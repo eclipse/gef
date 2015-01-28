@@ -27,18 +27,23 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
+	// TODO: rethink this property
+	public static final String ACTIVATION_COMPLETE_PROPERTY = "activationComplete";
+
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy
-		setAdapter(AdapterKey.get(AbstractFXHoverPolicy.class), new AbstractFXHoverPolicy() {
-			@Override
-			public void hover(MouseEvent e) {
-			}
-		});
+		setAdapter(AdapterKey.get(AbstractFXHoverPolicy.class),
+				new AbstractFXHoverPolicy() {
+					@Override
+					public void hover(MouseEvent e) {
+					}
+				});
 	}
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
 		getVisual().getChildren().add(index, child.getVisual());
 	}
 
@@ -50,20 +55,33 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected void doActivate() {
+		super.doActivate();
+		pcs.firePropertyChange(ACTIVATION_COMPLETE_PROPERTY, false, true);
+	}
+
+	@Override
 	public void doRefreshVisual(Group visual) {
 		// nothing to do
 	}
 
 	@Override
+	public Graph getContent() {
+		return (Graph) super.getContent();
+	}
+
+	@Override
 	public List<Object> getContentChildren() {
 		List<Object> children = new ArrayList<Object>();
-		children.addAll(((Graph) getContent()).getNodes());
-		children.addAll(((Graph) getContent()).getEdges());
+		children.addAll(getContent().getNodes());
+		children.addAll(getContent().getEdges());
 		return children;
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
+
 }

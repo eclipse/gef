@@ -45,12 +45,12 @@ public class ZestFxExpandingHandlePart extends ZestFxHidingHandlePart {
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
 				.iterator().next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
-		HidingModel pruningModel = viewer.getDomain().getAdapter(
+		HidingModel hidingModel = viewer.getDomain().getAdapter(
 				HidingModel.class);
-		Set<org.eclipse.gef4.graph.Node> prunedNeighbors = pruningModel
+		Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = hidingModel
 				.getHiddenNeighbors(((NodeContentPart) anchorage).getContent());
-		if (!prunedNeighbors.isEmpty()) {
-			for (org.eclipse.gef4.graph.Node node : prunedNeighbors) {
+		if (!hiddenNeighbors.isEmpty()) {
+			for (org.eclipse.gef4.graph.Node node : hiddenNeighbors) {
 				viewer.getContentPartMap().get(node)
 						.<HideNodePolicy> getAdapter(HideNodePolicy.class)
 						.show();

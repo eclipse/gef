@@ -23,6 +23,7 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 
 public class GraphLayoutContext extends AbstractLayoutContext {
 
@@ -60,7 +61,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	public void firePruningChanged(GraphNodeLayout node) {
-		pcs.firePropertyChange("pruned", 0, 1);
+		pcs.firePropertyChange("hidden", 0, 1);
 	}
 
 	public GraphEdgeLayout getEdgeLayout(Edge edge) {
@@ -84,10 +85,11 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	public NodeLayout[] getNodes() {
 		List<NodeLayout> nodes = new ArrayList<NodeLayout>();
 		NodeLayout[] allNodes = super.getNodes();
+		// filter out any hidden nodes
 		for (NodeLayout n : allNodes) {
-			Object pruned = n.getProperty("pruned");
+			Object hidden = n.getProperty(HidingModel.HIDDEN_PROPERTY);
 			// TODO: add 'pruned' property to layout model
-			if (pruned instanceof Boolean && (Boolean) pruned) {
+			if (hidden instanceof Boolean && (Boolean) hidden) {
 				continue;
 			}
 			nodes.add(n);
@@ -97,7 +99,9 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 
 	public void removeOnFlushChanges(Runnable runnable) {
 		if (!onFlushChanges.contains(runnable)) {
-			new IllegalArgumentException("Given Runnable is not contained in the list.").printStackTrace();
+			new IllegalArgumentException(
+					"Given Runnable is not contained in the list.")
+					.printStackTrace();
 		}
 		onFlushChanges.remove(runnable);
 	}

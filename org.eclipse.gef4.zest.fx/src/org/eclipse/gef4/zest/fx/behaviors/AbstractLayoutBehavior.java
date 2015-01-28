@@ -14,12 +14,14 @@ package org.eclipse.gef4.zest.fx.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Map;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -30,12 +32,18 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	private GraphLayoutContext glc;
 
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (LayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
 					.getPropertyName())) {
-				onLayoutContextChange((GraphLayoutContext) evt.getOldValue(),
-						(GraphLayoutContext) evt.getNewValue());
+				Map.Entry<Graph, LayoutContext> oldContext = (Map.Entry<Graph, LayoutContext>) evt
+						.getOldValue();
+				Map.Entry<Graph, LayoutContext> newContext = (Map.Entry<Graph, LayoutContext>) evt
+						.getNewValue();
+				onLayoutContextChange(oldContext.getKey(),
+						(GraphLayoutContext) oldContext.getValue(),
+						(GraphLayoutContext) newContext.getValue());
 			}
 		}
 	};
@@ -58,18 +66,17 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
-
 		// register listeners
 		getDomainAdapter(LayoutModel.class).addPropertyChangeListener(
 				layoutContextListener);
 		getHost().getVisual().layoutBoundsProperty()
 				.addListener(layoutBoundsListener);
-
 		// check if a layout context is already available
 		LayoutContext layoutContext = getDomainAdapter(LayoutModel.class)
-				.getLayoutContext();
+				.getLayoutContext(getGraph());
 		if (layoutContext instanceof GraphLayoutContext) {
-			onLayoutContextChange(null, (GraphLayoutContext) layoutContext);
+			onLayoutContextChange(getGraph(), null,
+					(GraphLayoutContext) layoutContext);
 		}
 	}
 
@@ -85,6 +92,8 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	public <T> T getDomainAdapter(Class<T> key) {
 		return getHost().getRoot().getViewer().getDomain().getAdapter(key);
 	}
+
+	protected abstract Graph getGraph();
 
 	/**
 	 * Called when the GLC changes.
@@ -107,8 +116,12 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	 */
 	protected abstract void onFlushChanges();
 
-	protected void onLayoutContextChange(GraphLayoutContext oldGlc,
+	protected void onLayoutContextChange(Graph key, GraphLayoutContext oldGlc,
 			GraphLayoutContext newGlc) {
+		if (getGraph() != key) {
+			return;
+		}
+
 		if (oldGlc != null && oldGlc == glc) {
 			oldGlc.removeOnFlushChanges(onFlushChanges);
 			glc = null;

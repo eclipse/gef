@@ -14,16 +14,22 @@ package org.eclipse.gef4.zest.fx.models;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 public class LayoutModel implements IPropertyChangeNotifier {
 
+	private static final SpringLayoutAlgorithm DEFAULT_ALGORITHM = new SpringLayoutAlgorithm();
+
 	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
 
-	private LayoutContext layoutContext;
+	private Map<Graph, LayoutContext> graphLayoutContext = new HashMap<Graph, LayoutContext>();
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -32,8 +38,23 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public LayoutContext getLayoutContext() {
-		return layoutContext;
+	public LayoutContext getLayoutContext(Graph graph) {
+		return graphLayoutContext.get(graph);
+	}
+
+	public void removeLayoutContext(Graph graph) {
+		if (graph == null) {
+			throw new IllegalArgumentException("Graph may not be null.");
+		}
+		LayoutContext oldContext = graphLayoutContext.remove(graph);
+		if (oldContext != null) {
+			// notify listeners
+			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY,
+					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+							oldContext),
+					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+							null));
+		}
 	}
 
 	@Override
@@ -41,22 +62,33 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void setLayoutContext(LayoutContext context) {
-		LayoutContext oldContext = layoutContext;
-		layoutContext = context;
+	public void setLayoutContext(Graph graph, LayoutContext context) {
+		if (graph == null) {
+			throw new IllegalArgumentException("Graph may not be null.");
+		}
+
+		LayoutContext oldContext = graphLayoutContext.get(graph);
+		graphLayoutContext.put(graph, context);
 
 		// in case new context does not specify an algorithm, transfer old
 		// context (or set default, if no context was set before)
 		if (context.getStaticLayoutAlgorithm() == null) {
-			if (oldContext != null && oldContext.getStaticLayoutAlgorithm() != null) {
-				context.setStaticLayoutAlgorithm(oldContext.getStaticLayoutAlgorithm());
+			if (oldContext != null
+					&& oldContext.getStaticLayoutAlgorithm() != null) {
+				context.setStaticLayoutAlgorithm(oldContext
+						.getStaticLayoutAlgorithm());
 			} else {
-				context.setStaticLayoutAlgorithm(new SpringLayoutAlgorithm());
+				context.setStaticLayoutAlgorithm(DEFAULT_ALGORITHM);
 			}
 		}
-
 		if (context != oldContext) {
-			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY, oldContext, layoutContext);
+			// notify listeners
+			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY,
+					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+							oldContext),
+					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+							context));
 		}
 	}
+
 }

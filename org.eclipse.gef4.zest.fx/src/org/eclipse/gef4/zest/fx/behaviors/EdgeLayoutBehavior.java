@@ -16,13 +16,26 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 
+// only applicable for EdgeContentPart (see #getHost())
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	protected GraphEdgeLayout edgeLayout;
+
+	@Override
+	protected Graph getGraph() {
+		return getHost().getContent().getGraph();
+	}
+
+	@Override
+	public EdgeContentPart getHost() {
+		return (EdgeContentPart) super.getHost();
+	}
 
 	@Override
 	protected void initializeLayout(GraphLayoutContext glc) {

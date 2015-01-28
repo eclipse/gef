@@ -20,11 +20,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 
 import com.google.common.collect.Multiset;
@@ -40,7 +42,9 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
-			onVisibilityChanged(oldValue, newValue);
+			if (oldValue.booleanValue() != newValue.booleanValue()) {
+				onVisibilityChanged(oldValue, newValue);
+			}
 		}
 	};
 
@@ -92,6 +96,16 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		getHost().getVisual().visibleProperty()
 				.removeListener(visibilityChangeListener);
 		getHost().removePropertyChangeListener(anchoredChangeListener);
+	}
+
+	@Override
+	protected Graph getGraph() {
+		return getHost().getContent().getGraph();
+	}
+
+	@Override
+	public NodeContentPart getHost() {
+		return (NodeContentPart) super.getHost();
 	}
 
 	@Override

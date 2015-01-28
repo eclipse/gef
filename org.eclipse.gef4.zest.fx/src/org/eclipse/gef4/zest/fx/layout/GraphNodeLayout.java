@@ -161,7 +161,7 @@ public class GraphNodeLayout implements NodeLayout {
 				context.fireNodeMovedEvent(this);
 			} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 				context.fireNodeResizedEvent(this);
-			} else if ("pruned".equals(name)) {
+			} else if ("hidden".equals(name)) {
 				context.firePruningChanged(this);
 			}
 		}

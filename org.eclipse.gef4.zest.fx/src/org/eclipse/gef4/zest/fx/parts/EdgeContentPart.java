@@ -162,7 +162,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	@Override
 	public void doRefreshVisual(FXLabeledConnection visual) {
 		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain()
-				.getAdapter(LayoutModel.class).getLayoutContext();
+				.getAdapter(LayoutModel.class)
+				.getLayoutContext(getContent().getGraph());
 		if (glc == null) {
 			return;
 		}

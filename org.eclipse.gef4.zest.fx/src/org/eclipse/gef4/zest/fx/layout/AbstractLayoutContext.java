@@ -222,16 +222,19 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
-	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1, EntityLayout layoutEntity2) {
+	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
+			EntityLayout layoutEntity2) {
 		List<ConnectionLayout> connections = new ArrayList<ConnectionLayout>();
 
-		for (ConnectionLayout c : ((NodeLayout) layoutEntity1).getOutgoingConnections()) {
+		for (ConnectionLayout c : ((NodeLayout) layoutEntity1)
+				.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity2) {
 				connections.add(c);
 			}
 		}
 
-		for (ConnectionLayout c : ((NodeLayout) layoutEntity2).getOutgoingConnections()) {
+		for (ConnectionLayout c : ((NodeLayout) layoutEntity2)
+				.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity1) {
 				connections.add(c);
 			}
@@ -320,7 +323,8 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		if (oldDynamicLayoutAlgorithm != dynamicLayoutAlgorithm) {
 			this.dynamicLayoutAlgorithm = dynamicLayoutAlgorithm;
 			dynamicLayoutAlgorithm.setLayoutContext(this);
-			pcs.firePropertyChange(DYNAMIC_LAYOUT_ALGORITHM_PROPERTY, oldDynamicLayoutAlgorithm, dynamicLayoutAlgorithm);
+			pcs.firePropertyChange(DYNAMIC_LAYOUT_ALGORITHM_PROPERTY,
+					oldDynamicLayoutAlgorithm, dynamicLayoutAlgorithm);
 		}
 	}
 
@@ -332,12 +336,14 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 			// send notification
 			if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 				fireBoundsChangedEvent();
-			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+					.equals(name)) {
 				fireBackgroundEnableChangedEvent();
 			} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
 				firePruningEnableChangedEvent();
 			}
 		}
+		pcs.firePropertyChange(name, oldValue, value);
 	}
 
 	@Override
@@ -346,7 +352,8 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
 			this.staticLayoutAlgorithm = staticLayoutAlgorithm;
 			staticLayoutAlgorithm.setLayoutContext(this);
-			pcs.firePropertyChange(STATIC_LAYOUT_ALGORITHM_PROPERTY, oldStaticLayoutAlgorithm, staticLayoutAlgorithm);
+			pcs.firePropertyChange(STATIC_LAYOUT_ALGORITHM_PROPERTY,
+					oldStaticLayoutAlgorithm, staticLayoutAlgorithm);
 		}
 	}
 

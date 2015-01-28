@@ -86,14 +86,15 @@ public abstract class AbstractZestExample extends Application {
 			@Override
 			public void run() {
 				// set contents
+				Graph graph = createGraph();
 				viewer.getAdapter(ContentModel.class).setContents(
-						Collections.singletonList(createGraph()));
+						Collections.singletonList(graph));
 
 				// TODO: we need to ensure the default algorithm is not used
 				// before the custom is set
 
 				// set layout algorithm
-				domain.getAdapter(LayoutModel.class).getLayoutContext()
+				domain.getAdapter(LayoutModel.class).getLayoutContext(graph)
 						.setStaticLayoutAlgorithm(createLayoutAlgorithm());
 			}
 		});

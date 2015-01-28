@@ -13,6 +13,8 @@
 package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javafx.beans.value.ChangeListener;
@@ -25,6 +27,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -35,6 +38,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -49,14 +53,15 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			Circle n2 = node(5, -15);
 			Circle n3 = node(15, -25);
 			Circle n4 = node(20, 5);
-			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3), edge(n3, n4), edge(n1, n4), n0, n1, n2, n3,
-					n4);
+			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3),
+					edge(n3, n4), edge(n1, n4), n0, n1, n2, n3, n4);
 			setScaleX(0.5);
 			setScaleY(0.5);
 		}
 
 		private Node edge(Circle n, Circle m) {
-			Line line = new Line(n.getCenterX(), n.getCenterY(), m.getCenterX(), m.getCenterY());
+			Line line = new Line(n.getCenterX(), n.getCenterY(),
+					m.getCenterX(), m.getCenterY());
 			line.setStroke(Color.BLACK);
 			return line;
 		}
@@ -79,7 +84,13 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	protected ImageView imageView = new ImageView();
 	protected double padding = 5;
 	protected Tooltip tooltipNode;
-	private Group decoGroup;
+	private Pane childrenPane;
+
+	@Override
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
+		childrenPane.getChildren().add(index, child.getVisual());
+	}
 
 	@Override
 	protected Group createVisual() {
@@ -92,39 +103,44 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		hbox.getChildren().addAll(imageView, text);
 		final VBox vbox = new VBox();
 		vbox.setMouseTransparent(true);
-		decoGroup = new Group();
-		vbox.getChildren().addAll(hbox, decoGroup);
+		childrenPane = new Pane();
+		childrenPane.setStyle("-fx-background-color: white;");
+		childrenPane.setScaleX(0.25);
+		childrenPane.setScaleY(0.25);
+		childrenPane.setPrefSize(0, 0);
+		vbox.getChildren().addAll(hbox, new Group(childrenPane));
 		group.getChildren().addAll(box, vbox);
 
 		// box, label, image
-		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT, Arrays.asList(new Stop(0, new Color(1, 1,
-				1, 1)))));
+		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
+				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
 		box.setStroke(new Color(0, 0, 0, 1));
 		text.setTextOrigin(VPos.TOP);
 		text.setText(DEFAULT_LABEL);
 		ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldBounds, Bounds newBounds) {
-				// TODO: find a replacement for these calls
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldBounds, Bounds newBounds) {
 				hbox.autosize();
-				decoGroup.layout();
 				vbox.autosize();
 			}
 		};
 		text.boundsInLocalProperty().addListener(boundsChangeListener);
 		imageView.setImage(null);
 		imageView.boundsInLocalProperty().addListener(boundsChangeListener);
-		decoGroup.boundsInLocalProperty().addListener(boundsChangeListener);
+		childrenPane.boundsInLocalProperty().addListener(boundsChangeListener);
 
 		// layout
 		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> arg0, Bounds arg1, Bounds arg2) {
+			public void changed(ObservableValue<? extends Bounds> arg0,
+					Bounds arg1, Bounds arg2) {
 				vbox.setTranslateX(padding);
 				vbox.setTranslateY(padding);
 				box.setWidth(vbox.getWidth() + 2 * padding);
 				box.setHeight(vbox.getHeight() + 2 * padding);
-				text.setTranslateX(vbox.getWidth() / 2 - text.getLayoutBounds().getWidth() / 2);
+				text.setTranslateX(vbox.getWidth() / 2
+						- text.getLayoutBounds().getWidth() / 2);
 			}
 		});
 
@@ -153,7 +169,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 		// set label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label : label == null ? DEFAULT_LABEL : label.toString();
+		String str = label instanceof String ? (String) label
+				: label == null ? DEFAULT_LABEL : label.toString();
 		text.setText(str);
 
 		// set image
@@ -162,10 +179,19 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			imageView.setImage(new Image((String) imageFileUrl));
 		}
 
-		// set decoration for nesting nodes
-		decoGroup.getChildren().clear();
+		// show children when we have a nested graph
 		if (getContent().getNestedGraph() != null) {
-			decoGroup.getChildren().add(new NestedGraphIcon());
+			if (childrenPane.getPrefWidth() != 400
+					|| childrenPane.getPrefHeight() != 400) {
+				childrenPane.setPrefSize(400, 400);
+				childrenPane.resize(400, 400);
+			}
+		} else {
+			if (childrenPane.getPrefWidth() != 0
+					|| childrenPane.getPrefHeight() != 0) {
+				childrenPane.setPrefSize(0, 0);
+				childrenPane.resize(0, 0);
+			}
 		}
 
 		// set tooltip
@@ -180,22 +206,45 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 	}
 
+	public Pane getChildrenPane() {
+		return childrenPane;
+	}
+
 	@Override
 	public org.eclipse.gef4.graph.Node getContent() {
 		return (org.eclipse.gef4.graph.Node) super.getContent();
 	}
 
 	@Override
+	public List<? extends Object> getContentChildren() {
+		Graph nestedGraph = getContent().getNestedGraph();
+		if (nestedGraph == null) {
+			return Collections.emptyList();
+		}
+		// TODO: restrict depending on zoom level
+		return Collections.singletonList(nestedGraph);
+	}
+
+	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
 		super.registerAtVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer().getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
+				.getVisualPartMap();
 		visualPartMap.put(box, this);
 	}
 
 	@Override
-	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, Group visual) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
+		childrenPane.getChildren().remove(index);
+	}
+
+	@Override
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
+			Group visual) {
 		super.unregisterFromVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer().getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
+				.getVisualPartMap();
 		visualPartMap.remove(box);
 	}
 

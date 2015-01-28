@@ -14,8 +14,10 @@ package org.eclipse.gef4.zest.fx.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -25,124 +27,245 @@ import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.viewer.IViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+/**
+ * The LayoutContextBehavior is responsible for the creation and distribution of
+ * a LayoutContext for a GraphContentPart and for initiating layout passes in
+ * this context.
+ *
+ * @author wienand
+ *
+ */
+// only applicable for GraphContentPart (see #getHost())
 public class LayoutContextBehavior extends AbstractBehavior<Node> {
 
-	private PropertyChangeListener layoutContextChangeListener = new PropertyChangeListener() {
+	private PropertyChangeListener layoutContextPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			// re-layout in case pruning state or (static) layout algorithm
-			// changes
-			if ("pruned".equals(evt.getPropertyName())
-					|| LayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
-				GraphLayoutContext context = getLayoutContext();
-				if (context != null) {
-					applyStaticLayout(context);
-				}
-			}
+			onLayoutContextPropertyChange(evt);
 		}
 	};
 
-	private PropertyChangeListener contentsChangeListener = new PropertyChangeListener() {
+	private boolean isHostActive;
+	private boolean isRootContent;
+	private GraphLayoutContext layoutContext;
+
+	private PropertyChangeListener viewportModelPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (ContentModel.CONTENTS_PROPERTY.equals(evt.getPropertyName())) {
-				// create context from content
-				Object content = evt.getNewValue();
-				final GraphLayoutContext context = createLayoutContext(content);
-
-				// get layout model
-				LayoutModel layoutModel = getViewer().getDomain().getAdapter(LayoutModel.class);
-
-				// remove change listener from old context
-				LayoutContext oldContext = layoutModel.getLayoutContext();
-				if (oldContext instanceof GraphLayoutContext) {
-					((GraphLayoutContext) oldContext).removePropertyChangeListener(layoutContextChangeListener);
-				}
-				// add change listener to new context
-				context.addPropertyChangeListener(layoutContextChangeListener);
-
-				// set layout context. other parts listen for the layout model
-				// to send in their layout data
-				layoutModel.setLayoutContext(context);
-				applyStaticLayout(context);
-			}
+			onViewportModelPropertyChange(evt);
 		}
 	};
 
-	private PropertyChangeListener viewportChangeListener = new PropertyChangeListener() {
+	private ChangeListener<? super Bounds> nestingVisualLayoutBoundsChangeListener = new ChangeListener<Bounds>() {
+		@Override
+		public void changed(ObservableValue<? extends Bounds> observable,
+				Bounds oldLayoutBounds, Bounds newLayoutBounds) {
+			onNestingVisualLayoutBoundsChange(oldLayoutBounds, newLayoutBounds);
+		}
+	};
+
+	private PropertyChangeListener hostPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			String name = evt.getPropertyName();
-			if (ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(name)
-					|| ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(name)) {
-				GraphLayoutContext context = getLayoutContext();
-				if (context != null) {
-					applyStaticLayout(context);
-				}
-			}
+			onHostPropertyChange(evt);
 		}
 	};
 
 	@Override
 	public void activate() {
 		super.activate();
-		// register listeners
-		getViewer().getAdapter(ContentModel.class).addPropertyChangeListener(contentsChangeListener);
-		getViewer().getAdapter(ViewportModel.class).addPropertyChangeListener(viewportChangeListener);
+		getHost().addPropertyChangeListener(hostPropertyChangeListener);
 	}
 
+	/**
+	 * Performs one layout pass using the static layout algorithm that is
+	 * configured for the given context.
+	 *
+	 * @param context
+	 */
 	protected void applyStaticLayout(final GraphLayoutContext context) {
-		// get current viewport size
-		ViewportModel viewportModel = getViewer().getAdapter(ViewportModel.class);
-		double width = viewportModel.getWidth();
-		double height = viewportModel.getHeight();
-		LayoutProperties.setBounds(context, new Rectangle(0, 0, width, height));
-
-		// apply static layout algorithm
+		if (!isHostActive) {
+			return;
+		}
 		context.applyStaticLayout(true);
 		context.flushChanges(false);
 	}
 
-	protected GraphLayoutContext createLayoutContext(Object content) {
-		if (!(content instanceof List)) {
-			throw new IllegalStateException("Wrong content! Expected <List> but got <" + content + ">.");
-		}
-		if (((List<?>) content).size() != 1) {
-			throw new IllegalStateException("Wrong content! Expected <Graph> but got nothing.");
-		}
-		content = ((List<?>) content).get(0);
-		if (!(content instanceof Graph)) {
-			throw new IllegalStateException("Wrong content! Expected <Graph> but got <" + content + ">.");
-		}
-		// TODO: we should extract this into a factory, so clients can influence
-		// the creation process
-		final GraphLayoutContext context = new GraphLayoutContext((Graph) content);
-		ViewportModel viewport = getViewer().getAdapter(ViewportModel.class);
-		LayoutProperties.setBounds(context, new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()));
-		return context;
+	protected GraphLayoutContext createLayoutContext(Graph content) {
+		return new GraphLayoutContext(content);
 	}
 
 	@Override
 	public void deactivate() {
 		super.deactivate();
-		getViewer().getAdapter(ContentModel.class).removePropertyChangeListener(contentsChangeListener);
-		getViewer().getAdapter(ViewportModel.class).removePropertyChangeListener(viewportChangeListener);
+		// remove property change listener from context
+		if (layoutContext != null) {
+			layoutContext
+					.removePropertyChangeListener(layoutContextPropertyChangeListener);
+		}
+		if (isRootContent) {
+			// remove change listener from viewport model
+			getViewportModel().removePropertyChangeListener(
+					viewportModelPropertyChangeListener);
+		} else {
+			// remove change listener from layout-bounds-property
+			getNestingPart().getVisual().layoutBoundsProperty()
+					.removeListener(nestingVisualLayoutBoundsChangeListener);
+		}
+		// nullify variables
+		layoutContext = null;
+		isRootContent = false;
+		isHostActive = false;
+		// remove layout context from model
+		getLayoutModel().removeLayoutContext(getHost().getContent());
+	}
+
+	private void distributeLayoutContext() {
+		ContentModel contentModel = getHost().getRoot().getViewer()
+				.getAdapter(ContentModel.class);
+		Object content = contentModel.getContents().get(0);
+		Rectangle initialBounds = new Rectangle();
+		if (getHost().getContent() == content) {
+			/*
+			 * Our graph is the root graph, therefore we listen to viewport
+			 * changes to update the layout bounds in the context accordingly.
+			 */
+			isRootContent = true;
+			ViewportModel viewportModel = getViewportModel();
+			viewportModel
+					.addPropertyChangeListener(viewportModelPropertyChangeListener);
+			// read initial bounds
+			initialBounds.setWidth(viewportModel.getWidth());
+			initialBounds.setHeight(viewportModel.getHeight());
+		} else if (getHost().getContent().getNestingNode() != null) {
+			/*
+			 * Our graph is nested inside a node of another graph, therefore we
+			 * listen to changes of that node's layout-bounds.
+			 */
+			Node visual = getNestingPart().getChildrenPane();
+			visual.layoutBoundsProperty().addListener(
+					nestingVisualLayoutBoundsChangeListener);
+			Bounds layoutBounds = visual.getLayoutBounds();
+			// read initial bounds
+			initialBounds.setWidth(layoutBounds.getWidth());
+			initialBounds.setHeight(layoutBounds.getHeight());
+		} else {
+			throw new IllegalStateException(
+					"Graph is neither nested nor root?!");
+		}
+
+		// create layout context
+		layoutContext = createLayoutContext(getHost().getContent());
+		Graph graph = layoutContext.getGraph();
+
+		// get layout model
+		LayoutModel layoutModel = getLayoutModel();
+
+		// set initial bounds
+		LayoutProperties.setBounds(layoutContext, initialBounds);
+
+		// add change listener to new context
+		layoutContext
+				.addPropertyChangeListener(layoutContextPropertyChangeListener);
+
+		// set layout context. other parts listen for the layout model
+		// to send in their layout data
+		layoutModel.setLayoutContext(graph, layoutContext);
+
+		// initial layout pass
+		applyStaticLayout(layoutContext);
+	}
+
+	@Override
+	public GraphContentPart getHost() {
+		return (GraphContentPart) super.getHost();
 	}
 
 	protected GraphLayoutContext getLayoutContext() {
-		LayoutModel layoutModel = getViewer().getDomain().getAdapter(LayoutModel.class);
-		if (layoutModel == null) {
-			return null;
-		}
-		return (GraphLayoutContext) layoutModel.getLayoutContext();
+		return (GraphLayoutContext) getLayoutModel().getLayoutContext(
+				getHost().getContent());
 	}
 
-	protected IViewer<Node> getViewer() {
-		return getHost().getRoot().getViewer();
+	protected LayoutModel getLayoutModel() {
+		return getHost().getRoot().getViewer().getDomain()
+				.<LayoutModel> getAdapter(LayoutModel.class);
+	}
+
+	protected NodeContentPart getNestingPart() {
+		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent()
+				.getNestingNode();
+		IContentPart<Node, ? extends Node> nestingNodePart = getHost()
+				.getRoot().getViewer().getContentPartMap().get(nestingNode);
+		return (NodeContentPart) nestingNodePart;
+	}
+
+	protected ViewportModel getViewportModel() {
+		return getHost().getRoot().getViewer()
+				.<ViewportModel> getAdapter(ViewportModel.class);
+	}
+
+	protected void onHostPropertyChange(PropertyChangeEvent evt) {
+		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt
+				.getPropertyName())) {
+			if ((Boolean) evt.getNewValue()) {
+				isHostActive = true;
+				distributeLayoutContext();
+			}
+		}
+	}
+
+	/**
+	 * Relayout when certain properties of the LayoutContext change:
+	 * <ul>
+	 * <li>static layout algorithm
+	 * <li>layout bounds
+	 * </ul>
+	 *
+	 * @param evt
+	 */
+	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
+		if (LayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
+				.getPropertyName())) {
+			applyStaticLayout(getLayoutContext());
+		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt
+				.getPropertyName())) {
+			applyStaticLayout(getLayoutContext());
+		}
+	}
+
+	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds,
+			Bounds newLayoutBounds) {
+		// update layout bounds to match the nesting visual layout bounds
+		double width = newLayoutBounds.getWidth();
+		double height = newLayoutBounds.getHeight();
+		Rectangle newBounds = new Rectangle(0, 0, width, height);
+		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
+			LayoutProperties.setBounds(layoutContext, newBounds);
+		}
+	}
+
+	protected void onViewportModelPropertyChange(PropertyChangeEvent evt) {
+		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY
+				.equals(evt.getPropertyName())
+				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt
+						.getPropertyName())) {
+			// only width and height changes are of interest
+			return;
+		}
+
+		// update layout bounds to match the viewport bounds
+		double width = getViewportModel().getWidth();
+		double height = getViewportModel().getHeight();
+		Rectangle newBounds = new Rectangle(0, 0, width, height);
+		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
+			LayoutProperties.setBounds(layoutContext, newBounds);
+		}
 	}
 
 }

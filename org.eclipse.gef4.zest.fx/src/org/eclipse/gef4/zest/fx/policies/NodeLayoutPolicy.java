@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 
 public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 
@@ -97,10 +98,11 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx,
 				transform.getTy() + miny);
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
-		Object wasPruned = nodeLayout.getProperty("pruned");
-		if (visual.isVisible() == (wasPruned == null || wasPruned instanceof Boolean
-				&& (Boolean) wasPruned)) {
-			nodeLayout.setProperty("pruned", !visual.isVisible());
+		Object wasHidden = nodeLayout.getProperty(HidingModel.HIDDEN_PROPERTY);
+		if (visual.isVisible() == (wasHidden == null || wasHidden instanceof Boolean
+				&& (Boolean) wasHidden)) {
+			nodeLayout.setProperty(HidingModel.HIDDEN_PROPERTY,
+					!visual.isVisible());
 		}
 	}
 

@@ -41,6 +41,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	@Override
 	public void activate() {
 		super.activate();
+
 		HidingModel hidingModel = getPruningModel();
 
 		// register for change notifications
@@ -114,7 +115,6 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		// hide visual
 		getHost().getVisual().setVisible(false);
 		getHost().getVisual().setMouseTransparent(true);
-		getHost().deactivate();
 
 		// hide connections
 		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = getHost()
@@ -176,7 +176,6 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 
 	protected void show() {
 		// show node
-		getHost().activate();
 		getHost().getVisual().setVisible(true);
 		getHost().getVisual().setMouseTransparent(false);
 
