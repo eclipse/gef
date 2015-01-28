@@ -69,8 +69,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
 			double segmentParameter) {
-		return new FXRectangleSegmentHandlePart(segmentsProvider, segmentIndex,
-				segmentParameter);
+		FXRectangleSegmentHandlePart part = new FXRectangleSegmentHandlePart(
+				segmentsProvider, segmentIndex, segmentParameter);
+		injector.injectMembers(part);
+		return part;
 	}
 
 	// TODO: maybe inline this method
@@ -87,7 +89,6 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			IHandlePart<Node, ? extends Node> part = createBoundsSelectionCornerHandlePart(
 					targets, contextMap, segmentsProvider, i, 0);
 			if (part != null) {
-				injector.injectMembers(part);
 				handleParts.add(part);
 			}
 		}
@@ -116,8 +117,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IVisualPart<Node, ? extends Node> targetPart,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
-		return new FXCircleSegmentHandlePart(segmentsProvider, segmentIndex,
-				segmentParameter);
+		FXCircleSegmentHandlePart part = new FXCircleSegmentHandlePart(
+				segmentsProvider, segmentIndex, segmentParameter);
+		injector.injectMembers(part);
+		return part;
 	}
 
 	/**
@@ -143,13 +146,11 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			IHandlePart<Node, ? extends Node> part = createCurveSelectionHandlePart(
 					targetPart, segmentsProvider, segments.length, i, 0.0);
 			if (part != null) {
-				injector.injectMembers(part);
 				hps.add(part);
 			}
 			part = createCurveSelectionHandlePart(targetPart, segmentsProvider,
 					segments.length, i, 0.5);
 			if (part != null) {
-				injector.injectMembers(part);
 				hps.add(part);
 			}
 
@@ -158,7 +159,6 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				part = createCurveSelectionHandlePart(targetPart,
 						segmentsProvider, segments.length, i, 1.0);
 				if (part != null) {
-					injector.injectMembers(part);
 					hps.add(part);
 				}
 			}
@@ -255,7 +255,6 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 					target, hoverHandlesSegmentsInSceneProvider,
 					segments.length, i, contextMap);
 			if (hp != null) {
-				injector.injectMembers(hp);
 				handleParts.add(hp);
 			}
 		}
@@ -267,8 +266,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
 			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
-		return new FXCircleSegmentHandlePart(
+		FXCircleSegmentHandlePart part = new FXCircleSegmentHandlePart(
 				hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
+		injector.injectMembers(part);
+		return part;
 	}
 
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
@@ -348,7 +349,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, Map<Object, Object> contextMap) {
-		return new FXCircleSegmentHandlePart(segmentsProvider, segmentIndex, 0);
+		FXCircleSegmentHandlePart part = new FXCircleSegmentHandlePart(
+				segmentsProvider, segmentIndex, 0);
+		injector.injectMembers(part);
+		return part;
 	}
 
 	@SuppressWarnings("serial")
@@ -402,7 +406,6 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 							target, selectionHandlesSegmentsInSceneProvider,
 							segments.length, i, contextMap);
 					if (hp != null) {
-						injector.injectMembers(hp);
 						handleParts.add(hp);
 					}
 				}
