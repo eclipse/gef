@@ -65,6 +65,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractViewer() {
+		// TODO: clear scope upon disposal
 		AdaptableScopes.scopeTo(this);
 	}
 

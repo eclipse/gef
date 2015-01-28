@@ -20,11 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Inject;
 
@@ -40,11 +43,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	@Inject
 	// scoped to single instance within viewer
-	protected IFeedbackPartFactory<VR> feedbackPartFactory;
+	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	@Inject
 	// scoped to single instance within viewer
-	protected IHandlePartFactory<VR> handlePartFactory;
+	private IHandlePartFactory<VR> handlePartFactory;
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IVisualPart<VR, ? extends VR> host;
@@ -72,6 +75,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
 		if (targets != null && !targets.isEmpty()) {
+			// create feedback part, adjusting the relevant adapter scopes
+			// before
+			adjustAdaptableScopes();
 			feedbackParts = feedbackPartFactory.createFeedbackParts(targets,
 					this, contextMap);
 			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
@@ -88,6 +94,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
 		if (targets != null && !targets.isEmpty()) {
+			// create handle part, adjusting the relevant adaptable scopes
+			// before
+			adjustAdaptableScopes();
 			handleParts = handlePartFactory.createHandleParts(targets, this,
 					contextMap);
 			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
@@ -98,6 +107,18 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
+	}
+
+	protected void adjustAdaptableScopes() {
+		// adjust relevant adaptable scopes before creating new part
+		// TODO: move this into AdaptableScopes, making it more generic (i.e.
+		// traverse adaptables)
+		IVisualPart<VR, ? extends VR> host = getHost();
+		IViewer<VR> viewer = host.getRoot().getViewer();
+		IDomain<VR> domain = viewer.getDomain();
+		AdaptableScopes.scopeTo(domain);
+		AdaptableScopes.scopeTo(viewer);
+		AdaptableScopes.scopeTo(host);
 	}
 
 	@Override

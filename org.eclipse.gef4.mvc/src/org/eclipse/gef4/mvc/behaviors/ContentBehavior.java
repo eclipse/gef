@@ -54,11 +54,11 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 	@Inject
 	// scoped to single instance within viewer
-	IContentPartFactory<VR> contentPartFactory;
+	private IContentPartFactory<VR> contentPartFactory;
 
 	@Inject
 	// scoped to single instance within viewer
-	ContentPartPool<VR> contentPartPool;
+	private ContentPartPool<VR> contentPartPool;
 
 	@Override
 	public void activate() {
@@ -111,6 +111,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 			// If the part could not be revived, a new one is created
 			if (contentPart == null) {
+				// create part using the factory, adjusting the relevant scopes
+				// before
+				adjustAdaptableScopes();
 				contentPart = contentPartFactory.createContentPart(content,
 						this, Collections.emptyMap());
 				if (contentPart == null) {

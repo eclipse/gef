@@ -81,6 +81,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractVisualPart() {
+		// TODO: clear scope upon disposal
 		AdaptableScopes.scopeTo(this);
 	}
 

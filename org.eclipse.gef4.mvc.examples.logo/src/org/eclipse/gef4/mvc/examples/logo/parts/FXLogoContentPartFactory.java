@@ -33,6 +33,7 @@ public class FXLogoContentPartFactory implements IContentPartFactory<Node> {
 	@Override
 	public IContentPart<Node, ? extends Node> createContentPart(Object content,
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+
 		if (content instanceof FXGeometricModel) {
 			return injector.getInstance(FXGeometricModelPart.class);
 		} else if (content instanceof FXGeometricShape) {

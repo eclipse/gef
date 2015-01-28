@@ -63,6 +63,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractDomain() {
+		// TODO: clear scope upon disposal
 		AdaptableScopes.scopeTo(this);
 	}
 

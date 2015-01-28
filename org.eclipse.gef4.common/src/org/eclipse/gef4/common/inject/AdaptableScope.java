@@ -56,6 +56,7 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	 *            The instance to bind this {@link AdaptableScope} to.
 	 */
 	public void scopeTo(A instance) {
+		System.out.println("Scoping " + type + " to " + instance);
 		this.adaptable = instance;
 	}
 
