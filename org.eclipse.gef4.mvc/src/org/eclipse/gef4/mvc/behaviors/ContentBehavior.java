@@ -18,6 +18,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -230,47 +231,54 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentChildren(
 			final List<? extends Object> contentChildren) {
-		int i;
-
 		// only synchronize IContentPart children
 		List<IContentPart<VR, ? extends VR>> childContentParts = PartUtils
 				.filterParts(getHost().getChildren(), IContentPart.class);
-		int contentChildrenSize = contentChildren.size();
-		int childContentPartsSize = childContentParts.size();
-
-		Map<Object, IContentPart<VR, ? extends VR>> contentToContentPartMap = Collections
-				.emptyMap();
-		IContentPart<VR, ? extends VR> contentPart;
-		if (childContentPartsSize > 0) {
-			contentToContentPartMap = new HashMap<Object, IContentPart<VR, ? extends VR>>(
-					childContentPartsSize);
-			for (i = 0; i < childContentPartsSize; i++) {
-				contentPart = childContentParts.get(i);
-				contentToContentPartMap.put(contentPart.getContent(),
-						contentPart);
+		// store the existing content parts in a map using the contents as keys
+		Map<Object, IContentPart<VR, ? extends VR>> contentPartMap = new HashMap<Object, IContentPart<VR, ? extends VR>>();
+		// find all content parts for which no content element exists in
+		// contentChildren, and therefore have to be removed
+		Set<? extends Object> newContents = new HashSet<Object>(contentChildren);
+		List<IContentPart<VR, ? extends VR>> toRemove = new ArrayList<IContentPart<VR, ? extends VR>>();
+		for (IContentPart<VR, ? extends VR> cp : childContentParts) {
+			// store content part in map
+			contentPartMap.put(cp.getContent(), cp);
+			// mark for removal
+			if (!newContents.contains(cp.getContent())) {
+				toRemove.add(cp);
 			}
 		}
-
+		// remove the parts
+		childContentParts.removeAll(toRemove);
+		for (IContentPart<VR, ? extends VR> cp : toRemove) {
+			getHost().removeChild(cp);
+			disposeIfObsolete(cp);
+		}
+		// walk over the new content children to reorder existing parts or
+		// create missing parts
 		Object content;
-		for (i = 0; i < contentChildrenSize; i++) {
+		int contentChildrenSize = contentChildren.size();
+		int childContentPartsSize = childContentParts.size();
+		for (int i = 0; i < contentChildrenSize; i++) {
 			content = contentChildren.get(i);
-
-			// Do a quick check to see if editPart[i] == model[i]
+			// Do a quick check to see if the existing content part is at the
+			// correct location in the children list.
 			if (i < childContentPartsSize
 					&& childContentParts.get(i).getContent() == content) {
 				continue;
 			}
-
-			// Look to see if the EditPart is already around but in the
-			// wrong location
-			contentPart = contentToContentPartMap.get(content);
-
+			// Look to see if the ContentPart is already around but in the
+			// wrong location.
+			IContentPart<VR, ? extends VR> contentPart = contentPartMap
+					.get(content);
 			if (contentPart != null) {
+				// Re-order the existing content part to its designated
+				// location in the children list.
 				// TODO: this is wrong, it has to take into consideration the
 				// visual parts in between
 				getHost().reorderChild(contentPart, i);
 			} else {
-				// An EditPart for this model doesn't exist yet. Create and
+				// A ContentPart for this model does not exist yet. Create and
 				// insert one.
 				contentPart = findOrCreatePartFor(content);
 				if (contentPart.getParent() != null) {
@@ -285,24 +293,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
 				}
 				getHost().addChild(contentPart, i);
-			}
-		}
-
-		// remove the remaining EditParts
-		childContentParts = PartUtils.filterParts(getHost().getChildren(),
-				IContentPart.class);
-		childContentPartsSize = childContentParts.size();
-
-		if (i < childContentPartsSize) {
-			List<IContentPart<VR, ? extends VR>> trash = new ArrayList<IContentPart<VR, ? extends VR>>(
-					childContentPartsSize - i);
-			for (; i < childContentPartsSize; i++) {
-				trash.add(childContentParts.get(i));
-			}
-			for (i = 0; i < trash.size(); i++) {
-				IContentPart<VR, ? extends VR> ep = trash.get(i);
-				getHost().removeChild(ep);
-				disposeIfObsolete(ep);
 			}
 		}
 	}
