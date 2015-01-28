@@ -105,18 +105,34 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 			@Override
 			public void resize(double w, double h) {
+				if (!isResizable()) {
+					return;
+				}
+
+				// compute delta size, based on layout bounds
 				Bounds layoutBounds = getLayoutBounds();
 				double dw = w - layoutBounds.getWidth();
 				double dh = h - layoutBounds.getHeight();
 
+				// compute new size, taking into account the childrenPane scale
 				double newWidth = childrenPane.getPrefWidth() + dw * 1
 						/ childrenPane.getScaleX();
 				double newHeight = childrenPane.getPrefHeight() + dh * 1
 						/ childrenPane.getScaleY();
 
+				// do not resize below threshold
+				if (newWidth < 100) {
+					newWidth = 100;
+				}
+				if (newHeight < 100) {
+					newHeight = 100;
+				}
+
+				// perform the resize
 				childrenPane.setPrefSize(newWidth, newHeight);
 				childrenPane.resize(newWidth, newHeight);
 
+				// layout other visuals
 				hbox.autosize();
 				vbox.autosize();
 			}
