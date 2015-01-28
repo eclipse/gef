@@ -34,7 +34,6 @@ import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
-import org.eclipse.gef4.mvc.models.GraveyardModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
@@ -197,9 +196,6 @@ public class ContentSynchronizationTests {
 					});
 			// bind parameterized default viewer models (others are already
 			// bound in superclass)
-			adapterMapBinder.addBinding(AdapterKey.get(GraveyardModel.class))
-					.to(new TypeLiteral<GraveyardModel<Object>>() {
-					});
 			adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class)).to(
 					new TypeLiteral<FocusModel<Object>>() {
 					});
