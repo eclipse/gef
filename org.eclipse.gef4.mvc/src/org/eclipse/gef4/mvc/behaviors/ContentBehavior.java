@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -50,7 +51,7 @@ import com.google.inject.Inject;
  *            javafx.scene.Node in case of JavaFX.
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
-		PropertyChangeListener {
+		PropertyChangeListener, IDisposable {
 
 	@Inject
 	// scoped to single instance within viewer
@@ -91,6 +92,11 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		super.deactivate();
 	}
 
+	@Override
+	public void dispose() {
+		contentPartPool.clear();
+	}
+
 	protected void disposeIfObsolete(IContentPart<VR, ? extends VR> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
@@ -113,7 +119,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			if (contentPart == null) {
 				// create part using the factory, adjusting the relevant scopes
 				// before
-				adjustAdaptableScopes();
+				switchAdaptableScopes();
 				contentPart = contentPartFactory.createContentPart(content,
 						this, Collections.emptyMap());
 				if (contentPart == null) {

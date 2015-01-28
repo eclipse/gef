@@ -77,7 +77,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		if (targets != null && !targets.isEmpty()) {
 			// create feedback part, adjusting the relevant adapter scopes
 			// before
-			adjustAdaptableScopes();
+			switchAdaptableScopes();
 			feedbackParts = feedbackPartFactory.createFeedbackParts(targets,
 					this, contextMap);
 			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
@@ -96,7 +96,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		if (targets != null && !targets.isEmpty()) {
 			// create handle part, adjusting the relevant adaptable scopes
 			// before
-			adjustAdaptableScopes();
+			switchAdaptableScopes();
 			handleParts = handlePartFactory.createHandleParts(targets, this,
 					contextMap);
 			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
@@ -109,16 +109,16 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	protected void adjustAdaptableScopes() {
+	protected void switchAdaptableScopes() {
 		// adjust relevant adaptable scopes before creating new part
 		// TODO: move this into AdaptableScopes, making it more generic (i.e.
 		// traverse adaptables)
 		IVisualPart<VR, ? extends VR> host = getHost();
 		IViewer<VR> viewer = host.getRoot().getViewer();
 		IDomain<VR> domain = viewer.getDomain();
-		AdaptableScopes.scopeTo(domain);
-		AdaptableScopes.scopeTo(viewer);
-		AdaptableScopes.scopeTo(host);
+		AdaptableScopes.switchTo(domain);
+		AdaptableScopes.switchTo(viewer);
+		AdaptableScopes.switchTo(host);
 	}
 
 	@Override

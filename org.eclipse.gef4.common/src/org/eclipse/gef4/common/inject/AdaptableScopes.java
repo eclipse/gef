@@ -26,6 +26,11 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
  */
 public class AdaptableScopes {
 
+	private interface ScopeProcessor {
+		public void process(Class<? extends IAdaptable> adaptableType,
+				final IAdaptable adaptableInstance);
+	}
+
 	// one adaptable scope for each type of adaptable
 	private static final Map<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>> scopes = new HashMap<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>>();
 
@@ -37,7 +42,8 @@ public class AdaptableScopes {
 	 * Retrieves an {@link AdaptableScope} for the given {@link IAdaptable}
 	 * -compliant type.
 	 * 
-	 * @param type The type of the {@link AdaptableScope}.
+	 * @param type
+	 *            The type of the {@link AdaptableScope}.
 	 * @return The static {@link AdaptableScope} instance for the given type.
 	 */
 	@SuppressWarnings("unchecked")
@@ -61,28 +67,53 @@ public class AdaptableScopes {
 	 * @param adaptable
 	 *            The {@link IAdaptable} instance to scope to.
 	 */
-	public static void scopeTo(final IAdaptable adaptable) {
-		scopeTo(adaptable.getClass(), adaptable);
+	public static void enter(final IAdaptable adaptable) {
+		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
+			@Override
+			public void process(Class<? extends IAdaptable> adaptableType,
+					IAdaptable adaptableInstance) {
+				AdaptableScopes.typed(adaptableType).enter(adaptableInstance);
+			}
+		});
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void scopeTo(Class<? extends IAdaptable> adaptableType,
-			final IAdaptable adaptableInstance) {
-		// scope the adaptable scope of the given type to the instance
-		AdaptableScopes.typed(adaptableType).scopeTo(adaptableInstance);
+	public static void switchTo(final IAdaptable adaptable) {
+		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
+			@Override
+			public void process(Class<? extends IAdaptable> adaptableType,
+					IAdaptable adaptableInstance) {
+				AdaptableScopes.typed(adaptableType)
+						.switchTo(adaptableInstance);
+			}
+		});
+	}
+
+	public static void leave(final IAdaptable adaptable) {
+		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
+			@Override
+			public void process(Class<? extends IAdaptable> adaptableType,
+					IAdaptable adaptableInstance) {
+				AdaptableScopes.typed(adaptableType).leave(adaptableInstance);
+			}
+		});
+	}
+
+	private static void process(Class<? extends IAdaptable> adaptableType,
+			final IAdaptable adaptableInstance, ScopeProcessor processor) {
+		processor.process(adaptableType, adaptableInstance);
 
 		// evaluate super classes of the given type
 		if (adaptableType.getSuperclass() != null
 				&& IAdaptable.class.isAssignableFrom(adaptableType
 						.getSuperclass())) {
-			scopeTo((Class<? extends IAdaptable>) adaptableType.getSuperclass(),
-					adaptableInstance);
+			process((Class<? extends IAdaptable>) adaptableType.getSuperclass(),
+					adaptableInstance, processor);
 		}
 		// evaluate interfaces of the given type
 		for (Class<?> interfaceType : adaptableType.getInterfaces()) {
 			if (IAdaptable.class.isAssignableFrom(interfaceType)) {
-				scopeTo((Class<? extends IAdaptable>) interfaceType,
-						adaptableInstance);
+				process((Class<? extends IAdaptable>) interfaceType,
+						adaptableInstance, processor);
 			}
 		}
 	}

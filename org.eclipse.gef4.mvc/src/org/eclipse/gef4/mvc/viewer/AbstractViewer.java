@@ -65,8 +65,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractViewer() {
-		// TODO: clear scope upon disposal
-		AdaptableScopes.scopeTo(this);
+		AdaptableScopes.enter(this);
 	}
 
 	@Override
@@ -94,6 +93,15 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 			}
 			acs.deactivate();
 		}
+	}
+
+	@Override
+	public void dispose() {
+		// leave adaptable scope
+		AdaptableScopes.leave(this);
+
+		// dispose adapters (including root part and models)
+		ads.dispose();
 	}
 
 	@Override

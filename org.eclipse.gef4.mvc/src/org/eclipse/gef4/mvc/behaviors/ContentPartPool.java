@@ -24,6 +24,10 @@ public class ContentPartPool<VR> {
 		pool.put(part.getContent(), part);
 	}
 
+	public void clear() {
+		pool.clear();
+	}
+
 	public IContentPart<VR, ? extends VR> remove(Object content) {
 		return pool.remove(content);
 	}

@@ -33,8 +33,7 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 
 	// hold a set of scoped instances per adaptable instance
 	private Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new HashMap<IAdaptable, Map<Key<?>, Object>>();
-	
-	
+
 	private A adaptable = null;
 	private Class<? extends A> type;
 
@@ -49,15 +48,29 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 		this.type = type;
 	}
 
+	public void enter(A instance) {
+		if (!scopedInstances.containsKey(instance)) {
+			scopedInstances.put(instance, new HashMap<Key<?>, Object>());			
+		}
+		this.adaptable = instance;
+	}
+
 	/**
 	 * Binds this scope to the given {@link IAdaptable} instance.
 	 * 
 	 * @param instance
 	 *            The instance to bind this {@link AdaptableScope} to.
 	 */
-	public void scopeTo(A instance) {
-		System.out.println("Scoping " + type + " to " + instance);
+	public void switchTo(A instance) {
+//		System.out.println("Switching scope for type " + type + " from " + this.adaptable + " to " + instance);
 		this.adaptable = instance;
+	}
+
+	public void leave(A instance) {
+		if (scopedInstances.containsKey(instance)) {
+			scopedInstances.remove(instance);
+		}
+		this.adaptable = null;
 	}
 
 	@Override
@@ -68,15 +81,13 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 			public T get() {
 				if (adaptable == null) {
 					throw new IllegalStateException(
-							"AdaptableScope for type + " + type + " is not yet bound to an adaptable instance.");
+							"AdaptableScope for type + "
+									+ type
+									+ " is not yet bound to an adaptable instance.");
 				} else {
 					// obtain the map of scoped instances for the given
 					// adaptable
 					Map<Key<?>, Object> scope = scopedInstances.get(adaptable);
-					if (scope == null) {
-						scope = new HashMap<Key<?>, Object>();
-						scopedInstances.put(adaptable, scope);
-					}
 
 					// retrieve a cached instance from the scope (if it exists)
 					Object instance = scope.get(key);

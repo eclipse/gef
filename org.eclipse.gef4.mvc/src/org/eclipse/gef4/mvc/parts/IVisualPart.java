@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -71,7 +72,7 @@ import com.google.common.collect.SetMultimap;
  *            The visual node used by this {@link IVisualPart}.
  */
 public interface IVisualPart<VR, V extends VR> extends IAdaptable,
-		IActivatable, IPropertyChangeNotifier {
+		IActivatable, IPropertyChangeNotifier, IDisposable {
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";

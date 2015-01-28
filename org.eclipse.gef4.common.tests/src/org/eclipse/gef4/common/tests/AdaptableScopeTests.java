@@ -57,7 +57,7 @@ public class AdaptableScopeTests {
 		private AdapterStore adaptable;
 
 		public ScopingAdapterStore() {
-			AdaptableScopes.scopeTo(this);
+			AdaptableScopes.enter(this);
 		}
 
 		@Override

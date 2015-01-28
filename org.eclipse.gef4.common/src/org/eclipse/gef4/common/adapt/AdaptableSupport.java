@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.dispose.IDisposable;
 
 import com.google.common.reflect.TypeToken;
 
@@ -295,6 +296,17 @@ public class AdaptableSupport<A extends IAdaptable> {
 		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
 				new HashMap<AdapterKey<?>, Object>(adapters));
 		return (T) adapter;
+	}
+
+	public void dispose() {
+		for(AdapterKey<?> key : adapters.keySet()){
+			Object adapter = adapters.get(key);
+			// dispose adapter if its disposable
+			if(adapter instanceof IDisposable){
+				((IDisposable) adapter).dispose();
+			}
+		}
+		adapters.clear();
 	}
 
 }

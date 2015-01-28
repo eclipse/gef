@@ -81,8 +81,8 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractVisualPart() {
-		// TODO: clear scope upon disposal
-		AdaptableScopes.scopeTo(this);
+		// enter adaptables scope
+		AdaptableScopes.enter(this);
 	}
 
 	/**
@@ -275,6 +275,15 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		throw new UnsupportedOperationException(
 				"Need to implement detachFromAnchorageVisual(IVisualPart, String) for "
 						+ this.getClass());
+	}
+
+	@Override
+	public void dispose() {
+		// leave adaptables scope
+		AdaptableScopes.leave(this);
+
+		// dispose adapters
+		ads.dispose();
 	}
 
 	protected void doActivate() {

@@ -63,8 +63,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 * AdaptableScopes#scopeTo(IAdaptable)).
 	 */
 	public AbstractDomain() {
-		// TODO: clear scope upon disposal
-		AdaptableScopes.scopeTo(this);
+		AdaptableScopes.enter(this);
 	}
 
 	@Override
@@ -101,6 +100,18 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		if (acs.isActive()) {
 			acs.deactivate();
 		}
+	}
+
+	@Override
+	public void dispose() {
+		// dispose operation history
+		operationHistory.dispose(undoContext, true, true, true);
+
+		// clear adaptable scope
+		AdaptableScopes.leave(this);
+
+		// dispose adapter store
+		ads.dispose();
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -35,7 +36,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public interface IViewer<VR> extends IAdaptable, IActivatable {
+public interface IViewer<VR> extends IAdaptable, IActivatable, IDisposable {
 
 	/**
 	 * Returns the {@link Map} for registering {@link IContentPart}s by their

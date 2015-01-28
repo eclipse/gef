@@ -22,6 +22,7 @@ import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -42,7 +43,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public interface IDomain<VR> extends IAdaptable, IActivatable {
+public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 
 	/**
 	 * Closes the active execution transition (see

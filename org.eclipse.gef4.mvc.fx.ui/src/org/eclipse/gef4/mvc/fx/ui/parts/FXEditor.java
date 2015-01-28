@@ -97,18 +97,18 @@ public abstract class FXEditor extends EditorPart {
 
 	@Override
 	public void dispose() {
-		domain.deactivate();
-
-		domain.getOperationHistory().removeOperationHistoryListener(
-				operationHistoryListener);
-		domain.getOperationHistory().dispose(domain.getUndoContext(), true,
-				true, true);
-
 		// unregister listener to provide selections
 		if (selectionProvider != null) {
 			getViewer().getAdapter(SelectionModel.class)
 					.removePropertyChangeListener(selectionForwarder);
 		}
+
+		domain.getOperationHistory().removeOperationHistoryListener(
+				operationHistoryListener);
+
+		domain.deactivate();
+		domain.dispose();
+
 		super.dispose();
 	}
 
