@@ -104,6 +104,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	@Override
 	public void applyStaticLayout(boolean clear) {
 		if (staticLayoutAlgorithm != null) {
+			staticLayoutAlgorithm.setLayoutContext(this);
 			staticLayoutAlgorithm.applyLayout(clear);
 		}
 	}

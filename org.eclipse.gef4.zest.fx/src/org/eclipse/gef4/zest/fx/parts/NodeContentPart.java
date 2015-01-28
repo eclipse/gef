@@ -85,6 +85,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	protected double padding = 5;
 	protected Tooltip tooltipNode;
 	private Pane childrenPane;
+	private HBox hbox;
+	private VBox vbox;
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
@@ -103,15 +105,28 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 			@Override
 			public void resize(double w, double h) {
-				// TODO
+				Bounds layoutBounds = getLayoutBounds();
+				double dw = w - layoutBounds.getWidth();
+				double dh = h - layoutBounds.getHeight();
+
+				double newWidth = childrenPane.getPrefWidth() + dw * 1
+						/ childrenPane.getScaleX();
+				double newHeight = childrenPane.getPrefHeight() + dh * 1
+						/ childrenPane.getScaleY();
+
+				childrenPane.setPrefSize(newWidth, newHeight);
+				childrenPane.resize(newWidth, newHeight);
+
+				hbox.autosize();
+				vbox.autosize();
 			}
 		};
 		group.setManaged(false);
 		group.setAutoSizeChildren(false);
-		final HBox hbox = new HBox();
+		hbox = new HBox();
 		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		hbox.getChildren().addAll(imageView, text);
-		final VBox vbox = new VBox();
+		vbox = new VBox();
 		vbox.setMouseTransparent(true);
 		childrenPane = new Pane();
 		childrenPane.setStyle("-fx-background-color: white;");
@@ -191,8 +206,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 		// show children when we have a nested graph
 		if (getContent().getNestedGraph() != null) {
-			if (childrenPane.getPrefWidth() != 400
-					|| childrenPane.getPrefHeight() != 400) {
+			if (childrenPane.getPrefWidth() == 0
+					&& childrenPane.getPrefHeight() == 0) {
 				childrenPane.setPrefSize(400, 400);
 				childrenPane.resize(400, 400);
 			}
