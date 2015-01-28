@@ -453,7 +453,7 @@
 
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
-		<!-- <module>../org.eclipse.gef4.mvc.tests</module> -->
+		<module>../org.eclipse.gef4.mvc.tests</module>
 		<module>../org.eclipse.gef4.mvc.ui</module>
 		<module>../org.eclipse.gef4.mvc.ui-feature</module>
 		<!-- <module>../org.eclipse.gef4.mvc.ui.tests</module> -->
