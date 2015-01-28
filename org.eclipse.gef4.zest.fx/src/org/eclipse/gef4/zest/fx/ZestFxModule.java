@@ -27,6 +27,8 @@ import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -108,6 +110,16 @@ public class ZestFxModule extends MvcFxModule {
 				HidingModel.class);
 	}
 
+	@Override
+	protected void bindAbstractFXHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindAbstractFXHandlePartAdapters(adapterMapBinder);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+						"ResizeRelocateOnHandleDrag")).to(
+				FXResizeRelocateOnHandleDragPolicy.class);
+	}
+
 	protected void bindEdgeContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
@@ -180,11 +192,20 @@ public class ZestFxModule extends MvcFxModule {
 		// transform policy for relocation
 		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class))
 				.to(FXTransformPolicy.class);
-
+		// resize policy to resize nesting nodes
+		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class)).to(
+				FXResizePolicy.class);
 		// provider
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
 				})).to(ChopBoxAnchorProvider.class);
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
+										FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 	}
 
 	protected void bindPruningHandlePartAdapters(

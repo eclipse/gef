@@ -19,7 +19,6 @@ import java.util.Map;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
-import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -56,10 +55,22 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 	}
 
 	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(
+	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(
+			IVisualPart<Node, ? extends Node> target,
+			Map<Object, Object> contextMap) {
+		if (target instanceof NodeContentPart) {
+			if (((NodeContentPart) target).getContent().getNestedGraph() != null) {
+				return super.createSingleSelectionHandleParts(target,
+						contextMap);
+			}
+		}
 		return Collections.emptyList();
 	}
 

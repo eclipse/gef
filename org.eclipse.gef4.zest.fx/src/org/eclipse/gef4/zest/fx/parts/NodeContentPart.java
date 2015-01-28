@@ -95,7 +95,17 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected Group createVisual() {
 		// container set-up
-		final Group group = new Group();
+		final Group group = new Group() {
+			@Override
+			public boolean isResizable() {
+				return childrenPane.getPrefWidth() != 0;
+			}
+
+			@Override
+			public void resize(double w, double h) {
+				// TODO
+			}
+		};
 		group.setManaged(false);
 		group.setAutoSizeChildren(false);
 		final HBox hbox = new HBox();
