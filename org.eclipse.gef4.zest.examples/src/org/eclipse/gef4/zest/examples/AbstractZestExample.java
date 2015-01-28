@@ -16,8 +16,6 @@ import java.util.Collections;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.stage.Stage;
 
 import org.eclipse.gef4.graph.Edge;
@@ -28,7 +26,6 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
@@ -98,47 +95,6 @@ public abstract class AbstractZestExample extends Application {
 						.setStaticLayoutAlgorithm(createLayoutAlgorithm());
 			}
 		});
-
-		// set initial size
-		viewer.getAdapter(ViewportModel.class).setWidth(
-				viewer.getScene().getWidth());
-		viewer.getAdapter(ViewportModel.class).setHeight(
-				viewer.getScene().getHeight());
-
-		viewer.getScene().widthProperty()
-				.addListener(new ChangeListener<Number>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends Number> observable,
-							Number oldValue, final Number newValue) {
-						if (newValue != null) {
-							Platform.runLater(new Runnable() {
-								@Override
-								public void run() {
-									viewer.getAdapter(ViewportModel.class)
-											.setWidth(newValue.doubleValue());
-								}
-							});
-						}
-					}
-				});
-		viewer.getScene().heightProperty()
-				.addListener(new ChangeListener<Number>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends Number> observable,
-							Number oldValue, final Number newValue) {
-						if (newValue != null) {
-							Platform.runLater(new Runnable() {
-								@Override
-								public void run() {
-									viewer.getAdapter(ViewportModel.class)
-											.setHeight(newValue.doubleValue());
-								}
-							});
-						}
-					}
-				});
 
 		primaryStage.setTitle(title);
 		primaryStage.sizeToScene();
