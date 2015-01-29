@@ -65,6 +65,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 
 	private FXTransformOperation transformOperation;
 	private AffineTransform oldTransform;
+	private Affine nodeTransform;
 
 	@Override
 	public IUndoableOperation commit() {
@@ -76,9 +77,12 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 
 	@SuppressWarnings("serial")
 	public Affine getNodeTransform() {
-		return getHost().getAdapter(
-				AdapterKey.get(new TypeToken<Provider<Affine>>() {
-				}, TRANSFORMATION_PROVIDER_ROLE)).get();
+		if (nodeTransform == null) {
+			nodeTransform = getHost().getAdapter(
+					AdapterKey.get(new TypeToken<Provider<Affine>>() {
+					}, TRANSFORMATION_PROVIDER_ROLE)).get();
+		}
+		return nodeTransform;
 	}
 
 	@Override
