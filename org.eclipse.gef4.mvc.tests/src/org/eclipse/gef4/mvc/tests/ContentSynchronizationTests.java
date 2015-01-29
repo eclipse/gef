@@ -22,18 +22,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
@@ -53,6 +54,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -118,122 +120,67 @@ public class ContentSynchronizationTests {
 		}
 	}
 
-	public static class Module extends MvcModule<Object> {
-		protected void bindDomainAdapters(
-				MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
-					new TypeLiteral<IViewer<Object>>() {
-					});
-		}
-
-		protected void bindIDomain() {
-			binder().bind(new TypeLiteral<IDomain<Object>>() {
-			}).to(Domain.class);
-		}
-
-		protected void bindIFeedbackPartFactory() {
-			binder().bind(new TypeLiteral<IFeedbackPartFactory<Object>>() {
-			}).to(FeedbackPartFactory.class);
-		}
-
-		protected void bindIHandlePartFactory() {
+	public static class Module extends AbstractModule {
+		@Override
+		protected void configure() {
+			install(new AdapterMapInjectionSupport());
+			// undo context and operation history (required because of field
+			// injections)
+			binder().bind(IUndoContext.class).to(UndoContext.class)
+					.in(AdaptableScopes.typed(IDomain.class));
+			binder().bind(IOperationHistory.class)
+					.to(DefaultOperationHistory.class)
+					.in(AdaptableScopes.typed(IDomain.class));
+			// bind default viewer models
+			binder().bind(ContentModel.class).in(
+					AdaptableScopes.typed(IViewer.class));
+			// bind factories (required because of field injections)
 			binder().bind(new TypeLiteral<IHandlePartFactory<Object>>() {
 			}).to(HandlePartFactory.class);
-		}
-
-		protected void bindIRootPart() {
+			binder().bind(new TypeLiteral<IFeedbackPartFactory<Object>>() {
+			}).to(FeedbackPartFactory.class);
+			binder().bind(new TypeLiteral<IContentPartFactory<Object>>() {
+			}).toInstance(new ContentPartFactory());
+			// bind domain, viewer, and root part
+			binder().bind(new TypeLiteral<IDomain<Object>>() {
+			}).to(Domain.class);
+			binder().bind(new TypeLiteral<IViewer<Object>>() {
+			}).to(Viewer.class);
 			binder().bind(
 					new TypeLiteral<IRootPart<Object, ? extends Object>>() {
 					}).to(RootPart.class);
-		}
-
-		protected void bindIViewer() {
-			binder().bind(new TypeLiteral<IViewer<Object>>() {
-			}).to(Viewer.class);
-		}
-
-		protected void bindRootPartAdapters(
-				MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			// register default behaviors
-			adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
+			// bind Viewer as adapter for Domain
+			AdapterMaps.getAdapterMapBinder(binder(), Domain.class)
+					.addBinding(AdapterKey.get(IViewer.class))
+					.to(new TypeLiteral<IViewer<Object>>() {
+					});
+			// bind RootPart as viewer adapter
+			MapBinder<AdapterKey<?>, Object> viewerAdapterMapBinder = AdapterMaps
+					.getAdapterMapBinder(binder(), Viewer.class);
+			viewerAdapterMapBinder.addBinding(AdapterKey.get(IRootPart.class))
+					.to(new TypeLiteral<IRootPart<Object, ? extends Object>>() {
+					});
+			viewerAdapterMapBinder.addBinding(
+					AdapterKey.get(ContentModel.class)).to(ContentModel.class);
+			viewerAdapterMapBinder.addBinding(AdapterKey.get(HoverModel.class))
+					.to(new TypeLiteral<HoverModel<Object>>() {
+					});
+			viewerAdapterMapBinder.addBinding(
+					AdapterKey.get(SelectionModel.class)).to(
+					new TypeLiteral<SelectionModel<Object>>() {
+					});
+			// bind ContentBehavior for RootPart
+			MapBinder<AdapterKey<?>, Object> rootPartAdapterMapBinder = AdapterMaps
+					.getAdapterMapBinder(binder(), RootPart.class);
+			rootPartAdapterMapBinder.addBinding(
+					AdapterKey.get(ContentBehavior.class)).to(
+					new TypeLiteral<ContentBehavior<Object>>() {
+					});
+			// bind ContentBehavior for the TreeContentPart
+			AdapterMaps.getAdapterMapBinder(binder(), TreeContentPart.class)
+					.addBinding(AdapterKey.get(ContentBehavior.class))
 					.to(new TypeLiteral<ContentBehavior<Object>>() {
 					});
-			adapterMapBinder
-					.addBinding(AdapterKey.get(SelectionBehavior.class)).to(
-							new TypeLiteral<SelectionBehavior<Object>>() {
-							});
-		}
-
-		private void bindTreeContentPartAdapters(
-				MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
-					.to(new TypeLiteral<ContentBehavior<Object>>() {
-					});
-			adapterMapBinder
-					.addBinding(AdapterKey.get(SelectionBehavior.class)).to(
-							new TypeLiteral<SelectionBehavior<Object>>() {
-							});
-		}
-
-		protected void bindViewerAdapters(
-				MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-			// bind root part
-			adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class)).to(
-					new TypeLiteral<IRootPart<Object, ? extends Object>>() {
-					});
-			// bind factories
-			adapterMapBinder.addBinding(
-					AdapterKey.get(IContentPartFactory.class)).to(
-					new TypeLiteral<IContentPartFactory<Object>>() {
-					});
-			adapterMapBinder.addBinding(
-					AdapterKey.get(IHandlePartFactory.class)).to(
-					new TypeLiteral<IHandlePartFactory<Object>>() {
-					});
-			adapterMapBinder.addBinding(
-					AdapterKey.get(IFeedbackPartFactory.class)).to(
-					new TypeLiteral<IFeedbackPartFactory<Object>>() {
-					});
-			// bind parameterized default viewer models (others are already
-			// bound in superclass)
-			adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class)).to(
-					new TypeLiteral<FocusModel<Object>>() {
-					});
-			adapterMapBinder.addBinding(AdapterKey.get(HoverModel.class)).to(
-					new TypeLiteral<HoverModel<Object>>() {
-					});
-			adapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class))
-					.to(new TypeLiteral<SelectionModel<Object>>() {
-					});
-		}
-
-		@Override
-		protected void configure() {
-			super.configure();
-
-			// bind factories
-			bindIHandlePartFactory();
-			bindIFeedbackPartFactory();
-			binder().bind(new TypeLiteral<IContentPartFactory<Object>>() {
-			}).toInstance(new ContentPartFactory());
-
-			// bind domain, viewer, and root part
-			bindIDomain();
-			bindIViewer();
-			bindIRootPart();
-
-			// bind additional adapters for Domain
-			bindDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-					Domain.class));
-			// bind additional adapters for Viewer
-			bindViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-					Viewer.class));
-			// bind additional adapters for RootPart
-			bindRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-					RootPart.class));
-			// bind additional adapters for specific parts
-			bindTreeContentPartAdapters(AdapterMaps.getAdapterMapBinder(
-					binder(), TreeContentPart.class));
 		}
 	}
 
