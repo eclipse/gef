@@ -32,6 +32,7 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXPolyBezierConnectionRouter;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
@@ -128,6 +129,12 @@ public class FXGeometricCurvePart extends
 			return this;
 		}
 	}
+
+	private final CircleHead START_CIRCLE_HEAD = new CircleHead();
+	private final CircleHead END_CIRCLE_HEAD = new CircleHead();
+	private final ArrowHead START_ARROW_HEAD = new ArrowHead();
+	private final ArrowHead END_ARROW_HEAD = new ArrowHead();
+	private FXGeometricCurve previousContent;
 
 	public FXGeometricCurvePart() {
 		// TODO: extract into own classes and use binding
@@ -271,13 +278,22 @@ public class FXGeometricCurvePart extends
 		FXGeometricCurve content = getContent();
 
 		List<Point> wayPoints = content.getWayPoints();
-		if (content.getTransform() != null) {
-			Point[] transformedWayPoints = content.getTransform()
-					.getTransformed(wayPoints.toArray(new Point[] {}));
-			wayPoints = Arrays.asList(transformedWayPoints);
+
+		AffineTransform transform = content.getTransform();
+		if (previousContent == null
+				|| (transform != null
+						&& !transform.equals(previousContent.getTransform()) || transform == null
+						&& previousContent.getTransform() != null)) {
+			if (transform != null) {
+				Point[] transformedWayPoints = transform
+						.getTransformed(wayPoints.toArray(new Point[] {}));
+				wayPoints = Arrays.asList(transformedWayPoints);
+			}
 		}
 
-		visual.setWayPoints(wayPoints);
+		if (!visual.getWayPoints().equals(wayPoints)) {
+			visual.setWayPoints(wayPoints);
+		}
 
 		// decorations
 		switch (content.getSourceDecoration()) {
@@ -289,13 +305,13 @@ public class FXGeometricCurvePart extends
 		case CIRCLE:
 			if (visual.getStartDecoration() == null
 					|| !(visual.getStartDecoration() instanceof CircleHead)) {
-				visual.setStartDecoration(new CircleHead());
+				visual.setStartDecoration(START_CIRCLE_HEAD);
 			}
 			break;
 		case ARROW:
 			if (visual.getStartDecoration() == null
 					|| !(visual.getStartDecoration() instanceof ArrowHead)) {
-				visual.setStartDecoration(new ArrowHead());
+				visual.setStartDecoration(START_ARROW_HEAD);
 			}
 			break;
 		}
@@ -308,13 +324,13 @@ public class FXGeometricCurvePart extends
 		case CIRCLE:
 			if (visual.getEndDecoration() == null
 					|| !(visual.getEndDecoration() instanceof CircleHead)) {
-				visual.setEndDecoration(new CircleHead());
+				visual.setEndDecoration(END_CIRCLE_HEAD);
 			}
 			break;
 		case ARROW:
 			if (visual.getEndDecoration() == null
 					|| !(visual.getEndDecoration() instanceof ArrowHead)) {
-				visual.setEndDecoration(new ArrowHead());
+				visual.setEndDecoration(END_ARROW_HEAD);
 			}
 			break;
 		}
@@ -359,6 +375,8 @@ public class FXGeometricCurvePart extends
 		if (!visual.getCurveNode().getStrokeDashArray().equals(dashList)) {
 			visual.getCurveNode().getStrokeDashArray().setAll(dashList);
 		}
+
+		previousContent = content;
 
 		// apply effect
 		super.doRefreshVisual(visual);
