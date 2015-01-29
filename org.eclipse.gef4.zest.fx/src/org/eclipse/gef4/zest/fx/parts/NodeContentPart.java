@@ -28,6 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -37,7 +38,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Transform;
 
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -55,8 +58,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			Circle n4 = node(20, 5);
 			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3),
 					edge(n3, n4), edge(n1, n4), n0, n1, n2, n3, n4);
-			setScaleX(0.5);
-			setScaleY(0.5);
 		}
 
 		private Node edge(Circle n, Circle m) {
@@ -79,14 +80,22 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	public static final Object ATTR_TOOLTIP = "tooltip";
 	public static final String DEFAULT_LABEL = "-";
 
+	public static final double DEFAULT_CHILDREN_PANE_WIDTH = 300;
+	public static final double DEFAULT_CHILDREN_PANE_HEIGHT = 300;
+
+	public static final double CHILDREN_PANE_WIDTH_THRESHOLD = 100;
+	public static final double CHILDREN_PANE_HEIGHT_THRESHOLD = 100;
+
 	protected Rectangle box = new Rectangle();
 	protected Text text = new Text();
 	protected ImageView imageView = new ImageView();
 	protected double padding = 5;
 	protected Tooltip tooltipNode;
+	private StackPane contentStackPane;
 	private Pane childrenPane;
 	private HBox hbox;
 	private VBox vbox;
+	private NestedGraphIcon nestedGraphIcon;
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
@@ -121,11 +130,11 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 						/ childrenPane.getScaleY();
 
 				// do not resize below threshold
-				if (newWidth < 100) {
-					newWidth = 100;
+				if (newWidth < CHILDREN_PANE_WIDTH_THRESHOLD) {
+					newWidth = CHILDREN_PANE_WIDTH_THRESHOLD;
 				}
-				if (newHeight < 100) {
-					newHeight = 100;
+				if (newHeight < CHILDREN_PANE_HEIGHT_THRESHOLD) {
+					newHeight = CHILDREN_PANE_HEIGHT_THRESHOLD;
 				}
 
 				// perform the resize
@@ -144,12 +153,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		hbox.getChildren().addAll(imageView, text);
 		vbox = new VBox();
 		vbox.setMouseTransparent(true);
+		contentStackPane = new StackPane();
 		childrenPane = new Pane();
 		childrenPane.setStyle("-fx-background-color: white;");
 		childrenPane.setScaleX(0.25);
 		childrenPane.setScaleY(0.25);
 		childrenPane.setPrefSize(0, 0);
-		vbox.getChildren().addAll(hbox, new Group(childrenPane));
+		contentStackPane.getChildren().add(new Group(childrenPane));
+		vbox.getChildren().addAll(hbox, contentStackPane);
 		group.getChildren().addAll(box, vbox);
 
 		// box, label, image
@@ -224,8 +235,10 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		if (getContent().getNestedGraph() != null) {
 			if (childrenPane.getPrefWidth() == 0
 					&& childrenPane.getPrefHeight() == 0) {
-				childrenPane.setPrefSize(400, 400);
-				childrenPane.resize(400, 400);
+				childrenPane.setPrefSize(DEFAULT_CHILDREN_PANE_WIDTH,
+						DEFAULT_CHILDREN_PANE_HEIGHT);
+				childrenPane.resize(DEFAULT_CHILDREN_PANE_WIDTH,
+						DEFAULT_CHILDREN_PANE_HEIGHT);
 			}
 		} else {
 			if (childrenPane.getPrefWidth() != 0
@@ -262,8 +275,21 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		if (nestedGraph == null) {
 			return Collections.emptyList();
 		}
-		// TODO: restrict depending on zoom level
-		return Collections.singletonList(nestedGraph);
+		// only show children when zoomed in
+		Transform tx = getVisual().getLocalToSceneTransform();
+		double scale = JavaFX2Geometry.toAffineTransform(tx).getScaleX();
+		if (scale > 2) {
+			if (nestedGraphIcon != null) {
+				contentStackPane.getChildren().remove(nestedGraphIcon);
+				nestedGraphIcon = null;
+			}
+			return Collections.singletonList(nestedGraph);
+		}
+		if (nestedGraphIcon == null) {
+			nestedGraphIcon = new NestedGraphIcon();
+			contentStackPane.getChildren().add(nestedGraphIcon);
+		}
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -187,11 +187,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		return (GraphContentPart) super.getHost();
 	}
 
-	protected GraphLayoutContext getLayoutContext() {
-		return (GraphLayoutContext) getLayoutModel().getLayoutContext(
-				getHost().getContent());
-	}
-
 	protected LayoutModel getLayoutModel() {
 		return getHost().getRoot().getViewer().getDomain()
 				.<LayoutModel> getAdapter(LayoutModel.class);
@@ -230,17 +225,23 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * @param evt
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
+		if (layoutContext == null) {
+			return;
+		}
 		if (LayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
 				.getPropertyName())) {
-			applyStaticLayout(getLayoutContext());
+			applyStaticLayout(layoutContext);
 		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt
 				.getPropertyName())) {
-			applyStaticLayout(getLayoutContext());
+			applyStaticLayout(layoutContext);
 		}
 	}
 
 	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds,
 			Bounds newLayoutBounds) {
+		if (layoutContext == null) {
+			return;
+		}
 		// update layout bounds to match the nesting visual layout bounds
 		double width = newLayoutBounds.getWidth();
 		double height = newLayoutBounds.getHeight();
@@ -251,6 +252,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected void onViewportModelPropertyChange(PropertyChangeEvent evt) {
+		if (layoutContext == null) {
+			return;
+		}
 		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY
 				.equals(evt.getPropertyName())
 				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt
@@ -258,7 +262,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			// only width and height changes are of interest
 			return;
 		}
-
 		// update layout bounds to match the viewport bounds
 		double width = getViewportModel().getWidth();
 		double height = getViewportModel().getHeight();

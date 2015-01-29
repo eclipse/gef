@@ -43,6 +43,9 @@ import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.OpenNestedGraphOnZoomBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.OpenParentGraphOnZoomBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
@@ -139,6 +142,9 @@ public class ZestFxModule extends MvcFxModule {
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 						"OpenParentGraphOnDoubleClick")).to(
 				OpenParentGraphOnDoubleClickPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(OpenParentGraphOnZoomBehavior.class)).to(
+				OpenParentGraphOnZoomBehavior.class);
 	}
 
 	protected void bindGraphContentPartAdapters(
@@ -190,6 +196,14 @@ public class ZestFxModule extends MvcFxModule {
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 						"OpenNestedGraphOnDoubleClick")).to(
 				OpenNestedGraphOnDoubleClickPolicy.class);
+		// synchronize children on zoom
+		adapterMapBinder.addBinding(
+				AdapterKey.get(SynchronizeChildrenOnZoomBehavior.class)).to(
+				SynchronizeChildrenOnZoomBehavior.class);
+		// replace contents with nested graph on zoom
+		adapterMapBinder.addBinding(
+				AdapterKey.get(OpenNestedGraphOnZoomBehavior.class)).to(
+				OpenNestedGraphOnZoomBehavior.class);
 		// transaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocatePolicy.class)).to(
