@@ -3,10 +3,18 @@
 <plugin>
    <extension
          point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.gef4.visualization"
+            name="Visualization">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
       <view
             class="org.eclipse.gef4.cloudio.internal.ui.view.TagCloudView"
             id="org.eclipse.gef4.cloudio.internal.tagcloud"
-            name="Tag Cloud View"
+            category="org.eclipse.gef4.visualization"
+            name="Tag Cloud"
             restorable="true">
       </view>
    </extension>

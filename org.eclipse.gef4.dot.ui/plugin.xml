@@ -180,13 +180,22 @@
       </markerResolutionGenerator>
    </extension>
    <!-- DOT view -->
+   <plugin>
+   </plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.gef4.visualization"
+            name="Visualization">
+      </category>
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
             class="org.eclipse.gef4.internal.dot.ui.DotGraphView"
             id="org.eclipse.gef4.dot.view"
             icon="icons/graph_view.gif"
-            category="org.eclipse.gef4.zest"
+            category="org.eclipse.gef4.visualization"
             name="DOT Graph"
             restorable="true">
       </view>

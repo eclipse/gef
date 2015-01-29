@@ -241,7 +241,7 @@ public class TagCloud extends Canvas {
 		gc = new GC(this);
 		layouter = new DefaultLayouter(accuracy, accuracy);
 		setBackground(new Color(getDisplay(), Display.getDefault()
-				.getSystemColor(SWT.COLOR_BLACK).getRGB()));
+				.getSystemColor(SWT.COLOR_WHITE).getRGB()));
 		initListeners();
 		textLayerImage = new Image(getDisplay(), 100, 100);
 		zoomFit();
