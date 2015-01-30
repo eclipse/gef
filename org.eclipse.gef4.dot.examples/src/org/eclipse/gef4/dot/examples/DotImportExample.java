@@ -10,11 +10,8 @@ package org.eclipse.gef4.dot.examples;
 
 import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.internal.dot.parser.dot.DotGraph;
 
 /**
- * Tests for the {@link DotGraph} class.
- *
  * @author Fabian Steeg (fsteeg)
  * @author anyssen
  */
@@ -29,8 +26,8 @@ public final class DotImportExample {
 		/* We can also import GraphViz Dot files/string into an existing graph */
 		Graph.Builder graph2 = new Graph.Builder();
 		new DotImport("digraph{1->2}").into(graph2);
-		new DotImport("node[label=zested]; 2->3; 2->4").into(graph2); //$NON-NLS-1$
-		new DotImport("edge[style=dashed]; 3->5; 4->6").into(graph2); //$NON-NLS-1$
+		new DotImport("node[label=zested]; 2->3; 2->4").into(graph2);
+		new DotImport("edge[style=dashed]; 3->5; 4->6").into(graph2);
 	}
 
 }

@@ -14,20 +14,10 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 
-/**
- * Zest graph sample input for the Zest-To-Dot transformation. Contains
- * everything that is currently supported by the transformation: node and edge
- * labels, edge styles.
- * <p/>
- * Uses the actual Zest Graph class and populates an instance of that, instead
- * of subclassing the Zest Graph and exporting the subclass (as in the samples
- * used for testing, which are based on Graphs generated using the
- * org.eclipse.gef4.zest.dot.import bundle).
- */
 public final class DotExportExample {
 
 	public static void main(final String[] args) {
-		/* Set up a directed Zest graph with a single connection: */
+		/* Set up a directed graph with a single connection: */
 		Graph.Builder graph = new Graph.Builder();
 		Node node1 = new Node.Builder().attr(Attr.Key.ID.toString(), "1")
 				.attr(Attr.Key.LABEL.toString(), "Node 1").build();
@@ -41,7 +31,7 @@ public final class DotExportExample {
 				Graph.Attr.Value.CONNECTIONS_DIRECTED).nodes(node1, node2)
 				.edges(edge);
 
-		/* Export the Zest graph to a DOT string or a DOT file: */
+		/* Export the graph to a DOT string or a DOT file: */
 		DotExport dotExport = new DotExport(graph.build());
 		System.out.println(dotExport.toDotString());
 	}
