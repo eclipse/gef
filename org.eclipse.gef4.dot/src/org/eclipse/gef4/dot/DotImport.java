@@ -13,10 +13,10 @@ import java.io.File;
 import java.util.List;
 
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.internal.dot.DotAst;
 import org.eclipse.gef4.internal.dot.DotMessages;
 import org.eclipse.gef4.internal.dot.GraphCreatorInterpreter;
-import org.eclipse.gef4.internal.dot.ZestGraphImport;
 import org.eclipse.gef4.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
@@ -114,7 +114,7 @@ public final class DotImport {
 	 *            The graph to add the imported dot into
 	 */
 	public void into(Graph.Builder graph) {
-		new ZestGraphImport(newGraphInstance()).into(graph);
+		new GraphCopier(newGraphInstance()).into(graph);
 	}
 
 	/**

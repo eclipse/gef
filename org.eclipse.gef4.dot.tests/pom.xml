@@ -47,12 +47,13 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<includes>
+						<include>**/All*Tests.class</include>
+					</includes>
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
 					<argLine>${vmargs}</argLine>
-					<testSuite>org.eclipse.gef4.dot.tests</testSuite>
-					<testClass>org.eclipse.gef4.dot.tests.AllHeadlessTests</testClass>
-					<testFailureIgnore>false</testFailureIgnore>
+					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
 		</plugins>

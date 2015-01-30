@@ -20,7 +20,7 @@ public class DotTemplate
   protected final String TEXT_2 = NL;
   protected final String TEXT_3 = " ";
   protected final String TEXT_4 = "{" + NL + "" + NL + "\t/* Global settings */" + NL + "\tgraph[layout=";
-  protected final String TEXT_5 = "]" + NL + "\tnode[shape=box] //more like the Zest default node look" + NL + "\trankdir=";
+  protected final String TEXT_5 = "]" + NL + "\tnode[shape=box]" + NL + "\trankdir=";
   protected final String TEXT_6 = NL + "\t" + NL + "\t/* Nodes */" + NL + "\t";
   protected final String TEXT_7 = " " + NL + "\t";
   protected final String TEXT_8 = "[label=\"";
@@ -52,7 +52,7 @@ public class DotTemplate
      boolean digraph = graph.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString())==Graph.Attr.Value.CONNECTIONS_DIRECTED; 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
-     simpleClassName = simpleClassName.equals("Graph") ? "Zest" + simpleClassName : simpleClassName; 
+     simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(TEXT_2);
     stringBuffer.append( digraph ? "digraph" : "graph" );
