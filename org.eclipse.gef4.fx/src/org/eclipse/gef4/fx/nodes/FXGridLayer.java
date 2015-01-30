@@ -233,8 +233,9 @@ public class FXGridLayer extends Pane {
 				double minX = 0;
 				double maxX = 0;
 				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
-					minX = Math.min(minX, b.get().getMinX());
-					maxX = Math.max(maxX, b.get().getMaxX());
+					Bounds bounds = b.get();
+					minX = Math.min(minX, bounds.getMinX());
+					maxX = Math.max(maxX, bounds.getMaxX());
 				}
 				// fill up to viewport width
 				return maxX - minX;
@@ -250,8 +251,9 @@ public class FXGridLayer extends Pane {
 				double minY = 0;
 				double maxY = 0;
 				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
-					minY = Math.min(minY, b.get().getMinY());
-					maxY = Math.max(maxY, b.get().getMaxY());
+					Bounds bounds = b.get();
+					minY = Math.min(minY, bounds.getMinY());
+					maxY = Math.max(maxY, bounds.getMaxY());
 				}
 				// fill up to viewport height
 				return maxY - minY;
