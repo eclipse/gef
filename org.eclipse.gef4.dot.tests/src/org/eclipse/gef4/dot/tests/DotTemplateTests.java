@@ -12,7 +12,7 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.internal.dot.export.DotTemplate;
+import org.eclipse.gef4.internal.dot.DotTemplate;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;

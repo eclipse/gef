@@ -13,9 +13,9 @@ import java.io.File;
 import java.util.Scanner;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.internal.dot.export.DotDrawer;
-import org.eclipse.gef4.internal.dot.export.DotFileUtils;
-import org.eclipse.gef4.internal.dot.export.DotTemplate;
+import org.eclipse.gef4.internal.dot.DotDrawer;
+import org.eclipse.gef4.internal.dot.DotFileUtils;
+import org.eclipse.gef4.internal.dot.DotTemplate;
 
 /**
  * Transformation of Graph instances to DOT strings or files, or via DOT to an
@@ -23,6 +23,7 @@ import org.eclipse.gef4.internal.dot.export.DotTemplate;
  * 
  * @author Fabian Steeg (fsteeg)
  */
+// TODO: extract the image export -> move to DotDrawer
 public final class DotExport {
 	public static final String DOT_BIN_DIR_KEY = "org.eclipse.gef4.dot.bin.dir"; //$NON-NLS-1$
 	private static final String DEFAULT_OUTPUT_FORMAT = "pdf"; //$NON-NLS-1$

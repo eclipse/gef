@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.dot.DotImport;
-import org.eclipse.gef4.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.view.ZestFxUiView;

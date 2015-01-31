@@ -15,9 +15,9 @@ import java.util.List;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.internal.dot.DotAst;
+import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.internal.dot.DotMessages;
 import org.eclipse.gef4.internal.dot.GraphCreatorInterpreter;
-import org.eclipse.gef4.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
@@ -120,6 +120,7 @@ public final class DotImport {
 	/**
 	 * @return The DOT AST parsed from the DOT source
 	 */
+	// TODO: this should either not be public, or DotAst should not be internal!
 	public DotAst getDotAst() {
 		return this.dotAst;
 	}

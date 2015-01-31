@@ -6,7 +6,7 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
-package org.eclipse.gef4.internal.dot.export;
+package org.eclipse.gef4.internal.dot;
 
 import java.io.File;
 import java.io.IOException;

@@ -60,7 +60,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 				DotImport.DEFAULT_LAYOUT_ALGORITHM));
 	}
 
-	public Graph create(DotAst dotAst, Graph.Builder graph) {
+	private Graph create(DotAst dotAst, Graph.Builder graph) {
 		if (dotAst.errors().size() > 0) {
 			throw new IllegalArgumentException(String.format(
 					DotMessages.GraphCreatorInterpreter_0 + ": %s", dotAst //$NON-NLS-1$

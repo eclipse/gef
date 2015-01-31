@@ -1,4 +1,4 @@
-package org.eclipse.gef4.internal.dot.export;
+package org.eclipse.gef4.internal.dot;
 
 import org.eclipse.gef4.graph.*;
 import org.eclipse.gef4.layout.algorithms.*;

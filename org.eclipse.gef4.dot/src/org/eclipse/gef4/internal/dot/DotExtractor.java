@@ -12,8 +12,6 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.gef4.internal.dot.export.DotFileUtils;
-
 /**
  * Extracts a DOT graph substring from a string or file.
  * 

@@ -14,18 +14,17 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.gef4.graph;bundle-version="0.1.0",
  org.eclipse.gef4.layout;bundle-version="0.1.0"
 Export-Package: org.eclipse.gef4.dot;x-internal:=true,
+ org.eclipse.gef4.internal.dot;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.internal.dot.parser;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.dot;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.dot.impl;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.dot.util;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.internal.dot.parser.formatting;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.parseTreeConstruction;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.parser.antlr;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.parser.antlr.internal;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot.parser.services;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot.export;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot.parser;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot.parser.formatting;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.scoping;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.internal.dot.parser.services;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.validation;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j
