@@ -32,13 +32,12 @@ import org.junit.Test;
 // as DotExportTests and DotTemplateTests
 public final class DotImportTests {
 
-	static void importFrom(final File dotFile) {
+	static Graph importFrom(final File dotFile) {
 		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
 				dotFile.exists());
-		Graph zest = new DotImport(dotFile).newGraphInstance();
-		Assert.assertNotNull("Resulting graph must not be null", zest); //$NON-NLS-1$
-		System.out.println(String.format(
-				"Transformed DOT in '%s' to Zest graph '%s'", dotFile, zest)); //$NON-NLS-1$
+		Graph graph = new DotImport(dotFile).newGraphInstance();
+		Assert.assertNotNull("Resulting graph must not be null", graph); //$NON-NLS-1$
+		return graph;
 	}
 
 	/**
@@ -47,12 +46,18 @@ public final class DotImportTests {
 	@Test
 	public void testBasicFileImport() {
 		// simple graphs
-		importFrom(new File(RESOURCES_TESTS + "sample_input.dot")); //$NON-NLS-1$
-		importFrom(new File(RESOURCES_TESTS + "basic_directed_graph.dot")); //$NON-NLS-1$
+		Graph graph = importFrom(new File(RESOURCES_TESTS + "labeled_graph.dot")); //$NON-NLS-1$
+		Assert.assertEquals(DotTestUtils.getLabeledGraph().toString(),
+				graph.toString());
 		importFrom(new File(RESOURCES_TESTS + "simple_digraph.dot")); //$NON-NLS-1$		
+		// TODO: compare with DotTestUtils
 		importFrom(new File(RESOURCES_TESTS + "simple_graph.dot")); //$NON-NLS-1$
-		importFrom(new File(RESOURCES_TESTS + "labeled_graph.dot")); //$NON-NLS-1$
+		// TODO: compare with DotTestUtils
+		importFrom(new File(RESOURCES_TESTS + "sample_input.dot")); //$NON-NLS-1$
+		// TODO: compare with DotTestUtils
 		importFrom(new File(RESOURCES_TESTS + "styled_graph.dot")); //$NON-NLS-1$
+
+		importFrom(new File(RESOURCES_TESTS + "basic_directed_graph.dot")); //$NON-NLS-1$
 		importFrom(new File(RESOURCES_TESTS + "global_node_graph.dot")); //$NON-NLS-1$
 		importFrom(new File(RESOURCES_TESTS + "global_edge_graph.dot")); //$NON-NLS-1$
 		importFrom(new File(RESOURCES_TESTS + "attributes_graph.dot")); //$NON-NLS-1$

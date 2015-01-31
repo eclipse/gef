@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public final class Graph {
 
@@ -88,8 +89,7 @@ public final class Graph {
 	 * edges.
 	 */
 	public Graph() {
-		this(new HashMap<String, Object>(), new ArrayList<Node>(),
-				new ArrayList<Edge>());
+		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
 	}
 
 	/**
@@ -117,14 +117,14 @@ public final class Graph {
 	}
 
 	@Override
-	public boolean equals(Object that) {
-		if (this == that) {
+	public boolean equals(Object other) {
+		if (this == other) {
 			return true;
 		}
-		if (!(that instanceof Graph)) {
+		if (!(other instanceof Graph)) {
 			return false;
 		}
-		Graph thatGraph = (Graph) that;
+		Graph thatGraph = (Graph) other;
 		boolean attrsEqual = this.getAttrs().equals(thatGraph.getAttrs());
 		boolean nodesEqual = this.getNodes().equals(thatGraph.getNodes());
 		boolean edgesEqual = this.getEdges().equals(thatGraph.getEdges());
@@ -193,8 +193,44 @@ public final class Graph {
 
 	@Override
 	public String toString() {
-		return String.format("Graph {%s nodes, %s edges}", nodes.size(), //$NON-NLS-1$
-				edges.size());
-	}
+		StringBuilder sb = new StringBuilder();
+		sb.append("Graph");
+		sb.append(" attr {");
+		boolean separator = false;
 
+		TreeMap<String, Object> sortedAttrs = new TreeMap<String, Object>();
+		sortedAttrs.putAll(attrs);
+		for (Object attrKey : sortedAttrs.keySet()) {
+			if (separator) {
+				sb.append(", ");
+			} else {
+				separator = true;
+			}
+			sb.append(attrKey.toString() + " : " + attrs.get(attrKey));
+		}
+		sb.append("}");
+		sb.append(".nodes {");
+		separator = false;
+		for (Node n : getNodes()) {
+			if (separator) {
+				sb.append(", ");
+			} else {
+				separator = true;
+			}
+			sb.append(n.toString());
+		}
+		sb.append("}");
+		sb.append(".edges {");
+		separator = false;
+		for (Edge e : getEdges()) {
+			if (separator) {
+				sb.append(", ");
+			} else {
+				separator = true;
+			}
+			sb.append(e.toString());
+		}
+		sb.append("}");
+		return sb.toString();
+	}
 }

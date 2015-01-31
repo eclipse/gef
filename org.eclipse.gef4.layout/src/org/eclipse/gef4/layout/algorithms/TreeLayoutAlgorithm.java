@@ -256,4 +256,28 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 			relativePosition += childInfo.numOfLeaves;
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("TreeLayout { direction : ");
+		switch (direction) {
+		case BOTTOM_UP:
+			sb.append("bottom -> top");
+			break;
+		case LEFT_RIGHT:
+			sb.append("left -> right");
+			break;
+		case RIGHT_LEFT:
+			sb.append("right -> left");
+			break;
+		case TOP_DOWN:
+			sb.append("top -> down");
+			break;
+		}
+		sb.append(", resize : " + resize);
+		sb.append(" }");
+		// TODO: include node space??
+		return sb.toString();
+	}
 }

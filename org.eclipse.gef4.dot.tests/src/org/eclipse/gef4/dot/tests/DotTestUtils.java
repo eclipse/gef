@@ -81,20 +81,20 @@ public final class DotTestUtils {
 
 	public static Graph getLabeledGraph() {
 		/* Global settings: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				Attr.Key.EDGE_STYLE.toString(),
-				Graph.Attr.Value.CONNECTIONS_DIRECTED).attr(
-				Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
+		Graph.Builder graph = new Graph.Builder()
+				.attr(Attr.Key.GRAPH_TYPE.toString(),
+						Graph.Attr.Value.GRAPH_DIRECTED).attr(
+						Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Nodes: */
 		Node n1 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "One").build(); //$NON-NLS-1$
+				.attr(Attr.Key.ID.toString(), "1").attr(Attr.Key.LABEL.toString(), "one").build(); //$NON-NLS-1$
 		Node n2 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "Two").build(); //$NON-NLS-1$
+				.attr(Attr.Key.ID.toString(), "2").attr(Attr.Key.LABEL.toString(), "two").build(); //$NON-NLS-1$
 		Node n3 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "3").build(); //$NON-NLS-1$
+				.attr(Attr.Key.ID.toString(), "3").attr(Attr.Key.LABEL.toString(), "3").build(); //$NON-NLS-1$
 		Node n4 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "4").build(); //$NON-NLS-1$
+				.attr(Attr.Key.ID.toString(), "4").attr(Attr.Key.LABEL.toString(), "4").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2)

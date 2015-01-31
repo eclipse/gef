@@ -10,6 +10,7 @@ package org.eclipse.gef4.graph;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.gef4.graph.Graph.Attr;
 
@@ -115,8 +116,21 @@ public final class Edge {
 
 	@Override
 	public String toString() {
-		return String.format("Edge {%s attrs} from %s to %s",//$NON-NLS-1$
-				getAttrs().size(), getSource(), getTarget());
+		StringBuilder sb = new StringBuilder();
+		sb.append("Edge {");
+		boolean separator = false;
+		TreeMap<String, Object> sortedAttrs = new TreeMap<String, Object>();
+		sortedAttrs.putAll(attrs);
+		for (Object attrKey : sortedAttrs.keySet()) {
+			if (separator) {
+				sb.append(", ");
+			} else {
+				separator = true;
+			}
+			sb.append(attrKey.toString() + " : " + attrs.get(attrKey));
+		}
+		sb.append("} from " + getSource() + " to " + getTarget());
+		return sb.toString();
 	}
 
 }

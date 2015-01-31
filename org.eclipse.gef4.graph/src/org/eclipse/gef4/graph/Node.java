@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.gef4.graph.Graph.Attr;
 
@@ -274,7 +275,9 @@ public final class Node {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Node {");
 		boolean separator = false;
-		for (Object attrKey : attrs.keySet()) {
+		TreeMap<String, Object> sortedAttrs = new TreeMap<String, Object>();
+		sortedAttrs.putAll(attrs);
+		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {
 				sb.append(", ");
 			} else {
@@ -285,5 +288,4 @@ public final class Node {
 		sb.append("}");
 		return sb.toString();
 	}
-
 }
