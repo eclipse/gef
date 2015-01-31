@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Fabian Steeg. All rights reserved. This program and
+ * Copyright (c) 2010, 2015 Fabian Steeg. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,8 @@ public class DotUiMessages extends NLS {
 	public static String DotGraphView_0;
 	public static String DotGraphView_1;
 	public static String DotGraphView_2;
+	public static String DotGraphView_3;
+	public static String DotGraphView_4;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, DotUiMessages.class);

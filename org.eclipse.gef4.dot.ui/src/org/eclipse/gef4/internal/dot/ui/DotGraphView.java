@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Fabian Steeg, hbz.
+ * Copyright (c) 2014, 2015 Fabian Steeg, hbz.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -48,7 +48,10 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -80,12 +83,15 @@ public class DotGraphView extends ZestFxUiView {
 	private static final String LOAD_DOT_FILE = DotUiMessages.DotGraphView_0;
 	private static final String SYNC_EXPORT_PDF = DotUiMessages.DotGraphView_1;
 	private static final String SYNC_IMPORT_DOT = DotUiMessages.DotGraphView_2;
+	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_3;
+	private static final String GRAPH_RESOURCE = DotUiMessages.DotGraphView_4;
 	private static final String FORMAT_PDF = "pdf"; //$NON-NLS-1$
 	private boolean listenToDotContent = false;
 	private boolean linkImage = false;
 	private String currentDot = "digraph{}"; //$NON-NLS-1$
 	private IFile currentFile = null;
 	private ExportToggle exportAction;
+	private Label resourceLabel = null;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new ZestFxUiModule())//
@@ -99,7 +105,12 @@ public class DotGraphView extends ZestFxUiView {
 		add(new UpdateToggle().action(this), ISharedImages.IMG_ELCL_SYNCED);
 		add(new LoadFile().action(this), ISharedImages.IMG_OBJ_FILE);
 		add(exportAction.action(this), ISharedImages.IMG_ETOOL_PRINT_EDIT);
+		parent.setLayout(new GridLayout(1, true));
+		resourceLabel = new Label(parent, SWT.WRAP);
+		resourceLabel.setText(GRAPH_NONE);
+		resourceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		super.createPartControl(parent);
+		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 		Scene scene = getViewer().getScene();
 		scene.getStylesheets().add(STYLES_CSS_FILE);
 	}
@@ -112,7 +123,7 @@ public class DotGraphView extends ZestFxUiView {
 		mgr.add(action);
 	}
 
-	private void setGraphAsync(final String dot) {
+	private void setGraphAsync(final String dot, final String name) {
 		final DotGraphView view = this;
 		getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -132,6 +143,7 @@ public class DotGraphView extends ZestFxUiView {
 					}
 					setGraph(dotImport.newGraphInstance());
 					exportAction.linkCorrespondingImage(view);
+					resourceLabel.setText(String.format(GRAPH_RESOURCE, name));
 				}
 			}
 		});
@@ -164,7 +176,7 @@ public class DotGraphView extends ZestFxUiView {
 			return false;
 		}
 		currentDot = dotString;
-		setGraphAsync(dotString);
+		setGraphAsync(dotString, file.getName());
 		return true;
 	}
 
