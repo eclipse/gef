@@ -32,7 +32,7 @@ import org.junit.Test;
  * @author Fabian Steeg (fsteeg)
  */
 public final class GraphCreatorInterpreterTests {
-	
+
 	private final GraphCreatorInterpreter interpreter = new GraphCreatorInterpreter();
 
 	@Test
@@ -58,7 +58,7 @@ public final class GraphCreatorInterpreterTests {
 		Assert.assertEquals(
 				"1", //$NON-NLS-1$
 				((Node) graph.getNodes().iterator().next()).getAttrs().get(
-						Graph.Attr.Key.LABEL.toString()));
+						Graph.Attr.Key.ID.toString()));
 	}
 
 	@Test
@@ -277,9 +277,9 @@ public final class GraphCreatorInterpreterTests {
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		List<Node> list = graph.getNodes();
 		Assert.assertEquals("node 1",//$NON-NLS-1$
-				list.get(0).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
+				list.get(0).getAttrs().get(Graph.Attr.Key.ID.toString()));
 		Assert.assertEquals("node 2",//$NON-NLS-1$
-				list.get(1).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
+				list.get(1).getAttrs().get(Graph.Attr.Key.ID.toString()));
 	}
 
 	@Test
@@ -302,9 +302,9 @@ public final class GraphCreatorInterpreterTests {
 		Assert.assertEquals(1, graph.getEdges().size());
 		List<Node> list = graph.getNodes();
 		Assert.assertEquals("n1", //$NON-NLS-1$
-				list.get(0).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
+				list.get(0).getAttrs().get(Graph.Attr.Key.ID.toString()));
 		Assert.assertEquals("n2", //$NON-NLS-1$
-				list.get(1).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
+				list.get(1).getAttrs().get(Graph.Attr.Key.ID.toString()));
 	}
 
 	@Test

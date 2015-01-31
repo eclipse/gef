@@ -46,16 +46,25 @@ public final class DotImportTests {
 	@Test
 	public void testBasicFileImport() {
 		// simple graphs
-		Graph graph = importFrom(new File(RESOURCES_TESTS + "labeled_graph.dot")); //$NON-NLS-1$
+		Graph graph = importFrom(new File(RESOURCES_TESTS + "simple_graph.dot")); //$NON-NLS-1$
+		Assert.assertEquals(DotTestUtils.getSimpleGraph().toString(),
+				graph.toString());
+
+		graph = importFrom(new File(RESOURCES_TESTS + "simple_digraph.dot")); //$NON-NLS-1$		
+		Assert.assertEquals(DotTestUtils.getSimpleDiGraph().toString(),
+				graph.toString());
+
+		graph = importFrom(new File(RESOURCES_TESTS + "labeled_graph.dot")); //$NON-NLS-1$
 		Assert.assertEquals(DotTestUtils.getLabeledGraph().toString(),
 				graph.toString());
-		importFrom(new File(RESOURCES_TESTS + "simple_digraph.dot")); //$NON-NLS-1$		
-		// TODO: compare with DotTestUtils
-		importFrom(new File(RESOURCES_TESTS + "simple_graph.dot")); //$NON-NLS-1$
-		// TODO: compare with DotTestUtils
-		importFrom(new File(RESOURCES_TESTS + "sample_input.dot")); //$NON-NLS-1$
-		// TODO: compare with DotTestUtils
-		importFrom(new File(RESOURCES_TESTS + "styled_graph.dot")); //$NON-NLS-1$
+
+		graph = importFrom(new File(RESOURCES_TESTS + "styled_graph.dot")); //$NON-NLS-1$
+		Assert.assertEquals(DotTestUtils.getStyledGraph().toString(),
+				graph.toString());
+
+		graph = importFrom(new File(RESOURCES_TESTS + "sample_input.dot")); //$NON-NLS-1$
+		// TODO: Assert.assertEquals(DotTestUtils.getSampleGraph().toString(),
+		// graph.toString());
 
 		importFrom(new File(RESOURCES_TESTS + "basic_directed_graph.dot")); //$NON-NLS-1$
 		importFrom(new File(RESOURCES_TESTS + "global_node_graph.dot")); //$NON-NLS-1$

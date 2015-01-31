@@ -56,13 +56,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			Circle n2 = node(5, -15);
 			Circle n3 = node(15, -25);
 			Circle n4 = node(20, 5);
-			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3),
-					edge(n3, n4), edge(n1, n4), n0, n1, n2, n3, n4);
+			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3), edge(n3, n4), edge(n1, n4), n0, n1, n2, n3,
+					n4);
 		}
 
 		private Node edge(Circle n, Circle m) {
-			Line line = new Line(n.getCenterX(), n.getCenterY(),
-					m.getCenterX(), m.getCenterY());
+			Line line = new Line(n.getCenterX(), n.getCenterY(), m.getCenterX(), m.getCenterY());
 			line.setStroke(Color.BLACK);
 			return line;
 		}
@@ -98,8 +97,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	private NestedGraphIcon nestedGraphIcon;
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		childrenPane.getChildren().add(index, child.getVisual());
 	}
 
@@ -124,10 +122,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 				double dh = h - layoutBounds.getHeight();
 
 				// compute new size, taking into account the childrenPane scale
-				double newWidth = childrenPane.getPrefWidth() + dw * 1
-						/ childrenPane.getScaleX();
-				double newHeight = childrenPane.getPrefHeight() + dh * 1
-						/ childrenPane.getScaleY();
+				double newWidth = childrenPane.getPrefWidth() + dw * 1 / childrenPane.getScaleX();
+				double newHeight = childrenPane.getPrefHeight() + dh * 1 / childrenPane.getScaleY();
 
 				// do not resize below threshold
 				if (newWidth < CHILDREN_PANE_WIDTH_THRESHOLD) {
@@ -164,15 +160,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		group.getChildren().addAll(box, vbox);
 
 		// box, label, image
-		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
-				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
+		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT, Arrays.asList(new Stop(0, new Color(1, 1,
+				1, 1)))));
 		box.setStroke(new Color(0, 0, 0, 1));
 		text.setTextOrigin(VPos.TOP);
 		text.setText(DEFAULT_LABEL);
 		ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> observable,
-					Bounds oldBounds, Bounds newBounds) {
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldBounds, Bounds newBounds) {
 				hbox.autosize();
 				vbox.autosize();
 			}
@@ -185,14 +180,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// layout
 		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> arg0,
-					Bounds arg1, Bounds arg2) {
+			public void changed(ObservableValue<? extends Bounds> arg0, Bounds arg1, Bounds arg2) {
 				vbox.setTranslateX(padding);
 				vbox.setTranslateY(padding);
 				box.setWidth(vbox.getWidth() + 2 * padding);
 				box.setHeight(vbox.getHeight() + 2 * padding);
-				text.setTranslateX(vbox.getWidth() / 2
-						- text.getLayoutBounds().getWidth() / 2);
+				text.setTranslateX(vbox.getWidth() / 2 - text.getLayoutBounds().getWidth() / 2);
 			}
 		});
 
@@ -221,8 +214,11 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 		// set label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label
-				: label == null ? DEFAULT_LABEL : label.toString();
+		// use id if no label is set
+		if (label == null) {
+			label = attrs.get(Attr.Key.ID.toString());
+		}
+		String str = label instanceof String ? (String) label : label == null ? DEFAULT_LABEL : label.toString();
 		text.setText(str);
 
 		// set image
@@ -233,16 +229,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 		// show children when we have a nested graph
 		if (getContent().getNestedGraph() != null) {
-			if (childrenPane.getPrefWidth() == 0
-					&& childrenPane.getPrefHeight() == 0) {
-				childrenPane.setPrefSize(DEFAULT_CHILDREN_PANE_WIDTH,
-						DEFAULT_CHILDREN_PANE_HEIGHT);
-				childrenPane.resize(DEFAULT_CHILDREN_PANE_WIDTH,
-						DEFAULT_CHILDREN_PANE_HEIGHT);
+			if (childrenPane.getPrefWidth() == 0 && childrenPane.getPrefHeight() == 0) {
+				childrenPane.setPrefSize(DEFAULT_CHILDREN_PANE_WIDTH, DEFAULT_CHILDREN_PANE_HEIGHT);
+				childrenPane.resize(DEFAULT_CHILDREN_PANE_WIDTH, DEFAULT_CHILDREN_PANE_HEIGHT);
 			}
 		} else {
-			if (childrenPane.getPrefWidth() != 0
-					|| childrenPane.getPrefHeight() != 0) {
+			if (childrenPane.getPrefWidth() != 0 || childrenPane.getPrefHeight() != 0) {
 				childrenPane.setPrefSize(0, 0);
 				childrenPane.resize(0, 0);
 			}
@@ -295,23 +287,19 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
 		super.registerAtVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
-				.getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer().getVisualPartMap();
 		visualPartMap.put(box, this);
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		childrenPane.getChildren().remove(index);
 	}
 
 	@Override
-	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
-			Group visual) {
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, Group visual) {
 		super.unregisterFromVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
-				.getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer().getVisualPartMap();
 		visualPartMap.remove(box);
 	}
 

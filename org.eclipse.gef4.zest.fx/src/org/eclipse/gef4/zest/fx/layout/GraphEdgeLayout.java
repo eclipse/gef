@@ -33,10 +33,8 @@ public class GraphEdgeLayout implements ConnectionLayout {
 		this.edge = edge;
 
 		// graph directed?
-		Object type = context.getGraph().getAttrs()
-				.get(Graph.Attr.Key.GRAPH_TYPE.toString());
-		if (type == Graph.Attr.Value.CONNECTIONS_DIRECTED
-				|| type == Graph.Attr.Value.GRAPH_DIRECTED) {
+		Object type = context.getGraph().getAttrs().get(Graph.Attr.Key.GRAPH_TYPE.toString());
+		if (type == Graph.Attr.Value.GRAPH_DIRECTED) {
 			setProperty(LayoutProperties.DIRECTED_PROPERTY, true);
 		}
 

@@ -91,10 +91,8 @@ public final class DotTestUtils {
 				.attr(Attr.Key.ID.toString(), "1").attr(Attr.Key.LABEL.toString(), "one").build(); //$NON-NLS-1$
 		Node n2 = new Node.Builder()
 				.attr(Attr.Key.ID.toString(), "2").attr(Attr.Key.LABEL.toString(), "two").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder()
-				.attr(Attr.Key.ID.toString(), "3").attr(Attr.Key.LABEL.toString(), "3").build(); //$NON-NLS-1$
-		Node n4 = new Node.Builder()
-				.attr(Attr.Key.ID.toString(), "4").attr(Attr.Key.LABEL.toString(), "4").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.Key.ID.toString(), "3").build(); //$NON-NLS-1$
+		Node n4 = new Node.Builder().attr(Attr.Key.ID.toString(), "4").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2)
@@ -113,8 +111,8 @@ public final class DotTestUtils {
 	public static Graph getSampleGraph() {
 		/* Global settings: */
 		Graph.Builder graph = new Graph.Builder()//
-				.attr(Attr.Key.EDGE_STYLE.toString(),
-						Graph.Attr.Value.CONNECTIONS_DIRECTED)//
+				.attr(Attr.Key.GRAPH_TYPE.toString(),
+						Graph.Attr.Value.GRAPH_DIRECTED)//
 				.attr(Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Nodes: */
@@ -148,21 +146,18 @@ public final class DotTestUtils {
 		return graph.nodes(n1, n2, n3, n4).edges(e1, e2).build();
 	}
 
-	public static Graph getSampleDiGraph() {
+	public static Graph getSimpleDiGraph() {
 
 		/* Global settings, here we set the directed property: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				Attr.Key.EDGE_STYLE.toString(),
-				Graph.Attr.Value.CONNECTIONS_DIRECTED).attr(
-				Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
+		Graph.Builder graph = new Graph.Builder()
+				.attr(Attr.Key.GRAPH_TYPE.toString(),
+						Graph.Attr.Value.GRAPH_DIRECTED).attr(
+						Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Nodes: */
-		Node n1 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "1").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "2").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "3").build(); //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(Attr.Key.ID.toString(), "1").build(); //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(Attr.Key.ID.toString(), "2").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.Key.ID.toString(), "3").build(); //$NON-NLS-1$ 
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2).build();
@@ -176,15 +171,14 @@ public final class DotTestUtils {
 	public static Graph getSimpleGraph() {
 		/* Set a layout algorithm: */
 		Graph.Builder graph = new Graph.Builder().attr(
+				Attr.Key.GRAPH_TYPE.toString(),
+				Graph.Attr.Value.GRAPH_UNDIRECTED).attr(
 				Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Set the nodes: */
-		Node n1 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "1").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "2").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "3").build(); //$NON-NLS-1$ 
+		Node n1 = new Node.Builder().attr(Attr.Key.ID.toString(), "1").build(); //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(Attr.Key.ID.toString(), "2").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.Key.ID.toString(), "3").build(); //$NON-NLS-1$ 
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2).build();
@@ -197,22 +191,17 @@ public final class DotTestUtils {
 
 	public static Graph getStyledGraph() {
 		/* Global properties: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				Attr.Key.EDGE_STYLE.toString(),
-				Graph.Attr.Value.CONNECTIONS_DIRECTED).attr(
-				Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
+		Graph.Builder graph = new Graph.Builder()
+				.attr(Attr.Key.GRAPH_TYPE.toString(),
+						Graph.Attr.Value.GRAPH_DIRECTED).attr(
+						Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Nodes: */
-		Node n1 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "1").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "2").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "3").build(); //$NON-NLS-1$
-		Node n4 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "4").build(); //$NON-NLS-1$
-		Node n5 = new Node.Builder()
-				.attr(Attr.Key.LABEL.toString(), "5").build(); //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(Attr.Key.ID.toString(), "1").build(); //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(Attr.Key.ID.toString(), "2").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.Key.ID.toString(), "3").build(); //$NON-NLS-1$
+		Node n4 = new Node.Builder().attr(Attr.Key.ID.toString(), "4").build(); //$NON-NLS-1$
+		Node n5 = new Node.Builder().attr(Attr.Key.ID.toString(), "5").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2).attr(Attr.Key.EDGE_STYLE.toString(),
@@ -228,8 +217,12 @@ public final class DotTestUtils {
 
 		/* Connection from n3 to n5: */
 		Edge e4 = new Edge.Builder(n3, n5).attr(Attr.Key.EDGE_STYLE.toString(),
+				Graph.Attr.Value.LINE_DASHDOTDOT).build();
+
+		Edge e5 = new Edge.Builder(n4, n5).attr(Attr.Key.EDGE_STYLE.toString(),
 				Graph.Attr.Value.LINE_SOLID).build();
 
-		return graph.nodes(n1, n2, n3, n4, n5).edges(e1, e2, e3, e4).build();
+		return graph.nodes(n1, n2, n3, n4, n5).edges(e1, e2, e3, e4, e5)
+				.build();
 	}
 }

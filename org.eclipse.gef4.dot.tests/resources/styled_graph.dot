@@ -17,4 +17,5 @@ digraph StyledGraph{
 	   which renders the line solid). */
 	3->4[style="dashdot"]
 	3->5[style="dashdotdot"]
+	4->5[style="solid"]
 }

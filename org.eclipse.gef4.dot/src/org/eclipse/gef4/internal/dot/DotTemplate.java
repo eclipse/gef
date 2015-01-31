@@ -49,7 +49,7 @@ public class DotTemplate
      Graph graph = (Graph) argument; 
      boolean small = graph.getNodes().size() < 100; 
      LayoutAlgorithm algo = (LayoutAlgorithm) (graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()) != null ? graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()) : new TreeLayoutAlgorithm());
-     boolean digraph = graph.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString())==Graph.Attr.Value.CONNECTIONS_DIRECTED; 
+     boolean digraph = graph.getAttrs().get(Graph.Attr.Key.GRAPH_TYPE.toString())==Graph.Attr.Value.GRAPH_DIRECTED; 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
      simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; 

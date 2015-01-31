@@ -24,11 +24,11 @@ public final class DotExportExample {
 		Node node2 = new Node.Builder().attr(Attr.Key.ID.toString(), "2")
 				.attr(Attr.Key.LABEL.toString(), "Node 2").build();
 		Edge edge = new Edge.Builder(node1, node2)
-				.attr(Attr.Key.LABEL.toString(), "A dotted edge")
-				.attr(Attr.Key.EDGE_STYLE.toString(), Graph.Attr.Value.LINE_DOT)
-				.build();
-		graph.attr(Graph.Attr.Key.EDGE_STYLE.toString(),
-				Graph.Attr.Value.CONNECTIONS_DIRECTED).nodes(node1, node2)
+		.attr(Attr.Key.LABEL.toString(), "A dotted edge")
+		.attr(Attr.Key.EDGE_STYLE.toString(), Graph.Attr.Value.LINE_DOT)
+		.build();
+		graph.attr(Graph.Attr.Key.GRAPH_TYPE.toString(),
+				Graph.Attr.Value.GRAPH_DIRECTED).nodes(node1, node2)
 				.edges(edge);
 
 		/* Export the graph to a DOT string or a DOT file: */

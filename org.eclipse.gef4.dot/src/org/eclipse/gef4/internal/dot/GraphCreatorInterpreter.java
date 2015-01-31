@@ -219,21 +219,27 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
 	private void createNode(final NodeStmt nodeStatement) {
 		String nodeId = escaped(nodeStatement.getNode().getName());
-		Node.Builder node = new Node.Builder();
+		String label = getAttributeValue(nodeStatement, "label"); //$NON-NLS-1$
+
+		Node.Builder node;
 		if (nodes.containsKey(nodeId)) {
 			node = nodes.get(nodeId);
 		} else {
-			node = node.attr(Graph.Attr.Key.LABEL.toString(), nodeId).attr(
-					Graph.Attr.Key.ID.toString(), nodeId);
-			graph = graph.nodes(node.build());
+			node = new Node.Builder()
+					.attr(Graph.Attr.Key.ID.toString(), nodeId);
 		}
-		String value = getAttributeValue(nodeStatement, "label"); //$NON-NLS-1$
-		if (value != null) {
-			node = node.attr(Graph.Attr.Key.LABEL.toString(), value);
+
+		if (label != null) {
+			node = node.attr(Graph.Attr.Key.LABEL.toString(), label);
 		} else if (globalNodeLabel != null) {
 			node = node.attr(Graph.Attr.Key.LABEL.toString(), globalNodeLabel);
 		}
-		nodes.put(nodeId, node);
+
+		if (!nodes.containsKey(nodeId)) {
+			nodes.put(nodeId, node);
+			graph = graph.nodes(node.build());
+		}
+
 	}
 
 	private Node node(String id) {

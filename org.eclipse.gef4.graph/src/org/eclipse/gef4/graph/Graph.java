@@ -17,6 +17,7 @@ import java.util.TreeMap;
 
 public final class Graph {
 
+	// TODO: split into graph, node, edge
 	public static class Attr {
 		public static enum Key {
 			NODE_STYLE, EDGE_STYLE, LABEL, STYLE, ID, IMAGE, LAYOUT, GRAPH_TYPE
@@ -24,7 +25,7 @@ public final class Graph {
 
 		public static enum Value {
 			LINE_DASH, LINE_DOT, LINE_SOLID, LINE_DASHDOT, LINE_DASHDOTDOT, //
-			GRAPH_DIRECTED, GRAPH_UNDIRECTED, CONNECTIONS_DIRECTED, NONE
+			GRAPH_DIRECTED, GRAPH_UNDIRECTED, NONE
 		}
 	}
 

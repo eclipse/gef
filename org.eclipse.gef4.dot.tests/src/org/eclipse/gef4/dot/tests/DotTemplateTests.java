@@ -36,8 +36,8 @@ public class DotTemplateTests {
 				.attr(Graph.Attr.Key.LABEL, "A dotted edge")
 				.attr(Graph.Attr.Key.EDGE_STYLE, Graph.Attr.Value.LINE_DOT)
 				.build();
-		graph.attr(Graph.Attr.Key.EDGE_STYLE,
-				Graph.Attr.Value.CONNECTIONS_DIRECTED).edges(edge);
+		graph.attr(Graph.Attr.Key.GRAPH_TYPE, Graph.Attr.Value.GRAPH_DIRECTED)
+				.edges(edge);
 		String dot = new DotTemplate().generate(graph.build());
 		Assert.assertTrue(
 				"Graph with horizontal tree layout should contain rankdir=LR",
@@ -63,7 +63,7 @@ public class DotTemplateTests {
 	/** Zest-To-Dot transformation for a minimal directed graph. */
 	@Test
 	public void directedGraph() {
-		testDotGeneration(DotTestUtils.getSampleDiGraph());
+		testDotGeneration(DotTestUtils.getSimpleDiGraph());
 	}
 
 	/** Zest-To-Dot transformation for a graph with edge and node labels. */
@@ -90,7 +90,7 @@ public class DotTemplateTests {
 				"DOT representation must contain simple class name of Dot input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
 		Assert.assertTrue(graph.getAttrs().get(
-				Graph.Attr.Key.EDGE_STYLE.toString()) == Graph.Attr.Value.CONNECTIONS_DIRECTED ? dot
+				Graph.Attr.Key.GRAPH_TYPE.toString()) == Graph.Attr.Value.GRAPH_DIRECTED ? dot
 				.contains("digraph") : !dot.contains("digraph")); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(dot);
 	}
