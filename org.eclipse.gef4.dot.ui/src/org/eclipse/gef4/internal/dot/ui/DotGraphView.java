@@ -14,7 +14,6 @@ package org.eclipse.gef4.internal.dot.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import javafx.scene.Scene;
 
@@ -27,7 +26,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -46,11 +44,11 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISelectionListener;
@@ -60,7 +58,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -89,7 +86,7 @@ public class DotGraphView extends ZestFxUiView {
 	private boolean listenToDotContent = false;
 	private boolean linkImage = false;
 	private String currentDot = "digraph{}"; //$NON-NLS-1$
-	private IFile currentFile = null;
+	private File currentFile = null;
 	private ExportToggle exportAction;
 	private Label resourceLabel = null;
 
@@ -123,7 +120,7 @@ public class DotGraphView extends ZestFxUiView {
 		mgr.add(action);
 	}
 
-	private void setGraphAsync(final String dot, final String name) {
+	private void setGraphAsync(final String dot, final File file) {
 		final DotGraphView view = this;
 		getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -143,7 +140,9 @@ public class DotGraphView extends ZestFxUiView {
 					}
 					setGraph(dotImport.newGraphInstance());
 					exportAction.linkCorrespondingImage(view);
-					resourceLabel.setText(String.format(GRAPH_RESOURCE, name));
+					resourceLabel.setText(String.format(GRAPH_RESOURCE,
+							file.getName()));
+					resourceLabel.setToolTipText(file.getAbsolutePath());
 				}
 			}
 		});
@@ -163,26 +162,20 @@ public class DotGraphView extends ZestFxUiView {
 		return input;
 	}
 
-	private boolean updateGraph(IFile file) {
-		if (file == null || file.getLocationURI() == null || !file.exists()) {
+	private boolean updateGraph(File file) {
+		if (file == null || !file.exists()) {
 			return false;
 		}
 		String dotString = currentDot;
-		try {
-			dotString = DotFileUtils.read(DotFileUtils.resolve(file
-					.getLocationURI().toURL()));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return false;
-		}
+		dotString = DotFileUtils.read(file);
 		currentDot = dotString;
-		setGraphAsync(dotString, file.getName());
+		setGraphAsync(dotString, file);
 		return true;
 	}
 
-	private IWorkspaceRunnable updateGraphRunnable(final IFile f) {
+	private IWorkspaceRunnable updateGraphRunnable(final File f) {
 		if (!listenToDotContent
-				&& !f.getLocation().toString().endsWith(EXTENSION)) {
+				&& !f.getAbsolutePath().toString().endsWith(EXTENSION)) {
 			return null;
 		}
 		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
@@ -207,19 +200,13 @@ public class DotGraphView extends ZestFxUiView {
 			if (view.currentFile == null) {
 				return image;
 			}
-			try {
-				URL url = view.currentFile.getParent().getLocationURI().toURL();
-				File copy = DotFileUtils.copySingleFile(
-						DotFileUtils.resolve(url), view.currentFile.getName()
-								+ "." + format, image); //$NON-NLS-1$
-				return copy;
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
+			File copy = DotFileUtils.copySingleFile(
+					view.currentFile.getParentFile(),
+					view.currentFile.getName() + "." + format, image); //$NON-NLS-1$
 			if (refresh) {
 				refreshParent(view.currentFile);
 			}
-			return image;
+			return copy;
 		}
 
 		private void openFile(File file, DotGraphView view) {
@@ -256,9 +243,14 @@ public class DotGraphView extends ZestFxUiView {
 			}
 		}
 
-		private void refreshParent(final IFile file) {
+		private void refreshParent(final File file) {
 			try {
-				file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+				ResourcesPlugin
+						.getWorkspace()
+						.getRoot()
+						.getFileForLocation(
+								Path.fromOSString(file.getAbsolutePath()))
+						.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -288,19 +280,23 @@ public class DotGraphView extends ZestFxUiView {
 
 	private class LoadFile {
 
+		private String lastSelection = null;
+
 		Action action(final DotGraphView view) {
 			return new Action(DotGraphView.LOAD_DOT_FILE) {
 				@Override
 				public void run() {
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-							.getRoot();
-					ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(
-							view.getViewSite().getShell(), root, IResource.FILE);
-					if (dialog.open() == Window.OK) {
-						Object[] selected = dialog.getResult();
-						if (selected != null) {
-							view.updateGraph((IFile) selected[0]);
-						}
+					FileDialog dialog = new FileDialog(view.getViewSite()
+							.getShell(), SWT.OPEN);
+					dialog.setFileName(lastSelection);
+					String fileNamePattern = "*." + EXTENSION; //$NON-NLS-1$
+					dialog.setFilterExtensions(new String[] { fileNamePattern });
+					dialog.setFilterNames(new String[] { String.format(
+							"DOT Graph (%s)", fileNamePattern) }); //$NON-NLS-1$
+					String selection = dialog.open();
+					if (selection != null) {
+						lastSelection = selection;
+						view.updateGraph(new File(selection));
 					}
 				}
 			};
@@ -358,8 +354,14 @@ public class DotGraphView extends ZestFxUiView {
 						if ("org.eclipse.gef4.internal.dot.parser.Dot" //$NON-NLS-1$
 								.equals(editor.getLanguageName())
 								&& editor.getEditorInput() instanceof FileEditorInput) {
-							view.updateGraph(((FileEditorInput) editor
-									.getEditorInput()).getFile());
+							try {
+								view.updateGraph(DotFileUtils
+										.resolve(((FileEditorInput) editor
+												.getEditorInput()).getFile()
+												.getLocationURI().toURL()));
+							} catch (MalformedURLException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 
@@ -390,7 +392,8 @@ public class DotGraphView extends ZestFxUiView {
 						try {
 							final IFile f = (IFile) resource;
 							IWorkspaceRunnable workspaceRunnable = view
-									.updateGraphRunnable(f);
+									.updateGraphRunnable(DotFileUtils.resolve(f
+											.getLocationURI().toURL()));
 							IWorkspace workspace = ResourcesPlugin
 									.getWorkspace();
 							if (!workspace.isTreeLocked()) {
