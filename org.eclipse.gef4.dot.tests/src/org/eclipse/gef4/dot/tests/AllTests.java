@@ -18,7 +18,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ DotImportTests.class, DotExportTests.class,
-		LayoutAlgorithmTests.class, DotImageExportTests.class,
+		LayoutAlgorithmTests.class, DotDrawerTests.class,
 		DotInterpreterTests.class, DotTemplateTests.class,
 		DotExtractorTests.class })
 public class AllTests {

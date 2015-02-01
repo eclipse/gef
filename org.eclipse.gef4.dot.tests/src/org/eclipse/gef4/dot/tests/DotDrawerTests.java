@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-public class DotImageExportTests extends DotTemplateTests {
+public class DotDrawerTests extends DotTemplateTests {
 
 	private static String dotDir = null;
 
@@ -41,12 +41,12 @@ public class DotImageExportTests extends DotTemplateTests {
 	public static String dotBinDir() {
 		if (dotDir == null) {
 			Properties props = new Properties();
-			InputStream stream = DotImageExportTests.class
+			InputStream stream = DotDrawerTests.class
 					.getResourceAsStream("test.properties"); //$NON-NLS-1$
 			if (stream == null) {
 				System.err
 						.println("Could not load the test.properties file in directory of " //$NON-NLS-1$
-								+ DotImageExportTests.class.getSimpleName());
+								+ DotDrawerTests.class.getSimpleName());
 			} else
 				try {
 					props.load(stream);
