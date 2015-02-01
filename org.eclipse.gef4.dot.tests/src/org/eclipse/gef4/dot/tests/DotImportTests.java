@@ -28,7 +28,7 @@ import org.junit.Test;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-// TODO: this could be combined with the GraphCreatorInterpreterTests, similar
+// TODO: this could be combined with the DotInterpreterTests, similar
 // as DotExportTests and DotTemplateTests
 public final class DotImportTests {
 

@@ -43,7 +43,7 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-public final class GraphCreatorInterpreter extends DotSwitch<Object> {
+public final class DotInterpreter extends DotSwitch<Object> {
 
 	private Map<String, Node.Builder> nodes;
 	private Graph.Builder graph;
@@ -55,12 +55,12 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private String currentEdgeSourceNodeId;
 	private boolean createConnection;
 
-	public Graph create(DotAst dotAst) {
-		return create(dotAst, new Graph.Builder().attr(Graph.Attr.Key.LAYOUT,
+	public Graph interpret(DotAst dotAst) {
+		return interpret(dotAst, new Graph.Builder().attr(Graph.Attr.Key.LAYOUT,
 				DotImport.DEFAULT_LAYOUT_ALGORITHM));
 	}
 
-	private Graph create(DotAst dotAst, Graph.Builder graph) {
+	private Graph interpret(DotAst dotAst, Graph.Builder graph) {
 		if (dotAst.errors().size() > 0) {
 			throw new IllegalArgumentException(String.format(
 					DotMessages.GraphCreatorInterpreter_0 + ": %s", dotAst //$NON-NLS-1$

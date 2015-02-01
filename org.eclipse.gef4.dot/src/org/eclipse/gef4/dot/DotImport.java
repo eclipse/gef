@@ -17,7 +17,7 @@ import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.internal.dot.DotAst;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.internal.dot.DotMessages;
-import org.eclipse.gef4.internal.dot.GraphCreatorInterpreter;
+import org.eclipse.gef4.internal.dot.DotInterpreter;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
@@ -106,7 +106,7 @@ public final class DotImport {
 		 * TODO switch to a string as the member holding the DOT to avoid
 		 * read-write here, and set that string as the resulting graph's data
 		 */
-		return new GraphCreatorInterpreter().create(dotAst);
+		return new DotInterpreter().interpret(dotAst);
 	}
 
 	/**
