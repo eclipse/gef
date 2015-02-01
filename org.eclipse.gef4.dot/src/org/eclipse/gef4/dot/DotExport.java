@@ -23,7 +23,7 @@ import org.eclipse.gef4.internal.dot.DotTemplate;
  * @author Fabian Steeg (fsteeg)
  */
 public final class DotExport {
-	public static final String DOT_BIN_DIR_KEY = "org.eclipse.gef4.dot.bin.dir"; //$NON-NLS-1$
+
 	private String dotString;
 	private String graphName = "Unnamed" + System.currentTimeMillis(); //$NON-NLS-1$
 

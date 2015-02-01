@@ -54,10 +54,11 @@ public class DotImageExportTests extends DotTemplateTests {
 					 * Path to the local Graphviz folder containing the dot
 					 * executable file:
 					 */
-					dotDir = props.getProperty(DotExport.DOT_BIN_DIR_KEY);
+					dotDir = props.getProperty(DotDirStore.DOT_PATH_PREF_KEY);
 					if (dotDir == null || dotDir.trim().length() == 0) {
 						System.err
-								.println("Graphviz DOT directory not set in test.properties file"); //$NON-NLS-1$
+								.printf("Graphviz DOT directory not set in test.properties file under '%s' key.\n",//$NON-NLS-1$
+										DotDirStore.DOT_PATH_PREF_KEY);
 					} else
 						stream.close();
 				} catch (IOException e) {
@@ -78,9 +79,8 @@ public class DotImageExportTests extends DotTemplateTests {
 			super.testDotGeneration(graph);
 			File dotFile = DotFileUtils.write(new DotExport(graph)
 					.toDotString());
-			File image = DotDrawer
-					.renderImage(new File(DotDirStore.getDotDirPath()),
-							dotFile, "pdf", null); //$NON-NLS-1$
+			File image = DotDrawer.renderImage(new File(dotDir), dotFile,
+					"pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
 			System.out.println("Created image: " + image); //$NON-NLS-1$
 			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$
