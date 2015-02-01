@@ -117,14 +117,6 @@ public final class DotImport {
 		new GraphCopier(newGraphInstance()).into(graph);
 	}
 
-	/**
-	 * @return The DOT AST parsed from the DOT source
-	 */
-	// TODO: this should either not be public, or DotAst should not be internal!
-	public DotAst getDotAst() {
-		return this.dotAst;
-	}
-
 	@Override
 	public String toString() {
 		return String.format("%s of %s at %s", getClass().getSimpleName(), //$NON-NLS-1$

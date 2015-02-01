@@ -375,6 +375,6 @@ public final class GraphCreatorInterpreterTests {
 	}
 
 	private DotAst parse(String dot) {
-		return new DotImport(dot).getDotAst();
+		return new DotAst(dot);
 	}
 }
