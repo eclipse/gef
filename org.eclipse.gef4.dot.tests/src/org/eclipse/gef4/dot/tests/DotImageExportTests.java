@@ -14,6 +14,9 @@ import java.util.Properties;
 
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.internal.dot.DotDrawer;
+import org.eclipse.gef4.internal.dot.DotFileUtils;
+import org.eclipse.gef4.internal.dot.ui.DotDirStore;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
@@ -73,7 +76,11 @@ public class DotImageExportTests extends DotTemplateTests {
 		 */
 		if (dotDir != null) {
 			super.testDotGeneration(graph);
-			File image = new DotExport(graph).toImage(dotDir, null);
+			File dotFile = DotFileUtils.write(new DotExport(graph)
+					.toDotString());
+			File image = DotDrawer
+					.renderImage(new File(DotDirStore.getDotDirPath()),
+							dotFile, "pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
 			System.out.println("Created image: " + image); //$NON-NLS-1$
 			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$

@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.dot.DotImport;
+import org.eclipse.gef4.internal.dot.DotDrawer;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
@@ -194,8 +194,9 @@ public class DotGraphView extends ZestFxUiView {
 
 		private File generateImageFromGraph(final boolean refresh,
 				final String format, DotGraphView view) {
-			DotExport dotExport = new DotExport(view.currentDot);
-			File image = dotExport.toImage(DotDirStore.getDotDirPath(), format,
+			File dotFile = DotFileUtils.write(view.currentDot);
+			File image = DotDrawer.renderImage(
+					new File(DotDirStore.getDotDirPath()), dotFile, format,
 					null);
 			if (view.currentFile == null) {
 				return image;
