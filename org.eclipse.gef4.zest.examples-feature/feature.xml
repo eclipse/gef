@@ -7,6 +7,7 @@
       plugin="org.eclipse.gef4.zest.examples"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
+
    <description>
       %description
    </description>
@@ -45,6 +46,13 @@
 
    <plugin
          id="org.eclipse.gef4.zest.examples.graph.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.gef4.zest.examples"
          download-size="0"
          install-size="0"
          version="0.0.0"
