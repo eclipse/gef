@@ -20,8 +20,9 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
+// TODO: check if we really need this policy, as we now have the transform policy
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-ITransactional {
+		ITransactional {
 
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
@@ -61,7 +62,7 @@ ITransactional {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -93,7 +94,7 @@ ITransactional {
 		FXTransformPolicy transformPolicy = getTransformPolicy();
 		if (transformPolicy != null) {
 			transformPolicy.setPreConcatenation(new AffineTransform()
-			.setToTranslation(dx, dy));
+					.setToTranslation(dx, dy));
 		}
 	}
 

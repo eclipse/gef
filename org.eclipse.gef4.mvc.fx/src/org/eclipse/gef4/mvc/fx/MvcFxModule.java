@@ -42,6 +42,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -115,7 +116,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<Affine>>() {
 				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).to(
-						FXTransformProvider.class);
+				FXTransformProvider.class);
 
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
@@ -125,8 +126,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				new TypeLiteral<HoverBehavior<Node>>() {
 				});
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
-		.to(new TypeLiteral<SelectionBehavior<Node>>() {
-		});
+				.to(new TypeLiteral<SelectionBehavior<Node>>() {
+				});
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
 				FXFocusBehavior.class);
 
@@ -172,8 +173,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		// register tool interaction policy which delegates hover interaction to
 		// hover policy
 		adapterMapBinder
-		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-				FXHoverOnHoverPolicy.class);
+				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+						FXHoverOnHoverPolicy.class);
 		// register behavior which reacts to changes of the hover model and
 		// updates selection (and handles)
 		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
@@ -218,7 +219,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class)).to(
 				FXTypeTool.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
-		.to(FXPinchSpreadTool.class);
+				.to(FXPinchSpreadTool.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class)).to(
 				FXScrollTool.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class)).to(
@@ -263,13 +264,13 @@ public class MvcFxModule extends MvcModule<Node> {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-						FXFocusAndSelectOnClickPolicy.class);
+				FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
-						FXMarqueeOnDragPolicy.class);
+				FXMarqueeOnDragPolicy.class);
 		adapterMapBinder
-		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-				FXHoverOnHoverPolicy.class);
+				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+						FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY, "zoomOnScroll"))
 				.to(FXZoomOnScrollPolicy.class);
@@ -278,21 +279,25 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXPanOnScrollPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
-						FXZoomOnPinchSpreadPolicy.class);
+				FXZoomOnPinchSpreadPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
-		.to(FXPanOnTypePolicy.class);
+				.to(FXPanOnTypePolicy.class);
+
+		//
+		adapterMapBinder.addBinding(AdapterKey.get(FXChangeViewportPolicy.class)).to(
+				FXChangeViewportPolicy.class);
 
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				new TypeLiteral<ContentBehavior<Node>>() {
 				});
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
-		.to(new TypeLiteral<SelectionBehavior<Node>>() {
-		});
+				.to(new TypeLiteral<SelectionBehavior<Node>>() {
+				});
 		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class)).to(
 				FXGridBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXViewportBehavior.class))
-		.to(FXViewportBehavior.class);
+				.to(FXViewportBehavior.class);
 	}
 
 	protected void bindFXScrollTool() {
@@ -358,7 +363,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		// work properly
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
 		}).to(FXDefaultFeedbackPartFactory.class)
-		.in(AdaptableScopes.typed(FXViewer.class));
+				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	protected void bindIHandlePartFactory() {
@@ -366,7 +371,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		// work properly
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).to(FXDefaultHandlePartFactory.class)
-		.in(AdaptableScopes.typed(FXViewer.class));
+				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	protected void bindIRootPart() {

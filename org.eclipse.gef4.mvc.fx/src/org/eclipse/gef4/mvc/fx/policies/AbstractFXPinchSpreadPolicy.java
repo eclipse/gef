@@ -22,20 +22,17 @@ public abstract class AbstractFXPinchSpreadPolicy extends AbstractPolicy<Node> {
 	/**
 	 * Reaction to the detection of pinch (close fingers) gestures.
 	 */
-	public abstract void zoomDetected(ZoomEvent e, double partialFactor,
-			double totalFactor);
+	public abstract void zoomDetected(ZoomEvent e);
 
 	/**
 	 * Continuous reaction to pinch (close fingers) gestures. Called
 	 * continuously on finger movement, after the gesture has been detected, and
 	 * before it has been finished.
 	 */
-	public abstract void zoomed(ZoomEvent e, double partialFactor,
-			double totalFactor);
+	public abstract void zoomed(ZoomEvent e);
 
 	/**
 	 * Reaction to the finish of pinch (close fingers) gestures.
 	 */
-	public abstract void zoomFinished(ZoomEvent e, double partialFactor,
-			double totalFactor);
+	public abstract void zoomFinished(ZoomEvent e);
 }

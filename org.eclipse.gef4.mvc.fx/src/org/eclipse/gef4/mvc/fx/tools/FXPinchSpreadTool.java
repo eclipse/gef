@@ -74,8 +74,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				protected void zoomDetected(ZoomEvent e) {
 					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
-						policy.zoomDetected(e, e.getZoomFactor(),
-								e.getTotalZoomFactor());
+						policy.zoomDetected(e);
 					}
 				}
 
@@ -83,8 +82,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				protected void zoomed(ZoomEvent e) {
 					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
-						policy.zoomed(e, e.getZoomFactor(),
-								e.getTotalZoomFactor());
+						policy.zoomed(e);
 					}
 				}
 
@@ -92,8 +90,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				protected void zoomFinished(ZoomEvent e) {
 					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
-						policy.zoomFinished(e, e.getZoomFactor(),
-								e.getTotalZoomFactor());
+						policy.zoomFinished(e);
 					}
 				}
 			};

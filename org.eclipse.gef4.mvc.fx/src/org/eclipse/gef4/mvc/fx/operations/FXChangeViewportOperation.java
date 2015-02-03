@@ -78,6 +78,10 @@ public class FXChangeViewportOperation extends AbstractOperation {
 		this.newTy = newTy;
 	}
 
+	public void concatenateToNewTransform(AffineTransform t) {
+		newTransform.concatenate(t);
+	}
+
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
