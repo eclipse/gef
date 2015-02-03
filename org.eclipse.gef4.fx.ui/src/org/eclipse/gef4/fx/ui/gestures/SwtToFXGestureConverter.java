@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
- *     Alexander Nyßen (itemis AG) - filter for emulated scroll events (#430940)
+ *     Alexander Nyßen (itemis AG) - filter for emulated scroll and pan gesture events (#430940)
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.ui.gestures;
@@ -67,29 +67,84 @@ public class SwtToFXGestureConverter implements GestureListener {
 
 	private State currentState;
 
-	private Listener mouseWheelEmulatedEventFilter;
+	// filter for mouse wheel event emulated from pan gesture interaction
+	private Listener emulatedMouseWheelEventFilter;
+	// filter for pan gesture events emulated from mouse wheel interaction
+	private Listener emulatedPanGestureEventFilter;
+
+	// used to keep track of the last (valid) pan gesture event
+	private Event lastPanGestureEvent;
 
 	public SwtToFXGestureConverter(final FXCanvas canvas) {
 		this.canvas = canvas;
 		this.currentState = new State(StateType.IDLE);
+
 		canvas.addGestureListener(this);
+
 		Display display = canvas.getDisplay();
+
+		// Fix for #430940: We need to register a filter for SWT.Gesture events
+		// for two purposes:
+		//
+		// 1) Sort out pan gesture events if they are only emulated from mouse
+		// wheel events (in which case - at least on the Mac - they do not seem
+		// to specify an xDirection and yDirection), as these are not
+		// transformed into valid JavaFX scroll events (x-delta and y-delta will
+		// always be 0). These will occur if the user actually uses the mouse
+		// wheel for interaction, in which case a proper JavaFX scroll event
+		// will already be created from the MouseWheel event.
+		// TODO: Check other platforms than Mac
+		//
+		// 2) Keep track of the last (valid) pan gesture event to be able to
+		// sort out mouse wheel events that are emulated from gesture events
+		// (by means of a MouseWheelListener)
+		emulatedPanGestureEventFilter = new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				if (event.widget == canvas) {
+					if (event.detail == SWT.GESTURE_PAN) {
+						if (event.xDirection == 0 && event.yDirection == 0) {
+							event.type = SWT.None;
+						} else {
+							lastPanGestureEvent = event;
+						}
+					}
+				}
+			}
+		};
+		display.addFilter(SWT.Gesture, emulatedPanGestureEventFilter);
+
 		if (display.getTouchEnabled()) {
-			// register a filter to suppress emulated scroll events that
-			// originate from mouse wheel events on devices that support touch
-			// events (see #430940)
-			mouseWheelEmulatedEventFilter = new Listener() {
+			// Fix for #430940: On touch devices, SWT seems to emulate mouse
+			// wheel events from PAN gesture events. As we already transform the
+			// original PAN gesture events into proper JavaFX scroll events
+			// (with a step-width of 5), the emulated mouse wheel events, which
+			// would also transferred into JavaFX scroll events by FXCanvas
+			// (with a step-width of 40), only disturb, which is why we want to
+			// filter them out here.
+			//
+			// As these emulated mouse wheel events cannot be differentiated
+			// from valid mouse wheel events based on their field values, use
+			// the approach to keep track of the last (valid) pan gesture event
+			// and sort out those mouse wheel events that use the same x and y
+			// position.
+			emulatedMouseWheelEventFilter = new Listener() {
 				@Override
 				public void handleEvent(Event event) {
 					if (event.widget == canvas) {
-						event.type = SWT.None;
+						if (lastPanGestureEvent != null
+								&& lastPanGestureEvent.x == event.x
+								&& lastPanGestureEvent.y == event.y) {
+							event.type = SWT.None;
+						}
 					}
 				}
 			};
 			display.addFilter(SWT.MouseVerticalWheel,
-					mouseWheelEmulatedEventFilter);
+					emulatedMouseWheelEventFilter);
 			display.addFilter(SWT.MouseHorizontalWheel,
-					mouseWheelEmulatedEventFilter);
+					emulatedMouseWheelEventFilter);
 		}
 	}
 
@@ -156,11 +211,14 @@ public class SwtToFXGestureConverter implements GestureListener {
 
 	public void dispose() {
 		Display display = canvas.getDisplay();
-		if (mouseWheelEmulatedEventFilter != null) {
+		if (emulatedPanGestureEventFilter != null) {
+			display.removeFilter(SWT.Gesture, emulatedPanGestureEventFilter);
+		}
+		if (emulatedMouseWheelEventFilter != null) {
 			display.removeFilter(SWT.MouseVerticalWheel,
-					mouseWheelEmulatedEventFilter);
+					emulatedMouseWheelEventFilter);
 			display.removeFilter(SWT.MouseHorizontalWheel,
-					mouseWheelEmulatedEventFilter);
+					emulatedMouseWheelEventFilter);
 		}
 		canvas.removeGestureListener(this);
 		canvas = null;
@@ -256,6 +314,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 		currentState.totalScrollY += event.yDirection;
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
 		// System.out.println(fxEventType + " " + screenPosition);
+
+		// only forward scroll events that are not also emulated
 		sceneListener.scrollEvent(fxEventType,
 				event.xDirection,
 				event.yDirection, // scrollX, scrollY
