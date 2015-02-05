@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - Support for focus listener notification
  *     Jan Köhnlein (itemis AG) - Support for multi-touch gestures (#427106)
  *
  *******************************************************************************/
@@ -32,9 +33,26 @@ import org.eclipse.gef4.fx.ui.gestures.SwtToFXGestureConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * A replacement of {@link FXCanvas} that offers the following additional
+ * capabilities:
+ * <ul>
+ * <li>Forwarding of SWT {@link GestureEvent}s to JavaFX (the original FXCanvas
+ * simply ignores all those events)</li>
+ * <li>Support for notifying SWT {@link FocusListener}s (the original FXCanvas
+ * will forward all focus events to the embedded JavaFX stage), so SWT
+ * {@link FocusListener} will not be notified</li>
+ * <li>Support for setting cursors via JavaFX (i.e. the cursor of the embedded
+ * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})</li>
+ * </ul>
+ *
+ * @author anyssen
+ *
+ */
 public class FXCanvasEx extends FXCanvas {
 
 	private static Map<Cursor, Integer> CURSOR_FROM_FX_TO_SWT = new HashMap<Cursor, Integer>() {
