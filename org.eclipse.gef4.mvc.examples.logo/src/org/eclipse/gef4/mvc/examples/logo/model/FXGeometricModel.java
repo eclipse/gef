@@ -347,8 +347,11 @@ public class FXGeometricModel {
 		selectionBoundsRightLine.addSourceAnchorage(topRightSelectionHandle);
 		selectionBoundsRightLine.addTargetAnchorage(bottomRightSelectionHandle);
 
-		// anchor points to letter shapes
+		// anchor g-letter shape fragments to its base shape and a point to each
+		// letter shapes
 		gDotShape.addAnchorage(gBaseShape);
+		gMiddleShape.addAnchorage(gBaseShape);
+		gTopShape.addAnchorage(gBaseShape);
 		eDotShape.addAnchorage(eShape);
 		fDotShape.addAnchorage(fShape);
 
