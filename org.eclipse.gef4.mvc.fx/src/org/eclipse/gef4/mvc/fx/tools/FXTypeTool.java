@@ -66,15 +66,20 @@ public class FXTypeTool extends AbstractTool<Node> {
 	protected Set<? extends AbstractFXTypePolicy> getTargetPolicies(
 			KeyEvent event) {
 		EventTarget target = event.getTarget();
-		if (!(target instanceof Node)) {
+		if (target instanceof Scene) {
+			return getTargetPolicies((Scene) target);
+		} else if (target instanceof Node) {
+			Scene scene = ((Node) target).getScene();
+			if (scene == null) {
+				return Collections.emptySet();
+			}
+			return getTargetPolicies(scene);
+		} else {
 			return Collections.emptySet();
 		}
+	}
 
-		Scene scene = ((Node) target).getScene();
-		if (scene == null) {
-			return Collections.emptySet();
-		}
-
+	protected Set<? extends AbstractFXTypePolicy> getTargetPolicies(Scene scene) {
 		IVisualPart<Node, ? extends Node> targetPart = null;
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
@@ -91,11 +96,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 				}
 			}
 		}
-
 		if (targetPart == null) {
 			return Collections.emptySet();
 		}
-
 		return getKeyPolicies(targetPart);
 	}
 
