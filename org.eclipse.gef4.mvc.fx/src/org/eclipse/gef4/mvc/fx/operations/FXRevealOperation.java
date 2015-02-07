@@ -21,34 +21,31 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXRevealOperation extends AbstractOperation {
 
-	private IVisualPart<Node, ? extends Node> part = null;
 	private double tx = 0d;
 	private double ty = 0d;
+
+	private IViewer<Node> viewer;
+	private ViewportModel viewportModel;
+	private IVisualPart<Node, ? extends Node> part = null;
 
 	public FXRevealOperation(IVisualPart<Node, ? extends Node> part) {
 		super("Reveal");
 		this.part = part;
-		ViewportModel viewportModel = part.getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
-		tx = viewportModel.getTranslateX();
-		ty = viewportModel.getTranslateY();
-	}
-
-	public FXRevealOperation(IVisualPart<Node, ? extends Node> part,
-			double initialTranslateX, double initialTranslateY) {
-		super("Reveal");
-		this.part = part;
-		tx = initialTranslateX;
-		ty = initialTranslateY;
+		viewer = part.getRoot().getViewer();
+		viewportModel = viewer.getAdapter(ViewportModel.class);
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		part.getRoot().getViewer().reveal(part);
+		// store the viewport translation
+		tx = viewportModel.getTranslateX();
+		ty = viewportModel.getTranslateY();
+		viewer.reveal(part);
 		return Status.OK_STATUS;
 	}
 
@@ -61,8 +58,7 @@ public class FXRevealOperation extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ViewportModel viewportModel = part.getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
+		// restore the viewport translation
 		viewportModel.setTranslateX(tx);
 		viewportModel.setTranslateY(ty);
 		return Status.OK_STATUS;
