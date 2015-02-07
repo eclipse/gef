@@ -17,6 +17,8 @@ import java.beans.PropertyChangeListener;
 
 import javafx.scene.Node;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ViewportModel;
@@ -29,12 +31,9 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt
-					.getPropertyName())) {
-				AffineTransform oldTransform = (AffineTransform) evt
-						.getOldValue();
-				AffineTransform newTransform = (AffineTransform) evt
-						.getNewValue();
+			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt.getPropertyName())) {
+				AffineTransform oldTransform = (AffineTransform) evt.getOldValue();
+				AffineTransform newTransform = (AffineTransform) evt.getNewValue();
 				double oldScale = oldTransform.getScaleX();
 				double newScale = newTransform.getScaleX();
 				if (oldScale != newScale) {
@@ -47,17 +46,14 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
-		ViewportModel viewportModel = getHost().getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
+		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
 		viewportModel.addPropertyChangeListener(viewportPropertyChangeListener);
 	}
 
 	@Override
 	public void deactivate() {
-		ViewportModel viewportModel = getHost().getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
-		viewportModel
-				.removePropertyChangeListener(viewportPropertyChangeListener);
+		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
+		viewportModel.removePropertyChangeListener(viewportPropertyChangeListener);
 		super.deactivate();
 	}
 
@@ -72,19 +68,20 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 		 * SynchronizeChildrenOnZoomBehavior which could have deactivated our
 		 * host, in which case we should not do anything.
 		 */
-		if (!getHost().isActive()) {
+		if (!isActive()) {
 			// TODO: Enhance property change mechanism to allow for easier
 			// decoupling of behaviors. For example, an event could be consumed
 			// to not notify any more listeners.
 			return;
 		}
-		getHost()
-				.getRoot()
-				.getViewer()
-				.getDomain()
-				.execute(
-						new SynchronizeContentChildrenOperation<Node>(
-								"SyncOnZoom", getHost()));
+		// execute synchronization locally (so it does not affect the undo
+		// history)
+		try {
+			new SynchronizeContentChildrenOperation<Node>("SyncOnZoom", getHost()).execute(new NullProgressMonitor(),
+					null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
