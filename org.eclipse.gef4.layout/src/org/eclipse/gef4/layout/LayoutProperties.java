@@ -246,6 +246,10 @@ public class LayoutProperties {
 		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
+	public static void setResizable(EntityLayout entity, boolean resizable) {
+		entity.setProperty(RESIZABLE_PROPERTY, resizable);
+	}
+
 	public static Boolean isMinimized(NodeLayout node) {
 		Object minimized = node.getProperty(MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
