@@ -180,8 +180,6 @@
       </markerResolutionGenerator>
    </extension>
    <!-- DOT view -->
-   <plugin>
-   </plugin>
    <extension
          point="org.eclipse.ui.views">
       <category
