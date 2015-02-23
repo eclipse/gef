@@ -10,6 +10,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration do double precision
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
+ *     Colin Sharples - contribution for Bugzilla #460569
  *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -40,6 +41,8 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  */
 public class Point implements Cloneable, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	private static Point[] eliminateDuplicates(Point... points) {
 		// sort points by x and y
 		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
@@ -47,9 +50,10 @@ public class Point implements Cloneable, Serializable {
 			public int compare(Point p1, Point p2) {
 				if (p1.x < p2.x) {
 					return -1;
-				}
-				if (p1.x == p2.x && p1.y < p2.y) {
+				} else if (p1.x == p2.x && p1.y < p2.y) {
 					return -1;
+				} else if (p1.x == p2.x && p1.y == p2.y) {
+					return 0;
 				}
 				return 1;
 			}
@@ -333,8 +337,6 @@ public class Point implements Cloneable, Serializable {
 			points[i].y += dy;
 		}
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The x value.
