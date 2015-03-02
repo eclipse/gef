@@ -27,8 +27,17 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
-	// TODO: rethink this property
+	/**
+	 * A property change event is fired as soon as {@link #activate()
+	 * activation} is finished.
+	 */
 	public static final String ACTIVATION_COMPLETE_PROPERTY = "activationComplete";
+
+	/**
+	 * This layout attribute determines if an element (node/edge) is irrelevant
+	 * for laying out, i.e. it should be filtered before laying out.
+	 */
+	public static final String ATTR_LAYOUT_IRRELEVANT = "layoutIrrelevant";
 
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part

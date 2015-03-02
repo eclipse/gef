@@ -20,10 +20,12 @@ import java.util.Map;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
+import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 
 public class GraphLayoutContext extends AbstractLayoutContext {
 
@@ -64,6 +66,23 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		pcs.firePropertyChange("hidden", 0, 1);
 	}
 
+	@Override
+	public ConnectionLayout[] getConnections() {
+		List<ConnectionLayout> connections = new ArrayList<ConnectionLayout>();
+		ConnectionLayout[] all = super.getConnections();
+		// filter out any hidden nodes
+		for (ConnectionLayout c : all) {
+			Object layoutIrrelevant = c
+					.getProperty(GraphContentPart.ATTR_LAYOUT_IRRELEVANT);
+			if (layoutIrrelevant instanceof Boolean
+					&& (Boolean) layoutIrrelevant) {
+				continue;
+			}
+			connections.add(c);
+		}
+		return connections.toArray(new ConnectionLayout[] {});
+	}
+
 	public GraphEdgeLayout getEdgeLayout(Edge edge) {
 		return edgeMap.get(edge);
 	}
@@ -88,8 +107,13 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		// filter out any hidden nodes
 		for (NodeLayout n : allNodes) {
 			Object hidden = n.getProperty(HidingModel.HIDDEN_PROPERTY);
-			// TODO: add 'pruned' property to layout model
 			if (hidden instanceof Boolean && (Boolean) hidden) {
+				continue;
+			}
+			Object layoutIrrelevant = n
+					.getProperty(GraphContentPart.ATTR_LAYOUT_IRRELEVANT);
+			if (layoutIrrelevant instanceof Boolean
+					&& (Boolean) layoutIrrelevant) {
 				continue;
 			}
 			nodes.add(n);
