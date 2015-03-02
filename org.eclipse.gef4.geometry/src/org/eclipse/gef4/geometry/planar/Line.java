@@ -1,15 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *     Colin Sharples - contribution for Bugzilla #460754
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -24,15 +25,15 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a line (or linear curve).
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Line extends BezierCurve {
 
@@ -40,7 +41,7 @@ public class Line extends BezierCurve {
 
 	/**
 	 * Constructs a new {@link Line} from the given coordinate values.
-	 * 
+	 *
 	 * @param coordinates
 	 *            A varargs of 4 doubles, providing the x and y coordinates of
 	 *            the start point, followed by those of the end point
@@ -58,7 +59,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Constructs a new {@link Line}, which connects the two {@link Point}s
 	 * given indirectly by their coordinates
-	 * 
+	 *
 	 * @param x1
 	 *            the x-coordinate of the start point
 	 * @param y1
@@ -75,7 +76,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Constructs a new {@link Line}, which connects the two {@link Point}s
 	 * given.
-	 * 
+	 *
 	 * @param points
 	 *            A varargs of two points serving as the start and end point of
 	 *            this line
@@ -91,7 +92,7 @@ public class Line extends BezierCurve {
 
 	/**
 	 * Constructs a new {@link Line} which connects the two given {@link Point}s
-	 * 
+	 *
 	 * @param p1
 	 *            the start point
 	 * @param p2
@@ -111,14 +112,14 @@ public class Line extends BezierCurve {
 		}
 
 		double distance = Math.abs(new Straight(getP1(), getP2())
-				.getSignedDistanceCCW(new Vector(p)));
+		.getSignedDistanceCCW(new Vector(p)));
 		return PrecisionUtils.equal(distance, 0) && getBounds().contains(p);
 	}
 
 	/**
 	 * Tests whether this {@link Line} is equal to the line given implicitly by
 	 * the given point coordinates.
-	 * 
+	 *
 	 * @param x1
 	 *            the x-coordinate of the start point of the line to test
 	 * @param y1
@@ -157,7 +158,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Returns the smallest {@link Rectangle} containing this {@link Line}'s
 	 * start and end point
-	 * 
+	 *
 	 * @see IGeometry#getBounds()
 	 */
 	@Override
@@ -168,7 +169,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Returns a new {@link Line}, which has the same start and end point
 	 * coordinates as this one.
-	 * 
+	 *
 	 * @return a new {@link Line} with the same start and end point coordinates
 	 */
 	@Override
@@ -181,7 +182,7 @@ public class Line extends BezierCurve {
 	 * given one, in case it exists. Note that even in case
 	 * {@link Line#intersects} returns true, there may not be a single
 	 * intersection point in case both lines overlap in more than one point.
-	 * 
+	 *
 	 * @param l
 	 *            the Line, for which to compute the intersection point
 	 * @return the single intersection point between this {@link Line} and the
@@ -255,7 +256,7 @@ public class Line extends BezierCurve {
 	 * Provides an optimized version of the
 	 * {@link BezierCurve#getIntersectionIntervalPairs(BezierCurve, Set)}
 	 * method.
-	 * 
+	 *
 	 * @param other
 	 * @param intersections
 	 * @return see
@@ -293,12 +294,23 @@ public class Line extends BezierCurve {
 		return super.getIntersections(curve);
 	}
 
+	/**
+	 * Calculates the distance between the {@link Point start} and the
+	 * {@link Point end point} of this {@link Line}.
+	 *
+	 * @see Point#getDistance(Point)
+	 * @return The distance between start and end points.
+	 */
+	public double getLength() {
+		return getP1().getDistance(getP2());
+	}
+
 	// TODO: add specialized getOverlap()
 
 	/**
 	 * Returns an array, which contains two {@link Point}s representing the
 	 * start and end points of this {@link Line}
-	 * 
+	 *
 	 * @return an array with two {@link Point}s, whose x and y coordinates match
 	 *         those of this {@link Line}'s start and end point
 	 */
@@ -326,7 +338,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Provides an optimized version of the
 	 * {@link BezierCurve#intersects(ICurve)} method.
-	 * 
+	 *
 	 * @param l
 	 * @return see {@link BezierCurve#intersects(ICurve)}
 	 */
@@ -363,7 +375,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Tests whether this {@link Line} and the given other {@link Line} overlap,
 	 * i.e. they share an infinite number of {@link Point}s.
-	 * 
+	 *
 	 * @param l
 	 *            the other {@link Line} to test for overlap with this
 	 *            {@link Line}
@@ -378,7 +390,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Initializes this {@link Line} with the given start and end point
 	 * coordinates
-	 * 
+	 *
 	 * @param x1
 	 *            the x-coordinate of the start point
 	 * @param y1
@@ -398,7 +410,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Initializes this {@link Line} with the start and end point coordinates of
 	 * the given one.
-	 * 
+	 *
 	 * @param l
 	 *            the {@link Line} whose start and end point coordinates should
 	 *            be used for initialization
@@ -412,7 +424,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Initializes this {@link Line} with the start and end point coordinates
 	 * provided by the given points
-	 * 
+	 *
 	 * @param p1
 	 *            the Point whose coordinates should be used as the start point
 	 *            coordinates of this {@link Line}
@@ -429,7 +441,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Sets the x-coordinate of the start {@link Point} of this {@link Line} to
 	 * the given value.
-	 * 
+	 *
 	 * @param x1
 	 * @return <code>this</code> for convenience
 	 */
@@ -441,7 +453,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Sets the x-coordinate of the end {@link Point} of this {@link Line} to
 	 * the given value.
-	 * 
+	 *
 	 * @param x2
 	 * @return <code>this</code> for convenience
 	 */
@@ -453,7 +465,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Sets the y-coordinate of the start {@link Point} of this {@link Line} to
 	 * the given value.
-	 * 
+	 *
 	 * @param y1
 	 * @return <code>this</code> for convenience
 	 */
@@ -465,7 +477,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Sets the y-coordinate of the end {@link Point} of this {@link Line} to
 	 * the given value.
-	 * 
+	 *
 	 * @param y2
 	 * @return <code>this</code> for convenience
 	 */
@@ -498,7 +510,7 @@ public class Line extends BezierCurve {
 	/**
 	 * Tests whether this {@link Line} and the given one share at least one
 	 * common point.
-	 * 
+	 *
 	 * @param l
 	 *            The {@link Line} to test.
 	 * @return <code>true</code> if this {@link Line} and the given one share at
