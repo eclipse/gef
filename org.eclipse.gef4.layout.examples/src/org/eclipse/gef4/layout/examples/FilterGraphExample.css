@@ -1,0 +1,19 @@
+.edge .curve {
+	-fx-stroke: grey;
+	-fx-stroke-width: 1;
+}
+
+.edge .decoration {
+	-fx-stroke: grey;
+	-fx-fill: grey;
+}
+
+.edge.red .curve {
+	-fx-stroke: red;
+	-fx-stroke-width: 3;
+}
+
+.edge.red .decoration {
+	-fx-stroke: red;
+	-fx-fill: red;
+}

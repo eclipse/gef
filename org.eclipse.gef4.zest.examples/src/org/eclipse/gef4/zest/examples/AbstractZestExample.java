@@ -63,6 +63,7 @@ public abstract class AbstractZestExample extends Application {
 			org.eclipse.gef4.graph.Node m, Object... attr) {
 		Edge edge = e(n, m, attr);
 		edge.setGraph(graph);
+		graph.getEdges().add(edge);
 		return edge;
 	}
 
@@ -79,6 +80,7 @@ public abstract class AbstractZestExample extends Application {
 	protected static org.eclipse.gef4.graph.Node n(Graph graph, Object... attr) {
 		Node node = n(attr);
 		node.setGraph(graph);
+		graph.getNodes().add(node);
 		return node;
 	}
 
