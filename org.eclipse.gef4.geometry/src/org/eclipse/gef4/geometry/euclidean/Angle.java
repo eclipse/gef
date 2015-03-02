@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *     Colin Sharples - contribution for Bugzilla #460754
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.euclidean;
 
@@ -28,22 +29,16 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * encounter an {@link Angle} object beyond 360/2pi or below 0/0
  * (degrees/radians).
  * </p>
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class Angle implements Cloneable, Serializable {
-
-	private static final long serialVersionUID = 1L;
-	private static final double DEG_TO_RAD = Math.PI / 180d;
-	private static final double RAD_TO_DEG = 180d / Math.PI;
-	private static final double RAD_180 = Math.PI;
-	private static final double RAD_360 = 2 * Math.PI;
 
 	/**
 	 * Constructs a new {@link Angle} object representing the given value. The
 	 * value is interpreted as being in degrees.
-	 * 
+	 *
 	 * @param degrees
 	 *            the angle in degrees
 	 * @return an {@link Angle} object representing the passed-in angle given in
@@ -56,7 +51,7 @@ public class Angle implements Cloneable, Serializable {
 	/**
 	 * Constructs a new {@link Angle} object representing the given value. The
 	 * value is interpreted as being in radians.
-	 * 
+	 *
 	 * @param radians
 	 *            the angle in radians
 	 * @return an {@link Angle} object representing the passed-in angle given in
@@ -65,6 +60,12 @@ public class Angle implements Cloneable, Serializable {
 	public static Angle fromRad(double radians) {
 		return new Angle(radians);
 	}
+
+	private static final long serialVersionUID = 1L;
+	private static final double DEG_TO_RAD = Math.PI / 180d;
+	private static final double RAD_TO_DEG = 180d / Math.PI;
+	private static final double RAD_180 = Math.PI;
+	private static final double RAD_360 = 2 * Math.PI;
 
 	private double rad = 0d;
 
@@ -76,7 +77,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Constructs a new {@link Angle} object with the given value in radians.
-	 * 
+	 *
 	 * @param rad
 	 *            the angle's value
 	 */
@@ -94,7 +95,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Returns the value of this {@link Angle} object in degrees.
-	 * 
+	 *
 	 * @return this {@link Angle}'s value in degrees.
 	 */
 	public double deg() {
@@ -126,7 +127,7 @@ public class Angle implements Cloneable, Serializable {
 	/**
 	 * Returns the sum of this and the given other {@link Angle} object as a new
 	 * {@link Angle} object.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link Angle} to add
 	 * @return the sum of this and the given other {@link Angle} as a new
@@ -138,7 +139,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Creates and returns a copy of this {@link Angle}.
-	 * 
+	 *
 	 * @return a copy of this {@link Angle}
 	 */
 	public Angle getCopy() {
@@ -148,7 +149,7 @@ public class Angle implements Cloneable, Serializable {
 	/**
 	 * Returns a new {@link Angle} object representing this {@link Angle}
 	 * multiplied by the given factor.
-	 * 
+	 *
 	 * @param factor
 	 *            the multiplication factor
 	 * @return a new {@link Angle} object representing this {@link Angle}
@@ -161,7 +162,7 @@ public class Angle implements Cloneable, Serializable {
 	/**
 	 * Returns the opposite {@link Angle} of this {@link Angle} in a full circle
 	 * as a new {@link Angle} object.
-	 * 
+	 *
 	 * @return the opposite {@link Angle} of this {@link Angle} in a full circle
 	 *         as a new {@link Angle} object
 	 */
@@ -172,12 +173,23 @@ public class Angle implements Cloneable, Serializable {
 	/**
 	 * Returns the opposite {@link Angle} of this {@link Angle} in a semi-circle
 	 * as a new {@link Angle} object.
-	 * 
+	 *
 	 * @return the opposite {@link Angle} of this {@link Angle} in a semi-circle
 	 *         as a new {@link Angle} object
 	 */
 	public Angle getOppositeSemi() {
 		return Angle.fromRad(RAD_180 - rad);
+	}
+
+	/**
+	 * Returns the reverse {@link Angle} of this {@link Angle} in a full circle
+	 * as a new {@link Angle} object.
+	 *
+	 * @return the reverse {@link Angle} of this {@link Angle} in a full circle
+	 *         as a new {@link Angle} object
+	 */
+	public Angle getReverse() {
+		return Angle.fromRad(rad + RAD_180);
 	}
 
 	@Override
@@ -198,7 +210,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Returns this {@link Angle}'s value in radians.
-	 * 
+	 *
 	 * @return This {@link Angle}'s value in radians.
 	 */
 	public double rad() {
@@ -207,7 +219,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Sets this {@link Angle}'s value to the passed-in value in degrees.
-	 * 
+	 *
 	 * @param degrees
 	 *            the angle's value in degrees
 	 * @return <code>this</code> for convenience
@@ -220,7 +232,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Sets this {@link Angle}'s value to the passed-in value in radians.
-	 * 
+	 *
 	 * @param radians
 	 *            the angle's value in radians
 	 * @return <code>this</code> for convenience
