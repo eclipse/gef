@@ -82,8 +82,8 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	public List<Object> getContentChildren() {
 		List<Object> children = new ArrayList<Object>();
-		children.addAll(getContent().getNodes());
 		children.addAll(getContent().getEdges());
+		children.addAll(getContent().getNodes());
 		return children;
 	}
 
