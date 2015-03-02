@@ -17,6 +17,7 @@ package org.eclipse.gef4.geometry.planar;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.projective.Vector3D;
@@ -175,6 +176,29 @@ public class Line extends BezierCurve {
 	@Override
 	public Line getCopy() {
 		return new Line(getP1(), getP2());
+	}
+
+	/**
+	 * Returns the counter-clockwise angle between the x axis and this
+	 * {@link Line}.
+	 *
+	 * @return Returns the counter-clockwise angle between the x axis and this
+	 *         {@link Line}.
+	 */
+	public Angle getDirectionCCW() {
+		Point start = getP1();
+		Point end = getP2();
+		return Angle.fromRad(Math.atan2(end.y - start.y, end.x - start.y));
+	}
+
+	/**
+	 * Returns the clockwise angle between the x axis and this {@link Line}.
+	 *
+	 * @return Returns the clockwise angle between the x axis and this
+	 *         {@link Line}.
+	 */
+	public Angle getDirectionCW() {
+		return getDirectionCCW().getOppositeFull();
 	}
 
 	/**

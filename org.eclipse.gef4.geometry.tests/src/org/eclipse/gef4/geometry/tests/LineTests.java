@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2012 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (Research Group Software Construction, RWTH Aachen University) - contribution for Bugzilla 245182
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -28,10 +28,10 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link Line}.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class LineTests {
 
@@ -120,6 +120,62 @@ public class LineTests {
 		bounds = l1.getBounds();
 		assertTrue(bounds.getBottomLeft().equals(l1.getP1()));
 		assertTrue(bounds.getTopRight().equals(l1.getP2()));
+	}
+
+	@Test
+	public void test_getDirectionCCW() {
+		// build lines by stepping 45deg in CCW order around the origin
+		Line line = new Line(0, 0, 10, 0);
+		assertTrue(PrecisionUtils.equal(0, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, 10, 10);
+		assertTrue(PrecisionUtils.equal(45, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, 0, 10);
+		assertTrue(PrecisionUtils.equal(90, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, -10, 10);
+		assertTrue(PrecisionUtils.equal(135, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, -10, 0);
+		assertTrue(PrecisionUtils.equal(180, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, -10, -10);
+		assertTrue(PrecisionUtils.equal(225, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, 0, -10);
+		assertTrue(PrecisionUtils.equal(270, line.getDirectionCCW().deg()));
+
+		line = new Line(0, 0, 10, -10);
+		assertTrue(PrecisionUtils.equal(315, line.getDirectionCCW().deg()));
+	}
+
+	@Test
+	public void test_getDirectionCW() {
+		// build lines by stepping 45deg in CW order around the origin
+		Line line = new Line(0, 0, 10, 0);
+		assertTrue(PrecisionUtils.equal(0, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, 10, -10);
+		assertTrue(PrecisionUtils.equal(45, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, 0, -10);
+		assertTrue(PrecisionUtils.equal(90, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, -10, -10);
+		assertTrue(PrecisionUtils.equal(135, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, -10, 0);
+		assertTrue(PrecisionUtils.equal(180, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, -10, 10);
+		assertTrue(PrecisionUtils.equal(225, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, 0, 10);
+		assertTrue(PrecisionUtils.equal(270, line.getDirectionCW().deg()));
+
+		line = new Line(0, 0, 10, 10);
+		assertTrue(PrecisionUtils.equal(315, line.getDirectionCW().deg()));
 	}
 
 	@Test
@@ -301,10 +357,10 @@ public class LineTests {
 		Line bigX = new Line(new Point(-1000, 0), new Point(1000, 0));
 		Line impreciselyParallel = new Line(new Point(-1000,
 				-UNRECOGNIZABLE_FRACTION), new Point(1000,
-				UNRECOGNIZABLE_FRACTION));
+						UNRECOGNIZABLE_FRACTION));
 		assertTrue(new Vector(bigX.getP1(), bigX.getP2())
-				.isParallelTo(new Vector(impreciselyParallel.getP1(),
-						impreciselyParallel.getP2())));
+		.isParallelTo(new Vector(impreciselyParallel.getP1(),
+				impreciselyParallel.getP2())));
 		assertTrue(bigX.touches(impreciselyParallel));
 	}
 
