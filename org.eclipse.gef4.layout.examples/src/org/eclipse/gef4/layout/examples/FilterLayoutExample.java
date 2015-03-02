@@ -24,14 +24,14 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 
-public class FilterGraphExample extends AbstractZestExample {
+public class FilterLayoutExample extends AbstractZestExample {
 
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
 
-	public FilterGraphExample() {
-		super("GEF4 Layouts - Filter Graph Example");
+	public FilterLayoutExample() {
+		super("GEF4 Layouts - Filter Layout Example");
 	}
 
 	@Override

@@ -29,7 +29,7 @@ public class SugiyamaLayoutExample extends AbstractZestExample {
 	}
 
 	public SugiyamaLayoutExample() {
-		super("GEF4 Layouts - Radial Layout Example");
+		super("GEF4 Layouts - Sugiyama Layout Example");
 	}
 
 	@Override
