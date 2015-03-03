@@ -88,7 +88,7 @@ public class NodeLayoutBehaviorTests {
 							Group visual = super.createVisual();
 							if (size != null) {
 								// ensure we are resizable
-								getChildrenPane().setPrefWidth(10);
+								getNestedChildrenPane().setPrefWidth(10);
 								visual.resize(size.width, size.height);
 							}
 							return visual;

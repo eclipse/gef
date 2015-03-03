@@ -54,6 +54,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class NodeContentPart extends AbstractFXContentPart<Group> {
 
+	/**
+	 * JavaFX Node displaying a small icon representing a nested graph.
+	 */
 	public static class NestedGraphIcon extends Group {
 		{
 			Circle n0 = node(-20, -20);
@@ -77,33 +80,38 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 	}
 
+	// defaults
+	protected static final double DEFAULT_PADDING = 5;
+	protected static final double ZOOMLEVEL_SHOW_NESTED_GRAPH = 2;
+	protected static final double DEFAULT_CHILDREN_PANE_WIDTH = 300;
+	protected static final double DEFAULT_CHILDREN_PANE_HEIGHT = 300;
+	protected static final double CHILDREN_PANE_WIDTH_THRESHOLD = 100;
+	protected static final double CHILDREN_PANE_HEIGHT_THRESHOLD = 100;
+
+	// CSS classes for styling nodes
 	public static final String CSS_CLASS = "node";
+
+	// processed attributes
 	public static final String ATTR_CLASS = "class";
-	public static final String ATTR_ID = "id";
+	public static final String ATTR_ID_0 = Attr.Key.ID.toString();
+	public static final String ATTR_ID_1 = "id";
 	public static final String ATTR_STYLE = "style";
 	public static final String ATTR_IMAGE = "image";
 	public static final String ATTR_TOOLTIP = "tooltip";
 	public static final String ATTR_FISHEYE = "fisheye";
+	public static final String ATTR_LABEL = Attr.Key.LABEL.toString();
 	public static final String DEFAULT_LABEL = "-";
 
-	public static final double DEFAULT_CHILDREN_PANE_WIDTH = 300;
-	public static final double DEFAULT_CHILDREN_PANE_HEIGHT = 300;
-
-	public static final double CHILDREN_PANE_WIDTH_THRESHOLD = 100;
-	public static final double CHILDREN_PANE_HEIGHT_THRESHOLD = 100;
-
-	protected Rectangle box = new Rectangle();
-	protected Text text = new Text();
-	protected ImageView imageView = new ImageView();
-	protected double padding = 5;
-	protected Tooltip tooltipNode;
-	private StackPane contentStackPane;
-	private Pane childrenPane;
-	private HBox hbox;
-	private VBox vbox;
-	private NestedGraphIcon nestedGraphIcon;
+	private Text labelText;
+	private ImageView iconImageView;
+	private Node nestedGraphIcon;
+	private StackPane nestedContentStackPane;
+	private Pane nestedChildrenPane;
 	private int originalIndex = -1;
 	private Bounds originalBounds = null;
+	private Tooltip tooltipNode;
+	private HBox hbox;
+	private VBox vbox;
 
 	private EventHandler<? super MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -119,6 +127,9 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 							event.getSceneY())) {
 						// unhover the visual by making it mouse transparent
 						getVisual().setMouseTransparent(true);
+						// this will result in a MOUSE_EXITED event being fired,
+						// which will lead to a refreshVisual() call, which will
+						// update the visualization
 					}
 				}
 			}
@@ -128,7 +139,83 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
-		childrenPane.getChildren().add(index, child.getVisual());
+		getNestedChildrenPane().getChildren().add(index, child.getVisual());
+	}
+
+	protected void autosizeNodeVisual() {
+		hbox.autosize();
+		vbox.autosize();
+	}
+
+	protected Pane createNestedContentPane() {
+		Pane pane = new Pane();
+		pane.setStyle("-fx-background-color: white;");
+		pane.setScaleX(0.25);
+		pane.setScaleY(0.25);
+		pane.setPrefSize(0, 0);
+		return pane;
+	}
+
+	protected StackPane createNestedContentStackPane(Pane nestedContentPane) {
+		StackPane stackPane = new StackPane();
+		stackPane.getChildren().add(new Group(nestedContentPane));
+		return stackPane;
+	}
+
+	private NestedGraphIcon createNestedGraphIcon() {
+		return new NestedGraphIcon();
+	}
+
+	/**
+	 * Creates the node visual. The given {@link ImageView}, {@link Text}, and
+	 * {@link StackPane} are inserted into that node visual to display the
+	 * node's icon, label and nested children, respectively. The node visual
+	 * needs to be inserted into the given {@link Group}.
+	 *
+	 * @param group
+	 *            This node's visual.
+	 * @param iconImageView
+	 *            The {@link ImageView} displaying the node's icon.
+	 * @param labelText
+	 *            The {@link Text} displaying the node's label.
+	 * @param nestedContentStackPane
+	 *            The {@link StackPane} displaying the node's nested content.
+	 */
+	protected void createNodeVisual(final Group group,
+			final ImageView iconImageView, final Text labelText,
+			final StackPane nestedContentStackPane) {
+		// put image and text next to each other at the top of the node
+		hbox = new HBox();
+		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		hbox.getChildren().addAll(iconImageView, labelText);
+
+		// put nested content stack pane below image and text
+		vbox = new VBox();
+		vbox.setMouseTransparent(true);
+		vbox.getChildren().addAll(hbox, nestedContentStackPane);
+
+		// create box for border and background
+		final Rectangle box = new Rectangle();
+		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
+				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
+		box.setStroke(new Color(0, 0, 0, 1));
+
+		// expand box depending on content size
+		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+			@Override
+			public void changed(ObservableValue<? extends Bounds> arg0,
+					Bounds arg1, Bounds arg2) {
+				vbox.setTranslateX(getPadding());
+				vbox.setTranslateY(getPadding());
+				box.setWidth(vbox.getWidth() + 2 * getPadding());
+				box.setHeight(vbox.getHeight() + 2 * getPadding());
+				labelText.setTranslateX(vbox.getWidth() / 2
+						- labelText.getLayoutBounds().getWidth() / 2);
+			}
+		});
+
+		// place the box below the other visuals
+		group.getChildren().addAll(box, vbox);
 	}
 
 	@Override
@@ -138,7 +225,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			@Override
 			public boolean isResizable() {
 				// every node is resizable when it contains a graph
-				return childrenPane.getPrefWidth() != 0;
+				return isNesting();
 			}
 
 			@Override
@@ -149,83 +236,11 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 				// compute delta size, based on layout bounds
 				Bounds layoutBounds = getLayoutBounds();
-				double dw = w - layoutBounds.getWidth();
-				double dh = h - layoutBounds.getHeight();
-
-				// compute new size, taking into account the childrenPane scale
-				double newWidth = childrenPane.getPrefWidth() + dw * 1
-						/ childrenPane.getScaleX();
-				double newHeight = childrenPane.getPrefHeight() + dh * 1
-						/ childrenPane.getScaleY();
-
-				// do not resize below threshold
-				if (newWidth < CHILDREN_PANE_WIDTH_THRESHOLD) {
-					newWidth = CHILDREN_PANE_WIDTH_THRESHOLD;
-				}
-				if (newHeight < CHILDREN_PANE_HEIGHT_THRESHOLD) {
-					newHeight = CHILDREN_PANE_HEIGHT_THRESHOLD;
-				}
-
-				// perform the resize
-				childrenPane.setPrefSize(newWidth, newHeight);
-				childrenPane.resize(newWidth, newHeight);
-
-				// layout other visuals
-				hbox.autosize();
-				vbox.autosize();
+				resizeNestedGraphArea(w - layoutBounds.getWidth(), h
+						- layoutBounds.getHeight());
 			}
 		};
-		group.setManaged(false);
-		group.setAutoSizeChildren(false);
-		hbox = new HBox();
-		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		hbox.getChildren().addAll(imageView, text);
-		vbox = new VBox();
-		vbox.setMouseTransparent(true);
-		contentStackPane = new StackPane();
-		childrenPane = new Pane();
-		childrenPane.setStyle("-fx-background-color: white;");
-		childrenPane.setScaleX(0.25);
-		childrenPane.setScaleY(0.25);
-		childrenPane.setPrefSize(0, 0);
-		contentStackPane.getChildren().add(new Group(childrenPane));
-		vbox.getChildren().addAll(hbox, contentStackPane);
-		group.getChildren().addAll(box, vbox);
-
-		// box, label, image
-		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
-				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
-		box.setStroke(new Color(0, 0, 0, 1));
-		text.setTextOrigin(VPos.TOP);
-		text.setText(DEFAULT_LABEL);
-		ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable,
-					Bounds oldBounds, Bounds newBounds) {
-				hbox.autosize();
-				vbox.autosize();
-			}
-		};
-		text.boundsInLocalProperty().addListener(boundsChangeListener);
-		imageView.setImage(null);
-		imageView.boundsInLocalProperty().addListener(boundsChangeListener);
-		childrenPane.boundsInLocalProperty().addListener(boundsChangeListener);
-
-		// layout
-		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-			@Override
-			public void changed(ObservableValue<? extends Bounds> arg0,
-					Bounds arg1, Bounds arg2) {
-				vbox.setTranslateX(padding);
-				vbox.setTranslateY(padding);
-				box.setWidth(vbox.getWidth() + 2 * padding);
-				box.setHeight(vbox.getHeight() + 2 * padding);
-				text.setTranslateX(vbox.getWidth() / 2
-						- text.getLayoutBounds().getWidth() / 2);
-			}
-		});
-
-		// orient this node at its center
+		// orient at its center
 		group.translateXProperty().bind(new DoubleBinding() {
 			{
 				bind(group.layoutBoundsProperty());
@@ -246,6 +261,37 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 				return -group.getLayoutBounds().getHeight() / 2;
 			}
 		});
+		// disable automatic layout
+		group.setManaged(false);
+		group.setAutoSizeChildren(false);
+
+		nestedChildrenPane = createNestedContentPane();
+		nestedContentStackPane = createNestedContentStackPane(nestedChildrenPane);
+
+		// initialize image view
+		iconImageView = new ImageView();
+		iconImageView.setImage(null);
+
+		// initialize text
+		labelText = new Text();
+		labelText.setTextOrigin(VPos.TOP);
+		labelText.setText(DEFAULT_LABEL);
+
+		// build node visual
+		createNodeVisual(group, iconImageView, labelText,
+				nestedContentStackPane);
+
+		// trigger a re-layout when the bounds of any "data" node changes
+		ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldBounds, Bounds newBounds) {
+				autosizeNodeVisual();
+			}
+		};
+		for (Node n : getDataDependentNodes()) {
+			n.boundsInLocalProperty().addListener(boundsChangeListener);
+		}
 
 		return group;
 	}
@@ -256,29 +302,115 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			throw new IllegalStateException();
 		}
 
-		// set CSS properties
+		// set CSS class
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
 		Map<String, Object> attrs = getContent().getAttrs();
 		if (attrs.containsKey(ATTR_CLASS)) {
-			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
+			refreshCssClass(visual, (String) attrs.get(ATTR_CLASS));
 		}
-		if (attrs.containsKey(ATTR_ID)) {
-			visual.setId((String) attrs.get(ATTR_ID));
+
+		// set CSS id
+		String id = null;
+		if (attrs.containsKey(ATTR_ID_0)) {
+			id = (String) attrs.get(ATTR_ID_0);
 		}
+		if (attrs.containsKey(ATTR_ID_1)) {
+			id = (String) attrs.get(ATTR_ID_1);
+		}
+		visual.setId(id);
+
+		// set CSS style
 		if (attrs.containsKey(ATTR_STYLE)) {
 			visual.setStyle((String) attrs.get(ATTR_STYLE));
 		}
 
 		// determine label
-		Object label = attrs.get(Attr.Key.LABEL.toString());
+		Object label = attrs.get(ATTR_LABEL);
 		// use id if no label is set
 		if (label == null) {
-			label = attrs.get(Attr.Key.ID.toString());
+			label = id;
 		}
+		// use the the DEFAULT_LABEL if no label is set
 		String str = label instanceof String ? (String) label
 				: label == null ? DEFAULT_LABEL : label.toString();
+		// eventually let the fisheye mode trim the label
+		str = refreshFisheye(visual, attrs, str);
+		refreshLabel(visual, str);
 
+		refreshIcon(visual, attrs.get(ATTR_IMAGE));
+		refreshNestedGraphArea(visual, isNesting());
+		refreshTooltip(visual, attrs.get(ATTR_TOOLTIP));
+	}
+
+	@Override
+	public org.eclipse.gef4.graph.Node getContent() {
+		return (org.eclipse.gef4.graph.Node) super.getContent();
+	}
+
+	@Override
+	public List<? extends Object> getContentChildren() {
+		Graph nestedGraph = getContent().getNestedGraph();
+		if (nestedGraph == null) {
+			return Collections.emptyList();
+		}
+		// only show children when zoomed in
+		Transform tx = getVisual().getLocalToSceneTransform();
+		double scale = JavaFX2Geometry.toAffineTransform(tx).getScaleX();
+		if (scale > ZOOMLEVEL_SHOW_NESTED_GRAPH) {
+			hideNestedGraphIcon();
+			return Collections.singletonList(nestedGraph);
+		}
+		// show an icon as a replacement when the zoom threshold is not reached
+		showNestedGraphIcon();
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Returns all "data" nodes, i.e. nodes which display any node data. These
+	 * nodes will change when the node's data changes. Therefore, the node's
+	 * layout needs to be refreshed when any of these "data" nodes changes.
+	 *
+	 * @return All nodes that directly display any node data.
+	 */
+	protected Node[] getDataDependentNodes() {
+		return new Node[] { labelText, iconImageView, nestedContentStackPane };
+	}
+
+	public Pane getNestedChildrenPane() {
+		return nestedChildrenPane;
+	}
+
+	protected StackPane getNestedContentStackPane() {
+		return nestedContentStackPane;
+	}
+
+	protected Node getNestedGraphIcon() {
+		return nestedGraphIcon;
+	}
+
+	protected double getPadding() {
+		return DEFAULT_PADDING;
+	}
+
+	protected void hideNestedGraphIcon() {
+		if (getNestedGraphIcon() != null) {
+			getNestedContentStackPane().getChildren().remove(
+					getNestedGraphIcon());
+			setNestedGraphIcon(null);
+		}
+	}
+
+	protected boolean isNesting() {
+		return getContent().getNestedGraph() != null;
+	}
+
+	private void refreshCssClass(Group visual, String cssClass) {
+		visual.getStyleClass().add(cssClass);
+	}
+
+	protected String refreshFisheye(Group visual, Map<String, Object> attrs,
+			String str) {
 		// limit label to first letter when in fisheye mode (and not hovered)
 		Object fisheye = attrs.get(ATTR_FISHEYE);
 		if (fisheye instanceof Boolean && (Boolean) fisheye) {
@@ -307,73 +439,58 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			restoreZOrder();
 			visual.removeEventHandler(MouseEvent.ANY, mouseHandler);
 		}
-		text.setText(str);
+		return str;
+	}
 
-		// set image
-		Object imageFileUrl = attrs.get(ATTR_IMAGE);
+	protected void refreshIcon(Group visual, Object imageFileUrl) {
 		if (imageFileUrl instanceof String) {
-			imageView.setImage(new Image((String) imageFileUrl));
+			iconImageView.setImage(new Image((String) imageFileUrl));
 		}
+	}
 
-		// show children when we have a nested graph
-		if (getContent().getNestedGraph() != null) {
-			if (childrenPane.getPrefWidth() == 0
-					&& childrenPane.getPrefHeight() == 0) {
-				childrenPane.setPrefSize(DEFAULT_CHILDREN_PANE_WIDTH,
+	protected void refreshLabel(Group visual, String str) {
+		labelText.setText(str);
+	}
+
+	/**
+	 * When this node has a nested graph, space is reserved for it, so that the
+	 * transition from an icon to the real graph will not change the node's
+	 * size.
+	 *
+	 * @param isNesting
+	 *            <code>true</code> if this node has a nested graph, otherwise
+	 *            <code>false</code>.
+	 */
+	protected void refreshNestedGraphArea(Group visual, boolean isNesting) {
+		Pane nestedContentPane = getNestedChildrenPane();
+		if (isNesting) {
+			if (nestedContentPane.getPrefWidth() == 0
+					&& nestedContentPane.getPrefHeight() == 0) {
+				// reserve space
+				nestedContentPane.setPrefSize(DEFAULT_CHILDREN_PANE_WIDTH,
 						DEFAULT_CHILDREN_PANE_HEIGHT);
-				childrenPane.resize(DEFAULT_CHILDREN_PANE_WIDTH,
+				nestedContentPane.resize(DEFAULT_CHILDREN_PANE_WIDTH,
 						DEFAULT_CHILDREN_PANE_HEIGHT);
 			}
 		} else {
-			if (childrenPane.getPrefWidth() != 0
-					|| childrenPane.getPrefHeight() != 0) {
-				childrenPane.setPrefSize(0, 0);
-				childrenPane.resize(0, 0);
+			if (nestedContentPane.getPrefWidth() != 0
+					|| nestedContentPane.getPrefHeight() != 0) {
+				// no nested graph => do not waste space
+				nestedContentPane.setPrefSize(0, 0);
+				nestedContentPane.resize(0, 0);
 			}
 		}
+	}
 
-		// set tooltip
+	protected void refreshTooltip(Group visual, Object tooltip) {
 		if (tooltipNode != null) {
 			Tooltip.uninstall(visual, tooltipNode);
 			tooltipNode = null;
 		}
-		Object tooltip = attrs.get(ATTR_TOOLTIP);
 		if (tooltip instanceof String) {
 			tooltipNode = new Tooltip((String) tooltip);
-			Tooltip.install(getVisual(), tooltipNode);
+			Tooltip.install(visual, tooltipNode);
 		}
-	}
-
-	public Pane getChildrenPane() {
-		return childrenPane;
-	}
-
-	@Override
-	public org.eclipse.gef4.graph.Node getContent() {
-		return (org.eclipse.gef4.graph.Node) super.getContent();
-	}
-
-	@Override
-	public List<? extends Object> getContentChildren() {
-		Graph nestedGraph = getContent().getNestedGraph();
-		if (nestedGraph == null) {
-			return Collections.emptyList();
-		}
-		// only show children when zoomed in
-		Transform tx = getVisual().getLocalToSceneTransform();
-		double scale = JavaFX2Geometry.toAffineTransform(tx).getScaleX();
-		if (scale > 2) {
-			if (nestedGraphIcon != null) {
-				contentStackPane.getChildren().remove(nestedGraphIcon);
-				nestedGraphIcon = null;
-			}
-			return Collections.singletonList(nestedGraph);
-		}
-		if (nestedGraphIcon == null) {
-			nestedGraphIcon = new NestedGraphIcon();
-			contentStackPane.getChildren().add(nestedGraphIcon);
-		}
-		return Collections.emptyList();
 	}
 
 	@Override
@@ -381,23 +498,75 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		super.registerAtVisualPartMap(viewer, visual);
 		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
 				.getVisualPartMap();
-		visualPartMap.put(box, this);
+		visualPartMap.put(getVisual().getChildren().get(0), this);
 	}
 
 	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
-		childrenPane.getChildren().remove(index);
+		getNestedChildrenPane().getChildren().remove(index);
+	}
+
+	/**
+	 * Resizes the area for the graph nested in this node.
+	 *
+	 * @param dw
+	 *            Delta width.
+	 * @param dh
+	 *            Delta height.
+	 */
+	protected void resizeNestedGraphArea(double dw, double dh) {
+		// compute new size, taking into account the childrenPane scale
+		Pane nestedContentPane = getNestedChildrenPane();
+		double newWidth = nestedContentPane.getPrefWidth() + dw * 1
+				/ nestedContentPane.getScaleX();
+		double newHeight = nestedContentPane.getPrefHeight() + dh * 1
+				/ nestedContentPane.getScaleY();
+
+		// do not resize below threshold
+		if (newWidth < CHILDREN_PANE_WIDTH_THRESHOLD) {
+			newWidth = CHILDREN_PANE_WIDTH_THRESHOLD;
+		}
+		if (newHeight < CHILDREN_PANE_HEIGHT_THRESHOLD) {
+			newHeight = CHILDREN_PANE_HEIGHT_THRESHOLD;
+		}
+
+		// compute relocation (node is oriented at center)
+		double oldWidth = nestedContentPane.getWidth();
+		double oldHeight = nestedContentPane.getHeight();
+		dw = newWidth - oldWidth;
+		dh = newHeight - oldHeight;
+		double dx = nestedContentPane.getScaleX() * dw / 2;
+		double dy = nestedContentPane.getScaleY() * dh / 2;
+
+		// perform the resize
+		nestedContentPane.setPrefSize(newWidth, newHeight);
+		nestedContentPane.resize(newWidth, newHeight);
+
+		// perform the relocation
+		getVisual().setLayoutX(getVisual().getLayoutX() + dx);
+		getVisual().setLayoutY(getVisual().getLayoutY() + dy);
 	}
 
 	private void restoreZOrder() {
 		if (originalIndex >= 0) {
 			getParent().reorderChild(this, originalIndex);
 		}
-		// make the visual hoverable by making it opaque for mouse events
+		// make the visual hoverable by making it opaque for mouse events again
 		getVisual().setMouseTransparent(false);
-		// clear original bounds, so that they cat recomputed
+		// clear original bounds, so that they are recomputed
 		originalBounds = null;
+	}
+
+	protected void setNestedGraphIcon(Node nestedGraphIcon) {
+		this.nestedGraphIcon = nestedGraphIcon;
+	}
+
+	protected void showNestedGraphIcon() {
+		if (getNestedGraphIcon() == null) {
+			setNestedGraphIcon(createNestedGraphIcon());
+			getNestedContentStackPane().getChildren().add(getNestedGraphIcon());
+		}
 	}
 
 	@Override
@@ -406,7 +575,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		super.unregisterFromVisualPartMap(viewer, visual);
 		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
 				.getVisualPartMap();
-		visualPartMap.remove(box);
+		visualPartMap.remove(getVisual().getChildren().get(0));
 	}
 
 }

@@ -148,7 +148,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			 * Our graph is nested inside a node of another graph, therefore we
 			 * listen to changes of that node's layout-bounds.
 			 */
-			Node visual = getNestingPart().getChildrenPane();
+			Node visual = getNestingPart().getNestedChildrenPane();
 			visual.layoutBoundsProperty().addListener(
 					nestingVisualLayoutBoundsChangeListener);
 			Bounds layoutBounds = visual.getLayoutBounds();
