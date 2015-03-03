@@ -30,10 +30,16 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 
 public class SpringLayoutProgressExample extends AbstractZestExample {
 
+	/**
+	 * The ManualSpringLayoutAlgorithm does not perform full layout passes, so
+	 * that we can use the {@link #performNIteration(int)} method to gradually
+	 * apply the layout.
+	 */
 	public static class ManualSpringLayoutAlgorithm extends
 			SpringLayoutAlgorithm {
 		@Override
@@ -41,8 +47,16 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 			// No-op
 		}
 
-		public void applyLayoutNow() {
-			super.applyLayout(true);
+		@Override
+		public void setLayoutContext(LayoutContext context) {
+			// This method is called before performing a layout pass, for
+			// example, when the viewer is resized.
+			if (getLayoutContext() != context) {
+				// The super call will place the nodes randomly. That's why we
+				// only do this when the context is replaced, i.e. for the first
+				// layout pass.
+				super.setLayoutContext(context);
+			}
 		}
 	}
 
