@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
+import javafx.scene.Node;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -21,7 +22,6 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -46,7 +46,7 @@ public abstract class FXView extends ViewPart {
 	@Inject(optional = true)
 	private ISelectionProvider selectionProvider;
 
-	private SelectionForwarder selectionForwarder;
+	private SelectionForwarder<Node> selectionForwarder;
 
 	private FXCanvas canvas = null;
 
@@ -80,18 +80,17 @@ public abstract class FXView extends ViewPart {
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder(selectionProvider);
-			getViewer().getAdapter(SelectionModel.class)
-					.addPropertyChangeListener(selectionForwarder);
+			selectionForwarder = new SelectionForwarder<Node>(
+					selectionProvider, getViewer());
 		}
 	}
 
 	@Override
 	public void dispose() {
 		// unregister listener to provide selections
-		if (selectionProvider != null) {
-			getViewer().getAdapter(SelectionModel.class)
-					.removePropertyChangeListener(selectionForwarder);
+		if (selectionForwarder != null) {
+			selectionForwarder.dispose();
+			selectionForwarder = null;
 		}
 
 		domain.deactivate();
