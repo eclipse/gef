@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.examples.graph.ui.view;
 import org.eclipse.gef4.zest.examples.graph.ZestGraphExample;
 import org.eclipse.gef4.zest.examples.graph.ZestGraphExampleModule;
 import org.eclipse.gef4.zest.examples.graph.ui.ZestGraphExampleUiModule;
-import org.eclipse.gef4.zest.fx.ui.view.ZestFxUiView;
+import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;

@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.ui.view;
+package org.eclipse.gef4.zest.fx.ui.parts;
 
 import java.util.ArrayList;
 import java.util.List;

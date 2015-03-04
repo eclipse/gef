@@ -38,7 +38,7 @@ import org.eclipse.gef4.internal.dot.DotDrawer;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
-import org.eclipse.gef4.zest.fx.ui.view.ZestFxUiView;
+import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
