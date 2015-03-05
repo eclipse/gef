@@ -9,9 +9,9 @@
 package org.eclipse.gef4.dot.examples;
 
 import org.eclipse.gef4.dot.DotExport;
+import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 
 public final class DotExportExample {
@@ -19,17 +19,16 @@ public final class DotExportExample {
 	public static void main(final String[] args) {
 		/* Set up a directed graph with a single connection: */
 		Graph.Builder graph = new Graph.Builder();
-		Node node1 = new Node.Builder().attr(Attr.Key.ID.toString(), "1")
-				.attr(Attr.Key.LABEL.toString(), "Node 1").build();
-		Node node2 = new Node.Builder().attr(Attr.Key.ID.toString(), "2")
-				.attr(Attr.Key.LABEL.toString(), "Node 2").build();
+		Node node1 = new Node.Builder().attr(DotProperties.NODE_ID, "1")
+				.attr(DotProperties.NODE_LABEL, "Node 1").build();
+		Node node2 = new Node.Builder().attr(DotProperties.NODE_ID, "2")
+				.attr(DotProperties.NODE_LABEL, "Node 2").build();
 		Edge edge = new Edge.Builder(node1, node2)
-		.attr(Attr.Key.LABEL.toString(), "A dotted edge")
-		.attr(Attr.Key.EDGE_STYLE.toString(), Graph.Attr.Value.LINE_DOT)
+		.attr(DotProperties.EDGE_LABEL, "A dotted edge")
+		.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
 		.build();
-		graph.attr(Graph.Attr.Key.GRAPH_TYPE.toString(),
-				Graph.Attr.Value.GRAPH_DIRECTED).nodes(node1, node2)
-				.edges(edge);
+		graph.attr(DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
+				.nodes(node1, node2).edges(edge);
 
 		/* Export the graph to a DOT string or a DOT file: */
 		DotExport dotExport = new DotExport(graph.build());

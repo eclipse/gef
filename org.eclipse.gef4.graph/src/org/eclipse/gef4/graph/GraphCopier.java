@@ -8,11 +8,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Imports the content of a GEF4 graph generated from DOT into an existing GEF4
  * graph.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
  * @author anyssen
  */
@@ -21,15 +25,69 @@ package org.eclipse.gef4.graph;
 final public class GraphCopier {
 
 	private Graph sourceGraph;
+	private String attributeNameForId = "ID";
 
 	/**
 	 * @param sourceGraph
 	 *            The Zest source graph to import into another graph. Note that
 	 *            this will only support a subset of the graph attributes, as it
 	 *            is used for import of Zest graphs created from DOT input.
+	 * @param attributeNameForId
+	 *            The name of the attribute that stores an identification value
+	 *            for nodes.
 	 */
-	public GraphCopier(Graph sourceGraph) {
+	public GraphCopier(Graph sourceGraph, String attributeNameForId) {
 		this.sourceGraph = sourceGraph;
+		this.attributeNameForId = attributeNameForId;
+	}
+
+	private Edge copy(Edge edge, Graph.Builder targetGraph,
+			Map<Node, Node> copiedNodes, Map<Object, Node> ids) {
+		// determine source and target
+		Node srcSource = edge.getSource();
+		Node source = find(ids, srcSource);
+		if (source == null) {
+			source = copiedNodes.get(srcSource);
+		}
+
+		Node srcTarget = edge.getTarget();
+		Node target = find(ids, srcTarget);
+		if (target == null) {
+			target = copiedNodes.get(srcTarget);
+		}
+
+		// copy edge
+		Edge.Builder copy = new Edge.Builder(source, target);
+
+		// copy attributes
+		for (Entry<String, Object> attr : edge.getAttrs().entrySet()) {
+			copy.attr(attr.getKey(), attr.getValue());
+		}
+
+		// put into graph
+		Edge build = copy.build();
+		targetGraph.edges(build);
+		return build;
+	}
+
+	private Node copy(Node node, Graph.Builder targetGraph) {
+		Node.Builder copy = new Node.Builder();
+		// copy attributes
+		for (Entry<String, Object> attr : node.getAttrs().entrySet()) {
+			copy.attr(attr.getKey(), attr.getValue());
+		}
+		Node copiedNode = copy.build();
+		targetGraph.nodes(copiedNode);
+		return copiedNode;
+	}
+
+	private Node find(Map<Object, Node> ids, Node n) {
+		Object id = n.getAttrs().get(attributeNameForId);
+		if (id != null && !ids.containsKey(id)) {
+			ids.put(id, n);
+			return null;
+		}
+		return ids.get(id);
 	}
 
 	/**
@@ -37,69 +95,28 @@ final public class GraphCopier {
 	 *            The graph to add content to
 	 */
 	public void into(Graph.Builder targetGraph) {
-		targetGraph.attr(Graph.Attr.Key.NODE_STYLE.toString(), sourceGraph
-				.getAttrs().get(Graph.Attr.Key.NODE_STYLE.toString()));
-		targetGraph.attr(Graph.Attr.Key.EDGE_STYLE.toString(), sourceGraph
-				.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString()));
-		targetGraph.attr(Graph.Attr.Key.LAYOUT.toString(), sourceGraph
-				.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()));
-		for (Object edge : sourceGraph.getEdges()) {
-			copy((Edge) edge, targetGraph);
+		// copy attributes
+		for (Entry<String, Object> attr : sourceGraph.getAttrs().entrySet()) {
+			targetGraph.attr(attr.getKey(), attr.getValue());
 		}
-		for (Object node : sourceGraph.getNodes()) {
-			copy((Node) node, targetGraph);
+		// find all existing node IDs in the target graph
+		Graph targetGraphBuilt = targetGraph.build();
+		List<Node> nodes = targetGraphBuilt.getNodes();
+		Map<Object, Node> ids = new HashMap<Object, Node>();
+		for (Node n : nodes) {
+			find(ids, n);
 		}
-	}
-
-	private Edge copy(Edge edge, Graph.Builder targetGraph) {
-		Node source = copy(edge.getSource(), targetGraph);
-		Node target = copy(edge.getTarget(), targetGraph);
-		Edge copy = new Edge.Builder(source, target)
-				.attr(Graph.Attr.Key.STYLE.toString(),
-						edge.getAttrs().get(Graph.Attr.Key.STYLE.toString()))
-				.attr(Graph.Attr.Key.LABEL.toString(),
-						edge.getAttrs().get(Graph.Attr.Key.LABEL.toString()))
-				.attr(Graph.Attr.Key.ID.toString(),
-						edge.getAttrs().get(Graph.Attr.Key.ID.toString()))
-				.attr(Graph.Attr.Key.EDGE_STYLE.toString(),
-						edge.getAttrs().get(
-								Graph.Attr.Key.EDGE_STYLE.toString())).build();
-		targetGraph.edges(copy);
-		return copy;
-	}
-
-	private Node copy(Node node, Graph.Builder targetGraph) {
-		Node find = find(node, targetGraph.build());
-		if (find == null) {
-			Node copy = new Node.Builder()
-					.attr(Graph.Attr.Key.LABEL.toString(),
-							node.getAttrs()
-									.get(Graph.Attr.Key.LABEL.toString()))
-					.attr(Graph.Attr.Key.STYLE.toString(),
-							node.getAttrs()
-									.get(Graph.Attr.Key.STYLE.toString()))
-					.attr(Graph.Attr.Key.IMAGE.toString(),
-							node.getAttrs()
-									.get(Graph.Attr.Key.IMAGE.toString()))
-					.attr(Graph.Attr.Key.ID.toString(),
-							node.getAttrs().get(Graph.Attr.Key.ID.toString()))
-					.build();
-			targetGraph.nodes(copy);
-			return copy;
-		}
-		return find; // target already contains the node to copy over
-	}
-
-	private Node find(Node node, Graph graph) {
-		for (Object o : graph.getNodes()) {
-			Node n = (Node) o;
-			Object nodeData = node.getAttrs().get(Graph.Attr.Key.ID.toString());
-			if (nodeData != null
-					&& nodeData.equals(n.getAttrs().get(
-							Graph.Attr.Key.ID.toString()))) {
-				return n;
+		// copy non-existing nodes over
+		Map<Node, Node> copiedNodes = new HashMap<Node, Node>();
+		for (Node node : sourceGraph.getNodes()) {
+			if (find(ids, node) == null) {
+				copiedNodes.put(node, copy(node, targetGraph));
 			}
 		}
-		return null;
+		// copy edges over
+		for (Edge edge : sourceGraph.getEdges()) {
+			copy(edge, targetGraph, copiedNodes, ids);
+		}
 	}
+
 }

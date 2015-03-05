@@ -39,12 +39,15 @@ import org.eclipse.draw2d.TreeSearch;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.decoration.DefaultConnectionDecorator;
 import org.eclipse.gef4.zest.core.widgets.decoration.DirectedConnectionDecorator;
@@ -231,16 +234,17 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	}
 
 	@SuppressWarnings("serial")
-	private Map<Attr.Value, Integer> map = new HashMap<Attr.Value, Integer>() {
+	private Map<String, Integer> map = new HashMap<String, Integer>() {
 		{
-			put(Attr.Value.GRAPH_DIRECTED, ZestStyles.CONNECTIONS_DIRECTED);
-			put(Attr.Value.GRAPH_UNDIRECTED, ZestStyles.CONNECTIONS_SOLID);
-			put(Attr.Value.LINE_DASH, SWT.LINE_DASH);
-			put(Attr.Value.LINE_DASHDOT, SWT.LINE_DASHDOT);
-			put(Attr.Value.LINE_DASHDOTDOT, SWT.LINE_DASHDOTDOT);
-			put(Attr.Value.LINE_DOT, SWT.LINE_DOT);
-			put(Attr.Value.LINE_SOLID, SWT.LINE_SOLID);
-			put(Attr.Value.NONE, ZestStyles.NONE);
+			put(DotProperties.GRAPH_TYPE_DIRECTED,
+					ZestStyles.CONNECTIONS_DIRECTED);
+			put(DotProperties.GRAPH_TYPE_UNDIRECTED,
+					ZestStyles.CONNECTIONS_SOLID);
+			put(DotProperties.EDGE_STYLE_DASHED, SWT.LINE_DASH);
+			put(DotProperties.EDGE_STYLE_DASHDOT, SWT.LINE_DASHDOT);
+			put(DotProperties.EDGE_STYLE_DASHDOTDOT, SWT.LINE_DASHDOTDOT);
+			put(DotProperties.EDGE_STYLE_DOTTED, SWT.LINE_DOT);
+			put(DotProperties.EDGE_STYLE_SOLID, SWT.LINE_SOLID);
 		}
 	};
 
@@ -275,12 +279,41 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 		setGraphType(dotGraph);
 	}
 
+	private LayoutAlgorithm mapAlgorithm(String algo, String rankdir) {
+		if (!DotProperties.GRAPH_RANKDIR_VALUES.contains(rankdir)) {
+			throw new IllegalArgumentException("Unknown DOT rankdir <"
+					+ rankdir + ">.");
+		}
+		boolean lr = DotProperties.GRAPH_RANKDIR_LR.equals(rankdir);
+		if (DotProperties.GRAPH_LAYOUT_CIRCO.equals(algo)) {
+			return new RadialLayoutAlgorithm();
+		} else if (DotProperties.GRAPH_LAYOUT_DOT.equals(algo)) {
+			return new TreeLayoutAlgorithm(lr ? TreeLayoutAlgorithm.LEFT_RIGHT
+					: TreeLayoutAlgorithm.TOP_DOWN);
+		} else if (DotProperties.GRAPH_LAYOUT_FDP.equals(algo)) {
+			return new SpringLayoutAlgorithm();
+		} else if (DotProperties.GRAPH_LAYOUT_GRID.equals(algo)) {
+			return new GridLayoutAlgorithm();
+		} else if (DotProperties.GRAPH_LAYOUT_NEATO.equals(algo)) {
+			return new RadialLayoutAlgorithm();
+		} else if (DotProperties.GRAPH_LAYOUT_OSAGE.equals(algo)) {
+			return new GridLayoutAlgorithm();
+		} else if (DotProperties.GRAPH_LAYOUT_SFDP.equals(algo)) {
+			return new SpringLayoutAlgorithm();
+		} else if (DotProperties.GRAPH_LAYOUT_TWOPI.equals(algo)) {
+			return new RadialLayoutAlgorithm();
+		} else {
+			throw new IllegalArgumentException("Unknown DOT layout algorithm <"
+					+ algo + ">.");
+		}
+	}
+
 	private void setLayout(Graph dotGraph) {
-		LayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
-		Object layout = dotGraph.getAttrs().get(Attr.Key.LAYOUT.toString());
-		if (layout != null)
-			algorithm = (LayoutAlgorithm) layout;
-		this.setLayoutAlgorithm(algorithm, true);
+		String layout = DotProperties.getLayout(dotGraph);
+		if (layout == null)
+			layout = DotProperties.GRAPH_LAYOUT_DEFAULT;
+		String rankdir = DotProperties.getRankdir(dotGraph);
+		this.setLayoutAlgorithm(mapAlgorithm(layout, rankdir), true);
 	}
 
 	private void setGraphData(Graph dotGraph) {
@@ -289,31 +322,28 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	}
 
 	private void setGraphType(Graph dotGraph) {
-		Object type = dotGraph.getAttrs().get(Attr.Key.GRAPH_TYPE.toString());
+		String type = DotProperties.getType(dotGraph);
 		if (type != null)
-			this.setConnectionStyle(map.get(Graph.Attr.Value.valueOf(type
-					.toString())));
+			this.setConnectionStyle(map.get(type));
 	}
 
 	private GraphConnection dotEdgeToZestEdge(Edge edge,
 			GraphNode sourceZestNode, GraphNode targetZestNode) {
 		int graphType = SWT.NONE;
-		Graph.Attr.Value type = (Graph.Attr.Value) dotGraph.getAttrs().get(
-				Attr.Key.GRAPH_TYPE.toString());
+		String type = DotProperties.getType(dotGraph);
 		if (type != null)
 			graphType = map.get(type);
 		GraphConnection connection = new GraphConnection(this, graphType,
 				sourceZestNode, targetZestNode);
-		Object edgeStyle = edge.getAttrs().get(Attr.Key.EDGE_STYLE.toString());
+		String edgeStyle = DotProperties.getStyle(edge);
 		if (edgeStyle != null) {
-			Integer style = map.get(Graph.Attr.Value.valueOf(edgeStyle
-					.toString()));
+			Integer style = map.get(edgeStyle);
 			connection.setLineStyle(style);
 		}
-		Object label = edge.getAttrs().get(Attr.Key.LABEL.toString());
+		String label = DotProperties.getLabel(edge);
 		if (label != null)
-			connection.setText(label.toString());
-		Object data = edge.getAttrs().get(Attr.Key.ID.toString());
+			connection.setText(label);
+		String data = DotProperties.getId(edge);
 		if (data != null)
 			connection.setData(data);
 		return connection;
@@ -321,10 +351,10 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 
 	private GraphNode dotNodeToZestNode(Node node) {
 		GraphNode graphNode = new GraphNode(this, SWT.NONE);
-		Object label = node.getAttrs().get(Attr.Key.LABEL.toString());
+		String label = DotProperties.getLabel(node);
 		if (label != null)
-			graphNode.setText(label.toString());
-		Object data = node.getAttrs().get(Attr.Key.ID.toString());
+			graphNode.setText(label);
+		String data = DotProperties.getId(node);
 		if (data != null)
 			graphNode.setData(data);
 		return graphNode;

@@ -10,12 +10,10 @@ package org.eclipse.gef4.dot.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.junit.Assert;
 
 /**
@@ -26,42 +24,43 @@ import org.junit.Assert;
  */
 public class LayoutAlgorithmTests extends TestCase {
 
-	/**
-	 * Access items laid out in a custom layout algorithm (see
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=337144)
-	 */
-	public void testCustomLayoutSimpleItemAccess() {
-		Node node = new Node.Builder().build();
-		Graph.Builder graph = new Graph.Builder().nodes(node);
-		graph.attr(Graph.Attr.Key.LAYOUT, new LayoutAlgorithm() {
-			private LayoutContext context;
-
-			public void setLayoutContext(LayoutContext context) {
-				this.context = context;
-				Object[] all = context.getEntities()[0].getItems();
-				Object[] nodes = context.getNodes()[0].getItems();
-				Assert.assertEquals(1, all.length);
-				Assert.assertEquals(1, nodes.length);
-				Assert.assertTrue(
-						"All entity items should be wrapped in a Node[]",
-						all instanceof Node[]);
-				Assert.assertTrue(
-						"Node entity items should be wrapped in a Node[]",
-						nodes instanceof Node[]);
-				Assert.assertTrue("All entity items should be Node instances",
-						all[0] instanceof Node);
-				Assert.assertTrue("Node entity items should be Node instances",
-						nodes[0] instanceof Node);
-			}
-
-			public void applyLayout(boolean clean) {
-			}
-
-			public LayoutContext getLayoutContext() {
-				return context;
-			}
-		});
-	}
+	// TODO: Verify the removal of the following test case:
+	// /**
+	// * Access items laid out in a custom layout algorithm (see
+	// * https://bugs.eclipse.org/bugs/show_bug.cgi?id=337144)
+	// */
+	// public void testCustomLayoutSimpleItemAccess() {
+	// Node node = new Node.Builder().build();
+	// Graph.Builder graph = new Graph.Builder().nodes(node);
+	// graph.attr(DotProperties.GRAPH_LAYOUT, new LayoutAlgorithm() {
+	// private LayoutContext context;
+	//
+	// public void setLayoutContext(LayoutContext context) {
+	// this.context = context;
+	// Object[] all = context.getEntities()[0].getItems();
+	// Object[] nodes = context.getNodes()[0].getItems();
+	// Assert.assertEquals(1, all.length);
+	// Assert.assertEquals(1, nodes.length);
+	// Assert.assertTrue(
+	// "All entity items should be wrapped in a Node[]",
+	// all instanceof Node[]);
+	// Assert.assertTrue(
+	// "Node entity items should be wrapped in a Node[]",
+	// nodes instanceof Node[]);
+	// Assert.assertTrue("All entity items should be Node instances",
+	// all[0] instanceof Node);
+	// Assert.assertTrue("Node entity items should be Node instances",
+	// nodes[0] instanceof Node);
+	// }
+	//
+	// public void applyLayout(boolean clean) {
+	// }
+	//
+	// public LayoutContext getLayoutContext() {
+	// return context;
+	// }
+	// });
+	// }
 
 	/**
 	 * Attempt to reproduce an infinite loop with GridLayoutAlgorithm on an
@@ -69,9 +68,9 @@ public class LayoutAlgorithmTests extends TestCase {
 	 */
 	public void testGridLayoutAlgorithmEmptyGraph() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(Graph.Attr.Key.LAYOUT, new GridLayoutAlgorithm());
-		Assert.assertEquals(GridLayoutAlgorithm.class, graph.build().getAttrs()
-				.get(Graph.Attr.Key.LAYOUT.toString()).getClass());
+		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_GRID);
+		Assert.assertEquals(DotProperties.GRAPH_LAYOUT_GRID,
+				DotProperties.getLayout(graph.build()));
 	}
 
 	/**

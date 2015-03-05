@@ -8,12 +8,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
+import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.internal.dot.DotTemplate;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,15 +27,17 @@ public class DotTemplateTests {
 	@Test
 	public void zestGraph() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(Graph.Attr.Key.LAYOUT, new TreeLayoutAlgorithm(
-				TreeLayoutAlgorithm.LEFT_RIGHT));
-		Node node1 = new Node.Builder().attr(Attr.Key.LABEL, "Node 1").build();
-		Node node2 = new Node.Builder().attr(Attr.Key.LABEL, "Node 2").build();
+		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DOT);
+		graph.attr(DotProperties.GRAPH_RANKDIR, DotProperties.GRAPH_RANKDIR_LR);
+		Node node1 = new Node.Builder()
+				.attr(DotProperties.NODE_LABEL, "Node 1").build();
+		Node node2 = new Node.Builder()
+				.attr(DotProperties.NODE_LABEL, "Node 2").build();
 		Edge edge = new Edge.Builder(node1, node2)
-				.attr(Graph.Attr.Key.LABEL, "A dotted edge")
-				.attr(Graph.Attr.Key.EDGE_STYLE, Graph.Attr.Value.LINE_DOT)
+				.attr(DotProperties.EDGE_LABEL, "A dotted edge")
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
 				.build();
-		graph.attr(Graph.Attr.Key.GRAPH_TYPE, Graph.Attr.Value.GRAPH_DIRECTED)
+		graph.attr(DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
 				.edges(edge);
 		String dot = new DotTemplate().generate(graph.build());
 		Assert.assertTrue(
@@ -89,9 +90,8 @@ public class DotTemplateTests {
 		Assert.assertTrue(
 				"DOT representation must contain simple class name of Dot input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
-		Assert.assertTrue(graph.getAttrs().get(
-				Graph.Attr.Key.GRAPH_TYPE.toString()) == Graph.Attr.Value.GRAPH_DIRECTED ? dot
-				.contains("digraph") : !dot.contains("digraph")); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.assertTrue(DotProperties.GRAPH_TYPE_DIRECTED
+				.equals(DotProperties.getType(graph)) ? dot.contains("digraph") : !dot.contains("digraph")); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(dot);
 	}
 }

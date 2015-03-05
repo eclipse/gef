@@ -23,13 +23,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.internal.dot.parser.DotStandaloneSetup;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
  * Creation and access to the parsed object tree.
@@ -37,51 +31,6 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
  * @author Fabian Steeg (fsteeg)
  */
 public final class DotAst {
-
-	// private static final int STYLE = LayoutStyles.NO_LAYOUT_NODE_RESIZING;
-
-	/** Edge style attributes in the DOT input and their Zest/SWT styles. */
-	enum Style {
-		DASHED(Graph.Attr.Value.LINE_DASH), //
-		DOTTED(Graph.Attr.Value.LINE_DOT), //
-		SOLID(Graph.Attr.Value.LINE_SOLID), //
-		DASHDOT(Graph.Attr.Value.LINE_DASHDOT), //
-		DASHDOTDOT(Graph.Attr.Value.LINE_DASHDOTDOT);
-
-		Graph.Attr.Value style;
-
-		Style(final Graph.Attr.Value style) {
-			this.style = style;
-		}
-	}
-
-	/**
-	 * Graph layout attributes in the DOT input and their Zest layout
-	 * algorithms.
-	 */
-	enum Layout {
-		/***/
-		DOT(new TreeLayoutAlgorithm()),
-		/***/
-		OSAGE(new GridLayoutAlgorithm()),
-		/***/
-		GRID(new GridLayoutAlgorithm()),
-		/***/
-		TWOPI(new RadialLayoutAlgorithm()),
-		/***/
-		CIRCO(new RadialLayoutAlgorithm()),
-		/***/
-		NEATO(new RadialLayoutAlgorithm()),
-		/***/
-		FDP(new SpringLayoutAlgorithm()),
-		/***/
-		SFDP(new SpringLayoutAlgorithm());
-		LayoutAlgorithm algorithm;
-
-		Layout(final LayoutAlgorithm algorithm) {
-			this.algorithm = algorithm;
-		}
-	}
 
 	private Resource resource;
 

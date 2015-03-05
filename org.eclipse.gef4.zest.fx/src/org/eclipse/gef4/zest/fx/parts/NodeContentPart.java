@@ -96,7 +96,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	public static final String ATTR_ID_0 = Attr.Key.ID.toString();
 	public static final String ATTR_ID_1 = "id";
 	public static final String ATTR_STYLE = "style";
-	public static final String ATTR_IMAGE = "image";
+	public static final String ATTR_IMAGE_URL = "imageUrl";
 	public static final String ATTR_TOOLTIP = "tooltip";
 	public static final String ATTR_FISHEYE = "fisheye";
 	public static final String ATTR_LABEL = Attr.Key.LABEL.toString();
@@ -338,7 +338,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		str = refreshFisheye(visual, attrs, str);
 		refreshLabel(visual, str);
 
-		refreshIcon(visual, attrs.get(ATTR_IMAGE));
+		refreshIcon(visual, attrs.get(ATTR_IMAGE_URL));
 		refreshNestedGraphArea(visual, isNesting());
 		refreshTooltip(visual, attrs.get(ATTR_TOOLTIP));
 	}

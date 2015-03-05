@@ -1,8 +1,7 @@
 package org.eclipse.gef4.internal.dot;
 
+import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.*;
-import org.eclipse.gef4.layout.algorithms.*;
-import org.eclipse.gef4.layout.*;
 
 public class DotTemplate
 {
@@ -47,9 +46,8 @@ public class DotTemplate
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
      Graph graph = (Graph) argument; 
-     boolean small = graph.getNodes().size() < 100; 
-     LayoutAlgorithm algo = (LayoutAlgorithm) (graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()) != null ? graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()) : new TreeLayoutAlgorithm());
-     boolean digraph = graph.getAttrs().get(Graph.Attr.Key.GRAPH_TYPE.toString())==Graph.Attr.Value.GRAPH_DIRECTED; 
+     String algo = DotProperties.getLayout(graph); if (algo == null) algo = DotProperties.GRAPH_LAYOUT_DEFAULT;
+     boolean digraph = DotProperties.getType(graph).equals(DotProperties.GRAPH_TYPE_DIRECTED); 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
      simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; 
@@ -59,21 +57,21 @@ public class DotTemplate
     stringBuffer.append(TEXT_3);
     stringBuffer.append(simpleClassName);
     stringBuffer.append(TEXT_4);
-    stringBuffer.append((algo.getClass() == RadialLayoutAlgorithm.class) ? "twopi" : (algo.getClass() == GridLayoutAlgorithm.class) ? "osage" : (algo.getClass() == SpringLayoutAlgorithm.class) ? (small ? "fdp" : "sfdp") : "dot");
+    stringBuffer.append(algo);
     stringBuffer.append(TEXT_5);
-    stringBuffer.append((graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()) != null && graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString()).getClass() == TreeLayoutAlgorithm.class && ((TreeLayoutAlgorithm)graph.getAttrs().get(Graph.Attr.Key.LAYOUT.toString())).getDirection() == TreeLayoutAlgorithm.LEFT_RIGHT)?"LR":"TD");
+    stringBuffer.append(DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph) : DotProperties.GRAPH_RANKDIR_TD);
     stringBuffer.append(TEXT_6);
      for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; 
     stringBuffer.append(TEXT_7);
     stringBuffer.append(node.hashCode());
     stringBuffer.append(TEXT_8);
-    stringBuffer.append(node.getAttrs().get(Graph.Attr.Key.LABEL.toString()));
+    stringBuffer.append(DotProperties.getLabel(node));
     stringBuffer.append(TEXT_9);
      }
     stringBuffer.append(TEXT_10);
      for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; 
     stringBuffer.append(TEXT_11);
-    boolean dashed = edge.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString()) == Graph.Attr.Value.LINE_DASH; boolean dotted = edge.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString()) == Graph.Attr.Value.LINE_DOT;
+    boolean dashed = DotProperties.getStyle(edge).equals(DotProperties.EDGE_STYLE_DASHED); boolean dotted = DotProperties.getStyle(edge).equals(DotProperties.EDGE_STYLE_DOTTED);
     stringBuffer.append(TEXT_12);
     stringBuffer.append(edge.getSource().hashCode());
     stringBuffer.append(TEXT_13);
@@ -83,7 +81,7 @@ public class DotTemplate
     stringBuffer.append(TEXT_15);
     stringBuffer.append(dashed?"dashed":dotted?"dotted":"solid");
     stringBuffer.append(TEXT_16);
-    stringBuffer.append(edge.getAttrs().get(Graph.Attr.Key.LABEL.toString()));
+    stringBuffer.append(DotProperties.getLabel(edge));
     stringBuffer.append(TEXT_17);
      }
     stringBuffer.append(TEXT_18);
