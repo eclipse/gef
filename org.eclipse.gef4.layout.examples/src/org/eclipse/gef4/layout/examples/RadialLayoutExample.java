@@ -22,9 +22,9 @@ import javafx.application.Application;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class RadialLayoutExample extends AbstractZestExample {
 
@@ -52,19 +52,15 @@ public class RadialLayoutExample extends AbstractZestExample {
 				// identical)
 				Node n2 = n(ID, i + "-" + j, LABEL, "2 - " + j);
 				nodes.add(n2);
-				Edge e = e(n, n2);
+				Edge e = e(n, n2, LABEL, "b");
 				edges.add(e);
 			}
-			edges.add(e(root, n));
+			edges.add(e(root, n, LABEL, "a"));
 		}
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
-				.edges(edges.toArray(new Edge[] {})).build();
-
-	}
-
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new RadialLayoutAlgorithm();
+				.edges(edges.toArray(new Edge[] {}))
+				.attr(ZestProperties.GRAPH_LAYOUT, new RadialLayoutAlgorithm())
+				.build();
 	}
 
 }

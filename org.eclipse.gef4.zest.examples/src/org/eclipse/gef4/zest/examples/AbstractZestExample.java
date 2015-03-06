@@ -23,7 +23,6 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Edge.Builder;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -31,7 +30,6 @@ import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -88,15 +86,12 @@ public abstract class AbstractZestExample extends Application {
 	protected FXDomain domain;
 	protected FXViewer viewer;
 	protected Graph graph;
-	protected LayoutAlgorithm layoutAlgorithm;
 
 	public AbstractZestExample(String title) {
 		this.title = title;
 	}
 
 	protected abstract Graph createGraph();
-
-	protected abstract LayoutAlgorithm createLayoutAlgorithm();
 
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
@@ -113,21 +108,14 @@ public abstract class AbstractZestExample extends Application {
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
-		// set contents and layout algorithm in JavaFX thread because it alters
-		// the scene graph
+		// set contents in the JavaFX application thread because it alters the
+		// scene graph
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				graph = createGraph();
 				viewer.getAdapter(ContentModel.class).setContents(
 						Collections.singletonList(graph));
-
-				// TODO: we need to ensure the default algorithm is not used
-				// before the custom is set
-
-				layoutAlgorithm = createLayoutAlgorithm();
-				domain.getAdapter(LayoutModel.class).getLayoutContext(graph)
-						.setStaticLayoutAlgorithm(layoutAlgorithm);
 			}
 		});
 

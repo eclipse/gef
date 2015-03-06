@@ -19,9 +19,9 @@ import javafx.application.Application;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class SimpleLayoutExample extends AbstractZestExample {
 
@@ -42,12 +42,8 @@ public class SimpleLayoutExample extends AbstractZestExample {
 		Edge e23 = new Edge(n2, n3);
 		Edge e31 = new Edge(n3, n);
 		return new Graph.Builder().nodes(n, n2, n3).edges(e12, e23, e31)
+				.attr(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm())
 				.build();
-	}
-
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new SpringLayoutAlgorithm();
 	}
 
 	@Override

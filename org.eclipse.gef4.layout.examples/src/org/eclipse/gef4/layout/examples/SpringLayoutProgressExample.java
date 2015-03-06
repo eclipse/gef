@@ -27,11 +27,11 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class SpringLayoutProgressExample extends AbstractZestExample {
 
@@ -63,6 +63,8 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 	public static void main(String[] args) {
 		launch(args);
 	}
+
+	private ManualSpringLayoutAlgorithm layoutAlgorithm = new ManualSpringLayoutAlgorithm();
 
 	public SpringLayoutProgressExample() {
 		super("GEF4 Layouts - Spring Layout Progress Example");
@@ -120,12 +122,8 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 		}
 
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
-				.edges(edges.toArray(new Edge[] {})).build();
-	}
-
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new ManualSpringLayoutAlgorithm();
+				.edges(edges.toArray(new Edge[] {}))
+				.attr(ZestProperties.GRAPH_LAYOUT, layoutAlgorithm).build();
 	}
 
 	@Override
@@ -146,16 +144,12 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 					long elapsed = now - last;
 					last = now;
 					if (elapsed > NANOS_PER_ITERATION) {
-						getLayoutAlgorithm().performNIteration(
-								(int) (elapsed / NANOS_PER_ITERATION));
+						layoutAlgorithm
+								.performNIteration((int) (elapsed / NANOS_PER_ITERATION));
 					}
 				}
 			}
 		}.start();
-	}
-
-	private ManualSpringLayoutAlgorithm getLayoutAlgorithm() {
-		return (ManualSpringLayoutAlgorithm) layoutAlgorithm;
 	}
 
 }

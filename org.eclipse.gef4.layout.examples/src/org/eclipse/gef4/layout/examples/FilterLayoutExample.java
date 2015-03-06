@@ -19,7 +19,6 @@ import javafx.application.Application;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -73,12 +72,10 @@ public class FilterLayoutExample extends AbstractZestExample {
 		e(graph, h, e, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
 
-		return graph;
-	}
+		graph.getAttrs().put(ZestProperties.GRAPH_LAYOUT,
+				new TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN));
 
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN);
+		return graph;
 	}
 
 	@Override

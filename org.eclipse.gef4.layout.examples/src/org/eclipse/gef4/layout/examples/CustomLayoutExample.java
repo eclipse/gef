@@ -22,6 +22,7 @@ import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 /**
  * This snippet shows how to create a custom layout. All the work is done in the
@@ -51,11 +52,12 @@ public class CustomLayoutExample extends AbstractZestExample {
 		org.eclipse.gef4.graph.Edge[] edges = new org.eclipse.gef4.graph.Edge[] {
 				e(nodes[0], nodes[1]), e(nodes[1], nodes[2]) };
 
-		return new Graph.Builder().nodes(nodes).edges(edges).build();
+		return new Graph.Builder().nodes(nodes).edges(edges)
+				.attr(ZestProperties.GRAPH_LAYOUT, createLayoutAlgorithm())
+				.build();
 	}
 
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
+	private LayoutAlgorithm createLayoutAlgorithm() {
 		LayoutAlgorithm layoutAlgorithm = new LayoutAlgorithm() {
 			private LayoutContext context;
 

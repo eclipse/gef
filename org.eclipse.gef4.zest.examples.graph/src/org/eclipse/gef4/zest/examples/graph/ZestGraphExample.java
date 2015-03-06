@@ -21,7 +21,6 @@ import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -123,6 +122,7 @@ public class ZestGraphExample extends AbstractZestExample {
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<String, Object>();
 		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
+		attrs.put(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 
 	}
@@ -138,11 +138,6 @@ public class ZestGraphExample extends AbstractZestExample {
 	@Override
 	protected Graph createGraph() {
 		return createDefaultGraph();
-	}
-
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new SpringLayoutAlgorithm();
 	}
 
 	@Override

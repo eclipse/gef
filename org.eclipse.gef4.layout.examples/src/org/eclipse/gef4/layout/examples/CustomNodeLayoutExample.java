@@ -29,7 +29,6 @@ import javafx.scene.text.Text;
 
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -37,6 +36,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -118,12 +118,9 @@ public class CustomNodeLayoutExample extends AbstractZestExample {
 	protected Graph createGraph() {
 		Graph g = new Graph();
 		e(g, n(g, LABEL, "A", "isCustom", true), n(g, LABEL, "B"));
+		g.getAttrs().put(ZestProperties.GRAPH_LAYOUT,
+				new SugiyamaLayoutAlgorithm());
 		return g;
-	}
-
-	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new SugiyamaLayoutAlgorithm();
 	}
 
 	@Override

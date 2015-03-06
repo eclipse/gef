@@ -21,9 +21,13 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
@@ -67,11 +71,26 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	protected void doActivate() {
 		super.doActivate();
 		pcs.firePropertyChange(ACTIVATION_COMPLETE_PROPERTY, false, true);
+		setGraphLayoutContext();
 	}
 
 	@Override
 	public void doRefreshVisual(Group visual) {
-		// nothing to do
+		// set layout algorithm on the context
+		setGraphLayoutContext();
+	}
+
+	private void setGraphLayoutContext() {
+		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
+		if (algo instanceof LayoutAlgorithm) {
+			LayoutAlgorithm layoutAlgorithm = (LayoutAlgorithm) algo;
+			LayoutContext layoutContext = getViewer().getDomain()
+					.getAdapter(LayoutModel.class)
+					.getLayoutContext(getContent());
+			if (layoutContext != null) {
+				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
+			}
+		}
 	}
 
 	@Override

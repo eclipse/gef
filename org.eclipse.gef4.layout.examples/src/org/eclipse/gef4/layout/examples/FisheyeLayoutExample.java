@@ -18,9 +18,9 @@ import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class FisheyeLayoutExample extends AbstractZestExample {
 
@@ -43,22 +43,19 @@ public class FisheyeLayoutExample extends AbstractZestExample {
 			e(g, n1, n2, LABEL, "");
 			e(g, n2, n3, LABEL, "");
 		}
+		g.getAttrs()
+				.put(ZestProperties.GRAPH_LAYOUT, new GridLayoutAlgorithm());
 		return g;
 	}
 
 	@Override
-	protected LayoutAlgorithm createLayoutAlgorithm() {
-		return new GridLayoutAlgorithm();
-	}
-
-	@Override
 	protected int getStageHeight() {
-		return 650;
+		return 500;
 	}
 
 	@Override
 	protected int getStageWidth() {
-		return 550;
+		return 500;
 	}
 
 }
