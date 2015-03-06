@@ -86,12 +86,19 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		 * Convenience for common 'rankdir=LR' attribute: use
 		 * TreeLayoutAlgorithm.LEFT_RIGHT if nothing else is specified
 		 */
-		if (object.getName().equals(DotProperties.GRAPH_RANKDIR)
-				&& object.getValue().equals(DotProperties.GRAPH_RANKDIR_LR)) {
+		if (DotProperties.GRAPH_RANKDIR.equals(object.getName())) {
+			String value = object.getValue();
+			if (value == null)
+				value = "";
+			value = value.toLowerCase();
+			boolean lr = DotProperties.GRAPH_RANKDIR_LR.equals(value);
+			boolean td = DotProperties.GRAPH_RANKDIR_TD.equals(value);
 			graph.attr(DotProperties.GRAPH_LAYOUT,
 					DotProperties.GRAPH_LAYOUT_DOT);
 			graph.attr(DotProperties.GRAPH_RANKDIR,
-					DotProperties.GRAPH_RANKDIR_LR);
+					lr ? DotProperties.GRAPH_RANKDIR_LR
+							: td ? DotProperties.GRAPH_RANKDIR_TD
+									: DotProperties.GRAPH_RANKDIR_DEFAULT);
 		}
 		return super.caseAttribute(object);
 	}

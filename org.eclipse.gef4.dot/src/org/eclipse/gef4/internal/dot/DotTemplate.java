@@ -59,7 +59,7 @@ public class DotTemplate
     stringBuffer.append(TEXT_4);
     stringBuffer.append(algo);
     stringBuffer.append(TEXT_5);
-    stringBuffer.append(DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph) : DotProperties.GRAPH_RANKDIR_TD);
+    stringBuffer.append(DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph).toUpperCase() : DotProperties.GRAPH_RANKDIR_TD.toUpperCase());
     stringBuffer.append(TEXT_6);
      for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; 
     stringBuffer.append(TEXT_7);

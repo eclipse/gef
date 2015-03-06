@@ -19,7 +19,7 @@
 	/* Global settings */
 	graph[layout=<%=algo%>]
 	node[shape=box]
-	rankdir=<%=DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph) : DotProperties.GRAPH_RANKDIR_TD%>
+	rankdir=<%=DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph).toUpperCase() : DotProperties.GRAPH_RANKDIR_TD.toUpperCase()%>
 	
 	/* Nodes */
 	<% for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; %> 
