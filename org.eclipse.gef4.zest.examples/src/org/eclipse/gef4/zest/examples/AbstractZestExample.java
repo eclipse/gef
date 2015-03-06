@@ -22,7 +22,6 @@ import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Edge.Builder;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
@@ -31,6 +30,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 import com.google.inject.Guice;
@@ -40,8 +40,8 @@ import com.google.inject.Module;
 public abstract class AbstractZestExample extends Application {
 
 	private static int id = 0;
-	protected static String ID = Key.ID.toString();
-	protected static String LABEL = Key.LABEL.toString();
+	protected static String ID = ZestProperties.NODE_CSS_ID;
+	protected static String LABEL = ZestProperties.NODE_LABEL;
 
 	protected static String genId() {
 		return Integer.toString(id++);

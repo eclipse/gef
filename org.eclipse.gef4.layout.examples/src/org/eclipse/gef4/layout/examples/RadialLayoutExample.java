@@ -21,7 +21,6 @@ import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
@@ -43,16 +42,15 @@ public class RadialLayoutExample extends AbstractZestExample {
 		List<Node> nodes = new ArrayList<>();
 		List<Edge> edges = new ArrayList<>();
 
-		Node root = n(Key.LABEL.toString(), "Root");
+		Node root = n(LABEL, "Root");
 		nodes.add(root);
 		for (int i = 0; i < 3; i++) {
-			Node n = n(Key.LABEL.toString(), "1 - " + i);
+			Node n = n(LABEL, "1 - " + i);
 			nodes.add(n);
 			for (int j = 0; j < 3; j++) {
 				// make these nodes differ via their ids (as the labels are
 				// identical)
-				Node n2 = n(Key.ID.toString(), i + "-" + j,
-						Key.LABEL.toString(), "2 - " + j);
+				Node n2 = n(ID, i + "-" + j, LABEL, "2 - " + j);
 				nodes.add(n2);
 				Edge e = e(n, n2);
 				edges.add(e);

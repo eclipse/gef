@@ -34,8 +34,8 @@ import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -148,7 +148,7 @@ public class ZestContentViewer extends ContentViewer {
 		// Image icon = labelProvider.getImage(node);
 
 		// transfer label information into node properties
-		graphNode.getAttrs().put(NodeContentPart.ATTR_LABEL, label);
+		graphNode.getAttrs().put(ZestProperties.NODE_LABEL, label);
 		// graphNode.getAttrs().put(NodeContentPart.ATTR_IMAGE, icon);
 
 		// TODO: color, etc.

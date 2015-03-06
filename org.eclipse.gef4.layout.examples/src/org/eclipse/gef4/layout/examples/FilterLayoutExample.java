@@ -22,6 +22,7 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 
 public class FilterLayoutExample extends AbstractZestExample {
@@ -37,8 +38,8 @@ public class FilterLayoutExample extends AbstractZestExample {
 	@Override
 	protected Graph createGraph() {
 		Graph graph = new Graph();
-		graph.getAttrs().put(Graph.Attr.Key.GRAPH_TYPE.toString(),
-				Graph.Attr.Value.GRAPH_DIRECTED);
+		graph.getAttrs().put(ZestProperties.GRAPH_TYPE,
+				ZestProperties.GRAPH_TYPE_DIRECTED);
 
 		Node a = n(graph, LABEL, "Root");
 		Node b = n(graph, LABEL, "B");

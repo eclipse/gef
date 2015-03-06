@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.tests;
 
@@ -23,28 +23,24 @@ import java.util.Map;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.junit.Test;
 
 public class GraphLayoutContextTests {
 
-	private static int ID;
+	public static Edge e(Node n, Node m) {
+		return new Edge.Builder(n, m).build();
+	}
 
 	/*
 	 * The following constants and methods are for easily building graph
 	 * structures.
 	 */
-
-	public static Map<String, Object> ATTR_EMPTY = new HashMap<String, Object>();
-
-	public static Edge e(Node n, Node m) {
-		return new Edge.Builder(n, m).build();
-	}
 
 	public static List<Edge> edges(List<Node> nodes, int... indices) {
 		List<Edge> edges = new ArrayList<Edge>();
@@ -55,8 +51,8 @@ public class GraphLayoutContextTests {
 	}
 
 	public static Node n(String label) {
-		return new Node.Builder().attr(Key.LABEL, label).attr(Key.ID, ID++)
-				.build();
+		return new Node.Builder().attr(ZestProperties.NODE_LABEL, label)
+				.attr(ZestProperties.NODE_CSS_ID, ID++).build();
 	}
 
 	public static List<Node> nodes(String... labels) {
@@ -66,6 +62,10 @@ public class GraphLayoutContextTests {
 		}
 		return Arrays.asList(nodes);
 	}
+
+	private static int ID;
+
+	public static Map<String, Object> ATTR_EMPTY = new HashMap<String, Object>();
 
 	/*
 	 * The test_n_m() functions test graphs with n nodes and m edges
@@ -81,7 +81,7 @@ public class GraphLayoutContextTests {
 	 * Does also check if the connection layout of that edge is correctly
 	 * returned as the only connection layout from its source to its target.
 	 * </p>
-	 * 
+	 *
 	 * @param edges
 	 *            graph edges
 	 * @param glc
@@ -109,7 +109,7 @@ public class GraphLayoutContextTests {
 	/**
 	 * Checks if the layout context constructed from a graph corresponds to that
 	 * graph in its structure.
-	 * 
+	 *
 	 * <ol>
 	 * <li>Constructs a graph from the given nodes and edges.</li>
 	 * <li>Constructs a layout context for that graph.</li>
@@ -118,7 +118,7 @@ public class GraphLayoutContextTests {
 	 * <li>{@link #checkNodesAndEdges(List, List, GraphLayoutContext) Checks}
 	 * identities and order of transfered nodes and edges.</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param nodes
 	 *            graph nodes
 	 * @param edges
@@ -134,7 +134,7 @@ public class GraphLayoutContextTests {
 	/**
 	 * Checks if the <i>x</i>th node of the given <i>nodes</i> list is correctly
 	 * returned as the only item from the corresponding layout node.
-	 * 
+	 *
 	 * @param nodes
 	 *            graph nodes
 	 * @param glc
@@ -151,7 +151,7 @@ public class GraphLayoutContextTests {
 
 	/**
 	 * Checks the identity and order of transfered layout nodes and edges.
-	 * 
+	 *
 	 * @param nodes
 	 *            graph nodes
 	 * @param edges
@@ -172,7 +172,7 @@ public class GraphLayoutContextTests {
 	/**
 	 * Checks if the number of returned layout objects (nodes, edges, entities)
 	 * corresponds with the sizes of the given graph nodes and edges.
-	 * 
+	 *
 	 * @param nodes
 	 *            graph nodes
 	 * @param edges

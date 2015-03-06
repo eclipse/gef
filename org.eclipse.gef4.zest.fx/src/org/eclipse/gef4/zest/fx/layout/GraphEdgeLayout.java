@@ -17,10 +17,10 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class GraphEdgeLayout implements ConnectionLayout {
 
@@ -33,8 +33,9 @@ public class GraphEdgeLayout implements ConnectionLayout {
 		this.edge = edge;
 
 		// graph directed?
-		Object type = context.getGraph().getAttrs().get(Graph.Attr.Key.GRAPH_TYPE.toString());
-		if (type == Graph.Attr.Value.GRAPH_DIRECTED) {
+		Object type = context.getGraph().getAttrs()
+				.get(ZestProperties.GRAPH_TYPE);
+		if (type == ZestProperties.GRAPH_TYPE_DIRECTED) {
 			setProperty(LayoutProperties.DIRECTED_PROPERTY, true);
 		}
 

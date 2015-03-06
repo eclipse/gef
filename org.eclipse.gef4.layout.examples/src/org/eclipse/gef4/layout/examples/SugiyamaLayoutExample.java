@@ -17,10 +17,10 @@ package org.eclipse.gef4.layout.examples;
 import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class SugiyamaLayoutExample extends AbstractZestExample {
 
@@ -36,13 +36,9 @@ public class SugiyamaLayoutExample extends AbstractZestExample {
 	protected Graph createGraph() {
 		// create nodes
 		org.eclipse.gef4.graph.Node[] nodes = new org.eclipse.gef4.graph.Node[] {
-				n(Key.LABEL.toString(), "Coal"),
-				n(Key.LABEL.toString(), "Ore"),
-				n(Key.LABEL.toString(), "Stone"),
-				n(Key.LABEL.toString(), "Metal"),
-				n(Key.LABEL.toString(), "Concrete"),
-				n(Key.LABEL.toString(), "Machine"),
-				n(Key.LABEL.toString(), "Building") };
+				n(LABEL, "Coal"), n(LABEL, "Ore"), n(LABEL, "Stone"),
+				n(LABEL, "Metal"), n(LABEL, "Concrete"), n(LABEL, "Machine"),
+				n(LABEL, "Building") };
 
 		// create edges
 		org.eclipse.gef4.graph.Edge[] edges = new org.eclipse.gef4.graph.Edge[] {
@@ -58,8 +54,8 @@ public class SugiyamaLayoutExample extends AbstractZestExample {
 																			 */};
 
 		return new Graph.Builder()
-				.attr(Graph.Attr.Key.GRAPH_TYPE.toString(),
-						Graph.Attr.Value.GRAPH_DIRECTED).nodes(nodes)
+				.attr(ZestProperties.GRAPH_TYPE,
+						ZestProperties.GRAPH_TYPE_DIRECTED).nodes(nodes)
 				.edges(edges).build();
 	}
 

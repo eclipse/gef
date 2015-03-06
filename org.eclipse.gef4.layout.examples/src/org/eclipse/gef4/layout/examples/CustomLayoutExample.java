@@ -17,7 +17,6 @@ package org.eclipse.gef4.layout.examples;
 import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -46,9 +45,7 @@ public class CustomLayoutExample extends AbstractZestExample {
 	protected Graph createGraph() {
 		// create nodes
 		org.eclipse.gef4.graph.Node[] nodes = new org.eclipse.gef4.graph.Node[] {
-				n(Key.LABEL.toString(), "Paper"),
-				n(Key.LABEL.toString(), "Rock"),
-				n(Key.LABEL.toString(), "Scissors"), };
+				n(LABEL, "Paper"), n(LABEL, "Rock"), n(LABEL, "Scissors"), };
 
 		// create edges
 		org.eclipse.gef4.graph.Edge[] edges = new org.eclipse.gef4.graph.Edge[] {

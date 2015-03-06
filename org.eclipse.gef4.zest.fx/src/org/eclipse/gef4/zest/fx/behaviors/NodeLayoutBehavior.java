@@ -266,6 +266,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
 		LayoutProperties.setResizable(nodeLayout, visual.isResizable());
 
+		// TODO: do not use layout objects for Zest state
 		Object wasHidden = nodeLayout.getProperty(HidingModel.HIDDEN_PROPERTY);
 		if (visual.isVisible() == (wasHidden == null || wasHidden instanceof Boolean
 				&& (Boolean) wasHidden)) {

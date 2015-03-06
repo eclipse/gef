@@ -21,10 +21,10 @@ import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import com.google.inject.Module;
 
@@ -34,9 +34,12 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(
-				n(Key.LABEL.toString(), "A", "tooltip", "Alpha", "id", id + "A"),
-				n(Key.LABEL.toString(), "B", "tooltip", "Beta", "id", id + "B"),
-				n(Key.LABEL.toString(), "C", "tooltip", "Gamma", "id", id + "C")));
+				n(ZestProperties.NODE_LABEL, "A", ZestProperties.NODE_TOOLTIP,
+						"Alpha", ZestProperties.NODE_CSS_ID, id + "A"),
+				n(ZestProperties.NODE_LABEL, "B", ZestProperties.NODE_TOOLTIP,
+						"Beta", ZestProperties.NODE_CSS_ID, id + "B"),
+				n(ZestProperties.NODE_LABEL, "C", ZestProperties.NODE_TOOLTIP,
+						"Gamma", ZestProperties.NODE_CSS_ID, id + "C")));
 
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<Edge>();
@@ -45,8 +48,7 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<String, Object>();
-		attrs.put(Graph.Attr.Key.GRAPH_TYPE.toString(),
-				Graph.Attr.Value.GRAPH_DIRECTED);
+		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
 		return new Graph(attrs, nodes, edges);
 	}
 
@@ -54,12 +56,16 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(
-				n(Key.LABEL.toString(), "A", "tooltip", "Alpha", "id", id + "A"),
-				n(Key.LABEL.toString(), "B", "tooltip", "Beta", "id", id + "B"),
-				n(Key.LABEL.toString(), "C", "tooltip", "Gamma", "id", id + "C"),
-				n(Key.LABEL.toString(), "D", "tooltip", "Delta", "id", id + "D"),
-				n(Key.LABEL.toString(), "E", "tooltip", "Epsilon", "id", id
-						+ "E")));
+				n(ZestProperties.NODE_LABEL, "A", ZestProperties.NODE_TOOLTIP,
+						"Alpha", ZestProperties.NODE_CSS_ID, id + "A"),
+				n(ZestProperties.NODE_LABEL, "B", ZestProperties.NODE_TOOLTIP,
+						"Beta", ZestProperties.NODE_CSS_ID, id + "B"),
+				n(ZestProperties.NODE_LABEL, "C", ZestProperties.NODE_TOOLTIP,
+						"Gamma", ZestProperties.NODE_CSS_ID, id + "C"),
+				n(ZestProperties.NODE_LABEL, "D", ZestProperties.NODE_TOOLTIP,
+						"Delta", ZestProperties.NODE_CSS_ID, id + "D"),
+				n(ZestProperties.NODE_LABEL, "E", ZestProperties.NODE_TOOLTIP,
+						"Epsilon", ZestProperties.NODE_CSS_ID, id + "E")));
 
 		// add nested graphs
 		nodes.get(4).setNestedGraph(buildAC("c"));
@@ -72,8 +78,7 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<String, Object>();
-		attrs.put(Graph.Attr.Key.GRAPH_TYPE.toString(),
-				Graph.Attr.Value.GRAPH_DIRECTED);
+		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
 		return new Graph(attrs, nodes, edges);
 	}
 
@@ -81,16 +86,26 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(
-				n(Key.LABEL.toString(), "0", "tooltip", "zero"),
-				n(Key.LABEL.toString(), "1", "tooltip", "one"),
-				n(Key.LABEL.toString(), "2", "tooltip", "two"),
-				n(Key.LABEL.toString(), "3", "tooltip", "three"),
-				n(Key.LABEL.toString(), "4", "tooltip", "four"),
-				n(Key.LABEL.toString(), "5", "tooltip", "five"),
-				n(Key.LABEL.toString(), "6", "tooltip", "six"),
-				n(Key.LABEL.toString(), "7", "tooltip", "seven"),
-				n(Key.LABEL.toString(), "8", "tooltip", "eight"),
-				n(Key.LABEL.toString(), "9", "tooltip", "nine")));
+				n(ZestProperties.NODE_LABEL, "0", ZestProperties.NODE_TOOLTIP,
+						"zero"),
+				n(ZestProperties.NODE_LABEL, "1", ZestProperties.NODE_TOOLTIP,
+						"one"),
+				n(ZestProperties.NODE_LABEL, "2", ZestProperties.NODE_TOOLTIP,
+						"two"),
+				n(ZestProperties.NODE_LABEL, "3", ZestProperties.NODE_TOOLTIP,
+						"three"),
+				n(ZestProperties.NODE_LABEL, "4", ZestProperties.NODE_TOOLTIP,
+						"four"),
+				n(ZestProperties.NODE_LABEL, "5", ZestProperties.NODE_TOOLTIP,
+						"five"),
+				n(ZestProperties.NODE_LABEL, "6", ZestProperties.NODE_TOOLTIP,
+						"six"),
+				n(ZestProperties.NODE_LABEL, "7", ZestProperties.NODE_TOOLTIP,
+						"seven"),
+				n(ZestProperties.NODE_LABEL, "8", ZestProperties.NODE_TOOLTIP,
+						"eight"),
+				n(ZestProperties.NODE_LABEL, "9", ZestProperties.NODE_TOOLTIP,
+						"nine")));
 
 		// set nested graphs
 		nodes.get(0).setNestedGraph(buildAC("a"));
@@ -107,8 +122,7 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<String, Object>();
-		attrs.put(Graph.Attr.Key.GRAPH_TYPE.toString(),
-				Graph.Attr.Value.GRAPH_DIRECTED);
+		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
 		return new Graph(attrs, nodes, edges);
 
 	}

@@ -47,10 +47,10 @@ import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class NodeContentPart extends AbstractFXContentPart<Group> {
 
@@ -90,17 +90,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	// CSS classes for styling nodes
 	public static final String CSS_CLASS = "node";
-
-	// processed attributes
-	public static final String ATTR_CLASS = "class";
-	public static final String ATTR_ID_0 = Attr.Key.ID.toString();
-	public static final String ATTR_ID_1 = "id";
-	public static final String ATTR_STYLE = "style";
-	public static final String ATTR_IMAGE_URL = "imageUrl";
-	public static final String ATTR_TOOLTIP = "tooltip";
-	public static final String ATTR_FISHEYE = "fisheye";
-	public static final String ATTR_LABEL = Attr.Key.LABEL.toString();
-	public static final String DEFAULT_LABEL = "-";
 
 	private Text labelText;
 	private ImageView iconImageView;
@@ -275,7 +264,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// initialize text
 		labelText = new Text();
 		labelText.setTextOrigin(VPos.TOP);
-		labelText.setText(DEFAULT_LABEL);
+		labelText.setText(ZestProperties.NODE_LABEL_DEFAULT);
 
 		// build node visual
 		createNodeVisual(group, iconImageView, labelText,
@@ -306,41 +295,40 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
 		Map<String, Object> attrs = getContent().getAttrs();
-		if (attrs.containsKey(ATTR_CLASS)) {
-			refreshCssClass(visual, (String) attrs.get(ATTR_CLASS));
+		if (attrs.containsKey(ZestProperties.NODE_CSS_CLASS)) {
+			refreshCssClass(visual,
+					(String) attrs.get(ZestProperties.NODE_CSS_CLASS));
 		}
 
 		// set CSS id
 		String id = null;
-		if (attrs.containsKey(ATTR_ID_0)) {
-			id = (String) attrs.get(ATTR_ID_0);
-		}
-		if (attrs.containsKey(ATTR_ID_1)) {
-			id = (String) attrs.get(ATTR_ID_1);
+		if (attrs.containsKey(ZestProperties.NODE_CSS_ID)) {
+			id = (String) attrs.get(ZestProperties.NODE_CSS_ID);
 		}
 		visual.setId(id);
 
 		// set CSS style
-		if (attrs.containsKey(ATTR_STYLE)) {
-			visual.setStyle((String) attrs.get(ATTR_STYLE));
+		if (attrs.containsKey(ZestProperties.NODE_CSS_STYLE)) {
+			visual.setStyle((String) attrs.get(ZestProperties.NODE_CSS_STYLE));
 		}
 
 		// determine label
-		Object label = attrs.get(ATTR_LABEL);
+		Object label = attrs.get(ZestProperties.NODE_LABEL);
 		// use id if no label is set
 		if (label == null) {
 			label = id;
 		}
 		// use the the DEFAULT_LABEL if no label is set
 		String str = label instanceof String ? (String) label
-				: label == null ? DEFAULT_LABEL : label.toString();
+				: label == null ? ZestProperties.NODE_LABEL_DEFAULT : label
+						.toString();
 		// eventually let the fisheye mode trim the label
 		str = refreshFisheye(visual, attrs, str);
 		refreshLabel(visual, str);
 
-		refreshIcon(visual, attrs.get(ATTR_IMAGE_URL));
+		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON_URL));
 		refreshNestedGraphArea(visual, isNesting());
-		refreshTooltip(visual, attrs.get(ATTR_TOOLTIP));
+		refreshTooltip(visual, attrs.get(ZestProperties.NODE_TOOLTIP));
 	}
 
 	@Override
@@ -412,7 +400,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	protected String refreshFisheye(Group visual, Map<String, Object> attrs,
 			String str) {
 		// limit label to first letter when in fisheye mode (and not hovered)
-		Object fisheye = attrs.get(ATTR_FISHEYE);
+		Object fisheye = attrs.get(ZestProperties.NODE_FISHEYE);
 		if (fisheye instanceof Boolean && (Boolean) fisheye) {
 			// register mouse event listeners
 			visual.addEventHandler(MouseEvent.ANY, mouseHandler);

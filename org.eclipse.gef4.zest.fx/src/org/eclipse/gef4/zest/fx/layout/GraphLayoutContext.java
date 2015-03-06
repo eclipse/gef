@@ -27,6 +27,12 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 
+/**
+ * Transformation from GEF4 Graph with ZestProperties to GEF4 Layout.
+ *
+ * @author wienand
+ *
+ */
 public class GraphLayoutContext extends AbstractLayoutContext {
 
 	private Graph g;
@@ -106,6 +112,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		NodeLayout[] allNodes = super.getNodes();
 		// filter out any hidden nodes
 		for (NodeLayout n : allNodes) {
+			// TODO: Do not use layout objects to hold Zest state
 			Object hidden = n.getProperty(HidingModel.HIDDEN_PROPERTY);
 			if (hidden instanceof Boolean && (Boolean) hidden) {
 				continue;
