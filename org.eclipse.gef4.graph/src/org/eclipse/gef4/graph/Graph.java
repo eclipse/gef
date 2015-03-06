@@ -17,18 +17,6 @@ import java.util.TreeMap;
 
 public final class Graph {
 
-	// TODO: split into graph, node, edge
-	public static class Attr {
-		public static enum Key {
-			NODE_STYLE, EDGE_STYLE, LABEL, STYLE, ID, IMAGE, LAYOUT, GRAPH_TYPE
-		}
-
-		public static enum Value {
-			LINE_DASH, LINE_DOT, LINE_SOLID, LINE_DASHDOT, LINE_DASHDOTDOT, //
-			GRAPH_DIRECTED, GRAPH_UNDIRECTED, NONE
-		}
-	}
-
 	public static class Builder {
 
 		private List<Node> nodes = new ArrayList<Node>();
@@ -36,10 +24,6 @@ public final class Graph {
 		private Map<String, Object> attrs = new HashMap<String, Object>();
 
 		public Builder() {
-		}
-
-		public Builder attr(Attr.Key attr, Object value) {
-			return attr(attr.toString(), value);
 		}
 
 		public Graph.Builder attr(String key, Object value) {
@@ -90,7 +74,8 @@ public final class Graph {
 	 * edges.
 	 */
 	public Graph() {
-		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
+		this(new HashMap<String, Object>(), new ArrayList<Node>(),
+				new ArrayList<Edge>());
 	}
 
 	/**

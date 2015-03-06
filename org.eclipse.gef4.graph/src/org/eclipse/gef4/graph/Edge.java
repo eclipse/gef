@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.graph.Graph.Attr;
-
 public final class Edge {
 
 	/*
@@ -30,10 +28,6 @@ public final class Edge {
 		public Builder(Node source, Node target) {
 			this.source = source;
 			this.target = target;
-		}
-
-		public Builder attr(Attr.Key attr, Object value) {
-			return attr(attr.toString(), value);
 		}
 
 		public Edge.Builder attr(String key, Object value) {

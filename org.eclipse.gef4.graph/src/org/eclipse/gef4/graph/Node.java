@@ -15,17 +15,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.graph.Graph.Attr;
-
 public final class Node {
 
 	public static class Builder {
 
 		private Map<String, Object> attrs = new HashMap<String, Object>();
-
-		public Builder attr(Attr.Key attr, Object value) {
-			return attr(attr.toString(), value);
-		}
 
 		public Node.Builder attr(String key, Object value) {
 			attrs.put(key, value);
@@ -134,7 +128,8 @@ public final class Node {
 		Set<Node> predecessors = new HashSet<Node>();
 		predecessors.addAll(getLocalPredecessorNodes());
 		if (graph.getNestingNode() != null) {
-			predecessors.addAll(graph.getNestingNode().getAllPredecessorNodes());
+			predecessors
+					.addAll(graph.getNestingNode().getAllPredecessorNodes());
 		}
 		return predecessors;
 	}
