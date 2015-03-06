@@ -20,49 +20,49 @@ import org.eclipse.xtext.ui.editor.utils.TextStyle;
 public class DotHighlightingConfiguration extends
 		DefaultHighlightingConfiguration {
 
-	public static final String GRAPH_NAME_ID = "graph_name";
-	public static final String NODE_NAME_ID = "node_name";
-	public static final String PORT_NAME_ID = "port_name";
-	public static final String ATTRIBUTE_NAME_ID = "attribute_name";
+	public static final String GRAPH_NAME_ID = "graph_name"; //$NON-NLS-1$
+	public static final String NODE_NAME_ID = "node_name"; //$NON-NLS-1$
+	public static final String PORT_NAME_ID = "port_name"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_NAME_ID = "attribute_name"; //$NON-NLS-1$
 
-	public static final String EDGE_OP_ID = "edge_op";
+	public static final String EDGE_OP_ID = "edge_op"; //$NON-NLS-1$
 
-	public static final String QUOTED_STRING_ID = "quoted_string";
-	public static final String NUMERAL_ID = "numeral";
+	public static final String QUOTED_STRING_ID = "quoted_string"; //$NON-NLS-1$
+	public static final String NUMERAL_ID = "numeral"; //$NON-NLS-1$
 
 	public void configure(IHighlightingConfigurationAcceptor acceptor) {
 
 		// semantic highlighting
-		acceptor.acceptDefaultHighlighting(GRAPH_NAME_ID, "Graph Id",
+		acceptor.acceptDefaultHighlighting(GRAPH_NAME_ID, "Graph Id", //$NON-NLS-1$
 				graphIdTextStyle());
-		acceptor.acceptDefaultHighlighting(NODE_NAME_ID, "Node Id",
+		acceptor.acceptDefaultHighlighting(NODE_NAME_ID, "Node Id", //$NON-NLS-1$
 				nodeIdTextStyle());
-		acceptor.acceptDefaultHighlighting(PORT_NAME_ID, "Port Id",
+		acceptor.acceptDefaultHighlighting(PORT_NAME_ID, "Port Id", //$NON-NLS-1$
 				portIdTextStyle());
-		acceptor.acceptDefaultHighlighting(ATTRIBUTE_NAME_ID, "Attribute Id",
+		acceptor.acceptDefaultHighlighting(ATTRIBUTE_NAME_ID, "Attribute Id", //$NON-NLS-1$
 				attributeIdTextStyle());
-		acceptor.acceptDefaultHighlighting(EDGE_OP_ID, "Edge Op",
+		acceptor.acceptDefaultHighlighting(EDGE_OP_ID, "Edge Op", //$NON-NLS-1$
 				edgeOpTextStyle());
 
-		acceptor.acceptDefaultHighlighting(DEFAULT_ID, "Default",
+		acceptor.acceptDefaultHighlighting(DEFAULT_ID, "Default", //$NON-NLS-1$
 				defaultTextStyle());
-		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Keyword",
+		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Keyword", //$NON-NLS-1$
 				keywordTextStyle());
 
 		// lexical hightlighting
-		acceptor.acceptDefaultHighlighting(STRING_ID, "(Unquoted) String",
+		acceptor.acceptDefaultHighlighting(STRING_ID, "(Unquoted) String", //$NON-NLS-1$
 				stringTextStyle());
-		acceptor.acceptDefaultHighlighting(NUMERAL_ID, "Numeral",
+		acceptor.acceptDefaultHighlighting(NUMERAL_ID, "Numeral", //$NON-NLS-1$
 				numberTextStyle());
-		acceptor.acceptDefaultHighlighting(QUOTED_STRING_ID, "Quoted String",
+		acceptor.acceptDefaultHighlighting(QUOTED_STRING_ID, "Quoted String", //$NON-NLS-1$
 				quotedStringTextStyle());
-		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comment",
+		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comment", //$NON-NLS-1$
 				commentTextStyle());
 
 		acceptor.acceptDefaultHighlighting(PUNCTUATION_ID,
-				"Punctuation Character", punctuationTextStyle());
+				"Punctuation Character", punctuationTextStyle()); //$NON-NLS-1$
 
-		acceptor.acceptDefaultHighlighting(INVALID_TOKEN_ID, "Invalid Symbol",
+		acceptor.acceptDefaultHighlighting(INVALID_TOKEN_ID, "Invalid Symbol", //$NON-NLS-1$
 				errorTextStyle());
 	}
 

@@ -41,8 +41,8 @@ public class DotSemanticHighlightingCalculator extends
 				EObject c = grammarElement.eContainer();
 
 				// handle ID elements specifically
-				if (r.getName().equals("ID")
-						&& ((Assignment) c).getFeature().equals("name")) {
+				if (r.getName().equals("ID") //$NON-NLS-1$
+						&& ((Assignment) c).getFeature().equals("name")) { //$NON-NLS-1$
 					if (node.getSemanticElement() instanceof DotGraph) {
 						acceptor.addPosition(node.getOffset(),
 								node.getLength(),
@@ -62,7 +62,7 @@ public class DotSemanticHighlightingCalculator extends
 								DotHighlightingConfiguration.PORT_NAME_ID);
 					}
 				}
-				if (r.getName().equals("EdgeOp")) {
+				if (r.getName().equals("EdgeOp")) { //$NON-NLS-1$
 					acceptor.addPosition(node.getOffset(), node.getLength(),
 							DotHighlightingConfiguration.EDGE_OP_ID);
 				}

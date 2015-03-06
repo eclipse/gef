@@ -25,19 +25,19 @@ public class DotAntlrTokenToAttributeIdMapper extends
 	@Override
 	protected String calculateId(String tokenName, int tokenType) {
 		// ensure CompassPt constants are lexically highlighted as STRING tokens
-		if ("RULE_STRING".equals(tokenName) || tokenName.equals("'n'")
-				|| tokenName.equals("'ne'") || tokenName.equals("'e'")
-				|| tokenName.equals("'se'") || tokenName.equals("'s'")
-				|| tokenName.equals("'sw'") || tokenName.equals("'w'")
-				|| tokenName.equals("'nw'") || tokenName.equals("'c'")
-				|| tokenName.equals("'_'")) {
+		if ("RULE_STRING".equals(tokenName) || tokenName.equals("'n'") //$NON-NLS-1$ //$NON-NLS-2$
+				|| tokenName.equals("'ne'") || tokenName.equals("'e'") //$NON-NLS-1$ //$NON-NLS-2$
+				|| tokenName.equals("'se'") || tokenName.equals("'s'") //$NON-NLS-1$ //$NON-NLS-2$
+				|| tokenName.equals("'sw'") || tokenName.equals("'w'") //$NON-NLS-1$ //$NON-NLS-2$
+				|| tokenName.equals("'nw'") || tokenName.equals("'c'") //$NON-NLS-1$ //$NON-NLS-2$
+				|| tokenName.equals("'_'")) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.STRING_ID;
-		} else if ("RULE_NUMERAL".equals(tokenName)) {
+		} else if ("RULE_NUMERAL".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.NUMERAL_ID;
-		} else if ("RULE_QUOTED_STRING".equals(tokenName)) {
+		} else if ("RULE_QUOTED_STRING".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.QUOTED_STRING_ID;
-		} else if ("RULE_ML_COMMENT".equals(tokenName)
-				|| "RULE_SL_COMMENT".equals(tokenName)) {
+		} else if ("RULE_ML_COMMENT".equals(tokenName) //$NON-NLS-1$
+				|| "RULE_SL_COMMENT".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.COMMENT_ID;
 		}
 		return super.calculateId(tokenName, tokenType);
