@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.dot.DotImport;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.internal.dot.DotDrawer;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
@@ -147,6 +148,11 @@ public class DotGraphView extends ZestFxUiView {
 			}
 		});
 
+	}
+
+	@Override
+	public void setGraph(Graph graph) {
+		super.setGraph(new DotToZestGraphConverter(graph).convert());
 	}
 
 	private boolean toggle(Action action, boolean input) {

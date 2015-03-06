@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
+
 public class ZestProperties {
 
 	public static final String NODE_CSS_CLASS = "css-class";
@@ -21,6 +24,7 @@ public class ZestProperties {
 	public static final String NODE_CSS_STYLE = "css-style";
 
 	public static final String NODE_ICON_URL = "iconUrl";
+	// TODO: public static final String NODE_ICON = "icon";
 
 	public static final String NODE_TOOLTIP = "tooltip";
 
@@ -49,8 +53,7 @@ public class ZestProperties {
 	public static final String GRAPH_TYPE_DIRECTED = "directed";
 	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";
 
-	// TODO: public static final String ATTR_VISIBLE = "visible";
-	// TODO: public static final String ATTR_PRUNED = "pruned";
-	// TODO: public static final String ATTR_IMAGE = "image";
+	public static final String GRAPH_LAYOUT = "layout";
+	public static final LayoutAlgorithm GRAPH_LAYOUT_DEFAULT = new TreeLayoutAlgorithm();
 
 }
