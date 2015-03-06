@@ -47,7 +47,7 @@ public class DotTemplate
  *******************************************************************************/
      Graph graph = (Graph) argument; 
      String algo = DotProperties.getLayout(graph); if (algo == null) algo = DotProperties.GRAPH_LAYOUT_DEFAULT;
-     boolean digraph = DotProperties.getType(graph).equals(DotProperties.GRAPH_TYPE_DIRECTED); 
+     boolean digraph = DotProperties.GRAPH_TYPE_DIRECTED.equals(DotProperties.getType(graph)); 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
      simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; 
@@ -71,7 +71,7 @@ public class DotTemplate
     stringBuffer.append(TEXT_10);
      for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; 
     stringBuffer.append(TEXT_11);
-    boolean dashed = DotProperties.getStyle(edge).equals(DotProperties.EDGE_STYLE_DASHED); boolean dotted = DotProperties.getStyle(edge).equals(DotProperties.EDGE_STYLE_DOTTED);
+    boolean dashed = DotProperties.EDGE_STYLE_DASHED.equals(DotProperties.getStyle(edge)); boolean dotted = DotProperties.EDGE_STYLE_DOTTED.equals(DotProperties.getStyle(edge));
     stringBuffer.append(TEXT_12);
     stringBuffer.append(edge.getSource().hashCode());
     stringBuffer.append(TEXT_13);

@@ -144,9 +144,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			graphConnection.attr(DotProperties.EDGE_LABEL, globalEdgeLabel);
 		}
 		/* Set the optional style, if set in the DOT input and supported: */
-		String currentEdgeStyleLc = new String(currentEdgeStyleValue)
+		String currentEdgeStyleLc = new String(
+				currentEdgeStyleValue == null ? "" : currentEdgeStyleValue)
 				.toLowerCase();
-		String globalEdgeStyleLc = new String(globalEdgeStyle).toLowerCase();
+		String globalEdgeStyleLc = new String(globalEdgeStyle == null ? ""
+				: globalEdgeStyle).toLowerCase();
 		if (supported(currentEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
 			graphConnection.attr(DotProperties.EDGE_STYLE, currentEdgeStyleLc);
 		} else if (supported(globalEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
