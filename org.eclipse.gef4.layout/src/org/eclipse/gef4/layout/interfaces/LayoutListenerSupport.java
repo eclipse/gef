@@ -10,19 +10,10 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.layout;
+package org.eclipse.gef4.layout.interfaces;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.ContextListener;
-import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.LayoutListener;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.PruningListener;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class LayoutListenerSupport {
 

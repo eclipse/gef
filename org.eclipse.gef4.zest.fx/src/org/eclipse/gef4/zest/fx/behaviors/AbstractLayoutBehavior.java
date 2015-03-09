@@ -29,7 +29,7 @@ import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	private GraphLayoutContext glc;
+	private LayoutContext glc;
 
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@SuppressWarnings("unchecked")
@@ -123,12 +123,12 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 		}
 
 		if (oldGlc != null && oldGlc == glc) {
-			oldGlc.removeOnFlushChanges(onFlushChanges);
+			oldGlc.unscheduleFromFlushChanges(onFlushChanges);
 			glc = null;
 		}
 		if (newGlc != null) {
 			glc = newGlc;
-			newGlc.addOnFlushChanges(onFlushChanges);
+			newGlc.scheduleForFlushChanges(onFlushChanges);
 			initializeLayout(newGlc);
 		}
 	}

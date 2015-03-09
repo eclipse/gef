@@ -26,6 +26,7 @@ import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
+import org.eclipse.gef4.layout.interfaces.ILayoutFilter;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.LayoutListener;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -618,6 +619,26 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		ps.addPropertyChangeListener(listener);
+	}
+
+	public void scheduleForFlushChanges(Runnable runnable) {
+	}
+
+	public void unscheduleFromFlushChanges(Runnable runnable) {
+	}
+
+	public boolean isLayoutIrrelevant(ConnectionLayout connLayout) {
+		return false;
+	}
+
+	public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
+		return false;
+	}
+
+	public void addLayoutFilter(ILayoutFilter layoutFilter) {
+	}
+
+	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
 	}
 
 }

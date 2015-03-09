@@ -13,7 +13,6 @@
 package org.eclipse.gef4.zest.fx.layout;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import java.util.Map;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.interfaces.AbstractLayoutContext;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -37,37 +37,17 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	private Graph g;
 	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<Node, GraphNodeLayout>();
 	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<Edge, GraphEdgeLayout>();
+
 	// TODO: subgraphs
-	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
-	private final List<ILayoutFilter> layoutFilters = new ArrayList<ILayoutFilter>();
 
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
-	}
-
-	public void addLayoutFilter(ILayoutFilter layoutFilter) {
-		layoutFilters.add(layoutFilter);
-	}
-
-	public void addOnFlushChanges(Runnable runnable) {
-		if (runnable == null) {
-			throw new IllegalArgumentException("Runnable may not be null.");
-		}
-		onFlushChanges.add(runnable);
 	}
 
 	@Override
 	public SubgraphLayout createSubgraph(NodeLayout[] nodes) {
 		// TODO: subgraphs
 		throw new UnsupportedOperationException("not yet implemented");
-	}
-
-	@Override
-	protected void doFlushChanges(boolean animationHint) {
-		// TODO: use specific flush-changes-listener to pass animationHint along
-		for (Runnable r : onFlushChanges) {
-			r.run();
-		}
 	}
 
 	public void firePruningChanged(GraphNodeLayout node) {
@@ -102,10 +82,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return g;
 	}
 
-	public List<ILayoutFilter> getLayoutFilters() {
-		return Collections.unmodifiableList(layoutFilters);
-	}
-
 	public GraphNodeLayout getNodeLayout(Node node) {
 		return nodeMap.get(node);
 	}
@@ -122,32 +98,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 			nodes.add(n);
 		}
 		return nodes.toArray(new NodeLayout[] {});
-	}
-
-	private boolean isLayoutIrrelevant(ConnectionLayout c) {
-		return false;
-	}
-
-	public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
-		for (ILayoutFilter filter : layoutFilters) {
-			if (filter.isLayoutIrrelevant(nodeLayout)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
-		layoutFilters.remove(layoutFilter);
-	}
-
-	public void removeOnFlushChanges(Runnable runnable) {
-		if (!onFlushChanges.contains(runnable)) {
-			new IllegalArgumentException(
-					"Given Runnable is not contained in the list.")
-					.printStackTrace();
-		}
-		onFlushChanges.remove(runnable);
 	}
 
 	public void setGraph(Graph graph) {

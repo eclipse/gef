@@ -62,10 +62,6 @@ public class GraphNodeLayout implements NodeLayout {
 		return incoming.toArray(new ConnectionLayout[0]);
 	}
 
-	public Object getItem() {
-		return node;
-	}
-
 	@Override
 	public Object[] getItems() {
 		return new Object[] { node };

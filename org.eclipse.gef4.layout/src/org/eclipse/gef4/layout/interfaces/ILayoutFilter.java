@@ -10,10 +10,8 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.layout;
+package org.eclipse.gef4.layout.interfaces;
 
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 public interface ILayoutFilter {
 

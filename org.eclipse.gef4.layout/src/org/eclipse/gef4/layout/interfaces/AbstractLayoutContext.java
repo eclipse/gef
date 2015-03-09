@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.layout;
+package org.eclipse.gef4.layout.interfaces;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -20,15 +20,6 @@ import java.util.List;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.ContextListener;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.LayoutListener;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.PruningListener;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 // TODO: replace fire* methods with property change mechanisms
 public abstract class AbstractLayoutContext implements LayoutContext {
@@ -42,10 +33,12 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 
 	private boolean flushChangesInvocation = false;
 
+	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
+	private final List<ILayoutFilter> layoutFilters = new ArrayList<ILayoutFilter>();
+
 	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	@Override
 	public void addContextListener(ContextListener listener) {
 		lls.addContextListener(listener);
 	}
@@ -62,12 +55,14 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		fireConnectionAddedEvent(edge);
 	}
 
-	@Override
 	public void addGraphStructureListener(GraphStructureListener listener) {
 		lls.addGraphStructureListener(listener);
 	}
 
-	@Override
+	public void addLayoutFilter(ILayoutFilter layoutFilter) {
+		layoutFilters.add(layoutFilter);
+	}
+
 	public void addLayoutListener(LayoutListener listener) {
 		lls.addLayoutListener(listener);
 	}
@@ -84,24 +79,20 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		fireNodeAddedEvent(node);
 	}
 
-	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	@Override
 	public void addPruningListener(PruningListener listener) {
 		lls.addPruningListener(listener);
 	}
 
-	@Override
 	public void applyDynamicLayout(boolean clear) {
 		if (dynamicLayoutAlgorithm != null) {
 			dynamicLayoutAlgorithm.applyLayout(clear);
 		}
 	}
 
-	@Override
 	public void applyStaticLayout(boolean clear) {
 		if (staticLayoutAlgorithm != null) {
 			staticLayoutAlgorithm.setLayoutContext(this);
@@ -129,100 +120,85 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		}
 	}
 
-	/**
-	 * As we have to guard invocations of {@link #flushChanges(boolean)}, the
-	 * true flushing of changes happens here.
-	 *
-	 * @param animationHint
-	 */
-	protected abstract void doFlushChanges(boolean animationHint);
+	protected void doFlushChanges(boolean animationHint) {
+		// TODO: use specific flush-changes-listener to pass animationHint along
+		for (Runnable r : onFlushChanges) {
+			r.run();
+		}
+	}
 
-	@Override
 	public void fireBackgroundEnableChangedEvent() {
 		lls.fireBackgroundEnableChangedEvent();
 	}
 
-	@Override
 	public void fireBoundsChangedEvent() {
 		if (!flushChangesInvocation) {
 			lls.fireBoundsChangedEvent();
 		}
 	}
 
-	@Override
 	public void fireConnectionAddedEvent(ConnectionLayout connection) {
 		if (!flushChangesInvocation) {
 			lls.fireConnectionAddedEvent(connection);
 		}
 	}
 
-	@Override
 	public void fireConnectionRemovedEvent(ConnectionLayout connection) {
 		if (!flushChangesInvocation) {
 			lls.fireConnectionRemovedEvent(connection);
 		}
 	}
 
-	@Override
 	public void fireNodeAddedEvent(NodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeAddedEvent(node);
 		}
 	}
 
-	@Override
 	public void fireNodeMovedEvent(NodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeMovedEvent(node);
 		}
 	}
 
-	@Override
 	public void fireNodeRemovedEvent(NodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeRemovedEvent(node);
 		}
 	}
 
-	@Override
 	public void fireNodeResizedEvent(NodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeResizedEvent(node);
 		}
 	}
 
-	@Override
 	public void firePruningEnableChangedEvent() {
 		lls.firePruningEnableChangedEvent();
 	}
 
-	@Override
 	public void fireSubgraphMovedEvent(SubgraphLayout subgraph) {
 		if (!flushChangesInvocation) {
 			lls.fireSubgraphMovedEvent(subgraph);
 		}
 	}
 
-	@Override
 	public void fireSubgraphResizedEvent(SubgraphLayout subgraph) {
 		if (!flushChangesInvocation) {
 			lls.fireSubgraphResizedEvent(subgraph);
 		}
 	}
 
-	@Override
 	public void flushChanges(boolean animationHint) {
 		flushChangesInvocation = true;
 		doFlushChanges(animationHint);
 		flushChangesInvocation = false;
 	}
 
-	@Override
 	public ConnectionLayout[] getConnections() {
 		return layoutEdges.toArray(new ConnectionLayout[0]);
 	}
 
-	@Override
 	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
 			EntityLayout layoutEntity2) {
 		List<ConnectionLayout> connections = new ArrayList<ConnectionLayout>();
@@ -244,32 +220,44 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		return connections.toArray(new ConnectionLayout[0]);
 	}
 
-	@Override
 	public LayoutAlgorithm getDynamicLayoutAlgorithm() {
 		return dynamicLayoutAlgorithm;
 	}
 
-	@Override
 	public NodeLayout[] getNodes() {
 		return layoutNodes.toArray(new NodeLayout[0]);
 	}
 
-	@Override
 	public Object getProperty(String name) {
 		return pss.getProperty(name);
 	}
 
-	@Override
 	public LayoutAlgorithm getStaticLayoutAlgorithm() {
 		return staticLayoutAlgorithm;
 	}
 
-	@Override
 	public SubgraphLayout[] getSubgraphs() {
 		return subgraphs.toArray(new SubgraphLayout[0]);
 	}
 
-	@Override
+	public boolean isLayoutIrrelevant(ConnectionLayout connLayout) {
+		for (ILayoutFilter filter : layoutFilters) {
+			if (filter.isLayoutIrrelevant(connLayout)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
+		for (ILayoutFilter filter : layoutFilters) {
+			if (filter.isLayoutIrrelevant(nodeLayout)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void removeContextListener(ContextListener listener) {
 		lls.removeContextListener(listener);
 	}
@@ -286,12 +274,14 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		fireConnectionRemovedEvent(edge);
 	}
 
-	@Override
 	public void removeGraphStructureListener(GraphStructureListener listener) {
 		lls.removeGraphStructureListener(listener);
 	}
 
-	@Override
+	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
+		layoutFilters.remove(layoutFilter);
+	}
+
 	public void removeLayoutListener(LayoutListener listener) {
 		lls.removeLayoutListener(listener);
 	}
@@ -308,17 +298,21 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		fireNodeRemovedEvent(node);
 	}
 
-	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	@Override
 	public void removePruningListener(PruningListener listener) {
 		lls.removePruningListener(listener);
 	}
 
-	@Override
+	public void scheduleForFlushChanges(Runnable runnable) {
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable may not be null.");
+		}
+		onFlushChanges.add(runnable);
+	}
+
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm dynamicLayoutAlgorithm) {
 		LayoutAlgorithm oldDynamicLayoutAlgorithm = this.dynamicLayoutAlgorithm;
 		if (oldDynamicLayoutAlgorithm != dynamicLayoutAlgorithm) {
@@ -329,7 +323,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		}
 	}
 
-	@Override
 	public void setProperty(String name, Object value) {
 		Object oldValue = pss.getProperty(name);
 		pss.setProperty(name, value);
@@ -347,7 +340,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		pcs.firePropertyChange(name, oldValue, value);
 	}
 
-	@Override
 	public void setStaticLayoutAlgorithm(LayoutAlgorithm staticLayoutAlgorithm) {
 		LayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
 		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
@@ -356,6 +348,15 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 			pcs.firePropertyChange(STATIC_LAYOUT_ALGORITHM_PROPERTY,
 					oldStaticLayoutAlgorithm, staticLayoutAlgorithm);
 		}
+	}
+
+	public void unscheduleFromFlushChanges(Runnable runnable) {
+		if (!onFlushChanges.contains(runnable)) {
+			new IllegalArgumentException(
+					"Given Runnable is not contained in the list.")
+					.printStackTrace();
+		}
+		onFlushChanges.remove(runnable);
 	}
 
 }

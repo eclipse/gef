@@ -116,6 +116,70 @@ public interface LayoutContext extends IPropertyStore {
 	public void setStaticLayoutAlgorithm(LayoutAlgorithm algorithm);
 
 	/**
+	 * Adds the given {@link Runnable} to the list of runnables which are called
+	 * when this {@link LayoutContext} is asked to apply all changes made to its
+	 * elements to the display.
+	 * 
+	 * @param runnable
+	 *            A {@link Runnable} called whenever this context is asked to
+	 *            apply all changes made to its elements to the display.
+	 */
+	public void scheduleForFlushChanges(Runnable runnable);
+
+	/**
+	 * Removes the given {@link Runnable} from the list of runnables which are
+	 * called when this {@link LayoutContext} is asked to apply all changes made
+	 * to its elements to the display.
+	 * 
+	 * @param runnable
+	 *            The {@link Runnable} that should no longer get called when
+	 *            flushing changes.
+	 */
+	public void unscheduleFromFlushChanges(Runnable runnable);
+
+	/**
+	 * Returns <code>true</code> when the given {@link ConnectionLayout} is not
+	 * relevant for layout according to the configured {@link ILayoutFilter
+	 * layout filters}. Otherwise returns <code>false</code>.
+	 * 
+	 * @param connLayout
+	 *            The {@link ConnectionLayout} in question.
+	 * @return <code>true</code> when the given {@link ConnectionLayout} is not
+	 *         relevant for layout according to the configure layout filters,
+	 *         otherwise <code>false</code>.
+	 */
+	public boolean isLayoutIrrelevant(ConnectionLayout connLayout);
+
+	/**
+	 * Returns <code>true</code> when the given {@link NodeLayout} is not
+	 * relevant for layout according to the configured {@link ILayoutFilter
+	 * layout filters}. Otherwise returns <code>false</code>.
+	 * 
+	 * @param nodeLayout
+	 *            The {@link NodeLayout} in question.
+	 * @return <code>true</code> when the given {@link NodeLayout} is not
+	 *         relevant for layout according to the configure layout filters,
+	 *         otherwise <code>false</code>.
+	 */
+	public boolean isLayoutIrrelevant(NodeLayout nodeLayout);
+
+	/**
+	 * Adds the given ILayoutFilter to this {@link LayoutContext}.
+	 * 
+	 * @param layoutFilter
+	 *            The ILayoutFilter to add to this context.
+	 */
+	public void addLayoutFilter(ILayoutFilter layoutFilter);
+
+	/**
+	 * Removes the given ILayoutFilter from this {@link LayoutContext}.
+	 * 
+	 * @param layoutFilter
+	 *            The ILayoutFilter to remove to this context.
+	 */
+	public void removeLayoutFilter(ILayoutFilter layoutFilter);
+
+	/**
 	 * Returns the static layout algorithm used to layout a newly initialized
 	 * graph or after heavy changes to it.
 	 * 

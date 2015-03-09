@@ -20,8 +20,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 			InternalLayoutContext layoutContext) {
 		this.graphConnection = graphConnection;
 		this.layoutContext = layoutContext;
-		setp(LayoutProperties.VISIBLE_PROPERTY,
-				graphConnection.isVisible());
+		setp(LayoutProperties.VISIBLE_PROPERTY, graphConnection.isVisible());
 	}
 
 	public NodeLayout getSource() {
