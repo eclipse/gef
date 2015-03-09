@@ -7,29 +7,32 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout.listeners;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
-public interface GraphStructureListener {
+public interface IGraphStructureListener {
 
-	public class Stub implements GraphStructureListener {
+	public class Stub implements IGraphStructureListener {
 
-		public boolean nodeAdded(LayoutContext context, NodeLayout node) {
+		public boolean nodeAdded(ILayoutContext context, INodeLayout node) {
 			return false;
 		}
 
-		public boolean nodeRemoved(LayoutContext context, NodeLayout node) {
+		public boolean nodeRemoved(ILayoutContext context, INodeLayout node) {
 			return false;
 		}
 
-		public boolean connectionAdded(LayoutContext context,
-				ConnectionLayout connection) {
+		public boolean connectionAdded(ILayoutContext context,
+				IConnectionLayout connection) {
 			return false;
 		}
 
-		public boolean connectionRemoved(LayoutContext context,
-				ConnectionLayout connection) {
+		public boolean connectionRemoved(ILayoutContext context,
+				IConnectionLayout connection) {
 			return false;
 		}
 	}
@@ -41,7 +44,7 @@ public interface GraphStructureListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -50,7 +53,7 @@ public interface GraphStructureListener {
 	 *            the added node
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodeAdded(LayoutContext context, NodeLayout node);
+	public boolean nodeAdded(ILayoutContext context, INodeLayout node);
 
 	/**
 	 * This method is called whenever a node is removed from a context. No
@@ -60,7 +63,7 @@ public interface GraphStructureListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -69,7 +72,7 @@ public interface GraphStructureListener {
 	 *            the removed node
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodeRemoved(LayoutContext context, NodeLayout node);
+	public boolean nodeRemoved(ILayoutContext context, INodeLayout node);
 
 	/**
 	 * This method is called whenever a connection is added to a context. It can
@@ -83,7 +86,7 @@ public interface GraphStructureListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -92,8 +95,8 @@ public interface GraphStructureListener {
 	 *            the added connection
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean connectionAdded(LayoutContext context,
-			ConnectionLayout connection);
+	public boolean connectionAdded(ILayoutContext context,
+			IConnectionLayout connection);
 
 	/**
 	 * This method is called whenever a connection is removed from a context. It
@@ -108,7 +111,7 @@ public interface GraphStructureListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -117,7 +120,7 @@ public interface GraphStructureListener {
 	 *            the added connection
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean connectionRemoved(LayoutContext context,
-			ConnectionLayout connection);
+	public boolean connectionRemoved(ILayoutContext context,
+			IConnectionLayout connection);
 
 }

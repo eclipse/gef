@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 public class LayoutModel implements IPropertyChangeNotifier {
 
@@ -29,7 +29,7 @@ public class LayoutModel implements IPropertyChangeNotifier {
 
 	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
 
-	private Map<Graph, LayoutContext> graphLayoutContext = new IdentityHashMap<Graph, LayoutContext>();
+	private Map<Graph, ILayoutContext> graphLayoutContext = new IdentityHashMap<Graph, ILayoutContext>();
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -38,7 +38,7 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public LayoutContext getLayoutContext(Graph graph) {
+	public ILayoutContext getLayoutContext(Graph graph) {
 		return graphLayoutContext.get(graph);
 	}
 
@@ -46,13 +46,13 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		if (graph == null) {
 			throw new IllegalArgumentException("Graph may not be null.");
 		}
-		LayoutContext oldContext = graphLayoutContext.remove(graph);
+		ILayoutContext oldContext = graphLayoutContext.remove(graph);
 		if (oldContext != null) {
 			// notify listeners
 			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY,
-					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+					new AbstractMap.SimpleEntry<Graph, ILayoutContext>(graph,
 							oldContext),
-					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+					new AbstractMap.SimpleEntry<Graph, ILayoutContext>(graph,
 							null));
 		}
 	}
@@ -62,12 +62,12 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void setLayoutContext(Graph graph, LayoutContext context) {
+	public void setLayoutContext(Graph graph, ILayoutContext context) {
 		if (graph == null) {
 			throw new IllegalArgumentException("Graph may not be null.");
 		}
 
-		LayoutContext oldContext = graphLayoutContext.get(graph);
+		ILayoutContext oldContext = graphLayoutContext.get(graph);
 		graphLayoutContext.put(graph, context);
 
 		// in case new context does not specify an algorithm, transfer old
@@ -84,9 +84,9 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		if (context != oldContext) {
 			// notify listeners
 			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY,
-					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+					new AbstractMap.SimpleEntry<Graph, ILayoutContext>(graph,
 							oldContext),
-					new AbstractMap.SimpleEntry<Graph, LayoutContext>(graph,
+					new AbstractMap.SimpleEntry<Graph, ILayoutContext>(graph,
 							context));
 		}
 	}

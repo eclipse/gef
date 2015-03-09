@@ -7,15 +7,15 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.common.properties.IPropertyStore;
 
 /**
  * A common interface for entities that are displayed on a graph, that is
- * {@link NodeLayout nodes} and {@link SubgraphLayout subgraphs}.
+ * {@link INodeLayout nodes} and {@link ISubgraphLayout subgraphs}.
  */
-public interface EntityLayout extends IPropertyStore {
+public interface IEntityLayout extends IPropertyStore {
 
 	/**
 	 * Returns all entities that are direct successors of this entity. Successor
@@ -43,7 +43,7 @@ public interface EntityLayout extends IPropertyStore {
 	 * 
 	 * @return array of successors of this node
 	 */
-	public EntityLayout[] getSuccessingEntities();
+	public IEntityLayout[] getSuccessingEntities();
 
 	/**
 	 * Returns all entities that are direct predecessors of this entity.
@@ -72,7 +72,7 @@ public interface EntityLayout extends IPropertyStore {
 	 * 
 	 * @return array of predecessors of this node
 	 */
-	public EntityLayout[] getPredecessingEntities();
+	public IEntityLayout[] getPredecessingEntities();
 
 	/**
 	 * Returns all graph items that are represented using this single entity.

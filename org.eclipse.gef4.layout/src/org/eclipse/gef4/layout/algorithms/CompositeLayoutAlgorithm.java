@@ -10,15 +10,15 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
-public class CompositeLayoutAlgorithm implements LayoutAlgorithm {
+public class CompositeLayoutAlgorithm implements ILayoutAlgorithm {
 
-	private LayoutContext context = null;
-	private LayoutAlgorithm[] algorithms = null;
+	private ILayoutContext context = null;
+	private ILayoutAlgorithm[] algorithms = null;
 
-	public CompositeLayoutAlgorithm(LayoutAlgorithm[] algorithms) {
+	public CompositeLayoutAlgorithm(ILayoutAlgorithm[] algorithms) {
 		this.algorithms = algorithms;
 	}
 
@@ -28,14 +28,14 @@ public class CompositeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
 		for (int i = 0; i < algorithms.length; i++) {
 			algorithms[i].setLayoutContext(context);
 		}
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 

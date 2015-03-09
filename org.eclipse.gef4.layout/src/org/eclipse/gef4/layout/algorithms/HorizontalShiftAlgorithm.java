@@ -18,45 +18,45 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 /**
  * This layout shifts overlapping nodes to the right.
  * 
  * @author Ian Bull
  */
-public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
+public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 
 	private static final double DELTA = 10;
 
 	private static final double VSPACING = 16;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		ArrayList<List<EntityLayout>> rowsList = new ArrayList<List<EntityLayout>>();
-		EntityLayout[] entities = context.getEntities();
+		ArrayList<List<IEntityLayout>> rowsList = new ArrayList<List<IEntityLayout>>();
+		IEntityLayout[] entities = context.getEntities();
 
 		for (int i = 0; i < entities.length; i++) {
 			addToRowList(entities[i], rowsList);
 		}
 
-		Collections.sort(rowsList, new Comparator<List<EntityLayout>>() {
-			public int compare(List<EntityLayout> o1, List<EntityLayout> o2) {
-				EntityLayout entity0 = o1.get(0);
-				EntityLayout entity1 = o2.get(0);
+		Collections.sort(rowsList, new Comparator<List<IEntityLayout>>() {
+			public int compare(List<IEntityLayout> o1, List<IEntityLayout> o2) {
+				IEntityLayout entity0 = o1.get(0);
+				IEntityLayout entity1 = o2.get(0);
 				return (int) (LayoutProperties.getLocation(entity0).y - LayoutProperties
 						.getLocation(entity1).y);
 			}
 		});
 
-		Comparator<EntityLayout> entityComparator = new Comparator<EntityLayout>() {
-			public int compare(EntityLayout o1, EntityLayout o2) {
+		Comparator<IEntityLayout> entityComparator = new Comparator<IEntityLayout>() {
+			public int compare(IEntityLayout o1, IEntityLayout o2) {
 				return (int) (LayoutProperties.getLocation(o1).y - LayoutProperties
 						.getLocation(o2).y);
 			}
@@ -64,9 +64,9 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		int heightSoFar = 0;
 
-		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
+		for (Iterator<List<IEntityLayout>> iterator = rowsList.iterator(); iterator
 				.hasNext();) {
-			List<EntityLayout> currentRow = iterator.next();
+			List<IEntityLayout> currentRow = iterator.next();
 			Collections.sort(currentRow, entityComparator);
 
 			int i = 0;
@@ -74,9 +74,9 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 
 			heightSoFar += LayoutProperties.getSize(currentRow.get(0)).height
 					+ VSPACING;
-			for (Iterator<EntityLayout> iterator2 = currentRow.iterator(); iterator2
+			for (Iterator<IEntityLayout> iterator2 = currentRow.iterator(); iterator2
 					.hasNext();) {
-				EntityLayout entity = (EntityLayout) iterator2.next();
+				IEntityLayout entity = (IEntityLayout) iterator2.next();
 				Dimension size = LayoutProperties.getSize(entity);
 				LayoutProperties.setLocation(entity, width + 10 * ++i
 						+ size.width / 2, heightSoFar + size.height / 2);
@@ -85,22 +85,22 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 
-	private void addToRowList(EntityLayout entity,
-			ArrayList<List<EntityLayout>> rowsList) {
+	private void addToRowList(IEntityLayout entity,
+			ArrayList<List<IEntityLayout>> rowsList) {
 		double layoutY = LayoutProperties.getLocation(entity).y;
 
-		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
+		for (Iterator<List<IEntityLayout>> iterator = rowsList.iterator(); iterator
 				.hasNext();) {
-			List<EntityLayout> currentRow = iterator.next();
-			EntityLayout currentRowEntity = currentRow.get(0);
+			List<IEntityLayout> currentRow = iterator.next();
+			IEntityLayout currentRowEntity = currentRow.get(0);
 			double currentRowY = LayoutProperties.getLocation(currentRowEntity).y;
 			if (layoutY >= currentRowY - DELTA
 					&& layoutY <= currentRowY + DELTA) {
@@ -108,7 +108,7 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 				return;
 			}
 		}
-		List<EntityLayout> newRow = new ArrayList<EntityLayout>();
+		List<IEntityLayout> newRow = new ArrayList<IEntityLayout>();
 		newRow.add(entity);
 		rowsList.add(newRow);
 	}

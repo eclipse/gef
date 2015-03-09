@@ -15,11 +15,11 @@ import java.util.Iterator;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 /**
  * The TreeLayoutAlgorithm class implements a simple algorithm to arrange graph
@@ -30,7 +30,7 @@ import org.eclipse.gef4.layout.interfaces.LayoutContext;
  * @author Casey Best and Rob Lintern (version 2.0)
  * @author Jingwei Wu (version 1.0)
  */
-public class TreeLayoutAlgorithm implements LayoutAlgorithm {
+public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * Tree direction constant for which root is placed at the top and branches
@@ -60,7 +60,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private boolean resize = false;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 
 	private Rectangle bounds;
 
@@ -147,7 +147,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 		resize = resizing;
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		if (treeObserver != null) {
 			treeObserver.stop();
 		}
@@ -157,7 +157,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -167,14 +167,14 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		internalApplyLayout();
 
-		EntityLayout[] entities = context.getEntities();
+		IEntityLayout[] entities = context.getEntities();
 
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
 		scaleEntities(entities);
 	}
 
-	private void scaleEntities(EntityLayout[] entities) {
+	private void scaleEntities(IEntityLayout[] entities) {
 		if (nodeSpace == null) {
 			Rectangle bounds2 = new Rectangle(bounds);
 			int insets = 4;

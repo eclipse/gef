@@ -12,13 +12,13 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.ContextListener;
-import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.listeners.IContextListener;
+import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
 
 /**
  * <p>
@@ -45,19 +45,19 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  */
 public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
-	private HashSet<NodeLayout> expandedNodes = new HashSet<NodeLayout>();
+	private HashSet<INodeLayout> expandedNodes = new HashSet<INodeLayout>();
 
-	private HashSet<NodeLayout> nodesToPrune = new HashSet<NodeLayout>();
+	private HashSet<INodeLayout> nodesToPrune = new HashSet<INodeLayout>();
 
-	private HashSet<NodeLayout> nodesToUnprune = new HashSet<NodeLayout>();
+	private HashSet<INodeLayout> nodesToUnprune = new HashSet<INodeLayout>();
 
-	private HashSet<NodeLayout> nodesToUpdate = new HashSet<NodeLayout>();
+	private HashSet<INodeLayout> nodesToUpdate = new HashSet<INodeLayout>();
 
 	private boolean cleanLayoutScheduled = false;
 
 	private boolean animate = true;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 
 	/**
 	 * @param animate
@@ -68,10 +68,10 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		this.animate = animate;
 	}
 
-	public void initExpansion(final LayoutContext context) {
+	public void initExpansion(final ILayoutContext context) {
 		this.context = context;
-		context.addGraphStructureListener(new GraphStructureListener() {
-			public boolean nodeRemoved(LayoutContext context, NodeLayout node) {
+		context.addGraphStructureListener(new IGraphStructureListener() {
+			public boolean nodeRemoved(ILayoutContext context, INodeLayout node) {
 				if (isExpanded(node)) {
 					collapse(node);
 				}
@@ -79,15 +79,15 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 				return false;
 			}
 
-			public boolean nodeAdded(LayoutContext context, NodeLayout node) {
+			public boolean nodeAdded(ILayoutContext context, INodeLayout node) {
 				resetState(node);
 				flushChanges(false, true);
 				return false;
 			}
 
-			public boolean connectionRemoved(LayoutContext context,
-					ConnectionLayout connection) {
-				NodeLayout target = connection.getTarget();
+			public boolean connectionRemoved(ILayoutContext context,
+					IConnectionLayout connection) {
+				INodeLayout target = connection.getTarget();
 				if (!isExpanded(target)
 						&& target.getIncomingConnections().length == 0) {
 					expand(target);
@@ -96,8 +96,8 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 				return false;
 			}
 
-			public boolean connectionAdded(LayoutContext context,
-					ConnectionLayout connection) {
+			public boolean connectionAdded(ILayoutContext context,
+					IConnectionLayout connection) {
 				resetState(connection.getTarget());
 				updateNodeLabel(connection.getSource());
 				flushChanges(false, true);
@@ -106,40 +106,40 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 		});
 
-		context.addContextListener(new ContextListener.Stub() {
-			public void backgroundEnableChanged(LayoutContext context) {
+		context.addContextListener(new IContextListener.Stub() {
+			public void backgroundEnableChanged(ILayoutContext context) {
 				flushChanges(false, false);
 			}
 		});
 	}
 
-	public boolean canCollapse(LayoutContext context, NodeLayout node) {
+	public boolean canCollapse(ILayoutContext context, INodeLayout node) {
 		return isExpanded(node) && !LayoutProperties.isPruned(node)
 				&& node.getOutgoingConnections().length > 0;
 	}
 
-	public boolean canExpand(LayoutContext context, NodeLayout node) {
+	public boolean canExpand(ILayoutContext context, INodeLayout node) {
 		return !isExpanded(node) && !LayoutProperties.isPruned(node)
 				&& node.getOutgoingConnections().length > 0;
 	}
 
-	private void collapseAllConnections(NodeLayout node) {
-		ConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
+	private void collapseAllConnections(INodeLayout node) {
+		IConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
 		for (int i = 0; i < outgoingConnections.length; i++) {
 			LayoutProperties.setVisible(outgoingConnections[i], false);
 		}
 		flushChanges(true, true);
 	}
 
-	private void expandAllConnections(NodeLayout node) {
-		ConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
+	private void expandAllConnections(INodeLayout node) {
+		IConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
 		for (int i = 0; i < outgoingConnections.length; i++) {
 			LayoutProperties.setVisible(outgoingConnections[i], true);
 		}
 		flushChanges(true, true);
 	}
 
-	public void setExpanded(LayoutContext context, NodeLayout node,
+	public void setExpanded(ILayoutContext context, INodeLayout node,
 			boolean expanded) {
 
 		// if (isExpanded(node) == expanded)
@@ -158,22 +158,22 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		flushChanges(true, true);
 	}
 
-	private void expand(NodeLayout node) {
+	private void expand(INodeLayout node) {
 		setExpanded(node, true);
-		NodeLayout[] successingNodes = node.getSuccessingNodes();
+		INodeLayout[] successingNodes = node.getSuccessingNodes();
 		for (int i = 0; i < successingNodes.length; i++) {
 			unpruneNode(successingNodes[i]);
 		}
 		updateNodeLabel(node);
 	}
 
-	private void collapse(NodeLayout node) {
+	private void collapse(INodeLayout node) {
 		if (isExpanded(node)) {
 			setExpanded(node, false);
 		} else {
 			return;
 		}
-		NodeLayout[] successors = node.getSuccessingNodes();
+		INodeLayout[] successors = node.getSuccessingNodes();
 		for (int i = 0; i < successors.length; i++) {
 			checkPruning(successors[i]);
 			if (isPruned(successors[i])) {
@@ -183,9 +183,9 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		updateNodeLabel(node);
 	}
 
-	private void checkPruning(NodeLayout node) {
+	private void checkPruning(INodeLayout node) {
 		boolean prune = true;
-		NodeLayout[] predecessors = node.getPredecessingNodes();
+		INodeLayout[] predecessors = node.getPredecessingNodes();
 		for (int j = 0; j < predecessors.length; j++) {
 			if (isExpanded(predecessors[j])) {
 				prune = false;
@@ -206,8 +206,8 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	 * 
 	 * @param target
 	 */
-	private void resetState(NodeLayout node) {
-		NodeLayout[] predecessors = node.getPredecessingNodes();
+	private void resetState(INodeLayout node) {
+		INodeLayout[] predecessors = node.getPredecessingNodes();
 		if (predecessors.length == 0) {
 			expand(node);
 		} else {
@@ -223,7 +223,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	 * @param node
 	 *            node to update
 	 */
-	private void updateNodeLabel(NodeLayout node) {
+	private void updateNodeLabel(INodeLayout node) {
 		nodesToUpdate.add(node);
 	}
 
@@ -236,7 +236,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		}
 	}
 
-	private void pruneNode(NodeLayout node) {
+	private void pruneNode(INodeLayout node) {
 		if (isPruned(node)) {
 			return;
 		}
@@ -244,7 +244,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		nodesToPrune.add(node);
 	}
 
-	private void unpruneNode(NodeLayout node) {
+	private void unpruneNode(INodeLayout node) {
 		if (!isPruned(node)) {
 			return;
 		}
@@ -252,7 +252,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		nodesToUnprune.add(node);
 	}
 
-	private boolean isPruned(NodeLayout node) {
+	private boolean isPruned(INodeLayout node) {
 		if (nodesToUnprune.contains(node)) {
 			return false;
 		}
@@ -268,20 +268,20 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 			return;
 		}
 
-		for (Iterator<NodeLayout> iterator = nodesToUnprune.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodesToUnprune.iterator(); iterator
 				.hasNext();) {
-			NodeLayout node = iterator.next();
+			INodeLayout node = iterator.next();
 			node.prune(null);
 		}
 		nodesToUnprune.clear();
 
 		if (!nodesToPrune.isEmpty()) {
 			context.createSubgraph(nodesToPrune
-					.toArray(new NodeLayout[nodesToPrune.size()]));
+					.toArray(new INodeLayout[nodesToPrune.size()]));
 			nodesToPrune.clear();
 		}
 
-		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodesToUpdate.iterator(); iterator
 				.hasNext();) {
 			InternalNodeLayout node = (InternalNodeLayout) iterator.next();
 			updateNodeLabel2(node);
@@ -293,12 +293,12 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		context.flushChanges(animate);
 	}
 
-	private boolean isExpanded(NodeLayout node) {
+	private boolean isExpanded(INodeLayout node) {
 		// return !node.isPruned();
 		return expandedNodes.contains(node);
 	}
 
-	private void setExpanded(NodeLayout node, boolean expanded) {
+	private void setExpanded(INodeLayout node, boolean expanded) {
 		if (expanded) {
 			expandedNodes.add(node);
 		} else {

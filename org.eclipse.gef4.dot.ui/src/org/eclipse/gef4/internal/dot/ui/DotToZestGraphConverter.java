@@ -19,7 +19,7 @@ import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
@@ -116,7 +116,7 @@ public class DotToZestGraphConverter {
 		// convert layout and rankdir to LayoutAlgorithm
 		Object dotLayout = dot.get(DotProperties.GRAPH_LAYOUT);
 		Object dotRankdir = dot.get(DotProperties.GRAPH_RANKDIR);
-		LayoutAlgorithm algo = null;
+		ILayoutAlgorithm algo = null;
 		if (DotProperties.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
 				|| DotProperties.GRAPH_LAYOUT_NEATO.equals(dotLayout)
 				|| DotProperties.GRAPH_LAYOUT_TWOPI.equals(dotLayout)) {

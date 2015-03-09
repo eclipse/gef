@@ -22,14 +22,14 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	private LayoutContext glc;
+	private ILayoutContext glc;
 
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@SuppressWarnings("unchecked")
@@ -37,9 +37,9 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (LayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
 					.getPropertyName())) {
-				Map.Entry<Graph, LayoutContext> oldContext = (Map.Entry<Graph, LayoutContext>) evt
+				Map.Entry<Graph, ILayoutContext> oldContext = (Map.Entry<Graph, ILayoutContext>) evt
 						.getOldValue();
-				Map.Entry<Graph, LayoutContext> newContext = (Map.Entry<Graph, LayoutContext>) evt
+				Map.Entry<Graph, ILayoutContext> newContext = (Map.Entry<Graph, ILayoutContext>) evt
 						.getNewValue();
 				onLayoutContextChange(oldContext.getKey(),
 						(GraphLayoutContext) oldContext.getValue(),
@@ -72,7 +72,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 		getHost().getVisual().layoutBoundsProperty()
 				.addListener(layoutBoundsListener);
 		// check if a layout context is already available
-		LayoutContext layoutContext = getDomainAdapter(LayoutModel.class)
+		ILayoutContext layoutContext = getDomainAdapter(LayoutModel.class)
 				.getLayoutContext(getGraph());
 		if (layoutContext instanceof GraphLayoutContext) {
 			onLayoutContextChange(getGraph(), null,

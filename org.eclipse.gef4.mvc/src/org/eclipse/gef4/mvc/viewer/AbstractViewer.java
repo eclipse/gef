@@ -16,6 +16,7 @@ package org.eclipse.gef4.mvc.viewer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
@@ -52,7 +53,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	private ActivatableSupport<IViewer<VR>> acs = new ActivatableSupport<IViewer<VR>>(
 			this, pcs);
 
-	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR, ? extends VR>>();
+	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<Object, IContentPart<VR, ? extends VR>>();
 	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR, ? extends VR>>();
 
 	private IDomain<VR> domain;

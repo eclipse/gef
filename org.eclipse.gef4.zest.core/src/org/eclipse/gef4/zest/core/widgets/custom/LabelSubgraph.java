@@ -10,8 +10,8 @@
 package org.eclipse.gef4.zest.core.widgets.custom;
 
 import org.eclipse.draw2d.Label;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.zest.core.widgets.FigureSubgraph;
 import org.eclipse.gef4.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.swt.graphics.Color;
@@ -59,7 +59,7 @@ public class LabelSubgraph extends FigureSubgraph {
 		((Label) figure).setText("" + nodes.size());
 	}
 
-	public LabelSubgraph(NodeLayout[] nodes, LayoutContext context,
+	public LabelSubgraph(INodeLayout[] nodes, ILayoutContext context,
 			Color foregroundColor, Color backgroundColor) {
 		super(nodes, context);
 		this.foregroundColor = foregroundColor;

@@ -17,10 +17,10 @@ package org.eclipse.gef4.layout.examples;
 import javafx.application.Application;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
@@ -57,20 +57,20 @@ public class CustomLayoutExample extends AbstractZestExample {
 				.build();
 	}
 
-	private LayoutAlgorithm createLayoutAlgorithm() {
-		LayoutAlgorithm layoutAlgorithm = new LayoutAlgorithm() {
-			private LayoutContext context;
+	private ILayoutAlgorithm createLayoutAlgorithm() {
+		ILayoutAlgorithm layoutAlgorithm = new ILayoutAlgorithm() {
+			private ILayoutContext context;
 
 			@Override
 			public void applyLayout(boolean clean) {
-				EntityLayout[] entitiesToLayout = context.getEntities();
+				IEntityLayout[] entitiesToLayout = context.getEntities();
 				int totalSteps = entitiesToLayout.length;
 				double distance = LayoutProperties.getBounds(context)
 						.getWidth() / totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
-					EntityLayout layoutEntity = entitiesToLayout[currentStep];
+					IEntityLayout layoutEntity = entitiesToLayout[currentStep];
 					LayoutProperties.setLocation(layoutEntity, xLocation,
 					/* LayoutProperties.getLocation(layoutEntity).y */0);
 					xLocation += distance;
@@ -78,12 +78,12 @@ public class CustomLayoutExample extends AbstractZestExample {
 			}
 
 			@Override
-			public LayoutContext getLayoutContext() {
+			public ILayoutContext getLayoutContext() {
 				return context;
 			}
 
 			@Override
-			public void setLayoutContext(LayoutContext context) {
+			public void setLayoutContext(ILayoutContext context) {
 				this.context = context;
 			}
 		};

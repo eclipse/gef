@@ -35,7 +35,7 @@ import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.internal.AspectRatioFreeformLayer;
 import org.eclipse.gef4.zest.core.widgets.internal.ContainerFigure;
@@ -652,7 +652,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	/**
 	 * @since 2.0
 	 */
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm,
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm,
 			boolean applyLayout) {
 		getLayoutContext().setStaticLayoutAlgorithm(algorithm);
 		if (applyLayout) {
@@ -968,7 +968,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	/**
 	 * @since 2.0
 	 */
-	public LayoutAlgorithm getLayoutAlgorithm() {
+	public ILayoutAlgorithm getLayoutAlgorithm() {
 		return getLayoutContext().getStaticLayoutAlgorithm();
 	}
 }

@@ -10,13 +10,14 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
+
 
 
 public interface ILayoutFilter {
 
-	public boolean isLayoutIrrelevant(ConnectionLayout connectionLayout);
+	public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout);
 
-	public boolean isLayoutIrrelevant(NodeLayout nodeLayout);
+	public boolean isLayoutIrrelevant(INodeLayout nodeLayout);
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -70,7 +70,7 @@ public interface IContainer {
 
 	public void applyLayout();
 
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm, boolean apply);
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm, boolean apply);
 
 	/**
 	 * Takes a list of connections and returns only those which source and

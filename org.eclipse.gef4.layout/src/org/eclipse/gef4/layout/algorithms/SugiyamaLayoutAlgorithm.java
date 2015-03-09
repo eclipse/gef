@@ -30,11 +30,11 @@ import java.util.Set;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 /**
  * The SugiyamaLayoutAlgorithm class implements an algorithm to arrange a
@@ -54,7 +54,7 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  * @author Rene Kuhlemann
  * @author Adam Kovacs
  */
-public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
+public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
 	public enum Direction {
 		HORIZONTAL, VERTICAL
@@ -83,7 +83,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	public static class BarycentricCrossingReducer implements CrossingReducer {
 
 		private List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>();
-		private Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
+		private Map<INodeLayout, NodeWrapper> map = new IdentityHashMap<INodeLayout, NodeWrapper>();
 		private static final int MAX_SWEEPS = 35;
 		private int last; // index of the last element in a layer after padding
 							// process
@@ -241,7 +241,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	 * 
 	 */
 	public static class SplitCrossingReducer implements CrossingReducer {
-		private final Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
+		private final Map<INodeLayout, NodeWrapper> map = new IdentityHashMap<INodeLayout, NodeWrapper>();
 
 		/**
 		 * Filters the multiple connections from the two arrays
@@ -250,9 +250,9 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param b
 		 * @return
 		 */
-		private ArrayList<NodeLayout> unionOfNodes(NodeLayout[] a,
-				NodeLayout[] b) {
-			ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();
+		private ArrayList<INodeLayout> unionOfNodes(INodeLayout[] a,
+				INodeLayout[] b) {
+			ArrayList<INodeLayout> res = new ArrayList<INodeLayout>();
 
 			for (int i = 0; i < a.length; i++)
 				res.add(a[i]);
@@ -277,14 +277,14 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				return 0;
 
 			// Filter nodes connected with bidirectional edges
-			ArrayList<NodeLayout> adjacentNodesOfA = unionOfNodes(
+			ArrayList<INodeLayout> adjacentNodesOfA = unionOfNodes(
 					nodeA.node.getPredecessingNodes(),
 					nodeA.node.getSuccessingNodes());
-			ArrayList<NodeLayout> adjacentNodesOfB = unionOfNodes(
+			ArrayList<INodeLayout> adjacentNodesOfB = unionOfNodes(
 					nodeB.node.getPredecessingNodes(),
 					nodeB.node.getSuccessingNodes());
 
-			for (NodeLayout aNode : adjacentNodesOfA) {
+			for (INodeLayout aNode : adjacentNodesOfA) {
 				ArrayList<Integer> alreadyCrossed = new ArrayList<Integer>();
 				NodeWrapper aNodeWrapper = map.get(aNode);
 				for (int i = 0; i < adjacentNodesOfB.size(); i++) {
@@ -416,7 +416,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	 * 
 	 */
 	public static class GreedyCrossingReducer implements CrossingReducer {
-		private final Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
+		private final Map<INodeLayout, NodeWrapper> map = new IdentityHashMap<INodeLayout, NodeWrapper>();
 		private List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>();
 		private Map<Integer, Integer> crossesForLayers = new IdentityHashMap<Integer, Integer>();
 
@@ -427,9 +427,9 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param b
 		 * @return
 		 */
-		private ArrayList<NodeLayout> unionOfNodes(NodeLayout[] a,
-				NodeLayout[] b) {
-			ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();
+		private ArrayList<INodeLayout> unionOfNodes(INodeLayout[] a,
+				INodeLayout[] b) {
+			ArrayList<INodeLayout> res = new ArrayList<INodeLayout>();
 
 			for (int i = 0; i < a.length; i++)
 				res.add(a[i]);
@@ -454,14 +454,14 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				return 0;
 
 			// Filter nodes connected with bidirectional edges
-			ArrayList<NodeLayout> adjacentNodesOfA = unionOfNodes(
+			ArrayList<INodeLayout> adjacentNodesOfA = unionOfNodes(
 					nodeA.node.getPredecessingNodes(),
 					nodeA.node.getSuccessingNodes());
-			ArrayList<NodeLayout> adjacentNodesOfB = unionOfNodes(
+			ArrayList<INodeLayout> adjacentNodesOfB = unionOfNodes(
 					nodeB.node.getPredecessingNodes(),
 					nodeB.node.getSuccessingNodes());
 
-			for (NodeLayout aNode : adjacentNodesOfA) {
+			for (INodeLayout aNode : adjacentNodesOfA) {
 				ArrayList<Integer> alreadyCrossed = new ArrayList<Integer>();
 				NodeWrapper aNodeWrapper = map.get(aNode);
 				for (int i = 0; i < adjacentNodesOfB.size(); i++) {
@@ -600,12 +600,12 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	public static class NodeWrapper {
 		int index;
 		final int layer;
-		final NodeLayout node;
+		final INodeLayout node;
 		final List<NodeWrapper> pred = new LinkedList<NodeWrapper>();
 		final List<NodeWrapper> succ = new LinkedList<NodeWrapper>();
 		private static final int PADDING = -1;
 
-		NodeWrapper(NodeLayout n, int l) {
+		NodeWrapper(INodeLayout n, int l) {
 			node = n;
 			layer = l;
 		} // NodeLayout wrapper
@@ -697,7 +697,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * @return a list of layers for the given nodes, represented each as a
 		 *         list of {@link NodeWrapper}s
 		 */
-		List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes);
+		List<List<NodeWrapper>> calculateLayers(List<INodeLayout> nodes);
 	}
 
 	/**
@@ -709,7 +709,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	 */
 	public static class DFSLayerProvider implements LayerProvider {
 
-		private Map<NodeLayout, Integer> assignedNodes = new IdentityHashMap<NodeLayout, Integer>();
+		private Map<INodeLayout, Integer> assignedNodes = new IdentityHashMap<INodeLayout, Integer>();
 
 		/**
 		 * Returns the mutual connections of the two array given as parameters.
@@ -718,9 +718,9 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param b
 		 * @return
 		 */
-		private List<ConnectionLayout> intersectOfConnections(
-				ConnectionLayout[] a, ConnectionLayout[] b) {
-			ArrayList<ConnectionLayout> res = new ArrayList<ConnectionLayout>();
+		private List<IConnectionLayout> intersectOfConnections(
+				IConnectionLayout[] a, IConnectionLayout[] b) {
+			ArrayList<IConnectionLayout> res = new ArrayList<IConnectionLayout>();
 
 			for (int i = 0; i < a.length; i++)
 				for (int j = 0; j < b.length; j++)
@@ -730,9 +730,9 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 			return res;
 		}
 
-		private void addToInitClosedList(NodeLayout node, int layout,
-				List<NodeLayout> initClosedList,
-				Map<NodeLayout, NodeWrapper> map) {
+		private void addToInitClosedList(INodeLayout node, int layout,
+				List<INodeLayout> initClosedList,
+				Map<INodeLayout, NodeWrapper> map) {
 			NodeWrapper nw = new NodeWrapper(node, layout);
 			map.put(node, nw);
 			initClosedList.add(node);
@@ -745,10 +745,10 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param nodes
 		 * @return the list of root elements
 		 */
-		public ArrayList<NodeLayout> getRoots(List<NodeLayout> nodes) {
-			ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();
+		public ArrayList<INodeLayout> getRoots(List<INodeLayout> nodes) {
+			ArrayList<INodeLayout> res = new ArrayList<INodeLayout>();
 
-			for (NodeLayout node : nodes) {
+			for (INodeLayout node : nodes) {
 				// directed edges
 				if (node.getIncomingConnections().length == 0)
 					res.add(node);
@@ -773,11 +773,11 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 			return res;
 		}
 
-		public Map<NodeLayout, Integer> getAssignedNodes() {
+		public Map<INodeLayout, Integer> getAssignedNodes() {
 			return assignedNodes;
 		}
 
-		public void addAssignedNode(NodeLayout node, int layer) {
+		public void addAssignedNode(INodeLayout node, int layer) {
 			assignedNodes.put(node, layer);
 		}
 
@@ -795,11 +795,11 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * 
 		 * @param list
 		 */
-		private void addLayer(List<NodeLayout> list,
-				List<List<NodeWrapper>> layers, Map<NodeLayout, NodeWrapper> map) {
+		private void addLayer(List<INodeLayout> list,
+				List<List<NodeWrapper>> layers, Map<INodeLayout, NodeWrapper> map) {
 			ArrayList<NodeWrapper> layer = new ArrayList<NodeWrapper>(
 					list.size());
-			for (NodeLayout node : list) {
+			for (INodeLayout node : list) {
 				// wrap each NodeLayout with the internal data object and
 				// provide a
 				// corresponding mapping
@@ -817,12 +817,12 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param toUnfold
 		 * @return
 		 */
-		private ArrayList<NodeLayout> Unfold(NodeLayout toUnfold,
-				Set<NodeLayout> openedList, Set<NodeLayout> closedList) {
-			ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();
+		private ArrayList<INodeLayout> Unfold(INodeLayout toUnfold,
+				Set<INodeLayout> openedList, Set<INodeLayout> closedList) {
+			ArrayList<INodeLayout> res = new ArrayList<INodeLayout>();
 
 			for (int i = 0; i < toUnfold.getOutgoingConnections().length; i++) {
-				NodeLayout endPoint = toUnfold.getOutgoingConnections()[i]
+				INodeLayout endPoint = toUnfold.getOutgoingConnections()[i]
 						.getTarget();
 				if (endPoint.equals(toUnfold))
 					endPoint = toUnfold.getOutgoingConnections()[i].getSource();
@@ -832,7 +832,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 					res.add(endPoint);
 			}
 			for (int i = 0; i < toUnfold.getIncomingConnections().length; i++) {
-				NodeLayout endPoint = toUnfold.getIncomingConnections()[i]
+				INodeLayout endPoint = toUnfold.getIncomingConnections()[i]
 						.getTarget();
 				if (endPoint.equals(toUnfold))
 					endPoint = toUnfold.getIncomingConnections()[i].getSource();
@@ -846,17 +846,17 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		}
 
 		public List<List<NodeWrapper>> calculateLayers(
-				List<NodeLayout> nodeLayouts) {
-			List<NodeLayout> nodes = new ArrayList<NodeLayout>(nodeLayouts);
-			Set<NodeLayout> openedList = new HashSet<NodeLayout>();
-			List<NodeLayout> initClosedList = new ArrayList<NodeLayout>();
-			Set<NodeLayout> closedList = new HashSet<NodeLayout>();
+				List<INodeLayout> nodeLayouts) {
+			List<INodeLayout> nodes = new ArrayList<INodeLayout>(nodeLayouts);
+			Set<INodeLayout> openedList = new HashSet<INodeLayout>();
+			List<INodeLayout> initClosedList = new ArrayList<INodeLayout>();
+			Set<INodeLayout> closedList = new HashSet<INodeLayout>();
 			List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>();
-			Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
+			Map<INodeLayout, NodeWrapper> map = new IdentityHashMap<INodeLayout, NodeWrapper>();
 
 			// Assigns the given nodes to there layers
 			if (assignedNodes.size() > 0) {
-				for (NodeLayout node : nodes) {
+				for (INodeLayout node : nodes) {
 					if (assignedNodes.containsKey(node))
 						addToInitClosedList(node, assignedNodes.get(node),
 								initClosedList, map);
@@ -871,23 +871,23 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				nodes.removeAll(initClosedList);
 				initClosedList.clear();
 
-				for (NodeLayout node : closedList) {
+				for (INodeLayout node : closedList) {
 					if (map.get(node).layer < layers.size()) {
 						layers.get(map.get(node).layer).add(map.get(node));
 						updateIndex(layers.get(map.get(node).layer));
 					} else {
 						while (map.get(node).layer != layers.size()) {
-							ArrayList<NodeLayout> layer = new ArrayList<NodeLayout>();
+							ArrayList<INodeLayout> layer = new ArrayList<INodeLayout>();
 							addLayer(layer, layers, map);
 						}
-						ArrayList<NodeLayout> layer = new ArrayList<NodeLayout>();
+						ArrayList<INodeLayout> layer = new ArrayList<INodeLayout>();
 						layer.add(node);
 						addLayer(layer, layers, map);
 					}
 				}
 			}
 
-			ArrayList<NodeLayout> startPoints = new ArrayList<NodeLayout>();
+			ArrayList<INodeLayout> startPoints = new ArrayList<INodeLayout>();
 			// Starts by finding a root or selecting the first from the assigned
 			// ones
 			if (layers.size() > 0 && layers.get(0).size() > 0)
@@ -897,7 +897,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				addLayer(startPoints, layers, map);
 			} else {
 				startPoints.add(getRoots(nodes).get(0));
-				for (NodeLayout startPoint : startPoints) {
+				for (INodeLayout startPoint : startPoints) {
 					if (!map.containsKey(startPoint)) {
 						NodeWrapper nw = new NodeWrapper(startPoint, 0);
 						map.put(startPoint, nw);
@@ -907,19 +907,19 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				updateIndex(layers.get(0));
 			}
 			openedList.addAll(startPoints);
-			NodeLayout toUnfold = startPoints.get(0);
+			INodeLayout toUnfold = startPoints.get(0);
 
 			while (nodes.size() > 0) {
 				// while openedList isn't empty it searches for further nodes
 				// and
 				// adding them to the next layer
 				while (openedList.size() != 0) {
-					ArrayList<NodeLayout> unfolded = Unfold(toUnfold,
+					ArrayList<INodeLayout> unfolded = Unfold(toUnfold,
 							openedList, closedList);
 					if (unfolded.size() > 0) {
 						int level = map.get(toUnfold).layer + 1;
 						if (level < layers.size()) {
-							for (NodeLayout n : unfolded) {
+							for (INodeLayout n : unfolded) {
 								if (!map.containsKey(n)) {
 									NodeWrapper nw = new NodeWrapper(n, level);
 									map.put(n, nw);
@@ -928,7 +928,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 							}
 							updateIndex(layers.get(level));
 						} else {
-							ArrayList<NodeLayout> layer = new ArrayList<NodeLayout>();
+							ArrayList<INodeLayout> layer = new ArrayList<INodeLayout>();
 							layer.addAll(unfolded);
 							addLayer(layer, layers, map);
 						}
@@ -942,7 +942,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 						toUnfold = openedList.iterator().next();
 				}
 				if (nodes.size() > 0) {
-					final NodeLayout node = nodes.get(0);
+					final INodeLayout node = nodes.get(0);
 					openedList.add(node);
 					NodeWrapper nw = new NodeWrapper(node, 0);
 					map.put(node, nw);
@@ -963,11 +963,11 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		private static final int MAX_LAYERS = 10;
 		private final List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>(
 				MAX_LAYERS);
-		private final Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
+		private final Map<INodeLayout, NodeWrapper> map = new IdentityHashMap<INodeLayout, NodeWrapper>();
 
-		private static List<NodeLayout> findRoots(List<NodeLayout> list) {
-			List<NodeLayout> roots = new ArrayList<NodeLayout>();
-			for (NodeLayout iter : list) { // no predecessors means: this is a
+		private static List<INodeLayout> findRoots(List<INodeLayout> list) {
+			List<INodeLayout> roots = new ArrayList<INodeLayout>();
+			for (INodeLayout iter : list) { // no predecessors means: this is a
 											// root,
 											// add it to list
 				if (iter.getPredecessingNodes().length == 0)
@@ -977,7 +977,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		}
 
 		/**
-		 * Wraps all {@link NodeLayout} objects into an internal presentation
+		 * Wraps all {@link INodeLayout} objects into an internal presentation
 		 * {@link NodeWrapper} and inserts dummy wrappers into the layers
 		 * between an object and their predecessing nodes if necessary. Finally,
 		 * all nodes are chained over immediate adjacent layers down to their
@@ -985,13 +985,13 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		 * Sugiyama algorithm to refine the node position within a layer.
 		 * 
 		 * @param list
-		 *            : List of all {@link NodeLayout} objects within the
+		 *            : List of all {@link INodeLayout} objects within the
 		 *            current layer
 		 */
-		private void addLayer(List<NodeLayout> list) {
+		private void addLayer(List<INodeLayout> list) {
 			ArrayList<NodeWrapper> layer = new ArrayList<NodeWrapper>(
 					list.size());
-			for (NodeLayout node : list) {
+			for (INodeLayout node : list) {
 				// wrap each NodeLayout with the internal data object and
 				// provide a
 				// corresponding mapping
@@ -1000,7 +1000,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				layer.add(nw);
 				// insert dummy nodes if the adjacent layer does not contain the
 				// predecessor
-				for (NodeLayout node_predecessor : node.getPredecessingNodes()) { // for
+				for (INodeLayout node_predecessor : node.getPredecessingNodes()) { // for
 																					// all
 																					// predecessors
 					NodeWrapper nw_predecessor = map.get(node_predecessor);
@@ -1031,10 +1031,10 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				list.get(index).index = index;
 		}
 
-		public List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes) {
+		public List<List<NodeWrapper>> calculateLayers(List<INodeLayout> nodes) {
 			map.clear();
 
-			List<NodeLayout> predecessors = findRoots(nodes);
+			List<INodeLayout> predecessors = findRoots(nodes);
 			nodes.removeAll(predecessors); // nodes now contains only nodes that
 											// are
 											// no roots
@@ -1045,8 +1045,8 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 							"Graphical tree exceeds maximum depth of "
 									+ MAX_LAYERS
 									+ "! (Graph not directed? Cycles?)");
-				List<NodeLayout> layer = new ArrayList<NodeLayout>();
-				for (NodeLayout item : nodes) {
+				List<INodeLayout> layer = new ArrayList<INodeLayout>();
+				for (INodeLayout item : nodes) {
 					if (predecessors.containsAll(Arrays.asList(item
 							.getPredecessingNodes())))
 						layer.add(item);
@@ -1064,11 +1064,11 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	private List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>();
-	private Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
+	private Map<INodeLayout, NodeWrapper> map = new IdentityHashMap<INodeLayout, NodeWrapper>();
 	private final Direction direction;
 	private final Dimension dimension;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 	private int last; // index of the last element in a layer after padding
 						// process
 
@@ -1128,11 +1128,11 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		this(Direction.VERTICAL, null, null, null);
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -1142,9 +1142,9 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		layers.clear();
 		map.clear();
 
-		ArrayList<NodeLayout> nodes = new ArrayList<NodeLayout>();
-		ArrayList<NodeLayout> nodes2 = new ArrayList<NodeLayout>();
-		for (NodeLayout node : context.getNodes()) {
+		ArrayList<INodeLayout> nodes = new ArrayList<INodeLayout>();
+		ArrayList<INodeLayout> nodes2 = new ArrayList<INodeLayout>();
+		for (INodeLayout node : context.getNodes()) {
 			nodes.add(node);
 			nodes2.add(node);
 		}
@@ -1169,13 +1169,13 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		double dx = boundary.getWidth() / layers.size();
 		double dy = boundary.getHeight() / (last + 1);
 		if (direction == Direction.HORIZONTAL)
-			for (NodeLayout node : context.getNodes()) {
+			for (INodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
 				LayoutProperties.setLocation(node,
 						(nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
 			}
 		else
-			for (NodeLayout node : context.getNodes()) {
+			for (INodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
 				LayoutProperties.setLocation(node,
 						(nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);

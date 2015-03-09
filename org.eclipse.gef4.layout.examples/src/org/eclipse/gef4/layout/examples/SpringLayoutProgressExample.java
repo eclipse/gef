@@ -27,9 +27,9 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
@@ -48,7 +48,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 		}
 
 		@Override
-		public void setLayoutContext(LayoutContext context) {
+		public void setLayoutContext(ILayoutContext context) {
 			// This method is called before performing a layout pass, for
 			// example, when the viewer is resized.
 			if (getLayoutContext() != context) {

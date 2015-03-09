@@ -22,14 +22,14 @@ import java.util.ListIterator;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
-import org.eclipse.gef4.layout.interfaces.ContextListener;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.LayoutListener;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.listeners.IContextListener;
+import org.eclipse.gef4.layout.listeners.ILayoutListener;
 
 /**
  * Layout algorithm implementing SpaceTree. It assumes that nodes in the layout
@@ -40,7 +40,7 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
  * positions to makes sure they stay in their current layer and don't overlap
  * with each other.
  */
-public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
+public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * A manager that controls expanding and collapsing nodes in a Graph.
@@ -57,7 +57,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param context
 		 *            the context to initialize
 		 */
-		public void initExpansion(LayoutContext context);
+		public void initExpansion(ILayoutContext context);
 
 		/**
 		 * Changes the expanded state of given node. It prunes/unprunes nodes
@@ -72,7 +72,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param expanded
 		 *            true to expand, false to collapse
 		 */
-		public void setExpanded(LayoutContext context, NodeLayout node,
+		public void setExpanded(ILayoutContext context, INodeLayout node,
 				boolean expanded);
 
 		/**
@@ -84,7 +84,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		 *            node to check
 		 * @return whether the give node can be expanded
 		 */
-		public boolean canExpand(LayoutContext context, NodeLayout node);
+		public boolean canExpand(ILayoutContext context, INodeLayout node);
 
 		/**
 		 * Checks if given node can be collapsed.
@@ -95,7 +95,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		 *            node to check
 		 * @return whether the given node can be collapsed
 		 */
-		public boolean canCollapse(LayoutContext context, NodeLayout node);
+		public boolean canCollapse(ILayoutContext context, INodeLayout node);
 	}
 
 	/**
@@ -123,12 +123,12 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	public final static int RIGHT_LEFT = 4;
 
 	private class SpaceTreeNode extends TreeLayoutObserver.TreeNode {
-		public SubgraphLayout subgraph = null;
+		public ISubgraphLayout subgraph = null;
 
 		public boolean expanded = false;
 		public double positionInLayer;
 
-		public SpaceTreeNode(NodeLayout node, TreeLayoutObserver owner) {
+		public SpaceTreeNode(INodeLayout node, TreeLayoutObserver owner) {
 			super(node, owner);
 		}
 
@@ -174,10 +174,10 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			}
 		}
 
-		public SubgraphLayout collapseAllChildrenIntoSubgraph(
-				SubgraphLayout subgraph, boolean includeYourself) {
+		public ISubgraphLayout collapseAllChildrenIntoSubgraph(
+				ISubgraphLayout subgraph, boolean includeYourself) {
 			expanded = false;
-			ArrayList<NodeLayout> allChildren = new ArrayList<NodeLayout>();
+			ArrayList<INodeLayout> allChildren = new ArrayList<INodeLayout>();
 			LinkedList<SpaceTreeNode> nodesToVisit = new LinkedList<SpaceTreeNode>();
 			nodesToVisit.addLast(this);
 			while (!nodesToVisit.isEmpty()) {
@@ -197,8 +197,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				setSubgraph(null);
 				return null;
 			}
-			NodeLayout[] childrenArray = allChildren
-					.toArray(new NodeLayout[allChildren.size()]);
+			INodeLayout[] childrenArray = allChildren
+					.toArray(new INodeLayout[allChildren.size()]);
 			if (subgraph == null) {
 				subgraph = context.createSubgraph(childrenArray);
 				LayoutProperties.setDirection(subgraph, getSubgraphDirection());
@@ -210,7 +210,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			return subgraph;
 		}
 
-		public void setSubgraph(SubgraphLayout subgraph) { // !
+		public void setSubgraph(ISubgraphLayout subgraph) { // !
 			if (this.subgraph != subgraph) {
 				this.subgraph = subgraph;
 				refreshSubgraphLocation();
@@ -503,7 +503,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private TreeLayoutObserver.TreeNodeFactory spaceTreeNodeFactory = new TreeLayoutObserver.TreeNodeFactory() {
 		public TreeLayoutObserver.TreeNode createTreeNode(
-				NodeLayout nodeLayout, TreeLayoutObserver observer) {
+				INodeLayout nodeLayout, TreeLayoutObserver observer) {
 			return new SpaceTreeNode(nodeLayout, observer);
 		};
 	};
@@ -954,11 +954,11 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private class SpaceTreeExpandCollapseManager implements
 			ExpandCollapseManager {
-		public void initExpansion(LayoutContext context) {
+		public void initExpansion(ILayoutContext context) {
 			// do nothing - initialization performed in #setLayoutContext()
 		}
 
-		public void setExpanded(LayoutContext context, NodeLayout node,
+		public void setExpanded(ILayoutContext context, INodeLayout node,
 				boolean expanded) {
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
@@ -973,7 +973,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			}
 		}
 
-		public boolean canExpand(LayoutContext context, NodeLayout node) {
+		public boolean canExpand(ILayoutContext context, INodeLayout node) {
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
 			if (spaceTreeNode != null) {
@@ -984,7 +984,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			return false;
 		}
 
-		public boolean canCollapse(LayoutContext context, NodeLayout node) {
+		public boolean canCollapse(ILayoutContext context, INodeLayout node) {
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
 			if (spaceTreeNode != null) {
@@ -1081,8 +1081,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private SpaceTreeExpandCollapseManager expandCollapseManager = new SpaceTreeExpandCollapseManager();
 
-	private ContextListener contextListener = new ContextListener.Stub() {
-		public boolean boundsChanged(LayoutContext context) {
+	private IContextListener contextListener = new IContextListener.Stub() {
+		public boolean boundsChanged(ILayoutContext context) {
 			boolean previousBoundsWrong = (bounds == null || bounds.getWidth()
 					* bounds.getHeight() <= 0);
 			bounds = LayoutProperties.getBounds(context);
@@ -1097,19 +1097,19 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 	};
 
-	private LayoutListener layoutListener = new LayoutListener() {
+	private ILayoutListener layoutListener = new ILayoutListener() {
 
-		public boolean subgraphResized(LayoutContext context,
-				SubgraphLayout subgraph) {
+		public boolean subgraphResized(ILayoutContext context,
+				ISubgraphLayout subgraph) {
 			return defaultSubgraphHandle(context, subgraph);
 		}
 
-		public boolean subgraphMoved(LayoutContext context,
-				SubgraphLayout subgraph) {
+		public boolean subgraphMoved(ILayoutContext context,
+				ISubgraphLayout subgraph) {
 			return defaultSubgraphHandle(context, subgraph);
 		}
 
-		public boolean nodeResized(LayoutContext context, NodeLayout node) {
+		public boolean nodeResized(ILayoutContext context, INodeLayout node) {
 			setAvailableSpace(getAvailableSpace()
 					+ ((SpaceTreeNode) treeObserver.getTreeNode(node))
 							.spaceRequiredForNode());
@@ -1118,7 +1118,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			return result;
 		}
 
-		public boolean nodeMoved(LayoutContext context, NodeLayout node) {
+		public boolean nodeMoved(ILayoutContext context, INodeLayout node) {
 			return defaultNodeHandle(context, node);
 		}
 
@@ -1130,8 +1130,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		 * @param subgraph
 		 * @return
 		 */
-		private boolean defaultSubgraphHandle(LayoutContext context,
-				SubgraphLayout subgraph) {
+		private boolean defaultSubgraphHandle(ILayoutContext context,
+				ISubgraphLayout subgraph) {
 			SpaceTreeNode node = (SpaceTreeNode) treeObserver
 					.getTreeNode(subgraph.getNodes()[0]);
 			while (node != null && node.node != null
@@ -1150,7 +1150,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			return false;
 		}
 
-		private boolean defaultNodeHandle(LayoutContext context, NodeLayout node) {
+		private boolean defaultNodeHandle(ILayoutContext context, INodeLayout node) {
 			if (bounds.getWidth() * bounds.getHeight() <= 0)
 				return false;
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
@@ -1210,7 +1210,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private boolean directionChanged = false;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 
 	private Rectangle bounds;
 
@@ -1302,7 +1302,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		checkPendingChangeDirection();
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		if (this.context != null) {
 			this.context.removeContextListener(contextListener);
 			this.context.removeLayoutListener(layoutListener);
@@ -1316,7 +1316,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		bounds = LayoutProperties.getBounds(context);
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -1331,7 +1331,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private void checkPendingChangeDirection() {
 		if (directionChanged) {
-			SubgraphLayout[] subgraphs = context.getSubgraphs();
+			ISubgraphLayout[] subgraphs = context.getSubgraphs();
 			int subgraphDirection = getSubgraphDirection();
 			for (int i = 0; i < subgraphs.length; i++) {
 				LayoutProperties.setDirection(subgraphs[i], subgraphDirection);

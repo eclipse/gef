@@ -15,14 +15,14 @@ import java.util.HashMap;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.LayoutListener;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.listeners.ILayoutListener;
 
 /**
  * The SpringLayoutAlgorithm has its own data repository and relation
@@ -33,7 +33,7 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
  * @author Ian Bull
  * @author Casey Best (version 1.0 by Jingwei Wu/Rob Lintern)
  */
-public class SpringLayoutAlgorithm implements LayoutAlgorithm {
+public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * The default value for the spring layout number of interations.
@@ -127,7 +127,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	private double[][] srcDestToSumOfWeights;
 
-	private EntityLayout[] entities;
+	private IEntityLayout[] entities;
 
 	private double[] forcesX, forcesY;
 
@@ -143,11 +143,11 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	public boolean fitWithinBounds = true;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 
-	class SpringLayoutListener implements LayoutListener {
+	class SpringLayoutListener implements ILayoutListener {
 
-		public boolean nodeMoved(LayoutContext context, NodeLayout node) {
+		public boolean nodeMoved(ILayoutContext context, INodeLayout node) {
 			// TODO Auto-generated method stub
 			for (int i = 0; i < entities.length; i++) {
 				if (entities[i] == node) {
@@ -160,19 +160,19 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			return false;
 		}
 
-		public boolean nodeResized(LayoutContext context, NodeLayout node) {
+		public boolean nodeResized(ILayoutContext context, INodeLayout node) {
 			// TODO Auto-generated method stub
 			return false;
 		}
 
-		public boolean subgraphMoved(LayoutContext context,
-				SubgraphLayout subgraph) {
+		public boolean subgraphMoved(ILayoutContext context,
+				ISubgraphLayout subgraph) {
 			// TODO Auto-generated method stub
 			return false;
 		}
 
-		public boolean subgraphResized(LayoutContext context,
-				SubgraphLayout subgraph) {
+		public boolean subgraphResized(ILayoutContext context,
+				ISubgraphLayout subgraph) {
 			// TODO Auto-generated method stub
 			return false;
 		}
@@ -202,13 +202,13 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
 		this.context.addLayoutListener(new SpringLayoutListener());
 		initLayout();
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -400,14 +400,14 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		loadLocations();
 
 		srcDestToSumOfWeights = new double[entities.length][entities.length];
-		HashMap<EntityLayout, Integer> entityToPosition = new HashMap<EntityLayout, Integer>();
+		HashMap<IEntityLayout, Integer> entityToPosition = new HashMap<IEntityLayout, Integer>();
 		for (int i = 0; i < entities.length; i++) {
 			entityToPosition.put(entities[i], new Integer(i));
 		}
 
-		ConnectionLayout[] connections = context.getConnections();
+		IConnectionLayout[] connections = context.getConnections();
 		for (int i = 0; i < connections.length; i++) {
-			ConnectionLayout connection = connections[i];
+			IConnectionLayout connection = connections[i];
 			Integer source = entityToPosition.get(getEntity(connection
 					.getSource()));
 			Integer target = entityToPosition.get(getEntity(connection
@@ -428,10 +428,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		startTime = System.currentTimeMillis();
 	}
 
-	private EntityLayout getEntity(NodeLayout node) {
+	private IEntityLayout getEntity(INodeLayout node) {
 		if (!LayoutProperties.isPruned(node))
 			return node;
-		SubgraphLayout subgraph = node.getSubgraph();
+		ISubgraphLayout subgraph = node.getSubgraph();
 		return subgraph;
 	}
 

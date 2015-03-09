@@ -21,9 +21,9 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.gef4.zest.core.widgets.internal.ZestRootLayer;
 import org.eclipse.swt.graphics.Font;
@@ -130,19 +130,19 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	private HashMap<GraphLabel, LabelAncestorListener> labelToAncestorListener = new HashMap<GraphLabel, LabelAncestorListener>();
 
-	protected PrunedSuccessorsSubgraph(LayoutContext context2) {
+	protected PrunedSuccessorsSubgraph(ILayoutContext context2) {
 		super(context2);
 		context.container.getGraph().addFisheyeListener(fisheyeListener);
 	}
 
-	public void addNodes(NodeLayout[] nodes) {
+	public void addNodes(INodeLayout[] nodes) {
 		super.addNodes(nodes);
-		HashSet<NodeLayout> nodesToUpdate = new HashSet<NodeLayout>();
+		HashSet<INodeLayout> nodesToUpdate = new HashSet<INodeLayout>();
 		for (int i = 0; i < nodes.length; i++) {
 			nodesToUpdate
 					.addAll(Arrays.asList(nodes[i].getPredecessingNodes()));
 		}
-		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodesToUpdate.iterator(); iterator
 				.hasNext();) {
 			InternalNodeLayout nodeToUpdate = (InternalNodeLayout) iterator
 					.next();
@@ -151,9 +151,9 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	}
 
-	public void removeNodes(NodeLayout[] nodes) {
+	public void removeNodes(INodeLayout[] nodes) {
 		super.removeNodes(nodes);
-		HashSet<NodeLayout> nodesToUpdate = new HashSet<NodeLayout>();
+		HashSet<INodeLayout> nodesToUpdate = new HashSet<INodeLayout>();
 		for (int i = 0; i < nodes.length; i++) {
 			nodesToUpdate
 					.addAll(Arrays.asList(nodes[i].getPredecessingNodes()));
@@ -163,7 +163,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				nodesToUpdate.add(nodes[i]);
 			}
 		}
-		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodesToUpdate.iterator(); iterator
 				.hasNext();) {
 			InternalNodeLayout predecessor = (InternalNodeLayout) iterator
 					.next();
@@ -232,7 +232,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				|| internalNode.isPruned()) {
 			label.setVisible(false);
 		} else {
-			NodeLayout[] successors = internalNode.getSuccessingNodes();
+			INodeLayout[] successors = internalNode.getSuccessingNodes();
 			int numberOfHiddenSuccessors = 0;
 			for (int i = 0; i < successors.length; i++) {
 				if (LayoutProperties.isPruned(successors[i])) {

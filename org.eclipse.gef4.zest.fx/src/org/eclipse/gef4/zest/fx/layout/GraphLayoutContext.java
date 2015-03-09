@@ -20,11 +20,11 @@ import java.util.Map;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.interfaces.AbstractLayoutContext;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.AbstractLayoutContext;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 
 /**
  * Transformation from GEF4 Graph with ZestProperties to GEF4 Layout.
@@ -45,7 +45,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	@Override
-	public SubgraphLayout createSubgraph(NodeLayout[] nodes) {
+	public ISubgraphLayout createSubgraph(INodeLayout[] nodes) {
 		// TODO: subgraphs
 		throw new UnsupportedOperationException("not yet implemented");
 	}
@@ -55,18 +55,18 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	@Override
-	public ConnectionLayout[] getConnections() {
-		List<ConnectionLayout> connections = new ArrayList<ConnectionLayout>();
-		ConnectionLayout[] all = super.getConnections();
+	public IConnectionLayout[] getConnections() {
+		List<IConnectionLayout> connections = new ArrayList<IConnectionLayout>();
+		IConnectionLayout[] all = super.getConnections();
 		// filter out any hidden nodes
-		for (ConnectionLayout c : all) {
+		for (IConnectionLayout c : all) {
 			if (isLayoutIrrelevant(c) || isLayoutIrrelevant(c.getSource())
 					|| isLayoutIrrelevant(c.getTarget())) {
 				continue;
 			}
 			connections.add(c);
 		}
-		return connections.toArray(new ConnectionLayout[] {});
+		return connections.toArray(new IConnectionLayout[] {});
 	}
 
 	public GraphEdgeLayout getEdgeLayout(Edge edge) {
@@ -74,7 +74,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	@Override
-	public EntityLayout[] getEntities() {
+	public IEntityLayout[] getEntities() {
 		return getNodes();
 	}
 
@@ -87,17 +87,17 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	@Override
-	public NodeLayout[] getNodes() {
-		List<NodeLayout> nodes = new ArrayList<NodeLayout>();
-		NodeLayout[] allNodes = super.getNodes();
+	public INodeLayout[] getNodes() {
+		List<INodeLayout> nodes = new ArrayList<INodeLayout>();
+		INodeLayout[] allNodes = super.getNodes();
 		// filter out any hidden nodes
-		for (NodeLayout n : allNodes) {
+		for (INodeLayout n : allNodes) {
 			if (isLayoutIrrelevant(n)) {
 				continue;
 			}
 			nodes.add(n);
 		}
-		return nodes.toArray(new NodeLayout[] {});
+		return nodes.toArray(new INodeLayout[] {});
 	}
 
 	public void setGraph(Graph graph) {

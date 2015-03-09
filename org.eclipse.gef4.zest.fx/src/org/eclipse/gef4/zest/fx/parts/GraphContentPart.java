@@ -21,8 +21,8 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -95,9 +95,9 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	private void setGraphLayoutContext() {
 		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
-		if (algo instanceof LayoutAlgorithm) {
-			LayoutAlgorithm layoutAlgorithm = (LayoutAlgorithm) algo;
-			LayoutContext layoutContext = getViewer().getDomain()
+		if (algo instanceof ILayoutAlgorithm) {
+			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
+			ILayoutContext layoutContext = getViewer().getDomain()
 					.getAdapter(LayoutModel.class)
 					.getLayoutContext(getContent());
 			if (layoutContext != null) {

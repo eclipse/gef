@@ -7,22 +7,24 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout.listeners;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
-public interface ContextListener {
-	public class Stub implements ContextListener {
 
-		public boolean boundsChanged(LayoutContext context) {
+public interface IContextListener {
+	public class Stub implements IContextListener {
+
+		public boolean boundsChanged(ILayoutContext context) {
 			return false;
 		}
 
-		public void backgroundEnableChanged(LayoutContext context) {
+		public void backgroundEnableChanged(ILayoutContext context) {
 			// do nothing
 		}
 
-		public boolean pruningEnablementChanged(LayoutContext context) {
+		public boolean pruningEnablementChanged(ILayoutContext context) {
 			return false;
 		}
 
@@ -35,14 +37,14 @@ public interface ContextListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
 	 *            the layout context that fired the event
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean boundsChanged(LayoutContext context);
+	public boolean boundsChanged(ILayoutContext context);
 
 	/**
 	 * This method is called whenever graph pruning is enabled or disabled in a
@@ -51,14 +53,14 @@ public interface ContextListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
 	 *            the layout context that fired the event
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean pruningEnablementChanged(LayoutContext context);
+	public boolean pruningEnablementChanged(ILayoutContext context);
 
 	/**
 	 * This method is called whenever background layout is enabled or disabled
@@ -70,5 +72,5 @@ public interface ContextListener {
 	 * @param context
 	 *            the layout context that fired the event
 	 */
-	public void backgroundEnableChanged(LayoutContext context);
+	public void backgroundEnableChanged(ILayoutContext context);
 }

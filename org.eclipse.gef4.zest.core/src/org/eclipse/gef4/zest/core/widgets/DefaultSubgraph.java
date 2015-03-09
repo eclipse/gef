@@ -20,19 +20,19 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 import org.eclipse.gef4.zest.core.widgets.custom.LabelSubgraph;
 import org.eclipse.gef4.zest.core.widgets.custom.TriangleSubgraph;
 import org.eclipse.gef4.zest.core.widgets.custom.TriangleSubgraph.TriangleParameters;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * Default implementation of {@link SubgraphLayout}. Every subgraph added to
+ * Default implementation of {@link ISubgraphLayout}. Every subgraph added to
  * Zest {@link GraphWidget} should inherit from this class. The default
  * implementation is very simple. A node pruned to this subgraph is minimized
  * and all connections adjacent to it are made invisible. No additional graphic
@@ -40,7 +40,7 @@ import org.eclipse.swt.graphics.Color;
  * 
  * @since 2.0
  */
-public class DefaultSubgraph implements SubgraphLayout {
+public class DefaultSubgraph implements ISubgraphLayout {
 
 	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 
@@ -49,10 +49,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 	 * a whole graph and throws every node into it.
 	 */
 	public static class DefaultSubgraphFactory implements SubgraphFactory {
-		private HashMap<LayoutContext, EntityLayout> contextToSubgraph = new HashMap<LayoutContext, EntityLayout>();
+		private HashMap<ILayoutContext, IEntityLayout> contextToSubgraph = new HashMap<ILayoutContext, IEntityLayout>();
 
-		public SubgraphLayout createSubgraph(NodeLayout[] nodes,
-				LayoutContext context) {
+		public ISubgraphLayout createSubgraph(INodeLayout[] nodes,
+				ILayoutContext context) {
 			DefaultSubgraph subgraph = (DefaultSubgraph) contextToSubgraph
 					.get(context);
 			if (subgraph == null) {
@@ -88,8 +88,8 @@ public class DefaultSubgraph implements SubgraphLayout {
 			defaultBackgroundColor = c;
 		}
 
-		public SubgraphLayout createSubgraph(NodeLayout[] nodes,
-				LayoutContext context) {
+		public ISubgraphLayout createSubgraph(INodeLayout[] nodes,
+				ILayoutContext context) {
 			return new LabelSubgraph(nodes, context, defaultForegroundColor,
 					defaultBackgroundColor);
 		}
@@ -98,8 +98,8 @@ public class DefaultSubgraph implements SubgraphLayout {
 	public static class TriangleSubgraphFactory implements SubgraphFactory {
 		private TriangleParameters parameters = new TriangleParameters();
 
-		public SubgraphLayout createSubgraph(NodeLayout[] nodes,
-				LayoutContext context) {
+		public ISubgraphLayout createSubgraph(INodeLayout[] nodes,
+				ILayoutContext context) {
 			return new TriangleSubgraph(nodes, context,
 					(TriangleParameters) parameters.clone());
 		}
@@ -189,10 +189,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 	 */
 	public static class PrunedSuccessorsSubgraphFactory implements
 			SubgraphFactory {
-		private HashMap<LayoutContext, EntityLayout> contextToSubgraph = new HashMap<LayoutContext, EntityLayout>();
+		private HashMap<ILayoutContext, IEntityLayout> contextToSubgraph = new HashMap<ILayoutContext, IEntityLayout>();
 
-		public SubgraphLayout createSubgraph(NodeLayout[] nodes,
-				LayoutContext context) {
+		public ISubgraphLayout createSubgraph(INodeLayout[] nodes,
+				ILayoutContext context) {
 			PrunedSuccessorsSubgraph subgraph = (PrunedSuccessorsSubgraph) contextToSubgraph
 					.get(context);
 			if (subgraph == null) {
@@ -225,11 +225,11 @@ public class DefaultSubgraph implements SubgraphLayout {
 
 	protected final InternalLayoutContext context;
 
-	protected final Set<NodeLayout> nodes = new HashSet<NodeLayout>();
+	protected final Set<INodeLayout> nodes = new HashSet<INodeLayout>();
 
 	protected boolean disposed = false;
 
-	protected DefaultSubgraph(LayoutContext context2) {
+	protected DefaultSubgraph(ILayoutContext context2) {
 		if (context2 instanceof InternalLayoutContext) {
 			this.context = (InternalLayoutContext) context2;
 		} else {
@@ -260,8 +260,8 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return false;
 	}
 
-	public EntityLayout[] getSuccessingEntities() {
-		return new EntityLayout[0];
+	public IEntityLayout[] getSuccessingEntities() {
+		return new IEntityLayout[0];
 	}
 
 	public Dimension getSize() {
@@ -273,8 +273,8 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return 0;
 	}
 
-	public EntityLayout[] getPredecessingEntities() {
-		return new EntityLayout[0];
+	public IEntityLayout[] getPredecessingEntities() {
+		return new IEntityLayout[0];
 	}
 
 	public Point getLocation() {
@@ -292,7 +292,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		// do nothing
 	}
 
-	public void removeNodes(NodeLayout[] nodes) {
+	public void removeNodes(INodeLayout[] nodes) {
 		context.checkChangesAllowed();
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.remove(nodes[i])) {
@@ -307,10 +307,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 	}
 
-	public NodeLayout[] getNodes() {
+	public INodeLayout[] getNodes() {
 		InternalNodeLayout[] result = new InternalNodeLayout[nodes.size()];
 		int i = 0;
-		for (Iterator<NodeLayout> iterator = nodes.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodes.iterator(); iterator
 				.hasNext();) {
 			result[i] = (InternalNodeLayout) iterator.next();
 			if (!context.isLayoutItemFiltered(result[i].getNode())) {
@@ -321,7 +321,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 			return result;
 		}
 
-		NodeLayout[] result2 = new NodeLayout[i];
+		INodeLayout[] result2 = new INodeLayout[i];
 		System.arraycopy(result, 0, result2, 0, i);
 		return result2;
 	}
@@ -329,7 +329,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 	public Object[] getItems() {
 		GraphNode[] result = new GraphNode[nodes.size()];
 		int i = 0;
-		for (Iterator<NodeLayout> iterator = nodes.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodes.iterator(); iterator
 				.hasNext();) {
 			InternalNodeLayout node = (InternalNodeLayout) iterator.next();
 			// getItems always returns an array of size 1 in case of
@@ -352,7 +352,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return nodes.size();
 	}
 
-	public void addNodes(NodeLayout[] nodes) {
+	public void addNodes(INodeLayout[] nodes) {
 		context.checkChangesAllowed();
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.add(nodes[i])) {
@@ -364,7 +364,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 	}
 
-	protected void refreshConnectionsVisibility(ConnectionLayout[] connections) {
+	protected void refreshConnectionsVisibility(IConnectionLayout[] connections) {
 		for (int i = 0; i < connections.length; i++) {
 			LayoutProperties.setVisible(
 					connections[i],

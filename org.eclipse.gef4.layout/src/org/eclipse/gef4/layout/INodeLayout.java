@@ -7,15 +7,16 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
 
-public interface NodeLayout extends EntityLayout {
+
+public interface INodeLayout extends IEntityLayout {
 
 	/**
 	 * @return a subgraph this node belongs to or null if this node is not
 	 *         pruned
 	 */
-	public SubgraphLayout getSubgraph();
+	public ISubgraphLayout getSubgraph();
 
 	/**
 	 * Assigns this NodeLayout to the given SubgraphLayout. Sets the pruned
@@ -25,7 +26,7 @@ public interface NodeLayout extends EntityLayout {
 	 *            a subgraph this node should belong to or null if this node
 	 *            should not be pruned
 	 */
-	public void prune(SubgraphLayout subgraph);
+	public void prune(ISubgraphLayout subgraph);
 
 	/**
 	 * Returns all nodes that are direct successors of this node. Nodes
@@ -35,7 +36,7 @@ public interface NodeLayout extends EntityLayout {
 	 * 
 	 * @return array of successors of this node
 	 */
-	public NodeLayout[] getSuccessingNodes();
+	public INodeLayout[] getSuccessingNodes();
 
 	/**
 	 * Returns all nodes that are direct predecessors of this node. Nodes
@@ -45,7 +46,7 @@ public interface NodeLayout extends EntityLayout {
 	 * 
 	 * @return array of predecessors of this node
 	 */
-	public NodeLayout[] getPredecessingNodes();
+	public INodeLayout[] getPredecessingNodes();
 
 	/**
 	 * Returns all connections that have this node as a target. All connections
@@ -55,7 +56,7 @@ public interface NodeLayout extends EntityLayout {
 	 * 
 	 * @return array of connections entering this node
 	 */
-	public ConnectionLayout[] getIncomingConnections();
+	public IConnectionLayout[] getIncomingConnections();
 
 	/**
 	 * Returns all connections that have this node as a source. All connections
@@ -65,6 +66,6 @@ public interface NodeLayout extends EntityLayout {
 	 * 
 	 * @return array of connections leaving this node
 	 */
-	public ConnectionLayout[] getOutgoingConnections();
+	public IConnectionLayout[] getOutgoingConnections();
 
 }

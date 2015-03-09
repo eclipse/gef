@@ -13,8 +13,8 @@ package org.eclipse.gef4.layout.algorithms;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
 
 public class AlgorithmHelper {
 
@@ -30,7 +30,7 @@ public class AlgorithmHelper {
 	 * @param destinationBounds
 	 * @param resize
 	 */
-	public static void fitWithinBounds(EntityLayout[] entities,
+	public static void fitWithinBounds(IEntityLayout[] entities,
 			Rectangle destinationBounds, boolean resize) {
 		Rectangle startingBounds = getLayoutBounds(entities, false);
 		double sizeScale = Math.min(destinationBounds.getWidth()
@@ -41,7 +41,7 @@ public class AlgorithmHelper {
 			return;
 		}
 		for (int i = 0; i < entities.length; i++) {
-			EntityLayout entity = entities[i];
+			IEntityLayout entity = entities[i];
 			Dimension size = LayoutProperties.getSize(entity);
 			if (LayoutProperties.isMovable(entity)) {
 				Point location = LayoutProperties.getLocation(entity);
@@ -70,7 +70,7 @@ public class AlgorithmHelper {
 		}
 	}
 
-	private static void fitSingleEntity(EntityLayout entity,
+	private static void fitSingleEntity(IEntityLayout entity,
 			Rectangle destinationBounds, boolean resize) {
 		if (LayoutProperties.isMovable(entity)) {
 			LayoutProperties.setLocation(entity, destinationBounds.getX()
@@ -101,7 +101,7 @@ public class AlgorithmHelper {
 	 * 
 	 * @param entities
 	 */
-	public static void maximizeSizes(EntityLayout[] entities) {
+	public static void maximizeSizes(IEntityLayout[] entities) {
 		if (entities.length > 1) {
 			Dimension minDistance = getMinimumDistance(entities);
 			double nodeSize = Math.max(minDistance.width, minDistance.height)
@@ -109,7 +109,7 @@ public class AlgorithmHelper {
 			double width = nodeSize;
 			double height = nodeSize;
 			for (int i = 0; i < entities.length; i++) {
-				EntityLayout entity = entities[i];
+				IEntityLayout entity = entities[i];
 				if (LayoutProperties.isResizable(entity)) {
 					double preferredRatio = LayoutProperties
 							.getPreferredAspectRatio(entity);
@@ -153,14 +153,14 @@ public class AlgorithmHelper {
 	 * size of the nodes or not. If the size is not included, the bounds will
 	 * only be guaranteed to include the center of each node.
 	 */
-	public static Rectangle getLayoutBounds(EntityLayout[] entities,
+	public static Rectangle getLayoutBounds(IEntityLayout[] entities,
 			boolean includeNodeSize) {
 		double rightSide = Double.NEGATIVE_INFINITY;
 		double bottomSide = Double.NEGATIVE_INFINITY;
 		double leftSide = Double.POSITIVE_INFINITY;
 		double topSide = Double.POSITIVE_INFINITY;
 		for (int i = 0; i < entities.length; i++) {
-			EntityLayout entity = entities[i];
+			IEntityLayout entity = entities[i];
 			Point location = LayoutProperties.getLocation(entity);
 			Dimension size = LayoutProperties.getSize(entity);
 			if (includeNodeSize) {
@@ -203,7 +203,7 @@ public class AlgorithmHelper {
 	 * 
 	 * 
 	 */
-	public static Dimension getMinimumDistance(EntityLayout[] entities) {
+	public static Dimension getMinimumDistance(IEntityLayout[] entities) {
 		Dimension horAndVertdistance = new Dimension(Double.MAX_VALUE,
 				Double.MAX_VALUE);
 		double minDistance = Double.MAX_VALUE;

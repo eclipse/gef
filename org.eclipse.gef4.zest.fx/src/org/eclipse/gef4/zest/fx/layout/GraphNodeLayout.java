@@ -20,19 +20,19 @@ import java.util.Map.Entry;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
-public class GraphNodeLayout implements NodeLayout {
+public class GraphNodeLayout implements INodeLayout {
 
 	// initialization context
 	private GraphLayoutContext context;
 	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 	private Node node;
-	private SubgraphLayout subgraph;
+	private ISubgraphLayout subgraph;
 
 	public GraphNodeLayout(GraphLayoutContext context, Node node) {
 		this.context = context;
@@ -49,17 +49,17 @@ public class GraphNodeLayout implements NodeLayout {
 	}
 
 	@Override
-	public ConnectionLayout[] getIncomingConnections() {
-		List<ConnectionLayout> incoming = new ArrayList<ConnectionLayout>();
+	public IConnectionLayout[] getIncomingConnections() {
+		List<IConnectionLayout> incoming = new ArrayList<IConnectionLayout>();
 
-		ConnectionLayout[] connections = context.getConnections();
-		for (ConnectionLayout c : connections) {
+		IConnectionLayout[] connections = context.getConnections();
+		for (IConnectionLayout c : connections) {
 			if (c.getTarget() == this) {
 				incoming.add(c);
 			}
 		}
 
-		return incoming.toArray(new ConnectionLayout[0]);
+		return incoming.toArray(new IConnectionLayout[0]);
 	}
 
 	@Override
@@ -68,30 +68,30 @@ public class GraphNodeLayout implements NodeLayout {
 	}
 
 	@Override
-	public ConnectionLayout[] getOutgoingConnections() {
-		List<ConnectionLayout> outgoing = new ArrayList<ConnectionLayout>();
+	public IConnectionLayout[] getOutgoingConnections() {
+		List<IConnectionLayout> outgoing = new ArrayList<IConnectionLayout>();
 
-		ConnectionLayout[] connections = context.getConnections();
-		for (ConnectionLayout c : connections) {
+		IConnectionLayout[] connections = context.getConnections();
+		for (IConnectionLayout c : connections) {
 			if (c.getSource() == this) {
 				outgoing.add(c);
 			}
 		}
 
-		return outgoing.toArray(new ConnectionLayout[0]);
+		return outgoing.toArray(new IConnectionLayout[0]);
 	}
 
 	@Override
-	public EntityLayout[] getPredecessingEntities() {
+	public IEntityLayout[] getPredecessingEntities() {
 		return getPredecessingNodes();
 	}
 
 	@Override
-	public NodeLayout[] getPredecessingNodes() {
-		ConnectionLayout[] incomingConnections = getIncomingConnections();
-		NodeLayout[] predecessors = new NodeLayout[incomingConnections.length];
+	public INodeLayout[] getPredecessingNodes() {
+		IConnectionLayout[] incomingConnections = getIncomingConnections();
+		INodeLayout[] predecessors = new INodeLayout[incomingConnections.length];
 		int i = 0;
-		for (ConnectionLayout incomingConnection : incomingConnections) {
+		for (IConnectionLayout incomingConnection : incomingConnections) {
 			predecessors[i++] = incomingConnection.getSource();
 		}
 		return predecessors;
@@ -103,34 +103,34 @@ public class GraphNodeLayout implements NodeLayout {
 	}
 
 	@Override
-	public SubgraphLayout getSubgraph() {
+	public ISubgraphLayout getSubgraph() {
 		return subgraph;
 	}
 
 	@Override
-	public EntityLayout[] getSuccessingEntities() {
+	public IEntityLayout[] getSuccessingEntities() {
 		return getSuccessingNodes();
 	}
 
 	@Override
-	public NodeLayout[] getSuccessingNodes() {
-		ConnectionLayout[] outgoingConnections = getOutgoingConnections();
-		NodeLayout[] successors = new NodeLayout[outgoingConnections.length];
+	public INodeLayout[] getSuccessingNodes() {
+		IConnectionLayout[] outgoingConnections = getOutgoingConnections();
+		INodeLayout[] successors = new INodeLayout[outgoingConnections.length];
 		int i = 0;
-		for (ConnectionLayout outgoingConnection : outgoingConnections) {
+		for (IConnectionLayout outgoingConnection : outgoingConnections) {
 			successors[i++] = outgoingConnection.getTarget();
 		}
 		return successors;
 	}
 
 	@Override
-	public void prune(SubgraphLayout subgraph) {
+	public void prune(ISubgraphLayout subgraph) {
 		// TODO: fire events
 		if (this.subgraph != null) {
-			this.subgraph.removeNodes(new NodeLayout[] { this });
+			this.subgraph.removeNodes(new INodeLayout[] { this });
 		}
 		this.subgraph = subgraph;
-		subgraph.addNodes(new NodeLayout[] { this });
+		subgraph.addNodes(new INodeLayout[] { this });
 	}
 
 	@Override

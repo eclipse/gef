@@ -12,10 +12,10 @@ package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 /**
  * This layout will take the given entities, apply a tree layout to them, and
@@ -24,13 +24,13 @@ import org.eclipse.gef4.layout.interfaces.LayoutContext;
  * @author Casey Best
  * @author Rob Lintern
  */
-public class RadialLayoutAlgorithm implements LayoutAlgorithm {
+public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private static final double MAX_DEGREES = Math.PI * 2;
 	private double startDegree = 0;
 	private double endDegree = MAX_DEGREES;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 	private boolean resize = false;
 
 	private TreeLayoutAlgorithm treeLayout = new TreeLayoutAlgorithm();
@@ -42,7 +42,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 		if (!clean)
 			return;
 		treeLayout.internalApplyLayout();
-		EntityLayout[] entities = context.getEntities();
+		IEntityLayout[] entities = context.getEntities();
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		computeRadialPositions(entities, bounds);
 		if (resize)
@@ -55,7 +55,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 		AlgorithmHelper.fitWithinBounds(entities, bounds, resize);
 	}
 
-	private void computeRadialPositions(EntityLayout[] entities,
+	private void computeRadialPositions(IEntityLayout[] entities,
 			Rectangle bounds) {
 		Rectangle layoutBounds = AlgorithmHelper.getLayoutBounds(entities,
 				false);
@@ -75,12 +75,12 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
 		treeLayout.setLayoutContext(context);
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 

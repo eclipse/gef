@@ -17,10 +17,10 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 /**
  * A subgraph layout that represents a subgraph as a single figure. An entity
@@ -83,7 +83,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		return figure;
 	}
 
-	protected FigureSubgraph(NodeLayout[] nodes, LayoutContext context) {
+	protected FigureSubgraph(INodeLayout[] nodes, ILayoutContext context) {
 		super(context);
 		addNodes(nodes);
 	}
@@ -94,7 +94,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 	 * All nodes added to this subgraph are moved to the center of the figure
 	 * (so that collapsing and expanding animation looks cool).
 	 */
-	public void addNodes(NodeLayout[] nodes) {
+	public void addNodes(INodeLayout[] nodes) {
 		int initialCount = this.nodes.size();
 		super.addNodes(nodes);
 		if (this.nodes.size() > initialCount && figure != null) {
@@ -108,7 +108,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		}
 	}
 
-	public void removeNodes(NodeLayout[] nodes) {
+	public void removeNodes(INodeLayout[] nodes) {
 		int initialCount = this.nodes.size();
 		super.removeNodes(nodes);
 		if (this.nodes.size() < initialCount && figure != null && !disposed) {
@@ -116,12 +116,12 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		}
 	}
 
-	public EntityLayout[] getSuccessingEntities() {
+	public IEntityLayout[] getSuccessingEntities() {
 		// TODO Auto-generated method stub
 		return super.getSuccessingEntities();
 	}
 
-	public EntityLayout[] getPredecessingEntities() {
+	public IEntityLayout[] getPredecessingEntities() {
 		// TODO Auto-generated method stub
 		return super.getPredecessingEntities();
 	}
@@ -144,9 +144,9 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 
 	public void setLocation(double x, double y) {
 		super.setLocation(x, y);
-		for (Iterator<NodeLayout> iterator = nodes.iterator(); iterator
+		for (Iterator<INodeLayout> iterator = nodes.iterator(); iterator
 				.hasNext();) {
-			NodeLayout node = iterator.next();
+			INodeLayout node = iterator.next();
 			LayoutProperties.setLocation(node, x, y);
 		}
 

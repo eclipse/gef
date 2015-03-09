@@ -3,11 +3,11 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
-class InternalConnectionLayout implements ConnectionLayout {
+class InternalConnectionLayout implements IConnectionLayout {
 
 	private final GraphConnection graphConnection;
 	private InternalLayoutContext layoutContext;
@@ -23,11 +23,11 @@ class InternalConnectionLayout implements ConnectionLayout {
 		setp(LayoutProperties.VISIBLE_PROPERTY, graphConnection.isVisible());
 	}
 
-	public NodeLayout getSource() {
+	public INodeLayout getSource() {
 		return this.graphConnection.getSource().getLayout();
 	}
 
-	public NodeLayout getTarget() {
+	public INodeLayout getTarget() {
 		return this.graphConnection.getDestination().getLayout();
 	}
 

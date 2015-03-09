@@ -43,7 +43,7 @@ import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
@@ -279,7 +279,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 		setGraphType(dotGraph);
 	}
 
-	private LayoutAlgorithm mapAlgorithm(String algo, String rankdir) {
+	private ILayoutAlgorithm mapAlgorithm(String algo, String rankdir) {
 		if (!DotProperties.GRAPH_RANKDIR_VALUES.contains(rankdir)) {
 			throw new IllegalArgumentException("Unknown DOT rankdir <"
 					+ rankdir + ">.");
@@ -632,7 +632,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @param algorithm
 	 * @since 2.0
 	 */
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm,
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm,
 			boolean applyLayout) {
 		getLayoutContext().setLayoutAlgorithm(algorithm);
 		if (applyLayout) {
@@ -643,7 +643,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	/**
 	 * @since 2.0
 	 */
-	public LayoutAlgorithm getLayoutAlgorithm() {
+	public ILayoutAlgorithm getLayoutAlgorithm() {
 		return getLayoutContext().getLayoutAlgorithm();
 	}
 

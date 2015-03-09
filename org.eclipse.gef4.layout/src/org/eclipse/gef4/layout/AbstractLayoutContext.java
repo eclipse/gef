@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -18,18 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutProperties;
+import org.eclipse.gef4.layout.listeners.IContextListener;
+import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
+import org.eclipse.gef4.layout.listeners.ILayoutListener;
+import org.eclipse.gef4.layout.listeners.IPruningListener;
+import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
 
 // TODO: replace fire* methods with property change mechanisms
-public abstract class AbstractLayoutContext implements LayoutContext {
+public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
-	private LayoutAlgorithm dynamicLayoutAlgorithm = null;
-	private LayoutAlgorithm staticLayoutAlgorithm = null;
-	private final List<NodeLayout> layoutNodes = new ArrayList<NodeLayout>();
-	private final List<ConnectionLayout> layoutEdges = new ArrayList<ConnectionLayout>();
-	private final List<SubgraphLayout> subgraphs = new ArrayList<SubgraphLayout>();
+	private ILayoutAlgorithm dynamicLayoutAlgorithm = null;
+	private ILayoutAlgorithm staticLayoutAlgorithm = null;
+	private final List<INodeLayout> layoutNodes = new ArrayList<INodeLayout>();
+	private final List<IConnectionLayout> layoutEdges = new ArrayList<IConnectionLayout>();
+	private final List<ISubgraphLayout> subgraphs = new ArrayList<ISubgraphLayout>();
 
 	private boolean flushChangesInvocation = false;
 
@@ -39,23 +42,23 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	public void addContextListener(ContextListener listener) {
+	public void addContextListener(IContextListener listener) {
 		lls.addContextListener(listener);
 	}
 
 	/**
-	 * Adds the given {@link ConnectionLayout} to the list of edges and fires a
+	 * Adds the given {@link IConnectionLayout} to the list of edges and fires a
 	 * corresponding connection-added-event.
 	 *
 	 * @param edge
-	 *            {@link ConnectionLayout} to add
+	 *            {@link IConnectionLayout} to add
 	 */
-	protected void addEdge(ConnectionLayout edge) {
+	protected void addEdge(IConnectionLayout edge) {
 		layoutEdges.add(edge);
 		fireConnectionAddedEvent(edge);
 	}
 
-	public void addGraphStructureListener(GraphStructureListener listener) {
+	public void addGraphStructureListener(IGraphStructureListener listener) {
 		lls.addGraphStructureListener(listener);
 	}
 
@@ -63,18 +66,18 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		layoutFilters.add(layoutFilter);
 	}
 
-	public void addLayoutListener(LayoutListener listener) {
+	public void addLayoutListener(ILayoutListener listener) {
 		lls.addLayoutListener(listener);
 	}
 
 	/**
-	 * Adds the given {@link NodeLayout} to the list of nodes and fires a
+	 * Adds the given {@link INodeLayout} to the list of nodes and fires a
 	 * corresponding node-added-event.
 	 *
 	 * @param node
-	 *            {@link NodeLayout} to add
+	 *            {@link INodeLayout} to add
 	 */
-	protected void addNode(NodeLayout node) {
+	protected void addNode(INodeLayout node) {
 		layoutNodes.add(node);
 		fireNodeAddedEvent(node);
 	}
@@ -83,7 +86,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public void addPruningListener(PruningListener listener) {
+	public void addPruningListener(IPruningListener listener) {
 		lls.addPruningListener(listener);
 	}
 
@@ -102,20 +105,20 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 
 	/**
 	 * Removes all edges from this context using individual
-	 * {@link #removeEdge(ConnectionLayout)} calls.
+	 * {@link #removeEdge(IConnectionLayout)} calls.
 	 */
 	protected void clearEdges() {
-		for (ConnectionLayout edge : layoutEdges) {
+		for (IConnectionLayout edge : layoutEdges) {
 			removeEdge(edge);
 		}
 	}
 
 	/**
 	 * Removes all nodes from this context using individual
-	 * {@link #removeNode(NodeLayout)} calls.
+	 * {@link #removeNode(INodeLayout)} calls.
 	 */
 	protected void clearNodes() {
-		for (NodeLayout node : layoutNodes) {
+		for (INodeLayout node : layoutNodes) {
 			removeNode(node);
 		}
 	}
@@ -137,37 +140,37 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		}
 	}
 
-	public void fireConnectionAddedEvent(ConnectionLayout connection) {
+	public void fireConnectionAddedEvent(IConnectionLayout connection) {
 		if (!flushChangesInvocation) {
 			lls.fireConnectionAddedEvent(connection);
 		}
 	}
 
-	public void fireConnectionRemovedEvent(ConnectionLayout connection) {
+	public void fireConnectionRemovedEvent(IConnectionLayout connection) {
 		if (!flushChangesInvocation) {
 			lls.fireConnectionRemovedEvent(connection);
 		}
 	}
 
-	public void fireNodeAddedEvent(NodeLayout node) {
+	public void fireNodeAddedEvent(INodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeAddedEvent(node);
 		}
 	}
 
-	public void fireNodeMovedEvent(NodeLayout node) {
+	public void fireNodeMovedEvent(INodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeMovedEvent(node);
 		}
 	}
 
-	public void fireNodeRemovedEvent(NodeLayout node) {
+	public void fireNodeRemovedEvent(INodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeRemovedEvent(node);
 		}
 	}
 
-	public void fireNodeResizedEvent(NodeLayout node) {
+	public void fireNodeResizedEvent(INodeLayout node) {
 		if (!flushChangesInvocation) {
 			lls.fireNodeResizedEvent(node);
 		}
@@ -177,13 +180,13 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		lls.firePruningEnableChangedEvent();
 	}
 
-	public void fireSubgraphMovedEvent(SubgraphLayout subgraph) {
+	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph) {
 		if (!flushChangesInvocation) {
 			lls.fireSubgraphMovedEvent(subgraph);
 		}
 	}
 
-	public void fireSubgraphResizedEvent(SubgraphLayout subgraph) {
+	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph) {
 		if (!flushChangesInvocation) {
 			lls.fireSubgraphResizedEvent(subgraph);
 		}
@@ -195,52 +198,52 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		flushChangesInvocation = false;
 	}
 
-	public ConnectionLayout[] getConnections() {
-		return layoutEdges.toArray(new ConnectionLayout[0]);
+	public IConnectionLayout[] getConnections() {
+		return layoutEdges.toArray(new IConnectionLayout[0]);
 	}
 
-	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
-			EntityLayout layoutEntity2) {
-		List<ConnectionLayout> connections = new ArrayList<ConnectionLayout>();
+	public IConnectionLayout[] getConnections(IEntityLayout layoutEntity1,
+			IEntityLayout layoutEntity2) {
+		List<IConnectionLayout> connections = new ArrayList<IConnectionLayout>();
 
-		for (ConnectionLayout c : ((NodeLayout) layoutEntity1)
+		for (IConnectionLayout c : ((INodeLayout) layoutEntity1)
 				.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity2) {
 				connections.add(c);
 			}
 		}
 
-		for (ConnectionLayout c : ((NodeLayout) layoutEntity2)
+		for (IConnectionLayout c : ((INodeLayout) layoutEntity2)
 				.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity1) {
 				connections.add(c);
 			}
 		}
 
-		return connections.toArray(new ConnectionLayout[0]);
+		return connections.toArray(new IConnectionLayout[0]);
 	}
 
-	public LayoutAlgorithm getDynamicLayoutAlgorithm() {
+	public ILayoutAlgorithm getDynamicLayoutAlgorithm() {
 		return dynamicLayoutAlgorithm;
 	}
 
-	public NodeLayout[] getNodes() {
-		return layoutNodes.toArray(new NodeLayout[0]);
+	public INodeLayout[] getNodes() {
+		return layoutNodes.toArray(new INodeLayout[0]);
 	}
 
 	public Object getProperty(String name) {
 		return pss.getProperty(name);
 	}
 
-	public LayoutAlgorithm getStaticLayoutAlgorithm() {
+	public ILayoutAlgorithm getStaticLayoutAlgorithm() {
 		return staticLayoutAlgorithm;
 	}
 
-	public SubgraphLayout[] getSubgraphs() {
-		return subgraphs.toArray(new SubgraphLayout[0]);
+	public ISubgraphLayout[] getSubgraphs() {
+		return subgraphs.toArray(new ISubgraphLayout[0]);
 	}
 
-	public boolean isLayoutIrrelevant(ConnectionLayout connLayout) {
+	public boolean isLayoutIrrelevant(IConnectionLayout connLayout) {
 		for (ILayoutFilter filter : layoutFilters) {
 			if (filter.isLayoutIrrelevant(connLayout)) {
 				return true;
@@ -249,7 +252,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		return false;
 	}
 
-	public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
+	public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
 		for (ILayoutFilter filter : layoutFilters) {
 			if (filter.isLayoutIrrelevant(nodeLayout)) {
 				return true;
@@ -258,23 +261,23 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		return false;
 	}
 
-	public void removeContextListener(ContextListener listener) {
+	public void removeContextListener(IContextListener listener) {
 		lls.removeContextListener(listener);
 	}
 
 	/**
-	 * Removes the given {@link ConnectionLayout} from the list of edges and
+	 * Removes the given {@link IConnectionLayout} from the list of edges and
 	 * fires a corresponding connection-removed-event.
 	 *
 	 * @param edge
-	 *            {@link ConnectionLayout} to remove
+	 *            {@link IConnectionLayout} to remove
 	 */
-	protected void removeEdge(ConnectionLayout edge) {
+	protected void removeEdge(IConnectionLayout edge) {
 		layoutEdges.remove(edge);
 		fireConnectionRemovedEvent(edge);
 	}
 
-	public void removeGraphStructureListener(GraphStructureListener listener) {
+	public void removeGraphStructureListener(IGraphStructureListener listener) {
 		lls.removeGraphStructureListener(listener);
 	}
 
@@ -282,18 +285,18 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		layoutFilters.remove(layoutFilter);
 	}
 
-	public void removeLayoutListener(LayoutListener listener) {
+	public void removeLayoutListener(ILayoutListener listener) {
 		lls.removeLayoutListener(listener);
 	}
 
 	/**
-	 * Removes the given {@link NodeLayout} from the managed list of nodes and
+	 * Removes the given {@link INodeLayout} from the managed list of nodes and
 	 * fires a corresponding node-removed-event.
 	 *
 	 * @param node
-	 *            {@link NodeLayout} to remove
+	 *            {@link INodeLayout} to remove
 	 */
-	protected void removeNode(NodeLayout node) {
+	protected void removeNode(INodeLayout node) {
 		layoutNodes.remove(node);
 		fireNodeRemovedEvent(node);
 	}
@@ -302,7 +305,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void removePruningListener(PruningListener listener) {
+	public void removePruningListener(IPruningListener listener) {
 		lls.removePruningListener(listener);
 	}
 
@@ -313,8 +316,8 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		onFlushChanges.add(runnable);
 	}
 
-	public void setDynamicLayoutAlgorithm(LayoutAlgorithm dynamicLayoutAlgorithm) {
-		LayoutAlgorithm oldDynamicLayoutAlgorithm = this.dynamicLayoutAlgorithm;
+	public void setDynamicLayoutAlgorithm(ILayoutAlgorithm dynamicLayoutAlgorithm) {
+		ILayoutAlgorithm oldDynamicLayoutAlgorithm = this.dynamicLayoutAlgorithm;
 		if (oldDynamicLayoutAlgorithm != dynamicLayoutAlgorithm) {
 			this.dynamicLayoutAlgorithm = dynamicLayoutAlgorithm;
 			dynamicLayoutAlgorithm.setLayoutContext(this);
@@ -340,8 +343,8 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		pcs.firePropertyChange(name, oldValue, value);
 	}
 
-	public void setStaticLayoutAlgorithm(LayoutAlgorithm staticLayoutAlgorithm) {
-		LayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
+	public void setStaticLayoutAlgorithm(ILayoutAlgorithm staticLayoutAlgorithm) {
+		ILayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
 		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
 			this.staticLayoutAlgorithm = staticLayoutAlgorithm;
 			staticLayoutAlgorithm.setLayoutContext(this);

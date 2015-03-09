@@ -15,13 +15,13 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeListener;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 import org.eclipse.gef4.zest.core.widgets.FigureSubgraph;
 import org.eclipse.swt.graphics.Color;
 
@@ -129,11 +129,11 @@ public class TriangleSubgraph extends FigureSubgraph {
 		}
 	}
 
-	private static HashMap<LayoutContext, TreeLayoutObserver> contextToTree = new HashMap<LayoutContext, TreeLayoutObserver>();
+	private static HashMap<ILayoutContext, TreeLayoutObserver> contextToTree = new HashMap<ILayoutContext, TreeLayoutObserver>();
 
 	private TriangleParameters parameters;
 
-	public TriangleSubgraph(NodeLayout[] nodes, LayoutContext context,
+	public TriangleSubgraph(INodeLayout[] nodes, ILayoutContext context,
 			TriangleParameters triangleParameters) {
 		super(nodes, context);
 		this.parameters = triangleParameters;
@@ -142,7 +142,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 					context, null);
 			treeLayoutObserver.addTreeListener(new TreeListener() {
 				protected void defaultHandle(TreeNode changedNode) {
-					SubgraphLayout subgraph = changedNode.getNode()
+					ISubgraphLayout subgraph = changedNode.getNode()
 							.getSubgraph();
 					if (subgraph instanceof TriangleSubgraph) {
 						((TriangleSubgraph) subgraph).updateFigure();
@@ -165,7 +165,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 
 	protected void updateFigure() {
 		TreeLayoutObserver tree = contextToTree.get(context);
-		TreeNode subgraphRoot = tree.getTreeNode((NodeLayout) nodes.iterator()
+		TreeNode subgraphRoot = tree.getTreeNode((INodeLayout) nodes.iterator()
 				.next());
 		if (subgraphRoot == null) {
 			return;

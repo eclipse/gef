@@ -15,11 +15,6 @@ package org.eclipse.gef4.layout;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class LayoutProperties {
 
@@ -147,7 +142,7 @@ public class LayoutProperties {
 	public static final String DIRECTION_DEPENDANT_PROPERTY = "direction-dependant";
 	public static final Boolean DEFAULT_DIRECTION_DEPENDANT = true;
 
-	public static Rectangle getBounds(LayoutContext graph) {
+	public static Rectangle getBounds(ILayoutContext graph) {
 		Object bounds = graph.getProperty(BOUNDS_PROPERTY);
 		if (bounds instanceof Rectangle) {
 			return ((Rectangle) bounds).getCopy();
@@ -155,11 +150,11 @@ public class LayoutProperties {
 		return DEFAULT_BOUNDS.getCopy();
 	}
 
-	public static void setBounds(LayoutContext graph, Rectangle bounds) {
+	public static void setBounds(ILayoutContext graph, Rectangle bounds) {
 		graph.setProperty(BOUNDS_PROPERTY, bounds);
 	}
 
-	public static Boolean isBoundsExpandable(LayoutContext graph) {
+	public static Boolean isBoundsExpandable(ILayoutContext graph) {
 		Object boundsExpandable = graph.getProperty(BOUNDS_EXPANDABLE_PROPERTY);
 		if (boundsExpandable instanceof Boolean) {
 			return (Boolean) boundsExpandable;
@@ -167,12 +162,12 @@ public class LayoutProperties {
 		return DEFAULT_BOUNDS_EXPANDABLE;
 	}
 
-	public static void setBoundsExpandable(LayoutContext graph,
+	public static void setBoundsExpandable(ILayoutContext graph,
 			boolean boundsExpandable) {
 		graph.setProperty(BOUNDS_EXPANDABLE_PROPERTY, boundsExpandable);
 	}
 
-	public static Boolean isDynamicLayoutEnables(LayoutContext graph) {
+	public static Boolean isDynamicLayoutEnables(ILayoutContext graph) {
 		Object dynamicLayoutEnabled = graph
 				.getProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY);
 		if (dynamicLayoutEnabled instanceof Boolean) {
@@ -181,12 +176,12 @@ public class LayoutProperties {
 		return DEFAULT_DYNAMIC_LAYOUT_ENABLED;
 	}
 
-	public static void setDynamicLayoutEnabled(LayoutContext graph,
+	public static void setDynamicLayoutEnabled(ILayoutContext graph,
 			boolean dynamicLayoutEnabled) {
 		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY, dynamicLayoutEnabled);
 	}
 
-	public static Point getLocation(EntityLayout entity) {
+	public static Point getLocation(IEntityLayout entity) {
 		Object location = entity.getProperty(LOCATION_PROPERTY);
 		if (location instanceof Point) {
 			return ((Point) location).getCopy();
@@ -194,7 +189,7 @@ public class LayoutProperties {
 		return DEFAULT_LOCATION.getCopy();
 	}
 
-	public static Dimension getSize(EntityLayout entity) {
+	public static Dimension getSize(IEntityLayout entity) {
 		Object size = entity.getProperty(SIZE_PROPERTY);
 		if (size instanceof Dimension) {
 			return ((Dimension) size).getCopy();
@@ -202,7 +197,7 @@ public class LayoutProperties {
 		return DEFAULT_SIZE.getCopy();
 	}
 
-	public static Double getPreferredAspectRatio(EntityLayout entity) {
+	public static Double getPreferredAspectRatio(IEntityLayout entity) {
 		Object ar = entity.getProperty(ASPECT_RATIO_PROPERTY);
 		if (ar instanceof Double) {
 			return (Double) ar;
@@ -210,7 +205,7 @@ public class LayoutProperties {
 		return DEFAULT_ASPECT_RATIO;
 	}
 
-	public static Boolean isResizable(EntityLayout entity) {
+	public static Boolean isResizable(IEntityLayout entity) {
 		Object resizable = entity.getProperty(RESIZABLE_PROPERTY);
 		if (resizable instanceof Boolean) {
 			return (Boolean) resizable;
@@ -218,7 +213,7 @@ public class LayoutProperties {
 		return DEFAULT_RESIZABLE;
 	}
 
-	public static Boolean isMovable(EntityLayout entity) {
+	public static Boolean isMovable(IEntityLayout entity) {
 		Object movable = entity.getProperty(MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
 			return (Boolean) movable;
@@ -226,7 +221,7 @@ public class LayoutProperties {
 		return DEFAULT_MOVABLE;
 	}
 
-	public static void setLocation(EntityLayout entity, double x, double y) {
+	public static void setLocation(IEntityLayout entity, double x, double y) {
 		if (Double.isNaN(x)) {
 			x = 0;
 		}
@@ -236,7 +231,7 @@ public class LayoutProperties {
 		entity.setProperty(LOCATION_PROPERTY, new Point(x, y));
 	}
 
-	public static void setSize(EntityLayout entity, double w, double h) {
+	public static void setSize(IEntityLayout entity, double w, double h) {
 		if (Double.isNaN(w)) {
 			w = 0;
 		}
@@ -246,11 +241,11 @@ public class LayoutProperties {
 		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
-	public static void setResizable(EntityLayout entity, boolean resizable) {
+	public static void setResizable(IEntityLayout entity, boolean resizable) {
 		entity.setProperty(RESIZABLE_PROPERTY, resizable);
 	}
 
-	public static Boolean isMinimized(NodeLayout node) {
+	public static Boolean isMinimized(INodeLayout node) {
 		Object minimized = node.getProperty(MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
 			return (Boolean) minimized;
@@ -258,11 +253,11 @@ public class LayoutProperties {
 		return DEFAULT_MINIMIZED;
 	}
 
-	public static void setMinimized(NodeLayout node, boolean minimized) {
+	public static void setMinimized(INodeLayout node, boolean minimized) {
 		node.setProperty(MINIMIZED_PROPERTY, minimized);
 	}
 
-	public static Boolean isPrunable(NodeLayout node) {
+	public static Boolean isPrunable(INodeLayout node) {
 		Object prunable = node.getProperty(PRUNABLE_PROPERTY);
 		if (prunable instanceof Boolean) {
 			return (Boolean) prunable;
@@ -270,15 +265,15 @@ public class LayoutProperties {
 		return DEFAULT_PRUNABLE;
 	}
 
-	public static Boolean isPruned(NodeLayout node) {
+	public static Boolean isPruned(INodeLayout node) {
 		return node.getSubgraph() != null;
 	}
 
-	public static void setPrunable(NodeLayout node, boolean prunable) {
+	public static void setPrunable(INodeLayout node, boolean prunable) {
 		node.setProperty(PRUNABLE_PROPERTY, prunable);
 	}
 
-	public static Boolean isDirected(ConnectionLayout edge) {
+	public static Boolean isDirected(IConnectionLayout edge) {
 		Object directed = edge.getProperty(DIRECTED_PROPERTY);
 		if (directed instanceof Boolean) {
 			return (Boolean) directed;
@@ -286,7 +281,7 @@ public class LayoutProperties {
 		return DEFAULT_DIRECTED;
 	}
 
-	public static Boolean isVisible(ConnectionLayout edge) {
+	public static Boolean isVisible(IConnectionLayout edge) {
 		Object visible = edge.getProperty(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
@@ -294,7 +289,7 @@ public class LayoutProperties {
 		return DEFAULT_VISIBLE;
 	}
 
-	public static Boolean isVisible(EntityLayout entity) {
+	public static Boolean isVisible(IEntityLayout entity) {
 		Object visible = entity.getProperty(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
@@ -302,7 +297,7 @@ public class LayoutProperties {
 		return DEFAULT_VISIBLE;
 	}
 
-	public static Double getWeight(ConnectionLayout edge) {
+	public static Double getWeight(IConnectionLayout edge) {
 		Object weight = edge.getProperty(WEIGHT_PROPERTY);
 		if (weight instanceof Double) {
 			return (Double) weight;
@@ -310,29 +305,29 @@ public class LayoutProperties {
 		return DEFAULT_WEIGHT;
 	}
 
-	public static void setDirected(ConnectionLayout edge, boolean directed) {
+	public static void setDirected(IConnectionLayout edge, boolean directed) {
 		edge.setProperty(DIRECTED_PROPERTY, directed);
 	}
 
-	public static void setVisible(ConnectionLayout edge, boolean visible) {
+	public static void setVisible(IConnectionLayout edge, boolean visible) {
 		edge.setProperty(VISIBLE_PROPERTY, visible);
 	}
 
-	public static void setWeight(ConnectionLayout edge, double weight) {
+	public static void setWeight(IConnectionLayout edge, double weight) {
 		edge.setProperty(WEIGHT_PROPERTY, weight);
 	}
 
-	public static void setDirectionDependant(SubgraphLayout subgraph,
+	public static void setDirectionDependant(ISubgraphLayout subgraph,
 			boolean isDirectionDependant) {
 		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY, isDirectionDependant);
 	}
 
 	// TODO: ensure valid direction by using an enum
-	public static void setDirection(SubgraphLayout subgraph, int direction) {
+	public static void setDirection(ISubgraphLayout subgraph, int direction) {
 		subgraph.setProperty(DIRECTION_PROPERTY, direction);
 	}
 
-	public static Boolean isDirectionDependant(SubgraphLayout subgraph) {
+	public static Boolean isDirectionDependant(ISubgraphLayout subgraph) {
 		Object directionDependant = subgraph
 				.getProperty(DIRECTION_DEPENDANT_PROPERTY);
 		if (directionDependant instanceof Boolean) {
@@ -341,7 +336,7 @@ public class LayoutProperties {
 		return DEFAULT_DIRECTION_DEPENDANT;
 	}
 
-	public static Integer getDirection(SubgraphLayout subgraph) {
+	public static Integer getDirection(ISubgraphLayout subgraph) {
 		Object direction = subgraph.getProperty(DIRECTION_PROPERTY);
 		if (direction instanceof Integer) {
 			return (Integer) direction;

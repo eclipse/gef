@@ -20,13 +20,13 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
-class InternalNodeLayout implements NodeLayout {
+class InternalNodeLayout implements INodeLayout {
 
 	/**
 	 * This listener is added to nodes' figures as a workaround for the problem
@@ -89,7 +89,7 @@ class InternalNodeLayout implements NodeLayout {
 				.getCopy();
 	}
 
-	public SubgraphLayout getSubgraph() {
+	public ISubgraphLayout getSubgraph() {
 		return subgraph;
 	}
 
@@ -113,7 +113,7 @@ class InternalNodeLayout implements NodeLayout {
 		return (node.parent.getItem().getStyle() & ZestStyles.NODES_NO_LAYOUT_RESIZE) == 0;
 	}
 
-	public void prune(SubgraphLayout subgraph) {
+	public void prune(ISubgraphLayout subgraph) {
 		if (subgraph != null && !(subgraph instanceof DefaultSubgraph)) {
 			throw new RuntimeException(
 					"InternalNodeLayout can be pruned only to instance of DefaultSubgraph.");
@@ -123,13 +123,13 @@ class InternalNodeLayout implements NodeLayout {
 			return;
 		}
 		if (this.subgraph != null) {
-			SubgraphLayout subgraph2 = this.subgraph;
+			ISubgraphLayout subgraph2 = this.subgraph;
 			this.subgraph = null;
-			subgraph2.removeNodes(new NodeLayout[] { this });
+			subgraph2.removeNodes(new INodeLayout[] { this });
 		}
 		if (subgraph != null) {
 			this.subgraph = (DefaultSubgraph) subgraph;
-			subgraph.addNodes(new NodeLayout[] { this });
+			subgraph.addNodes(new INodeLayout[] { this });
 		}
 	}
 
@@ -178,9 +178,9 @@ class InternalNodeLayout implements NodeLayout {
 		return LayoutProperties.DEFAULT_MINIMIZED;
 	}
 
-	public NodeLayout[] getPredecessingNodes() {
-		ConnectionLayout[] connections = getIncomingConnections();
-		NodeLayout[] result = new NodeLayout[connections.length];
+	public INodeLayout[] getPredecessingNodes() {
+		IConnectionLayout[] connections = getIncomingConnections();
+		INodeLayout[] result = new INodeLayout[connections.length];
 		for (int i = 0; i < connections.length; i++) {
 			result[i] = connections[i].getSource();
 			if (result[i] == this) {
@@ -190,9 +190,9 @@ class InternalNodeLayout implements NodeLayout {
 		return result;
 	}
 
-	public NodeLayout[] getSuccessingNodes() {
-		ConnectionLayout[] connections = getOutgoingConnections();
-		NodeLayout[] result = new NodeLayout[connections.length];
+	public INodeLayout[] getSuccessingNodes() {
+		IConnectionLayout[] connections = getOutgoingConnections();
+		INodeLayout[] result = new INodeLayout[connections.length];
 		for (int i = 0; i < connections.length; i++) {
 			result[i] = connections[i].getTarget();
 			if (result[i] == this) {
@@ -202,18 +202,18 @@ class InternalNodeLayout implements NodeLayout {
 		return result;
 	}
 
-	public EntityLayout[] getSuccessingEntities() {
+	public IEntityLayout[] getSuccessingEntities() {
 		if (isPruned()) {
-			return new NodeLayout[0];
+			return new INodeLayout[0];
 		}
-		ArrayList<EntityLayout> result = new ArrayList<EntityLayout>();
-		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
-		NodeLayout[] successingNodes = getSuccessingNodes();
+		ArrayList<IEntityLayout> result = new ArrayList<IEntityLayout>();
+		HashSet<ISubgraphLayout> addedSubgraphs = new HashSet<ISubgraphLayout>();
+		INodeLayout[] successingNodes = getSuccessingNodes();
 		for (int i = 0; i < successingNodes.length; i++) {
 			if (!LayoutProperties.isPruned(successingNodes[i])) {
 				result.add(successingNodes[i]);
 			} else {
-				SubgraphLayout successingSubgraph = successingNodes[i]
+				ISubgraphLayout successingSubgraph = successingNodes[i]
 						.getSubgraph();
 				if (!addedSubgraphs.contains(successingSubgraph)) {
 					result.add(successingSubgraph);
@@ -221,21 +221,21 @@ class InternalNodeLayout implements NodeLayout {
 				}
 			}
 		}
-		return result.toArray(new EntityLayout[result.size()]);
+		return result.toArray(new IEntityLayout[result.size()]);
 	}
 
-	public EntityLayout[] getPredecessingEntities() {
+	public IEntityLayout[] getPredecessingEntities() {
 		if (isPruned()) {
-			return new NodeLayout[0];
+			return new INodeLayout[0];
 		}
-		ArrayList<EntityLayout> result = new ArrayList<EntityLayout>();
-		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
-		NodeLayout[] predecessingNodes = getPredecessingNodes();
+		ArrayList<IEntityLayout> result = new ArrayList<IEntityLayout>();
+		HashSet<ISubgraphLayout> addedSubgraphs = new HashSet<ISubgraphLayout>();
+		INodeLayout[] predecessingNodes = getPredecessingNodes();
 		for (int i = 0; i < predecessingNodes.length; i++) {
 			if (!LayoutProperties.isPruned(predecessingNodes[i])) {
 				result.add(predecessingNodes[i]);
 			} else {
-				SubgraphLayout predecessingSubgraph = predecessingNodes[i]
+				ISubgraphLayout predecessingSubgraph = predecessingNodes[i]
 						.getSubgraph();
 				if (!addedSubgraphs.contains(predecessingSubgraph)) {
 					result.add(predecessingSubgraph);
@@ -243,10 +243,10 @@ class InternalNodeLayout implements NodeLayout {
 				}
 			}
 		}
-		return result.toArray(new EntityLayout[result.size()]);
+		return result.toArray(new IEntityLayout[result.size()]);
 	}
 
-	public ConnectionLayout[] getIncomingConnections() {
+	public IConnectionLayout[] getIncomingConnections() {
 		ArrayList<InternalConnectionLayout> result = new ArrayList<InternalConnectionLayout>();
 		for (Iterator<GraphConnection> iterator = node.getTargetConnections()
 				.iterator(); iterator.hasNext();) {
@@ -263,10 +263,10 @@ class InternalNodeLayout implements NodeLayout {
 				result.add(connection.getLayout());
 			}
 		}
-		return result.toArray(new ConnectionLayout[result.size()]);
+		return result.toArray(new IConnectionLayout[result.size()]);
 	}
 
-	public ConnectionLayout[] getOutgoingConnections() {
+	public IConnectionLayout[] getOutgoingConnections() {
 		ArrayList<InternalConnectionLayout> result = new ArrayList<InternalConnectionLayout>();
 		for (Iterator<GraphConnection> iterator = node.getSourceConnections()
 				.iterator(); iterator.hasNext();) {
@@ -283,7 +283,7 @@ class InternalNodeLayout implements NodeLayout {
 				result.add(connection.getLayout());
 			}
 		}
-		return result.toArray(new ConnectionLayout[result.size()]);
+		return result.toArray(new IConnectionLayout[result.size()]);
 	}
 
 	public double getPreferredAspectRatio() {
@@ -349,7 +349,7 @@ class InternalNodeLayout implements NodeLayout {
 	void dispose() {
 		isDisposed = true;
 		if (subgraph != null) {
-			subgraph.removeNodes(new NodeLayout[] { this });
+			subgraph.removeNodes(new INodeLayout[] { this });
 		}
 		layoutContext.fireNodeRemovedEvent(node.getLayout());
 		figureToNode.remove(node.nodeFigure);

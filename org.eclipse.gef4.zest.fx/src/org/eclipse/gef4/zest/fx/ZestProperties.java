@@ -20,7 +20,7 @@ import java.util.Set;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 public class ZestProperties {
@@ -73,12 +73,17 @@ public class ZestProperties {
 		return (String) node.getAttrs().get(NODE_LABEL);
 	}
 
-	public static LayoutAlgorithm getLayout(Graph graph) {
-		return (LayoutAlgorithm) graph.getAttrs().get(GRAPH_LAYOUT);
+	public static ILayoutAlgorithm getLayout(Graph graph) {
+		return (ILayoutAlgorithm) graph.getAttrs().get(GRAPH_LAYOUT);
 	}
 
-	public static Boolean getLayoutIrrelevant(Edge edge) {
-		return (Boolean) edge.getAttrs().get(ENTITY_LAYOUT_IRRELEVANT);
+	public static Boolean getLayoutIrrelevant(Edge edge,
+			boolean returnDefaultIfMissing) {
+		Map<String, Object> attrs = edge.getAttrs();
+		if (attrs.containsKey(ENTITY_LAYOUT_IRRELEVANT)) {
+			return (Boolean) attrs.get(ENTITY_LAYOUT_IRRELEVANT);
+		}
+		return returnDefaultIfMissing ? ENTITY_LAYOUT_IRRELEVANT_DEFAULT : null;
 	}
 
 	public static Boolean getLayoutIrrelevant(Node node,
@@ -146,7 +151,7 @@ public class ZestProperties {
 		node.getAttrs().put(NODE_LABEL, label);
 	}
 
-	public static void setLayout(Graph graph, LayoutAlgorithm algorithm) {
+	public static void setLayout(Graph graph, ILayoutAlgorithm algorithm) {
 		graph.getAttrs().put(GRAPH_LAYOUT, algorithm);
 	}
 
@@ -221,7 +226,7 @@ public class ZestProperties {
 	public static final String GRAPH_TYPE_DEFAULT = GRAPH_TYPE_UNDIRECTED;
 	public static final String GRAPH_LAYOUT = "layout";
 
-	public static final LayoutAlgorithm GRAPH_LAYOUT_DEFAULT = new TreeLayoutAlgorithm();
+	public static final ILayoutAlgorithm GRAPH_LAYOUT_DEFAULT = new TreeLayoutAlgorithm();
 
 	/**
 	 * This layout attribute determines if an entity (node/edge) is irrelevant

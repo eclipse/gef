@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
 
 /**
  * A helper class for layout algorithms that are based on tree structure. It
@@ -41,7 +41,7 @@ public class TreeLayoutObserver {
 	 * structure made of <code>TreeNode</code>'s subclasses.
 	 */
 	public static class TreeNodeFactory {
-		public TreeNode createTreeNode(NodeLayout nodeLayout,
+		public TreeNode createTreeNode(INodeLayout nodeLayout,
 				TreeLayoutObserver observer) {
 			return new TreeNode(nodeLayout, observer);
 		}
@@ -52,7 +52,7 @@ public class TreeLayoutObserver {
 	 * to it. May be subclassed if additional data and behavior is necessary.
 	 */
 	public static class TreeNode {
-		final protected NodeLayout node;
+		final protected INodeLayout node;
 		final protected TreeLayoutObserver owner;
 		protected int height = 0;
 		protected int depth = -1;
@@ -68,7 +68,7 @@ public class TreeLayoutObserver {
 		 * @return node layout related to this tree node (null for
 		 *         {@link TreeLayoutObserver#getSuperRoot() Super Root})
 		 */
-		public NodeLayout getNode() {
+		public INodeLayout getNode() {
 			return node;
 		}
 
@@ -122,7 +122,7 @@ public class TreeLayoutObserver {
 		 * layout context, unless {@link TreeLayoutObserver#recomputeTree()} was
 		 * called after the nodes were added. In that case the order is
 		 * determined by order of nodes returned by
-		 * {@link NodeLayout#getSuccessingNodes()}. Leaves are assigned
+		 * {@link INodeLayout#getSuccessingNodes()}. Leaves are assigned
 		 * successive numbers starting from 0, other nodes have order equal to
 		 * the smallest order of their children.
 		 * 
@@ -174,7 +174,7 @@ public class TreeLayoutObserver {
 		 * @param owner
 		 *            <code>TreeLayoutObserver</code> owning created node
 		 */
-		protected TreeNode(NodeLayout node, TreeLayoutObserver owner) {
+		protected TreeNode(INodeLayout node, TreeLayoutObserver owner) {
 			this.node = node;
 			this.owner = owner;
 		}
@@ -231,7 +231,7 @@ public class TreeLayoutObserver {
 		protected void findNewParent() {
 			if (parent != null)
 				parent.children.remove(this);
-			NodeLayout[] predecessingNodes = node.getPredecessingNodes();
+			INodeLayout[] predecessingNodes = node.getPredecessingNodes();
 			parent = null;
 			for (int i = 0; i < predecessingNodes.length; i++) {
 				TreeNode potentialParent = owner.layoutToTree
@@ -338,9 +338,9 @@ public class TreeLayoutObserver {
 		}
 	}
 
-	private GraphStructureListener structureListener = new GraphStructureListener() {
+	private IGraphStructureListener structureListener = new IGraphStructureListener() {
 
-		public boolean nodeRemoved(LayoutContext context, NodeLayout node) {
+		public boolean nodeRemoved(ILayoutContext context, INodeLayout node) {
 			TreeNode treeNode = layoutToTree.get(node);
 			treeNode.parent.children.remove(treeNode);
 			superRoot.precomputeTree();
@@ -352,7 +352,7 @@ public class TreeLayoutObserver {
 			return false;
 		}
 
-		public boolean nodeAdded(LayoutContext context, NodeLayout node) {
+		public boolean nodeAdded(ILayoutContext context, INodeLayout node) {
 			TreeNode treeNode = getTreeNode(node);
 			superRoot.addChild(treeNode);
 			superRoot.precomputeTree();
@@ -364,8 +364,8 @@ public class TreeLayoutObserver {
 			return false;
 		}
 
-		public boolean connectionRemoved(LayoutContext context,
-				ConnectionLayout connection) {
+		public boolean connectionRemoved(ILayoutContext context,
+				IConnectionLayout connection) {
 			TreeNode node1 = layoutToTree.get(connection.getSource());
 			TreeNode node2 = layoutToTree.get(connection.getTarget());
 			if (node1.parent == node2) {
@@ -385,8 +385,8 @@ public class TreeLayoutObserver {
 			return false;
 		}
 
-		public boolean connectionAdded(LayoutContext context,
-				ConnectionLayout connection) {
+		public boolean connectionAdded(ILayoutContext context,
+				IConnectionLayout connection) {
 			TreeNode source = layoutToTree.get(connection.getSource());
 			TreeNode target = layoutToTree.get(connection.getTarget());
 			if (source == target)
@@ -420,7 +420,7 @@ public class TreeLayoutObserver {
 
 	private final HashMap<Object, TreeNode> layoutToTree = new HashMap<Object, TreeNode>();
 	private final TreeNodeFactory factory;
-	private final LayoutContext context;
+	private final ILayoutContext context;
 	private TreeNode superRoot;
 	private ArrayList<TreeListener> treeListeners = new ArrayList<TreeListener>();
 
@@ -430,7 +430,7 @@ public class TreeLayoutObserver {
 	 * @param context
 	 * @param nodeFactory
 	 */
-	public TreeLayoutObserver(LayoutContext context, TreeNodeFactory nodeFactory) {
+	public TreeLayoutObserver(ILayoutContext context, TreeNodeFactory nodeFactory) {
 		if (nodeFactory == null)
 			this.factory = new TreeNodeFactory();
 		else
@@ -475,10 +475,10 @@ public class TreeLayoutObserver {
 	 * 
 	 * @param node
 	 * @return The already existing {@link TreeNode} related to the given
-	 *         {@link NodeLayout} or a newly created one in case there was no
+	 *         {@link INodeLayout} or a newly created one in case there was no
 	 *         related {@link TreeNode} before.
 	 */
-	public TreeNode getTreeNode(NodeLayout node) {
+	public TreeNode getTreeNode(INodeLayout node) {
 		TreeNode treeNode = layoutToTree.get(node);
 		if (treeNode == null) {
 			treeNode = factory.createTreeNode(node, this);
@@ -514,11 +514,11 @@ public class TreeLayoutObserver {
 	 * 
 	 * @param nodes
 	 */
-	private void createTrees(NodeLayout[] nodes) {
-		HashSet<NodeLayout> alreadyVisited = new HashSet<NodeLayout>();
+	private void createTrees(INodeLayout[] nodes) {
+		HashSet<INodeLayout> alreadyVisited = new HashSet<INodeLayout>();
 		LinkedList<Object[]> nodesToAdd = new LinkedList<Object[]>();
 		for (int i = 0; i < nodes.length; i++) {
-			NodeLayout root = findRoot(nodes[i], alreadyVisited);
+			INodeLayout root = findRoot(nodes[i], alreadyVisited);
 			if (root != null) {
 				alreadyVisited.add(root);
 				nodesToAdd.addLast(new Object[] { root, superRoot });
@@ -527,12 +527,12 @@ public class TreeLayoutObserver {
 		while (!nodesToAdd.isEmpty()) {
 			Object[] dequeued = nodesToAdd.removeFirst();
 			TreeNode currentNode = factory.createTreeNode(
-					(NodeLayout) dequeued[0], this);
+					(INodeLayout) dequeued[0], this);
 			layoutToTree.put(dequeued[0], currentNode);
 			TreeNode currentRoot = (TreeNode) dequeued[1];
 
 			currentRoot.addChild(currentNode);
-			NodeLayout[] children = currentNode.node.getSuccessingNodes();
+			INodeLayout[] children = currentNode.node.getSuccessingNodes();
 			for (int i = 0; i < children.length; i++) {
 				if (!alreadyVisited.contains(children[i])) {
 					alreadyVisited.add(children[i]);
@@ -558,16 +558,16 @@ public class TreeLayoutObserver {
 	 *            method stops and returns null).
 	 * @return
 	 */
-	private NodeLayout findRoot(NodeLayout nodeLayout,
-			Set<NodeLayout> alreadyVisited) {
-		HashSet<NodeLayout> alreadyVisitedRoot = new HashSet<NodeLayout>();
+	private INodeLayout findRoot(INodeLayout nodeLayout,
+			Set<INodeLayout> alreadyVisited) {
+		HashSet<INodeLayout> alreadyVisitedRoot = new HashSet<INodeLayout>();
 		while (true) {
 			if (alreadyVisited.contains(nodeLayout))
 				return null;
 			if (alreadyVisitedRoot.contains(nodeLayout))
 				return nodeLayout;
 			alreadyVisitedRoot.add(nodeLayout);
-			NodeLayout[] predecessingNodes = nodeLayout.getPredecessingNodes();
+			INodeLayout[] predecessingNodes = nodeLayout.getPredecessingNodes();
 			if (predecessingNodes.length > 0) {
 				nodeLayout = predecessingNodes[0];
 			} else {

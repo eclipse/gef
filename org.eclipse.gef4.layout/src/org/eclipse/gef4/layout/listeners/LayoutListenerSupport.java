@@ -10,48 +10,53 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
+
 public class LayoutListenerSupport {
 
-	private final LayoutContext context;
-	private final List<ContextListener> contextListeners = new ArrayList<ContextListener>();
-	private final List<GraphStructureListener> graphStructureListeners = new ArrayList<GraphStructureListener>();
-	private final List<LayoutListener> layoutListeners = new ArrayList<LayoutListener>();
-	private final List<PruningListener> pruningListeners = new ArrayList<PruningListener>();
+	private final ILayoutContext context;
+	private final List<IContextListener> contextListeners = new ArrayList<IContextListener>();
+	private final List<IGraphStructureListener> graphStructureListeners = new ArrayList<IGraphStructureListener>();
+	private final List<ILayoutListener> layoutListeners = new ArrayList<ILayoutListener>();
+	private final List<IPruningListener> pruningListeners = new ArrayList<IPruningListener>();
 
-	public LayoutListenerSupport(LayoutContext context) {
+	public LayoutListenerSupport(ILayoutContext context) {
 		this.context = context;
 	}
 
-	public void addContextListener(ContextListener listener) {
+	public void addContextListener(IContextListener listener) {
 		contextListeners.add(listener);
 	}
 
-	public void addGraphStructureListener(GraphStructureListener listener) {
+	public void addGraphStructureListener(IGraphStructureListener listener) {
 		graphStructureListeners.add(listener);
 	}
 
-	public void addLayoutListener(LayoutListener listener) {
+	public void addLayoutListener(ILayoutListener listener) {
 		layoutListeners.add(listener);
 	}
 
-	public void addPruningListener(PruningListener listener) {
+	public void addPruningListener(IPruningListener listener) {
 		pruningListeners.add(listener);
 	}
 
 	public void fireBackgroundEnableChangedEvent() {
-		for (ContextListener listener : contextListeners) {
+		for (IContextListener listener : contextListeners) {
 			listener.backgroundEnableChanged(context);
 		}
 	}
 
 	public void fireBoundsChangedEvent() {
 		boolean intercepted = false;
-		for (ContextListener listener : contextListeners) {
+		for (IContextListener listener : contextListeners) {
 			intercepted = listener.boundsChanged(context);
 		}
 		if (!intercepted) {
@@ -59,9 +64,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireConnectionAddedEvent(ConnectionLayout connection) {
+	public void fireConnectionAddedEvent(IConnectionLayout connection) {
 		boolean intercepted = false;
-		for (GraphStructureListener listener : graphStructureListeners) {
+		for (IGraphStructureListener listener : graphStructureListeners) {
 			intercepted = listener.connectionAdded(context, connection);
 		}
 		if (!intercepted) {
@@ -69,9 +74,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireConnectionRemovedEvent(ConnectionLayout connection) {
+	public void fireConnectionRemovedEvent(IConnectionLayout connection) {
 		boolean intercepted = false;
-		for (GraphStructureListener listener : graphStructureListeners) {
+		for (IGraphStructureListener listener : graphStructureListeners) {
 			intercepted = listener.connectionRemoved(context, connection);
 		}
 		if (!intercepted) {
@@ -79,9 +84,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireNodeAddedEvent(NodeLayout node) {
+	public void fireNodeAddedEvent(INodeLayout node) {
 		boolean intercepted = false;
-		for (GraphStructureListener listener : graphStructureListeners) {
+		for (IGraphStructureListener listener : graphStructureListeners) {
 			intercepted = listener.nodeAdded(context, node);
 		}
 		if (!intercepted) {
@@ -89,9 +94,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireNodeMovedEvent(NodeLayout node) {
+	public void fireNodeMovedEvent(INodeLayout node) {
 		boolean intercepted = false;
-		for (LayoutListener listener : layoutListeners) {
+		for (ILayoutListener listener : layoutListeners) {
 			intercepted = listener.nodeMoved(context, node);
 		}
 		if (!intercepted) {
@@ -99,9 +104,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireNodeRemovedEvent(NodeLayout node) {
+	public void fireNodeRemovedEvent(INodeLayout node) {
 		boolean intercepted = false;
-		for (GraphStructureListener listener : graphStructureListeners) {
+		for (IGraphStructureListener listener : graphStructureListeners) {
 			intercepted = listener.nodeRemoved(context, node);
 		}
 		if (!intercepted) {
@@ -109,9 +114,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireNodeResizedEvent(NodeLayout node) {
+	public void fireNodeResizedEvent(INodeLayout node) {
 		boolean intercepted = false;
-		for (LayoutListener listener : layoutListeners) {
+		for (ILayoutListener listener : layoutListeners) {
 			intercepted = listener.nodeResized(context, node);
 		}
 		if (!intercepted) {
@@ -120,14 +125,14 @@ public class LayoutListenerSupport {
 	}
 
 	public void firePruningEnableChangedEvent() {
-		for (ContextListener listener : contextListeners) {
+		for (IContextListener listener : contextListeners) {
 			listener.pruningEnablementChanged(context);
 		}
 	}
 
-	public void fireSubgraphMovedEvent(SubgraphLayout subgraph) {
+	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph) {
 		boolean intercepted = false;
-		for (LayoutListener listener : layoutListeners) {
+		for (ILayoutListener listener : layoutListeners) {
 			intercepted = listener.subgraphMoved(context, subgraph);
 		}
 		if (!intercepted) {
@@ -135,9 +140,9 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void fireSubgraphResizedEvent(SubgraphLayout subgraph) {
+	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph) {
 		boolean intercepted = false;
-		for (LayoutListener listener : layoutListeners) {
+		for (ILayoutListener listener : layoutListeners) {
 			intercepted = listener.subgraphResized(context, subgraph);
 		}
 		if (!intercepted) {
@@ -145,19 +150,19 @@ public class LayoutListenerSupport {
 		}
 	}
 
-	public void removeContextListener(ContextListener listener) {
+	public void removeContextListener(IContextListener listener) {
 		contextListeners.remove(listener);
 	}
 
-	public void removeGraphStructureListener(GraphStructureListener listener) {
+	public void removeGraphStructureListener(IGraphStructureListener listener) {
 		graphStructureListeners.remove(listener);
 	}
 
-	public void removeLayoutListener(LayoutListener listener) {
+	public void removeLayoutListener(ILayoutListener listener) {
 		layoutListeners.remove(listener);
 	}
 
-	public void removePruningListener(PruningListener listener) {
+	public void removePruningListener(IPruningListener listener) {
 		pruningListeners.remove(listener);
 	}
 

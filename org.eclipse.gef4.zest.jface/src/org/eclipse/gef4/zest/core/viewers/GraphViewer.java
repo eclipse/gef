@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelEntityFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelEntityRelationshipFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelFactory;
@@ -161,7 +161,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * @param runLayout
 	 *            if the layout should be run
 	 */
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm, boolean runLayout) {
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm, boolean runLayout) {
 		graph.setLayoutAlgorithm(algorithm, runLayout);
 	}
 
@@ -171,7 +171,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer
 	 * # setLayoutAlgorithm(org.eclipse.gef4.layout.LayoutAlgorithm)
 	 */
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm) {
 		super.setLayoutAlgorithm(algorithm);
 	}
 
@@ -366,7 +366,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * @seeorg.eclipse.gef4.zest.core.viewers.AbstractStructuredGraphViewer#
 	 * getLayoutAlgorithm()
 	 */
-	protected LayoutAlgorithm getLayoutAlgorithm() {
+	protected ILayoutAlgorithm getLayoutAlgorithm() {
 		return graph.getLayoutAlgorithm();
 	}
 

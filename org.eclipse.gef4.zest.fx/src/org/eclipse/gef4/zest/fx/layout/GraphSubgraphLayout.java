@@ -18,17 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 
-public class GraphSubgraphLayout implements SubgraphLayout {
+public class GraphSubgraphLayout implements ISubgraphLayout {
 
-	private List<NodeLayout> nodes = new ArrayList<NodeLayout>();
+	private List<INodeLayout> nodes = new ArrayList<INodeLayout>();
 	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 
 	@Override
-	public void addNodes(NodeLayout[] nodes) {
+	public void addNodes(INodeLayout[] nodes) {
 		if (nodes == null || nodes.length == 0) {
 			return;
 		}
@@ -48,24 +48,24 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	@Override
 	public Object[] getItems() {
 		List<Object> items = new ArrayList<Object>();
-		for (NodeLayout node : nodes) {
+		for (INodeLayout node : nodes) {
 			items.addAll(Arrays.asList(node.getItems()));
 		}
 		return items.toArray();
 	}
 
 	@Override
-	public NodeLayout[] getNodes() {
-		return nodes.toArray(new NodeLayout[] {});
+	public INodeLayout[] getNodes() {
+		return nodes.toArray(new INodeLayout[] {});
 	}
 
 	@Override
-	public EntityLayout[] getPredecessingEntities() {
-		List<EntityLayout> predecessors = new ArrayList<EntityLayout>();
-		for (NodeLayout node : nodes) {
+	public IEntityLayout[] getPredecessingEntities() {
+		List<IEntityLayout> predecessors = new ArrayList<IEntityLayout>();
+		for (INodeLayout node : nodes) {
 			predecessors.addAll(Arrays.asList(node.getPredecessingEntities()));
 		}
-		return predecessors.toArray(new EntityLayout[] {});
+		return predecessors.toArray(new IEntityLayout[] {});
 	}
 
 	@Override
@@ -74,16 +74,16 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	}
 
 	@Override
-	public EntityLayout[] getSuccessingEntities() {
-		List<EntityLayout> successors = new ArrayList<EntityLayout>();
-		for (NodeLayout node : nodes) {
+	public IEntityLayout[] getSuccessingEntities() {
+		List<IEntityLayout> successors = new ArrayList<IEntityLayout>();
+		for (INodeLayout node : nodes) {
 			successors.addAll(Arrays.asList(node.getSuccessingEntities()));
 		}
-		return successors.toArray(new EntityLayout[] {});
+		return successors.toArray(new IEntityLayout[] {});
 	}
 
 	@Override
-	public void removeNodes(NodeLayout[] nodes) {
+	public void removeNodes(INodeLayout[] nodes) {
 		if (nodes == null || nodes.length == 0) {
 			return;
 		}

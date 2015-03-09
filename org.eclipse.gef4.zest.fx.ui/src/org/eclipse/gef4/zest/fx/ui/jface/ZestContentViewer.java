@@ -24,7 +24,7 @@ import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.parts.SelectionForwarder;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
@@ -217,7 +217,7 @@ public class ZestContentViewer extends ContentViewer {
 		return (ILabelProvider) super.getLabelProvider();
 	}
 
-	public LayoutAlgorithm getLayoutAlgorithm() {
+	public ILayoutAlgorithm getLayoutAlgorithm() {
 		return domain
 				.getAdapter(LayoutModel.class)
 				.getLayoutContext(
@@ -258,7 +258,7 @@ public class ZestContentViewer extends ContentViewer {
 						getLabelProvider())));
 	}
 
-	public void setLayoutAlgorithm(LayoutAlgorithm layoutAlgorithm) {
+	public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
 		domain.getAdapter(LayoutModel.class)
 				.getLayoutContext(
 						(Graph) viewer.getAdapter(ContentModel.class)

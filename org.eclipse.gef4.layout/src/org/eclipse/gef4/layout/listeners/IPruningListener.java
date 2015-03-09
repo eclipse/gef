@@ -7,11 +7,14 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout.listeners;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
-public interface PruningListener {
+public interface IPruningListener {
 
 	/**
 	 * This method is called when some nodes are pruned in a layout context.
@@ -19,7 +22,7 @@ public interface PruningListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -28,7 +31,7 @@ public interface PruningListener {
 	 *            subgraphs that have been created or had nodes added
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodesPruned(LayoutContext context, SubgraphLayout[] subgraph);
+	public boolean nodesPruned(ILayoutContext context, ISubgraphLayout[] subgraph);
 
 	/**
 	 * This method is called when some nodes are unpruned in a layout context,
@@ -37,7 +40,7 @@ public interface PruningListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -46,6 +49,6 @@ public interface PruningListener {
 	 *            nodes that have been unpruned
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodesUnpruned(LayoutContext context, NodeLayout[] nodes);
+	public boolean nodesUnpruned(ILayoutContext context, INodeLayout[] nodes);
 
 }

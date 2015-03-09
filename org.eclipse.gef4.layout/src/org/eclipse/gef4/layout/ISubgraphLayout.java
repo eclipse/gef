@@ -7,7 +7,8 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
+
 
 /**
  * An interface for subgraphs in layout. A subgraph is a set of pruned nodes
@@ -15,7 +16,7 @@ package org.eclipse.gef4.layout.interfaces;
  * node (empty subgraphs will be removed from its context). Every node can
  * belong to at most one subgraph.
  */
-public interface SubgraphLayout extends EntityLayout {
+public interface ISubgraphLayout extends IEntityLayout {
 
 	/**
 	 * Returns all the nodes belonging to this subgraph. Replacing elements in
@@ -23,7 +24,7 @@ public interface SubgraphLayout extends EntityLayout {
 	 * 
 	 * @return array of nodes
 	 */
-	public NodeLayout[] getNodes();
+	public INodeLayout[] getNodes();
 
 	/**
 	 * Returns the number of nodes pruned into this subgraph.
@@ -39,7 +40,7 @@ public interface SubgraphLayout extends EntityLayout {
 	 * @param nodes
 	 *            array of nodes to add
 	 */
-	public void addNodes(NodeLayout[] nodes);
+	public void addNodes(INodeLayout[] nodes);
 
 	/**
 	 * Removes nodes from this subgraph.
@@ -47,6 +48,6 @@ public interface SubgraphLayout extends EntityLayout {
 	 * @param nodes
 	 *            array of nodes to remove
 	 */
-	public void removeNodes(NodeLayout[] nodes);
+	public void removeNodes(INodeLayout[] nodes);
 
 }

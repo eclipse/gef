@@ -7,17 +7,20 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.common.properties.IPropertyStore;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.listeners.IContextListener;
+import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
+import org.eclipse.gef4.layout.listeners.ILayoutListener;
+import org.eclipse.gef4.layout.listeners.IPruningListener;
 
 /**
  * Objects implementing LayoutContext interface are used for exchanging of
  * information between layout algorithms and graphical objects displaying
  * graphs.
  */
-public interface LayoutContext extends IPropertyStore {
+public interface ILayoutContext extends IPropertyStore {
 
 	public static final String STATIC_LAYOUT_ALGORITHM_PROPERTY = "staticLayoutAlgorithm";
 	public static final String DYNAMIC_LAYOUT_ALGORITHM_PROPERTY = "dynamicLayoutAlgorithm";
@@ -42,7 +45,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @return array of nodes to lay out
 	 */
-	public NodeLayout[] getNodes();
+	public INodeLayout[] getNodes();
 
 	/**
 	 * Returns all the connections between nodes that should be laid out.
@@ -50,7 +53,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @return array of connections between nodes
 	 */
-	public ConnectionLayout[] getConnections();
+	public IConnectionLayout[] getConnections();
 
 	/**
 	 * Returns all entities that are currently placed on the graph, that is
@@ -59,7 +62,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @return array of entities to layout
 	 */
-	public EntityLayout[] getEntities();
+	public IEntityLayout[] getEntities();
 
 	/**
 	 * Returns all the connections between given source and target entities. If
@@ -72,8 +75,8 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param layoutEntity2
 	 * @return the connections between layoutEntitity1 and layoutEntity2
 	 */
-	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
-			EntityLayout layoutEntity2);
+	public IConnectionLayout[] getConnections(IEntityLayout layoutEntity1,
+			IEntityLayout layoutEntity2);
 
 	/**
 	 * Returns all the subgraphs this context's nodes were pruned to. Replacing
@@ -81,7 +84,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @return array of subgraphs (may be empty)
 	 */
-	public SubgraphLayout[] getSubgraphs();
+	public ISubgraphLayout[] getSubgraphs();
 
 	/**
 	 * Creates a subgraph containing given nodes and adds it to this context. If
@@ -91,12 +94,12 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param nodes
 	 *            nodes to add to the new subgraph
 	 */
-	public SubgraphLayout createSubgraph(NodeLayout[] nodes);
+	public ISubgraphLayout createSubgraph(INodeLayout[] nodes);
 
 	/**
 	 * Sets the dynamic layout algorithm for this context. This algorithm will
 	 * be used to relayout graph items using
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} after every event that is
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} after every event that is
 	 * not intercepted by any listener when currently changes are not being
 	 * flushed and background layout is enabled. The clean flag for the
 	 * background layout algorithm can be set to <code>false</code> by the
@@ -104,7 +107,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @param algorithm
 	 */
-	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm);
+	public void setDynamicLayoutAlgorithm(ILayoutAlgorithm algorithm);
 
 	/**
 	 * Sets the static layout algorithm for this context. The static algorithm
@@ -113,11 +116,11 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @param algorithm
 	 */
-	public void setStaticLayoutAlgorithm(LayoutAlgorithm algorithm);
+	public void setStaticLayoutAlgorithm(ILayoutAlgorithm algorithm);
 
 	/**
 	 * Adds the given {@link Runnable} to the list of runnables which are called
-	 * when this {@link LayoutContext} is asked to apply all changes made to its
+	 * when this {@link ILayoutContext} is asked to apply all changes made to its
 	 * elements to the display.
 	 * 
 	 * @param runnable
@@ -128,7 +131,7 @@ public interface LayoutContext extends IPropertyStore {
 
 	/**
 	 * Removes the given {@link Runnable} from the list of runnables which are
-	 * called when this {@link LayoutContext} is asked to apply all changes made
+	 * called when this {@link ILayoutContext} is asked to apply all changes made
 	 * to its elements to the display.
 	 * 
 	 * @param runnable
@@ -138,33 +141,33 @@ public interface LayoutContext extends IPropertyStore {
 	public void unscheduleFromFlushChanges(Runnable runnable);
 
 	/**
-	 * Returns <code>true</code> when the given {@link ConnectionLayout} is not
+	 * Returns <code>true</code> when the given {@link IConnectionLayout} is not
 	 * relevant for layout according to the configured {@link ILayoutFilter
 	 * layout filters}. Otherwise returns <code>false</code>.
 	 * 
 	 * @param connLayout
-	 *            The {@link ConnectionLayout} in question.
-	 * @return <code>true</code> when the given {@link ConnectionLayout} is not
+	 *            The {@link IConnectionLayout} in question.
+	 * @return <code>true</code> when the given {@link IConnectionLayout} is not
 	 *         relevant for layout according to the configure layout filters,
 	 *         otherwise <code>false</code>.
 	 */
-	public boolean isLayoutIrrelevant(ConnectionLayout connLayout);
+	public boolean isLayoutIrrelevant(IConnectionLayout connLayout);
 
 	/**
-	 * Returns <code>true</code> when the given {@link NodeLayout} is not
+	 * Returns <code>true</code> when the given {@link INodeLayout} is not
 	 * relevant for layout according to the configured {@link ILayoutFilter
 	 * layout filters}. Otherwise returns <code>false</code>.
 	 * 
 	 * @param nodeLayout
-	 *            The {@link NodeLayout} in question.
-	 * @return <code>true</code> when the given {@link NodeLayout} is not
+	 *            The {@link INodeLayout} in question.
+	 * @return <code>true</code> when the given {@link INodeLayout} is not
 	 *         relevant for layout according to the configure layout filters,
 	 *         otherwise <code>false</code>.
 	 */
-	public boolean isLayoutIrrelevant(NodeLayout nodeLayout);
+	public boolean isLayoutIrrelevant(INodeLayout nodeLayout);
 
 	/**
-	 * Adds the given ILayoutFilter to this {@link LayoutContext}.
+	 * Adds the given ILayoutFilter to this {@link ILayoutContext}.
 	 * 
 	 * @param layoutFilter
 	 *            The ILayoutFilter to add to this context.
@@ -172,7 +175,7 @@ public interface LayoutContext extends IPropertyStore {
 	public void addLayoutFilter(ILayoutFilter layoutFilter);
 
 	/**
-	 * Removes the given ILayoutFilter from this {@link LayoutContext}.
+	 * Removes the given ILayoutFilter from this {@link ILayoutContext}.
 	 * 
 	 * @param layoutFilter
 	 *            The ILayoutFilter to remove to this context.
@@ -185,13 +188,13 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @return the static layout algorithm
 	 */
-	public LayoutAlgorithm getStaticLayoutAlgorithm();
+	public ILayoutAlgorithm getStaticLayoutAlgorithm();
 
 	/**
 	 * @return the background algorithm of this context (see
-	 *         {@link #setDynamicLayoutAlgorithm(LayoutAlgorithm)} for details)
+	 *         {@link #setDynamicLayoutAlgorithm(ILayoutAlgorithm)} for details)
 	 */
-	public LayoutAlgorithm getDynamicLayoutAlgorithm();
+	public ILayoutAlgorithm getDynamicLayoutAlgorithm();
 
 	/**
 	 * Adds a listener to the context that will be notified about changes in
@@ -204,7 +207,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addLayoutListener(LayoutListener listener);
+	public void addLayoutListener(ILayoutListener listener);
 
 	/**
 	 * Removes a layout listener from this context.
@@ -212,7 +215,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removeLayoutListener(LayoutListener listener);
+	public void removeLayoutListener(ILayoutListener listener);
 
 	/**
 	 * Adds a listener to the context that will be notified about changes in
@@ -225,7 +228,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addGraphStructureListener(GraphStructureListener listener);
+	public void addGraphStructureListener(IGraphStructureListener listener);
 
 	/**
 	 * Removes a graph structure listener from this context.
@@ -233,7 +236,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removeGraphStructureListener(GraphStructureListener listener);
+	public void removeGraphStructureListener(IGraphStructureListener listener);
 
 	/**
 	 * Adds a listener to the context that will be notified about changes
@@ -242,7 +245,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addContextListener(ContextListener listener);
+	public void addContextListener(IContextListener listener);
 
 	/**
 	 * Removes a context listener from this context.
@@ -250,7 +253,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removeContextListener(ContextListener listener);
+	public void removeContextListener(IContextListener listener);
 
 	/**
 	 * Adds a listener to the context that will be notified about changes in
@@ -262,7 +265,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addPruningListener(PruningListener listener);
+	public void addPruningListener(IPruningListener listener);
 
 	/**
 	 * Removes a pruning structure listener from this context.
@@ -270,7 +273,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removePruningListener(PruningListener listener);
+	public void removePruningListener(IPruningListener listener);
 
 	/**
 	 * Causes all the changes made to elements in this context to affect the
@@ -283,91 +286,91 @@ public interface LayoutContext extends IPropertyStore {
 	public void flushChanges(boolean animationHint);
 
 	/**
-	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * Notifies all previously registered {@link IGraphStructureListener}s about
 	 * the newly added node.
 	 * 
 	 * @param node
 	 *            NodeLayout of newly added node
 	 */
-	public void fireNodeAddedEvent(NodeLayout node);
+	public void fireNodeAddedEvent(INodeLayout node);
 
 	/**
-	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * Notifies all previously registered {@link IGraphStructureListener}s about
 	 * the removed node.
 	 * 
 	 * @param node
 	 *            NodeLayout of removed node
 	 */
-	public void fireNodeRemovedEvent(NodeLayout node);
+	public void fireNodeRemovedEvent(INodeLayout node);
 
 	/**
-	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * Notifies all previously registered {@link IGraphStructureListener}s about
 	 * the newly added connection.
 	 * 
 	 * @param connection
 	 *            ConnectionLayout of newly added connection
 	 */
-	public void fireConnectionAddedEvent(ConnectionLayout connection);
+	public void fireConnectionAddedEvent(IConnectionLayout connection);
 
 	/**
-	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * Notifies all previously registered {@link IGraphStructureListener}s about
 	 * the removed connection.
 	 * 
 	 * @param connection
 	 *            ConnectionLayout of removed connection
 	 */
-	public void fireConnectionRemovedEvent(ConnectionLayout connection);
+	public void fireConnectionRemovedEvent(IConnectionLayout connection);
 
 	/**
-	 * Notifies all previously registered {@link ContextListener}s about the
+	 * Notifies all previously registered {@link IContextListener}s about the
 	 * bounds change.
 	 */
 	public void fireBoundsChangedEvent();
 
 	/**
-	 * Notifies all previously registered {@link ContextListener}s about the
+	 * Notifies all previously registered {@link IContextListener}s about the
 	 * state of the background layout flag.
 	 */
 	public void fireBackgroundEnableChangedEvent();
 
 	/**
-	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * Notifies all previously registered {@link ILayoutListener}s about the
 	 * moved node.
 	 * 
 	 * @param node
 	 *            NodeLayout of moved node
 	 */
-	public void fireNodeMovedEvent(NodeLayout node);
+	public void fireNodeMovedEvent(INodeLayout node);
 
 	/**
-	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * Notifies all previously registered {@link ILayoutListener}s about the
 	 * resized node.
 	 * 
 	 * @param node
 	 *            NodeLayout of resized node
 	 */
-	public void fireNodeResizedEvent(NodeLayout node);
+	public void fireNodeResizedEvent(INodeLayout node);
 
 	/**
-	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * Notifies all previously registered {@link ILayoutListener}s about the
 	 * moved subgraph.
 	 * 
 	 * @param subgraph
 	 *            SubgraphLayout of moved subgraph
 	 */
-	public void fireSubgraphMovedEvent(SubgraphLayout subgraph);
+	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph);
 
 	/**
-	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * Notifies all previously registered {@link ILayoutListener}s about the
 	 * resized subgraph.
 	 * 
 	 * @param subgraph
 	 *            SubgraphLayout of resized subgraph
 	 */
-	public void fireSubgraphResizedEvent(SubgraphLayout subgraph);
+	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph);
 
 	/**
-	 * Notifies all previously registered {@link ContextListener}s about the
+	 * Notifies all previously registered {@link IContextListener}s about the
 	 * state of the pruning flag.
 	 */
 	public void firePruningEnableChangedEvent();

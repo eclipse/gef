@@ -7,9 +7,12 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout.listeners;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
 /**
  * 
@@ -18,17 +21,17 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface LayoutListener {
+public interface ILayoutListener {
 
 	/**
 	 * This method is called whenever location of a particular node is changed
 	 * within observed context. This usually implicates change of position (the
 	 * center of the node) and the receiver should be aware of it (no additional
-	 * {@link #nodeMoved(LayoutContext, NodeLayout)} event will be fired). If
+	 * {@link #nodeMoved(ILayoutContext, INodeLayout)} event will be fired). If
 	 * true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.LayoutListener
 	 * 
 	 * @param context
@@ -37,18 +40,18 @@ public interface LayoutListener {
 	 *            the node that has moved
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodeMoved(LayoutContext context, NodeLayout node);
+	public boolean nodeMoved(ILayoutContext context, INodeLayout node);
 
 	/**
 	 * This method is called whenever size of a particular node is changed
 	 * within observed context. This usually implicates change of position (the
 	 * center of the node) and the receiver should be aware of it (no additional
-	 * {@link #nodeMoved(LayoutContext, NodeLayout)} event will be fired).
+	 * {@link #nodeMoved(ILayoutContext, INodeLayout)} event will be fired).
 	 * 
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -57,14 +60,14 @@ public interface LayoutListener {
 	 *            the node that was resized
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodeResized(LayoutContext context, NodeLayout node);
+	public boolean nodeResized(ILayoutContext context, INodeLayout node);
 
 	/**
 	 * This method is called whenever location of a particular subgraph is
 	 * changed within observed context. If true is returned, it means that the
 	 * receiving listener has intercepted this event. Intercepted events will
 	 * not be passed to the rest of the listeners. If the event is not
-	 * intercepted by any listener, {@link LayoutAlgorithm#applyLayout(boolean)}
+	 * intercepted by any listener, {@link ILayoutAlgorithm#applyLayout(boolean)}
 	 * will be called on the context's main algorithm.
 	 * 
 	 * @param context
@@ -73,18 +76,18 @@ public interface LayoutListener {
 	 *            the subgraph that has moved
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean subgraphMoved(LayoutContext context, SubgraphLayout subgraph);
+	public boolean subgraphMoved(ILayoutContext context, ISubgraphLayout subgraph);
 
 	/**
 	 * This method is called whenever size of a particular subgraph is changed
 	 * within observed context. This usually implicates change of position (the
 	 * center of the node) and the receiver should be aware of it (no additional
-	 * {@link #nodeMoved(LayoutContext, NodeLayout)} event will be fired).
+	 * {@link #nodeMoved(ILayoutContext, INodeLayout)} event will be fired).
 	 * 
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
+	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -93,7 +96,7 @@ public interface LayoutListener {
 	 *            the subgraph that was resized
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean subgraphResized(LayoutContext context,
-			SubgraphLayout subgraph);
+	public boolean subgraphResized(ILayoutContext context,
+			ISubgraphLayout subgraph);
 
 }

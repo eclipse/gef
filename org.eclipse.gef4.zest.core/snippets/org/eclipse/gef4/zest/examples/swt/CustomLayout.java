@@ -1,9 +1,9 @@
 package org.eclipse.gef4.zest.examples.swt;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.GraphWidget;
@@ -38,26 +38,26 @@ public class CustomLayout {
 		new GraphConnection(g, SWT.NONE, n2, n3);
 		new GraphConnection(g, SWT.NONE, n3, n);
 
-		LayoutAlgorithm layoutAlgorithm = new LayoutAlgorithm() {
-			private LayoutContext context;
+		ILayoutAlgorithm layoutAlgorithm = new ILayoutAlgorithm() {
+			private ILayoutContext context;
 
-			public void setLayoutContext(LayoutContext context) {
+			public void setLayoutContext(ILayoutContext context) {
 				this.context = context;
 			}
 
-			public LayoutContext getLayoutContext() {
+			public ILayoutContext getLayoutContext() {
 				return context;
 			}
 
 			public void applyLayout(boolean clean) {
-				EntityLayout[] entitiesToLayout = context.getEntities();
+				IEntityLayout[] entitiesToLayout = context.getEntities();
 				int totalSteps = entitiesToLayout.length;
 				double distance = LayoutProperties.getBounds(context)
 						.getWidth() / totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
-					EntityLayout layoutEntity = entitiesToLayout[currentStep];
+					IEntityLayout layoutEntity = entitiesToLayout[currentStep];
 					LayoutProperties.setLocation(layoutEntity, xLocation,
 							LayoutProperties.getLocation(layoutEntity).y);
 					xLocation += distance;

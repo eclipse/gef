@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.examples.layouts;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.HorizontalShiftAlgorithm;
@@ -137,7 +137,7 @@ public class ContainerResizeGraphSnippet {
 		createContainer(g);
 
 		CompositeLayoutAlgorithm compositeLayoutAlgorithm = new CompositeLayoutAlgorithm(
-				new LayoutAlgorithm[] { new GridLayoutAlgorithm(),
+				new ILayoutAlgorithm[] { new GridLayoutAlgorithm(),
 						new HorizontalShiftAlgorithm() });
 		// g.setLayoutAlgorithm(new
 		// GridLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);

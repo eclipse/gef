@@ -9,9 +9,9 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.ISubgraphLayout;
 
 /**
  * Factory used by {@link GraphWidget} to create subgraphs. One instance of
@@ -21,5 +21,5 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
  * @since 2.0
  */
 public interface SubgraphFactory {
-	SubgraphLayout createSubgraph(NodeLayout[] nodes, LayoutContext context);
+	ISubgraphLayout createSubgraph(INodeLayout[] nodes, ILayoutContext context);
 }

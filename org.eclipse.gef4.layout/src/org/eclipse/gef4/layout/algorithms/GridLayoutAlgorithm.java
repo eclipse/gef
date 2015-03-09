@@ -12,17 +12,17 @@ package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 /**
  * @version 2.0
  * @author Ian Bull
  * @author Casey Best and Rob Lintern
  */
-public class GridLayoutAlgorithm implements LayoutAlgorithm {
+public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private static final double PADDING_PERCENTAGE = 0.95;
 	private static final int MIN_ENTITY_SIZE = 5;
@@ -34,12 +34,12 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	protected double colWidth, rowHeight, offsetX, offsetY;
 	protected double childrenHeight, childrenWidth;
 
-	private LayoutContext context;
+	private ILayoutContext context;
 
 	public GridLayoutAlgorithm() {
 	}
 
-	public void setLayoutContext(LayoutContext context) {
+	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
 	}
 
@@ -89,13 +89,13 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	 *            the bounds in which the layout can place the entities.
 	 */
 	protected synchronized void applyLayoutInternal(
-			EntityLayout[] entitiesToLayout, Rectangle bounds) {
+			IEntityLayout[] entitiesToLayout, Rectangle bounds) {
 
 		int index = 0;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				if ((i * cols + j) < numChildren) {
-					EntityLayout node = entitiesToLayout[index++];
+					IEntityLayout node = entitiesToLayout[index++];
 					if (resize && LayoutProperties.isResizable(node))
 						LayoutProperties.setSize(node,
 								Math.max(childrenWidth, MIN_ENTITY_SIZE),
@@ -236,7 +236,7 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 		resize = resizing;
 	}
 
-	public LayoutContext getLayoutContext() {
+	public ILayoutContext getLayoutContext() {
 		return context;
 	}
 

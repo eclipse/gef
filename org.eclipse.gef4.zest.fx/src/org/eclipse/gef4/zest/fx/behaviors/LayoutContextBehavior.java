@@ -22,11 +22,11 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutFilter;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.ILayoutFilter;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
@@ -106,14 +106,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		GraphLayoutContext graphLayoutContext = new GraphLayoutContext(content);
 		graphLayoutContext.addLayoutFilter(new ILayoutFilter() {
 			@Override
-			public boolean isLayoutIrrelevant(ConnectionLayout connectionLayout) {
-				return ZestProperties
-						.getLayoutIrrelevant(((GraphEdgeLayout) connectionLayout)
-								.getEdge());
+			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
+				return ZestProperties.getLayoutIrrelevant(
+						((GraphEdgeLayout) connectionLayout).getEdge(), true);
 			}
 
 			@Override
-			public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
+			public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
 				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout
 						.getItems()[0];
 				return ZestProperties.getLayoutIrrelevant(node, true)
@@ -250,7 +249,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		if (layoutContext == null) {
 			return;
 		}
-		if (LayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
+		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
 				.getPropertyName())) {
 			applyStaticLayout(layoutContext);
 		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt

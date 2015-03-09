@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -101,7 +101,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		getHost().addPropertyChangeListener(anchoredChangeListener);
 	}
 
-	public void adaptLayoutInformation(NodeLayout nodeLayout) {
+	public void adaptLayoutInformation(INodeLayout nodeLayout) {
 		FXResizeRelocatePolicy policy = getHost().getAdapter(
 				RESIZE_RELOCATE_POLICY_KEY);
 		if (policy != null) {
@@ -234,7 +234,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		}
 	}
 
-	public void provideLayoutInformation(NodeLayout nodeLayout) {
+	public void provideLayoutInformation(INodeLayout nodeLayout) {
 		Node visual = getHost().getVisual();
 		Bounds hostBounds = visual.getLayoutBounds();
 		double minx = hostBounds.getMinX();

@@ -17,12 +17,12 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
-public class GraphEdgeLayout implements ConnectionLayout {
+public class GraphEdgeLayout implements IConnectionLayout {
 
 	private GraphLayoutContext context;
 	private Edge edge;
@@ -60,12 +60,12 @@ public class GraphEdgeLayout implements ConnectionLayout {
 	}
 
 	@Override
-	public NodeLayout getSource() {
+	public INodeLayout getSource() {
 		return context.getNodeLayout(edge.getSource());
 	}
 
 	@Override
-	public NodeLayout getTarget() {
+	public INodeLayout getTarget() {
 		return context.getNodeLayout(edge.getTarget());
 	}
 

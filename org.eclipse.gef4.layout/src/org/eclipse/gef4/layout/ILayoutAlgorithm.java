@@ -10,14 +10,13 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 /**
  * An interface for all layout algorithms.
  * 
  * 
  */
-public interface LayoutAlgorithm {
+public interface ILayoutAlgorithm {
 
 	/**
 	 * Sets the layout context for this algorithm. The receiver will unregister
@@ -30,15 +29,15 @@ public interface LayoutAlgorithm {
 	 *            a new layout context or null if this algorithm should not
 	 *            perform any layout
 	 */
-	public void setLayoutContext(LayoutContext context);
+	public void setLayoutContext(ILayoutContext context);
 
 	// TODO: API change => really do this?
 	/**
-	 * Returns the previously set {@link LayoutContext}.
+	 * Returns the previously set {@link ILayoutContext}.
 	 * 
-	 * @return the previously set {@link LayoutContext}
+	 * @return the previously set {@link ILayoutContext}
 	 */
-	public LayoutContext getLayoutContext();
+	public ILayoutContext getLayoutContext();
 
 	/**
 	 * Makes this algorithm perform layout computation and apply it to its

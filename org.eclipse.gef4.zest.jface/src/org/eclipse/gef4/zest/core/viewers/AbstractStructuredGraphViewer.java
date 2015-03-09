@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.internal.IStylingGraphModelFactory;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
@@ -185,7 +185,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 *            true if the layout algorithm should be run immediately. This
 	 *            is a hint.
 	 */
-	public abstract void setLayoutAlgorithm(LayoutAlgorithm algorithm,
+	public abstract void setLayoutAlgorithm(ILayoutAlgorithm algorithm,
 			boolean run);
 
 	/**
@@ -193,14 +193,14 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * 
 	 * @return the current layout algorithm.
 	 */
-	protected abstract LayoutAlgorithm getLayoutAlgorithm();
+	protected abstract ILayoutAlgorithm getLayoutAlgorithm();
 
 	/**
 	 * Equivalent to setLayoutAlgorithm(algorithm, false).
 	 * 
 	 * @param algorithm
 	 */
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm) {
 		setLayoutAlgorithm(algorithm, false);
 	}
 

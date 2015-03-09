@@ -7,20 +7,20 @@
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
-package org.eclipse.gef4.layout.interfaces;
+package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.common.properties.IPropertyStore;
 
-public interface ConnectionLayout extends IPropertyStore {
+public interface IConnectionLayout extends IPropertyStore {
 
 	/**
 	 * @return source node
 	 */
-	public NodeLayout getSource();
+	public INodeLayout getSource();
 
 	/**
 	 * @return target node
 	 */
-	public NodeLayout getTarget();
+	public INodeLayout getTarget();
 
 }

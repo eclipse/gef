@@ -12,12 +12,12 @@ import junit.framework.TestCase;
 
 import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
 import org.junit.Assert;
 
 /**
- * Tests involving the {@link LayoutAlgorithm} interface.
+ * Tests involving the {@link ILayoutAlgorithm} interface.
  * 
  * @author Fabian Steeg (fsteeg)
  * 
