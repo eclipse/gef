@@ -223,9 +223,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					DotProperties.GRAPH_LAYOUT);
 			if (graphLayout != null) {
 				String graphLayoutLc = new String(graphLayout).toLowerCase();
-				if (supported(graphLayoutLc, DotProperties.GRAPH_LAYOUT_VALUES)) {
-					graph.attr(DotProperties.GRAPH_LAYOUT, graphLayoutLc);
+				if (!supported(graphLayoutLc, DotProperties.GRAPH_LAYOUT_VALUES)) {
+					throw new IllegalArgumentException(
+							"Unknown layout algorithm <" + graphLayoutLc + ">.");
 				}
+				graph.attr(DotProperties.GRAPH_LAYOUT, graphLayoutLc);
 			}
 			break;
 		}
