@@ -13,7 +13,8 @@
 package org.eclipse.gef4.zest.fx.layout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +25,6 @@ import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
-import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 
 /**
  * Transformation from GEF4 Graph with ZestProperties to GEF4 Layout.
@@ -36,15 +35,18 @@ import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 public class GraphLayoutContext extends AbstractLayoutContext {
 
 	private Graph g;
-	private final Map<Node, GraphNodeLayout> nodeMap = new HashMap<Node, GraphNodeLayout>();
-	private final Map<Edge, GraphEdgeLayout> edgeMap = new HashMap<Edge, GraphEdgeLayout>();
+	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<Node, GraphNodeLayout>();
+	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<Edge, GraphEdgeLayout>();
 	// TODO: subgraphs
-	// TODO: We have to expose a hook for flushChanges() to be able to do
-	// something when layouting finishes
 	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
+	private final List<ILayoutFilter> layoutFilters = new ArrayList<ILayoutFilter>();
 
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
+	}
+
+	public void addLayoutFilter(ILayoutFilter layoutFilter) {
+		layoutFilters.add(layoutFilter);
 	}
 
 	public void addOnFlushChanges(Runnable runnable) {
@@ -78,10 +80,8 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		ConnectionLayout[] all = super.getConnections();
 		// filter out any hidden nodes
 		for (ConnectionLayout c : all) {
-			Object layoutIrrelevant = c
-					.getProperty(GraphContentPart.ATTR_LAYOUT_IRRELEVANT);
-			if (layoutIrrelevant instanceof Boolean
-					&& (Boolean) layoutIrrelevant) {
+			if (isLayoutIrrelevant(c) || isLayoutIrrelevant(c.getSource())
+					|| isLayoutIrrelevant(c.getTarget())) {
 				continue;
 			}
 			connections.add(c);
@@ -102,6 +102,10 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return g;
 	}
 
+	public List<ILayoutFilter> getLayoutFilters() {
+		return Collections.unmodifiableList(layoutFilters);
+	}
+
 	public GraphNodeLayout getNodeLayout(Node node) {
 		return nodeMap.get(node);
 	}
@@ -112,20 +116,29 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		NodeLayout[] allNodes = super.getNodes();
 		// filter out any hidden nodes
 		for (NodeLayout n : allNodes) {
-			// TODO: Do not use layout objects to hold Zest state
-			Object hidden = n.getProperty(HidingModel.HIDDEN_PROPERTY);
-			if (hidden instanceof Boolean && (Boolean) hidden) {
-				continue;
-			}
-			Object layoutIrrelevant = n
-					.getProperty(GraphContentPart.ATTR_LAYOUT_IRRELEVANT);
-			if (layoutIrrelevant instanceof Boolean
-					&& (Boolean) layoutIrrelevant) {
+			if (isLayoutIrrelevant(n)) {
 				continue;
 			}
 			nodes.add(n);
 		}
 		return nodes.toArray(new NodeLayout[] {});
+	}
+
+	private boolean isLayoutIrrelevant(ConnectionLayout c) {
+		return false;
+	}
+
+	public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
+		for (ILayoutFilter filter : layoutFilters) {
+			if (filter.isLayoutIrrelevant(nodeLayout)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
+		layoutFilters.remove(layoutFilter);
 	}
 
 	public void removeOnFlushChanges(Runnable runnable) {

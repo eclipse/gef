@@ -50,6 +50,10 @@ public class GraphEdgeLayout implements ConnectionLayout {
 		pss.addPropertyChangeListener(listener);
 	}
 
+	public Object getItem() {
+		return edge;
+	}
+
 	@Override
 	public Object getProperty(String name) {
 		return pss.getProperty(name);

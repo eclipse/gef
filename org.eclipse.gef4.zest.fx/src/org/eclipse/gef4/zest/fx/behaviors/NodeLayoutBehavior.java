@@ -34,9 +34,9 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -266,11 +266,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
 		LayoutProperties.setResizable(nodeLayout, visual.isResizable());
 
-		// TODO: do not use layout objects for Zest state
-		Object wasHidden = nodeLayout.getProperty(HidingModel.HIDDEN_PROPERTY);
-		if (visual.isVisible() == (wasHidden == null || wasHidden instanceof Boolean
-				&& (Boolean) wasHidden)) {
-			nodeLayout.setProperty(HidingModel.HIDDEN_PROPERTY,
+		Boolean wasHidden = ZestProperties.getHidden(getHost().getContent(),
+				false);
+		if (visual.isVisible() == (wasHidden == null || wasHidden)) {
+			ZestProperties.setHidden(getHost().getContent(),
 					!visual.isVisible());
 		}
 	}

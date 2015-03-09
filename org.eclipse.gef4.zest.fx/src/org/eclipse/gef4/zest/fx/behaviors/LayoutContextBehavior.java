@@ -21,14 +21,21 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutProperties;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
+import org.eclipse.gef4.zest.fx.layout.ILayoutFilter;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -98,7 +105,24 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected GraphLayoutContext createLayoutContext(Graph content) {
-		return new GraphLayoutContext(content);
+		GraphLayoutContext graphLayoutContext = new GraphLayoutContext(content);
+		graphLayoutContext.addLayoutFilter(new ILayoutFilter() {
+			@Override
+			public boolean isLayoutIrrelevant(ConnectionLayout connectionLayout) {
+				return ZestProperties
+						.getLayoutIrrelevant((Edge) ((GraphEdgeLayout) connectionLayout)
+								.getItem());
+			}
+
+			@Override
+			public boolean isLayoutIrrelevant(NodeLayout nodeLayout) {
+				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) ((GraphNodeLayout) nodeLayout)
+						.getItem();
+				return ZestProperties.getLayoutIrrelevant(node, true)
+						|| ZestProperties.getHidden(node, true);
+			}
+		});
+		return graphLayoutContext;
 	}
 
 	@Override

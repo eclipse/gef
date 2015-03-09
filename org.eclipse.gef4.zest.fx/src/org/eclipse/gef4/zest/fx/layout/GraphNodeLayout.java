@@ -62,24 +62,27 @@ public class GraphNodeLayout implements NodeLayout {
 		return incoming.toArray(new ConnectionLayout[0]);
 	}
 
+	public Object getItem() {
+		return node;
+	}
+
 	@Override
 	public Object[] getItems() {
 		return new Object[] { node };
 	}
 
-	// FIXME: duplicate code! getIncomingConnections ~ getOutgoingConnections
 	@Override
 	public ConnectionLayout[] getOutgoingConnections() {
-		List<ConnectionLayout> incoming = new ArrayList<ConnectionLayout>();
+		List<ConnectionLayout> outgoing = new ArrayList<ConnectionLayout>();
 
 		ConnectionLayout[] connections = context.getConnections();
 		for (ConnectionLayout c : connections) {
 			if (c.getSource() == this) {
-				incoming.add(c);
+				outgoing.add(c);
 			}
 		}
 
-		return incoming.toArray(new ConnectionLayout[0]);
+		return outgoing.toArray(new ConnectionLayout[0]);
 	}
 
 	@Override

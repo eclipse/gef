@@ -138,16 +138,14 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 
 			@Override
 			public void handle(long now) {
-				if (last == 0) {
-					last = now;
-				} else if (button.isSelected()) {
+				if (button.isSelected()) {
 					long elapsed = now - last;
-					last = now;
 					if (elapsed > NANOS_PER_ITERATION) {
 						layoutAlgorithm
 								.performNIteration((int) (elapsed / NANOS_PER_ITERATION));
 					}
 				}
+				last = now;
 			}
 		}.start();
 	}

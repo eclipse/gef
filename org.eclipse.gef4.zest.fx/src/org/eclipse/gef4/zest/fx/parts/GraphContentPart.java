@@ -37,12 +37,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	 */
 	public static final String ACTIVATION_COMPLETE_PROPERTY = "activationComplete";
 
-	/**
-	 * This layout attribute determines if an element (node/edge) is irrelevant
-	 * for laying out, i.e. it should be filtered before laying out.
-	 */
-	public static final String ATTR_LAYOUT_IRRELEVANT = "layoutIrrelevant";
-
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy
@@ -80,19 +74,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		setGraphLayoutContext();
 	}
 
-	private void setGraphLayoutContext() {
-		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
-		if (algo instanceof LayoutAlgorithm) {
-			LayoutAlgorithm layoutAlgorithm = (LayoutAlgorithm) algo;
-			LayoutContext layoutContext = getViewer().getDomain()
-					.getAdapter(LayoutModel.class)
-					.getLayoutContext(getContent());
-			if (layoutContext != null) {
-				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
-			}
-		}
-	}
-
 	@Override
 	public Graph getContent() {
 		return (Graph) super.getContent();
@@ -110,6 +91,19 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().remove(child.getVisual());
+	}
+
+	private void setGraphLayoutContext() {
+		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
+		if (algo instanceof LayoutAlgorithm) {
+			LayoutAlgorithm layoutAlgorithm = (LayoutAlgorithm) algo;
+			LayoutContext layoutContext = getViewer().getDomain()
+					.getAdapter(LayoutModel.class)
+					.getLayoutContext(getContent());
+			if (layoutContext != null) {
+				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
+			}
+		}
 	}
 
 }

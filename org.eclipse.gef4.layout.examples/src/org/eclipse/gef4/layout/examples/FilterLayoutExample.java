@@ -22,7 +22,6 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 
 public class FilterLayoutExample extends AbstractZestExample {
 
@@ -37,8 +36,7 @@ public class FilterLayoutExample extends AbstractZestExample {
 	@Override
 	protected Graph createGraph() {
 		Graph graph = new Graph();
-		graph.getAttrs().put(ZestProperties.GRAPH_TYPE,
-				ZestProperties.GRAPH_TYPE_DIRECTED);
+		ZestProperties.setType(graph, ZestProperties.GRAPH_TYPE_DIRECTED);
 
 		Node a = n(graph, LABEL, "Root");
 		Node b = n(graph, LABEL, "B");
@@ -49,11 +47,11 @@ public class FilterLayoutExample extends AbstractZestExample {
 		Node g = n(graph, LABEL, "G");
 		Node h = n(graph, LABEL, "H");
 
-		e(graph, a, b, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, a, b, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
-		e(graph, a, c, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, a, c, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
-		e(graph, a, d, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, a, d, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
 
 		e(graph, b, e, LABEL, "");
@@ -61,15 +59,15 @@ public class FilterLayoutExample extends AbstractZestExample {
 		e(graph, c, g, LABEL, "");
 		e(graph, d, h, LABEL, "");
 
-		e(graph, b, c, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, b, c, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
-		e(graph, c, d, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, c, d, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
-		e(graph, e, f, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, e, f, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
-		e(graph, f, g, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, f, g, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
-		e(graph, h, e, LABEL, "", GraphContentPart.ATTR_LAYOUT_IRRELEVANT,
+		e(graph, h, e, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
 				Boolean.TRUE, "class", "red");
 
 		graph.getAttrs().put(ZestProperties.GRAPH_LAYOUT,

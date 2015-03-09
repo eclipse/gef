@@ -14,6 +14,7 @@ package org.eclipse.gef4.zest.fx;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.graph.Edge;
@@ -52,6 +53,14 @@ public class ZestProperties {
 		return (Boolean) node.getAttrs().get(NODE_FISHEYE);
 	}
 
+	public static Boolean getHidden(Node node, boolean returnDefaultIfMissing) {
+		Map<String, Object> attrs = node.getAttrs();
+		if (attrs.containsKey(NODE_HIDDEN)) {
+			return (Boolean) attrs.get(NODE_HIDDEN);
+		}
+		return returnDefaultIfMissing ? NODE_HIDDEN_DEFAULT : null;
+	}
+
 	public static String getIconUrl(Node node) {
 		return (String) node.getAttrs().get(NODE_ICON_URL);
 	}
@@ -66,6 +75,19 @@ public class ZestProperties {
 
 	public static LayoutAlgorithm getLayout(Graph graph) {
 		return (LayoutAlgorithm) graph.getAttrs().get(GRAPH_LAYOUT);
+	}
+
+	public static Boolean getLayoutIrrelevant(Edge edge) {
+		return (Boolean) edge.getAttrs().get(ENTITY_LAYOUT_IRRELEVANT);
+	}
+
+	public static Boolean getLayoutIrrelevant(Node node,
+			boolean returnDefaultIfMissing) {
+		Map<String, Object> attrs = node.getAttrs();
+		if (attrs.containsKey(ENTITY_LAYOUT_IRRELEVANT)) {
+			return (Boolean) attrs.get(ENTITY_LAYOUT_IRRELEVANT);
+		}
+		return returnDefaultIfMissing ? ENTITY_LAYOUT_IRRELEVANT_DEFAULT : null;
 	}
 
 	public static String getStyle(Edge edge) {
@@ -108,6 +130,10 @@ public class ZestProperties {
 		node.getAttrs().put(NODE_FISHEYE, fisheye);
 	}
 
+	public static void setHidden(Node node, Boolean hidden) {
+		node.getAttrs().put(NODE_HIDDEN, hidden);
+	}
+
 	public static void setIconUrl(Node node, String iconUrl) {
 		node.getAttrs().put(NODE_ICON_URL, iconUrl);
 	}
@@ -122,6 +148,14 @@ public class ZestProperties {
 
 	public static void setLayout(Graph graph, LayoutAlgorithm algorithm) {
 		graph.getAttrs().put(GRAPH_LAYOUT, algorithm);
+	}
+
+	public static void setLayoutIrrelevant(Edge edge, Boolean layoutIrrelevant) {
+		edge.getAttrs().put(ENTITY_LAYOUT_IRRELEVANT, layoutIrrelevant);
+	}
+
+	public static void setLayoutIrrelevant(Node node, Boolean layoutIrrelevant) {
+		node.getAttrs().put(ENTITY_LAYOUT_IRRELEVANT, layoutIrrelevant);
 	}
 
 	public static void setStyle(Edge edge, String style) {
@@ -146,8 +180,11 @@ public class ZestProperties {
 		graph.getAttrs().put(GRAPH_TYPE, type);
 	}
 
+	public static final Boolean ENTITY_LAYOUT_IRRELEVANT_DEFAULT = false;
+
 	public static final String NODE_CSS_CLASS = "css-class";
 	public static final String NODE_CSS_ID = "css-id";
+
 	public static final String NODE_CSS_STYLE = "css-style";
 
 	public static final String NODE_ICON_URL = "iconUrl";
@@ -156,16 +193,15 @@ public class ZestProperties {
 	public static final String NODE_TOOLTIP = "tooltip";
 
 	public static final String NODE_FISHEYE = "fisheye";
-
 	public static final String NODE_LABEL = "label";
+
 	public static final String NODE_LABEL_DEFAULT = "-";
 
 	public static final String EDGE_LABEL = "label";
-
 	public static final String EDGE_CSS_CLASS = "css-class";
 	public static final String EDGE_CSS_ID = "css-id";
-	public static final String EDGE_CSS_STYLE = "css-style";
 
+	public static final String EDGE_CSS_STYLE = "css-style";
 	public static final String EDGE_STYLE = "style";
 	public static final String EDGE_STYLE_DASHED = "dashed";
 	public static final String EDGE_STYLE_DOTTED = "dotted";
@@ -175,17 +211,27 @@ public class ZestProperties {
 	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
 			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
 					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
-	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
 
+	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
 	public static final String GRAPH_TYPE = "type";
 	public static final String GRAPH_TYPE_DIRECTED = "directed";
 	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";
+
 	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<String>(
 			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
 
 	public static final String GRAPH_TYPE_DEFAULT = GRAPH_TYPE_UNDIRECTED;
-
 	public static final String GRAPH_LAYOUT = "layout";
+
 	public static final LayoutAlgorithm GRAPH_LAYOUT_DEFAULT = new TreeLayoutAlgorithm();
+
+	/**
+	 * This layout attribute determines if an entity (node/edge) is irrelevant
+	 * for laying out, i.e. it should be filtered before laying out.
+	 */
+	public static final String ENTITY_LAYOUT_IRRELEVANT = "layoutIrrelevant";
+
+	public static final String NODE_HIDDEN = "hidden";
+	public static final Boolean NODE_HIDDEN_DEFAULT = false;
 
 }

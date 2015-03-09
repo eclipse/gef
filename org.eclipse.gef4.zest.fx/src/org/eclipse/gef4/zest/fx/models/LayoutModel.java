@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.models;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.AbstractMap;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
@@ -29,7 +29,7 @@ public class LayoutModel implements IPropertyChangeNotifier {
 
 	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
 
-	private Map<Graph, LayoutContext> graphLayoutContext = new HashMap<Graph, LayoutContext>();
+	private Map<Graph, LayoutContext> graphLayoutContext = new IdentityHashMap<Graph, LayoutContext>();
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
