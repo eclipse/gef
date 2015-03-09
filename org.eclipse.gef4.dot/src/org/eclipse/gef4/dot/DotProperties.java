@@ -28,6 +28,32 @@ public class DotProperties {
 	// node label
 	public static final String NODE_LABEL = "label";
 
+	// edge id
+	public static final String EDGE_ID = "id";
+
+	// edge label
+	public static final String EDGE_LABEL = "label";
+
+	// edge style
+	public static final String EDGE_STYLE = "style";
+	public static final String EDGE_STYLE_DASHED = "dashed";
+	public static final String EDGE_STYLE_DOTTED = "dotted";
+	public static final String EDGE_STYLE_SOLID = "solid";
+	public static final String EDGE_STYLE_DASHDOT = "dashdot";
+	public static final String EDGE_STYLE_DASHDOTDOT = "dashdotdot";
+	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
+			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
+					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
+	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
+
+	// graph type
+	public static final String GRAPH_TYPE = "type";
+	public static final String GRAPH_TYPE_DIRECTED = "directed";
+	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";
+	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<String>(
+			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
+	public static final String GRAPH_TYPE_DEFAULT = GRAPH_TYPE_UNDIRECTED;
+
 	// layout algorithm
 	public static final String GRAPH_LAYOUT = "layout";
 	public static final String GRAPH_LAYOUT_DOT = "dot";
@@ -52,62 +78,88 @@ public class DotProperties {
 			Arrays.asList(GRAPH_RANKDIR_LR, GRAPH_RANKDIR_TD));
 	public static final String GRAPH_RANKDIR_DEFAULT = GRAPH_RANKDIR_TD;
 
-	// graph type
-	public static final String GRAPH_TYPE = "type";
-	public static final String GRAPH_TYPE_DIRECTED = "directed";
-	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";
-	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<String>(
-			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
-	public static final String GRAPH_TYPE_DEFAULT = GRAPH_TYPE_UNDIRECTED;
-
-	// edge style
-	public static final String EDGE_STYLE = "style";
-	public static final String EDGE_STYLE_DASHED = "dashed";
-	public static final String EDGE_STYLE_DOTTED = "dotted";
-	public static final String EDGE_STYLE_SOLID = "solid";
-	public static final String EDGE_STYLE_DASHDOT = "dashdot";
-	public static final String EDGE_STYLE_DASHDOTDOT = "dashdotdot";
-	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
-			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
-					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
-	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
-
-	// edge label
-	public static final String EDGE_LABEL = "label";
-
-	// edge id
-	public static final String EDGE_ID = "id";
-
 	public static String getLayout(Graph graph) {
 		return (String) graph.getAttrs().get(GRAPH_LAYOUT);
+	}
+
+	public static void setLayout(Graph graph, String layout) {
+		if (!GRAPH_LAYOUT_VALUES.contains(layout)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"layout\" to \"" + layout
+							+ "\"; supported values: " + GRAPH_LAYOUT_VALUES);
+		}
+		graph.getAttrs().put(GRAPH_LAYOUT, layout);
 	}
 
 	public static String getType(Graph graph) {
 		return (String) graph.getAttrs().get(GRAPH_TYPE);
 	}
 
+	public static void setType(Graph graph, String type) {
+		if (!GRAPH_TYPE_VALUES.contains(type)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"type\" to \"" + type
+							+ "\"; supported values: " + GRAPH_TYPE_VALUES);
+		}
+		graph.getAttrs().put(GRAPH_TYPE, type);
+	}
+
 	public static String getRankdir(Graph graph) {
 		return (String) graph.getAttrs().get(GRAPH_RANKDIR);
+	}
+
+	public static void setRankdir(Graph graph, String rankdir) {
+		if (!GRAPH_RANKDIR_VALUES.contains(rankdir)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"rankdir\" to \"" + rankdir
+							+ "\"; supported values: " + GRAPH_RANKDIR_VALUES);
+		}
+		graph.getAttrs().put(GRAPH_RANKDIR, rankdir);
 	}
 
 	public static String getLabel(Node node) {
 		return (String) node.getAttrs().get(NODE_LABEL);
 	}
 
+	public static void setLabel(Node node, String label) {
+		node.getAttrs().put(NODE_LABEL, label);
+	}
+
 	public static String getId(Node node) {
 		return (String) node.getAttrs().get(NODE_ID);
+	}
+
+	public static void setId(Node node, String id) {
+		node.getAttrs().put(NODE_ID, id);
 	}
 
 	public static String getLabel(Edge edge) {
 		return (String) edge.getAttrs().get(EDGE_LABEL);
 	}
 
+	public static void setLabel(Edge edge, String label) {
+		edge.getAttrs().put(EDGE_LABEL, label);
+	}
+
 	public static String getStyle(Edge edge) {
 		return (String) edge.getAttrs().get(EDGE_STYLE);
 	}
 
+	public static void setStyle(Edge edge, String style) {
+		if (!EDGE_STYLE_VALUES.contains(style)) {
+			throw new IllegalArgumentException(
+					"Cannot set edge attribute \"style\" to \"" + style
+							+ "\"; supported values: " + EDGE_STYLE_VALUES);
+		}
+		edge.getAttrs().put(EDGE_STYLE, style);
+	}
+
 	public static String getId(Edge edge) {
 		return (String) edge.getAttrs().get(EDGE_ID);
+	}
+
+	public static void setId(Edge edge, String id) {
+		edge.getAttrs().put(EDGE_ID, id);
 	}
 
 }
