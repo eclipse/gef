@@ -90,6 +90,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	// CSS classes for styling nodes
 	public static final String CSS_CLASS = "node";
+	private static final String NODE_LABEL_EMPTY = "-";
 
 	private Text labelText;
 	private ImageView iconImageView;
@@ -264,7 +265,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// initialize text
 		labelText = new Text();
 		labelText.setTextOrigin(VPos.TOP);
-		labelText.setText(ZestProperties.NODE_LABEL_DEFAULT);
+		labelText.setText(NODE_LABEL_EMPTY);
 
 		// build node visual
 		createNodeVisual(group, iconImageView, labelText,
@@ -320,8 +321,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 		// use the the DEFAULT_LABEL if no label is set
 		String str = label instanceof String ? (String) label
-				: label == null ? ZestProperties.NODE_LABEL_DEFAULT : label
-						.toString();
+				: label == null ? NODE_LABEL_EMPTY : label.toString();
 		// eventually let the fisheye mode trim the label
 		str = refreshFisheye(visual, attrs, str);
 		refreshLabel(visual, str);

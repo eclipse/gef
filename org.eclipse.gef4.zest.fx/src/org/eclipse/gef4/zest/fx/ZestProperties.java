@@ -195,8 +195,6 @@ public class ZestProperties {
 	public static final String NODE_FISHEYE = "fisheye";
 	public static final String NODE_LABEL = "label";
 
-	public static final String NODE_LABEL_DEFAULT = "-";
-
 	public static final String EDGE_LABEL = "label";
 	public static final String EDGE_CSS_CLASS = "css-class";
 	public static final String EDGE_CSS_ID = "css-id";
