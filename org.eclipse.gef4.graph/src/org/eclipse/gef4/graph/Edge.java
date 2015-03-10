@@ -8,11 +8,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public final class Edge {
+import org.eclipse.gef4.common.notify.IMapObserver;
+import org.eclipse.gef4.common.notify.ObservableMap;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+
+public final class Edge implements IPropertyChangeNotifier {
 
 	/*
 	 * TODO: How to check consistency? The associated graph has to be an
@@ -41,19 +47,47 @@ public final class Edge {
 
 	}
 
-	private final Map<String, Object> attrs;
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	/**
+	 * The property name that is used to notify change listeners about changes
+	 * made to the attributes of this Edge. A property change event for this
+	 * property will have its old value set to a
+	 * <code>Map&lt;String, Object&gt;</code> holding the old attributes and its
+	 * new value set to a <code>Map&lt;String, Object&gt;</code> holding the new
+	 * attributes.
+	 */
+	public static final String ATTRIBUTES_PROPERTY = "attributes";
+
+	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
+		@Override
+		public void afterChange(ObservableMap<String, Object> observableMap,
+				Map<String, Object> previousMap) {
+			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap,
+					observableMap);
+		}
+	};
+
+	private final ObservableMap<String, Object> attrs = new ObservableMap<String, Object>();
 	private Node source;
 	private Node target;
 	private Graph graph; // associated graph
 
 	public Edge(Map<String, Object> attrs, Node source, Node target) {
-		this.attrs = attrs;
+		this.attrs.putAll(attrs);
+		this.attrs.addMapObserver(attributesObserver);
 		this.source = source;
 		this.target = target;
 	}
 
 	public Edge(Node source, Node target) {
 		this(new HashMap<String, Object>(), source, target);
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -94,6 +128,12 @@ public final class Edge {
 		result = 31 * result + getSource().hashCode();
 		result = 31 * result + getTarget().hashCode();
 		return result;
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void setGraph(Graph graph) {

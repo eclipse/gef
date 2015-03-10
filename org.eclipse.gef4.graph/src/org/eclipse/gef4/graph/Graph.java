@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public final class Graph {
+import org.eclipse.gef4.common.notify.IListObserver;
+import org.eclipse.gef4.common.notify.IMapObserver;
+import org.eclipse.gef4.common.notify.ObservableList;
+import org.eclipse.gef4.common.notify.ObservableMap;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+
+public final class Graph implements IPropertyChangeNotifier {
 
 	public static class Builder {
 
@@ -48,20 +56,75 @@ public final class Graph {
 	}
 
 	/**
+	 * The property name that is used to notify change listeners about changes
+	 * made to the attributes of this Graph. A property change event for this
+	 * property will have its old value set to a
+	 * <code>Map&lt;String, Object&gt;</code> holding the old attributes and its
+	 * new value set to a <code>Map&lt;String, Object&gt;</code> holding the new
+	 * attributes.
+	 */
+	public static final String ATTRIBUTES_PROPERTY = "attributes";
+
+	/**
+	 * The property name that is used to notify change listeners about
+	 * added/removed nodes. A property change event for this property will have
+	 * its old value set to a <code>List&lt;Node&gt;</code> holding the old
+	 * nodes and its new value set to a <code>List&lt;Node&gt;</code> holding
+	 * the new nodes.
+	 */
+	public static final String NODES_PROPERTY = "nodes";
+
+	/**
+	 * The property name that is used to notify change listeners about
+	 * added/removed edges. A property change event for this property will have
+	 * its old value set to a <code>List&lt;Edge&gt;</code> holding the old
+	 * edges and its new value set to a <code>List&lt;Edge&gt;</code> holding
+	 * the new edges.
+	 */
+	public static final String EDGES_PROPERTY = "edges";
+
+	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
+		@Override
+		public void afterChange(ObservableMap<String, Object> observableMap,
+				Map<String, Object> previousMap) {
+			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap,
+					observableMap);
+		}
+	};
+
+	private IListObserver<Node> nodesObserver = new IListObserver<Node>() {
+		@Override
+		public void afterChange(ObservableList<Node> observableList,
+				List<Node> previousList) {
+			pcs.firePropertyChange(NODES_PROPERTY, previousList, observableList);
+		}
+	};
+
+	private IListObserver<Edge> edgesObserver = new IListObserver<Edge>() {
+		@Override
+		public void afterChange(ObservableList<Edge> observableList,
+				List<Edge> previousList) {
+			pcs.firePropertyChange(EDGES_PROPERTY, previousList, observableList);
+		}
+	};
+
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	/**
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
-	private final List<Node> nodes;
+	private final ObservableList<Node> nodes = new ObservableList<Node>();
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
-	private final List<Edge> edges;
+	private final ObservableList<Edge> edges = new ObservableList<Edge>();
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
-	private final Map<String, Object> attrs;
+	private final ObservableMap<String, Object> attrs = new ObservableMap<String, Object>();
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
@@ -90,9 +153,12 @@ public final class Graph {
 	 *            List of {@link Edge}s.
 	 */
 	public Graph(Map<String, Object> attrs, List<Node> nodes, List<Edge> edges) {
-		this.attrs = attrs;
-		this.nodes = nodes;
-		this.edges = edges;
+		this.attrs.putAll(attrs);
+		this.attrs.addMapObserver(attributesObserver);
+		this.nodes.addAll(nodes);
+		this.nodes.addListObserver(nodesObserver);
+		this.edges.addAll(edges);
+		this.edges.addListObserver(edgesObserver);
 		// set graph on nodes and edges
 		for (Node n : nodes) {
 			n.setGraph(this);
@@ -100,6 +166,11 @@ public final class Graph {
 		for (Edge e : edges) {
 			e.setGraph(this);
 		}
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -164,6 +235,11 @@ public final class Graph {
 		return result;
 	}
 
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
 	/**
 	 * Sets the nesting {@link Node} of this {@link Graph}.
 	 *
@@ -219,4 +295,5 @@ public final class Graph {
 		sb.append("}");
 		return sb.toString();
 	}
+
 }

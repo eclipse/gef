@@ -6,3 +6,5 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.graph;x-internal:=true
+Require-Bundle: org.eclipse.gef4.common,
+ com.google.guava
