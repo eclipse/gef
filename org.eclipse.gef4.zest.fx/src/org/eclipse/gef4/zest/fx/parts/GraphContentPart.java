@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +21,16 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
+import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
@@ -36,6 +42,39 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	 * activation} is finished.
 	 */
 	public static final String ACTIVATION_COMPLETE_PROPERTY = "activationComplete";
+
+	/**
+	 * A property change event for this property name is fired when a content
+	 * synchronization, based on a Graph property change, is finished.
+	 */
+	public static final String SYNC_COMPLETE_PROPERTY = "synchronizationComplete";
+
+	private PropertyChangeListener graphPropertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (Graph.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
+				refreshVisual();
+			} else if (Graph.NODES_PROPERTY.equals(evt.getPropertyName())
+					|| Graph.EDGES_PROPERTY.equals(evt.getPropertyName())) {
+				// nodes/edges changed => content synchronization
+				SynchronizeContentChildrenOperation<Node> syncChildrenOp = new SynchronizeContentChildrenOperation<Node>(
+						"SynchronizeContentChildren", GraphContentPart.this);
+				SynchronizeContentAnchoragesOperation<Node> syncAnchoragesOp = new SynchronizeContentAnchoragesOperation<Node>(
+						"SynchronizeContentAnchorage", GraphContentPart.this);
+				ForwardUndoCompositeOperation syncOp = new ForwardUndoCompositeOperation(
+						"SynchronizeContent");
+				syncOp.add(syncChildrenOp);
+				syncOp.add(syncAnchoragesOp);
+				try {
+					syncOp.execute(null, null);
+					pcs.firePropertyChange(SYNC_COMPLETE_PROPERTY, false, true);
+				} catch (ExecutionException e) {
+					throw new IllegalStateException(
+							"Cannot synchronize with contents.", e);
+				}
+			}
+		}
+	};
 
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
@@ -64,8 +103,15 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+		getContent().addPropertyChangeListener(graphPropertyChangeListener);
 		pcs.firePropertyChange(ACTIVATION_COMPLETE_PROPERTY, false, true);
 		setGraphLayoutContext();
+	}
+
+	@Override
+	protected void doDeactivate() {
+		getContent().removePropertyChangeListener(graphPropertyChangeListener);
+		super.doDeactivate();
 	}
 
 	@Override

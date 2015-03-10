@@ -86,8 +86,7 @@ public final class Edge implements IPropertyChangeNotifier {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -132,8 +131,7 @@ public final class Edge implements IPropertyChangeNotifier {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	public void setGraph(Graph graph) {

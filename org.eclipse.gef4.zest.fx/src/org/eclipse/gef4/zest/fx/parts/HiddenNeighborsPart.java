@@ -85,9 +85,9 @@ public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 		circle.setCenterY(y);
 
 		// update text
-		HidingModel pruningModel = getViewer().getDomain().getAdapter(
+		HidingModel hidingModel = getViewer().getDomain().getAdapter(
 				HidingModel.class);
-		int count = pruningModel.getHiddenNeighbors(
+		int count = hidingModel.getHiddenNeighbors(
 				((NodeContentPart) anchorage).getContent()).size();
 		text.setText(Integer.toString(count));
 

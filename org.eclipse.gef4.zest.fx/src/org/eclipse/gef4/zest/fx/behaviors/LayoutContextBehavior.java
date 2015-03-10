@@ -233,6 +233,12 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 				isHostActive = true;
 				distributeLayoutContext();
 			}
+		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt
+				.getPropertyName()) && isHostActive) {
+			if ((Boolean) evt.getNewValue()) {
+				// TODO: update layout context instead of constructing a new one
+				distributeLayoutContext();
+			}
 		}
 	}
 

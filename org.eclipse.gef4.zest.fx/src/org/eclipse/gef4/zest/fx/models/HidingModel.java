@@ -14,7 +14,8 @@ package org.eclipse.gef4.zest.fx.models;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Set;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
@@ -25,7 +26,8 @@ public class HidingModel implements IPropertyChangeNotifier {
 	public static final String HIDDEN_PROPERTY = "hidden";
 
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private final Set<Node> hidden = new HashSet<Node>();
+	private final Set<Node> hidden = Collections
+			.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -35,23 +37,27 @@ public class HidingModel implements IPropertyChangeNotifier {
 	public Set<org.eclipse.gef4.graph.Node> getHiddenNeighbors(
 			org.eclipse.gef4.graph.Node node) {
 		Set<org.eclipse.gef4.graph.Node> neighbors = node.getLocalNeighbors();
-		Set<org.eclipse.gef4.graph.Node> prunedNeighbors = new HashSet<org.eclipse.gef4.graph.Node>();
+		Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = Collections
+				.newSetFromMap(new IdentityHashMap<org.eclipse.gef4.graph.Node, Boolean>());
 		for (org.eclipse.gef4.graph.Node n : neighbors) {
 			if (isHidden(n)) {
-				prunedNeighbors.add(n);
+				hiddenNeighbors.add(n);
 			}
 		}
-		return prunedNeighbors;
+		return hiddenNeighbors;
 	}
 
 	public Set<Node> getHiddenNodes() {
-		return new HashSet<Node>(hidden);
+		Set<Node> copy = Collections
+				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		copy.addAll(hidden);
+		return copy;
 	}
 
 	public void hide(Node node) {
-		Set<Node> oldPruned = getHiddenNodes();
+		Set<Node> oldHidden = getHiddenNodes();
 		hidden.add(node);
-		pcs.firePropertyChange(HIDDEN_PROPERTY, oldPruned, getHiddenNodes());
+		pcs.firePropertyChange(HIDDEN_PROPERTY, oldHidden, getHiddenNodes());
 	}
 
 	public boolean isHidden(Node node) {

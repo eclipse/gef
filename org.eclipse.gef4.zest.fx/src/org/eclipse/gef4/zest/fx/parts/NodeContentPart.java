@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -122,6 +124,15 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 						// update the visualization
 					}
 				}
+			}
+		}
+	};
+	private PropertyChangeListener nodeAttributesPropertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (org.eclipse.gef4.graph.Node.ATTRIBUTES_PROPERTY.equals(evt
+					.getPropertyName())) {
+				refreshVisual();
 			}
 		}
 	};
@@ -284,6 +295,20 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 
 		return group;
+	}
+
+	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getContent().addPropertyChangeListener(
+				nodeAttributesPropertyChangeListener);
+	}
+
+	@Override
+	protected void doDeactivate() {
+		getContent().removePropertyChangeListener(
+				nodeAttributesPropertyChangeListener);
+		super.doDeactivate();
 	}
 
 	@Override

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 import javafx.geometry.Bounds;
@@ -33,6 +35,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -107,6 +110,15 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 
 	}
 
+	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (Edge.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
+				refreshVisual();
+			}
+		}
+	};
+
 	public static final String CSS_CLASS = "edge";
 
 	private static final double GAP_LENGTH = 7d;
@@ -153,6 +165,20 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	}
 
 	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getContent().addPropertyChangeListener(
+				edgeAttributesPropertyChangeListener);
+	}
+
+	@Override
+	protected void doDeactivate() {
+		getContent().removePropertyChangeListener(
+				edgeAttributesPropertyChangeListener);
+		super.doDeactivate();
+	}
+
+	@Override
 	public void doRefreshVisual(FXLabeledConnection visual) {
 		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain()
 				.getAdapter(LayoutModel.class)
@@ -186,6 +212,21 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
 		} else {
 			curveNode.getStrokeDashArray().clear();
+		}
+
+		// visibility
+		IContentPart<Node, ? extends Node> sourcePart = getViewer()
+				.getContentPartMap().get(getContent().getSource());
+		IContentPart<Node, ? extends Node> targetPart = getViewer()
+				.getContentPartMap().get(getContent().getTarget());
+
+		if (sourcePart.getVisual().isVisible()
+				&& targetPart.getVisual().isVisible()) {
+			visual.setVisible(true);
+			visual.setMouseTransparent(false);
+		} else {
+			visual.setVisible(false);
+			visual.setMouseTransparent(true);
 		}
 	}
 

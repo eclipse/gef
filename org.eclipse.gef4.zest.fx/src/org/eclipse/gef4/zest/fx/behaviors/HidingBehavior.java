@@ -19,10 +19,8 @@ import java.util.Set;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.behaviors.BehaviorUtils;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
@@ -42,26 +40,28 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	public void activate() {
 		super.activate();
 
-		HidingModel hidingModel = getPruningModel();
-
-		// register for change notifications
+		// register for change notifications regarding hidden nodes
+		HidingModel hidingModel = getHidingModel();
 		hidingModel.addPropertyChangeListener(this);
 
-		// query pruned status
+		// register for change notifications regarding anchoreds (connections)
+		getHost().addPropertyChangeListener(this);
+
+		// query "hidden" state
 		isHidden = hidingModel.isHidden(getHost().getContent());
 
-		// create pruned neighbors part if it is already associated with our
+		// create hidden neighbors part if it is already associated with our
 		// host
-		if (hasPrunedNeighbors(getHost().getContent(), hidingModel)) {
+		if (hasHiddenNeighbors(getHost().getContent(), hidingModel)) {
 			createHiddenNeighborPart();
 		}
 	}
 
-	private boolean containsAny(Set<org.eclipse.gef4.graph.Node> oldPruned,
+	private boolean containsAny(Set<org.eclipse.gef4.graph.Node> hidden,
 			Set<org.eclipse.gef4.graph.Node> neighbors) {
 		boolean containsAny = false;
 		for (org.eclipse.gef4.graph.Node n : neighbors) {
-			if (oldPruned.contains(n)) {
+			if (hidden.contains(n)) {
 				containsAny = true;
 				break;
 			}
@@ -79,17 +79,22 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 
 	@Override
 	public void deactivate() {
-		HidingModel hidingModel = getPruningModel();
+		HidingModel hidingModel = getHidingModel();
 
 		// remove pruned neighbors part if it is currently associated with our
 		// host
-		if (hasPrunedNeighbors(getHost().getContent(), hidingModel)) {
+		if (hasHiddenNeighbors(getHost().getContent(), hidingModel)) {
 			removeHiddenNeighborPart();
 		}
 
 		// unregister
 		hidingModel.removePropertyChangeListener(this);
 		super.deactivate();
+	}
+
+	protected HidingModel getHidingModel() {
+		return getHost().getRoot().getViewer().getDomain()
+				.<HidingModel> getAdapter(HidingModel.class);
 	}
 
 	@Override
@@ -101,14 +106,9 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		return hiddenNeighborsPart;
 	}
 
-	protected HidingModel getPruningModel() {
-		return getHost().getRoot().getViewer().getDomain()
-				.<HidingModel> getAdapter(HidingModel.class);
-	}
-
-	private boolean hasPrunedNeighbors(org.eclipse.gef4.graph.Node node,
-			HidingModel pruningModel) {
-		return !pruningModel.getHiddenNeighbors(node).isEmpty();
+	private boolean hasHiddenNeighbors(org.eclipse.gef4.graph.Node node,
+			HidingModel hidingModel) {
+		return !hidingModel.getHiddenNeighbors(node).isEmpty();
 	}
 
 	protected void hide() {
@@ -122,8 +122,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		for (IVisualPart<Node, ? extends Node> anchored : anchoreds
 				.elementSet()) {
 			if (anchored instanceof EdgeContentPart) {
-				anchored.getVisual().setVisible(false);
-				anchored.getVisual().setMouseTransparent(true);
+				anchored.refreshVisual();
 			}
 		}
 	}
@@ -131,10 +130,10 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(HidingModel.HIDDEN_PROPERTY)) {
+		if (HidingModel.HIDDEN_PROPERTY.equals(event.getPropertyName())) {
 			// check if we have to prune/unprune the host
 			boolean wasHidden = isHidden;
-			isHidden = getPruningModel().isHidden(getHost().getContent());
+			isHidden = getHidingModel().isHidden(getHost().getContent());
 
 			if (wasHidden && !isHidden) {
 				show();
@@ -161,8 +160,19 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 			} else {
 				// TODO: only necessary when neighbors change
 				if (hiddenNeighborsPart != null) {
-					updatePrunedNeighborPart();
+					updateHiddenNeighborPart();
 				}
+			}
+		} else if (IVisualPart.ANCHOREDS_PROPERTY.equals(event
+				.getPropertyName())) {
+			if (hiddenNeighborsPart == null) {
+				Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = getHidingModel()
+						.getHiddenNeighbors(getHost().getContent());
+				if (!hiddenNeighbors.isEmpty()) {
+					createHiddenNeighborPart();
+				}
+			} else {
+				updateHiddenNeighborPart();
 			}
 		}
 	}
@@ -185,26 +195,12 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		for (IVisualPart<Node, ? extends Node> anchored : anchoreds
 				.elementSet()) {
 			if (anchored instanceof EdgeContentPart) {
-				// retrieve source and target parts
-				Edge edge = ((EdgeContentPart) anchored).getContent();
-				IContentPart<Node, ? extends Node> sourcePart = getHost()
-						.getRoot().getViewer().getContentPartMap()
-						.get(edge.getSource());
-				IContentPart<Node, ? extends Node> targetPart = getHost()
-						.getRoot().getViewer().getContentPartMap()
-						.get(edge.getTarget());
-				// set connection visible if both (source and target) are
-				// visible
-				if (sourcePart.getVisual().isVisible()
-						&& targetPart.getVisual().isVisible()) {
-					anchored.getVisual().setVisible(true);
-					anchored.getVisual().setMouseTransparent(false);
-				}
+				anchored.refreshVisual();
 			}
 		}
 	}
 
-	protected void updatePrunedNeighborPart() {
+	protected void updateHiddenNeighborPart() {
 		hiddenNeighborsPart.refreshVisual();
 	}
 
