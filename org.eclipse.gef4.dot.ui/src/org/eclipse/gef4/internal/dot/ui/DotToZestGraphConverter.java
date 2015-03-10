@@ -71,8 +71,8 @@ public class DotToZestGraphConverter {
 		// convert id and label
 		Object dotId = dot.get(DotProperties.EDGE_ID);
 		Object dotLabel = dot.get(DotProperties.EDGE_LABEL);
-		zest.put(ZestProperties.EDGE_CSS_ID, dotId);
-		zest.put(ZestProperties.EDGE_LABEL, dotLabel);
+		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
+		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
 
 		// convert edge style
 		Object dotStyle = dot.get(DotProperties.EDGE_STYLE);
@@ -107,8 +107,8 @@ public class DotToZestGraphConverter {
 		// convert id and label
 		Object dotId = dot.get(DotProperties.NODE_ID);
 		Object dotLabel = dot.get(DotProperties.NODE_LABEL);
-		zest.put(ZestProperties.NODE_CSS_ID, dotId);
-		zest.put(ZestProperties.NODE_LABEL, dotLabel);
+		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
+		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
 	}
 
 	private void convertGraphAttributes(Map<String, Object> dot,

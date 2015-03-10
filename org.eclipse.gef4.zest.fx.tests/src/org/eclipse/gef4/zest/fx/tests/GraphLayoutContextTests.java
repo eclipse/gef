@@ -51,8 +51,8 @@ public class GraphLayoutContextTests {
 	}
 
 	public static Node n(String label) {
-		return new Node.Builder().attr(ZestProperties.NODE_LABEL, label)
-				.attr(ZestProperties.NODE_CSS_ID, ID++).build();
+		return new Node.Builder().attr(ZestProperties.ELEMENT_LABEL, label)
+				.attr(ZestProperties.ELEMENT_CSS_ID, ID++).build();
 	}
 
 	public static List<Node> nodes(String... labels) {

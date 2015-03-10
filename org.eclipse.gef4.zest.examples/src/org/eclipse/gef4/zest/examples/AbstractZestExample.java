@@ -38,8 +38,10 @@ import com.google.inject.Module;
 public abstract class AbstractZestExample extends Application {
 
 	private static int id = 0;
-	protected static String ID = ZestProperties.NODE_CSS_ID;
-	protected static String LABEL = ZestProperties.NODE_LABEL;
+	protected static final String ID = ZestProperties.ELEMENT_CSS_ID;
+	protected static final String LABEL = ZestProperties.ELEMENT_LABEL;
+	protected static final String CSS_CLASS = ZestProperties.ELEMENT_CSS_CLASS;
+	protected static final String LAYOUT_IRRELEVANT = ZestProperties.ELEMENT_LAYOUT_IRRELEVANT;
 
 	protected static String genId() {
 		return Integer.toString(id++);

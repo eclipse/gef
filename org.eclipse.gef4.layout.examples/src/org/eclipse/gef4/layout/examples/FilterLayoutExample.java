@@ -47,28 +47,28 @@ public class FilterLayoutExample extends AbstractZestExample {
 		Node g = n(graph, LABEL, "G");
 		Node h = n(graph, LABEL, "H");
 
-		e(graph, a, b, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
-		e(graph, a, c, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
-		e(graph, a, d, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
+		e(graph, a, b, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
+		e(graph, a, c, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
+		e(graph, a, d, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
 
 		e(graph, b, e, LABEL, "");
 		e(graph, b, f, LABEL, "");
 		e(graph, c, g, LABEL, "");
 		e(graph, d, h, LABEL, "");
 
-		e(graph, b, c, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
-		e(graph, c, d, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
-		e(graph, e, f, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
-		e(graph, f, g, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
-		e(graph, h, e, LABEL, "", ZestProperties.ENTITY_LAYOUT_IRRELEVANT,
-				Boolean.TRUE, "class", "red");
+		e(graph, b, c, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
+		e(graph, c, d, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
+		e(graph, e, f, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
+		e(graph, f, g, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
+		e(graph, h, e, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
+				"red");
 
 		graph.getAttrs().put(ZestProperties.GRAPH_LAYOUT,
 				new TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN));

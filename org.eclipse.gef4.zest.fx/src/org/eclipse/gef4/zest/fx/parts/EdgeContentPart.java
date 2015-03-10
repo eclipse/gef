@@ -162,8 +162,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		}
 
 		// decoration
-		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(glc.getGraph().getAttrs()
-				.get(ZestProperties.GRAPH_TYPE))) {
+		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(
+				glc.getGraph(), true))) {
 			visual.setEndDecoration(new ArrowHead());
 		} else {
 			visual.setEndDecoration(null);
@@ -215,16 +215,16 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		Edge edge = (Edge) content;
 
 		Map<String, Object> attrs = edge.getAttrs();
-		Object label = attrs.get(ZestProperties.EDGE_LABEL);
+		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
 		if (label instanceof String) {
 			visual.setLabel((String) label);
 		}
-		if (attrs.containsKey(ZestProperties.EDGE_CSS_CLASS)) {
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			visual.getStyleClass().add(
-					(String) attrs.get(ZestProperties.EDGE_CSS_CLASS));
+					(String) attrs.get(ZestProperties.ELEMENT_CSS_CLASS));
 		}
-		if (attrs.containsKey(ZestProperties.EDGE_CSS_ID)) {
-			visual.setId((String) attrs.get(ZestProperties.EDGE_CSS_ID));
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
+			visual.setId((String) attrs.get(ZestProperties.ELEMENT_CSS_ID));
 		}
 		setAdapter(
 				AdapterKey

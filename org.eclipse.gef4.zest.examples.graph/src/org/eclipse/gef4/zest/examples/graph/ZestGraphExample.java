@@ -33,12 +33,12 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(
-				n(ZestProperties.NODE_LABEL, "A", ZestProperties.NODE_TOOLTIP,
-						"Alpha", ZestProperties.NODE_CSS_ID, id + "A"),
-				n(ZestProperties.NODE_LABEL, "B", ZestProperties.NODE_TOOLTIP,
-						"Beta", ZestProperties.NODE_CSS_ID, id + "B"),
-				n(ZestProperties.NODE_LABEL, "C", ZestProperties.NODE_TOOLTIP,
-						"Gamma", ZestProperties.NODE_CSS_ID, id + "C")));
+				n(ZestProperties.ELEMENT_LABEL, "A", ZestProperties.NODE_TOOLTIP,
+						"Alpha", ZestProperties.ELEMENT_CSS_ID, id + "A"),
+				n(ZestProperties.ELEMENT_LABEL, "B", ZestProperties.NODE_TOOLTIP,
+						"Beta", ZestProperties.ELEMENT_CSS_ID, id + "B"),
+				n(ZestProperties.ELEMENT_LABEL, "C", ZestProperties.NODE_TOOLTIP,
+						"Gamma", ZestProperties.ELEMENT_CSS_ID, id + "C")));
 
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<Edge>();
@@ -55,16 +55,16 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(
-				n(ZestProperties.NODE_LABEL, "A", ZestProperties.NODE_TOOLTIP,
-						"Alpha", ZestProperties.NODE_CSS_ID, id + "A"),
-				n(ZestProperties.NODE_LABEL, "B", ZestProperties.NODE_TOOLTIP,
-						"Beta", ZestProperties.NODE_CSS_ID, id + "B"),
-				n(ZestProperties.NODE_LABEL, "C", ZestProperties.NODE_TOOLTIP,
-						"Gamma", ZestProperties.NODE_CSS_ID, id + "C"),
-				n(ZestProperties.NODE_LABEL, "D", ZestProperties.NODE_TOOLTIP,
-						"Delta", ZestProperties.NODE_CSS_ID, id + "D"),
-				n(ZestProperties.NODE_LABEL, "E", ZestProperties.NODE_TOOLTIP,
-						"Epsilon", ZestProperties.NODE_CSS_ID, id + "E")));
+				n(ZestProperties.ELEMENT_LABEL, "A", ZestProperties.NODE_TOOLTIP,
+						"Alpha", ZestProperties.ELEMENT_CSS_ID, id + "A"),
+				n(ZestProperties.ELEMENT_LABEL, "B", ZestProperties.NODE_TOOLTIP,
+						"Beta", ZestProperties.ELEMENT_CSS_ID, id + "B"),
+				n(ZestProperties.ELEMENT_LABEL, "C", ZestProperties.NODE_TOOLTIP,
+						"Gamma", ZestProperties.ELEMENT_CSS_ID, id + "C"),
+				n(ZestProperties.ELEMENT_LABEL, "D", ZestProperties.NODE_TOOLTIP,
+						"Delta", ZestProperties.ELEMENT_CSS_ID, id + "D"),
+				n(ZestProperties.ELEMENT_LABEL, "E", ZestProperties.NODE_TOOLTIP,
+						"Epsilon", ZestProperties.ELEMENT_CSS_ID, id + "E")));
 
 		// add nested graphs
 		nodes.get(4).setNestedGraph(buildAC("c"));
@@ -85,25 +85,25 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(
-				n(ZestProperties.NODE_LABEL, "0", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "0", ZestProperties.NODE_TOOLTIP,
 						"zero"),
-				n(ZestProperties.NODE_LABEL, "1", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "1", ZestProperties.NODE_TOOLTIP,
 						"one"),
-				n(ZestProperties.NODE_LABEL, "2", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "2", ZestProperties.NODE_TOOLTIP,
 						"two"),
-				n(ZestProperties.NODE_LABEL, "3", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "3", ZestProperties.NODE_TOOLTIP,
 						"three"),
-				n(ZestProperties.NODE_LABEL, "4", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "4", ZestProperties.NODE_TOOLTIP,
 						"four"),
-				n(ZestProperties.NODE_LABEL, "5", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "5", ZestProperties.NODE_TOOLTIP,
 						"five"),
-				n(ZestProperties.NODE_LABEL, "6", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "6", ZestProperties.NODE_TOOLTIP,
 						"six"),
-				n(ZestProperties.NODE_LABEL, "7", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "7", ZestProperties.NODE_TOOLTIP,
 						"seven"),
-				n(ZestProperties.NODE_LABEL, "8", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "8", ZestProperties.NODE_TOOLTIP,
 						"eight"),
-				n(ZestProperties.NODE_LABEL, "9", ZestProperties.NODE_TOOLTIP,
+				n(ZestProperties.ELEMENT_LABEL, "9", ZestProperties.NODE_TOOLTIP,
 						"nine")));
 
 		// set nested graphs

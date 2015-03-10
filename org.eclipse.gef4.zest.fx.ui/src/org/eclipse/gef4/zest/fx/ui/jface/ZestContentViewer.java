@@ -148,7 +148,7 @@ public class ZestContentViewer extends ContentViewer {
 		// Image icon = labelProvider.getImage(node);
 
 		// transfer label information into node properties
-		graphNode.getAttrs().put(ZestProperties.NODE_LABEL, label);
+		graphNode.getAttrs().put(ZestProperties.ELEMENT_LABEL, label);
 		// graphNode.getAttrs().put(NodeContentPart.ATTR_IMAGE, icon);
 
 		// TODO: color, etc.

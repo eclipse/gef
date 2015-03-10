@@ -296,25 +296,26 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
 		Map<String, Object> attrs = getContent().getAttrs();
-		if (attrs.containsKey(ZestProperties.NODE_CSS_CLASS)) {
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			refreshCssClass(visual,
-					(String) attrs.get(ZestProperties.NODE_CSS_CLASS));
+					(String) attrs.get(ZestProperties.ELEMENT_CSS_CLASS));
 		}
 
 		// set CSS id
 		String id = null;
-		if (attrs.containsKey(ZestProperties.NODE_CSS_ID)) {
-			id = (String) attrs.get(ZestProperties.NODE_CSS_ID);
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
+			id = (String) attrs.get(ZestProperties.ELEMENT_CSS_ID);
 		}
 		visual.setId(id);
 
 		// set CSS style
-		if (attrs.containsKey(ZestProperties.NODE_CSS_STYLE)) {
-			visual.setStyle((String) attrs.get(ZestProperties.NODE_CSS_STYLE));
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_STYLE)) {
+			visual.setStyle((String) attrs
+					.get(ZestProperties.ELEMENT_CSS_STYLE));
 		}
 
 		// determine label
-		Object label = attrs.get(ZestProperties.NODE_LABEL);
+		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
 		// use id if no label is set
 		if (label == null) {
 			label = id;

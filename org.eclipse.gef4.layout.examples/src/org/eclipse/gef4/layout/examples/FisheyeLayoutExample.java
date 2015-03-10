@@ -37,9 +37,10 @@ public class FisheyeLayoutExample extends AbstractZestExample {
 		// TODO: images for info, warn, error
 		Graph g = new Graph();
 		for (int i = 0; i < 80; i++) {
-			Node n1 = n(g, LABEL, "Information", "fisheye", true);
-			Node n2 = n(g, LABEL, "Warning", "fisheye", true);
-			Node n3 = n(g, LABEL, "Error", "fisheye", true);
+			Node n1 = n(g, LABEL, "Information", ZestProperties.NODE_FISHEYE,
+					true);
+			Node n2 = n(g, LABEL, "Warning", ZestProperties.NODE_FISHEYE, true);
+			Node n3 = n(g, LABEL, "Error", ZestProperties.NODE_FISHEYE, true);
 			e(g, n1, n2, LABEL, "");
 			e(g, n2, n3, LABEL, "");
 		}
