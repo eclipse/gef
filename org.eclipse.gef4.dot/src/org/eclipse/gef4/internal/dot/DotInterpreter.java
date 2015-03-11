@@ -43,7 +43,7 @@ import org.eclipse.gef4.internal.dot.parser.dot.util.DotSwitch;
  */
 public final class DotInterpreter extends DotSwitch<Object> {
 
-	private Map<String, Node.Builder> nodes;
+	private Map<String, Node> nodes;
 	private Graph.Builder graph;
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
@@ -65,7 +65,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 							.errors().toString()));
 		}
 		this.graph = graph;
-		nodes = new HashMap<String, Node.Builder>();
+		nodes = new HashMap<String, Node>();
 		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(
 				dotAst.resource(), false);
 		while (contents.hasNext()) {
@@ -239,36 +239,36 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		String label = getAttributeValue(nodeStatement,
 				DotProperties.NODE_LABEL);
 
-		Node.Builder node;
+		Node node;
 		if (nodes.containsKey(nodeId)) {
 			node = nodes.get(nodeId);
 		} else {
-			node = new Node.Builder().attr(DotProperties.NODE_ID, nodeId);
+			node = new Node.Builder().attr(DotProperties.NODE_ID, nodeId)
+					.build();
 		}
 
 		if (label != null) {
-			node = node.attr(DotProperties.NODE_LABEL, label);
+			DotProperties.setLabel(node, label);
 		} else if (globalNodeLabel != null) {
-			node = node.attr(DotProperties.NODE_LABEL, globalNodeLabel);
+			DotProperties.setLabel(node, globalNodeLabel);
 		}
 
 		if (!nodes.containsKey(nodeId)) {
 			nodes.put(nodeId, node);
-			graph = graph.nodes(node.build());
+			graph = graph.nodes(node);
 		}
-
 	}
 
 	private Node node(String id) {
 		if (!nodes.containsKey(id)) { // undeclared node, as in "graph{1->2}"
-			Node.Builder node = new Node.Builder().attr(
-					DotProperties.NODE_LABEL,
-					globalNodeLabel != null ? globalNodeLabel : id).attr(
-					DotProperties.NODE_ID, id);
+			Node node = new Node.Builder()
+					.attr(DotProperties.NODE_LABEL,
+							globalNodeLabel != null ? globalNodeLabel : id)
+					.attr(DotProperties.NODE_ID, id).build();
 			nodes.put(id, node);
-			graph = graph.nodes(node.build());
+			graph = graph.nodes(node);
 		}
-		return nodes.get(id).build();
+		return nodes.get(id);
 	}
 
 	/**
