@@ -9,6 +9,7 @@ Export-Package: org.eclipse.gef4.common.activate;x-internal:=true,
  org.eclipse.gef4.common.adapt;x-internal:=true,
  org.eclipse.gef4.common.dispose;x-internal:=true,
  org.eclipse.gef4.common.inject;x-internal:=true,
+ org.eclipse.gef4.common.notify;x-internal:=true,
  org.eclipse.gef4.common.properties;x-internal:=true,
  org.eclipse.gef4.common.reflect;x-internal:=true
 Require-Bundle: com.google.inject;bundle-version="[3.0.0,4.0.0)",
