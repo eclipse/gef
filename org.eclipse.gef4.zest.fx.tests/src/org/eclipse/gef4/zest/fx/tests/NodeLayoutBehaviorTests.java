@@ -35,7 +35,6 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -51,7 +50,8 @@ public class NodeLayoutBehaviorTests {
 		return nodeLayout;
 	}
 
-	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location, final Dimension size) {
+	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location,
+			final Dimension size) {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
 			private NodeContentPart host;
 
@@ -60,24 +60,36 @@ public class NodeLayoutBehaviorTests {
 				if (host == null) {
 					host = new NodeContentPart() {
 						{
-							setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class), new FXResizeRelocatePolicy() {
-								@Override
-								public org.eclipse.core.commands.operations.IUndoableOperation commit() {
-									return null;
-								}
-							});
-							setAdapter(AdapterKey.get(FXResizePolicy.class), new FXResizePolicy() {
-								@Override
-								public void init() {
-									resizeOperation = new FXResizeNodeOperation(getHost().getVisual());
-									forwardUndoOperation = new ForwardUndoCompositeOperation("Resize");
-									forwardUndoOperation.add(resizeOperation);
-								}
-							});
+							setAdapter(
+									AdapterKey
+											.get(FXResizeRelocatePolicy.class),
+									new FXResizeRelocatePolicy() {
+										@Override
+										public org.eclipse.core.commands.operations.IUndoableOperation commit() {
+											return null;
+										}
+									});
+							setAdapter(AdapterKey.get(FXResizePolicy.class),
+									new FXResizePolicy() {
+										@Override
+										public void init() {
+											resizeOperation = new FXResizeNodeOperation(
+													getHost().getVisual());
+											forwardUndoOperation = new ForwardUndoCompositeOperation(
+													"Resize");
+											forwardUndoOperation
+													.add(resizeOperation);
+										}
+									});
 							FXTransformProvider transformProvider = new FXTransformProvider();
-							setAdapter(AdapterKey.get(new TypeToken<Provider<Affine>>() {
-							}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE), transformProvider);
-							setAdapter(AdapterKey.get(FXTransformPolicy.class), new FXTransformPolicy());
+							setAdapter(
+									AdapterKey
+											.get(new TypeToken<Provider<Affine>>() {
+											},
+													FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE),
+									transformProvider);
+							setAdapter(AdapterKey.get(FXTransformPolicy.class),
+									new FXTransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);
 							affine.setTy(location.y);
@@ -94,6 +106,10 @@ public class NodeLayoutBehaviorTests {
 							return visual;
 						}
 
+						@Override
+						public Node getContent() {
+							return new Node();
+						}
 					};
 					FXRootPart rootPart = new FXRootPart();
 					rootPart.setAdaptable(new FXViewer());
@@ -106,9 +122,9 @@ public class NodeLayoutBehaviorTests {
 	}
 
 	@Test
-	@Ignore
 	public void test_adapt() {
-		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(), null);
+		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(),
+				null);
 
 		Point location = new Point(1, 5);
 		Dimension size = new Dimension(100, 200);
@@ -123,17 +139,18 @@ public class NodeLayoutBehaviorTests {
 		 * corner, therefore we expect <code>translate-xy = location - size /
 		 * 2</code>.
 		 */
-		Affine affine = behavior.getHost().getAdapter(FXTransformPolicy.class).getNodeTransform();
+		Affine affine = behavior.getHost().getAdapter(FXTransformPolicy.class)
+				.getNodeTransform();
 		// FIXME: as size is not set (in case there are no child nodes), this
 		// seems to be invalid
-		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(affine.getTx(), affine.getTy()));
+		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(
+				affine.getTx(), affine.getTy()));
 		// TODO: fixme assertEquals(size, new
 		// Dimension(visual.getLayoutBounds().getWidth(),
 		// visual.getLayoutBounds().getHeight()));
 	}
 
 	@Test
-	@Ignore
 	public void test_provide() {
 		final Point location = new Point(10, 20);
 
@@ -144,13 +161,15 @@ public class NodeLayoutBehaviorTests {
 		GraphNodeLayout nodeLayout = createNodeLayout();
 		behavior.provideLayoutInformation(nodeLayout);
 
-		assertEquals(visual.isResizable(), LayoutProperties.isResizable(nodeLayout));
+		assertEquals(visual.isResizable(),
+				LayoutProperties.isResizable(nodeLayout));
 
 		// TODO: check whether this is correct
 		Bounds layoutBounds = visual.getLayoutBounds();
-		assertEquals(location,
-				LayoutProperties.getLocation(nodeLayout).translate(-layoutBounds.getMinX(), -layoutBounds.getMinY()));
-		assertEquals(new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()),
+		assertEquals(location, LayoutProperties.getLocation(nodeLayout)
+				.translate(-layoutBounds.getMinX(), -layoutBounds.getMinY()));
+		assertEquals(
+				new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()),
 				LayoutProperties.getSize(nodeLayout));
 
 		// TODO: test with resizable figure as well
