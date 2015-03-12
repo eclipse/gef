@@ -105,7 +105,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		super.doActivate();
 		getContent().addPropertyChangeListener(graphPropertyChangeListener);
 		pcs.firePropertyChange(ACTIVATION_COMPLETE_PROPERTY, false, true);
-		setGraphLayoutContext();
+		setGraphLayoutAlgorithm();
 	}
 
 	@Override
@@ -116,8 +116,8 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	public void doRefreshVisual(Group visual) {
-		// set layout algorithm on the context
-		setGraphLayoutContext();
+		// set layout algorithm from Graph on the context
+		setGraphLayoutAlgorithm();
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 
-	private void setGraphLayoutContext() {
+	private void setGraphLayoutAlgorithm() {
 		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;

@@ -98,6 +98,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		if (!isHostActive) {
 			return;
 		}
+
 		context.applyStaticLayout(true);
 		context.flushChanges(false);
 	}
@@ -125,6 +126,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void deactivate() {
 		super.deactivate();
+		// remove host property change listener
+		getHost().removePropertyChangeListener(hostPropertyChangeListener);
 		// remove property change listener from context
 		if (layoutContext != null) {
 			layoutContext
@@ -181,6 +184,12 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 					"Graph is neither nested nor root?!");
 		}
 
+		// remove change listener from old context
+		if (layoutContext != null) {
+			layoutContext
+					.removePropertyChangeListener(layoutContextPropertyChangeListener);
+		}
+
 		// create layout context
 		layoutContext = createLayoutContext(getHost().getContent());
 		Graph graph = layoutContext.getGraph();
@@ -191,13 +200,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		// set initial bounds
 		LayoutProperties.setBounds(layoutContext, initialBounds);
 
-		// add change listener to new context
-		layoutContext
-				.addPropertyChangeListener(layoutContextPropertyChangeListener);
-
 		// set layout context. other parts listen for the layout model
 		// to send in their layout data
 		layoutModel.setLayoutContext(graph, layoutContext);
+
+		// add change listener to new context
+		layoutContext
+				.addPropertyChangeListener(layoutContextPropertyChangeListener);
 
 		// initial layout pass
 		applyStaticLayout(layoutContext);

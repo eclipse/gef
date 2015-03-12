@@ -316,7 +316,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		onFlushChanges.add(runnable);
 	}
 
-	public void setDynamicLayoutAlgorithm(ILayoutAlgorithm dynamicLayoutAlgorithm) {
+	public void setDynamicLayoutAlgorithm(
+			ILayoutAlgorithm dynamicLayoutAlgorithm) {
 		ILayoutAlgorithm oldDynamicLayoutAlgorithm = this.dynamicLayoutAlgorithm;
 		if (oldDynamicLayoutAlgorithm != dynamicLayoutAlgorithm) {
 			this.dynamicLayoutAlgorithm = dynamicLayoutAlgorithm;

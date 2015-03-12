@@ -90,6 +90,16 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		}
 	};
 
+	private ChangeListener<? super Number> nodeTransformListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			if (nodeLayout != null) {
+				provideLayoutInformation(nodeLayout);
+			}
+		}
+	};
+
 	public NodeLayoutBehavior() {
 	}
 
@@ -98,6 +108,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		super.activate();
 		getHost().getVisual().visibleProperty()
 				.addListener(visibilityChangeListener);
+		Affine nodeTransform = getHost().getAdapter(FXTransformPolicy.class)
+				.getNodeTransform();
+		nodeTransform.txProperty().addListener(nodeTransformListener);
+		nodeTransform.tyProperty().addListener(nodeTransformListener);
 		getHost().addPropertyChangeListener(anchoredChangeListener);
 	}
 
@@ -116,6 +130,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			double h = layoutBounds.getHeight();
 
 			Point location = LayoutProperties.getLocation(nodeLayout);
+
 			Dimension size = LayoutProperties.getSize(nodeLayout);
 
 			// location is the center of the node, therefore we subtract half

@@ -20,16 +20,21 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 
 public class LayoutModel implements IPropertyChangeNotifier {
 
-	private static final SpringLayoutAlgorithm DEFAULT_ALGORITHM = new SpringLayoutAlgorithm();
+	private static SpringLayoutAlgorithm getDefaultAlgorithm() {
+		return new SpringLayoutAlgorithm();
+	}
 
 	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
 
 	private Map<Graph, ILayoutContext> graphLayoutContext = new IdentityHashMap<Graph, ILayoutContext>();
+
+	private ILayoutAlgorithm previousAlgorithm;
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -48,6 +53,7 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		}
 		ILayoutContext oldContext = graphLayoutContext.remove(graph);
 		if (oldContext != null) {
+			previousAlgorithm = oldContext.getStaticLayoutAlgorithm();
 			// notify listeners
 			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY,
 					new AbstractMap.SimpleEntry<Graph, ILayoutContext>(graph,
@@ -73,12 +79,10 @@ public class LayoutModel implements IPropertyChangeNotifier {
 		// in case new context does not specify an algorithm, transfer old
 		// context (or set default, if no context was set before)
 		if (context.getStaticLayoutAlgorithm() == null) {
-			if (oldContext != null
-					&& oldContext.getStaticLayoutAlgorithm() != null) {
-				context.setStaticLayoutAlgorithm(oldContext
-						.getStaticLayoutAlgorithm());
+			if (previousAlgorithm != null) {
+				context.setStaticLayoutAlgorithm(previousAlgorithm);
 			} else {
-				context.setStaticLayoutAlgorithm(DEFAULT_ALGORITHM);
+				context.setStaticLayoutAlgorithm(getDefaultAlgorithm());
 			}
 		}
 		if (context != oldContext) {
