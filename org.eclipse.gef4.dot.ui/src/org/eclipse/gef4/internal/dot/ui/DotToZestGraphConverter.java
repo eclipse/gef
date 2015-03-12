@@ -46,12 +46,15 @@ public class DotToZestGraphConverter {
 		// destination of edges can be found easily later
 		for (Node dotNode : dot.getNodes()) {
 			Node zestNode = convertNode(dotNode);
+			zestNode.setGraph(zest);
 			dotToZestNodes.put(dotNode, zestNode);
 			zest.getNodes().add(zestNode);
 		}
 		// convert edges
 		for (Edge dotEdge : dot.getEdges()) {
-			zest.getEdges().add(convertEdge(dotEdge));
+			Edge edge = convertEdge(dotEdge);
+			edge.setGraph(zest);
+			zest.getEdges().add(edge);
 		}
 		return zest;
 	}
