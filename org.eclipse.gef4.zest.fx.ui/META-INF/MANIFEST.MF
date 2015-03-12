@@ -53,4 +53,5 @@ Import-Package: javafx.animation,
  javafx.stage,
  javafx.util
 Export-Package: org.eclipse.gef4.zest.fx.ui;x-internal:=true,
+ org.eclipse.gef4.zest.fx.ui.jface;x-internal:=true,
  org.eclipse.gef4.zest.fx.ui.parts;x-internal:=true
