@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Zest.UI Examples
-Bundle-SymbolicName: org.eclipse.gef4.zest.examples;singleton:=true
+Bundle-SymbolicName: org.eclipse.gef4.zest.examples.ui;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
