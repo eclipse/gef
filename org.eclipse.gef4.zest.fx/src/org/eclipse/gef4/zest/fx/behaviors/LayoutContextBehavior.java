@@ -147,9 +147,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 
 	/**
 	 * Performs one layout pass using the static layout algorithm that is
-	 * configured for the given context.
-	 *
-	 * @param context
+	 * configured for the layout context.
 	 */
 	protected void applyStaticLayout() {
 		if (!isHostActive) {
@@ -221,13 +219,15 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Relayout when certain properties of the LayoutContext change:
+	 * Re-layout when certain properties of the LayoutContext change:
 	 * <ul>
 	 * <li>static layout algorithm
 	 * <li>layout bounds
 	 * </ul>
 	 *
 	 * @param evt
+	 *            A {@link PropertyChangeEvent} that was fired by the layout
+	 *            context.
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
 		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
@@ -243,7 +243,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * Sets the layout bounds on the layout context for nested graphs.
 	 *
 	 * @param oldLayoutBounds
+	 *            The previous nesting node's bounds.
 	 * @param newLayoutBounds
+	 *            The current nesting node's bounds.
 	 */
 	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds,
 			Bounds newLayoutBounds) {

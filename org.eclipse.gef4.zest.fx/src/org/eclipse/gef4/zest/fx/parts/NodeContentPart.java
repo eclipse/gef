@@ -421,6 +421,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 * transition from an icon to the real graph will not change the node's
 	 * size.
 	 *
+	 * @param visual
+	 *            The visual of this part.
 	 * @param isNesting
 	 *            <code>true</code> if this node has a nested graph, otherwise
 	 *            <code>false</code>.
