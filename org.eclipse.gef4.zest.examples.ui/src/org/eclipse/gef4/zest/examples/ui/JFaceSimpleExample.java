@@ -80,7 +80,7 @@ public class JFaceSimpleExample {
 
 	static class MyLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
-			return null;
+			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
 
 		public String getText(Object element) {

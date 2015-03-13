@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -144,8 +143,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	protected void autosizeNodeVisual() {
-		hbox.autosize();
-		vbox.autosize();
 	}
 
 	protected Pane createNestedContentPane() {
@@ -204,14 +201,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// expand box depending on content size
 		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> arg0,
-					Bounds arg1, Bounds arg2) {
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldValue, Bounds newValue) {
 				vbox.setTranslateX(getPadding());
 				vbox.setTranslateY(getPadding());
 				box.setWidth(vbox.getWidth() + 2 * getPadding());
 				box.setHeight(vbox.getHeight() + 2 * getPadding());
-				labelText.setTranslateX(vbox.getWidth() / 2
-						- labelText.getLayoutBounds().getWidth() / 2);
 			}
 		});
 
@@ -241,30 +236,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 						- layoutBounds.getHeight());
 			}
 		};
-		// orient at its center
-		group.translateXProperty().bind(new DoubleBinding() {
-			{
-				bind(group.layoutBoundsProperty());
-			}
-
-			@Override
-			protected double computeValue() {
-				return -group.getLayoutBounds().getWidth() / 2;
-			}
-		});
-		group.translateYProperty().bind(new DoubleBinding() {
-			{
-				bind(group.layoutBoundsProperty());
-			}
-
-			@Override
-			protected double computeValue() {
-				return -group.getLayoutBounds().getHeight() / 2;
-			}
-		});
-		// disable automatic layout
-		group.setManaged(false);
-		group.setAutoSizeChildren(false);
 
 		nestedChildrenPane = createNestedContentPane();
 		nestedContentStackPane = createNestedContentStackPane(nestedChildrenPane);
@@ -281,18 +252,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// build node visual
 		createNodeVisual(group, iconImageView, labelText,
 				nestedContentStackPane);
-
-		// trigger a re-layout when the bounds of any "data" node changes
-		ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable,
-					Bounds oldBounds, Bounds newBounds) {
-				autosizeNodeVisual();
-			}
-		};
-		for (Node n : getDataDependentNodes()) {
-			n.boundsInLocalProperty().addListener(boundsChangeListener);
-		}
 
 		return group;
 	}
@@ -352,7 +311,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		str = refreshFisheye(visual, attrs, str);
 		refreshLabel(visual, str);
 
-		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON_URL));
+		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON));
 		refreshNestedGraphArea(visual, isNesting());
 		refreshTooltip(visual, attrs.get(ZestProperties.NODE_TOOLTIP));
 	}
@@ -378,17 +337,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// show an icon as a replacement when the zoom threshold is not reached
 		showNestedGraphIcon();
 		return Collections.emptyList();
-	}
-
-	/**
-	 * Returns all "data" nodes, i.e. nodes which display any node data. These
-	 * nodes will change when the node's data changes. Therefore, the node's
-	 * layout needs to be refreshed when any of these "data" nodes changes.
-	 *
-	 * @return All nodes that directly display any node data.
-	 */
-	protected Node[] getDataDependentNodes() {
-		return new Node[] { labelText, iconImageView, nestedContentStackPane };
 	}
 
 	public Pane getNestedChildrenPane() {
@@ -456,14 +404,16 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		return str;
 	}
 
-	protected void refreshIcon(Group visual, Object imageFileUrl) {
-		if (imageFileUrl instanceof String) {
-			iconImageView.setImage(new Image((String) imageFileUrl));
+	protected void refreshIcon(Group visual, Object icon) {
+		if (iconImageView.getImage() != icon && icon instanceof Image) {
+			iconImageView.setImage((Image) icon);
 		}
 	}
 
 	protected void refreshLabel(Group visual, String str) {
-		labelText.setText(str);
+		if (!labelText.getText().equals(str)) {
+			labelText.setText(str);
+		}
 	}
 
 	/**

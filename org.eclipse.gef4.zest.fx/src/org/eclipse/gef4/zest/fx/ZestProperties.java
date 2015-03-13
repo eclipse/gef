@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.scene.image.Image;
+
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -64,8 +66,8 @@ public class ZestProperties {
 		return returnDefaultIfMissing ? false : null;
 	}
 
-	public static String getIconUrl(Node node) {
-		return (String) node.getAttrs().get(NODE_ICON_URL);
+	public static Image getIcon(Node node) {
+		return (Image) node.getAttrs().get(NODE_ICON);
 	}
 
 	public static String getLabel(Edge edge) {
@@ -155,8 +157,8 @@ public class ZestProperties {
 		node.getAttrs().put(NODE_HIDDEN, hidden);
 	}
 
-	public static void setIconUrl(Node node, String iconUrl) {
-		node.getAttrs().put(NODE_ICON_URL, iconUrl);
+	public static void setIcon(Node node, Image icon) {
+		node.getAttrs().put(NODE_ICON, icon);
 	}
 
 	public static void setLabel(Edge edge, String label) {
@@ -213,7 +215,7 @@ public class ZestProperties {
 	public static final String ELEMENT_CSS_STYLE = "css-style";
 
 	public static final String ELEMENT_LABEL = "label";
-	public static final String NODE_ICON_URL = "iconUrl";
+	public static final String NODE_ICON = "icon";
 	public static final String NODE_TOOLTIP = "tooltip";
 	public static final String NODE_FISHEYE = "fisheye";
 

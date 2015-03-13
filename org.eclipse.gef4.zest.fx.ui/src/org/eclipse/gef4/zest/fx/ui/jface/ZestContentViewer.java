@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javafx.embed.swt.FXCanvas;
+import javafx.embed.swt.SWTFXUtils;
 
 import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
 import org.eclipse.gef4.graph.Edge;
@@ -45,6 +46,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -148,11 +150,12 @@ public class ZestContentViewer extends ContentViewer {
 
 		// retrieve label
 		String label = labelProvider.getText(node);
-		// Image icon = labelProvider.getImage(node);
+		Image icon = labelProvider.getImage(node);
 
 		// transfer label information into node properties
 		graphNode.getAttrs().put(ZestProperties.ELEMENT_LABEL, label);
-		// graphNode.getAttrs().put(NodeContentPart.ATTR_IMAGE, icon);
+		graphNode.getAttrs().put(ZestProperties.NODE_ICON,
+				SWTFXUtils.toFXImage(icon.getImageData(), null));
 
 		// TODO: color, etc.
 		// if (labelProvider instanceof IColorProvider) {
