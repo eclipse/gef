@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -26,8 +21,6 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
@@ -35,13 +28,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-
-import com.google.common.collect.Multiset;
-import com.google.common.collect.SetMultimap;
 
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
@@ -49,73 +38,20 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	protected GraphNodeLayout nodeLayout;
 
-	private ChangeListener<Boolean> visibilityChangeListener = new ChangeListener<Boolean>() {
-		@Override
-		public void changed(ObservableValue<? extends Boolean> observable,
-				Boolean oldValue, Boolean newValue) {
-			if (oldValue.booleanValue() != newValue.booleanValue()) {
-				onVisibilityChanged(oldValue, newValue);
-			}
-		}
-	};
-
-	private PropertyChangeListener anchoredChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (IVisualPart.ANCHOREDS_PROPERTY.equals(evt.getPropertyName())) {
-				@SuppressWarnings("unchecked")
-				Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds = (Multiset<IVisualPart<Node, ? extends Node>>) evt
-						.getOldValue();
-				@SuppressWarnings("unchecked")
-				Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds = (Multiset<IVisualPart<Node, ? extends Node>>) evt
-						.getNewValue();
-				onAnchoredChange(oldAnchoreds, newAnchoreds);
-			}
-		}
-	};
-
-	private PropertyChangeListener pruningAnchorageChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (IVisualPart.ANCHORAGES_PROPERTY.equals(evt.getPropertyName())) {
-				@SuppressWarnings("unchecked")
-				SetMultimap<IVisualPart<Node, ? extends Node>, String> oldPruningAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
-						.getOldValue();
-				@SuppressWarnings("unchecked")
-				SetMultimap<IVisualPart<Node, ? extends Node>, String> newPruningAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
-						.getNewValue();
-				onPruningAnchorageChange(oldPruningAnchorages,
-						newPruningAnchorages);
-			}
-		}
-	};
-
-	private ChangeListener<? super Number> nodeTransformListener = new ChangeListener<Number>() {
-		@Override
-		public void changed(ObservableValue<? extends Number> observable,
-				Number oldValue, Number newValue) {
-			if (nodeLayout != null) {
-				provideLayoutInformation(nodeLayout);
-			}
-		}
-	};
-
 	public NodeLayoutBehavior() {
 	}
 
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getVisual().visibleProperty()
-				.addListener(visibilityChangeListener);
-		Affine nodeTransform = getHost().getAdapter(FXTransformPolicy.class)
-				.getNodeTransform();
-		nodeTransform.txProperty().addListener(nodeTransformListener);
-		nodeTransform.tyProperty().addListener(nodeTransformListener);
-		getHost().addPropertyChangeListener(anchoredChangeListener);
+		nodeLayout = getLayoutModel().getNodeLayout(getHost().getContent());
+		if (nodeLayout == null) {
+			throw new IllegalStateException(
+					"Cannot find INodeLayout in LayoutModel.");
+		}
 	}
 
-	public void adaptLayoutInformation(INodeLayout nodeLayout) {
+	public void adaptLayoutInformation() {
 		FXResizeRelocatePolicy policy = getHost().getAdapter(
 				RESIZE_RELOCATE_POLICY_KEY);
 		if (policy != null) {
@@ -130,7 +66,6 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			double h = layoutBounds.getHeight();
 
 			Point location = LayoutProperties.getLocation(nodeLayout);
-
 			Dimension size = LayoutProperties.getSize(nodeLayout);
 
 			// location is the center of the node, therefore we subtract half
@@ -154,102 +89,30 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	public void deactivate() {
-		super.deactivate();
-		getHost().getVisual().visibleProperty()
-				.removeListener(visibilityChangeListener);
-		getHost().removePropertyChangeListener(anchoredChangeListener);
-	}
-
-	@Override
-	protected Graph getGraph() {
-		return getHost().getContent().getGraph();
-	}
-
-	@Override
 	public NodeContentPart getHost() {
 		return (NodeContentPart) super.getHost();
 	}
 
 	@Override
-	protected void initializeLayout(GraphLayoutContext glc) {
-		// find node layout
-		nodeLayout = glc
-				.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node, ? extends Node>) getHost())
-						.getContent());
-		if (nodeLayout == null) {
-			// XXX: Why are we still living?
-			return;
-		}
+	protected LayoutModel getLayoutModel() {
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
+				.getViewer().getContentPartMap()
+				.get(getHost().getContent().getGraph());
+		return graphPart.getAdapter(LayoutModel.class);
+	}
 
-		// initialize layout information
+	@Override
+	protected void postLayout() {
+		adaptLayoutInformation();
 		getHost().refreshVisual();
-		provideLayoutInformation(nodeLayout);
-	}
-
-	protected void onAnchoredChange(
-			Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds,
-			Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds) {
-		if (nodeLayout != null) {
-			HiddenNeighborsPart oldSubgraphPart = null;
-			for (IVisualPart<Node, ? extends Node> oldAnchored : oldAnchoreds) {
-				if (oldAnchored instanceof HiddenNeighborsPart) {
-					oldSubgraphPart = (HiddenNeighborsPart) oldAnchored;
-					break;
-				}
-			}
-
-			HiddenNeighborsPart newSubgraphPart = null;
-			for (IVisualPart<Node, ? extends Node> newAnchored : newAnchoreds) {
-				if (newAnchored instanceof HiddenNeighborsPart) {
-					newSubgraphPart = (HiddenNeighborsPart) newAnchored;
-					break;
-				}
-			}
-
-			if (oldSubgraphPart != null && newSubgraphPart == null) {
-				oldSubgraphPart
-						.removePropertyChangeListener(pruningAnchorageChangeListener);
-				provideLayoutInformation(nodeLayout);
-			} else if (oldSubgraphPart == null && newSubgraphPart != null) {
-				newSubgraphPart
-						.addPropertyChangeListener(pruningAnchorageChangeListener);
-			}
-		}
 	}
 
 	@Override
-	protected void onBoundsChange(Bounds oldBounds, Bounds newBounds) {
-		if (nodeLayout != null) {
-			provideLayoutInformation(nodeLayout);
-		}
+	protected void preLayout() {
+		provideLayoutInformation();
 	}
 
-	@Override
-	protected void onFlushChanges() {
-		if (nodeLayout != null) {
-			adaptLayoutInformation(nodeLayout);
-			getHost().refreshVisual();
-		}
-	}
-
-	protected void onPruningAnchorageChange(
-			SetMultimap<IVisualPart<Node, ? extends Node>, String> oldPruningAnchorages,
-			SetMultimap<IVisualPart<Node, ? extends Node>, String> newPruningAnchorages) {
-		boolean hostWasAnchorage = oldPruningAnchorages.containsKey(getHost());
-		boolean hostIsAnchorage = newPruningAnchorages.containsKey(getHost());
-		if (!hostWasAnchorage && hostIsAnchorage) {
-			provideLayoutInformation(nodeLayout);
-		}
-	}
-
-	protected void onVisibilityChanged(Boolean wasVisible, Boolean isVisible) {
-		if (nodeLayout != null) {
-			provideLayoutInformation(nodeLayout);
-		}
-	}
-
-	public void provideLayoutInformation(INodeLayout nodeLayout) {
+	public void provideLayoutInformation() {
 		Node visual = getHost().getVisual();
 		Bounds hostBounds = visual.getLayoutBounds();
 		double minx = hostBounds.getMinX();
@@ -288,4 +151,5 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 					!visual.isVisible());
 		}
 	}
+
 }

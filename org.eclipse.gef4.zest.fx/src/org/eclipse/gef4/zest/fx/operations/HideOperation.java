@@ -63,8 +63,7 @@ public class HideOperation extends AbstractOperation {
 	}
 
 	protected void hide() {
-		node.getRoot().getViewer().getDomain()
-				.<HidingModel> getAdapter(HidingModel.class)
+		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class)
 				.hide(node.getContent());
 	}
 
@@ -75,8 +74,7 @@ public class HideOperation extends AbstractOperation {
 	}
 
 	protected void show() {
-		node.getRoot().getViewer().getDomain()
-				.<HidingModel> getAdapter(HidingModel.class)
+		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class)
 				.show(node.getContent());
 	}
 

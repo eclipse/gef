@@ -160,8 +160,6 @@ public class GraphNodeLayout implements INodeLayout {
 				context.fireNodeMovedEvent(this);
 			} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 				context.fireNodeResizedEvent(this);
-			} else if ("hidden".equals(name)) {
-				context.firePruningChanged(this);
 			}
 		}
 	}

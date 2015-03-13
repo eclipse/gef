@@ -50,10 +50,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		throw new UnsupportedOperationException("not yet implemented");
 	}
 
-	public void firePruningChanged(GraphNodeLayout node) {
-		pcs.firePropertyChange("hidden", 0, 1);
-	}
-
 	@Override
 	public IConnectionLayout[] getConnections() {
 		List<IConnectionLayout> connections = new ArrayList<IConnectionLayout>();

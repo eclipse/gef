@@ -120,25 +120,25 @@ public interface ILayoutContext extends IPropertyStore {
 
 	/**
 	 * Adds the given {@link Runnable} to the list of runnables which are called
-	 * when this {@link ILayoutContext} is asked to apply all changes made to its
-	 * elements to the display.
+	 * when this {@link ILayoutContext} is asked to apply all changes made to
+	 * its elements to the display.
 	 * 
 	 * @param runnable
 	 *            A {@link Runnable} called whenever this context is asked to
 	 *            apply all changes made to its elements to the display.
 	 */
-	public void scheduleForFlushChanges(Runnable runnable);
+	public void schedulePostLayoutPass(Runnable runnable);
 
 	/**
 	 * Removes the given {@link Runnable} from the list of runnables which are
-	 * called when this {@link ILayoutContext} is asked to apply all changes made
-	 * to its elements to the display.
+	 * called when this {@link ILayoutContext} is asked to apply all changes
+	 * made to its elements to the display.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} that should no longer get called when
 	 *            flushing changes.
 	 */
-	public void unscheduleFromFlushChanges(Runnable runnable);
+	public void unschedulePostLayoutPass(Runnable runnable);
 
 	/**
 	 * Returns <code>true</code> when the given {@link IConnectionLayout} is not
@@ -374,5 +374,9 @@ public interface ILayoutContext extends IPropertyStore {
 	 * state of the pruning flag.
 	 */
 	public void firePruningEnableChangedEvent();
+
+	public void unschedulePreLayoutPass(Runnable runnable);
+
+	public void schedulePreLayoutPass(Runnable runnable);
 
 }

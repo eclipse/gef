@@ -24,7 +24,7 @@ import org.eclipse.gef4.layout.listeners.ILayoutListener;
 import org.eclipse.gef4.layout.listeners.IPruningListener;
 import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
 
-// TODO: replace fire* methods with property change mechanisms
+// TODO: replace fire* methods with property change mechanism
 public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
@@ -36,7 +36,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	private boolean flushChangesInvocation = false;
 
-	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
+	private final List<Runnable> postLayoutPass = new ArrayList<Runnable>();
+	private final List<Runnable> preLayoutPass = new ArrayList<Runnable>();
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<ILayoutFilter>();
 
 	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
@@ -92,12 +93,18 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	public void applyDynamicLayout(boolean clear) {
 		if (dynamicLayoutAlgorithm != null) {
+			for (Runnable r : preLayoutPass) {
+				r.run();
+			}
 			dynamicLayoutAlgorithm.applyLayout(clear);
 		}
 	}
 
 	public void applyStaticLayout(boolean clear) {
 		if (staticLayoutAlgorithm != null) {
+			for (Runnable r : preLayoutPass) {
+				r.run();
+			}
 			staticLayoutAlgorithm.setLayoutContext(this);
 			staticLayoutAlgorithm.applyLayout(clear);
 		}
@@ -108,7 +115,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * {@link #removeEdge(IConnectionLayout)} calls.
 	 */
 	protected void clearEdges() {
-		for (IConnectionLayout edge : layoutEdges) {
+		for (IConnectionLayout edge : new ArrayList<IConnectionLayout>(
+				layoutEdges)) {
 			removeEdge(edge);
 		}
 	}
@@ -118,14 +126,14 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * {@link #removeNode(INodeLayout)} calls.
 	 */
 	protected void clearNodes() {
-		for (INodeLayout node : layoutNodes) {
+		for (INodeLayout node : new ArrayList<INodeLayout>(layoutNodes)) {
 			removeNode(node);
 		}
 	}
 
 	protected void doFlushChanges(boolean animationHint) {
 		// TODO: use specific flush-changes-listener to pass animationHint along
-		for (Runnable r : onFlushChanges) {
+		for (Runnable r : new ArrayList<Runnable>(postLayoutPass)) {
 			r.run();
 		}
 	}
@@ -309,11 +317,18 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		lls.removePruningListener(listener);
 	}
 
-	public void scheduleForFlushChanges(Runnable runnable) {
+	public void schedulePostLayoutPass(Runnable runnable) {
 		if (runnable == null) {
 			throw new IllegalArgumentException("Runnable may not be null.");
 		}
-		onFlushChanges.add(runnable);
+		postLayoutPass.add(runnable);
+	}
+
+	public void schedulePreLayoutPass(Runnable runnable) {
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable may not be null.");
+		}
+		preLayoutPass.add(runnable);
 	}
 
 	public void setDynamicLayoutAlgorithm(
@@ -354,13 +369,22 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		}
 	}
 
-	public void unscheduleFromFlushChanges(Runnable runnable) {
-		if (!onFlushChanges.contains(runnable)) {
+	public void unschedulePostLayoutPass(Runnable runnable) {
+		if (!postLayoutPass.contains(runnable)) {
 			new IllegalArgumentException(
 					"Given Runnable is not contained in the list.")
 					.printStackTrace();
 		}
-		onFlushChanges.remove(runnable);
+		postLayoutPass.remove(runnable);
+	}
+
+	public void unschedulePreLayoutPass(Runnable runnable) {
+		if (!preLayoutPass.contains(runnable)) {
+			new IllegalArgumentException(
+					"Given Runnable is not contained in the list.")
+					.printStackTrace();
+		}
+		preLayoutPass.remove(runnable);
 	}
 
 }

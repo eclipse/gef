@@ -53,10 +53,13 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (Graph.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
+				// the layout algorithm might have changed
 				refreshVisual();
 			} else if (Graph.NODES_PROPERTY.equals(evt.getPropertyName())
 					|| Graph.EDGES_PROPERTY.equals(evt.getPropertyName())) {
-				// nodes/edges changed => content synchronization
+				// construct new layout context
+				getAdapter(LayoutModel.class).setGraph(getContent());
+				// start content synchronization
 				SynchronizeContentChildrenOperation<Node> syncChildrenOp = new SynchronizeContentChildrenOperation<Node>(
 						"SynchronizeContentChildren", GraphContentPart.this);
 				SynchronizeContentAnchoragesOperation<Node> syncAnchoragesOp = new SynchronizeContentAnchoragesOperation<Node>(
@@ -139,14 +142,19 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 
+	@Override
+	public void setContent(Object content) {
+		super.setContent(content);
+		getAdapter(LayoutModel.class).setGraph(getContent());
+	}
+
 	private void setGraphLayoutAlgorithm() {
 		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
-			ILayoutContext layoutContext = getViewer().getDomain()
-					.getAdapter(LayoutModel.class)
-					.getLayoutContext(getContent());
-			if (layoutContext != null) {
+			ILayoutContext layoutContext = getAdapter(LayoutModel.class);
+			if (layoutContext != null
+					&& layoutContext.getStaticLayoutAlgorithm() != algo) {
 				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
 			}
 		}

@@ -17,10 +17,10 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.listeners.ILayoutListener;
 
@@ -153,9 +153,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 				if (entities[i] == node) {
 					locationsX[i] = LayoutProperties.getLocation(entities[i]).x;
 					locationsY[i] = LayoutProperties.getLocation(entities[i]).y;
-
 				}
-
 			}
 			return false;
 		}
@@ -176,7 +174,6 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			// TODO Auto-generated method stub
 			return false;
 		}
-
 	}
 
 	public void applyLayout(boolean clean) {

@@ -93,7 +93,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected HidingModel getHidingModel() {
-		return getHost().getRoot().getViewer().getDomain()
+		return getHost().getRoot().getViewer()
 				.<HidingModel> getAdapter(HidingModel.class);
 	}
 

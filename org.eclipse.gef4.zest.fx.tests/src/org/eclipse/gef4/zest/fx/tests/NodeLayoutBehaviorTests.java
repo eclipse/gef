@@ -51,10 +51,14 @@ public class NodeLayoutBehaviorTests {
 	}
 
 	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location,
-			final Dimension size) {
+			final Dimension size, final GraphNodeLayout pNodeLayout) {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
+			{
+				nodeLayout = pNodeLayout;
+			}
 			private NodeContentPart host;
 
+			@SuppressWarnings("serial")
 			@Override
 			public NodeContentPart getHost() {
 				if (host == null) {
@@ -123,16 +127,16 @@ public class NodeLayoutBehaviorTests {
 
 	@Test
 	public void test_adapt() {
+		GraphNodeLayout nodeLayout = createNodeLayout();
 		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(),
-				null);
+				null, nodeLayout);
 
 		Point location = new Point(1, 5);
 		Dimension size = new Dimension(100, 200);
-		GraphNodeLayout nodeLayout = createNodeLayout();
 		LayoutProperties.setLocation(nodeLayout, location.x, location.y);
 		LayoutProperties.setSize(nodeLayout, size.getWidth(), size.getHeight());
 
-		behavior.adaptLayoutInformation(nodeLayout);
+		behavior.adaptLayoutInformation();
 
 		/*
 		 * <i>location</i> is the center, <i>translate-xy</i> is the top left
@@ -155,11 +159,12 @@ public class NodeLayoutBehaviorTests {
 		final Point location = new Point(10, 20);
 
 		// setup with non-resizable figure
-		NodeLayoutBehavior behavior = createNodeLayoutBehavior(location, null);
+		GraphNodeLayout nodeLayout = createNodeLayout();
+		NodeLayoutBehavior behavior = createNodeLayoutBehavior(location, null,
+				nodeLayout);
 		Group visual = behavior.getHost().getVisual();
 
-		GraphNodeLayout nodeLayout = createNodeLayout();
-		behavior.provideLayoutInformation(nodeLayout);
+		behavior.provideLayoutInformation();
 
 		assertEquals(visual.isResizable(),
 				LayoutProperties.isResizable(nodeLayout));

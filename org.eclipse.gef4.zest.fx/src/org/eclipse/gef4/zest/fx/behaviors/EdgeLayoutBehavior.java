@@ -12,25 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 
 // only applicable for EdgeContentPart (see #getHost())
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
-
-	protected GraphEdgeLayout edgeLayout;
-
-	@Override
-	protected Graph getGraph() {
-		return getHost().getContent().getGraph();
-	}
 
 	@Override
 	public EdgeContentPart getHost() {
@@ -38,21 +27,20 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected void initializeLayout(GraphLayoutContext glc) {
-		edgeLayout = glc
-				.getEdgeLayout((Edge) ((IContentPart<Node, ? extends Node>) getHost())
-						.getContent());
+	protected LayoutModel getLayoutModel() {
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
+				.getViewer().getContentPartMap()
+				.get(getHost().getContent().getGraph());
+		return graphPart.getAdapter(LayoutModel.class);
 	}
 
 	@Override
-	protected void onBoundsChange(Bounds oldBounds, Bounds newBounds) {
+	protected void postLayout() {
+		getHost().refreshVisual();
 	}
 
 	@Override
-	protected void onFlushChanges() {
-		if (edgeLayout != null) {
-			getHost().refreshVisual();
-		}
+	protected void preLayout() {
 	}
 
 }

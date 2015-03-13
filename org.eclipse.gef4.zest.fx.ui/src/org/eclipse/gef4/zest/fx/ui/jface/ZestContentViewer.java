@@ -35,7 +35,6 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -66,6 +65,7 @@ public class ZestContentViewer extends ContentViewer {
 	private ISelection selection;
 	private SelectionForwarder<javafx.scene.Node> selectionForwarder;
 	private Composite parent;
+	private ILayoutAlgorithm layoutAlgorithm;
 
 	public ZestContentViewer(Composite parent, int style) {
 		this.parent = parent;
@@ -117,6 +117,9 @@ public class ZestContentViewer extends ContentViewer {
 	protected Graph createGraph(IContentProvider contentProvider,
 			ILabelProvider labelProvider) {
 		Graph graph = new Graph();
+		if (layoutAlgorithm != null) {
+			ZestProperties.setLayout(graph, layoutAlgorithm);
+		}
 		if (contentProvider instanceof IGraphNodeContentProvider) {
 			IGraphNodeContentProvider graphNodeProvider = (IGraphNodeContentProvider) contentProvider;
 			Object[] nodes = graphNodeProvider.getNodes();
@@ -218,12 +221,7 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	public ILayoutAlgorithm getLayoutAlgorithm() {
-		return domain
-				.getAdapter(LayoutModel.class)
-				.getLayoutContext(
-						(Graph) viewer.getAdapter(ContentModel.class)
-								.getContents().get(0))
-				.getStaticLayoutAlgorithm();
+		return layoutAlgorithm;
 	}
 
 	@Override
@@ -259,11 +257,7 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
-		domain.getAdapter(LayoutModel.class)
-				.getLayoutContext(
-						(Graph) viewer.getAdapter(ContentModel.class)
-								.getContents().get(0))
-				.setStaticLayoutAlgorithm(layoutAlgorithm);
+		this.layoutAlgorithm = layoutAlgorithm;
 	}
 
 	@Override

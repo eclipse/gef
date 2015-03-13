@@ -21,14 +21,12 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -39,9 +37,7 @@ import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
- * The LayoutContextBehavior is responsible for the creation and distribution of
- * a LayoutContext for a GraphContentPart and for initiating layout passes in
- * this context.
+ * The LayoutContextBehavior is responsible for initiating layout passes.
  *
  * @author wienand
  *
@@ -85,77 +81,12 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
+		// register listener for host property changes
 		getHost().addPropertyChangeListener(hostPropertyChangeListener);
-	}
 
-	/**
-	 * Performs one layout pass using the static layout algorithm that is
-	 * configured for the given context.
-	 *
-	 * @param context
-	 */
-	protected void applyStaticLayout(final GraphLayoutContext context) {
-		if (!isHostActive) {
-			return;
-		}
-
-		context.applyStaticLayout(true);
-		context.flushChanges(false);
-	}
-
-	protected GraphLayoutContext createLayoutContext(Graph content) {
-		GraphLayoutContext graphLayoutContext = new GraphLayoutContext(content);
-		graphLayoutContext.addLayoutFilter(new ILayoutFilter() {
-			@Override
-			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
-				return ZestProperties.getLayoutIrrelevant(
-						((GraphEdgeLayout) connectionLayout).getEdge(), true);
-			}
-
-			@Override
-			public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
-				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout
-						.getItems()[0];
-				return ZestProperties.getLayoutIrrelevant(node, true)
-						|| ZestProperties.getHidden(node, true);
-			}
-		});
-		return graphLayoutContext;
-	}
-
-	@Override
-	public void deactivate() {
-		super.deactivate();
-		// remove host property change listener
-		getHost().removePropertyChangeListener(hostPropertyChangeListener);
-		// remove property change listener from context
-		if (layoutContext != null) {
-			layoutContext
-					.removePropertyChangeListener(layoutContextPropertyChangeListener);
-		}
-		if (isRootContent) {
-			// remove change listener from viewport model
-			getViewportModel().removePropertyChangeListener(
-					viewportModelPropertyChangeListener);
-		} else {
-			// remove change listener from layout-bounds-property
-			getNestingPart().getVisual().layoutBoundsProperty()
-					.removeListener(nestingVisualLayoutBoundsChangeListener);
-		}
-		// nullify variables
-		layoutContext = null;
-		isRootContent = false;
-		isHostActive = false;
-		// remove layout context from model
-		getLayoutModel().removeLayoutContext(getHost().getContent());
-	}
-
-	private void distributeLayoutContext() {
-		ContentModel contentModel = getHost().getRoot().getViewer()
-				.getAdapter(ContentModel.class);
-		Object content = contentModel.getContents().get(0);
+		// register listener for bounds changes
 		Rectangle initialBounds = new Rectangle();
-		if (getHost().getContent() == content) {
+		if (getHost().getParent() == getHost().getRoot()) {
 			/*
 			 * Our graph is the root graph, therefore we listen to viewport
 			 * changes to update the layout bounds in the context accordingly.
@@ -184,32 +115,73 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 					"Graph is neither nested nor root?!");
 		}
 
-		// remove change listener from old context
+		// retrieve layout context
+		layoutContext = getLayoutModel();
+
+		// add layout filter for hidden/layout irrelevant elements
+		layoutContext.addLayoutFilter(new ILayoutFilter() {
+			@Override
+			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
+				return ZestProperties.getLayoutIrrelevant(
+						((GraphEdgeLayout) connectionLayout).getEdge(), true);
+			}
+
+			@Override
+			public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
+				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout
+						.getItems()[0];
+				return ZestProperties.getLayoutIrrelevant(node, true)
+						|| ZestProperties.getHidden(node, true);
+			}
+		});
+
+		// set initial bounds on the context
+		LayoutProperties.setBounds(layoutContext, initialBounds);
+
+		// register listener for layout context property changes after setting
+		// the initial layout properties, so that this listener will not be
+		// called for the initial layout properties
+		layoutContext
+				.addPropertyChangeListener(layoutContextPropertyChangeListener);
+	}
+
+	/**
+	 * Performs one layout pass using the static layout algorithm that is
+	 * configured for the given context.
+	 *
+	 * @param context
+	 */
+	protected void applyStaticLayout() {
+		if (!isHostActive) {
+			return;
+		}
+		layoutContext.applyStaticLayout(true);
+		layoutContext.flushChanges(false);
+	}
+
+	@Override
+	public void deactivate() {
+		super.deactivate();
+		// remove host property change listener
+		getHost().removePropertyChangeListener(hostPropertyChangeListener);
+		// remove property change listener from context
 		if (layoutContext != null) {
 			layoutContext
 					.removePropertyChangeListener(layoutContextPropertyChangeListener);
 		}
-
-		// create layout context
-		layoutContext = createLayoutContext(getHost().getContent());
-		Graph graph = layoutContext.getGraph();
-
-		// get layout model
-		LayoutModel layoutModel = getLayoutModel();
-
-		// set initial bounds
-		LayoutProperties.setBounds(layoutContext, initialBounds);
-
-		// set layout context. other parts listen for the layout model
-		// to send in their layout data
-		layoutModel.setLayoutContext(graph, layoutContext);
-
-		// add change listener to new context
-		layoutContext
-				.addPropertyChangeListener(layoutContextPropertyChangeListener);
-
-		// initial layout pass
-		applyStaticLayout(layoutContext);
+		if (isRootContent) {
+			// remove change listener from viewport model
+			getViewportModel().removePropertyChangeListener(
+					viewportModelPropertyChangeListener);
+		} else {
+			// remove change listener from layout-bounds-property
+			getNestingPart().getVisual().layoutBoundsProperty()
+					.removeListener(nestingVisualLayoutBoundsChangeListener);
+		}
+		// nullify variables
+		layoutContext = null;
+		isRootContent = false;
+		isHostActive = false;
 	}
 
 	@Override
@@ -218,8 +190,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected LayoutModel getLayoutModel() {
-		return getHost().getRoot().getViewer().getDomain()
-				.<LayoutModel> getAdapter(LayoutModel.class);
+		return getHost().<LayoutModel> getAdapter(LayoutModel.class);
 	}
 
 	protected NodeContentPart getNestingPart() {
@@ -240,13 +211,12 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 				.getPropertyName())) {
 			if ((Boolean) evt.getNewValue()) {
 				isHostActive = true;
-				distributeLayoutContext();
+				applyStaticLayout();
 			}
 		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt
 				.getPropertyName()) && isHostActive) {
 			if ((Boolean) evt.getNewValue()) {
-				// TODO: update layout context instead of constructing a new one
-				distributeLayoutContext();
+				applyStaticLayout();
 			}
 		}
 	}
@@ -261,23 +231,23 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * @param evt
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
-		if (layoutContext == null) {
-			return;
-		}
 		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
 				.getPropertyName())) {
-			applyStaticLayout(layoutContext);
+			applyStaticLayout();
 		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt
 				.getPropertyName())) {
-			applyStaticLayout(layoutContext);
+			applyStaticLayout();
 		}
 	}
 
+	/**
+	 * Sets the layout bounds on the layout context for nested graphs.
+	 *
+	 * @param oldLayoutBounds
+	 * @param newLayoutBounds
+	 */
 	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds,
 			Bounds newLayoutBounds) {
-		if (layoutContext == null) {
-			return;
-		}
 		// update layout bounds to match the nesting visual layout bounds
 		double width = newLayoutBounds.getWidth();
 		double height = newLayoutBounds.getHeight();
@@ -288,9 +258,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected void onViewportModelPropertyChange(PropertyChangeEvent evt) {
-		if (layoutContext == null) {
-			return;
-		}
 		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY
 				.equals(evt.getPropertyName())
 				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt

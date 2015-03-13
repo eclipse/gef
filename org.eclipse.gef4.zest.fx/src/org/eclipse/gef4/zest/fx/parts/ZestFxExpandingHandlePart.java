@@ -45,8 +45,7 @@ public class ZestFxExpandingHandlePart extends ZestFxHidingHandlePart {
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
 				.iterator().next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
-		HidingModel hidingModel = viewer.getDomain().getAdapter(
-				HidingModel.class);
+		HidingModel hidingModel = viewer.getAdapter(HidingModel.class);
 		Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = hidingModel
 				.getHiddenNeighbors(((NodeContentPart) anchorage).getContent());
 		if (!hiddenNeighbors.isEmpty()) {

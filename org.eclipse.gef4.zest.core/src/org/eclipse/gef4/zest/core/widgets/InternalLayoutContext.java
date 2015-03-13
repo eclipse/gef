@@ -21,11 +21,11 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
 import org.eclipse.gef4.layout.listeners.IContextListener;
@@ -90,8 +90,8 @@ class InternalLayoutContext implements ILayoutContext {
 		for (int i = 0; i < nodes.length; i++) {
 			internalNodes[i] = (InternalNodeLayout) nodes[i];
 		}
-		ISubgraphLayout subgraph = subgraphFactory.createSubgraph(internalNodes,
-				this);
+		ISubgraphLayout subgraph = subgraphFactory.createSubgraph(
+				internalNodes, this);
 		subgraphs.add(subgraph);
 		return subgraph;
 	}
@@ -621,10 +621,10 @@ class InternalLayoutContext implements ILayoutContext {
 		ps.addPropertyChangeListener(listener);
 	}
 
-	public void scheduleForFlushChanges(Runnable runnable) {
+	public void schedulePostLayoutPass(Runnable runnable) {
 	}
 
-	public void unscheduleFromFlushChanges(Runnable runnable) {
+	public void unschedulePostLayoutPass(Runnable runnable) {
 	}
 
 	public boolean isLayoutIrrelevant(IConnectionLayout connLayout) {
@@ -639,6 +639,12 @@ class InternalLayoutContext implements ILayoutContext {
 	}
 
 	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
+	}
+
+	public void unschedulePreLayoutPass(Runnable runnable) {
+	}
+
+	public void schedulePreLayoutPass(Runnable runnable) {
 	}
 
 }

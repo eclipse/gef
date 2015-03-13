@@ -180,9 +180,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 
 	@Override
 	public void doRefreshVisual(FXLabeledConnection visual) {
-		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain()
-				.getAdapter(LayoutModel.class)
-				.getLayoutContext(getContent().getGraph());
+		GraphLayoutContext glc = getLayoutModel();
 		if (glc == null) {
 			return;
 		}
@@ -220,7 +218,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		IContentPart<Node, ? extends Node> targetPart = getViewer()
 				.getContentPartMap().get(getContent().getTarget());
 
-		if (sourcePart.getVisual().isVisible()
+		if (sourcePart != null && targetPart != null
+				&& sourcePart.getVisual().isVisible()
 				&& targetPart.getVisual().isVisible()) {
 			visual.setVisible(true);
 			visual.setMouseTransparent(false);
@@ -241,6 +240,11 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		anchorages.put(getContent().getSource(), "START");
 		anchorages.put(getContent().getTarget(), "END");
 		return anchorages;
+	}
+
+	protected LayoutModel getLayoutModel() {
+		return getViewer().getContentPartMap().get(getContent().getGraph())
+				.getAdapter(LayoutModel.class);
 	}
 
 	@Override

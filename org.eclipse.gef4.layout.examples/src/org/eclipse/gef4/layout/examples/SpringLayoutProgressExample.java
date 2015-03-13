@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.ToggleButton;
 
@@ -27,11 +29,11 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public class SpringLayoutProgressExample extends AbstractZestExample {
 
@@ -44,27 +46,12 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 			SpringLayoutAlgorithm {
 		@Override
 		public void applyLayout(boolean clean) {
-			// No-op
-		}
-
-		@Override
-		public void setLayoutContext(ILayoutContext context) {
-			// This method is called before performing a layout pass, for
-			// example, when the viewer is resized.
-			if (getLayoutContext() != context) {
-				// The super call will place the nodes randomly. That's why we
-				// only do this when the context is replaced, i.e. for the first
-				// layout pass.
-				super.setLayoutContext(context);
-			}
 		}
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	private ManualSpringLayoutAlgorithm layoutAlgorithm = new ManualSpringLayoutAlgorithm();
 
 	public SpringLayoutProgressExample() {
 		super("GEF4 Layouts - Spring Layout Progress Example");
@@ -123,13 +110,29 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
 				.edges(edges.toArray(new Edge[] {}))
-				.attr(ZestProperties.GRAPH_LAYOUT, layoutAlgorithm).build();
+				.attr(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm())
+				.build();
 	}
 
 	@Override
 	protected void customizeUi(ScrollPaneEx scrollPane) {
 		Group overlay = scrollPane.getScrollbarGroup();
 		final ToggleButton button = new ToggleButton("step");
+		final ManualSpringLayoutAlgorithm[] layoutAlgorithm = new ManualSpringLayoutAlgorithm[1];
+		button.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if (layoutAlgorithm[0] == null) {
+					layoutAlgorithm[0] = new ManualSpringLayoutAlgorithm();
+					layoutAlgorithm[0].setRandom(false);
+					ZestProperties.setLayout(graph, layoutAlgorithm[0]);
+				} else {
+					viewer.getContentPartMap().get(graph)
+							.getAdapter(LayoutModel.class)
+							.applyStaticLayout(true);
+				}
+			}
+		});
 		overlay.getChildren().add(button);
 		new AnimationTimer() {
 			private long last = 0;
@@ -141,11 +144,13 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 				if (button.isSelected()) {
 					long elapsed = now - last;
 					if (elapsed > NANOS_PER_ITERATION) {
-						layoutAlgorithm
-								.performNIteration((int) (elapsed / NANOS_PER_ITERATION));
+						int n = (int) (elapsed / NANOS_PER_ITERATION);
+						layoutAlgorithm[0].performNIteration(n);
+						last = now;
 					}
+				} else {
+					last = now;
 				}
-				last = now;
 			}
 		}.start();
 	}
