@@ -19,6 +19,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
@@ -53,8 +54,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	};
 
 	private boolean isHostActive;
-	private boolean isRootContent;
 	private GraphLayoutContext layoutContext;
+	private Pane nestingVisual;
 
 	private PropertyChangeListener viewportModelPropertyChangeListener = new PropertyChangeListener() {
 		@Override
@@ -91,7 +92,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			 * Our graph is the root graph, therefore we listen to viewport
 			 * changes to update the layout bounds in the context accordingly.
 			 */
-			isRootContent = true;
 			ViewportModel viewportModel = getViewportModel();
 			viewportModel
 					.addPropertyChangeListener(viewportModelPropertyChangeListener);
@@ -103,10 +103,10 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			 * Our graph is nested inside a node of another graph, therefore we
 			 * listen to changes of that node's layout-bounds.
 			 */
-			Node visual = getNestingPart().getNestedChildrenPane();
-			visual.layoutBoundsProperty().addListener(
+			nestingVisual = getNestingPart().getNestedChildrenPane();
+			nestingVisual.layoutBoundsProperty().addListener(
 					nestingVisualLayoutBoundsChangeListener);
-			Bounds layoutBounds = visual.getLayoutBounds();
+			Bounds layoutBounds = nestingVisual.getLayoutBounds();
 			// read initial bounds
 			initialBounds.setWidth(layoutBounds.getWidth());
 			initialBounds.setHeight(layoutBounds.getHeight());
@@ -169,18 +169,17 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			layoutContext
 					.removePropertyChangeListener(layoutContextPropertyChangeListener);
 		}
-		if (isRootContent) {
+		if (nestingVisual == null) {
 			// remove change listener from viewport model
 			getViewportModel().removePropertyChangeListener(
 					viewportModelPropertyChangeListener);
 		} else {
-			// remove change listener from layout-bounds-property
-			getNestingPart().getVisual().layoutBoundsProperty()
-					.removeListener(nestingVisualLayoutBoundsChangeListener);
+			nestingVisual.layoutBoundsProperty().removeListener(
+					nestingVisualLayoutBoundsChangeListener);
 		}
 		// nullify variables
 		layoutContext = null;
-		isRootContent = false;
+		nestingVisual = null;
 		isHostActive = false;
 	}
 

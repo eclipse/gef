@@ -51,10 +51,6 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
 	protected abstract LayoutModel getLayoutModel();
 
-	public <T> T getViewerAdapter(Class<T> key) {
-		return getHost().getRoot().getViewer().getAdapter(key);
-	}
-
 	/**
 	 * Called after a layout pass. Should be used to transfer layout information
 	 * from the layout model over to the visualization.
