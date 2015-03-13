@@ -15,8 +15,6 @@ package org.eclipse.gef4.fx.tests;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.nodes.FXConnection;
