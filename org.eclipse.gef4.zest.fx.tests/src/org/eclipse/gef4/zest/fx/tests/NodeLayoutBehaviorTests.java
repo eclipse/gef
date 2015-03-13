@@ -53,9 +53,6 @@ public class NodeLayoutBehaviorTests {
 	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location,
 			final Dimension size, final GraphNodeLayout pNodeLayout) {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
-			{
-				nodeLayout = pNodeLayout;
-			}
 			private NodeContentPart host;
 
 			@SuppressWarnings("serial")
@@ -120,6 +117,11 @@ public class NodeLayoutBehaviorTests {
 					host.setParent(rootPart);
 				}
 				return host;
+			}
+
+			@Override
+			protected GraphNodeLayout getNodeLayout() {
+				return pNodeLayout;
 			}
 		};
 		return behavior;

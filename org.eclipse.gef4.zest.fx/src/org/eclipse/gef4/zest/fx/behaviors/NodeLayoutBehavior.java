@@ -36,19 +36,12 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	public static Class<FXResizeRelocatePolicy> RESIZE_RELOCATE_POLICY_KEY = FXResizeRelocatePolicy.class;
 
-	protected GraphNodeLayout nodeLayout;
-
 	public NodeLayoutBehavior() {
 	}
 
 	@Override
 	public void activate() {
 		super.activate();
-		nodeLayout = getLayoutModel().getNodeLayout(getHost().getContent());
-		if (nodeLayout == null) {
-			throw new IllegalStateException(
-					"Cannot find INodeLayout in LayoutModel.");
-		}
 	}
 
 	public void adaptLayoutInformation() {
@@ -65,6 +58,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			double w = layoutBounds.getWidth();
 			double h = layoutBounds.getHeight();
 
+			GraphNodeLayout nodeLayout = getNodeLayout();
 			Point location = LayoutProperties.getLocation(nodeLayout);
 			Dimension size = LayoutProperties.getSize(nodeLayout);
 
@@ -99,6 +93,17 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 				.getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
 		return graphPart.getAdapter(LayoutModel.class);
+	}
+
+	protected GraphNodeLayout getNodeLayout() {
+		// TODO: use event to update node layout
+		GraphNodeLayout nodeLayout = getLayoutModel().getNodeLayout(
+				getHost().getContent());
+		if (nodeLayout == null) {
+			throw new IllegalStateException(
+					"Cannot find INodeLayout in LayoutModel.");
+		}
+		return nodeLayout;
 	}
 
 	@Override
@@ -139,6 +144,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 				FXTransformPolicy.class);
 		Affine transform = txPolicy.getNodeTransform();
 
+		GraphNodeLayout nodeLayout = getNodeLayout();
 		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx,
 				transform.getTy() + miny);
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
