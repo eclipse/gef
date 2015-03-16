@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
@@ -33,13 +34,23 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 
-	private ISceneContainer sceneContainer;
-	private Scene scene = null;
-	private ScrollPaneEx scrollPane;
-	private FXGridLayer gridLayer;
+	protected ISceneContainer sceneContainer;
+	protected Scene scene = null;
+	protected ScrollPaneEx scrollPane;
+	protected FXGridLayer gridLayer;
 
+	/**
+	 * Creates a {@link Scene}, inserts the given root visual into it, and sets
+	 * that {@link Scene} on the given {@link ISceneContainer}.
+	 *
+	 * @param container
+	 *            The container for the {@link Scene}.
+	 * @param rootVisual
+	 *            The visual of the {@link FXRootPart}.
+	 */
 	@SuppressWarnings("unchecked")
-	private void createAndHookScene(ISceneContainer container, Parent rootVisual) {
+	protected void createAndHookScene(ISceneContainer container,
+			Parent rootVisual) {
 		scrollPane = new ScrollPaneEx();
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
 
