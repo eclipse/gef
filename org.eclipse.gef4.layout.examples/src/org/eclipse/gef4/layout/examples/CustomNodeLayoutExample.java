@@ -25,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import org.eclipse.gef4.common.inject.AdaptableScopes;
@@ -85,13 +86,9 @@ public class CustomNodeLayoutExample extends AbstractZestExample {
 		private VBox vbox;
 
 		@Override
-		protected void autosizeNodeVisual() {
-			vbox.autosize();
-		}
-
-		@Override
-		protected void createNodeVisual(Group group, ImageView iconImageView,
-				Text labelText, StackPane nestedContentStackPane) {
+		protected void createNodeVisual(Group group, Rectangle rect,
+				ImageView iconImageView, Text labelText,
+				StackPane nestedContentStackPane) {
 			ImageView ian = new ImageView(new Image(getClass().getResource(
 					"ibull.jpg").toExternalForm()));
 			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90,

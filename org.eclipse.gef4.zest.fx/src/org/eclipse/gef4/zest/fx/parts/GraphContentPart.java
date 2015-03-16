@@ -108,7 +108,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		super.doActivate();
 		getContent().addPropertyChangeListener(graphPropertyChangeListener);
 		pcs.firePropertyChange(ACTIVATION_COMPLETE_PROPERTY, false, true);
-		setGraphLayoutAlgorithm();
+		refreshVisual();
 	}
 
 	@Override
@@ -121,6 +121,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public void doRefreshVisual(Group visual) {
 		// set layout algorithm from Graph on the context
 		setGraphLayoutAlgorithm();
+		// TODO: setGraphStyleSheet();
 	}
 
 	@Override

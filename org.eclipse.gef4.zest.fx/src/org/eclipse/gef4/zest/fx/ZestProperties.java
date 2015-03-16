@@ -42,12 +42,12 @@ public class ZestProperties {
 		return (String) node.getAttrs().get(ELEMENT_CSS_ID);
 	}
 
-	public static String getCssStyle(Edge edge) {
-		return (String) edge.getAttrs().get(ELEMENT_CSS_STYLE);
+	public static String getEdgeCurveCssStyle(Edge edge) {
+		return (String) edge.getAttrs().get(EDGE_CURVE_CSS_STYLE);
 	}
 
-	public static String getCssStyle(Node node) {
-		return (String) node.getAttrs().get(ELEMENT_CSS_STYLE);
+	public static String getEdgeLabelCssStyle(Edge edge) {
+		return (String) edge.getAttrs().get(EDGE_LABEL_CSS_STYLE);
 	}
 
 	public static Boolean getFisheye(Node node, boolean returnDefaultIfMissing) {
@@ -106,6 +106,14 @@ public class ZestProperties {
 				: null;
 	}
 
+	public static String getNodeRectCssStyle(Node node) {
+		return (String) node.getAttrs().get(NODE_RECT_CSS_STYLE);
+	}
+
+	public static String getNodeLabelCssStyle(Node node) {
+		return (String) node.getAttrs().get(NODE_LABEL_CSS_STYLE);
+	}
+
 	public static String getStyle(Edge edge) {
 		return (String) edge.getAttrs().get(EDGE_STYLE);
 	}
@@ -141,12 +149,12 @@ public class ZestProperties {
 		node.getAttrs().put(ELEMENT_CSS_ID, cssId);
 	}
 
-	public static void setCssStyle(Edge edge, String cssStyle) {
-		edge.getAttrs().put(ELEMENT_CSS_STYLE, cssStyle);
+	public static void setEdgeConnCssStyle(Edge edge, String connCssStyle) {
+		edge.getAttrs().put(EDGE_CURVE_CSS_STYLE, connCssStyle);
 	}
 
-	public static void setCssStyle(Node node, String cssStyle) {
-		node.getAttrs().put(ELEMENT_CSS_STYLE, cssStyle);
+	public static void setEdgeTextCssStyle(Edge edge, String textCssStyle) {
+		edge.getAttrs().put(EDGE_LABEL_CSS_STYLE, textCssStyle);
 	}
 
 	public static void setFisheye(Node node, Boolean fisheye) {
@@ -181,6 +189,14 @@ public class ZestProperties {
 		node.getAttrs().put(ELEMENT_LAYOUT_IRRELEVANT, layoutIrrelevant);
 	}
 
+	public static void setNodeRectCssStyle(Node node, String rectCssStyle) {
+		node.getAttrs().put(NODE_RECT_CSS_STYLE, rectCssStyle);
+	}
+
+	public static void setNodeTextCssStyle(Node node, String textCssStyle) {
+		node.getAttrs().put(NODE_LABEL_CSS_STYLE, textCssStyle);
+	}
+
 	public static void setStyle(Edge edge, String style) {
 		if (!EDGE_STYLE_VALUES.contains(style)) {
 			throw new IllegalArgumentException("Cannot set edge attribute \""
@@ -208,18 +224,23 @@ public class ZestProperties {
 	 * for laying out, i.e. it should be filtered before laying out.
 	 */
 	public static final String ELEMENT_LAYOUT_IRRELEVANT = "layoutIrrelevant";
-
 	public static final Boolean ELEMENT_LAYOUT_IRRELEVANT_DEFAULT = false;
+
+	public static final String NODE_RECT_CSS_STYLE = "node-rect-css-style";
+	public static final String NODE_LABEL_CSS_STYLE = "node-label-css-style";
+
+	public static final String EDGE_CURVE_CSS_STYLE = "edge-curve-css-style";
+	public static final String EDGE_LABEL_CSS_STYLE = "edge-label-css-style";
+
 	public static final String ELEMENT_CSS_CLASS = "css-class";
 	public static final String ELEMENT_CSS_ID = "css-id";
-	public static final String ELEMENT_CSS_STYLE = "css-style";
-
 	public static final String ELEMENT_LABEL = "label";
+
 	public static final String NODE_ICON = "icon";
 	public static final String NODE_TOOLTIP = "tooltip";
 	public static final String NODE_FISHEYE = "fisheye";
-
 	public static final String NODE_HIDDEN = "hidden";
+
 	public static final String EDGE_STYLE = "style";
 	public static final String EDGE_STYLE_DASHED = "dashed";
 	public static final String EDGE_STYLE_DOTTED = "dotted";

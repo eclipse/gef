@@ -91,6 +91,10 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	// CSS classes for styling nodes
 	public static final String CSS_CLASS = "node";
+	public static final String CSS_CLASS_SHAPE = "shape";
+	public static final String CSS_CLASS_LABEL = "label";
+	public static final String CSS_CLASS_ICON = "icon";
+
 	private static final String NODE_LABEL_EMPTY = "-";
 
 	private Text labelText;
@@ -103,6 +107,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	private Tooltip tooltipNode;
 	private HBox hbox;
 	private VBox vbox;
+	private Rectangle rect;
 
 	private EventHandler<? super MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -142,9 +147,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		getNestedChildrenPane().getChildren().add(index, child.getVisual());
 	}
 
-	protected void autosizeNodeVisual() {
-	}
-
 	protected Pane createNestedContentPane() {
 		Pane pane = new Pane();
 		pane.setStyle("-fx-background-color: white;");
@@ -158,10 +160,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		StackPane stackPane = new StackPane();
 		stackPane.getChildren().add(new Group(nestedContentPane));
 		return stackPane;
-	}
-
-	private NestedGraphIcon createNestedGraphIcon() {
-		return new NestedGraphIcon();
 	}
 
 	/**
@@ -179,7 +177,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 * @param nestedContentStackPane
 	 *            The {@link StackPane} displaying the node's nested content.
 	 */
-	protected void createNodeVisual(final Group group,
+	protected void createNodeVisual(final Group group, final Rectangle rect,
 			final ImageView iconImageView, final Text labelText,
 			final StackPane nestedContentStackPane) {
 		// put image and text next to each other at the top of the node
@@ -192,12 +190,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		vbox.setMouseTransparent(true);
 		vbox.getChildren().addAll(hbox, nestedContentStackPane);
 
-		// create box for border and background
-		final Rectangle box = new Rectangle();
-		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
-				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
-		box.setStroke(new Color(0, 0, 0, 1));
-
 		// expand box depending on content size
 		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
@@ -205,13 +197,13 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 					Bounds oldValue, Bounds newValue) {
 				vbox.setTranslateX(getPadding());
 				vbox.setTranslateY(getPadding());
-				box.setWidth(vbox.getWidth() + 2 * getPadding());
-				box.setHeight(vbox.getHeight() + 2 * getPadding());
+				rect.setWidth(vbox.getWidth() + 2 * getPadding());
+				rect.setHeight(vbox.getHeight() + 2 * getPadding());
 			}
 		});
 
 		// place the box below the other visuals
-		group.getChildren().addAll(box, vbox);
+		group.getChildren().addAll(rect, vbox);
 	}
 
 	@Override
@@ -237,20 +229,29 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			}
 		};
 
+		// create box for border and background
+		rect = new Rectangle();
+		rect.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
+				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
+		rect.setStroke(new Color(0, 0, 0, 1));
+		rect.getStyleClass().add(CSS_CLASS_SHAPE);
+
 		nestedChildrenPane = createNestedContentPane();
 		nestedContentStackPane = createNestedContentStackPane(nestedChildrenPane);
 
 		// initialize image view
 		iconImageView = new ImageView();
 		iconImageView.setImage(null);
+		iconImageView.getStyleClass().add(CSS_CLASS_ICON);
 
 		// initialize text
 		labelText = new Text();
 		labelText.setTextOrigin(VPos.TOP);
 		labelText.setText(NODE_LABEL_EMPTY);
+		labelText.getStyleClass().add(CSS_CLASS_LABEL);
 
 		// build node visual
-		createNodeVisual(group, iconImageView, labelText,
+		createNodeVisual(group, rect, iconImageView, labelText,
 				nestedContentStackPane);
 
 		return group;
@@ -279,23 +280,25 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// set CSS class
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
-		Map<String, Object> attrs = getContent().getAttrs();
+		org.eclipse.gef4.graph.Node node = getContent();
+		Map<String, Object> attrs = node.getAttrs();
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
-			refreshCssClass(visual,
-					(String) attrs.get(ZestProperties.ELEMENT_CSS_CLASS));
+			refreshCssClass(visual, ZestProperties.getCssClass(node));
 		}
 
 		// set CSS id
 		String id = null;
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
-			id = (String) attrs.get(ZestProperties.ELEMENT_CSS_ID);
+			id = ZestProperties.getCssId(node);
 		}
 		visual.setId(id);
 
 		// set CSS style
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_STYLE)) {
-			visual.setStyle((String) attrs
-					.get(ZestProperties.ELEMENT_CSS_STYLE));
+		if (attrs.containsKey(ZestProperties.NODE_RECT_CSS_STYLE)) {
+			rect.setStyle(ZestProperties.getNodeRectCssStyle(node));
+		}
+		if (attrs.containsKey(ZestProperties.NODE_LABEL_CSS_STYLE)) {
+			labelText.setStyle(ZestProperties.getNodeLabelCssStyle(node));
 		}
 
 		// determine label
@@ -339,6 +342,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		return Collections.emptyList();
 	}
 
+	protected ImageView getIconImageView() {
+		return iconImageView;
+	}
+
+	protected Text getLabelText() {
+		return labelText;
+	}
+
 	public Pane getNestedChildrenPane() {
 		return nestedChildrenPane;
 	}
@@ -349,6 +360,10 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	protected Node getNestedGraphIcon() {
 		return nestedGraphIcon;
+	}
+
+	protected Rectangle getNodeRect() {
+		return rect;
 	}
 
 	protected double getPadding() {
@@ -367,7 +382,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		return getContent().getNestedGraph() != null;
 	}
 
-	private void refreshCssClass(Group visual, String cssClass) {
+	protected void refreshCssClass(Group visual, String cssClass) {
 		visual.getStyleClass().add(cssClass);
 	}
 
@@ -449,13 +464,13 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	protected void refreshTooltip(Group visual, Object tooltip) {
-		if (tooltipNode != null) {
-			Tooltip.uninstall(visual, tooltipNode);
-			tooltipNode = null;
-		}
 		if (tooltip instanceof String) {
-			tooltipNode = new Tooltip((String) tooltip);
-			Tooltip.install(visual, tooltipNode);
+			if (tooltipNode == null) {
+				tooltipNode = new Tooltip((String) tooltip);
+				Tooltip.install(visual, tooltipNode);
+			} else {
+				tooltipNode.setText((String) tooltip);
+			}
 		}
 	}
 
@@ -530,7 +545,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	protected void showNestedGraphIcon() {
 		if (getNestedGraphIcon() == null) {
-			setNestedGraphIcon(createNestedGraphIcon());
+			setNestedGraphIcon(new NestedGraphIcon());
 			getNestedContentStackPane().getChildren().add(getNestedGraphIcon());
 		}
 	}

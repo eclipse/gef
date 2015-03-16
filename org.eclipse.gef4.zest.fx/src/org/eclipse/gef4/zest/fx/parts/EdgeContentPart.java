@@ -82,8 +82,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			text.setManaged(false);
 		}
 
-		public String getLabel() {
-			return text.getText();
+		public Text getLabelText() {
+			return text;
 		}
 
 		@Override
@@ -104,10 +104,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			}
 		}
 
-		public void setLabel(String label) {
-			text.setText(label);
-		}
-
 	}
 
 	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
@@ -120,6 +116,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	};
 
 	public static final String CSS_CLASS = "edge";
+	public static final String CSS_CLASS_CURVE = "curve";
+	public static final String CSS_CLASS_LABEL = "label";
 
 	private static final double GAP_LENGTH = 7d;
 	private static final double DASH_LENGTH = 7d;
@@ -146,7 +144,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	protected FXLabeledConnection createVisual() {
 		FXLabeledConnection visual = new FXLabeledConnection();
 		visual.getStyleClass().add(CSS_CLASS);
-		visual.getCurveNode().getStyleClass().add("curve");
+		visual.getCurveNode().getStyleClass().add(CSS_CLASS_CURVE);
+		visual.getLabelText().getStyleClass().add(CSS_CLASS_LABEL);
 		return visual;
 	}
 
@@ -185,6 +184,40 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			return;
 		}
 
+		Edge edge = getContent();
+		Map<String, Object> attrs = edge.getAttrs();
+		FXGeometryNode<ICurve> curveNode = visual.getCurveNode();
+
+		// css class
+		visual.getStyleClass().clear();
+		visual.getStyleClass().add(CSS_CLASS);
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
+			String cssClass = ZestProperties.getCssClass(edge);
+			visual.getStyleClass().add(cssClass);
+		}
+
+		// css id
+		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
+			String cssId = ZestProperties.getCssId(edge);
+			visual.setId(cssId);
+		}
+
+		// css style
+		if (attrs.containsKey(ZestProperties.EDGE_CURVE_CSS_STYLE)) {
+			String connCssStyle = ZestProperties.getEdgeCurveCssStyle(edge);
+			curveNode.setStyle(connCssStyle);
+		}
+		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
+			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);
+			visual.getLabelText().setStyle(textCssStyle);
+		}
+
+		// label
+		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
+		if (label instanceof String) {
+			visual.getLabelText().setText((String) label);
+		}
+
 		// decoration
 		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(
 				glc.getGraph(), true))) {
@@ -193,11 +226,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			visual.setEndDecoration(null);
 		}
 
-		// TODO: visibility
-		FXGeometryNode<ICurve> curveNode = visual.getCurveNode();
-
 		// dashes
-		Object style = getContent().getAttrs().get(ZestProperties.EDGE_STYLE);
+		Object style = attrs.get(ZestProperties.EDGE_STYLE);
 		if (style == ZestProperties.EDGE_STYLE_DASHED) {
 			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
 		} else if (style == ZestProperties.EDGE_STYLE_DASHDOT) {
@@ -214,9 +244,9 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 
 		// visibility
 		IContentPart<Node, ? extends Node> sourcePart = getViewer()
-				.getContentPartMap().get(getContent().getSource());
+				.getContentPartMap().get(edge.getSource());
 		IContentPart<Node, ? extends Node> targetPart = getViewer()
-				.getContentPartMap().get(getContent().getTarget());
+				.getContentPartMap().get(edge.getTarget());
 
 		if (sourcePart != null && targetPart != null
 				&& sourcePart.getVisual().isVisible()
@@ -257,20 +287,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
 		final FXLabeledConnection visual = getVisual();
-		Edge edge = (Edge) content;
-
-		Map<String, Object> attrs = edge.getAttrs();
-		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
-		if (label instanceof String) {
-			visual.setLabel((String) label);
-		}
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
-			visual.getStyleClass().add(
-					(String) attrs.get(ZestProperties.ELEMENT_CSS_CLASS));
-		}
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
-			visual.setId((String) attrs.get(ZestProperties.ELEMENT_CSS_ID));
-		}
 		setAdapter(
 				AdapterKey
 						.get(Provider.class,

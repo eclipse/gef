@@ -1,21 +1,21 @@
 /*
  * classes:
  * .node: node visual
- * .node Rectangle: background rectangle of the node
- * .node Text: label of the node
- * .node ImageView: image of the node
+ * .node .shape: background rectangle of the node
+ * .node .label: label of the node
+ * .node .icon: icon of the node
  * .edge: connection visual
  * .edge .curve: connection line
- * .edge Text: connection label
- * .decoration: start/end arrow of a connection
+ * .edge .label: connection label
+ * .edge .decoration: start/end arrow of a connection
  */
 
-.node Rectangle {
+.node .shape {
 	-fx-fill: rgb(135, 150, 220);
 	-fx-stroke: rgb(99, 123, 71);
 }
 
-.node Text {
+.node .label {
 	-fx-fill: white;
 }
 
@@ -24,11 +24,11 @@
 	-fx-stroke-width: 1.5px;
 }
 
-.edge Text {
+.edge .label {
 	-fx-fill: black;
 }
 
-.decoration {
+.edge .decoration {
 	-fx-stroke: rgb(99, 123, 71);
 	-fx-stroke-width: 1.5px;
 	-fx-fill: white;

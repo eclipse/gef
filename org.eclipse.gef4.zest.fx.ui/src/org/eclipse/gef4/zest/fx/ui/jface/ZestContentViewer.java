@@ -36,24 +36,33 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.util.Modules;
 
 public class ZestContentViewer extends ContentViewer {
 
@@ -131,10 +140,12 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	protected Module createModule() {
-		// TODO:
-		// return Modules.override(new ZestFxUiModule()).with(new
-		// ZestFxModule());
-		return new ZestFxModule();
+		if (PlatformUI.isWorkbenchRunning()) {
+			return Modules.override(new ZestFxUiModule()).with(
+					new ZestFxModule());
+		} else {
+			return new ZestFxModule();
+		}
 	}
 
 	protected Node createNode(Map<Object, Node> contentToGraphMap, Object node,
@@ -148,26 +159,77 @@ public class ZestContentViewer extends ContentViewer {
 		Node graphNode = new Node();
 		contentToGraphMap.put(node, graphNode);
 
-		// retrieve label
+		// label
 		String label = labelProvider.getText(node);
-		Image icon = labelProvider.getImage(node);
+		ZestProperties.setLabel(graphNode, label);
 
-		// transfer label information into node properties
-		graphNode.getAttrs().put(ZestProperties.ELEMENT_LABEL, label);
-		graphNode.getAttrs().put(ZestProperties.NODE_ICON,
+		// icon
+		Image icon = labelProvider.getImage(node);
+		ZestProperties.setIcon(graphNode,
 				SWTFXUtils.toFXImage(icon.getImageData(), null));
 
-		// TODO: color, etc.
-		// if (labelProvider instanceof IColorProvider) {
-		// }
+		// tooltip
+		if (labelProvider instanceof IToolTipProvider) {
+			IToolTipProvider toolTipProvider = (IToolTipProvider) labelProvider;
+			String toolTipText = toolTipProvider.getToolTipText(node);
+			ZestProperties.setTooltip(graphNode, toolTipText);
+		}
+
+		String textCssStyle = null;
+
+		// colors
+		if (labelProvider instanceof IColorProvider) {
+			IColorProvider colorProvider = (IColorProvider) labelProvider;
+			Color foreground = colorProvider.getForeground(node);
+			Color background = colorProvider.getBackground(node);
+			ZestProperties.setNodeRectCssStyle(graphNode, "-fx-fill: "
+					+ toCssRgb(background) + "; -fx-stroke: "
+					+ toCssRgb(foreground) + ";");
+			textCssStyle = "-fx-fill: " + toCssRgb(foreground) + ";";
+		}
+
+		// font
+		if (labelProvider instanceof IFontProvider) {
+			IFontProvider fontProvider = (IFontProvider) labelProvider;
+			Font font = fontProvider.getFont(node);
+
+			FontData[] fontData = font.getFontData();
+
+			String name = fontData[0].getName();
+			int size = fontData[0].getHeight();
+			int style = fontData[0].getStyle();
+
+			// TODO: support all SWT font styles
+			boolean isBold = (style & SWT.BOLD) != 0;
+			boolean isItalic = (style & SWT.ITALIC) != 0;
+
+			if (textCssStyle == null) {
+				textCssStyle = "";
+			}
+			textCssStyle = textCssStyle + "-fx-font-family: " + name + ";"
+					+ "-fx-font-size: " + size + "pt;";
+			if (isItalic) {
+				textCssStyle = textCssStyle + "-fx-font-style: italic;";
+			}
+			if (isBold) {
+				textCssStyle = textCssStyle + "-fx-font-weight: bold;";
+			}
+		}
+
+		ZestProperties.setNodeTextCssStyle(graphNode, textCssStyle);
 
 		// create nested graph (optional)
 		if (graphNodeProvider instanceof INestedGraphContentProvider) {
 			INestedGraphContentProvider nestedGraphProvider = (INestedGraphContentProvider) graphNodeProvider;
-			Graph graph = new Graph();
-			Object[] nodes = nestedGraphProvider.getChildren(graphNode);
-			createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
-			graph.setNestingNode(graphNode);
+			if (nestedGraphProvider.hasChildren(node)) {
+				Graph graph = new Graph();
+				// TODO: graph attributes
+				ZestProperties.setLayout(graph, layoutAlgorithm);
+				Object[] nodes = nestedGraphProvider.getChildren(node);
+				createNodesAndEdges(graphNodeProvider, labelProvider, graph,
+						nodes);
+				graph.setNestingNode(graphNode);
+			}
 		}
 
 		return graphNode;
@@ -285,6 +347,11 @@ public class ZestContentViewer extends ContentViewer {
 				}
 			}
 		}
+	}
+
+	protected String toCssRgb(Color color) {
+		return "rgb(" + color.getRed() + "," + color.getGreen() + ","
+				+ color.getBlue() + ")";
 	}
 
 }
