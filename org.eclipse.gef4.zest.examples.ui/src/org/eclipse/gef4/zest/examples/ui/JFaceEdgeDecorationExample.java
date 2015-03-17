@@ -14,10 +14,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.ui;
 
+import javafx.scene.Node;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polyline;
+
+import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.zest.fx.ui.jface.IEdgeDecorationProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeContentProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.ZestContentViewer;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -25,14 +31,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class JFaceFontsExample {
+public class JFaceEdgeDecorationExample {
 
 	static class MyContentProvider implements IGraphNodeContentProvider {
 		private Object input;
@@ -80,7 +85,50 @@ public class JFaceFontsExample {
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements IFontProvider {
+	static class CircleHead extends Circle implements IFXDecoration {
+		public CircleHead() {
+			super(5);
+		}
+
+		@Override
+		public Point getLocalEndPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Point getLocalStartPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Node getVisual() {
+			return this;
+		}
+	}
+
+	static class DiamondHead extends Polyline implements IFXDecoration {
+		public DiamondHead() {
+			super(15.0, 0.0, 7.5, -7.5, 0.0, 0.0, 7.5, 7.5, 15.0, 0.0);
+		}
+
+		@Override
+		public Point getLocalEndPoint() {
+			return new Point(15, 0);
+		}
+
+		@Override
+		public Point getLocalStartPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Node getVisual() {
+			return this;
+		}
+	}
+
+	static class MyLabelProvider extends LabelProvider implements
+			IEdgeDecorationProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -93,10 +141,15 @@ public class JFaceFontsExample {
 		}
 
 		@Override
-		public Font getFont(Object element) {
-			return new Font(Display.getCurrent(), "Helvetica", element
-					.toString().startsWith("F") ? 12 : 24, element.toString()
-					.startsWith("S") ? SWT.BOLD : SWT.ITALIC);
+		public IFXDecoration getSourceDecoration(Object contentSourceNode,
+				Object contentTargetNode) {
+			return new CircleHead();
+		}
+
+		@Override
+		public IFXDecoration getTargetDecoration(Object contentSourceNode,
+				Object contentTargetNode) {
+			return new DiamondHead();
 		}
 	}
 

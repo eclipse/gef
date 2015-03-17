@@ -14,10 +14,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
+import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeContentProvider;
+import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeLabelProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.ZestContentViewer;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -25,14 +34,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class JFaceFontsExample {
+public class JFaceEdgeRouterExample {
 
 	static class MyContentProvider implements IGraphNodeContentProvider {
 		private Object input;
@@ -80,7 +88,41 @@ public class JFaceFontsExample {
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements IFontProvider {
+	protected static IFXConnectionRouter getManhattenRouter() {
+		return new IFXConnectionRouter() {
+			@Override
+			public ICurve routeConnection(Point[] points) {
+				if (points == null || points.length < 2) {
+					return new org.eclipse.gef4.geometry.planar.Polyline(0, 0,
+							0, 0);
+				}
+				List<Point> manhattenPoints = new ArrayList<Point>();
+				Point start = points[0];
+				Point end = points[points.length - 1];
+				Point mid = start.getTranslated(end).getScaled(0.5);
+				boolean isHorizontal = Math.abs(end.x - start.x) > Math
+						.abs(end.y - start.y);
+
+				manhattenPoints.add(start);
+				if (isHorizontal) {
+					manhattenPoints.add(new Point(mid.x, start.y));
+					manhattenPoints.add(new Point(mid.x, mid.y));
+					manhattenPoints.add(new Point(mid.x, end.y));
+				} else {
+					manhattenPoints.add(new Point(start.x, mid.y));
+					manhattenPoints.add(new Point(mid.x, mid.y));
+					manhattenPoints.add(new Point(end.x, mid.y));
+				}
+				manhattenPoints.add(end);
+
+				return new org.eclipse.gef4.geometry.planar.Polyline(
+						manhattenPoints.toArray(new Point[] {}));
+			}
+		};
+	}
+
+	static class MyLabelProvider extends LabelProvider implements
+			IGraphNodeLabelProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -93,10 +135,20 @@ public class JFaceFontsExample {
 		}
 
 		@Override
-		public Font getFont(Object element) {
-			return new Font(Display.getCurrent(), "Helvetica", element
-					.toString().startsWith("F") ? 12 : 24, element.toString()
-					.startsWith("S") ? SWT.BOLD : SWT.ITALIC);
+		public Map<String, Object> getEdgeAttributes(Object sourceNode,
+				Object targetNode) {
+			return Collections.singletonMap(ZestProperties.EDGE_ROUTER,
+					(Object) getManhattenRouter());
+		}
+
+		@Override
+		public Map<String, Object> getNodeAttributes(Object node) {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getRootGraphAttributes() {
+			return null;
 		}
 	}
 

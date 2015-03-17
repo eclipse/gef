@@ -14,10 +14,31 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.ui;
 
+import java.util.Collections;
+import java.util.Map;
+
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+
+import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeContentProvider;
+import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeLabelProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.ZestContentViewer;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -25,14 +46,19 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class JFaceFontsExample {
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
+
+public class JFaceCustomNodeExample {
+
+	private static final String ATTR_CUSTOM = "custom";
 
 	static class MyContentProvider implements IGraphNodeContentProvider {
 		private Object input;
@@ -80,7 +106,8 @@ public class JFaceFontsExample {
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements IFontProvider {
+	static class MyLabelProvider extends LabelProvider implements
+			IGraphNodeLabelProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -93,10 +120,77 @@ public class JFaceFontsExample {
 		}
 
 		@Override
-		public Font getFont(Object element) {
-			return new Font(Display.getCurrent(), "Helvetica", element
-					.toString().startsWith("F") ? 12 : 24, element.toString()
-					.startsWith("S") ? SWT.BOLD : SWT.ITALIC);
+		public Map<String, Object> getEdgeAttributes(Object sourceNode,
+				Object targetNode) {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getNodeAttributes(Object node) {
+			if (node.toString().startsWith("T")) {
+				return Collections.singletonMap(ATTR_CUSTOM, null);
+			}
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getRootGraphAttributes() {
+			return null;
+		}
+	}
+
+	public static class CustomContentPartFactory extends ContentPartFactory {
+		@Inject
+		private Injector injector;
+
+		@Override
+		public IContentPart<Node, ? extends Node> createContentPart(
+				Object content, IBehavior<Node> contextBehavior,
+				Map<Object, Object> contextMap) {
+			if (content instanceof org.eclipse.gef4.graph.Node) {
+				// create custom node if we find the custom attribute
+				org.eclipse.gef4.graph.Node n = (org.eclipse.gef4.graph.Node) content;
+				if (n.getAttrs().containsKey(ATTR_CUSTOM)) {
+					CustomNodeContentPart part = new CustomNodeContentPart();
+					if (part != null) {
+						injector.injectMembers(part);
+					}
+					return part;
+				}
+			}
+			return super
+					.createContentPart(content, contextBehavior, contextMap);
+		}
+	}
+
+	public static class CustomModule extends ZestFxModule {
+		@Override
+		protected void bindIContentPartFactory() {
+			binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+			}).to(CustomContentPartFactory.class)
+					.in(AdaptableScopes.typed(FXViewer.class));
+		}
+	}
+
+	public static class CustomNodeContentPart extends NodeContentPart {
+		private VBox vbox;
+
+		@Override
+		protected void createNodeVisual(Group group, Rectangle rect,
+				ImageView iconImageView, Text labelText,
+				StackPane nestedContentStackPane) {
+			ImageView ian = new ImageView(new javafx.scene.image.Image(
+					getClass().getResource("ibull.jpg").toExternalForm()));
+			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90,
+					0, 60, 0, 25, 25, 0, 0, 25, -25, 0);
+			body.setTranslateX(ian.getLayoutBounds().getWidth() / 2
+					- body.getLayoutBounds().getWidth() / 2 - 5);
+			body.setTranslateY(-15);
+			vbox = new VBox();
+			vbox.getChildren().addAll(ian, body, labelText, iconImageView,
+					nestedContentStackPane);
+			group.getChildren().add(vbox);
+			labelText.setStroke(Color.BLACK);
 		}
 	}
 
@@ -116,7 +210,7 @@ public class JFaceFontsExample {
 			}
 		});
 
-		viewer = new ZestContentViewer();
+		viewer = new ZestContentViewer(new CustomModule());
 		viewer.createControl(shell, SWT.NONE);
 		viewer.setContentProvider(new MyContentProvider());
 		viewer.setLabelProvider(new MyLabelProvider());

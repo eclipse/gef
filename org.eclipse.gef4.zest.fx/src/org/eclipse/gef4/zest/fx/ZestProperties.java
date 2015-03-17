@@ -19,6 +19,8 @@ import java.util.Set;
 
 import javafx.scene.image.Image;
 
+import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
+import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -106,16 +108,28 @@ public class ZestProperties {
 				: null;
 	}
 
-	public static String getNodeRectCssStyle(Node node) {
-		return (String) node.getAttrs().get(NODE_RECT_CSS_STYLE);
-	}
-
 	public static String getNodeLabelCssStyle(Node node) {
 		return (String) node.getAttrs().get(NODE_LABEL_CSS_STYLE);
 	}
 
+	public static String getNodeRectCssStyle(Node node) {
+		return (String) node.getAttrs().get(NODE_RECT_CSS_STYLE);
+	}
+
+	public static IFXConnectionRouter getRouter(Edge edge) {
+		return (IFXConnectionRouter) edge.getAttrs().get(EDGE_ROUTER);
+	}
+
+	public static IFXDecoration getSourceDecoration(Edge edge) {
+		return (IFXDecoration) edge.getAttrs().get(EDGE_SOURCE_DECORATION);
+	}
+
 	public static String getStyle(Edge edge) {
 		return (String) edge.getAttrs().get(EDGE_STYLE);
+	}
+
+	public static IFXDecoration getTargetDecoration(Edge edge) {
+		return (IFXDecoration) edge.getAttrs().get(EDGE_TARGET_DECORATION);
 	}
 
 	public static String getTooltip(Node node) {
@@ -197,6 +211,15 @@ public class ZestProperties {
 		node.getAttrs().put(NODE_LABEL_CSS_STYLE, textCssStyle);
 	}
 
+	public static void setRouter(Edge edge, IFXConnectionRouter router) {
+		edge.getAttrs().put(EDGE_ROUTER, router);
+	}
+
+	public static void setSourceDecoration(Edge edge,
+			IFXDecoration sourceDecoration) {
+		edge.getAttrs().put(EDGE_SOURCE_DECORATION, sourceDecoration);
+	}
+
 	public static void setStyle(Edge edge, String style) {
 		if (!EDGE_STYLE_VALUES.contains(style)) {
 			throw new IllegalArgumentException("Cannot set edge attribute \""
@@ -204,6 +227,11 @@ public class ZestProperties {
 					+ "\"; supported values: " + EDGE_STYLE_VALUES);
 		}
 		edge.getAttrs().put(EDGE_STYLE, style);
+	}
+
+	public static void setTargetDecoration(Edge edge,
+			IFXDecoration targetDecoration) {
+		edge.getAttrs().put(EDGE_TARGET_DECORATION, targetDecoration);
 	}
 
 	public static void setTooltip(Node node, String tooltip) {
@@ -226,20 +254,25 @@ public class ZestProperties {
 	public static final String ELEMENT_LAYOUT_IRRELEVANT = "layoutIrrelevant";
 	public static final Boolean ELEMENT_LAYOUT_IRRELEVANT_DEFAULT = false;
 
+	public static final String ELEMENT_CSS_CLASS = "css-class";
+	public static final String ELEMENT_CSS_ID = "css-id";
+	public static final String ELEMENT_LABEL = "label";
+
 	public static final String NODE_RECT_CSS_STYLE = "node-rect-css-style";
 	public static final String NODE_LABEL_CSS_STYLE = "node-label-css-style";
 
 	public static final String EDGE_CURVE_CSS_STYLE = "edge-curve-css-style";
 	public static final String EDGE_LABEL_CSS_STYLE = "edge-label-css-style";
 
-	public static final String ELEMENT_CSS_CLASS = "css-class";
-	public static final String ELEMENT_CSS_ID = "css-id";
-	public static final String ELEMENT_LABEL = "label";
-
 	public static final String NODE_ICON = "icon";
 	public static final String NODE_TOOLTIP = "tooltip";
 	public static final String NODE_FISHEYE = "fisheye";
 	public static final String NODE_HIDDEN = "hidden";
+
+	public static final String EDGE_TARGET_DECORATION = "target-decoration";
+	public static final String EDGE_SOURCE_DECORATION = "source-decoration";
+
+	public static final String EDGE_ROUTER = "edge-router";
 
 	public static final String EDGE_STYLE = "style";
 	public static final String EDGE_STYLE_DASHED = "dashed";
@@ -250,8 +283,8 @@ public class ZestProperties {
 	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
 			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
 					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
-
 	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
+
 	public static final String GRAPH_TYPE = "type";
 	public static final String GRAPH_TYPE_DIRECTED = "directed";
 	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";

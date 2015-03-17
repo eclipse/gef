@@ -14,10 +14,40 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.ui.jface;
 
+
+/**
+ * The {@link INestedGraphContentProvider} extends the
+ * {@link IGraphNodeContentProvider} with parent-child-relations. You can use
+ * this to express nested graphs.
+ *
+ * @author wienand
+ *
+ */
 public interface INestedGraphContentProvider extends IGraphNodeContentProvider {
 
+	/**
+	 * Returns the nested children of the node represented by the given content
+	 * element. If the node does not have nested children, either an empty array
+	 * or <code>null</code> is returned.
+	 *
+	 * @param node
+	 *            A content element that represents a node, according to the
+	 *            {@link #getNodes()} method.
+	 * @return The nested children of the node represented by the given content
+	 *         element.
+	 */
 	public Object[] getChildren(Object node);
 
+	/**
+	 * Determines whether the node represented by the given content element has
+	 * nested children.
+	 *
+	 * @param node
+	 *            A content element that represents a node, according to the
+	 *            {@link #getNodes()} method.
+	 * @return <code>true</code> when the node represented by the given content
+	 *         element has nested children, otherwise <code>false</code>.
+	 */
 	public boolean hasChildren(Object node);
 
 }

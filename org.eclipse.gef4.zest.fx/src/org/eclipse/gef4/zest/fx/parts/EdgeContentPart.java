@@ -27,6 +27,7 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -218,12 +219,30 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 			visual.getLabelText().setText((String) label);
 		}
 
-		// decoration
+		// default decoration for directed graphs
 		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(
 				glc.getGraph(), true))) {
 			visual.setEndDecoration(new ArrowHead());
 		} else {
 			visual.setEndDecoration(null);
+		}
+
+		// custom decoration
+		IFXDecoration sourceDecoration = ZestProperties
+				.getSourceDecoration(edge);
+		if (sourceDecoration != null) {
+			visual.setStartDecoration(sourceDecoration);
+		}
+		IFXDecoration targetDecoration = ZestProperties
+				.getTargetDecoration(edge);
+		if (targetDecoration != null) {
+			visual.setEndDecoration(targetDecoration);
+		}
+
+		// connection router
+		IFXConnectionRouter router = ZestProperties.getRouter(edge);
+		if (router != null) {
+			visual.setRouter(router);
 		}
 
 		// dashes

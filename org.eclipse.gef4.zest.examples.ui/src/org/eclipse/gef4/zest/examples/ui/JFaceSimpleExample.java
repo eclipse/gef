@@ -107,8 +107,8 @@ public class JFaceSimpleExample {
 			}
 		});
 
-		viewer = new ZestContentViewer(shell, SWT.NONE);
-		viewer.createControl();
+		viewer = new ZestContentViewer();
+		viewer.createControl(shell, SWT.NONE);
 		viewer.setContentProvider(new MyContentProvider());
 		viewer.setLabelProvider(new MyLabelProvider());
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
