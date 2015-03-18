@@ -15,16 +15,9 @@ package org.eclipse.gef4.zest.fx.ui.parts;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.embed.swt.FXCanvas;
-
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
 
 import com.google.inject.Injector;
 
@@ -34,26 +27,6 @@ public class ZestFxUiView extends FXView {
 
 	public ZestFxUiView(Injector injector) {
 		super(injector);
-	}
-
-	@Override
-	protected FXCanvas createCanvas(Composite parent) {
-		FXCanvas canvas = super.createCanvas(parent);
-		canvas.addControlListener(new ControlListener() {
-			@Override
-			public void controlMoved(ControlEvent e) {
-			}
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle bounds = getCanvas().getBounds();
-				getViewer().getAdapter(ViewportModel.class).setWidth(
-						bounds.width);
-				getViewer().getAdapter(ViewportModel.class).setHeight(
-						bounds.height);
-			}
-		});
-		return canvas;
 	}
 
 	@Override

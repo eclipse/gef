@@ -32,7 +32,6 @@ import org.eclipse.gef4.mvc.fx.ui.parts.SelectionForwarder;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
@@ -48,14 +47,11 @@ import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -103,20 +99,6 @@ public class ZestContentViewer extends ContentViewer {
 		// hook viewer
 		viewer = domain.getAdapter(IViewer.class);
 		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
-
-		// report canvas size changes to the ViewportModel
-		canvas.addControlListener(new ControlListener() {
-			@Override
-			public void controlMoved(ControlEvent e) {
-			}
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle bounds = canvas.getBounds();
-				viewer.getAdapter(ViewportModel.class).setWidth(bounds.width);
-				viewer.getAdapter(ViewportModel.class).setHeight(bounds.height);
-			}
-		});
 
 		// activate domain
 		domain.activate();
