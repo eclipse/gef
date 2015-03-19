@@ -183,8 +183,11 @@ public class ZestContentViewer extends ContentViewer {
 		Graph graph = createEmptyGraph();
 		if (labelProvider instanceof INestedGraphLabelProvider) {
 			INestedGraphLabelProvider nestedGraphLabelProvider = (INestedGraphLabelProvider) labelProvider;
-			nestedGraphLabelProvider
+			Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
 					.getNestedGraphAttributes(contentNestingNode);
+			if (nestedGraphAttributes != null) {
+				graph.getAttrs().putAll(nestedGraphAttributes);
+			}
 		}
 		Object[] contentNodes = nestedGraphContentProvider
 				.getChildren(contentNestingNode);
