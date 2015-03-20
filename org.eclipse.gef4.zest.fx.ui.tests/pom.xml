@@ -52,6 +52,13 @@
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<testFailureIgnore>true</testFailureIgnore>
 					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+					<dependencies>
+						<dependency>
+							<artifactId>com.google.inject.multibindings</artifactId>
+							<version>0.0.0</version>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
 					<frameworkExtensions>
 						<frameworkExtension>
 							<groupId>org.eclipse.fx.shared</groupId>

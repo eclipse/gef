@@ -40,4 +40,4 @@ Import-Package: javafx.animation,
  javafx.stage,
  javafx.util,
  javax.annotation,
- javax.inject
+ javax.inject;version="1.0.0"

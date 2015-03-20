@@ -15,7 +15,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Import-Package: javax.annotation,
- javax.inject
+ javax.inject;version="1.0.0"
 Export-Package: org.eclipse.gef4.mvc;x-internal:=true,
  org.eclipse.gef4.mvc.behaviors;x-internal:=true,
  org.eclipse.gef4.mvc.domain;x-internal:=true,

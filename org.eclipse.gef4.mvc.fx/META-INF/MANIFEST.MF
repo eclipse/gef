@@ -49,7 +49,7 @@ Import-Package: javafx.animation,
  javafx.stage,
  javafx.util,
  javax.annotation,
- javax.inject
+ javax.inject;version="1.0.0"
 Bundle-Vendor: Eclipse GEF
 Bundle-Activator: org.eclipse.gef4.mvc.fx.MvcFxBundle
 Bundle-ActivationPolicy: lazy
