@@ -116,7 +116,17 @@ public class ZestContentViewer extends ContentViewer {
 	 * {@link IGraphNodeLabelProvider#getEdgeAttributes(Object, Object)} methods
 	 * and inserted into the edge.
 	 *
-	 * @return A new {@link Edge}, styled with the label provider.
+	 * @param labelProvider
+	 *            This viewer's {@link ILabelProvider} for convenience.
+	 * @param contentSourceNode
+	 *            The content element representing the source node of this edge.
+	 * @param sourceNode
+	 *            The already created source {@link Node} of this edge.
+	 * @param contentTargetNode
+	 *            The content element representing the target node of this edge.
+	 * @param targetNode
+	 *            The already created target {@link Node} of this edge.
+	 * @return The new {@link Edge}.
 	 */
 	protected Edge createEdge(ILabelProvider labelProvider,
 			Object contentSourceNode, Node sourceNode,
@@ -178,8 +188,11 @@ public class ZestContentViewer extends ContentViewer {
 	 *
 	 * @param contentNestingNode
 	 * @param nestedGraphContentProvider
+	 *            This viewer's {@link INestedGraphContentProvider} for
+	 *            convenience.
 	 * @param labelProvider
-	 * @return
+	 *            This viewer's {@link ILabelProvider} for convenience.
+	 * @return The new {@link Graph}.
 	 */
 	protected Graph createNestedGraph(Object contentNestingNode,
 			INestedGraphContentProvider nestedGraphContentProvider,
@@ -201,15 +214,17 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	/**
-	 * Creates a {@link javafx.scene.Node} for the specified <i>contentNode</i>
-	 * using the {@link IContentProvider} and {@link ILabelProvider}. Moreover,
-	 * the new node is put into the given <i>contentToGraphMap</i>.
+	 * Creates a {@link Node} for the specified <i>contentNode</i> using the
+	 * {@link IContentProvider} and {@link ILabelProvider}. Moreover, the new
+	 * node is put into the given <i>contentToGraphMap</i>.
 	 *
-	 * @param contentToGraphMap
 	 * @param contentNode
 	 * @param graphContentProvider
+	 *            This viewer's {@link IGraphNodeContentProvider} for
+	 *            convenience.
 	 * @param labelProvider
-	 * @return
+	 *            This viewer's {@link ILabelProvider} for convenience.
+	 * @return The new {@link Node}.
 	 */
 	protected Node createNode(Object contentNode,
 			IGraphNodeContentProvider graphContentProvider,
@@ -323,15 +338,15 @@ public class ZestContentViewer extends ContentViewer {
 	 * array of <i>contentNodes</i>.
 	 *
 	 * @param graphContentProvider
-	 *            This viewer's {@link IContentProvider} for convenience.
+	 *            This viewer's {@link IGraphNodeContentProvider} for
+	 *            convenience.
 	 * @param labelProvider
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @param graph
 	 *            The {@link Graph} for which nodes and edges are created.
-	 * @param graphNodeProvider
-	 *            The
 	 * @param contentNodes
-	 * @param contentToNodeMap
+	 *            Content elements which represent nodes that are to be created
+	 *            together with the edges between them.
 	 */
 	protected void createNodesAndEdges(
 			IGraphNodeContentProvider graphContentProvider,
@@ -358,12 +373,15 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	/**
-	 * Creates the root {@link Graph} using the given {@link IContentProvider}
+	 * Creates a complete {@link Graph} using the given {@link IContentProvider}
 	 * and {@link ILabelProvider}.
 	 *
 	 * @param contentProvider
+	 *            The {@link IContentProvider} for this viewer.
 	 * @param labelProvider
-	 * @return
+	 *            The {@link ILabelProvider} for this viewer.
+	 * @return A complete {@link Graph} constructed by using the given
+	 *         providers.
 	 */
 	protected Graph createRootGraph(IContentProvider contentProvider,
 			ILabelProvider labelProvider) {
