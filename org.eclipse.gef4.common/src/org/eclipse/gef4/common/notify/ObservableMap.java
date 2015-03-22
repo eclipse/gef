@@ -23,7 +23,7 @@ import com.google.common.collect.ForwardingMap;
  * An {@link ObservableMap} maintains a list of {@link IMapObserver observers}
  * which are notified whenever the map changes.
  * 
- * @author wienand
+ * @author mwienand
  *
  * @param <K>
  *            The type of the map's keys.

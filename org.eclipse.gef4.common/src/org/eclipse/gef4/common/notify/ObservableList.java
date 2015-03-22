@@ -22,7 +22,7 @@ import com.google.common.collect.ForwardingList;
  * An {@link ObservableList} maintains a list of {@link IListObserver observers}
  * which are notified whenever the list changes.
  * 
- * @author wienand
+ * @author mwienand
  *
  * @param <T>
  *            The type of the list elements.

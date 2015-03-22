@@ -102,7 +102,7 @@ public abstract class AbstractIntersectionExample implements PaintListener {
 	/**
 	 * A draggable point. On the screen it is represented as an ellipse.
 	 * 
-	 * @author wienand
+	 * @author mwienand
 	 * 
 	 */
 	class ControlPoint implements MouseListener, MouseMoveListener, Listener {

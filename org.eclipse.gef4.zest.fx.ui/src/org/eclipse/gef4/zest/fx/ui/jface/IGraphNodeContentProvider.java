@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IContentProvider;
  * {@link ZestContentViewer} and a content model. It provides content elements
  * which represent nodes, and the connections between nodes.
  *
- * @author wienand
+ * @author mwienand
  *
  */
 public interface IGraphNodeContentProvider extends IContentProvider {

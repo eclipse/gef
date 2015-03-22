@@ -101,7 +101,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 	/**
 	 * A draggable point. On the screen it is represented as an ellipse.
 	 * 
-	 * @author wienand
+	 * @author mwienand
 	 * 
 	 */
 	class ControlPoint implements MouseListener, MouseMoveListener, Listener {

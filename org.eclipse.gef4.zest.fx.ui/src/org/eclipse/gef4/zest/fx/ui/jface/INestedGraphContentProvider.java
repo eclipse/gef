@@ -20,7 +20,7 @@ package org.eclipse.gef4.zest.fx.ui.jface;
  * {@link IGraphNodeContentProvider} with parent-child-relations. You can use
  * this to express nested graphs.
  *
- * @author wienand
+ * @author mwienand
  *
  */
 public interface INestedGraphContentProvider extends IGraphNodeContentProvider {

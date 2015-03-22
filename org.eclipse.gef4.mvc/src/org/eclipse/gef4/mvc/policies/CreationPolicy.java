@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * {@link AbstractPolicy} that handles the creation of new content objects via
  * the {@link ContentPolicy}.
  *
- * @author wienand
+ * @author mwienand
  *
  * @param <VR>
  *            The visual root node of the UI toolkit used, e.g.

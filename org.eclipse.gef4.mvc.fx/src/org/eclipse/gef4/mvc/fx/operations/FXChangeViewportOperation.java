@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.models.ViewportModel;
  * The {@link FXChangeViewportOperation} can be used to alter a
  * {@link ViewportModel}. It is used by scroll/pan and zoom policies.
  *
- * @author wienand
+ * @author mwienand
  *
  */
 public class FXChangeViewportOperation extends AbstractOperation {

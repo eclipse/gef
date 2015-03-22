@@ -29,7 +29,7 @@ import org.eclipse.gef4.layout.ISubgraphLayout;
 /**
  * Transformation from GEF4 Graph with ZestProperties to GEF4 Layout.
  *
- * @author wienand
+ * @author mwienand
  *
  */
 public class GraphLayoutContext extends AbstractLayoutContext {

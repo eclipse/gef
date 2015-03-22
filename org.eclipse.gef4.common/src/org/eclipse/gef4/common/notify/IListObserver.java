@@ -18,7 +18,7 @@ import java.util.List;
  * An {@link IListObserver} can be used to monitor changes made to an
  * {@link ObservableList}.
  * 
- * @author wienand
+ * @author mwienand
  *
  * @param <T>
  *            The type of the list elements.

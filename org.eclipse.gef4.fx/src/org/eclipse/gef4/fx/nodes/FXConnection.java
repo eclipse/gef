@@ -55,7 +55,7 @@ public class FXConnection extends Group {
 	 * of that {@link FXConnection} which are registered at
 	 * {@link FXChopBoxAnchor}s.
 	 *
-	 * @author wienand
+	 * @author mwienand
 	 *
 	 */
 	public static class FXChopBoxHelper implements
@@ -71,7 +71,7 @@ public class FXConnection extends Group {
 		 * which will never trigger a reference point computation, but instead
 		 * simply look it up in the map.
 		 *
-		 * @author wienand
+		 * @author mwienand
 		 *
 		 */
 		public class ReferencePointMap extends HashMap<AnchorKey, Point> {

@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * {@link IVisualPart#isRefreshVisual()} flag of a specified {@link IVisualPart}
  * . This can be handy to guard other operations from model refreshes.
  *
- * @author wienand
+ * @author mwienand
  *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is

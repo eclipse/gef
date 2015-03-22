@@ -40,7 +40,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 /**
  * The LayoutContextBehavior is responsible for initiating layout passes.
  *
- * @author wienand
+ * @author mwienand
  *
  */
 // only applicable for GraphContentPart (see #getHost())

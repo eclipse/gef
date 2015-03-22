@@ -18,7 +18,7 @@ import java.util.Map;
  * An {@link IMapObserver} can be used to monitor changes made to an
  * {@link ObservableMap}.
  * 
- * @author wienand
+ * @author mwienand
  *
  * @param <K> The type of the map's keys.
  * @param <V> The type of the map's values.
