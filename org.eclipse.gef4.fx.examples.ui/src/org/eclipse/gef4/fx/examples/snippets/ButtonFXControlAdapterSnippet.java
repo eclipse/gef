@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -23,12 +24,12 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-import org.eclipse.gef4.fx.ui.controls.IControlFactory;
 import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
+import org.eclipse.gef4.fx.ui.controls.IControlFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class ButtonFXControlAdapterSnippet extends AbstractFXUIExamples {
+public class ButtonFXControlAdapterSnippet extends AbstractFXUIExample {
 
 	protected static FXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
 			final String text) {
@@ -56,33 +57,39 @@ public class ButtonFXControlAdapterSnippet extends AbstractFXUIExamples {
 		return shape;
 	}
 
+	public ButtonFXControlAdapterSnippet() {
+		super("FXControlAdapter Example (Buttons)");
+	}
+
 	@Override
 	public Scene createScene() {
 		HBox hbox = new HBox();
 		VBox col1 = new VBox();
 		VBox col2 = new VBox();
+		HBox.setMargin(col1, new Insets(10.0));
+		HBox.setMargin(col2, new Insets(10.0));
 		hbox.getChildren().addAll(col1, col2);
 		HBox.setHgrow(col1, Priority.ALWAYS);
 		HBox.setHgrow(col2, Priority.ALWAYS);
 
-		col1.getChildren().addAll(new Button("JavaFX 1"),
+		col1.getChildren().addAll(new Button("JavaFX Button 1"),
 				shape(new Arc(0, 0, 50, 50, 15, 120) {
 					{
 						setType(ArcType.ROUND);
 					}
-				}, 0.52, 0.49, 0.15), createButtonAdapter("SwtFX 1"));
+				}, 0.52, 0.49, 0.15), createButtonAdapter("SWT Button 1"));
 
 		col2.getChildren().addAll(
 				shape(new Rectangle(0, 0, 100, 50), 0.49, 0.36, 0.20),
-				createButtonAdapter("SwtFX 2"),
+				createButtonAdapter("SWT Button 2"),
 				shape(new Rectangle(0, 0, 100, 100) {
 					{
 						setArcHeight(20);
 						setArcWidth(20);
 					}
-				}, 0.87, 0.83, 0.49), new Button("JavaFX 2"));
+				}, 0.87, 0.83, 0.49), new Button("JavaFX Button 2"));
 
-		return new Scene(hbox, 400, 400);
+		return new Scene(hbox, 400, 300);
 	}
 
 }

@@ -7,13 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
-public class ChangeCursor extends AbstractFXUIExamples {
+public class ChangeCursor extends AbstractFXUIExample {
 
 	public static void main(String[] args) {
 		new ChangeCursor();
 	}
 
 	public ChangeCursor() {
+		super("Curser Change Example");
 	}
 
 	@Override

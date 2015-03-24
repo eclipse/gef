@@ -23,8 +23,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import org.eclipse.gef4.fx.ui.controls.IControlFactory;
 import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
+import org.eclipse.gef4.fx.ui.controls.IControlFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -34,17 +34,21 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class StyledTextFXControlAdapterSnippet extends AbstractFXUIExamples {
+public class StyledTextFXControlAdapterSnippet extends AbstractFXUIExample {
+
+	private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur\nadipisicing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.\nDuis aute irure dolor in reprehenderit\nin voluptate velit esse cillum dolore\neu fugiat nulla pariatur. Excepteur sint\noccaecat cupidatat non proident, sunt\nin culpa qui officia deserunt mollit\nanim id est laborum.";
 
 	public static void main(String[] args) {
 		new StyledTextFXControlAdapterSnippet();
 	}
 
-	private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur\nadipisicing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.\nDuis aute irure dolor in reprehenderit\nin voluptate velit esse cillum dolore\neu fugiat nulla pariatur. Excepteur sint\noccaecat cupidatat non proident, sunt\nin culpa qui officia deserunt mollit\nanim id est laborum.";
+	public StyledTextFXControlAdapterSnippet() {
+		super("FXControlAdapter Example (StyledText)");
+	}
 
 	private void colorAction(Node actionNode,
-			final FXControlAdapter<StyledText> stNode,
-			final int fgSwtColorId, final int bgSwtColorId) {
+			final FXControlAdapter<StyledText> stNode, final int fgSwtColorId,
+			final int bgSwtColorId) {
 		actionNode.addEventHandler(ActionEvent.ACTION,
 				new EventHandler<ActionEvent>() {
 					@Override
