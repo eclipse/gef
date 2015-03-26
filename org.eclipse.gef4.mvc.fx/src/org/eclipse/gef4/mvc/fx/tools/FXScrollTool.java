@@ -63,8 +63,6 @@ public class FXScrollTool extends AbstractTool<Node> {
 
 			@Override
 			public void handle(ScrollEvent event) {
-				event.consume();
-
 				Collection<? extends AbstractFXScrollPolicy> policies = getTargetPolicies(event);
 				for (AbstractFXScrollPolicy policy : policies) {
 					policy.scroll(event);
