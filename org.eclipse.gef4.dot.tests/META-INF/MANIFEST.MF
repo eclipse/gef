@@ -4,6 +4,7 @@ Bundle-Name: GEF4 Graph Tests
 Bundle-SymbolicName: org.eclipse.gef4.dot.tests
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.junit,
+ org.eclipse.gef4.common;bundle-version="0.1.0",
  org.eclipse.gef4.layout;bundle-version="0.1.0",
  org.eclipse.gef4.dot;bundle-version="0.1.0",
  org.eclipse.gef4.dot.ui;bundle-version="0.1.0",
