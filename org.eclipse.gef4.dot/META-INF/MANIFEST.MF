@@ -3,15 +3,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 DOT
 Bundle-SymbolicName: org.eclipse.gef4.dot;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Require-Bundle: org.eclipse.emf.ecore,
- org.eclipse.xtext;visibility:=reexport,
- org.eclipse.emf.mwe2.launch;bundle-version="2.0.0";resolution:=optional,
- org.eclipse.xtext.generator;bundle-version="2.0.0";resolution:=optional,
- org.eclipse.xtext.util,
+Require-Bundle: org.antlr.runtime,
  org.eclipse.emf.common,
- org.antlr.runtime,
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
+ org.eclipse.xtext.util;bundle-version="2.0.0",
  org.eclipse.gef4.graph;bundle-version="0.1.0",
- org.eclipse.gef4.layout;bundle-version="0.1.0"
+ org.eclipse.gef4.layout;bundle-version="0.1.0",
+ org.apache.commons.logging;bundle-version="1.1.1";resolution:=optional,
+ org.eclipse.equinox.common;bundle-version="3.7.0";resolution:=optional,
+ org.eclipse.xtext.generator;bundle-version="2.0.0";resolution:=optional,
+ org.eclipse.emf.mwe2.launch;bundle-version="2.0.0";resolution:=optional
 Export-Package: org.eclipse.gef4.dot;x-internal:=true,
  org.eclipse.gef4.internal.dot;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
@@ -25,6 +27,6 @@ Export-Package: org.eclipse.gef4.dot;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser.scoping;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.services;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.validation;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.apache.log4j
 Bundle-Vendor: Eclipse GEF
