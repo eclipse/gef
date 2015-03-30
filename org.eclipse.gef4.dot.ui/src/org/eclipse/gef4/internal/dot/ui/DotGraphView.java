@@ -46,11 +46,13 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -89,7 +91,7 @@ public class DotGraphView extends ZestFxUiView {
 	private String currentDot = "digraph{}"; //$NON-NLS-1$
 	private File currentFile = null;
 	private ExportToggle exportAction;
-	private Label resourceLabel = null;
+	private Link resourceLabel = null;
 
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new ZestFxUiModule())//
@@ -100,17 +102,52 @@ public class DotGraphView extends ZestFxUiView {
 	@Override
 	public void createPartControl(final Composite parent) {
 		exportAction = new ExportToggle();
-		add(new UpdateToggle().action(this), ISharedImages.IMG_ELCL_SYNCED);
-		add(new LoadFile().action(this), ISharedImages.IMG_OBJ_FILE);
+		Action updateToggleAction = new UpdateToggle().action(this);
+		Action loadFileAction = new LoadFile().action(this);
+		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
+		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
 		add(exportAction.action(this), ISharedImages.IMG_ETOOL_PRINT_EDIT);
 		parent.setLayout(new GridLayout(1, true));
-		resourceLabel = new Label(parent, SWT.WRAP);
-		resourceLabel.setText(GRAPH_NONE);
-		resourceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		initResourceLabel(parent, loadFileAction, updateToggleAction);
 		super.createPartControl(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 		Scene scene = getViewer().getScene();
 		scene.getStylesheets().add(STYLES_CSS_FILE);
+	}
+
+	private void initResourceLabel(final Composite parent,
+			final Action loadAction, final Action toggleAction) {
+		resourceLabel = new Link(parent, SWT.WRAP);
+		resourceLabel.setText(GRAPH_NONE);
+		resourceLabel.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				processEvent(loadAction, toggleAction, GRAPH_NONE, e);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				processEvent(loadAction, toggleAction, GRAPH_NONE, e);
+			}
+
+			private void processEvent(final Action loadFileAction,
+					final Action toggleAction, final String label,
+					SelectionEvent e) {
+				/*
+				 * As we use a single string for the links for localization, we
+				 * don't compare specific strings but say the first link
+				 * triggers the loadAction, else the toggleAction:
+				 */
+				if (label.replaceAll("<a>", "").startsWith(e.text)) { //$NON-NLS-1$ //$NON-NLS-2$
+					loadFileAction.run();
+				} else {
+					// toggle as if the button was pressed, then run the action:
+					toggleAction.setChecked(!toggleAction.isChecked());
+					toggleAction.run();
+				}
+			}
+		});
+		resourceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	private void add(Action action, String imageName) {
