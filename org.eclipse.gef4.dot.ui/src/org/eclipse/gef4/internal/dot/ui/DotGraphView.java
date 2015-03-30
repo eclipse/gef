@@ -196,9 +196,9 @@ public class DotGraphView extends ZestFxUiView {
 		action.setChecked(!action.isChecked());
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		for (IContributionItem item : mgr.getItems()) {
-			if (item.getId() != null && item.getId().equals(action.getText())) {
-				ActionContributionItem i = (ActionContributionItem) item;
-				i.getAction().setChecked(!i.getAction().isChecked());
+			if (item instanceof ActionContributionItem
+					&& ((ActionContributionItem) item).getAction() == action) {
+				action.setChecked(!action.isChecked());
 				return !input;
 			}
 		}
