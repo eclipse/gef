@@ -288,8 +288,7 @@ public class ZestContentViewer extends ContentViewer {
 		if (labelProvider instanceof IFontProvider) {
 			IFontProvider fontProvider = (IFontProvider) labelProvider;
 			Font font = fontProvider.getFont(contentNode);
-
-			FontData[] fontData = font.getFontData();
+			FontData[] fontData = font == null ? null : font.getFontData();
 			if (fontData != null && fontData.length > 0 && fontData[0] != null) {
 				String name = fontData[0].getName();
 				int size = fontData[0].getHeight();

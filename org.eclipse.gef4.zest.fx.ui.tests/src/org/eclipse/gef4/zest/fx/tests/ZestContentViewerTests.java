@@ -34,6 +34,7 @@ import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeContentProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.IGraphNodeLabelProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.INestedGraphContentProvider;
 import org.eclipse.gef4.zest.fx.ui.jface.INestedGraphLabelProvider;
@@ -59,6 +60,26 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ZestContentViewerTests {
+
+	static class EmptyContentProvider implements IGraphNodeContentProvider {
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public Object[] getConnectedTo(Object node) {
+			return null;
+		}
+
+		@Override
+		public Object[] getNodes() {
+			return null;
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
 
 	static class MyContentProvider implements INestedGraphContentProvider {
 		public static String alpha() {
@@ -200,6 +221,81 @@ public class ZestContentViewerTests {
 		@Override
 		public String getToolTipText(Object element) {
 			return element.toString().toUpperCase();
+		}
+	}
+
+	static class NullContentProvider implements INestedGraphContentProvider {
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public Object[] getChildren(Object node) {
+			return "2".equals(node) ? new String[] { "2.1", "2.2" } : null;
+		}
+
+		@Override
+		public Object[] getConnectedTo(Object node) {
+			return null;
+		}
+
+		@Override
+		public Object[] getNodes() {
+			return new String[] { "1", "2", "3" };
+		}
+
+		@Override
+		public boolean hasChildren(Object node) {
+			return "2".equals(node);
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
+
+	static class NullLabelProvider extends LabelProvider implements
+			IColorProvider, IFontProvider, IToolTipProvider,
+			IGraphNodeLabelProvider, INestedGraphLabelProvider {
+		@Override
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getEdgeAttributes(Object sourceNode,
+				Object targetNode) {
+			return null;
+		}
+
+		@Override
+		public Font getFont(Object element) {
+			return null;
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getNestedGraphAttributes(Object nestingNode) {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getNodeAttributes(Object node) {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getRootGraphAttributes() {
+			return null;
+		}
+
+		@Override
+		public String getToolTipText(Object element) {
+			return null;
 		}
 	}
 
@@ -361,6 +457,33 @@ public class ZestContentViewerTests {
 		assertTrue((Boolean) rootGraph.getAttrs().get("root"));
 		// ensure root does not get nested attributes
 		assertFalse(rootGraph.getAttrs().containsKey("nested"));
+	}
+
+	@Test
+	public void test_provideEmptyNull() {
+		boolean thrown = false;
+		try {
+			viewer.setContentProvider(new EmptyContentProvider());
+			viewer.setInput(new Object());
+		} catch (Exception x) {
+			thrown = true;
+		}
+		// no exception => success
+		assertFalse(thrown);
+	}
+
+	@Test
+	public void test_provideNull() {
+		boolean thrown = false;
+		try {
+			viewer.setContentProvider(new NullContentProvider());
+			viewer.setLabelProvider(new NullLabelProvider());
+			viewer.setInput(new Object());
+		} catch (Exception x) {
+			thrown = true;
+		}
+		// no exception => success
+		assertFalse(thrown);
 	}
 
 	@Test
