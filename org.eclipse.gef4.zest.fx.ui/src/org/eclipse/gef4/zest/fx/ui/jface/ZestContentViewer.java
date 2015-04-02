@@ -136,11 +136,11 @@ public class ZestContentViewer extends ContentViewer {
 			IEdgeDecorationProvider edgeDecorationProvider = (IEdgeDecorationProvider) labelProvider;
 			IFXDecoration sourceDecoration = edgeDecorationProvider
 					.getSourceDecoration(contentSourceNode, contentTargetNode);
-			IFXDecoration targetDecoration = edgeDecorationProvider
-					.getTargetDecoration(contentSourceNode, contentTargetNode);
 			if (sourceDecoration != null) {
 				ZestProperties.setSourceDecoration(edge, sourceDecoration);
 			}
+			IFXDecoration targetDecoration = edgeDecorationProvider
+					.getTargetDecoration(contentSourceNode, contentTargetNode);
 			if (targetDecoration != null) {
 				ZestProperties.setTargetDecoration(edge, targetDecoration);
 			}
@@ -208,8 +208,10 @@ public class ZestContentViewer extends ContentViewer {
 		}
 		Object[] contentNodes = nestedGraphContentProvider
 				.getChildren(contentNestingNode);
-		createNodesAndEdges(nestedGraphContentProvider, labelProvider, graph,
-				contentNodes);
+		if (contentNodes != null) {
+			createNodesAndEdges(nestedGraphContentProvider, labelProvider,
+					graph, contentNodes);
+		}
 		return graph;
 	}
 
@@ -361,13 +363,16 @@ public class ZestContentViewer extends ContentViewer {
 		// create edges
 		for (Object contentSourceNode : contentNodes) {
 			Node sourceNode = contentNodeMap.get(contentSourceNode);
-			for (Object contentTargetNode : graphContentProvider
-					.getConnectedTo(contentSourceNode)) {
-				Node targetNode = contentNodeMap.get(contentTargetNode);
-				Edge edge = createEdge(labelProvider, contentSourceNode,
-						sourceNode, contentTargetNode, targetNode);
-				graph.getEdges().add(edge);
-				edge.setGraph(graph);
+			Object[] connectedTo = graphContentProvider
+					.getConnectedTo(contentSourceNode);
+			if (connectedTo != null) {
+				for (Object contentTargetNode : connectedTo) {
+					Node targetNode = contentNodeMap.get(contentTargetNode);
+					Edge edge = createEdge(labelProvider, contentSourceNode,
+							sourceNode, contentTargetNode, targetNode);
+					graph.getEdges().add(edge);
+					edge.setGraph(graph);
+				}
 			}
 		}
 	}
@@ -397,7 +402,10 @@ public class ZestContentViewer extends ContentViewer {
 		if (contentProvider instanceof IGraphNodeContentProvider) {
 			IGraphNodeContentProvider graphNodeProvider = (IGraphNodeContentProvider) contentProvider;
 			Object[] nodes = graphNodeProvider.getNodes();
-			createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
+			if (nodes != null) {
+				createNodesAndEdges(graphNodeProvider, labelProvider, graph,
+						nodes);
+			}
 		}
 		return graph;
 	}
