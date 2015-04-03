@@ -33,6 +33,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -119,6 +120,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		layoutContext = getLayoutModel();
 
 		// add layout filter for hidden/layout irrelevant elements
+		final HidingModel hidingModel = getHost().getRoot().getViewer()
+				.getAdapter(HidingModel.class);
 		layoutContext.addLayoutFilter(new ILayoutFilter() {
 			@Override
 			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
@@ -131,7 +134,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout
 						.getItems()[0];
 				return ZestProperties.getLayoutIrrelevant(node, true)
-						|| ZestProperties.getHidden(node, true);
+						|| hidingModel.isHidden(node);
 			}
 		});
 

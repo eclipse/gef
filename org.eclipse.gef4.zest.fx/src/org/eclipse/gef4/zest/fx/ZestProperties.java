@@ -60,14 +60,6 @@ public class ZestProperties {
 		return returnDefaultIfMissing ? false : null;
 	}
 
-	public static Boolean getHidden(Node node, boolean returnDefaultIfMissing) {
-		Object hidden = node.getAttrs().get(NODE_HIDDEN);
-		if (hidden instanceof Boolean) {
-			return (Boolean) hidden;
-		}
-		return returnDefaultIfMissing ? false : null;
-	}
-
 	public static Image getIcon(Node node) {
 		return (Image) node.getAttrs().get(NODE_ICON);
 	}
@@ -175,10 +167,6 @@ public class ZestProperties {
 		node.getAttrs().put(NODE_FISHEYE, fisheye);
 	}
 
-	public static void setHidden(Node node, Boolean hidden) {
-		node.getAttrs().put(NODE_HIDDEN, hidden);
-	}
-
 	public static void setIcon(Node node, Image icon) {
 		node.getAttrs().put(NODE_ICON, icon);
 	}
@@ -267,7 +255,6 @@ public class ZestProperties {
 	public static final String NODE_ICON = "icon";
 	public static final String NODE_TOOLTIP = "tooltip";
 	public static final String NODE_FISHEYE = "fisheye";
-	public static final String NODE_HIDDEN = "hidden";
 
 	public static final String EDGE_TARGET_DECORATION = "target-decoration";
 	public static final String EDGE_SOURCE_DECORATION = "source-decoration";

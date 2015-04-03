@@ -27,7 +27,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -149,13 +148,6 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 				transform.getTy() + miny);
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
 		LayoutProperties.setResizable(nodeLayout, visual.isResizable());
-
-		Boolean wasHidden = ZestProperties.getHidden(getHost().getContent(),
-				false);
-		if (visual.isVisible() == (wasHidden == null || wasHidden)) {
-			ZestProperties.setHidden(getHost().getContent(),
-					!visual.isVisible());
-		}
 	}
 
 }
