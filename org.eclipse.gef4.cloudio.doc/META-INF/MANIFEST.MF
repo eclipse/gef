@@ -6,5 +6,5 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
  org.eclipse.jface;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
- org.eclipse.ui;bundle-version="3.6.0";resolution:=optional,
+ org.eclipse.ui;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
  org.eclipse.platform.doc.isv;bundle-version="[3.0.0,5.0.0)"
