@@ -40,7 +40,6 @@ Import-Package: javafx.animation,
  javafx.scene.transform,
  javafx.scene.web,
  javafx.stage,
- javafx.util,
- javax.annotation
+ javafx.util
 Bundle-Vendor: Eclipse GEF
 Export-Package: org.eclipse.gef4.mvc.examples;x-internal:=true
