@@ -6,9 +6,9 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.mvc.MvcBundle
 Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
  com.google.inject;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.osgi,
- org.eclipse.equinox.common,
- org.eclipse.core.commands,
+ org.eclipse.osgi;bundle-version="[3.10.0,4.0.0)",
+ org.eclipse.equinox.common;bundle-version="[3.4.0,4.0.0)",
+ org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.gef4.common;bundle-version="0.1.0",
  org.eclipse.gef4.geometry;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
