@@ -44,5 +44,4 @@ Import-Package: javafx.animation,
  javafx.scene.transform,
  javafx.scene.web,
  javafx.stage,
- javafx.util,
- javax.annotation
+ javafx.util
