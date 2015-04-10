@@ -55,7 +55,7 @@ Import-Package: javafx.animation,
  javafx.scene.web,
  javafx.stage,
  javafx.util,
- org.apache.log4j;version="1.2.15"
+ org.apache.log4j;version="1.2.15";resolution:=optional
 Bundle-ClassPath: .
 Export-Package: org.eclipse.gef4.internal.dot.ui;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser;x-internal:=true,
