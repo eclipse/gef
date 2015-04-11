@@ -212,6 +212,7 @@ public class DotGraphView extends ZestFxUiView {
 		String dotString = currentDot;
 		dotString = DotFileUtils.read(file);
 		currentDot = dotString;
+		currentFile = file;
 		setGraphAsync(dotString, file);
 		return true;
 	}
@@ -399,10 +400,13 @@ public class DotGraphView extends ZestFxUiView {
 								.equals(editor.getLanguageName())
 								&& editor.getEditorInput() instanceof FileEditorInput) {
 							try {
-								view.updateGraph(DotFileUtils
+								File resolvedFile = DotFileUtils
 										.resolve(((FileEditorInput) editor
 												.getEditorInput()).getFile()
-												.getLocationURI().toURL()));
+												.getLocationURI().toURL());
+								if (!resolvedFile.equals(view.currentFile)) {
+									view.updateGraph(resolvedFile);
+								}
 							} catch (MalformedURLException e) {
 								e.printStackTrace();
 							}
@@ -432,7 +436,8 @@ public class DotGraphView extends ZestFxUiView {
 				@Override
 				public boolean visit(final IResourceDelta delta) {
 					IResource resource = delta.getResource();
-					if (resource.getType() == IResource.FILE) {
+					if (resource.getType() == IResource.FILE
+							&& ((IFile) resource).getName().endsWith(EXTENSION)) {
 						try {
 							final IFile f = (IFile) resource;
 							IWorkspaceRunnable workspaceRunnable = view
