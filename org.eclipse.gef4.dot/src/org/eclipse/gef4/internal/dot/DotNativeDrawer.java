@@ -18,8 +18,8 @@ import java.util.Arrays;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-final public class DotDrawer {
-	private DotDrawer() {/* Enforce non-instantiability */
+final public class DotNativeDrawer {
+	private DotNativeDrawer() {/* Enforce non-instantiability */
 	}
 
 	/**

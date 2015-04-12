@@ -14,7 +14,7 @@ import java.util.Properties;
 
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.internal.dot.DotDrawer;
+import org.eclipse.gef4.internal.dot.DotNativeDrawer;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.internal.dot.ui.DotDirStore;
 import org.junit.Assert;
@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-public class DotDrawerTests extends DotTemplateTests {
+public class DotNativeDrawerTests extends DotTemplateTests {
 
 	private static String dotDir = null;
 
@@ -41,12 +41,12 @@ public class DotDrawerTests extends DotTemplateTests {
 	public static String dotBinDir() {
 		if (dotDir == null) {
 			Properties props = new Properties();
-			InputStream stream = DotDrawerTests.class
+			InputStream stream = DotNativeDrawerTests.class
 					.getResourceAsStream("test.properties"); //$NON-NLS-1$
 			if (stream == null) {
 				System.err
 						.println("Could not load the test.properties file in directory of " //$NON-NLS-1$
-								+ DotDrawerTests.class.getSimpleName());
+								+ DotNativeDrawerTests.class.getSimpleName());
 			} else
 				try {
 					props.load(stream);
@@ -79,7 +79,7 @@ public class DotDrawerTests extends DotTemplateTests {
 			super.testDotGeneration(graph);
 			File dotFile = DotFileUtils.write(new DotExport(graph)
 					.toDotString());
-			File image = DotDrawer.renderImage(new File(dotDir), dotFile,
+			File image = DotNativeDrawer.renderImage(new File(dotDir), dotFile,
 					"pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
 			System.out.println("Created image: " + image); //$NON-NLS-1$
