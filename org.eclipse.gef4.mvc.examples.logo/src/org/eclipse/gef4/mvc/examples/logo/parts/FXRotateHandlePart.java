@@ -22,14 +22,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Polygon;
 
-import org.eclipse.gef4.fx.nodes.FXBlendImageView;
+import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXRotateHandlePart extends AbstractFXHandlePart<FXBlendImageView> {
+public class FXRotateHandlePart extends AbstractFXHandlePart<FXImageViewHoverOverlay> {
 
 	private boolean registered = false;
 	private final PropertyChangeListener parentAnchoragesChangeListener = new PropertyChangeListener() {
@@ -77,20 +77,20 @@ public class FXRotateHandlePart extends AbstractFXHandlePart<FXBlendImageView> {
 	}
 
 	@Override
-	protected FXBlendImageView createVisual() {
+	protected FXImageViewHoverOverlay createVisual() {
 		// make it pickable on bounds, so that the user can click into the icon
 		// even when there is empty space
-		FXBlendImageView blendImageView = new FXBlendImageView();
-		blendImageView.getImageView().setPickOnBounds(true);
-		blendImageView.getHoverImageView().setPickOnBounds(true);
+		FXImageViewHoverOverlay blendImageView = new FXImageViewHoverOverlay();
+		blendImageView.getBaseImageView().setPickOnBounds(true);
+		blendImageView.getOverlayImageView().setPickOnBounds(true);
 		// load images (disabled/active)
-		blendImageView.imageProperty().set(getImage());
-		blendImageView.hoverImageProperty().set(getHoverImage());
+		blendImageView.baseImageProperty().set(getImage());
+		blendImageView.overlayImageProperty().set(getHoverImage());
 		return blendImageView;
 	}
 
 	@Override
-	protected void doRefreshVisual(FXBlendImageView visual) {
+	protected void doRefreshVisual(FXImageViewHoverOverlay visual) {
 		// automatically layed out by its parent
 	}
 

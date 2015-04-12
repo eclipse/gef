@@ -23,7 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.FXBlendImageView;
+import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
@@ -35,7 +35,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
 public class ZestFxHidingHandlePart extends
-		AbstractFXSegmentHandlePart<FXBlendImageView> {
+		AbstractFXSegmentHandlePart<FXImageViewHoverOverlay> {
 
 	public static final String IMG_PRUNE = "/collapseall.png";
 	public static final String IMG_PRUNE_DISABLED = "/collapseall_disabled.png";
@@ -62,14 +62,14 @@ public class ZestFxHidingHandlePart extends
 	}
 
 	@Override
-	protected FXBlendImageView createVisual() {
+	protected FXImageViewHoverOverlay createVisual() {
 		// get image and hover image
 		final Image hoverImage = getHoverImage();
 		final Image image = getImage();
 		// create blending image view for both
-		FXBlendImageView blendImageView = new FXBlendImageView();
-		blendImageView.imageProperty().set(image);
-		blendImageView.hoverImageProperty().set(hoverImage);
+		FXImageViewHoverOverlay blendImageView = new FXImageViewHoverOverlay();
+		blendImageView.baseImageProperty().set(image);
+		blendImageView.overlayImageProperty().set(hoverImage);
 		// register click action
 		blendImageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -81,7 +81,7 @@ public class ZestFxHidingHandlePart extends
 	}
 
 	@Override
-	public void doRefreshVisual(FXBlendImageView visual) {
+	public void doRefreshVisual(FXImageViewHoverOverlay visual) {
 		boolean wasVisible = isVisible;
 		super.doRefreshVisual(visual);
 		isVisible = getVisual().isVisible();

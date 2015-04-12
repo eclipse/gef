@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - cleanup of API
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -26,83 +27,93 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
+/**
+ * A {@link Group} that combines two {@link ImageView}s, realizing an overlay
+ * effect (by adjusting the respective opacities) upon mouse hover.
+ *
+ * @author mwienand
+ * @author anyssen
+ *
+ */
 // TODO: extract magic numbers to properties
-public class FXBlendImageView extends Group {
+public class FXImageViewHoverOverlay extends Group {
 
-	private SimpleObjectProperty<Image> imageProperty = new SimpleObjectProperty<Image>();
-	private SimpleObjectProperty<Image> hoverImageProperty = new SimpleObjectProperty<Image>();
-	private ImageView imageView;
-	private ImageView hoverImageView;
+	private SimpleObjectProperty<Image> baseImageProperty = new SimpleObjectProperty<Image>();
+	private SimpleObjectProperty<Image> overlayImageProperty = new SimpleObjectProperty<Image>();
+	private ImageView baseImageView;
+	private ImageView overlayImageView;
 
-	public FXBlendImageView() {
+	public FXImageViewHoverOverlay() {
 		createImageViews();
 		registerHoverEffect();
 		registerPropertyListeners();
 	}
 
+	public SimpleObjectProperty<Image> baseImageProperty() {
+		return baseImageProperty;
+	}
+
 	protected void createImageViews() {
-		imageView = new ImageView();
-		hoverImageView = new ImageView();
-		getChildren().addAll(imageView, hoverImageView);
+		baseImageView = new ImageView();
+		overlayImageView = new ImageView();
+		getChildren().addAll(baseImageView, overlayImageView);
 		setBlendMode(BlendMode.SRC_OVER);
 		// hide hover image, and show normal image
-		hoverImageView.setOpacity(0);
-		imageView.setOpacity(0.8); // 20% transparent
+		overlayImageView.setOpacity(0);
+		baseImageView.setOpacity(0.8); // 20% transparent
 	}
 
-	public ImageView getHoverImageView() {
-		return hoverImageView;
+	public ImageView getBaseImageView() {
+		return baseImageView;
 	}
 
-	public ImageView getImageView() {
-		return imageView;
+	public ImageView getOverlayImageView() {
+		return overlayImageView;
 	}
 
-	public SimpleObjectProperty<Image> hoverImageProperty() {
-		return hoverImageProperty;
-	}
-
-	public SimpleObjectProperty<Image> imageProperty() {
-		return imageProperty;
+	public SimpleObjectProperty<Image> overlayImageProperty() {
+		return overlayImageProperty;
 	}
 
 	protected void registerHoverEffect() {
 		setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						imageView.opacityProperty(), 0), new KeyValue(
-						hoverImageView.opacityProperty(), 1))).play();
+				new Timeline(new KeyFrame(Duration.millis(150),
+						new KeyValue(baseImageView.opacityProperty(), 0),
+						new KeyValue(overlayImageView.opacityProperty(), 1)))
+								.play();
 			}
 		});
 		setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						imageView.opacityProperty(), 0.8), new KeyValue(
-						hoverImageView.opacityProperty(), 0))).play();
+				new Timeline(new KeyFrame(Duration.millis(150),
+						new KeyValue(baseImageView.opacityProperty(), 0.8),
+						new KeyValue(overlayImageView.opacityProperty(), 0)))
+								.play();
 			}
 		});
 	}
 
 	protected void registerPropertyListeners() {
-		imageProperty.addListener(new ChangeListener<Image>() {
+		baseImageProperty.addListener(new ChangeListener<Image>() {
 			@Override
 			public void changed(ObservableValue<? extends Image> observable,
 					Image oldImage, Image newImage) {
-				setImage(imageView, newImage);
+				setImage(baseImageView, newImage);
 			}
 		});
-		hoverImageProperty.addListener(new ChangeListener<Image>() {
+		overlayImageProperty.addListener(new ChangeListener<Image>() {
 			@Override
 			public void changed(ObservableValue<? extends Image> observable,
 					Image oldImage, Image newImage) {
-				setImage(hoverImageView, newImage);
+				setImage(overlayImageView, newImage);
 			}
 		});
 	}
 
-	protected void setImage(ImageView imageView, Image image) {
+	private void setImage(ImageView imageView, Image image) {
 		imageView.setImage(image);
 		// translate to center
 		imageView.setTranslateX(-image.getWidth() / 2);

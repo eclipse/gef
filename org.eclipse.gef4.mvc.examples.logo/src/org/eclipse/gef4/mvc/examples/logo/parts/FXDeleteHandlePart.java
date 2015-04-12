@@ -18,14 +18,14 @@ import java.net.URL;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 
-import org.eclipse.gef4.fx.nodes.FXBlendImageView;
+import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXDeleteHandlePart extends AbstractFXHandlePart<FXBlendImageView> {
+public class FXDeleteHandlePart extends AbstractFXHandlePart<FXImageViewHoverOverlay> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
@@ -46,15 +46,15 @@ public class FXDeleteHandlePart extends AbstractFXHandlePart<FXBlendImageView> {
 	};
 
 	@Override
-	protected FXBlendImageView createVisual() {
-		FXBlendImageView blendImageView = new FXBlendImageView();
-		blendImageView.imageProperty().set(getImage());
-		blendImageView.hoverImageProperty().set(getHoverImage());
+	protected FXImageViewHoverOverlay createVisual() {
+		FXImageViewHoverOverlay blendImageView = new FXImageViewHoverOverlay();
+		blendImageView.baseImageProperty().set(getImage());
+		blendImageView.overlayImageProperty().set(getHoverImage());
 		return blendImageView;
 	}
 
 	@Override
-	protected void doRefreshVisual(FXBlendImageView visual) {
+	protected void doRefreshVisual(FXImageViewHoverOverlay visual) {
 		// automatically layed out by its parent
 	}
 
