@@ -15,9 +15,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 
-import javafx.scene.Node;
-import javafx.scene.image.Image;
-
 import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -25,7 +22,11 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXDeleteHandlePart extends AbstractFXHandlePart<FXImageViewHoverOverlay> {
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+
+public class FXDeleteHoverHandlePart
+		extends AbstractFXHandlePart<FXImageViewHoverOverlay> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
@@ -47,34 +48,31 @@ public class FXDeleteHandlePart extends AbstractFXHandlePart<FXImageViewHoverOve
 
 	@Override
 	protected FXImageViewHoverOverlay createVisual() {
+		URL overlayImageResource = FXDeleteHoverHandlePart.class
+				.getResource(IMG_DELETE);
+		if (overlayImageResource == null) {
+			throw new IllegalStateException(
+					"Cannot find resource <" + IMG_DELETE + ">.");
+		}
+		Image overlayImage = new Image(overlayImageResource.toExternalForm());
+
+		URL baseImageResource = FXDeleteHoverHandlePart.class
+				.getResource(IMG_DELETE_DISABLED);
+		if (baseImageResource == null) {
+			throw new IllegalStateException(
+					"Cannot find resource <" + IMG_DELETE_DISABLED + ">.");
+		}
+		Image baseImage = new Image(baseImageResource.toExternalForm());
+
 		FXImageViewHoverOverlay blendImageView = new FXImageViewHoverOverlay();
-		blendImageView.baseImageProperty().set(getImage());
-		blendImageView.overlayImageProperty().set(getHoverImage());
+		blendImageView.baseImageProperty().set(baseImage);
+		blendImageView.overlayImageProperty().set(overlayImage);
 		return blendImageView;
 	}
 
 	@Override
 	protected void doRefreshVisual(FXImageViewHoverOverlay visual) {
 		// automatically layed out by its parent
-	}
-
-	protected Image getHoverImage() {
-		URL resource = FXDeleteHandlePart.class.getResource(IMG_DELETE);
-		if (resource == null) {
-			throw new IllegalStateException("Cannot find resource <"
-					+ IMG_DELETE + ">.");
-		}
-		return new Image(resource.toExternalForm());
-	}
-
-	protected Image getImage() {
-		URL resource = FXDeleteHandlePart.class
-				.getResource(IMG_DELETE_DISABLED);
-		if (resource == null) {
-			throw new IllegalStateException("Cannot find resource <"
-					+ IMG_DELETE_DISABLED + ">.");
-		}
-		return new Image(resource.toExternalForm());
 	}
 
 	protected void onParentAnchoragesChanged(

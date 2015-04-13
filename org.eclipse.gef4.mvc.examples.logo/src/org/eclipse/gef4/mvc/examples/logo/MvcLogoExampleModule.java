@@ -21,7 +21,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHandlePart;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
@@ -240,7 +240,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// hover handles
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), FXDeleteHandlePart.class));
+				binder(), FXDeleteHoverHandlePart.class));
 	}
 
 }
