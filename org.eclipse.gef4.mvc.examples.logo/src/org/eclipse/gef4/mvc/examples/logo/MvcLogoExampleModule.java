@@ -21,12 +21,14 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoCursorProvider;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
@@ -126,6 +128,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 						"FXCreationMenuOnClick")).to(
 				FXCreationMenuOnClickPolicy.class);
+	}
+
+	protected void bindFXCreateCurveHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "create"))
+				.to(FXCreateCurveOnDragPolicy.class);
 	}
 
 	protected void bindFXDeleteHandlePartAdapters(
@@ -241,6 +250,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// hover handles
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXDeleteHoverHandlePart.class));
+		bindFXCreateCurveHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXCreateCurveHoverHandlePart.class));
 	}
 
 }

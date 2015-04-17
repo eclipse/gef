@@ -1,0 +1,9 @@
+.FXCreateCurveHoverHandlePart Circle {
+	-fx-stroke: black;
+}
+
+.FXCreateCurveHoverHandlePart Text {
+	-fx-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 16pt;
+}

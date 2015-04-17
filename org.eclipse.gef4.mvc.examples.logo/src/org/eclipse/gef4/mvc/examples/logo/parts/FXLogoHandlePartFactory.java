@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javafx.scene.Node;
+
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
@@ -29,8 +31,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-import javafx.scene.Node;
-
 public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Inject
@@ -41,9 +41,9 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 			final IVisualPart<Node, ? extends Node> targetPart,
 			final Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
-		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super.createCurveSelectionHandlePart(
-				targetPart, segmentsProvider, segmentCount, segmentIndex,
-				segmentParameter);
+		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super
+				.createCurveSelectionHandlePart(targetPart, segmentsProvider,
+						segmentCount, segmentIndex, segmentParameter);
 		injector.injectMembers(part);
 
 		if (segmentIndex + segmentParameter > 0
@@ -65,8 +65,7 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
 			IVisualPart<Node, ? extends Node> target,
-			HoverBehavior<Node> contextBehavior,
-			Map<Object, Object> contextMap) {
+			HoverBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		if (target instanceof FXGeometricShapePart) {
 			// create root handle part
@@ -79,10 +78,14 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 			injector.injectMembers(deleteHp);
 			parentHp.addChild(deleteHp);
 
+			FXCreateCurveHoverHandlePart createCurveHp = new FXCreateCurveHoverHandlePart();
+			injector.injectMembers(createCurveHp);
+			parentHp.addChild(createCurveHp);
+
 			return handles;
 		}
-		return super.createHoverHandleParts(target, contextBehavior,
-				contextMap);
+		return super
+				.createHoverHandleParts(target, contextBehavior, contextMap);
 	}
 
 }
