@@ -166,6 +166,13 @@ public class ScrollPaneEx extends Region {
 						- getWidth(), -tx));
 	}
 
+	/**
+	 * Computes and returns the bounds of the scrollable area within this
+	 * {@link ScrollPaneEx}.
+	 *
+	 * @return The bounds of the scrollable area, i.e.
+	 *         <code>[minx, miny, maxx, maxy]</code>.
+	 */
 	public double[] computeScrollableBoundsInLocal() {
 		double[] cb = computeContentBoundsInLocal();
 		Bounds db = contentGroup.getBoundsInParent();

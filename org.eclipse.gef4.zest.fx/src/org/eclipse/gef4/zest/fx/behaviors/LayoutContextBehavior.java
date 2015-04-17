@@ -28,6 +28,7 @@ import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -97,8 +98,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			viewportModel
 					.addPropertyChangeListener(viewportModelPropertyChangeListener);
 			// read initial bounds
-			initialBounds.setWidth(viewportModel.getWidth());
-			initialBounds.setHeight(viewportModel.getHeight());
+			FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
+			double[] scrollableBounds = fxViewer.getScrollPane()
+					.computeScrollableBoundsInLocal();
+			initialBounds.setX(scrollableBounds[0]);
+			initialBounds.setY(scrollableBounds[1]);
+			initialBounds.setWidth(fxViewer.getScrollPane().getWidth());
+			initialBounds.setHeight(fxViewer.getScrollPane().getHeight());
 		} else if (getHost().getContent().getNestingNode() != null) {
 			/*
 			 * Our graph is nested inside a node of another graph, therefore we
@@ -270,9 +276,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			return;
 		}
 		// update layout bounds to match the viewport bounds
-		double width = getViewportModel().getWidth();
-		double height = getViewportModel().getHeight();
-		Rectangle newBounds = new Rectangle(0, 0, width, height);
+		FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
+		double[] scrollableBounds = fxViewer.getScrollPane()
+				.computeScrollableBoundsInLocal();
+		Rectangle newBounds = new Rectangle(scrollableBounds[0],
+				scrollableBounds[1], fxViewer.getScrollPane().getWidth(),
+				fxViewer.getScrollPane().getHeight());
+
 		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
 			LayoutProperties.setBounds(layoutContext, newBounds);
 		}
