@@ -48,7 +48,7 @@ Import-Package: javafx.animation,
  javafx.scene.web,
  javafx.stage,
  javafx.util,
- javax.inject;version="1.0.0"
+ javax.inject;version="[1.0.0,2.0.0)"
 Bundle-Vendor: Eclipse GEF
 Bundle-Activator: org.eclipse.gef4.mvc.fx.MvcFxBundle
 Bundle-ActivationPolicy: lazy

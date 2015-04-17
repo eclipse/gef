@@ -44,7 +44,7 @@ Import-Package: javafx.animation,
  javafx.scene.web,
  javafx.stage,
  javafx.util,
- javax.inject;version="1.0.0"
+ javax.inject;version="[1.0.0,2.0.0)"
 Export-Package: org.eclipse.gef4.zest.fx;x-internal:=true,
  org.eclipse.gef4.zest.fx.behaviors;x-internal:=true,
  org.eclipse.gef4.zest.fx.layout;x-internal:=true,

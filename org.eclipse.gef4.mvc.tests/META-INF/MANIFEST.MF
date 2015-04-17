@@ -39,4 +39,4 @@ Import-Package: javafx.animation,
  javafx.scene.web,
  javafx.stage,
  javafx.util,
- javax.inject;version="1.0.0"
+ javax.inject;version="[1.0.0,2.0.0)"
