@@ -18,8 +18,6 @@ import java.util.Map;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -39,32 +37,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class FXHoverBehavior extends HoverBehavior<Node> {
 
 	/**
-	 * Searches the given {@link IVisualPart}s for a visual (JavaFX {@link Node}
-	 * ) that is currently pressed, i.e. the mouse was pressed over the visual.
-	 *
-	 * @param parts
-	 *            The list of parts to search for a pressed visual.
-	 * @return The part whose visual is currently pressed, or <code>null</code>.
-	 */
-	public static IVisualPart<Node, ? extends Node> getPressed(
-			List<? extends IVisualPart<Node, ? extends Node>> parts) {
-		if (parts == null || parts.isEmpty()) {
-			return null;
-		}
-		for (IVisualPart<Node, ? extends Node> part : parts) {
-			if (part.getVisual().isPressed()) {
-				return part;
-			}
-			IVisualPart<Node, ? extends Node> pressed = getPressed(part
-					.getChildren());
-			if (pressed != null) {
-				return pressed;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Searches for the specified part in the given list of root parts. Returns
 	 * <code>true</code> if the part can be found. Otherwise returns
 	 * <code>false</code>.
@@ -78,7 +50,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	public static boolean isContained(
 			List<? extends IVisualPart<Node, ? extends Node>> rootParts,
-					IVisualPart<Node, ? extends Node> part) {
+			IVisualPart<Node, ? extends Node> part) {
 		// validate arguments
 		if (part == null) {
 			return false;
@@ -108,25 +80,17 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	private PauseTransition creationDelayTransition;
 	private PauseTransition removalDelayTransition;
 	private Point initialPointerLocation;
-	private Node pressedVisual;
 	private final EventHandler<MouseEvent> mouseMoveHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			onMouseMove(event);
 		}
 	};
-	private final ChangeListener<? super Boolean> pressedListener = new ChangeListener<Boolean>() {
-		@Override
-		public void changed(ObservableValue<? extends Boolean> observable,
-				Boolean oldPressed, Boolean newPressed) {
-			onRelease();
-		}
-	};
 
 	@Override
 	protected void addFeedback(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
-					Map<Object, Object> contextMap) {
+			Map<Object, Object> contextMap) {
 		isFeedback = true;
 		if (getHost() instanceof IHandlePart) {
 			// add effect to handle parts as feedback, because feedback parts
@@ -148,9 +112,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		}
 		if (isInRemovalDelay()) {
 			stopRemovalDelay();
-		}
-		if (isInPressedListener()) {
-			removePressedListener();
 		}
 		super.deactivate();
 	}
@@ -202,17 +163,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	/**
-	 * Returns <code>true</code> when the pressed listener is currently active.
-	 * Otherwise returns <code>false</code>.
-	 *
-	 * @return <code>true</code> when the pressed listener is currently active,
-	 *         otherwise <code>false</code>.
-	 */
-	protected boolean isInPressedListener() {
-		return pressedVisual != null;
-	}
-
-	/**
 	 * Returns <code>true</code> when the removal delay is currently running.
 	 * Otherwise returns <code>false</code>.
 	 *
@@ -248,9 +198,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		}
 		if (!isHandles) {
 			startHandleCreationDelay();
-		}
-		if (isInPressedListener()) {
-			removePressedListener();
 		}
 	}
 
@@ -290,7 +237,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * Called when the pressed visual is released and we are unhovered.
 	 */
 	protected void onRelease() {
-		removePressedListener();
 		removeFeedback(Collections.singletonList(getHost()));
 		isHandles = false;
 		removeHandles(Collections.singletonList(getHost()));
@@ -300,15 +246,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * Called when the removal delay finishes.
 	 */
 	protected void onRemovalDelay() {
-		IVisualPart<Node, ? extends Node> pressed = getPressed(getHandleParts());
-		if (pressed == null) {
-			removeFeedback(Collections.singletonList(getHost()));
-			isHandles = false;
-			removeHandles(Collections.singletonList(getHost()));
-		} else {
-			pressedVisual = pressed.getVisual();
-			pressedVisual.pressedProperty().addListener(pressedListener);
-		}
+		removeFeedback(Collections.singletonList(getHost()));
+		isHandles = false;
+		removeHandles(Collections.singletonList(getHost()));
 	}
 
 	/**
@@ -351,11 +291,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		} else {
 			super.removeFeedback(targets);
 		}
-	}
-
-	protected void removePressedListener() {
-		pressedVisual.pressedProperty().removeListener(pressedListener);
-		pressedVisual = null;
 	}
 
 	protected void startHandleCreationDelay() {
