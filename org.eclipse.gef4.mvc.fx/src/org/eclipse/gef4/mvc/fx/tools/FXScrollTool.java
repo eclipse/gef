@@ -50,7 +50,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 				Node targetNode = (Node) target;
 				IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
 						.getTargetPart(Collections.singleton(viewer),
-								targetNode, TOOL_POLICY_KEY);
+								targetNode, TOOL_POLICY_KEY, true);
 
 				// send event to root part if no target part is found
 				if (targetPart == null) {

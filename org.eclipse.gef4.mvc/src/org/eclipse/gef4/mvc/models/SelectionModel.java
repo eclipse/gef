@@ -148,19 +148,24 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	}
 
 	/**
-	 * Selects the given list of {@link IContentPart}s. The parts are inserted
-	 * at the beginning of the selection list.
+	 * Updates the current selection by adding the given list of
+	 * {@link IContentPart}s, preserving already selected elements. That is, if
+	 * a member of the given list is not contained in the current selection, it
+	 * will be added to it. If a member of the current selection is not
+	 * contained in the given list, it will remain selected. The selection order
+	 * will be adjusted, so that the given elements are in front.
 	 *
-	 * @param newlySelected
-	 *            The {@link IContentPart}s to select.
+	 * @param additionalSelected
+	 *            The {@link IContentPart}s to add to/move within the current
+	 *            selection.
 	 */
 	public void select(
-			List<? extends IContentPart<VR, ? extends VR>> newlySelected) {
+			List<? extends IContentPart<VR, ? extends VR>> additionalSelected) {
 		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
-		selectionList.removeAll(newlySelected);
-		selectionSet.removeAll(newlySelected);
+		selectionList.removeAll(additionalSelected);
+		selectionSet.removeAll(additionalSelected);
 		int i = 0;
-		for (IContentPart<VR, ? extends VR> p : newlySelected) {
+		for (IContentPart<VR, ? extends VR> p : additionalSelected) {
 			if (!selectionSet.contains(p)) {
 				selectionList.add(i++, p);
 				selectionSet.add(p);

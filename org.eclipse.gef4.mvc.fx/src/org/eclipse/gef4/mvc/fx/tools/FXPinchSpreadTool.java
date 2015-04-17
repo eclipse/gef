@@ -55,7 +55,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 		Node targetNode = (Node) target;
 		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
 				.getTargetPart(Collections.singleton(viewer), targetNode,
-						TOOL_POLICY_KEY);
+						TOOL_POLICY_KEY, true);
 
 		// send event to root part if no target part can be found
 		if (targetPart == null) {

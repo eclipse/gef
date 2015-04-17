@@ -11,52 +11,34 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
+import java.util.Collections;
+
+import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
+import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
-public class FXCreateCurveOnDragPolicy extends AbstractFXDragPolicy {
+import com.google.common.collect.Multiset;
 
-	private FXGeometricCurvePart curvePart;
-
-	@Override
-	public void drag(MouseEvent e, Dimension delta) {
-		// move curve to pointer location
-		curvePart.getVisual().setEndPoint(getLocation(e));
-	}
-
-	protected Point getLocation(MouseEvent e) {
-		Point2D location = ((FXViewer) getHost().getRoot().getViewer())
-				.getScrollPane().getContentGroup()
-				.sceneToLocal(e.getSceneX(), e.getSceneY());
-		return new Point(location.getX(), location.getY());
-	}
-
-	protected FXGeometricShapePart getShapePart() {
-		return (FXGeometricShapePart) getHost().getParent().getAnchorages()
-				.keySet().iterator().next();
-	}
+public class FXCreateCurveOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
-	public void press(MouseEvent e) {
-		if (curvePart != null) {
-			throw new IllegalStateException(
-					"Cannot create a curve while creating a curve!");
-		}
-
+	public void click(MouseEvent e) {
 		// create new curve
 		FXGeometricCurve curve = new FXGeometricCurve(new Point[] {},
 				FXGeometricModel.GEF_COLOR_GREEN,
@@ -82,18 +64,57 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXDragPolicy {
 		// execute on stack
 		getHost().getRoot().getViewer().getDomain().execute(createOperation);
 
-		curvePart = (FXGeometricCurvePart) getHost().getRoot().getViewer()
-				.getContentPartMap().get(curve);
+		FXGeometricCurvePart curvePart = (FXGeometricCurvePart) getHost()
+				.getRoot().getViewer().getContentPartMap().get(curve);
 
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(e));
+
+		updateDragTargetToLastSegmentHandlePart(curvePart, e.getTarget());
 	}
 
-	@Override
-	public void release(MouseEvent e, Dimension delta) {
-		// move curve to pointer location
-		curvePart.getVisual().setEndPoint(getLocation(e));
-		curvePart = null;
+	protected Point getLocation(MouseEvent e) {
+		Point2D location = ((FXViewer) getHost().getRoot().getViewer())
+				.getScrollPane().getContentGroup()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
+		return new Point(location.getX(), location.getY());
+	}
+
+	protected FXGeometricShapePart getShapePart() {
+		return (FXGeometricShapePart) getHost().getParent().getAnchorages()
+				.keySet().iterator().next();
+	}
+
+	protected void updateDragTargetToLastSegmentHandlePart(
+			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
+		// select curve part to generate segment handles
+		getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+				.deselectAll();
+		getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+				.select(Collections.singletonList(curvePart));
+
+		// find last segment handle part
+		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart
+				.getAnchoreds();
+		FXCircleSegmentHandlePart lastSegmentHandlePart = null;
+		for (IVisualPart<Node, ? extends Node> anchored : anchoreds) {
+			if (anchored instanceof FXCircleSegmentHandlePart) {
+				FXCircleSegmentHandlePart circleSegmentHandlePart = (FXCircleSegmentHandlePart) anchored;
+				if (circleSegmentHandlePart.getSegmentParameter() == 1.0) {
+					lastSegmentHandlePart = circleSegmentHandlePart;
+					break;
+				}
+			}
+		}
+
+		// override drag target with segment handle part
+		getHost()
+				.getRoot()
+				.getViewer()
+				.getDomain()
+				.getAdapter(FXClickDragTool.class)
+				.overrideTargetForThisInteraction(eventTarget,
+						lastSegmentHandlePart);
 	}
 
 }

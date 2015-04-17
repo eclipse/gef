@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -28,6 +29,7 @@ import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -39,6 +41,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
 	private boolean dragInProgress;
 	private final Map<AbstractFXDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXDragPolicy, MouseEvent>();
+	private Map<EventTarget, IVisualPart<Node, ? extends Node>> interactionTargetOverrides = new HashMap<EventTarget, IVisualPart<Node, ? extends Node>>();
 
 	protected Set<? extends AbstractFXClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -54,8 +57,41 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				.values());
 	}
 
+	protected <T extends IPolicy<Node>> IVisualPart<Node, ? extends Node> getTargetPart(
+			final IViewer<Node> viewer, Node target, Class<T> policy,
+			boolean searchHierarchy) {
+		if (interactionTargetOverrides.containsKey(target)) {
+			IVisualPart<Node, ? extends Node> overridingTarget = interactionTargetOverrides
+					.get(target);
+			if (policy != null
+					&& overridingTarget.getAdapters(policy).isEmpty()) {
+				return null;
+			}
+			return overridingTarget;
+		}
+		return FXPartUtils.getTargetPart(Collections.singleton(viewer), target,
+				policy, searchHierarchy);
+	}
+
 	public boolean isDragging() {
 		return dragInProgress;
+	}
+
+	/**
+	 * Registers the given {@link IVisualPart} as the target part for all JavaFX
+	 * events which are send to the given {@link EventTarget} during the
+	 * currently active or next press-drag-release gesture.
+	 *
+	 * @param target
+	 *            The JavaFX {@link EventTarget} for which the given target
+	 *            should be used.
+	 * @param targetPart
+	 *            The {@link IVisualPart} to use as the target for all JavaFX
+	 *            events directed at the given {@link EventTarget}.
+	 */
+	public void overrideTargetForThisInteraction(EventTarget target,
+			IVisualPart<Node, ? extends Node> targetPart) {
+		interactionTargetOverrides.put(target, targetPart);
 	}
 
 	@Override
@@ -70,9 +106,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					if (!dragInProgress) {
 						return;
 					}
-					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
-							.getTargetPart(Collections.singleton(viewer),
-									target, DRAG_TOOL_POLICY_KEY);
+					IVisualPart<Node, ? extends Node> targetPart = getTargetPart(
+							viewer, target, DRAG_TOOL_POLICY_KEY, true);
 					// when no part processes the event, send it to the root
 					// part
 					if (targetPart == null) {
@@ -90,9 +125,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					e.consume();
 
 					// click first
-					IVisualPart<Node, ? extends Node> clickTargetPart = FXPartUtils
-							.getTargetPart(Collections.singleton(viewer),
-									target, null);
+					IVisualPart<Node, ? extends Node> clickTargetPart = getTargetPart(
+							viewer, target, CLICK_TOOL_POLICY_KEY, false);
 					// when no part processes the event, send it to the root
 					// part
 					if (clickTargetPart == null) {
@@ -107,9 +141,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// drag second, but only for single clicks
 					if (e.getClickCount() == 1) {
-						IVisualPart<Node, ? extends Node> dragTargetPart = FXPartUtils
-								.getTargetPart(Collections.singleton(viewer),
-										target, DRAG_TOOL_POLICY_KEY);
+						IVisualPart<Node, ? extends Node> dragTargetPart = getTargetPart(
+								viewer, target, DRAG_TOOL_POLICY_KEY, true);
+
 						// if no part wants to process the drag event, send it
 						// to the root part
 						if (dragTargetPart == null) {
@@ -131,9 +165,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					if (!dragInProgress) {
 						return;
 					}
-					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
-							.getTargetPart(Collections.singleton(viewer),
-									target, DRAG_TOOL_POLICY_KEY);
+					IVisualPart<Node, ? extends Node> targetPart = getTargetPart(
+							viewer, target, DRAG_TOOL_POLICY_KEY, true);
 					// if no part wants to process the event, send it to the
 					// root part
 					if (targetPart == null) {
@@ -146,6 +179,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 					getDomain().closeExecutionTransaction();
 					dragInProgress = false;
+					interactionTargetOverrides.clear();
 				}
 			};
 
@@ -161,4 +195,5 @@ public class FXClickDragTool extends AbstractTool<Node> {
 		}
 		super.unregisterListeners();
 	}
+
 }

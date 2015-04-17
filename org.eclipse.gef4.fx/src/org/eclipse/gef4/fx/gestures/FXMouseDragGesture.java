@@ -119,6 +119,7 @@ public abstract class FXMouseDragGesture {
 				drag(pressed, event, dx, dy);
 			} else {
 				release(pressed, event, dx, dy);
+				pressed.removeEventHandler(MouseEvent.ANY, mouseFilter);
 				pressed = null;
 			}
 		}
@@ -137,6 +138,7 @@ public abstract class FXMouseDragGesture {
 		EventTarget target = event.getTarget();
 		if (target instanceof Node) {
 			pressed = (Node) target;
+			pressed.addEventHandler(MouseEvent.ANY, mouseFilter);
 			startMousePosition = new Point2D(event.getSceneX(),
 					event.getSceneY());
 			press(pressed, event);
