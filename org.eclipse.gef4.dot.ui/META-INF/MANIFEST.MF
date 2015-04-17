@@ -23,7 +23,9 @@ Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.gef4.mvc.fx.ui;bundle-version="0.1.0",
  org.eclipse.gef4.zest.fx;bundle-version="0.1.0",
  org.eclipse.gef4.dot;bundle-version="0.1.0",
- org.eclipse.gef4.zest.fx.ui;bundle-version="0.1.0"
+ org.eclipse.gef4.zest.fx.ui;bundle-version="0.1.0",
+ org.eclipse.ui.editors,
+ org.eclipse.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javafx.animation,
@@ -52,8 +54,7 @@ Import-Package: javafx.animation,
  javafx.scene.transform,
  javafx.scene.web,
  javafx.stage,
- javafx.util,
- org.apache.log4j;version="1.2.15";resolution:=optional
+ org.apache.log4j;version="[1.2.15,2.0.0)"
 Bundle-ClassPath: .
 Export-Package: org.eclipse.gef4.internal.dot.ui;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser;x-internal:=true,
