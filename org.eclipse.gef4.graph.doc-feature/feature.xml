@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.graph" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.common.doc" version="0.1.0.qualifier"/>
    </requires>
 
    <plugin
