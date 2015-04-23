@@ -31,7 +31,7 @@
    <includes
          id="org.eclipse.gef4.dot.source"
          version="0.0.0"/>
-         
+
    <includes
          id="org.eclipse.gef4.dot.ui"
          version="0.0.0"/>
@@ -48,6 +48,8 @@
       <import feature="org.eclipse.gef4.graph.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.layout.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.mvc.sdk" version="0.1.0.qualifier"/>
    </requires>
 
 </feature>
