@@ -18,7 +18,7 @@
    <license url="%licenseURL">
       %license
    </license>
-   
+
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
       <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
@@ -35,5 +35,9 @@
    <includes
          id="org.eclipse.gef4.graph.doc"
          version="0.0.0"/>
+
+   <requires>
+      <import feature="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier"/>
+   </requires>
 
 </feature>
