@@ -90,7 +90,8 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXClickPolicy {
 		// select curve part to generate segment handles
 		getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
 				.deselectAll();
-		getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+		getHost().getRoot().getViewer()
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.select(Collections.singletonList(curvePart));
 
 		// find last segment handle part

@@ -29,7 +29,7 @@ public class FXPartUtils {
 	 * which both of the following properties hold:
 	 * <ol>
 	 * <li>Supports the specified policy (which may be <code>null</code>).</li>
-	 * <li>Provides a visual that belong to the parent hierarchy of the given
+	 * <li>Provides a visual that belongs to the parent hierarchy of the given
 	 * visual.</li>
 	 * </ol>
 	 *
@@ -37,19 +37,19 @@ public class FXPartUtils {
 	 * visual part that controls a visual in the hierarchy is returned.
 	 *
 	 * When the <i>searchHierarchy</i> is set to <code>false</code> only the
-	 * part directly controlling the given visual is considered.
+	 * first visual part is considered.
 	 *
 	 * @param viewers
 	 *            {@link Collection} of all {@link IViewer}s.
 	 * @param visual
-	 *            {@link Node} visual of the target part.
+	 *            {@link Node} visual that received an event.
 	 * @param supportedPolicy
 	 *            Class of the {@link IPolicy} which has to be supported by the
 	 *            target part. May be <code>null</code> to indicate that the
 	 *            target part does not have to support a specific policy.
 	 * @param searchHierarchy
-	 *            If set to <code>true</code>, the full parent hierarchy will be
-	 *            searched, otherwise, the direct target part alone is
+	 *            If set to <code>true</code>, the full visual part hierarchy
+	 *            will be searched, otherwise, the direct target part alone is
 	 *            considered.
 	 * @return The first suitable target part, or <code>null</code> if no
 	 *         suitable target part can be found.
@@ -65,26 +65,25 @@ public class FXPartUtils {
 			IVisualPart<Node, ? extends Node> targetPart = viewer
 					.getVisualPartMap().get(targetNode);
 
-			if (searchHierarchy) {
-				// traverse the node hierarchy to find a suitable part
-				while (targetNode != null
-						&& (targetPart == null || supportedPolicy != null
-								&& targetPart.getAdapters(supportedPolicy)
-										.isEmpty()) && targetNode != rootVisual) {
-					targetNode = targetNode.getParent();
-					targetPart = viewer.getVisualPartMap().get(targetNode);
-				}
+			// traverse the node hierarchy to find a suitable target part
+			while (targetNode != null
+					&& (targetPart == null || searchHierarchy
+							&& supportedPolicy != null
+							&& targetPart.getAdapters(supportedPolicy)
+									.isEmpty()) && targetNode != rootVisual) {
+				targetNode = targetNode.getParent();
+				targetPart = viewer.getVisualPartMap().get(targetNode);
 			}
 
 			// check if the found target part supports the policy
 			if (targetPart != null) {
-				if (supportedPolicy != null) {
-					if (!targetPart.getAdapters(supportedPolicy).isEmpty()) {
-						return targetPart;
-					}
-				} else {
+				if (supportedPolicy == null) {
 					return targetPart;
 				}
+				if (!targetPart.getAdapters(supportedPolicy).isEmpty()) {
+					return targetPart;
+				}
+				return null;
 			}
 		}
 
