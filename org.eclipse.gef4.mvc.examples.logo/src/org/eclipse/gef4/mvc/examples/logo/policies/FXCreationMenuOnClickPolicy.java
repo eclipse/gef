@@ -9,9 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Reflection;
@@ -19,12 +20,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Popup;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -36,7 +37,10 @@ import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
@@ -51,6 +55,13 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 		Reflection reflection = new Reflection();
 		reflection.setInput(dropShadow);
 		return reflection;
+	}
+
+	private static boolean isNested(Parent parent, Node node) {
+		while (node != null && node != parent) {
+			node = node.getParent();
+		}
+		return node == parent;
 	}
 
 	/**
@@ -106,12 +117,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	private double maxHeight = 0;
 
 	/**
-	 * This is the {@link Popup} window which provides the second {@link Scene}
-	 * for us.
-	 */
-	private Popup popup;
-
-	/**
 	 * The index of the current item in the list of {@link #geometries}.
 	 */
 	private int currentItemIndex = 1;
@@ -120,11 +125,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	 * The visual used to render a geometry.
 	 */
 	private FXGeometryNode<IGeometry> geometryNode;
-
-	/**
-	 * The initial mouse position in screen coordinates.
-	 */
-	private Point initialMousePositionInScreen;
 
 	/**
 	 * The initial mouse position in the coordinate system of the scene of the
@@ -139,6 +139,10 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	private final double padding = DROP_SHADOW_RADIUS + 1 + ARROW_STROKE_WIDTH
 			* 2 + 1;
 
+	private boolean isMenuOpen = false;
+
+	private HBox hbox;
+
 	{
 		List<AbstractFXGeometricElement<? extends IGeometry>> defaultElements = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
 		defaultElements.add(new FXGeometricShape(FXGeometricModel
@@ -152,33 +156,32 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 				.createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1,
 				227, 45), Color.WHITE, 2, Color.BLACK,
 				FXGeometricModel.GEF_SHADOW_EFFECT));
-		// defaultElements.add(new FXGeometricCurve(new Point[] { new Point(0,
-		// 0), new Point(10, 0), new Point(10, 10) },
-		// FXGeometricModel.GEF_COLOR_GREEN,
-		// FXGeometricModel.GEF_STROKE_WIDTH,
-		// FXGeometricModel.GEF_DASH_PATTERN, null));
 		setElements(defaultElements);
 	}
 
 	@Override
 	public void click(MouseEvent e) {
-		// close menu if open
-		if (popup != null) {
-			closeMenu();
-		}
-
 		// open menu on right click
 		if (MouseButton.SECONDARY.equals(e.getButton())) {
+			// close menu if already open
+			if (isMenuOpen) {
+				closeMenu();
+			}
 			EventTarget target = e.getTarget();
 			if (target instanceof Node) {
-				Node targetNode = (Node) target;
-				// check if the event is relevant for us
-				if (getHost().getVisual().getScene() == targetNode.getScene()) {
-					initialMousePositionInScreen = new Point(e.getScreenX(),
-							e.getScreenY());
-					initialMousePositionInScene = new Point(e.getSceneX(),
-							e.getSceneY());
-					openMenu(e);
+				initialMousePositionInScene = new Point(e.getSceneX(),
+						e.getSceneY());
+				openMenu(e);
+			}
+		} else if (MouseButton.PRIMARY.equals(e.getButton())) {
+			// close menu if currently opened
+			if (isMenuOpen) {
+				EventTarget target = e.getTarget();
+				if (target instanceof Node) {
+					Node targetNode = (Node) target;
+					if (!isNested(hbox, targetNode)) {
+						closeMenu();
+					}
 				}
 			}
 		}
@@ -186,8 +189,9 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 
 	private void closeMenu() {
 		// remove menu items
-		popup.hide();
-		popup = null;
+		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+		viewer.getScrollPane().getScrolledPane().getChildren().remove(hbox);
+		isMenuOpen = false;
 	}
 
 	protected void create(Object content) {
@@ -286,8 +290,13 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 		});
 	}
 
+	private FXViewer getViewer() {
+		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+		return viewer;
+	}
+
 	public boolean isMenuOpen() {
-		return popup != null;
+		return isMenuOpen;
 	}
 
 	private void nextElement(final boolean left) {
@@ -329,14 +338,24 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 					geomCurve.getEffect());
 		}
 
-		// determine translation
-		org.eclipse.gef4.geometry.planar.Rectangle bounds = toCreate
-				.getGeometry().getBounds();
-		// TODO: take transformations into account when computing the
-		// position
-		toCreate.setTransform(new AffineTransform(1, 0, 0, 1,
-				initialMousePositionInScene.x - bounds.getWidth() / 2,
-				initialMousePositionInScene.y - bounds.getHeight() / 2));
+		// compute width and height deltas to the content layer
+		Bounds bounds = geometryNode.getLayoutBounds();
+		Bounds boundsInContent = ((FXRootPart) getHost().getRoot()).contentLayer
+				.sceneToLocal(geometryNode.localToScene(bounds));
+		double dx = bounds.getWidth() - boundsInContent.getWidth();
+		double dy = bounds.getHeight() - boundsInContent.getHeight();
+
+		// compute translation based on the bounds, scaling, and width/height
+		// deltas
+		AffineTransform contentsTransform = getViewer().getAdapter(
+				ViewportModel.class).getContentsTransform();
+		double x = boundsInContent.getMinX() - bounds.getMinX()
+				/ contentsTransform.getScaleX() - dx / 2;
+		double y = boundsInContent.getMinY() - bounds.getMinY()
+				/ contentsTransform.getScaleY() - dy / 2;
+
+		// set translation transformation to position the element
+		toCreate.setTransform(new AffineTransform(1, 0, 0, 1, x, y));
 
 		// create the new semantic element
 		create(toCreate);
@@ -348,26 +367,28 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 		Node menuItem = createMenuItem();
 		Node rightArrow = createArrow(false);
 
-		HBox hbox = new HBox();
+		hbox = new HBox();
 		hbox.getChildren().addAll(wrapWithPadding(leftArrow, padding),
 				wrapWithPadding(menuItem, padding, maxWidth, maxHeight),
 				wrapWithPadding(rightArrow, padding));
 
-		popup = new Popup();
-		popup.getContent().add(hbox);
+		final Pane scrolledPane = getViewer().getScrollPane().getScrolledPane();
+		scrolledPane.getChildren().add(hbox);
+		isMenuOpen = true;
 
 		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable,
 					Bounds oldBounds, Bounds newBounds) {
-				popup.setX(initialMousePositionInScreen.x
-						- newBounds.getWidth() / 2);
-				popup.setY(initialMousePositionInScreen.y
-						- newBounds.getHeight() / 2);
+				hbox.setTranslateX(-newBounds.getWidth() / 2);
+				hbox.setTranslateY(-newBounds.getHeight() / 2);
+				Point2D pos = scrolledPane.sceneToLocal(
+						initialMousePositionInScene.x,
+						initialMousePositionInScene.y);
+				hbox.setLayoutX(pos.getX());
+				hbox.setLayoutY(pos.getY());
 			}
 		});
-
-		popup.show(getHost().getVisual().getScene().getWindow());
 	}
 
 	public void setElements(

@@ -80,8 +80,7 @@ public class FXGeometricShapePart extends
 			Affine affine = getAdapter(
 					AdapterKey.<Provider<? extends Affine>> get(
 							new TypeToken<Provider<? extends Affine>>() {
-							},
-							FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE))
+							}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE))
 					.get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());
