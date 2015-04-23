@@ -29,6 +29,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoCursorProvider;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnClickPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
@@ -128,6 +129,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 						"FXCreationMenuOnClick")).to(
 				FXCreationMenuOnClickPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXCreationMenuItemProvider.class)).to(
+				FXCreationMenuItemProvider.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(

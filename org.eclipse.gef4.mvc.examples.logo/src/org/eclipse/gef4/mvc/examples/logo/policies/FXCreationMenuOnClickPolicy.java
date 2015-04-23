@@ -1,7 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2015 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -27,26 +37,20 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-// TODO: only applicable for FXRootPart
+// TODO: only applicable for FXRootPart and FXViewer
 public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 
 	private static Reflection createDropShadowReflectionEffect(
@@ -102,9 +106,9 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	private static final Color HIGHLIGHT_COLOR = FXHoverFeedbackPart.DEFAULT_STROKE;
 
 	/**
-	 * List of {@link AbstractFXGeometricElement}s which can be constructed.
+	 * List of {@link IFXCreationMenuItem}s which can be constructed.
 	 */
-	private final List<AbstractFXGeometricElement<? extends IGeometry>> elements = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+	private final List<IFXCreationMenuItem> items = new ArrayList<IFXCreationMenuItem>();
 
 	/**
 	 * Stores the maximum element width.
@@ -122,11 +126,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	private int currentItemIndex = 1;
 
 	/**
-	 * The visual used to render a geometry.
-	 */
-	private FXGeometryNode<IGeometry> geometryNode;
-
-	/**
 	 * The initial mouse position in the coordinate system of the scene of the
 	 * {@link #getHost() host}.
 	 */
@@ -139,32 +138,22 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	private final double padding = DROP_SHADOW_RADIUS + 1 + ARROW_STROKE_WIDTH
 			* 2 + 1;
 
-	private boolean isMenuOpen = false;
-
+	/**
+	 * The {@link HBox} in which all menu visuals are layed out.
+	 */
 	private HBox hbox;
 
-	{
-		List<AbstractFXGeometricElement<? extends IGeometry>> defaultElements = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
-		defaultElements.add(new FXGeometricShape(FXGeometricModel
-				.createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1,
-				0, 0), Color.WHITE, FXGeometricModel.GEF_SHADOW_EFFECT));
-		defaultElements.add(new FXGeometricShape(FXGeometricModel
-				.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100,
-				22), FXGeometricModel.GEF_COLOR_BLUE,
-				FXGeometricModel.GEF_SHADOW_EFFECT));
-		defaultElements.add(new FXGeometricShape(FXGeometricModel
-				.createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1,
-				227, 45), Color.WHITE, 2, Color.BLACK,
-				FXGeometricModel.GEF_SHADOW_EFFECT));
-		setElements(defaultElements);
-	}
+	/**
+	 * The {@link Group} managing the template visual.
+	 */
+	private Group templateGroup;
 
 	@Override
 	public void click(MouseEvent e) {
 		// open menu on right click
 		if (MouseButton.SECONDARY.equals(e.getButton())) {
 			// close menu if already open
-			if (isMenuOpen) {
+			if (isMenuOpen()) {
 				closeMenu();
 			}
 			EventTarget target = e.getTarget();
@@ -175,7 +164,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 			}
 		} else if (MouseButton.PRIMARY.equals(e.getButton())) {
 			// close menu if currently opened
-			if (isMenuOpen) {
+			if (isMenuOpen()) {
 				EventTarget target = e.getTarget();
 				if (target instanceof Node) {
 					Node targetNode = (Node) target;
@@ -188,27 +177,21 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	}
 
 	private void closeMenu() {
-		// remove menu items
-		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-		viewer.getScrollPane().getScrolledPane().getChildren().remove(hbox);
-		isMenuOpen = false;
+		// remove menu visuals
+		getViewer().getScrollPane().getScrolledPane().getChildren()
+				.remove(hbox);
 	}
 
-	protected void create(Object content) {
+	private void create(IContentPart<Node, ? extends Node> contentParent,
+			Object content) {
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		IViewer<Node> viewer = root.getViewer();
-
-		// find model part
-		IVisualPart<Node, ? extends Node> modelPart = root.getChildren().get(0);
-		if (!(modelPart instanceof FXGeometricModelPart)) {
-			throw new IllegalStateException("Cannot find FXGeometricModelPart.");
-		}
 
 		// build create operation
 		CreationPolicy<Node> creationPolicy = root
 				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
 		creationPolicy.init();
-		creationPolicy.create((FXGeometricModelPart) modelPart, content);
+		creationPolicy.create(contentParent, content);
 
 		// execute on stack
 		viewer.getDomain().execute(creationPolicy.commit());
@@ -239,38 +222,33 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 
 	private Node createMenuItem() {
 		// create visual
-		geometryNode = new FXGeometryNode<IGeometry>();
-		// geometryNode.setOpacity(0.5);
-		// copy attributes from the current semantic element
-		updateGeometryNode();
-
-		// wrap geometry into group for the effect
-		final Group effectGroup = new Group(geometryNode);
+		templateGroup = new Group();
+		refreshMenuItem();
 
 		// highlighting
-		effectGroup.setEffect(createDropShadowReflectionEffect(
+		templateGroup.setEffect(createDropShadowReflectionEffect(
 				DROP_SHADOW_RADIUS, Color.TRANSPARENT));
 		effectOnHover(
-				effectGroup,
+				templateGroup,
 				createDropShadowReflectionEffect(DROP_SHADOW_RADIUS,
 						HIGHLIGHT_COLOR));
 
 		// register click action
-		effectGroup.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		templateGroup.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				onItemClick();
 			}
 		});
 		// register scroll action
-		effectGroup.setOnScroll(new EventHandler<ScrollEvent>() {
+		templateGroup.setOnScroll(new EventHandler<ScrollEvent>() {
 			@Override
 			public void handle(ScrollEvent event) {
 				nextElement(event.getDeltaY() < 0);
 			}
 		});
 
-		return effectGroup;
+		return templateGroup;
 	}
 
 	private void effectOnHover(final Node node, final Effect effect) {
@@ -291,12 +269,11 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	}
 
 	private FXViewer getViewer() {
-		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-		return viewer;
+		return (FXViewer) getHost().getRoot().getViewer();
 	}
 
 	public boolean isMenuOpen() {
-		return isMenuOpen;
+		return hbox != null && hbox.getParent() != null;
 	}
 
 	private void nextElement(final boolean left) {
@@ -304,44 +281,24 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 			// show previous geometry
 			currentItemIndex--;
 			if (currentItemIndex < 0) {
-				currentItemIndex = elements.size() - 1;
+				currentItemIndex = items.size() - 1;
 			}
 		} else {
 			// show next geometry
 			currentItemIndex++;
-			if (currentItemIndex >= elements.size()) {
+			if (currentItemIndex >= items.size()) {
 				currentItemIndex = 0;
 			}
 		}
-		updateGeometryNode();
+		refreshMenuItem();
 	}
 
 	private void onItemClick() {
-		// get semantic element
-		final AbstractFXGeometricElement<? extends IGeometry> geom = elements
-				.get(currentItemIndex);
-
-		// copy the semantic element
-		AbstractFXGeometricElement<? extends IGeometry> toCreate = null;
-		if (geom instanceof FXGeometricShape) {
-			FXGeometricShape geomShape = (FXGeometricShape) geom;
-			toCreate = new FXGeometricShape(geomShape.getGeometry(),
-					geomShape.getTransform(), geomShape.getFill(),
-					geomShape.getEffect());
-			toCreate.setStroke(geomShape.getStroke());
-			toCreate.setStrokeWidth(geomShape.getStrokeWidth());
-		} else if (geom instanceof FXGeometricCurve) {
-			FXGeometricCurve geomCurve = (FXGeometricCurve) geom;
-			toCreate = new FXGeometricCurve(geomCurve.getWayPointsCopy()
-					.toArray(new Point[] {}), geomCurve.getStroke(),
-					geomCurve.getStrokeWidth(), geomCurve.getDashes(),
-					geomCurve.getEffect());
-		}
-
 		// compute width and height deltas to the content layer
-		Bounds bounds = geometryNode.getLayoutBounds();
+		Node itemVisual = templateGroup.getChildren().get(0);
+		Bounds bounds = itemVisual.getLayoutBounds();
 		Bounds boundsInContent = ((FXRootPart) getHost().getRoot()).contentLayer
-				.sceneToLocal(geometryNode.localToScene(bounds));
+				.sceneToLocal(itemVisual.localToScene(bounds));
 		double dx = bounds.getWidth() - boundsInContent.getWidth();
 		double dy = bounds.getHeight() - boundsInContent.getHeight();
 
@@ -354,14 +311,23 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 		double y = boundsInContent.getMinY() - bounds.getMinY()
 				/ contentsTransform.getScaleY() - dy / 2;
 
-		// set translation transformation to position the element
-		toCreate.setTransform(new AffineTransform(1, 0, 0, 1, x, y));
-
 		// create the new semantic element
-		create(toCreate);
+		IFXCreationMenuItem item = items.get(currentItemIndex);
+		Object toCreate = item.createContent();
+		create(item.findContentParent(getHost().getRoot()), toCreate);
+
+		// relocate to final position
+		FXTransformPolicy txPolicy = getViewer().getContentPartMap()
+				.get(toCreate).getAdapter(FXTransformPolicy.class);
+		txPolicy.init();
+		txPolicy.setTransform(new AffineTransform(1, 0, 0, 1, x, y));
+		getViewer().getDomain().execute(txPolicy.commit());
 	}
 
 	private void openMenu(final MouseEvent e) {
+		// refresh menu items based on the provider
+		refreshMenuItems();
+
 		// construct content pane and group
 		Node leftArrow = createArrow(true);
 		Node menuItem = createMenuItem();
@@ -374,7 +340,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 
 		final Pane scrolledPane = getViewer().getScrollPane().getScrolledPane();
 		scrolledPane.getChildren().add(hbox);
-		isMenuOpen = true;
 
 		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
@@ -391,15 +356,23 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 		});
 	}
 
-	public void setElements(
-			Collection<AbstractFXGeometricElement<? extends IGeometry>> elements) {
-		this.elements.clear();
-		this.elements.addAll(elements);
+	private void refreshMenuItem() {
+		// exchange template visual
+		templateGroup.getChildren().clear();
+		templateGroup.getChildren().add(
+				items.get(currentItemIndex).createVisual());
+	}
+
+	private void refreshMenuItems() {
+		List<IFXCreationMenuItem> menuItems = getHost().getAdapter(
+				FXCreationMenuItemProvider.class).get();
+		this.items.clear();
+		this.items.addAll(menuItems);
+		// compute max width and height
 		maxWidth = 0;
 		maxHeight = 0;
-		for (AbstractFXGeometricElement<? extends IGeometry> element : this.elements) {
-			org.eclipse.gef4.geometry.planar.Rectangle bounds = element
-					.getGeometry().getBounds();
+		for (IFXCreationMenuItem item : items) {
+			Bounds bounds = item.createVisual().getLayoutBounds();
 			if (bounds.getWidth() > maxWidth) {
 				maxWidth = bounds.getWidth();
 			}
@@ -407,19 +380,9 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 				maxHeight = bounds.getHeight();
 			}
 		}
-	}
-
-	protected void updateGeometryNode() {
-		// get semantic element
-		final AbstractFXGeometricElement<? extends IGeometry> geom = elements
-				.get(currentItemIndex);
-		// copy attributes over the the visual
-		geometryNode.setGeometry(geom.getGeometry());
-		geometryNode.setStroke(geom.getStroke());
-		geometryNode.setStrokeWidth(geom.getStrokeWidth());
-		geometryNode.setEffect(geom.getEffect());
-		if (geom instanceof FXGeometricShape) {
-			geometryNode.setFill(((FXGeometricShape) geom).getFill());
+		// ensure currentItemIndex is in bounds
+		if (currentItemIndex >= this.items.size()) {
+			currentItemIndex = 0;
 		}
 	}
 
