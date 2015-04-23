@@ -37,6 +37,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
@@ -49,6 +50,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 // TODO: only applicable for FXRootPart and FXViewer
 public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
@@ -67,6 +71,12 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 		}
 		return node == parent;
 	}
+
+	/**
+	 * The adapter role for the
+	 * <code>Provider&lt;List&lt;IFXCreationMenuItem&gt;&gt;</code>.
+	 */
+	public static final String MENU_ITEM_PROVIDER = "Provider<List<IFXCreationMenuItem>>";
 
 	/**
 	 * Default {@link Paint} used for to fill the interior of the arrows.
@@ -364,8 +374,12 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	}
 
 	private void refreshMenuItems() {
-		List<IFXCreationMenuItem> menuItems = getHost().getAdapter(
-				FXCreationMenuItemProvider.class).get();
+		@SuppressWarnings("serial")
+		List<IFXCreationMenuItem> menuItems = getHost()
+				.<Provider<List<IFXCreationMenuItem>>> getAdapter(
+						AdapterKey
+								.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
+								}, MENU_ITEM_PROVIDER)).get();
 		this.items.clear();
 		this.items.addAll(menuItems);
 		// compute max width and height

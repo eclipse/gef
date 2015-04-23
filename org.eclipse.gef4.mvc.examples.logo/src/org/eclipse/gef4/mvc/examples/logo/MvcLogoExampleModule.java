@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo;
 
+import java.util.List;
 import java.util.Map;
 
 import javafx.scene.Cursor;
@@ -36,6 +37,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.IFXCreationMenuItem;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
@@ -130,7 +132,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 						"FXCreationMenuOnClick")).to(
 				FXCreationMenuOnClickPolicy.class);
 		adapterMapBinder.addBinding(
-				AdapterKey.get(FXCreationMenuItemProvider.class)).to(
+				AdapterKey.get(
+						new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
+						}, FXCreationMenuOnClickPolicy.MENU_ITEM_PROVIDER)).to(
 				FXCreationMenuItemProvider.class);
 	}
 
