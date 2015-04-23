@@ -58,8 +58,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	}
 
 	protected <T extends IPolicy<Node>> IVisualPart<Node, ? extends Node> getTargetPart(
-			final IViewer<Node> viewer, Node target, Class<T> policy,
-			boolean searchHierarchy) {
+			final IViewer<Node> viewer, Node target, Class<T> policy) {
 		if (interactionTargetOverrides.containsKey(target)) {
 			IVisualPart<Node, ? extends Node> overridingTarget = interactionTargetOverrides
 					.get(target);
@@ -70,7 +69,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 			return overridingTarget;
 		}
 		return FXPartUtils.getTargetPart(Collections.singleton(viewer), target,
-				policy, searchHierarchy);
+				policy, true);
 	}
 
 	public boolean isDragging() {
@@ -107,7 +106,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						return;
 					}
 					IVisualPart<Node, ? extends Node> targetPart = getTargetPart(
-							viewer, target, DRAG_TOOL_POLICY_KEY, true);
+							viewer, target, DRAG_TOOL_POLICY_KEY);
 					// when no part processes the event, send it to the root
 					// part
 					if (targetPart == null) {
@@ -126,7 +125,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// click first
 					IVisualPart<Node, ? extends Node> clickTargetPart = getTargetPart(
-							viewer, target, CLICK_TOOL_POLICY_KEY, false);
+							viewer, target, CLICK_TOOL_POLICY_KEY);
 					// when no part processes the event, send it to the root
 					// part
 					if (clickTargetPart == null) {
@@ -142,7 +141,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					// drag second, but only for single clicks
 					if (e.getClickCount() == 1) {
 						IVisualPart<Node, ? extends Node> dragTargetPart = getTargetPart(
-								viewer, target, DRAG_TOOL_POLICY_KEY, true);
+								viewer, target, DRAG_TOOL_POLICY_KEY);
 
 						// if no part wants to process the drag event, send it
 						// to the root part
@@ -166,7 +165,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						return;
 					}
 					IVisualPart<Node, ? extends Node> targetPart = getTargetPart(
-							viewer, target, DRAG_TOOL_POLICY_KEY, true);
+							viewer, target, DRAG_TOOL_POLICY_KEY);
 					// if no part wants to process the event, send it to the
 					// root part
 					if (targetPart == null) {
