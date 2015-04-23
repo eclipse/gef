@@ -50,7 +50,6 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class NodeContentPart extends AbstractFXContentPart<Group> {
@@ -475,14 +474,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
-		super.registerAtVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
-				.getVisualPartMap();
-		visualPartMap.put(getVisual().getChildren().get(0), this);
-	}
-
-	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getNestedChildrenPane().getChildren().remove(index);
@@ -548,15 +539,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			setNestedGraphIcon(new NestedGraphIcon());
 			getNestedContentStackPane().getChildren().add(getNestedGraphIcon());
 		}
-	}
-
-	@Override
-	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
-			Group visual) {
-		super.unregisterFromVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
-				.getVisualPartMap();
-		visualPartMap.remove(getVisual().getChildren().get(0));
 	}
 
 }

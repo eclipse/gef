@@ -75,8 +75,8 @@ public class FXPartUtils {
 				targetPart = viewer.getVisualPartMap().get(targetNode);
 			}
 
-			// check if the found target part supports the policy
 			if (targetPart != null) {
+				// check if the found target part supports the policy
 				if (supportedPolicy == null) {
 					return targetPart;
 				}
@@ -86,7 +86,7 @@ public class FXPartUtils {
 				return null;
 			}
 		}
-
+		// no suitable part could be found
 		return null;
 	}
 
