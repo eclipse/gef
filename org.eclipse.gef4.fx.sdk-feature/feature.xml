@@ -39,13 +39,14 @@
    <includes
          id="org.eclipse.gef4.fx.ui"
          version="0.0.0"/>
-         
+
    <includes
          id="org.eclipse.gef4.fx.ui.source"
          version="0.0.0"/>
 
    <requires>
       <import feature="org.eclipse.gef4.geometry.sdk" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier"/>
    </requires>
 
 </feature>
