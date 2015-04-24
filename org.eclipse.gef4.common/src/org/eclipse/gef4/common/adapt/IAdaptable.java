@@ -115,6 +115,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * {@link AdapterKey}, or there is no one 'matching' it, <code>null</code>
 	 * will be returned.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link AdapterKey} used to retrieve a registered adapter.
 	 * @return The unambiguously retrievable adapter for the given
@@ -140,6 +141,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * role ({@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for
 	 * which this holds. Otherwise it will return <code>null</code>.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link Class} key used to retrieve a registered adapter.
 	 * @return The unambiguously retrievable adapter for the given {@link Class}
@@ -165,6 +167,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * there is a single adapter for which this holds. Otherwise it will return
 	 * <code>null</code>.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link TypeToken} key used to retrieve a registered
 	 *            adapter.
@@ -180,6 +183,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
 	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link Class} key to retrieve adapters for.
 	 * @return A {@link Map} containing all those adapters registered at this
@@ -199,6 +203,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * given {@link TypeToken} key (see
 	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link TypeToken} key to retrieve adapters for.
 	 * @return A {@link Map} containing all those adapters registered at this
@@ -222,6 +227,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link AdapterKey} under which to register the given
 	 *            adapter.
@@ -240,6 +246,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link Class} under which to register the given adapter.
 	 * @param adapter
@@ -258,6 +265,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link TypeToken} under which to register the given
 	 *            adapter.
@@ -277,6 +285,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method, passing over
 	 * <code>null</code>.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The {@link AdapterKey} for which to remove a registered
 	 *            adapter.

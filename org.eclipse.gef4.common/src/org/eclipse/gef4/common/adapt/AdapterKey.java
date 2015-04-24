@@ -71,6 +71,7 @@ public class AdapterKey<T> {
 	/**
 	 * Creates a new {@link AdapterKey} for the given key and role.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The key to use for the newly created {@link AdapterKey}. May
 	 *            not be <code>null</code>.
@@ -92,6 +93,7 @@ public class AdapterKey<T> {
 	/**
 	 * Creates a new {@link AdapterKey} for the given key and role.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The key to use for the newly created {@link AdapterKey}. May
 	 *            not be <code>null</code>.
@@ -114,6 +116,7 @@ public class AdapterKey<T> {
 	 * Creates a new {@link AdapterKey} for the given key and the
 	 * {@link #DEFAULT_ROLE} role.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The key to use for the newly created {@link AdapterKey}. May
 	 *            not be <code>null</code>.
@@ -129,6 +132,7 @@ public class AdapterKey<T> {
 	 * Creates a new {@link AdapterKey} for the given key and the
 	 * {@link #DEFAULT_ROLE} role.
 	 * 
+	 * @param <T> The adapter type.
 	 * @param key
 	 *            The key to use for the newly created {@link AdapterKey}. May
 	 *            not be <code>null</code>.
