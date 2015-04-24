@@ -16,7 +16,6 @@ import java.util.Collections;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -68,15 +67,10 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
 			}
 		} else if (host instanceof IRootPart) {
 			// check if click on background (either one of the root visuals, or
-			// an unregistered visual, or a visual for which the part does
-			// support a click policy, i.e. only when this policy is called as a
-			// fallback on the root part)
+			// an unregistered visual)
 			IVisualPart<Node, ? extends Node> targetPart = getHost().getRoot()
 					.getViewer().getVisualPartMap().get(e.getTarget());
-			if (targetPart == null
-					|| targetPart == host
-					|| !targetPart.getAdapters(
-							FXClickDragTool.CLICK_TOOL_POLICY_KEY).isEmpty()) {
+			if (targetPart == null || targetPart == host) {
 				// unset focus
 				focusModel.setFocused(null);
 				// remove all selected
