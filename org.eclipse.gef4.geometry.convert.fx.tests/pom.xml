@@ -33,14 +33,14 @@
 							<groupId>org.eclipse.fx.shared</groupId>
 							<artifactId>org.eclipse.fx.osgi</artifactId>
 							<scope>system</scope>
-							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_1.0.0.201406020501.jar</systemPath>
+							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_2.0.0.201504180501.jar</systemPath>
 							<version>1.0.0</version>
 						</frameworkExtension>
 						<frameworkExtension>
 							<groupId>org.eclipse.fx.runtime</groupId>
 							<artifactId>org.eclipse.fx.osgi.util</artifactId>
 							<scope>system</scope>
-							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_1.0.0.201406020601.jar</systemPath>
+							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_2.0.0.201504180602.jar</systemPath>
 							<version>1.0.0</version>
 						</frameworkExtension>
 					</frameworkExtensions>

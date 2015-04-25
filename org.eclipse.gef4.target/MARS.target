@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="MARS" sequenceNumber="11">
+<?pde version="3.8"?><target name="MARS" sequenceNumber="16">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
-<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
-<unit id="com.google.inject" version="3.0.0.v201312141243"/>
-<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20150316021154/repository/"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
 <repository location="http://download.itemis.de/updates/"/>
@@ -17,11 +10,23 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="1.2.0.201501301028"/>
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150323-0420"/>
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.8.1.v201503230617"/>
 <unit id="org.eclipse.sdk.ide" version="4.5.0.I20150320-0800"/>
 <repository location="http://download.eclipse.org/releases/mars"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201504212146"/>
+<repository location="http://download.eclipse.org/efxclipse/simrel-contrib/mars/m7/shared/site"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.google.inject" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
+<unit id="com.google.guava" version="15.0.0.v201403281430"/>
+<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
+<unit id="com.google.guava.source" version="15.0.0.v201403281430"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20150316021154/repository/"/>
 </location>
 </locations>
 </target>

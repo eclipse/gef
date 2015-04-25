@@ -20,6 +20,15 @@
       %license
    </license>
 
+   <requires>
+      <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef4.mvc" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.geometry.convert.fx" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.common" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.geometry" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.fx" version="0.1.0.qualifier"/>
+   </requires>
+
    <plugin
          id="org.eclipse.gef4.mvc.fx"
          download-size="0"
