@@ -26,12 +26,12 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractFXPinchSpreadPolicy {
 	}
 
 	@Override
-	public void zoomDetected(ZoomEvent e) {
+	public void zoomStarted(ZoomEvent e) {
 		getViewportPolicy().init();
 	}
 
 	@Override
-	public void zoomed(ZoomEvent e) {
+	public void zoom(ZoomEvent e) {
 		getViewportPolicy().zoomRelative(e.getZoomFactor(), e.getSceneX(),
 				e.getSceneY());
 	}

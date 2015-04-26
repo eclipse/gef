@@ -19,17 +19,17 @@ public abstract class FXPinchSpreadGesture {
 
 	private Scene scene;
 
-	private EventHandler<? super ZoomEvent> zoomDetectedHandler = new EventHandler<ZoomEvent>() {
+	private EventHandler<? super ZoomEvent> zoomStartedHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			zoomDetected(event);
+			zoomStarted(event);
 		}
 	};
 
 	private EventHandler<? super ZoomEvent> zoomHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			zoomed(event);
+			zoom(event);
 		}
 	};
 
@@ -49,7 +49,7 @@ public abstract class FXPinchSpreadGesture {
 			this.scene.removeEventHandler(ZoomEvent.ZOOM_FINISHED,
 					zoomFinishedHandler);
 			this.scene.removeEventHandler(ZoomEvent.ZOOM_STARTED,
-					zoomDetectedHandler);
+					zoomStartedHandler);
 			this.scene.removeEventHandler(ZoomEvent.ZOOM, zoomHandler);
 		}
 
@@ -59,15 +59,15 @@ public abstract class FXPinchSpreadGesture {
 			this.scene.addEventHandler(ZoomEvent.ZOOM_FINISHED,
 					zoomFinishedHandler);
 			this.scene.addEventHandler(ZoomEvent.ZOOM_STARTED,
-					zoomDetectedHandler);
+					zoomStartedHandler);
 			this.scene.addEventHandler(ZoomEvent.ZOOM, zoomHandler);
 		}
 
 	}
 
-	protected abstract void zoomDetected(ZoomEvent event);
+	protected abstract void zoomStarted(ZoomEvent event);
 
-	protected abstract void zoomed(ZoomEvent event);
+	protected abstract void zoom(ZoomEvent event);
 
 	protected abstract void zoomFinished(ZoomEvent event);
 

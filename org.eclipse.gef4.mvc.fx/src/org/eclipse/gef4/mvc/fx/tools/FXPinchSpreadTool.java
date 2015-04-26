@@ -71,18 +71,18 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
 				@Override
-				protected void zoomDetected(ZoomEvent e) {
+				protected void zoomStarted(ZoomEvent e) {
 					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
-						policy.zoomDetected(e);
+						policy.zoomStarted(e);
 					}
 				}
 
 				@Override
-				protected void zoomed(ZoomEvent e) {
+				protected void zoom(ZoomEvent e) {
 					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
-						policy.zoomed(e);
+						policy.zoom(e);
 					}
 				}
 
