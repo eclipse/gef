@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
+ * Copyright (c) 2015 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
@@ -17,9 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.gestures.FXPinchSpreadGesture;
+import org.eclipse.gef4.fx.gestures.FXRotateGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXRotatePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -27,26 +27,26 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.input.RotateEvent;
 
-public class FXPinchSpreadTool extends AbstractTool<Node> {
+public class FXRotateTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXPinchSpreadPolicy.class;
+	public static final Class<AbstractFXRotatePolicy> TOOL_POLICY_KEY = AbstractFXRotatePolicy.class;
 
-	private final Map<IViewer<Node>, FXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, FXPinchSpreadGesture>();
+	private final Map<IViewer<Node>, FXRotateGesture> gestures = new HashMap<IViewer<Node>, FXRotateGesture>();
 
-	public FXPinchSpreadTool() {
+	public FXRotateTool() {
 	}
 
-	protected Set<? extends AbstractFXPinchSpreadPolicy> getPinchSpreadPolicies(
+	protected Set<? extends AbstractFXRotatePolicy> getRotatePolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart
-				.<AbstractFXPinchSpreadPolicy> getAdapters(TOOL_POLICY_KEY)
-				.values());
+		return new HashSet<>(
+				targetPart.<AbstractFXRotatePolicy> getAdapters(TOOL_POLICY_KEY)
+						.values());
 	}
 
-	protected Set<? extends AbstractFXPinchSpreadPolicy> getTargetPolicies(
-			IViewer<Node> viewer, ZoomEvent e) {
+	protected Set<? extends AbstractFXRotatePolicy> getTargetPolicies(
+			IViewer<Node> viewer, RotateEvent e) {
 		EventTarget target = e.getTarget();
 		if (!(target instanceof Node)) {
 			return null;
@@ -62,35 +62,36 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 			targetPart = viewer.getRootPart();
 		}
 
-		return getPinchSpreadPolicies(targetPart);
+		return getRotatePolicies(targetPart);
 	}
 
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
+			FXRotateGesture gesture = new FXRotateGesture() {
+
 				@Override
-				protected void zoom(ZoomEvent e) {
-					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
-							viewer, e)) {
-						policy.zoom(e);
+				protected void rotate(RotateEvent event) {
+					for (AbstractFXRotatePolicy policy : getTargetPolicies(
+							viewer, event)) {
+						policy.rotate(event);
 					}
 				}
 
 				@Override
-				protected void zoomFinished(ZoomEvent e) {
-					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
-							viewer, e)) {
-						policy.zoomFinished(e);
+				protected void rotationFinished(RotateEvent event) {
+					for (AbstractFXRotatePolicy policy : getTargetPolicies(
+							viewer, event)) {
+						policy.rotationFinished(event);
 					}
 				}
 
 				@Override
-				protected void zoomStarted(ZoomEvent e) {
-					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
-							viewer, e)) {
-						policy.zoomStarted(e);
+				protected void rotationStarted(RotateEvent event) {
+					for (AbstractFXRotatePolicy policy : getTargetPolicies(
+							viewer, event)) {
+						policy.rotationStarted(event);
 					}
 				}
 			};
@@ -102,7 +103,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (FXPinchSpreadGesture gesture : gestures.values()) {
+		for (FXRotateGesture gesture : gestures.values()) {
 			gesture.setScene(null);
 		}
 		super.unregisterListeners();

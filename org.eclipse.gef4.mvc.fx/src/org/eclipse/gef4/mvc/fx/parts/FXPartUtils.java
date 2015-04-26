@@ -13,14 +13,13 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Collection;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import javafx.scene.Node;
 
 public class FXPartUtils {
 
@@ -67,10 +66,11 @@ public class FXPartUtils {
 
 			// traverse the node hierarchy to find a suitable target part
 			while (targetNode != null
-					&& (targetPart == null || searchHierarchy
-							&& supportedPolicy != null
-							&& targetPart.getAdapters(supportedPolicy)
-									.isEmpty()) && targetNode != rootVisual) {
+					&& (targetPart == null
+							|| searchHierarchy && supportedPolicy != null
+									&& targetPart.getAdapters(supportedPolicy)
+											.isEmpty())
+					&& targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);
 			}
@@ -90,25 +90,20 @@ public class FXPartUtils {
 		return null;
 	}
 
-	public static Bounds getUnionedVisualBoundsInScene(
+	public static Rectangle getUnionedVisualBoundsInScene(
 			Collection<? extends IVisualPart<Node, ? extends Node>> parts) {
-		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
-		for (IVisualPart<Node, ? extends Node> cp : parts) {
-			Bounds boundsInScene = cp.getVisual().localToScene(
-					cp.getVisual().getLayoutBounds());
-			if (unionedBoundsInScene == null) {
-				unionedBoundsInScene = JavaFX2Geometry
-						.toRectangle(boundsInScene);
+		Rectangle bounds = null;
+		for (IVisualPart<Node, ? extends Node> part : parts) {
+			Rectangle boundsInScene = JavaFX2Geometry
+					.toRectangle(part.getVisual()
+							.localToScene(part.getVisual().getLayoutBounds()));
+			if (bounds == null) {
+				bounds = boundsInScene;
 			} else {
-				unionedBoundsInScene.union(JavaFX2Geometry
-						.toRectangle(boundsInScene));
+				bounds.union(boundsInScene);
 			}
 		}
-		if (unionedBoundsInScene != null) {
-			return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
-		} else {
-			return null;
-		}
+		return bounds;
 	}
 
 }
