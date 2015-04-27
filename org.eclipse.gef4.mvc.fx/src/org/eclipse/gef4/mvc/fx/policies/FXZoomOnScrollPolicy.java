@@ -26,7 +26,7 @@ public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 	@Override
 	public void scroll(ScrollEvent event) {
 		if (isZoom(event)) {
-			zoomRelative(event.getDeltaY() > 0 ? 1.01 : 1 / 1.01,
+			zoomRelative(event.getDeltaY() > 0 ? 1.05 : 1 / 1.05,
 					event.getSceneX(), event.getSceneY());
 		}
 	}
