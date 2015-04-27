@@ -4,8 +4,7 @@ Bundle-Name: GEF4 DOT Documentation
 Bundle-SymbolicName: org.eclipse.gef4.dot.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
-Require-Bundle: com.google.inject;bundle-version="[3.0.0,4.0.0)";resolution:=optional,
- org.eclipse.emf.ecore;bundle-version="[2.0.0,3.0.0)";resolution:=optional,
+Require-Bundle: org.eclipse.emf.ecore;bundle-version="[2.0.0,3.0.0)";resolution:=optional,
  org.eclipse.xtext;bundle-version="[2.0.0,3.0.0)";resolution:=optional,
  org.eclipse.gef4.common;bundle-version="0.1.0";resolution:=optional,
  org.eclipse.gef4.graph;bundle-version="0.1.0";resolution:=optional,

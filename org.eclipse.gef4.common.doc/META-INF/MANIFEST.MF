@@ -4,5 +4,10 @@ Bundle-Name: GEF4 Common Documentation
 Bundle-SymbolicName: org.eclipse.gef4.common.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
-Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)";resolution:=optional,
- com.google.inject;bundle-version="[3.0.0,4.0.0)";resolution:=optional
+Import-Package: com.google.common.collect;version="[12.0.0,16.0.0)";resolution:=optional,
+ com.google.common.reflect;version="[12.0.0,16.0.0)";resolution:=optional,
+ com.google.inject;version="[1.3.0,2.0.0)";resolution:=optional,
+ com.google.inject.matcher;version="[1.3.0,2.0.0)";resolution:=optional,
+ com.google.inject.multibindings;version="[1.3.0,2.0.0)";resolution:=optional,
+ com.google.inject.spi;version="[1.3.0,2.0.0)";resolution:=optional,
+ javax.inject;version="[1.0.0,2.0.0)";resolution:=optional

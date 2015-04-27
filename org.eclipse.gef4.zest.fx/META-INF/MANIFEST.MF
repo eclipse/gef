@@ -5,9 +5,7 @@ Bundle-SymbolicName: org.eclipse.gef4.zest.fx
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
- com.google.inject;bundle-version="[3.0.0,4.0.0)",
- org.eclipse.osgi;bundle-version="[3.10.0,4.0.0)",
+Require-Bundle: org.eclipse.osgi;bundle-version="[3.10.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.gef4.common;bundle-version="0.1.0",
@@ -18,10 +16,14 @@ Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
  org.eclipse.gef4.mvc.fx;bundle-version="0.1.0",
  org.eclipse.gef4.graph;bundle-version="0.1.0",
  org.eclipse.gef4.layout;bundle-version="0.1.0"
-Import-Package: javax.inject;version="[1.0.0,2.0.0)"
 Export-Package: org.eclipse.gef4.zest.fx;x-internal:=true,
  org.eclipse.gef4.zest.fx.behaviors;x-internal:=true,
  org.eclipse.gef4.zest.fx.layout;x-internal:=true,
  org.eclipse.gef4.zest.fx.models;x-internal:=true,
  org.eclipse.gef4.zest.fx.parts;x-internal:=true,
  org.eclipse.gef4.zest.fx.policies;x-internal:=true
+Import-Package: com.google.common.collect;version="[12.0.0,16.0.0)",
+ com.google.common.reflect;version="[12.0.0,16.0.0)",
+ com.google.inject;version="[1.3.0,2.0.0)",
+ com.google.inject.binder;version="[1.3.0,2.0.0)",
+ com.google.inject.multibindings;version="[1.3.0,2.0.0)"

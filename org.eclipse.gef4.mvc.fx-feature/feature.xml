@@ -27,6 +27,10 @@
       <import feature="org.eclipse.gef4.common" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.geometry" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.fx" version="0.1.0.qualifier"/>
+      <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
+      <import plugin="com.google.inject.multibindings" version="3.0.0" match="compatible"/>
+      <import plugin="javax.inject" version="1.0.0" match="compatible"/>
    </requires>
 
    <plugin
