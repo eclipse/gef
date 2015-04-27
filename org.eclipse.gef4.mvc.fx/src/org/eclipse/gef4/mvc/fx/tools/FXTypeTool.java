@@ -33,27 +33,27 @@ public class FXTypeTool extends AbstractTool<Node> {
 
 	public static final Class<AbstractFXTypePolicy> TOOL_POLICY_KEY = AbstractFXTypePolicy.class;
 
+	private boolean isTypeInProgress = false;
+
 	private final EventHandler<? super KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
-			getDomain().openExecutionTransaction();
+			getDomain().openExecutionTransaction(FXTypeTool.this);
 			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
 			for (AbstractFXTypePolicy policy : policies) {
 				policy.pressed(event);
 			}
-			getDomain().closeExecutionTransaction();
 		}
 	};
 
 	private final EventHandler<? super KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
-			getDomain().openExecutionTransaction();
 			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
 			for (AbstractFXTypePolicy policy : policies) {
 				policy.released(event);
 			}
-			getDomain().closeExecutionTransaction();
+			getDomain().closeExecutionTransaction(FXTypeTool.this);
 		}
 	};
 
@@ -105,20 +105,18 @@ public class FXTypeTool extends AbstractTool<Node> {
 	@Override
 	protected void registerListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-			viewer.getRootPart().getVisual().getScene()
-					.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
-			viewer.getRootPart().getVisual().getScene()
-					.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+			Scene scene = viewer.getRootPart().getVisual().getScene();
+			scene.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
+			scene.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
 		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-			viewer.getRootPart().getVisual().getScene()
-					.removeEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
-			viewer.getRootPart().getVisual().getScene()
-					.removeEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+			Scene scene = viewer.getRootPart().getVisual().getScene();
+			scene.removeEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
+			scene.removeEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
 		}
 	}
 

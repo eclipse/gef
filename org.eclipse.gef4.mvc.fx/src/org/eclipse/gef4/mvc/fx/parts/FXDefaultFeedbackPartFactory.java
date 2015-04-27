@@ -68,26 +68,22 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		if (targets.size() == 0 || targets.size() > 1) {
 			return Collections.emptyList();
 		}
-
 		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<IFeedbackPart<Node, ? extends Node>>();
 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
-
 		final Provider<? extends IGeometry> hoverFeedbackGeometryProvider = target
 				.getAdapter(AdapterKey.get(
 						new TypeToken<Provider<? extends IGeometry>>() {
 						}, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 		if (hoverFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
-
 				@Override
 				public IGeometry get() {
 					return FXUtils.localToScene(target.getVisual(),
 							hoverFeedbackGeometryProvider.get());
 				}
 			};
-
 			FXHoverFeedbackPart part = new FXHoverFeedbackPart(
 					geometryInSceneProvider);
 			injector.injectMembers(part);
@@ -136,7 +132,6 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 					return null;
 				}
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
-
 					// TODO: inject
 					private final FXChopBoxAnchor.ComputationStrategy.Impl computationStrategy = new FXChopBoxAnchor.ComputationStrategy.Impl();
 
@@ -177,7 +172,6 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 						// construct link line
 						return new Line(sourcePointInScene, targetPointInScene);
 					}
-
 				};
 				return new FXSelectionLinkFeedbackPart(
 						linkFeedbackGeometryProvider);
@@ -214,7 +208,6 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 							selectionFeedbackGeometryProvider.get());
 				}
 			};
-
 			FXSelectionFeedbackPart selectionFeedbackPart = new FXSelectionFeedbackPart(
 					geometryInSceneProvider);
 			injector.injectMembers(selectionFeedbackPart);

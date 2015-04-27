@@ -72,10 +72,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				policy, true);
 	}
 
-	public boolean isDragging() {
-		return dragInProgress;
-	}
-
 	/**
 	 * Registers the given {@link IVisualPart} as the target part for all JavaFX
 	 * events which are send to the given {@link EventTarget} during the
@@ -131,12 +127,13 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					if (clickTargetPart == null) {
 						clickTargetPart = viewer.getRootPart();
 					}
+
 					Collection<? extends AbstractFXClickPolicy> clickPolicies = getClickPolicies(clickTargetPart);
-					getDomain().openExecutionTransaction();
+					getDomain().openExecutionTransaction(FXClickDragTool.this);
 					for (AbstractFXClickPolicy policy : clickPolicies) {
 						policy.click(e);
 					}
-					getDomain().closeExecutionTransaction();
+					getDomain().closeExecutionTransaction(FXClickDragTool.this);
 
 					// drag second, but only for single clicks
 					if (e.getClickCount() == 1) {
@@ -149,7 +146,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 							dragTargetPart = viewer.getRootPart();
 						}
 						Collection<? extends AbstractFXDragPolicy> dragPolicies = getDragPolicies(dragTargetPart);
-						getDomain().openExecutionTransaction();
+						getDomain().openExecutionTransaction(
+								FXClickDragTool.this);
 						for (AbstractFXDragPolicy policy : dragPolicies) {
 							dragInProgress = true;
 							pressEvents.put(policy, e);
@@ -176,7 +174,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						pressEvents.remove(policy);
 						policy.release(e, new Dimension(dx, dy));
 					}
-					getDomain().closeExecutionTransaction();
+					getDomain().closeExecutionTransaction(FXClickDragTool.this);
 					dragInProgress = false;
 					interactionTargetOverrides.clear();
 				}

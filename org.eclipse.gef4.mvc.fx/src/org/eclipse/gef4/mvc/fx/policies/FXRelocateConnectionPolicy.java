@@ -78,7 +78,7 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	@Override
 	public void setConcatenation(AffineTransform transform) {
-		throw new UnsupportedOperationException();
+		setPreConcatenation(transform);
 	}
 
 	@Override
@@ -106,7 +106,9 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	@Override
 	public void setTransform(AffineTransform newTransform) {
-		throw new UnsupportedOperationException();
+		double dx = newTransform.getTranslateX() - getNodeTransform().getTx();
+		double dy = newTransform.getTranslateY() - getNodeTransform().getTy();
+		setPreConcatenation(new AffineTransform().translate(dx, dy));
 	}
 
 }

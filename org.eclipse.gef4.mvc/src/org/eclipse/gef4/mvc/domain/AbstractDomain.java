@@ -13,7 +13,9 @@ package org.eclipse.gef4.mvc.domain;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -54,6 +56,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
 	private ForwardUndoCompositeOperation transaction;
+	private Set<ITool<VR>> transactionContext = new HashSet<ITool<VR>>();
 
 	/**
 	 * Creates a new {@link AbstractDomain} instance, setting the
@@ -79,9 +82,11 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public void closeExecutionTransaction() {
+	public void closeExecutionTransaction(ITool<VR> tool) {
+		transactionContext.remove(tool);
+
 		// check if the transaction has an effect (or is empty)
-		if (!transaction.getOperations().isEmpty()) {
+		if (transaction != null && !transaction.getOperations().isEmpty()) {
 			// adjust the label
 			transaction.setLabel(transaction.getOperations().iterator().next()
 					.getLabel());
@@ -92,7 +97,23 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 			getOperationHistory().closeOperation(true, false,
 					IOperationHistory.EXECUTE);
 		}
-		transaction = null;
+
+		if (!transactionContext.isEmpty()) {
+			// open new transaction for the remaining tools in the transaction
+			// context
+			transaction = createExecutionTransaction();
+		} else {
+			transaction = null;
+		}
+	}
+
+	protected ForwardUndoCompositeOperation createExecutionTransaction() {
+		ForwardUndoCompositeOperation transaction = new ForwardUndoCompositeOperation(
+				"Transaction");
+		transaction.addContext(getUndoContext());
+		getOperationHistory().openOperation(transaction,
+				IOperationHistory.EXECUTE);
+		return transaction;
 	}
 
 	@Override
@@ -120,7 +141,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		// IMPORTANT: if we have an open transaction in the domain, we should
 		// not add an undo context, because our operation will be added to the
 		// transaction (which has the undo context).
-		if (!isTransactionOpen()) {
+		if (!isExecutionTransactionOpen()) {
 			operation.addContext(getUndoContext());
 		}
 		try {
@@ -182,16 +203,21 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		return acs.isActive();
 	}
 
-	private boolean isTransactionOpen() {
+	protected boolean isExecutionTransactionOpen() {
 		return transaction != null;
 	}
 
 	@Override
-	public void openExecutionTransaction() {
-		transaction = new ForwardUndoCompositeOperation("Transaction");
-		transaction.addContext(getUndoContext());
-		getOperationHistory().openOperation(transaction,
-				IOperationHistory.EXECUTE);
+	public boolean isExecutionTransactionOpen(ITool<VR> tool) {
+		return transactionContext.contains(tool);
+	}
+
+	@Override
+	public void openExecutionTransaction(ITool<VR> tool) {
+		if (!isExecutionTransactionOpen()) {
+			transaction = createExecutionTransaction();
+		}
+		transactionContext.add(tool);
 	}
 
 	@Override
@@ -238,4 +264,5 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	public <T> T unsetAdapter(AdapterKey<? super T> key) {
 		return ads.unsetAdapter(key);
 	}
+
 }

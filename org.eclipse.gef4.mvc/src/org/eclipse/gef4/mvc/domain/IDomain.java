@@ -46,10 +46,16 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 
 	/**
-	 * Closes the active execution transition (see
-	 * {@link #openExecutionTransaction()}).
+	 * Closes the active execution transaction, removes the given {@link ITool}
+	 * from the transaction context, and opens a new execution transaction if
+	 * there are any tools remaining in the context.
+	 *
+	 * @param tool
+	 *            The {@link ITool} that should be removed from the transaction
+	 *            context.
+	 * @see #openExecutionTransaction(ITool)
 	 */
-	public void closeExecutionTransaction();
+	public void closeExecutionTransaction(ITool<VR> tool);
 
 	/**
 	 * Will execute the given {@link IUndoableOperation} on the
@@ -57,13 +63,14 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
 	 * {@link IDomain}.
 	 *
-	 * In case an execution transition is currently open (see
-	 * {@link #openExecutionTransaction()}, {@link #closeExecutionTransaction()}
-	 * ) the enclosing transaction will refer to the {@link IUndoContext} used
-	 * by this {@link IDomain}) (so that no specific {@link IUndoContext} is set
-	 * on the passed in {@link IUndoableOperation}). If no transaction is
-	 * currently open, the {@link IUndoContext} of this {@link IDomain} will be
-	 * set on the passed in {@link IUndoableOperation}.
+	 * In case an execution transaction is currently open (see
+	 * {@link #openExecutionTransaction(ITool)},
+	 * {@link #closeExecutionTransaction(ITool)}) the enclosing transaction will
+	 * refer to the {@link IUndoContext} used by this {@link IDomain}) (so that
+	 * no specific {@link IUndoContext} is set on the passed in
+	 * {@link IUndoableOperation}). If no transaction is currently open, the
+	 * {@link IUndoContext} of this {@link IDomain} will be set on the passed in
+	 * {@link IUndoableOperation}.
 	 *
 	 * @param operation
 	 *            The {@link IUndoableOperation} to be executed on the
@@ -110,11 +117,28 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers();
 
 	/**
-	 * Opens a new transaction for executing operations (via
+	 * Returns <code>true</code> if the given {@link ITool} is taking part in
+	 * the currently open execution transaction. Otherwise returns
+	 * <code>false</code>.
+	 *
+	 * @param tool
+	 *            The {@link ITool} that is checked.
+	 * @return <code>true</code> if the given {@link ITool} is taking part in
+	 *         the currently open execution transaction, otherwise
+	 *         <code>false</code>.
+	 */
+	public boolean isExecutionTransactionOpen(ITool<VR> tool);
+
+	/**
+	 * Opens a new transaction or adds the given {@link ITool} to the currently
+	 * opened transaction for executing operations (via
 	 * {@link #execute(IUndoableOperation)}) on the {@link IOperationHistory}
 	 * used by this {@link IDomain} (see {@link #getOperationHistory()}), using
 	 * the {@link IUndoContext} of this {@link IDomain}.
+	 *
+	 * @param tool
+	 *            The {@link ITool} starting/joining the transaction.
 	 */
-	public void openExecutionTransaction();
+	public void openExecutionTransaction(ITool<VR> tool);
 
 }

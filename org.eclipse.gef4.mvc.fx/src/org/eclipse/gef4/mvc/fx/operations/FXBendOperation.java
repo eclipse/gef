@@ -45,7 +45,7 @@ public class FXBendOperation extends AbstractOperation {
 	 *            operation.
 	 */
 	public FXBendOperation(FXConnection connection) {
-		super("bend");
+		super("Bend");
 		this.connection = connection;
 		this.oldAnchors = new ArrayList<IFXAnchor>(connection.getAnchors());
 		this.newAnchors = new ArrayList<IFXAnchor>(oldAnchors);

@@ -35,7 +35,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 		// prevent deletion when other drag policies are running
 		FXClickDragTool tool = getHost().getRoot().getViewer().getDomain()
 				.getAdapter(FXClickDragTool.class);
-		if (tool != null && tool.isDragging()) {
+		if (tool != null
+				&& getHost().getRoot().getViewer().getDomain()
+						.isExecutionTransactionOpen(tool)) {
 			return false;
 		}
 

@@ -17,6 +17,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.event.EventTarget;
+import javafx.scene.Node;
+import javafx.scene.input.ZoomEvent;
+
 import org.eclipse.gef4.fx.gestures.FXPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXPinchSpreadPolicy;
@@ -24,10 +28,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-
-import javafx.event.EventTarget;
-import javafx.scene.Node;
-import javafx.scene.input.ZoomEvent;
 
 public class FXPinchSpreadTool extends AbstractTool<Node> {
 
@@ -72,6 +72,8 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
 				@Override
 				protected void zoom(ZoomEvent e) {
+					getDomain()
+							.openExecutionTransaction(FXPinchSpreadTool.this);
 					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoom(e);
@@ -92,6 +94,8 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 							viewer, e)) {
 						policy.zoomStarted(e);
 					}
+					getDomain().closeExecutionTransaction(
+							FXPinchSpreadTool.this);
 				}
 			};
 			gesture.setScene(((FXViewer) viewer).getScene());
