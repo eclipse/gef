@@ -76,7 +76,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 	 * The adapter role for the
 	 * <code>Provider&lt;List&lt;IFXCreationMenuItem&gt;&gt;</code>.
 	 */
-	public static final String MENU_ITEM_PROVIDER = "Provider<List<IFXCreationMenuItem>>";
+	public static final String MENU_ITEM_PROVIDER_ROLE = "Provider<List<IFXCreationMenuItem>>";
 
 	/**
 	 * Default {@link Paint} used for to fill the interior of the arrows.
@@ -379,7 +379,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
 				.<Provider<List<IFXCreationMenuItem>>> getAdapter(
 						AdapterKey
 								.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
-								}, MENU_ITEM_PROVIDER)).get();
+								}, MENU_ITEM_PROVIDER_ROLE)).get();
 		this.items.clear();
 		this.items.addAll(menuItems);
 		// compute max width and height
