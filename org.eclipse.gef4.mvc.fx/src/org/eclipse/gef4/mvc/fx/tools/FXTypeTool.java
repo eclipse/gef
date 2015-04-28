@@ -22,7 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -31,7 +31,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXTypeTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXTypePolicy> TOOL_POLICY_KEY = AbstractFXTypePolicy.class;
+	public static final Class<AbstractFXOnTypePolicy> TOOL_POLICY_KEY = AbstractFXOnTypePolicy.class;
 
 	private boolean isTypeInProgress = false;
 
@@ -39,8 +39,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 		@Override
 		public void handle(KeyEvent event) {
 			getDomain().openExecutionTransaction(FXTypeTool.this);
-			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
-			for (AbstractFXTypePolicy policy : policies) {
+			Collection<? extends AbstractFXOnTypePolicy> policies = getTargetPolicies(event);
+			for (AbstractFXOnTypePolicy policy : policies) {
 				policy.pressed(event);
 			}
 		}
@@ -49,21 +49,21 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private final EventHandler<? super KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
-			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
-			for (AbstractFXTypePolicy policy : policies) {
+			Collection<? extends AbstractFXOnTypePolicy> policies = getTargetPolicies(event);
+			for (AbstractFXOnTypePolicy policy : policies) {
 				policy.released(event);
 			}
 			getDomain().closeExecutionTransaction(FXTypeTool.this);
 		}
 	};
 
-	protected Set<? extends AbstractFXTypePolicy> getKeyPolicies(
+	protected Set<? extends AbstractFXOnTypePolicy> getKeyPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart.<AbstractFXTypePolicy> getAdapters(
+		return new HashSet<>(targetPart.<AbstractFXOnTypePolicy> getAdapters(
 				TOOL_POLICY_KEY).values());
 	}
 
-	protected Set<? extends AbstractFXTypePolicy> getTargetPolicies(
+	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
 			KeyEvent event) {
 		EventTarget target = event.getTarget();
 		if (target instanceof Scene) {
@@ -79,7 +79,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 		}
 	}
 
-	protected Set<? extends AbstractFXTypePolicy> getTargetPolicies(Scene scene) {
+	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(Scene scene) {
 		IVisualPart<Node, ? extends Node> targetPart = null;
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {

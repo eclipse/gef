@@ -25,7 +25,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXScrollPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -33,14 +33,14 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXScrollTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXScrollPolicy> TOOL_POLICY_KEY = AbstractFXScrollPolicy.class;
+	public static final Class<AbstractFXOnScrollPolicy> TOOL_POLICY_KEY = AbstractFXOnScrollPolicy.class;
 
 	private final Map<FXViewer, EventHandler<ScrollEvent>> scrollListeners = new HashMap<FXViewer, EventHandler<ScrollEvent>>();
 
 	private EventHandler<ScrollEvent> createScrollListener(
 			final IViewer<Node> viewer) {
 		return new EventHandler<ScrollEvent>() {
-			protected Collection<? extends AbstractFXScrollPolicy> getTargetPolicies(
+			protected Collection<? extends AbstractFXOnScrollPolicy> getTargetPolicies(
 					ScrollEvent event) {
 				EventTarget target = event.getTarget();
 				if (!(target instanceof Node)) {
@@ -57,23 +57,23 @@ public class FXScrollTool extends AbstractTool<Node> {
 					targetPart = viewer.getRootPart();
 				}
 
-				Collection<? extends AbstractFXScrollPolicy> policies = getScrollPolicies(targetPart);
+				Collection<? extends AbstractFXOnScrollPolicy> policies = getScrollPolicies(targetPart);
 				return policies;
 			}
 
 			@Override
 			public void handle(ScrollEvent event) {
-				Collection<? extends AbstractFXScrollPolicy> policies = getTargetPolicies(event);
-				for (AbstractFXScrollPolicy policy : policies) {
+				Collection<? extends AbstractFXOnScrollPolicy> policies = getTargetPolicies(event);
+				for (AbstractFXOnScrollPolicy policy : policies) {
 					policy.scroll(event);
 				}
 			}
 		};
 	}
 
-	protected Set<? extends AbstractFXScrollPolicy> getScrollPolicies(
+	protected Set<? extends AbstractFXOnScrollPolicy> getScrollPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart.<AbstractFXScrollPolicy> getAdapters(
+		return new HashSet<>(targetPart.<AbstractFXOnScrollPolicy> getAdapters(
 				TOOL_POLICY_KEY).values());
 	}
 

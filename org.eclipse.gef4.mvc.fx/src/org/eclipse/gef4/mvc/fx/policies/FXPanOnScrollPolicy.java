@@ -20,7 +20,7 @@ import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
-public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
+public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
 	private static final int SAME_SCROLL_MILLIS = 100;
 	private long lastMillis = 0;

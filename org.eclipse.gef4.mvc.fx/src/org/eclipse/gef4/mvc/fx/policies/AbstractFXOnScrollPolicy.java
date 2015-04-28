@@ -12,15 +12,11 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-/**
- * @author anyssen
- *
- */
-public abstract class AbstractFXHoverPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXOnScrollPolicy extends AbstractPolicy<Node> {
 
-	public abstract void hover(MouseEvent e);
+	public abstract void scroll(ScrollEvent event);
 }

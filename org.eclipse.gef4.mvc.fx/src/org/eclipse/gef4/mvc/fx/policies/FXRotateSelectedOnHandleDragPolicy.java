@@ -27,7 +27,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 // TODO: Extract FXRotatePolicy and extract duplicate code with FXRotateSelectedOnRotatePolicy
-public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private boolean invalidGesture = false;
 	private Point initialPointerLocationInScene;

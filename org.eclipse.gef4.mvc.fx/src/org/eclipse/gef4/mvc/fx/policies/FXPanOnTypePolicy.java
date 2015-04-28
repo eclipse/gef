@@ -18,7 +18,7 @@ import javafx.scene.input.KeyEvent;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
-public class FXPanOnTypePolicy extends AbstractFXTypePolicy {
+public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	public static final double DEFAULT_SCROLL_AMOUNT_PER_SECOND = 150d;
 

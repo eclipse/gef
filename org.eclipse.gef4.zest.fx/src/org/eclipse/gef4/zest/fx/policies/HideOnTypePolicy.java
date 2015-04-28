@@ -18,12 +18,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnTypePolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-public class HideOnTypePolicy extends AbstractFXTypePolicy {
+public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	@Override
 	public NodeContentPart getHost() {

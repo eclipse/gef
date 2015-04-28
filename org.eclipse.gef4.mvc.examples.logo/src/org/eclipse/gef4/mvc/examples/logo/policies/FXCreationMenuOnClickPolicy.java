@@ -42,7 +42,7 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
@@ -55,7 +55,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 // TODO: only applicable for FXRootPart and FXViewer
-public class FXCreationMenuOnClickPolicy extends AbstractFXClickPolicy {
+public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	private static Reflection createDropShadowReflectionEffect(
 			double effectRadius, Color color) {

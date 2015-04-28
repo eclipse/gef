@@ -17,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public abstract class AbstractFXDragPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXOnDragPolicy extends AbstractPolicy<Node> {
 
 	public abstract void drag(MouseEvent e, Dimension delta);
 

@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.models.HoverModel;
 
-public class FXHoverOnHoverPolicy extends AbstractFXHoverPolicy {
+public class FXHoverOnHoverPolicy extends AbstractFXOnHoverPolicy {
 
 	@Override
 	public void hover(MouseEvent e) {

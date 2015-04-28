@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import javafx.scene.Node;
 import javafx.scene.input.RotateEvent;
 
-public class FXRotateSelectedOnRotatePolicy extends AbstractFXRotatePolicy {
+public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 
 	private Point pivotInScene;
 

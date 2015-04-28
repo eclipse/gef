@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
+public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	protected boolean isDelete(KeyEvent event) {
 		// only delete on <DELETE> key

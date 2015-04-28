@@ -23,7 +23,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
+public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
 

@@ -23,7 +23,7 @@ import javafx.scene.input.ZoomEvent;
 
 import org.eclipse.gef4.fx.gestures.FXPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -31,21 +31,21 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXPinchSpreadTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXPinchSpreadPolicy.class;
+	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
 
 	private final Map<IViewer<Node>, FXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, FXPinchSpreadGesture>();
 
 	public FXPinchSpreadTool() {
 	}
 
-	protected Set<? extends AbstractFXPinchSpreadPolicy> getPinchSpreadPolicies(
+	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getPinchSpreadPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<>(targetPart
-				.<AbstractFXPinchSpreadPolicy> getAdapters(TOOL_POLICY_KEY)
+				.<AbstractFXOnPinchSpreadPolicy> getAdapters(TOOL_POLICY_KEY)
 				.values());
 	}
 
-	protected Set<? extends AbstractFXPinchSpreadPolicy> getTargetPolicies(
+	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getTargetPolicies(
 			IViewer<Node> viewer, ZoomEvent e) {
 		EventTarget target = e.getTarget();
 		if (!(target instanceof Node)) {
@@ -74,7 +74,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				protected void zoom(ZoomEvent e) {
 					getDomain()
 							.openExecutionTransaction(FXPinchSpreadTool.this);
-					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
+					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoom(e);
 					}
@@ -82,7 +82,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 				@Override
 				protected void zoomFinished(ZoomEvent e) {
-					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
+					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoomFinished(e);
 					}
@@ -90,7 +90,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 				@Override
 				protected void zoomStarted(ZoomEvent e) {
-					for (AbstractFXPinchSpreadPolicy policy : getTargetPolicies(
+					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoomStarted(e);
 					}

@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -35,7 +35,7 @@ import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
 import com.google.common.collect.Multiset;
 
-public class FXCreateCurveOnClickPolicy extends AbstractFXClickPolicy {
+public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {

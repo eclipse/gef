@@ -26,7 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -34,13 +34,13 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXHoverTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXHoverPolicy> TOOL_POLICY_KEY = AbstractFXHoverPolicy.class;
+	public static final Class<AbstractFXOnHoverPolicy> TOOL_POLICY_KEY = AbstractFXOnHoverPolicy.class;
 
 	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<FXViewer, EventHandler<MouseEvent>>();
 
 	protected EventHandler<MouseEvent> createHoverFilter(final FXViewer viewer) {
 		return new EventHandler<MouseEvent>() {
-			protected Collection<? extends AbstractFXHoverPolicy> getTargetPolicies(
+			protected Collection<? extends AbstractFXOnHoverPolicy> getTargetPolicies(
 					final MouseEvent event) {
 				EventTarget target = event.getTarget();
 				if (!(target instanceof Node)) {
@@ -75,7 +75,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 					targetPart = viewer.getRootPart();
 				}
 
-				Collection<? extends AbstractFXHoverPolicy> policies = getHoverPolicies(targetPart);
+				Collection<? extends AbstractFXOnHoverPolicy> policies = getHoverPolicies(targetPart);
 				return policies;
 			}
 
@@ -87,17 +87,17 @@ public class FXHoverTool extends AbstractTool<Node> {
 					return;
 				}
 
-				Collection<? extends AbstractFXHoverPolicy> policies = getTargetPolicies(event);
-				for (AbstractFXHoverPolicy policy : policies) {
+				Collection<? extends AbstractFXOnHoverPolicy> policies = getTargetPolicies(event);
+				for (AbstractFXOnHoverPolicy policy : policies) {
 					policy.hover(event);
 				}
 			}
 		};
 	}
 
-	protected Set<? extends AbstractFXHoverPolicy> getHoverPolicies(
+	protected Set<? extends AbstractFXOnHoverPolicy> getHoverPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart.<AbstractFXHoverPolicy> getAdapters(
+		return new HashSet<>(targetPart.<AbstractFXOnHoverPolicy> getAdapters(
 				TOOL_POLICY_KEY).values());
 	}
 

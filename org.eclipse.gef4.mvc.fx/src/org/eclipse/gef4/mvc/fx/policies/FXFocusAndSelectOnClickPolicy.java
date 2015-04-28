@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
+public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {

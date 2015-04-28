@@ -25,8 +25,8 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -35,25 +35,25 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXClickDragTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXClickPolicy> CLICK_TOOL_POLICY_KEY = AbstractFXClickPolicy.class;
-	public static final Class<AbstractFXDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
+	public static final Class<AbstractFXOnClickPolicy> CLICK_TOOL_POLICY_KEY = AbstractFXOnClickPolicy.class;
+	public static final Class<AbstractFXOnDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXOnDragPolicy.class;
 
 	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
 	private boolean dragInProgress;
-	private final Map<AbstractFXDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXDragPolicy, MouseEvent>();
+	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXOnDragPolicy, MouseEvent>();
 	private Map<EventTarget, IVisualPart<Node, ? extends Node>> interactionTargetOverrides = new HashMap<EventTarget, IVisualPart<Node, ? extends Node>>();
 
-	protected Set<? extends AbstractFXClickPolicy> getClickPolicies(
+	protected Set<? extends AbstractFXOnClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<AbstractFXClickPolicy>(targetPart
-				.<AbstractFXClickPolicy> getAdapters(CLICK_TOOL_POLICY_KEY)
+		return new HashSet<AbstractFXOnClickPolicy>(targetPart
+				.<AbstractFXOnClickPolicy> getAdapters(CLICK_TOOL_POLICY_KEY)
 				.values());
 	}
 
-	protected Set<? extends AbstractFXDragPolicy> getDragPolicies(
+	protected Set<? extends AbstractFXOnDragPolicy> getDragPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<AbstractFXDragPolicy>(targetPart
-				.<AbstractFXDragPolicy> getAdapters(DRAG_TOOL_POLICY_KEY)
+		return new HashSet<AbstractFXOnDragPolicy>(targetPart
+				.<AbstractFXOnDragPolicy> getAdapters(DRAG_TOOL_POLICY_KEY)
 				.values());
 	}
 
@@ -108,8 +108,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					if (targetPart == null) {
 						targetPart = viewer.getRootPart();
 					}
-					Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
-					for (AbstractFXDragPolicy policy : policies) {
+					Collection<? extends AbstractFXOnDragPolicy> policies = getDragPolicies(targetPart);
+					for (AbstractFXOnDragPolicy policy : policies) {
 						policy.drag(e, new Dimension(dx, dy));
 					}
 				}
@@ -128,9 +128,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						clickTargetPart = viewer.getRootPart();
 					}
 
-					Collection<? extends AbstractFXClickPolicy> clickPolicies = getClickPolicies(clickTargetPart);
+					Collection<? extends AbstractFXOnClickPolicy> clickPolicies = getClickPolicies(clickTargetPart);
 					getDomain().openExecutionTransaction(FXClickDragTool.this);
-					for (AbstractFXClickPolicy policy : clickPolicies) {
+					for (AbstractFXOnClickPolicy policy : clickPolicies) {
 						policy.click(e);
 					}
 					getDomain().closeExecutionTransaction(FXClickDragTool.this);
@@ -145,10 +145,10 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						if (dragTargetPart == null) {
 							dragTargetPart = viewer.getRootPart();
 						}
-						Collection<? extends AbstractFXDragPolicy> dragPolicies = getDragPolicies(dragTargetPart);
+						Collection<? extends AbstractFXOnDragPolicy> dragPolicies = getDragPolicies(dragTargetPart);
 						getDomain().openExecutionTransaction(
 								FXClickDragTool.this);
-						for (AbstractFXDragPolicy policy : dragPolicies) {
+						for (AbstractFXOnDragPolicy policy : dragPolicies) {
 							dragInProgress = true;
 							pressEvents.put(policy, e);
 							policy.press(e);
@@ -169,8 +169,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					if (targetPart == null) {
 						targetPart = viewer.getRootPart();
 					}
-					Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
-					for (AbstractFXDragPolicy policy : policies) {
+					Collection<? extends AbstractFXOnDragPolicy> policies = getDragPolicies(targetPart);
+					for (AbstractFXOnDragPolicy policy : policies) {
 						pressEvents.remove(policy);
 						policy.release(e, new Dimension(dx, dy));
 					}

@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.fx.gestures.FXRotateGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXRotatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -31,21 +31,21 @@ import javafx.scene.input.RotateEvent;
 
 public class FXRotateTool extends AbstractTool<Node> {
 
-	public static final Class<AbstractFXRotatePolicy> TOOL_POLICY_KEY = AbstractFXRotatePolicy.class;
+	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
 
 	private final Map<IViewer<Node>, FXRotateGesture> gestures = new HashMap<IViewer<Node>, FXRotateGesture>();
 
 	public FXRotateTool() {
 	}
 
-	protected Set<? extends AbstractFXRotatePolicy> getRotatePolicies(
+	protected Set<? extends AbstractFXOnRotatePolicy> getRotatePolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<>(
-				targetPart.<AbstractFXRotatePolicy> getAdapters(TOOL_POLICY_KEY)
+				targetPart.<AbstractFXOnRotatePolicy> getAdapters(TOOL_POLICY_KEY)
 						.values());
 	}
 
-	protected Set<? extends AbstractFXRotatePolicy> getTargetPolicies(
+	protected Set<? extends AbstractFXOnRotatePolicy> getTargetPolicies(
 			IViewer<Node> viewer, RotateEvent e) {
 		EventTarget target = e.getTarget();
 		if (!(target instanceof Node)) {
@@ -73,7 +73,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 
 				@Override
 				protected void rotate(RotateEvent event) {
-					for (AbstractFXRotatePolicy policy : getTargetPolicies(
+					for (AbstractFXOnRotatePolicy policy : getTargetPolicies(
 							viewer, event)) {
 						policy.rotate(event);
 					}
@@ -81,7 +81,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 
 				@Override
 				protected void rotationFinished(RotateEvent event) {
-					for (AbstractFXRotatePolicy policy : getTargetPolicies(
+					for (AbstractFXOnRotatePolicy policy : getTargetPolicies(
 							viewer, event)) {
 						policy.rotationFinished(event);
 					}
@@ -89,7 +89,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 
 				@Override
 				protected void rotationStarted(RotateEvent event) {
-					for (AbstractFXRotatePolicy policy : getTargetPolicies(
+					for (AbstractFXOnRotatePolicy policy : getTargetPolicies(
 							viewer, event)) {
 						policy.rotationStarted(event);
 					}

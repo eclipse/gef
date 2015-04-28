@@ -27,7 +27,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
@@ -82,8 +82,8 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy
-		setAdapter(AdapterKey.get(AbstractFXHoverPolicy.class),
-				new AbstractFXHoverPolicy() {
+		setAdapter(AdapterKey.get(AbstractFXOnHoverPolicy.class),
+				new AbstractFXOnHoverPolicy() {
 					@Override
 					public void hover(MouseEvent e) {
 					}

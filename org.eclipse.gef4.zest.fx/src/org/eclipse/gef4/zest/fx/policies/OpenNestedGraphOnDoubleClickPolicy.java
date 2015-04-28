@@ -17,11 +17,11 @@ import java.util.Collections;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXClickPolicy {
+public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {

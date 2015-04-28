@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
+public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private static double[] bbox(Point2D start, Point2D end) {
 		double bbox[] = { start.getX(), start.getY(), end.getX(), end.getY() };

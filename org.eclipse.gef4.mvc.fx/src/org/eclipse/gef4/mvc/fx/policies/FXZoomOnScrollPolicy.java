@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import javafx.scene.input.ScrollEvent;
 
-public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
+public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
 	private FXChangeViewportPolicy getViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);

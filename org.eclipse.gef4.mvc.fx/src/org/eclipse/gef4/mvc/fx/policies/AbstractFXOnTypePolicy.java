@@ -16,7 +16,7 @@ import javafx.scene.input.KeyEvent;
 
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public abstract class AbstractFXTypePolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXOnTypePolicy extends AbstractPolicy<Node> {
 
 	public abstract void pressed(KeyEvent event);
 

@@ -15,14 +15,14 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXClickPolicy {
+public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {

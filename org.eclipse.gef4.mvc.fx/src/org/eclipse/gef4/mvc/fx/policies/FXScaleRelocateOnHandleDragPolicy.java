@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;

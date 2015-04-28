@@ -27,7 +27,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 // Only applicable for AbstractFXCornerHandlePart, see #getHost().
-public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialPointerLocation;
 	private double initialTx;
