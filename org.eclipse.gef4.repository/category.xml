@@ -112,16 +112,16 @@
       <category name="GEF4 MVC"/>
    </feature>
    <feature url="features/org.eclipse.gef4.fx.compatibility.luna_0.1.0.qualifier.jar" id="org.eclipse.gef4.fx.compatibility.luna" version="0.1.0.qualifier" patch="true">
-      <category name="GEF4 (FX, MVC, MVC.FX) Luna Compatibility Patches"/>
+      <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
    <feature url="features/org.eclipse.gef4.mvc.compatibility.luna_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.compatibility.luna" version="0.1.0.qualifier" patch="true">
-      <category name="GEF4 (FX, MVC, MVC.FX) Luna Compatibility Patches"/>
+      <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
    <feature url="features/org.eclipse.gef4.mvc.fx.compatibility.luna_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx.compatibility.luna" version="0.1.0.qualifier" patch="true">
-      <category name="GEF4 (FX, MVC, MVC.FX) Luna Compatibility Patches"/>
+      <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
    <feature url="features/org.eclipse.gef4.zest.fx.compatibility.luna_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.fx.compatibility.luna" version="0.1.0.qualifier">
-      <category name="GEF4 (FX, MVC, MVC.FX) Luna Compatibility Patches"/>
+      <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 FX" label="GEF4 FX"/>
@@ -132,9 +132,9 @@
    <category-def name="GEF4 Graph" label="GEF4 Graph"/>
    <category-def name="GEF4 DOT" label="GEF4 DOT"/>
    <category-def name="GEF4 Common" label="GEF4 Common"/>
-   <category-def name="GEF4 (FX, MVC, MVC.FX) Luna Compatibility Patches" label="GEF4 (FX, MVC, MVC.FX, Zest.FX) Luna Compatibility Patches">
+   <category-def name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)" label="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)">
       <description>
-         Patch features that have to be installed when using GEF4 FX, GEF4 MVC, GEF4 MVC.FX, and GEF4 Zest.FX components within Luna SR2 environment.
+         The Luna compatibility features will have to be installed when using GEF4 FX, GEF4 MVC, GEF4 MVC.FX, and GEF4 Zest.FX within a Luna SR2 environment. They are used to prevent uses constraint violations that arise from conflicting &apos;javax.annotation&apos; package imports, the org.eclipse.gef4.fx, org.eclipse.gef4.mvc, org.eclipse.gef4.mvc.fx, and org.eclipse.gef4.zest.fx bundles are exposed to via their &apos;org.eclipse.osgi&apos; and &apos;com.google.guava&apos; dependencies. In a Mars environment, these uses constraint violations should not occur, thus these features do not have to be installed there.
       </description>
    </category-def>
 </site>
