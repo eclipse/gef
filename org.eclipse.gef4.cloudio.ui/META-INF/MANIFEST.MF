@@ -4,10 +4,10 @@ Bundle-Name: GEF4 Cloudio.UI
 Bundle-SymbolicName: org.eclipse.gef4.cloudio.ui;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.cloudio.ui.Activator
-Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.jface;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.runtime;bundle-version="[3.10.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.6.0,4.0.0)"
+Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.9.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.105.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.cloudio.ui;x-internal:=true,

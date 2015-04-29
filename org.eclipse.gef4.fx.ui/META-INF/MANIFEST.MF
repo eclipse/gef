@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.gef4.fx.ui
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
+Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)",
  org.eclipse.gef4.common;bundle-version="0.1.0"
 Export-Package: org.eclipse.gef4.fx.ui.canvas;x-internal:=true,
  org.eclipse.gef4.fx.ui.controls;x-internal:=true,

@@ -4,17 +4,17 @@ Bundle-Name: GEF4 DOT
 Bundle-SymbolicName: org.eclipse.gef4.dot;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.emf.common;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.emf.ecore;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.xtext;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.xtext.util;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.emf.common;bundle-version="[2.9.0,3.0.0)",
+ org.eclipse.emf.ecore;bundle-version="[2.9.0,3.0.0)",
+ org.eclipse.xtext;bundle-version="[2.6.0,3.0.0)",
+ org.eclipse.xtext.util;bundle-version="[2.6.0,3.0.0)",
  org.eclipse.gef4.common;bundle-version="0.1.0",
  org.eclipse.gef4.graph;bundle-version="0.1.0",
  org.eclipse.gef4.layout;bundle-version="0.1.0",
  org.apache.commons.logging;bundle-version="[1.1.1,2.0.0)";resolution:=optional,
- org.eclipse.equinox.common;bundle-version="[3.4.0,4.0.0)";resolution:=optional,
- org.eclipse.xtext.generator;bundle-version="[2.0.0,3.0.0)";resolution:=optional,
- org.eclipse.emf.mwe2.launch;bundle-version="[2.0.0,3.0.0)";resolution:=optional
+ org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
+ org.eclipse.xtext.generator;bundle-version="[2.6.0,3.0.0)";resolution:=optional,
+ org.eclipse.emf.mwe2.launch;bundle-version="[2.6.0,3.0.0)";resolution:=optional
 Export-Package: org.eclipse.gef4.dot;x-internal:=true,
  org.eclipse.gef4.internal.dot;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
