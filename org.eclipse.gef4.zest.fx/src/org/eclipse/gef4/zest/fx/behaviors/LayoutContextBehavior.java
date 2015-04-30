@@ -132,7 +132,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			@Override
 			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
 				return ZestProperties.getLayoutIrrelevant(
-						((GraphEdgeLayout) connectionLayout).getEdge(), true);
+						((GraphEdgeLayout) connectionLayout).getEdge(), true)
+						|| isLayoutIrrelevant(connectionLayout.getSource())
+						|| isLayoutIrrelevant(connectionLayout.getTarget());
 			}
 
 			@Override
