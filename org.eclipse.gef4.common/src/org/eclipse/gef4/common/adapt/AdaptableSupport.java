@@ -73,6 +73,12 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 *            unset.
 	 */
 	public AdaptableSupport(A source, PropertyChangeSupport pcs) {
+		if (source == null) {
+			throw new IllegalArgumentException("source may not be null.");
+		}
+		if (pcs == null) {
+			throw new IllegalArgumentException("pcs may not be null.");
+		}
 		this.source = source;
 		this.pcs = pcs;
 	}

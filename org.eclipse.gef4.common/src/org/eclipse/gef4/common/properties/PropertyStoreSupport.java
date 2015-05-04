@@ -22,6 +22,12 @@ public class PropertyStoreSupport {
 	private PropertyChangeSupport pcs;
 	
 	public PropertyStoreSupport(IPropertyStore source, PropertyChangeSupport pcs) {
+		if (source == null) {
+			throw new IllegalArgumentException("source may not be null.");
+		}
+		if (pcs == null) {
+			throw new IllegalArgumentException("pcs may not be null.");
+		}
 		this.pcs = pcs;
 	}
 
