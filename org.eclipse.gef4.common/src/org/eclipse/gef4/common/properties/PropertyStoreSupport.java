@@ -12,18 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.properties;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PropertyStoreSupport implements IPropertyStore {
+public class PropertyStoreSupport {
 
 	private Map<String, Object> properties = new HashMap<String, Object>();
 	private PropertyChangeSupport pcs;
 	
-	public PropertyStoreSupport(Object source) {
-		pcs = new PropertyChangeSupport(source);
+	public PropertyStoreSupport(IPropertyStore source, PropertyChangeSupport pcs) {
+		this.pcs = pcs;
 	}
 
 	public Object getProperty(String name) {
@@ -40,15 +39,4 @@ public class PropertyStoreSupport implements IPropertyStore {
 			pcs.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
 }

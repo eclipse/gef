@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.layout;
 
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -30,7 +31,8 @@ public class GraphNodeLayout implements INodeLayout {
 
 	// initialization context
 	private GraphLayoutContext context;
-	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 	private Node node;
 	private ISubgraphLayout subgraph;
 
@@ -45,7 +47,7 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		ps.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public Object getProperty(String name) {
-		return ps.getProperty(name);
+		return pss.getProperty(name);
 	}
 
 	@Override
@@ -135,12 +137,12 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		ps.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override
 	public void setProperty(String name, Object value) {
-		Object oldValue = ps.getProperty(name);
+		Object oldValue = pss.getProperty(name);
 		// TODO: remove NaN check here and ensure NaN is not passed in
 		if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			if (value instanceof Point) {
@@ -153,7 +155,7 @@ public class GraphNodeLayout implements INodeLayout {
 				}
 			}
 		}
-		ps.setProperty(name, value);
+		pss.setProperty(name, value);
 		// send notification
 		if (value != oldValue && (value == null || !value.equals(oldValue))) {
 			if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {

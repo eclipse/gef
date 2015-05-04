@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.layout;
 
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,8 @@ import org.eclipse.gef4.layout.ISubgraphLayout;
 public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	private List<INodeLayout> nodes = new ArrayList<INodeLayout>();
-	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 
 	@Override
 	public void addNodes(INodeLayout[] nodes) {
@@ -37,7 +39,7 @@ public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		ps.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	@Override
 	public Object getProperty(String name) {
-		return ps.getProperty(name);
+		return pss.getProperty(name);
 	}
 
 	@Override
@@ -92,12 +94,12 @@ public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		ps.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override
 	public void setProperty(String name, Object value) {
-		ps.setProperty(name, value);
+		pss.setProperty(name, value);
 	}
 
 }

@@ -54,7 +54,7 @@ import com.google.common.reflect.TypeToken;
  *            interface, the generic type parameter of {@link IAdaptable.Bound}
  *            has to match this one.
  */
-public class AdaptableSupport<A extends IAdaptable> {
+public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 
 	private A source;
 	private PropertyChangeSupport pcs;
@@ -103,7 +103,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 		// an adapter instance may be registered under different keys
 		int adapterCount = new HashSet<T>(adaptersForTypeKey.values()).size();
 		if (adapterCount == 1) {
-			return (T) adaptersForTypeKey.values().iterator().next();
+			return adaptersForTypeKey.values().iterator().next();
 		}
 
 		return null;
@@ -124,7 +124,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 		// an adapter instance may be registered under different keys
 		int adapterCount = new HashSet<T>(adaptersForTypeKey.values()).size();
 		if (adapterCount == 1) {
-			return (T) adaptersForTypeKey.values().iterator().next();
+			return adaptersForTypeKey.values().iterator().next();
 		}
 
 		if (adapterCount > 1) {
@@ -254,7 +254,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 								+ ", as its neither a super interface nor a super class of its type.");
 			}
 			if (overwrite || !getAdapters().containsKey(key)) {
-				setAdapter((AdapterKey) key, (Object) adaptersWithKeys.get(key));
+				setAdapter((AdapterKey) key, adaptersWithKeys.get(key));
 			}
 		}
 	}

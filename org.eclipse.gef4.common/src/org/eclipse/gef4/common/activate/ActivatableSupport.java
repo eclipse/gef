@@ -42,16 +42,12 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
  * for this purpose.
  * 
  * @author anyssen
- * 
- * @param <A>
- *            The type of {@link IActivatable} supported by this class.
- * 
  *
  */
-public class ActivatableSupport<A extends IActivatable> {
+public class ActivatableSupport {
 
 	private boolean isActive = false;
-	private A source;
+	private IActivatable source;
 	private PropertyChangeSupport pcs;
 
 	/**
@@ -65,7 +61,7 @@ public class ActivatableSupport<A extends IActivatable> {
 	 *            An {@link PropertyChangeSupport}, which will be used to fire
 	 *            {@link PropertyChangeEvent}'s during state changes.
 	 */
-	public ActivatableSupport(A source, PropertyChangeSupport pcs) {
+	public ActivatableSupport(IActivatable source, PropertyChangeSupport pcs) {
 		if (source == null) {
 			throw new IllegalArgumentException("source may not be null.");
 		}

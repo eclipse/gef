@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.layout;
 
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Map.Entry;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
@@ -26,15 +27,15 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	private GraphLayoutContext context;
 	private Edge edge;
-	private PropertyStoreSupport pss = new PropertyStoreSupport(this);
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 
 	public GraphEdgeLayout(GraphLayoutContext context, Edge edge) {
 		this.context = context;
 		this.edge = edge;
 
 		// graph directed?
-		Object type = context.getGraph().getAttrs()
-				.get(ZestProperties.GRAPH_TYPE);
+		Object type = context.getGraph().getAttrs().get(ZestProperties.GRAPH_TYPE);
 		if (type == ZestProperties.GRAPH_TYPE_DIRECTED) {
 			setProperty(LayoutProperties.DIRECTED_PROPERTY, true);
 		}
@@ -47,7 +48,7 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pss.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	public Edge getEdge() {
@@ -71,7 +72,7 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pss.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override

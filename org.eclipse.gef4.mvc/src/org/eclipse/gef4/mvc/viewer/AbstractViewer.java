@@ -42,15 +42,12 @@ import com.google.inject.Inject;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public abstract class AbstractViewer<VR> implements IViewer<VR>,
-		IAdaptable.Bound<IDomain<VR>> {
+public abstract class AbstractViewer<VR>
+		implements IViewer<VR>, IAdaptable.Bound<IDomain<VR>> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
+	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
 	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
-			this, pcs);
-
-	private ActivatableSupport<IViewer<VR>> acs = new ActivatableSupport<IViewer<VR>>(
 			this, pcs);
 
 	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<Object, IContentPart<VR, ? extends VR>>();
