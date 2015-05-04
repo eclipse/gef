@@ -16,4 +16,4 @@
 
 org.eclipse.gef4.layout
 org.eclipse.gef4.layout.algorithms
-org.eclipse.gef4.layout.interfaces
+org.eclipse.gef4.layout.listeners
