@@ -37,7 +37,7 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.common.sdk" version="0.1.0" match="equivalent"/>
    </requires>
 
 </feature>

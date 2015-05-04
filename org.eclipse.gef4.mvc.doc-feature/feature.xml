@@ -21,9 +21,9 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.common.doc" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.fx.doc" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.geometry.doc" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.common.doc" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.fx.doc" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.geometry.doc" version="0.1.0" match="equivalent"/>
    </requires>
 
    <plugin

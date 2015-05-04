@@ -21,15 +21,15 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.layout" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.dot" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.fx" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.mvc" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.mvc.fx" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.mvc.fx.ui" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.mvc.ui" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.zest.fx" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.zest.fx.ui" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.layout" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.dot" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.fx" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc.fx" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc.fx.ui" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc.ui" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.zest.fx" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.zest.fx.ui" version="0.1.0" match="equivalent"/>
    </requires>
 
    <plugin

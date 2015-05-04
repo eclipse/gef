@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.mvc" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.mvc" version="0.1.0" match="equivalent"/>
       <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
    </requires>
 
