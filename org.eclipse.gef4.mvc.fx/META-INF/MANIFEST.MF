@@ -6,11 +6,11 @@ Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)",
- org.eclipse.gef4.common;bundle-version="0.1.0",
- org.eclipse.gef4.fx;bundle-version="0.1.0",
- org.eclipse.gef4.geometry;bundle-version="0.1.0",
- org.eclipse.gef4.geometry.convert.fx;bundle-version="0.1.0",
- org.eclipse.gef4.mvc;bundle-version="0.1.0"
+ org.eclipse.gef4.common;bundle-version="[0.1.0,0.2.0)",
+ org.eclipse.gef4.fx;bundle-version="[0.1.0,0.2.0)",
+ org.eclipse.gef4.geometry;bundle-version="[0.1.0,0.2.0)",
+ org.eclipse.gef4.geometry.convert.fx;bundle-version="[0.1.0,0.2.0)",
+ org.eclipse.gef4.mvc;bundle-version="[0.1.0,0.2.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.gef4.mvc.fx;x-internal:=true,
  org.eclipse.gef4.mvc.fx.behaviors;x-internal:=true,
