@@ -9,12 +9,13 @@
 -splitIndex
 -windowtitle "GEF4 FX API Reference"
 -doctitle "GEF4 FX API Reference"
--header "<b>GEF4 FX</b><br>0.1.0.201501091258"
+-header "<b>GEF4 FX</b><br>@build@"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/7/docs/api/
 -link http://docs.oracle.com/javafx/2/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
+org.eclipse.gef4.fx
 org.eclipse.gef4.fx.anchors
 org.eclipse.gef4.fx.gestures
 org.eclipse.gef4.fx.listeners
