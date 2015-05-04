@@ -11,6 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.dispose;
 
+/**
+ * An {@link IDisposable} needs to be disposed after it is no longer needed.
+ * 
+ * @author anyssen
+ *
+ */
 public interface IDisposable {
 
 	public void dispose();
