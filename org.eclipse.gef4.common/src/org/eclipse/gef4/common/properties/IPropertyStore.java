@@ -12,25 +12,42 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.properties;
 
+import java.beans.PropertyChangeListener;
+
+import org.eclipse.gef4.common.adapt.AdaptableSupport;
+
+/**
+ * An {@link IPropertyStore} allows to store and retrieve values of named
+ * properties, notifying registered {@link PropertyChangeListener}s about all
+ * (real) changes of property values, i.e. when a value gets set, unset, or
+ * changed to a different value.
+ * <p>
+ * Any client implementing this interface may internally use an
+ * {@link AdaptableSupport} as a delegate to easily realize the required
+ * functionality.
+ * 
+ * @author mwienand
+ * @author anyssen
+ */
 public interface IPropertyStore extends IPropertyChangeNotifier {
 
 	/**
-	 * Sets the value of the property specified by <i>key</i> with the passed-in
+	 * Sets the value of the property specified by <i>name</i> with the passed-in
 	 * <i>value</i>.
 	 * 
 	 * @param name
-	 *            property name
+	 *            The name of the property whose value is to set/update.
 	 * @param value
-	 *            property value
+	 *            The property value.
 	 */
 	public void setProperty(String name, Object value);
 
 	/**
-	 * Returns the value of the property specified by <i>key</i>.
+	 * Returns the value of the property specified by <i>name</i>.
 	 * 
 	 * @param name
-	 *            property name
-	 * @return property value
+	 *            The name of the property whose value is to retrieve.
+	 * @return The property value.
 	 */
 	public Object getProperty(String name);
 

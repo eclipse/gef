@@ -19,5 +19,8 @@ package org.eclipse.gef4.common.dispose;
  */
 public interface IDisposable {
 
+	/**
+	 * Called to dispose the {@link IDisposable}.
+	 */
 	public void dispose();
 }

@@ -25,10 +25,16 @@ import java.lang.reflect.Field;
 public class ReflectionUtils {
 
 	/**
-	 * Returns the value of the specified private field for the given <i>owner</i>.
+	 * Returns the value of the specified private field for the given
+	 * <i>owner</i>.
 	 * 
-	 * @param owner {@link Object} from which the field is read.
-	 * @param fieldName Name of the field to read.
+	 * @param <T>
+	 *            The type of the field value.
+	 * 
+	 * @param owner
+	 *            {@link Object} from which the field is read.
+	 * @param fieldName
+	 *            Name of the field to read.
 	 * @return The value of the specified field for the given <i>owner</i>.
 	 */
 	@SuppressWarnings("unchecked")
@@ -46,9 +52,12 @@ public class ReflectionUtils {
 	 * hierarchy of the given <i>owner</i>. If the field can be found, it is
 	 * made accessible, so that its value can be read and written.
 	 * 
-	 * @param owner {@link Object} from which the {@link Field} should be extracted.
-	 * @param fieldName The name of the field.
-	 * @return {@link Field} if it can be found, otherwise <code>null</code>. 
+	 * @param owner
+	 *            {@link Object} from which the {@link Field} should be
+	 *            extracted.
+	 * @param fieldName
+	 *            The name of the field.
+	 * @return {@link Field} if it can be found, otherwise <code>null</code>.
 	 */
 	public static Field getPrivateField(Object owner, String fieldName) {
 		Class<? extends Object> currentClass = owner.getClass();
@@ -68,11 +77,18 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * Sets the value of the specified private field for the given <i>owner</i> to the given <i>value</i>.
+	 * Sets the value of the specified private field for the given <i>owner</i>
+	 * to the given <i>value</i>.
 	 * 
-	 * @param owner {@link Object} for which the field is set.
-	 * @param fieldName Name of the field.
-	 * @param value New value for the field.
+	 * @param <T>
+	 *            The type of the field value.
+	 * 
+	 * @param owner
+	 *            {@link Object} for which the field is set.
+	 * @param fieldName
+	 *            Name of the field.
+	 * @param value
+	 *            New value for the field.
 	 */
 	public static <T> void setPrivateFieldValue(Object owner, String fieldName,
 			T value) {

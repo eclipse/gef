@@ -20,10 +20,10 @@ import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
 /**
- * Support class to manage the active state of a source {@link IActivatable}. It
- * is expected that the source {@link IActivatable} holds an instance of this
- * class as a delegate, forwarding the calls of all {@link IActivatable}
- * operations to it.
+ * A support class to manage the active state for a source {@link IActivatable}.
+ * It offers all methods defined by {@link IActivatable}, while not formally
+ * implementing the interface, and can thus be used by a source
+ * {@link IActivatable} as a delegate.
  * <p>
  * In addition to the source {@link IActivatable} a
  * {@link PropertyChangeSupport} is expected during construction. It will be
@@ -56,10 +56,12 @@ public class ActivatableSupport {
 	 * 
 	 * @param source
 	 *            The {@link IActivatable} that encloses the to be created
-	 *            {@link ActivatableSupport}, delegating calls to it.
+	 *            {@link ActivatableSupport}, delegating calls to it. May not be
+	 *            <code>null</code>
 	 * @param pcs
 	 *            An {@link PropertyChangeSupport}, which will be used to fire
-	 *            {@link PropertyChangeEvent}'s during state changes.
+	 *            {@link PropertyChangeEvent}'s during state changes. May not be
+	 *            <code>null</code>
 	 */
 	public ActivatableSupport(IActivatable source, PropertyChangeSupport pcs) {
 		if (source == null) {
@@ -76,7 +78,7 @@ public class ActivatableSupport {
 	 * Reports whether this {@link ActivatableSupport} is active or inactive.
 	 * 
 	 * @return {@code true} in case the {@link ActivatableSupport} is active,
-	 *         {@code false} otherwise
+	 *         {@code false} otherwise.
 	 * 
 	 * @see IActivatable#isActive()
 	 */
@@ -129,7 +131,7 @@ public class ActivatableSupport {
 	 * at the source {@link IActivatable}, then adjust the (internal) active
 	 * state, and finally fire a {@link PropertyChangeEvent}.
 	 * 
-	 * @see IActivatable#activate()
+	 * @see IActivatable#deactivate()
 	 */
 	public void deactivate() {
 		if (isActive) {

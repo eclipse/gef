@@ -22,13 +22,17 @@ import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 /**
  * An {@link IActivatable} represents an entity that can be activated (
  * {@link #activate()}) and deactivated ({@link #deactivate()}) as required.
- * 
+ * <p>
  * The current activation state of an {@link IActivatable} (whether the entity
  * is active or not) can be queried by clients ({@link #isActive()}), and it is
  * expected that an {@link IActivatable} notifies registered
  * {@link PropertyChangeListener}s about changes of its activation state by
  * means of {@link PropertyChangeEvent}s, using the property name
  * {@value #ACTIVE_PROPERTY}.
+ * <p>
+ * Any client implementing this interface may internally use an
+ * {@link ActivatableSupport} as a delegate to easily realize the required
+ * functionality.
  * 
  * @author anyssen
  * 
@@ -67,7 +71,7 @@ public interface IActivatable extends IPropertyChangeNotifier {
 	 * Reports whether this {@link IActivatable} is active or inactive.
 	 * 
 	 * @return {@code true} in case the {@link IActivatable} is active,
-	 *         {@code false} otherwise
+	 *         {@code false} otherwise.
 	 */
 	public boolean isActive();
 

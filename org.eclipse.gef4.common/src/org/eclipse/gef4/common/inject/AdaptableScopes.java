@@ -42,6 +42,10 @@ public class AdaptableScopes {
 	 * Retrieves an {@link AdaptableScope} for the given {@link IAdaptable}
 	 * -compliant type.
 	 * 
+	 * @param <A>
+	 *            The {@link IAdaptable} (sub-)type to return an
+	 *            {@link AdaptableScope} for.
+	 * 
 	 * @param type
 	 *            The type of the {@link AdaptableScope}.
 	 * @return The static {@link AdaptableScope} instance for the given type.
@@ -59,13 +63,16 @@ public class AdaptableScopes {
 	}
 
 	/**
-	 * Sets the {@link AdaptableScope} for all {@link IAdaptable}-compliant
+	 * Enters the {@link AdaptableScope} of all {@link IAdaptable}-compliant
 	 * types (i.e. (super-)classes implementing {@link IAdaptable} and
 	 * (super-)interfaces extending {@link IAdaptable}) of the given
-	 * {@link IAdaptable} instance to the given instance.
+	 * {@link IAdaptable} for the given {@link IAdaptable}.
 	 * 
 	 * @param adaptable
-	 *            The {@link IAdaptable} instance to scope to.
+	 *            The {@link IAdaptable} instance, for whose types to enter the
+	 *            {@link AdaptableScope}s with the instance.
+	 * 
+	 * @see AdaptableScope#enter(IAdaptable)
 	 */
 	public static void enter(final IAdaptable adaptable) {
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
@@ -77,6 +84,18 @@ public class AdaptableScopes {
 		});
 	}
 
+	/**
+	 * Switches the {@link AdaptableScope} of all {@link IAdaptable}-compliant
+	 * types (i.e. (super-)classes implementing {@link IAdaptable} and
+	 * (super-)interfaces extending {@link IAdaptable}) of the given
+	 * {@link IAdaptable} to the given {@link IAdaptable}.
+	 * 
+	 * @param adaptable
+	 *            The {@link IAdaptable} instance, for whose types to switch the
+	 *            {@link AdaptableScope}s to the instance.
+	 * 
+	 * @see AdaptableScope#switchTo(IAdaptable)
+	 */
 	public static void switchTo(final IAdaptable adaptable) {
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
@@ -88,6 +107,18 @@ public class AdaptableScopes {
 		});
 	}
 
+	/**
+	 * Leaves the {@link AdaptableScope} of all {@link IAdaptable}-compliant
+	 * types (i.e. (super-)classes implementing {@link IAdaptable} and
+	 * (super-)interfaces extending {@link IAdaptable}) of the given
+	 * {@link IAdaptable} for the given {@link IAdaptable}.
+	 * 
+	 * @param adaptable
+	 *            The {@link IAdaptable} instance, for whose types to leave the
+	 *            {@link AdaptableScope}s with the instance.
+	 * 
+	 * @see AdaptableScope#leave(IAdaptable)
+	 */
 	public static void leave(final IAdaptable adaptable) {
 		process(adaptable.getClass(), adaptable, new ScopeProcessor() {
 			@Override
@@ -98,14 +129,14 @@ public class AdaptableScopes {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void process(Class<? extends IAdaptable> adaptableType,
 			final IAdaptable adaptableInstance, ScopeProcessor processor) {
 		processor.process(adaptableType, adaptableInstance);
 
 		// evaluate super classes of the given type
-		if (adaptableType.getSuperclass() != null
-				&& IAdaptable.class.isAssignableFrom(adaptableType
-						.getSuperclass())) {
+		if (adaptableType.getSuperclass() != null && IAdaptable.class
+				.isAssignableFrom(adaptableType.getSuperclass())) {
 			process((Class<? extends IAdaptable>) adaptableType.getSuperclass(),
 					adaptableInstance, processor);
 		}

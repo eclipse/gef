@@ -16,12 +16,27 @@ import java.lang.annotation.Annotation;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
+/**
+ * Implementation of {@link AdapterMap} annotation.
+ * 
+ * @author anyssen
+ *
+ */
 @SuppressWarnings("all")
+// TODO: change visibility to package
 public class AdapterMapImpl implements AdapterMap, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Class<? extends IAdaptable> value;
 
+	/**
+	 * Creates a new {@link AdapterMapImpl} with the given {@link IAdaptable}
+	 * type as its value.
+	 * 
+	 * @param value
+	 *            The {@link IAdaptable} type being used as value of this
+	 *            {@link AdapterMapImpl}.
+	 */
 	public AdapterMapImpl(Class<? extends IAdaptable> value) {
 		this.value = value;
 	}

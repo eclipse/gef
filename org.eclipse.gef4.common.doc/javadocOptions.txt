@@ -13,8 +13,13 @@
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/7/docs/api/
 -link http://docs.oracle.com/javafx/2/api/
+-link http://docs.guava-libraries.googlecode.com/git-history/v15.0/javadoc/
+-link http://google.github.io/guice/api-docs/3.0/javadoc/
 
-org.eclipse.gef4.common.active
+org.eclipse.gef4.common.activate
 org.eclipse.gef4.common.adapt
+org.eclipse.gef4.common.dispose
 org.eclipse.gef4.common.inject
 org.eclipse.gef4.common.notify
+org.eclipse.gef4.common.properties
+org.eclipse.gef4.common.reflect

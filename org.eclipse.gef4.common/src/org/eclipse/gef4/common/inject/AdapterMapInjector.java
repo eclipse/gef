@@ -165,14 +165,54 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	private final Method method;
 	private final AdapterMap methodAnnotation;
 
+	/**
+	 * Creates a new {@link AdapterMapInjector} to inject the given
+	 * {@link Method}, annotated with the given {@link AdapterMap} method
+	 * annotation.
+	 * 
+	 * @param method
+	 *            The {@link Method} to be injected.
+	 * @param methodAnnotation
+	 *            The {@link AdapterMap} annotation specified at the single
+	 *            parameter of the to be injected method.
+	 */
 	public AdapterMapInjector(final Method method,
 			final AdapterMap methodAnnotation) {
 		this.method = method;
 		this.methodAnnotation = methodAnnotation;
 	}
 
-	protected SortedMap<Key<?>, Binding<?>> getPolymorphicAdapterBindingKeys(
-			final Class<?> type, final Method method,
+	/**
+	 * Retrieves all adapter map bindings where the adaptable type of the map
+	 * binding is a true super type or true super interface of the one referred
+	 * to in the given method annotation, and assignable from the given
+	 * adaptable type. The bindings are returned mapped to their keys, sorted
+	 * following the inheritance hierarchy of their respective adaptable types.
+	 * <p>
+	 * As Guice will already inject those map bindings, where the adaptable type
+	 * of the map binding is the same as the one given in the method annotation,
+	 * these are ignored here. Instead, only those bindings are computed where
+	 * the type in the method annotation is not equal to the one of the map
+	 * binding, and where the type of the map binding is assignable from the
+	 * given concrete adaptable type.
+	 * 
+	 * @param adaptableType
+	 *            The concrete (runtime) adaptable type of the adaptable, whose
+	 *            method is to be injected.
+	 * @param method
+	 *            The to be injected method of the adaptable type.
+	 * @param methodAnnotation
+	 *            The {@link AdapterMap} method annotation of the to be injected
+	 *            adaptable's method.
+	 * @return All adapter map bindings (mapped to their binding keys), sorted
+	 *         along the type hierarchy of the bindings adaptable types, where
+	 *         the adaptable type of the binding is a true super type or true
+	 *         interface of the adaptable type given in the method annotation,
+	 *         and is furthermore assignable from the given adaptable type.
+	 */
+	// TODO: Remove method parameter, which is unused
+	protected SortedMap<Key<?>, Binding<?>> getPolymorphicAdapterMapBindings(
+			final Class<?> adaptableType, final Method method,
 			final AdapterMap methodAnnotation) {
 		// find available keys
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
@@ -184,8 +224,8 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 					@Override
 					public int compare(final Key<?> o1, final Key<?> o2) {
 						if (!AdapterMap.class.equals(o1.getAnnotationType())
-								|| !AdapterMap.class.equals(o2
-										.getAnnotationType())) {
+								|| !AdapterMap.class
+										.equals(o2.getAnnotationType())) {
 							throw new IllegalArgumentException(
 									"Can only compare keys with AdapterMap annotations");
 						}
@@ -193,8 +233,8 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 						final AdapterMap a2 = (AdapterMap) o2.getAnnotation();
 						if (a1.adaptableType().equals(a2.adaptableType())) {
 							return 0;
-						} else if (a1.adaptableType().isAssignableFrom(
-								a2.adaptableType())) {
+						} else if (a1.adaptableType()
+								.isAssignableFrom(a2.adaptableType())) {
 							return -1;
 						} else {
 							return 1;
@@ -209,18 +249,19 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 				// Guice will already have injected all bindings where the
 				// adaptableType used in the method annotation is the same as
 				// the one used in the key annotation.
-				if (!methodAnnotation.adaptableType().equals(
-						keyAnnotation.adaptableType())
+				if (!methodAnnotation.adaptableType()
+						.equals(keyAnnotation.adaptableType())
 						/*
 						 * The annotation in the binding refers to a true
 						 * super-type of instance runtime type (check, because
 						 * if the type is the same, the default injector will
-						 * already inject the values) IMPORTANT: we use type
-						 * instead of methodAnnotation .adaptableType() here,
-						 * because the runtime type of the to be injected
-						 * IAdaptable is relevant
+						 * already inject the values) IMPORTANT: we use
+						 * 'adaptableType' instead of 'methodAnnotation
+						 * .adaptableType()' here, because the runtime type of
+						 * the to be injected IAdaptable is relevant
 						 */
-						&& keyAnnotation.adaptableType().isAssignableFrom(type)) {
+						&& keyAnnotation.adaptableType()
+								.isAssignableFrom(adaptableType)) {
 					// System.out.println("Applying binding for " +
 					// keyAnnotation.value() + " to " + type +
 					// " as subtype of " + methodAnnotation.value());
@@ -238,16 +279,16 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	 *            The adaptable to inject adapters into.
 	 */
 	protected void injectAdapters(final Object adaptable) {
-		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterBindingKeys(
+		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterMapBindings(
 				adaptable.getClass(), method, methodAnnotation);
 		// System.out.println("--");
 		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 				.entrySet()) {
 			// System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
 			try {
-				final Map<AdapterKey<?>, Object> target = entry
-						.getValue()
-						.acceptTargetVisitor(new AdapterBindingsTargetVisitor());
+				final Map<AdapterKey<?>, Object> target = entry.getValue()
+						.acceptTargetVisitor(
+								new AdapterBindingsTargetVisitor());
 				if ((target != null) && !target.isEmpty()) {
 					// System.out.println("Injecting " + method.getName()
 					// + " of " + instance + " with " + target

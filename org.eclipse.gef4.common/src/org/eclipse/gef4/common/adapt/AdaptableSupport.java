@@ -13,6 +13,7 @@ package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,11 +67,12 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * 
 	 * @param source
 	 *            The {@link IAdaptable} that encloses the to be created
-	 *            {@link AdaptableSupport}, delegating calls to it.
+	 *            {@link AdaptableSupport}, delegating calls to it. May not be
+	 *            <code>null</code>
 	 * @param pcs
 	 *            An {@link PropertyChangeSupport}, which will be used to fire
 	 *            {@link PropertyChangeEvent}'s whenever adapters are set or
-	 *            unset.
+	 *            unset. May not be <code>null</code>
 	 */
 	public AdaptableSupport(A source, PropertyChangeSupport pcs) {
 		if (source == null) {
@@ -84,19 +86,34 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	}
 
 	private void activateAdapters() {
-		for (IActivatable adapter : this.<IActivatable> getAdapters(
-				IActivatable.class).values()) {
+		for (IActivatable adapter : this
+				.<IActivatable> getAdapters(IActivatable.class).values()) {
 			adapter.activate();
 		}
 	}
 
 	private void deactivateAdapters() {
-		for (IActivatable adapter : this.<IActivatable> getAdapters(
-				IActivatable.class).values()) {
+		for (IActivatable adapter : this
+				.<IActivatable> getAdapters(IActivatable.class).values()) {
 			adapter.deactivate();
 		}
 	}
 
+	/**
+	 * Returns an adapter for the given {@link AdapterKey} if one can
+	 * unambiguously be retrieved, i.e. if there is only a single adapter
+	 * registered under a key that 'matches' the given {@link AdapterKey}.
+	 *
+	 * @param <T>
+	 *            The adapter type.
+	 * @param key
+	 *            The {@link AdapterKey} used to retrieve a registered adapter.
+	 * @return The unambiguously retrievable adapter for the given
+	 *         {@link AdapterKey} or <code>null</code> if none could be
+	 *         retrieved.
+	 * 
+	 * @see IAdaptable#getAdapter(AdapterKey)
+	 */
 	public <T> T getAdapter(AdapterKey<? super T> key) {
 		if (adapters == null) {
 			return null;
@@ -115,11 +132,42 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		return null;
 	}
 
+	/**
+	 * Returns an adapter for the given {@link Class} key if one can
+	 * unambiguously be retrieved. That is, if there is only a single adapter
+	 * that 'matches' the given {@link Class} key, this adapter is returned,
+	 * ignoring the role under which it is registered (see
+	 * {@link AdapterKey#getRole()}).
+	 * 
+	 * @param <T> The adapter type.
+	 * @param key
+	 *            The {@link Class} key used to retrieve a registered adapter.
+	 * @return The unambiguously retrievable adapter for the given {@link Class}
+	 *         key or <code>null</code> if none could be retrieved.
+	 * 
+	 * @see IAdaptable#getAdapter(Class)
+	 */
 	public <T> T getAdapter(Class<? super T> key) {
 		return this.<T> getAdapter(TypeToken.of(key));
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Returns an adapter for the given {@link TypeToken} key if one can
+	 * unambiguously be retrieved. That is, if there is only a single adapter
+	 * that 'matches' the given {@link TypeToken} key, this adapter is returned,
+	 * ignoring the role under which it is registered (see
+	 * {@link AdapterKey#getRole()}).
+	 * 
+	 * @param <T> The adapter type.
+	 * @param key
+	 *            The {@link TypeToken} key used to retrieve a registered
+	 *            adapter.
+	 * @return The unambiguously retrievable adapter for the given
+	 *         {@link TypeToken} key or <code>null</code> if none could be
+	 *         retrieved.
+	 * 
+	 * @see IAdaptable#getAdapter(TypeToken)
+	 */
 	public <T> T getAdapter(TypeToken<? super T> key) {
 		// if we have only one adapter (instance) for the given type key
 		// (disregarding the
@@ -142,17 +190,61 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		return null;
 	}
 
+	/**
+	 * Retrieves all registered adapters, mapped to the respective
+	 * {@link AdapterKey}s they are registered.
+	 * 
+	 * @return A map containing the registered adapters under their
+	 *         {@link AdapterKey}s as a copy.
+	 */
+	// TODO: Change visibility to private/protected
 	public Map<AdapterKey<?>, Object> getAdapters() {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
-		return adapters;
+		return new HashMap<AdapterKey<?>, Object>(adapters);
 	}
 
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> key) {
+	/**
+	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
+	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
+	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
+	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
+	 * 
+	 * @param <T> The adapter type.
+	 * @param key
+	 *            The {@link Class} key to retrieve adapters for.
+	 * @return A {@link Map} containing all those adapters registered at this
+	 *         {@link AdaptableSupport}, whose {@link AdapterKey}'s
+	 *         {@link TypeToken} key ({@link AdapterKey#getKey()}) refers to the
+	 *         same or a sub-type of the given {@link Class} key, qualified by
+	 *         their respective {@link AdapterKey}s.
+	 * 
+	 * @see IAdaptable#getAdapters(Class)
+	 */
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> key) {
 		return getAdapters(TypeToken.of(key));
 	}
 
+	/**
+	 * Returns all adapters 'matching' the given {@link TypeToken} key, i.e. all
+	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
+	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type or of the
+	 * given {@link TypeToken} key (see
+	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
+	 * 
+	 * @param <T> The adapter type.
+	 * @param key
+	 *            The {@link TypeToken} key to retrieve adapters for.
+	 * @return A {@link Map} containing all those adapters registered at this
+	 *         {@link AdaptableSupport}, whose {@link AdapterKey}'s
+	 *         {@link TypeToken} key ({@link AdapterKey#getKey()}) refers to the
+	 *         same or a sub-type of the given {@link TypeToken} key, qualified
+	 *         by their respective {@link AdapterKey}s.
+	 * 
+	 * @see IAdaptable#getAdapters(TypeToken)
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			TypeToken<? super T> key) {
@@ -172,6 +264,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		return typeSafeAdapters;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			TypeToken<? super T> typeKey, String role) {
 		if (adapters == null) {
@@ -191,15 +284,60 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		return typeSafeAdapters;
 	}
 
+	/**
+	 * Registers the given adapter under an {@link AdapterKey}, which will use a
+	 * {@link TypeToken} representing the given {@link Class} key, i.e. using
+	 * {@link TypeToken#of(Class)}, as well as the default role (see
+	 * {@link AdapterKey#DEFAULT_ROLE}.
+	 * 
+	 * @param <T> The adapter type.
+	 * @param key
+	 *            The {@link Class} under which to register the given adapter.
+	 * @param adapter
+	 *            The adapter to register under the given {@link Class} key.
+	 * 
+	 * @see IAdaptable#setAdapter(Class, Object)
+	 */
 	public <T> void setAdapter(Class<? super T> key, T adapter) {
 		setAdapter(AdapterKey.get(TypeToken.of(key), AdapterKey.DEFAULT_ROLE),
 				adapter);
 	}
 
+	/**
+	 * Registers the given adapter under an {@link AdapterKey}, which will use
+	 * the given {@link TypeToken} key as well as the default role (see
+	 * {@link AdapterKey#DEFAULT_ROLE}.
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param key
+	 *            The {@link TypeToken} under which to register the given
+	 *            adapter.
+	 * @param adapter
+	 *            The adapter to register under the given {@link TypeToken} key.
+	 * 
+	 * @see IAdaptable#setAdapter(TypeToken, Object)
+	 */
 	public <T> void setAdapter(TypeToken<? super T> key, T adapter) {
 		setAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE), adapter);
 	}
 
+	/**
+	 * Registers the given adapter under the given {@link AdapterKey}. The
+	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
+	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
+	 * {@link AdapterKey#getKey()}).
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param key
+	 *            The {@link AdapterKey} under which to register the given
+	 *            adapter.
+	 * @param adapter
+	 *            The adapter to register under the given {@link AdapterKey}.
+	 * 
+	 * @see IAdaptable#setAdapter(AdapterKey, Object)
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
 		if (adapters == null) {
@@ -251,13 +389,11 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	public void setAdapters(Map<AdapterKey<?>, Object> adaptersWithKeys,
 			boolean overwrite) {
 		for (AdapterKey<?> key : adaptersWithKeys.keySet()) {
-			if (!key.getKey().isAssignableFrom(
-					adaptersWithKeys.get(key).getClass())) {
-				throw new IllegalArgumentException(
-						key
-								+ " is not a valid key for "
-								+ adaptersWithKeys.get(key)
-								+ ", as its neither a super interface nor a super class of its type.");
+			if (!key.getKey()
+					.isAssignableFrom(adaptersWithKeys.get(key).getClass())) {
+				throw new IllegalArgumentException(key
+						+ " is not a valid key for " + adaptersWithKeys.get(key)
+						+ ", as its neither a super interface nor a super class of its type.");
 			}
 			if (overwrite || !getAdapters().containsKey(key)) {
 				setAdapter((AdapterKey) key, adaptersWithKeys.get(key));
@@ -265,6 +401,18 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 	}
 
+	/**
+	 * Unregisters the adapter registered under the exact {@link AdapterKey}
+	 * given, returning it for convenience.
+	 * 
+	 * @param <T> The adapter type.
+	 * @param key
+	 *            The {@link AdapterKey} for which to remove a registered
+	 *            adapter.
+	 * @return The adapter, which has been removed.
+	 * 
+	 * @see IAdaptable#unsetAdapter(AdapterKey)
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T unsetAdapter(AdapterKey<? super T> key) {
 		if (adapters == null || !adapters.containsKey(key)) {
@@ -295,24 +443,55 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			activateAdapters();
 		}
 
+		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
+				new HashMap<AdapterKey<?>, Object>(adapters));
+
 		if (adapters.size() == 0) {
 			adapters = null;
 		}
-
-		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
-				new HashMap<AdapterKey<?>, Object>(adapters));
 		return (T) adapter;
 	}
 
+	/**
+	 * Disposes this {@link AdaptableSupport}, which will unregister all
+	 * currently registered adapters, unbind them from their source
+	 * {@link IAdaptable} (in case they are {@link IAdaptable.Bound}), and
+	 * dispose them (if they are {@link IDisposable}). No notification will be
+	 * fired to notify listeners about the unregistering of adapters. It is
+	 * expected that in case the source {@link IAdaptable} is
+	 * {@link IActivatable}, it is deactivated before disposing this
+	 * {@link AdaptableSupport}.
+	 */
+	@SuppressWarnings("unchecked")
 	public void dispose() {
-		for(AdapterKey<?> key : adapters.keySet()){
-			Object adapter = adapters.get(key);
-			// dispose adapter if its disposable
-			if(adapter instanceof IDisposable){
+		// deactivate already registered adapters, if adaptable is IActivatable
+		// and currently active (thus adapters are also active)
+		if (source instanceof IActivatable
+				&& ((IActivatable) source).isActive()) {
+			throw new IllegalStateException(
+					"source needs to be deactivated before disposing this AdaptableSupport.");
+		}
+
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(
+				adapters);
+
+		for (AdapterKey<?> key : oldAdapters.keySet()) {
+			Object adapter = adapters.remove(key);
+			if (adapter != null) {
+				// unbind adapter (if its bound)
+				if (adapter instanceof IAdaptable.Bound) {
+					((IAdaptable.Bound<A>) adapter).setAdaptable(null);
+				}
+			}
+
+			// dispose adapter (if its disposable)
+			if (adapter instanceof IDisposable) {
 				((IDisposable) adapter).dispose();
 			}
 		}
+
 		adapters.clear();
+		adapters = null;
 	}
 
 }
