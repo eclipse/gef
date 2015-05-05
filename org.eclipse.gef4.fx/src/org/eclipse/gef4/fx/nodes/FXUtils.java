@@ -39,6 +39,9 @@ public class FXUtils {
 	/**
 	 * Forces the JavaFX runtime to update the mouse cursor. This is useful when
 	 * you want to change the mouse cursor independently of mouse movement.
+	 *
+	 * @param scene
+	 *            The {@link Scene} to update the cursor for.
 	 */
 	public static void forceCursorUpdate(Scene scene) {
 		try {
@@ -99,11 +102,17 @@ public class FXUtils {
 	}
 
 	/**
-	 * Performs picking on the scene graph beginning at the specified root node.
+	 * Performs picking on the scene graph beginning at the specified root node
+	 * and processing its transitive children.
 	 *
 	 * @param sceneX
+	 *            The x-coordinate of the position to pick nodes at, interpreted
+	 *            in scene coordinate space.
 	 * @param sceneY
+	 *            The y-coordinate of the position to pick nodes at, interpreted
+	 *            in scene coordinate space.
 	 * @param root
+	 *            The root node at which to start with picking
 	 * @return A list of {@link Node}s which contain the the given coordinate.
 	 */
 	public static List<Node> getNodesAt(Node root, double sceneX,

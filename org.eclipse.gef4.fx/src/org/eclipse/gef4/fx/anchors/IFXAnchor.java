@@ -11,21 +11,28 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.geometry.planar.Point;
+
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.geometry.planar.Point;
-
 /**
- * A visual anchor that can provide positions for attached {@link AnchorKey}s
- * (i.e. anchored {@link Node}s) in local coordinates of the {@link AnchorKey}'s
- * anchored {@link Node}. An {@link IFXAnchor} may be bound to an anchorage
- * {@link Node}. If this is the case, it will recompute positions for all
- * attached anchored {@link Node}s in case the anchorage {@link Node} or any of
- * its ancestors are changed in a way that will have an effect on the position
- * (in local coordinates of the anchored {@link Node}s).
+ * An {@link IFXAnchor} is a visual anchor that will provide positions for
+ * attached {@link AnchorKey}s (i.e. anchored {@link Node}s) in local
+ * coordinates of the {@link AnchorKey}'s anchored {@link Node}.
+ * <p>
+ * The position for each attached {@link Node} will be recomputed in case the
+ * attached {@link Node} or any of its ancestors are changed in a way that has
+ * an effect on the position being provided for the attached {@link Node}. The
+ * {@link #positionProperty()} will be updated accordingly, it may be monitored
+ * for changes.
+ * <p>
+ * An {@link IFXAnchor} may be bound to an anchorage {@link Node}. If this is
+ * the case, positions for all attached {@link Node}s will also be recomputed in
+ * case the anchorage {@link Node} or any of its ancestors are changed in a way
+ * that will have an effect on the position of the attached {@link Node}.
  *
  * @author anyssen
  */
@@ -33,7 +40,7 @@ public interface IFXAnchor {
 
 	/**
 	 * Provides a read-only property with the anchorage {@link Node} this
-	 * {@link IFXAnchor} is attached to. The property value may be
+	 * {@link IFXAnchor} is bound to. The property value may be
 	 * <code>null</code> in case this {@link IFXAnchor} is not bound to an
 	 * anchorage {@link Node}.
 	 *
@@ -102,10 +109,12 @@ public interface IFXAnchor {
 
 	/**
 	 * Provides a read-only (map) property with positions (in local coordinates
-	 * of the anchored {@link Node}) for all attached {@link AnchorKey}s. The
+	 * of the anchored {@link Node}s) for all attached {@link AnchorKey}s. The
 	 * positions will be updated for all attached {@link AnchorKey}s if the
-	 * anchorage {@link Node} or any of its ancestors changes in a way that will
-	 * effect them.
+	 * attached {@link Node}s or the anchorage {@link Node}, the
+	 * {@link IFXAnchor} is bound to, or any of their ancestors changes in a way
+	 * that will effect the positions (within the local coordinate space of the
+	 * attached {@link Node}s).
 	 *
 	 * @return A read-only (map) property storing positions for all attached
 	 *         {@link AnchorKey}s.

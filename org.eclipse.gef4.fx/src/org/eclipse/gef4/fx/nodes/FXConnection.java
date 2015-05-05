@@ -17,19 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.beans.property.ReadOnlyMapProperty;
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
-import javafx.geometry.Point2D;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.transform.Rotate;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
@@ -47,6 +34,19 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.transform.Rotate;
+
 public class FXConnection extends Group {
 
 	/**
@@ -58,8 +58,8 @@ public class FXConnection extends Group {
 	 * @author mwienand
 	 *
 	 */
-	public static class FXChopBoxHelper implements
-			FXChopBoxAnchor.ReferencePointProvider {
+	public static class FXChopBoxHelper
+			implements FXChopBoxAnchor.ReferencePointProvider {
 
 		/**
 		 * The {@link ReferencePointMap} is used to store the reference points
@@ -87,8 +87,8 @@ public class FXConnection extends Group {
 
 				AnchorKey ak = (AnchorKey) key;
 				if (!containsKey(ak)) {
-					if (!(connection.getStartAnchor() == null || connection
-							.getEndAnchor() == null)) {
+					if (!(connection.getStartAnchor() == null
+							|| connection.getEndAnchor() == null)) {
 						updateReferencePoint(connection.getAnchorIndex(ak), ak);
 					} else {
 						put(ak, new Point());
@@ -128,8 +128,8 @@ public class FXConnection extends Group {
 				AnchorKey key = change.getKey();
 				IFXAnchor oldAnchor = change.getValueRemoved();
 				if (oldAnchor != null && pcls.containsKey(key)) {
-					oldAnchor.positionProperty().removeListener(
-							pcls.remove(key));
+					oldAnchor.positionProperty()
+							.removeListener(pcls.remove(key));
 					updateReferencePoints(null);
 				}
 				IFXAnchor newAnchor = change.getValueAdded();
@@ -198,8 +198,8 @@ public class FXConnection extends Group {
 
 		// TODO: move to utility && replace with safe algorithm
 		private Point getCenter(Node anchorageNode) {
-			Point center = JavaFX2Geometry.toRectangle(
-					connection.sceneToLocal(anchorageNode
+			Point center = JavaFX2Geometry
+					.toRectangle(connection.sceneToLocal(anchorageNode
 							.localToScene(anchorageNode.getLayoutBounds())))
 					.getCenter();
 			if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
@@ -219,7 +219,8 @@ public class FXConnection extends Group {
 
 			// first uncontained static anchor (no anchorage)
 			// or first anchorage center
-			for (int i = anchorIndex + step; i < anchors.size() && i >= 0; i += step) {
+			for (int i = anchorIndex + step; i < anchors.size()
+					&& i >= 0; i += step) {
 				IFXAnchor predAnchor = anchors.get(i);
 				if (predAnchor == null) {
 					throw new IllegalStateException(
@@ -234,8 +235,8 @@ public class FXConnection extends Group {
 						throw new IllegalStateException(
 								"connection inconsistent (null position)");
 					}
-					Point2D local = anchorage.sceneToLocal(connection
-							.localToScene(position.x, position.y));
+					Point2D local = anchorage.sceneToLocal(
+							connection.localToScene(position.x, position.y));
 					if (!anchorage.contains(local)) {
 						return position;
 					}
@@ -281,7 +282,8 @@ public class FXConnection extends Group {
 			}
 
 			// only compute reference points for chop box anchors
-			if (!(connection.getAnchors().get(anchorIndex) instanceof FXChopBoxAnchor)) {
+			if (!(connection.getAnchors()
+					.get(anchorIndex) instanceof FXChopBoxAnchor)) {
 				return;
 			}
 
@@ -402,9 +404,8 @@ public class FXConnection extends Group {
 	}
 
 	public void addWayPoint(int index, Point wayPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
-						wayPointInLocal.y)));
+		FXStaticAnchor anchor = new FXStaticAnchor(JavaFX2Geometry
+				.toPoint(localToScene(wayPointInLocal.x, wayPointInLocal.y)));
 		addWayAnchor(index, anchor);
 	}
 
@@ -416,16 +417,18 @@ public class FXConnection extends Group {
 	 * Arranges the given decoration according to the passed-in values. Returns
 	 * the transformed end point of the arranged decoration.
 	 *
-	 * @param deco
+	 * @param decoration
+	 *            The {@link IFXDecoration} to arrange.
 	 * @param start
 	 * @param direction
 	 * @param decoStart
 	 * @param decoDirection
-	 * @return the transformed end point of the arranged decoration
+	 * @return The transformed end point of the arranged decoration.
 	 */
-	protected Point arrangeDecoration(IFXDecoration deco, Point start,
+	// TODO: Remove decoStart, which is unused.
+	protected Point arrangeDecoration(IFXDecoration decoration, Point start,
 			Vector direction, Point decoStart, Vector decoDirection) {
-		Node visual = deco.getVisual();
+		Node visual = decoration.getVisual();
 
 		// position
 		visual.setLayoutX(start.x);
@@ -440,8 +443,9 @@ public class FXConnection extends Group {
 		}
 
 		// return corresponding curve point
-		return angleCW == null ? start : start.getTranslated(decoDirection
-				.getRotatedCW(angleCW).toPoint());
+		return angleCW == null ? start
+				: start.getTranslated(
+						decoDirection.getRotatedCW(angleCW).toPoint());
 	}
 
 	protected void arrangeEndDecoration() {
@@ -478,8 +482,8 @@ public class FXConnection extends Group {
 		Point decoEndPoint = endDecoration.getLocalEndPoint();
 		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
 
-		arrangeDecoration(endDecoration, endPoint, endDirection,
-				decoStartPoint, decoDirection);
+		arrangeDecoration(endDecoration, endPoint, endDirection, decoStartPoint,
+				decoDirection);
 	}
 
 	protected void arrangeStartDecoration() {
@@ -540,8 +544,8 @@ public class FXConnection extends Group {
 			nextWayAnchorId = 0;
 			setWayAnchors(wayAnchors);
 		}
-		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX
-				+ nextWayAnchorId++);
+		return new AnchorKey(getCurveNode(),
+				WAY_POINT_ROLE_PREFIX + nextWayAnchorId++);
 	}
 
 	protected int getAnchorIndex(AnchorKey anchorKey) {
@@ -617,10 +621,9 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getEndAnchorKey())) {
 			return null;
 		}
-		return JavaFX2Geometry.toPoint(getCurveNode()
-				.localToParent(
-						Geometry2JavaFX.toFXPoint(anchor
-								.getPosition(getEndAnchorKey()))));
+		return JavaFX2Geometry
+				.toPoint(getCurveNode().localToParent(Geometry2JavaFX
+						.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
 	}
 
 	public Point[] getPoints() {
@@ -671,9 +674,9 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getStartAnchorKey())) {
 			return null;
 		}
-		return JavaFX2Geometry.toPoint(getCurveNode().localToParent(
-				Geometry2JavaFX.toFXPoint(anchor
-						.getPosition(getStartAnchorKey()))));
+		return JavaFX2Geometry
+				.toPoint(getCurveNode().localToParent(Geometry2JavaFX
+						.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
 	}
 
 	public IFXAnchor getWayAnchor(int index) {
@@ -694,7 +697,8 @@ public class FXConnection extends Group {
 		for (int i = 0; i < wayPointsCount; i++) {
 			IFXAnchor wayAnchor = getWayAnchor(i);
 			if (wayAnchor == null) {
-				throw new IllegalStateException("Way anchor may never be null.");
+				throw new IllegalStateException(
+						"Way anchor may never be null.");
 			}
 			wayPointAnchors.add(wayAnchor);
 		}
@@ -708,10 +712,8 @@ public class FXConnection extends Group {
 	protected int getWayIndex(AnchorKey key) {
 		int index = wayAnchorKeys.indexOf(key);
 		if (index == -1) {
-			throw new IllegalArgumentException(
-					"The given AnchorKey ("
-							+ key
-							+ ") is not registered as a way point anchor for this connection.");
+			throw new IllegalArgumentException("The given AnchorKey (" + key
+					+ ") is not registered as a way point anchor for this connection.");
 		}
 		return index;
 	}
@@ -724,17 +726,17 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getWayAnchorKey(index))) {
 			return null;
 		}
-		return JavaFX2Geometry.toPoint(getCurveNode().localToParent(
-				Geometry2JavaFX.toFXPoint(anchor
-						.getPosition(getWayAnchorKey(index)))));
+		return JavaFX2Geometry
+				.toPoint(getCurveNode().localToParent(Geometry2JavaFX.toFXPoint(
+						anchor.getPosition(getWayAnchorKey(index)))));
 	}
 
 	public List<Point> getWayPoints() {
 		List<IFXAnchor> wayPointAnchors = getWayAnchors();
 		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
-			wayPoints.add(wayPointAnchors.get(i)
-					.getPosition(getWayAnchorKey(i)));
+			wayPoints.add(
+					wayPointAnchors.get(i).getPosition(getWayAnchorKey(i)));
 		}
 		return wayPoints;
 	}
@@ -756,7 +758,8 @@ public class FXConnection extends Group {
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}
 
-	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey, int wayIndex) {
+	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey,
+			int wayIndex) {
 		/*
 		 * IMPORTANT: The anchor is put into the map before attaching it, so
 		 * that listeners on the map can register position change listeners on
@@ -769,7 +772,8 @@ public class FXConnection extends Group {
 		anchorsProperty.put(anchorKey, anchor);
 		anchor.attach(anchorKey, as);
 		if (!anchorKeyPCL.containsKey(anchorKey)) {
-			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
+			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
+					anchorKey);
 			anchorKeyPCL.put(anchorKey, pcl);
 			anchor.positionProperty().addListener(pcl);
 		}
@@ -825,8 +829,8 @@ public class FXConnection extends Group {
 
 	protected void removeAnchor(AnchorKey anchorKey, IFXAnchor oldAnchor) {
 		if (anchorKeyPCL.containsKey(anchorKey)) {
-			oldAnchor.positionProperty().removeListener(
-					anchorKeyPCL.remove(anchorKey));
+			oldAnchor.positionProperty()
+					.removeListener(anchorKeyPCL.remove(anchorKey));
 		}
 		/*
 		 * Important: detach() after removing from the anchors-map, so that
@@ -903,9 +907,8 @@ public class FXConnection extends Group {
 	}
 
 	public void setEndPoint(Point endPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(endPointInLocal.x,
-						endPointInLocal.y)));
+		FXStaticAnchor anchor = new FXStaticAnchor(JavaFX2Geometry
+				.toPoint(localToScene(endPointInLocal.x, endPointInLocal.y)));
 		setEndAnchor(anchor);
 	}
 
@@ -942,9 +945,8 @@ public class FXConnection extends Group {
 	}
 
 	public void setStartPoint(Point startPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(startPointInLocal.x,
-						startPointInLocal.y)));
+		FXStaticAnchor anchor = new FXStaticAnchor(JavaFX2Geometry.toPoint(
+				localToScene(startPointInLocal.x, startPointInLocal.y)));
 		setStartAnchor(anchor);
 	}
 
@@ -982,9 +984,8 @@ public class FXConnection extends Group {
 	}
 
 	public void setWayPoint(int index, Point wayPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
-						wayPointInLocal.y)));
+		FXStaticAnchor anchor = new FXStaticAnchor(JavaFX2Geometry
+				.toPoint(localToScene(wayPointInLocal.x, wayPointInLocal.y)));
 		setWayAnchor(index, anchor);
 	}
 

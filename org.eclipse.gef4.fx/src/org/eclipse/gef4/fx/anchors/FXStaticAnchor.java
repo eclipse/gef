@@ -11,13 +11,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.scene.Node;
+
 /**
- * A {@link FXStaticAnchor} provides a static position per anchor link.
+ * An {@link FXStaticAnchor} provides a position for each {@link AnchorKey},
+ * based on a reference position relative to the anchorage {@link Node}, to
+ * which the {@link FXStaticAnchor} is bound, or based on a (global) static
+ * reference position in case the {@link FXStaticAnchor} is unbound.
  *
  * @author mwienand
  * @author anyssen
@@ -30,15 +33,19 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 
 	/**
 	 * Creates an {@link FXStaticAnchor} that is bound to the provided
-	 * anchorage. It will provide the passed in position (in the local
-	 * coordinate system of the anchorage {@link Node}) for all attached
-	 * {@link AnchorKey}s (i.e anchored {@link Node} s), after having
-	 * transformed them into the local coordinate system of the anchoreds,
-	 * respectively. In case the anchorage {@link Node} or any of its ancestors
-	 * are changed in a way that will affect the position, the
-	 * {@link #positionProperty()} will be updated.
+	 * anchorage. It will used the passed in reference position (in the local
+	 * coordinate system of the anchorage {@link Node}) to compute positions
+	 * (see {@link #positionProperty()}) for all attached {@link AnchorKey}s (in
+	 * the local coordinate system of the attached {@link AnchorKey}'s
+	 * {@link Node}).
+	 * <p>
+	 * In case the anchorage {@link Node} or any of its ancestors are changed in
+	 * a way that will affect the position, the {@link #positionProperty()} will
+	 * be updated.
 	 *
 	 * @param anchorage
+	 *            The anchorage {@link Node} to bind this {@link FXStaticAnchor}
+	 *            to.
 	 * @param referencePositionInAnchorageLocal
 	 *            The position within the local coordinate space of the
 	 *            anchorage {@link Node}, which is used to compute the position
@@ -74,8 +81,8 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 		Point positionInScene = anchorage == null ? referencePosition
 				: JavaFX2Geometry.toPoint(anchorage.localToScene(
 						referencePosition.x, referencePosition.y));
-		Point positionInAnchoredLocal = JavaFX2Geometry.toPoint(anchored
-				.sceneToLocal(positionInScene.x, positionInScene.y));
+		Point positionInAnchoredLocal = JavaFX2Geometry.toPoint(
+				anchored.sceneToLocal(positionInScene.x, positionInScene.y));
 		return positionInAnchoredLocal;
 	}
 

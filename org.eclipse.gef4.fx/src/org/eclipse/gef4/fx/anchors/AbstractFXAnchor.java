@@ -16,6 +16,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.planar.Point;
+
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -28,22 +32,24 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.transform.Transform;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.geometry.planar.Point;
-
 /**
- * Abstract base implementation for visual anchors. It provides the facility for
- * {@link AnchorKey}s to be attached (see {@link #attach(AnchorKey, IAdaptable)}
- * ) and detached (see {@link #detach(AnchorKey, IAdaptable)}), and to provide
- * anchor positions for all attached {@link AnchorKey}s (see
- * {@link #positionProperty()}).
- *
- * Each {@link AbstractFXAnchor} anchor is bound to an anchorage {@link Node}
- * (see {@link #anchorageProperty()}). Computation is left to If it needs
- * additional information to compute {@link AnchorKey}s, it may request this
- * from the {@link IAdaptable} info passed into
- * {@link #attach(AnchorKey, IAdaptable)}.
+ * {@link AbstractFXAnchor} is the abstract base implementation for
+ * {@link IFXAnchor}s. It provides the facility to bind an anchor to an
+ * anchorage {@link Node} ({@link #anchorageProperty()}), to attach and detach
+ * {@link Node}s via {@link AnchorKey}s, and to provide positions (
+ * {@link #positionProperty()}) for the attached {@link AnchorKey}s.
+ * <p>
+ * It also registers the necessary listeners at the anchorage {@link Node} and
+ * the attached {@link Node}s as well as relevant ancestor {@link Node}s, to
+ * trigger the (re-)computation of positions.
+ * <p>
+ * The actual computation of positions for attached nodes is delegated to
+ * {@link #computePosition(AnchorKey)}, thus left to subclasses. If a subclass
+ * needs additional information to compute positions for attached
+ * {@link AnchorKey}s, it may request that an {@link IAdaptable} info gets
+ * passed into {@link #attach(AnchorKey, IAdaptable)} and
+ * {@link #detach(AnchorKey, IAdaptable)}, and may overwrite both methods to get
+ * access to it.
  *
  * @author anyssen
  */
@@ -75,14 +81,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
 				unregisterVCLs();
-				oldAnchorage.sceneProperty().removeListener(
-						anchorageVisualSceneChangeListener);
+				oldAnchorage.sceneProperty()
+						.removeListener(anchorageVisualSceneChangeListener);
 			}
 			if (newAnchorage != null) {
 				// register listener on scene property, so we can react to
 				// changes of the scene property of the anchorage node
-				newAnchorage.sceneProperty().addListener(
-						anchorageVisualSceneChangeListener);
+				newAnchorage.sceneProperty()
+						.addListener(anchorageVisualSceneChangeListener);
 				// if scene is already set, register anchorage visual listener
 				// directly (else do this within scene change listener)
 				Scene scene = newAnchorage.getScene();
@@ -230,7 +236,8 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			@Override
 			public void changed(ObservableValue<? extends Scene> observed,
 					Scene oldScene, Scene newScene) {
-				if (getAnchorage() == null || getAnchorage().getScene() == null) {
+				if (getAnchorage() == null
+						|| getAnchorage().getScene() == null) {
 					return;
 				}
 				VisualChangeListener vcl = vcls.get(anchored);

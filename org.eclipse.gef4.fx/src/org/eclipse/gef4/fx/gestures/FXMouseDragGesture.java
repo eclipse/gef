@@ -77,6 +77,7 @@ public abstract class FXMouseDragGesture {
 	 * events if the gesture was previously initiated (pressed node is known).
 	 *
 	 * @param event
+	 *            The {@link MouseEvent} to process.
 	 * @see #onMousePress(MouseEvent)
 	 */
 	protected void onMouseEvent(MouseEvent event) {
@@ -132,6 +133,7 @@ public abstract class FXMouseDragGesture {
 	 * events.
 	 *
 	 * @param event
+	 *            The {@link MouseEvent} to process.
 	 * @see #onMouseEvent(MouseEvent)
 	 */
 	protected void onMousePress(MouseEvent event) {

@@ -19,6 +19,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.reflect.ReflectionUtils;
+import org.eclipse.gef4.fx.ui.gestures.SwtToFXGestureConverter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.GestureEvent;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
@@ -27,15 +37,6 @@ import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.stage.Window;
-
-import org.eclipse.gef4.common.reflect.ReflectionUtils;
-import org.eclipse.gef4.fx.ui.gestures.SwtToFXGestureConverter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.GestureEvent;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * A replacement of {@link FXCanvas} that offers the following additional
@@ -47,7 +48,8 @@ import org.eclipse.swt.widgets.Composite;
  * will forward all focus events to the embedded JavaFX stage), so SWT
  * {@link FocusListener} will not be notified</li>
  * <li>Support for setting cursors via JavaFX (i.e. the cursor of the embedded
- * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})</li>
+ * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})
+ * </li>
  * </ul>
  *
  * @author anyssen
@@ -95,13 +97,13 @@ public class FXCanvasEx extends FXCanvas {
 				double hotspotX = ((ImageCursor) newCursor).getHotspotX();
 				double hotspotY = ((ImageCursor) newCursor).getHotspotY();
 				org.eclipse.swt.graphics.Cursor swtCursor = new org.eclipse.swt.graphics.Cursor(
-						getDisplay(), imageData, (int) hotspotX, (int) hotspotY);
+						getDisplay(), imageData, (int) hotspotX,
+						(int) hotspotY);
 				getShell().setCursor(swtCursor);
 			} else if (CURSOR_FROM_FX_TO_SWT.containsKey(newCursor)) {
 				// standard cursor, look up in map
-				getShell().setCursor(
-						new org.eclipse.swt.graphics.Cursor(getDisplay(),
-								CURSOR_FROM_FX_TO_SWT.get(newCursor)));
+				getShell().setCursor(new org.eclipse.swt.graphics.Cursor(
+						getDisplay(), CURSOR_FROM_FX_TO_SWT.get(newCursor)));
 			} else {
 				// unknown cursor, use default
 				getShell().setCursor(null);
@@ -109,6 +111,18 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	};
 
+	/**
+	 * Creates a new {@link FXCanvasEx} for the given parent and with the given
+	 * style.
+	 *
+	 * @param parent
+	 *            The {@link Composite} to use as parent.
+	 * @param style
+	 *            A combination of SWT styles to be applied. Note that the
+	 *            {@link FXCanvas} constructor will set the
+	 *            {@link SWT#NO_BACKGROUND} style before passing it to the
+	 *            {@link Canvas} constructor.
+	 */
 	public FXCanvasEx(Composite parent, int style) {
 		super(parent, style);
 		gestureConverter = new SwtToFXGestureConverter(this);
@@ -154,6 +168,11 @@ public class FXCanvasEx extends FXCanvas {
 		super.dispose();
 	}
 
+	/**
+	 * Returns the stage {@link Window} hold by this {@link FXCanvas}.
+	 *
+	 * @return The stage {@link Window}.
+	 */
 	public Window getStage() {
 		return ReflectionUtils.getPrivateFieldValue(this, "stage");
 	}

@@ -14,13 +14,8 @@ package org.eclipse.gef4.fx.anchors;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.collections.MapChangeListener;
-import javafx.scene.Node;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.nodes.FXConnection.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -31,38 +26,13 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.MapChangeListener;
+import javafx.scene.Node;
+
 // TODO: Find an appropriate name for this (outline anchor or shape anchor or perimeter anchor)
 //       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
-
-	/**
-	 * A {@link ReferencePointProvider} needs to be provided as default
-	 * adapter (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable}
-	 * info that gets passed into
-	 * {@link FXChopBoxAnchor#attach(AnchorKey, IAdaptable)} and
-	 * {@link FXChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
-	 * {@link ReferencePointProvider} has to provide a reference point
-	 * for each {@link AdapterKey} that is attached to the
-	 * {@link FXChopBoxAnchor}. It will be used when computing anchor positions
-	 * for the respective {@link AnchorKey}.
-	 *
-	 * @author anyssen
-	 *
-	 */
-	public interface ReferencePointProvider {
-
-		/**
-		 * Provides a read-only (map) property with positions (in local
-		 * coordinates of the anchored {@link Node}) for all attached
-		 * {@link AnchorKey}s.
-		 *
-		 * @return A read-only (map) property storing reference positions for
-		 *         all {@link AnchorKey}s attached to the
-		 *         {@link FXChopBoxAnchor}s it is forwarded to.
-		 */
-		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
-
-	}
 
 	public interface ComputationStrategy {
 
@@ -109,8 +79,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 			protected Point computeAnchorageReferencePointInScene(Node node,
 					IGeometry geometryInLocal) {
-				return FXUtils.localToScene(
-						node,
+				return FXUtils.localToScene(node,
 						computeAnchorageReferencePointInLocal(node,
 								geometryInLocal));
 			}
@@ -127,10 +96,11 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			@Override
 			public Point computePositionInScene(Node anchorage, Node anchored,
 					Point anchoredReferencePointInLocal) {
-				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(anchorage);
+				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(
+						anchorage);
 
-				Point anchoredReferencePointInScene = FXUtils.localToScene(
-						anchored, anchoredReferencePointInLocal);
+				Point anchoredReferencePointInScene = FXUtils
+						.localToScene(anchored, anchoredReferencePointInLocal);
 
 				Point anchorageReferencePointInScene = computeAnchorageReferencePointInScene(
 						anchorage, anchorageReferenceGeometryInLocal);
@@ -141,7 +111,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 				IGeometry anchorageGeometryInScene = FXUtils.localToScene(
 						anchorage, anchorageReferenceGeometryInLocal);
-				ICurve anchorageOutlineInScene = getOutline(anchorageGeometryInScene);
+				ICurve anchorageOutlineInScene = getOutline(
+						anchorageGeometryInScene);
 
 				Point nearestIntersectionInScene = anchorageOutlineInScene
 						.getNearestIntersection(referenceLineInScene,
@@ -162,8 +133,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				}
 				if (!(geometry instanceof IShape)) {
 					// TODO: ICurve, Path
-					geometry = JavaFX2Geometry.toRectangle(anchorage
-							.getLayoutBounds());
+					geometry = JavaFX2Geometry
+							.toRectangle(anchorage.getLayoutBounds());
 				}
 				return geometry;
 			}
@@ -212,6 +183,34 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	}
 
+	/**
+	 * A {@link ReferencePointProvider} needs to be provided as default adapter
+	 * (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable} info that
+	 * gets passed into {@link FXChopBoxAnchor#attach(AnchorKey, IAdaptable)}
+	 * and {@link FXChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
+	 * {@link ReferencePointProvider} has to provide a reference point for each
+	 * {@link AdapterKey} that is attached to the {@link FXChopBoxAnchor}. It
+	 * will be used when computing anchor positions for the respective
+	 * {@link AnchorKey}.
+	 *
+	 * @author anyssen
+	 *
+	 */
+	public interface ReferencePointProvider {
+
+		/**
+		 * Provides a read-only (map) property with positions (in local
+		 * coordinates of the anchored {@link Node}) for all attached
+		 * {@link AnchorKey}s.
+		 *
+		 * @return A read-only (map) property storing reference positions for
+		 *         all {@link AnchorKey}s attached to the
+		 *         {@link FXChopBoxAnchor}s it is forwarded to.
+		 */
+		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
+
+	}
+
 	private Map<AnchorKey, ReferencePointProvider> anchoredReferencePointProviders = new HashMap<>();
 
 	private MapChangeListener<AnchorKey, Point> anchoredReferencePointsChangeListener = new MapChangeListener<AnchorKey, Point>() {
@@ -230,7 +229,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 					throw new IllegalStateException(
 							"Attempt to put <null> value into reference point map!");
 				}
-				if (anchoredReferencePointProviders.containsKey(change.getKey())) {
+				if (anchoredReferencePointProviders
+						.containsKey(change.getKey())) {
 					// only recompute position, if one of our own keys changed
 					// (FXChopBoxHelper#referencePointProperty() may contain
 					// AnchorKeys registered at other anchors as well)
@@ -254,15 +254,15 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	/**
 	 * Attaches the given {@link AnchorKey} to this {@link FXChopBoxAnchor}.
-	 * Requires that an {@link FXChopBoxHelper} can be obtained from the passed
-	 * in {@link IAdaptable}.
+	 * Requires that an {@link ReferencePointProvider} can be obtained from the
+	 * passed in {@link IAdaptable}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be attached.
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link ReferencePointProvider} that provides reference
-	 *            points for this {@link FXChopBoxAnchor}.
+	 *            {@link ReferencePointProvider} that provides reference points
+	 *            for this {@link FXChopBoxAnchor}.
 	 *
 	 */
 	@Override
@@ -283,15 +283,18 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		super.attach(key, info);
 
 		// add listener to reference point changes
-		referencePointProvider.referencePointProperty().addListener(
-				anchoredReferencePointsChangeListener);
+		referencePointProvider.referencePointProperty()
+				.addListener(anchoredReferencePointsChangeListener);
 	}
 
 	/**
-	 * Recomputes the position of this anchor w.r.t. the given anchored
-	 * {@link Node} and the reference point provided for it.
+	 * Recomputes the position for the given attached {@link AnchorKey} by
+	 * retrieving a reference position via the {@link ReferencePointProvider}
+	 * that was obtained when attaching the {@link AnchorKey} (
+	 * {@link #attach(AnchorKey, IAdaptable)}).
 	 *
 	 * @param key
+	 *            The {@link AnchorKey} for which to compute an anchor position.
 	 */
 	@Override
 	protected Point computePosition(AnchorKey key) {
@@ -322,23 +325,23 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	protected Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
-		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
-				.toFXPoint(computationStrategy
+		return JavaFX2Geometry.toPoint(anchored
+				.sceneToLocal(Geometry2JavaFX.toFXPoint(computationStrategy
 						.computePositionInScene(getAnchorage(), anchored,
 								anchoredReferencePointInLocal))));
 	}
 
 	/**
 	 * Detaches the given {@link AnchorKey} from this {@link FXChopBoxAnchor}.
-	 * Requires that an {@link FXChopBoxHelper} can be obtained from the passed
-	 * in {@link IAdaptable}.
+	 * Requires that an {@link ReferencePointProvider} can be obtained from the
+	 * passed in {@link IAdaptable}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be detached.
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link ReferencePointProvider} that provides reference
-	 *            points for this {@link FXChopBoxAnchor}.
+	 *            {@link ReferencePointProvider} that provides reference points
+	 *            for this {@link FXChopBoxAnchor}.
 	 */
 	@Override
 	public void detach(AnchorKey key, IAdaptable info) {
@@ -355,8 +358,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 
 		// unregister reference point listener
-		helper.referencePointProperty().removeListener(
-				anchoredReferencePointsChangeListener);
+		helper.referencePointProperty()
+				.removeListener(anchoredReferencePointsChangeListener);
 
 		super.detach(key, info);
 
