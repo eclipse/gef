@@ -30,8 +30,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * @param <V>
  *            The visual node used by this {@link AbstractRootPart}.
  */
-public abstract class AbstractRootPart<VR, V extends VR> extends
-		AbstractVisualPart<VR, V> implements IRootPart<VR, V> {
+public abstract class AbstractRootPart<VR, V extends VR>
+		extends AbstractVisualPart<VR, V>implements IRootPart<VR, V> {
 
 	private IViewer<VR> viewer;
 
@@ -84,16 +84,19 @@ public abstract class AbstractRootPart<VR, V extends VR> extends
 		return getViewer();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<VR, ? extends VR>> getContentPartChildren() {
 		return PartUtils.filterParts(getChildren(), IContentPart.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IFeedbackPart<VR, ? extends VR>> getFeedbackPartChildren() {
 		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IHandlePart<VR, ? extends VR>> getHandlePartChildren() {
 		return PartUtils.filterParts(getChildren(), IHandlePart.class);

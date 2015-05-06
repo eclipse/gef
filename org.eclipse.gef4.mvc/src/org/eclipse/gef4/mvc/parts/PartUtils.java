@@ -20,9 +20,9 @@ import java.util.Set;
 import com.google.common.collect.Multiset;
 
 /**
- * Provides utilities neeeded in the context of {@link IVisualPart}s.
+ * Provides utilities needed in the context of {@link IVisualPart}s.
  *
- * @author nyssen
+ * @author anyssen
  *
  */
 public class PartUtils {
@@ -39,15 +39,6 @@ public class PartUtils {
 		}
 		return filtered;
 	}
-
-	// public static <VR> List<IVisualPart<VR>> getAnchorages(
-	// List<? extends IVisualPart<VR>> anchoreds) {
-	// List<IVisualPart<VR>> anchorages = new ArrayList<IVisualPart<VR>>();
-	// for (IVisualPart<VR> a : anchoreds) {
-	// anchorages.addAll(a.getAnchoragesWithRoles().keySet());
-	// }
-	// return anchorages;
-	// }
 
 	public static <VR> List<IVisualPart<VR, ? extends VR>> getAnchoreds(
 			Collection<? extends IVisualPart<VR, ? extends VR>> anchorages) {
@@ -70,18 +61,5 @@ public class PartUtils {
 		}
 		return result;
 	}
-	/*
-	 * TODO: IVisualPart findCommonAncestor(IVisualPart... parts)
-	 * 
-	 * Searches the visual part hierarchy for a common ancestor of the given
-	 * parts. Returns this ancestor if one is found, otherwise returns null.
-	 * 
-	 * @param parts
-	 * 
-	 * @return common ancestor of given parts, or null
-	 * 
-	 * Note: This method can be transferred to here from the GEF 3.x
-	 * ToolUtilities class.
-	 */
 
 }

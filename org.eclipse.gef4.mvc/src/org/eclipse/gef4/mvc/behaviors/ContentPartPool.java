@@ -16,18 +16,63 @@ import java.util.Map;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+/**
+ * A temporary store for {@link IContentPart}s that is used by
+ * {@link ContentBehavior}s. They will add {@link IContentPart}s, which are
+ * removed from the viewer during content synchronization (e.g. because the
+ * related content element was deleted), to be re-used (i.e. removed again and
+ * restored within the viewer) when the content element re-appears during
+ * synchronization, e.g. because of an undo of a delete operation. The
+ * motivation behind recycling {@link IContentPart}s is that after an undo the
+ * viewer is in the exact same state as before the execution of an operation
+ * (which may be important for feedback or handles).
+ *
+ * @author mwienand
+ * @author anyssen
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
+ */
 public class ContentPartPool<VR> {
 
 	private Map<Object, IContentPart<VR, ? extends VR>> pool = new HashMap<Object, IContentPart<VR, ? extends VR>>();
 
+	/**
+	 * Adds an {@link IContentPart} to this pool. The {@link IContentPart} will
+	 * be stored under its content element ({@link IContentPart#getContent()})
+	 * and may later be retrieved back via this content element (see
+	 * {@link #remove(Object)}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} to add to the pool.
+	 */
 	public void add(IContentPart<VR, ? extends VR> part) {
+		// TODO: We need to handle the case that a content part was already
+		// registered for the same content element in case we will enable this
+		// in the viewer (e.g. by adding context information to the content part
+		// map).
 		pool.put(part.getContent(), part);
 	}
 
+	/**
+	 * Clears the pool, that is removes all {@link IContentPart}s.
+	 */
 	public void clear() {
 		pool.clear();
 	}
 
+	/**
+	 * Retrieves an {@link IContentPart} for the given content element and
+	 * removes it from the pool.
+	 *
+	 * @param content
+	 *            The {@link IContentPart} that was registered for the content
+	 *            element, or <code>null</code> if no {@link IContentPart} could
+	 *            be retrieved for the content element.
+	 * @return The part that was retrieved for the given content element, or
+	 *         <code>null</code> if none could be found.
+	 */
 	public IContentPart<VR, ? extends VR> remove(Object content) {
 		return pool.remove(content);
 	}

@@ -183,6 +183,7 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	// TODO: rename to bindContentPartPool()
 	protected void bindContentBehaviorPartPool() {
 		binder().bind(new TypeLiteral<ContentPartPool<Node>>() {
 		}).in(AdaptableScopes.typed(IViewer.class));

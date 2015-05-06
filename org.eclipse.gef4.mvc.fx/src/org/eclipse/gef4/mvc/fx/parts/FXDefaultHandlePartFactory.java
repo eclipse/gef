@@ -48,20 +48,38 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	private Injector injector;
 
 	/**
-	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
-	 * selection. The corner is specified via the <i>position</i> parameter.
+	 * Creates an {@link FXRectangleSegmentHandlePart} for one corner of the
+	 * bounds of a multi selection. The selection bounds geometry can be
+	 * obtained from the given provider as a poly-bezier, i.e. an array of
+	 * {@link BezierCurve}s. The position of the handle part to create is
+	 * represented via segment index and parameter, where the index refers to
+	 * the respective {@link BezierCurve} segment, and the parameter (0 = start,
+	 * 0.5 = mid, 1 = end) to the relative position w.r.t. to the indexed
+	 * segment.
 	 *
 	 * @param targets
-	 *            The selected {@link IVisualPart}s.
+	 *            The selected {@link IVisualPart}s that form the multi
+	 *            selection, for which feedback handles are to be created.
 	 * @param contextMap
-	 *            Stores context information as an {@link IBehavior} is
-	 *            stateless.
+	 *            May contain additional information needed for the creation or
+	 *            to identify the creation context, when querying back such
+	 *            information from the context {@link IBehavior} that initiated
+	 *            the creation.
 	 * @param segmentsProvider
+	 *            A provider that delivers the selection geometry as a
+	 *            poly-bezier, represented as an array of {@link BezierCurve}s.
 	 * @param segmentIndex
+	 *            The index of the poly-bezier segment at which the handle is to
+	 *            be placed.
 	 * @param segmentParameter
+	 *            The parameter that identifies the position within the segment
+	 *            (0 = start, 0.5 = mid, 1 = end).
 	 * @return an {@link IHandlePart} for the specified corner of the bounds of
 	 *         the multi selection
 	 */
+	// TODO: if we pass in the contextMap here, we should also pass in the
+	// contextBehavior, because otherwise a back-query scenario cannot be
+	// realized.
 	protected IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Map<Object, Object> contextMap,
@@ -73,7 +91,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return part;
 	}
 
-	// TODO: maybe inline this method
+	// TODO: Maybe inline this method
+	// TODO: if we pass in the contextMap here, we should also pass in the
+	// contextBehavior, because otherwise a back-query scenario cannot be
+	// realized.
 	protected List<IHandlePart<Node, ? extends Node>> createBoundsSelectionHandleParts(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Provider<? extends IGeometry> handleGeometryProvider,
@@ -103,6 +124,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param segmentsProvider
 	 *            Provides {@link BezierCurve}s from which the handle part can
 	 *            retrieve its location.
+	 * @param segmentCount
+	 *            The number of segments that exist
 	 * @param segmentIndex
 	 *            Index of the segment of the provided {@link BezierCurve}s
 	 *            where the handle part will be located.
@@ -112,6 +135,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return {@link IHandlePart} for the specified segment vertex of the
 	 *         provided {@link BezierCurve}s
 	 */
+	// TODO: if we pass in context behavior and context map to the other
+	// creation methods, we should also do this here.
+	// TODO: remove the segment count parameter here
 	protected IHandlePart<Node, ? extends Node> createCurveSelectionHandlePart(
 			final IVisualPart<Node, ? extends Node> targetPart,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
@@ -135,6 +161,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 *            stateless.
 	 * @return {@link IHandlePart}s for the given target part.
 	 */
+	// TODO: Maybe inline this method
+	// TODO: if we pass in the contextMap here, we should also pass in the
+	// contextBehavior, because otherwise a back-query scenario cannot be
+	// realized.
 	protected List<IHandlePart<Node, ? extends Node>> createCurveSelectionHandleParts(
 			final IVisualPart<Node, ? extends Node> targetPart,
 			Provider<BezierCurve[]> segmentsProvider,

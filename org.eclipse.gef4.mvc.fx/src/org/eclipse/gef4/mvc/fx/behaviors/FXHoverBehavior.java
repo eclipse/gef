@@ -16,6 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -27,14 +34,12 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
-import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef4.mvc.parts.IFeedbackPart;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-
 public class FXHoverBehavior extends HoverBehavior<Node> {
+
+	public static final int REMOVAL_DELAY_MILLIS = 500;
+
+	public static final int CREATION_DELAY_MILLIS = 250;
+	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
 	/**
 	 * Searches for the specified part in the given list of root parts. Returns
@@ -71,9 +76,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return false;
 	}
 
-	public static final int REMOVAL_DELAY_MILLIS = 500;
-	public static final int CREATION_DELAY_MILLIS = 250;
-	public static final double MOUSE_MOVE_THRESHOLD = 4;
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<IVisualPart<Node, ? extends Node>, Effect>();
 	private boolean isFeedback;
 	private boolean isHandles;
@@ -122,6 +124,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * parts.
 	 *
 	 * @param contextMap
+	 *            A map with context information that might be needed to
+	 *            identify the concrete creation context.
 	 * @return The {@link Effect} that is applied to {@link IHandlePart}s as a
 	 *         replacement for {@link IFeedbackPart}s which are created for
 	 *         normal parts.
@@ -157,9 +161,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *         otherwise <code>false</code>.
 	 */
 	protected boolean isInCreationDelay() {
-		return creationDelayTransition != null
-				&& Animation.Status.RUNNING.equals(creationDelayTransition
-						.getStatus());
+		return creationDelayTransition != null && Animation.Status.RUNNING
+				.equals(creationDelayTransition.getStatus());
 	}
 
 	/**
@@ -170,9 +173,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 *         otherwise <code>false</code>.
 	 */
 	protected boolean isInRemovalDelay() {
-		return removalDelayTransition != null
-				&& Animation.Status.RUNNING.equals(removalDelayTransition
-						.getStatus());
+		return removalDelayTransition != null && Animation.Status.RUNNING
+				.equals(removalDelayTransition.getStatus());
 	}
 
 	/**

@@ -1,6 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
-
-import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -12,28 +21,32 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+
 /**
  * An {@link AbstractFXSegmentHandlePart} is bound to a segment of a poly-bezier
- * handle geometry. The segmentIndex identifies that segment (0, 1, 2, ...). The
- * segmentParameter specifies the position of this handle part on the segment (0
- * = start, 0.5 = mid, 1 = end).
+ * handle geometry, represented by an array of {@link BezierCurve}s. The
+ * segmentIndex of the {@link AbstractFXSegmentHandlePart} identifies that
+ * segment (0, 1, 2, ...). The segmentParameter specifies the position of this
+ * handle part on the segment (0 = start, 0.5 = mid, 1 = end).
  *
  * @author anyssen
  *
  * @param <N>
+ *            The type of visual used by this handle. Needs to be a sub-type of
+ *            {@link Node}.
  */
-public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
-		AbstractFXHandlePart<N> implements
-		Comparable<AbstractFXSegmentHandlePart<? extends Node>> {
+public abstract class AbstractFXSegmentHandlePart<N extends Node>
+		extends AbstractFXHandlePart<N>
+		implements Comparable<AbstractFXSegmentHandlePart<? extends Node>> {
 
 	private final Provider<BezierCurve[]> segmentsProvider;
 	private BezierCurve[] segments;
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
-	public AbstractFXSegmentHandlePart(
-			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
-			double segmentParameter) {
+	public AbstractFXSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
+			int segmentIndex, double segmentParameter) {
 		super();
 		this.segmentsProvider = segmentsProvider;
 		this.segmentIndex = segmentIndex;
@@ -48,8 +61,8 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
-		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter()) - (100 * o
-				.getSegmentIndex() + 10 * o.getSegmentParameter()));
+		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter())
+				- (100 * o.getSegmentIndex() + 10 * o.getSegmentParameter()));
 	}
 
 	@Override
@@ -61,6 +74,7 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 		return segment.get(segmentParameter);
 	}
 
+	// TODO: Make protected
 	public int getSegmentCount() {
 		return segments == null ? 0 : segments.length;
 	}
@@ -100,9 +114,10 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 	}
 
 	/**
-	 * Sets the segment index. Refreshs the handle visual.
+	 * Sets the segment index and refreshes the visual.
 	 *
 	 * @param segmentIndex
+	 *            The segment index to set.
 	 * @see #getSegmentIndex()
 	 */
 	public void setSegmentIndex(int segmentIndex) {
@@ -114,9 +129,10 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 	}
 
 	/**
-	 * Sets the segment parameter. Refreshs the handle visual.
+	 * Sets the segment parameter and refreshes the visual.
 	 *
 	 * @param segmentParameter
+	 *            The segment parameter to set.
 	 * @see #getSegmentParameter()
 	 */
 	public void setSegmentParameter(double segmentParameter) {
@@ -143,14 +159,14 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 			visual.setVisible(true);
 
 			// get new position (in parent coordinate space)
-			BezierCurve segmentInParent = (BezierCurve) FXUtils.sceneToLocal(
-					visual.getParent(), segments[segmentIndex]);
+			BezierCurve segmentInParent = (BezierCurve) FXUtils
+					.sceneToLocal(visual.getParent(), segments[segmentIndex]);
 			Point positionInParent = getPosition(segmentInParent);
 
 			// transform to handle space
-			visual.relocate(positionInParent.x
-					+ visual.getLayoutBounds().getMinX(), positionInParent.y
-					+ visual.getLayoutBounds().getMinY());
+			visual.relocate(
+					positionInParent.x + visual.getLayoutBounds().getMinX(),
+					positionInParent.y + visual.getLayoutBounds().getMinY());
 		}
 	}
 
