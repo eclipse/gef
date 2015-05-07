@@ -488,6 +488,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 *            Delta height.
 	 */
 	protected void resizeNestedGraphArea(double dw, double dh) {
+		// TODO: Add new base visual with controllable dimensions (Pane)
+
 		// compute new size, taking into account the childrenPane scale
 		Pane nestedContentPane = getNestedChildrenPane();
 		double newWidth = nestedContentPane.getPrefWidth() + dw * 1

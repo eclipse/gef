@@ -24,6 +24,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 
 // only applicable for GraphRootPart (see #getHost())
@@ -86,7 +87,9 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 			// reset zoom level
 			ViewportModel viewportModel = getHost().getRoot().getViewer()
 					.getAdapter(ViewportModel.class);
-			viewportModel.setContentsTransform(new AffineTransform());
+			ViewportStackModel viewportStackModel = getHost().getRoot()
+					.getViewer().getAdapter(ViewportStackModel.class);
+			viewportStackModel.pop(viewportModel);
 			// replace contents
 			ContentModel contentModel = getHost().getRoot().getViewer()
 					.getAdapter(ContentModel.class);

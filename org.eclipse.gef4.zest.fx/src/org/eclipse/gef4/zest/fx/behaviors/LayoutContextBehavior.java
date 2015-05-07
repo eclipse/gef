@@ -223,6 +223,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			}
 		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt
 				.getPropertyName()) && isHostActive) {
+			// TODO: Suppress Re-Layout when navigating back to a previously
+			// visited graph.
 			if ((Boolean) evt.getNewValue()) {
 				applyStaticLayout();
 			}
