@@ -16,11 +16,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
-import javafx.scene.text.Text;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -32,7 +29,6 @@ import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
@@ -41,14 +37,16 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart.FXLabeledConnection;
+import org.eclipse.gef4.zest.fx.parts.EdgeContentPart.ArrowHead;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> {
+public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
@@ -72,40 +70,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		}
 	}
 
-	public class FXLabeledConnection extends FXConnection {
-
-		protected Text text = new Text();
-		// TODO: protected HBox hbox = new HBox();
-		// TODO: protected ImageView imageView = new ImageView();
-
-		{
-			text.setTextOrigin(VPos.TOP);
-			text.setManaged(false);
-		}
-
-		public Text getLabelText() {
-			return text;
-		}
-
-		@Override
-		protected void refreshGeometry() {
-			super.refreshGeometry();
-
-			// TODO: image
-
-			Bounds textBounds = text.getLayoutBounds();
-			Rectangle bounds = getCurveNode().getGeometry().getBounds();
-			text.setTranslateX(bounds.getX() + bounds.getWidth() / 2
-					- textBounds.getWidth() / 2);
-			text.setTranslateY(bounds.getY() + bounds.getHeight() / 2
-					- textBounds.getHeight());
-			// FIXME: add to children list at beginning
-			if (!getChildren().contains(text)) {
-				getChildren().add(text);
-			}
-		}
-
-	}
+	@Inject
+	private Injector injector;
 
 	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
 		@Override
@@ -114,6 +80,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 				refreshVisual();
 			}
 		}
+
 	};
 
 	public static final String CSS_CLASS = "edge";
@@ -124,13 +91,25 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	private static final double DASH_LENGTH = 7d;
 	private static final Double DOT_LENGTH = 1d;
 
+	private EdgeLabelPart edgeLabelPart;
+
+	@Override
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
+		if (!getVisual().getChildren().contains(child.getVisual())) {
+			getVisual().getChildren().add(child.getVisual());
+		}
+	}
+
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		@SuppressWarnings("serial")
-		IFXAnchor anchor = anchorage.getAdapter(
-				AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
-				})).get();
+		Provider<? extends IFXAnchor> anchorProvider = anchorage
+				.getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+						}));
+		IFXAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
@@ -142,11 +121,23 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	}
 
 	@Override
-	protected FXLabeledConnection createVisual() {
-		FXLabeledConnection visual = new FXLabeledConnection();
+	protected FXConnection createVisual() {
+		// create connection
+		FXConnection visual = new FXConnection() {
+			@Override
+			protected void refreshGeometry() {
+				super.refreshGeometry();
+				if (!getVisual().getChildren().contains(
+						edgeLabelPart.getVisual())) {
+					getVisual().getChildren().add(edgeLabelPart.getVisual());
+				}
+				if (edgeLabelPart != null) {
+					edgeLabelPart.refreshVisual();
+				}
+			}
+		};
 		visual.getStyleClass().add(CSS_CLASS);
 		visual.getCurveNode().getStyleClass().add(CSS_CLASS_CURVE);
-		visual.getLabelText().getStyleClass().add(CSS_CLASS_LABEL);
 		return visual;
 	}
 
@@ -179,10 +170,18 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	}
 
 	@Override
-	public void doRefreshVisual(FXLabeledConnection visual) {
+	public void doRefreshVisual(FXConnection visual) {
 		GraphLayoutContext glc = getLayoutModel();
 		if (glc == null) {
 			return;
+		}
+
+		// add label on first refresh
+		if (edgeLabelPart == null) {
+			edgeLabelPart = new EdgeLabelPart();
+			injector.injectMembers(edgeLabelPart);
+			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
+			addChild(edgeLabelPart);
 		}
 
 		Edge edge = getContent();
@@ -210,13 +209,13 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		}
 		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
 			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);
-			visual.getLabelText().setStyle(textCssStyle);
+			edgeLabelPart.getVisual().setStyle(textCssStyle);
 		}
 
 		// label
 		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
 		if (label instanceof String) {
-			visual.getLabelText().setText((String) label);
+			edgeLabelPart.getVisual().setText((String) label);
 		}
 
 		// default decoration for directed graphs
@@ -297,6 +296,12 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	}
 
 	@Override
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
+		getVisual().getChildren().remove(child.getVisual());
+	}
+
+	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
 		if (content == null) {
@@ -305,7 +310,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		if (!(content instanceof Edge)) {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
-		final FXLabeledConnection visual = getVisual();
+		final FXConnection visual = getVisual();
 		setAdapter(
 				AdapterKey
 						.get(Provider.class,
@@ -331,4 +336,5 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 					}
 				});
 	}
+
 }
