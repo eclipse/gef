@@ -52,6 +52,7 @@ import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
+import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -59,6 +60,7 @@ import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
 import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
+import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
 
@@ -131,6 +133,14 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
 				.to(EdgeLayoutBehavior.class);
+	}
+
+	protected void bindEdgeLabelPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// offset on drag
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+						"OffsetOnDrag")).to(OffsetEdgeLabelOnDragPolicy.class);
 	}
 
 	@Override
@@ -255,6 +265,8 @@ public class ZestFxModule extends MvcFxModule {
 				EdgeContentPart.class));
 		bindPruningHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				ZestFxHidingHandlePart.class));
+		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				EdgeLabelPart.class));
 	}
 
 }

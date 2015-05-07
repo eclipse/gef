@@ -30,6 +30,8 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		Text text = new Text();
 		text.setTextOrigin(VPos.TOP);
 		text.setManaged(false);
+		text.setPickOnBounds(true);
+
 		translate = new Translate();
 		text.getTransforms().add(translate);
 		return text;
@@ -52,7 +54,7 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		return (EdgeContentPart) super.getParent();
 	}
 
-	public Translate getTranslate() {
+	public Translate getOffset() {
 		return translate;
 	}
 
