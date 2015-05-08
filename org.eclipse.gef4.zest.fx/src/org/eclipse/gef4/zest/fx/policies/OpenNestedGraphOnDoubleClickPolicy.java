@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
@@ -34,6 +35,8 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 				// change contents
 				ContentModel contentModel = getHost().getRoot().getViewer()
 						.getAdapter(ContentModel.class);
+				((Graph) contentModel.getContents().get(0)).getAttrs().put(
+						ZestProperties.GRAPH_IS_LAYED_OUT, true);
 				contentModel
 						.setContents(Collections.singletonList(nestedGraph));
 			}

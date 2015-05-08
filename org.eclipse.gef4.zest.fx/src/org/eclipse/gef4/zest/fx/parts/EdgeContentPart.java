@@ -169,7 +169,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	@Override
 	protected void doDeactivate() {
-
 		getContent().removePropertyChangeListener(
 				edgeAttributesPropertyChangeListener);
 		super.doDeactivate();
@@ -289,12 +288,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	protected LayoutModel getLayoutModel() {
-		if (getContent() == null) {
-			return null;
-		}
-		IContentPart<Node, ? extends Node> contentPart = getViewer()
-				.getContentPartMap().get(getContent().getGraph());
-		return contentPart == null ? null : contentPart
+		return getViewer().getContentPartMap().get(getContent().getGraph())
 				.getAdapter(LayoutModel.class);
 	}
 

@@ -164,6 +164,15 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		if (!isHostActive) {
 			return;
 		}
+		if (getHost().getContent().getAttrs()
+				.containsKey(ZestProperties.GRAPH_IS_LAYED_OUT)) {
+			if ((Boolean) getHost().getContent().getAttrs()
+					.get(ZestProperties.GRAPH_IS_LAYED_OUT)) {
+				getHost().getContent().getAttrs()
+						.remove(ZestProperties.GRAPH_IS_LAYED_OUT);
+				return;
+			}
+		}
 		layoutContext.applyStaticLayout(true);
 		layoutContext.flushChanges(false);
 	}
@@ -217,14 +226,14 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	protected void onHostPropertyChange(PropertyChangeEvent evt) {
 		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt
 				.getPropertyName())) {
+			// TODO: Suppress Re-Layout when navigating back to a previously
+			// visited graph.
 			if ((Boolean) evt.getNewValue()) {
 				isHostActive = true;
 				applyStaticLayout();
 			}
 		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt
 				.getPropertyName()) && isHostActive) {
-			// TODO: Suppress Re-Layout when navigating back to a previously
-			// visited graph.
 			if ((Boolean) evt.getNewValue()) {
 				applyStaticLayout();
 			}
