@@ -100,7 +100,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 	protected void disposeIfObsolete(IContentPart<VR, ? extends VR> contentPart) {
 		if (contentPart.getParent() == null
-				&& contentPart.getAnchorages().isEmpty()) {
+				&& contentPart.getAnchoreds().isEmpty()) {
+			// System.out.println("DISPOSE " + contentPart.getContent());
 			contentPartPool.add(contentPart);
 			contentPart.setContent(null);
 		}
@@ -110,6 +111,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		Map<Object, IContentPart<VR, ? extends VR>> contentPartMap = getHost()
 				.getRoot().getViewer().getContentPartMap();
 		if (contentPartMap.containsKey(content)) {
+			// System.out.println("FOUND " + content);
 			return contentPartMap.get(content);
 		} else {
 			// 'Revive' a content part, if it was removed before
@@ -121,6 +123,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 				// create part using the factory, adjusting the relevant scopes
 				// before
 				switchAdaptableScopes();
+				// System.out.println("CREATE " + content);
 				contentPart = contentPartFactory.createContentPart(content,
 						this, Collections.emptyMap());
 				if (contentPart == null) {
@@ -128,7 +131,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 							+ contentPartFactory.getClass().getSimpleName()
 							+ "' did not create part for " + content + ".");
 				}
-			}
+			}// else {
+				// System.out.println("REVIVE " + content);
+			// }
 
 			// initialize part
 			contentPart.setContent(content);
@@ -187,13 +192,13 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			if (!contentAnchorages.containsEntry(content, e.getValue())) {
 				toRemove.add(e);
 			}
-			disposeIfObsolete((IContentPart<VR, ? extends VR>) e.getKey());
 		}
 
 		// Correspondingly remove the anchorages. This is done in a separate
 		// step to prevent ConcurrentModificationException.
 		for (Entry<IVisualPart<VR, ? extends VR>, String> e : toRemove) {
 			getHost().removeAnchorage(e.getKey(), e.getValue());
+			disposeIfObsolete((IContentPart<VR, ? extends VR>) e.getKey());
 		}
 
 		// find content for which no anchorages exist
