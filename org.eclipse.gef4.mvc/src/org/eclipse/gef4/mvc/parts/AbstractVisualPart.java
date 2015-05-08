@@ -529,7 +529,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		IViewer<VR> newViewer = getViewer();
 		anchoreds.add(anchored);
 
-		// unregister if we loose the link to the viewer
+		// unregister if we lose the link to the viewer
 		if (oldViewer != null && newViewer == null) {
 			unregister(oldViewer);
 		}
@@ -670,9 +670,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		// unregister if we were registered (oldViewer != null) and the viewer
 		// changes (newViewer != oldViewer)
 		if (oldViewer != null && newViewer != oldViewer) {
-			if (newParent == null && anchoreds == null) {
-				unregister(oldViewer);
-			}
+			unregister(oldViewer);
 		}
 
 		this.parent = newParent;
