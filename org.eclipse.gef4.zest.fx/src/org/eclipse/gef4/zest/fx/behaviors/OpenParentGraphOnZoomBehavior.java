@@ -24,7 +24,6 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 
@@ -95,7 +94,7 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 			ContentModel contentModel = getHost().getRoot().getViewer()
 					.getAdapter(ContentModel.class);
 			Graph graph = (Graph) contentModel.getContents().get(0);
-			graph.getAttrs().put(ZestProperties.GRAPH_IS_LAYED_OUT, true);
+			viewportStackModel.addSkipNextLayout(graph);
 			contentModel.setContents(Collections.singletonList(graph
 					.getNestingNode().getGraph()));
 		}

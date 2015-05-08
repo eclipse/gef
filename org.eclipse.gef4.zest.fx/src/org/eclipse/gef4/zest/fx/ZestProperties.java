@@ -281,6 +281,4 @@ public class ZestProperties {
 
 	public static final String GRAPH_LAYOUT = "layout";
 
-	public static final String GRAPH_IS_LAYED_OUT = "is-layed-out";
-
 }

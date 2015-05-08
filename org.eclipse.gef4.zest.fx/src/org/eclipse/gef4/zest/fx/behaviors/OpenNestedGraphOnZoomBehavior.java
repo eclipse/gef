@@ -29,7 +29,6 @@ import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -112,12 +111,11 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 						.getViewer().getAdapter(ViewportStackModel.class);
 				viewportStackModel.push(viewportModel);
 				viewportModel.setContentsTransform(new AffineTransform());
-
 				// replace contents
 				ContentModel contentModel = getHost().getRoot().getViewer()
 						.getAdapter(ContentModel.class);
-				((Graph) contentModel.getContents().get(0)).getAttrs().put(
-						ZestProperties.GRAPH_IS_LAYED_OUT, true);
+				viewportStackModel.addSkipNextLayout((Graph) contentModel
+						.getContents().get(0));
 				contentModel.setContents(Collections.singletonList(getHost()
 						.getContent().getNestedGraph()));
 			}

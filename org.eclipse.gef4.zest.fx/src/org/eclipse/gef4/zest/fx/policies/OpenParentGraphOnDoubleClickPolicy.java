@@ -19,7 +19,8 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 
 public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
@@ -28,13 +29,21 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 	public void click(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			// double click
+
 			ContentModel contentModel = getHost().getViewer().getAdapter(
 					ContentModel.class);
 			Graph graph = (Graph) contentModel.getContents().get(0);
 			if (graph.getNestingNode() != null) {
-				Graph parentGraph = graph.getNestingNode().getGraph();
+				// reset zoom level
+				ViewportModel viewportModel = getHost().getRoot().getViewer()
+						.getAdapter(ViewportModel.class);
+				ViewportStackModel viewportStackModel = getHost().getRoot()
+						.getViewer().getAdapter(ViewportStackModel.class);
+				viewportStackModel.pop(viewportModel);
+
 				// change contents
-				graph.getAttrs().put(ZestProperties.GRAPH_IS_LAYED_OUT, true);
+				Graph parentGraph = graph.getNestingNode().getGraph();
+				viewportStackModel.addSkipNextLayout(graph);
 				contentModel
 						.setContents(Collections.singletonList(parentGraph));
 			}

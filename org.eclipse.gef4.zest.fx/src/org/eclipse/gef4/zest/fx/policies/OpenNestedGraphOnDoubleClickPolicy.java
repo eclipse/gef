@@ -16,10 +16,12 @@ import java.util.Collections;
 
 import javafx.scene.input.MouseEvent;
 
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
@@ -32,11 +34,18 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 			org.eclipse.gef4.graph.Node graphNode = nodePart.getContent();
 			Graph nestedGraph = graphNode.getNestedGraph();
 			if (nestedGraph != null) {
+				// reset zoom level
+				ViewportModel viewportModel = getHost().getRoot().getViewer()
+						.getAdapter(ViewportModel.class);
+				ViewportStackModel viewportStackModel = getHost().getRoot()
+						.getViewer().getAdapter(ViewportStackModel.class);
+				viewportStackModel.push(viewportModel);
+				viewportModel.setContentsTransform(new AffineTransform());
 				// change contents
 				ContentModel contentModel = getHost().getRoot().getViewer()
 						.getAdapter(ContentModel.class);
-				((Graph) contentModel.getContents().get(0)).getAttrs().put(
-						ZestProperties.GRAPH_IS_LAYED_OUT, true);
+				viewportStackModel.addSkipNextLayout(((Graph) contentModel
+						.getContents().get(0)));
 				contentModel
 						.setContents(Collections.singletonList(nestedGraph));
 			}

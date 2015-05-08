@@ -12,9 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.models;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class ViewportStackModel {
@@ -26,8 +30,14 @@ public class ViewportStackModel {
 	}
 
 	private Stack<ViewportState> viewportStack = new Stack<ViewportState>();
+	private Set<Graph> skipNextLayout = Collections
+			.newSetFromMap(new IdentityHashMap<Graph, Boolean>());
 
 	public ViewportStackModel() {
+	}
+
+	public void addSkipNextLayout(Graph graph) {
+		skipNextLayout.add(graph);
 	}
 
 	public void pop(ViewportModel viewportModel) {
@@ -45,6 +55,17 @@ public class ViewportStackModel {
 		state.ty = viewportModel.getTranslateY();
 		state.transform = viewportModel.getContentsTransform();
 		viewportStack.push(state);
+	}
+
+	/**
+	 * Removes the skip-next-layout-flag for the given {@link Graph}.
+	 *
+	 * @param graph
+	 * @return <code>true</code> if the flag was set for the given {@link Graph}
+	 *         , otherwise <code>false</code>.
+	 */
+	public boolean removeSkipNextLayout(Graph graph) {
+		return skipNextLayout.remove(graph);
 	}
 
 }

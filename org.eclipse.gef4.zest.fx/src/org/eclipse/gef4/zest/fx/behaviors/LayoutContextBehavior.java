@@ -36,6 +36,7 @@ import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -164,14 +165,11 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		if (!isHostActive) {
 			return;
 		}
-		if (getHost().getContent().getAttrs()
-				.containsKey(ZestProperties.GRAPH_IS_LAYED_OUT)) {
-			if ((Boolean) getHost().getContent().getAttrs()
-					.get(ZestProperties.GRAPH_IS_LAYED_OUT)) {
-				getHost().getContent().getAttrs()
-						.remove(ZestProperties.GRAPH_IS_LAYED_OUT);
-				return;
-			}
+		// check if this layout pass should be skipped
+		ViewportStackModel viewportStackModel = getHost().getRoot().getViewer()
+				.getAdapter(ViewportStackModel.class);
+		if (viewportStackModel.removeSkipNextLayout(getHost().getContent())) {
+			return;
 		}
 		layoutContext.applyStaticLayout(true);
 		layoutContext.flushChanges(false);
