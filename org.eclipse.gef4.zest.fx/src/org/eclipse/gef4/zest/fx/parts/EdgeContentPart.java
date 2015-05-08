@@ -84,13 +84,14 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	};
 
 	public static final String CSS_CLASS = "edge";
-	public static final String CSS_CLASS_CURVE = "curve";
-	public static final String CSS_CLASS_LABEL = "label";
 
+	public static final String CSS_CLASS_CURVE = "curve";
+
+	public static final String CSS_CLASS_LABEL = "label";
 	private static final double GAP_LENGTH = 7d;
 	private static final double DASH_LENGTH = 7d;
-	private static final Double DOT_LENGTH = 1d;
 
+	private static final Double DOT_LENGTH = 1d;
 	private EdgeLabelPart edgeLabelPart;
 
 	@Override
@@ -123,11 +124,16 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			@Override
 			protected void refreshGeometry() {
 				super.refreshGeometry();
-				if (!getVisual().getChildren().contains(
-						edgeLabelPart.getVisual())) {
-					getVisual().getChildren().add(edgeLabelPart.getVisual());
-				}
+				// IMPORTANT: The FXConnection clears its children, therefore,
+				// we have to re-insert the edgeLabelPart here.
+				// TODO: Therefore, the labels should be handled as children of
+				// the root part instead.
 				if (edgeLabelPart != null) {
+					if (!getVisual().getChildren().contains(
+							edgeLabelPart.getVisual())) {
+						getVisual().getChildren()
+								.add(edgeLabelPart.getVisual());
+					}
 					edgeLabelPart.refreshVisual();
 				}
 			}
@@ -160,6 +166,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	@Override
 	protected void doDeactivate() {
+
 		getContent().removePropertyChangeListener(
 				edgeAttributesPropertyChangeListener);
 		super.doDeactivate();
@@ -168,7 +175,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	@Override
 	public void doRefreshVisual(FXConnection visual) {
 		GraphLayoutContext glc = getLayoutModel();
-		if (glc == null) {
+		if (glc == null || edgeLabelPart == null) {
 			return;
 		}
 
@@ -287,7 +294,12 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	protected LayoutModel getLayoutModel() {
-		return getViewer().getContentPartMap().get(getContent().getGraph())
+		if (getContent() == null) {
+			return null;
+		}
+		IContentPart<Node, ? extends Node> contentPart = getViewer()
+				.getContentPartMap().get(getContent().getGraph());
+		return contentPart == null ? null : contentPart
 				.getAdapter(LayoutModel.class);
 	}
 

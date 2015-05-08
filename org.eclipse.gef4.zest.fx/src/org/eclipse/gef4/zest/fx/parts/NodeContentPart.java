@@ -95,7 +95,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	public static final String CSS_CLASS_ICON = "icon";
 
 	private static final String NODE_LABEL_EMPTY = "-";
-
 	private Text labelText;
 	private ImageView iconImageView;
 	private Node nestedGraphIcon;
@@ -107,7 +106,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	private HBox hbox;
 	private VBox vbox;
 	private Rectangle rect;
-
 	private EventHandler<? super MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
