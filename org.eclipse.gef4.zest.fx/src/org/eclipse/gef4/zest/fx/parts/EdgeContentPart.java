@@ -34,10 +34,10 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart.ArrowHead;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -80,7 +80,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 				refreshVisual();
 			}
 		}
-
 	};
 
 	public static final String CSS_CLASS = "edge";
@@ -95,6 +94,14 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	private EdgeLabelPart edgeLabelPart;
 
 	@Override
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
+		if (!getVisual().getChildren().contains(child.getVisual())) {
+			getVisual().getChildren().add(child.getVisual());
+		}
+	}
+
+	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		@SuppressWarnings("serial")
@@ -107,10 +114,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
 			getVisual().setEndAnchor(anchor);
-		} else if (role.equals("LABEL")) {
-			if (!getVisual().getChildren().contains(anchorage.getVisual())) {
-				getVisual().getChildren().add(anchorage.getVisual());
-			}
 		} else {
 			throw new IllegalStateException(
 					"Cannot attach to anchor with role <" + role + ">.");
@@ -177,14 +180,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		GraphLayoutContext glc = getLayoutModel();
 		if (glc == null || edgeLabelPart == null) {
 			return;
-		}
-
-		// add label on first refresh
-		if (edgeLabelPart == null) {
-			edgeLabelPart = new EdgeLabelPart();
-			injector.injectMembers(edgeLabelPart);
-			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
-			addAnchorage(edgeLabelPart, "LABEL");
 		}
 
 		Edge edge = getContent();
@@ -304,6 +299,24 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	@Override
+	protected void register(IViewer<Node> viewer) {
+		super.register(viewer);
+		// add label part
+		if (edgeLabelPart == null) {
+			edgeLabelPart = injector.getInstance(EdgeLabelPart.class);
+			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
+			addChild(edgeLabelPart);
+			edgeLabelPart.addAnchorage(this);
+		}
+	}
+
+	@Override
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
+		getVisual().getChildren().remove(child.getVisual());
+	}
+
+	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
 		if (content == null) {
@@ -337,6 +350,16 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 												.getCurveNode()).getGeometry()));
 					}
 				});
+	}
+
+	@Override
+	protected void unregister(IViewer<Node> viewer) {
+		if (edgeLabelPart != null) {
+			removeAnchored(edgeLabelPart);
+			removeChild(edgeLabelPart);
+			edgeLabelPart = null;
+		}
+		super.unregister(viewer);
 	}
 
 }

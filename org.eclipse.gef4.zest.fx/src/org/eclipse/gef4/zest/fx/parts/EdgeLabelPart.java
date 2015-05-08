@@ -20,10 +20,16 @@ import javafx.scene.transform.Translate;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 
 	private Translate translate;
+
+	@Override
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	}
 
 	@Override
 	protected Text createVisual() {
@@ -31,10 +37,15 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		text.setTextOrigin(VPos.TOP);
 		text.setManaged(false);
 		text.setPickOnBounds(true);
-
+		// add translation transform to the Text
 		translate = new Translate();
 		text.getTransforms().add(translate);
 		return text;
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 	}
 
 	@Override
@@ -55,8 +66,8 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 	}
 
 	protected EdgeContentPart getHost() {
-		return getAnchoreds().isEmpty() ? null
-				: (EdgeContentPart) getAnchoreds().iterator().next();
+		return getAnchorages().isEmpty() ? null
+				: (EdgeContentPart) getAnchorages().keys().iterator().next();
 	}
 
 	public Translate getOffset() {

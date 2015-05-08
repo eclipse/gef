@@ -39,6 +39,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
@@ -57,6 +58,7 @@ import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxFeedbackPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
 import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
@@ -150,6 +152,14 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
 						"OffsetOnDrag")).to(OffsetEdgeLabelOnDragPolicy.class);
+		// selection link feedback
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
+										FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualOutlineGeometryProvider.class);
 	}
 
 	@Override
@@ -187,6 +197,13 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).to(ContentPartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+	}
+
+	@Override
+	protected void bindIFeedbackPartFactory() {
+		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
+		}).to(ZestFxFeedbackPartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 

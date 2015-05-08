@@ -1,36 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
+ * Copyright (c) 2015 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.parts;
+package org.eclipse.gef4.zest.fx.parts;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
-import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.fx.parts.FXSelectionLinkFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-/**
- * Abstract base implementation for a JavaFX-specific {@link IFeedbackPart}.
- *
- * @author anyssen
- *
- * @param <N>
- *            The visual {@link Node} used by this
- *            {@link AbstractFXFeedbackPart}.
- */
-abstract public class AbstractFXFeedbackPart<N extends Node> extends
-		AbstractFeedbackPart<Node, N> {
+import com.google.inject.Provider;
+
+public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 
 	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
@@ -45,10 +38,25 @@ abstract public class AbstractFXFeedbackPart<N extends Node> extends
 		}
 	};
 
+	public ZestFxEdgeLinkFeedbackPart(
+			Provider<IGeometry> feedbackGeometryProvider) {
+		super(feedbackGeometryProvider);
+	}
+
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		visualListener.register(anchorage.getVisual(), getVisual());
+		if (anchorage instanceof EdgeContentPart) {
+			EdgeContentPart edgeContentPart = (EdgeContentPart) anchorage;
+			// find EdgeLabelPart in the anchorages of the EdgeContentPart
+			for (IVisualPart<Node, ? extends Node> anchored : edgeContentPart
+					.getAnchoreds()) {
+				if (anchored instanceof EdgeLabelPart) {
+					visualListener.register(anchored.getVisual(), getVisual());
+					break;
+				}
+			}
+		}
 	}
 
 	@Override

@@ -62,7 +62,6 @@ public class FXSelectionFeedbackPart extends
 		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);
-		// feedbackVisual.setStrokeType(StrokeType.OUTSIDE);
 		feedbackVisual.setStrokeWidth(1);
 		return feedbackVisual;
 	}

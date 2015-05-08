@@ -25,8 +25,6 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
-import com.google.inject.Module;
-
 public class ZestGraphExample extends AbstractZestExample {
 
 	private static Graph buildAC(String id) {
@@ -148,11 +146,6 @@ public class ZestGraphExample extends AbstractZestExample {
 	@Override
 	protected Graph createGraph() {
 		return createDefaultGraph();
-	}
-
-	@Override
-	protected Module createModule() {
-		return new ZestGraphExampleModule();
 	}
 
 }

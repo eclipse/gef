@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.ArrayList;
@@ -111,9 +122,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 			final IVisualPart<Node, ? extends Node> anchored,
 			final IVisualPart<Node, ? extends Node> anchorage,
 			String anchorageRole) {
-
-		// only show anchor link feedback if anchorage and anchored provider is
-		// not null (and anchored is no connection)
+		// only show link feedback when anchored is no connection
 		if (!(anchored.getVisual() instanceof FXConnection)) {
 			final Provider<IGeometry> anchorageGeometryProvider = anchorage
 					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
@@ -123,6 +132,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
 							new TypeToken<Provider<? extends IGeometry>>() {
 							}, SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
+			// only show anchor link feedback if anchorage and anchored provider
+			// is not null
 			if (anchoredGeometryProvider != null
 					&& anchorageGeometryProvider != null) {
 				if (anchoredGeometryProvider == null
