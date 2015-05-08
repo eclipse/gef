@@ -94,14 +94,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	private EdgeLabelPart edgeLabelPart;
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
-		if (!getVisual().getChildren().contains(child.getVisual())) {
-			getVisual().getChildren().add(child.getVisual());
-		}
-	}
-
-	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		@SuppressWarnings("serial")
@@ -114,6 +106,10 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
 			getVisual().setEndAnchor(anchor);
+		} else if (role.equals("LABEL")) {
+			if (!getVisual().getChildren().contains(anchorage.getVisual())) {
+				getVisual().getChildren().add(anchorage.getVisual());
+			}
 		} else {
 			throw new IllegalStateException(
 					"Cannot attach to anchor with role <" + role + ">.");
@@ -181,7 +177,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			edgeLabelPart = new EdgeLabelPart();
 			injector.injectMembers(edgeLabelPart);
 			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
-			addChild(edgeLabelPart);
+			addAnchorage(edgeLabelPart, "LABEL");
 		}
 
 		Edge edge = getContent();
@@ -293,12 +289,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	protected LayoutModel getLayoutModel() {
 		return getViewer().getContentPartMap().get(getContent().getGraph())
 				.getAdapter(LayoutModel.class);
-	}
-
-	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
-		getVisual().getChildren().remove(child.getVisual());
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
+import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
@@ -133,6 +134,14 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
 				.to(EdgeLayoutBehavior.class);
+		// selection link feedback
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
+										FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualOutlineGeometryProvider.class);
 	}
 
 	protected void bindEdgeLabelPartAdapters(

@@ -37,7 +37,7 @@ public class FXGeometricShapePart extends
 			org.eclipse.gef4.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
 			String role) {
 		// nothing to do
-	};
+	}
 
 	@Override
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {

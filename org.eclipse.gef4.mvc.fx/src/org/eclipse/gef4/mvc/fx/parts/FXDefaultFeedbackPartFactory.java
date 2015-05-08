@@ -115,8 +115,6 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		// only show anchor link feedback if anchorage and anchored provider is
 		// not null (and anchored is no connection)
 		if (!(anchored.getVisual() instanceof FXConnection)) {
-			// TODO: need own providers for link feedback (computation might be
-			// different)
 			final Provider<IGeometry> anchorageGeometryProvider = anchorage
 					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
 							new TypeToken<Provider<? extends IGeometry>>() {

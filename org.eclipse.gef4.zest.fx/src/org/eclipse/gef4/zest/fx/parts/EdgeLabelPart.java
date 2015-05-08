@@ -39,7 +39,12 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 
 	@Override
 	protected void doRefreshVisual(Text visual) {
-		EdgeContentPart edgeContentPart = getParent();
+		EdgeContentPart edgeContentPart = getHost();
+		if (edgeContentPart == null
+				|| edgeContentPart.getVisual() == null
+				|| edgeContentPart.getVisual().getCurveNode().getGeometry() == null) {
+			return;
+		}
 		Rectangle bounds = edgeContentPart.getVisual().getCurveNode()
 				.getGeometry().getBounds();
 		Bounds textBounds = getVisual().getLayoutBounds();
@@ -49,9 +54,9 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 				- textBounds.getHeight());
 	}
 
-	@Override
-	public EdgeContentPart getParent() {
-		return (EdgeContentPart) super.getParent();
+	protected EdgeContentPart getHost() {
+		return getAnchoreds().isEmpty() ? null
+				: (EdgeContentPart) getAnchoreds().iterator().next();
 	}
 
 	public Translate getOffset() {
