@@ -379,24 +379,9 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		}
 		for (IVisualPart<VR, ? extends VR> anchored : getAnchoreds()
 				.elementSet()) {
-			/*
-			 * IMPORTANT: When the <i>anchored</i> is a transitive child of
-			 * <i>this</i> part, it will ask <i>this</i> part for the root part
-			 * first, entering an infinite recursion. Therefore, only anchoreds
-			 * which are not children of <i>this</i> part are asked for the root
-			 * part.
-			 */
-			boolean isChild = false;
-			IVisualPart<VR, ? extends VR> part = anchored;
-			while (!isChild && part != null) {
-				isChild = part == this;
-				part = part.getParent();
-			}
-			if (!isChild) {
-				IRootPart<VR, ? extends VR> root = anchored.getRoot();
-				if (root != null) {
-					return root;
-				}
+			IRootPart<VR, ? extends VR> root = anchored.getRoot();
+			if (root != null) {
+				return root;
 			}
 		}
 		return null;
