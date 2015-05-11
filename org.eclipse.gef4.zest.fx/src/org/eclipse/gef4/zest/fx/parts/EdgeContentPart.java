@@ -83,14 +83,12 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	};
 
 	public static final String CSS_CLASS = "edge";
-
 	public static final String CSS_CLASS_CURVE = "curve";
-
 	public static final String CSS_CLASS_LABEL = "label";
 	private static final double GAP_LENGTH = 7d;
 	private static final double DASH_LENGTH = 7d;
-
 	private static final Double DOT_LENGTH = 1d;
+
 	private EdgeLabelPart edgeLabelPart;
 
 	@Override
@@ -122,25 +120,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	@Override
 	protected FXConnection createVisual() {
-		// create connection
-		FXConnection visual = new FXConnection() {
-			@Override
-			protected void refreshGeometry() {
-				super.refreshGeometry();
-				// IMPORTANT: The FXConnection clears its children, therefore,
-				// we have to re-insert the edgeLabelPart here.
-				// TODO: Therefore, the labels should be handled as children of
-				// the root part instead.
-				if (edgeLabelPart != null) {
-					if (!getVisual().getChildren().contains(
-							edgeLabelPart.getVisual())) {
-						getVisual().getChildren()
-								.add(edgeLabelPart.getVisual());
-					}
-					edgeLabelPart.refreshVisual();
-				}
-			}
-		};
+		FXConnection visual = new FXConnection();
 		visual.getStyleClass().add(CSS_CLASS);
 		visual.getCurveNode().getStyleClass().add(CSS_CLASS_CURVE);
 		return visual;
@@ -165,6 +145,13 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		super.doActivate();
 		getContent().addPropertyChangeListener(
 				edgeAttributesPropertyChangeListener);
+		// add label part
+		if (edgeLabelPart == null) {
+			edgeLabelPart = injector.getInstance(EdgeLabelPart.class);
+			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
+			getParent().addChild(edgeLabelPart);
+			edgeLabelPart.addAnchorage(this);
+		}
 	}
 
 	@Override
@@ -295,13 +282,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	@Override
 	protected void register(IViewer<Node> viewer) {
 		super.register(viewer);
-		// add label part
-		if (edgeLabelPart == null) {
-			edgeLabelPart = injector.getInstance(EdgeLabelPart.class);
-			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
-			addChild(edgeLabelPart);
-			edgeLabelPart.addAnchorage(this);
-		}
 	}
 
 	@Override
@@ -350,7 +330,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	protected void unregister(IViewer<Node> viewer) {
 		if (edgeLabelPart != null) {
 			removeAnchored(edgeLabelPart);
-			removeChild(edgeLabelPart);
+			getParent().removeChild(edgeLabelPart);
 			edgeLabelPart = null;
 		}
 		super.unregister(viewer);

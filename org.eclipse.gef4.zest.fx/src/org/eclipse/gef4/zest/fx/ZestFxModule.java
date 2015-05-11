@@ -61,6 +61,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxFeedbackPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
+import org.eclipse.gef4.zest.fx.policies.FocusAndSelectFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
@@ -152,6 +153,10 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
 						"OffsetOnDrag")).to(OffsetEdgeLabelOnDragPolicy.class);
+		// select anchorage on click
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
+				FocusAndSelectFirstAnchorageOnClickPolicy.class);
 		// selection link feedback
 		adapterMapBinder
 				.addBinding(
