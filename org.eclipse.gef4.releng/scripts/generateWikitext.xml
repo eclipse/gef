@@ -4,7 +4,10 @@
 	<!-- path to wikitext standalone package -->
 	<path id="wikitext.classpath">
 		<fileset dir="../org.eclipse.gef4.releng/libs">
-			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+			<include name="com.google.guava_*.jar" />
+			<include name="org.eclipse.mylyn.wikitext.core_*.jar" />
+			<include name="org.eclipse.mylyn.wikitext.core.ant_*.jar" />
+			<include name="org.eclipse.mylyn.wikitext.mediawiki.core_*.jar" />
 		</fileset>
 	</path>
 	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
