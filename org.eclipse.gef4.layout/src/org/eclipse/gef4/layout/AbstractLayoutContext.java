@@ -356,6 +356,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 				firePruningEnableChangedEvent();
 			}
 		}
+		// TODO: check if this is really needed, as the property store already
+		// fires the respective event
 		pcs.firePropertyChange(name, oldValue, value);
 	}
 
