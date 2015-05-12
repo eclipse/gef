@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <toc label="GEF4 Graph Documentation">
    <link toc="reference/wiki/GEF-GEF4-Graph-toc.xml"/>
-   <topic href="reference/api/overview-summary.html" label="API Reference">
+   <!-- overview-summary.html is not generated here, as we only have a single package -->
+   <topic href="reference/api/org/eclipse/gef4/graph/package-summary.html" label="API Reference">
 	</topic>
 </toc>
