@@ -28,4 +28,11 @@
       <import feature="org.eclipse.gef4.mvc.doc" version="0.1.0" match="equivalent"/>
    </requires>
 
+   <plugin
+         id="org.eclipse.gef4.dot"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
