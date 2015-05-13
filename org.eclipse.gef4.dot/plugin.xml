@@ -2,7 +2,6 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://www.eclipse.org/gef4/internal/dot/parser/Dot" 
@@ -10,9 +9,4 @@
        genModel = "src-gen/org/eclipse/gef4/internal/dot/parser/Dot.genmodel" />
 	
   </extension>
-
-
-
-
-
 </plugin>

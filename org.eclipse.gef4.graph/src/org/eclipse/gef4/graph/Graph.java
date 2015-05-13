@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2013-2014 Fabian Steeg. All rights reserved. This program and
- * the accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ * Copyright (c) 2013, 2015 Fabian Steeg and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
- * Contributors: Fabian Steeg - initial API and implementation; see bug 372365
+ *
+ * Contributors:
+ *     Fabian Steeg - initial API and implementation (see #372365)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 

@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2013-2014 Fabian Steeg. All rights reserved. This program and
- * the accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ * Copyright (c) 2013, 2015 Fabian Steeg and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
- * Contributors: Fabian Steeg - initial API and implementation; see bug 372365
+ *
+ * Contributors:
+ *     Fabian Steeg - initial API and implementation (see #372365)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
@@ -47,8 +51,6 @@ public final class Edge implements IPropertyChangeNotifier {
 
 	}
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
 	/**
 	 * The property name that is used to notify change listeners about changes
 	 * made to the attributes of this Edge. A property change event for this
@@ -59,12 +61,12 @@ public final class Edge implements IPropertyChangeNotifier {
 	 */
 	public static final String ATTRIBUTES_PROPERTY = "attributes";
 
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
 	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
 		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap,
-				Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap,
-					observableMap);
+		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
+			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
 		}
 	};
 

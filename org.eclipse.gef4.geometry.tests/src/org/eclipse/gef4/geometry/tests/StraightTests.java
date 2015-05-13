@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Research Group Software Construction,
+ * Copyright (c) 2010, 2014 Research Group Software Construction,
  *                          RWTH Aachen University and others.
  * 
  * All rights reserved. This program and the accompanying materials
