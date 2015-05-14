@@ -14,19 +14,15 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
       <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
    </url>
-
-   <includes
-         id="org.eclipse.gef4.geometry"
-         version="0.0.0"/>
 
    <includes
          id="org.eclipse.gef4.geometry.source"
@@ -37,19 +33,11 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.gef4.geometry.convert.fx"
-         version="0.0.0"/>
-         
-   <includes
          id="org.eclipse.gef4.geometry.convert.fx.source"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.gef4.geometry.convert.swt"
-         version="0.0.0"/>
-         
-   <includes
          id="org.eclipse.gef4.geometry.convert.swt.source"
          version="0.0.0"/>
-         
+
 </feature>

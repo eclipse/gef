@@ -25,10 +25,6 @@
    </url>
 
    <includes
-         id="org.eclipse.gef4.layout"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.gef4.layout.source"
          version="0.0.0"/>
 

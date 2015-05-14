@@ -25,15 +25,7 @@
    </url>
 
    <includes
-         id="org.eclipse.gef4.mvc"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.gef4.mvc.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.gef4.mvc.ui"
          version="0.0.0"/>
 
    <includes
@@ -41,15 +33,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.gef4.mvc.fx"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.gef4.mvc.fx.source"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.gef4.mvc.fx.ui"
          version="0.0.0"/>
 
    <includes
