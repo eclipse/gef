@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.gef4.geometry.convert.fx"
-      label="GEF4 Geometry JavaFX Conversion"
+      label="GEF4 Geometry.Convert.FX"
       version="0.1.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.geometry.convert.fx"

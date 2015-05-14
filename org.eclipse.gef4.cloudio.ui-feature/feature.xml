@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.gef4.cloudio.ui"
-      label="GEF4 Cloudio UI"
+      label="GEF4 Cloudio.UI"
       version="0.1.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.cloudio.ui"
@@ -15,9 +15,9 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <plugin
