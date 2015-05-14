@@ -189,12 +189,12 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindAbstractViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind (default) viewer models as adapters
-		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class)).to(
-				ContentModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(ViewportModel.class)).to(
-				ViewportModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(GridModel.class)).to(
-				GridModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class))
+				.to(ContentModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(ViewportModel.class))
+				.to(ViewportModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(GridModel.class))
+				.to(GridModel.class);
 	}
 
 	/**
@@ -215,29 +215,45 @@ public class MvcModule<VR> extends AbstractModule {
 		// nothing to bind by default
 	}
 
+	/**
+	 * Binds {@link ContentModel} in adaptable scope of {@link IViewer}.
+	 */
 	protected void bindContentModel() {
-		binder().bind(ContentModel.class).in(
-				AdaptableScopes.typed(IViewer.class));
+		binder().bind(ContentModel.class)
+				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
+	/**
+	 * Binds {@link GridModel} in adaptable scope of {@link IViewer}.
+	 */
 	protected void bindGridModel() {
 		binder().bind(GridModel.class).in(AdaptableScopes.typed(IViewer.class));
 	}
 
+	/**
+	 * Binds {@link IOperationHistory} to {@link DefaultOperationHistory} in
+	 * adaptable scope of {@link IDomain}.
+	 */
 	protected void bindIOperationHistory() {
-		binder().bind(IOperationHistory.class)
-				.to(DefaultOperationHistory.class)
+		binder().bind(IOperationHistory.class).to(DefaultOperationHistory.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
+	/**
+	 * Binds {@link IUndoContext} to {@link UndoContext} in adaptable scope of
+	 * {@link IDomain}.
+	 */
 	protected void bindIUndoContext() {
 		binder().bind(IUndoContext.class).to(UndoContext.class)
 				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
+	/**
+	 * Binds {@link ViewportModel} in adaptable scope of {@link IViewer}.
+	 */
 	protected void bindViewportModel() {
-		binder().bind(ViewportModel.class).in(
-				AdaptableScopes.typed(IViewer.class));
+		binder().bind(ViewportModel.class)
+				.in(AdaptableScopes.typed(IViewer.class));
 	}
 
 	@Override
@@ -263,16 +279,16 @@ public class MvcModule<VR> extends AbstractModule {
 				AbstractViewer.class));
 
 		// bind visual part adapters
-		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractVisualPart.class));
+		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractVisualPart.class));
 		bindAbstractRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				AbstractRootPart.class));
-		bindAbstractContentPartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractContentPart.class));
-		bindAbstractFeedbackPartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractFeedbackPart.class));
-		bindAbstractHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractHandlePart.class));
+		bindAbstractContentPartAdapters(AdapterMaps
+				.getAdapterMapBinder(binder(), AbstractContentPart.class));
+		bindAbstractFeedbackPartAdapters(AdapterMaps
+				.getAdapterMapBinder(binder(), AbstractFeedbackPart.class));
+		bindAbstractHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractHandlePart.class));
 	}
 
 	/**
