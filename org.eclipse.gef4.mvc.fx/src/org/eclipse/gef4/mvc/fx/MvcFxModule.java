@@ -183,17 +183,28 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	/**
+	 * Binds {@link ContentPartPool}, parameterized with {@link Node}, to the
+	 * {@link FXViewer} adaptable scope.
+	 */
 	// TODO: rename to bindContentPartPool()
 	protected void bindContentBehaviorPartPool() {
 		binder().bind(new TypeLiteral<ContentPartPool<Node>>() {
-		}).in(AdaptableScopes.typed(IViewer.class));
+		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Binds {@link FocusModel}, parameterized with {@link Node}, to the
+	 * {@link FXViewer} adaptable scope.
+	 */
 	protected void bindFocusModel() {
 		binder().bind(new TypeLiteral<FocusModel<Node>>() {
-		}).in(AdaptableScopes.typed(IViewer.class));
+		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Binds {@link FXClickDragTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXClickDragTool() {
 		binder().bind(FXClickDragTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
@@ -234,16 +245,25 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	/**
+	 * Binds {@link FXFocusTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXFocusTool() {
 		binder().bind(FXFocusTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
 	}
 
+	/**
+	 * Binds {@link FXHoverTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXHoverTool() {
 		binder().bind(FXHoverTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
 	}
 
+	/**
+	 * Binds {@link FXPinchSpreadTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXPinchSpreadTool() {
 		binder().bind(FXPinchSpreadTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
@@ -309,16 +329,25 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXViewportBehavior.class);
 	}
 
+	/**
+	 * Binds {@link FXRotateTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXRotateTool() {
 		binder().bind(FXRotateTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
 	}
 
+	/**
+	 * Binds {@link FXScrollTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXScrollTool() {
 		binder().bind(FXScrollTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
 	}
 
+	/**
+	 * Binds {@link FXTypeTool} to the {@link FXDomain} adaptable scope.
+	 */
 	protected void bindFXTypeTool() {
 		binder().bind(FXTypeTool.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
@@ -357,21 +386,37 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	/**
+	 * Binds {@link FXHoverBehavior} to the {@link HoverBehavior}, parameterized
+	 * with {@link Node}.
+	 */
 	protected void bindHoverBehavior() {
 		binder().bind(new TypeLiteral<HoverBehavior<Node>>() {
 		}).to(FXHoverBehavior.class);
 	}
 
+	/**
+	 * Binds {@link HoverModel}, parameterized with {@link Node} to the
+	 * {@link FXViewer} adaptable scope.
+	 */
 	protected void bindHoverModel() {
 		binder().bind(new TypeLiteral<HoverModel<Node>>() {
 		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Binds {@link FXDomain} to {@link IDomain}, parameterized by {@link Node}.
+	 */
 	protected void bindIDomain() {
 		binder().bind(new TypeLiteral<IDomain<Node>>() {
 		}).to(FXDomain.class);
 	}
 
+	/**
+	 * Binds {@link FXDefaultFeedbackPartFactory} to
+	 * {@link IFeedbackPartFactory}, parameterized by {@link Node}, in adaptable
+	 * scope of {@link FXViewer}.
+	 */
 	protected void bindIFeedbackPartFactory() {
 		// TODO: bind to viewer scope, otherwise stateful factories might not
 		// work properly
@@ -380,6 +425,10 @@ public class MvcFxModule extends MvcModule<Node> {
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Binds {@link FXDefaultHandlePartFactory} to {@link IHandlePartFactory},
+	 * parameterized by {@link Node}, in adaptable scope of {@link FXViewer}.
+	 */
 	protected void bindIHandlePartFactory() {
 		// TODO: bind to viewer scope, otherwise stateful factories might not
 		// work properly
@@ -388,16 +437,28 @@ public class MvcFxModule extends MvcModule<Node> {
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Binds {@link FXRootPart} to {@link IRootPart}, parameterized by
+	 * {@link Node}, in adaptable scope of {@link FXViewer}.
+	 */
 	protected void bindIRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 		}).to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Binds {@link IViewer}, parameterized by {@link Node}, to {@link FXViewer}
+	 * .
+	 */
 	protected void bindIViewer() {
 		binder().bind(new TypeLiteral<IViewer<Node>>() {
 		}).to(FXViewer.class);
 	}
 
+	/**
+	 * Binds {@link SelectionModel}, parameterized by {@link Node}, in adaptable
+	 * scope of {@link FXViewer}.
+	 */
 	protected void bindSelectionModel() {
 		binder().bind(new TypeLiteral<SelectionModel<Node>>() {
 		}).in(AdaptableScopes.typed(FXViewer.class));
