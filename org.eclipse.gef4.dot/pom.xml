@@ -26,7 +26,7 @@
 					<execution>
 						<phase>generate-sources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<property name="compile.classpath" refid="maven.compile.classpath" />
 								<property name="runtime.classpath" refid="maven.runtime.classpath" />
 								<java classpath="${compile.classpath}:${runtime.classpath}:src"
@@ -36,7 +36,7 @@
 										value="src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2" />
 									<sysproperty key="file.encoding" value="UTF-8" />
 								</java>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>

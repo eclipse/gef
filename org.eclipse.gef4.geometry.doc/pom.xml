@@ -53,13 +53,13 @@
 						<id>prepare-offline-link-targets</id>
 						<phase>process-sources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<echo message="Preparing linkoffline-target" />
 								<unzip src="linkoffline-target/org.eclipse.platform.doc.isv.jar"
 									dest="linkoffline-target/org.eclipse.platform.doc.isv/" />
 								<echo
 									message="Done: linkoffline-target contains unzipped offline link target." />
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>

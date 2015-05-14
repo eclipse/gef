@@ -66,7 +66,7 @@
 						<id>replace-tokens</id>
 						<phase>process-resources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
@@ -95,7 +95,7 @@
 										</replace>
 									</then>
 								</if>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -134,7 +134,7 @@
 						<id>replace-back-tokens</id>
 						<phase>verify</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
@@ -156,7 +156,7 @@
 										<delete file="javadocOptions.txt.backup" />
 									</then>
 								</if>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>

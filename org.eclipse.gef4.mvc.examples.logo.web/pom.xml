@@ -24,7 +24,7 @@
 						<id>deploy-jnlp-and-html</id>
 						<phase>process-resources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
@@ -51,7 +51,7 @@
 											overwrite="true" />
 									</then>
 								</if>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -61,7 +61,7 @@
 						<id>deploy-jars</id>
 						<phase>verify</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 
@@ -71,7 +71,7 @@
 										<exclude name="**/*.jar.pack.gz" />
 									</fileset>
 								</copy>
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
