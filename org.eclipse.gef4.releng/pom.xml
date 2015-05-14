@@ -12,7 +12,7 @@
 	<properties>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
-		<tycho-version>0.19.0</tycho-version>
+		<tycho-version>0.21.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<cbi-plugins.version>1.0.4</cbi-plugins.version>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
@@ -63,7 +63,7 @@
 				<version>${maven-antrun-plugin.version}</version>
 				<executions>
 					<execution>
-						<id>replace-build-token</id>
+						<id>replace-tokens</id>
 						<phase>process-resources</phase>
 						<configuration>
 							<tasks>
@@ -79,7 +79,7 @@
 											message="Replacing @build@ token within about.mappings with build id." />
 										<replace file="about.mappings">
 											<replacefilter token="@build@"
-												value="${unqualifiedVersion}.${buildQualifier}" />
+												value="${buildQualifier}" />
 										</replace>
 									</then>
 								</if>
@@ -131,7 +131,7 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>replace-back-build-token</id>
+						<id>replace-back-tokens</id>
 						<phase>verify</phase>
 						<configuration>
 							<tasks>
@@ -199,7 +199,7 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!-- workaround for bug #398250, which affects source feature generation -->
+				<!-- This is needed for source feature generation, as outlined in bug #398250 -->
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
 				<version>${tycho-version}</version>
