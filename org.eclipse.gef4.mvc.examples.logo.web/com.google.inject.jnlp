@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="com.google.inject.jnlp">
+	<information>
+		<title>Google Inject</title>
+		<vendor>Eclipse.org</vendor>
+		<description>com.google.inject, as provided by Eclipse Orbit</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+        <jar href="com.google.inject.jar"/>
+	</resources>
+</jnlp>

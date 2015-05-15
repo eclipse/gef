@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="javax.xml.jnlp">
+	<information>
+		<title>javax.xml</title>
+		<vendor>Eclipse.org</vendor>
+		<description>javax.xml, as provided by Eclipse Orbit</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+        <jar href="javax.xml.jar"/>
+	</resources>
+</jnlp>

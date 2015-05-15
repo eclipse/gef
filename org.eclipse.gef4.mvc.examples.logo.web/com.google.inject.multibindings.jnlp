@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="com.google.inject.multibindings.jnlp">
+	<information>
+		<title>Google Inject</title>
+		<vendor>Eclipse.org</vendor>
+		<description>com.google.inject multibindings, as provided by Eclipse Orbit</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+        <jar href="com.google.inject.multibindings.jar"/>
+	</resources>
+</jnlp>

@@ -14,10 +14,6 @@
 		<j2se version="1.7+" />
 		<property name="jnlp.packEnabled" value="true"/>
         <property name="jnlp.versionEnabled" value="true"/>
-        <jar href="javax.inject.jar"/>
-        <jar href="javax.xml.jar"/>
-        <jar href="com.google.inject.jar"/>
-   		<jar href="com.google.inject.multibindings.jar"/>
 		<jar href="org.eclipse.osgi.jar"/>
 		<jar href="org.eclipse.equinox.app.jar"/>
 		<jar href="org.eclipse.equinox.common.jar"/>
@@ -35,6 +31,10 @@
 		<jar href="org.eclipse.gef4.mvc.jar"/>
 		<jar href="org.eclipse.gef4.mvc.fx.jar"/>
         <jar href="org.eclipse.gef4.mvc.examples.logo.jar"/>
+        <extension name="javax.inject" href="javax.inject.jnlp" />
+        <extension name="javax.xml" href="javax.xml.jnlp" />
+        <extension name="com.google.inject" href="com.google.inject.jnlp" />
+        <extension name="com.google.inject.multibindings" href="com.google.inject.multibindings.jnlp" />
 	</resources>
 	<update check="prompt-update"/>
 	<jfx:javafx-desc width="640" height="480" main-class="org.eclipse.gef4.mvc.examples.logo.MvcLogoExample" name="MvcLogoExample" />	

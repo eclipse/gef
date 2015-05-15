@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="javax.inject.jnlp">
+	<information>
+		<title>javax.inject</title>
+		<vendor>Eclipse.org</vendor>
+		<description>javax.inject, as provided by Eclipse Orbit</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+        <jar href="javax.inject.jar"/>
+	</resources>
+</jnlp>

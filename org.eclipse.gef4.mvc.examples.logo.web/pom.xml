@@ -44,9 +44,33 @@
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<echo
-									message="Deploying org.eclipse.gef4.mvc.examples.logo.web.jnlp.template." />
-								<copy file="org.eclipse.gef4.mvc.examples.logo.web.jnlp.template"
+									message="Deploying org.eclipse.gef4.mvc.examples.logo.web.jnlp." />
+								<copy file="org.eclipse.gef4.mvc.examples.logo.web.jnlp"
 									tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying javax.inject.jnlp." />
+								<copy file="javax.inject.jnlp"
+									tofile="${project.build.directory}/web-files/javax.inject.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying javax.xml.jnlp." />
+								<copy file="javax.xml.jnlp"
+									tofile="${project.build.directory}/web-files/javax.xml.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying com.google.inject.jnlp." />
+								<copy file="com.google.inject.jnlp"
+									tofile="${project.build.directory}/web-files/com.google.inject.jnlp"
+									overwrite="true" />
+									
+								<echo
+									message="Deploying com.google.inject.multibindings.jnlp." />
+								<copy file="com.google.inject.multibindings.jnlp"
+									tofile="${project.build.directory}/web-files/com.google.inject.multibindings.jnlp"
 									overwrite="true" />
 
 								<echo message="Deploying index.html." />
