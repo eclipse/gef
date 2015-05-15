@@ -473,9 +473,11 @@
 		<module>../org.eclipse.gef4.mvc.examples</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.ui</module>
-		<module>../org.eclipse.gef4.mvc.examples.logo.web</module>
 		<module>../org.eclipse.gef4.mvc.examples-feature</module>
 		
+		<module>../org.eclipse.gef4.mvc.examples.logo.web</module>
+		<module>../org.eclipse.gef4.mvc.examples.logo.web.repository</module>
+
 		<module>../org.eclipse.gef4.mvc.compatibility.luna</module>
 		<module>../org.eclipse.gef4.mvc.compatibility.luna-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.compatibility.luna</module>

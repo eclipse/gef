@@ -4,93 +4,20 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.eclipse.gef4</groupId>
 		<artifactId>org.eclipse.gef4.releng</artifactId>
+		<groupId>org.eclipse.gef4</groupId>
 		<version>0.1.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.gef4.releng/pom.xml</relativePath>
+		<relativePath>../org.eclipse.gef4.releng</relativePath>
 	</parent>
 	<groupId>org.eclipse.gef4.examples</groupId>
 	<artifactId>org.eclipse.gef4.mvc.examples.logo.web</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
-	<packaging>eclipse-repository</packaging>
+	<packaging>eclipse-plugin</packaging>
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependent-jars</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<outputDirectory>${project.build.directory}/web-files</outputDirectory>
-							<stripVersion>true</stripVersion>
-						</configuration>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>${maven-antrun-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>deploy-jnlp-and-html</id>
-						<phase>process-resources</phase>
-						<configuration>
-							<target>
-								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
-									classpathref="maven.plugin.classpath" />
-								<echo
-									message="Deploying org.eclipse.gef4.mvc.examples.logo.web.jnlp." />
-								<copy file="org.eclipse.gef4.mvc.examples.logo.web.jnlp"
-									tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp"
-									overwrite="true" />
-									
-								<echo
-									message="Deploying javax.inject.jnlp." />
-								<copy file="javax.inject.jnlp"
-									tofile="${project.build.directory}/web-files/javax.inject.jnlp"
-									overwrite="true" />
-									
-								<echo
-									message="Deploying javax.xml.jnlp." />
-								<copy file="javax.xml.jnlp"
-									tofile="${project.build.directory}/web-files/javax.xml.jnlp"
-									overwrite="true" />
-									
-								<echo
-									message="Deploying com.google.inject.jnlp." />
-								<copy file="com.google.inject.jnlp"
-									tofile="${project.build.directory}/web-files/com.google.inject.jnlp"
-									overwrite="true" />
-									
-								<echo
-									message="Deploying com.google.inject.multibindings.jnlp." />
-								<copy file="com.google.inject.multibindings.jnlp"
-									tofile="${project.build.directory}/web-files/com.google.inject.multibindings.jnlp"
-									overwrite="true" />
-
-								<echo message="Deploying index.html." />
-								<copy file="index.html"
-									tofile="${project.build.directory}/web-files/index.html"
-									overwrite="true" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>20020829</version>
-					</dependency>
-				</dependencies>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

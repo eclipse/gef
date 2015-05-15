@@ -20,5 +20,7 @@
    <bundle id="org.eclipse.gef4.fx" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.mvc" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.mvc.fx" version="0.0.0"/>
+   <bundle id="org.eclipse.gef4.mvc.examples" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.mvc.examples.logo" version="0.0.0"/>
+   <bundle id="org.eclipse.gef4.mvc.examples.logo.web" version="0.0.0"/>
 </site>
