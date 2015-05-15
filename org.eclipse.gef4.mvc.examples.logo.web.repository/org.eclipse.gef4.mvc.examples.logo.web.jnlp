@@ -29,8 +29,8 @@
         <jar href="org.eclipse.gef4.mvc.examples.logo.web.jar"/>
         <extension name="javax" href="javax.jnlp" />
         <extension name="com.google" href="com.google.jnlp" />
-        <extension name="org.eclipse.equinox" href="org.eclipse.equinox.jnlp" />
         <extension name="org.eclipse.osgi" href="org.eclipse.osgi.jnlp" />
+        <extension name="org.eclipse.equinox" href="org.eclipse.equinox.jnlp" />
 	</resources>
 	<update check="prompt-update"/>
 	<jfx:javafx-desc width="640" height="480" main-class="org.eclipse.gef4.mvc.examples.logo.web.MvcLogoWebExample" name="MvcLogoWebExample" />	

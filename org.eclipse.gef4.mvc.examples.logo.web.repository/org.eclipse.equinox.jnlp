@@ -11,10 +11,8 @@
 	</security>
 	<component-desc/>
 	<resources>
-        <jar href="org.eclipse.equinox.app.jar"/>
 		<jar href="org.eclipse.equinox.common.jar"/>
 		<jar href="org.eclipse.equinox.preferences.jar"/>
 		<jar href="org.eclipse.equinox.registry.jar"/>
-		<jar href="org.eclipse.equinox.launcher.jar"/>
 	</resources>
 </jnlp>
