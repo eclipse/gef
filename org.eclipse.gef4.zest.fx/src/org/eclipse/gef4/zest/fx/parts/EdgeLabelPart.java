@@ -82,7 +82,7 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 				- textBounds.getHeight());
 	}
 
-	protected EdgeContentPart getHost() {
+	public EdgeContentPart getHost() {
 		return getAnchorages().isEmpty() ? null
 				: (EdgeContentPart) getAnchorages().keys().iterator().next();
 	}

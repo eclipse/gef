@@ -32,7 +32,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -242,22 +241,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
 		} else {
 			curveNode.getStrokeDashArray().clear();
-		}
-
-		// visibility
-		IContentPart<Node, ? extends Node> sourcePart = getViewer()
-				.getContentPartMap().get(edge.getSource());
-		IContentPart<Node, ? extends Node> targetPart = getViewer()
-				.getContentPartMap().get(edge.getTarget());
-
-		if (sourcePart != null && targetPart != null
-				&& sourcePart.getVisual().isVisible()
-				&& targetPart.getVisual().isVisible()) {
-			visual.setVisible(true);
-			visual.setMouseTransparent(false);
-		} else {
-			visual.setVisible(false);
-			visual.setMouseTransparent(true);
 		}
 	}
 

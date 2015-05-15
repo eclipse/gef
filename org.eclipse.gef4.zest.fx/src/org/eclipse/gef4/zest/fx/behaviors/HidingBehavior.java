@@ -23,13 +23,14 @@ import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.behaviors.BehaviorUtils;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-import com.google.common.collect.Multiset;
+/*
+ * TODO: Rename HidingBehavior to NodeHidingBehavior and let it extend AbstractHidingBehavior.
+ */
 
-// Only applicable for NodeContentPart
+// Only applicable for NodeContentPart (seee #getHost())
 public class HidingBehavior extends AbstractBehavior<Node> implements
 		PropertyChangeListener {
 
@@ -115,16 +116,6 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		// hide visual
 		getHost().getVisual().setVisible(false);
 		getHost().getVisual().setMouseTransparent(true);
-
-		// hide connections
-		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = getHost()
-				.getAnchoreds();
-		for (IVisualPart<Node, ? extends Node> anchored : anchoreds
-				.elementSet()) {
-			if (anchored instanceof EdgeContentPart) {
-				anchored.refreshVisual();
-			}
-		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -188,16 +179,6 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		// show node
 		getHost().getVisual().setVisible(true);
 		getHost().getVisual().setMouseTransparent(false);
-
-		// show connections
-		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = getHost()
-				.getAnchoreds();
-		for (IVisualPart<Node, ? extends Node> anchored : anchoreds
-				.elementSet()) {
-			if (anchored instanceof EdgeContentPart) {
-				anchored.refreshVisual();
-			}
-		}
 	}
 
 	protected void updateHiddenNeighborPart() {

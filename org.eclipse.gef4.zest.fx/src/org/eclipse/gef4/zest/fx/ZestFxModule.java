@@ -42,6 +42,8 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
@@ -135,8 +137,12 @@ public class ZestFxModule extends MvcFxModule {
 
 	protected void bindEdgeContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// layout
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
 				.to(EdgeLayoutBehavior.class);
+		// hiding
+		adapterMapBinder.addBinding(AdapterKey.get(EdgeHidingBehavior.class))
+				.to(EdgeHidingBehavior.class);
 		// selection link feedback
 		adapterMapBinder
 				.addBinding(
@@ -149,6 +155,10 @@ public class ZestFxModule extends MvcFxModule {
 
 	protected void bindEdgeLabelPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// hiding
+		adapterMapBinder.addBinding(
+				AdapterKey.get(EdgeLabelHidingBehavior.class)).to(
+				EdgeLabelHidingBehavior.class);
 		// offset on drag
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
