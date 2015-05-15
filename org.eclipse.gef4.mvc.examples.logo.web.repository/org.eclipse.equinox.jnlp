@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="org.eclipse.equinox.jnlp">
+	<information>
+		<title>org.eclipse.equinox</title>
+		<vendor>Eclipse.org</vendor>
+		<description>Equinox bundles, as provided by Eclipse</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+        <jar href="org.eclipse.equinox.app.jar"/>
+		<jar href="org.eclipse.equinox.common.jar"/>
+		<jar href="org.eclipse.equinox.preferences.jar"/>
+		<jar href="org.eclipse.equinox.registry.jar"/>
+		<jar href="org.eclipse.equinox.launcher.jar"/>
+	</resources>
+</jnlp>

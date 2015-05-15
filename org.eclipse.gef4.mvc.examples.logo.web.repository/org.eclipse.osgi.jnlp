@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="org.eclipse.osgi.jnlp">
+	<information>
+		<title>org.eclipse.equinox</title>
+		<vendor>Eclipse.org</vendor>
+		<description>org.eclipse.osgi, as provided by Eclipse</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+	    <jar href="org.eclipse.osgi.jar"/>
+	</resources>
+</jnlp>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="com.google.jnlp">
+	<information>
+		<title>Google Guava and Inject</title>
+		<vendor>Eclipse.org</vendor>
+		<description>com.google.inject, com.google.inject.multibindings, com.google.guava, as provided by Eclipse Orbit</description>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<component-desc/>
+	<resources>
+        <jar href="com.google.inject.jar"/>
+        <jar href="com.google.inject.multibindings.jar"/>
+        <jar href="com.google.guava.jar"/>
+	</resources>
+</jnlp>

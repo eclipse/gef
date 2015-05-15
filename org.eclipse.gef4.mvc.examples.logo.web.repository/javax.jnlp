@@ -11,6 +11,7 @@
 	</security>
 	<component-desc/>
 	<resources>
+		<jar href="javax.inject.jar"/>
         <jar href="javax.xml.jar"/>
 	</resources>
 </jnlp>
