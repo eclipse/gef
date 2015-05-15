@@ -12,7 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
+import java.util.Map;
+
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
@@ -20,6 +24,7 @@ import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
@@ -60,6 +65,7 @@ import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
 import org.eclipse.gef4.zest.fx.parts.ZestFxFeedbackPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
@@ -125,6 +131,13 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
 				.to(FXRotateSelectedOnHandleDragPolicy.class);
+		// change cursor for rotation
+		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class)).to(
+				FXCursorBehavior.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<Provider<Map<KeyCode, Cursor>>>() {
+				}, FXCursorBehavior.CURSOR_PROVIDER_ROLE)).to(
+				ZestFxCursorProvider.class);
 	}
 
 	@Override
