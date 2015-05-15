@@ -27,7 +27,7 @@ import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /*
- * TODO: Rename HidingBehavior to NodeHidingBehavior and let it extend AbstractHidingBehavior.
+ * TODO: Rename HidingBehavior to NodeHidingBehavior and let it extend AbstractHidingBehavior. (Bugzilla #466851)
  */
 
 // Only applicable for NodeContentPart (seee #getHost())
