@@ -14,30 +14,29 @@
 		<j2se version="1.7+" />
 		<property name="jnlp.packEnabled" value="true"/>
         <property name="jnlp.versionEnabled" value="true"/>
-        <jar href="javax.inject_1.0.0.v20091030_resigned.jar"/>
-        <jar href="javax.xml_1.3.4.v201005080400_resigned.jar"/>
-		<jar href="org.eclipse.fx.javafx_2.2.0.201411050602.jar"/>
-        <jar href="com.google.inject_3.0.0.v201312141243_resigned.jar"/>
-   		<jar href="com.google.inject.multibindings_3.0.0.v201402270930_resigned.jar"/>
-		<jar href="org.eclipse.osgi_3.10.100.v20141020-1414.jar"/>
-		<jar href="org.eclipse.equinox.app_1.3.200.v20130910-1609.jar"/>
-		<jar href="org.eclipse.equinox.common_3.6.200.v20140819-0835.jar"/>
-		<jar href="org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar"/>
-		<jar href="org.eclipse.equinox.registry_3.5.400.v20140428-1507.jar"/>
-		<jar href="org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar"/>
-		<jar href="org.eclipse.core.commands_3.6.100.v20141026-0121.jar"/>
-		<jar href="org.eclipse.core.runtime_3.10.0.v20140724-1132.jar"/>
-		<jar href="org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar"/>
-		<jar href="org.eclipse.core.jobs_3.6.100.v20140929-1332.jar"/>
-		<jar href="org.eclipse.gef4.common_0.1.0.qualifier.jar"/>
-		<jar href="org.eclipse.gef4.geometry_0.1.0.qualifier.jar"/>
-		<jar href="org.eclipse.gef4.geometry.convert.fx_0.1.0.qualifier.jar"/>
-		<jar href="org.eclipse.gef4.fx_0.1.0.qualifier.jar"/>
-		<jar href="org.eclipse.gef4.mvc_0.1.0.qualifier.jar"/>
-		<jar href="org.eclipse.gef4.mvc.fx_0.1.0.qualifier.jar"/>
-        <jar href="org.eclipse.gef4.mvc.examples.logo_0.1.0.qualifier.jar"/>
+        <jar href="javax.inject.jar"/>
+        <jar href="javax.xml.jar"/>
+        <jar href="com.google.inject.jar"/>
+   		<jar href="com.google.inject.multibindings.jar"/>
+		<jar href="org.eclipse.osgi.jar"/>
+		<jar href="org.eclipse.equinox.app.jar"/>
+		<jar href="org.eclipse.equinox.common.jar"/>
+		<jar href="org.eclipse.equinox.preferences.jar"/>
+		<jar href="org.eclipse.equinox.registry.jar"/>
+		<jar href="org.eclipse.equinox.launcher.jar"/>
+		<jar href="org.eclipse.core.commands.jar"/>
+		<jar href="org.eclipse.core.runtime.jar"/>
+		<jar href="org.eclipse.core.contenttype.jar"/>
+		<jar href="org.eclipse.core.jobs.jar"/>
+		<jar href="org.eclipse.gef4.common.jar"/>
+		<jar href="org.eclipse.gef4.geometry.jar"/>
+		<jar href="org.eclipse.gef4.geometry.convert.fx.jar"/>
+		<jar href="org.eclipse.gef4.fx.jar"/>
+		<jar href="org.eclipse.gef4.mvc.jar"/>
+		<jar href="org.eclipse.gef4.mvc.fx.jar"/>
+        <jar href="org.eclipse.gef4.mvc.examples.logo.jar"/>
 	</resources>
 	<update check="prompt-update"/>
 	<jfx:javafx-desc width="640" height="480" main-class="org.eclipse.gef4.mvc.examples.logo.MvcLogoExample" name="MvcLogoExample" />	
-	<!--<application-desc main-class="org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleApplication" />-->
+	<!--<application-desc main-class="org.eclipse.gef4.mvc.examples.logo.MvcLogoExample" />-->
 </jnlp>

@@ -16,6 +16,22 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependent-jars</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<outputDirectory>${project.build.directory}/web-files</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin.version}</version>
@@ -27,50 +43,16 @@
 							<target>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
-								<if>
-									<available file="org.eclipse.gef4.mvc.examples.logo.web.jnlp.template" />
-									<then>
-										<echo message="Deploying org.eclipse.gef4.mvc.examples.logo.web.jnlp.template." />
-										<copy file="org.eclipse.gef4.mvc.examples.logo.web.jnlp.template"
-											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp"
-											overwrite="true" />
-										<echo
-											message="Replacing qualifier token within org.eclipse.gef4.mvc.examples.logo.web.jnlp with build qualifier." />
-										<replace
-											file="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp">
-											<replacefilter token="qualifier" value="${buildQualifier}" />
-										</replace>
-									</then>
-								</if>
-								<if>
-									<available file="index.html" />
-									<then>
-										<echo message="Deploying index.html." />
-										<copy file="index.html"
-											tofile="${project.build.directory}/web-files/index.html"
-											overwrite="true" />
-									</then>
-								</if>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>deploy-jars</id>
-						<phase>verify</phase>
-						<configuration>
-							<target>
-								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
-									classpathref="maven.plugin.classpath" />
+								<echo
+									message="Deploying org.eclipse.gef4.mvc.examples.logo.web.jnlp.template." />
+								<copy file="org.eclipse.gef4.mvc.examples.logo.web.jnlp.template"
+									tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp"
+									overwrite="true" />
 
-								<echo message="Deploying jars." />
-								<copy todir="${project.build.directory}/web-files">
-									<fileset dir="${project.build.directory}/repository/plugins/">
-										<exclude name="**/*.jar.pack.gz" />
-									</fileset>
-								</copy>
+								<echo message="Deploying index.html." />
+								<copy file="index.html"
+									tofile="${project.build.directory}/web-files/index.html"
+									overwrite="true" />
 							</target>
 						</configuration>
 						<goals>
