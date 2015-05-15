@@ -22,11 +22,8 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * An FXMouseDragGesture can be used to listen to mouse press, drag, and release
- * events. The gesture internally starts a full drag and records the nodes
- * currently at the mouse pointer.
- *
- * In order to use the FXMouseDragGesture, you have to subclass it and implement
- * the press, drag, and release methods.
+ * events. In order to use it, you have to subclass it and implement the press,
+ * drag, and release methods.
  *
  * @author mwienand
  *
