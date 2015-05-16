@@ -50,27 +50,27 @@
 									overwrite="true" />
 									
 								<echo
-									message="Deploying javax.inject.jnlp." />
-								<copy file="javax.inject.jnlp"
-									tofile="${project.build.directory}/web-files/javax.inject.jnlp"
+									message="Deploying javax.jnlp." />
+								<copy file="javax.jnlp"
+									tofile="${project.build.directory}/web-files/javax.jnlp"
 									overwrite="true" />
 									
 								<echo
-									message="Deploying javax.xml.jnlp." />
-								<copy file="javax.xml.jnlp"
-									tofile="${project.build.directory}/web-files/javax.xml.jnlp"
+									message="Deploying org.eclipse.equinox.jnlp." />
+								<copy file="org.eclipse.equinox.jnlp"
+									tofile="${project.build.directory}/web-files/org.eclipse.equinox.jnlp
 									overwrite="true" />
 									
 								<echo
-									message="Deploying com.google.inject.jnlp." />
-								<copy file="com.google.inject.jnlp"
-									tofile="${project.build.directory}/web-files/com.google.inject.jnlp"
+									message="Deploying org.eclipse.osgi.jnlp." />
+								<copy file="org.eclipse.osgi.jnlp"
+									tofile="${project.build.directory}/web-files/org.eclipse.osgi.jnlp"
 									overwrite="true" />
 									
 								<echo
-									message="Deploying com.google.inject.multibindings.jnlp." />
-								<copy file="com.google.inject.multibindings.jnlp"
-									tofile="${project.build.directory}/web-files/com.google.inject.multibindings.jnlp"
+									message="Deploying com.google.jnlp." />
+								<copy file="com.google.jnlp"
+									tofile="${project.build.directory}/web-files/com.google.jnlp"
 									overwrite="true" />
 
 								<echo message="Deploying index.html." />
