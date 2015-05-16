@@ -58,7 +58,7 @@
 								<echo
 									message="Deploying org.eclipse.equinox.jnlp." />
 								<copy file="org.eclipse.equinox.jnlp"
-									tofile="${project.build.directory}/web-files/org.eclipse.equinox.jnlp
+									tofile="${project.build.directory}/web-files/org.eclipse.equinox.jnlp"
 									overwrite="true" />
 									
 								<echo
