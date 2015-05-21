@@ -11,12 +11,12 @@
 	<!-- this is the parent POM from which all modules inherit common settings -->
 	<properties>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
-		<maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
 		<tycho-version>0.21.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<cbi-plugins.version>1.0.4</cbi-plugins.version>
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/gef/org.eclipse.gef4.git</tycho.scmUrl>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
 		<plugins>
@@ -58,6 +58,23 @@
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<sourceReferences>
+						<generate>true</generate>
+					</sourceReferences>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-sourceref-jgit</artifactId>
+						<version>${tycho-extras-version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin.version}</version>
@@ -78,8 +95,7 @@
 										<echo
 											message="Replacing @build@ token within about.mappings with build id." />
 										<replace file="about.mappings">
-											<replacefilter token="@build@"
-												value="${buildQualifier}" />
+											<replacefilter token="@build@" value="${buildQualifier}" />
 										</replace>
 									</then>
 								</if>
@@ -420,7 +436,7 @@
 
 	<modules>
 		<module>../org.eclipse.gef4.target</module>
-		
+
 		<module>../org.eclipse.gef4.common</module>
 		<module>../org.eclipse.gef4.common-feature</module>
 		<module>../org.eclipse.gef4.common.tests</module>
@@ -450,7 +466,7 @@
 		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.fx.compatibility.luna</module>
 		<module>../org.eclipse.gef4.fx.compatibility.luna-feature</module>
 
@@ -474,7 +490,7 @@
 		<module>../org.eclipse.gef4.mvc.examples.logo</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.ui</module>
 		<module>../org.eclipse.gef4.mvc.examples-feature</module>
-		
+
 		<module>../org.eclipse.gef4.mvc.examples.logo.web</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.web.repository</module>
 
@@ -522,12 +538,12 @@
 		<module>../org.eclipse.gef4.zest.doc</module>
 		<module>../org.eclipse.gef4.zest.doc-feature</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.zest.examples</module>
 		<module>../org.eclipse.gef4.zest.examples.graph</module>
 		<module>../org.eclipse.gef4.zest.examples.graph.ui</module>
 		<module>../org.eclipse.gef4.zest.examples-feature</module>
-		
+
 		<module>../org.eclipse.gef4.zest.fx.compatibility.luna</module>
 		<module>../org.eclipse.gef4.zest.fx.compatibility.luna-feature</module>
 
