@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen (itemis AG)  - major refactorings    
+ *     Alexander Nyßen (itemis AG)  - major refactorings
  *******************************************************************************/
 package org.eclipse.gef4.fx.ui.controls;
 
@@ -28,6 +28,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * The FXControlAdapter can be used to embed SWT controls into a JavaFX scene
+ * graph.
+ *
+ * @author mwienand
+ *
+ * @param <T>
+ *            The SWT Control class which is wrapped by this
+ *            {@link FXControlAdapter}.
+ */
 public class FXControlAdapter<T extends Control> extends Region {
 
 	private static final int[] FORWARD_SWT_EVENT_TYPES = new int[] {
@@ -47,12 +57,28 @@ public class FXControlAdapter<T extends Control> extends Region {
 
 	private IControlFactory<T> controlFactory;
 
+	/**
+	 * Creates a new {@link FXControlAdapter} which uses the given
+	 * {@link IControlFactory} for the creation of the SWT {@link Control}.
+	 *
+	 * @param controlFactory
+	 *            The {@link IControlFactory} to use to create the SWT
+	 *            {@link Control}.
+	 */
 	public FXControlAdapter(IControlFactory<T> controlFactory) {
 		// lazy creation of control in case canvas is obtained
 		this.controlFactory = controlFactory;
 		init();
 	}
 
+	/**
+	 * Creates a new {@link FXControlAdapter} which wraps the given SWT
+	 * {@link Control}.
+	 *
+	 * @param control
+	 *            The SWT {@link Control} to wrap in this
+	 *            {@link FXControlAdapter}.
+	 */
 	public FXControlAdapter(T control) {
 		// detect SwtFXCanvas via given control
 		canvas = getFXCanvas(control);
@@ -101,6 +127,10 @@ public class FXControlAdapter<T extends Control> extends Region {
 		return control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 	}
 
+	/**
+	 * Deactivates this {@link FXControlAdapter}, so that the SWT
+	 * {@link Control} will not be re-created when the {@link FXCanvas} changes.
+	 */
 	public void dispose() {
 		unregisterListeners();
 	}
@@ -114,6 +144,13 @@ public class FXControlAdapter<T extends Control> extends Region {
 		return getChildrenUnmodifiable();
 	}
 
+	/**
+	 * Returns the SWT {@link Control} that is wrapped by this
+	 * {@link FXControlAdapter}.
+	 *
+	 * @return The SWT {@link Control} that is wrapped by this
+	 *         {@link FXControlAdapter}.
+	 */
 	public T getControl() {
 		return control;
 	}
@@ -149,8 +186,8 @@ public class FXControlAdapter<T extends Control> extends Region {
 			// of
 			// FXCanvas$HostContainer
 			FXCanvas canvas = ReflectionUtils.getPrivateFieldValue(
-					ReflectionUtils.<Object> getPrivateFieldValue(window, "host"),
-					"this$0");
+					ReflectionUtils.<Object> getPrivateFieldValue(window,
+							"host"), "this$0");
 			return canvas;
 		}
 		return null;
@@ -158,6 +195,10 @@ public class FXControlAdapter<T extends Control> extends Region {
 
 	/**
 	 * Used to register special listeners on the specific {@link Control}.
+	 *
+	 * @param control
+	 *            The SWT {@link Control} that is wrapped by this
+	 *            {@link FXControlAdapter}.
 	 */
 	protected void hookControl(T control) {
 		FXCanvas swtFXCanvas = getFXCanvas(control);
