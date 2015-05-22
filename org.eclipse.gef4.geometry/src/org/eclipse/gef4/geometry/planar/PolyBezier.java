@@ -69,6 +69,8 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 *            width of the curve. A value smaller than 1 sharpens the curve
 	 *            and a value greater than 1 thickens the curve.
 	 * @param wayPoints
+	 *            The array of {@link Point}s which lie on the resulting
+	 *            {@link PolyBezier}.
 	 * @return {@link PolyBezier} consisting of continuous {@link CubicCurve}
 	 *         segments through the given {@link Point}s
 	 */
@@ -109,6 +111,8 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 *            width of the curve. A value smaller than one sharpens the
 	 *            curve and a value greater than one thickens the curve.
 	 * @param points
+	 *            The array of {@link Point}s which lie on the resulting
+	 *            {@link PolyBezier}.
 	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
 	 *         through the given {@link Point}s.
 	 */
@@ -171,6 +175,8 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	/**
 	 * @see #interpolateCubic(double, Point...)
 	 * @param points
+	 *            The array of {@link Point}s which lie on the resulting
+	 *            {@link PolyBezier}.
 	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
 	 *         through the given {@link Point}s.
 	 */
@@ -233,13 +239,13 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	}
 
 	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
+	public Point[] getIntersections(ICurve c) {
+		return CurveUtils.getIntersections(this, c);
 	}
 
 	@Override
-	public Point[] getIntersections(ICurve c) {
-		return CurveUtils.getIntersections(this, c);
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
 	}
 
 	@Override

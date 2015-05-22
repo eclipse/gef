@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -21,10 +21,10 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * The {@link Pie} is a closed {@link AbstractArcBasedGeometry}. It is the
  * complement of the {@link Arc}, which is an open
  * {@link AbstractArcBasedGeometry}.
- * 
+ *
  * The {@link Pie} covers an area, therefore it implements the {@link IShape}
  * interface.
- * 
+ *
  * @author anyssen
  * @author mwienand
  */
@@ -34,10 +34,16 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	/**
 	 * Constructs a new {@link Pie} from the given values.
-	 * 
+	 *
 	 * @param r
+	 *            The {@link AbstractRectangleBasedGeometry} which provides the
+	 *            size for this {@link Pie}.
 	 * @param startAngle
+	 *            The counter-clockwise (CCW) {@link Angle} to the x-axis at
+	 *            which this {@link Pie} begins.
 	 * @param angularExtent
+	 *            The counter-clockwise (CCW) {@link Angle} that spans this
+	 *            {@link Pie}.
 	 */
 	public Pie(AbstractRectangleBasedGeometry<?, ?> r, Angle startAngle,
 			Angle angularExtent) {
@@ -46,8 +52,10 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	/**
 	 * Constructs a new {@link Pie} from the given {@link Arc}.
-	 * 
+	 *
 	 * @param arc
+	 *            The {@link Arc} which provides size, start angle, and angular
+	 *            extent for this {@link Pie}.
 	 */
 	public Pie(Arc arc) {
 		super(arc.x, arc.y, arc.width, arc.height, arc.startAngle,
@@ -56,16 +64,28 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	/**
 	 * Constructs a new {@link Pie} from the given values.
-	 * 
+	 *
 	 * @see AbstractArcBasedGeometry#AbstractArcBasedGeometry(double, double,
 	 *      double, double, Angle, Angle)
-	 * 
+	 *
 	 * @param x
+	 *            The x-coordinate of the rectangular area which encloses thie
+	 *            {@link Pie}.
 	 * @param y
+	 *            The y-coordinate of the rectangular area which encloses thie
+	 *            {@link Pie}.
 	 * @param width
+	 *            The width of the rectangular area which encloses thie
+	 *            {@link Pie}.
 	 * @param height
+	 *            The height of the rectangular area which encloses thie
+	 *            {@link Pie}.
 	 * @param startAngle
+	 *            The counter-clockwise (CCW) {@link Angle} to the x-axis at
+	 *            which this {@link Pie} begins.
 	 * @param angularExtent
+	 *            The counter-clockwise (CCW) {@link Angle} that spans this
+	 *            {@link Pie}.
 	 */
 	public Pie(double x, double y, double width, double height,
 			Angle startAngle, Angle angularExtent) {

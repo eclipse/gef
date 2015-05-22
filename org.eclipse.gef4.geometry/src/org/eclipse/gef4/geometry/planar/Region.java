@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -28,26 +28,24 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  * {@link Region} do not have to be touching. The area covered by the
  * {@link Region} is exactly the area that all of its corresponding
  * {@link Rectangle}s are covering.
- * 
+ *
  * A {@link Region} differentiates between the internal {@link Rectangle}s and
  * the external {@link Rectangle}s. The external {@link Rectangle}s are those
  * that you feed it, in order to construct the {@link Region}. The internal
  * {@link Rectangle}s are those used for computations of the {@link Region}.
  * They are defined to not share any area, so that only their borders can be
  * overlapping.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Region extends AbstractMultiShape implements
-		ITranslatable<Region>, IScalable<Region>, IRotatable<Ring> {
-
-	private static final long serialVersionUID = 1L;
+ITranslatable<Region>, IScalable<Region>, IRotatable<Ring> {
 
 	/**
 	 * Cuts the given {@link Rectangle}s along the given parallel to the x-axis.
-	 * 
+	 *
 	 * @param y
 	 *            the distance of the cut-line to the x-axis
 	 * @param parts
@@ -65,7 +63,7 @@ public class Region extends AbstractMultiShape implements
 
 	/**
 	 * Cuts the given {@link Rectangle}s along the given parallel to the y-axis.
-	 * 
+	 *
 	 * @param x
 	 *            the distance of the cut-line to the y-axis
 	 * @param parts
@@ -81,6 +79,8 @@ public class Region extends AbstractMultiShape implements
 		}
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	private ArrayList<Rectangle> rects;
 
 	/**
@@ -93,11 +93,13 @@ public class Region extends AbstractMultiShape implements
 	/**
 	 * Constructs a new {@link Region} from the given list of {@link Rectangle}
 	 * s.
-	 * 
+	 *
 	 * The given {@link Rectangle}s are {@link #add(Rectangle)}ed to the
 	 * {@link Region} one after the other.
-	 * 
+	 *
 	 * @param rectangles
+	 *            The array of {@link Rectangle}s from which this {@link Region}
+	 *            is constructed.
 	 */
 	public Region(Rectangle... rectangles) {
 		this();
@@ -111,8 +113,10 @@ public class Region extends AbstractMultiShape implements
 	/**
 	 * Constructs a new {@link Region} from the given other {@link Region}. In
 	 * other words, it copies the given other {@link Region}.
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Region} from which this {@link Region} is
+	 *            constructed.
 	 */
 	public Region(Region other) {
 		rects = new ArrayList<Rectangle>(other.rects.size());
@@ -124,11 +128,11 @@ public class Region extends AbstractMultiShape implements
 
 	/**
 	 * Adds the given {@link Rectangle} to this {@link Region}.
-	 * 
+	 *
 	 * To assure the required conditions for internal {@link Rectangle}s, the
 	 * given {@link Rectangle} is cut into several sub-{@link Rectangle}s so
 	 * that no internal {@link Rectangle}s share any area.
-	 * 
+	 *
 	 * @param rectangle
 	 *            the {@link Rectangle} to add to this {@link Region}
 	 * @return <code>this</code> for convenience
@@ -192,7 +196,7 @@ public class Region extends AbstractMultiShape implements
 
 	/**
 	 * Collects all outline segments of the internal {@link Rectangle}s.
-	 * 
+	 *
 	 * @return all the outline segments of the internal {@link Rectangle}s
 	 */
 	@Override
@@ -229,8 +233,10 @@ public class Region extends AbstractMultiShape implements
 	/**
 	 * Computes the {@link Point}s of intersection of this {@link Region} with
 	 * the given {@link ICurve}.
-	 * 
+	 *
 	 * @param c
+	 *            The {@link ICurve} for which outline intersections are
+	 *            computed.
 	 * @return the intersection {@link Point}s
 	 */
 	public Point[] getOutlineIntersections(ICurve c) {
@@ -374,7 +380,7 @@ public class Region extends AbstractMultiShape implements
 	/**
 	 * Constructs a new {@link Ring} that covers the same area as this
 	 * {@link Region}.
-	 * 
+	 *
 	 * @return a new {@link Ring} that covers the same area as this
 	 *         {@link Region}
 	 */

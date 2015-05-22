@@ -41,8 +41,6 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  */
 public class Point implements Cloneable, Serializable {
 
-	private static final long serialVersionUID = 1L;
-
 	private static Point[] eliminateDuplicates(Point... points) {
 		// sort points by x and y
 		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
@@ -105,6 +103,8 @@ public class Point implements Cloneable, Serializable {
 	 * centroid.
 	 *
 	 * @param points
+	 *            The array of {@link Point}s for which the centroid is
+	 *            computed.
 	 * @return the center {@link Point} (or centroid) of the given {@link Point}
 	 *         s
 	 */
@@ -266,9 +266,13 @@ public class Point implements Cloneable, Serializable {
 	 * the specified {@link Angle} around the given center {@link Point}.
 	 *
 	 * @param points
+	 *            The array of {@link Point}s to rotate.
 	 * @param angle
+	 *            The rotation {@link Angle}.
 	 * @param cx
+	 *            The x-coordinate of the rotation's pivot point.
 	 * @param cy
+	 *            The y-coordinate of the rotation's pivot point.
 	 */
 	public static void rotateCCW(Point[] points, Angle angle, double cx,
 			double cy) {
@@ -286,9 +290,13 @@ public class Point implements Cloneable, Serializable {
 	 * specified {@link Angle} around the given center {@link Point}.
 	 *
 	 * @param points
+	 *            The array of {@link Point}s to rotate.
 	 * @param angle
+	 *            The rotation {@link Angle}.
 	 * @param cx
+	 *            The x-coordinate of the rotation's pivot point.
 	 * @param cy
+	 *            The y-coordinate of the rotation's pivot point.
 	 */
 	public static void rotateCW(Point[] points, Angle angle, double cx,
 			double cy) {
@@ -306,10 +314,15 @@ public class Point implements Cloneable, Serializable {
 	 * factors around the given center {@link Point} (cx, cy).
 	 *
 	 * @param points
+	 *            The array of {@link Point}s to scale.
 	 * @param fx
+	 *            The horizontal scale factor.
 	 * @param fy
+	 *            Ther vertical scale factor.
 	 * @param cx
+	 *            The x-coordinate of the scale's pivot point.
 	 * @param cy
+	 *            The y-coordinate of the scale's pivot point.
 	 */
 	public static void scale(Point[] points, double fx, double fy, double cx,
 			double cy) {
@@ -337,6 +350,8 @@ public class Point implements Cloneable, Serializable {
 			points[i].y += dy;
 		}
 	}
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The x value.

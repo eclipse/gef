@@ -1,24 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
 /**
  * Represents the geometric shape of a quadratic Bézier curve.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class QuadraticCurve extends BezierCurve {
 
@@ -27,10 +27,10 @@ public class QuadraticCurve extends BezierCurve {
 	/**
 	 * Constructs a new {@link QuadraticCurve} from the given sequence of x- and
 	 * y-coordinates of the start-, the control-, and the end-point.
-	 * 
+	 *
 	 * @param coordinates
 	 *            a sequence containing the x- and y-coordinates
-	 * 
+	 *
 	 * @see QuadraticCurve#QuadraticCurve(double, double, double, double,
 	 *      double, double)
 	 */
@@ -46,7 +46,7 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Constructs a new QuadraticCurve object from the given point coordinates.
-	 * 
+	 *
 	 * @param x1
 	 *            the start point's x-coordinate
 	 * @param y1
@@ -68,10 +68,10 @@ public class QuadraticCurve extends BezierCurve {
 	/**
 	 * Constructs a new {@link QuadraticCurve} from the given sequence of
 	 * {@link Point}s formed by start-, control-, and end-point.
-	 * 
+	 *
 	 * @param points
 	 *            the control {@link Point}s
-	 * 
+	 *
 	 * @see QuadraticCurve#QuadraticCurve(Point, Point, Point)
 	 */
 	public QuadraticCurve(Point... points) {
@@ -85,7 +85,7 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Constructs a new QuadraticCurve object from the given points.
-	 * 
+	 *
 	 * @param p1
 	 *            the start point
 	 * @param pCtrl
@@ -109,13 +109,13 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Erroneous getBounds() implementation... use the generic one instead.
-	 * 
+	 *
 	 * TODO: find out why the mathematical solution is erroneous in some cases.
-	 * 
+	 *
 	 * Returns the bounds of this QuadraticCurve. The bounds are calculated by
 	 * examining the extreme points of the x(t) and y(t) function
 	 * representations of this QuadraticCurve.
-	 * 
+	 *
 	 * @return the bounds {@link Rectangle}
 	 */
 
@@ -126,7 +126,7 @@ public class QuadraticCurve extends BezierCurve {
 	/**
 	 * Returns a new {@link QuadraticCurve}, which has the same start, end, and
 	 * control point coordinates as this one.
-	 * 
+	 *
 	 * @return a new {@link QuadraticCurve} with the same start, end, and
 	 *         control point coordinates
 	 */
@@ -137,7 +137,7 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Get the control point.
-	 * 
+	 *
 	 * @return a Point object representing the control point
 	 */
 	public Point getCtrl() {
@@ -146,7 +146,7 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Get the control point's x-coordinate.
-	 * 
+	 *
 	 * @return the control point's x-coordinate
 	 */
 	public double getCtrlX() {
@@ -155,7 +155,7 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Get the control point's y-coordinate.
-	 * 
+	 *
 	 * @return the control point's y-coordinate
 	 */
 	public double getCtrlY() {
@@ -165,7 +165,7 @@ public class QuadraticCurve extends BezierCurve {
 	/**
 	 * Degree elevation: Returns a {@link CubicCurve} representation of this
 	 * {@link QuadraticCurve}.
-	 * 
+	 *
 	 * @return A {@link CubicCurve} that represents this {@link QuadraticCurve}.
 	 */
 	@Override
@@ -191,8 +191,9 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Sets the curve's control point.
-	 * 
+	 *
 	 * @param ctrl
+	 *            The new curve's control point.
 	 * @return <code>this</code> for convenience
 	 */
 	public QuadraticCurve setCtrl(Point ctrl) {
@@ -203,8 +204,9 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Sets the x-coordinate of the curve's control point.
-	 * 
+	 *
 	 * @param ctrlX
+	 *            The new x-coordinate of the curve's control point.
 	 * @return <code>this</code> for convenience
 	 */
 	public QuadraticCurve setCtrlX(double ctrlX) {
@@ -214,8 +216,9 @@ public class QuadraticCurve extends BezierCurve {
 
 	/**
 	 * Sets the y-coordinate of the curve's control point.
-	 * 
+	 *
 	 * @param ctrlY
+	 *            The y-coordinate of the curve's control point.
 	 * @return <code>this</code> for convenience
 	 */
 	public QuadraticCurve setCtrlY(double ctrlY) {
@@ -227,7 +230,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * Splits this QuadraticCurve using the de Casteljau algorithm at parameter
 	 * t into two separate QuadraticCurve objects. The returned
 	 * {@link QuadraticCurve}s are the curves for [0, t] and [t, 1].
-	 * 
+	 *
 	 * @param t
 	 *            in range [0,1]
 	 * @return two QuadraticCurve objects constituting the original curve: 1.
@@ -243,7 +246,7 @@ public class QuadraticCurve extends BezierCurve {
 	/**
 	 * Transform the QuadraticCurve object to a {@link Path} object with the
 	 * same shape.
-	 * 
+	 *
 	 * @return a {@link Path} object representing the curve
 	 */
 	@Override

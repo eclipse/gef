@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -25,9 +25,9 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 /**
  * The {@link ShapeUtils} class provides functionality that can be used for all
  * shapes, independent on their construction kind.
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 class ShapeUtils {
 
@@ -37,12 +37,12 @@ class ShapeUtils {
 	 * {@link Arc} given by the location, the width, and the height of the
 	 * implied ellipse and the start and end {@link Angle}s of the arc.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The given start and end {@link Angle}s may not span an {@link Angle} of
 	 * more than 90 degrees.
 	 * </p>
-	 * 
+	 *
 	 * @param x
 	 *            left coordinate value of the aforementioned ellipse
 	 * @param y
@@ -98,9 +98,12 @@ class ShapeUtils {
 	 * Returns <code>true</code> if the second {@link IGeometry} is fully
 	 * contained by the first {@link IGeometry}. Otherwise, <code>false</code>
 	 * is returned.
-	 * 
+	 *
 	 * @param geom1
+	 *            The {@link IGeometry} which is tested to contain the given
+	 *            other {@link IGeometry}.
 	 * @param geom2
+	 *            The {@link IGeometry} which is tested for containment.
 	 * @return <code>true</code> if the first {@link IGeometry} contains the
 	 *         second {@link IGeometry}, otherwise <code>false</code>
 	 */
@@ -115,14 +118,19 @@ class ShapeUtils {
 	}
 
 	/**
-	 * TODO: generalize the contains() method for IShape and IMultiShape.
-	 * 
+	 * Returns <code>true</code> if the given {@link BezierCurve} is fully
+	 * contained by the given {@link IMultiShape}.
+	 *
 	 * @param multiShape
+	 *            The {@link IMultiShape} which is tested to contain the given
+	 *            {@link BezierCurve}.
 	 * @param c
+	 *            The {@link BezierCurve} which is tested for containment.
 	 * @return <code>true</code> if the {@link BezierCurve} is contained by the
 	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
 	public static boolean contains(IMultiShape multiShape, BezierCurve c) {
+		// TODO: generalize the contains() method for IShape and IMultiShape.
 		if (!(multiShape.contains(c.getP1()) && multiShape.contains(c.getP2()))) {
 			return false;
 		}
@@ -159,6 +167,7 @@ class ShapeUtils {
 
 		Double[] poiParams = intersectionParams.toArray(new Double[] {});
 		Arrays.sort(poiParams, new Comparator<Double>() {
+			@Override
 			public int compare(Double t, Double u) {
 				double d = t - u;
 				return d < 0 ? -1 : d > 0 ? 1 : 0;
@@ -182,9 +191,12 @@ class ShapeUtils {
 	/**
 	 * Checks if the given {@link ICurve} is contained by the given
 	 * {@link IMultiShape}.
-	 * 
+	 *
 	 * @param ps
+	 *            The {@link IMultiShape} which is tested to contain the given
+	 *            {@link ICurve}.
 	 * @param c
+	 *            The {@link ICurve} which is tested for containment.
 	 * @return <code>true</code> if the {@link ICurve} is contained by the
 	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
@@ -199,9 +211,12 @@ class ShapeUtils {
 
 	/**
 	 * Checks if the {@link IGeometry} is contained by the {@link IMultiShape}.
-	 * 
+	 *
 	 * @param ps
+	 *            The {@link IMultiShape} which is tested to contain the given
+	 *            {@link IGeometry}.
 	 * @param g
+	 *            The {@link IGeometry} which is tested for containment.
 	 * @return <code>true</code> if the {@link IGeometry} is contained by the
 	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
@@ -220,9 +235,12 @@ class ShapeUtils {
 	/**
 	 * Checks if the second {@link IMultiShape} is contained by the first
 	 * {@link IMultiShape}.
-	 * 
+	 *
 	 * @param ps
+	 *            The {@link IMultiShape} which is tested to contain the given
+	 *            other {@link IMultiShape}.
 	 * @param ps2
+	 *            The {@link IMultiShape} which is tested for containment.
 	 * @return <code>true</code> if the second {@link IMultiShape} is contained
 	 *         by the first {@link IMultiShape}, otherwise <code>false</code>
 	 */
@@ -237,9 +255,12 @@ class ShapeUtils {
 
 	/**
 	 * Checks if the {@link IShape} is contained by the {@link IMultiShape}.
-	 * 
+	 *
 	 * @param ps
+	 *            The {@link IMultiShape} which is tested to contain the given
+	 *            {@link IShape}.
 	 * @param s
+	 *            The {@link IShape} which is tested for containment.
 	 * @return <code>true</code> if the {@link IShape} is contained by the
 	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
@@ -259,19 +280,19 @@ class ShapeUtils {
 	 * {@link BezierCurve} is fully contained by the given {@link IShape}.
 	 * Otherwise, returns <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * At first, the algorithm checks if start and end {@link Point} of the
 	 * {@link BezierCurve} are contained by the {@link IShape}. If this is not
 	 * the case, <code>false</code> is returned.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Subsequently, the {@link Point}s of intersection of the
 	 * {@link BezierCurve} and the {@link IShape} are computed. If there are
 	 * less then two intersection {@link Point}s, <code>true</code> is returned.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Alternatively, the {@link BezierCurve}'s parameter values for the
 	 * individual {@link Point}s of intersection are sorted. For every two
@@ -280,14 +301,14 @@ class ShapeUtils {
 	 * {@link Point}s is not contained by the {@link IShape}, <code>false</code>
 	 * is returned. Otherwise, <code>true</code> is returned.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Self-intersection-problem: If the {@link BezierCurve} has a
 	 * self-intersection p and p lies on an outline segment of the
 	 * {@link IShape} ( {@link IShape#getOutlineSegments()}), <code>true</code>
 	 * is returned, although <code>false</code> would be the right answer.
 	 * </p>
-	 * 
+	 *
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the given
 	 *            {@link BezierCurve}
@@ -329,6 +350,7 @@ class ShapeUtils {
 
 		Double[] poiParams = intersectionParams.toArray(new Double[] {});
 		Arrays.sort(poiParams, new Comparator<Double>() {
+			@Override
 			public int compare(Double t, Double u) {
 				double d = t - u;
 				return d < 0 ? -1 : d > 0 ? 1 : 0;
@@ -353,7 +375,7 @@ class ShapeUtils {
 	 * {@link ICurve} is contained by a {@link IShape} if the {@link ICurve}'s
 	 * Bezier approximation ({@link ICurve#toBezier()}) is contained by the
 	 * {@link IShape} ({@link ShapeUtils#contains(IShape, BezierCurve)}).
-	 * 
+	 *
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the
 	 *            {@link ICurve}
@@ -375,9 +397,9 @@ class ShapeUtils {
 	/**
 	 * Returns <code>true</code> if the given {@link IShape} fully contains the
 	 * given {@link IGeometry}. Otherwise, <code>false</code> is returned.
-	 * 
+	 *
 	 * An <code>instanceof</code> test delegates to the appropriate method.
-	 * 
+	 *
 	 * @see ShapeUtils#contains(IShape, ICurve)
 	 * @see ShapeUtils#contains(IShape, IShape)
 	 * @see ShapeUtils#contains(IShape, IMultiShape)
@@ -405,12 +427,12 @@ class ShapeUtils {
 	/**
 	 * Returns <code>true</code> if the given {@link IShape} fully contains the
 	 * given {@link IMultiShape}. Otherwise, <code>false</code> is returned.
-	 * 
+	 *
 	 * A {@link IMultiShape} is contained by a {@link IShape} if all of its sub-
 	 * {@link IShape}s are contained by the {@link IShape} (see
 	 * {@link IMultiShape#getShapes()} and
 	 * {@link ShapeUtils#contains(IShape, IShape)}).
-	 * 
+	 *
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the
 	 *            {@link IMultiShape}
@@ -432,11 +454,11 @@ class ShapeUtils {
 	/**
 	 * Returns <code>true</code> if the second {@link IShape} is fully contained
 	 * by the first {@link IShape}. Otherwise, <code>false</code> is returned.
-	 * 
+	 *
 	 * A {@link IShape} is contained by another {@link IShape} if all of its
 	 * outline segments ({@link IShape#getOutlineSegments()}) are contained by
 	 * the other {@link IShape} ({@link ShapeUtils#contains(IShape, ICurve)}).
-	 * 
+	 *
 	 * @param shape1
 	 *            the {@link IShape} that is tested to contain the other
 	 *            {@link IShape}
@@ -459,7 +481,7 @@ class ShapeUtils {
 	 * Returns a {@link PolyBezier} that is constructed from the outline
 	 * segments ( {@link IShape#getOutlineSegments()}) of the given
 	 * {@link IShape}.
-	 * 
+	 *
 	 * @param shape
 	 *            the {@link IShape} to compute the outline for
 	 * @return a {@link PolyBezier} that is constructed from the outline

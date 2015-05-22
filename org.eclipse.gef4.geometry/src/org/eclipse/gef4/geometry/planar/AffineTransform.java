@@ -121,6 +121,7 @@ public class AffineTransform {
 	 * @return a new {@link AffineTransform} that represents the inverse
 	 *         transformation of this {@link AffineTransform}
 	 * @throws NoninvertibleTransformException
+	 *             when this {@link AffineTransform} is not invertible.
 	 */
 	public java.awt.geom.AffineTransform createInverse()
 			throws NoninvertibleTransformException {
@@ -369,6 +370,7 @@ public class AffineTransform {
 	 * @param numPts
 	 *            the number of {@link Point}s to inverse transform
 	 * @throws NoninvertibleTransformException
+	 *             when this {@link AffineTransform} is not invertible.
 	 */
 	public void inverseTransform(double[] srcPts, int srcOff, double[] dstPts,
 			int dstOff, int numPts) throws NoninvertibleTransformException {
@@ -383,6 +385,7 @@ public class AffineTransform {
 	 *            the {@link Point} to inverse transform
 	 * @return a new, inverse transformed {@link Point}
 	 * @throws NoninvertibleTransformException
+	 *             when this {@link AffineTransform} is not invertible.
 	 */
 	public Point inverseTransform(Point pt)
 			throws NoninvertibleTransformException {
@@ -395,6 +398,7 @@ public class AffineTransform {
 	 *
 	 * @return <code>this</code> for convenience
 	 * @throws NoninvertibleTransformException
+	 *             when this {@link AffineTransform} is not invertible.
 	 */
 	public AffineTransform invert() throws NoninvertibleTransformException {
 		delegate.invert();

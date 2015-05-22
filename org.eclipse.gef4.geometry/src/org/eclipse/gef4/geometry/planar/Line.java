@@ -113,7 +113,7 @@ public class Line extends BezierCurve {
 		}
 
 		double distance = Math.abs(new Straight(getP1(), getP2())
-		.getSignedDistanceCCW(new Vector(p)));
+				.getSignedDistanceCCW(new Vector(p)));
 		return PrecisionUtils.equal(distance, 0) && getBounds().contains(p);
 	}
 
@@ -282,7 +282,10 @@ public class Line extends BezierCurve {
 	 * method.
 	 *
 	 * @param other
+	 *            The {@link Line} which is searched for points of intersections
+	 *            with this {@link BezierCurve}.
 	 * @param intersections
+	 *            The {@link Set} where intersections are inserted.
 	 * @return see
 	 *         {@link BezierCurve#getIntersectionIntervalPairs(BezierCurve, Set)}
 	 */
@@ -364,6 +367,7 @@ public class Line extends BezierCurve {
 	 * {@link BezierCurve#intersects(ICurve)} method.
 	 *
 	 * @param l
+	 *            The {@link Line} to test for intersections.
 	 * @return see {@link BezierCurve#intersects(ICurve)}
 	 */
 	public boolean intersects(Line l) {
@@ -467,6 +471,8 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 *
 	 * @param x1
+	 *            The new x-coordinate for the start {@link Point} of this
+	 *            {@link Line}.
 	 * @return <code>this</code> for convenience
 	 */
 	public Line setX1(double x1) {
@@ -479,6 +485,8 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 *
 	 * @param x2
+	 *            The new x-coordiante for the end {@link Point} of this
+	 *            {@link Line}.
 	 * @return <code>this</code> for convenience
 	 */
 	public Line setX2(double x2) {
@@ -491,6 +499,8 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 *
 	 * @param y1
+	 *            The new y-coordinate for the start {@link Point} of this
+	 *            {@link Line}.
 	 * @return <code>this</code> for convenience
 	 */
 	public Line setY1(double y1) {
@@ -503,6 +513,8 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 *
 	 * @param y2
+	 *            The new y-coordinate for the end {@link Point} of this
+	 *            {@link Line}.
 	 * @return <code>this</code> for convenience
 	 */
 	public Line setY2(double y2) {

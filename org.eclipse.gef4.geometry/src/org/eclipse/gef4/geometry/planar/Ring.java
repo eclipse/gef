@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -24,15 +24,13 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
 
 /**
  * A combination of Polygons....
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		IScalable<Ring>, IRotatable<Ring> {
-
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Triangulates the given triangle ({@link Polygon}) at the given
@@ -40,11 +38,11 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * {@link #triangulate(Polygon, Point, Point)} method. The real and
 	 * imaginary {@link Point}s of intersection of the {@link Line} and the
 	 * {@link Polygon} are used as the split {@link Point}s.
-	 * 
+	 *
 	 * The triangulation is only done, if the {@link Line} intersects the
 	 * {@link Polygon}, i.e. at least one {@link Point} of the {@link Line} lies
 	 * inside the {@link Polygon} but not on its outline.
-	 * 
+	 *
 	 * @param p
 	 *            the triangle ({@link Polygon}) to triangulate
 	 * @param l
@@ -115,25 +113,25 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * Splits a triangle at the line through points p1 and p2, which are
 	 * required to lie on the outline of the triangle.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * If the points p1 and p2 lie on the same edge on the triangle, a copy of
 	 * the given {@link Polygon} is returned.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * If one of the points lies on an edge, and the other point lies on a
 	 * vertex of the triangle, two {@link Polygon}s are returned. They represent
 	 * the areas left and right to the line through p1 and p2.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * If both points lie on different edges, three {@link Polygon}s are
 	 * returned. One of them represents the triangle which lies on one side of
 	 * the line through p1 and p2. The other two triangles are the triangulation
 	 * of the tetragon on the other side of the line through p1 and p2.
 	 * </p>
-	 * 
+	 *
 	 * @param p
 	 * @param p1
 	 * @param p2
@@ -221,6 +219,8 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		}
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	private ArrayList<Polygon> triangles;
 
 	/**
@@ -232,8 +232,10 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 
 	/**
 	 * Constructs a new {@link Ring} from the given {@link Polygon}s.
-	 * 
+	 *
 	 * @param polygons
+	 *            The array of {@link Polygon}s from which this {@link Ring} is
+	 *            constructed.
 	 */
 	public Ring(Polygon... polygons) {
 		this();
@@ -243,11 +245,12 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	}
 
 	/**
-	 * Constructs a new {@link Ring} of the given other {@link Ring}. The
+	 * Constructs a new {@link Ring} from the given other {@link Ring}. The
 	 * internal {@link IShape}s of the other {@link Ring} are copied to prevent
 	 * actions at a distance.
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Ring} from which this {@link Ring} is constructed.
 	 */
 	public Ring(Ring other) {
 		this();
@@ -258,8 +261,9 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 
 	/**
 	 * Adds the given {@link Polygon} to this {@link Ring}.
-	 * 
+	 *
 	 * @param p
+	 *            The {@link Polygon} which is added to this {@link Ring}.
 	 * @return <code>this</code> for convenience
 	 */
 	public Ring add(Polygon p) {
@@ -505,7 +509,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * Directly rotates this {@link Ring} counter-clock-wise around its center
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -520,7 +524,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * point (specified by cx and cy) by the given {@link Angle}. Direct
 	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
 	 * in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param cx
@@ -540,7 +544,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * Directly rotates this {@link Ring} counter-clock-wise around the given
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param center
@@ -555,7 +559,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * Directly rotates this {@link Ring} clock-wise around its center
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -569,7 +573,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * Directly rotates this {@link Ring} clock-wise around the given point
 	 * (specified by cx and cy) by the given {@link Angle}. Direct adaptation
 	 * means, that <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param cx
@@ -589,7 +593,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	 * Directly rotates this {@link Ring} clock-wise around the given
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param center

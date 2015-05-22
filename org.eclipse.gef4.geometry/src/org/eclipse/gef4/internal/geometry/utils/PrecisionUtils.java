@@ -42,7 +42,9 @@ public class PrecisionUtils {
 	/**
 	 * @see PrecisionUtils#equal(double, double, int)
 	 * @param d1
+	 *            The first operand.
 	 * @param d2
+	 *            The second operand.
 	 * @return result of the comparison
 	 */
 	public static final boolean equal(double d1, double d2) {
@@ -75,7 +77,9 @@ public class PrecisionUtils {
 	/**
 	 * @see PrecisionUtils#greater(double, double, int)
 	 * @param d1
+	 *            The first operand.
 	 * @param d2
+	 *            The second operand.
 	 * @return result of the comparison
 	 */
 	public static final boolean greater(double d1, double d2) {
@@ -108,7 +112,9 @@ public class PrecisionUtils {
 	/**
 	 * @see PrecisionUtils#greaterEqual(double, double, int)
 	 * @param d1
+	 *            The first operand.
 	 * @param d2
+	 *            The second operand.
 	 * @return result of the comparison
 	 */
 	public static final boolean greaterEqual(double d1, double d2) {
@@ -142,7 +148,9 @@ public class PrecisionUtils {
 	/**
 	 * @see PrecisionUtils#smaller(double, double, int)
 	 * @param d1
+	 *            The first operand.
 	 * @param d2
+	 *            The second operand.
 	 * @return result of the comparison
 	 */
 	public static final boolean smaller(double d1, double d2) {
@@ -175,7 +183,9 @@ public class PrecisionUtils {
 	/**
 	 * @see PrecisionUtils#smallerEqual(double, double, int)
 	 * @param d1
+	 *            The first operand.
 	 * @param d2
+	 *            The second operand.
 	 * @return result of the comparison
 	 */
 	public static final boolean smallerEqual(double d1, double d2) {

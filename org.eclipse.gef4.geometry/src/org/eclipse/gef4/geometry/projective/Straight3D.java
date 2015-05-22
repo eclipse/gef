@@ -39,7 +39,11 @@ public final class Straight3D {
 	 * {@link Vector3D}s.
 	 *
 	 * @param start
+	 *            The first {@link Vector3D} which lies on to the
+	 *            {@link Straight3D} which is constructed.
 	 * @param end
+	 *            The second {@link Vector3D} which lies on the
+	 *            {@link Straight3D} which is constructed.
 	 * @return a new {@link Straight3D} through start and end {@link Vector3D}s
 	 */
 	public static Straight3D through(Vector3D start, Vector3D end) {
@@ -69,6 +73,7 @@ public final class Straight3D {
 	 * {@link Vector3D}s.
 	 *
 	 * @param other
+	 *            The {@link Straight3D} for which intersections are computed.
 	 * @return the intersection between this and the given other
 	 *         {@link Straight3D}
 	 */
@@ -92,6 +97,8 @@ public final class Straight3D {
 	 * {@link Vector3D}.
 	 *
 	 * @param vp
+	 *            The {@link Vector3D} which lies on the orthogonal
+	 *            {@link Straight3D}.
 	 * @return the orthogonal {@link Straight3D} through the given
 	 *         {@link Vector3D}
 	 */
@@ -107,6 +114,7 @@ public final class Straight3D {
 	 * (x,y) vector: <code>|(x,y)|</code>.
 	 *
 	 * @param vp
+	 *            The {@link Vector3D} to which the distance is computed.
 	 * @return the clock-wise signed distance of the {@link Vector3D} to this
 	 *         {@link Straight3D}
 	 */

@@ -35,7 +35,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  *
  */
 public class Ellipse extends
-AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
+		AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -182,6 +182,7 @@ AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
 	 * {@link Ellipse}.
 	 *
 	 * @param e2
+	 *            The {@link Ellipse} for which intersections are computed.
 	 * @return {@link Point}s of intersection
 	 */
 	public Point[] getIntersections(Ellipse e2) {
@@ -203,6 +204,7 @@ AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
 	 * {@link ICurve}.
 	 *
 	 * @param c
+	 *            The {@link ICurve} for which intersections are computed.
 	 * @return {@link Point}s of intersection
 	 */
 	public Point[] getIntersections(ICurve c) {
@@ -349,12 +351,12 @@ AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
 		return new CubicCurve[] {
 				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(0), Angle.fromDeg(90)),
-						ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-								height, Angle.fromDeg(90), Angle.fromDeg(180)),
-								ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-										height, Angle.fromDeg(180), Angle.fromDeg(270)),
-										ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-												height, Angle.fromDeg(270), Angle.fromDeg(360)), };
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(90), Angle.fromDeg(180)),
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(180), Angle.fromDeg(270)),
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(270), Angle.fromDeg(360)), };
 	}
 
 	@Override

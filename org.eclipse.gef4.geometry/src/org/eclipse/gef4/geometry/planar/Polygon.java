@@ -35,7 +35,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  *
  */
 public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
-IShape {
+		IShape {
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -356,10 +356,10 @@ IShape {
 				 * contained by the test line. the containment test is done to
 				 * handle special cases where the intersection has to be counted
 				 * appropriately.
-				 *
+				 * 
 				 * 1) if the vertex is above (greater y-component) the other
 				 * point of the line, it is counted once.
-				 *
+				 * 
 				 * 2) if the vertex is below (lower y-component) or on the same
 				 * height as the other point of the line, it is omitted.
 				 */
@@ -384,7 +384,7 @@ IShape {
 				/*
 				 * check the current link for an intersection with the test
 				 * line. if there is an intersection, change state.
-				 *
+				 * 
 				 * Special case error prevention: If the point in question (p)
 				 * is very near to an edge of and inside the polygon, it can
 				 * happen, that the edge.contains(p) is false, but an
@@ -426,6 +426,7 @@ IShape {
 	 * {@link Polygon}.
 	 *
 	 * @param p
+	 *            The {@link Polyline} to test for containment.
 	 * @return true if it is contained, false otherwise
 	 */
 	public boolean contains(Polyline p) {

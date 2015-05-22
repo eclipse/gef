@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2014 Research Group Software Construction,
  *                          RWTH Aachen University and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (Research Group Software Contruction, RWTH Aachen University) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.euclidean;
 
@@ -24,14 +24,12 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * Represents a straight line within 2-dimensional Euclidean space.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Straight implements Cloneable, Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * <p>
@@ -49,7 +47,7 @@ public class Straight implements Cloneable, Serializable {
 	 * returns the distance of the first {@link Point} to the last {@link Point}
 	 * .
 	 * </p>
-	 * 
+	 *
 	 * @param p
 	 *            the start {@link Point} of the {@link Straight}
 	 * @param q
@@ -67,6 +65,8 @@ public class Straight implements Cloneable, Serializable {
 		return -line.getSignedDistanceCW(new Vector3D(r));
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	/** The position {@link Vector} of this {@link Straight}. */
 	public Vector position;
 
@@ -76,7 +76,7 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * Constructs a new {@link Straight} through the start and end {@link Point}
 	 * of the given {@link Line}.
-	 * 
+	 *
 	 * @param line
 	 *            the {@link Line} which the new {@link Straight} shall pass
 	 *            through
@@ -88,7 +88,7 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * Constructs a new {@link Straight} that passes through the two given
 	 * {@link Point}s.
-	 * 
+	 *
 	 * @param point1
 	 *            a first waypoint of the {@link Straight} to be constructed
 	 * @param point2
@@ -101,7 +101,7 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * Constructs a new {@link Straight} with the given position {@link Vector}
 	 * and direction {@link Vector}.
-	 * 
+	 *
 	 * @param position
 	 *            a support {@link Vector} of the new {@link Straight}
 	 * @param direction
@@ -120,7 +120,7 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * Checks if the {@link Point} indicated by the provided {@link Vector} is a
 	 * {@link Point} on this {@link Straight}.
-	 * 
+	 *
 	 * @param vector
 	 *            the {@link Vector} that is checked to lie on this
 	 *            {@link Straight}
@@ -138,7 +138,7 @@ public class Straight implements Cloneable, Serializable {
 	 * {@link Point} on the {@link Straight} segment between the given start and
 	 * end {@link Point}s indicated by their corresponding position
 	 * {@link Vector}s.
-	 * 
+	 *
 	 * @param segmentStart
 	 *            A {@link Vector} indicating the start {@link Point} of the
 	 *            segment. It has to lie on this {@link Straight}.
@@ -189,7 +189,7 @@ public class Straight implements Cloneable, Serializable {
 	 * . Two {@link Straight}s s1 and s2 are equal, if the position
 	 * {@link Vector} of s2 is a {@link Point} on s1 and the direction
 	 * {@link Vector}s of s1 and s2 are parallel.
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -206,7 +206,7 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * Returns the (smallest) {@link Angle} between this {@link Straight} and
 	 * the provided one.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link Straight} to compute the {@link Angle} with
 	 * @return the {@link Angle} spanned between the two {@link Straight}s
@@ -226,8 +226,9 @@ public class Straight implements Cloneable, Serializable {
 	 * {@link Straight#getAngleCW(Straight)} method except that for 180deg/0deg,
 	 * both methods return an {@link Angle} of 0deg.
 	 * </p>
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Straight} to which the {@link Angle} is computed.
 	 * @return the counter-clockwise (CCW) or positive {@link Angle} spanned
 	 *         between the two {@link Straight}s
 	 */
@@ -250,8 +251,9 @@ public class Straight implements Cloneable, Serializable {
 	 * {@link Straight#getAngleCCW(Straight)} method except that for
 	 * 180deg/0deg, both methods return an {@link Angle} of 0deg.
 	 * </p>
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Straight} to which the {@link Angle} is computed.
 	 * @return the clockwise (CW) or negative {@link Angle} spanned between the
 	 *         two {@link Straight}s
 	 */
@@ -267,7 +269,7 @@ public class Straight implements Cloneable, Serializable {
 
 	/**
 	 * Returns a copy of this {@link Straight} object.
-	 * 
+	 *
 	 * @return a copy of this {@link Straight} object.
 	 */
 	public Straight getCopy() {
@@ -279,7 +281,7 @@ public class Straight implements Cloneable, Serializable {
 	 * {@link Straight}, which is the distance between the provided
 	 * {@link Vector} and its projection onto this {@link Straight} (see
 	 * {@link Straight#getProjection(Vector)}).
-	 * 
+	 *
 	 * @param vector
 	 *            the {@link Vector} whose distance to this {@link Straight} is
 	 *            to be calculated
@@ -294,7 +296,7 @@ public class Straight implements Cloneable, Serializable {
 	 * Computes and returns the position {@link Vector} of the intersection of
 	 * this {@link Straight} and the provided one. If the two {@link Straight}s
 	 * are parallel or identical, <code>null</code> is returned.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link Straight} to compute the position {@link Vector} of
 	 *            the intersection with
@@ -324,7 +326,7 @@ public class Straight implements Cloneable, Serializable {
 	 * This method is the reverse of the
 	 * {@link Straight#getPositionVectorAt(double)} method.
 	 * </p>
-	 * 
+	 *
 	 * @param vp
 	 *            a {@link Vector} on this {@link Straight} for which the
 	 *            parameter value is to be calculated
@@ -362,7 +364,7 @@ public class Straight implements Cloneable, Serializable {
 	 * This method is the reverse of the {@link Straight#getParameterAt(Vector)}
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @param parameter
 	 *            the parameter value for which the corresponding {@link Vector}
 	 *            on this {@link Straight} is to be calculated
@@ -379,7 +381,7 @@ public class Straight implements Cloneable, Serializable {
 	 * {@link Straight}, which is the {@link Point} on this {@link Straight}
 	 * with the minimal distance to the {@link Point}, denoted by the provided
 	 * {@link Vector}.
-	 * 
+	 *
 	 * @param vector
 	 *            the {@link Vector} whose projection should be determined
 	 * @return a new {@link Vector} representing the projection of the provided
@@ -405,7 +407,7 @@ public class Straight implements Cloneable, Serializable {
 	 * negative. If it is on the left side of this {@link Straight}'s direction
 	 * {@link Vector}, it is positive.
 	 * </p>
-	 * 
+	 *
 	 * @param vector
 	 *            the {@link Vector} for which the CCW signed distance to this
 	 *            {@link Straight} is to be calculated
@@ -430,7 +432,7 @@ public class Straight implements Cloneable, Serializable {
 	 * positive. If it is on the left side of this {@link Straight}'s direction
 	 * {@link Vector}, it is negative.
 	 * </p>
-	 * 
+	 *
 	 * @param vector
 	 *            the {@link Vector} for which the CW signed distance to this
 	 *            {@link Straight} is to be calculated
@@ -454,7 +456,7 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * Checks whether this {@link Straight} and the provided one have a single
 	 * {@link Point} of intersection.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link Straight} to test for an intersection {@link Point}
 	 *            with this {@link Straight}
@@ -470,7 +472,7 @@ public class Straight implements Cloneable, Serializable {
 	 * Checks whether this {@link Straight} and the provided one have an
 	 * intersection {@link Point} which is inside the specified segment between
 	 * the segmentStart and segmentEnd {@link Vector}s.
-	 * 
+	 *
 	 * @param segmentStart
 	 *            A {@link Vector} indicating the start {@link Point} of the
 	 *            segment. It has to be a {@link Point} on the {@link Straight}.
@@ -512,7 +514,7 @@ public class Straight implements Cloneable, Serializable {
 	 * Checks if this {@link Straight} and the provided one are parallel to each
 	 * other. Identical {@link Straight}s are regarded to be parallel to each
 	 * other.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link Straight} that is checked to be parallel to this
 	 *            {@link Straight}

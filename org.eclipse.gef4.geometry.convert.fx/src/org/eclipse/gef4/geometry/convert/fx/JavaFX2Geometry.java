@@ -30,26 +30,63 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
 
+/**
+ * Utility class to support the conversion between JavaFX objects and
+ * corresponding classes of the GEF4 geometry API.
+ * 
+ * @author anyssen
+ *
+ */
 public class JavaFX2Geometry {
 
 	private JavaFX2Geometry() {
 		// this class should not be instantiated by clients
 	}
 
+	/**
+	 * Converts the given JavaFX {@link Transform} to an {@link AffineTransform}
+	 * .
+	 * 
+	 * @param t
+	 *            The JavaFX {@link Transform} to convert.
+	 * @return The new {@link AffineTransform}.
+	 */
 	public static final AffineTransform toAffineTransform(Transform t) {
 		return new AffineTransform(t.getMxx(), t.getMyx(), t.getMxy(),
 				t.getMyy(), t.getTx(), t.getTy());
 	}
 
+	/**
+	 * Converts the given JavaFX {@link Bounds} to a {@link Rectangle}.
+	 * 
+	 * @param b
+	 *            The JavaFX {@link Bounds} to convert.
+	 * @return The new {@link Rectangle}.
+	 */
 	public static final Rectangle toRectangle(Bounds b) {
 		return new Rectangle(b.getMinX(), b.getMinY(), b.getWidth(),
 				b.getHeight());
 	}
 
+	/**
+	 * Converts the given JavaFX {@link Point2D} to a {@link Point}.
+	 * 
+	 * @param point
+	 *            The {@link Point2D} to convert.
+	 * @return The new {@link Point}.
+	 */
 	public static final Point toPoint(Point2D point) {
 		return new Point(point.getX(), point.getY());
 	}
 
+	/**
+	 * Converts the given JavaFX {@link Path} to a
+	 * {@link org.eclipse.gef4.geometry.planar.Path}.
+	 * 
+	 * @param path
+	 *            The JavaFX {@link Path} to convert.
+	 * @return The new {@link org.eclipse.gef4.geometry.planar.Path}.
+	 */
 	public static final org.eclipse.gef4.geometry.planar.Path toPath(Path path) {
 		ObservableList<PathElement> elements = path.getElements();
 		org.eclipse.gef4.geometry.planar.Path.Segment[] segments = new org.eclipse.gef4.geometry.planar.Path.Segment[elements

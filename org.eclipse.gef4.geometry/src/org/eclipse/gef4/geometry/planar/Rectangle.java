@@ -38,7 +38,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  *
  */
 public final class Rectangle extends
-AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
+		AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -147,7 +147,7 @@ AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
 				&& PrecisionUtils.smallerEqual(this.y, y)
 				&& PrecisionUtils.greaterEqual(this.x + this.width, x + width)
 				&& PrecisionUtils
-				.greaterEqual(this.y + this.height, y + height);
+						.greaterEqual(this.y + this.height, y + height);
 	}
 
 	@Override
@@ -356,6 +356,7 @@ AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
 	 * (see {@link AbstractRectangleBasedGeometry#getCenter()}).
 	 *
 	 * @param alpha
+	 *            The rotation {@link Angle}.
 	 * @return the resulting {@link Polygon}
 	 * @see IRotatable#getRotatedCCW(Angle, Point)
 	 */

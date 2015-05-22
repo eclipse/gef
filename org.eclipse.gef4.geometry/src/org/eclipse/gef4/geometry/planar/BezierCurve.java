@@ -133,8 +133,10 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * smallest parameter range.
 		 *
 		 * @param i
+		 *            The first operand.
 		 * @param j
-		 * @return the {@link Interval} with the smallest parameter range
+		 *            The second operand.
+		 * @return The {@link Interval} with the smallest parameter range.
 		 */
 		public static Interval min(Interval i, Interval j) {
 			return (i.b - i.a) > (j.b - j.a) ? j : i;
@@ -215,6 +217,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * {@link Interval}.
 		 *
 		 * @param i
+		 *            The other {@link Interval} to which <code>this</code> is
+		 *            expanded.
 		 */
 		public void expand(Interval i) {
 			if (i.a < a) {
@@ -354,6 +358,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * {@link IntervalPair}.
 		 *
 		 * @param ip
+		 *            The other {@link IntervalPair} to which <code>this</code>
+		 *            is expanded.
 		 */
 		public void expand(IntervalPair ip) {
 			if (p == ip.p) {
@@ -1755,11 +1761,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return results;
 	}
 
-	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
-	}
-
 	/**
 	 * Returns the {@link Point}s of intersection of this and the given other
 	 * {@link BezierCurve}.
@@ -1787,6 +1788,11 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return intersections.toArray(new Point[] {});
 	}
 
+	@Override
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
+	}
+
 	/**
 	 * <p>
 	 * Returns a {@link BezierCurve} that represents the overlap of this
@@ -1796,6 +1802,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * </p>
 	 *
 	 * @param other
+	 *            The {@link BezierCurve} to which an overlap is computed.
 	 * @return a {@link BezierCurve} representing the overlap of this and the
 	 *         given other {@link BezierCurve} if an overlap exists, otherwise
 	 *         <code>null</code>

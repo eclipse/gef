@@ -53,6 +53,8 @@ implements ICurve {
 	 * segments.
 	 *
 	 * @param segmentsArray
+	 *            The array of {@link Line}s from which this {@link Polyline} is
+	 *            constructed.
 	 */
 	public Polyline(Line[] segmentsArray) {
 		super(PointListUtils.toPointsArray(segmentsArray, false));
@@ -151,13 +153,13 @@ implements ICurve {
 	}
 
 	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
+	public Point[] getIntersections(ICurve c) {
+		return CurveUtils.getIntersections(this, c);
 	}
 
 	@Override
-	public Point[] getIntersections(ICurve c) {
-		return CurveUtils.getIntersections(this, c);
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
 	}
 
 	@Override

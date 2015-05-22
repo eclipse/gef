@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.projective;
 
@@ -18,13 +18,13 @@ import org.eclipse.gef4.geometry.planar.Point;
  * The Vector3D class implements a three dimensional vector (components x, y, z)
  * with its standard operations: addition and multiplication (scalar,
  * dot-product, cross-product).
- * 
+ *
  * It is used to represent planar lines and planar points which are represented
  * by three dimensional planes and three dimensional lines through the origin,
  * respectively.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public final class Vector3D {
 	/**
@@ -44,10 +44,13 @@ public final class Vector3D {
 
 	/**
 	 * Constructs a new {@link Vector3D} object with the given component values.
-	 * 
+	 *
 	 * @param px
+	 *            The x-coordinate of the new {@link Vector3D}.
 	 * @param py
+	 *            The y-coordinate of the new {@link Vector3D}.
 	 * @param pz
+	 *            The z-coordinate of the new {@link Vector3D}.
 	 */
 	public Vector3D(double px, double py, double pz) {
 		x = px;
@@ -58,8 +61,10 @@ public final class Vector3D {
 	/**
 	 * Constructs a new {@link Vector3D} from the given {@link Point}, setting z
 	 * to 1.
-	 * 
+	 *
 	 * @param p
+	 *            The {@link Point} which determines the new {@link Vector3D}'s
+	 *            x- and y-coordinate.
 	 */
 	public Vector3D(Point p) {
 		this(p.x, p.y, 1);
@@ -82,8 +87,9 @@ public final class Vector3D {
 	 * Returns a new {@link Vector3D} object with its components set to the sum
 	 * of the individual x, y and z components of this {@link Vector3D} and the
 	 * given other {@link Vector3D}.
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Vector3D} which is added to this {@link Vector3D}.
 	 * @return a new {@link Vector3D} object representing the sum of this
 	 *         {@link Vector3D} and the given other {@link Vector3D}
 	 */
@@ -94,7 +100,7 @@ public final class Vector3D {
 
 	/**
 	 * Returns a copy of this {@link Vector3D}.
-	 * 
+	 *
 	 * @return a copy of this {@link Vector3D}
 	 */
 	public Vector3D getCopy() {
@@ -104,8 +110,9 @@ public final class Vector3D {
 	/**
 	 * Returns a new {@link Vector3D} object that is the cross product of this
 	 * and the given other {@link Vector3D}.
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Vector3D} to which the cross product is computed.
 	 * @return a new {@link Vector3D} object that is the cross product of this
 	 *         and the given other {@link Vector3D}
 	 */
@@ -117,8 +124,9 @@ public final class Vector3D {
 
 	/**
 	 * Returns the dot-product of this and the given other {@link Vector3D}.
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Vector3D} to which the dot product is computed.
 	 * @return the dot-product of this and the given other {@link Vector3D}
 	 */
 	public double getDotProduct(Vector3D other) {
@@ -129,7 +137,7 @@ public final class Vector3D {
 	 * Returns a new {@link Vector3D} object with its components set to the
 	 * given ratio between this {@link Vector3D} and the given other
 	 * {@link Vector3D}.
-	 * 
+	 *
 	 * @param other
 	 *            The other {@link Vector3D}.
 	 * @param t
@@ -145,7 +153,7 @@ public final class Vector3D {
 	/**
 	 * Returns a new {@link Vector3D} object with its components set to the x, y
 	 * and z components of this {@link Vector3D} scaled by the given factor.
-	 * 
+	 *
 	 * @param f
 	 *            The scaling factor.
 	 * @return a new {@link Vector3D} object with its components set to the x, y
@@ -160,8 +168,10 @@ public final class Vector3D {
 	 * Returns a new {@link Vector3D} object with its components set to the
 	 * difference of the individual x, y and z components of this
 	 * {@link Vector3D} and the given other {@link Vector3D}.
-	 * 
+	 *
 	 * @param other
+	 *            The {@link Vector3D} which is subtracted from this
+	 *            {@link Vector3D}.
 	 * @return a new {@link Vector3D} object representing the difference of this
 	 *         {@link Vector3D} and the given other {@link Vector3D}
 	 */
@@ -180,7 +190,7 @@ public final class Vector3D {
 	/**
 	 * Returns a new {@link Point} object that is represented by this
 	 * {@link Vector3D}.
-	 * 
+	 *
 	 * @return a new {@link Point} object that is represented by this
 	 *         {@link Vector3D}
 	 */

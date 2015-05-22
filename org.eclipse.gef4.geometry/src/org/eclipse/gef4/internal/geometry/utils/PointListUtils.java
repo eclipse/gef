@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.internal.geometry.utils;
 
@@ -21,10 +21,10 @@ import org.eclipse.gef4.geometry.planar.Polyline;
 /**
  * Common utilities for point manipulations as needed e.g. within
  * {@link Polygon} and {@link Polyline}.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class PointListUtils {
 
@@ -33,7 +33,7 @@ public class PointListUtils {
 	 * containing the x and y coordinates of the given points, where the x and y
 	 * coordinates of the n-th {@link Point} can be found at positions 2*n and
 	 * 2*n+1.
-	 * 
+	 *
 	 * @param points
 	 *            an array of {@link Point}s to convert
 	 * @return a new array of doubles, containing the x and y coordinates of the
@@ -55,7 +55,7 @@ public class PointListUtils {
 	/**
 	 * Converts an array of double values into an array of integer values by
 	 * casting them.
-	 * 
+	 *
 	 * @param doubles
 	 *            an array of doubles to convert
 	 * @return a new array of integer values, which is created by casting the
@@ -76,8 +76,9 @@ public class PointListUtils {
 	/**
 	 * Converts a given array of x/y coordinate values into an array of
 	 * {@link Point}s.
-	 * 
+	 *
 	 * @param coordinates
+	 *            The array of coordinates.
 	 * @return a new array of {@link Point}s, representing the given x and y
 	 *         coordinates
 	 */
@@ -100,8 +101,9 @@ public class PointListUtils {
 	 * returned. Additionally, the end {@link Point} of the last {@link Line} is
 	 * returned, too if the given boolean flag <code>open</code> is set to
 	 * <code>false</code>.
-	 * 
+	 *
 	 * @param segmentsArray
+	 *            The array of {@link Line}s.
 	 * @param open
 	 *            indicates whether to omit the end {@link Point} of the last
 	 *            {@link Line}
@@ -134,7 +136,7 @@ public class PointListUtils {
 	 * adjacent points in the array. In case it is specified to close the
 	 * segment list, a {@link Line} segment is furthermore created between the
 	 * last and the first point in the list.
-	 * 
+	 *
 	 * @param points
 	 *            the array of {@link Point}s to convert
 	 * @param close
