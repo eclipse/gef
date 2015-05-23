@@ -1,0 +1,58 @@
+Contributing to Graphical Editing Framework (GEF)
+=================================================
+
+Thanks for your interest in this project.
+
+Project description:
+--------------------
+
+The Graphical Editing Framework (GEF) provides technology to create rich graphical applications. It is currently driven in two streams:
+
+- The originally available production components Draw2d 3.x, GEF (MVC) 3.x, and Zest 1.x, which support 2D-rendering on top of SWT as well as the creation of creating graphical editors and graph-based visualization views for the Eclipse Worbench UI, are still maintained but will not be further developed. 
+
+- The next generation production components, aka GEF4, are actively being developed in terms of smaller, more lightweight components that make use of JavaFX instead of SWT as underlying rendering technology and support building of rich graphical applications that can be integrated into the Eclipse Workbench UI (using a JavaFX-SWT-integration) or deployed standalone.
+
+- https://projects.eclipse.org/projects/tools.gef
+
+Contributor Guide:
+------------------
+
+If you want to contribute to the GEF project, please follow the official GEF contributor guide. It provides detailed information on how to create a contribution, so that it can directly be consumed by the GEF project team. 
+
+- https://bugs.eclipse.org/bugs/enter_bug.cgi?product=GEF
+
+Developer resources:
+--------------------
+
+Information regarding source code management, builds, coding standards, and more.
+
+- https://projects.eclipse.org/projects/tools.gef/developer
+
+Contributor License Agreement:
+------------------------------
+
+Before your contribution can be accepted by the project, you need to create and electronically sign the Eclipse Foundation Contributor License Agreement (CLA).
+
+- http://www.eclipse.org/legal/CLA.php
+
+Contact:
+--------
+
+Contact the project developers via the project's "dev" list.
+
+- https://dev.eclipse.org/mailman/listinfo/gef-dev
+
+Search for bugs:
+----------------
+
+This project uses Bugzilla to track ongoing development and issues.
+
+- https://bugs.eclipse.org/bugs/buglist.cgi?product=GEF
+
+Create a new bug:
+-----------------
+
+Be sure to search for existing bugs before you create another one. Remember that contributions are always welcome!
+
+- https://bugs.eclipse.org/bugs/enter_bug.cgi?product=GEF
+
