@@ -28,6 +28,11 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  */
 public abstract class AbstractTool<VR> implements ITool<VR> {
 
+	/**
+	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
+	 * listeners about changes to this object. May be used by subclasses to
+	 * trigger the notification of listeners.
+	 */
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private boolean active = false;

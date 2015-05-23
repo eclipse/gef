@@ -52,11 +52,16 @@ import com.google.inject.Inject;
  * @param <V>
  *            The visual node used by this {@link AbstractVisualPart}.
  */
-public abstract class AbstractVisualPart<VR, V extends VR> implements
-		IVisualPart<VR, V> {
+public abstract class AbstractVisualPart<VR, V extends VR>
+		implements IVisualPart<VR, V> {
 
 	private static final String DEFAULT_ANCHORAGE_ROLE = "default";
 
+	/**
+	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
+	 * listeners about changes to this object. May be used by subclasses to
+	 * trigger the notification of listeners.
+	 */
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
 	private AdaptableSupport<IVisualPart<VR, V>> ads = new AdaptableSupport<IVisualPart<VR, V>>(
@@ -118,8 +123,8 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		}
 
 		// copy anchorages by role (required for the change notification)
-		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null ? HashMultimap
-				.<IVisualPart<VR, ? extends VR>, String> create()
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
+				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
 				: HashMultimap.create(anchorages);
 
 		if (oldAnchorages.containsEntry(anchorage, role)) {
@@ -152,9 +157,9 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	@Override
 	public void addAnchored(IVisualPart<VR, ? extends VR> anchored) {
 		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null ? HashMultiset
-				.<IVisualPart<VR, ? extends VR>> create() : HashMultiset
-				.create(anchoreds);
+		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
+				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
+				: HashMultiset.create(anchoreds);
 
 		// determine the viewer before adding the anchored
 		IViewer<VR> oldViewer = getViewer();
@@ -170,7 +175,8 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 			register(newViewer);
 		}
 
-		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds, getAnchoreds());
+		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
+				getAnchoreds());
 	}
 
 	@Override
@@ -222,7 +228,8 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 *            The child's position
 	 * @see #addChild(IVisualPart, int)
 	 */
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index) {
 		throw new UnsupportedOperationException(
 				"Need to properly implement addChildVisual(IVisualPart, int) for "
 						+ this.getClass());
@@ -340,8 +347,9 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	public Multiset<IVisualPart<VR, ? extends VR>> getAnchoreds() {
 		if (anchoreds == null) {
 			return Multisets
-					.<IVisualPart<VR, ? extends VR>> unmodifiableMultiset(HashMultiset
-							.<IVisualPart<VR, ? extends VR>> create());
+					.<IVisualPart<VR, ? extends VR>> unmodifiableMultiset(
+							HashMultiset
+									.<IVisualPart<VR, ? extends VR>> create());
 		}
 		return Multisets.unmodifiableMultiset(anchoreds);
 	}
@@ -466,8 +474,8 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		}
 
 		// copy anchorages (required for the change notification)
-		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null ? HashMultimap
-				.<IVisualPart<VR, ? extends VR>, String> create()
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
+				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
 				: HashMultimap.create(anchorages);
 
 		if (!oldAnchorages.containsEntry(anchorage, role)) {
@@ -504,9 +512,9 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	@Override
 	public void removeAnchored(IVisualPart<VR, ? extends VR> anchored) {
 		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null ? HashMultiset
-				.<IVisualPart<VR, ? extends VR>> create() : HashMultiset
-				.create(anchoreds);
+		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
+				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
+				: HashMultiset.create(anchoreds);
 
 		// determine viewer before and after removing the anchored
 		IViewer<VR> oldViewer = getViewer();
@@ -524,7 +532,8 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 			anchoreds = null;
 		}
 
-		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds, getAnchoreds());
+		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
+				getAnchoreds());
 	}
 
 	@Override

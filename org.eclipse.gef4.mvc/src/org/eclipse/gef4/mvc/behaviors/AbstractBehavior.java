@@ -41,6 +41,13 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
+	/**
+	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
+	 * listeners about changes to this object. May be used by subclasses to
+	 * trigger the notification of listeners.
+	 */
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
 	@Inject
 	// scoped to single instance within viewer
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
@@ -48,8 +55,6 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Inject
 	// scoped to single instance within viewer
 	private IHandlePartFactory<VR> handlePartFactory;
-
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IVisualPart<VR, ? extends VR> host;
 	private boolean active;
 
@@ -107,18 +112,6 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
-	}
-
-	protected void switchAdaptableScopes() {
-		// adjust relevant adaptable scopes before creating new part
-		// TODO: move this into AdaptableScopes, making it more generic (i.e.
-		// traverse adaptables)
-		IVisualPart<VR, ? extends VR> host = getHost();
-		IViewer<VR> viewer = host.getRoot().getViewer();
-		IDomain<VR> domain = viewer.getDomain();
-		AdaptableScopes.switchTo(domain);
-		AdaptableScopes.switchTo(viewer);
-		AdaptableScopes.switchTo(host);
 	}
 
 	@Override
@@ -184,6 +177,18 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Override
 	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
 		this.host = adaptable;
+	}
+
+	protected void switchAdaptableScopes() {
+		// adjust relevant adaptable scopes before creating new part
+		// TODO: move this into AdaptableScopes, making it more generic (i.e.
+		// traverse adaptables)
+		IVisualPart<VR, ? extends VR> host = getHost();
+		IViewer<VR> viewer = host.getRoot().getViewer();
+		IDomain<VR> domain = viewer.getDomain();
+		AdaptableScopes.switchTo(domain);
+		AdaptableScopes.switchTo(viewer);
+		AdaptableScopes.switchTo(host);
 	}
 
 }

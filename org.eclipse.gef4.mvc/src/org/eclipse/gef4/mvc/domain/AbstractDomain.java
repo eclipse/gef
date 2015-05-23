@@ -46,6 +46,11 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
+	/**
+	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
+	 * listeners about changes to this object. May be used by subclasses to
+	 * trigger the notification of listeners.
+	 */
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
 	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<IDomain<VR>>(

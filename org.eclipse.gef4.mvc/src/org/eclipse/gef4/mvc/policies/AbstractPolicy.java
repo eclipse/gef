@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
+ * Abstract base implementation of {@link IPolicy}.
  *
  * @author anyssen
  *
@@ -42,7 +43,8 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 		}
 	}
 
-	protected void disableRefreshVisuals(IVisualPart<VR, ? extends VR> anchorage) {
+	protected void disableRefreshVisuals(
+			IVisualPart<VR, ? extends VR> anchorage) {
 		initialRefreshVisual.put(anchorage, anchorage.isRefreshVisual());
 	}
 
