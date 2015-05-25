@@ -210,7 +210,11 @@ public class DotGraphView extends ZestFxUiView {
 			return false;
 		}
 		String dotString = currentDot;
-		dotString = new DotExtractor(file).getDotString();
+		if (file.getName().endsWith(EXTENSION)) {
+			dotString = DotFileUtils.read(file);
+		} else {
+			dotString = new DotExtractor(file).getDotString();
+		}
 		currentDot = dotString;
 		currentFile = file;
 		setGraphAsync(dotString, file);
