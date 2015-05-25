@@ -210,7 +210,7 @@ public class DotGraphView extends ZestFxUiView {
 			return false;
 		}
 		String dotString = currentDot;
-		if (file.getName().endsWith(EXTENSION)) {
+		if (file.getName().endsWith("." + EXTENSION)) { //$NON-NLS-1$
 			dotString = DotFileUtils.read(file);
 		} else {
 			dotString = new DotExtractor(file).getDotString();
