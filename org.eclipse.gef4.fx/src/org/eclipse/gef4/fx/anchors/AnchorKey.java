@@ -14,17 +14,29 @@ package org.eclipse.gef4.fx.anchors;
 import javafx.scene.Node;
 
 /**
- * AnchorKey represents a set of anchored node and additional key to identify
- * one anchor target. TODO: make unmodifiable?
+ * AnchorKey represents a set of anchored {@link Node} and additional
+ * {@link String} ID to identify one anchor target.
  *
  * @author mwienand
  *
  */
+// TODO: make unmodifiable?
 public class AnchorKey {
 
 	private Node anchored;
 	private String id;
 
+	/**
+	 * Creates a new {@link AnchorKey} for the given <i>anchored</i>
+	 * {@link Node} with the given <i>id</i>.
+	 *
+	 * @param anchored
+	 *            The anchored {@link Node}.
+	 * @param id
+	 *            The identifier for this {@link AnchorKey}, used to
+	 *            differentiate multiple keys with the same anchored
+	 *            {@link Node}.
+	 */
 	public AnchorKey(Node anchored, String id) {
 		setAnchored(anchored);
 		setId(id);
@@ -43,10 +55,20 @@ public class AnchorKey {
 		return false;
 	}
 
+	/**
+	 * Returns the anchored {@link Node} of this {@link AnchorKey}.
+	 *
+	 * @return The anchored {@link Node} of this {@link AnchorKey}.
+	 */
 	public Node getAnchored() {
 		return anchored;
 	}
 
+	/**
+	 * The {@link String} identifier of this {@link AnchorKey}.
+	 *
+	 * @return The {@link String} identifier of this {@link AnchorKey}.
+	 */
 	public String getId() {
 		return id;
 	}
@@ -60,6 +82,13 @@ public class AnchorKey {
 		return result;
 	}
 
+	/**
+	 * Sets the anchored {@link Node} of this {@link AnchorKey} to the given
+	 * value.
+	 *
+	 * @param anchored
+	 *            The new anchored {@link Node} for this {@link AnchorKey}.
+	 */
 	protected void setAnchored(Node anchored) {
 		if (anchored == null) {
 			throw new IllegalArgumentException(
@@ -68,6 +97,13 @@ public class AnchorKey {
 		this.anchored = anchored;
 	}
 
+	/**
+	 * Sets the {@link String} identifier of this {@link AnchorKey} to the given
+	 * value.
+	 *
+	 * @param id
+	 *            The new {@link String} identifier for this {@link AnchorKey}.
+	 */
 	protected void setId(String id) {
 		if (id == null) {
 			throw new IllegalArgumentException(

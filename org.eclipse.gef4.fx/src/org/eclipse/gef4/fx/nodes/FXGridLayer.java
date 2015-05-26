@@ -27,6 +27,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
+/**
+ * The {@link FXGridLayer} can be used as a background layer which displays a
+ * uniform grid.
+ *
+ * @author anyssen
+ *
+ */
 public class FXGridLayer extends Pane {
 
 	private class GridCanvas extends Canvas {
@@ -109,6 +116,9 @@ public class FXGridLayer extends Pane {
 	private final DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
 			10);
 
+	/**
+	 * Constructs a new {@link FXGridLayer}.
+	 */
 	public FXGridLayer() {
 		gridCanvas = new GridCanvas();
 		gridCanvas.setManaged(false);
@@ -162,6 +172,13 @@ public class FXGridLayer extends Pane {
 		});
 	}
 
+	/**
+	 * Binds the minimum size of this {@link FXGridLayer} to the given property.
+	 *
+	 * @param minSizeProperty
+	 *            The {@link Bounds} property which determines the minimum size
+	 *            for this {@link FXGridLayer}.
+	 */
 	public void bindMinSizeToBounds(
 			final ReadOnlyObjectProperty<Bounds> minSizeProperty) {
 		minWidthProperty().bind(new DoubleBinding() {
@@ -193,6 +210,14 @@ public class FXGridLayer extends Pane {
 		});
 	}
 
+	/**
+	 * Binds the preferred size of this {@link FXGridLayer} to the maximum of
+	 * the given properties.
+	 *
+	 * @param boundsProperties
+	 *            The {@link Bounds} properties which determine the preferred
+	 *            size for this {@link FXGridLayer}.
+	 */
 	public void bindPrefSizeToUnionedBounds(
 			@SuppressWarnings("unchecked") final ReadOnlyObjectProperty<Bounds>... boundsProperties) {
 		layoutXProperty().bind(new DoubleBinding() {
@@ -261,16 +286,35 @@ public class FXGridLayer extends Pane {
 		});
 	}
 
+	/**
+	 * Returns the {@link Scale} property of this {@link FXGridLayer}. This can
+	 * be used to adapt the grid layer to zooming changes within the content
+	 * which is above the grid.
+	 *
+	 * @return The {@link Scale} property of this {@link FXGridLayer}.
+	 */
 	public ObjectProperty<Scale> gridScaleProperty() {
 		return gridScaleProperty;
 	}
 
+	/**
+	 * Sets the grid cell height to the given value.
+	 *
+	 * @param height
+	 *            The new grid cell height.
+	 */
 	public void setGridHeight(double height) {
 		gridCellHeightProperty.set(height);
 	}
 
-	public void setGridWidth(double height) {
-		gridCellWidthProperty.set(height);
-
+	/**
+	 * Sets the grid cell width to the given value.
+	 *
+	 * @param width
+	 *            The new grid cell width.
+	 */
+	public void setGridWidth(double width) {
+		gridCellWidthProperty.set(width);
 	}
+
 }

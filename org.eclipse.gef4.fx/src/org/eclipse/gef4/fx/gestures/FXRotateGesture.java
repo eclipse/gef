@@ -15,6 +15,15 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.RotateEvent;
 
+/**
+ * An FXRotateGesture can be used to listen to touchpad rotation events. In
+ * order to use it, you have to subclass it and implement the
+ * {@link #rotationStarted(RotateEvent)}, {@link #rotate(RotateEvent)}, and
+ * {@link #rotationFinished(RotateEvent)} methods.
+ *
+ * @author anyssen
+ *
+ */
 public abstract class FXRotateGesture {
 
 	private Scene scene;
@@ -40,12 +49,39 @@ public abstract class FXRotateGesture {
 		}
 	};
 
+	/**
+	 * Called upon {@link RotateEvent#ROTATE} events.
+	 *
+	 * @param event
+	 *            The corresponding {@link RotateEvent}.
+	 */
 	protected abstract void rotate(RotateEvent event);
 
+	/**
+	 * Called upon {@link RotateEvent#ROTATION_FINISHED} events.
+	 *
+	 * @param event
+	 *            The corresponding {@link RotateEvent}.
+	 */
 	protected abstract void rotationFinished(RotateEvent event);
 
+	/**
+	 * Called upon {@link RotateEvent#ROTATION_STARTED} events.
+	 *
+	 * @param event
+	 *            The corresponding {@link RotateEvent}.
+	 */
 	protected abstract void rotationStarted(RotateEvent event);
 
+	/**
+	 * Sets the {@link Scene} for this gesture to the given value. Unregisters
+	 * previously registered event listeners and registers event listeners for
+	 * this gesture on the new {@link Scene} when the given {@link Scene} is not
+	 * <code>null</code>.
+	 *
+	 * @param scene
+	 *            The new {@link Scene} for this gesture.
+	 */
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;

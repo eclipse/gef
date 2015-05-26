@@ -17,6 +17,13 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
+/**
+ * The {@link FXPolyBezierConnectionRouter} interpolates a cubic Bezier spline
+ * through the supplied {@link Point}s.
+ *
+ * @author mwienand
+ *
+ */
 public class FXPolyBezierConnectionRouter implements IFXConnectionRouter {
 
 	@Override

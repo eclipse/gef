@@ -100,6 +100,9 @@ public class ScrollPaneEx extends Region {
 	private ObjectBinding<Bounds> contentBoundsBinding;
 	private ObjectBinding<Bounds> scrollableBoundsBinding;
 
+	/**
+	 * Constructs a new {@link ScrollPaneEx}.
+	 */
 	public ScrollPaneEx() {
 		getChildren().addAll(getScrolledPane(), getScrollbarGroup());
 		getScrolledPane().boundsInLocalProperty().addListener(
@@ -133,6 +136,15 @@ public class ScrollPaneEx extends Region {
 		};
 	}
 
+	/**
+	 * Computes the bounds <code>[min-x, min-y, max-x, max-y]</code> surrounding
+	 * the {@link #getContentGroup() content group} within the coordinate system
+	 * of this {@link ScrollPaneEx}.
+	 *
+	 * @return The bounds <code>[min-x, min-y, max-x, max-y]</code> surrounding
+	 *         the {@link #getContentGroup() content group} within the
+	 *         coordinate system of this {@link ScrollPaneEx}.
+	 */
 	public double[] computeContentBoundsInLocal() {
 		Bounds diagramBoundsInCanvas = contentGroup.getBoundsInParent();
 		double minX = diagramBoundsInCanvas.getMinX();
@@ -249,6 +261,13 @@ public class ScrollPaneEx extends Region {
 						- getHeight(), -ty));
 	}
 
+	/**
+	 * Creates the {@link Group} designated for holding the scrolled content.
+	 * The {@link #getViewportTransform() viewport transform} is added to the
+	 * transforms list of that {@link Group}.
+	 *
+	 * @return The {@link Group} designated for holding the scrolled content.
+	 */
 	protected Group createContentGroup() {
 		Group g = new Group();
 		g.getTransforms().add(viewportTransform);
@@ -257,6 +276,13 @@ public class ScrollPaneEx extends Region {
 		return g;
 	}
 
+	/**
+	 * Creates the {@link Group} designated for holding the scrollbars and
+	 * places the scrollbars in it. Furthermore, event listeners are registered
+	 * to update the scroll offset upon scrollbar movement.
+	 *
+	 * @return The {@link Group} designated for holding the scrollbars.
+	 */
 	protected Group createScrollbarGroup() {
 		horizontalScrollBar = new ScrollBar();
 		horizontalScrollBar.setVisible(false);
@@ -363,6 +389,14 @@ public class ScrollPaneEx extends Region {
 		return new Group(horizontalScrollBar, verticalScrollBar);
 	}
 
+	/**
+	 * Creates the {@link Pane} which is translated when scrolling and inserts
+	 * the {@link #getContentGroup() content group} into it. Therefore, the
+	 * {@link #getViewportTransform() viewport transform} does not influence the
+	 * scroll offset.
+	 *
+	 * @return The {@link Pane} which is translated when scrolling.
+	 */
 	protected Pane createScrolledPane() {
 		Pane canvas = new Pane();
 		canvas.getChildren().add(getContentGroup());
@@ -384,14 +418,37 @@ public class ScrollPaneEx extends Region {
 		return bounds.getMaxY() - getHeight();
 	}
 
+	/**
+	 * Transforms the bounds-in-local of the given {@link Node} into the
+	 * coordinate system of this {@link ScrollPaneEx}, i.e. the viewport
+	 * coordinate system.
+	 *
+	 * @param child
+	 *            The {@link Node} whose bounds-in-local are transformed.
+	 * @return The new, transformed {@link Bounds}.
+	 */
 	public Bounds getBoundsInViewport(Node child) {
 		return sceneToLocal(child.localToScene(child.getBoundsInLocal()));
 	}
 
+	/**
+	 * Returns an {@link ObjectBinding} for the {@link Bounds} of the
+	 * {@link #getContentGroup() content group} within the coordinate system of
+	 * this {@link ScrollPaneEx}.
+	 *
+	 * @return An {@link ObjectBinding} for the {@link Bounds} of the
+	 *         {@link #getContentGroup() content group} within the coordinate
+	 *         system of this {@link ScrollPaneEx}.
+	 */
 	public ObjectBinding<Bounds> getContentBoundsBinding() {
 		return contentBoundsBinding;
 	}
 
+	/**
+	 * Returns the {@link Group} designated for holding the scrolled content.
+	 *
+	 * @return The {@link Group} designated for holding the scrolled content.
+	 */
 	public Group getContentGroup() {
 		if (contentGroup == null) {
 			contentGroup = createContentGroup();
@@ -399,6 +456,11 @@ public class ScrollPaneEx extends Region {
 		return contentGroup;
 	}
 
+	/**
+	 * Returns the horizontal {@link ScrollBar}.
+	 *
+	 * @return The horizontal {@link ScrollBar}.
+	 */
 	public ScrollBar getHorizontalScrollBar() {
 		return horizontalScrollBar;
 	}
@@ -433,10 +495,22 @@ public class ScrollPaneEx extends Region {
 		return bounds.getMaxX() - getWidth();
 	}
 
+	/**
+	 * Returns an {@link ObjectBinding} for the {@link Bounds} of the scrollable
+	 * area within the coordinate system of this {@link ScrollPaneEx}.
+	 *
+	 * @return An {@link ObjectBinding} for the {@link Bounds} of the scrollable
+	 *         area within the coordinate system of this {@link ScrollPaneEx}.
+	 */
 	public ObjectBinding<Bounds> getScrollableBoundsBinding() {
 		return scrollableBoundsBinding;
 	}
 
+	/**
+	 * Returns the {@link Group} designated for holding the {@link ScrollBar}s.
+	 *
+	 * @return The {@link Group} designated for holding the {@link ScrollBar}s.
+	 */
 	public Group getScrollbarGroup() {
 		if (scrollbarGroup == null) {
 			scrollbarGroup = createScrollbarGroup();
@@ -444,6 +518,14 @@ public class ScrollPaneEx extends Region {
 		return scrollbarGroup;
 	}
 
+	/**
+	 * Returns the {@link Pane} which is translated when scrolling. This
+	 * {@link Pane} contains the {@link #getContentGroup() content group},
+	 * therefore, the {@link #getViewportTransform() viewport transform} does
+	 * not influence the scroll offset.
+	 *
+	 * @return The {@link Pane} which is translated when scrolling.
+	 */
 	public Pane getScrolledPane() {
 		if (scrolledPane == null) {
 			scrolledPane = createScrolledPane();
@@ -451,10 +533,20 @@ public class ScrollPaneEx extends Region {
 		return scrolledPane;
 	}
 
+	/**
+	 * Returns the current horizontal scroll offset.
+	 *
+	 * @return The current horizontal scroll offset.
+	 */
 	public double getScrollOffsetX() {
 		return getScrolledPane().getTranslateX();
 	}
 
+	/**
+	 * Returns the current vertical scroll offset.
+	 *
+	 * @return The current vertical scroll offset.
+	 */
 	public double getScrollOffsetY() {
 		return getScrolledPane().getTranslateY();
 	}
@@ -474,16 +566,21 @@ public class ScrollPaneEx extends Region {
 		return -bounds.getMinY();
 	}
 
+	/**
+	 * Returns the vertical {@link ScrollBar}.
+	 *
+	 * @return The vertical {@link ScrollBar}.
+	 */
 	public ScrollBar getVerticalScrollBar() {
 		return verticalScrollBar;
 	}
 
 	/**
 	 * Returns the transformation that is applied to the
-	 * {@link #getContentGroup()}.
+	 * {@link #getContentGroup() content group}.
 	 *
 	 * @return The transformation that is applied to the
-	 *         {@link #getContentGroup()}.
+	 *         {@link #getContentGroup() content group}.
 	 */
 	public Affine getViewportTransform() {
 		return viewportTransform;
@@ -541,11 +638,29 @@ public class ScrollPaneEx extends Region {
 		return Double.isNaN(d) ? 0 : Math.min(max, Math.max(min, d));
 	}
 
+	/**
+	 * Linear intERPolation (LERP) of the given horizontal ratio (in range
+	 * <code>[0;1]</code>) onto the horizontal scroll offset range.
+	 *
+	 * @param hvRatio
+	 *            The horizontal ratio to lerp (in range <code>[0;1]</code>).
+	 * @return The corresponding value on the {@link #getHorizontalScrollBar()
+	 *         horizontal scrollbar}.
+	 */
 	public double lerpHvRatio(double hvRatio) {
 		return lerp(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
 				hvRatio);
 	}
 
+	/**
+	 * Linear intERPolation (LERP) of the given vertical ratio (in range
+	 * <code>[0;1]</code>) onto the vertical scroll offset range.
+	 *
+	 * @param vvRatio
+	 *            The vertical ratio to lerp (in range <code>[0;1]</code>).
+	 * @return The corresponding value on the {@link #getVerticalScrollBar()
+	 *         vertical scrollbar}.
+	 */
 	public double lerpVvRatio(double vvRatio) {
 		return lerp(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
 				vvRatio);
@@ -568,11 +683,27 @@ public class ScrollPaneEx extends Region {
 		return Double.isNaN(d) ? 0 : Math.min(1, Math.max(0, d));
 	}
 
+	/**
+	 * Normalizes the given horizontal scroll offset to a ratio in the range
+	 * <code>[0;1]</code>.
+	 *
+	 * @param hv
+	 *            The horizontal scroll offset to normalize.
+	 * @return The normalized ratio in the range <code>[0;1]</code>.
+	 */
 	public double normHv(double hv) {
 		return norm(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
 				hv);
 	}
 
+	/**
+	 * Normalizes the given vertical scroll offset to a ratio in the range
+	 * <code>[0;1]</code>.
+	 *
+	 * @param vv
+	 *            The vertical scroll offset to normalize.
+	 * @return The normalized ratio in the range <code>[0;1]</code>.
+	 */
 	public double normVv(double vv) {
 		return norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv);
 	}
@@ -629,7 +760,7 @@ public class ScrollPaneEx extends Region {
 	}
 
 	/**
-	 * Ensure that the specified child {@link Node} is visible to the user by
+	 * Ensures that the specified child {@link Node} is visible to the user by
 	 * scrolling to its position. The effect and style of the node are taken
 	 * into consideration. After revealing a node, it will be fully visible, if
 	 * it fits within the current viewport bounds.
@@ -669,6 +800,16 @@ public class ScrollPaneEx extends Region {
 		}
 	}
 
+	/**
+	 * Sets the horizontal scroll offset to the given value.
+	 *
+	 * @param scrollOffsetX
+	 *            The new horizontal scroll offset.
+	 * @throws IllegalArgumentException
+	 *             when the given horizontal scroll offset is outside of the
+	 *             value range of the {@link #getHorizontalScrollBar()
+	 *             horizontal scrollbar}.
+	 */
 	public void setScrollOffsetX(double scrollOffsetX) {
 		updateScrollbars();
 		double hv = computeHv(scrollOffsetX);
@@ -682,6 +823,16 @@ public class ScrollPaneEx extends Region {
 		getScrolledPane().setTranslateX(scrollOffsetX);
 	}
 
+	/**
+	 * Sets the vertical scroll offset to the given value.
+	 *
+	 * @param scrollOffsetY
+	 *            The new vertical scroll offset.
+	 * @throws IllegalArgumentException
+	 *             when the given vertical scroll offset is outside of the value
+	 *             range of the {@link #getVerticalScrollBar() vertical
+	 *             scrollbar}.
+	 */
 	public void setScrollOffsetY(double scrollOffsetY) {
 		updateScrollbars();
 		double vv = computeVv(scrollOffsetY);
@@ -694,6 +845,14 @@ public class ScrollPaneEx extends Region {
 		getScrolledPane().setTranslateY(scrollOffsetY);
 	}
 
+	/**
+	 * Sets the transformation matrix of the {@link #getViewportTransform()
+	 * viewport transform} to the values specified by the given {@link Affine}.
+	 *
+	 * @param tx
+	 *            The {@link Affine} determining the new
+	 *            {@link #getViewportTransform() viewport transform}.
+	 */
 	public void setViewportTransform(Affine tx) {
 		viewportTransform.setMxx(tx.getMxx());
 		viewportTransform.setMxy(tx.getMxy());
@@ -707,9 +866,16 @@ public class ScrollPaneEx extends Region {
 		scrollableBoundsBinding.invalidate();
 	}
 
+	/**
+	 * Updates the {@link ScrollBar}s' visibilities, value ranges and value
+	 * increments based on the {@link #computeContentBoundsInLocal() content
+	 * bounds} and the {@link #computeScrollableBoundsInLocal() scrollable
+	 * bounds}. The update is not done if any of the {@link ScrollBar}s is
+	 * currently in use.
+	 */
 	protected void updateScrollbars() {
 		// do not update while a scrollbar is pressed, so that the scrollable
-		// are does not change while using a scrollbar
+		// area does not change while using a scrollbar
 		if (horizontalScrollBar.isPressed() || verticalScrollBar.isPressed()) {
 			return;
 		}

@@ -15,6 +15,13 @@ package org.eclipse.gef4.fx.nodes;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
 
+/**
+ * The {@link FXPolylineConnectionRouter} constructs a
+ * {@link javafx.scene.shape.Polyline} through the supplied {@link Point}s.
+ *
+ * @author mwienand
+ *
+ */
 public class FXPolylineConnectionRouter implements IFXConnectionRouter {
 
 	@Override

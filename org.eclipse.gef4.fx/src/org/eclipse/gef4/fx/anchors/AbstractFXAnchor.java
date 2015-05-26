@@ -16,10 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.geometry.planar.Point;
-
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -31,6 +27,10 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.transform.Transform;
+
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * {@link AbstractFXAnchor} is the abstract base implementation for
@@ -52,6 +52,8 @@ import javafx.scene.transform.Transform;
  * access to it.
  *
  * @author anyssen
+ * @author mwienand
+ *
  */
 public abstract class AbstractFXAnchor implements IFXAnchor {
 
@@ -81,14 +83,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
 				unregisterVCLs();
-				oldAnchorage.sceneProperty()
-						.removeListener(anchorageVisualSceneChangeListener);
+				oldAnchorage.sceneProperty().removeListener(
+						anchorageVisualSceneChangeListener);
 			}
 			if (newAnchorage != null) {
 				// register listener on scene property, so we can react to
 				// changes of the scene property of the anchorage node
-				newAnchorage.sceneProperty()
-						.addListener(anchorageVisualSceneChangeListener);
+				newAnchorage.sceneProperty().addListener(
+						anchorageVisualSceneChangeListener);
 				// if scene is already set, register anchorage visual listener
 				// directly (else do this within scene change listener)
 				Scene scene = newAnchorage.getScene();
@@ -99,6 +101,13 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		}
 	};
 
+	/**
+	 * Creates a new {@link AbstractFXAnchor} for the given <i>anchorage</i>
+	 * {@link Node}.
+	 *
+	 * @param anchorage
+	 *            The anchorage {@link Node} for this {@link AbstractFXAnchor}.
+	 */
 	public AbstractFXAnchor(Node anchorage) {
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorage(anchorage);
@@ -135,6 +144,13 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				&& anchored != null && anchored.getScene() != null;
 	}
 
+	/**
+	 * Computes and returns the position for the given {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which the position is computed.
+	 * @return The position for the given {@link AnchorKey}.
+	 */
 	protected abstract Point computePosition(AnchorKey key);
 
 	private VisualChangeListener createVCL(final Node anchored) {
@@ -197,6 +213,13 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		return anchorageProperty.get();
 	}
 
+	/**
+	 * Returns the {@link Map} which stores the registered {@link AnchorKey}s
+	 * per {@link Node} by reference.
+	 *
+	 * @return The {@link Map} which stores the registered {@link AnchorKey}s
+	 *         per {@link Node} by reference.
+	 */
 	protected Map<Node, Set<AnchorKey>> getKeys() {
 		return keys;
 	}
@@ -236,8 +259,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			@Override
 			public void changed(ObservableValue<? extends Scene> observed,
 					Scene oldScene, Scene newScene) {
-				if (getAnchorage() == null
-						|| getAnchorage().getScene() == null) {
+				if (getAnchorage() == null || getAnchorage().getScene() == null) {
 					return;
 				}
 				VisualChangeListener vcl = vcls.get(anchored);
@@ -261,6 +283,10 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		anchored.sceneProperty().addListener(changeListener);
 	}
 
+	/**
+	 * Registers {@link VisualChangeListener}s for all anchored {@link Node}s,
+	 * or schedules their registration if the VCL cannot be registered yet.
+	 */
 	protected void registerVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
 			if (canRegister(anchored)) {
@@ -271,16 +297,38 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		}
 	}
 
+	/**
+	 * Sets the anchorage of this {@link AbstractFXAnchor} to the given value.
+	 *
+	 * @param anchorage
+	 *            The new anchorage for this {@link AbstractFXAnchor}.
+	 */
 	protected void setAnchorage(Node anchorage) {
 		anchorageProperty.set(anchorage);
 	}
 
+	/**
+	 * Unregisters the {@link VisualChangeListener}s for all anchored
+	 * {@link Node}s.
+	 */
 	protected void unregisterVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
 			vcls.get(anchored).unregister();
 		}
 	}
 
+	/**
+	 * Updates the position for the given {@link AnchorKey}, i.e.
+	 * <ol>
+	 * <li>Queries its current position.</li>
+	 * <li>Computes its new position.</li>
+	 * <li>Checks if the position changed, and fires an appropriate event by
+	 * putting the new position into the {@link #positionProperty()}</li>
+	 * </ol>
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which the position is updated.
+	 */
 	protected void updatePosition(AnchorKey key) {
 		Point oldPosition = getPosition(key);
 		Point newPosition = computePosition(key);

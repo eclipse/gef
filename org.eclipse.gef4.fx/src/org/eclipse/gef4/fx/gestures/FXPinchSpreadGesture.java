@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.gestures;
 
@@ -15,6 +15,15 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
+/**
+ * An FXPinchSpreadGesture can be used to listen to touchpad pinch and spread
+ * events. In order to use it, you have to subclass it and implement the
+ * {@link #zoomStarted(ZoomEvent)}, {@link #zoom(ZoomEvent)}, and
+ * {@link #zoomFinished(ZoomEvent)} methods.
+ *
+ * @author mwienand
+ *
+ */
 public abstract class FXPinchSpreadGesture {
 
 	private Scene scene;
@@ -40,6 +49,15 @@ public abstract class FXPinchSpreadGesture {
 		}
 	};
 
+	/**
+	 * Sets the {@link Scene} for this gesture to the given value. Unregisters
+	 * previously registered event listeners and registers event listeners for
+	 * this gesture on the new {@link Scene} when the given {@link Scene} is not
+	 * <code>null</code>.
+	 *
+	 * @param scene
+	 *            The new {@link Scene} for this gesture.
+	 */
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;
@@ -65,10 +83,28 @@ public abstract class FXPinchSpreadGesture {
 
 	}
 
-	protected abstract void zoomStarted(ZoomEvent event);
-
+	/**
+	 * Called upon {@link ZoomEvent#ZOOM} events.
+	 *
+	 * @param event
+	 *            The corresponding {@link ZoomEvent}.
+	 */
 	protected abstract void zoom(ZoomEvent event);
 
+	/**
+	 * Called upon {@link ZoomEvent#ZOOM_FINISHED} events.
+	 *
+	 * @param event
+	 *            The corresponding {@link ZoomEvent}.
+	 */
 	protected abstract void zoomFinished(ZoomEvent event);
+
+	/**
+	 * Called upon {@link ZoomEvent#ZOOM_STARTED} events.
+	 *
+	 * @param event
+	 *            The corresponding {@link ZoomEvent}.
+	 */
+	protected abstract void zoomStarted(ZoomEvent event);
 
 }

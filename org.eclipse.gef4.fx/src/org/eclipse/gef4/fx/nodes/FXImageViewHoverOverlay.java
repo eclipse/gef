@@ -43,16 +43,31 @@ public class FXImageViewHoverOverlay extends Group {
 	private ImageView baseImageView;
 	private ImageView overlayImageView;
 
+	/**
+	 * Constructs a new {@link FXImageViewHoverOverlay}.
+	 */
 	public FXImageViewHoverOverlay() {
 		createImageViews();
 		registerHoverEffect();
 		registerPropertyListeners();
 	}
 
+	/**
+	 * Returns the {@link SimpleObjectProperty} which stores the base
+	 * {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 *
+	 * @return The {@link SimpleObjectProperty} which stores the base
+	 *         {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 */
 	public SimpleObjectProperty<Image> baseImageProperty() {
 		return baseImageProperty;
 	}
 
+	/**
+	 * Creates the {@link ImageView}s for the base and overlay image. Sets the
+	 * opacity of the overlay {@link ImageView} to <code>0%</code> and the
+	 * opacity of the base {@link ImageView} to <code>80%</code>.
+	 */
 	protected void createImageViews() {
 		baseImageView = new ImageView();
 		overlayImageView = new ImageView();
@@ -63,39 +78,60 @@ public class FXImageViewHoverOverlay extends Group {
 		baseImageView.setOpacity(0.8); // 20% transparent
 	}
 
+	/**
+	 * Returns the {@link ImageView} which displays the base {@link Image}.
+	 *
+	 * @return The {@link ImageView} which displays the base {@link Image}.
+	 */
 	public ImageView getBaseImageView() {
 		return baseImageView;
 	}
 
+	/**
+	 * Returns the {@link ImageView} which displays the overlay {@link Image}.
+	 *
+	 * @return The {@link ImageView} which displays the overlay {@link Image}.
+	 */
 	public ImageView getOverlayImageView() {
 		return overlayImageView;
 	}
 
+	/**
+	 * Returns the {@link SimpleObjectProperty} which stores the overlay
+	 * {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 *
+	 * @return The {@link SimpleObjectProperty} which stores the overlay
+	 *         {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 */
 	public SimpleObjectProperty<Image> overlayImageProperty() {
 		return overlayImageProperty;
 	}
 
+	/**
+	 * Registers event listeners realizing the overlay effect on mouse hover.
+	 */
 	protected void registerHoverEffect() {
 		setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150),
-						new KeyValue(baseImageView.opacityProperty(), 0),
-						new KeyValue(overlayImageView.opacityProperty(), 1)))
-								.play();
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+						baseImageView.opacityProperty(), 0), new KeyValue(
+						overlayImageView.opacityProperty(), 1))).play();
 			}
 		});
 		setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150),
-						new KeyValue(baseImageView.opacityProperty(), 0.8),
-						new KeyValue(overlayImageView.opacityProperty(), 0)))
-								.play();
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+						baseImageView.opacityProperty(), 0.8), new KeyValue(
+						overlayImageView.opacityProperty(), 0))).play();
 			}
 		});
 	}
 
+	/**
+	 * Registers property listeners for updating the {@link ImageView} s.
+	 */
 	protected void registerPropertyListeners() {
 		baseImageProperty.addListener(new ChangeListener<Image>() {
 			@Override

@@ -22,8 +22,10 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * An FXMouseDragGesture can be used to listen to mouse press, drag, and release
- * events. In order to use it, you have to subclass it and implement the press,
- * drag, and release methods.
+ * events. In order to use it, you have to subclass it and implement the
+ * {@link #press(Node, MouseEvent)},
+ * {@link #drag(Node, MouseEvent, double, double)}, and
+ * {@link #release(Node, MouseEvent, double, double)} methods.
  *
  * @author mwienand
  *
@@ -56,13 +58,35 @@ public abstract class FXMouseDragGesture {
 		}
 	};
 
+	/**
+	 * This method is called upon {@link MouseEvent#MOUSE_DRAGGED} events.
+	 *
+	 * @param target
+	 *            The event target.
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 * @param dx
+	 *            The horizontal displacement from the mouse press location.
+	 * @param dy
+	 *            The vertical displacement from the mouse press location.
+	 */
 	abstract protected void drag(Node target, MouseEvent event, double dx,
 			double dy);
 
+	/**
+	 * Returns the currently pressed {@link Node}.
+	 *
+	 * @return The currently pressed {@link Node}.
+	 */
 	public Node getPressed() {
 		return pressed;
 	}
 
+	/**
+	 * The {@link Scene} on which this gesture is registered.
+	 *
+	 * @return The {@link Scene} on which this gesture is registered.
+	 */
 	public Scene getScene() {
 		return scene;
 	}
@@ -144,6 +168,14 @@ public abstract class FXMouseDragGesture {
 		}
 	}
 
+	/**
+	 * This method is called upon {@link MouseEvent#MOUSE_PRESSED} events.
+	 *
+	 * @param target
+	 *            The event target.
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 */
 	abstract protected void press(Node target, MouseEvent event);
 
 	/**
@@ -155,9 +187,33 @@ public abstract class FXMouseDragGesture {
 		getScene().addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 	}
 
+	/**
+	 * This method is called upon {@link MouseEvent#MOUSE_RELEASED} events. This
+	 * method is also called for other mouse events, when a mouse release event
+	 * was not fired, but was detected otherwise (probably only possible when
+	 * using the JavaFX/SWT integration).
+	 *
+	 * @param target
+	 *            The event target.
+	 * @param event
+	 *            The corresponding {@link MouseEvent}.
+	 * @param dx
+	 *            The horizontal displacement from the mouse press location.
+	 * @param dy
+	 *            The vertical displacement from the mouse press location.
+	 */
 	abstract protected void release(Node target, MouseEvent event, double dx,
 			double dy);
 
+	/**
+	 * Sets the {@link Scene} for this gesture to the given value.
+	 * {@link #unregister() Unregisters} previously registered event listeners
+	 * and {@link #register() registers} event listeners for this gesture on the
+	 * new {@link Scene} when the given {@link Scene} is not <code>null</code>.
+	 *
+	 * @param scene
+	 *            The new {@link Scene} for this gesture.
+	 */
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;

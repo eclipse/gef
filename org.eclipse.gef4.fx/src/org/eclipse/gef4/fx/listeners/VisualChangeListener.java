@@ -55,6 +55,14 @@ public abstract class VisualChangeListener {
 	private Node parent;
 	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
 
+	/**
+	 * This method is called upon a bounds-in-local change.
+	 *
+	 * @param oldBounds
+	 *            The old {@link Bounds}.
+	 * @param newBounds
+	 *            The new {@link Bounds}.
+	 */
 	protected abstract void boundsInLocalChanged(Bounds oldBounds,
 			Bounds newBounds);
 
@@ -93,6 +101,13 @@ public abstract class VisualChangeListener {
 		return null;
 	}
 
+	/**
+	 * Returns <code>true</code> if this {@link VisualChangeListener} is
+	 * currently registered, otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if this {@link VisualChangeListener} is
+	 *         currently registered, otherwise <code>false</code>.
+	 */
 	public boolean isRegistered() {
 		return parent != null;
 	}
@@ -168,6 +183,16 @@ public abstract class VisualChangeListener {
 		return true;
 	}
 
+	/**
+	 * This method is called upon a local-to-parent-transform change.
+	 *
+	 * @param observed
+	 *            The {@link Node} whose local-to-parent-transform changed.
+	 * @param oldTransform
+	 *            The old {@link Transform}.
+	 * @param newTransform
+	 *            The new {@link Transform}.
+	 */
 	protected abstract void localToParentTransformChanged(Node observed,
 			Transform oldTransform, Transform newTransform);
 
@@ -263,6 +288,9 @@ public abstract class VisualChangeListener {
 		}
 	}
 
+	/**
+	 * Unregisters all previously registered listeners.
+	 */
 	public void unregister() {
 		if (!isRegistered()) {
 			return;

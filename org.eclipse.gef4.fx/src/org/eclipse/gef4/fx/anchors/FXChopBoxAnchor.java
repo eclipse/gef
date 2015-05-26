@@ -14,8 +14,13 @@ package org.eclipse.gef4.fx.anchors;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.MapChangeListener;
+import javafx.scene.Node;
+
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ComputationStrategy.Impl;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -26,18 +31,68 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.collections.MapChangeListener;
-import javafx.scene.Node;
+import com.sun.javafx.geom.Rectangle;
 
-// TODO: Find an appropriate name for this (outline anchor or shape anchor or perimeter anchor)
-//       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
+/**
+ * The {@link FXChopBoxAnchor} computes anchor positions based on a reference
+ * position per anchored and one reference position for the anchorage. The
+ * anchoreds' reference positions are provided when
+ * {@link #attach(AnchorKey, IAdaptable) attaching} an {@link AnchorKey}. The
+ * computation is carried out by a {@link ComputationStrategy}. The default
+ * computation strategy ({@link Impl}) will connect anchored and anchorage
+ * reference position and compute the intersection with the outline of the
+ * anchorage.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
+// TODO: Find an appropriate name for this (outline anchor or shape anchor or
+// perimeter anchor)
+// It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
+	/**
+	 * The {@link ComputationStrategy} is responsible for computing anchor
+	 * positions based on an anchorage {@link Node}, an anchored {@link Node},
+	 * and an anchored reference position (
+	 * {@link #computePositionInScene(Node, Node, Point)}).
+	 */
 	public interface ComputationStrategy {
 
+		/**
+		 * The default implementation of the {@link ComputationStrategy}
+		 * computes an anchor position as follows:
+		 * <ol>
+		 * <li>Compute the anchorage geometry based on its visual (
+		 * {@link #getAnchorageReferenceGeometryInLocal(Node)}).</li>
+		 * <li>Compute an anchorage reference position based on its geometry (
+		 * {@link #computeAnchorageReferencePointInLocal(Node, IGeometry)}).</li>
+		 * <li>Transform this reference position into the coordinate system of
+		 * the scene (
+		 * {@link #computeAnchorageReferencePointInScene(Node, IGeometry)}).</li>
+		 * <li>Connect anchored and anchorage reference positions.</li>
+		 * <li>Compute the intersection of the connection and the outline of the
+		 * anchorage geometry ({@link #getOutline(IGeometry)}).</li>
+		 * </ol>
+		 */
 		public class Impl implements ComputationStrategy {
 
+			/**
+			 * Computes the anchorage reference position within the coordinate
+			 * system of the given {@link IGeometry}. For an {@link IShape}
+			 * geometry, the center is used if it is contained within the shape,
+			 * otherwise, the vertex nearest to the center is used as the
+			 * reference position. For an {@link ICurve} geometry, the first
+			 * point is used as the reference position.
+			 *
+			 * @param node
+			 *            The anchorage visual.
+			 * @param geometryInLocal
+			 *            The anchorage geometry within the local coordinate
+			 *            system of the anchorage visual.
+			 * @return A position within the given {@link IGeometry}.
+			 */
 			// TODO: reduce visibility
 			public Point computeAnchorageReferencePointInLocal(Node node,
 					IGeometry geometryInLocal) {
@@ -77,9 +132,22 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				}
 			}
 
+			/**
+			 * Computes the anchorage reference position in scene coordinates,
+			 * based on the given anchorage geometry.
+			 *
+			 * @see #computeAnchorageReferencePointInLocal(Node, IGeometry)
+			 * @param node
+			 *            The anchorage visual.
+			 * @param geometryInLocal
+			 *            The anchorage geometry within the coordinate system of
+			 *            the anchorage visual.
+			 * @return The anchorage reference position.
+			 */
 			protected Point computeAnchorageReferencePointInScene(Node node,
 					IGeometry geometryInLocal) {
-				return FXUtils.localToScene(node,
+				return FXUtils.localToScene(
+						node,
 						computeAnchorageReferencePointInLocal(node,
 								geometryInLocal));
 			}
@@ -96,11 +164,10 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			@Override
 			public Point computePositionInScene(Node anchorage, Node anchored,
 					Point anchoredReferencePointInLocal) {
-				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(
-						anchorage);
+				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(anchorage);
 
-				Point anchoredReferencePointInScene = FXUtils
-						.localToScene(anchored, anchoredReferencePointInLocal);
+				Point anchoredReferencePointInScene = FXUtils.localToScene(
+						anchored, anchoredReferencePointInLocal);
 
 				Point anchorageReferencePointInScene = computeAnchorageReferencePointInScene(
 						anchorage, anchorageReferenceGeometryInLocal);
@@ -111,8 +178,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 				IGeometry anchorageGeometryInScene = FXUtils.localToScene(
 						anchorage, anchorageReferenceGeometryInLocal);
-				ICurve anchorageOutlineInScene = getOutline(
-						anchorageGeometryInScene);
+				ICurve anchorageOutlineInScene = getOutline(anchorageGeometryInScene);
 
 				Point nearestIntersectionInScene = anchorageOutlineInScene
 						.getNearestIntersection(referenceLineInScene,
@@ -125,6 +191,17 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				return anchorageReferencePointInScene;
 			}
 
+			/**
+			 * Determines the anchorage geometry based on the given anchorage
+			 * visual. For an {@link FXGeometryNode}, the corresponding geometry
+			 * is returned. Otherwise, a {@link Rectangle} representing the
+			 * layout-bounds of the visual is returned.
+			 *
+			 * @param anchorage
+			 *            The anchorage visual.
+			 * @return The anchorage geometry within the local coordinate system
+			 *         of the given anchorage visual.
+			 */
 			protected IGeometry getAnchorageReferenceGeometryInLocal(
 					Node anchorage) {
 				IGeometry geometry = null;
@@ -133,12 +210,23 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				}
 				if (!(geometry instanceof IShape)) {
 					// TODO: ICurve, Path
-					geometry = JavaFX2Geometry
-							.toRectangle(anchorage.getLayoutBounds());
+					geometry = JavaFX2Geometry.toRectangle(anchorage
+							.getLayoutBounds());
 				}
 				return geometry;
 			}
 
+			/**
+			 * Determines the vertex of the given {@link IShape} which is
+			 * nearest to the given center {@link Point}.
+			 *
+			 * @param boundsCenter
+			 *            The ideal anchorage reference position.
+			 * @param shape
+			 *            The anchorage geometry.
+			 * @return The <i>shape</i> vertex nearest to the given
+			 *         <i>boundsCenter</i>.
+			 */
 			protected Point getNearestVertex(Point boundsCenter, IShape shape) {
 				ICurve[] outlineSegments = shape.getOutlineSegments();
 				if (outlineSegments.length == 0) {
@@ -158,6 +246,13 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				return nearestVertex;
 			}
 
+			/**
+			 * Determines the outline of the given {@link IGeometry}.
+			 *
+			 * @param geometry
+			 *            The anchorage geometry.
+			 * @return The outline of the given {@link IGeometry}.
+			 */
 			protected ICurve getOutline(IGeometry geometry) {
 				// TODO: we cannot handle Path yet
 				if (!(geometry instanceof IShape)
@@ -178,6 +273,19 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 		}
 
+		/**
+		 * Computes an anchor position based on the given anchorage visual,
+		 * anchored visual, and anchored reference point.
+		 *
+		 * @param anchorage
+		 *            The anchorage visual.
+		 * @param anchored
+		 *            The anchored visual.
+		 * @param anchoredReferencePointInLocal
+		 *            The anchored reference point within the local coordinate
+		 *            system of the anchored visual.
+		 * @return The anchor position.
+		 */
 		Point computePositionInScene(Node anchorage, Node anchored,
 				Point anchoredReferencePointInLocal);
 
@@ -242,10 +350,26 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	private ComputationStrategy computationStrategy;
 
+	/**
+	 * Constructs a new {@link FXChopBoxAnchor} for the given anchorage visual.
+	 * Uses the default computation strategy ({@link Impl}).
+	 *
+	 * @param anchorage
+	 *            The anchorage visual.
+	 */
 	public FXChopBoxAnchor(Node anchorage) {
 		this(anchorage, new ComputationStrategy.Impl());
 	}
 
+	/**
+	 * Constructs a new {@link FXChopBoxAnchor} for the given anchorage visual
+	 * using the given {@link ComputationStrategy}.
+	 *
+	 * @param anchorage
+	 *            The anchorage visual.
+	 * @param computationStrategy
+	 *            The {@link ComputationStrategy} to use.
+	 */
 	public FXChopBoxAnchor(Node anchorage,
 			ComputationStrategy computationStrategy) {
 		super(anchorage);
@@ -283,8 +407,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		super.attach(key, info);
 
 		// add listener to reference point changes
-		referencePointProvider.referencePointProperty()
-				.addListener(anchoredReferencePointsChangeListener);
+		referencePointProvider.referencePointProperty().addListener(
+				anchoredReferencePointsChangeListener);
 	}
 
 	/**
@@ -325,8 +449,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	protected Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
-		return JavaFX2Geometry.toPoint(anchored
-				.sceneToLocal(Geometry2JavaFX.toFXPoint(computationStrategy
+		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
+				.toFXPoint(computationStrategy
 						.computePositionInScene(getAnchorage(), anchored,
 								anchoredReferencePointInLocal))));
 	}
@@ -358,8 +482,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 
 		// unregister reference point listener
-		helper.referencePointProperty()
-				.removeListener(anchoredReferencePointsChangeListener);
+		helper.referencePointProperty().removeListener(
+				anchoredReferencePointsChangeListener);
 
 		super.detach(key, info);
 

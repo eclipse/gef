@@ -42,14 +42,29 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	private T geometry;
 
+	/**
+	 * Constructs a new {@link FXGeometryNode} without an {@link IGeometry}.
+	 */
 	public FXGeometryNode() {
 		super();
 	}
 
+	/**
+	 * Constructs a new {@link FXGeometryNode} which displays the given
+	 * {@link IGeometry}.
+	 *
+	 * @param geom
+	 *            The {@link IGeometry} to display.
+	 */
 	public FXGeometryNode(T geom) {
 		setGeometry(geom);
 	}
 
+	/**
+	 * Returns the {@link IGeometry} of this {@link FXGeometryNode}.
+	 *
+	 * @return The {@link IGeometry} of this {@link FXGeometryNode}.
+	 */
 	public T getGeometry() {
 		return geometry;
 	}
@@ -62,7 +77,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		 * the offset between geometric bounds and layout bounds, we set the
 		 * geometric bounds to the resize width and height and tweak the layout
 		 * bounds here to match the geometric bounds.
-		 *
+		 * 
 		 * TODO: Re-implement this fix by only using public API, for example, a
 		 * Group can be used as the super class. (Bug #443954)
 		 */
@@ -161,6 +176,13 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		updatePathElements();
 	}
 
+	/**
+	 * Sets the {@link IGeometry} of this {@link FXGeometryNode} to the given
+	 * value.
+	 *
+	 * @param geometry
+	 *            The new {@link IGeometry} for this {@link FXGeometryNode}.
+	 */
 	public void setGeometry(T geometry) {
 		this.geometry = geometry;
 		updatePathElements();

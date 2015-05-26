@@ -20,21 +20,40 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.fx.FxBundle;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Point;
-
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-public class FXUtils {
+import org.eclipse.gef4.fx.FxBundle;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Point;
 
-	private static final String JAVA_AWT_HEADLESS_PROPERTY = "java.awt.headless";
+/**
+ * The {@link FXUtils} class contains utility methods for working with JavaFX:
+ * <ul>
+ * <li>transforming {@link IGeometry}s from/to different JavaFX coordinate
+ * systems ({@link #localToParent(Node, IGeometry)},
+ * {@link #localToScene(Node, IGeometry)}, {@link #localToScene(Node, Point)},
+ * {@link #parentToLocal(Node, IGeometry)},
+ * {@link #sceneToLocal(Node, IGeometry)})</li>
+ * <li>determining the actual local-to-scene or scene-to-local transform for a
+ * JavaFX {@link Node} ({@link #getLocalToSceneTx(Node)},
+ * {@link #getSceneToLocalTx(Node)})</li>
+ * <li>determining the current pointer location ({@link #getPointerLocation()})</li>
+ * <li>forcing a mouse cursor update ({@link #forceCursorUpdate(Scene)})</li>
+ * <li>perform picking of {@link Node}s at a specific position within the JavaFX
+ * scene graph ({@link #getNodesAt(Node, double, double)})</li>
+ * </ul>
+ *
+ * @author mwienand
+ * @author anyssen
+ *
+ */
+public class FXUtils {
 
 	/**
 	 * Forces the JavaFX runtime to update the mouse cursor. This is useful when
@@ -45,14 +64,14 @@ public class FXUtils {
 	 */
 	public static void forceCursorUpdate(Scene scene) {
 		try {
-			Field mouseHandlerField = scene.getClass()
-					.getDeclaredField("mouseHandler");
+			Field mouseHandlerField = scene.getClass().getDeclaredField(
+					"mouseHandler");
 			mouseHandlerField.setAccessible(true);
 			Object mouseHandler = mouseHandlerField.get(scene);
 			Class<?> mouseHandlerClass = Class
 					.forName("javafx.scene.Scene$MouseHandler");
-			Method updateCursorMethod = mouseHandlerClass
-					.getDeclaredMethod("updateCursor", Cursor.class);
+			Method updateCursorMethod = mouseHandlerClass.getDeclaredMethod(
+					"updateCursor", Cursor.class);
 			updateCursorMethod.setAccessible(true);
 			updateCursorMethod.invoke(mouseHandler, scene.getCursor());
 			Method updateCursorFrameMethod = mouseHandlerClass
@@ -89,14 +108,13 @@ public class FXUtils {
 	 *         transformation matrix for the given {@link Node}.
 	 */
 	public static AffineTransform getLocalToSceneTx(Node node) {
-		AffineTransform tx = JavaFX2Geometry
-				.toAffineTransform(node.getLocalToParentTransform());
+		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
+				.getLocalToParentTransform());
 		Node tmp = node;
 		while (tmp.getParent() != null) {
 			tmp = tmp.getParent();
-			tx = JavaFX2Geometry
-					.toAffineTransform(tmp.getLocalToParentTransform())
-					.concatenate(tx);
+			tx = JavaFX2Geometry.toAffineTransform(
+					tmp.getLocalToParentTransform()).concatenate(tx);
 		}
 		return tx;
 	}
@@ -115,8 +133,7 @@ public class FXUtils {
 	 *            The root node at which to start with picking
 	 * @return A list of {@link Node}s which contain the the given coordinate.
 	 */
-	public static List<Node> getNodesAt(Node root, double sceneX,
-			double sceneY) {
+	public static List<Node> getNodesAt(Node root, double sceneX, double sceneY) {
 		List<Node> picked = new ArrayList<Node>();
 
 		// start with given root node
@@ -184,6 +201,14 @@ public class FXUtils {
 		}
 	}
 
+	/**
+	 * Returns the scene-to-local transform for the given {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} for which the scene-to-local transform is
+	 *            returned.
+	 * @return The scene-to-local transform for the given {@link Node}.
+	 */
 	public static AffineTransform getSceneToLocalTx(Node node) {
 		try {
 			// IMPORTANT: we make use of getLocalToSceneTx(Node) here to
@@ -195,27 +220,69 @@ public class FXUtils {
 		}
 	}
 
+	/**
+	 * Transforms the given {@link IGeometry} from the local coordinate system
+	 * of the given {@link Node} into the coordinate system of the {@link Node}
+	 * 's parent.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param g
+	 *            The {@link IGeometry} to transform.
+	 * @return The new, transformed {@link IGeometry}.
+	 */
 	public static IGeometry localToParent(Node n, IGeometry g) {
-		AffineTransform localToParentTx = JavaFX2Geometry
-				.toAffineTransform(n.getLocalToParentTransform());
+		AffineTransform localToParentTx = JavaFX2Geometry.toAffineTransform(n
+				.getLocalToParentTransform());
 		return g.getTransformed(localToParentTx);
 	}
 
+	/**
+	 * Transforms the given {@link IGeometry} from the local coordinate system
+	 * of the given {@link Node} into scene coordinates.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param g
+	 *            The {@link IGeometry} to transform.
+	 * @return The new, transformed {@link IGeometry}.
+	 */
 	public static IGeometry localToScene(Node n, IGeometry g) {
 		AffineTransform localToSceneTx = getLocalToSceneTx(n);
 		return g.getTransformed(localToSceneTx);
 	}
 
+	/**
+	 * Transforms the given {@link Point} from the local coordinate system of
+	 * the given {@link Node} into scene coordinates.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param p
+	 *            The {@link IGeometry} to transform.
+	 * @return The new, transformed {@link Point}.
+	 */
 	public static Point localToScene(Node n, Point p) {
 		AffineTransform localToSceneTx = getLocalToSceneTx(n);
 		return localToSceneTx.getTransformed(p);
 	}
 
+	/**
+	 * Transforms the given {@link IGeometry} from the parent coordinate system
+	 * of the given {@link Node} into the local coordinate system of the
+	 * {@link Node}.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param g
+	 *            The {@link IGeometry} to transform.
+	 * @return The new, transformed {@link IGeometry}.
+	 */
 	public static IGeometry parentToLocal(Node n, IGeometry g) {
 		// retrieve transform from scene to target parent, by inverting target
 		// parent to scene
-		AffineTransform localToParentTx = JavaFX2Geometry
-				.toAffineTransform(n.getLocalToParentTransform());
+		AffineTransform localToParentTx = JavaFX2Geometry.toAffineTransform(n
+				.getLocalToParentTransform());
 		AffineTransform parentToLocalTx = null;
 		try {
 			parentToLocalTx = localToParentTx.getCopy().invert();
@@ -226,11 +293,23 @@ public class FXUtils {
 		return g.getTransformed(parentToLocalTx);
 	}
 
+	/**
+	 * Transforms the given {@link IGeometry} from scene coordinates to the
+	 * local coordinate system of the given {@link Node}.
+	 *
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param g
+	 *            The {@link IGeometry} to transform.
+	 * @return The new, transformed {@link IGeometry}.
+	 */
 	public static IGeometry sceneToLocal(Node n, IGeometry g) {
 		// retrieve transform from scene to target parent, by inverting target
 		// parent to scene
 		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
 		return g.getTransformed(sceneToLocalTx);
 	}
+
+	private static final String JAVA_AWT_HEADLESS_PROPERTY = "java.awt.headless";
 
 }
