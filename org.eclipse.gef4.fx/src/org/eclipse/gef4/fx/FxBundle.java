@@ -1,5 +1,3 @@
-package org.eclipse.gef4.fx;
-
 /*******************************************************************************
  * Copyright (c) 2014, 2015 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
@@ -11,14 +9,22 @@ package org.eclipse.gef4.fx;
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
+package org.eclipse.gef4.fx;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * The {@link BundleActivator} for the MVC bundle.
+ * The {@link BundleActivator} for the FX bundle.
  */
 public class FxBundle implements BundleActivator {
+
+	/**
+	 * The plug-in id of the FX bundle.
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.gef4.fx"; //$NON-NLS-1$
+
+	private static BundleContext context;
 
 	/**
 	 * If the bundle has been started, returns the {@link BundleContext}
@@ -33,16 +39,9 @@ public class FxBundle implements BundleActivator {
 		return context;
 	}
 
-	/**
-	 * The plug-in id of the MVC bundle.
-	 */
-	public static final String PLUGIN_ID = "org.eclipse.gef4.fx"; //$NON-NLS-1$
-
-	private static BundleContext context;
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
@@ -54,7 +53,7 @@ public class FxBundle implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
