@@ -13,4 +13,25 @@
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 	<groupId>org.eclipse.gef4.features</groupId>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<labelSuffix xml:space="preserve"> with Sources</labelSuffix>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
