@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -25,16 +26,44 @@ import org.eclipse.gef4.common.notify.IMapObserver;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 
+/**
+ * A {@link Node} represents a vertex within a {@link Graph}.
+ *
+ * @author Fabian Steeg
+ *
+ */
 public final class Node implements IPropertyChangeNotifier {
 
+	/**
+	 * The {@link Builder} can be used to construct a {@link Node} little by
+	 * little.
+	 */
 	public static class Builder {
 		private Map<String, Object> attrs = new HashMap<String, Object>();
 
+		/**
+		 * Puts the given <i>key</i>-<i>value</i>-pair into the
+		 * {@link Node#getAttrs() attributes map} of the {@link Node} which is
+		 * constructed by this {@link Builder}.
+		 *
+		 * @param key
+		 *            The attribute name which is inserted.
+		 * @param value
+		 *            The attribute value which is inserted.
+		 * @return <code>this</code> for convenience.
+		 */
 		public Node.Builder attr(String key, Object value) {
 			attrs.put(key, value);
 			return this;
 		}
 
+		/**
+		 * Constructs a new {@link Node} from the values which have been
+		 * supplied to this {@link Builder}.
+		 *
+		 * @return A new {@link Node} from the values which have been supplied
+		 *         to this {@link Builder}.
+		 */
 		public Node build() {
 			return new Node(attrs);
 		}
@@ -59,6 +88,11 @@ public final class Node implements IPropertyChangeNotifier {
 		}
 	};
 
+	/**
+	 * The {@link PropertyChangeSupport} which handles (un-)registration of
+	 * {@link PropertyChangeListener}s and firing of {@link PropertyChangeEvent}
+	 * s.
+	 */
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private final ObservableMap<String, Object> attrs = new ObservableMap<String, Object>();
@@ -71,10 +105,21 @@ public final class Node implements IPropertyChangeNotifier {
 	 */
 	private Graph nestedGraph;
 
+	/**
+	 * Constructs a new {@link Node}.
+	 */
 	public Node() {
 		this(new HashMap<String, Object>());
 	}
 
+	/**
+	 * Constructs a new {@link Node} and copies the given <i>attributes</i> into
+	 * the {@link #getAttrs() attributes map} of this {@link Node}.
+	 *
+	 * @param attrs
+	 *            A {@link Map} containing the attributes which are copied into
+	 *            the {@link #getAttrs() attributes map} of this {@link Node}.
+	 */
 	public Node(Map<String, Object> attrs) {
 		this.attrs.putAll(attrs);
 		this.attrs.addMapObserver(attributesObserver);
@@ -193,10 +238,22 @@ public final class Node implements IPropertyChangeNotifier {
 		return successors;
 	}
 
+	/**
+	 * Returns the attributes map of this {@link Node} by reference. When this
+	 * map is changed, a {@link PropertyChangeEvent} is fired for the
+	 * {@link #ATTRIBUTES_PROPERTY}.
+	 *
+	 * @return The attributes map of this {@link Node} by reference.
+	 */
 	public Map<String, Object> getAttrs() {
 		return attrs;
 	}
 
+	/**
+	 * Returns the {@link Graph} to which this {@link Node} belongs.
+	 *
+	 * @return The {@link Graph} to which this {@link Node} belongs.
+	 */
 	public Graph getGraph() {
 		return graph;
 	}
@@ -222,6 +279,13 @@ public final class Node implements IPropertyChangeNotifier {
 		return incoming;
 	}
 
+	/**
+	 * Returns all (local) neighbors of this {@link Node}, i.e. the union of the
+	 * {@link #getLocalPredecessorNodes()} and {@link #getLocalSuccessorNodes()}
+	 * .
+	 *
+	 * @return All (local) neighbors of this {@link Node}.
+	 */
 	public Set<Node> getLocalNeighbors() {
 		Set<Node> neighbors = Collections
 				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
@@ -304,10 +368,24 @@ public final class Node implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * Sets the {@link Graph} to which this {@link Node} belongs to the given
+	 * value.
+	 *
+	 * @param graph
+	 *            The new {@link Graph} for this {@link Node}.
+	 */
 	public void setGraph(Graph graph) {
 		this.graph = graph;
 	}
 
+	/**
+	 * Sets the {@link Graph} which is nested inside this {@link Node} to the
+	 * given value.
+	 *
+	 * @param nestedGraph
+	 *            The new nested {@link Graph} for this {@link Node}.
+	 */
 	public void setNestedGraph(Graph nestedGraph) {
 		this.nestedGraph = nestedGraph;
 		if (nestedGraph.getNestingNode() != this) {

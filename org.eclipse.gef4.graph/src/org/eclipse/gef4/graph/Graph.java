@@ -27,31 +27,82 @@ import org.eclipse.gef4.common.notify.ObservableList;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 
+/**
+ * A {@link Graph} is a container for {@link Node}s and {@link Edge}s between
+ * those {@link Node}s.
+ *
+ * @author Fabian Steeg
+ *
+ */
 public final class Graph implements IPropertyChangeNotifier {
 
+	/**
+	 * The {@link Builder} can be used to construct a new {@link Graph} little
+	 * by little.
+	 */
 	public static class Builder {
 
 		private List<Node> nodes = new ArrayList<Node>();
 		private List<Edge> edges = new ArrayList<Edge>();
 		private Map<String, Object> attrs = new HashMap<String, Object>();
 
+		/**
+		 * Constructs a new {@link Builder} without {@link Node}s and
+		 * {@link Edge}s.
+		 */
 		public Builder() {
 		}
 
+		/**
+		 * Puts the given <i>key</i>-<i>value</i>-pair into the
+		 * {@link Graph#getAttrs() attributes map} of the {@link Graph} which is
+		 * constructed by this {@link Builder}.
+		 *
+		 * @param key
+		 *            The attribute name which is inserted.
+		 * @param value
+		 *            The attribute value which is inserted.
+		 * @return <code>this</code> for convenience.
+		 */
 		public Graph.Builder attr(String key, Object value) {
 			attrs.put(key, value);
 			return this;
 		}
 
+		/**
+		 * Constructs a new {@link Graph} from the values which have been
+		 * supplied to this {@link Builder}.
+		 *
+		 * @return A new {@link Graph} from the values which have been supplied
+		 *         to this {@link Builder}.
+		 */
 		public Graph build() {
 			return new Graph(attrs, nodes, edges);
 		}
 
+		/**
+		 * Adds the given {@link Edge}s to the {@link Graph} which is
+		 * constructed by this {@link Builder}.
+		 *
+		 * @param edges
+		 *            The {@link Edge}s which are added to the {@link Graph}
+		 *            which is constructed by this {@link Builder}.
+		 * @return <code>this</code> for convenience.
+		 */
 		public Graph.Builder edges(Edge... edges) {
 			this.edges.addAll(Arrays.asList(edges));
 			return this;
 		}
 
+		/**
+		 * Adds the given {@link Node}s to the {@link Graph} which is
+		 * constructed by this {@link Builder}.
+		 *
+		 * @param nodes
+		 *            The {@link Node}s which are added to the {@link Graph}
+		 *            which is constructed by this {@link Builder}.
+		 * @return <code>this</code> for convenience.
+		 */
 		public Graph.Builder nodes(Node... nodes) {
 			this.nodes.addAll(Arrays.asList(nodes));
 			return this;
