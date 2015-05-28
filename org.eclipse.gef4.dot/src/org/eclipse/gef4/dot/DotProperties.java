@@ -19,10 +19,6 @@ import java.util.Set;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
  * The {@link DotProperties} class contains all properties which are supported
@@ -141,50 +137,50 @@ public class DotProperties {
 	public static final String GRAPH_LAYOUT = "layout";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link TreeLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "dot" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_DOT = "dot";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link GridLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "osage" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_OSAGE = "osage";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link GridLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "grid" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_GRID = "grid";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link RadialLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "twopi" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_TWOPI = "twopi";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link RadialLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "circo" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_CIRCO = "circo";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link RadialLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "neato" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_NEATO = "neato";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link SpringLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "fdp" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_FDP = "fdp";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the
-	 * {@link SpringLayoutAlgorithm} is to be used for laying out the graph.
+	 * This {@link #GRAPH_LAYOUT} value specifies that the "sfdp" layout
+	 * algorithm is to be used for laying out the graph.
 	 */
 	public static final String GRAPH_LAYOUT_SFDP = "sfdp";
 
