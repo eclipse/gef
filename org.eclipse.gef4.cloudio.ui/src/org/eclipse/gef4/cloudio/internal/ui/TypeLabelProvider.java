@@ -31,17 +31,16 @@ import org.eclipse.swt.widgets.Display;
  * @author sschwieb
  *
  */
-public class TypeLabelProvider extends BaseLabelProvider implements
-		IEditableCloudLabelProvider {
+public class TypeLabelProvider extends BaseLabelProvider implements IEditableCloudLabelProvider {
 
 	private double maxOccurrences;
 	private double minOccurrences;
-	
+
 	public enum Scaling {
-		
+
 		LINEAR, LOGARITHMIC;
 	}
-	
+
 	private Map<Object, Color> colors = new HashMap<Object, Color>();
 	private Map<Object, FontData[]> fonts = new HashMap<Object, FontData[]>();
 	private Random random = new Random();
@@ -49,7 +48,7 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	protected List<Font> fontList;
 	protected List<Float> angles;
 	private Scaling scaling = Scaling.LOGARITHMIC;
-		
+
 	public TypeLabelProvider() {
 		colorList = new ArrayList<Color>();
 		fontList = new ArrayList<Font>();
@@ -59,36 +58,40 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 
 	@Override
 	public String getLabel(Object element) {
-		return ((Type)element).getString();
+		return ((Type) element).getString();
 	}
 
 	@Override
 	public double getWeight(Object element) {
-		switch(scaling) {
-			case LINEAR: return ((Type)element).getOccurrences()/maxOccurrences;
-			case LOGARITHMIC: {
-				double count  = Math.log(((Type)element).getOccurrences() - minOccurrences+1);
-				count /=(Math.log(maxOccurrences));
-				return count;
+		switch (scaling) {
+		case LINEAR:
+			return ((Type) element).getOccurrences() / maxOccurrences;
+		case LOGARITHMIC: {
+			double count = Math.log(((Type) element).getOccurrences() - minOccurrences + 1);
+			if (count != 0) {
+				count /= Math.log(maxOccurrences);
 			}
-			default: return 1;
+			return count;
 		}
-		
+		default:
+			return 1;
+		}
+
 	}
 
 	@Override
 	public Color getColor(Object element) {
 		Color color = colors.get(element);
-		if(color == null) {
+		if (color == null) {
 			color = colorList.get(random.nextInt(colorList.size()));
 			colors.put(element, color);
 		}
 		return color;
 	}
-	
+
 	public FontData[] getFontData(Object element) {
 		FontData[] data = fonts.get(element);
-		if(data == null) {
+		if (data == null) {
 			data = fontList.get(random.nextInt(fontList.size())).getFontData();
 			fonts.put(element, data);
 		}
@@ -102,7 +105,7 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	public void setMinOccurrences(int occurrences) {
 		this.minOccurrences = occurrences;
 	}
-	
+
 	@Override
 	public void dispose() {
 		for (Color color : colorList) {
@@ -112,7 +115,7 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 			font.dispose();
 		}
 	}
-	
+
 	public void setAngles(List<Float> angles) {
 		this.angles = angles;
 	}
@@ -124,7 +127,8 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	}
 
 	public void setColors(List<RGB> newColors) {
-		if(newColors.isEmpty()) return;
+		if (newColors.isEmpty())
+			return;
 		for (Color color : colorList) {
 			color.dispose();
 		}
@@ -137,7 +141,8 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	}
 
 	public void setFonts(List<FontData> newFonts) {
-		if(newFonts.isEmpty()) return;
+		if (newFonts.isEmpty())
+			return;
 		for (Font font : fontList) {
 			font.dispose();
 		}
@@ -157,7 +162,5 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	public void setScale(Scaling scaling) {
 		this.scaling = scaling;
 	}
-	
-	
 
 }
