@@ -12,10 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.ui.controls;
 
+import javafx.embed.swt.FXCanvas;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
+ * The {@link IControlFactory} can be used in conjunction with
+ * {@link FXControlAdapter} to create the wrapped SWT {@link Control} when the
+ * surrounding {@link FXCanvas} changes.
  *
  * @author anyssen
  *
@@ -25,6 +30,13 @@ import org.eclipse.swt.widgets.Control;
 // TODO: move to Common.UI
 public interface IControlFactory<T extends Control> {
 
+	/**
+	 * Creates the {@link Control} as a child of the given {@link Composite}.
+	 *
+	 * @param parent
+	 *            The {@link Composite} in which to create the {@link Control}.
+	 * @return The new {@link Control}.
+	 */
 	public T createControl(Composite parent);
 
 }

@@ -155,6 +155,18 @@ public class FXControlAdapter<T extends Control> extends Region {
 		return control;
 	}
 
+	/**
+	 * Returns the first {@link FXCanvas} which is found by walking up the
+	 * widget hierarchy of the given {@link Control}. If no {@link FXCanvas} can
+	 * be found, <code>null</code> is returned.
+	 *
+	 * @param control
+	 *            The {@link Control} for which to identify the surrounding
+	 *            {@link FXCanvas}.
+	 * @return The first {@link FXCanvas} which is found by walking up the
+	 *         widget hierarchy of the given {@link Control}, or
+	 *         <code>null</code>.
+	 */
 	protected FXCanvas getFXCanvas(Control control) {
 		Control candidate = control;
 		while (candidate != null) {
@@ -166,6 +178,16 @@ public class FXControlAdapter<T extends Control> extends Region {
 		return null;
 	}
 
+	/**
+	 * Returns the {@link FXCanvas} which embeds the {@link Scene} which
+	 * contains the given {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} for which the embedding {@link FXCanvas} is
+	 *            determined.
+	 * @return The {@link FXCanvas} which embeds the {@link Scene} which
+	 *         contains the given {@link Node}.
+	 */
 	protected FXCanvas getFXCanvas(Node node) {
 		if (node == null) {
 			return null;
@@ -173,6 +195,16 @@ public class FXControlAdapter<T extends Control> extends Region {
 		return getFXCanvas(node.getScene());
 	}
 
+	/**
+	 * Returns the {@link FXCanvas} which contains the given {@link Scene}.
+	 * Therefore, it is only valid to call this method for a {@link Scene} which
+	 * is embedded into an SWT application via {@link FXCanvas}.
+	 *
+	 * @param scene
+	 *            The {@link Scene} for which to determine the surrounding
+	 *            {@link FXCanvas}.
+	 * @return The {@link FXCanvas} which contains the given {@link Scene}.
+	 */
 	protected FXCanvas getFXCanvas(Scene scene) {
 		if (scene != null) {
 			return getFXCanvas(scene.getWindow());
@@ -180,6 +212,18 @@ public class FXControlAdapter<T extends Control> extends Region {
 		return null;
 	}
 
+	/**
+	 * Returns the {@link FXCanvas} which serves as the host container for the
+	 * given {@link Window}. Therefore, it is only valid to call this method for
+	 * the {@link Window} of a JavaFX scene graph which is embedded into an SWT
+	 * application via {@link FXCanvas}.
+	 *
+	 * @param window
+	 *            The {@link Window} for which to determine the surrounding
+	 *            {@link FXCanvas}.
+	 * @return The {@link FXCanvas} which serves as the host container for the
+	 *         given {@link Window}.
+	 */
 	protected FXCanvas getFXCanvas(Window window) {
 		if (window != null) {
 			// Obtain FXCanvas by accessing outer class
@@ -194,10 +238,12 @@ public class FXControlAdapter<T extends Control> extends Region {
 	}
 
 	/**
-	 * Used to register special listeners on the specific {@link Control}.
+	 * Hooks the given {@link Control} into the JavaFX scene graph, for example,
+	 * registering event forwarding from SWT to JavaFX.
 	 *
+	 * @see #registerSwtToFXEventForwarders(FXCanvas)
 	 * @param control
-	 *            The SWT {@link Control} that is wrapped by this
+	 *            The {@link Control} which is wrapped by this
 	 *            {@link FXControlAdapter}.
 	 */
 	protected void hookControl(T control) {
@@ -211,6 +257,13 @@ public class FXControlAdapter<T extends Control> extends Region {
 		registerSwtToFXEventForwarders(swtFXCanvas);
 	}
 
+	/**
+	 * Initializes this {@link FXControlAdapter}. Per default, this
+	 * {@link FXControlAdapter} is added to the focus traversal cycle and JavaFX
+	 * listeners are registered for forwarding JavaFX state to SWT.
+	 *
+	 * @see #registerListeners()
+	 */
 	protected void init() {
 		// by default, be part of focus traversal cycle
 		focusTraversableProperty().set(true);
@@ -219,6 +272,15 @@ public class FXControlAdapter<T extends Control> extends Region {
 		registerListeners();
 	}
 
+	/**
+	 * Registers JavaFX listeners for forwarding JavaFX state to SWT. Among
+	 * other things, this registers a listener for {@link Scene} changes which
+	 * will then hook the SWT {@link Control} to the {@link FXCanvas} of the new
+	 * {@link Scene}.
+	 *
+	 * @see #unregisterListeners()
+	 * @see #setCanvas(FXCanvas)
+	 */
 	protected void registerListeners() {
 		focusChangeListener = new ChangeListener<Boolean>() {
 			@Override
@@ -268,6 +330,13 @@ public class FXControlAdapter<T extends Control> extends Region {
 		sceneProperty().addListener(sceneChangeListener);
 	}
 
+	/**
+	 * Registers SWT to JavaFX event forwarders for the given {@link FXCanvas}.
+	 *
+	 * @see #unregisterSwtToFXEventForwarders()
+	 * @param newCanvas
+	 *            The {@link FXCanvas} for which event forwarding is registered.
+	 */
 	protected void registerSwtToFXEventForwarders(final FXCanvas newCanvas) {
 		swtToFXEventForwardingListener = new Listener() {
 			@Override
@@ -301,6 +370,19 @@ public class FXControlAdapter<T extends Control> extends Region {
 		updateSwtBounds();
 	}
 
+	/**
+	 * Changes the {@link FXCanvas} in which the {@link Control} is hooked. An
+	 * {@link IControlFactory} has to be available for re-creating the
+	 * {@link Control} within the new {@link FXCanvas}, otherwise an exception
+	 * is thrown.
+	 *
+	 * @see #setControl(Control)
+	 * @param newCanvas
+	 *            The new {@link FXCanvas} for the {@link Control}.
+	 * @throws IllegalArgumentException
+	 *             when the {@link FXCanvas} is changed, but no
+	 *             {@link IControlFactory} is available.
+	 */
 	protected void setCanvas(FXCanvas newCanvas) {
 		// if we do not have a control factory, we are bound to an existing
 		// control and will not be able to handle canvas changes
@@ -311,8 +393,7 @@ public class FXControlAdapter<T extends Control> extends Region {
 			}
 		} else {
 			// use control factory to dispose/create controls as needed upon
-			// canvas
-			// changes
+			// canvas changes
 			FXCanvas oldCanvas = this.canvas;
 			if (oldCanvas != null && oldCanvas != newCanvas) {
 				T oldControl = getControl();
@@ -328,6 +409,17 @@ public class FXControlAdapter<T extends Control> extends Region {
 		}
 	}
 
+	/**
+	 * Sets the {@link Control} of this {@link FXControlAdapter} to the given
+	 * value and {@link #hookControl(Control) hooks} or
+	 * {@link #unhookControl(Control) unhooks} the {@link Control},
+	 * respectively.
+	 *
+	 * @see #hookControl(Control)
+	 * @see #unhookControl(Control)
+	 * @param control
+	 *            The new {@link Control} for this {@link FXControlAdapter}.
+	 */
 	protected void setControl(T control) {
 		T oldControl = this.control;
 		if (oldControl != null) {
@@ -340,17 +432,32 @@ public class FXControlAdapter<T extends Control> extends Region {
 	}
 
 	/**
-	 * Used to unregister special listeners from the specific {@link Control}.
+	 * Unhooks the given {@link Control} from the JavaFX scene graph, for
+	 * example, unregistering event forwarding from SWT to JavaFX.
+	 *
+	 * @see #hookControl(Control)
+	 * @see #unregisterSwtToFXEventForwarders()
+	 * @param control
+	 *            The {@link Control} which is wrapped by this
+	 *            {@link FXControlAdapter}.
 	 */
 	protected void unhookControl(T control) {
 		unregisterSwtToFXEventForwarders();
 	}
 
+	/**
+	 * Unregisters the listeners which have previously been registered during
+	 * {@link #registerListeners()}.
+	 */
 	protected void unregisterListeners() {
 		sceneProperty().removeListener(sceneChangeListener);
 		focusedProperty().removeListener(focusChangeListener);
 	}
 
+	/**
+	 * Unregisters the event forwarders which have previously been registered
+	 * during {@link #registerSwtToFXEventForwarders(FXCanvas)}.
+	 */
 	protected void unregisterSwtToFXEventForwarders() {
 		for (int eventType : FORWARD_SWT_EVENT_TYPES) {
 			control.removeListener(eventType, swtToFXEventForwardingListener);
@@ -358,6 +465,13 @@ public class FXControlAdapter<T extends Control> extends Region {
 		swtToFXEventForwardingListener = null;
 	}
 
+	/**
+	 * Updates the {@link Control#setBounds(int, int, int, int) bounds} of the
+	 * {@link Control} which is wrapped by this {@link FXControlAdapter}. This
+	 * method is automatically called when this {@link FXControlAdapter} is
+	 * {@link #relocate(double, double) relocated} or
+	 * {@link #resize(double, double) resized}.
+	 */
 	public void updateSwtBounds() {
 		if (control == null) {
 			return;

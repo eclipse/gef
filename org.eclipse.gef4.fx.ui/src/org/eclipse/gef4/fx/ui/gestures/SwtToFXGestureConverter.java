@@ -45,22 +45,73 @@ import com.sun.javafx.tk.TKSceneListener;
  */
 public class SwtToFXGestureConverter implements GestureListener {
 
+	/**
+	 * Stores the state of touchpad events.
+	 */
 	protected class State {
+		/**
+		 * The {@link StateType} determines the currently performed touchpad
+		 * gesture.
+		 */
 		StateType type;
 
+		/**
+		 * The total horizontal scroll distance, initially set to <code>0</code>
+		 * .
+		 */
 		double totalScrollX = 0;
+
+		/**
+		 * The total vertical scroll distance, initially set to <code>0</code>.
+		 */
 		double totalScrollY = 0;
 
+		/**
+		 * The most recent (accumulated) zoom factor, initially set to
+		 * <code>1</code>.
+		 */
 		double lastZoomFactor = 1;
+
+		/**
+		 * The most recent (accumulated) rotation (in degrees), initially set to
+		 * <code>0</code>.
+		 */
 		double lastRotation = 0;
 
+		/**
+		 * Constructs a new {@link State} of the given {@link StateType}.
+		 *
+		 * @param type
+		 *            The {@link #type} for this {@link State}.
+		 */
 		public State(StateType type) {
 			this.type = type;
 		}
 	}
 
+	/**
+	 * Determines the touchpad gesture which is currently performed.
+	 */
 	enum StateType {
-		IDLE, SCROLLING, ROTATING, ZOOMING;
+		/**
+		 * Indicates that no touchpad gesture is performed.
+		 */
+		IDLE,
+
+		/**
+		 * Indicates that a "scrolling" touchpad gesture is performed.
+		 */
+		SCROLLING,
+
+		/**
+		 * Indicates that a "rotation" touchpad gesture is performed.
+		 */
+		ROTATING,
+
+		/**
+		 * Indicates that a "zooming" touchpad gesture is performed.
+		 */
+		ZOOMING;
 	}
 
 	private FXCanvas canvas;
@@ -75,6 +126,12 @@ public class SwtToFXGestureConverter implements GestureListener {
 	// used to keep track of the last (valid) pan gesture event
 	private Event lastPanGestureEvent;
 
+	/**
+	 * Registers event forwarding for the given {@link FXCanvas}.
+	 *
+	 * @param canvas
+	 *            The {@link FXCanvas} for which event forwarding is registered.
+	 */
 	public SwtToFXGestureConverter(final FXCanvas canvas) {
 		this.canvas = canvas;
 		this.currentState = new State(StateType.IDLE);
@@ -148,6 +205,20 @@ public class SwtToFXGestureConverter implements GestureListener {
 		}
 	}
 
+	/**
+	 * Changes the internal {@link State} of the currently performed touchpad
+	 * gesture and sends the appropriate events to JavaFX.
+	 *
+	 * @param newStateType
+	 *            The new {@link StateType}.
+	 * @param event
+	 *            The {@link GestureEvent} which was performed.
+	 * @param sceneListener
+	 *            The {@link TKSceneListener} to which the corresponding JavaFX
+	 *            event is send.
+	 * @return <code>true</code> when the {@link StateType} is changed,
+	 *         otherwise <code>false</code>.
+	 */
 	protected boolean changeState(StateType newStateType, GestureEvent event,
 			TKSceneListener sceneListener) {
 		if (newStateType != currentState.type) {
@@ -209,6 +280,10 @@ public class SwtToFXGestureConverter implements GestureListener {
 		return false;
 	}
 
+	/**
+	 * Unregisters event forwarding from the {@link FXCanvas} for which this
+	 * {@link SwtToFXGestureConverter} was created.
+	 */
 	public void dispose() {
 		Display display = canvas.getDisplay();
 		if (emulatedPanGestureEventFilter != null) {
@@ -245,6 +320,14 @@ public class SwtToFXGestureConverter implements GestureListener {
 		return (event.stateMask & SWT.SHIFT) != 0;
 	}
 
+	/**
+	 * Converts the given {@link GestureEvent} to a corresponding JavaFX event
+	 * and sends it to the JavaFX scene graph of the {@link FXCanvas} which is
+	 * associated with this {@link SwtToFXGestureConverter}.
+	 *
+	 * @param event
+	 *            The {@link GestureEvent} to send to JavaFX.
+	 */
 	protected void sendGestureEventToFX(final GestureEvent event) {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -379,4 +462,5 @@ public class SwtToFXGestureConverter implements GestureListener {
 				false); // inertia
 		currentState.lastZoomFactor = magnification;
 	}
+
 }
