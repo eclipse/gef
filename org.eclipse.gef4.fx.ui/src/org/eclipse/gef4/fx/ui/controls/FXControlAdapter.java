@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Listener;
  * graph.
  *
  * @author mwienand
+ * @author anyssen
  *
  * @param <T>
  *            The SWT Control class which is wrapped by this
@@ -227,8 +228,7 @@ public class FXControlAdapter<T extends Control> extends Region {
 	protected FXCanvas getFXCanvas(Window window) {
 		if (window != null) {
 			// Obtain FXCanvas by accessing outer class
-			// of
-			// FXCanvas$HostContainer
+			// of FXCanvas$HostContainer
 			FXCanvas canvas = ReflectionUtils.getPrivateFieldValue(
 					ReflectionUtils.<Object> getPrivateFieldValue(window,
 							"host"), "this$0");

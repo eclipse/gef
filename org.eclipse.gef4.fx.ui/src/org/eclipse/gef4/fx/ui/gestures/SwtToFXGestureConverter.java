@@ -46,11 +46,11 @@ import com.sun.javafx.tk.TKSceneListener;
 public class SwtToFXGestureConverter implements GestureListener {
 
 	/**
-	 * Stores the state of touchpad events.
+	 * Represents the current {@link State} of touch gesture interaction.
 	 */
 	protected class State {
 		/**
-		 * The {@link StateType} determines the currently performed touchpad
+		 * The {@link StateType} determines the currently performed touch
 		 * gesture.
 		 */
 		StateType type;
@@ -90,26 +90,26 @@ public class SwtToFXGestureConverter implements GestureListener {
 	}
 
 	/**
-	 * Determines the touchpad gesture which is currently performed.
+	 * Determines the touch gesture which is currently performed.
 	 */
 	enum StateType {
 		/**
-		 * Indicates that no touchpad gesture is performed.
+		 * Indicates that no touch gesture is performed.
 		 */
 		IDLE,
 
 		/**
-		 * Indicates that a "scrolling" touchpad gesture is performed.
+		 * Indicates that a "scrolling" touch gesture is performed.
 		 */
 		SCROLLING,
 
 		/**
-		 * Indicates that a "rotation" touchpad gesture is performed.
+		 * Indicates that a "rotation" touch gesture is performed.
 		 */
 		ROTATING,
 
 		/**
-		 * Indicates that a "zooming" touchpad gesture is performed.
+		 * Indicates that a "zooming" touch gesture is performed.
 		 */
 		ZOOMING;
 	}
@@ -206,7 +206,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 	}
 
 	/**
-	 * Changes the internal {@link State} of the currently performed touchpad
+	 * Changes the internal {@link State} of the currently performed touch
 	 * gesture and sends the appropriate events to JavaFX.
 	 *
 	 * @param newStateType
