@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Label;
  * @author sschwieb
  *
  */
+// TODO: move to internal package
 public class CloudOptionsComposite extends Composite {
 	
 	protected TagCloudViewer viewer;
