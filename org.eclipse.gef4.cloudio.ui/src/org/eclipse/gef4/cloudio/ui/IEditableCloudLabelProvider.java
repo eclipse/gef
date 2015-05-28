@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.RGB;
  * @author sschwieb
  *
  */
+// TODO: make internal
 public interface IEditableCloudLabelProvider extends ICloudLabelProvider {
 
 	public void setColors(List<RGB> colors);
