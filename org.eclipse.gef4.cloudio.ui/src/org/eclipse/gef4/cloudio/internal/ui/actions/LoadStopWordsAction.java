@@ -26,7 +26,7 @@ public class LoadStopWordsAction extends AbstractTagCloudAction {
 	@Override
 	public void run(IAction action) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-		dialog.setText("Select a stopwor file, containing one word per line...");
+		dialog.setText("Select a stopword file, containing one word per line...");
 		String sourceFile = dialog.open();
 		if(sourceFile == null) return;
 		TypeCollector.setStopwords(sourceFile);
