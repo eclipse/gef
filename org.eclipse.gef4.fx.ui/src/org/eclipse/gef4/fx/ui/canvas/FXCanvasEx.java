@@ -19,6 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swt.FXCanvas;
+import javafx.embed.swt.SWTFXUtils;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
+import javafx.scene.Scene;
+import javafx.stage.Window;
+
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.ui.gestures.SwtToFXGestureConverter;
 import org.eclipse.swt.SWT;
@@ -28,15 +37,6 @@ import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.embed.swt.FXCanvas;
-import javafx.embed.swt.SWTFXUtils;
-import javafx.scene.Cursor;
-import javafx.scene.ImageCursor;
-import javafx.scene.Scene;
-import javafx.stage.Window;
 
 /**
  * A replacement of {@link FXCanvas} that offers the following additional
@@ -48,8 +48,7 @@ import javafx.stage.Window;
  * will forward all focus events to the embedded JavaFX stage), so SWT
  * {@link FocusListener} will not be notified</li>
  * <li>Support for setting cursors via JavaFX (i.e. the cursor of the embedded
- * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})
- * </li>
+ * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})</li>
  * </ul>
  *
  * @author anyssen
@@ -97,13 +96,13 @@ public class FXCanvasEx extends FXCanvas {
 				double hotspotX = ((ImageCursor) newCursor).getHotspotX();
 				double hotspotY = ((ImageCursor) newCursor).getHotspotY();
 				org.eclipse.swt.graphics.Cursor swtCursor = new org.eclipse.swt.graphics.Cursor(
-						getDisplay(), imageData, (int) hotspotX,
-						(int) hotspotY);
+						getDisplay(), imageData, (int) hotspotX, (int) hotspotY);
 				getShell().setCursor(swtCursor);
 			} else if (CURSOR_FROM_FX_TO_SWT.containsKey(newCursor)) {
 				// standard cursor, look up in map
-				getShell().setCursor(new org.eclipse.swt.graphics.Cursor(
-						getDisplay(), CURSOR_FROM_FX_TO_SWT.get(newCursor)));
+				getShell().setCursor(
+						new org.eclipse.swt.graphics.Cursor(getDisplay(),
+								CURSOR_FROM_FX_TO_SWT.get(newCursor)));
 			} else {
 				// unknown cursor, use default
 				getShell().setCursor(null);
