@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="MARS" sequenceNumber="16">
+<?pde version="3.8"?><target name="MARS" sequenceNumber="17">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
@@ -10,9 +10,9 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150323-0420"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.8.1.v201503230617"/>
-<unit id="org.eclipse.sdk.ide" version="4.5.0.I20150320-0800"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150518-0831"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.8.3.v201505260429"/>
+<unit id="org.eclipse.sdk.ide" version="4.5.0.I20150522-2000"/>
 <repository location="http://download.eclipse.org/releases/mars"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
