@@ -18,19 +18,33 @@ import org.eclipse.gef4.layout.listeners.ILayoutListener;
 import org.eclipse.gef4.layout.listeners.IPruningListener;
 
 /**
- * Objects implementing LayoutContext interface are used for exchanging of
- * information between layout algorithms and graphical objects displaying
- * graphs.
+ * Objects implementing {@link ILayoutContext} interface are used for exchanging
+ * of information between layout algorithms and graphical objects displaying
+ * graphs, i.e. an {@link ILayoutContext} represents a graph within the layout
+ * model.
  */
 public interface ILayoutContext extends IPropertyStore {
 
+	/**
+	 * An {@link ILayoutContext} notifies registered listeners about changes to
+	 * the static layout algorithm using this property name.
+	 */
 	public static final String STATIC_LAYOUT_ALGORITHM_PROPERTY = "staticLayoutAlgorithm";
+
+	/**
+	 * An {@link ILayoutContext} notifies registered listeners about changes to
+	 * the dynamic layout algorithm using this property name.
+	 */
 	public static final String DYNAMIC_LAYOUT_ALGORITHM_PROPERTY = "dynamicLayoutAlgorithm";
 
 	/**
 	 * Applies the background layout algorithm of this LayoutContext. The clean
 	 * flag is passed-in to the background layout algorithm to indicate whether
 	 * the context changed significantly since the last layout pass.
+	 * 
+	 * @param clean
+	 *            <code>true</code> to indicate that the algorithm has to fully
+	 *            re-compute the layout, otherwise <code>false</code>.
 	 */
 	public void applyDynamicLayout(boolean clean);
 
@@ -38,6 +52,10 @@ public interface ILayoutContext extends IPropertyStore {
 	 * Applies the static layout algorithm of this LayoutContext. The clean flag
 	 * is passed-in to the static layout algorithm to indicate whether the
 	 * context changed significantly since the last layout pass.
+	 * 
+	 * @param clean
+	 *            <code>true</code> to indicate that the algorithm has to fully
+	 *            re-compute the layout, otherwise <code>false</code>.
 	 */
 	public void applyStaticLayout(boolean clean);
 
@@ -74,8 +92,10 @@ public interface ILayoutContext extends IPropertyStore {
 	 * returned array does not affect this context.
 	 * 
 	 * @param layoutEntity1
+	 *            The source entity.
 	 * @param layoutEntity2
-	 * @return the connections between layoutEntitity1 and layoutEntity2
+	 *            The target entity.
+	 * @return The connections between the source and target entities.
 	 */
 	public IConnectionLayout[] getConnections(IEntityLayout layoutEntity1,
 			IEntityLayout layoutEntity2);
@@ -95,6 +115,7 @@ public interface ILayoutContext extends IPropertyStore {
 	 * 
 	 * @param nodes
 	 *            nodes to add to the new subgraph
+	 * @return The newly created {@link ISubgraphLayout}.
 	 */
 	public ISubgraphLayout createSubgraph(INodeLayout[] nodes);
 
@@ -108,6 +129,8 @@ public interface ILayoutContext extends IPropertyStore {
 	 * context when reacting to events.
 	 * 
 	 * @param algorithm
+	 *            The new dynamic {@link ILayoutAlgorithm} for this
+	 *            {@link ILayoutContext}.
 	 */
 	public void setDynamicLayoutAlgorithm(ILayoutAlgorithm algorithm);
 
@@ -117,13 +140,15 @@ public interface ILayoutContext extends IPropertyStore {
 	 * context.
 	 * 
 	 * @param algorithm
+	 *            The new static {@link ILayoutAlgorithm} for this
+	 *            {@link ILayoutContext}.
 	 */
 	public void setStaticLayoutAlgorithm(ILayoutAlgorithm algorithm);
 
 	/**
 	 * Adds the given {@link Runnable} to the list of runnables which are called
 	 * when this {@link ILayoutContext} is asked to apply all changes made to
-	 * its elements to the display.
+	 * its elements to the display, i.e. within {@link #flushChanges(boolean)}.
 	 * 
 	 * @param runnable
 	 *            A {@link Runnable} called whenever this context is asked to
@@ -134,7 +159,8 @@ public interface ILayoutContext extends IPropertyStore {
 	/**
 	 * Removes the given {@link Runnable} from the list of runnables which are
 	 * called when this {@link ILayoutContext} is asked to apply all changes
-	 * made to its elements to the display.
+	 * made to its elements to the display, i.e. within
+	 * {@link #flushChanges(boolean)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} that should no longer get called when
@@ -377,8 +403,28 @@ public interface ILayoutContext extends IPropertyStore {
 	 */
 	public void firePruningEnableChangedEvent();
 
+	/**
+	 * Removes the given {@link Runnable} from the list of {@link Runnable}s
+	 * which are executed before applying a layout, i.e. before
+	 * {@link #applyDynamicLayout(boolean)} or
+	 * {@link #applyStaticLayout(boolean)}.
+	 * 
+	 * @param runnable
+	 *            The {@link Runnable} to remove from the list of
+	 *            {@link Runnable}s which are executed before applying a layout.
+	 */
 	public void unschedulePreLayoutPass(Runnable runnable);
 
+	/**
+	 * Adds the given {@link Runnable} to the list of {@link Runnable}s which
+	 * are executed before applying a layout, i.e. before
+	 * {@link #applyDynamicLayout(boolean)} or
+	 * {@link #applyStaticLayout(boolean)}.
+	 * 
+	 * @param runnable
+	 *            The {@link Runnable} to add to the list of {@link Runnable}s
+	 *            which are executed before applying a layout.
+	 */
 	public void schedulePreLayoutPass(Runnable runnable);
 
 }

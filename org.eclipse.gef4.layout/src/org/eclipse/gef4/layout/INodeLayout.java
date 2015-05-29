@@ -11,7 +11,9 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
-
+/**
+ * An {@link INodeLayout} represents a node of a graph within the layout model.
+ */
 public interface INodeLayout extends IEntityLayout {
 
 	/**

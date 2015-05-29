@@ -16,12 +16,22 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
+/**
+ * {@link LayoutProperties} contains all properties which can be accessed on
+ * {@link ILayoutContext}, {@link IConnectionLayout}, {@link INodeLayout}, and
+ * {@link ISubgraphLayout}, their default values, as well as static accessor
+ * methods for those properties.
+ */
 public class LayoutProperties {
 
 	/**
 	 * Stores the bounds in which the graph elements can be placed.
 	 */
 	public static final String BOUNDS_PROPERTY = "bounds";
+
+	/**
+	 * Defines the default value for the {@link #BOUNDS_PROPERTY}.
+	 */
 	public static final Rectangle DEFAULT_BOUNDS = new Rectangle();
 
 	/**
@@ -29,12 +39,20 @@ public class LayoutProperties {
 	 * of the bounds.
 	 */
 	public static final String BOUNDS_EXPANDABLE_PROPERTY = "bounds-expandable";
+
+	/**
+	 * Defines the default value for the {@link #BOUNDS_EXPANDABLE_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_BOUNDS_EXPANDABLE = false;
 
 	/**
 	 * Indicates whether an algorithm is allowed to prune nodes to subgraphs.
 	 */
 	public static final String PRUNING_ENABLED_PROPERTY = "pruning-enabled";
+
+	/**
+	 * Defines the default value for the {@link #PRUNING_ENABLED_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_PRUNING_ENABLED = true;
 
 	/**
@@ -42,24 +60,41 @@ public class LayoutProperties {
 	 * events/animation.
 	 */
 	public static final String DYNAMIC_LAYOUT_ENABLED_PROPERTY = "dynamic-layout-enabled";
+
+	/**
+	 * Defines the default value for the
+	 * {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_DYNAMIC_LAYOUT_ENABLED = true;
 
 	/**
 	 * Stores the location of this EntityLayout.
 	 */
 	public static final String LOCATION_PROPERTY = "location";
+
+	/**
+	 * Defines the default value for the {@link #LOCATION_PROPERTY}.
+	 */
 	public static final Point DEFAULT_LOCATION = new Point();
 
 	/**
 	 * Stores the size of this EntityLayout.
 	 */
 	public static final String SIZE_PROPERTY = "size";
+
+	/**
+	 * Defines the default value for the {@link #SIZE_PROPERTY}.
+	 */
 	public static final Dimension DEFAULT_SIZE = new Dimension();
 
 	/**
 	 * Stores the movable state of this EntityLayout.
 	 */
 	public static final String MOVABLE_PROPERTY = "movable";
+
+	/**
+	 * Defines the default value for the {@link #MOVABLE_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_MOVABLE = true;
 
 	/**
@@ -67,18 +102,30 @@ public class LayoutProperties {
 	 * may be resized by a layout algorithm.
 	 */
 	public static final String RESIZABLE_PROPERTY = "resizable";
+
+	/**
+	 * Defines the default value for the {@link #RESIZABLE_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_RESIZABLE = true;
 
 	/**
 	 * Stores the preferred aspect ratio (width / height) for this EntityLayout.
 	 */
 	public static final String ASPECT_RATIO_PROPERTY = "aspect-ratio";
+
+	/**
+	 * Defines the default value for the {@link #ASPECT_RATIO_PROPERTY}.
+	 */
 	public static final Double DEFAULT_ASPECT_RATIO = 0d;
 
 	/**
 	 * Stores the visibility state of the entity.
 	 */
 	public static final String VISIBLE_PROPERTY = "visible";
+
+	/**
+	 * Defines the default value for the {@link #VISIBLE_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_VISIBLE = true;
 
 	/**
@@ -88,6 +135,10 @@ public class LayoutProperties {
 	 * if it is not resizable.
 	 */
 	public static final String MINIMIZED_PROPERTY = "minimized";
+
+	/**
+	 * Defines the default value for the {@link #MINIMIZED_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_MINIMIZED = false;
 
 	/**
@@ -95,18 +146,30 @@ public class LayoutProperties {
 	 * be pruned to a subgraph.
 	 */
 	public static final String PRUNABLE_PROPERTY = "prunable";
+
+	/**
+	 * Defines the default value for the {@link #PRUNABLE_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_PRUNABLE = true;
 
 	/**
 	 * Stores a weight for this connection.
 	 */
 	public static final String WEIGHT_PROPERTY = "weight";
+
+	/**
+	 * Defines the default value for the {@link #WEIGHT_PROPERTY}.
+	 */
 	public static final Double DEFAULT_WEIGHT = 0d;
 
 	/**
 	 * Stores a weight for this connection.
 	 */
 	public static final String DIRECTED_PROPERTY = "directed";
+
+	/**
+	 * Defines the default value for the {@link #DIRECTED_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_DIRECTED = true;
 
 	/**
@@ -133,6 +196,10 @@ public class LayoutProperties {
 	 * Stores the direction of this subgraph.
 	 */
 	public static final String DIRECTION_PROPERTY = "direction";
+
+	/**
+	 * Defines the default value for the {@link #DIRECTION_PROPERTY}.
+	 */
 	public static final Integer DEFAULT_DIRECTION = DIRECTION_TOP_DOWN;
 
 	/**
@@ -140,8 +207,22 @@ public class LayoutProperties {
 	 * its .
 	 */
 	public static final String DIRECTION_DEPENDANT_PROPERTY = "direction-dependant";
+
+	/**
+	 * Defines the default value for the {@link #DIRECTION_DEPENDANT_PROPERTY}.
+	 */
 	public static final Boolean DEFAULT_DIRECTION_DEPENDANT = true;
 
+	/**
+	 * Returns the value of the {@link #BOUNDS_PROPERTY} of the given
+	 * {@link ILayoutContext}.
+	 * 
+	 * @param graph
+	 *            The {@link ILayoutContext} whose {@link #BOUNDS_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #BOUNDS_PROPERTY} of the given
+	 *         {@link ILayoutContext}.
+	 */
 	public static Rectangle getBounds(ILayoutContext graph) {
 		Object bounds = graph.getProperty(BOUNDS_PROPERTY);
 		if (bounds instanceof Rectangle) {
@@ -150,10 +231,31 @@ public class LayoutProperties {
 		return DEFAULT_BOUNDS.getCopy();
 	}
 
+	/**
+	 * Sets the value of the {@link #BOUNDS_PROPERTY} of the given
+	 * {@link ILayoutContext} to the given value.
+	 * 
+	 * @param graph
+	 *            The {@link ILayoutContext} whose {@link #BOUNDS_PROPERTY} is
+	 *            changed.
+	 * @param bounds
+	 *            The new value for the {@link #BOUNDS_PROPERTY} of the given
+	 *            {@link ILayoutContext}.
+	 */
 	public static void setBounds(ILayoutContext graph, Rectangle bounds) {
 		graph.setProperty(BOUNDS_PROPERTY, bounds);
 	}
 
+	/**
+	 * Returns the value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
+	 * {@link ILayoutContext}.
+	 * 
+	 * @param graph
+	 *            The {@link ILayoutContext} whose
+	 *            {@link #BOUNDS_EXPANDABLE_PROPERTY} is read.
+	 * @return The value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
+	 *         {@link ILayoutContext}.
+	 */
 	public static Boolean isBoundsExpandable(ILayoutContext graph) {
 		Object boundsExpandable = graph.getProperty(BOUNDS_EXPANDABLE_PROPERTY);
 		if (boundsExpandable instanceof Boolean) {
@@ -162,11 +264,32 @@ public class LayoutProperties {
 		return DEFAULT_BOUNDS_EXPANDABLE;
 	}
 
+	/**
+	 * Sets the value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
+	 * {@link ILayoutContext} to the given value.
+	 * 
+	 * @param graph
+	 *            The {@link ILayoutContext} whose
+	 *            {@link #BOUNDS_EXPANDABLE_PROPERTY} is changed.
+	 * @param boundsExpandable
+	 *            The new value for the {@link #BOUNDS_EXPANDABLE_PROPERTY} of
+	 *            the given {@link ILayoutContext}.
+	 */
 	public static void setBoundsExpandable(ILayoutContext graph,
 			boolean boundsExpandable) {
 		graph.setProperty(BOUNDS_EXPANDABLE_PROPERTY, boundsExpandable);
 	}
 
+	/**
+	 * Returns the value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
+	 * given {@link ILayoutContext}.
+	 * 
+	 * @param graph
+	 *            The {@link ILayoutContext} whose
+	 *            {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} is read.
+	 * @return The value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
+	 *         given {@link ILayoutContext}.
+	 */
 	public static Boolean isDynamicLayoutEnables(ILayoutContext graph) {
 		Object dynamicLayoutEnabled = graph
 				.getProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY);
@@ -176,11 +299,32 @@ public class LayoutProperties {
 		return DEFAULT_DYNAMIC_LAYOUT_ENABLED;
 	}
 
+	/**
+	 * Sets the value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
+	 * given {@link ILayoutContext} to the given value.
+	 * 
+	 * @param graph
+	 *            The {@link ILayoutContext} whose
+	 *            {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} is changed.
+	 * @param dynamicLayoutEnabled
+	 *            The new value for the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY}
+	 *            of the given {@link ILayoutContext}.
+	 */
 	public static void setDynamicLayoutEnabled(ILayoutContext graph,
 			boolean dynamicLayoutEnabled) {
 		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY, dynamicLayoutEnabled);
 	}
 
+	/**
+	 * Returns the value of the {@link #LOCATION_PROPERTY} of the given
+	 * {@link IEntityLayout}.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #LOCATION_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #LOCATION_PROPERTY} of the given
+	 *         {@link IEntityLayout}.
+	 */
 	public static Point getLocation(IEntityLayout entity) {
 		Object location = entity.getProperty(LOCATION_PROPERTY);
 		if (location instanceof Point) {
@@ -189,6 +333,16 @@ public class LayoutProperties {
 		return DEFAULT_LOCATION.getCopy();
 	}
 
+	/**
+	 * Returns the value of the {@link #SIZE_PROPERTY} of the given
+	 * {@link IEntityLayout}.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #SIZE_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #SIZE_PROPERTY} of the given
+	 *         {@link IEntityLayout}.
+	 */
 	public static Dimension getSize(IEntityLayout entity) {
 		Object size = entity.getProperty(SIZE_PROPERTY);
 		if (size instanceof Dimension) {
@@ -197,6 +351,16 @@ public class LayoutProperties {
 		return DEFAULT_SIZE.getCopy();
 	}
 
+	/**
+	 * Returns the value of the {@link #ASPECT_RATIO_PROPERTY} of the given
+	 * {@link IEntityLayout}.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #ASPECT_RATIO_PROPERTY}
+	 *            is read.
+	 * @return The value of the {@link #ASPECT_RATIO_PROPERTY} of the given
+	 *         {@link IEntityLayout}.
+	 */
 	public static Double getPreferredAspectRatio(IEntityLayout entity) {
 		Object ar = entity.getProperty(ASPECT_RATIO_PROPERTY);
 		if (ar instanceof Double) {
@@ -205,6 +369,16 @@ public class LayoutProperties {
 		return DEFAULT_ASPECT_RATIO;
 	}
 
+	/**
+	 * Returns the value of the {@link #RESIZABLE_PROPERTY} of the given
+	 * {@link IEntityLayout}.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #RESIZABLE_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #RESIZABLE_PROPERTY} of the given
+	 *         {@link IEntityLayout}.
+	 */
 	public static Boolean isResizable(IEntityLayout entity) {
 		Object resizable = entity.getProperty(RESIZABLE_PROPERTY);
 		if (resizable instanceof Boolean) {
@@ -213,6 +387,16 @@ public class LayoutProperties {
 		return DEFAULT_RESIZABLE;
 	}
 
+	/**
+	 * Returns the value of the {@link #MOVABLE_PROPERTY} of the given
+	 * {@link IEntityLayout}.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #MOVABLE_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #MOVABLE_PROPERTY} of the given
+	 *         {@link IEntityLayout}.
+	 */
 	public static Boolean isMovable(IEntityLayout entity) {
 		Object movable = entity.getProperty(MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
@@ -221,6 +405,20 @@ public class LayoutProperties {
 		return DEFAULT_MOVABLE;
 	}
 
+	/**
+	 * Sets the value of the {@link #LOCATION_PROPERTY} of the given
+	 * {@link IEntityLayout} to the given value.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #LOCATION_PROPERTY} is
+	 *            changed.
+	 * @param x
+	 *            The new x coordinate for the {@link #LOCATION_PROPERTY} of the
+	 *            given {@link IEntityLayout}.
+	 * @param y
+	 *            The new y coordinate for the {@link #LOCATION_PROPERTY} of the
+	 *            given {@link IEntityLayout}.
+	 */
 	public static void setLocation(IEntityLayout entity, double x, double y) {
 		if (Double.isNaN(x)) {
 			x = 0;
@@ -231,6 +429,20 @@ public class LayoutProperties {
 		entity.setProperty(LOCATION_PROPERTY, new Point(x, y));
 	}
 
+	/**
+	 * Sets the value of the {@link #SIZE_PROPERTY} of the given
+	 * {@link IEntityLayout} to the given value.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #SIZE_PROPERTY} is
+	 *            changed.
+	 * @param w
+	 *            The new width for the {@link #SIZE_PROPERTY} of the given
+	 *            {@link IEntityLayout}.
+	 * @param h
+	 *            The new height for the {@link #SIZE_PROPERTY} of the given
+	 *            {@link IEntityLayout}.
+	 */
 	public static void setSize(IEntityLayout entity, double w, double h) {
 		if (Double.isNaN(w)) {
 			w = 0;
@@ -241,10 +453,31 @@ public class LayoutProperties {
 		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
+	/**
+	 * Sets the value of the {@link #RESIZABLE_PROPERTY} of the given
+	 * {@link IEntityLayout} to the given value.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #RESIZABLE_PROPERTY} is
+	 *            changed.
+	 * @param resizable
+	 *            The new value for the {@link #RESIZABLE_PROPERTY} of the given
+	 *            {@link IEntityLayout}.
+	 */
 	public static void setResizable(IEntityLayout entity, boolean resizable) {
 		entity.setProperty(RESIZABLE_PROPERTY, resizable);
 	}
 
+	/**
+	 * Returns the value of the {@link #MINIMIZED_PROPERTY} of the given
+	 * {@link INodeLayout}.
+	 * 
+	 * @param node
+	 *            The {@link INodeLayout} whose {@link #MINIMIZED_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #MINIMIZED_PROPERTY} of the given
+	 *         {@link INodeLayout}.
+	 */
 	public static Boolean isMinimized(INodeLayout node) {
 		Object minimized = node.getProperty(MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
@@ -253,10 +486,31 @@ public class LayoutProperties {
 		return DEFAULT_MINIMIZED;
 	}
 
+	/**
+	 * Sets the value of the {@link #MINIMIZED_PROPERTY} of the given
+	 * {@link INodeLayout} to the given value.
+	 * 
+	 * @param node
+	 *            The {@link INodeLayout} whose {@link #MINIMIZED_PROPERTY} is
+	 *            changed.
+	 * @param minimized
+	 *            The new value for the {@link #MINIMIZED_PROPERTY} of the given
+	 *            {@link INodeLayout}.
+	 */
 	public static void setMinimized(INodeLayout node, boolean minimized) {
 		node.setProperty(MINIMIZED_PROPERTY, minimized);
 	}
 
+	/**
+	 * Returns the value of the {@link #PRUNABLE_PROPERTY} of the given
+	 * {@link INodeLayout}.
+	 * 
+	 * @param node
+	 *            The {@link INodeLayout} whose {@link #PRUNABLE_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #PRUNABLE_PROPERTY} of the given
+	 *         {@link INodeLayout}.
+	 */
 	public static Boolean isPrunable(INodeLayout node) {
 		Object prunable = node.getProperty(PRUNABLE_PROPERTY);
 		if (prunable instanceof Boolean) {
@@ -265,14 +519,47 @@ public class LayoutProperties {
 		return DEFAULT_PRUNABLE;
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link INodeLayout} is pruned to
+	 * an {@link ISubgraphLayout}, i.e. its {@link INodeLayout#getSubgraph()}
+	 * method does not return <code>null</code>. Otherwise returns
+	 * <code>false</code>.
+	 * 
+	 * @param node
+	 *            The {@link INodeLayout} whose
+	 *            {@link INodeLayout#getSubgraph()} is evaluated.
+	 * @return <code>true</code> if the given {@link INodeLayout} is pruned to
+	 *         an {@link ISubgraphLayout}, otherwise <code>false</code>.
+	 */
 	public static Boolean isPruned(INodeLayout node) {
 		return node.getSubgraph() != null;
 	}
 
+	/**
+	 * Sets the value of the {@link #PRUNABLE_PROPERTY} of the given
+	 * {@link INodeLayout} to the given value.
+	 * 
+	 * @param node
+	 *            The {@link INodeLayout} whose {@link #PRUNABLE_PROPERTY} is
+	 *            changed.
+	 * @param prunable
+	 *            The new value for the {@link #PRUNABLE_PROPERTY} of the given
+	 *            {@link INodeLayout}.
+	 */
 	public static void setPrunable(INodeLayout node, boolean prunable) {
 		node.setProperty(PRUNABLE_PROPERTY, prunable);
 	}
 
+	/**
+	 * Returns the value of the {@link #DIRECTED_PROPERTY} of the given
+	 * {@link IConnectionLayout}.
+	 * 
+	 * @param edge
+	 *            The {@link IConnectionLayout} whose {@link #DIRECTED_PROPERTY}
+	 *            is read.
+	 * @return The value of the {@link #DIRECTED_PROPERTY} of the given
+	 *         {@link IConnectionLayout}.
+	 */
 	public static Boolean isDirected(IConnectionLayout edge) {
 		Object directed = edge.getProperty(DIRECTED_PROPERTY);
 		if (directed instanceof Boolean) {
@@ -281,6 +568,16 @@ public class LayoutProperties {
 		return DEFAULT_DIRECTED;
 	}
 
+	/**
+	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
+	 * {@link IConnectionLayout}.
+	 * 
+	 * @param edge
+	 *            The {@link IConnectionLayout} whose {@link #VISIBLE_PROPERTY}
+	 *            is read.
+	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
+	 *         {@link IConnectionLayout}.
+	 */
 	public static Boolean isVisible(IConnectionLayout edge) {
 		Object visible = edge.getProperty(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
@@ -289,6 +586,16 @@ public class LayoutProperties {
 		return DEFAULT_VISIBLE;
 	}
 
+	/**
+	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
+	 * {@link IEntityLayout}.
+	 * 
+	 * @param entity
+	 *            The {@link IEntityLayout} whose {@link #VISIBLE_PROPERTY} is
+	 *            read.
+	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
+	 *         {@link IEntityLayout}.
+	 */
 	public static Boolean isVisible(IEntityLayout entity) {
 		Object visible = entity.getProperty(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
@@ -297,6 +604,16 @@ public class LayoutProperties {
 		return DEFAULT_VISIBLE;
 	}
 
+	/**
+	 * Returns the value of the {@link #WEIGHT_PROPERTY} of the given
+	 * {@link IConnectionLayout}.
+	 * 
+	 * @param edge
+	 *            The {@link IConnectionLayout} whose {@link #WEIGHT_PROPERTY}
+	 *            is read.
+	 * @return The value of the {@link #WEIGHT_PROPERTY} of the given
+	 *         {@link IConnectionLayout}.
+	 */
 	public static Double getWeight(IConnectionLayout edge) {
 		Object weight = edge.getProperty(WEIGHT_PROPERTY);
 		if (weight instanceof Double) {
@@ -305,28 +622,93 @@ public class LayoutProperties {
 		return DEFAULT_WEIGHT;
 	}
 
+	/**
+	 * Sets the value of the {@link #DIRECTED_PROPERTY} of the given
+	 * {@link IConnectionLayout} to the given value.
+	 * 
+	 * @param edge
+	 *            The {@link IConnectionLayout} whose {@link #DIRECTED_PROPERTY}
+	 *            is changed.
+	 * @param directed
+	 *            The new value for the {@link #DIRECTED_PROPERTY} of the given
+	 *            {@link IConnectionLayout}.
+	 */
 	public static void setDirected(IConnectionLayout edge, boolean directed) {
 		edge.setProperty(DIRECTED_PROPERTY, directed);
 	}
 
+	/**
+	 * Sets the value of the {@link #VISIBLE_PROPERTY} of the given
+	 * {@link IConnectionLayout} to the given value.
+	 * 
+	 * @param edge
+	 *            The {@link IConnectionLayout} whose {@link #VISIBLE_PROPERTY}
+	 *            is changed.
+	 * @param visible
+	 *            The new value for the {@link #VISIBLE_PROPERTY} of the given
+	 *            {@link IConnectionLayout}.
+	 */
 	public static void setVisible(IConnectionLayout edge, boolean visible) {
 		edge.setProperty(VISIBLE_PROPERTY, visible);
 	}
 
+	/**
+	 * Sets the value of the {@link #WEIGHT_PROPERTY} of the given
+	 * {@link IConnectionLayout} to the given value.
+	 * 
+	 * @param edge
+	 *            The {@link IConnectionLayout} whose {@link #WEIGHT_PROPERTY}
+	 *            is changed.
+	 * @param weight
+	 *            The new value for the {@link #WEIGHT_PROPERTY} of the given
+	 *            {@link IConnectionLayout}.
+	 */
 	public static void setWeight(IConnectionLayout edge, double weight) {
 		edge.setProperty(WEIGHT_PROPERTY, weight);
 	}
 
+	/**
+	 * Sets the value of the {@link #DIRECTION_DEPENDANT_PROPERTY} of the given
+	 * {@link ISubgraphLayout} to the given value.
+	 * 
+	 * @param subgraph
+	 *            The {@link ISubgraphLayout} whose
+	 *            {@link #DIRECTION_DEPENDANT_PROPERTY} is changed.
+	 * @param isDirectionDependant
+	 *            The new value for the {@link #DIRECTION_DEPENDANT_PROPERTY} of
+	 *            the given {@link ISubgraphLayout}.
+	 */
 	public static void setDirectionDependant(ISubgraphLayout subgraph,
 			boolean isDirectionDependant) {
 		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY, isDirectionDependant);
 	}
 
+	/**
+	 * Sets the value of the {@link #DIRECTION_PROPERTY} of the given
+	 * {@link ISubgraphLayout} to the given value.
+	 * 
+	 * @param subgraph
+	 *            The {@link ISubgraphLayout} whose {@link #DIRECTION_PROPERTY}
+	 *            is changed.
+	 * @param direction
+	 *            The new value for the {@link #DIRECTION_PROPERTY} of the given
+	 *            {@link ISubgraphLayout}.
+	 */
 	// TODO: ensure valid direction by using an enum
 	public static void setDirection(ISubgraphLayout subgraph, int direction) {
 		subgraph.setProperty(DIRECTION_PROPERTY, direction);
 	}
 
+	/**
+	 * Returns the value of the {@link #DIRECTION_DEPENDANT_PROPERTY} of the
+	 * given {@link ISubgraphLayout}.
+	 * 
+	 * @param subgraph
+	 *            The {@link ISubgraphLayout} whose
+	 *            {@link #DIRECTION_DEPENDANT_PROPERTY} is read.
+	 * @return The value of the {@link #DIRECTION_DEPENDANT_PROPERTY} of the
+	 *         given {@link ISubgraphLayout}.
+	 */
 	public static Boolean isDirectionDependant(ISubgraphLayout subgraph) {
 		Object directionDependant = subgraph
 				.getProperty(DIRECTION_DEPENDANT_PROPERTY);
@@ -336,6 +718,16 @@ public class LayoutProperties {
 		return DEFAULT_DIRECTION_DEPENDANT;
 	}
 
+	/**
+	 * Returns the value of the {@link #DIRECTION_PROPERTY} of the given
+	 * {@link ISubgraphLayout}.
+	 * 
+	 * @param subgraph
+	 *            The {@link ISubgraphLayout} whose {@link #DIRECTION_PROPERTY}
+	 *            is read.
+	 * @return The value of the {@link #DIRECTION_PROPERTY} of the given
+	 *         {@link ISubgraphLayout}.
+	 */
 	public static Integer getDirection(ISubgraphLayout subgraph) {
 		Object direction = subgraph.getProperty(DIRECTION_PROPERTY);
 		if (direction instanceof Integer) {

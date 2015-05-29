@@ -13,6 +13,11 @@ package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.common.properties.IPropertyStore;
 
+/**
+ * An {@link IConnectionLayout} represents a connection between two
+ * {@link INodeLayout}s, i.e. it represents an edge of a graph within the layout
+ * model.
+ */
 public interface IConnectionLayout extends IPropertyStore {
 
 	/**

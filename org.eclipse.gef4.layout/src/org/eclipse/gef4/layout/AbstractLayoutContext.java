@@ -24,6 +24,17 @@ import org.eclipse.gef4.layout.listeners.ILayoutListener;
 import org.eclipse.gef4.layout.listeners.IPruningListener;
 import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
 
+/**
+ * The {@link AbstractLayoutContext} is an abstract {@link ILayoutContext}
+ * implementation which supports the (un-)registration of
+ * {@link PropertyChangeListener}s and firing of events, the (un-)registration
+ * of any layout listeners and firing of events, the handling and execution of
+ * pre and post {@link Runnable}s, and filtering of layout objects using
+ * {@link ILayoutFilter}.
+ * 
+ * @author mwienand
+ *
+ */
 // TODO: replace fire* methods with property change mechanism
 public abstract class AbstractLayoutContext implements ILayoutContext {
 
@@ -40,7 +51,15 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	private final List<Runnable> preLayoutPass = new ArrayList<Runnable>();
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<ILayoutFilter>();
 
+	/**
+	 * Support object for the (un-)registration of
+	 * {@link PropertyChangeListener}s and firing of events.
+	 */
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	/**
+	 * Support object for reading/writing general properties.
+	 */
 	protected PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 
 	public void addContextListener(IContextListener listener) {
@@ -131,6 +150,14 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		}
 	}
 
+	/**
+	 * Executes all scheduled post-layout {@link Runnable}s (previously added by
+	 * {@link #schedulePostLayoutPass(Runnable)}.
+	 * 
+	 * @param animationHint
+	 *            <code>true</code> to indicate that the changes should be
+	 *            applied with an animation, otherwise <code>false</code>.
+	 */
 	protected void doFlushChanges(boolean animationHint) {
 		// TODO: use specific flush-changes-listener to pass animationHint along
 		for (Runnable r : new ArrayList<Runnable>(postLayoutPass)) {
@@ -361,8 +388,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		pcs.firePropertyChange(name, oldValue, value);
 	}
 
-	public void setStaticLayoutAlgorithm(
-			ILayoutAlgorithm staticLayoutAlgorithm) {
+	public void setStaticLayoutAlgorithm(ILayoutAlgorithm staticLayoutAlgorithm) {
 		ILayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
 		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
 			this.staticLayoutAlgorithm = staticLayoutAlgorithm;
@@ -376,7 +402,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		if (!postLayoutPass.contains(runnable)) {
 			new IllegalArgumentException(
 					"Given Runnable is not contained in the list.")
-							.printStackTrace();
+					.printStackTrace();
 		}
 		postLayoutPass.remove(runnable);
 	}
@@ -385,7 +411,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		if (!preLayoutPass.contains(runnable)) {
 			new IllegalArgumentException(
 					"Given Runnable is not contained in the list.")
-							.printStackTrace();
+					.printStackTrace();
 		}
 		preLayoutPass.remove(runnable);
 	}
