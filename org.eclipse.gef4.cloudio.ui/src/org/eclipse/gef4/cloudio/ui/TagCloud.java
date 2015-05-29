@@ -445,7 +445,7 @@ public class TagCloud extends Canvas {
 
 	/**
 	 * Calculates the bounds of each word, by determining the {@link Rectangle}
-	 * a {@link Path} would require to render an element.
+	 * a path would require to render an element.
 	 * 
 	 * @param monitor
 	 */
