@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
@@ -21,8 +22,6 @@ import java.util.TreeMap;
 import org.eclipse.gef4.common.notify.IMapObserver;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-
-import com.sun.javafx.fxml.PropertyChangeEvent;
 
 /**
  * An {@link Edge} represents a (directed) connection between two {@link Node}s
@@ -108,10 +107,8 @@ public final class Edge implements IPropertyChangeNotifier {
 
 	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
 		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap,
-				Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap,
-					observableMap);
+		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
+			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
 		}
 	};
 
