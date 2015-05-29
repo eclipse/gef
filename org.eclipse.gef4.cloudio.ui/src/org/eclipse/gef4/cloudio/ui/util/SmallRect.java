@@ -12,18 +12,17 @@
 package org.eclipse.gef4.cloudio.ui.util;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * A custom variation of a {@link Rectangle}, which stores
- * the required values as short instead of int, thus saving
- * some space. 
+ * A custom variation of a {@link Rectangle}, which stores the required values
+ * as short instead of int, thus saving some space.
  * 
  * @author sschwieb
  *
  */
+// TODO: replace with org.eclipse.gef4.geometry.planar.Rectangle
 public class SmallRect {
-	
+
 	final short x, y, width, height;
 
 	@Override
@@ -65,17 +64,17 @@ public class SmallRect {
 	}
 
 	public boolean intersects(SmallRect rect) {
-		if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		return rect == this || intersects (rect.x, rect.y, rect.width, rect.height);
-	}
-	
-	public boolean intersects (final int x, final int y, final int width, final int height) {
-		return (x < this.x + this.width) && (y < this.y + this.height) &&
-			(x + width > this.x) && (y + height > this.y);
+		if (rect == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		return rect == this || intersects(rect.x, rect.y, rect.width, rect.height);
 	}
 
-	public String toString () {
+	public boolean intersects(final int x, final int y, final int width, final int height) {
+		return (x < this.x + this.width) && (y < this.y + this.height) && (x + width > this.x) && (y + height > this.y);
+	}
+
+	public String toString() {
 		return "Rectangle {" + x + ", " + y + ", " + width + ", " + height + "}";
 	}
-	
+
 }

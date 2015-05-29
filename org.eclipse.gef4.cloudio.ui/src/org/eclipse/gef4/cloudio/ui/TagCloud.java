@@ -49,7 +49,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
@@ -212,7 +211,8 @@ public class TagCloud extends Canvas {
 	 * Parameter <code>accuracy</code> defines the size of the raster used when
 	 * placing strings, and must be a value greater than <code>0</code>. An
 	 * accuracy of <code>1</code> will theoretically give best results, as the
-	 * drawable area is analyzed most detailed, but this will also be very slow. <br>
+	 * drawable area is analyzed most detailed, but this will also be very slow.
+	 * <br>
 	 * Parameter <code>maxSize</code> defines the maximum size of the drawable
 	 * area and <strong>must</strong> be a power-of of <code>accuracy</code>,
 	 * such that <code>accuracy^n=maxSize</code> holds. <br>
@@ -226,11 +226,8 @@ public class TagCloud extends Canvas {
 	 */
 	public TagCloud(Composite parent, int style, int accuracy, int maxSize) {
 		super(parent, style);
-		Assert.isLegal(accuracy > 0,
-				"Parameter accuracy must be greater than 0, but was "
-						+ accuracy);
-		Assert.isLegal(maxSize > 0,
-				"Parameter maxSize must be greater than 0, but was " + maxSize);
+		Assert.isLegal(accuracy > 0, "Parameter accuracy must be greater than 0, but was " + accuracy);
+		Assert.isLegal(maxSize > 0, "Parameter maxSize must be greater than 0, but was " + maxSize);
 		int tmp = maxSize;
 		while (tmp > accuracy) {
 			tmp /= 2;
@@ -239,12 +236,10 @@ public class TagCloud extends Canvas {
 		this.accuracy = accuracy;
 		this.maxSize = maxSize;
 		cloudArea = new Rectangle(0, 0, maxSize, maxSize);
-		highlightColor = new Color(getDisplay(), Display.getDefault()
-				.getSystemColor(SWT.COLOR_RED).getRGB());
+		highlightColor = new Color(getDisplay(), Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB());
 		gc = new GC(this);
 		layouter = new DefaultLayouter(accuracy, accuracy);
-		setBackground(new Color(getDisplay(), Display.getDefault()
-				.getSystemColor(SWT.COLOR_WHITE).getRGB()));
+		setBackground(new Color(getDisplay(), Display.getDefault().getSystemColor(SWT.COLOR_WHITE).getRGB()));
 		initListeners();
 		textLayerImage = new Image(getDisplay(), 100, 100);
 		zoomFit();
@@ -257,12 +252,13 @@ public class TagCloud extends Canvas {
 		});
 	}
 
-/**
-	 * Creates a new Tag cloud on the given parent. To add scroll bars
-	 * to the cloud, use {@link SWT#HORIZONTAL} and {@link SWT#VERTICAL}.
-	 * This is a shortcut to {@link #TagCloud(Composite, int, int, int)},
-	 * which sets the accuracy to <code>5</code> and the maximum size of the
-	 * drawable area to <code>5120</code>.
+	/**
+	 * Creates a new Tag cloud on the given parent. To add scroll bars to the
+	 * cloud, use {@link SWT#HORIZONTAL} and {@link SWT#VERTICAL}. This is a
+	 * shortcut to {@link #TagCloud(Composite, int, int, int)}, which sets the
+	 * accuracy to <code>5</code> and the maximum size of the drawable area to
+	 * <code>5120</code>.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
@@ -315,8 +311,7 @@ public class TagCloud extends Canvas {
 		checkWidget();
 		if (selectionLayerImage == null)
 			return;
-		zoomLayerImage = new Image(getDisplay(),
-				selectionLayerImage.getBounds().width,
+		zoomLayerImage = new Image(getDisplay(), selectionLayerImage.getBounds().width,
 				selectionLayerImage.getBounds().height);
 		GC gc = new GC(zoomLayerImage);
 		gc.drawImage(selectionLayerImage, 0, 0);
@@ -485,8 +480,7 @@ public class TagCloud extends Canvas {
 					final double cos = Math.abs(Math.cos(radian));
 					final int x = (int) ((cos * stringExtent.x) + (sin * stringExtent.y));
 					final int y = (int) ((cos * stringExtent.y) + (sin * stringExtent.x));
-					ImageData id = createImageData(word, font, stringExtent,
-							sin, cos, x, y, color);
+					ImageData id = createImageData(word, font, stringExtent, sin, cos, x, y, color);
 					calcWordExtents(word, id);
 					font.dispose();
 				}
@@ -518,9 +512,8 @@ public class TagCloud extends Canvas {
 		}
 	}
 
-	private ImageData createImageData(final Word word, Font font,
-			Point stringExtent, final double sin, final double cos, int x,
-			int y, Color color) {
+	private ImageData createImageData(final Word word, Font font, Point stringExtent, final double sin,
+			final double cos, int x, int y, Color color) {
 		Image img = new Image(null, x, y);
 		word.width = x;
 		word.height = y;
@@ -530,8 +523,7 @@ public class TagCloud extends Canvas {
 		g.setForeground(color);
 		Transform t = new Transform(img.getDevice());
 		if (word.angle < 0) {
-			t.translate(0, img.getBounds().height
-					- (int) (cos * stringExtent.y));
+			t.translate(0, img.getBounds().height - (int) (cos * stringExtent.y));
 		} else {
 			t.translate((int) (sin * stringExtent.y), 0);
 		}
@@ -568,17 +560,14 @@ public class TagCloud extends Canvas {
 				int pixel = pixels[i];
 				// Extracting color values as in PaletteData.getRGB(int pixel):
 				int r = pixel & palette.redMask;
-				r = (palette.redShift < 0) ? r >>> -palette.redShift
-						: r << palette.redShift;
+				r = (palette.redShift < 0) ? r >>> -palette.redShift : r << palette.redShift;
 				int g = pixel & palette.greenMask;
-				g = (palette.greenShift < 0) ? g >>> -palette.greenShift
-						: g << palette.greenShift;
+				g = (palette.greenShift < 0) ? g >>> -palette.greenShift : g << palette.greenShift;
 				int b = pixel & palette.blueMask;
-				b = (palette.blueShift < 0) ? b >>> -palette.blueShift
-						: b << palette.blueShift;
+				b = (palette.blueShift < 0) ? b >>> -palette.blueShift : b << palette.blueShift;
 				if (r < 250 || g < 250 || b < 250) {
-					SmallRect rect = new SmallRect((i / accuracy) * accuracy,
-							(y / accuracy) * accuracy, accuracy, accuracy);
+					SmallRect rect = new SmallRect((i / accuracy) * accuracy, (y / accuracy) * accuracy, accuracy,
+							accuracy);
 					if (!inserted.contains(rect)) {
 						word.tree.insert(rect, word.id);
 						inserted.add(rect);
@@ -598,8 +587,7 @@ public class TagCloud extends Canvas {
 	 *            may be <code>null</code>.
 	 * @return the number of words which could be placed
 	 */
-	protected int layoutWords(Collection<Word> wordsToUse,
-			IProgressMonitor monitor) {
+	protected int layoutWords(Collection<Word> wordsToUse, IProgressMonitor monitor) {
 		checkWidget();
 		if (monitor != null) {
 			monitor.subTask("Placing words...");
@@ -623,8 +611,7 @@ public class TagCloud extends Canvas {
 			final GC g = gc;
 			for (Word word : wordsToUse) {
 				Point point = layouter.getInitialOffset(word, cloudArea);
-				boolean result = layouter.layout(point, word, cloudArea,
-						cloudMatrix);
+				boolean result = layouter.layout(point, word, cloudArea, cloudMatrix);
 				if (!result) {
 					System.err.println("Failed to place " + word.string);
 					continue;
@@ -675,14 +662,12 @@ public class TagCloud extends Canvas {
 		}
 		textLayerImage = new Image(getDisplay(), r.width - r.x, r.height - r.y);
 		gc = new GC(textLayerImage);
-		gc.drawImage(tmpImage, r.x, r.y, r.width - r.x, r.height - r.y, 0, 0,
-				textLayerImage.getBounds().width,
+		gc.drawImage(tmpImage, r.x, r.y, r.width - r.x, r.height - r.y, 0, 0, textLayerImage.getBounds().width,
 				textLayerImage.getBounds().height);
 		this.regionOffset = new Point(r.x, r.y);
 		tmpImage.dispose();
 		gc.dispose();
-		selectionLayerImage = new Image(getDisplay(),
-				textLayerImage.getBounds());
+		selectionLayerImage = new Image(getDisplay(), textLayerImage.getBounds());
 		gc = new GC(selectionLayerImage);
 		gc.drawImage(textLayerImage, 0, 0);
 		gc.dispose();
@@ -707,22 +692,14 @@ public class TagCloud extends Canvas {
 		for (Word word : values) {
 			Assert.isLegal(word != null, "Word must not be null!");
 			Assert.isLegal(word.string != null, "Word must define a string!");
-			Assert.isLegal(word.getColor() != null,
-					"A word must define a color");
-			Assert.isLegal(word.getFontData() != null,
-					"A word must define a fontdata array");
+			Assert.isLegal(word.getColor() != null, "A word must define a color");
+			Assert.isLegal(word.getFontData() != null, "A word must define a fontdata array");
 			Assert.isLegal(word.weight >= 0,
-					"Word weight must be between 0 and 1 (inclusive), but value was "
-							+ word.weight);
+					"Word weight must be between 0 and 1 (inclusive), but value was " + word.weight);
 			Assert.isLegal(word.weight <= 1,
-					"Word weight must be between 0 and 1 (inclusive), but value was "
-							+ word.weight);
-			Assert.isLegal(word.angle >= -90,
-					"Angle must be between -90 and +90 (inclusive), but was "
-							+ word.angle);
-			Assert.isLegal(word.angle <= 90,
-					"Angle must be between -90 and +90 (inclusive), but was "
-							+ word.angle);
+					"Word weight must be between 0 and 1 (inclusive), but value was " + word.weight);
+			Assert.isLegal(word.angle >= -90, "Angle must be between -90 and +90 (inclusive), but was " + word.angle);
+			Assert.isLegal(word.angle <= 90, "Angle must be between -90 and +90 (inclusive), but was " + word.angle);
 		}
 		this.wordsToUse = new ArrayList<Word>(values);
 		if (boost > 0) {
@@ -774,8 +751,7 @@ public class TagCloud extends Canvas {
 			Image img = new Image(null, cloudArea.width, cloudArea.height);
 			GC gc = new GC(img);
 			Image tmp = new Image(null, bgData);
-			gc.drawImage(tmp, 0, 0, tmp.getBounds().width,
-					tmp.getBounds().height, 0, 0, cloudArea.width,
+			gc.drawImage(tmp, 0, 0, tmp.getBounds().width, tmp.getBounds().height, 0, 0, cloudArea.width,
 					cloudArea.height);
 			ImageData id = img.getImageData();
 			tmp.dispose();
@@ -787,8 +763,7 @@ public class TagCloud extends Canvas {
 
 	private void resetMask() {
 		Word word = new Word("mask");
-		word.tree = new RectTree(new SmallRect(0, 0, cloudArea.width,
-				cloudArea.height), accuracy);
+		word.tree = new RectTree(new SmallRect(0, 0, cloudArea.width, cloudArea.height), accuracy);
 		calcWordExtents(word, mask);
 		word.tree.place(cloudMatrix, RectTree.BACKGROUND);
 	}
@@ -812,8 +787,7 @@ public class TagCloud extends Canvas {
 					int hSelection = hBar.getSelection();
 					int destX = -hSelection - origin.x;
 					Rectangle rect = zoomLayerImage.getBounds();
-					TagCloud.this.scroll(destX, 0, 0, 0, rect.width,
-							rect.height, false);
+					TagCloud.this.scroll(destX, 0, 0, 0, rect.width, rect.height, false);
 					origin.x = -hSelection;
 				}
 			};
@@ -827,8 +801,7 @@ public class TagCloud extends Canvas {
 					int vSelection = vBar.getSelection();
 					int destY = -vSelection - origin.y;
 					Rectangle rect = zoomLayerImage.getBounds();
-					TagCloud.this.scroll(0, destY, 0, 0, rect.width,
-							rect.height, false);
+					TagCloud.this.scroll(0, destY, 0, 0, rect.width, rect.height, false);
 					origin.y = -vSelection;
 				}
 			};
@@ -1045,8 +1018,7 @@ public class TagCloud extends Canvas {
 		return me;
 	}
 
-	private void fireMouseEvent(MouseEvent me, int type,
-			Set<EventListener> listeners) {
+	private void fireMouseEvent(MouseEvent me, int type, Set<EventListener> listeners) {
 		for (EventListener listener : listeners) {
 			if (listener instanceof MouseListener) {
 				MouseListener ml = (MouseListener) listener;
@@ -1145,8 +1117,7 @@ public class TagCloud extends Canvas {
 			return;
 		GC gc = new GC(textLayerImage);
 		gc.setBackground(getBackground());
-		gc.fillRectangle(0, 0, textLayerImage.getBounds().width,
-				textLayerImage.getBounds().height);
+		gc.fillRectangle(0, 0, textLayerImage.getBounds().width, textLayerImage.getBounds().height);
 		for (Word word : wordsToUse) {
 			drawWord(gc, word, word.getColor());
 		}
@@ -1206,8 +1177,7 @@ public class TagCloud extends Canvas {
 			}
 			placedWords = layoutWords(wordsToUse, monitor);
 		} catch (Exception e) {
-			MessageDialog.openError(getShell(),
-					"Exception while layouting data",
+			MessageDialog.openError(getShell(), "Exception while layouting data",
 					"An exception occurred while layouting: " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -1258,8 +1228,7 @@ public class TagCloud extends Canvas {
 	 */
 	public void setMaxFontSize(int maxSize) {
 		checkWidget();
-		Assert.isLegal(maxSize > 0,
-				"Font Size must be greater than zero, but was " + maxSize + "!");
+		Assert.isLegal(maxSize > 0, "Font Size must be greater than zero, but was " + maxSize + "!");
 		maxFontSize = maxSize;
 	}
 
@@ -1271,10 +1240,8 @@ public class TagCloud extends Canvas {
 	 */
 	public void setOpacity(int opacity) {
 		checkWidget();
-		Assert.isLegal(opacity > 0, "Opacity must be greater than zero: "
-				+ opacity);
-		Assert.isLegal(opacity < 256, "Opacity must be less than 256: "
-				+ opacity);
+		Assert.isLegal(opacity > 0, "Opacity must be greater than zero: " + opacity);
+		Assert.isLegal(opacity < 256, "Opacity must be less than 256: " + opacity);
 		this.opacity = opacity;
 	}
 
