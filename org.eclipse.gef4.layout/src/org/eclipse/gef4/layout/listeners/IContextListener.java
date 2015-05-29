@@ -11,11 +11,26 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.listeners;
 
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.LayoutProperties;
 
-
+/**
+ * An {@link IContextListener} is notified about changes to context attributes
+ * such as the {@link LayoutProperties#BOUNDS_PROPERTY} which limits the area
+ * where nodes can be placed by layout algorithms, the
+ * {@link LayoutProperties#PRUNING_ENABLED_PROPERTY} which defines whether nodes
+ * can be pruned, and the
+ * {@link LayoutProperties#DYNAMIC_LAYOUT_ENABLED_PROPERTY} which defines
+ * whether layout algorithms are allowed to perform a layout pass in reaction to
+ * layout context events.
+ */
 public interface IContextListener {
+
+	/**
+	 * A stub implementation of the {@link IContextListener} which contains
+	 * empty implementations of the specified methods.
+	 */
 	public class Stub implements IContextListener {
 
 		public boolean boundsChanged(ILayoutContext context) {

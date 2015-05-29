@@ -12,12 +12,20 @@
 package org.eclipse.gef4.layout.listeners;
 
 import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
+/**
+ * An {@link IGraphStructureListener} is notified about structural changes, i.e.
+ * the addition/removal of {@link INodeLayout}s and {@link IConnectionLayout}s.
+ */
 public interface IGraphStructureListener {
 
+	/**
+	 * A stub implementation of the {@link IGraphStructureListener} which
+	 * contains empty implementations of the specified methods.
+	 */
 	public class Stub implements IGraphStructureListener {
 
 		public boolean nodeAdded(ILayoutContext context, INodeLayout node) {

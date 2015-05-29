@@ -11,11 +11,16 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.listeners;
 
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
+/**
+ * An {@link IPruningListener} is notified about pruning changes, i.e. adding
+ * {@link INodeLayout}s to an {@link ISubgraphLayout} (pruning), or removing
+ * {@link INodeLayout}s from an {@link ISubgraphLayout} (unpruning).
+ */
 public interface IPruningListener {
 
 	/**
@@ -33,7 +38,8 @@ public interface IPruningListener {
 	 *            subgraphs that have been created or had nodes added
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean nodesPruned(ILayoutContext context, ISubgraphLayout[] subgraph);
+	public boolean nodesPruned(ILayoutContext context,
+			ISubgraphLayout[] subgraph);
 
 	/**
 	 * This method is called when some nodes are unpruned in a layout context,
