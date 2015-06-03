@@ -22,6 +22,15 @@
 			<!-- Set up which wiki pages to pull from: -->
 			<path name="${wiki.path}" title="${wiki.title}" generateToc="true" />
 		</mediawiki-to-eclipse-help>
+
+		<!-- perform (global) URL rewriting for http-based platform javadoc references (of any release) to local org.eclipse.platform.doc.isv bundle -->
+		<replaceregexp flags="g">
+			<fileset dir="${basedir}/reference/wiki/">
+				<include name="**/*.html" />
+			</fileset>
+			<regexp pattern="http://help.eclipse.org/.+?/org.eclipse.platform.doc.isv/reference/api/"/>
+			<substitution expression="PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/" />
+		</replaceregexp>
 	</target>
 </project>
 
