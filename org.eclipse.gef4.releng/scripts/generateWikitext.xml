@@ -21,6 +21,7 @@
 		<mediawiki-to-eclipse-help markuplanguage="MediaWiki" wikiBaseUrl="http://wiki.eclipse.org" navigationImages="true" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" helpPrefix="reference/wiki" title="${wiki.title}" generateUnifiedToc="false">
 			<!-- Set up which wiki pages to pull from: -->
 			<path name="${wiki.path}" title="${wiki.title}" generateToc="true" />
+			<!--<stylesheet url="http://wiki.eclipse.org/skins/solstice/public/stylesheets/styles.min.css?303" />-->
 		</mediawiki-to-eclipse-help>
 
 		<!-- perform (global) URL rewriting for http-based platform javadoc references (of any release) to local org.eclipse.platform.doc.isv bundle -->
@@ -28,7 +29,7 @@
 			<fileset dir="${basedir}/reference/wiki/">
 				<include name="**/*.html" />
 			</fileset>
-			<regexp pattern="http://help.eclipse.org/.+?/org.eclipse.platform.doc.isv/reference/api/"/>
+			<regexp pattern="http://help.eclipse.org/(.+?/)?org.eclipse.platform.doc.isv/reference/api/"/>
 			<substitution expression="PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/" />
 		</replaceregexp>
 	</target>
