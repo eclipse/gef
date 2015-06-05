@@ -29,7 +29,7 @@
 			<fileset dir="${basedir}/reference/wiki/">
 				<include name="**/*.html" />
 			</fileset>
-			<regexp pattern="http://help.eclipse.org/(.+?/)?/topic/org.eclipse.platform.doc.isv/reference/api/"/>
+			<regexp pattern="http://help.eclipse.org/(.+?/)?topic/org.eclipse.platform.doc.isv/reference/api/"/>
 			<substitution expression="PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/" />
 		</replaceregexp>
 	</target>
