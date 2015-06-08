@@ -13,7 +13,7 @@
 /**
  * This package provides a two-dimensional tree structure to store non-overlapping
  * rectangles ({@link org.eclipse.gef4.cloudio.ui.util.RectTree}), a custom rectangle
- * implementations with short precision ({@link org.eclipse.gef4.cloudio.ui.util.SmallRect}),
+ * implementation with short precision ({@link org.eclipse.gef4.cloudio.ui.util.SmallRect}),
  * and a representation of the drawable area within a {@link org.eclipse.gef4.cloudio.ui.TagCloud}
  * ({@link org.eclipse.gef4.cloudio.ui.util.CloudMatrix}).
  */
