@@ -6,13 +6,13 @@
  * accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Matthias Wienand (itemis AG) - initial text
+ * Contributors: Alexander Nyßen (itemis AG) - initial text
  *
  *******************************************************************************/
 /**
  * This package provides the bundle activator (
- * {@link org.eclipse.gef4.mvc.fx.ui.MvcFxUiBundle}) as well as a Guice Module (
- * {@link org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule}) with default bindings for
- * MVC.FX.UI.
+ * {@link org.eclipse.gef4.mvc.ui.MvcUiBundle}) as well as a Guice Module (
+ * {@link org.eclipse.gef4.mvc.ui.MvcUiModule}) with default bindings for
+ * MVC.UI.
  */
-package org.eclipse.gef4.mvc.fx.ui;
+package org.eclipse.gef4.mvc.ui;
