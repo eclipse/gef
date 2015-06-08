@@ -30,6 +30,7 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
+// TODO: Rename to provide 'Abstract' prefix
 public abstract class FXMouseDragGesture {
 
 	private Scene scene;

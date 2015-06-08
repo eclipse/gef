@@ -24,6 +24,7 @@ import javafx.scene.input.RotateEvent;
  * @author anyssen
  *
  */
+// TODO: Rename to provide 'Abstract' prefix
 public abstract class FXRotateGesture {
 
 	private Scene scene;

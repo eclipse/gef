@@ -24,6 +24,7 @@ import javafx.scene.input.ZoomEvent;
  * @author mwienand
  *
  */
+// TODO: Rename to provide 'Abstract' prefix
 public abstract class FXPinchSpreadGesture {
 
 	private Scene scene;
