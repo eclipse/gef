@@ -66,12 +66,16 @@ import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
+import org.eclipse.gef4.zest.fx.parts.ZestFxExpandingHandlePart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxFeedbackPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
+import org.eclipse.gef4.zest.fx.policies.ExpandFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.FocusAndSelectFirstAnchorageOnClickPolicy;
+import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
+import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
 import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
@@ -119,6 +123,7 @@ public class ZestFxModule extends MvcFxModule {
 				.to(VisualBoundsGeometryProvider.class);
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void bindAbstractFXHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -148,6 +153,7 @@ public class ZestFxModule extends MvcFxModule {
 				.to(ViewportStackModel.class);
 	}
 
+	@SuppressWarnings("serial")
 	protected void bindEdgeContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout
@@ -166,6 +172,7 @@ public class ZestFxModule extends MvcFxModule {
 				.to(VisualOutlineGeometryProvider.class);
 	}
 
+	@SuppressWarnings("serial")
 	protected void bindEdgeLabelPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hiding
@@ -188,6 +195,18 @@ public class ZestFxModule extends MvcFxModule {
 								},
 										FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
+	}
+
+	protected void bindExpandingHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY,
+						"hoverFirstAnchorage")).to(
+				HoverFirstAnchorageOnHoverPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
+						"expandOnClick")).to(
+				ExpandFirstAnchorageOnClickPolicy.class);
 	}
 
 	@Override
@@ -220,6 +239,18 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(LayoutContextBehavior.class)).to(
 						LayoutContextBehavior.class);
+	}
+
+	protected void bindHidingHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY,
+						"hoverFirstAnchorage")).to(
+				HoverFirstAnchorageOnHoverPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
+						"hideOnClick")).to(
+				HideFirstAnchorageOnClickPolicy.class);
 	}
 
 	protected void bindIContentPartFactory() {
@@ -303,10 +334,6 @@ public class ZestFxModule extends MvcFxModule {
 				.to(VisualBoundsGeometryProvider.class);
 	}
 
-	protected void bindPruningHandlePartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-	}
-
 	@Override
 	protected void configure() {
 		super.configure();
@@ -317,8 +344,10 @@ public class ZestFxModule extends MvcFxModule {
 				NodeContentPart.class));
 		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				EdgeContentPart.class));
-		bindPruningHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+		bindHidingHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				ZestFxHidingHandlePart.class));
+		bindExpandingHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), ZestFxExpandingHandlePart.class));
 		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				EdgeLabelPart.class));
 	}

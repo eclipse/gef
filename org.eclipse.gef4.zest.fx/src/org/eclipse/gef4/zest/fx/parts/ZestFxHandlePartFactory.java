@@ -24,9 +24,14 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
+
+	@Inject
+	private Injector injector;
 
 	@Override
 	protected IHandlePart<Node, ? extends Node> createHoverSegmentHandlePart(
@@ -36,8 +41,10 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (target instanceof NodeContentPart) {
 			if (segmentIndex == 0) {
 				// create prune handle at first vertex
-				return new ZestFxHidingHandlePart(
+				ZestFxHidingHandlePart zestFxHidingHandlePart = new ZestFxHidingHandlePart(
 						hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
+				injector.injectMembers(zestFxHidingHandlePart);
+				return zestFxHidingHandlePart;
 			} else if (segmentIndex == 1) {
 				// create expand handle at second vertex
 				// but check if we have pruned neighbors, first
@@ -45,9 +52,11 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 						.getAdapter(HidingModel.class);
 				if (!hidingModel.getHiddenNeighbors(
 						((NodeContentPart) target).getContent()).isEmpty()) {
-					return new ZestFxExpandingHandlePart(
+					ZestFxExpandingHandlePart zestFxExpandingHandlePart = new ZestFxExpandingHandlePart(
 							hoverHandlesSegmentsInSceneProvider, segmentIndex,
 							0);
+					injector.injectMembers(zestFxExpandingHandlePart);
+					return zestFxExpandingHandlePart;
 				}
 			}
 		}
