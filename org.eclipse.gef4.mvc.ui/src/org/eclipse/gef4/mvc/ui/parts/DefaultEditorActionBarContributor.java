@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.parts;
+package org.eclipse.gef4.mvc.ui.parts;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
@@ -18,12 +18,13 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 /**
  * @author anyssen
  */
-public class FXEditorActionBarContributor extends EditorActionBarContributor {
+public class DefaultEditorActionBarContributor extends
+		EditorActionBarContributor {
 
 	@Override
 	public void setActiveEditor(final IEditorPart targetEditor) {
 		super.setActiveEditor(targetEditor);
-		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) targetEditor
+		final UndoRedoActionGroup undoRedoActionGroup = targetEditor
 				.getAdapter(UndoRedoActionGroup.class);
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.fillActionBars(getActionBars());

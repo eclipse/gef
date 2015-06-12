@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.parts;
+package org.eclipse.gef4.mvc.ui.parts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
-// TOOD: move to Common.UI
 public class DefaultSelectionProvider implements ISelectionProvider {
 
 	private ISelection selection;
@@ -49,6 +48,7 @@ public class DefaultSelectionProvider implements ISelectionProvider {
 				selection);
 		for (final ISelectionChangedListener l : selectionChangedListeners) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					l.selectionChanged(e);
 				}
