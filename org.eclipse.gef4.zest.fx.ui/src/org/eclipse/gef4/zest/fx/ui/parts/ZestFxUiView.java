@@ -18,12 +18,21 @@ import java.util.List;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 
 public class ZestFxUiView extends FXView {
 
 	private Object graph;
+
+	public ZestFxUiView() {
+		super(Guice.createInjector(Modules.override(new ZestFxModule()).with(
+				new ZestFxUiModule())));
+	}
 
 	public ZestFxUiView(Injector injector) {
 		super(injector);

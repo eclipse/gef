@@ -15,6 +15,8 @@ package org.eclipse.gef4.internal.dot.ui;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import javafx.scene.Scene;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -36,8 +38,6 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.internal.dot.DotExtractor;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.internal.dot.DotNativeDrawer;
-import org.eclipse.gef4.zest.fx.ZestFxModule;
-import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -63,11 +63,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
-
-import com.google.inject.Guice;
-import com.google.inject.util.Modules;
-
-import javafx.scene.Scene;
 
 /**
  * Render DOT content with ZestFx and Graphviz
@@ -96,8 +91,6 @@ public class DotGraphView extends ZestFxUiView {
 	private Link resourceLabel = null;
 
 	public DotGraphView() {
-		super(Guice.createInjector(Modules.override(new ZestFxUiModule())//
-				.with(new ZestFxModule())));
 		setGraph(new DotImport(currentDot).newGraphInstance());
 	}
 
@@ -171,15 +164,17 @@ public class DotGraphView extends ZestFxUiView {
 						String message = String.format(
 								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
 								dotImport.getErrors(), dot);
-						DotUiActivator.getDefault().getLog()
+						DotUiActivator
+								.getDefault()
+								.getLog()
 								.log(new Status(Status.ERROR,
 										DotUiActivator.PLUGIN_ID, message));
 						return;
 					}
 					setGraph(dotImport.newGraphInstance());
 					exportAction.linkCorrespondingImage(view);
-					resourceLabel.setText(
-							String.format(GRAPH_RESOURCE, file.getName()));
+					resourceLabel.setText(String.format(GRAPH_RESOURCE,
+							file.getName()));
 					resourceLabel.setToolTipText(file.getAbsolutePath());
 				}
 			}
@@ -260,8 +255,8 @@ public class DotGraphView extends ZestFxUiView {
 
 		private void openFile(File file, DotGraphView view) {
 			if (view.currentFile == null) { // no workspace file for cur. graph
-				IFileStore fileStore = EFS.getLocalFileSystem()
-						.getStore(new Path("")); //$NON-NLS-1$
+				IFileStore fileStore = EFS.getLocalFileSystem().getStore(
+						new Path("")); //$NON-NLS-1$
 				fileStore = fileStore.getChild(file.getAbsolutePath());
 				if (!fileStore.fetchInfo().isDirectory()
 						&& fileStore.fetchInfo().exists()) {
@@ -280,10 +275,11 @@ public class DotGraphView extends ZestFxUiView {
 						.getEditorRegistry();
 				if (registry.isSystemExternalEditorAvailable(copy.getName())) {
 					try {
-						view.getViewSite().getPage()
-								.openEditor(new FileEditorInput(
-										copy),
-								IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+						view.getViewSite()
+								.getPage()
+								.openEditor(
+										new FileEditorInput(copy),
+										IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 					} catch (PartInitException e) {
 						e.printStackTrace();
 					}
@@ -293,7 +289,9 @@ public class DotGraphView extends ZestFxUiView {
 
 		private void refreshParent(final File file) {
 			try {
-				ResourcesPlugin.getWorkspace().getRoot()
+				ResourcesPlugin
+						.getWorkspace()
+						.getRoot()
 						.getFileForLocation(
 								Path.fromOSString(file.getAbsolutePath()))
 						.getParent().refreshLocal(IResource.DEPTH_ONE, null);
@@ -332,8 +330,8 @@ public class DotGraphView extends ZestFxUiView {
 			return new Action(DotGraphView.LOAD_DOT_FILE) {
 				@Override
 				public void run() {
-					FileDialog dialog = new FileDialog(
-							view.getViewSite().getShell(), SWT.OPEN);
+					FileDialog dialog = new FileDialog(view.getViewSite()
+							.getShell(), SWT.OPEN);
 					dialog.setFileName(lastSelection);
 					String dotFileNamePattern = "*." + EXTENSION; //$NON-NLS-1$
 					String embeddedDotFileNamePattern = "*.*"; //$NON-NLS-1$
@@ -387,10 +385,9 @@ public class DotGraphView extends ZestFxUiView {
 										| IResourceChangeEvent.POST_CHANGE);
 						service.addSelectionListener(selectionChangeListener);
 					} else {
-						workspace.removeResourceChangeListener(
-								resourceChangeListener);
-						service.removeSelectionListener(
-								selectionChangeListener);
+						workspace
+								.removeResourceChangeListener(resourceChangeListener);
+						service.removeSelectionListener(selectionChangeListener);
 					}
 				}
 
@@ -404,14 +401,12 @@ public class DotGraphView extends ZestFxUiView {
 						XtextEditor editor = (XtextEditor) part;
 						if ("org.eclipse.gef4.internal.dot.parser.Dot" //$NON-NLS-1$
 								.equals(editor.getLanguageName())
-								&& editor
-										.getEditorInput() instanceof FileEditorInput) {
+								&& editor.getEditorInput() instanceof FileEditorInput) {
 							try {
 								File resolvedFile = DotFileUtils
 										.resolve(((FileEditorInput) editor
 												.getEditorInput()).getFile()
-														.getLocationURI()
-														.toURL());
+												.getLocationURI().toURL());
 								if (!resolvedFile.equals(view.currentFile)) {
 									view.updateGraph(resolvedFile);
 								}
@@ -445,13 +440,12 @@ public class DotGraphView extends ZestFxUiView {
 				public boolean visit(final IResourceDelta delta) {
 					IResource resource = delta.getResource();
 					if (resource.getType() == IResource.FILE
-							&& ((IFile) resource).getName()
-									.endsWith(EXTENSION)) {
+							&& ((IFile) resource).getName().endsWith(EXTENSION)) {
 						try {
 							final IFile f = (IFile) resource;
 							IWorkspaceRunnable workspaceRunnable = view
-									.updateGraphRunnable(DotFileUtils.resolve(
-											f.getLocationURI().toURL()));
+									.updateGraphRunnable(DotFileUtils.resolve(f
+											.getLocationURI().toURL()));
 							IWorkspace workspace = ResourcesPlugin
 									.getWorkspace();
 							if (!workspace.isTreeLocked()) {
