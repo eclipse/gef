@@ -11,7 +11,6 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.listeners;
 
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 
@@ -49,33 +48,29 @@ public interface IContextListener {
 
 	/**
 	 * This method is called whenever the bounds available in a layout context
-	 * change.
-	 * 
-	 * If true is returned, it means that the receiving listener has intercepted
-	 * this event. Intercepted events will not be passed to the rest of the
-	 * listeners. If the event is not intercepted by any listener,
-	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
-	 * context's main algorithm.
+	 * change. If <code>true</code> is returned, no dynamic layout will be
+	 * applied after notifying all listeners, i.e. a dynamic layout pass will
+	 * only be applied when all registered {@link IContextListener}s return
+	 * <code>false</code>.
 	 * 
 	 * @param context
 	 *            the layout context that fired the event
-	 * @return true if no further operations after this event are required
+	 * @return <code>true</code> if no dynamic layout should be applied
+	 *         afterwards.
 	 */
 	public boolean boundsChanged(ILayoutContext context);
 
 	/**
 	 * This method is called whenever graph pruning is enabled or disabled in a
-	 * layout context.
-	 * 
-	 * If true is returned, it means that the receiving listener has intercepted
-	 * this event. Intercepted events will not be passed to the rest of the
-	 * listeners. If the event is not intercepted by any listener,
-	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
-	 * context's main algorithm.
+	 * layout context. If <code>true</code> is returned, no dynamic layout will
+	 * be applied after notifying all listeners, i.e. a dynamic layout pass will
+	 * only be applied when all registered {@link IContextListener}s return
+	 * <code>false</code>.
 	 * 
 	 * @param context
 	 *            the layout context that fired the event
-	 * @return true if no further operations after this event are required
+	 * @return <code>true</code> if no dynamic layout should be applied
+	 *         afterwards.
 	 */
 	public boolean pruningEnablementChanged(ILayoutContext context);
 

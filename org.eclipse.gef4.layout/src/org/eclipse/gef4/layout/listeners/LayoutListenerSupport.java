@@ -120,7 +120,10 @@ public class LayoutListenerSupport {
 	public void fireBoundsChangedEvent() {
 		boolean intercepted = false;
 		for (IContextListener listener : contextListeners) {
-			intercepted = listener.boundsChanged(context);
+			boolean intercept = listener.boundsChanged(context);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -142,7 +145,10 @@ public class LayoutListenerSupport {
 	public void fireConnectionAddedEvent(IConnectionLayout connection) {
 		boolean intercepted = false;
 		for (IGraphStructureListener listener : graphStructureListeners) {
-			intercepted = listener.connectionAdded(context, connection);
+			boolean intercept = listener.connectionAdded(context, connection);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -164,7 +170,10 @@ public class LayoutListenerSupport {
 	public void fireConnectionRemovedEvent(IConnectionLayout connection) {
 		boolean intercepted = false;
 		for (IGraphStructureListener listener : graphStructureListeners) {
-			intercepted = listener.connectionRemoved(context, connection);
+			boolean intercept = listener.connectionRemoved(context, connection);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -185,7 +194,10 @@ public class LayoutListenerSupport {
 	public void fireNodeAddedEvent(INodeLayout node) {
 		boolean intercepted = false;
 		for (IGraphStructureListener listener : graphStructureListeners) {
-			intercepted = listener.nodeAdded(context, node);
+			boolean intercept = listener.nodeAdded(context, node);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -206,7 +218,10 @@ public class LayoutListenerSupport {
 	public void fireNodeMovedEvent(INodeLayout node) {
 		boolean intercepted = false;
 		for (ILayoutListener listener : layoutListeners) {
-			intercepted = listener.nodeMoved(context, node);
+			boolean intercept = listener.nodeMoved(context, node);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -228,7 +243,10 @@ public class LayoutListenerSupport {
 	public void fireNodeRemovedEvent(INodeLayout node) {
 		boolean intercepted = false;
 		for (IGraphStructureListener listener : graphStructureListeners) {
-			intercepted = listener.nodeRemoved(context, node);
+			boolean intercept = listener.nodeRemoved(context, node);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -249,7 +267,10 @@ public class LayoutListenerSupport {
 	public void fireNodeResizedEvent(INodeLayout node) {
 		boolean intercepted = false;
 		for (ILayoutListener listener : layoutListeners) {
-			intercepted = listener.nodeResized(context, node);
+			boolean intercept = listener.nodeResized(context, node);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -280,7 +301,10 @@ public class LayoutListenerSupport {
 	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph) {
 		boolean intercepted = false;
 		for (ILayoutListener listener : layoutListeners) {
-			intercepted = listener.subgraphMoved(context, subgraph);
+			boolean intercept = listener.subgraphMoved(context, subgraph);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);
@@ -302,7 +326,10 @@ public class LayoutListenerSupport {
 	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph) {
 		boolean intercepted = false;
 		for (ILayoutListener listener : layoutListeners) {
-			intercepted = listener.subgraphResized(context, subgraph);
+			boolean intercept = listener.subgraphResized(context, subgraph);
+			if (!intercepted) {
+				intercepted = intercept;
+			}
 		}
 		if (!intercepted) {
 			context.applyDynamicLayout(true);

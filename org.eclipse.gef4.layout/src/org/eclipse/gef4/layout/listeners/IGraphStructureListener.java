@@ -61,26 +61,25 @@ public interface IGraphStructureListener {
 	 *            the layout context that fired the event
 	 * @param node
 	 *            the added node
-	 * @return true if no further operations after this event are required
+	 * @return <code>true</code> if no dynamic layout should be applied
+	 *         afterwards.
 	 */
 	public boolean nodeAdded(ILayoutContext context, INodeLayout node);
 
 	/**
 	 * This method is called whenever a node is removed from a context. No
 	 * separate events will be fired for eventual connections adjacent to the
-	 * removed node.
-	 * 
-	 * If true is returned, it means that the receiving listener has intercepted
-	 * this event. Intercepted events will not be passed to the rest of the
-	 * listeners. If the event is not intercepted by any listener,
-	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
-	 * context's main algorithm.
+	 * removed node. If <code>true</code> is returned, no dynamic layout will be
+	 * applied after notifying all listeners, i.e. a dynamic layout pass will
+	 * only be applied when all registered {@link IGraphStructureListener}s
+	 * return <code>false</code>.
 	 * 
 	 * @param context
 	 *            the context that fired the event
 	 * @param node
 	 *            the removed node
-	 * @return true if no further operations after this event are required
+	 * @return <code>true</code> if no dynamic layout should be applied
+	 *         afterwards.
 	 */
 	public boolean nodeRemoved(ILayoutContext context, INodeLayout node);
 
@@ -88,22 +87,22 @@ public interface IGraphStructureListener {
 	 * This method is called whenever a connection is added to a context. It can
 	 * be assumed that both source and target nodes of the added connection
 	 * already exist in the context.
-	 * 
+	 * <p>
 	 * This method will be called only if both nodes connected by added
 	 * connection lay directly in the node container owned by the notifying
 	 * layout context.
-	 * 
-	 * If true is returned, it means that the receiving listener has intercepted
-	 * this event. Intercepted events will not be passed to the rest of the
-	 * listeners. If the event is not intercepted by any listener,
-	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
-	 * context's main algorithm.
+	 * <p>
+	 * If <code>true</code> is returned, no dynamic layout will be applied after
+	 * notifying all listeners, i.e. a dynamic layout pass will only be applied
+	 * when all registered {@link IGraphStructureListener}s return
+	 * <code>false</code>.
 	 * 
 	 * @param context
 	 *            the context that fired the event
 	 * @param connection
 	 *            the added connection
-	 * @return true if no further operations after this event are required
+	 * @return <code>true</code> if no dynamic layout should be applied
+	 *         afterwards.
 	 */
 	public boolean connectionAdded(ILayoutContext context,
 			IConnectionLayout connection);
@@ -113,22 +112,22 @@ public interface IGraphStructureListener {
 	 * can be assumed that both source and target nodes of the removed
 	 * connection still exist in the context and will not be removed along with
 	 * it.
-	 * 
+	 * <p>
 	 * This method will be called only if both nodes connected by removed
 	 * connection lay directly in the node container owned by the notifying
 	 * layout context.
-	 * 
-	 * If true is returned, it means that the receiving listener has intercepted
-	 * this event. Intercepted events will not be passed to the rest of the
-	 * listeners. If the event is not intercepted by any listener,
-	 * {@link ILayoutAlgorithm#applyLayout(boolean)} will be called on the
-	 * context's main algorithm.
+	 * <p>
+	 * If <code>true</code> is returned, no dynamic layout will be applied after
+	 * notifying all listeners, i.e. a dynamic layout pass will only be applied
+	 * when all registered {@link IGraphStructureListener}s return
+	 * <code>false</code>.
 	 * 
 	 * @param context
 	 *            the context that fired the event
 	 * @param connection
 	 *            the added connection
-	 * @return true if no further operations after this event are required
+	 * @return <code>true</code> if no dynamic layout should be applied
+	 *         afterwards.
 	 */
 	public boolean connectionRemoved(ILayoutContext context,
 			IConnectionLayout connection);
