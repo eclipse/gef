@@ -19,8 +19,10 @@ import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -60,6 +62,23 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	private IUndoContext undoContext;
 	private ForwardUndoCompositeOperation transaction;
 	private Set<ITool<VR>> transactionContext = new HashSet<ITool<VR>>();
+	private IOperationHistoryListener operationHistoryListener = new IOperationHistoryListener() {
+		@Override
+		public void historyNotification(OperationHistoryEvent event) {
+			if (event.getEventType() == OperationHistoryEvent.ABOUT_TO_UNDO) {
+				if (!transactionContext.isEmpty() && transaction != null) {
+					if (transaction.getOperations().isEmpty()) {
+						for (ITool<VR> tool : transactionContext) {
+							closeExecutionTransaction(tool);
+						}
+					} else {
+						throw new IllegalStateException(
+								"Cannot perform UNDO while a currently open execution transaction contains operations.");
+					}
+				}
+			}
+		}
+	};
 
 	/**
 	 * Creates a new {@link AbstractDomain} instance, setting the
@@ -91,8 +110,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		// check if the transaction has an effect (or is empty)
 		if (transaction != null && !transaction.getOperations().isEmpty()) {
 			// adjust the label
-			transaction.setLabel(
-					transaction.getOperations().iterator().next().getLabel());
+			transaction.setLabel(transaction.getOperations().iterator().next()
+					.getLabel());
 			// successfully close operation
 			getOperationHistory().closeOperation(true, true,
 					IOperationHistory.EXECUTE);
@@ -267,7 +286,17 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Inject
 	public void setOperationHistory(IOperationHistory stack) {
-		operationHistory = stack;
+		if (operationHistory != null && operationHistory != stack) {
+			operationHistory
+					.removeOperationHistoryListener(operationHistoryListener);
+		}
+		if (operationHistory != stack) {
+			operationHistory = stack;
+			if (operationHistory != null) {
+				operationHistory
+						.addOperationHistoryListener(operationHistoryListener);
+			}
+		}
 	}
 
 	@Inject
