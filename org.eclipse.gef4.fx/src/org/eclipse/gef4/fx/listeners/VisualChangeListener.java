@@ -40,20 +40,52 @@ import javafx.scene.transform.Transform;
  */
 public abstract class VisualChangeListener {
 
+	private Node observed;
+	private Node parent;
+	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
+	private boolean layoutBoundsChanged = false;
+	private boolean boundsInLocalChanged = false;
+	private boolean boundsInParentChanged = false;
+	private Bounds oldBoundsInLocal = null;
+	private Bounds newBoundsInLocal = null;
+
+	private ChangeListener<? super Bounds> layoutBoundsListener = new ChangeListener<Bounds>() {
+		@Override
+		public void changed(ObservableValue<? extends Bounds> observable,
+				Bounds oldValue, Bounds newValue) {
+			// only fire a visual change event if the new bounds are valid
+			if (isValidBounds(newValue)) {
+				layoutBoundsChanged = true;
+				onBoundsChanged();
+			}
+		}
+	};
+
 	private final ChangeListener<? super Bounds> boundsInLocalListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
 			// only fire a visual change event if the new bounds are valid
 			if (isValidBounds(newValue)) {
-				boundsInLocalChanged(oldValue, newValue);
+				oldBoundsInLocal = oldValue;
+				newBoundsInLocal = newValue;
+				boundsInLocalChanged = true;
+				onBoundsChanged();
 			}
 		}
 	};
 
-	private Node observed;
-	private Node parent;
-	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
+	private ChangeListener<? super Bounds> boundsInParentListener = new ChangeListener<Bounds>() {
+		@Override
+		public void changed(ObservableValue<? extends Bounds> observable,
+				Bounds oldValue, Bounds newValue) {
+			// only fire a visual change event if the new bounds are valid
+			if (isValidBounds(newValue)) {
+				boundsInParentChanged = true;
+				onBoundsChanged();
+			}
+		}
+	};
 
 	/**
 	 * This method is called upon a bounds-in-local change.
@@ -197,6 +229,22 @@ public abstract class VisualChangeListener {
 			Transform oldTransform, Transform newTransform);
 
 	/**
+	 * Called upon changes to any of the following properties: "layout-bounds",
+	 * "bounds-in-local", and "bounds-in-parent". Calls the
+	 * {@link #boundsInLocalChanged(Bounds, Bounds)} method if all bounds
+	 * properties are changed.
+	 */
+	protected void onBoundsChanged() {
+		if (layoutBoundsChanged && boundsInLocalChanged
+				&& boundsInParentChanged) {
+			boundsInLocalChanged(oldBoundsInLocal, newBoundsInLocal);
+			layoutBoundsChanged = false;
+			boundsInLocalChanged = false;
+			boundsInParentChanged = false;
+		}
+	}
+
+	/**
 	 * Registers this listener on the given pair of observed and observer nodes
 	 * to recognize visual changes of the observed node relative to the common
 	 * parent of observer and observed node.
@@ -262,8 +310,11 @@ public abstract class VisualChangeListener {
 		this.observed = observed;
 		parent = commonAncestor;
 
-		// add bounds listener
+		// add bounds listeners
+		observed.layoutBoundsProperty().addListener(layoutBoundsListener);
 		observed.boundsInLocalProperty().addListener(boundsInLocalListener);
+		observed.boundsInParentProperty().addListener(boundsInParentListener);
+
 		// add transform listeners
 		tmp = observed;
 		while (tmp != null && tmp != parent) {
