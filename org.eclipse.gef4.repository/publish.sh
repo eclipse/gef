@@ -10,7 +10,7 @@
 #*******************************************************************************
 #!/bin/sh
 
-jobName="gef4-nightly-tycho"
+jobName="gef4-master"
 
 # Script may take 3 command line parameters:
 # $1: Hudson build id: <id>
@@ -67,14 +67,13 @@ echo "Reverse lookup yielded build id: $buildId"
 # Select the build type
 if [ -z "$buildType" ];
 then
-        echo -n "Please select which type of build you want to publish to [n(ightly), i(integration), m(ilestone), r(elease)]: "
+        echo -n "Please select which type of build you want to publish to [i(integration), m(ilestone), r(elease)]: "
         read buildType
 fi
 echo "Publishing as $buildType build"
 
 # Determine remote update site we want to promote to
 case $buildType in
-        n|N) remoteSite=nightly ;;
         i|I) remoteSite=integration ;;
         m|M) remoteSite=milestones ;;
         r|R) remoteSite=releases ;;
@@ -108,8 +107,8 @@ cd $tmpDir
 
 # Download and prepare Eclipse SDK, which is needed to merge update site and postprocess repository 
 echo "Downloading eclipse to $PWD"
-cp /home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.7.2-201202080800/eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz .
-tar -xvzf eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz
+cp /home/data/httpd/download.eclipse.org/eclipse/downloads/drops4/R-4.4.2-201502041700/eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz .
+tar -xvzf eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz
 cd eclipse
 chmod 700 eclipse
 cd ..
@@ -123,16 +122,16 @@ echo "Installing WTP Releng tools"
 ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.director -repository http://download.eclipse.org/webtools/releng/repository/ -installIUs org.eclipse.wtp.releng.tools.feature.feature.group
 # Clean up
 echo "Cleaning up"
-rm eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz
+rm eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz
 
 # Prepare local update site (merge if required)
 if [ "$merge" = y ];
         then
         echo "Merging existing site into local one."
-        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
         echo "Merged $localUpdateSite and $remoteUpdateSite into local directory update-site."
 else
         echo "Skipping merge operation."
