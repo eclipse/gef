@@ -21,6 +21,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.FXConnection;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -42,11 +47,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-
 public class FXMouseDragSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
@@ -60,6 +60,7 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 			onSceneSizeChange(scene.getWidth(), scene.getHeight());
 		}
 	};
+
 	private Pane contentLayer;
 	private Pane handleLayer;
 	private Scene scene;
@@ -84,6 +85,10 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 	private Pane feedbackLayer;
 	private StackPane stackPane;
 
+	public FXMouseDragSnippet() {
+		super("FX MouseDrag Snippet");
+	}
+
 	@Override
 	public Scene createScene() {
 		// layers
@@ -96,8 +101,8 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 		feedbackLayer.setMouseTransparent(true);
 
 		stackPane = new StackPane();
-		stackPane.getChildren()
-				.addAll(contentLayer, handleLayer, feedbackLayer);
+		stackPane.getChildren().addAll(contentLayer, handleLayer,
+				feedbackLayer);
 
 		// scrolling
 		ScrollPane scrollPane = new ScrollPane();
@@ -126,8 +131,8 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 		Rectangle rectangle = new Rectangle(0, 0, rw, rh);
 		rectangle.setLayoutX(rx);
 		rectangle.setLayoutY(ry);
-		rectangle.setFill(new Color(Math.random(), Math.random(),
-				Math.random(), 0.5));
+		rectangle.setFill(
+				new Color(Math.random(), Math.random(), Math.random(), 0.5));
 		rectangle.setStroke(Color.TRANSPARENT);
 		return rectangle;
 	}
@@ -160,8 +165,8 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 			boolean changed = updateNodesUnderMouse(event.getSceneX(),
 					event.getSceneY());
 			if (changed) {
-				System.out.println("targets: "
-						+ Arrays.asList(nodesUnderMouse.toArray()));
+				System.out.println(
+						"targets: " + Arrays.asList(nodesUnderMouse.toArray()));
 			}
 		}
 	}
@@ -198,12 +203,12 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 
 		// generate random curves between
 		for (int i = 0; i < count; i++) {
-			Node n = handleLayer.getChildren().get(
-					(int) (Math.random() * count / 2));
+			Node n = handleLayer.getChildren()
+					.get((int) (Math.random() * count / 2));
 			Node m = null;
 			while (m == null || m == n) {
-				m = handleLayer.getChildren().get(
-						(int) (Math.random() * count / 2));
+				m = handleLayer.getChildren()
+						.get((int) (Math.random() * count / 2));
 			}
 
 			FXConnection connection = new FXConnection();

@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -42,9 +45,6 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Shear;
 import javafx.scene.transform.Transform;
 
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-
 public class FXLayoutSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
@@ -52,6 +52,7 @@ public class FXLayoutSnippet extends AbstractFXExample {
 	}
 
 	private Point2D startPoint;
+
 	private Point2D endPoint;
 	private double initialTx;
 	private double initialTy;
@@ -59,11 +60,15 @@ public class FXLayoutSnippet extends AbstractFXExample {
 	private double initialHeight;
 	private Affine affine;
 
+	public FXLayoutSnippet() {
+		super("FXLayoutSnippet");
+	}
+
 	private void applyTransform(Affine dst, Transform transform) {
 		AffineTransform affineTransform = JavaFX2Geometry
 				.toAffineTransform(dst);
-		AffineTransform result = affineTransform.concatenate(JavaFX2Geometry
-				.toAffineTransform(transform));
+		AffineTransform result = affineTransform
+				.concatenate(JavaFX2Geometry.toAffineTransform(transform));
 		setAffine(dst, result);
 	}
 
@@ -224,8 +229,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 			@Override
 			public void handle(ActionEvent event) {
 				Bounds bounds = rect.getLayoutBounds();
-				Scale scale = Transform.scale(1.25, 1.25, bounds.getMinX()
-						+ bounds.getWidth() / 2,
+				Scale scale = Transform.scale(1.25, 1.25,
+						bounds.getMinX() + bounds.getWidth() / 2,
 						bounds.getMinY() + bounds.getHeight() / 2);
 				applyTransform(affine, scale);
 			}
@@ -234,8 +239,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 			@Override
 			public void handle(ActionEvent event) {
 				Bounds bounds = rect.getLayoutBounds();
-				Scale scale = Transform.scale(0.8, 0.8, bounds.getMinX()
-						+ bounds.getWidth() / 2,
+				Scale scale = Transform.scale(0.8, 0.8,
+						bounds.getMinX() + bounds.getWidth() / 2,
 						bounds.getMinY() + bounds.getHeight() / 2);
 				applyTransform(affine, scale);
 			}
@@ -244,8 +249,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 			@Override
 			public void handle(ActionEvent event) {
 				Bounds bounds = rect.getLayoutBounds();
-				Shear shear = Transform.shear(-0.25, 0, bounds.getMinX()
-						+ bounds.getWidth() / 2,
+				Shear shear = Transform.shear(-0.25, 0,
+						bounds.getMinX() + bounds.getWidth() / 2,
 						bounds.getMinY() + bounds.getHeight() / 2);
 				applyTransform(affine, shear);
 			}
@@ -254,8 +259,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 			@Override
 			public void handle(ActionEvent event) {
 				Bounds bounds = rect.getLayoutBounds();
-				Shear shear = Transform.shear(0.25, 0, bounds.getMinX()
-						+ bounds.getWidth() / 2,
+				Shear shear = Transform.shear(0.25, 0,
+						bounds.getMinX() + bounds.getWidth() / 2,
 						bounds.getMinY() + bounds.getHeight() / 2);
 				applyTransform(affine, shear);
 			}

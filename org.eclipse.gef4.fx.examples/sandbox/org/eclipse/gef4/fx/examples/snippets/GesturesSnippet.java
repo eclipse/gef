@@ -26,6 +26,10 @@ public class GesturesSnippet extends AbstractFXExample {
 		launch();
 	}
 
+	public GesturesSnippet() {
+		super("GesturesSnippet");
+	}
+
 	@Override
 	public Scene createScene() {
 		VBox root = new VBox();

@@ -1,25 +1,25 @@
 /*******************************************************************************
  * Copyright (c) 2014, 2015 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
+
+import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polyline;
-
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
-import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXConnectionSnippet extends AbstractFXExample {
 
@@ -30,13 +30,13 @@ public class FXConnectionSnippet extends AbstractFXExample {
 		}
 
 		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
+		public Point getLocalEndPoint() {
+			return new Point(15, 0);
 		}
 
 		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
+		public Point getLocalStartPoint() {
+			return new Point(0, 0);
 		}
 
 		@Override
@@ -49,10 +49,14 @@ public class FXConnectionSnippet extends AbstractFXExample {
 		launch();
 	}
 
+	public FXConnectionSnippet() {
+		super("FXConnectionSnippet");
+	}
+
 	@Override
 	public Scene createScene() {
 		FXConnection connection = new FXConnection();
-		
+
 		connection.setStartDecoration(new ArrowHead());
 		connection.setEndDecoration(new ArrowHead());
 

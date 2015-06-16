@@ -1,16 +1,19 @@
 /*******************************************************************************
  * Copyright (c) 2014, 2015 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
+
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,9 +25,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-
 public class FXChopBoxSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
@@ -32,11 +32,29 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 	}
 
 	private Rectangle nodeA;
+
 	private Rectangle nodeB;
 	private Rectangle nodeC;
 	private FXChopBoxAnchor anchorA;
 	private FXChopBoxAnchor anchorB;
 	private FXChopBoxAnchor anchorC;
+
+	public FXChopBoxSnippet() {
+		super("FXChopBoxSnippet");
+	}
+
+	private EventHandler<ActionEvent> createMoveHandler(final String label,
+			final Node node, final double x, final double y0, final double y1) {
+		return new EventHandler<ActionEvent>() {
+			boolean flag = false;
+
+			@Override
+			public void handle(ActionEvent event) {
+				node.relocate(x, flag ? y0 : y1);
+				flag = !flag;
+			}
+		};
+	}
 
 	@Override
 	public Scene createScene() {
@@ -67,8 +85,8 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 		FXConnection connectionAB = new FXConnection();
 		FXConnection connectionBC = new FXConnection();
 
-		Group group = new Group(nodeA, nodeB, nodeC, connectionAB,
-				connectionBC, btnA, btnB, btnC);
+		Group group = new Group(nodeA, nodeB, nodeC, connectionAB, connectionBC,
+				btnA, btnB, btnC);
 		root.getChildren().add(group);
 
 		anchorA = new FXChopBoxAnchor(nodeA);
@@ -84,19 +102,6 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 		nodeC.relocate(200, 200);
 
 		return scene;
-	}
-
-	private EventHandler<ActionEvent> createMoveHandler(final String label,
-			final Node node, final double x, final double y0, final double y1) {
-		return new EventHandler<ActionEvent>() {
-			boolean flag = false;
-
-			@Override
-			public void handle(ActionEvent event) {
-				node.relocate(x, flag ? y0 : y1);
-				flag = !flag;
-			}
-		};
 	}
 
 }

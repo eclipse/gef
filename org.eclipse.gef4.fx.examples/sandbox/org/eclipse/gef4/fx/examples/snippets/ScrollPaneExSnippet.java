@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -27,10 +31,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-
 public class ScrollPaneExSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
@@ -39,20 +39,22 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 
 	private ScrollPaneEx scrollPane;
 
+	public ScrollPaneExSnippet() {
+		super("ScrollPaneExSnippet");
+	}
+
 	@Override
 	public Scene createScene() {
 		BorderPane root = new BorderPane();
 
 		scrollPane = new ScrollPaneEx();
 		root.setCenter(scrollPane);
-		scrollPane
-				.getContentGroup()
-				.getChildren()
-				.addAll(rect(25, 25, 100, 50, Color.BLUE),
-						rect(25, 200, 25, 50, Color.BLUE),
-						rect(150, 100, 75, 75, Color.BLUE),
-						rect(-100, -100, 30, 60, Color.CYAN),
-						rect(75, 75, 150, 150, Color.RED));
+		scrollPane.getContentGroup().getChildren().addAll(
+				rect(25, 25, 100, 50, Color.BLUE),
+				rect(25, 200, 25, 50, Color.BLUE),
+				rect(150, 100, 75, 75, Color.BLUE),
+				rect(-100, -100, 30, 60, Color.CYAN),
+				rect(75, 75, 150, 150, Color.RED));
 
 		// translate to top-left most content node
 		// TODO: implement ScrollPaneEx#reveal(Node);
@@ -68,8 +70,8 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 				if (MouseButton.SECONDARY.equals(event.getButton())) {
 					// determine pivot in content group
 					Group contentGroup = scrollPane.getContentGroup();
-					Point2D contentPivot = contentGroup.sceneToLocal(
-							event.getSceneX(), event.getSceneY());
+					Point2D contentPivot = contentGroup
+							.sceneToLocal(event.getSceneX(), event.getSceneY());
 					double zoomFactor = event.isControlDown() ? 4d / 5 : 5d / 4;
 
 					// compute zoom transformation
