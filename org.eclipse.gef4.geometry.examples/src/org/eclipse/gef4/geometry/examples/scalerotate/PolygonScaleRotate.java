@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.scalerotate;
 
@@ -59,6 +59,7 @@ public class PolygonScaleRotate extends AbstractScaleRotateExample {
 			@Override
 			public void draw(GC gc) {
 				Polygon me = createGeometry();
+				gc.setLineWidth(2);
 				gc.drawPolygon(Geometry2SWT.toSWTPointArray(me));
 				gc.fillPolygon(Geometry2SWT.toSWTPointArray(me));
 			}

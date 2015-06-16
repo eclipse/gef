@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples;
 
@@ -51,6 +51,8 @@ abstract public class AbstractExample implements PaintListener {
 
 		// open the shell before creating the controllable shapes so that their
 		// default coordinates are not changed due to the resize of their canvas
+		shell.setBackground(
+				Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		shell.open();
 
 		viewer = new ControllableShapeViewer(shell);
@@ -75,6 +77,7 @@ abstract public class AbstractExample implements PaintListener {
 	public void onInit() {
 	}
 
+	@Override
 	public void paintControl(PaintEvent e) {
 	}
 

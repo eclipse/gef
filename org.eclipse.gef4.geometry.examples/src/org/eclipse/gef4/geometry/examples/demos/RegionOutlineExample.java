@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class RegionOutlineExample extends AbstractExample {
 	public static void main(String[] args) {
-		new RegionOutlineExample("Region Example");
+		new RegionOutlineExample("Region Outline Example");
 	}
 
 	public RegionOutlineExample(String title) {
@@ -59,8 +59,8 @@ public class RegionOutlineExample extends AbstractExample {
 				Region region = getShape();
 
 				gc.setAlpha(128);
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLUE));
+				gc.setBackground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 				for (Rectangle r : region.getShapes()) {
 					gc.fillRectangle(Geometry2SWT.toSWTRectangle(r));
 				}
@@ -71,8 +71,8 @@ public class RegionOutlineExample extends AbstractExample {
 				// for (Rectangle r : region.getShapes()) {
 				// gc.drawRectangle(r.toSWTRectangle());
 				// }
-				gc.setForeground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLACK));
+				gc.setForeground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 				for (Line l : region.getOutlineSegments()) {
 					gc.drawLine((int) (l.getX1()), (int) (l.getY1()),
 							(int) (l.getX2()), (int) (l.getY2()));

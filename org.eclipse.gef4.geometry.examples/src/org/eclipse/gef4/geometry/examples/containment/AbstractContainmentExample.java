@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2015 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.containment;
 
@@ -100,9 +100,9 @@ public abstract class AbstractContainmentExample implements PaintListener {
 
 	/**
 	 * A draggable point. On the screen it is represented as an ellipse.
-	 * 
+	 *
 	 * @author mwienand
-	 * 
+	 *
 	 */
 	class ControlPoint implements MouseListener, MouseMoveListener, Listener {
 		private Canvas canvas;
@@ -127,7 +127,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 		 * Creates a new ControlPoint object. Adds event listeners to the given
 		 * Canvas object, so that the user can drag the control point with the
 		 * mouse.
-		 * 
+		 *
 		 * @param canvas
 		 *            Drawing area
 		 */
@@ -148,7 +148,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 		 * Creates a new ControlPoint object. Adds event listeners to the given
 		 * Canvas object, so that the user can drag the control point with the
 		 * mouse.
-		 * 
+		 *
 		 * @param canvas
 		 *            Drawing area
 		 * @param p
@@ -172,7 +172,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 
 		/**
 		 * Draws an ellipse with the given GC at the control points location.
-		 * 
+		 *
 		 * @param gc
 		 */
 		public void draw(GC gc) {
@@ -184,19 +184,20 @@ public abstract class AbstractContainmentExample implements PaintListener {
 
 		/**
 		 * Returns the exact Point of this ControlPoint object.
-		 * 
+		 *
 		 * @return The exact Point of this ControlPoint object.
 		 */
 		public Point getPoint() {
 			return p;
 		}
 
+		@Override
 		public void handleEvent(Event e) {
 			switch (e.type) {
 			case SWT.Resize:
 				Rectangle bounds = SWT2Geometry.toRectangle(canvas.getBounds());
-				p.scale(bounds.getWidth() / oldShellWidth, bounds.getHeight()
-						/ oldShellHeight);
+				p.scale(bounds.getWidth() / oldShellWidth,
+						bounds.getHeight() / oldShellHeight);
 				oldShellWidth = bounds.getWidth();
 				oldShellHeight = bounds.getHeight();
 				update();
@@ -213,15 +214,18 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			return value;
 		}
 
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseDown(MouseEvent e) {
 			if (ellipse.contains(new Point(e.x, e.y))) {
 				isDragged = true;
 			}
 		}
 
+		@Override
 		public void mouseMove(MouseEvent e) {
 			if (isDragged) {
 				relX = e.x - p.x;
@@ -233,6 +237,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			}
 		}
 
+		@Override
 		public void mouseUp(MouseEvent e) {
 			isDragged = false;
 		}
@@ -253,10 +258,10 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			// check canvas pane:
 			p.x = inRange(canvas.getClientArea().x + radius, p.x,
 					canvas.getClientArea().x + canvas.getClientArea().width
-							- radius);
+					- radius);
 			p.y = inRange(canvas.getClientArea().y + radius, p.y,
 					canvas.getClientArea().y + canvas.getClientArea().height
-							- radius);
+					- radius);
 
 			// check links:
 			if (xLink != null) {
@@ -304,13 +309,15 @@ public abstract class AbstractContainmentExample implements PaintListener {
 	private Shell shell;
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractContainmentExample(String title) {
 		Display display = new Display();
 		shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
 		shell.setText(title);
 		shell.setBounds(0, 0, 640, 480);
+		shell.setBackground(
+				Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		// open the shell before creating the controllable shapes so that their
 		// default coordinates are not changed due to the resize of their canvas
@@ -339,6 +346,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 	protected abstract AbstractControllableShape createControllableShape2(
 			Canvas canvas);
 
+	@Override
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
 
@@ -346,14 +354,14 @@ public abstract class AbstractContainmentExample implements PaintListener {
 		IGeometry cs2geometry = controllableShape2.createGeometry();
 
 		if (computeIntersects(cs1geometry, cs2geometry)) {
-			e.gc.setBackground(Display.getCurrent().getSystemColor(
-					INTERSECTS_COLOR));
+			e.gc.setBackground(
+					Display.getCurrent().getSystemColor(INTERSECTS_COLOR));
 			controllableShape2.fillShape(e.gc);
 		}
 
 		if (computeContains(cs1geometry, cs2geometry)) {
-			e.gc.setBackground(Display.getCurrent().getSystemColor(
-					CONTAINS_COLOR));
+			e.gc.setBackground(
+					Display.getCurrent().getSystemColor(CONTAINS_COLOR));
 			controllableShape2.fillShape(e.gc);
 		}
 

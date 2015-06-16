@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.scalerotate;
 
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class AbstractScaleRotateExample implements PaintListener,
-		MouseWheelListener, MouseMoveListener, MouseListener, Listener {
+MouseWheelListener, MouseMoveListener, MouseListener, Listener {
 
 	// TODO: The new angle interface is easier to use and should be used here!
 
@@ -76,13 +76,15 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 	private Angle dragBeginAngle = Angle.fromDeg(0);
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractScaleRotateExample(String title) {
 		Display display = new Display();
 		shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
 		shell.setText(title);
 		shell.setBounds(0, 0, 640, 480);
+		shell.setBackground(
+				Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		// open the shell before creating the controllable shapes so that their
 		// default coordinates are not changed due to the resize of their canvas
@@ -106,6 +108,7 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 
 	protected abstract AbstractScaleRotateShape createShape(Canvas canvas);
 
+	@Override
 	public void handleEvent(Event e) {
 		switch (e.type) {
 		case SWT.Resize:
@@ -114,44 +117,50 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		}
 	}
 
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		shape.zoomFactor += 0.1;
 		shell.redraw();
 	}
 
+	@Override
 	public void mouseDown(MouseEvent e) {
 		if (shape.contains(new Point(e.x, e.y))) {
 			dragBegin = new Vector(shape.getCenter(), new Point(e.x, e.y));
-		}// else {
-			// dragBeginAngle = shape.rotationAngle;
-			// dragBegin = null;
-			// }
+		} // else {
+		// dragBeginAngle = shape.rotationAngle;
+		// dragBegin = null;
+		// }
 	}
 
+	@Override
 	public void mouseMove(MouseEvent e) {
 		if (dragBegin != null) {
 			Point center = shape.getCenter();
 			Vector toMouse = new Vector(center, new Point(e.x, e.y));
-			shape.rotationAngle = dragBegin.getAngleCW(toMouse).getAdded(
-					dragBeginAngle);
+			shape.rotationAngle = dragBegin.getAngleCW(toMouse)
+					.getAdded(dragBeginAngle);
 			shell.redraw();
 		}
 	}
 
+	@Override
 	public void mouseScrolled(MouseEvent e) {
 		shape.zoomFactor += (double) e.count / 30;
 		shell.redraw();
 	}
 
+	@Override
 	public void mouseUp(MouseEvent e) {
 		dragBeginAngle = shape.rotationAngle;
 		dragBegin = null;
 	}
 
+	@Override
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
-		e.gc.setBackground(Display.getCurrent().getSystemColor(
-				GEOMETRY_FILL_COLOR));
+		e.gc.setBackground(
+				Display.getCurrent().getSystemColor(GEOMETRY_FILL_COLOR));
 		shape.draw(e.gc);
 	}
 }

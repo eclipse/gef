@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
 public class RingOutlineExample extends AbstractExample {
 
 	public static void main(String[] args) {
-		new RingOutlineExample("Ring Example");
+		new RingOutlineExample("Ring Outline Example");
 	}
 
 	public RingOutlineExample(String title) {
@@ -64,8 +64,8 @@ public class RingOutlineExample extends AbstractExample {
 			public void onDraw(GC gc) {
 				Ring ring = getShape();
 
-				gc.setForeground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLACK));
+				gc.setForeground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 				int lineWidth = gc.getLineWidth();
 				gc.setLineWidth(1);
 

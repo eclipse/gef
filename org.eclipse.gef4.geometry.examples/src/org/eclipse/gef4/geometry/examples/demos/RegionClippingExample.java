@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class RegionClippingExample extends AbstractExample {
 	public static void main(String[] args) {
-		new RegionClippingExample("Region Example");
+		new RegionClippingExample("Region Clipping Example");
 	}
 
 	public RegionClippingExample(String title) {
@@ -53,8 +53,8 @@ public class RegionClippingExample extends AbstractExample {
 
 				gc.setClipping(Geometry2SWT.toSWTRegion(region));
 
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_WIDGET_BACKGROUND));
+				gc.setBackground(Display.getCurrent()
+						.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 				for (int y = 0; y < 800; y += 20) {
 					gc.drawString(
 							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
@@ -64,8 +64,8 @@ public class RegionClippingExample extends AbstractExample {
 				gc.setClipping((org.eclipse.swt.graphics.Region) null);
 
 				gc.setAlpha(128);
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLUE));
+				gc.setBackground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 				for (Rectangle r : region.getShapes()) {
 					gc.fillRectangle(Geometry2SWT.toSWTRectangle(r));
 				}
