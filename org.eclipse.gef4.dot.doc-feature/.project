@@ -10,8 +10,22 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.oomph.version.VersionBuilder</name>
+			<arguments>
+				<dictionary>
+					<key>ignore.missing.export.versions</key>
+					<value>true</value>
+				</dictionary>
+				<dictionary>
+					<key>release.path</key>
+					<value>/org.eclipse.gef4.releng/oomph_version_mgmt/release.xml</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.pde.FeatureNature</nature>
+		<nature>org.eclipse.oomph.version.VersionNature</nature>
 	</natures>
 </projectDescription>
