@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Layout Examples
-Bundle-SymbolicName: org.eclipse.gef4.fx.examples
+Bundle-SymbolicName: org.eclipse.gef4.layout.examples
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
