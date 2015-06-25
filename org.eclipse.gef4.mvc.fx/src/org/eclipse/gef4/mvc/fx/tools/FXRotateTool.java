@@ -17,7 +17,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.gestures.FXRotateGesture;
+import javafx.event.EventTarget;
+import javafx.scene.Node;
+import javafx.scene.input.RotateEvent;
+
+import org.eclipse.gef4.fx.gestures.AbstractFXRotateGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -25,24 +29,19 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import javafx.event.EventTarget;
-import javafx.scene.Node;
-import javafx.scene.input.RotateEvent;
-
 public class FXRotateTool extends AbstractTool<Node> {
 
 	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
 
-	private final Map<IViewer<Node>, FXRotateGesture> gestures = new HashMap<IViewer<Node>, FXRotateGesture>();
+	private final Map<IViewer<Node>, AbstractFXRotateGesture> gestures = new HashMap<IViewer<Node>, AbstractFXRotateGesture>();
 
 	public FXRotateTool() {
 	}
 
 	protected Set<? extends AbstractFXOnRotatePolicy> getRotatePolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(
-				targetPart.<AbstractFXOnRotatePolicy> getAdapters(TOOL_POLICY_KEY)
-						.values());
+		return new HashSet<>(targetPart.<AbstractFXOnRotatePolicy> getAdapters(
+				TOOL_POLICY_KEY).values());
 	}
 
 	protected Set<? extends AbstractFXOnRotatePolicy> getTargetPolicies(
@@ -69,7 +68,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			FXRotateGesture gesture = new FXRotateGesture() {
+			AbstractFXRotateGesture gesture = new AbstractFXRotateGesture() {
 
 				@Override
 				protected void rotate(RotateEvent event) {
@@ -103,7 +102,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (FXRotateGesture gesture : gestures.values()) {
+		for (AbstractFXRotateGesture gesture : gestures.values()) {
 			gesture.setScene(null);
 		}
 		super.unregisterListeners();

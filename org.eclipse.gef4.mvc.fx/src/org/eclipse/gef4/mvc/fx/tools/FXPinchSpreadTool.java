@@ -21,7 +21,7 @@ import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
-import org.eclipse.gef4.fx.gestures.FXPinchSpreadGesture;
+import org.eclipse.gef4.fx.gestures.AbstractFXPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -33,7 +33,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
 
-	private final Map<IViewer<Node>, FXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, FXPinchSpreadGesture>();
+	private final Map<IViewer<Node>, AbstractFXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractFXPinchSpreadGesture>();
 
 	public FXPinchSpreadTool() {
 	}
@@ -69,7 +69,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
+			AbstractFXPinchSpreadGesture gesture = new AbstractFXPinchSpreadGesture() {
 				@Override
 				protected void zoom(ZoomEvent e) {
 					getDomain()
@@ -106,7 +106,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (FXPinchSpreadGesture gesture : gestures.values()) {
+		for (AbstractFXPinchSpreadGesture gesture : gestures.values()) {
 			gesture.setScene(null);
 		}
 		super.unregisterListeners();

@@ -21,7 +21,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
+import org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -71,7 +71,7 @@ public class FXChopBoxELetterSnippet extends AbstractFXExample {
 		}
 	}
 
-	private abstract static class OnDrag extends FXMouseDragGesture {
+	private abstract static class OnDrag extends AbstractFXMouseDragGesture {
 		private Node target;
 
 		public OnDrag(Node target) {

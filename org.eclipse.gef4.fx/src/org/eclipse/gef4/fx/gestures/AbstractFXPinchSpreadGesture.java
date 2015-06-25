@@ -23,8 +23,7 @@ import javafx.scene.input.ZoomEvent;
  * @author mwienand
  *
  */
-// TODO: Rename to provide 'Abstract' prefix
-public abstract class FXPinchSpreadGesture extends AbstractFXGesture {
+public abstract class AbstractFXPinchSpreadGesture extends AbstractFXGesture {
 
 	private EventHandler<? super ZoomEvent> zoomStartedHandler = new EventHandler<ZoomEvent>() {
 		@Override

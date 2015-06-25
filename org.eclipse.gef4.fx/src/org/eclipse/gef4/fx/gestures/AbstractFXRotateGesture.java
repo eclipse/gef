@@ -23,8 +23,7 @@ import javafx.scene.input.RotateEvent;
  * @author anyssen
  *
  */
-// TODO: Rename to provide 'Abstract' prefix
-public abstract class FXRotateGesture extends AbstractFXGesture {
+public abstract class AbstractFXRotateGesture extends AbstractFXGesture {
 
 	private EventHandler<? super RotateEvent> rotateStartedHandler = new EventHandler<RotateEvent>() {
 		@Override

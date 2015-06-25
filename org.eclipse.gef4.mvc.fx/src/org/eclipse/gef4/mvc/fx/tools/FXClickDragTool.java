@@ -22,7 +22,7 @@ import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
+import org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
@@ -38,7 +38,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	public static final Class<AbstractFXOnClickPolicy> CLICK_TOOL_POLICY_KEY = AbstractFXOnClickPolicy.class;
 	public static final Class<AbstractFXOnDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXOnDragPolicy.class;
 
-	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
+	private final Map<IViewer<Node>, AbstractFXMouseDragGesture> gestures = new HashMap<IViewer<Node>, AbstractFXMouseDragGesture>();
 	private boolean dragInProgress;
 	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXOnDragPolicy, MouseEvent>();
 	private Map<EventTarget, IVisualPart<Node, ? extends Node>> interactionTargetOverrides = new HashMap<EventTarget, IVisualPart<Node, ? extends Node>>();
@@ -94,7 +94,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 		super.registerListeners();
 
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			FXMouseDragGesture gesture = new FXMouseDragGesture() {
+			AbstractFXMouseDragGesture gesture = new AbstractFXMouseDragGesture() {
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
 						double dy) {
@@ -187,7 +187,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (FXMouseDragGesture gesture : gestures.values()) {
+		for (AbstractFXMouseDragGesture gesture : gestures.values()) {
 			gesture.setScene(null);
 		}
 		super.unregisterListeners();
