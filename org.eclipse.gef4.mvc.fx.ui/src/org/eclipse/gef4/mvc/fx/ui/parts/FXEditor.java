@@ -29,7 +29,6 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
@@ -61,6 +60,8 @@ public abstract class FXEditor extends EditorPart {
 	private IPropertySheetPage propertySheetPage;
 
 	private IOperationHistoryListener operationHistoryListener;
+
+	private boolean isDirty;
 
 	// TOOD: use executable extension factory to inject this class
 	public FXEditor(final Injector injector) {
@@ -170,12 +171,27 @@ public abstract class FXEditor extends EditorPart {
 		operationHistoryListener = new IOperationHistoryListener() {
 			@Override
 			public void historyNotification(final OperationHistoryEvent event) {
-				firePropertyChange(IEditorPart.PROP_DIRTY);
+				if (event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
+						&& event.getHistory().getUndoHistory(
+								event.getOperation().getContexts()[0]).length > 0) {
+					setDirty(true);
+				}
 			}
 		};
-
 		getDomain().getOperationHistory().addOperationHistoryListener(
 				operationHistoryListener);
+	}
+
+	@Override
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	protected void setDirty(boolean isDirty) {
+		if (this.isDirty != isDirty) {
+			this.isDirty = isDirty;
+			firePropertyChange(PROP_DIRTY);
+		}
 	}
 
 	@Override
