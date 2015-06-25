@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.dot.doc"
       label="GEF4 DOT Documentation"
-      version="0.1.0.qualifier"
+      version="0.1.1.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.dot.doc"
       license-feature="org.eclipse.license"
