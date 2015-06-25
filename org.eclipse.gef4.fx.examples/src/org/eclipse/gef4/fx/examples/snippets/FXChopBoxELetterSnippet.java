@@ -352,7 +352,7 @@ public class FXChopBoxELetterSnippet extends AbstractFXExample {
 	@Override
 	public Scene createScene() {
 		root = new BorderPane();
-		root.setStyle("-fx-background-color: lightgrey;");
+		root.setStyle("-fx-background-color: white;");
 		scene = new Scene(root, WIDTH, HEIGHT);
 
 		// description (what is demonstrated)
