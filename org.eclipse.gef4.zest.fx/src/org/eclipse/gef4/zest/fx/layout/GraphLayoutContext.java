@@ -40,6 +40,10 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 
 	// TODO: subgraphs
 
+	public GraphLayoutContext() {
+		setGraph(null);
+	}
+
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
 	}
@@ -97,6 +101,9 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	public void setGraph(Graph graph) {
+		if (graph == null) {
+			graph = new Graph();
+		}
 		this.g = graph;
 		transferNodes();
 		transferEdges();

@@ -15,23 +15,23 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 
 // only applicable for EdgeContentPart (see #getHost())
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
-	public EdgeContentPart getHost() {
-		return (EdgeContentPart) super.getHost();
-	}
-
-	@Override
-	protected LayoutModel getLayoutModel() {
+	protected GraphLayoutContext getGraphLayoutContext() {
 		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
 				.getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
-		return graphPart.getAdapter(LayoutModel.class);
+		return graphPart.getAdapter(GraphLayoutContext.class);
+	}
+
+	@Override
+	public EdgeContentPart getHost() {
+		return (EdgeContentPart) super.getHost();
 	}
 
 	@Override

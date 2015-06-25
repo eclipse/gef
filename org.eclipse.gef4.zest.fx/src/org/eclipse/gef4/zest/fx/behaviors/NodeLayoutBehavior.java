@@ -27,8 +27,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
@@ -82,21 +82,21 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
+	protected GraphLayoutContext getGraphLayoutContext() {
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
+				.getViewer().getContentPartMap()
+				.get(getHost().getContent().getGraph());
+		return graphPart.getAdapter(GraphLayoutContext.class);
+	}
+
+	@Override
 	public NodeContentPart getHost() {
 		return (NodeContentPart) super.getHost();
 	}
 
-	@Override
-	protected LayoutModel getLayoutModel() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
-				.getViewer().getContentPartMap()
-				.get(getHost().getContent().getGraph());
-		return graphPart.getAdapter(LayoutModel.class);
-	}
-
 	protected GraphNodeLayout getNodeLayout() {
 		// TODO: use event to update node layout
-		GraphNodeLayout nodeLayout = getLayoutModel().getNodeLayout(
+		GraphNodeLayout nodeLayout = getGraphLayoutContext().getNodeLayout(
 				getHost().getContent());
 		if (nodeLayout == null) {
 			throw new IllegalStateException(

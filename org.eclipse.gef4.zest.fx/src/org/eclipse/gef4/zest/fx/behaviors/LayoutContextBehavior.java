@@ -35,7 +35,6 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -124,7 +123,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		}
 
 		// retrieve layout context
-		layoutContext = getLayoutModel();
+		layoutContext = getGraphLayoutContext();
 
 		// add layout filter for hidden/layout irrelevant elements
 		final HidingModel hidingModel = getHost().getRoot().getViewer()
@@ -199,13 +198,14 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		isHostActive = false;
 	}
 
+	protected GraphLayoutContext getGraphLayoutContext() {
+		return getHost().<GraphLayoutContext> getAdapter(
+				GraphLayoutContext.class);
+	}
+
 	@Override
 	public GraphContentPart getHost() {
 		return (GraphContentPart) super.getHost();
-	}
-
-	protected LayoutModel getLayoutModel() {
-		return getHost().<LayoutModel> getAdapter(LayoutModel.class);
 	}
 
 	protected NodeContentPart getNestingPart() {

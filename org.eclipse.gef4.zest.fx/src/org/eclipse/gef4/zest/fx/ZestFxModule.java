@@ -56,8 +56,8 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.OpenNestedGraphOnZoomBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.OpenParentGraphOnZoomBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
@@ -232,8 +232,8 @@ public class ZestFxModule extends MvcFxModule {
 
 	protected void bindGraphContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(LayoutModel.class)).to(
-				LayoutModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(GraphLayoutContext.class))
+				.to(GraphLayoutContext.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXRotatePolicy.class)).to(
 				FXRotatePolicy.class);
 		adapterMapBinder

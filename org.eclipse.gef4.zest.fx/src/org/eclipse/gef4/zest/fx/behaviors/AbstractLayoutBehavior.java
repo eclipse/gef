@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
@@ -36,20 +36,20 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
-		LayoutModel layoutModel = getLayoutModel();
+		GraphLayoutContext layoutModel = getGraphLayoutContext();
 		layoutModel.schedulePreLayoutPass(preLayout);
 		layoutModel.schedulePostLayoutPass(postLayout);
 	}
 
 	@Override
 	public void deactivate() {
-		LayoutModel layoutModel = getLayoutModel();
+		GraphLayoutContext layoutModel = getGraphLayoutContext();
 		layoutModel.unschedulePreLayoutPass(preLayout);
 		layoutModel.unschedulePostLayoutPass(postLayout);
 		super.deactivate();
 	}
 
-	protected abstract LayoutModel getLayoutModel();
+	protected abstract GraphLayoutContext getGraphLayoutContext();
 
 	/**
 	 * Called after a layout pass. Should be used to transfer layout information

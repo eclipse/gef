@@ -36,7 +36,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -162,7 +161,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	@Override
 	public void doRefreshVisual(FXConnection visual) {
-		GraphLayoutContext glc = getLayoutModel();
+		GraphLayoutContext glc = getGraphLayoutContext();
 		if (glc == null || edgeLabelPart == null) {
 			return;
 		}
@@ -257,9 +256,9 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		return anchorages;
 	}
 
-	protected LayoutModel getLayoutModel() {
+	protected GraphLayoutContext getGraphLayoutContext() {
 		return getViewer().getContentPartMap().get(getContent().getGraph())
-				.getAdapter(LayoutModel.class);
+				.getAdapter(GraphLayoutContext.class);
 	}
 
 	@Override

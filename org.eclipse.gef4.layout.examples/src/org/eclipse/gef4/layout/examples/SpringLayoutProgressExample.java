@@ -33,7 +33,7 @@ import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public class SpringLayoutProgressExample extends AbstractZestExample {
 
@@ -128,7 +128,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 					ZestProperties.setLayout(graph, layoutAlgorithm[0]);
 				} else {
 					viewer.getContentPartMap().get(graph)
-							.getAdapter(LayoutModel.class)
+							.getAdapter(GraphLayoutContext.class)
 							.applyStaticLayout(true);
 				}
 			}

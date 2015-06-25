@@ -33,7 +33,7 @@ import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
@@ -58,7 +58,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			} else if (Graph.NODES_PROPERTY.equals(evt.getPropertyName())
 					|| Graph.EDGES_PROPERTY.equals(evt.getPropertyName())) {
 				// construct new layout context
-				getAdapter(LayoutModel.class).setGraph(getContent());
+				getAdapter(GraphLayoutContext.class).setGraph(getContent());
 				// start content synchronization
 				SynchronizeContentChildrenOperation<Node> syncChildrenOp = new SynchronizeContentChildrenOperation<Node>(
 						"SynchronizeContentChildren", GraphContentPart.this);
@@ -146,14 +146,14 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
-		getAdapter(LayoutModel.class).setGraph(getContent());
+		getAdapter(GraphLayoutContext.class).setGraph(getContent());
 	}
 
 	private void setGraphLayoutAlgorithm() {
 		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
-			ILayoutContext layoutContext = getAdapter(LayoutModel.class);
+			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
 			if (layoutContext != null
 					&& layoutContext.getStaticLayoutAlgorithm() != algo) {
 				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
