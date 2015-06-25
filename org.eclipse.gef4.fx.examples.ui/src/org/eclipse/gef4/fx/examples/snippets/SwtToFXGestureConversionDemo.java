@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,12 +27,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.VBox;
-
-import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 public class SwtToFXGestureConversionDemo {
 
@@ -60,13 +60,16 @@ public class SwtToFXGestureConversionDemo {
 				display.setText(event.getEventType().toString());
 			}
 		});
-		return new Scene(root, 300, 300);
+		return new Scene(root, 400, 300);
 	}
 
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
+		shell.setBackground(
+				Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		shell.setText("SWT to FX Gesture Conversion Demo");
 		FXCanvasEx canvas = new FXCanvasEx(shell, SWT.NONE);
 		Scene scene = createScene();
 		canvas.setScene(scene);
