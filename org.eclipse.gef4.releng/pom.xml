@@ -524,7 +524,7 @@
 
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.layout-feature</module>
-		<!-- <module>../org.eclipse.gef4.layout.tests</module> -->
+		<module>../org.eclipse.gef4.layout.tests</module>
 		<module>../org.eclipse.gef4.layout.doc</module>
 		<module>../org.eclipse.gef4.layout.doc-feature</module>
 		<module>../org.eclipse.gef4.layout.sdk-feature</module>
