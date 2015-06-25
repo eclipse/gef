@@ -13,6 +13,7 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.examples.AbstractFXExample;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 
 import javafx.event.ActionEvent;

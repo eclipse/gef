@@ -10,7 +10,7 @@
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.examples.snippets;
+package org.eclipse.gef4.fx.examples.ui;
 
 import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
 import org.eclipse.swt.SWT;

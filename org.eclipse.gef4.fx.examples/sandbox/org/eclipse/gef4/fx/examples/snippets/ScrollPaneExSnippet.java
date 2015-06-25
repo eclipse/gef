@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.fx.examples.AbstractFXExample;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;

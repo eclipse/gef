@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.fx.examples.AbstractFXExample;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef4.fx.examples.snippets;
+package org.eclipse.gef4.fx.examples.ui;
 
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;

@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.examples.snippets;
+package org.eclipse.gef4.fx.examples;
 
 import java.util.Arrays;
 import java.util.HashMap;
