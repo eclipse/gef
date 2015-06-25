@@ -31,9 +31,8 @@ import javafx.scene.input.MouseEvent;
  *
  */
 // TODO: Rename to provide 'Abstract' prefix
-public abstract class FXMouseDragGesture {
+public abstract class FXMouseDragGesture extends AbstractFXGesture {
 
-	private Scene scene;
 	private Node pressed;
 	private Point2D startMousePosition;
 
@@ -81,15 +80,6 @@ public abstract class FXMouseDragGesture {
 	 */
 	public Node getPressed() {
 		return pressed;
-	}
-
-	/**
-	 * The {@link Scene} on which this gesture is registered.
-	 *
-	 * @return The {@link Scene} on which this gesture is registered.
-	 */
-	public Scene getScene() {
-		return scene;
 	}
 
 	/**
@@ -179,10 +169,7 @@ public abstract class FXMouseDragGesture {
 	 */
 	abstract protected void press(Node target, MouseEvent event);
 
-	/**
-	 * Called when a {@link Scene} is provided. The new {@link Scene} can be
-	 * obtained via {@link #getScene()}. Event handlers are registered here.
-	 */
+	@Override
 	protected void register() {
 		getScene().addEventFilter(MouseEvent.ANY, mouseFilter);
 		getScene().addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
@@ -206,33 +193,7 @@ public abstract class FXMouseDragGesture {
 	abstract protected void release(Node target, MouseEvent event, double dx,
 			double dy);
 
-	/**
-	 * Sets the {@link Scene} for this gesture to the given value.
-	 * {@link #unregister() Unregisters} previously registered event listeners
-	 * and {@link #register() registers} event listeners for this gesture on the
-	 * new {@link Scene} when the given {@link Scene} is not <code>null</code>.
-	 *
-	 * @param scene
-	 *            The new {@link Scene} for this gesture.
-	 */
-	public void setScene(Scene scene) {
-		if (this.scene == scene) {
-			return;
-		}
-		if (this.scene != null) {
-			unregister();
-		}
-		this.scene = scene;
-		if (scene != null) {
-			register();
-		}
-	}
-
-	/**
-	 * Called when the {@link Scene} is removed. You can obtain the old
-	 * {@link Scene} via {@link #getScene()} so that event handlers can be
-	 * unregistered.
-	 */
+	@Override
 	protected void unregister() {
 		getScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		getScene().removeEventFilter(MouseEvent.ANY, mouseFilter);

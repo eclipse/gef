@@ -12,7 +12,6 @@
 package org.eclipse.gef4.fx.gestures;
 
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.input.RotateEvent;
 
 /**
@@ -25,9 +24,7 @@ import javafx.scene.input.RotateEvent;
  *
  */
 // TODO: Rename to provide 'Abstract' prefix
-public abstract class FXRotateGesture {
-
-	private Scene scene;
+public abstract class FXRotateGesture extends AbstractFXGesture {
 
 	private EventHandler<? super RotateEvent> rotateStartedHandler = new EventHandler<RotateEvent>() {
 		@Override
@@ -49,6 +46,15 @@ public abstract class FXRotateGesture {
 			rotationFinished(event);
 		}
 	};
+
+	@Override
+	protected void register() {
+		getScene().addEventHandler(RotateEvent.ROTATION_FINISHED,
+				rotateFinishedHandler);
+		getScene().addEventHandler(RotateEvent.ROTATION_STARTED,
+				rotateStartedHandler);
+		getScene().addEventHandler(RotateEvent.ROTATE, rotateHandler);
+	}
 
 	/**
 	 * Called upon {@link RotateEvent#ROTATE} events.
@@ -74,38 +80,13 @@ public abstract class FXRotateGesture {
 	 */
 	protected abstract void rotationStarted(RotateEvent event);
 
-	/**
-	 * Sets the {@link Scene} for this gesture to the given value. Unregisters
-	 * previously registered event listeners and registers event listeners for
-	 * this gesture on the new {@link Scene} when the given {@link Scene} is not
-	 * <code>null</code>.
-	 *
-	 * @param scene
-	 *            The new {@link Scene} for this gesture.
-	 */
-	public void setScene(Scene scene) {
-		if (this.scene == scene) {
-			return;
-		}
-
-		if (this.scene != null) {
-			this.scene.removeEventHandler(RotateEvent.ROTATION_FINISHED,
-					rotateFinishedHandler);
-			this.scene.removeEventHandler(RotateEvent.ROTATION_STARTED,
-					rotateStartedHandler);
-			this.scene.removeEventHandler(RotateEvent.ROTATE, rotateHandler);
-		}
-
-		this.scene = scene;
-
-		if (this.scene != null) {
-			this.scene.addEventHandler(RotateEvent.ROTATION_FINISHED,
-					rotateFinishedHandler);
-			this.scene.addEventHandler(RotateEvent.ROTATION_STARTED,
-					rotateStartedHandler);
-			this.scene.addEventHandler(RotateEvent.ROTATE, rotateHandler);
-		}
-
+	@Override
+	protected void unregister() {
+		getScene().removeEventHandler(RotateEvent.ROTATION_FINISHED,
+				rotateFinishedHandler);
+		getScene().removeEventHandler(RotateEvent.ROTATION_STARTED,
+				rotateStartedHandler);
+		getScene().removeEventHandler(RotateEvent.ROTATE, rotateHandler);
 	}
 
 }

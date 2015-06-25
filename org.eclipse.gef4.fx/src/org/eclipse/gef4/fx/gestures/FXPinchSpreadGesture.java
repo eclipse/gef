@@ -12,7 +12,6 @@
 package org.eclipse.gef4.fx.gestures;
 
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
 /**
@@ -25,9 +24,7 @@ import javafx.scene.input.ZoomEvent;
  *
  */
 // TODO: Rename to provide 'Abstract' prefix
-public abstract class FXPinchSpreadGesture {
-
-	private Scene scene;
+public abstract class FXPinchSpreadGesture extends AbstractFXGesture {
 
 	private EventHandler<? super ZoomEvent> zoomStartedHandler = new EventHandler<ZoomEvent>() {
 		@Override
@@ -50,38 +47,21 @@ public abstract class FXPinchSpreadGesture {
 		}
 	};
 
-	/**
-	 * Sets the {@link Scene} for this gesture to the given value. Unregisters
-	 * previously registered event listeners and registers event listeners for
-	 * this gesture on the new {@link Scene} when the given {@link Scene} is not
-	 * <code>null</code>.
-	 *
-	 * @param scene
-	 *            The new {@link Scene} for this gesture.
-	 */
-	public void setScene(Scene scene) {
-		if (this.scene == scene) {
-			return;
-		}
+	@Override
+	protected void register() {
+		getScene()
+				.addEventHandler(ZoomEvent.ZOOM_FINISHED, zoomFinishedHandler);
+		getScene().addEventHandler(ZoomEvent.ZOOM_STARTED, zoomStartedHandler);
+		getScene().addEventHandler(ZoomEvent.ZOOM, zoomHandler);
+	}
 
-		if (this.scene != null) {
-			this.scene.removeEventHandler(ZoomEvent.ZOOM_FINISHED,
-					zoomFinishedHandler);
-			this.scene.removeEventHandler(ZoomEvent.ZOOM_STARTED,
-					zoomStartedHandler);
-			this.scene.removeEventHandler(ZoomEvent.ZOOM, zoomHandler);
-		}
-
-		this.scene = scene;
-
-		if (this.scene != null) {
-			this.scene.addEventHandler(ZoomEvent.ZOOM_FINISHED,
-					zoomFinishedHandler);
-			this.scene.addEventHandler(ZoomEvent.ZOOM_STARTED,
-					zoomStartedHandler);
-			this.scene.addEventHandler(ZoomEvent.ZOOM, zoomHandler);
-		}
-
+	@Override
+	protected void unregister() {
+		getScene().removeEventHandler(ZoomEvent.ZOOM_FINISHED,
+				zoomFinishedHandler);
+		getScene().removeEventHandler(ZoomEvent.ZOOM_STARTED,
+				zoomStartedHandler);
+		getScene().removeEventHandler(ZoomEvent.ZOOM, zoomHandler);
 	}
 
 	/**
