@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXResizeNodeOperation extends AbstractOperation {
 
@@ -35,24 +34,18 @@ public class FXResizeNodeOperation extends AbstractOperation {
 	}
 
 	public FXResizeNodeOperation(Node visual, double dw, double dh) {
-		this("Resize", visual, new Point(visual.getLayoutX()
-				+ visual.getLayoutBounds().getMinX(), visual.getLayoutY()
-				+ visual.getLayoutBounds().getMinY()), new Dimension(visual
-				.getLayoutBounds().getWidth(), visual.getLayoutBounds()
-				.getHeight()), dw, dh);
+		this("Resize", visual, new Dimension(visual.getLayoutBounds()
+				.getWidth(), visual.getLayoutBounds().getHeight()), dw, dh);
 	}
 
 	/**
 	 * Constructs a new {@link FXResizeNodeOperation} from the given values.
 	 * Note that the <i>oldLocation</i> does include the layout-bounds minimum.
-	 * 
+	 *
 	 * @param label
 	 *            Descriptive title for the operation.
 	 * @param visual
 	 *            The visual that is resized/relocated.
-	 * @param oldLocation
-	 *            The old location of the visual (including layout-bounds
-	 *            minimum).
 	 * @param oldSize
 	 *            The old size of the visual.
 	 * @param dw
@@ -60,8 +53,8 @@ public class FXResizeNodeOperation extends AbstractOperation {
 	 * @param dh
 	 *            The vertical size difference.
 	 */
-	public FXResizeNodeOperation(String label, Node visual, Point oldLocation,
-			Dimension oldSize, double dw, double dh) {
+	public FXResizeNodeOperation(String label, Node visual, Dimension oldSize,
+			double dw, double dh) {
 		super(label);
 		this.visual = visual;
 

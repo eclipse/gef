@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
@@ -40,6 +42,11 @@ public class FXResizePolicy extends AbstractPolicy<Node> implements
 		return commit;
 	}
 
+	protected Dimension getInitialSize(Node visualToResize) {
+		Bounds layoutBounds = visualToResize.getLayoutBounds();
+		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
+	}
+
 	protected double getMinimumHeight() {
 		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
 	}
@@ -48,15 +55,21 @@ public class FXResizePolicy extends AbstractPolicy<Node> implements
 		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
 	}
 
+	protected Node getVisualToResize() {
+		return getHost().getVisual();
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
 	public void init() {
 		// create "empty" operation
-		resizeOperation = new FXResizeNodeOperation(getHost().getVisual());
+		Node visualToResize = getVisualToResize();
+		resizeOperation = new FXResizeNodeOperation("Resize", visualToResize,
+				getInitialSize(visualToResize), 0, 0);
 		FXRevealOperation revealOperation = new FXRevealOperation(getHost());
 		forwardUndoOperation = new ForwardUndoCompositeOperation(
 				resizeOperation.getLabel());
@@ -65,7 +78,7 @@ public class FXResizePolicy extends AbstractPolicy<Node> implements
 	}
 
 	public void performResize(double dw, double dh) {
-		Node visual = getHost().getVisual();
+		Node visual = resizeOperation.getVisual();
 		boolean resizable = visual.isResizable();
 
 		// convert resize into relocate in case node is not resizable

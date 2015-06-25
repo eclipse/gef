@@ -30,7 +30,7 @@
    <feature url="features/org.eclipse.gef4.mvc.ui_0.1.1.qualifier.jar" id="org.eclipse.gef4.mvc.ui" version="0.1.1.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.mvc.fx_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.mvc.fx_0.1.1.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="0.1.1.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
    <feature url="features/org.eclipse.gef4.mvc.fx.ui_0.1.1.qualifier.jar" id="org.eclipse.gef4.mvc.fx.ui" version="0.1.1.qualifier">

@@ -62,7 +62,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -79,9 +79,9 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
-		// relocate in middle of resize area if visual is not resizable
+		// relocate in middle of resize area if no resize policy is available
 		FXResizePolicy resizePolicy = getResizePolicy();
-		if (!getHost().getVisual().isResizable() || resizePolicy == null) {
+		if (resizePolicy == null) {
 			dw = 0;
 			dh = 0;
 			dx += dw / 2;
