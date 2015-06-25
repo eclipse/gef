@@ -12,9 +12,26 @@
  * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.layout.CustomFigureGraphSnippet
  *
  *******************************************************************************/
-package org.eclipse.gef4.layout.examples;
+package org.eclipse.gef4.zest.examples;
 
 import java.util.Map;
+
+import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -28,25 +45,7 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.zest.examples.AbstractZestExample;
-import org.eclipse.gef4.zest.fx.ZestFxModule;
-import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
-
-public class CustomNodeLayoutExample extends AbstractZestExample {
+public class CustomNodeExample extends AbstractZestExample {
 
 	public static class CustomContentPartFactory extends ContentPartFactory {
 		@Inject
@@ -68,8 +67,8 @@ public class CustomNodeLayoutExample extends AbstractZestExample {
 					return part;
 				}
 			}
-			return super
-					.createContentPart(content, contextBehavior, contextMap);
+			return super.createContentPart(content, contextBehavior,
+					contextMap);
 		}
 	}
 
@@ -89,10 +88,10 @@ public class CustomNodeLayoutExample extends AbstractZestExample {
 		protected void createNodeVisual(Group group, Rectangle rect,
 				ImageView iconImageView, Text labelText,
 				StackPane nestedContentStackPane) {
-			ImageView ian = new ImageView(new Image(getClass().getResource(
-					"ibull.jpg").toExternalForm()));
-			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90,
-					0, 60, 0, 25, 25, 0, 0, 25, -25, 0);
+			ImageView ian = new ImageView(new Image(
+					getClass().getResource("ibull.jpg").toExternalForm()));
+			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90, 0,
+					60, 0, 25, 25, 0, 0, 25, -25, 0);
 			body.setTranslateX(ian.getLayoutBounds().getWidth() / 2
 					- body.getLayoutBounds().getWidth() / 2 - 5);
 			body.setTranslateY(-15);
@@ -100,7 +99,7 @@ public class CustomNodeLayoutExample extends AbstractZestExample {
 			vbox.getChildren().addAll(ian, body, labelText, iconImageView,
 					nestedContentStackPane);
 			group.getChildren().add(vbox);
-			labelText.setStroke(Color.BLACK);
+			labelText.setFill(Color.BLACK);
 		}
 	}
 
@@ -110,8 +109,8 @@ public class CustomNodeLayoutExample extends AbstractZestExample {
 
 	private static final String ATTR_CUSTOM = "isCustom";
 
-	public CustomNodeLayoutExample() {
-		super("GEF4 Layouts - Custom Node Example");
+	public CustomNodeExample() {
+		super("GEF4 Zest - Custom Node Example");
 	}
 
 	@Override

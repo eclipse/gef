@@ -9,51 +9,53 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
- * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.layout.SimpleGraphSnippet
+ * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.layout.FisheyeGraphSnippet
  *
  *******************************************************************************/
-package org.eclipse.gef4.layout.examples;
+package org.eclipse.gef4.zest.examples;
+
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import javafx.application.Application;
 
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.examples.AbstractZestExample;
-import org.eclipse.gef4.zest.fx.ZestProperties;
-
-public class SimpleLayoutExample extends AbstractZestExample {
+public class FisheyeExample extends AbstractZestExample {
 
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
 
-	public SimpleLayoutExample() {
-		super("GEF4 Layouts - Simple Layout Example");
+	public FisheyeExample() {
+		super("GEF4 Zest - Fisheye Example");
 	}
 
 	@Override
 	protected Graph createGraph() {
-		Node n = n(LABEL, "Paper");
-		Node n2 = n(LABEL, "Rock");
-		Node n3 = n(LABEL, "Scissors");
-		Edge e12 = new Edge(n, n2);
-		Edge e23 = new Edge(n2, n3);
-		Edge e31 = new Edge(n3, n);
-		return new Graph.Builder().nodes(n, n2, n3).edges(e12, e23, e31)
-				.attr(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm())
-				.build();
+		// TODO: images for info, warn, error
+		Graph g = new Graph();
+		for (int i = 0; i < 80; i++) {
+			Node n1 = n(g, LABEL, "Information", ZestProperties.NODE_FISHEYE,
+					true);
+			Node n2 = n(g, LABEL, "Warning", ZestProperties.NODE_FISHEYE, true);
+			Node n3 = n(g, LABEL, "Error", ZestProperties.NODE_FISHEYE, true);
+			e(g, n1, n2, LABEL, "");
+			e(g, n2, n3, LABEL, "");
+		}
+		g.getAttrs().put(ZestProperties.GRAPH_LAYOUT,
+				new GridLayoutAlgorithm());
+		return g;
 	}
 
 	@Override
 	protected int getStageHeight() {
-		return 400;
+		return 500;
 	}
 
 	@Override
 	protected int getStageWidth() {
-		return 400;
+		return 500;
 	}
 
 }
