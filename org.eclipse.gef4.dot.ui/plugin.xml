@@ -192,7 +192,7 @@
       <view
             class="org.eclipse.gef4.internal.dot.ui.DotGraphView"
             id="org.eclipse.gef4.dot.view"
-            icon="icons/graph_view.gif"
+            icon="icons/graph_view.png"
             category="org.eclipse.gef4.visualization"
             name="DOT Graph"
             restorable="true">

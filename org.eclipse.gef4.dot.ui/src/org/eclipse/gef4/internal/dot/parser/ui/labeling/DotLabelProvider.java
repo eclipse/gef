@@ -42,43 +42,43 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String image(GraphvizModel model) {
-		return "file.gif"; //$NON-NLS-1$
+		return "file.png"; //$NON-NLS-1$
 	}
 
 	String image(DotGraph graph) {
-		return "graph_outline.gif"; //$NON-NLS-1$
+		return "graph_outline.png"; //$NON-NLS-1$
 	}
 
 	String image(Subgraph graph) {
-		return "subgraph.gif"; //$NON-NLS-1$
+		return "subgraph.png"; //$NON-NLS-1$
 	}
 
 	String image(NodeStmt node) {
-		return "node.gif"; //$NON-NLS-1$
+		return "node.png"; //$NON-NLS-1$
 	}
 
 	String image(EdgeStmtNode edge) {
-		return "edge.gif"; //$NON-NLS-1$
+		return "edge.png"; //$NON-NLS-1$
 	}
 
 	String image(AttrStmt attr) {
-		return "attributes.gif"; //$NON-NLS-1$
+		return "attributes.png"; //$NON-NLS-1$
 	}
 
 	String image(Attribute attr) {
-		return "attribute.gif"; //$NON-NLS-1$
+		return "attribute.png"; //$NON-NLS-1$
 	}
 
 	String image(AttrList attrs) {
-		return "attributes.gif"; //$NON-NLS-1$
+		return "attributes.png"; //$NON-NLS-1$
 	}
 
 	String image(NodeId attrs) {
-		return "id.gif"; //$NON-NLS-1$
+		return "id.png"; //$NON-NLS-1$
 	}
 
 	String image(EdgeRhs rhs) {
-		return "rhs.gif"; //$NON-NLS-1$
+		return "rhs.png"; //$NON-NLS-1$
 	}
 
 	Object text(GraphvizModel model) {
