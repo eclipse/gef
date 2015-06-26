@@ -93,6 +93,50 @@ public class FXChangeViewportOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	public double getNewHeight() {
+		return newHeight;
+	}
+
+	public AffineTransform getNewTransform() {
+		return newTransform;
+	}
+
+	public double getNewTx() {
+		return newTx;
+	}
+
+	public double getNewTy() {
+		return newTy;
+	}
+
+	public double getNewWidth() {
+		return newWidth;
+	}
+
+	public double getOldHeight() {
+		return oldHeight;
+	}
+
+	public AffineTransform getOldTransform() {
+		return oldTransform;
+	}
+
+	public double getOldTx() {
+		return oldTx;
+	}
+
+	public double getOldTy() {
+		return oldTy;
+	}
+
+	public double getOldWidth() {
+		return oldWidth;
+	}
+
+	public ViewportModel getViewportModel() {
+		return viewportModel;
+	}
+
 	/**
 	 * Stores all relevant values in fields, so that they can be restored later.
 	 *
@@ -118,6 +162,26 @@ public class FXChangeViewportOperation extends AbstractOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	public void setNewHeight(double newHeight) {
+		this.newHeight = newHeight;
+	}
+
+	public void setNewTransform(AffineTransform newTransform) {
+		this.newTransform = newTransform;
+	}
+
+	public void setNewTx(double newTx) {
+		this.newTx = newTx;
+	}
+
+	public void setNewTy(double newTy) {
+		this.newTy = newTy;
+	}
+
+	public void setNewWidth(double newWidth) {
+		this.newWidth = newWidth;
 	}
 
 	@Override

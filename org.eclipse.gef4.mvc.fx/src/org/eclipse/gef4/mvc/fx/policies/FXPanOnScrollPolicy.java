@@ -16,9 +16,7 @@ import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
@@ -31,16 +29,11 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	 */
 
 	protected void applyPanning(double dx, double dy) {
-		ViewportModel viewportModel = getHost().getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
-		getHost()
-				.getRoot()
-				.getViewer()
-				.getDomain()
-				.execute(
-						new FXChangeViewportOperation(viewportModel,
-								viewportModel.getTranslateX() + dx,
-								viewportModel.getTranslateY() + dy));
+		FXChangeViewportPolicy viewportPolicy = getHost().getRoot().getAdapter(
+				FXChangeViewportPolicy.class);
+		init(viewportPolicy);
+		viewportPolicy.scrollRelative(dx, dy);
+		commit(viewportPolicy);
 	}
 
 	protected Dimension computeDelta(ScrollEvent event) {

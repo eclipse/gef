@@ -15,30 +15,13 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	public static final double DEFAULT_SCROLL_AMOUNT_PER_SECOND = 150d;
 
-	private final AnimationTimer timer = new AnimationTimer() {
-		@Override
-		public void handle(long nanos) {
-			long now = System.currentTimeMillis();
-			// compute millis pressed per direction
-			if (isDown) {
-				currentMillisDown = now - startMillisDown;
-			} else if (isUp) {
-				currentMillisUp = now - startMillisUp;
-			} else if (isLeft) {
-				currentMillisLeft = now - startMillisLeft;
-			} else if (isRight) {
-				currentMillisRight = now - startMillisRight;
-			}
-			updateScrollPosition();
-		}
-	};
+	private AnimationTimer timer;
 	// timer running?
 	private boolean isRunning;
 	// store pressed state for direction keys
@@ -61,9 +44,6 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 	private long totalMillisUp = 0;
 	private long totalMillisLeft = 0;
 	private long totalMillisRight = 0;
-	// initial translation values
-	private double initialTranslateX;
-	private double initialTranslateY;
 
 	/**
 	 * Returns the amount of units scrolled per second when a direction key is
@@ -102,8 +82,35 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 		}
 
 		if (!isRunning && (isDown || isUp || isLeft || isRight)) {
-			initialTranslateX = getViewportModel().getTranslateX();
-			initialTranslateY = getViewportModel().getTranslateY();
+			FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
+					.getAdapter(FXChangeViewportPolicy.class);
+			init(viewportPolicy);
+			if (timer == null) {
+				/*
+				 * IMPORTANT: the animation timer cannot be constructed atop,
+				 * because it will then only be called once; reason unknown.
+				 */
+				timer = new AnimationTimer() {
+					@Override
+					public void handle(long nanos) {
+						long now = System.currentTimeMillis();
+						// compute millis pressed per direction
+						if (isDown) {
+							currentMillisDown = now - startMillisDown;
+						}
+						if (isUp) {
+							currentMillisUp = now - startMillisUp;
+						}
+						if (isLeft) {
+							currentMillisLeft = now - startMillisLeft;
+						}
+						if (isRight) {
+							currentMillisRight = now - startMillisRight;
+						}
+						updateScrollPosition();
+					}
+				};
+			}
 			timer.start();
 			isRunning = true;
 		}
@@ -135,6 +142,9 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 			isRunning = false;
 			timer.stop();
 			updateScrollPosition();
+			FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
+					.getAdapter(FXChangeViewportPolicy.class);
+			commit(viewportPolicy);
 			totalMillisDown = 0;
 			totalMillisUp = 0;
 			totalMillisLeft = 0;
@@ -151,13 +161,9 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 		double dy = ((totalMillisUp + currentMillisUp) / 1000d) * scrollAmount
 				- ((totalMillisDown + currentMillisDown) / 1000d)
 				* scrollAmount;
-		getHost()
-				.getRoot()
-				.getViewer()
-				.getDomain()
-				.execute(
-						new FXChangeViewportOperation(getViewportModel(),
-								initialTranslateX + dx, initialTranslateY + dy));
+		FXChangeViewportPolicy viewportPolicy = getHost().getRoot().getAdapter(
+				FXChangeViewportPolicy.class);
+		viewportPolicy.scrollRelative(dx, dy);
 	}
 
 }
