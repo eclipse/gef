@@ -7,85 +7,190 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #469491
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swt.FXCanvas;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * A picker for multi-stop {@link LinearGradient}s and {@link RadialGradient}s.
- * 
+ * A picker for multi-stop {@link LinearGradient}s.
+ *
  * @author anyssen
+ * @author mwienand
  *
  */
+// TODO: This is a linear gradient picker.
 public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private class StopPicker extends Group {
 
-	private Paint advancedGradient;
+		private static final double SIZE = 8;
 
-	private Control control;
+		private int index = 0;
+		private DoubleProperty offsetProperty = new SimpleDoubleProperty();
+		private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(
+				Color.WHITE);
+		private Polygon tip;
+		private Rectangle picker;
+		private double initialMouseX;
+		private double initialTx;
+		private boolean draggable;
 
-	public FXAdvancedGradientPicker(Composite parent) {
-		control = createControl(parent);
-		// TODO: start with three stops
-		setAdvancedGradient(createAdvancedLinearGradient(Color.WHITE,
-				Color.GREY, Color.BLACK));
-	}
+		private EventHandler<? super MouseEvent> onDrag = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (draggable) {
+					double dx = event.getSceneX() - initialMouseX;
+					double newOffset = (initialTx + dx) / preview.getWidth();
+					newOffset = Math.max(getPrevOffset(index),
+							Math.min(getNextOffset(index), newOffset));
+					offsetProperty.set(newOffset);
+					updateStop(index, offsetProperty.get(), colorProperty.get());
+				}
+			}
+		};
 
-	public Control getControl() {
-		return control;
-	}
-
-	protected Control createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		// TODO: use canvas factory
-		FXCanvas canvas = new FXCanvas(composite, SWT.NONE);
-		HBox root = new HBox();
-		Rectangle r = new Rectangle(20, 30);
-		r.setFill(Color.RED);
-		root.getChildren().add(r);
-		Scene scene = new Scene(root);
-		canvas.setScene(scene);
-		return composite;
-	}
-
-	public void setAdvancedGradient(Paint advancedGradient) {
-		if (!isAdvancedGradient(advancedGradient)) {
-			throw new IllegalArgumentException("Given value '"
-					+ advancedGradient + "' is no advanced gradient");
+		{
+			tip = new Polygon(0, 0, SIZE / 2, SIZE / 2, -SIZE / 2, SIZE / 2);
+			tip.setStroke(Color.BLACK);
+			tip.setFill(Color.BLACK);
+			picker = new Rectangle(-SIZE / 2, SIZE / 2, SIZE, SIZE);
+			picker.setStroke(Color.BLACK);
+			picker.fillProperty().bind(colorProperty);
+			getChildren().addAll(tip, picker);
 		}
-		;
 
-		Paint oldAdvancedGradient = this.advancedGradient;
-		this.advancedGradient = advancedGradient;
-		// update controls to reflect changes
-		pcs.firePropertyChange("simpleGradient", oldAdvancedGradient,
-				advancedGradient);
-	}
+		public StopPicker(int index) {
+			this.index = index;
 
-	public Paint getAdvancedGradient() {
-		return advancedGradient;
+			// bind translation to offset
+			translateXProperty().bind(
+					preview.widthProperty().multiply(offsetProperty));
+
+			// mouse feedback
+			setOnMouseEntered(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (draggable) {
+						BoxBlur boxBlur = new BoxBlur(0, 0, 1);
+						setEffect(boxBlur);
+						Timeline timeline = new Timeline(
+								new KeyFrame(Duration.millis(0), new KeyValue(
+										boxBlur.widthProperty(), 0),
+										new KeyValue(boxBlur.heightProperty(),
+												0)),
+								new KeyFrame(
+										Duration.millis(150),
+										new KeyValue(boxBlur.widthProperty(), 3),
+										new KeyValue(boxBlur.heightProperty(),
+												3)));
+						timeline.play();
+					}
+				}
+			});
+			setOnMouseExited(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (!isPressed()) {
+						setEffect(null);
+					}
+				}
+			});
+
+			// make draggable
+			setOnMousePressed(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					initialMouseX = event.getSceneX();
+					initialTx = getTranslateX();
+				}
+			});
+			setOnMouseDragged(onDrag);
+			setOnMouseReleased(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					onDrag.handle(event);
+					if (!isHover()) {
+						setEffect(null);
+					}
+				}
+			});
+
+			// copy values from Stop
+			refresh();
+
+			// pick color on double click
+			picker.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (event.getClickCount() > 1) {
+						// double click
+						colorProperty.set(FXColorPicker.pickColor(
+								control.getShell(), colorProperty.get()));
+						updateStop(StopPicker.this.index, offsetProperty.get(),
+								colorProperty.get());
+					} else if (draggable
+							&& MouseButton.SECONDARY.equals(event.getButton())) {
+						removeStop(StopPicker.this.index);
+					}
+				}
+			});
+		}
+
+		/**
+		 * Refreshes this stop picker by copying offset and color from the stops
+		 * list.
+		 */
+		public void refresh() {
+			// copy offset and color from stop
+			offsetProperty.set(getStops().get(index).getOffset());
+			colorProperty.set(getStops().get(index).getColor());
+
+			// determine if draggable (all but start and end)
+			draggable = offsetProperty.get() != 0 && offsetProperty.get() != 1;
+		}
+
 	}
 
 	protected static LinearGradient createAdvancedLinearGradient(Color c1,
@@ -95,16 +200,6 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
 	public static boolean isAdvancedGradient(Paint paint) {
 		if (paint instanceof LinearGradient) {
 			return ((LinearGradient) paint).getStops().size() > 2;
@@ -112,6 +207,305 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 			return true;
 		}
 		return false;
+	}
+
+	private static final int DIRECTION_RADIUS = 16;
+	private static final double OFFSET_THRESHOLD = 0.005;
+
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private Paint advancedGradient;
+	private double directionX = 1;
+	private double directionY = 0;
+	private Control control;
+	private AnchorPane root;
+	private Rectangle preview;
+	private Group pickerGroup;
+	private Line directionLine;
+
+	public FXAdvancedGradientPicker(Composite parent) {
+		control = createControl(parent);
+		// TODO: start with three stops
+		setAdvancedGradient(createAdvancedLinearGradient(Color.WHITE,
+				Color.GREY, Color.BLACK));
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	protected Control createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		// TODO: use canvas factory
+		FXCanvas canvas = new FXCanvas(composite, SWT.NONE);
+		canvas.setLayoutData(new GridData(230, 60));
+
+		// create preview pane and direction circle
+		root = new AnchorPane();
+		final Pane previewPane = new Pane();
+		final Circle directionCircle = new Circle(DIRECTION_RADIUS, Color.WHITE);
+		directionLine = new Line();
+		directionLine.setMouseTransparent(true);
+		directionLine.setEndX(DIRECTION_RADIUS);
+		directionLine.setEndY(0);
+		directionLine.startXProperty().bind(directionCircle.centerXProperty());
+		directionLine.startYProperty().bind(directionCircle.centerYProperty());
+		directionLine.translateXProperty().bind(
+				directionCircle.layoutXProperty());
+		directionLine.translateYProperty().bind(
+				directionCircle.layoutYProperty());
+		root.getChildren().addAll(previewPane, directionCircle, directionLine);
+		// layout preview pane
+		AnchorPane.setTopAnchor(previewPane, 2d);
+		AnchorPane.setBottomAnchor(previewPane, 20d);
+		AnchorPane.setLeftAnchor(previewPane, 15d);
+		AnchorPane.setRightAnchor(previewPane, 40d);
+		// layout direction circle
+		AnchorPane.setTopAnchor(directionCircle, 5d);
+		AnchorPane.setRightAnchor(directionCircle, 0d);
+
+		// create a preview rectangle that displays the gradient
+		preview = new Rectangle();
+		preview.setStroke(Color.BLACK);
+		pickerGroup = new Group();
+		root.getChildren().addAll(preview, pickerGroup);
+		preview.xProperty().bind(previewPane.layoutXProperty());
+		preview.yProperty().bind(previewPane.layoutYProperty());
+		preview.widthProperty().bind(previewPane.widthProperty());
+		preview.heightProperty().bind(previewPane.heightProperty());
+		preview.setFill(advancedGradient);
+		Scene scene = new Scene(root);
+
+		// copy background color from parent composite
+		org.eclipse.swt.graphics.Color background = parent.getBackground();
+		Color backgroundColor = new Color(background.getRed() / 255d,
+				background.getGreen() / 255d, background.getBlue() / 255d,
+				background.getAlpha() / 255d);
+		scene.setFill(backgroundColor);
+
+		// create highlight line for showing where new spots are created
+		final Rectangle highlightSpotCreation = new Rectangle();
+		highlightSpotCreation.setStroke(Color.TRANSPARENT);
+		highlightSpotCreation.setFill(new Color(1, 1, 0, 0.5));
+		highlightSpotCreation.heightProperty().bind(
+				preview.heightProperty().add(10));
+		highlightSpotCreation.yProperty().bind(preview.yProperty());
+		highlightSpotCreation.setWidth(3);
+		highlightSpotCreation.setTranslateX(-1.5);
+		highlightSpotCreation.setVisible(false);
+		highlightSpotCreation.setMouseTransparent(true);
+		root.getChildren().add(highlightSpotCreation);
+
+		// update highlighting when the mouse is moved
+		preview.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				highlightSpotCreation.setVisible(true);
+			}
+		});
+		preview.setOnMouseMoved(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				highlightSpotCreation.setX(event.getX());
+			}
+		});
+		preview.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				highlightSpotCreation.setVisible(false);
+			}
+		});
+
+		// create a new stop with primary mouse button
+		preview.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (MouseButton.PRIMARY.equals(event.getButton())) {
+					// create new stop
+					Point2D previewPosition = previewPane.sceneToLocal(
+							event.getSceneX(), event.getSceneY());
+					double offset = previewPosition.getX() / preview.getWidth();
+					offset = Math.max(0, Math.min(1, offset));
+					createStop(offset);
+				}
+			}
+		});
+
+		// change direction when clicking into the direction circle
+		directionCircle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (directionX == 1) {
+					directionX = 0;
+					directionY = 1;
+				} else {
+					directionX = 1;
+					directionY = 0;
+				}
+				updateDirectionLine();
+				List<Stop> newStops = new ArrayList<Stop>(getStops());
+				updateGradient(newStops);
+			}
+		});
+
+		canvas.setScene(scene);
+		return composite;
+	}
+
+	/**
+	 * Creates a new spot for the given offset.
+	 *
+	 * @param offset
+	 *            The offset for the new spot.
+	 */
+	protected void createStop(double offset) {
+		List<Stop> newStops = new ArrayList<Stop>(getStops());
+		int addIndex = newStops.size();
+		for (int i = 0; i < newStops.size(); i++) {
+			if (newStops.get(i).getOffset() > offset) {
+				addIndex = i;
+				break;
+			}
+		}
+		newStops.add(addIndex, new Stop(offset, Color.WHITE));
+		updateGradient(newStops);
+	}
+
+	public Paint getAdvancedGradient() {
+		return advancedGradient;
+	}
+
+	public Control getControl() {
+		return control;
+	}
+
+	/**
+	 * Computes the maximum offset for the given stop index.
+	 *
+	 * @param stopIndex
+	 * @return The maximum offset for the given stop index.
+	 */
+	protected double getNextOffset(int stopIndex) {
+		if (stopIndex == getStops().size() - 1) {
+			return 1 - OFFSET_THRESHOLD;
+		}
+		return getStops().get(stopIndex + 1).getOffset() - OFFSET_THRESHOLD;
+	}
+
+	/**
+	 * Computes the minimum offset for the given stop index.
+	 *
+	 * @param stopIndex
+	 * @return The minimum offset for the given stop index.
+	 */
+	protected double getPrevOffset(int stopIndex) {
+		if (stopIndex == 0) {
+			return 0 + OFFSET_THRESHOLD;
+		}
+		return getStops().get(stopIndex - 1).getOffset() + OFFSET_THRESHOLD;
+	}
+
+	protected List<Stop> getStops() {
+		return ((LinearGradient) advancedGradient).getStops();
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	/**
+	 * Removes the spot specified by the given index.
+	 *
+	 * @param index
+	 *            The spot index.
+	 */
+	protected void removeStop(int index) {
+		List<Stop> newStops = new ArrayList<Stop>(getStops());
+		newStops.remove(index);
+		updateGradient(newStops);
+	}
+
+	/**
+	 * Sets the gradient managed by this gradient picker to the given value.
+	 * Does also update the UI so that the new gradient can be manipulated.
+	 *
+	 * @param advancedGradient
+	 *            The new gradient.
+	 */
+	public void setAdvancedGradient(Paint advancedGradient) {
+		Paint oldAdvancedGradient = this.advancedGradient;
+		this.advancedGradient = advancedGradient;
+		preview.setFill(advancedGradient);
+
+		// update stop pickers
+		if (advancedGradient instanceof LinearGradient) {
+			// adapt direction
+			directionX = ((LinearGradient) advancedGradient).getEndX();
+			if (directionX == 1) {
+				directionY = 0;
+			} else {
+				directionX = 0;
+				directionY = 1;
+			}
+			updateDirectionLine();
+			// adapt stops
+			List<Stop> stops = getStops();
+			for (int i = 0; i < stops.size(); i++) {
+				if (pickerGroup.getChildren().size() > i) {
+					// refresh existing stop pickers
+					((StopPicker) pickerGroup.getChildren().get(i)).refresh();
+				} else {
+					// add new stop pickers
+					StopPicker stopPicker = new StopPicker(i);
+					pickerGroup.getChildren().add(stopPicker);
+					stopPicker.layoutXProperty().bind(preview.xProperty());
+					stopPicker.layoutYProperty().bind(
+							preview.yProperty().add(preview.heightProperty()));
+				}
+			}
+			// remove unused stop pickers
+			for (int i = pickerGroup.getChildren().size() - 1; i >= stops
+					.size(); i--) {
+				pickerGroup.getChildren().remove(i);
+			}
+		}
+
+		// send notification
+		pcs.firePropertyChange("simpleGradient", oldAdvancedGradient,
+				advancedGradient);
+	}
+
+	/**
+	 * Updates the direction line to display the current direction (specified by
+	 * directionX and directionY).
+	 */
+	protected void updateDirectionLine() {
+		directionLine.setEndX(directionX * DIRECTION_RADIUS);
+		directionLine.setEndY(directionY * DIRECTION_RADIUS);
+	}
+
+	protected void updateGradient(List<Stop> newStops) {
+		setAdvancedGradient(new LinearGradient(0, 0, directionX, directionY,
+				true, CycleMethod.NO_CYCLE, newStops));
+	}
+
+	/**
+	 * Sets the offset and color of the spot specified by the given index to the
+	 * given values.
+	 *
+	 * @param index
+	 *            The index of the spot.
+	 * @param offset
+	 *            The new offset for that spot.
+	 * @param color
+	 *            The new color for that spot.
+	 */
+	protected void updateStop(int index, double offset, Color color) {
+		List<Stop> newStops = new ArrayList<Stop>(getStops());
+		newStops.set(index, new Stop(offset, color));
+		updateGradient(newStops);
 	}
 
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
@@ -40,10 +40,24 @@ import org.eclipse.swt.widgets.Control;
  */
 public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected static LinearGradient createSimpleGradient(Color c1, Color c2) {
+		// TODO: add angle
+		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(1, c2) };
+		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+	}
 
+	public static boolean isSimpleGradient(Paint paint) {
+		if (paint instanceof LinearGradient) {
+			return ((LinearGradient) paint).getStops().size() == 2;
+		}
+		return false;
+	}
+
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private LinearGradient simpleGradient;
+
 	private AbstractFXColorPicker color1Picker;
+
 	private FXColorPicker color2Picker;
 
 	private Control control;
@@ -53,8 +67,9 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		setSimpleGradient(createSimpleGradient(Color.WHITE, Color.BLACK));
 	}
 
-	public Control getControl() {
-		return control;
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	protected Control createControl(final Composite parent) {
@@ -102,8 +117,29 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		});
 
 		Scene scene = new Scene(root);
+
+		// copy background color from parent composite
+		org.eclipse.swt.graphics.Color background = parent.getBackground();
+		Color backgroundColor = new Color(background.getRed() / 255d,
+				background.getGreen() / 255d, background.getBlue() / 255d,
+				background.getAlpha() / 255d);
+		scene.setFill(backgroundColor);
+
 		canvas.setScene(scene);
 		return canvas;
+	}
+
+	public Control getControl() {
+		return control;
+	}
+
+	public LinearGradient getSimpleGradient() {
+		return simpleGradient;
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	public void setSimpleGradient(LinearGradient simpleGradient) {
@@ -128,33 +164,6 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		}
 		pcs.firePropertyChange("simpleGradient", oldSimpleGradient,
 				simpleGradient);
-	}
-
-	public LinearGradient getSimpleGradient() {
-		return simpleGradient;
-	}
-
-	protected static LinearGradient createSimpleGradient(Color c1, Color c2) {
-		// TODO: add angle
-		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(1, c2) };
-		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-	}
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
-	public static boolean isSimpleGradient(Paint paint) {
-		if (paint instanceof LinearGradient) {
-			return ((LinearGradient) paint).getStops().size() == 2;
-		}
-		return false;
 	}
 
 }
