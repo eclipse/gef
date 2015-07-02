@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
@@ -38,7 +36,10 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> {
+import javafx.scene.Node;
+
+public class FXDefaultFeedbackPartFactory
+		implements IFeedbackPartFactory<Node> {
 
 	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
 
@@ -84,8 +85,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
 		final Provider<? extends IGeometry> hoverFeedbackGeometryProvider = target
-				.getAdapter(AdapterKey.get(
-						new TypeToken<Provider<? extends IGeometry>>() {
+				.getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 		if (hoverFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
@@ -95,6 +96,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 							hoverFeedbackGeometryProvider.get());
 				}
 			};
+			// TODO: obtain via injector, so we can bind a different
+			// implementation
 			FXHoverFeedbackPart part = new FXHoverFeedbackPart(
 					geometryInSceneProvider);
 			injector.injectMembers(part);
@@ -141,7 +144,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 					return null;
 				}
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
-					// TODO: inject
+					// TODO (#471628): inject
 					private final FXChopBoxAnchor.ComputationStrategy.Impl computationStrategy = new FXChopBoxAnchor.ComputationStrategy.Impl();
 
 					private Point computePosition(Node anchoredVisual,
@@ -182,6 +185,9 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 						return new Line(sourcePointInScene, targetPointInScene);
 					}
 				};
+				// TODO (#471628): obtain via injector, so we can bind a
+				// different
+				// implementation; also, inject members here
 				return new FXSelectionLinkFeedbackPart(
 						linkFeedbackGeometryProvider);
 			}
@@ -206,8 +212,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
 		final Provider<IGeometry> selectionFeedbackGeometryProvider = target
-				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-						new TypeToken<Provider<? extends IGeometry>>() {
+				.<Provider<IGeometry>> getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
@@ -217,6 +223,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 							selectionFeedbackGeometryProvider.get());
 				}
 			};
+			// TODO (#471628): obtain via injector, so we can bind a different
+			// implementation
 			FXSelectionFeedbackPart selectionFeedbackPart = new FXSelectionFeedbackPart(
 					geometryInSceneProvider);
 			injector.injectMembers(selectionFeedbackPart);
