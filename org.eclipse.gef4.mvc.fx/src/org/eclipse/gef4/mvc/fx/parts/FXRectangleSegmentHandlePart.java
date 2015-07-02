@@ -14,17 +14,13 @@ package org.eclipse.gef4.mvc.fx.parts;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.geometry.planar.BezierCurve;
-
-import com.google.inject.Provider;
-
 /**
  * An {@link AbstractFXSegmentHandlePart} with a
  * {@link javafx.scene.shape.Rectangle} visual.
- * 
+ *
  * @author mwienand
  * @author anyssen
- * 
+ *
  */
 public class FXRectangleSegmentHandlePart extends
 		AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
@@ -32,12 +28,6 @@ public class FXRectangleSegmentHandlePart extends
 	public static final double DEFAULT_SIZE = 5;
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 	public static final Color DEFAULT_FILL = Color.web("#d5faff");
-
-	public FXRectangleSegmentHandlePart(
-			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
-			double segmentParameter) {
-		super(segmentsProvider, segmentIndex, segmentParameter);
-	}
 
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {

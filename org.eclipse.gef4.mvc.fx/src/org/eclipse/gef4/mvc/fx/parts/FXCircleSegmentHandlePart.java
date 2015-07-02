@@ -17,11 +17,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
-import com.google.inject.Provider;
 
 /**
  * An {@link AbstractFXSegmentHandlePart} with a {@link Circle} visual.
@@ -38,11 +36,6 @@ public class FXCircleSegmentHandlePart extends
 	public static final Color CONNECTED_FILL = Color.web("#ff0000");
 	public static final Color UNCONNECTED_FILL = Color.web("#d5faff");
 	public static final double DEFAULT_SIZE = 5d;
-
-	public FXCircleSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
-			int segmentIndex, double segmentParameter) {
-		super(segmentsProvider, segmentIndex, segmentParameter);
-	}
 
 	/**
 	 * Creates the visual representation of this selection handle.

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import javafx.scene.Node;
+
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -20,8 +22,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
-
-import javafx.scene.Node;
 
 /**
  * An {@link AbstractFXSegmentHandlePart} is bound to a segment of a poly-bezier
@@ -36,22 +36,14 @@ import javafx.scene.Node;
  *            The type of visual used by this handle. Needs to be a sub-type of
  *            {@link Node}.
  */
-public abstract class AbstractFXSegmentHandlePart<N extends Node>
-		extends AbstractFXHandlePart<N>
-		implements Comparable<AbstractFXSegmentHandlePart<? extends Node>> {
+public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
+		AbstractFXHandlePart<N> implements
+		Comparable<AbstractFXSegmentHandlePart<? extends Node>> {
 
-	private final Provider<BezierCurve[]> segmentsProvider;
+	private Provider<BezierCurve[]> segmentsProvider;
 	private BezierCurve[] segments;
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
-
-	public AbstractFXSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
-			int segmentIndex, double segmentParameter) {
-		super();
-		this.segmentsProvider = segmentsProvider;
-		this.segmentIndex = segmentIndex;
-		this.segmentParameter = segmentParameter;
-	}
 
 	@Override
 	public int compareTo(AbstractFXSegmentHandlePart<? extends Node> o) {
@@ -61,8 +53,8 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
-		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter())
-				- (100 * o.getSegmentIndex() + 10 * o.getSegmentParameter()));
+		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter()) - (100 * o
+				.getSegmentIndex() + 10 * o.getSegmentParameter()));
 	}
 
 	@Override
@@ -143,6 +135,10 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 		}
 	}
 
+	public void setSegmentsProvider(Provider<BezierCurve[]> segmentsProvider) {
+		this.segmentsProvider = segmentsProvider;
+	}
+
 	protected void updateLocation(N visual) {
 		// only update when bound to anchorage
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
@@ -159,14 +155,14 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 			visual.setVisible(true);
 
 			// get new position (in parent coordinate space)
-			BezierCurve segmentInParent = (BezierCurve) FXUtils
-					.sceneToLocal(visual.getParent(), segments[segmentIndex]);
+			BezierCurve segmentInParent = (BezierCurve) FXUtils.sceneToLocal(
+					visual.getParent(), segments[segmentIndex]);
 			Point positionInParent = getPosition(segmentInParent);
 
 			// transform to handle space
-			visual.relocate(
-					positionInParent.x + visual.getLayoutBounds().getMinX(),
-					positionInParent.y + visual.getLayoutBounds().getMinY());
+			visual.relocate(positionInParent.x
+					+ visual.getLayoutBounds().getMinX(), positionInParent.y
+					+ visual.getLayoutBounds().getMinY());
 		}
 	}
 
