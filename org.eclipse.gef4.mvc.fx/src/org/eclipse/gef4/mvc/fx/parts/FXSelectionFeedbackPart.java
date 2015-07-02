@@ -48,12 +48,11 @@ public class FXSelectionFeedbackPart extends
 		}
 	};
 
-	private final Provider<IGeometry> feedbackGeometryProvider;
+	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
 
-	public FXSelectionFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
-		this.feedbackGeometryProvider = feedbackGeometryProvider;
+	public FXSelectionFeedbackPart() {
 	}
 
 	@Override
@@ -142,6 +141,11 @@ public class FXSelectionFeedbackPart extends
 		effect.setRadius(5);
 		effect.setSpread(0.6);
 		return effect;
+	}
+
+	public void setGeometryProvider(
+			Provider<? extends IGeometry> geometryProvider) {
+		feedbackGeometryProvider = geometryProvider;
 	}
 
 }

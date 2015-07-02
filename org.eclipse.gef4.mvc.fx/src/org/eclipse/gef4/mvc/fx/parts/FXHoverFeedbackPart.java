@@ -28,11 +28,9 @@ public class FXHoverFeedbackPart extends
 
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 
-	private final Provider<? extends IGeometry> feedbackGeometryProvider;
+	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
-	public FXHoverFeedbackPart(
-			Provider<? extends IGeometry> feedbackGeometryProvider) {
-		this.feedbackGeometryProvider = feedbackGeometryProvider;
+	public FXHoverFeedbackPart() {
 	}
 
 	@Override
@@ -81,6 +79,11 @@ public class FXHoverFeedbackPart extends
 		DropShadow effect = new DropShadow();
 		effect.setRadius(3);
 		return effect;
+	}
+
+	public void setGeometryProvider(
+			Provider<? extends IGeometry> geometryProvider) {
+		feedbackGeometryProvider = geometryProvider;
 	}
 
 }

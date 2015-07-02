@@ -18,12 +18,9 @@ import javafx.scene.shape.StrokeType;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
-import com.google.inject.Provider;
-
 public class FXSelectionLinkFeedbackPart extends FXSelectionFeedbackPart {
 
-	public FXSelectionLinkFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
-		super(feedbackGeometryProvider);
+	public FXSelectionLinkFeedbackPart() {
 	}
 
 	@Override
