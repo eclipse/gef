@@ -14,20 +14,10 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import javafx.scene.image.Image;
 
-import org.eclipse.gef4.geometry.planar.BezierCurve;
-
-import com.google.inject.Provider;
-
 public class ZestFxHidingHandlePart extends AbstractHidingHandlePart {
 
 	public static final String IMG_PRUNE = "/collapseall.png";
 	public static final String IMG_PRUNE_DISABLED = "/collapseall_disabled.png";
-
-	public ZestFxHidingHandlePart(
-			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
-			double segmentParameter) {
-		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
-	}
 
 	@Override
 	protected Image getHoverImage() {

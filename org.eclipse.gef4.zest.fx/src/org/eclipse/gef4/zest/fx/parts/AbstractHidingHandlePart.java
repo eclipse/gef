@@ -21,23 +21,14 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-
-import com.google.inject.Provider;
 
 public abstract class AbstractHidingHandlePart extends
 		AbstractFXSegmentHandlePart<FXImageViewHoverOverlay> {
 
 	private boolean isVisible = false;
-
-	public AbstractHidingHandlePart(
-			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
-			double segmentParameter) {
-		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
-	}
 
 	@Override
 	protected void attachToAnchorageVisual(

@@ -41,10 +41,12 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (target instanceof NodeContentPart) {
 			if (segmentIndex == 0) {
 				// create prune handle at first vertex
-				ZestFxHidingHandlePart zestFxHidingHandlePart = new ZestFxHidingHandlePart(
-						hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
-				injector.injectMembers(zestFxHidingHandlePart);
-				return zestFxHidingHandlePart;
+				ZestFxHidingHandlePart part = injector
+						.getInstance(ZestFxHidingHandlePart.class);
+				part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
+				part.setSegmentIndex(segmentIndex);
+				part.setSegmentParameter(0);
+				return part;
 			} else if (segmentIndex == 1) {
 				// create expand handle at second vertex
 				// but check if we have pruned neighbors, first
@@ -52,11 +54,12 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 						.getAdapter(HidingModel.class);
 				if (!hidingModel.getHiddenNeighbors(
 						((NodeContentPart) target).getContent()).isEmpty()) {
-					ZestFxExpandingHandlePart zestFxExpandingHandlePart = new ZestFxExpandingHandlePart(
-							hoverHandlesSegmentsInSceneProvider, segmentIndex,
-							0);
-					injector.injectMembers(zestFxExpandingHandlePart);
-					return zestFxExpandingHandlePart;
+					ZestFxExpandingHandlePart part = injector
+							.getInstance(ZestFxExpandingHandlePart.class);
+					part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
+					part.setSegmentIndex(segmentIndex);
+					part.setSegmentParameter(0);
+					return part;
 				}
 			}
 		}
