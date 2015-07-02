@@ -17,11 +17,8 @@ import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionLinkFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-
-import com.google.inject.Provider;
 
 public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 
@@ -38,9 +35,7 @@ public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 		}
 	};
 
-	public ZestFxEdgeLinkFeedbackPart(
-			Provider<IGeometry> feedbackGeometryProvider) {
-		super(feedbackGeometryProvider);
+	public ZestFxEdgeLinkFeedbackPart() {
 	}
 
 	@Override

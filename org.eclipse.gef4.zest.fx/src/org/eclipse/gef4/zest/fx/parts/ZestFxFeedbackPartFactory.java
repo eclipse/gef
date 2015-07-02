@@ -72,10 +72,10 @@ public class ZestFxFeedbackPartFactory extends FXDefaultFeedbackPartFactory {
 				return new Line(sourcePointInScene, targetPointInScene);
 			}
 		};
-		ZestFxEdgeLinkFeedbackPart zestFxEdgeLinkFeedbackPart = new ZestFxEdgeLinkFeedbackPart(
-				linkFeedbackGeometryProvider);
-		injector.injectMembers(zestFxEdgeLinkFeedbackPart);
-		return zestFxEdgeLinkFeedbackPart;
+		ZestFxEdgeLinkFeedbackPart part = injector
+				.getInstance(ZestFxEdgeLinkFeedbackPart.class);
+		part.setGeometryProvider(linkFeedbackGeometryProvider);
+		return part;
 	}
 
 	@Override

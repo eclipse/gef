@@ -234,7 +234,9 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 					if (entry.getKey() instanceof IVisualPart) {
 						IFeedbackPart<Node, ? extends Node> anchorLinkFeedbackPart = createLinkFeedbackPart(
 								t, entry.getKey(), entry.getValue());
-						feedbackParts.add(anchorLinkFeedbackPart);
+						if (anchorLinkFeedbackPart != null) {
+							feedbackParts.add(anchorLinkFeedbackPart);
+						}
 					}
 				}
 			}

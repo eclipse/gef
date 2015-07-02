@@ -22,6 +22,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -32,6 +33,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 public class FXSelectionFeedbackPart extends
@@ -51,6 +53,11 @@ public class FXSelectionFeedbackPart extends
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
+
+	public static final String PRIMARY_FOCUSED_EFFECT_PROVIDER = "PrimaryFocusedSelectionFeedbackEffectProvider";
+	public static final String PRIMARY_UNFOCUSED_EFFECT_PROVIDER = "PrimaryUnfocusedSelectionFeedbackEffectProvider";
+	public static final String SECONDARY_FOCUSED_EFFECT_PROVIDER = "SecondaryFocusedSelectionFeedbackEffectProvider";
+	public static final String SECONDARY_UNFOCUSED_EFFECT_PROVIDER = "SecondaryUnfocusedSelectionFeedbackEffectProvider";
 
 	public FXSelectionFeedbackPart() {
 	}
@@ -128,19 +135,45 @@ public class FXSelectionFeedbackPart extends
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
-		DropShadow effect = new DropShadow();
-		effect.setColor(focused ? FOCUS_COLOR : Color.GREY);
-		effect.setRadius(5);
-		effect.setSpread(0.6);
-		return effect;
+		Provider<? extends Effect> effectProvider = null;
+		if (!getAnchorages().isEmpty()) {
+			IVisualPart<Node, ? extends Node> host = getAnchorages().keys()
+					.iterator().next();
+			String providerRole = focused ? PRIMARY_FOCUSED_EFFECT_PROVIDER
+					: PRIMARY_UNFOCUSED_EFFECT_PROVIDER;
+			effectProvider = host.getAdapter(AdapterKey.get(
+					new TypeToken<Provider<? extends Effect>>() {
+					}, providerRole));
+		}
+		if (effectProvider == null) {
+			DropShadow effect = new DropShadow();
+			effect.setColor(focused ? FOCUS_COLOR : Color.GREY);
+			effect.setRadius(5);
+			effect.setSpread(0.6);
+			return effect;
+		}
+		return effectProvider.get();
 	}
 
 	protected Effect getSecondarySelectionFeedbackEffect(boolean focused) {
-		DropShadow effect = new DropShadow();
-		effect.setColor(focused ? FOCUS_COLOR : Color.GREY);
-		effect.setRadius(5);
-		effect.setSpread(0.6);
-		return effect;
+		Provider<? extends Effect> effectProvider = null;
+		if (!getAnchorages().isEmpty()) {
+			IVisualPart<Node, ? extends Node> host = getAnchorages().keys()
+					.iterator().next();
+			String providerRole = focused ? SECONDARY_FOCUSED_EFFECT_PROVIDER
+					: SECONDARY_UNFOCUSED_EFFECT_PROVIDER;
+			effectProvider = host.getAdapter(AdapterKey.get(
+					new TypeToken<Provider<? extends Effect>>() {
+					}, providerRole));
+		}
+		if (effectProvider == null) {
+			DropShadow effect = new DropShadow();
+			effect.setColor(focused ? FOCUS_COLOR : Color.GREY);
+			effect.setRadius(5);
+			effect.setSpread(0.6);
+			return effect;
+		}
+		return effectProvider.get();
 	}
 
 	public void setGeometryProvider(
