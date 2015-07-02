@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.ui.parts;
+package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
@@ -18,7 +18,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 /**
  * @author anyssen
  */
-public class DefaultEditorActionBarContributor extends
+public class FXEditorActionBarContributor extends
 		EditorActionBarContributor {
 
 	@Override
