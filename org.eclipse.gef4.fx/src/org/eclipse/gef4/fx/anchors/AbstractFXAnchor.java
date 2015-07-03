@@ -343,8 +343,10 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	private void updatePositions(Node anchored) {
-		for (AnchorKey key : getKeys().get(anchored)) {
-			updatePosition(key);
+		if (getKeys().containsKey(anchored)) {
+			for (AnchorKey key : getKeys().get(anchored)) {
+				updatePosition(key);
+			}
 		}
 	}
 

@@ -96,11 +96,11 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 					selectionModel.getSelected());
 			selectionWithoutHost.remove(getHost());
 
-			// build "deselect anchorages" operation
+			// build "deselect host" operation
 			ChangeSelectionOperation<Node> deselectOperation = new ChangeSelectionOperation<Node>(
 					viewer, selection, selectionWithoutHost);
 
-			// build "select anchorages" operation
+			// build "select host" operation
 			ChangeSelectionOperation<Node> selectOperation = new ChangeSelectionOperation<Node>(
 					viewer, selectionWithoutHost, selection);
 
@@ -133,7 +133,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	public void createAndSelectSegmentPoint(int segmentIndex, Point mouseInScene) {
 		// create new way point
 		op.getNewAnchors().add(segmentIndex + 1,
-				new FXStaticAnchor(mouseInScene));
+				generateStaticAnchor(mouseInScene));
 
 		locallyExecuteOperation();
 
@@ -159,9 +159,15 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			}
 		}
 		if (anchor == null) {
-			anchor = new FXStaticAnchor(currentReferencePositionInScene);
+			anchor = generateStaticAnchor(currentReferencePositionInScene);
 		}
 		return anchor;
+	}
+
+	protected IFXAnchor generateStaticAnchor(Point scene) {
+		return new FXStaticAnchor(getConnection(),
+				JavaFX2Geometry.toPoint(getConnection().sceneToLocal(scene.x,
+						scene.y)));
 	}
 
 	@SuppressWarnings("serial")
@@ -289,8 +295,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		// anchorage
 		IFXAnchor candidateAnchor = findAnchor(currentReferencePositionInScene,
 				true);
-		// TODO: compensate that getStartPoint(), etc. of connection is
-		// actually in the coordinate space of the curve node
 		Point currentPoint = JavaFX2Geometry.toPoint(getConnection()
 				.getCurveNode().sceneToLocal(currentReferencePositionInScene.x,
 						currentReferencePositionInScene.y));

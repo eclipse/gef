@@ -18,7 +18,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -96,10 +95,9 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 					p.y + dy, 0.5, 0.5);
 			op.getNewAnchors().set(
 					i,
-					new FXStaticAnchor(JavaFX2Geometry.toPoint(getHost()
-							.getVisual().localToScene(
-									p.x + dx - snapToGridOffset.width,
-									p.y + dy - snapToGridOffset.height))));
+					new FXStaticAnchor(getHost().getVisual(), new Point(p.x
+							+ dx - snapToGridOffset.width, p.y + dy
+							- snapToGridOffset.height)));
 		}
 		locallyExecuteOperation();
 	}

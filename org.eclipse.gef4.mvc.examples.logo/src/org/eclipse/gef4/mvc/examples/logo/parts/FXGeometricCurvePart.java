@@ -384,13 +384,15 @@ public class FXGeometricCurvePart extends
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(IFXAnchor anchor) {
 		Node anchorageNode = anchor.getAnchorage();
-		IVisualPart<Node, ? extends Node> part = getViewer().getVisualPartMap()
-				.get(anchorageNode);
-		if (part instanceof IContentPart) {
-			Object content = ((IContentPart<Node, ? extends Node>) part)
-					.getContent();
-			if (content instanceof AbstractFXGeometricElement) {
-				return (AbstractFXGeometricElement<?>) content;
+		if (anchorageNode != getVisual()) {
+			IVisualPart<Node, ? extends Node> part = getViewer()
+					.getVisualPartMap().get(anchorageNode);
+			if (part instanceof IContentPart) {
+				Object content = ((IContentPart<Node, ? extends Node>) part)
+						.getContent();
+				if (content instanceof AbstractFXGeometricElement) {
+					return (AbstractFXGeometricElement<?>) content;
+				}
 			}
 		}
 		return null;

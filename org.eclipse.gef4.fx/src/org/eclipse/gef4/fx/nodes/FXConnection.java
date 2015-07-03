@@ -241,7 +241,7 @@ public class FXConnection extends Group {
 							"connection inconsistent (null anchor)");
 				}
 				Node predAnchorage = predAnchor.getAnchorage();
-				if (predAnchorage == null) {
+				if (predAnchorage == null || predAnchorage == connection) {
 					// anchor is static
 					AnchorKey anchorKey = connection.getAnchorKey(i);
 					Point position = predAnchor.getPosition(anchorKey);
@@ -279,7 +279,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */
@@ -443,9 +443,10 @@ public class FXConnection extends Group {
 	 *            The position for the specified way point.
 	 */
 	public void addWayPoint(int index, Point wayPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
-						wayPointInLocal.y)));
+		if (wayPointInLocal == null) {
+			wayPointInLocal = new Point();
+		}
+		IFXAnchor anchor = new FXStaticAnchor(this, wayPointInLocal);
 		addWayAnchor(index, anchor);
 	}
 
@@ -1292,9 +1293,10 @@ public class FXConnection extends Group {
 	 *            The new end {@link Point} for this {@link FXConnection}.
 	 */
 	public void setEndPoint(Point endPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(endPointInLocal.x,
-						endPointInLocal.y)));
+		if (endPointInLocal == null) {
+			endPointInLocal = new Point();
+		}
+		IFXAnchor anchor = new FXStaticAnchor(this, endPointInLocal);
 		setEndAnchor(anchor);
 	}
 
@@ -1362,9 +1364,10 @@ public class FXConnection extends Group {
 	 *            The new start {@link Point} for this {@link FXConnection}.
 	 */
 	public void setStartPoint(Point startPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(startPointInLocal.x,
-						startPointInLocal.y)));
+		if (startPointInLocal == null) {
+			startPointInLocal = new Point();
+		}
+		IFXAnchor anchor = new FXStaticAnchor(this, startPointInLocal);
 		setStartAnchor(anchor);
 	}
 
@@ -1427,9 +1430,10 @@ public class FXConnection extends Group {
 	 *            The new way {@link Point} for that index.
 	 */
 	public void setWayPoint(int index, Point wayPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
-						wayPointInLocal.y)));
+		if (wayPointInLocal == null) {
+			wayPointInLocal = new Point();
+		}
+		IFXAnchor anchor = new FXStaticAnchor(this, wayPointInLocal);
 		setWayAnchor(index, anchor);
 	}
 
