@@ -25,6 +25,7 @@ import org.junit.Test;
 public class DotExtractorTests {
 
 	/* Testing input and output values: */
+	@SuppressWarnings("serial")
 	Map<String, String> values = new HashMap<String, String>() {
 		{
 			put("/** Javadoc stuff graph name{a;b;a->b} and more */", //$NON-NLS-1$
