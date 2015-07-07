@@ -4,7 +4,7 @@ jobName="gef4-master"
 
 # Script may take 3 command line parameters:
 # $1: Hudson build id: <id>
-# $2: Build type: n(ightly), m(ilestone), r(elease)
+# $2: Build type: i(ntegration), m(ilestone), r(elease)
 # $3: Whether to merge the site with an existing one: (y)es, (n)o
 # 
 if [ $# -eq 3 ];
