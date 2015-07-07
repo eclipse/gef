@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2015 itemis AG and others.
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2009, 2015 Fabian Steeg. All rights reserved. This program and
+ * the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
- *
+ * <p/>
+ * Contributors: 
+ *     Fabian Steeg - initial API and implementation; see bug 277380
+ *     Alexander Nyßen (itemis AG) - rename refactoring
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
@@ -19,6 +17,11 @@ import org.eclipse.gef4.internal.dot.DotExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * Tests for the {@link DotExtractor}.
+ * 
+ * @author Fabian Steeg (fsteeg)
+ */
 public class DotExtractorTests {
 
 	/* Testing input and output values: */
