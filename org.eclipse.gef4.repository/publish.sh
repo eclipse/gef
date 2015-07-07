@@ -1,13 +1,3 @@
-#*******************************************************************************
-# Copyright (c) 2015 itemis AG and others.
-# All rights reserved. This program and the accompanying materials
-# are made available under the terms of the Eclipse Public License v1.0
-# which accompanies this distribution, and is available at
-# http://www.eclipse.org/legal/epl-v10.html
-#
-# Contributors:
-#     Alexander Nyßen (itemis AG) - initial API and implementation
-#*******************************************************************************
 #!/bin/sh
 
 jobName="gef4-master"
@@ -31,7 +21,7 @@ fi
 
 if [ -z "$buildId" ];
 then
-        for i in $( find /shared/jobs/$jobName/builds -type l | sed 's!.*/!!' | sort)
+        for i in $( find ~/.hudson/jobs/$jobName/builds -type l | sed 's!.*/!!' | sort)
         do
                 echo -n "$i, "
         done
@@ -47,15 +37,15 @@ fi
 # Determine the local update site we want to publish to
 if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
         then
-                jobDir=$(readlink -f /shared/jobs/$jobName/$buildId)
+                jobDir=$(readlink -f ~/.hudson/jobs/$jobName/$buildId)
         else
-                jobDir=$(readlink -f /shared/jobs/$jobName/builds/$buildId)
+                jobDir=$(readlink -f ~/.hudson/jobs/$jobName/builds/$buildId)
 fi
 localUpdateSite=$jobDir/archive/update-site
 echo "Using local update-site: $localUpdateSite"
 
 # Reverse lookup the build id (in case lastSuccessful or lastStable was used)
-for i in $(find /shared/jobs/$jobName/builds/ -type l)
+for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
 do
         if [ "$(readlink -f $i)" =  "$jobDir" ];
                 then
