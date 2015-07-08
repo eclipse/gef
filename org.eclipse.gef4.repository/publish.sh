@@ -123,7 +123,7 @@ echo "Installing WTP Releng tools"
 echo "Cleaning up"
 rm eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz
 
-updateSiteLabel=${releaseLabel}_${jobName}_#${buildId}
+updateSiteLabel=${releaseLabel}_${jobName}_${buildId}
 # Prepare composite local update site (transfer into composite if needed)
 if [ "$merge" = y ];
     then
