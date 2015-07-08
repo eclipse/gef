@@ -42,8 +42,8 @@ public final class DotExtractor {
 	}
 
 	/**
-	 * @return A DOT string extracted from the input, or {@link NO_DOT}, a valid
-	 *         DOT graph
+	 * @return A DOT string extracted from the input, or the {@code NO_DOT}
+	 *         constant, a valid DOT graph
 	 */
 	public String getDotString() {
 		return trimNonDotSuffix(trimNonDotPrefix());

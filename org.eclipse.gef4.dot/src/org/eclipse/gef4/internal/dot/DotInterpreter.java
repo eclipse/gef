@@ -55,6 +55,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String currentEdgeSourceNodeId;
 	private boolean createConnection;
 
+	/**
+	 * @param dotAst
+	 *            The DOT abstract synstx tree (AST) to interpret
+	 * @return A graph instance for the given DOT AST
+	 */
 	public Graph interpret(DotAst dotAst) {
 		return interpret(dotAst, new Graph.Builder().attr(
 				DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DEFAULT));

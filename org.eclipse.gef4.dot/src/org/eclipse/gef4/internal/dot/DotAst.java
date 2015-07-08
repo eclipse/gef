@@ -80,8 +80,6 @@ public final class DotAst {
 	}
 
 	/**
-	 * @param dotFile
-	 *            The DOT file to parse
 	 * @return The graph EObjects to walk or inspect
 	 */
 	EObject graph() {
