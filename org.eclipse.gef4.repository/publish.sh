@@ -72,7 +72,7 @@ case $buildType in
         *) exit 0 ;;
 esac
 remoteUpdateSiteBase="tools/gef/gef4/updates/$remoteSite"
-remoteUpdateSite="/home/data/httpd/download.eclipse.org/:wq"
+remoteUpdateSite="/home/data/httpd/download.eclipse.org/$remoteUpdateSiteBase"
 echo "Publishing to remote update-site: $remoteUpdateSite"
 
 if [ -d "$remoteUpdateSite" ];
