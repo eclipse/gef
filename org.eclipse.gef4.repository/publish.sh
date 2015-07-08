@@ -131,17 +131,17 @@ if [ "$merge" = y ];
         echo "Merging existing site into local one."
         if [ -e "$remoteUpdateSite/compositeArtifacts.xml" ];
     	    then
-    	    cp -r $remoteUpdateSite/* update-site/
+    	    cp -R $remoteUpdateSite/* update-site/
     	else
     		mkdir -p update-site/pre_${updateSiteLabel}
-    		cp -r $remoteUpdateSite/* update-site/pre_${updateSiteLabel}/
+    		cp -R $remoteUpdateSite/* update-site/pre_${updateSiteLabel}/
     	fi
 else 
    	echo "Skipping merge operation."    
 fi
 # move local update site below composite one
 mkdir -p update-site/${updateSiteLabel}
-cp $localUpdateSite/* update-site/${updateSiteLabel}/
+cp -R $localUpdateSite/* update-site/${updateSiteLabel}/
     	
 cd update-site
 children=$(find . -maxdepth 1 -type d -print | wc -l)
