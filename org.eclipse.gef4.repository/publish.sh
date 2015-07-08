@@ -145,7 +145,7 @@ cp $localUpdateSite/* update-site/${updateSiteLabel}/
     	
 cd update-site
 children=$(find . -maxdepth 1 -type d -print | wc -l)
-children=$($children-1)
+children=$(($children-1))
     		 	
 timestamp=$(date +%s000)
 
