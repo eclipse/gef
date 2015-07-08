@@ -311,7 +311,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef4</groupId>
 									<artifactId>org.eclipse.gef4.target</artifactId>
-									<version>0.1.0-SNAPSHOT</version>
+									<version>0.1.1-SNAPSHOT</version>
 									<classifier>LUNA</classifier>
 								</artifact>
 							</target>
