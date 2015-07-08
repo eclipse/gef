@@ -67,8 +67,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private Graph interpret(DotAst dotAst, Graph.Builder graph) {
 		if (dotAst.errors().size() > 0) {
-			throw new IllegalArgumentException(String.format(
-					DotMessages.GraphCreatorInterpreter_0 + ": %s", dotAst //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					String.format("Could not create graph: %s", dotAst //$NON-NLS-1$
 							.errors().toString()));
 		}
 		this.graph = graph;

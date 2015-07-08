@@ -72,9 +72,8 @@ public final class DotAst {
 		Iterator<Diagnostic> i = errors.iterator();
 		while (i.hasNext()) {
 			Diagnostic next = i.next();
-			result.add(String.format(DotMessages.DotAst_0 + " %s: %s ", //$NON-NLS-1$
-					next.getLine(),
-					next.getMessage()));
+			result.add(String.format("Error in line %s: %s ", //$NON-NLS-1$
+					next.getLine(), next.getMessage()));
 		}
 		return result;
 	}

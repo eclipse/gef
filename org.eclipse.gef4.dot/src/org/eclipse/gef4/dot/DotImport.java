@@ -19,7 +19,6 @@ import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.internal.dot.DotAst;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.internal.dot.DotInterpreter;
-import org.eclipse.gef4.internal.dot.DotMessages;
 
 /**
  * Transformation of DOT files or strings to Zest Graph instances.
@@ -49,8 +48,9 @@ public final class DotImport {
 
 	private void init(final String dotString) {
 		if (dotString == null || dotString.trim().length() == 0) {
-			throw new IllegalArgumentException(DotMessages.DotImport_2 + ": " //$NON-NLS-1$
-					+ dotString);
+			throw new IllegalArgumentException(
+					"Passed DOT must not be null or empty: " //$NON-NLS-1$
+							+ dotString);
 		}
 		loadFrom(dotString);
 		if (dotAst.errors().size() > 0) {
@@ -71,9 +71,9 @@ public final class DotImport {
 	private void guardFaultyParse() {
 		List<String> errors = this.dotAst.errors();
 		if (errors.size() > 0) {
-			throw new IllegalArgumentException(String.format(
-					DotMessages.DotImport_1 + ": %s (%s)", dotString, //$NON-NLS-1$
-					errors.toString()));
+			throw new IllegalArgumentException(
+					String.format("Could not parse DOT: %s (%s)", dotString, //$NON-NLS-1$
+							errors.toString()));
 		}
 	}
 
