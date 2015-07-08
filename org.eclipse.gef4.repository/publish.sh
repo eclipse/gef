@@ -6,12 +6,14 @@ jobName="gef4-master"
 # $1: Hudson build id: <id>
 # $2: Build type: i(ntegration), m(ilestone), r(elease)
 # $3: Whether to merge the site with an existing one: (y)es, (n)o
+# $4: The release label used to label the (nested) update site, e.g. 3.10.0 or 3.10.1M4
 # 
-if [ $# -eq 3 ];
+if [ $# -eq 4 ];
         then
                 buildId=$1
                 buildType=$2
                 merge=$3
+               	releaseLabel=$4
         else
                 if [ $# -ne 0 ];
                 then
@@ -70,7 +72,7 @@ case $buildType in
         *) exit 0 ;;
 esac
 remoteUpdateSiteBase="tools/gef/gef4/updates/$remoteSite"
-remoteUpdateSite="/home/data/httpd/download.eclipse.org/$remoteUpdateSiteBase"
+remoteUpdateSite="/home/data/httpd/download.eclipse.org/:wq"
 echo "Publishing to remote update-site: $remoteUpdateSite"
 
 if [ -d "$remoteUpdateSite" ];
@@ -88,6 +90,13 @@ if [ -d "$remoteUpdateSite" ];
                 merge=n
 fi
 echo "Merging with existing site: $merge"
+
+# Determine releaseLabel
+if [ -z "$releaseLabel" ];
+        then
+                echo -n "Please enter release label (e.g. 3.10.0, 3.10.1M2):"
+                read releaseLabel
+fi
 
 # Prepare a temp directory
 tmpDir="$jobName-publish-tmp"
@@ -114,32 +123,84 @@ echo "Installing WTP Releng tools"
 echo "Cleaning up"
 rm eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz
 
-# Prepare local update site (merge if required)
+updateSiteLabel=${releaseLabel}_${jobName}_#${buildId}
+# Prepare composite local update site (transfer into composite if needed)
 if [ "$merge" = y ];
-        then
+    then
+        # check if the remote site is a composite update site
         echo "Merging existing site into local one."
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
-        echo "Merged $localUpdateSite and $remoteUpdateSite into local directory update-site."
-else
-        echo "Skipping merge operation."
-        cp -R $localUpdateSite/* update-site/
-        echo "Copied $localUpdateSite to local directory update-site."
+        if [ -e "$remoteUpdateSite/compositeArtifacts.xml" ];
+    	    then
+    	    cp -r $remoteUpdateSite/* update-site/
+    	else
+    		mkdir -p update-site/pre_${updateSiteLabel}
+    		cp -r $remoteUpdateSite/* update-site/pre_${updateSiteLabel}/
+    	fi
+else 
+   	echo "Skipping merge operation."    
 fi
+# move local update site below composite one
+mkdir -p update-site/${updateSiteLabel}
+cp $localUpdateSite/* update-site/${updateSiteLabel}/
+    	
+cd update-site
+children=$(find . -maxdepth 1 -type d -print | wc -l)
+children=$($children-1)
+    		 	
+timestamp=$(date +%s000)
+
+content="
+<?xml version='1.0' encoding='UTF-8'?>
+<?compositeMetadataRepository version='1.0.0'?>
+<repository name='GEF4 ${remoteSite}' type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository' version='1.0.0'>
+<properties size='1'>
+<property name='p2.timestamp' value='${timestamp}'/>
+</properties>
+<children size='${children}'>
+$(
+for file in *; do
+  if [ -d $file ]; then
+printf "<child location='${file}'/>"
+  fi
+done
+)
+</children>
+</repository>
+"
+echo $content > compositeContent.xml
+
+artifact="
+<?xml version='1.0' encoding='UTF-8'?>
+<?compositeArtifactRepository version='1.0.0'?>
+<repository name='GEF4 ${remoteSite}' type='org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository' version='1.0.0'>
+<properties size='1'>
+<property name='p2.timestamp' value='${timestamp}'/>
+</properties>
+<children size='${children}'>
+$(
+for file in *; do
+  if [ -d $file ]; then
+printf "<child location='${file}'/>"
+  fi
+done
+)
+</children>
+</repository>
+"
+echo $artifact > compositeArtifacts.xml
+
+cd ..
 
 # Ensure p2.mirrorURLs property is used in update site
-echo "Setting p2.mirrorsURL to http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase"
-./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.wtp.releng.tools.addRepoProperties -vmargs -DartifactRepoDirectory=$PWD/update-site -Dp2MirrorsURL="http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase"
+./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.wtp.releng.tools.addRepoProperties -vmargs -DartifactRepoDirectory=$PWD/update-site/${updateSiteLabel} -Dp2MirrorsURL="http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase/${updateSiteLabel}"
 
 # Create p2.index file
 if [ ! -e "update-site/p2.index" ];
     then
         echo "Creating p2.index file"
         echo "version = 1" > update-site/p2.index
-        echo "metadata.repository.factory.order = content.xml,\!" >> update-site/p2.index
-        echo "artifact.repository.factory.order = artifacts.xml,\!" >> update-site/p2.index
+        echo "metadata.repository.factory.order=compositeContent.xml,\!" >> update-site/p2.index
+        echo "artifact.repository.factory.order=compositeArtifacts.xml,\!" >> update-site/p2.index
 fi
 
 # Backup then clean remote update site
