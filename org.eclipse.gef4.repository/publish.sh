@@ -1,60 +1,78 @@
 #!/bin/sh
 
-jobName="gef4-master"
+# Script may take 6-7 command line parameters:
+# $1: Hudson job name: <name>
+# $2: Hudson build id: <id>
+# $3: Build type: i(nterim), s(table), r(elease)
+# $4: Whether to promote to an update-site: (y)es, (n)o
+# $5: Whether to merge the site with an existing one: (y)es, (n)o
+# $6: Whether to generate drop files: (y)es, (n)o
+# $7: The release label used to label the drop files and (nested) update site, e.g. 3.10.0 or 3.10.1
+# $8: An optional release label suffix to be appended to drop files and (nested) update site name, e.g. M1, RC1 
 
-# Script may take 3 command line parameters:
-# $1: Hudson build id: <id>
-# $2: Build type: i(ntegration), m(ilestone), r(elease)
-# $3: Whether to merge the site with an existing one: (y)es, (n)o
-# $4: The release label used to label the (nested) update site, e.g. 3.10.0 or 3.10.1
-# $5: An optional release label suffix to be appended to drop files and (nested) update site name, e.g. M1, RC1 
- 
-if [ $# -eq 4 -o $# -eq 5 ];
+if [ $# -eq 7 -o $# -eq 8  ];
 then
-	buildId=$1
-	buildType=$2
-	merge=$3
-	releaseLabel=$4
-	if [ -n "$5" ];
-    then
-        releaseLabelSuffix=$5
-    fi
-else
-    if [ $# -ne 0 ];
+	jobName=$1
+	echo "jobName: $jobName"
+	buildId=$2
+	echo "buildId: $buildId"
+	buildType=$3
+	echo "buildType: $buildType"
+	site=$4
+	echo "site: $site"
+	merge=$5
+	echo "merge: $merge"
+	dropFiles=$6
+	echo "dropFiles: $dropFiles"
+	releaseLabel=$7	
+	echo "releaseLabel: $releaseLabel"
+	if [ -n "$8" ];
 	then
-        exit 1
-    fi
+		releaseLabelSuffix=$8
+		echo "releaseLabelSuffix: $releaseLabelSuffix"
+	fi
+else
+	if [ $# -ne 0 ];
+	then
+		exit 1
+	fi
+fi
+
+if [ -z "$jobName" ];
+then
+	echo -n "Please enter the name of the Hudson job you want to promote:"
+	read jobName
 fi
 
 if [ -z "$buildId" ];
 then
-    for i in $( find ~/.hudson/jobs/$jobName/builds -type l | sed 's!.*/!!' | sort)
-    do
-        echo -n "$i, "
-    done
-    echo "lastStable, lastSuccessful"
-    echo -n "Please enter the id of the $jobName build you want to promote:"
-    read buildId
-    if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
-    then
-    	# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
+	for i in $( find ~/.hudson/jobs/$jobName/builds -type l | sed 's!.*/!!' | sort)
+	do
+		echo -n "$i, "
+	done
+	echo "lastStable, lastSuccessful"
+	echo -n "Please enter the id of the $jobName build you want to promote:"
+	read buildId
+	if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
+	then
+		# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
 		for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
 		do
-    		if [ "$(readlink -f $i)" =  "$jobDir" ];
-    		then
-        		buildId=${i##*/}
-    		fi
+			if [ "$(readlink -f $i)" =  "$jobDir" ];
+			then
+				buildId=${i##*/}
+			fi
 		done
 		echo "Reverse lookup (lastStable/lastSuccessful) yielded buildId: $buildId"
-    fi
+	fi
 fi
 
 # Determine the local update site we want to publish to
 jobDir=$(readlink -f ~/.hudson/jobs/$jobName/builds/$buildId)
 if [ ! -d $jobDir ];
 then
-  echo "The specified buildId does not refer to an existing build: $buildId"
-  exit 1
+	echo "The specified buildId does not refer to an existing build: $buildId"
+	exit 1
 fi
 localUpdateSite=$jobDir/archive/update-site
 echo "Publishing from local update site: $localUpdateSite"
@@ -67,35 +85,64 @@ then
 fi
 echo "Publishing as $buildType build"
 
-# Determine remote update site we want to promote to
-case $buildType in
-    i|I) remoteSite=integration ;;
-    m|M) remoteSite=milestones ;;
-    r|R) remoteSite=releases ;;
-    *) 
-    echo "Parameter buildType has to be 'i'(ntegration), 'm'(ilestone), or 'r'(elease), but was: $buildType"
-    exit 1 ;;
-esac
-remoteUpdateSiteBase="tools/gef/gef4/updates/$remoteSite"
-remoteUpdateSite="/home/data/httpd/download.eclipse.org/$remoteUpdateSiteBase"
-echo "Publishing to remote update-site: $remoteUpdateSite"
-
-if [ -d "$remoteUpdateSite" ];
+# check if we are going to promote to an update-site
+if [ -z "$site" ];
 then
-    if [ -z "$merge" ];
-    then
-        echo -n "Do you want to merge with the existing update-site? [(y)es, (n)o]:"
-        read merge
-    fi
-    if [ "$merge" != y -a "$merge" != n ];
-    then
-    	echo "Parameter merge has to be 'y'(es) or 'n'(o) but was: $merge"
-        exit 1
-    fi
-else
-    merge=n
+	echo -n "Do you want to promote to an remote update site? [(y)es, (n)o]:"
+	read site
 fi
-echo "Merging with existing site: $merge"
+if [ "$site" != y -a "$site" != n ];
+then
+	echo "Parameter site has to be 'y'(es) or 'n'(o) but was: $site"
+    exit 0
+fi
+echo "Promoting to remote update site: $site"
+
+if [ "$site" = y ];
+then
+	# Determine remote update site we want to promote to
+	case $buildType in
+		i|I) remoteSite=integration;;
+		m|M) remoteSite=milestones;;
+		r|R) remoteSite=releases;;
+		*) 
+		echo "Parameter buildType has to be 'i'(ntegration), 'm'(ilestone), or 'r'(elease), but was: $buildType"
+		exit 1 ;;
+	esac
+	remoteUpdateSiteBase="tools/gef/gef4/updates/$remoteSite"
+	remoteUpdateSite="/home/data/httpd/download.eclipse.org/$remoteUpdateSiteBase"
+	echo "Publishing to remote update-site: $remoteUpdateSite"
+
+	if [ -d "$remoteUpdateSite" ];
+	then
+		if [ -z "$merge" ];
+		then
+			echo -n "Do you want to merge with the existing update-site? [(y)es, (n)o]:"
+			read merge
+		fi
+		if [ "$merge" != y -a "$merge" != n ];
+		then
+			echo "Parameter merge has to be 'y'(es) or 'n'(o) but was: $merge"
+			exit 1
+		fi
+	else
+		merge=n
+	fi
+	echo "Merging with existing site: $merge"
+fi
+
+# check if we are going to create drop files
+if [ -z "$dropFiles" ];
+then
+	echo -n "Do you want to create drop files? [(y)es, (n)o]:"
+	read dropFiles
+fi
+if [ "$dropFiles" != y -a "$dropFiles" != n ];
+then
+	echo "Parameter dropFiles has to be 'y'(es) or 'n'(o) but was: $dropFiles"
+	exit 1
+fi
+echo "Generating drop files: $dropFiles"
 
 # Determine releaseLabel
 if [ -z "$releaseLabel" ];
@@ -107,7 +154,6 @@ fi
 # Prepare a temp directory
 tmpDir="$jobName-publish-tmp"
 rm -fr $tmpDir
-mkdir -p $tmpDir/update-site
 cd $tmpDir
 
 # Download and prepare Eclipse SDK, which is needed to merge update site and postprocess repository 
@@ -129,31 +175,69 @@ echo "Installing WTP Releng tools"
 echo "Cleaning up"
 rm eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz
 
-updateSiteLabel=${releaseLabel}${releaseLabelSuffix}_${jobName}_${buildId}
-# Prepare composite local update site (transfer into composite if needed)
-if [ "$merge" = y ];
-then
-    # check if the remote site is a composite update site
-    echo "Merging existing site into local one."
-    if [ -e "$remoteUpdateSite/compositeArtifacts.xml" ];
-    then
-	    cp -R $remoteUpdateSite/* update-site/
-	else
-		mkdir -p update-site/pre_${updateSiteLabel}
-		cp -R $remoteUpdateSite/* update-site/pre_${updateSiteLabel}/
-	fi
-else 
-   	echo "Skipping merge operation."    
+# Generate drop files
+if [ "$dropFiles" = y ];
+	then
+	
+	# Prepare local update site (for drop files)
+	mkdir -p update-site
+	cp -R $localUpdateSite/* update-site/
+	echo "Copied $localUpdateSite to local directory update-site."
+	
+	qualifiedVersion=$(find update-site/features/ -maxdepth 1 | grep "org.eclipse.gef4.common.sdk")
+    qualifiedVersion=${qualifiedVersion#*_}
+    qualifier=${qualifiedVersion##*.}
+    dropDir="${releaseLabel}/$(echo $buildType | tr '[:lower:]' '[:upper:]')$qualifier"
+    localDropDir=drops/$dropDir
+    echo "Creating drop files in local directory $localDropDir"
+    mkdir -p $localDropDir
+    
+    cd update-site
+    zip -r ../$localDropDir/GEF4-Update-${releaseLabel}.zip features plugins artifacts.jar content.jar
+    md5sum ../$localDropDir/GEF4-Update-${releaseLabel}.zip > ../$localDropDir/GEF4-Update-${releaseLabel}.zip.md5
+    echo "Created GEF4-Update-Site-${releaseLabel}.zip"  
+    cd .. 
+
+    # Cleanup local update site (for drop files generation)
+	rm -fr update-site
+
+	#generating build.cfg file to be referenced from downloads web page
+    echo "hudson.job.name=$jobName" > $localDropDir/build.cfg
+    echo "hudson.job.id=$buildId (${jobDir##*/})" >> $localDropDir/build.cfg
+    echo "hudson.job.url=https://hudson.eclipse.org/gef/job/$jobName/$buildId" >> $localDropDir/build.cfg
+
+    remoteDropDir=/home/data/httpd/download.eclipse.org/tools/gef/downloads/drops/$dropDir
+    mkdir -p $remoteDropDir
+    cp -R $localDropDir/* $remoteDropDir/
 fi
-# move local update site below composite one
-mkdir -p update-site/${updateSiteLabel}
-cp -R $localUpdateSite/* update-site/${updateSiteLabel}/
+
+if [ "$site" = y ];
+then
+	mkdir -p update-site
+	updateSiteLabel=${releaseLabel}${releaseLabelSuffix}_${jobName}_${buildId}
+	# Prepare composite local update site (transfer into composite if needed)
+	if [ "$merge" = y ];
+	then
+		# check if the remote site is a composite update site
+		echo "Merging existing site into local one."
+		if [ -e "$remoteUpdateSite/compositeArtifacts.xml" ];
+		then
+			cp -R $remoteUpdateSite/* update-site/
+		else
+			mkdir -p update-site/pre_${updateSiteLabel}
+			cp -R $remoteUpdateSite/* update-site/pre_${updateSiteLabel}/
+		fi
+	else 
+		echo "Skipping merge operation."    
+	fi
+	# move local update site below composite one
+	mkdir -p update-site/${updateSiteLabel}
+	cp -R $localUpdateSite/* update-site/${updateSiteLabel}/
     	
-cd update-site
-children=$(find . -maxdepth 1 -type d -print | wc -l)
-children=$(($children-1))
-    		 	
-timestamp=$(date +%s000)
+	cd update-site
+	children=$(find . -maxdepth 1 -type d -print | wc -l)
+	children=$(($children-1))
+	timestamp=$(date +%s000)
 
 content="
 <?xml version='1.0' encoding='UTF-8'?>
@@ -173,7 +257,7 @@ done
 </children>
 </repository>
 "
-echo $content > compositeContent.xml
+	echo $content > compositeContent.xml
 
 artifact="
 <?xml version='1.0' encoding='UTF-8'?>
@@ -193,39 +277,40 @@ done
 </children>
 </repository>
 "
-echo $artifact > compositeArtifacts.xml
+	echo $artifact > compositeArtifacts.xml
 
-cd ..
+	cd ..
 
-# Ensure p2.mirrorURLs property is used in update site
-echo "Updating p2.mirrorURLs property."
-./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.wtp.releng.tools.addRepoProperties -vmargs -DartifactRepoDirectory=$PWD/update-site/${updateSiteLabel} -Dp2MirrorsURL="http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase/${updateSiteLabel}"
+	# Ensure p2.mirrorURLs property is used in update site
+	echo "Updating p2.mirrorURLs property."
+	./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.wtp.releng.tools.addRepoProperties -vmargs -DartifactRepoDirectory=$PWD/update-site/${updateSiteLabel} -Dp2MirrorsURL="http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase/${updateSiteLabel}"
 
-# Create p2.index file
-if [ ! -e "update-site/p2.index" ];
-then
-    echo "Creating p2.index file."
-    echo "version = 1" > update-site/p2.index
-    echo "metadata.repository.factory.order=compositeContent.xml,\!" >> update-site/p2.index
-    echo "artifact.repository.factory.order=compositeArtifacts.xml,\!" >> update-site/p2.index
-fi
-
-# Backup then clean remote update site
-echo "Creating backup of remote update site."
-if [ -d "$remoteUpdateSite" ];
-then
-    if [ -d BACKUP ];
+	# Create p2.index file
+	if [ ! -e "update-site/p2.index" ];
 	then
-        rm -fr BACKUP
-    fi
-    mkdir BACKUP
-    cp -R $remoteUpdateSite/* BACKUP/
-    rm -fr $remoteUpdateSite
-fi
+		echo "Creating p2.index file."
+		echo "version = 1" > update-site/p2.index
+		echo "metadata.repository.factory.order=compositeContent.xml,\!" >> update-site/p2.index
+		echo "artifact.repository.factory.order=compositeArtifacts.xml,\!" >> update-site/p2.index
+	fi
 
-echo "Publishing contents of local update-site directory to remote update site $remoteUpdateSite"
-mkdir -p $remoteUpdateSite
-cp -R update-site/* $remoteUpdateSite/
+	# Backup then clean remote update site
+	echo "Creating backup of remote update site."
+	if [ -d "$remoteUpdateSite" ];
+	then
+		if [ -d BACKUP ];
+		then
+			rm -fr BACKUP
+		fi
+		mkdir BACKUP
+		cp -R $remoteUpdateSite/* BACKUP/
+		rm -fr $remoteUpdateSite
+	fi
+
+	echo "Publishing contents of local update-site directory to remote update site $remoteUpdateSite"
+	mkdir -p $remoteUpdateSite
+	cp -R update-site/* $remoteUpdateSite/
+fi
 
 # Clean up
 echo "Cleaning up"
