@@ -186,6 +186,7 @@ if [ "$dropFiles" = y ];
 	echo "Copied $localUpdateSite to local directory update-site."
 	
 	qualifiedVersion=$(find update-site/features/ -maxdepth 1 | grep "org.eclipse.gef4.common.sdk")
+	qualifiedVersion=${qualifiedVersion%.jar}
     qualifiedVersion=${qualifiedVersion#*_}
     qualifier=${qualifiedVersion##*.}
     dropDir="${releaseLabel}/$(echo $buildType | tr '[:lower:]' '[:upper:]')$qualifier"
