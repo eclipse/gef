@@ -33,33 +33,31 @@ then
         echo -n "$i, "
     done
     echo "lastStable, lastSuccessful"
-    echo -n "Please enter the id/label of the Hudson job you want to promote:"
+    echo -n "Please enter the id of the $jobName build you want to promote:"
     read buildId
-fi
-if [ -z "$buildId" ];
+    if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
     then
-    exit 0
+    	# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
+		for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
+		do
+    		if [ "$(readlink -f $i)" =  "$jobDir" ];
+    		then
+        		buildId=${i##*/}
+    		fi
+		done
+		echo "Reverse lookup (lastStable/lastSuccessful) yielded buildId: $buildId"
+    fi
 fi
 
 # Determine the local update site we want to publish to
-if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
-    then
-    jobDir=$(readlink -f ~/.hudson/jobs/$jobName/$buildId)
-else
-    jobDir=$(readlink -f ~/.hudson/jobs/$jobName/builds/$buildId)
+jobDir=$(readlink -f ~/.hudson/jobs/$jobName/builds/$buildId)
+if [ ! -d $jobDir ];
+then
+  echo "The specified buildId does not refer to an existing build: $buildId"
+  exit 1
 fi
 localUpdateSite=$jobDir/archive/update-site
-echo "Using local update-site: $localUpdateSite"
-
-# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
-for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
-do
-    if [ "$(readlink -f $i)" =  "$jobDir" ];
-    then
-        buildId=${i##*/}
-    fi
-done
-echo "Reverse lookup yielded build id: $buildId"
+echo "Publishing from local update site: $localUpdateSite"
 
 # Select the build type
 if [ -z "$buildType" ];
@@ -74,7 +72,9 @@ case $buildType in
     i|I) remoteSite=integration ;;
     m|M) remoteSite=milestones ;;
     r|R) remoteSite=releases ;;
-    *) exit 0 ;;
+    *) 
+    echo "Parameter buildType has to be 'i'(ntegration), 'm'(ilestone), or 'r'(elease), but was: $buildType"
+    exit 1 ;;
 esac
 remoteUpdateSiteBase="tools/gef/gef4/updates/$remoteSite"
 remoteUpdateSite="/home/data/httpd/download.eclipse.org/$remoteUpdateSiteBase"
@@ -89,7 +89,8 @@ then
     fi
     if [ "$merge" != y -a "$merge" != n ];
     then
-        exit 0
+    	echo "Parameter merge has to be 'y'(es) or 'n'(o) but was: $merge"
+        exit 1
     fi
 else
     merge=n
