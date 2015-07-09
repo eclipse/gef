@@ -206,7 +206,7 @@ if [ "$dropFiles" = y ];
     echo "hudson.job.id=$buildId (${jobDir##*/})" >> $localDropDir/build.cfg
     echo "hudson.job.url=https://hudson.eclipse.org/gef/job/$jobName/$buildId" >> $localDropDir/build.cfg
 
-    remoteDropDir=/home/data/httpd/download.eclipse.org/tools/gef/downloads/drops/$dropDir
+    remoteDropDir=/home/data/httpd/download.eclipse.org/tools/gef/gef4/downloads/drops/$dropDir
     mkdir -p $remoteDropDir
     cp -R $localDropDir/* $remoteDropDir/
 fi
