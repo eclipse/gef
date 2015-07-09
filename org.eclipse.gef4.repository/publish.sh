@@ -154,6 +154,7 @@ fi
 # Prepare a temp directory
 tmpDir="$jobName-publish-tmp"
 rm -fr $tmpDir
+mkdir -p $tmpDir
 cd $tmpDir
 
 # Download and prepare Eclipse SDK, which is needed to merge update site and postprocess repository 
