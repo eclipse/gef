@@ -6,14 +6,19 @@ jobName="gef4-master"
 # $1: Hudson build id: <id>
 # $2: Build type: i(ntegration), m(ilestone), r(elease)
 # $3: Whether to merge the site with an existing one: (y)es, (n)o
-# $4: The release label used to label the (nested) update site, e.g. 3.10.0 or 3.10.1M4
+# $4: The release label used to label the (nested) update site, e.g. 3.10.0 or 3.10.1
+# $5: An optional release label suffix to be appended to drop files and (nested) update site name, e.g. M1, RC1 
  
-if [ $# -eq 4 ];
+if [ $# -eq 4 -o $# -eq 5 ];
 then
 	buildId=$1
 	buildType=$2
 	merge=$3
 	releaseLabel=$4
+	if [ -n "$5" ];
+    then
+        releaseLabelSuffix=$5
+    fi
 else
     if [ $# -ne 0 ];
 	then
@@ -123,7 +128,7 @@ echo "Installing WTP Releng tools"
 echo "Cleaning up"
 rm eclipse-SDK-4.4.2-linux-gtk-x86_64.tar.gz
 
-updateSiteLabel=${releaseLabel}_${jobName}_${buildId}
+updateSiteLabel=${releaseLabel}${releaseLabelSuffix}_${jobName}_${buildId}
 # Prepare composite local update site (transfer into composite if needed)
 if [ "$merge" = y ];
 then
