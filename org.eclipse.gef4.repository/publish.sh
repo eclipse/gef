@@ -53,18 +53,19 @@ then
 	echo "lastStable, lastSuccessful"
 	echo -n "Please enter the id of the $jobName build you want to promote:"
 	read buildId
-	if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
-	then
-		# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
-		for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
-		do
-			if [ "$(readlink -f $i)" =  "$jobDir" ];
-			then
-				buildId=${i##*/}
-			fi
-		done
-		echo "Reverse lookup (lastStable/lastSuccessful) yielded buildId: $buildId"
-	fi
+fi
+
+if [ "$buildId" = "lastStable" -o "$buildId" = "lastSuccessful" ];
+then
+	# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
+	for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
+	do
+		if [ "$(readlink -f $i)" =  "$jobDir" ];
+		then
+			buildId=${i##*/}
+		fi
+	done
+	echo "Reverse lookup (lastStable/lastSuccessful) yielded buildId: $buildId"
 fi
 
 # Determine the local update site we want to publish to
