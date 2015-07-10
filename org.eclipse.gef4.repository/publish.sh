@@ -60,7 +60,7 @@ then
 	# Reverse lookup the build id (in case lastSuccessful or lastStable was used)
 	for i in $(find ~/.hudson/jobs/$jobName/builds/ -type l)
 	do
-		if [ "$(readlink -f $i)" =  "$jobDir" ];
+		if [ "$(readlink -f $i)" = "$(readlink -f ~/.hudson/jobs/$jobName/$buildId)" ];
 		then
 			buildId=${i##*/}
 		fi
