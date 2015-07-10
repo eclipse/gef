@@ -3,7 +3,7 @@
 # Script may take 6-7 command line parameters:
 # $1: Hudson job name: <name>
 # $2: Hudson build id: <id>
-# $3: Build type: i(nterim), s(table), r(elease)
+# $3: Build type: i(ntegration), s(table), r(elease)
 # $4: Whether to promote to an update-site: (y)es, (n)o
 # $5: Whether to merge the site with an existing one: (y)es, (n)o
 # $6: Whether to generate drop files: (y)es, (n)o
@@ -80,7 +80,7 @@ echo "Publishing from local update site: $localUpdateSite"
 # Select the build type
 if [ -z "$buildType" ];
 then
-    echo -n "Please select which type of build you want to publish to [i(integration), m(ilestone), r(elease)]: "
+    echo -n "Please select which type of build you want to publish to [i(integration), s(table), r(elease)]: "
     read buildType
 fi
 echo "Publishing as $buildType build"
@@ -103,10 +103,10 @@ then
 	# Determine remote update site we want to promote to
 	case $buildType in
 		i|I) remoteSite=integration;;
-		m|M) remoteSite=milestones;;
+		s|S) remoteSite=milestones;;
 		r|R) remoteSite=releases;;
 		*) 
-		echo "Parameter buildType has to be 'i'(ntegration), 'm'(ilestone), or 'r'(elease), but was: $buildType"
+		echo "Parameter buildType has to be 'i'(ntegration), 's'(stable), or 'r'(elease), but was: $buildType"
 		exit 1 ;;
 	esac
 	remoteUpdateSiteBase="tools/gef/gef4/updates/$remoteSite"
