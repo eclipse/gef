@@ -16,15 +16,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.oomph.version.VersionBuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<triggers>full,incremental,</triggers>
 			<arguments>
 				<dictionary>
-					<key>ignore.missing.export.versions</key>
-					<value>true</value>
-				</dictionary>
-				<dictionary>
-					<key>release.path</key>
-					<value>/org.eclipse.gef4.releng/oomph_version_mgmt/release.xml</value>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/org.eclipse.oomph.version.VersionBuilder.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
