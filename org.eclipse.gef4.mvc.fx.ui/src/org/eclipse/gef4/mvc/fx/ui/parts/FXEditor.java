@@ -13,15 +13,11 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import java.util.List;
 
-import javafx.embed.swt.FXCanvas;
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
@@ -37,6 +33,10 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+
+import javafx.embed.swt.FXCanvas;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 
 /**
  * @author anyssen
@@ -80,7 +80,7 @@ public abstract class FXEditor extends EditorPart {
 		// domain was already injected, hook viewer to controls (via scene
 		// container)
 		final FXViewer viewer = domain.getAdapter(IViewer.class);
-		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
+		canvas.setScene(new Scene(viewer.getScrollPane()));
 
 		// activate domain
 		domain.activate();
@@ -90,8 +90,8 @@ public abstract class FXEditor extends EditorPart {
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<Node>(
-					selectionProvider, getViewer());
+			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
+					getViewer());
 		}
 	}
 
@@ -103,8 +103,8 @@ public abstract class FXEditor extends EditorPart {
 			selectionForwarder = null;
 		}
 
-		domain.getOperationHistory().removeOperationHistoryListener(
-				operationHistoryListener);
+		domain.getOperationHistory()
+				.removeOperationHistoryListener(operationHistoryListener);
 
 		domain.deactivate();
 		domain.dispose();
@@ -126,7 +126,8 @@ public abstract class FXEditor extends EditorPart {
 				propertySheetPage = new UndoablePropertySheetPage(
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class),
-						(UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class));
+						(UndoRedoActionGroup) getAdapter(
+								UndoRedoActionGroup.class));
 			}
 			return propertySheetPage;
 		} else if (UndoRedoActionGroup.class.equals(key)) {
@@ -171,15 +172,16 @@ public abstract class FXEditor extends EditorPart {
 		operationHistoryListener = new IOperationHistoryListener() {
 			@Override
 			public void historyNotification(final OperationHistoryEvent event) {
-				if (event.getEventType() == OperationHistoryEvent.OPERATION_ADDED
-						&& event.getHistory().getUndoHistory(
-								event.getOperation().getContexts()[0]).length > 0) {
+				if (event
+						.getEventType() == OperationHistoryEvent.OPERATION_ADDED
+						&& event.getHistory().getUndoHistory(event
+								.getOperation().getContexts()[0]).length > 0) {
 					setDirty(true);
 				}
 			}
 		};
-		getDomain().getOperationHistory().addOperationHistoryListener(
-				operationHistoryListener);
+		getDomain().getOperationHistory()
+				.addOperationHistoryListener(operationHistoryListener);
 	}
 
 	@Override

@@ -14,17 +14,12 @@ package org.eclipse.gef4.zest.examples;
 
 import java.util.Collections;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.stage.Stage;
-
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Edge.Builder;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -34,6 +29,11 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public abstract class AbstractZestExample extends Application {
 
@@ -77,7 +77,8 @@ public abstract class AbstractZestExample extends Application {
 		return builder.build();
 	}
 
-	protected static org.eclipse.gef4.graph.Node n(Graph graph, Object... attr) {
+	protected static org.eclipse.gef4.graph.Node n(Graph graph,
+			Object... attr) {
 		Node node = n(attr);
 		node.setGraph(graph);
 		graph.getNodes().add(node);
@@ -101,11 +102,14 @@ public abstract class AbstractZestExample extends Application {
 		Injector injector = Guice.createInjector(createModule());
 		domain = injector.getInstance(FXDomain.class);
 		viewer = domain.getAdapter(IViewer.class);
-		viewer.setSceneContainer(new FXStageSceneContainer(primaryStage));
+		primaryStage.setScene(new Scene(viewer.getScrollPane()));
 
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(getStageWidth());
 		primaryStage.setHeight(getStageHeight());
+		primaryStage.setTitle(title);
+		primaryStage.sizeToScene();
+		primaryStage.show();
 
 		// activate domain only after viewers have been hooked
 		domain.activate();
@@ -116,16 +120,12 @@ public abstract class AbstractZestExample extends Application {
 			@Override
 			public void run() {
 				graph = createGraph();
-				viewer.getAdapter(ContentModel.class).setContents(
-						Collections.singletonList(graph));
+				viewer.getAdapter(ContentModel.class)
+						.setContents(Collections.singletonList(graph));
 			}
 		});
 
 		customizeUi(viewer.getScrollPane());
-
-		primaryStage.setTitle(title);
-		primaryStage.sizeToScene();
-		primaryStage.show();
 	}
 
 	protected int getStageHeight() {

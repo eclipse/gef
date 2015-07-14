@@ -13,13 +13,9 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import java.util.List;
 
-import javafx.embed.swt.FXCanvas;
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
@@ -34,6 +30,10 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+
+import javafx.embed.swt.FXCanvas;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 
 public abstract class FXView extends ViewPart {
 
@@ -70,7 +70,7 @@ public abstract class FXView extends ViewPart {
 		// domain was already injected, hook viewer to controls (via scene
 		// container)
 		final FXViewer viewer = domain.getAdapter(IViewer.class);
-		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
+		canvas.setScene(new Scene(viewer.getScrollPane()));
 
 		// activate domain
 		domain.activate();
@@ -80,8 +80,8 @@ public abstract class FXView extends ViewPart {
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<Node>(
-					selectionProvider, getViewer());
+			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
+					getViewer());
 		}
 	}
 
@@ -114,7 +114,8 @@ public abstract class FXView extends ViewPart {
 				propertySheetPage = new UndoablePropertySheetPage(
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class),
-						(UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class));
+						(UndoRedoActionGroup) getAdapter(
+								UndoRedoActionGroup.class));
 			}
 			return propertySheetPage;
 		} else if (UndoRedoActionGroup.class.equals(key)) {
@@ -149,7 +150,8 @@ public abstract class FXView extends ViewPart {
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 
-		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class);
+		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) getAdapter(
+				UndoRedoActionGroup.class);
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.fillActionBars(site.getActionBars());
 		}

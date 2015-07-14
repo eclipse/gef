@@ -42,4 +42,3 @@ org.eclipse.gef4.mvc.fx.viewer
 org.eclipse.gef4.mvc.fx.ui
 org.eclipse.gef4.mvc.fx.ui.parts
 org.eclipse.gef4.mvc.fx.ui.properties
-org.eclipse.gef4.mvc.fx.ui.viewer

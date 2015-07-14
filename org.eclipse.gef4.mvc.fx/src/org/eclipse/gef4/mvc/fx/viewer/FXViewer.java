@@ -11,20 +11,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.viewer;
 
+import org.eclipse.gef4.fx.nodes.FXGridLayer;
+import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-
-import org.eclipse.gef4.fx.nodes.FXGridLayer;
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
-import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 public class FXViewer extends AbstractViewer<Node> {
 
@@ -34,44 +33,8 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 
-	protected ISceneContainer sceneContainer;
-	protected Scene scene = null;
 	protected ScrollPaneEx scrollPane;
 	protected FXGridLayer gridLayer;
-
-	/**
-	 * Creates a {@link Scene}, inserts the given root visual into it, and sets
-	 * that {@link Scene} on the given {@link ISceneContainer}.
-	 *
-	 * @param container
-	 *            The container for the {@link Scene}.
-	 * @param rootVisual
-	 *            The visual of the {@link FXRootPart}.
-	 */
-	@SuppressWarnings("unchecked")
-	protected void createAndHookScene(ISceneContainer container,
-			Parent rootVisual) {
-		scrollPane = new ScrollPaneEx();
-		scrollPane.setStyle(SCROLL_PANE_STYLE);
-
-		gridLayer = new FXGridLayer();
-		scrollPane.getContentGroup().getChildren().addAll(rootVisual);
-		scrollPane.getScrolledPane().getChildren().add(gridLayer);
-		gridLayer.toBack();
-
-		// bind grid layer size
-		SimpleObjectProperty<Bounds> scrollableBoundsProperty = new SimpleObjectProperty<Bounds>() {
-			{
-				bind(scrollPane.getScrollableBoundsBinding());
-			}
-		};
-		gridLayer.bindMinSizeToBounds(scrollableBoundsProperty);
-		gridLayer
-				.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] { scrollableBoundsProperty });
-
-		scene = new Scene(scrollPane);
-		sceneContainer.setScene(scene);
-	}
 
 	@Override
 	public FXDomain getDomain() {
@@ -83,31 +46,41 @@ public class FXViewer extends AbstractViewer<Node> {
 	}
 
 	public Scene getScene() {
-		return scene;
+		return scrollPane.getScene();
 	}
 
+	@SuppressWarnings("unchecked")
 	public ScrollPaneEx getScrollPane() {
+		if (scrollPane == null) {
+			IRootPart<Node, ? extends Node> rootPart = getRootPart();
+			if (rootPart != null) {
+				scrollPane = new ScrollPaneEx();
+				scrollPane.setStyle(SCROLL_PANE_STYLE);
+
+				gridLayer = new FXGridLayer();
+				scrollPane.getContentGroup().getChildren()
+						.addAll((Parent) rootPart.getVisual());
+				scrollPane.getScrolledPane().getChildren().add(gridLayer);
+				gridLayer.toBack();
+
+				// bind grid layer size
+				SimpleObjectProperty<Bounds> scrollableBoundsProperty = new SimpleObjectProperty<Bounds>() {
+					{
+						bind(scrollPane.getScrollableBoundsBinding());
+					}
+				};
+				gridLayer.bindMinSizeToBounds(scrollableBoundsProperty);
+				gridLayer.bindPrefSizeToUnionedBounds(
+						new ReadOnlyObjectProperty[] {
+								scrollableBoundsProperty });
+			}
+		}
 		return scrollPane;
 	}
 
 	@Override
 	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
 		scrollPane.reveal(visualPart.getVisual());
-	}
-
-	public void setSceneContainer(ISceneContainer sceneContainer) {
-		this.sceneContainer = sceneContainer;
-		if (sceneContainer != null) {
-			if (scene == null) {
-				IRootPart<Node, ? extends Node> rootPart = getRootPart();
-				if (rootPart != null) {
-					createAndHookScene(sceneContainer,
-							(Parent) rootPart.getVisual());
-				}
-			} else {
-				sceneContainer.setScene(scene);
-			}
-		}
 	}
 
 }

@@ -13,11 +13,9 @@ package org.eclipse.gef4.mvc.examples;
 
 import java.util.List;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdapterMapInjector;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -25,6 +23,11 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
+import javafx.stage.Stage;
 
 public abstract class AbstractMvcExample extends Application {
 
@@ -41,20 +44,22 @@ public abstract class AbstractMvcExample extends Application {
 		Injector injector = Guice.createInjector(createModule());
 		FXDomain domain = injector.getInstance(FXDomain.class);
 
+		// hook the (single) viewer into the stage
 		FXViewer viewer = domain.getAdapter(IViewer.class);
-		viewer.setSceneContainer(new FXStageSceneContainer(primaryStage));
-
-		// activate domain only after viewers have been hooked
-		domain.activate();
-
-		viewer.getAdapter(ContentModel.class).setContents(createContents());
-
+		primaryStage.setScene(new Scene(viewer.getScrollPane()));
+		
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(640);
 		primaryStage.setHeight(480);
 		primaryStage.setTitle(title);
 		primaryStage.sizeToScene();
 		primaryStage.show();
+		
+		// activate domain only after viewers have been hooked
+		domain.activate();
+
+		// set viewer contents
+		viewer.getAdapter(ContentModel.class).setContents(createContents());
 	}
 
 	protected abstract List<? extends Object> createContents();

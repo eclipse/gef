@@ -18,9 +18,6 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import javafx.embed.swt.FXCanvas;
-import javafx.embed.swt.SWTFXUtils;
-
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
 import org.eclipse.gef4.graph.Edge;
@@ -29,7 +26,6 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.parts.SelectionForwarder;
-import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -59,6 +55,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
+
+import javafx.embed.swt.FXCanvas;
+import javafx.embed.swt.SWTFXUtils;
+import javafx.scene.Scene;
 
 public class ZestContentViewer extends ContentViewer {
 
@@ -98,14 +98,13 @@ public class ZestContentViewer extends ContentViewer {
 
 		// hook viewer
 		viewer = domain.getAdapter(IViewer.class);
-		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
+		canvas.setScene(new Scene(viewer.getScrollPane()));
 
 		// activate domain
 		domain.activate();
 
 		// register listener to provide selection to workbench
-		selectionForwarder = new SelectionForwarder<javafx.scene.Node>(this,
-				viewer);
+		selectionForwarder = new SelectionForwarder<javafx.scene.Node>(this, viewer);
 	}
 
 	/**
@@ -128,27 +127,26 @@ public class ZestContentViewer extends ContentViewer {
 	 *            The already created target {@link Node} of this edge.
 	 * @return The new {@link Edge}.
 	 */
-	protected Edge createEdge(ILabelProvider labelProvider,
-			Object contentSourceNode, Node sourceNode,
+	protected Edge createEdge(ILabelProvider labelProvider, Object contentSourceNode, Node sourceNode,
 			Object contentTargetNode, Node targetNode) {
 		Edge edge = new Edge(sourceNode, targetNode);
 		if (labelProvider instanceof IEdgeDecorationProvider) {
 			IEdgeDecorationProvider edgeDecorationProvider = (IEdgeDecorationProvider) labelProvider;
-			IFXDecoration sourceDecoration = edgeDecorationProvider
-					.getSourceDecoration(contentSourceNode, contentTargetNode);
+			IFXDecoration sourceDecoration = edgeDecorationProvider.getSourceDecoration(contentSourceNode,
+					contentTargetNode);
 			if (sourceDecoration != null) {
 				ZestProperties.setSourceDecoration(edge, sourceDecoration);
 			}
-			IFXDecoration targetDecoration = edgeDecorationProvider
-					.getTargetDecoration(contentSourceNode, contentTargetNode);
+			IFXDecoration targetDecoration = edgeDecorationProvider.getTargetDecoration(contentSourceNode,
+					contentTargetNode);
 			if (targetDecoration != null) {
 				ZestProperties.setTargetDecoration(edge, targetDecoration);
 			}
 		}
 		if (labelProvider instanceof IGraphNodeLabelProvider) {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
-			Map<String, Object> edgeAttributes = graphNodeLabelProvider
-					.getEdgeAttributes(contentSourceNode, contentTargetNode);
+			Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,
+					contentTargetNode);
 			if (edgeAttributes != null) {
 				edge.getAttrs().putAll(edgeAttributes);
 			}
@@ -175,8 +173,7 @@ public class ZestContentViewer extends ContentViewer {
 
 	protected Module createModule() {
 		if (PlatformUI.isWorkbenchRunning()) {
-			return Modules.override(new ZestFxUiModule()).with(
-					new ZestFxModule());
+			return Modules.override(new ZestFxUiModule()).with(new ZestFxModule());
 		} else {
 			return new ZestFxModule();
 		}
@@ -194,8 +191,7 @@ public class ZestContentViewer extends ContentViewer {
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @return The new {@link Graph}.
 	 */
-	protected Graph createNestedGraph(Object contentNestingNode,
-			INestedGraphContentProvider nestedGraphContentProvider,
+	protected Graph createNestedGraph(Object contentNestingNode, INestedGraphContentProvider nestedGraphContentProvider,
 			ILabelProvider labelProvider) {
 		Graph graph = createEmptyGraph();
 		if (labelProvider instanceof INestedGraphLabelProvider) {
@@ -206,11 +202,9 @@ public class ZestContentViewer extends ContentViewer {
 				graph.getAttrs().putAll(nestedGraphAttributes);
 			}
 		}
-		Object[] contentNodes = nestedGraphContentProvider
-				.getChildren(contentNestingNode);
+		Object[] contentNodes = nestedGraphContentProvider.getChildren(contentNestingNode);
 		if (contentNodes != null) {
-			createNodesAndEdges(nestedGraphContentProvider, labelProvider,
-					graph, contentNodes);
+			createNodesAndEdges(nestedGraphContentProvider, labelProvider, graph, contentNodes);
 		}
 		return graph;
 	}
@@ -228,13 +222,11 @@ public class ZestContentViewer extends ContentViewer {
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @return The new {@link Node}.
 	 */
-	protected Node createNode(Object contentNode,
-			IGraphNodeContentProvider graphContentProvider,
+	protected Node createNode(Object contentNode, IGraphNodeContentProvider graphContentProvider,
 			ILabelProvider labelProvider) {
 		// do not create the same node twice
 		if (contentNodeMap.containsKey(contentNode)) {
-			throw new IllegalStateException("A node for content <"
-					+ contentNode + "> has already been created.");
+			throw new IllegalStateException("A node for content <" + contentNode + "> has already been created.");
 		}
 
 		Node node = new Node();
@@ -249,8 +241,7 @@ public class ZestContentViewer extends ContentViewer {
 		// icon
 		Image icon = labelProvider.getImage(contentNode);
 		if (icon != null) {
-			ZestProperties.setIcon(node,
-					SWTFXUtils.toFXImage(icon.getImageData(), null));
+			ZestProperties.setIcon(node, SWTFXUtils.toFXImage(icon.getImageData(), null));
 		}
 
 		// tooltip
@@ -271,12 +262,10 @@ public class ZestContentViewer extends ContentViewer {
 			Color background = colorProvider.getBackground(contentNode);
 			String rectCssStyle = "";
 			if (background != null) {
-				rectCssStyle = rectCssStyle + "-fx-fill: "
-						+ toCssRgb(background) + ";";
+				rectCssStyle = rectCssStyle + "-fx-fill: " + toCssRgb(background) + ";";
 			}
 			if (foreground != null) {
-				rectCssStyle = rectCssStyle + "-fx-stroke: "
-						+ toCssRgb(foreground) + ";";
+				rectCssStyle = rectCssStyle + "-fx-stroke: " + toCssRgb(foreground) + ";";
 				textCssStyle = "-fx-fill: " + toCssRgb(foreground) + ";";
 			}
 			if (!rectCssStyle.isEmpty()) {
@@ -298,8 +287,7 @@ public class ZestContentViewer extends ContentViewer {
 				boolean isBold = (style & SWT.BOLD) != 0;
 				boolean isItalic = (style & SWT.ITALIC) != 0;
 
-				textCssStyle = textCssStyle + "-fx-font-family: \"" + name
-						+ "\";" + "-fx-font-size: " + size + "pt;";
+				textCssStyle = textCssStyle + "-fx-font-family: \"" + name + "\";" + "-fx-font-size: " + size + "pt;";
 				if (isItalic) {
 					textCssStyle = textCssStyle + "-fx-font-style: italic;";
 				}
@@ -314,8 +302,7 @@ public class ZestContentViewer extends ContentViewer {
 		// custom attributes
 		if (labelProvider instanceof IGraphNodeLabelProvider) {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
-			Map<String, Object> nodeAttributes = graphNodeLabelProvider
-					.getNodeAttributes(contentNode);
+			Map<String, Object> nodeAttributes = graphNodeLabelProvider.getNodeAttributes(contentNode);
 			if (nodeAttributes != null) {
 				node.getAttrs().putAll(nodeAttributes);
 			}
@@ -325,8 +312,7 @@ public class ZestContentViewer extends ContentViewer {
 		if (graphContentProvider instanceof INestedGraphContentProvider) {
 			INestedGraphContentProvider nestedGraphProvider = (INestedGraphContentProvider) graphContentProvider;
 			if (nestedGraphProvider.hasChildren(contentNode)) {
-				Graph graph = createNestedGraph(contentNode,
-						nestedGraphProvider, labelProvider);
+				Graph graph = createNestedGraph(contentNode, nestedGraphProvider, labelProvider);
 				graph.setNestingNode(node);
 			}
 		}
@@ -349,26 +335,22 @@ public class ZestContentViewer extends ContentViewer {
 	 *            Content elements which represent nodes that are to be created
 	 *            together with the edges between them.
 	 */
-	protected void createNodesAndEdges(
-			IGraphNodeContentProvider graphContentProvider,
-			ILabelProvider labelProvider, Graph graph, Object[] contentNodes) {
+	protected void createNodesAndEdges(IGraphNodeContentProvider graphContentProvider, ILabelProvider labelProvider,
+			Graph graph, Object[] contentNodes) {
 		// create nodes
 		for (Object node : contentNodes) {
-			Node graphNode = createNode(node, graphContentProvider,
-					labelProvider);
+			Node graphNode = createNode(node, graphContentProvider, labelProvider);
 			graph.getNodes().add(graphNode);
 			graphNode.setGraph(graph);
 		}
 		// create edges
 		for (Object contentSourceNode : contentNodes) {
 			Node sourceNode = contentNodeMap.get(contentSourceNode);
-			Object[] connectedTo = graphContentProvider
-					.getConnectedTo(contentSourceNode);
+			Object[] connectedTo = graphContentProvider.getConnectedTo(contentSourceNode);
 			if (connectedTo != null) {
 				for (Object contentTargetNode : connectedTo) {
 					Node targetNode = contentNodeMap.get(contentTargetNode);
-					Edge edge = createEdge(labelProvider, contentSourceNode,
-							sourceNode, contentTargetNode, targetNode);
+					Edge edge = createEdge(labelProvider, contentSourceNode, sourceNode, contentTargetNode, targetNode);
 					graph.getEdges().add(edge);
 					edge.setGraph(graph);
 				}
@@ -387,13 +369,11 @@ public class ZestContentViewer extends ContentViewer {
 	 * @return A complete {@link Graph} constructed by using the given
 	 *         providers.
 	 */
-	protected Graph createRootGraph(IContentProvider contentProvider,
-			ILabelProvider labelProvider) {
+	protected Graph createRootGraph(IContentProvider contentProvider, ILabelProvider labelProvider) {
 		Graph graph = createEmptyGraph();
 		if (labelProvider instanceof IGraphNodeLabelProvider) {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
-			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider
-					.getRootGraphAttributes();
+			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getRootGraphAttributes();
 			if (rootGraphAttributes != null) {
 				graph.getAttrs().putAll(rootGraphAttributes);
 			}
@@ -402,8 +382,7 @@ public class ZestContentViewer extends ContentViewer {
 			IGraphNodeContentProvider graphNodeProvider = (IGraphNodeContentProvider) contentProvider;
 			Object[] nodes = graphNodeProvider.getNodes();
 			if (nodes != null) {
-				createNodesAndEdges(graphNodeProvider, labelProvider, graph,
-						nodes);
+				createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);
 			}
 		}
 		return graph;
@@ -459,9 +438,8 @@ public class ZestContentViewer extends ContentViewer {
 	@Override
 	public void refresh() {
 		contentNodeMap.clear();
-		viewer.getAdapter(ContentModel.class).setContents(
-				Collections.singletonList(createRootGraph(getContentProvider(),
-						getLabelProvider())));
+		viewer.getAdapter(ContentModel.class)
+				.setContents(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
 	}
 
 	public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
@@ -470,8 +448,7 @@ public class ZestContentViewer extends ContentViewer {
 
 	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
-		if (this.selection != selection
-				&& (this.selection == null || !this.selection.equals(selection))) {
+		if (this.selection != selection && (this.selection == null || !this.selection.equals(selection))) {
 			this.selection = selection;
 			fireSelectionChanged(new SelectionChangedEvent(this, selection));
 			if (reveal) {
@@ -493,8 +470,7 @@ public class ZestContentViewer extends ContentViewer {
 	}
 
 	protected String toCssRgb(Color color) {
-		return "rgb(" + color.getRed() + "," + color.getGreen() + ","
-				+ color.getBlue() + ")";
+		return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
 	}
 
 }
