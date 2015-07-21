@@ -79,20 +79,13 @@ public abstract class FXEditor extends EditorPart {
 
 		// domain was already injected, hook viewer to controls (via scene
 		// container)
-		final FXViewer viewer = domain.getAdapter(IViewer.class);
-		canvas.setScene(new Scene(viewer.getScrollPane()));
+		hookViewers();
 
 		// activate domain
 		domain.activate();
 
 		// populate viewer
-		viewer.getAdapter(ContentModel.class).setContents(getContents());
-
-		// register listener to provide selection to workbench
-		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
-					getViewer());
-		}
+		hookViewers();
 	}
 
 	@Override
@@ -112,6 +105,7 @@ public abstract class FXEditor extends EditorPart {
 		super.dispose();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
 		// Provide a default selection provider (subclasses may overwrite by
@@ -150,12 +144,25 @@ public abstract class FXEditor extends EditorPart {
 
 	protected abstract List<? extends Object> getContents();
 
+	protected FXViewer getViewer() {
+		return domain.getAdapter(IViewer.class);
+	}
+
 	protected FXDomain getDomain() {
 		return domain;
 	}
 
-	protected FXViewer getViewer() {
-		return domain.getAdapter(IViewer.class);
+	protected void hookViewers() {
+		// by default we only have a single (content) viewer, so hook its
+		// visuals as root visuals into the scene
+		final FXViewer contentViewer = getViewer();
+		canvas.setScene(new Scene(contentViewer.getScrollPane()));
+
+		// register listener to provide selection to workbench
+		if (selectionProvider != null) {
+			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
+					contentViewer);
+		}
 	}
 
 	@Override
@@ -187,6 +194,12 @@ public abstract class FXEditor extends EditorPart {
 	@Override
 	public boolean isDirty() {
 		return isDirty;
+	}
+
+	protected void populateViewers() {
+		// populate the content viewer
+		final FXViewer contentViewer = getViewer();
+		contentViewer.getAdapter(ContentModel.class).setContents(getContents());
 	}
 
 	protected void setDirty(boolean isDirty) {

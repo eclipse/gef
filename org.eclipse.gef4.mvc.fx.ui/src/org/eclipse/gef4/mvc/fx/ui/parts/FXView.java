@@ -67,22 +67,15 @@ public abstract class FXView extends ViewPart {
 		// create viewer and canvas only after toolkit has been initialized
 		canvas = createCanvas(parent);
 
-		// domain was already injected, hook viewer to controls (via scene
+		// domain was already injected, hook viewers to controls (via scene
 		// container)
-		final FXViewer viewer = domain.getAdapter(IViewer.class);
-		canvas.setScene(new Scene(viewer.getScrollPane()));
+		hookViewers();
 
 		// activate domain
 		domain.activate();
 
-		// populate viewer
-		viewer.getAdapter(ContentModel.class).setContents(getContents());
-
-		// register listener to provide selection to workbench
-		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
-					getViewer());
-		}
+		// populate viewers (set contents)
+		populateViewers();
 	}
 
 	@Override
@@ -99,7 +92,7 @@ public abstract class FXView extends ViewPart {
 		super.dispose();
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object getAdapter(final Class key) {
 		// Provide a default selection provider (subclasses may overwrite by
@@ -146,6 +139,19 @@ public abstract class FXView extends ViewPart {
 		return domain.getAdapter(IViewer.class);
 	}
 
+	protected void hookViewers() {
+		// by default we only have a single (content) viewer, so hook its
+		// visuals as root visuals into the scene
+		final FXViewer contentViewer = getViewer();
+		canvas.setScene(new Scene(contentViewer.getScrollPane()));
+
+		// register listener to provide selection to workbench
+		if (selectionProvider != null) {
+			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
+					contentViewer);
+		}
+	}
+
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
@@ -160,6 +166,12 @@ public abstract class FXView extends ViewPart {
 		if (selectionProvider != null) {
 			site.setSelectionProvider(selectionProvider);
 		}
+	}
+
+	protected void populateViewers() {
+		// populate the content viewer
+		final FXViewer contentViewer = getViewer();
+		contentViewer.getAdapter(ContentModel.class).setContents(getContents());
 	}
 
 	@Override
