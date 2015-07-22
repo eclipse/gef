@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
@@ -30,8 +31,7 @@ public class ZestFxUiView extends FXView {
 	private Object graph;
 
 	public ZestFxUiView() {
-		super(Guice.createInjector(Modules.override(new ZestFxModule()).with(
-				new ZestFxUiModule())));
+		super(Guice.createInjector(Modules.override(new ZestFxModule()).with(new ZestFxUiModule())));
 	}
 
 	public ZestFxUiView(Injector injector) {
@@ -40,17 +40,29 @@ public class ZestFxUiView extends FXView {
 
 	@Override
 	protected List<Object> getContents() {
+		// TODO: remove this callback and directly set contents in
+		// setGraph(Graph)
 		List<Object> contents = new ArrayList<Object>(1);
-		contents.add(graph);
+		if (graph != null) {
+			contents.add(graph);
+		}
 		return contents;
 	}
 
 	public void setGraph(Graph graph) {
 		this.graph = graph;
-		if (!getViewer().getAdapter(ContentModel.class).getContents().isEmpty()) {
-			getViewer().getAdapter(ContentModel.class).setContents(
-					getContents());
+		// check we have a content viewer
+		FXViewer contentViewer = getViewer();
+		if (contentViewer == null) {
+			throw new IllegalStateException("Invalid configuration: Content viewer could not be retrieved.");
 		}
+		// check we have a content model
+		ContentModel contentModel = getViewer().getAdapter(ContentModel.class);
+		if (contentModel == null) {
+			throw new IllegalStateException("Invalid configuration: Content model could not be retrieved.");
+		}
+		// set contents (will wrap graph into contents list)
+		contentModel.setContents(getContents());
 	}
 
 }
