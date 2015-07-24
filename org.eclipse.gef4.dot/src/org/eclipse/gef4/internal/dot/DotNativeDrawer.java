@@ -20,6 +20,7 @@ import java.util.Arrays;
  * Class for drawing dot graphs by calling the dot executable.
  * 
  * @author Fabian Steeg (fsteeg)
+ * @author Alexander Nyßen (anyssen)
  */
 final public class DotNativeDrawer {
 	private DotNativeDrawer() {/* Enforce non-instantiability */
