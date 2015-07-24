@@ -3,8 +3,11 @@
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
- * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ * 
+ * Contributors: 
+ *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Alexander Nyßen (alexander.nyssen@itemis.de) - fixed NPE (see bug #473011)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.internal.dot;
 
@@ -40,43 +43,47 @@ final public class DotNativeDrawer {
 			final File dotInputFile, final String format,
 			final String imageResultFile) {
 		String outputFormat = "-T" + format; //$NON-NLS-1$
-		String resultFile = imageResultFile == null ? dotInputFile.getName()
-				+ "." + format : imageResultFile; //$NON-NLS-1$
+		String resultFile = imageResultFile == null
+				? dotInputFile.getName() + "." + format : imageResultFile; //$NON-NLS-1$
 		String dotFile = dotInputFile.getName();
 		String inputFolder = new File(dotInputFile.getParent())
 				.getAbsolutePath() + File.separator;
-		String outputFolder = imageResultFile == null ? inputFolder : new File(
-				new File(imageResultFile).getAbsolutePath()).getParentFile()
-				.getAbsolutePath()
-				+ File.separator;
+		String outputFolder = imageResultFile == null ? inputFolder
+				: new File(new File(imageResultFile).getAbsolutePath())
+						.getParentFile().getAbsolutePath() + File.separator;
 		String dotExecutable = "dot" + (runningOnWindows() ? ".exe" : ""); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		String[] commands = new String[] {
 				dotExecutableDir.getAbsolutePath() + File.separator
-						+ dotExecutable, outputFormat, "-o", //$NON-NLS-1$
+						+ dotExecutable,
+				outputFormat, "-o", //$NON-NLS-1$
 				outputFolder + resultFile, inputFolder + dotFile };
 		call(commands);
 		return new File(outputFolder, resultFile);
 	}
 
 	private static void call(final String[] commands) {
-		System.out.print("Calling: " + Arrays.asList(commands)); //$NON-NLS-1$
+		System.out.print("Calling '" + Arrays.asList(commands) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		Runtime runtime = Runtime.getRuntime();
 		Process p = null;
 		try {
 			p = runtime.exec(commands);
 			p.waitFor();
-		} catch (Exception x) {
-			x.printStackTrace();
+			System.out.println(
+					" resulted in exit status: " + p.exitValue() + "."); //$NON-NLS-1$//$NON-NLS-2$
+		} catch (Exception e) {
+			System.out
+					.println(" failed with exception " + e.getMessage() + "."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		System.out
-				.println(", " + "resulted in exit status" + ": " + p.exitValue()); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-		String errors = read(p.getErrorStream());
-		String output = read(p.getInputStream());
-		if (errors.trim().length() > 0) {
-			System.err.println("Errors from dot call: " + errors); //$NON-NLS-1$
-		}
-		if (output.trim().length() > 0) {
-			System.out.println("Output from dot call: " + output); //$NON-NLS-1$
+		// handle input and error stream only if process succeeded.
+		if (p != null) {
+			String errors = read(p.getErrorStream());
+			if (errors.trim().length() > 0) {
+				System.err.println("Errors from dot call: " + errors); //$NON-NLS-1$
+			}
+			String output = read(p.getInputStream());
+			if (output.trim().length() > 0) {
+				System.out.println("Output from dot call: " + output); //$NON-NLS-1$
+			}
 		}
 	}
 
