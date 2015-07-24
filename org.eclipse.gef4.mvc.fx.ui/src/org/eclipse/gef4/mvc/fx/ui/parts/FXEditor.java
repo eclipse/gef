@@ -85,7 +85,7 @@ public abstract class FXEditor extends EditorPart {
 		domain.activate();
 
 		// populate viewer
-		hookViewers();
+		populateViewers();
 	}
 
 	@Override
@@ -144,12 +144,12 @@ public abstract class FXEditor extends EditorPart {
 
 	protected abstract List<? extends Object> getContents();
 
-	protected FXViewer getViewer() {
-		return domain.getAdapter(IViewer.class);
-	}
-
 	protected FXDomain getDomain() {
 		return domain;
+	}
+
+	protected FXViewer getViewer() {
+		return domain.getAdapter(IViewer.class);
 	}
 
 	protected void hookViewers() {
