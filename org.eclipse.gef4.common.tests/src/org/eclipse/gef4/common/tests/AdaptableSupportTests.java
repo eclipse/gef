@@ -157,21 +157,26 @@ public class AdaptableSupportTests {
 
 	@SuppressWarnings("serial")
 	@Test
-	public void polymorphicRegistration() {
+	public void polymorphicRegistrationAndRetrieval() {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
 
-		// register adapter
+		// register adapter via type key for 'ParameterizedSuperType'
 		ParameterizedSubType<ParameterType1> parameterType1 = new ParameterizedSubType<ParameterType1>();
 		td.setAdapter(new TypeToken<ParameterizedSuperType<ParameterType1>>() {
 		}, parameterType1);
 
-		// retrieve adapter
+		// retrieve adapter via 'ParameterizedSuperType' key (used for
+		// registration)
 		assertEquals(parameterType1, td.getAdapter(
 				new TypeToken<ParameterizedSuperType<ParameterType1>>() {
 				}));
+
+		// cannot retrieve with a subtype key
 		assertNull(td
 				.getAdapter(new TypeToken<ParameterizedType<ParameterType1>>() {
 				}));
+
+		// cannot retrieve with a key that is not assignable from the adapter
 		assertNull(td.getAdapter(
 				new TypeToken<ParameterizedSubType<ParameterType1>>() {
 				}));
@@ -277,7 +282,7 @@ public class AdaptableSupportTests {
 
 	@SuppressWarnings("serial")
 	@Test
-	public void registrationAndRetrievalOfParameterizedWithRoles() {
+	public void registrationAndRetrievalOfParameterizedTypeWithRoles() {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
 
 		// register adapters
