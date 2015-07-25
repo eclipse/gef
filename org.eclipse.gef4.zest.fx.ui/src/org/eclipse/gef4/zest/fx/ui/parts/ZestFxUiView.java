@@ -28,8 +28,6 @@ import com.google.inject.util.Modules;
 
 public class ZestFxUiView extends FXView {
 
-	private Object graph;
-
 	public ZestFxUiView() {
 		super(Guice.createInjector(Modules.override(new ZestFxModule()).with(new ZestFxUiModule())));
 	}
@@ -38,19 +36,7 @@ public class ZestFxUiView extends FXView {
 		super(injector);
 	}
 
-	@Override
-	protected List<Object> getContents() {
-		// TODO: remove this callback and directly set contents in
-		// setGraph(Graph)
-		List<Object> contents = new ArrayList<Object>(1);
-		if (graph != null) {
-			contents.add(graph);
-		}
-		return contents;
-	}
-
 	public void setGraph(Graph graph) {
-		this.graph = graph;
 		// check we have a content viewer
 		FXViewer contentViewer = getViewer();
 		if (contentViewer == null) {
@@ -62,7 +48,11 @@ public class ZestFxUiView extends FXView {
 			throw new IllegalStateException("Invalid configuration: Content model could not be retrieved.");
 		}
 		// set contents (will wrap graph into contents list)
-		contentModel.setContents(getContents());
+		List<Object> contents = new ArrayList<Object>(1);
+		if (graph != null) {
+			contents.add(graph);
+		}
+		contentModel.setContents(contents);
 	}
 
 }

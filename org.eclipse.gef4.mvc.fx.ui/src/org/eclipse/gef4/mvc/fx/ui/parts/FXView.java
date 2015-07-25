@@ -11,13 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
 
-import java.util.List;
-
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -35,6 +32,13 @@ import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
+/**
+ * Abstract base class for views.
+ *
+ * @author Alexander Nyßen (anyssen)
+ *
+ */
+// TODO: make concrete or rename
 public abstract class FXView extends ViewPart {
 
 	@Inject
@@ -58,6 +62,10 @@ public abstract class FXView extends ViewPart {
 		injector.injectMembers(this);
 	}
 
+	protected void activate() {
+		domain.activate();
+	}
+
 	protected FXCanvas createCanvas(final Composite parent) {
 		return canvasFactory.createCanvas(parent);
 	}
@@ -67,28 +75,31 @@ public abstract class FXView extends ViewPart {
 		// create viewer and canvas only after toolkit has been initialized
 		canvas = createCanvas(parent);
 
-		// domain was already injected, hook viewers to controls (via scene
-		// container)
+		// hook viewer controls and selection forwarder
 		hookViewers();
 
 		// activate domain
-		domain.activate();
+		activate();
+	}
 
-		// populate viewers (set contents)
-		populateViewers();
+	protected void deactivate() {
+		domain.deactivate();
 	}
 
 	@Override
 	public void dispose() {
-		// unregister listener to provide selections
-		if (selectionForwarder != null) {
-			selectionForwarder.dispose();
-			selectionForwarder = null;
+		// deactivate domain
+		deactivate();
+
+		// unhook selection forwarder
+		unhookViewers();
+
+		// unregister selection provider
+		if (selectionProvider != null) {
+			getSite().setSelectionProvider(null);
 		}
 
-		domain.deactivate();
 		domain.dispose();
-
 		super.dispose();
 	}
 
@@ -129,8 +140,6 @@ public abstract class FXView extends ViewPart {
 		return canvas;
 	}
 
-	protected abstract List<? extends Object> getContents();
-
 	protected FXDomain getDomain() {
 		return domain;
 	}
@@ -168,15 +177,17 @@ public abstract class FXView extends ViewPart {
 		}
 	}
 
-	protected void populateViewers() {
-		// populate the content viewer
-		final FXViewer contentViewer = getViewer();
-		contentViewer.getAdapter(ContentModel.class).setContents(getContents());
-	}
-
 	@Override
 	public void setFocus() {
 		canvas.setFocus();
+	}
+
+	protected void unhookViewers() {
+		// unregister listener to provide selections
+		if (selectionForwarder != null) {
+			selectionForwarder.dispose();
+			selectionForwarder = null;
+		}
 	}
 
 }

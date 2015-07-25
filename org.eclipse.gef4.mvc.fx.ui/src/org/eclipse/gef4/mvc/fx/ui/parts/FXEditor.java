@@ -11,15 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
 
-import java.util.List;
-
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -39,8 +36,12 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 
 /**
- * @author anyssen
+ * Abstract base class for editors.
+ *
+ * @author Alexander Nyßen (anyssen)
+ * @author Matthias Wienand (mwienand)
  */
+// TODO: make concrete or rename
 public abstract class FXEditor extends EditorPart {
 
 	@Inject
@@ -60,12 +61,15 @@ public abstract class FXEditor extends EditorPart {
 	private IPropertySheetPage propertySheetPage;
 
 	private IOperationHistoryListener operationHistoryListener;
-
 	private boolean isDirty;
 
 	// TOOD: use executable extension factory to inject this class
 	public FXEditor(final Injector injector) {
 		injector.injectMembers(this);
+	}
+
+	protected void activate() {
+		domain.activate();
 	}
 
 	protected FXCanvas createCanvas(final Composite parent) {
@@ -77,37 +81,41 @@ public abstract class FXEditor extends EditorPart {
 		// create viewer and canvas only after toolkit has been initialized
 		canvas = createCanvas(parent);
 
-		// domain was already injected, hook viewer to controls (via scene
-		// container)
+		// hook viewer controls and selection forwarder
 		hookViewers();
 
 		// activate domain
-		domain.activate();
+		activate();
+	}
 
-		// populate viewer
-		populateViewers();
+	protected void deactivate() {
+		domain.deactivate();
 	}
 
 	@Override
 	public void dispose() {
-		// unregister listener to provide selections
-		if (selectionForwarder != null) {
-			selectionForwarder.dispose();
-			selectionForwarder = null;
-		}
+		// deactivate domain
+		deactivate();
 
+		// unhook selection forwarder
+		unhookViewers();
+
+		// unregister operation history listener
 		domain.getOperationHistory()
 				.removeOperationHistoryListener(operationHistoryListener);
 
-		domain.deactivate();
-		domain.dispose();
+		// unregister selection provider
+		if (selectionProvider != null) {
+			getSite().setSelectionProvider(null);
+		}
 
+		domain.dispose();
 		super.dispose();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
+	public Object getAdapter(final Class key) {
 		// Provide a default selection provider (subclasses may overwrite by
 		// handling the key and returning a different implementation
 		// replace with binding
@@ -141,8 +149,6 @@ public abstract class FXEditor extends EditorPart {
 	protected FXCanvas getCanvas() {
 		return canvas;
 	}
-
-	protected abstract List<? extends Object> getContents();
 
 	protected FXDomain getDomain() {
 		return domain;
@@ -196,12 +202,6 @@ public abstract class FXEditor extends EditorPart {
 		return isDirty;
 	}
 
-	protected void populateViewers() {
-		// populate the content viewer
-		final FXViewer contentViewer = getViewer();
-		contentViewer.getAdapter(ContentModel.class).setContents(getContents());
-	}
-
 	protected void setDirty(boolean isDirty) {
 		if (this.isDirty != isDirty) {
 			this.isDirty = isDirty;
@@ -212,6 +212,14 @@ public abstract class FXEditor extends EditorPart {
 	@Override
 	public void setFocus() {
 		canvas.setFocus();
+	}
+
+	protected void unhookViewers() {
+		// unregister listener to provide selections
+		if (selectionForwarder != null) {
+			selectionForwarder.dispose();
+			selectionForwarder = null;
+		}
 	}
 
 }

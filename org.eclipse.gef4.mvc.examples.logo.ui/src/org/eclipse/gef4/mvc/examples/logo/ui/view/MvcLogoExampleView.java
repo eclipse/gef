@@ -11,12 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.view;
 
-import java.util.List;
-
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
+import org.eclipse.gef4.mvc.models.ContentModel;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
@@ -28,11 +27,8 @@ public class MvcLogoExampleView extends FXView {
 	public MvcLogoExampleView() {
 		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
 				.with(new MvcLogoExampleUiModule())));
+		// set default contents (GEF logo)
+		getViewer().getAdapter(ContentModel.class)
+				.setContents(MvcLogoExample.createDefaultContents());
 	}
-
-	@Override
-	protected List<? extends Object> getContents() {
-		return MvcLogoExample.createDefaultContents();
-	}
-
 }
