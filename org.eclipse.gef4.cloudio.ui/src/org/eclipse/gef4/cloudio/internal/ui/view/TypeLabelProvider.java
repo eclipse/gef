@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.internal.ui;
+package org.eclipse.gef4.cloudio.internal.ui.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.gef4.cloudio.internal.ui.data.Type;
-import org.eclipse.gef4.cloudio.ui.IEditableCloudLabelProvider;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;

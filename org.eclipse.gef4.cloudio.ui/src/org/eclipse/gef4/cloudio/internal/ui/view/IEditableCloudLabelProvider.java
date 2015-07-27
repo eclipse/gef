@@ -9,10 +9,11 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui.view;
 
 import java.util.List;
 
+import org.eclipse.gef4.cloudio.ui.ICloudLabelProvider;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
@@ -23,7 +24,6 @@ import org.eclipse.swt.graphics.RGB;
  * @author sschwieb
  *
  */
-// TODO: make internal
 public interface IEditableCloudLabelProvider extends ICloudLabelProvider {
 
 	public void setColors(List<RGB> colors);

@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.gef4.cloudio.ui.CloudioUiBundle;
+import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
+import org.eclipse.gef4.cloudio.ui.Word;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -51,7 +54,6 @@ import org.eclipse.swt.widgets.Label;
  * @author sschwieb
  *
  */
-// TODO: move to internal package
 public class CloudOptionsComposite extends Composite {
 	
 	protected TagCloudViewer viewer;
