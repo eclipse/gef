@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 FX Luna Compatibility
 Bundle-SymbolicName: org.eclipse.gef4.fx.compatibility.luna
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-Vendor: Eclipse GEF
-Fragment-Host: org.eclipse.gef4.fx;bundle-version="[0.1.0,1.0.0)"
+Fragment-Host: org.eclipse.gef4.fx;bundle-version="[0.1.0,0.3.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation

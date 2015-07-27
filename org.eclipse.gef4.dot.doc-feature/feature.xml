@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.dot.doc"
       label="GEF4 DOT Documentation"
-      version="0.1.1.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.dot.doc"
       license-feature="org.eclipse.license"
@@ -23,9 +23,9 @@
    <requires>
       <import feature="org.eclipse.gef4.common.doc" version="0.1.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.graph.doc" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.layout.doc" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.zest.doc" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.doc" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.layout.doc" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc.doc" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.zest.doc" version="0.2.0" match="equivalent"/>
    </requires>
 
    <plugin

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.dot.sdk"
       label="GEF4 DOT SDK"
-      version="0.1.1.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -37,11 +37,11 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.gef4.graph.sdk" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.layout.sdk" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.common.sdk" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.sdk" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.graph.sdk" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.layout.sdk" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc.sdk" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.zest.sdk" version="0.2.0" match="equivalent"/>
    </requires>
 
 </feature>

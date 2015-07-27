@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.zest.fx.compatibility.luna"
       label="GEF4 Zest.FX Luna Compatibility"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -20,7 +20,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.zest.fx" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.zest.fx" version="0.1.0" match="compatible"/>
    </requires>
 
    <plugin

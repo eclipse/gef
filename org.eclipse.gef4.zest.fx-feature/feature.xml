@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.zest.fx"
       label="GEF4 Zest.FX"
-      version="0.1.1.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.zest.fx"
       license-feature="org.eclipse.license"
@@ -21,15 +21,15 @@
    </license>
 
    <requires>
+      <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gef4.common" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.fx" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.fx" version="0.2.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.geometry" version="0.1.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.geometry.convert.fx" version="0.1.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.graph" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.layout" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc.fx" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef4.layout" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc.fx" version="0.2.0" match="equivalent"/>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
       <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
       <import plugin="com.google.inject.multibindings" version="3.0.0" match="compatible"/>

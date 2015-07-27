@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.mvc.sdk"
       label="GEF4 MVC SDK"
-      version="0.1.1.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -45,9 +45,9 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.gef4.geometry.sdk" version="0.1.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.fx.sdk" version="0.1.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.common.sdk" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.geometry.sdk" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.fx.sdk" version="0.2.0" match="equivalent"/>
    </requires>
 
 </feature>

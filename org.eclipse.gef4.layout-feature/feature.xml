@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.layout"
       label="GEF4 Layout"
-      version="0.1.1.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.layout"
       license-feature="org.eclipse.license"

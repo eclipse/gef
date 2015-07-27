@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.mvc"
       label="GEF4 MVC"
-      version="0.1.1.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.mvc"
       license-feature="org.eclipse.license"
