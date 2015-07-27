@@ -28,13 +28,13 @@ import org.osgi.framework.BundleContext;
  *
  */
 // TODO: rename to CloudioUiBundle
-public class Activator extends AbstractUIPlugin {
+public class CloudioUiBundle extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.gef4.cloudio"; //$NON-NLS-1$
 
 	// The shared instance
-	private static Activator plugin;
+	private static CloudioUiBundle plugin;
 	
 
 	public static final String ADD = "add.gif";
@@ -47,7 +47,7 @@ public class Activator extends AbstractUIPlugin {
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public CloudioUiBundle() {
 	}
 
 	/*
@@ -84,7 +84,7 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static CloudioUiBundle getDefault() {
 		return plugin;
 	}
 

@@ -177,7 +177,7 @@ public class CloudOptionsComposite extends Composite {
 		fonts.add(getFont().getFontData()[0]);
 		tv.setInput(fonts);
 		Button add = new Button(comp, SWT.FLAT);
-		add.setImage(Activator.getDefault().getImageRegistry().get(Activator.ADD));
+		add.setImage(CloudioUiBundle.getDefault().getImageRegistry().get(CloudioUiBundle.ADD));
 		add.setToolTipText("Add font...");
 		add.addSelectionListener(new SelectionListener() {
 			
@@ -210,7 +210,7 @@ public class CloudOptionsComposite extends Composite {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
-		remove.setImage(Activator.getDefault().getImageRegistry().get(Activator.REMOVE));
+		remove.setImage(CloudioUiBundle.getDefault().getImageRegistry().get(CloudioUiBundle.REMOVE));
 		return buttons;
 	}
 	
@@ -270,7 +270,7 @@ public class CloudOptionsComposite extends Composite {
 		initColors();
 		tv.setInput(colors);
 		Button add = new Button(comp, SWT.FLAT);
-		add.setImage(Activator.getDefault().getImageRegistry().get(Activator.ADD));
+		add.setImage(CloudioUiBundle.getDefault().getImageRegistry().get(CloudioUiBundle.ADD));
 		add.setToolTipText("Add color...");
 		add.addSelectionListener(new SelectionListener() {
 			
@@ -304,7 +304,7 @@ public class CloudOptionsComposite extends Composite {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
-		remove.setImage(Activator.getDefault().getImageRegistry().get(Activator.REMOVE));
+		remove.setImage(CloudioUiBundle.getDefault().getImageRegistry().get(CloudioUiBundle.REMOVE));
 		Button toggle = new Button(comp, SWT.FLAT);
 		toggle.setToolTipText("Toggle Colors");
 		toggle.addSelectionListener(new SelectionListener() {
@@ -319,7 +319,7 @@ public class CloudOptionsComposite extends Composite {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
-		toggle.setImage(Activator.getDefault().getImageRegistry().get(Activator.TOGGLE_COLORS));
+		toggle.setImage(CloudioUiBundle.getDefault().getImageRegistry().get(CloudioUiBundle.TOGGLE_COLORS));
 		
 		comp = new Composite(buttons, SWT.NONE);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
