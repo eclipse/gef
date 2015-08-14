@@ -10,6 +10,8 @@
 		<relativePath>../org.eclipse.gef4.releng/pom.xml</relativePath>
 	</parent>
 	<artifactId>org.eclipse.gef4.repository</artifactId>
+	<groupId>org.eclipse.gef4</groupId>
+	<version>0.2.0-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 	<pluginRepositories>
 		<pluginRepository>
@@ -79,8 +81,7 @@
 								</goals>
 								<configuration>
 									<associateSites>
-										<site>http://download.eclipse.org/releases/luna</site>
-										<site>http://download.eclipse.org/efxclipse/runtime-released/1.0.0/site</site>
+										<site>http://download.eclipse.org/releases/mars</site>
 									</associateSites>
 								</configuration>
 							</execution>
@@ -97,6 +98,4 @@
 			</build>
 		</profile>
 	</profiles>
-	<groupId>org.eclipse.gef4</groupId>
-	<version>0.2.0-SNAPSHOT</version>
 </project>
