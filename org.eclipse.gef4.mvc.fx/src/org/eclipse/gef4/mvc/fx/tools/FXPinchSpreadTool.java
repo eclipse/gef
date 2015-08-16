@@ -72,7 +72,6 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 			AbstractFXPinchSpreadGesture gesture = new AbstractFXPinchSpreadGesture() {
 				@Override
 				protected void zoom(ZoomEvent e) {
-					System.out.println("ZOOM");
 					// the start event might get lost, so we should open a
 					// transaction if one is not already open
 					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
@@ -83,7 +82,6 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 				@Override
 				protected void zoomFinished(ZoomEvent e) {
-					System.out.println("ZOOM FINISH");
 					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoomFinished(e);
@@ -94,7 +92,6 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 				@Override
 				protected void zoomStarted(ZoomEvent e) {
-					System.out.println("ZOOM START");
 					// zoom finish may not occur, so close any preceding
 					// transaction just in case
 

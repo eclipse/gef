@@ -12,6 +12,6 @@
 /**
  * This package provides viewer models to support hiding/unhiding of nodes (
  * {@link org.eclipse.gef4.zest.fx.models.HidingModel}) as well as semantic
- * zooming ({@link org.eclipse.gef4.zest.fx.models.ViewportStackModel}).
+ * zooming ({@link org.eclipse.gef4.zest.fx.models.NavigationModel}).
  */
 package org.eclipse.gef4.zest.fx.models;

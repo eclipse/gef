@@ -42,7 +42,7 @@ public class FXChangeViewportOperation extends AbstractOperation {
 	protected double newTy;
 
 	protected FXChangeViewportOperation(ViewportModel viewportModel) {
-		super("ChangeViewport");
+		super("Change Viewport");
 		readViewport(viewportModel);
 	}
 
@@ -52,28 +52,28 @@ public class FXChangeViewportOperation extends AbstractOperation {
 		this.newTransform = newTransform;
 	}
 
-	public FXChangeViewportOperation(ViewportModel viewportModel,
-			AffineTransform newTransform, double newTx, double newTy) {
+	public FXChangeViewportOperation(ViewportModel viewportModel, double newTx,
+			double newTy) {
 		this(viewportModel);
-		this.newTransform = newTransform;
 		this.newTx = newTx;
 		this.newTy = newTy;
 	}
 
-	public FXChangeViewportOperation(ViewportModel viewportModel,
-			AffineTransform newTransform, double newTx, double newTy,
-			double newWidth, double newHeight) {
+	public FXChangeViewportOperation(ViewportModel viewportModel, double newTx,
+			double newTym, AffineTransform newTransform) {
 		this(viewportModel);
-		this.newWidth = newWidth;
-		this.newHeight = newHeight;
 		this.newTransform = newTransform;
 		this.newTx = newTx;
 		this.newTy = newTy;
 	}
 
 	public FXChangeViewportOperation(ViewportModel viewportModel, double newTx,
-			double newTy) {
+			double newTy, double newWidth, double newHeight,
+			AffineTransform newTransform) {
 		this(viewportModel);
+		this.newWidth = newWidth;
+		this.newHeight = newHeight;
+		this.newTransform = newTransform;
 		this.newTx = newTx;
 		this.newTy = newTy;
 	}

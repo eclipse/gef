@@ -14,12 +14,6 @@ package org.eclipse.gef4.zest.fx.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collections;
-
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -27,12 +21,17 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
+
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.transform.Transform;
 
 // only applicable for NodeContentPart (see #getHost())
+// TODO: refactor into policy -> directly react on zoom level change
 public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 
 	protected double zoomLevel;
@@ -40,12 +39,9 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt
-					.getPropertyName())) {
-				Transform localToSceneTransform = getHost().getVisual()
-						.getLocalToSceneTransform();
-				AffineTransform transform = JavaFX2Geometry
-						.toAffineTransform(localToSceneTransform);
+			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt.getPropertyName())) {
+				Transform localToSceneTransform = getHost().getVisual().getLocalToSceneTransform();
+				AffineTransform transform = JavaFX2Geometry.toAffineTransform(localToSceneTransform);
 				double lastZoomLevel = zoomLevel;
 				zoomLevel = transform.getScaleX();
 				onZoomLevelChange(lastZoomLevel, zoomLevel);
@@ -60,23 +56,17 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 		Graph nestedGraph = getHost().getContent().getNestedGraph();
 		if (nestedGraph != null) {
 			// determine initial zoom level
-			zoomLevel = JavaFX2Geometry.toAffineTransform(
-					getHost().getVisual().getLocalToSceneTransform())
-					.getScaleX();
+			zoomLevel = JavaFX2Geometry.toAffineTransform(getHost().getVisual().getLocalToSceneTransform()).getScaleX();
 			// register viewport listener
-			ViewportModel viewportModel = getHost().getRoot().getViewer()
-					.getAdapter(ViewportModel.class);
-			viewportModel
-					.addPropertyChangeListener(viewportPropertyChangeListener);
+			ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
+			viewportModel.addPropertyChangeListener(viewportPropertyChangeListener);
 		}
 	}
 
 	@Override
 	public void deactivate() {
-		ViewportModel viewportModel = getHost().getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
-		viewportModel
-				.removePropertyChangeListener(viewportPropertyChangeListener);
+		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
+		viewportModel.removePropertyChangeListener(viewportPropertyChangeListener);
 		super.deactivate();
 	}
 
@@ -85,41 +75,34 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 		return (NodeContentPart) super.getHost();
 	}
 
+	protected NavigationPolicy getSemanticZoomPolicy() {
+		return getHost().getRoot().getAdapter(NavigationPolicy.class);
+	}
+
 	protected void onZoomLevelChange(double oldScale, double newScale) {
 		if (oldScale < newScale && newScale > 3) {
 			// determine bounds of host visual
 			Group hostVisual = getHost().getVisual();
-			Bounds boundsInScene = hostVisual.localToScene(hostVisual
-					.getLayoutBounds());
+			Bounds boundsInScene = hostVisual.localToScene(hostVisual.getLayoutBounds());
 			// transform into the viewport coordinate system
-			ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot()
-					.getViewer()).getScrollPane();
+			ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer()).getScrollPane();
 			org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = JavaFX2Geometry
 					.toRectangle(scrollPane.sceneToLocal(boundsInScene));
 			// compute intersection with the viewport
 			org.eclipse.gef4.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef4.geometry.planar.Rectangle(
 					0, 0, scrollPane.getWidth(), scrollPane.getHeight());
-			org.eclipse.gef4.geometry.planar.Rectangle intersected = boundsInViewport
-					.getIntersected(viewportBounds);
+			org.eclipse.gef4.geometry.planar.Rectangle intersected = boundsInViewport.getIntersected(viewportBounds);
 			// only open nested graph if we fill at least the half of the
 			// viewport
 			if (intersected.getArea() > viewportBounds.getArea() / 2) {
-				// reset zoom level
-				ViewportModel viewportModel = getHost().getRoot().getViewer()
-						.getAdapter(ViewportModel.class);
-				ViewportStackModel viewportStackModel = getHost().getRoot()
-						.getViewer().getAdapter(ViewportStackModel.class);
-				viewportStackModel.push(viewportModel);
-				viewportModel.setContentsTransform(new AffineTransform());
-				// replace contents
-				ContentModel contentModel = getHost().getRoot().getViewer()
-						.getAdapter(ContentModel.class);
-				viewportStackModel.addSkipNextLayout((Graph) contentModel
-						.getContents().get(0));
-				contentModel.setContents(Collections.singletonList(getHost()
-						.getContent().getNestedGraph()));
+				final Graph nestedGraph = getHost().getContent().getNestedGraph();
+				if (nestedGraph != null) {
+					NavigationPolicy semanticZoomPolicy = getSemanticZoomPolicy();
+					// semanticZoomPolicy.init();
+					semanticZoomPolicy.openNestedGraph(nestedGraph);
+					// semanticZoomPolicy.commit();
+				}
 			}
 		}
 	}
-
 }

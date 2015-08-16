@@ -13,48 +13,30 @@
 package org.eclipse.gef4.zest.fx.models;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.models.ViewportModel.ViewportState;
 
-public class ViewportStackModel {
+public class NavigationModel {
 
-	private static class ViewportState {
-		public double tx;
-		public double ty;
-		public AffineTransform transform;
+	private Set<Graph> skipNextLayout = Collections.newSetFromMap(new IdentityHashMap<Graph, Boolean>());
+	private Map<Graph, ViewportState> viewportStates = new HashMap<Graph, ViewportState>();
+
+	public NavigationModel() {
 	}
 
-	private Stack<ViewportState> viewportStack = new Stack<ViewportState>();
-	private Set<Graph> skipNextLayout = Collections
-			.newSetFromMap(new IdentityHashMap<Graph, Boolean>());
-
-	public ViewportStackModel() {
-	}
-
+	// TODO: find a more robust way here -> layout should only occur, if size
+	// of viewport/node changes
 	public void addSkipNextLayout(Graph graph) {
 		skipNextLayout.add(graph);
 	}
 
-	public void pop(ViewportModel viewportModel) {
-		if (!viewportStack.isEmpty()) {
-			ViewportState state = viewportStack.pop();
-			viewportModel.setTranslateX(state.tx);
-			viewportModel.setTranslateY(state.ty);
-			viewportModel.setContentsTransform(state.transform);
-		}
-	}
-
-	public void push(ViewportModel viewportModel) {
-		ViewportState state = new ViewportState();
-		state.tx = viewportModel.getTranslateX();
-		state.ty = viewportModel.getTranslateY();
-		state.transform = viewportModel.getContentsTransform();
-		viewportStack.push(state);
+	public ViewportState getViewportState(Graph graph) {
+		return viewportStates.get(graph);
 	}
 
 	/**
@@ -68,4 +50,7 @@ public class ViewportStackModel {
 		return skipNextLayout.remove(graph);
 	}
 
+	public void setViewportState(Graph graph, ViewportState state) {
+		viewportStates.put(graph, state);
+	}
 }

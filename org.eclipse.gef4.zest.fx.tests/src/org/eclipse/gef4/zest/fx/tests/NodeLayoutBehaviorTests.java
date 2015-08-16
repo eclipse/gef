@@ -13,9 +13,6 @@
 package org.eclipse.gef4.zest.fx.tests;
 
 import static org.junit.Assert.assertEquals;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.transform.Affine;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -40,6 +37,10 @@ import org.junit.Test;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.transform.Affine;
+
 public class NodeLayoutBehaviorTests {
 
 	private GraphNodeLayout createNodeLayout() {
@@ -50,8 +51,8 @@ public class NodeLayoutBehaviorTests {
 		return nodeLayout;
 	}
 
-	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location,
-			final Dimension size, final GraphNodeLayout pNodeLayout) {
+	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location, final Dimension size,
+			final GraphNodeLayout pNodeLayout) {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
 			private NodeContentPart host;
 
@@ -61,36 +62,24 @@ public class NodeLayoutBehaviorTests {
 				if (host == null) {
 					host = new NodeContentPart() {
 						{
-							setAdapter(
-									AdapterKey
-											.get(FXResizeRelocatePolicy.class),
-									new FXResizeRelocatePolicy() {
-										@Override
-										public org.eclipse.core.commands.operations.IUndoableOperation commit() {
-											return null;
-										}
-									});
-							setAdapter(AdapterKey.get(FXResizePolicy.class),
-									new FXResizePolicy() {
-										@Override
-										public void init() {
-											resizeOperation = new FXResizeNodeOperation(
-													getHost().getVisual());
-											forwardUndoOperation = new ForwardUndoCompositeOperation(
-													"Resize");
-											forwardUndoOperation
-													.add(resizeOperation);
-										}
-									});
+							setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class), new FXResizeRelocatePolicy() {
+								@Override
+								public org.eclipse.core.commands.operations.IUndoableOperation commit() {
+									return null;
+								}
+							});
+							setAdapter(AdapterKey.get(FXResizePolicy.class), new FXResizePolicy() {
+								@Override
+								public void init() {
+									resizeOperation = new FXResizeNodeOperation(getHost().getVisual());
+									resizeAndRevealOperation = new ForwardUndoCompositeOperation("Resize");
+									resizeAndRevealOperation.add(resizeOperation);
+								}
+							});
 							FXTransformProvider transformProvider = new FXTransformProvider();
-							setAdapter(
-									AdapterKey
-											.get(new TypeToken<Provider<Affine>>() {
-											},
-													FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE),
-									transformProvider);
-							setAdapter(AdapterKey.get(FXTransformPolicy.class),
-									new FXTransformPolicy());
+							setAdapter(AdapterKey.get(new TypeToken<Provider<Affine>>() {
+							}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE), transformProvider);
+							setAdapter(AdapterKey.get(FXTransformPolicy.class), new FXTransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);
 							affine.setTy(location.y);
@@ -130,8 +119,7 @@ public class NodeLayoutBehaviorTests {
 	@Test
 	public void test_adapt() {
 		GraphNodeLayout nodeLayout = createNodeLayout();
-		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(),
-				null, nodeLayout);
+		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(), null, nodeLayout);
 
 		Point location = new Point(1, 5);
 		Dimension size = new Dimension(100, 200);
@@ -145,12 +133,10 @@ public class NodeLayoutBehaviorTests {
 		 * corner, therefore we expect <code>translate-xy = location - size /
 		 * 2</code>.
 		 */
-		Affine affine = behavior.getHost().getAdapter(FXTransformPolicy.class)
-				.getNodeTransform();
+		Affine affine = behavior.getHost().getAdapter(FXTransformPolicy.class).getNodeTransform();
 		// FIXME: as size is not set (in case there are no child nodes), this
 		// seems to be invalid
-		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(
-				affine.getTx(), affine.getTy()));
+		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(affine.getTx(), affine.getTy()));
 		// TODO: fixme assertEquals(size, new
 		// Dimension(visual.getLayoutBounds().getWidth(),
 		// visual.getLayoutBounds().getHeight()));
@@ -162,21 +148,18 @@ public class NodeLayoutBehaviorTests {
 
 		// setup with non-resizable figure
 		GraphNodeLayout nodeLayout = createNodeLayout();
-		NodeLayoutBehavior behavior = createNodeLayoutBehavior(location, null,
-				nodeLayout);
+		NodeLayoutBehavior behavior = createNodeLayoutBehavior(location, null, nodeLayout);
 		Group visual = behavior.getHost().getVisual();
 
 		behavior.provideLayoutInformation();
 
-		assertEquals(visual.isResizable(),
-				LayoutProperties.isResizable(nodeLayout));
+		assertEquals(visual.isResizable(), LayoutProperties.isResizable(nodeLayout));
 
 		// TODO: check whether this is correct
 		Bounds layoutBounds = visual.getLayoutBounds();
-		assertEquals(location, LayoutProperties.getLocation(nodeLayout)
-				.translate(-layoutBounds.getMinX(), -layoutBounds.getMinY()));
-		assertEquals(
-				new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()),
+		assertEquals(location,
+				LayoutProperties.getLocation(nodeLayout).translate(-layoutBounds.getMinX(), -layoutBounds.getMinY()));
+		assertEquals(new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()),
 				LayoutProperties.getSize(nodeLayout));
 
 		// TODO: test with resizable figure as well

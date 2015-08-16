@@ -100,7 +100,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 				getHost().getContent());
 		if (nodeLayout == null) {
 			throw new IllegalStateException(
-					"Cannot find INodeLayout in LayoutModel.");
+					"Cannot find INodeLayout in NavigationModel.");
 		}
 		return nodeLayout;
 	}

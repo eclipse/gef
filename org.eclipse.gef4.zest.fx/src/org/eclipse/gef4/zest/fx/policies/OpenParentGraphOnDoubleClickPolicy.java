@@ -12,40 +12,36 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
-import java.util.Collections;
-
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.zest.fx.models.ViewportStackModel;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
+
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
 		if (e.getClickCount() == 2) {
-			// double click
+			// double click, so open nesting graph, if it exists
+			ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
+			if (contentModel == null) {
+				throw new IllegalArgumentException("ContentModel could not be obtained!");
+			}
 
-			ContentModel contentModel = getHost().getViewer().getAdapter(
-					ContentModel.class);
-			Graph graph = (Graph) contentModel.getContents().get(0);
-			if (graph.getNestingNode() != null) {
-				// reset zoom level
-				ViewportModel viewportModel = getHost().getRoot().getViewer()
-						.getAdapter(ViewportModel.class);
-				ViewportStackModel viewportStackModel = getHost().getRoot()
-						.getViewer().getAdapter(ViewportStackModel.class);
-				viewportStackModel.pop(viewportModel);
+			final Graph currentGraph = (Graph) contentModel.getContents().get(0);
+			final Graph nestingGraph = currentGraph.getNestingNode() != null ? currentGraph.getNestingNode().getGraph()
+					: null;
 
-				// change contents
-				Graph parentGraph = graph.getNestingNode().getGraph();
-				viewportStackModel.addSkipNextLayout(graph);
-				contentModel
-						.setContents(Collections.singletonList(parentGraph));
+			if (nestingGraph != null) {
+				IDomain<Node> domain = getHost().getRoot().getViewer().getDomain();
+				NavigationPolicy navigationPolicy = getHost().getRoot().getAdapter(NavigationPolicy.class);
+				navigationPolicy.init();
+				navigationPolicy.openNestingGraph(nestingGraph);
+				domain.execute(navigationPolicy.commit());
 			}
 		}
 	}
@@ -54,5 +50,4 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 	public GraphRootPart getHost() {
 		return (GraphRootPart) super.getHost();
 	}
-
 }

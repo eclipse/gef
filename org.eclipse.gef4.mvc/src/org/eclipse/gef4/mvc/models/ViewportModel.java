@@ -24,18 +24,128 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 public class ViewportModel implements IPropertyChangeNotifier {
 
 	/*
-	 * TODO: Store x, y, width, and height relative to the underlying contents.
+	 * TODO: Store translateX, translateY, width, and height relative to the
+	 * underlying contents.
 	 */
+	/**
+	 * Representation of a viewport's state, which manifests itself in x and y
+	 * translation, width and height, as well as a contents transform.
+	 *
+	 * @author anyssen
+	 *
+	 */
+	public static class ViewportState {
+
+		private double translateX = 0;
+		private double translateY = 0;
+		private double width = 0;
+		private double height = 0;
+		private AffineTransform contentsTransform = null;
+
+		public ViewportState() {
+			this(0, 0, 0, 0, new AffineTransform());
+		}
+
+		public ViewportState(double translateX, double translateY, double width,
+				double height, AffineTransform contentsTransform) {
+			this.translateX = translateX;
+			this.translateY = translateY;
+			this.width = width;
+			this.height = height;
+			this.contentsTransform = contentsTransform;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			ViewportState other = (ViewportState) obj;
+			if (contentsTransform == null) {
+				if (other.contentsTransform != null) {
+					return false;
+				}
+			} else if (!contentsTransform.equals(other.contentsTransform)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(height) != Double
+					.doubleToLongBits(other.height)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(translateX) != Double
+					.doubleToLongBits(other.translateX)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(translateY) != Double
+					.doubleToLongBits(other.translateY)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(width) != Double
+					.doubleToLongBits(other.width)) {
+				return false;
+			}
+			return true;
+		}
+
+		public AffineTransform getContentsTransform() {
+			return contentsTransform;
+		}
+
+		public ViewportState getCopy() {
+			return new ViewportState(translateX, translateY, width, height,
+					contentsTransform.getCopy());
+		}
+
+		public double getHeight() {
+			return height;
+		}
+
+		public double getTranslateX() {
+			return translateX;
+		}
+
+		public double getTranslateY() {
+			return translateY;
+		}
+
+		public double getWidth() {
+			return width;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((contentsTransform == null) ? 0
+					: contentsTransform.hashCode());
+			long temp;
+			temp = Double.doubleToLongBits(height);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(translateX);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(translateY);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(width);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+	}
 
 	/**
-	 * When the viewport x-position changes, this is the property name reported
-	 * by a corresponding property change event.
+	 * When the viewport translateX-position changes, this is the property name
+	 * reported by a corresponding property change event.
 	 */
 	public static final String VIEWPORT_TRANSLATE_X_PROPERTY = "viewportTranslateX";
 
 	/**
-	 * When the viewport y-position changes, this is the property name reported
-	 * by a corresponding property change event.
+	 * When the viewport translateY-position changes, this is the property name
+	 * reported by a corresponding property change event.
 	 */
 	public static final String VIEWPORT_TRANSLATE_Y_PROPERTY = "viewportTranslateY";
 
@@ -57,17 +167,36 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 */
 	public static final String VIEWPORT_CONTENTS_TRANSFORM_PROPERTY = "viewportContentsTransform";
 
+	private ViewportState state = new ViewportState();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-	private double x = 0;
-	private double y = 0;
-	private double width = 0;
-	private double height = 0;
-	private AffineTransform contentsTx = new AffineTransform();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
+	}
+
+	public void applyState(ViewportState state, boolean ignoreTranslateX,
+			boolean ignoreTranslateY, boolean ignoreWidth, boolean ignoreHeight,
+			boolean ignoreContentsTransform) {
+		// System.out.println("APPLY: (" + state.translateX + ", " +
+		// state.translateY
+		// + ", " + state.width + ", " + state.height + ") -> "
+		// + state.contentsTransform);
+		if (!ignoreTranslateX) {
+			setTranslateX(state.translateX);
+		}
+		if (!ignoreTranslateY) {
+			setTranslateY(state.translateY);
+		}
+		if (!ignoreWidth) {
+			setWidth(state.width);
+		}
+		if (!ignoreHeight) {
+			setHeight(state.height);
+		}
+		if (!ignoreContentsTransform) {
+			setContentsTransform(state.contentsTransform);
+		}
 	}
 
 	/**
@@ -76,7 +205,7 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 * @return The contents transformation.
 	 */
 	public AffineTransform getContentsTransform() {
-		return contentsTx.getCopy();
+		return state.contentsTransform.getCopy();
 	}
 
 	/**
@@ -86,7 +215,7 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 * @return height of current viewport
 	 */
 	public double getHeight() {
-		return height;
+		return state.height;
 	}
 
 	/**
@@ -95,7 +224,7 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 * @return The horizontal translation.
 	 */
 	public double getTranslateX() {
-		return x;
+		return state.translateX;
 	}
 
 	/**
@@ -104,7 +233,7 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 * @return The vertical translation.
 	 */
 	public double getTranslateY() {
-		return y;
+		return state.translateY;
 	}
 
 	/**
@@ -114,12 +243,39 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 * @return width of current viewport
 	 */
 	public double getWidth() {
-		return width;
+		return state.width;
 	}
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
+	}
+
+	public ViewportState retrieveState(boolean ignoreTranslateX,
+			boolean ignoreTranslateY, boolean ignoreWidth, boolean ignoreHeight,
+			boolean ignoreContentsTransform) {
+		ViewportState state = new ViewportState(getTranslateX(),
+				getTranslateY(), getWidth(), getHeight(),
+				getContentsTransform());
+		if (ignoreTranslateX) {
+			state.translateX = 0;
+		}
+		if (ignoreTranslateY) {
+			state.translateY = 0;
+		}
+		if (ignoreWidth) {
+			state.width = 0;
+		}
+		if (ignoreHeight) {
+			state.height = 0;
+		}
+		if (ignoreContentsTransform) {
+			state.contentsTransform = new AffineTransform();
+		}
+		// System.out.println("OBTAIN: (" + state.translateX + ", "
+		// + state.translateY + ", " + state.width + ", " + state.height
+		// + ") -> " + state.contentsTransform);
+		return state;
 	}
 
 	/**
@@ -129,11 +285,12 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 *            The new contents transformation.
 	 */
 	public void setContentsTransform(AffineTransform contentsTransform) {
-		if (!contentsTx.equals(contentsTransform)) {
-			AffineTransform oldTx = contentsTx.getCopy();
-			contentsTx = contentsTransform.getCopy();
+		if (!state.contentsTransform.equals(contentsTransform)) {
+			AffineTransform oldTx = state.contentsTransform.getCopy();
+			state.contentsTransform = contentsTransform.getCopy();
+			// System.out.println("SET TRANSFORM: " + contentsTransform);
 			pcs.firePropertyChange(VIEWPORT_CONTENTS_TRANSFORM_PROPERTY, oldTx,
-					contentsTx);
+					state.contentsTransform);
 		}
 	}
 
@@ -151,9 +308,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 *            new viewport height
 	 */
 	public void setHeight(double height) {
-		double oldHeight = this.height;
-		this.height = height;
+		double oldHeight = this.state.height;
 		if (oldHeight != height) {
+			this.state.height = height;
 			pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
 		}
 	}
@@ -161,28 +318,30 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	/**
 	 * Sets the horizontal translation of the contents in this model.
 	 *
-	 * @param x
+	 * @param translateX
 	 *            The new horizontal translation.
 	 */
-	public void setTranslateX(double x) {
-		double oldX = this.x;
-		this.x = x;
-		if (oldX != x) {
-			pcs.firePropertyChange(VIEWPORT_TRANSLATE_X_PROPERTY, oldX, x);
+	public void setTranslateX(double translateX) {
+		double oldTx = this.state.translateX;
+		if (oldTx != translateX) {
+			this.state.translateX = translateX;
+			pcs.firePropertyChange(VIEWPORT_TRANSLATE_X_PROPERTY, oldTx,
+					translateX);
 		}
 	}
 
 	/**
 	 * Sets the vertical translation of the contents in this model.
 	 *
-	 * @param y
+	 * @param translateY
 	 *            The new vertical translation.
 	 */
-	public void setTranslateY(double y) {
-		double oldY = this.y;
-		this.y = y;
-		if (oldY != y) {
-			pcs.firePropertyChange(VIEWPORT_TRANSLATE_Y_PROPERTY, oldY, y);
+	public void setTranslateY(double translateY) {
+		double oldTy = this.state.translateY;
+		if (oldTy != translateY) {
+			this.state.translateY = translateY;
+			pcs.firePropertyChange(VIEWPORT_TRANSLATE_Y_PROPERTY, oldTy,
+					translateY);
 		}
 	}
 
@@ -200,9 +359,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 *            new viewport width
 	 */
 	public void setWidth(double width) {
-		double oldWidth = this.width;
-		this.width = width;
+		double oldWidth = this.state.width;
 		if (oldWidth != width) {
+			this.state.width = width;
 			pcs.firePropertyChange(VIEWPORT_WIDTH_PROPERTY, oldWidth, width);
 		}
 	}
