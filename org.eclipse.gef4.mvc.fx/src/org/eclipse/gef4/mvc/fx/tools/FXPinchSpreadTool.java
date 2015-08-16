@@ -17,10 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.event.EventTarget;
-import javafx.scene.Node;
-import javafx.scene.input.ZoomEvent;
-
 import org.eclipse.gef4.fx.gestures.AbstractFXPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnPinchSpreadPolicy;
@@ -28,6 +24,10 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import javafx.event.EventTarget;
+import javafx.scene.Node;
+import javafx.scene.input.ZoomEvent;
 
 public class FXPinchSpreadTool extends AbstractTool<Node> {
 
@@ -72,8 +72,9 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 			AbstractFXPinchSpreadGesture gesture = new AbstractFXPinchSpreadGesture() {
 				@Override
 				protected void zoom(ZoomEvent e) {
-					getDomain()
-							.openExecutionTransaction(FXPinchSpreadTool.this);
+					System.out.println("ZOOM");
+					// the start event might get lost, so we should open a
+					// transaction if one is not already open
 					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoom(e);
@@ -82,20 +83,32 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 				@Override
 				protected void zoomFinished(ZoomEvent e) {
+					System.out.println("ZOOM FINISH");
 					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoomFinished(e);
 					}
+					getDomain()
+							.closeExecutionTransaction(FXPinchSpreadTool.this);
 				}
 
 				@Override
 				protected void zoomStarted(ZoomEvent e) {
+					System.out.println("ZOOM START");
+					// zoom finish may not occur, so close any preceding
+					// transaction just in case
+
+					if (!getDomain().isExecutionTransactionOpen(
+							FXPinchSpreadTool.this)) {
+						// finish event may not properly occur in all cases; we
+						// may continue to use the still open transaction
+						getDomain().openExecutionTransaction(
+								FXPinchSpreadTool.this);
+					}
 					for (AbstractFXOnPinchSpreadPolicy policy : getTargetPolicies(
 							viewer, e)) {
 						policy.zoomStarted(e);
 					}
-					getDomain().closeExecutionTransaction(
-							FXPinchSpreadTool.this);
 				}
 			};
 			gesture.setScene(((FXViewer) viewer).getScene());
