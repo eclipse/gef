@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+// TODO: init label when adding nested operations
 public class ReverseUndoCompositeOperation extends AbstractCompositeOperation {
 
 	public ReverseUndoCompositeOperation(String label) {
@@ -30,8 +31,8 @@ public class ReverseUndoCompositeOperation extends AbstractCompositeOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		ListIterator<IUndoableOperation> li = getOperations().listIterator(
-				getOperations().size());
+		ListIterator<IUndoableOperation> li = getOperations()
+				.listIterator(getOperations().size());
 		while (li.hasPrevious()) {
 			status = combine(status, li.previous().undo(monitor, info));
 		}

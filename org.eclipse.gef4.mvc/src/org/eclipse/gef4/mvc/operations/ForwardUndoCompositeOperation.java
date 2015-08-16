@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
+//TODO: init label when adding nested operations
 public class ForwardUndoCompositeOperation extends AbstractCompositeOperation {
 
 	public ForwardUndoCompositeOperation(String label) {
