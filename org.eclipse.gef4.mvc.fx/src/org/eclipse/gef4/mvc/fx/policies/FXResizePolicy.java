@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -24,20 +21,23 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public class FXResizePolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+
+public class FXResizePolicy extends AbstractPolicy<Node>
+		implements ITransactional {
 
 	protected FXResizeNodeOperation resizeOperation;
-	protected ForwardUndoCompositeOperation forwardUndoOperation;
+	protected ForwardUndoCompositeOperation resizeAndRevealOperation;
 
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
 	public IUndoableOperation commit() {
-		/*
-		 * TODO: Take out any "empty" operations.
-		 */
-		IUndoableOperation commit = forwardUndoOperation;
-		forwardUndoOperation = null;
+		IUndoableOperation commit = null;
+		if (resizeOperation.hasEffect()) {
+			commit = resizeAndRevealOperation;
+		}
+		resizeAndRevealOperation = null;
 		resizeOperation = null;
 		return commit;
 	}
@@ -70,11 +70,10 @@ public class FXResizePolicy extends AbstractPolicy<Node> implements
 		Node visualToResize = getVisualToResize();
 		resizeOperation = new FXResizeNodeOperation("Resize", visualToResize,
 				getInitialSize(visualToResize), 0, 0);
-		FXRevealOperation revealOperation = new FXRevealOperation(getHost());
-		forwardUndoOperation = new ForwardUndoCompositeOperation(
+		resizeAndRevealOperation = new ForwardUndoCompositeOperation(
 				resizeOperation.getLabel());
-		forwardUndoOperation.add(resizeOperation);
-		forwardUndoOperation.add(revealOperation);
+		resizeAndRevealOperation.add(resizeOperation);
+		resizeAndRevealOperation.add(new FXRevealOperation(getHost()));
 	}
 
 	public void performResize(double dw, double dh) {
@@ -87,11 +86,13 @@ public class FXResizePolicy extends AbstractPolicy<Node> implements
 
 		// ensure visual is not resized below threshold
 		if (resizable) {
-			if (resizeOperation.getOldSize().width + layoutDw < getMinimumWidth()) {
+			if (resizeOperation.getOldSize().width
+					+ layoutDw < getMinimumWidth()) {
 				layoutDw = getMinimumWidth()
 						- resizeOperation.getOldSize().width;
 			}
-			if (resizeOperation.getOldSize().height + layoutDh < getMinimumHeight()) {
+			if (resizeOperation.getOldSize().height
+					+ layoutDh < getMinimumHeight()) {
 				layoutDh = getMinimumHeight()
 						- resizeOperation.getOldSize().height;
 			}
@@ -101,7 +102,7 @@ public class FXResizePolicy extends AbstractPolicy<Node> implements
 
 		// locally execute operation
 		try {
-			forwardUndoOperation.execute(null, null);
+			resizeAndRevealOperation.execute(null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}

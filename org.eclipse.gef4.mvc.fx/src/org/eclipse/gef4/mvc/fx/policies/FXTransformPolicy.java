@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.scene.Node;
-import javafx.scene.transform.Affine;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -29,8 +26,13 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-public class FXTransformPolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+import javafx.scene.Node;
+import javafx.scene.transform.Affine;
+
+public class FXTransformPolicy extends AbstractPolicy<Node>
+		implements ITransactional {
+
+	public static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
 
 	protected static Dimension getSnapToGridOffset(GridModel gridModel,
 			final double localX, final double localY,
@@ -61,15 +63,16 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 		return new Dimension(snapOffsetX, snapOffsetY);
 	}
 
-	public static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
-
 	private FXTransformOperation transformOperation;
 	private AffineTransform oldTransform;
 	private Affine nodeTransform;
 
 	@Override
 	public IUndoableOperation commit() {
-		IUndoableOperation commit = transformOperation;
+		IUndoableOperation commit = null;
+		if (transformOperation.hasEffect()) {
+			commit = transformOperation;
+		}
 		transformOperation = null;
 		oldTransform = null;
 		return commit;
@@ -88,8 +91,8 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 	@Override
 	public void init() {
 		transformOperation = new FXTransformOperation(getNodeTransform());
-		oldTransform = JavaFX2Geometry.toAffineTransform(transformOperation
-				.getOldTransform());
+		oldTransform = JavaFX2Geometry
+				.toAffineTransform(transformOperation.getOldTransform());
 	}
 
 	public void setConcatenation(AffineTransform transform) {
@@ -102,18 +105,18 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 
 	public void setTransform(AffineTransform newTransform) {
 		// snap to grid if needed (TODO: check that this is correct)
-		Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
-				.getViewer().getAdapter(GridModel.class),
-				newTransform.getTranslateX(), newTransform.getTranslateY(),
-				0.5, 0.5);
+		Dimension snapToGridOffset = getSnapToGridOffset(
+				getHost().getRoot().getViewer().getAdapter(GridModel.class),
+				newTransform.getTranslateX(), newTransform.getTranslateY(), 0.5,
+				0.5);
 		newTransform.setTransform(newTransform.getM00(), newTransform.getM10(),
 				newTransform.getM01(), newTransform.getM11(),
 				newTransform.getTranslateX() - snapToGridOffset.width,
 				newTransform.getTranslateY() - snapToGridOffset.height);
 
 		// update operation
-		transformOperation.setNewTransform(Geometry2JavaFX
-				.toFXAffine(newTransform));
+		transformOperation
+				.setNewTransform(Geometry2JavaFX.toFXAffine(newTransform));
 
 		// locally execute operation
 		try {

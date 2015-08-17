@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
-import javafx.scene.transform.Affine;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -20,7 +18,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import javafx.scene.transform.Affine;
+
 public class FXTransformOperation extends AbstractOperation {
+
+	protected static boolean equals(Affine a1, Affine a2) {
+		// Affine does not properly implement equals, so we have to implement
+		// that here
+		return a1.getMxx() == a2.getMxx() && a1.getMxy() == a2.getMxy()
+				&& a1.getMxz() == a2.getMxz() && a1.getMyx() == a2.getMyx()
+				&& a1.getMyy() == a2.getMyy() && a1.getMyz() == a2.getMyz()
+				&& a1.getMzx() == a2.getMzx() && a1.getMzy() == a2.getMzy()
+				&& a1.getMzz() == a2.getMzz() && a1.getTx() == a2.getTx()
+				&& a1.getTy() == a2.getTy() && a1.getTz() == a2.getTz();
+	}
 
 	protected static Affine setAffine(Affine dst, Affine src) {
 		dst.setMxx(src.getMxx());
@@ -39,8 +50,8 @@ public class FXTransformOperation extends AbstractOperation {
 	}
 
 	private final Affine nodeTransform;
-	private Affine oldTransform;
 
+	private Affine oldTransform;
 	private Affine newTransform;
 
 	public FXTransformOperation(Affine nodeTransform) {
@@ -78,6 +89,10 @@ public class FXTransformOperation extends AbstractOperation {
 
 	public Affine getOldTransform() {
 		return oldTransform;
+	}
+
+	public boolean hasEffect() {
+		return !equals(newTransform, oldTransform);
 	}
 
 	@Override

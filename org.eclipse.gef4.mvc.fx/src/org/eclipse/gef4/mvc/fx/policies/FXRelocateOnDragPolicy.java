@@ -13,15 +13,15 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
 
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 
@@ -33,14 +33,14 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				Node visual = part.getVisual();
-				Point2D initialPosInParent = visual.localToParent(visual
-						.sceneToLocal(Geometry2JavaFX
+				Point2D initialPosInParent = visual
+						.localToParent(visual.sceneToLocal(Geometry2JavaFX
 								.toFXPoint(getInitialMouseLocationInScene())));
-				Point2D currentPosInParent = visual.localToParent(visual
-						.sceneToLocal(e.getSceneX(), e.getSceneY()));
-				Point2D deltaPoint = new Point2D(currentPosInParent.getX()
-						- initialPosInParent.getX(), currentPosInParent.getY()
-						- initialPosInParent.getY());
+				Point2D currentPosInParent = visual.localToParent(
+						visual.sceneToLocal(e.getSceneX(), e.getSceneY()));
+				Point2D deltaPoint = new Point2D(
+						currentPosInParent.getX() - initialPosInParent.getX(),
+						currentPosInParent.getY() - initialPosInParent.getY());
 				policy.performResizeRelocate(deltaPoint.getX(),
 						deltaPoint.getY(), 0, 0);
 			}

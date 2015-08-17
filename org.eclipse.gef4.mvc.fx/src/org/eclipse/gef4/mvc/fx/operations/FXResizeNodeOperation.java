@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -21,6 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.planar.Dimension;
+
+import javafx.scene.Node;
 
 public class FXResizeNodeOperation extends AbstractOperation {
 
@@ -34,8 +34,10 @@ public class FXResizeNodeOperation extends AbstractOperation {
 	}
 
 	public FXResizeNodeOperation(Node visual, double dw, double dh) {
-		this("Resize", visual, new Dimension(visual.getLayoutBounds()
-				.getWidth(), visual.getLayoutBounds().getHeight()), dw, dh);
+		this("Resize", visual,
+				new Dimension(visual.getLayoutBounds().getWidth(),
+						visual.getLayoutBounds().getHeight()),
+				dw, dh);
 	}
 
 	/**
@@ -91,6 +93,10 @@ public class FXResizeNodeOperation extends AbstractOperation {
 
 	public Node getVisual() {
 		return visual;
+	}
+
+	public boolean hasEffect() {
+		return dw != 0 && dh != 0;
 	}
 
 	@Override
