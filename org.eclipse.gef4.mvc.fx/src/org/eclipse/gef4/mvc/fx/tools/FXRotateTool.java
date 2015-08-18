@@ -17,10 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.event.EventTarget;
-import javafx.scene.Node;
-import javafx.scene.input.RotateEvent;
-
 import org.eclipse.gef4.fx.gestures.AbstractFXRotateGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnRotatePolicy;
@@ -29,8 +25,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.event.EventTarget;
+import javafx.scene.Node;
+import javafx.scene.input.RotateEvent;
+
 public class FXRotateTool extends AbstractTool<Node> {
 
+	// TODO: Rename to ON_ROTATE_POLICY_KEY
 	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
 
 	private final Map<IViewer<Node>, AbstractFXRotateGesture> gestures = new HashMap<IViewer<Node>, AbstractFXRotateGesture>();
@@ -38,10 +39,12 @@ public class FXRotateTool extends AbstractTool<Node> {
 	public FXRotateTool() {
 	}
 
+	// TODO: Rename to getOnRotatePolicies()
 	protected Set<? extends AbstractFXOnRotatePolicy> getRotatePolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart.<AbstractFXOnRotatePolicy> getAdapters(
-				TOOL_POLICY_KEY).values());
+		return new HashSet<>(targetPart
+				.<AbstractFXOnRotatePolicy> getAdapters(TOOL_POLICY_KEY)
+				.values());
 	}
 
 	protected Set<? extends AbstractFXOnRotatePolicy> getTargetPolicies(
@@ -84,10 +87,12 @@ public class FXRotateTool extends AbstractTool<Node> {
 							viewer, event)) {
 						policy.rotationFinished(event);
 					}
+					getDomain().closeExecutionTransaction(FXRotateTool.this);
 				}
 
 				@Override
 				protected void rotationStarted(RotateEvent event) {
+					getDomain().openExecutionTransaction(FXRotateTool.this);
 					for (AbstractFXOnRotatePolicy policy : getTargetPolicies(
 							viewer, event)) {
 						policy.rotationStarted(event);
