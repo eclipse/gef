@@ -4,10 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
@@ -25,7 +24,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
-public class FXClickDragToolTests {
+public class FXTypeToolTests {
 
 	/**
 	 * Ensure all tests are executed on the JavaFX application thread (and the
@@ -51,12 +50,10 @@ public class FXClickDragToolTests {
 	}
 
 	/**
-	 * It is important that a single execution transaction (see
+	 * It is important that a (single) execution transaction (see
 	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef4.mvc.tools.ITool)}
-	 * ) is used for a complete click/drag interaction gesture, because
-	 * otherwise the transactional results of the gesture could not be undone in
-	 * a single step, as it would result in more than one operation within the
-	 * domain's {@link IOperationHistory}.
+	 * ) is used for a complete press/drag interaction gesture, because
+	 * otherwise the transactional results of the gesture could not be undone.
 	 */
 	@Test
 	public void singleExecutionTransactionUsedForInteraction()
@@ -86,33 +83,17 @@ public class FXClickDragToolTests {
 		// create robot to simulate events
 		Robot robot = new Robot();
 
-		// simulate click gesture
+		// simulate press/release gesture
 		domain.openedExecutionTransactions = 0;
 		domain.closedExecutionTransactions = 0;
 		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mousePress(InputEvent.BUTTON1_MASK);
+		robot.keyPress(KeyEvent.VK_K);
 		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mouseRelease(InputEvent.BUTTON1_MASK);
+		robot.keyRelease(KeyEvent.VK_K);
 		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
 		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
-
-		// simulate click/drag gesture
-		domain.openedExecutionTransactions = 0;
-		domain.closedExecutionTransactions = 0;
-		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mousePress(InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mouseMove(20, 20);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mouseRelease(InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
-
 	}
 
 }
