@@ -14,15 +14,16 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
-import org.eclipse.gef4.mvc.models.FocusModel;
-import org.eclipse.gef4.mvc.tools.AbstractTool;
-import org.eclipse.gef4.mvc.viewer.IViewer;
-
+// This tool should be removed. Focus is no user interaction with the viewer. The viewer should rather react to focus.
 public class FXFocusTool extends AbstractTool<Node> {
 
 	private final Map<IViewer<Node>, ChangeListener<? super Boolean>> viewerFocusListenerMap = new HashMap<IViewer<Node>, ChangeListener<? super Boolean>>();
@@ -43,7 +44,8 @@ public class FXFocusTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = viewer.getRootPart().getVisual().getScene();
-			ChangeListener<? super Boolean> listener = createWindowFocusedChangeListener(viewer);
+			ChangeListener<? super Boolean> listener = createWindowFocusedChangeListener(
+					viewer);
 			viewerFocusListenerMap.put(viewer, listener);
 			scene.windowProperty().get().focusedProperty()
 					.addListener(listener);

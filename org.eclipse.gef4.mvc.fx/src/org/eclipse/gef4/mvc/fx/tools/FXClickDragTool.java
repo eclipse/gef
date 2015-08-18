@@ -68,11 +68,13 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	 * The typeKey used to retrieve those policies that are able to handle the
 	 * click part of the click/drag interaction gesture.
 	 */
+	// TODO: Rename to ON_CLICK_POLICY_KEY
 	public static final Class<AbstractFXOnClickPolicy> CLICK_TOOL_POLICY_KEY = AbstractFXOnClickPolicy.class;
 	/**
 	 * The typeKey used to retrieve those policies that are able to handle the
 	 * drag part of the click/drag interaction gesture.
 	 */
+	// TODO: Rename to ON_DRAG_POLICY_KEY
 	public static final Class<AbstractFXOnDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXOnDragPolicy.class;
 
 	private final Map<IViewer<Node>, AbstractFXMouseDragGesture> gestures = new HashMap<IViewer<Node>, AbstractFXMouseDragGesture>();
@@ -80,6 +82,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXOnDragPolicy, MouseEvent>();
 	private Map<EventTarget, IVisualPart<Node, ? extends Node>> interactionTargetOverrides = new HashMap<EventTarget, IVisualPart<Node, ? extends Node>>();
 
+	// TODO: Rename to getOnClickPolicies()
 	protected Set<? extends AbstractFXOnClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<AbstractFXOnClickPolicy>(targetPart
@@ -87,6 +90,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				.values());
 	}
 
+	// TODO: Rename to getOnDragPolicies()
 	protected Set<? extends AbstractFXOnDragPolicy> getDragPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<AbstractFXOnDragPolicy>(targetPart

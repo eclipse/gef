@@ -19,12 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.event.EventHandler;
-import javafx.event.EventTarget;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -32,13 +26,21 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.event.EventHandler;
+import javafx.event.EventTarget;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+
 public class FXHoverTool extends AbstractTool<Node> {
 
+	// TODO: Rename to ON_HOVER_POLICY_KEY
 	public static final Class<AbstractFXOnHoverPolicy> TOOL_POLICY_KEY = AbstractFXOnHoverPolicy.class;
 
 	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<FXViewer, EventHandler<MouseEvent>>();
 
-	protected EventHandler<MouseEvent> createHoverFilter(final FXViewer viewer) {
+	protected EventHandler<MouseEvent> createHoverFilter(
+			final FXViewer viewer) {
 		return new EventHandler<MouseEvent>() {
 			protected Collection<? extends AbstractFXOnHoverPolicy> getTargetPolicies(
 					final MouseEvent event) {
@@ -75,19 +77,21 @@ public class FXHoverTool extends AbstractTool<Node> {
 					targetPart = viewer.getRootPart();
 				}
 
-				Collection<? extends AbstractFXOnHoverPolicy> policies = getHoverPolicies(targetPart);
+				Collection<? extends AbstractFXOnHoverPolicy> policies = getHoverPolicies(
+						targetPart);
 				return policies;
 			}
 
 			@Override
 			public void handle(MouseEvent event) {
 				if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
-						&& !event.getEventType().equals(
-								MouseEvent.MOUSE_DRAGGED)) {
+						&& !event.getEventType()
+								.equals(MouseEvent.MOUSE_DRAGGED)) {
 					return;
 				}
 
-				Collection<? extends AbstractFXOnHoverPolicy> policies = getTargetPolicies(event);
+				Collection<? extends AbstractFXOnHoverPolicy> policies = getTargetPolicies(
+						event);
 				for (AbstractFXOnHoverPolicy policy : policies) {
 					policy.hover(event);
 				}
@@ -95,17 +99,20 @@ public class FXHoverTool extends AbstractTool<Node> {
 		};
 	}
 
+	// TODO: Rename to getOnHoverPolicies()
 	protected Set<? extends AbstractFXOnHoverPolicy> getHoverPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart.<AbstractFXOnHoverPolicy> getAdapters(
-				TOOL_POLICY_KEY).values());
+		return new HashSet<>(targetPart
+				.<AbstractFXOnHoverPolicy> getAdapters(TOOL_POLICY_KEY)
+				.values());
 	}
 
 	@Override
 	protected void registerListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
-				EventHandler<MouseEvent> hoverFilter = createHoverFilter((FXViewer) viewer);
+				EventHandler<MouseEvent> hoverFilter = createHoverFilter(
+						(FXViewer) viewer);
 				hoverFilters.put((FXViewer) viewer, hoverFilter);
 				viewer.getRootPart().getVisual().getScene()
 						.addEventFilter(MouseEvent.ANY, hoverFilter);

@@ -31,6 +31,7 @@ import javafx.scene.input.ZoomEvent;
 
 public class FXPinchSpreadTool extends AbstractTool<Node> {
 
+	// TODO: Rename to ON_PINCH_SPREAD_POLICY_KEY
 	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
 
 	private final Map<IViewer<Node>, AbstractFXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractFXPinchSpreadGesture>();
@@ -38,6 +39,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	public FXPinchSpreadTool() {
 	}
 
+	// TODO: Rename to getOnPinchSpreachPolicies()
 	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getPinchSpreadPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<>(targetPart
@@ -97,6 +99,8 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 					if (!getDomain().isExecutionTransactionOpen(
 							FXPinchSpreadTool.this)) {
+						// TODO: this case should already be handled by the
+						// underlying gesture
 						// finish event may not properly occur in all cases; we
 						// may continue to use the still open transaction
 						getDomain().openExecutionTransaction(
