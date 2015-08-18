@@ -18,12 +18,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.event.EventHandler;
-import javafx.event.EventTarget;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.input.ScrollEvent;
-
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -31,8 +25,15 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.event.EventHandler;
+import javafx.event.EventTarget;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.ScrollEvent;
+
 public class FXScrollTool extends AbstractTool<Node> {
 
+	// TODO: Rename to ON_SCROLL_POLICY_KEY
 	public static final Class<AbstractFXOnScrollPolicy> TOOL_POLICY_KEY = AbstractFXOnScrollPolicy.class;
 
 	private final Map<FXViewer, EventHandler<ScrollEvent>> scrollListeners = new HashMap<FXViewer, EventHandler<ScrollEvent>>();
@@ -57,24 +58,30 @@ public class FXScrollTool extends AbstractTool<Node> {
 					targetPart = viewer.getRootPart();
 				}
 
-				Collection<? extends AbstractFXOnScrollPolicy> policies = getScrollPolicies(targetPart);
+				Collection<? extends AbstractFXOnScrollPolicy> policies = getScrollPolicies(
+						targetPart);
 				return policies;
 			}
 
 			@Override
 			public void handle(ScrollEvent event) {
-				Collection<? extends AbstractFXOnScrollPolicy> policies = getTargetPolicies(event);
+				getDomain().openExecutionTransaction(FXScrollTool.this);
+				Collection<? extends AbstractFXOnScrollPolicy> policies = getTargetPolicies(
+						event);
 				for (AbstractFXOnScrollPolicy policy : policies) {
 					policy.scroll(event);
 				}
+				getDomain().closeExecutionTransaction(FXScrollTool.this);
 			}
 		};
 	}
 
+	// TODO: Rename to getOnScrollPolicies
 	protected Set<? extends AbstractFXOnScrollPolicy> getScrollPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart.<AbstractFXOnScrollPolicy> getAdapters(
-				TOOL_POLICY_KEY).values());
+		return new HashSet<>(targetPart
+				.<AbstractFXOnScrollPolicy> getAdapters(TOOL_POLICY_KEY)
+				.values());
 	}
 
 	@Override
@@ -82,7 +89,8 @@ public class FXScrollTool extends AbstractTool<Node> {
 		super.registerListeners();
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = ((FXViewer) viewer).getScene();
-			EventHandler<ScrollEvent> scrollListener = createScrollListener(viewer);
+			EventHandler<ScrollEvent> scrollListener = createScrollListener(
+					viewer);
 			scrollListeners.put((FXViewer) viewer, scrollListener);
 			scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
 		}
