@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AbstractFXHandlePartTests.class })
+@SuiteClasses({ AbstractFXHandlePartTests.class, FXClickDragToolTests.class })
 public class AllTests {
 
 }

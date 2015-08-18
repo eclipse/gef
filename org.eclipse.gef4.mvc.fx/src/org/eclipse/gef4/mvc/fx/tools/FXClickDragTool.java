@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
@@ -27,15 +28,51 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * An {@link ITool} to handle a click/drag interaction gestures.
+ * <p>
+ * As click and drag are 'overlapping' gestures (a click is part of each drag,
+ * which is composed out of click, drag, and release), these are handled
+ * together here, even while distinct interaction policies will be queried to
+ * handle the respective gesture parts.
+ * <p>
+ * During each click/drag interaction, the tool identifies respective
+ * {@link IVisualPart}s that serve as interaction targets for click and drag
+ * respectively. They are identified via hit-testing on the visuals and the
+ * availability of a corresponding {@link AbstractFXOnClickPolicy} or
+ * {@link AbstractFXOnDragPolicy} (see @
+ * {@link #getTargetPart(IViewer, Node, Class)}) and can even be temporarily
+ * overwritten (see @
+ * {@link #overrideTargetForThisInteraction(EventTarget, IVisualPart)}).
+ * <p>
+ * The {@link FXClickDragTool} handles the opening and closing of an transaction
+ * operation via the {@link FXDomain}, to which it is adapted. It controls that
+ * a single transaction operation is used for the complete interaction
+ * (including the click and potential drag part), so all interaction results can
+ * be undone in a single undo step.
+ *
+ * @author mwienand
+ * @author anyssen
+ *
+ */
 public class FXClickDragTool extends AbstractTool<Node> {
 
+	/**
+	 * The typeKey used to retrieve those policies that are able to handle the
+	 * click part of the click/drag interaction gesture.
+	 */
 	public static final Class<AbstractFXOnClickPolicy> CLICK_TOOL_POLICY_KEY = AbstractFXOnClickPolicy.class;
+	/**
+	 * The typeKey used to retrieve those policies that are able to handle the
+	 * drag part of the click/drag interaction gesture.
+	 */
 	public static final Class<AbstractFXOnDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXOnDragPolicy.class;
 
 	private final Map<IViewer<Node>, AbstractFXMouseDragGesture> gestures = new HashMap<IViewer<Node>, AbstractFXMouseDragGesture>();
