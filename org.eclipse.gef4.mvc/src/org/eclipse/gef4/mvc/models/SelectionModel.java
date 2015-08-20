@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Camille Letavernier (camille.letavernier@cea.fr) - fix for bug #475399
  *
  * Note: Parts of this class have been transferred from org.eclipse.gef.SelectionManager.
  *
@@ -188,9 +189,18 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	// TODO: rename to replaceSelection()
 	public void updateSelection(
 			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
 		selectionList.clear();
 		selectionSet.clear();
-		select(newSelection);
+		int i = 0;
+		for (IContentPart<VR, ? extends VR> p : newSelection) {
+			if (!selectionSet.contains(p)) {
+				selectionList.add(i++, p);
+				selectionSet.add(p);
+			}
+		}
+		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
+				oldSelection, getSelected());
 	}
 
 }
