@@ -32,6 +32,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * {@link SelectionModel} as the result of input events.
  *
  * @author anyssen
+ * @author mwienand
  *
  * @param <VR>
  *            The visual root node of the UI toolkit used, e.g.
@@ -69,7 +70,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void appendSelection(
 			List<? extends IContentPart<VR, ? extends VR>> contentParts) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
 		for (IContentPart<VR, ? extends VR> p : contentParts) {
 			if (!selectionSet.contains(p)) {
 				selectionList.add(p);
@@ -89,7 +90,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void deselect(
 			Collection<? extends IContentPart<VR, ? extends VR>> contentParts) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
 		selectionList.removeAll(contentParts);
 		selectionSet.removeAll(contentParts);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
@@ -100,7 +101,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * Clears the current selection.
 	 */
 	public void deselectAll() {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
 		selectionList.clear();
 		selectionSet.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
@@ -125,7 +126,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return A modifiable list of the currently selected {@link IContentPart}
 	 *         s.
 	 */
-	private List<IContentPart<VR, ? extends VR>> getSelectionCopy() {
+	private List<IContentPart<VR, ? extends VR>> getSelectionListCopy() {
 		return new ArrayList<IContentPart<VR, ? extends VR>>(selectionList);
 	}
 
@@ -159,9 +160,10 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *            The {@link IContentPart}s to add to/move within the current
 	 *            selection.
 	 */
+	// TODO: rename to prependSelection()
 	public void select(
 			List<? extends IContentPart<VR, ? extends VR>> additionalSelected) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
 		selectionList.removeAll(additionalSelected);
 		selectionSet.removeAll(additionalSelected);
 		int i = 0;
@@ -183,6 +185,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *            The list of {@link IContentPart}s constituting the new
 	 *            selection.
 	 */
+	// TODO: rename to replaceSelection()
 	public void updateSelection(
 			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
 		selectionList.clear();
