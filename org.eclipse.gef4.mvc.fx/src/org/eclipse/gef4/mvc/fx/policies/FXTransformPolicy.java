@@ -70,7 +70,9 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	@Override
 	public IUndoableOperation commit() {
 		IUndoableOperation commit = null;
-		if (transformOperation.hasEffect()) {
+		// transformOperation may be null if commit() is called more than once
+		// (see bug #475554)
+		if (transformOperation != null && transformOperation.hasEffect()) {
 			commit = transformOperation;
 		}
 		transformOperation = null;

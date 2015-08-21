@@ -34,7 +34,9 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 	@Override
 	public IUndoableOperation commit() {
 		IUndoableOperation commit = null;
-		if (resizeOperation.hasEffect()) {
+		// resizeOperation may be null if commit() is called more than once (see
+		// bug #475554)
+		if (resizeOperation != null && resizeOperation.hasEffect()) {
 			commit = resizeAndRevealOperation;
 		}
 		resizeAndRevealOperation = null;
