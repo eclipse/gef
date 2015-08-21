@@ -67,7 +67,6 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			disableRefreshVisuals(part);
-			part.setRefreshVisual(false);
 			// init transaction policy
 			init(getResizeRelocatePolicy(part));
 		}

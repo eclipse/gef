@@ -43,11 +43,24 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 		}
 	}
 
-	protected void disableRefreshVisuals(
-			IVisualPart<VR, ? extends VR> anchorage) {
-		initialRefreshVisual.put(anchorage, anchorage.isRefreshVisual());
+	/**
+	 * Disable that the given {@link IVisualPart} refreshed its visual, if this
+	 * was not already the case (see
+	 * {@link IVisualPart#setRefreshVisual(boolean)}). Stores the state (whether
+	 * the part was still refreshing its visual or not) so it can be restored
+	 * later (see {@link #enableRefreshVisuals(IVisualPart)}).
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} whose visual refresh is to be
+	 *            disabled.
+	 */
+	// TODO: rename to storeAndDisableRefreshVisual()
+	protected void disableRefreshVisuals(IVisualPart<VR, ? extends VR> part) {
+		initialRefreshVisual.put(part, part.isRefreshVisual());
+		part.setRefreshVisual(false);
 	}
 
+	// TODO: rename to restoreRefreshVisual()
 	protected void enableRefreshVisuals(IVisualPart<VR, ? extends VR> part) {
 		part.setRefreshVisual(initialRefreshVisual.remove(part));
 	}
