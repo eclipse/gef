@@ -196,9 +196,9 @@ if [ "$dropFiles" = y ];
     mkdir -p $localDropDir
     
     cd update-site
-    zip -r ../$localDropDir/GEF4-Update-${releaseLabel}.zip features plugins artifacts.jar content.jar
-    md5sum ../$localDropDir/GEF4-Update-${releaseLabel}.zip > ../$localDropDir/GEF4-Update-${releaseLabel}.zip.md5
-    echo "Created GEF4-Update-Site-${releaseLabel}.zip"  
+    zip -r ../$localDropDir/GEF4-Update-${releaseLabel}${releaseLabelSuffix}.zip features plugins artifacts.jar content.jar
+    md5sum ../$localDropDir/GEF4-Update-${releaseLabel}${releaseLabelSuffix}.zip > ../$localDropDir/GEF4-Update-${releaseLabel}${releaseLabelSuffix}.zip.md5
+    echo "Created GEF4-Update-Site-${releaseLabel}${releaseLabelSuffix}.zip"  
     cd .. 
 
     # Cleanup local update site (for drop files generation)
