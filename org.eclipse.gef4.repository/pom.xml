@@ -80,7 +80,7 @@
 								<configuration>
 									<associateSites>
 										<site>http://download.eclipse.org/releases/luna</site>
-										<site>http://download.eclipse.org/efxclipse/runtime-released/1.0.0/site</site>
+										<site>http://download.eclipse.org/efxclipse/updates-released/2.0.0/site</site>
 									</associateSites>
 								</configuration>
 							</execution>
