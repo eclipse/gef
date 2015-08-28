@@ -29,8 +29,8 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
  * @author mwienand
  *
  */
-public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
-		IScalable<Ring>, IRotatable<Ring> {
+public class Ring extends AbstractMultiShape
+		implements ITranslatable<Ring>, IScalable<Ring>, IRotatable<Ring> {
 
 	/**
 	 * Triangulates the given triangle ({@link Polygon}) at the given
@@ -164,8 +164,8 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		boolean p2_on_e2 = e[2].contains(p2);
 
 		// if both points lie on the same edge, we have nothing to do
-		if (p1_on_e0 && p2_on_e0 || p1_on_e1 && p2_on_e1 || p1_on_e2
-				&& p2_on_e2) {
+		if (p1_on_e0 && p2_on_e0 || p1_on_e1 && p2_on_e1
+				|| p1_on_e2 && p2_on_e2) {
 			return new Polygon[] { p.getCopy() };
 		}
 
@@ -286,7 +286,8 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 							.hasNext();) {
 						Polygon addend = i.next();
 						i.remove();
-						for (Polygon subTriangleToAdd : triangulate(addend, e)) {
+						for (Polygon subTriangleToAdd : triangulate(addend,
+								e)) {
 							if (!triangleAlreadyThere
 									.contains(subTriangleToAdd)) {
 								nextAddends.push(subTriangleToAdd);

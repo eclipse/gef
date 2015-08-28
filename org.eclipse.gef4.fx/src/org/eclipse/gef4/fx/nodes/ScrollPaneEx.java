@@ -105,8 +105,8 @@ public class ScrollPaneEx extends Region {
 	 */
 	public ScrollPaneEx() {
 		getChildren().addAll(getScrolledPane(), getScrollbarGroup());
-		getScrolledPane().boundsInLocalProperty().addListener(
-				canvasBoundsInLocalChangeListener);
+		getScrolledPane().boundsInLocalProperty()
+				.addListener(canvasBoundsInLocalChangeListener);
 		widthProperty().addListener(widthChangeListener);
 		heightProperty().addListener(heightChangeListener);
 		contentBoundsBinding = new ObjectBinding<Bounds>() {
@@ -117,8 +117,8 @@ public class ScrollPaneEx extends Region {
 			@Override
 			protected Bounds computeValue() {
 				double[] bb = computeContentBoundsInLocal();
-				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0], bb[3]
-						- bb[1]);
+				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0],
+						bb[3] - bb[1]);
 			}
 		};
 		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
@@ -130,8 +130,8 @@ public class ScrollPaneEx extends Region {
 			@Override
 			protected Bounds computeValue() {
 				double[] bb = computeScrollableBoundsInLocal();
-				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0], bb[3]
-						- bb[1]);
+				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0],
+						bb[3] - bb[1]);
 			}
 		};
 	}
@@ -171,11 +171,9 @@ public class ScrollPaneEx extends Region {
 	 *         translation.
 	 */
 	public double computeHv(double tx) {
-		return lerp(
-				horizontalScrollBar.getMin(),
-				horizontalScrollBar.getMax(),
-				norm(currentScrollableBounds[0], currentScrollableBounds[2]
-						- getWidth(), -tx));
+		return lerp(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
+				norm(currentScrollableBounds[0],
+						currentScrollableBounds[2] - getWidth(), -tx));
 	}
 
 	/**
@@ -221,11 +219,10 @@ public class ScrollPaneEx extends Region {
 	 *         scrollbar value.
 	 */
 	public double computeTx(double hv) {
-		return -lerp(
-				currentScrollableBounds[0],
+		return -lerp(currentScrollableBounds[0],
 				currentScrollableBounds[2] - getWidth(),
-				norm(horizontalScrollBar.getMin(),
-						horizontalScrollBar.getMax(), hv));
+				norm(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
+						hv));
 	}
 
 	/**
@@ -238,10 +235,10 @@ public class ScrollPaneEx extends Region {
 	 *         scrollbar value.
 	 */
 	public double computeTy(double vv) {
-		return -lerp(
-				currentScrollableBounds[1],
+		return -lerp(currentScrollableBounds[1],
 				currentScrollableBounds[3] - getHeight(),
-				norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv));
+				norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
+						vv));
 	}
 
 	/**
@@ -254,11 +251,9 @@ public class ScrollPaneEx extends Region {
 	 *         translation.
 	 */
 	public double computeVv(double ty) {
-		return lerp(
-				verticalScrollBar.getMin(),
-				verticalScrollBar.getMax(),
-				norm(currentScrollableBounds[1], currentScrollableBounds[3]
-						- getHeight(), -ty));
+		return lerp(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
+				norm(currentScrollableBounds[1],
+						currentScrollableBounds[3] - getHeight(), -ty));
 	}
 
 	/**
@@ -271,8 +266,8 @@ public class ScrollPaneEx extends Region {
 	protected Group createContentGroup() {
 		Group g = new Group();
 		g.getTransforms().add(viewportTransform);
-		g.boundsInParentProperty().addListener(
-				contentBoundsInParentChangeListener);
+		g.boundsInParentProperty()
+				.addListener(contentBoundsInParentChangeListener);
 		return g;
 	}
 
@@ -302,17 +297,16 @@ public class ScrollPaneEx extends Region {
 
 			@Override
 			protected double computeValue() {
-				return verticalScrollBar.isVisible() ? verticalScrollBar
-						.getWidth() : 0;
+				return verticalScrollBar.isVisible()
+						? verticalScrollBar.getWidth() : 0;
 			}
 		};
-		horizontalScrollBar.prefWidthProperty().bind(
-				widthProperty().subtract(vWidth));
+		horizontalScrollBar.prefWidthProperty()
+				.bind(widthProperty().subtract(vWidth));
 
 		// bind horizontal y position
-		horizontalScrollBar.layoutYProperty()
-				.bind(heightProperty().subtract(
-						horizontalScrollBar.heightProperty()));
+		horizontalScrollBar.layoutYProperty().bind(heightProperty()
+				.subtract(horizontalScrollBar.heightProperty()));
 
 		// bind vertical size
 		DoubleBinding hHeight = new DoubleBinding() {
@@ -323,12 +317,12 @@ public class ScrollPaneEx extends Region {
 
 			@Override
 			protected double computeValue() {
-				return horizontalScrollBar.isVisible() ? horizontalScrollBar
-						.getHeight() : 0;
+				return horizontalScrollBar.isVisible()
+						? horizontalScrollBar.getHeight() : 0;
 			}
 		};
-		verticalScrollBar.prefHeightProperty().bind(
-				heightProperty().subtract(hHeight));
+		verticalScrollBar.prefHeightProperty()
+				.bind(heightProperty().subtract(hHeight));
 
 		// bind vertical x position
 		verticalScrollBar.layoutXProperty().bind(
@@ -351,8 +345,8 @@ public class ScrollPaneEx extends Region {
 				mousePressFilter);
 
 		// translate on scroll
-		horizontalScrollBar.valueProperty().addListener(
-				new ChangeListener<Number>() {
+		horizontalScrollBar.valueProperty()
+				.addListener(new ChangeListener<Number>() {
 					@Override
 					public void changed(
 							ObservableValue<? extends Number> observable,
@@ -363,8 +357,8 @@ public class ScrollPaneEx extends Region {
 						}
 					}
 				});
-		verticalScrollBar.valueProperty().addListener(
-				new ChangeListener<Number>() {
+		verticalScrollBar.valueProperty()
+				.addListener(new ChangeListener<Number>() {
 					@Override
 					public void changed(
 							ObservableValue<? extends Number> observable,
@@ -785,8 +779,8 @@ public class ScrollPaneEx extends Region {
 			if (bounds.getMinY() < 0) {
 				setScrollOffsetY(getScrollOffsetY() - bounds.getMinY());
 			} else if (bounds.getMaxY() > getHeight()) {
-				setScrollOffsetY(getScrollOffsetY() + getHeight()
-						- bounds.getMaxY());
+				setScrollOffsetY(
+						getScrollOffsetY() + getHeight() - bounds.getMaxY());
 			}
 		}
 
@@ -794,8 +788,8 @@ public class ScrollPaneEx extends Region {
 			if (bounds.getMinX() < 0) {
 				setScrollOffsetX(getScrollOffsetX() - bounds.getMinX());
 			} else if (bounds.getMaxX() > getWidth()) {
-				setScrollOffsetX(getScrollOffsetX() + getWidth()
-						- bounds.getMaxX());
+				setScrollOffsetX(
+						getScrollOffsetX() + getWidth() - bounds.getMaxX());
 			}
 		}
 	}
@@ -836,7 +830,8 @@ public class ScrollPaneEx extends Region {
 	public void setScrollOffsetY(double scrollOffsetY) {
 		updateScrollbars();
 		double vv = computeVv(scrollOffsetY);
-		if (vv < verticalScrollBar.getMin() || vv > verticalScrollBar.getMax()) {
+		if (vv < verticalScrollBar.getMin()
+				|| vv > verticalScrollBar.getMax()) {
 			throw new IllegalArgumentException(
 					"Vertical scrolling offset outside range ["
 							+ verticalScrollBar.getMin() + ";"
@@ -913,8 +908,8 @@ public class ScrollPaneEx extends Region {
 
 		// compute scrollbar values from canvas translation (in case the
 		// scrollbar values are incorrect)
-		horizontalScrollBar.setValue(computeHv(getScrolledPane()
-				.getTranslateX()));
+		horizontalScrollBar
+				.setValue(computeHv(getScrolledPane().getTranslateX()));
 		verticalScrollBar
 				.setValue(computeVv(getScrolledPane().getTranslateY()));
 	}

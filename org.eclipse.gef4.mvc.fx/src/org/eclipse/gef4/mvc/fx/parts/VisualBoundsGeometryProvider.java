@@ -17,7 +17,8 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 /**
  * @author anyssen
  */
-public class VisualBoundsGeometryProvider extends VisualOutlineGeometryProvider {
+public class VisualBoundsGeometryProvider
+		extends VisualOutlineGeometryProvider {
 
 	@Override
 	public IGeometry get() {

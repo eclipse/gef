@@ -94,8 +94,8 @@ public class GroupLayersSetup extends Application {
 		// scrolling
 		final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 		scrollPane = new ScrollPane();
-		final Group spi = new Group(gridLayer, contentLayer,
-				feedbackLayer, handleLayer);
+		final Group spi = new Group(gridLayer, contentLayer, feedbackLayer,
+				handleLayer);
 		scrollPane.setContent(spi);
 		scrollPane.setPannable(false);
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
@@ -110,21 +110,25 @@ public class GroupLayersSetup extends Application {
 				contentLayer.boundsInParentProperty(),
 				feedbackLayer.boundsInParentProperty(),
 				handleLayer.boundsInParentProperty() });
-		
-		scrollPane.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
 
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable,
-					Bounds oldValue, Bounds newValue) {
-				System.out.println("viewport width " + newValue.getWidth());
-			}
-		});
+		scrollPane.viewportBoundsProperty()
+				.addListener(new ChangeListener<Bounds>() {
+
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldValue, Bounds newValue) {
+						System.out.println(
+								"viewport width " + newValue.getWidth());
+					}
+				});
 		gridLayer.minWidthProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
-				System.out.println("grid min width (unscaled)" + (newValue.doubleValue()));
+				System.out.println(
+						"grid min width (unscaled)" + (newValue.doubleValue()));
 			}
 		});
 		gridLayer.prefWidthProperty().addListener(new ChangeListener<Number>() {
@@ -132,17 +136,21 @@ public class GroupLayersSetup extends Application {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
 					Number oldValue, Number newValue) {
-				System.out.println("grid pref width (unscaled)" + (newValue.doubleValue()));
+				System.out.println("grid pref width (unscaled)"
+						+ (newValue.doubleValue()));
 			}
 		});
-		gridLayer.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
+		gridLayer.boundsInParentProperty()
+				.addListener(new ChangeListener<Bounds>() {
 
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable,
-					Bounds oldValue, Bounds newValue) {
-				System.out.println("Bounds in parent " + newValue.getWidth());
-			}
-		});
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldValue, Bounds newValue) {
+						System.out.println(
+								"Bounds in parent " + newValue.getWidth());
+					}
+				});
 
 		// create content and feedback
 		final FXGeometryNode red = new FXGeometryNode<org.eclipse.gef4.geometry.planar.Rectangle>(
@@ -174,7 +182,8 @@ public class GroupLayersSetup extends Application {
 		new VisualChangeListener() {
 			@Override
 			protected void localToParentTransformChanged(final Node source,
-					final Transform oldTransform, final Transform newTransform) {
+					final Transform oldTransform,
+					final Transform newTransform) {
 				update();
 			}
 
@@ -184,9 +193,8 @@ public class GroupLayersSetup extends Application {
 						geomInRed);
 				final IGeometry geomInBlue = FXUtils.sceneToLocal(blue,
 						geomInScene);
-				final IGeometry transformedInBlue = geomInBlue
-						.getTransformed(new AffineTransform(1, 0, 0, 1, 100,
-								100));
+				final IGeometry transformedInBlue = geomInBlue.getTransformed(
+						new AffineTransform(1, 0, 0, 1, 100, 100));
 				blue.setGeometry(transformedInBlue);
 			}
 
@@ -208,7 +216,8 @@ public class GroupLayersSetup extends Application {
 			@Override
 			public void handle(final MouseEvent event) {
 				if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					Scale s = Scale.scale(scaleProperty.get().getX() + 0.1, scaleProperty.get().getY() + 0.1);
+					Scale s = Scale.scale(scaleProperty.get().getX() + 0.1,
+							scaleProperty.get().getY() + 0.1);
 					scaleProperty.get().setX(s.getX());
 					scaleProperty.get().setY(s.getY());
 				}

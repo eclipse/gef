@@ -31,8 +31,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @param <N>
  *            The visual {@link Node} used by this {@link AbstractFXHandlePart}.
  */
-abstract public class AbstractFXHandlePart<N extends Node> extends
-		AbstractHandlePart<Node, N> {
+abstract public class AbstractFXHandlePart<N extends Node>
+		extends AbstractHandlePart<Node, N> {
 
 	private final Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 	private final Map<IVisualPart<Node, ? extends Node>, Integer> anchorageLinkCount = new HashMap<>();

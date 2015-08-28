@@ -118,8 +118,8 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	 * Calculates and returns an array containing the number of columns,
 	 * followed by the number of rows
 	 */
-	protected int[] calculateNumberOfRowsAndCols(int numChildren,
-			double boundX, double boundY, double boundWidth, double boundHeight) {
+	protected int[] calculateNumberOfRowsAndCols(int numChildren, double boundX,
+			double boundY, double boundWidth, double boundHeight) {
 		if (aspectRatio == 1.0) {
 			return calculateNumberOfRowsAndCols_square(numChildren, boundX,
 					boundY, boundWidth, boundHeight);
@@ -129,7 +129,8 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	protected int[] calculateNumberOfRowsAndCols_square(int numChildren,
-			double boundX, double boundY, double boundWidth, double boundHeight) {
+			double boundX, double boundY, double boundWidth,
+			double boundHeight) {
 		int rows = Math.max(1,
 				(int) Math.sqrt(numChildren * boundHeight / boundWidth));
 		int cols = Math.max(1,
@@ -181,10 +182,10 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	protected double[] calculateNodeSize(double colWidth, double rowHeight) {
-		double childW = Math
-				.max(MIN_ENTITY_SIZE, PADDING_PERCENTAGE * colWidth);
-		double childH = Math.max(MIN_ENTITY_SIZE, PADDING_PERCENTAGE
-				* (rowHeight - rowPadding));
+		double childW = Math.max(MIN_ENTITY_SIZE,
+				PADDING_PERCENTAGE * colWidth);
+		double childH = Math.max(MIN_ENTITY_SIZE,
+				PADDING_PERCENTAGE * (rowHeight - rowPadding));
 		double whRatio = colWidth / rowHeight;
 		if (whRatio < aspectRatio) {
 			childH = childW / aspectRatio;

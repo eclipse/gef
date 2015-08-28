@@ -157,7 +157,8 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 			SetPropertyValueOperation setOperation = new SetPropertyValueOperation(
 					child.getDisplayName(), getPropertySource(getValues()[i]),
 					((UndoablePropertySheetEntry) child).getDescriptor()
-							.getId(), child.getValues()[i]);
+							.getId(),
+					child.getValues()[i]);
 			compositeOperation.add(setOperation);
 		}
 		valueChanged((UndoablePropertySheetEntry) child,

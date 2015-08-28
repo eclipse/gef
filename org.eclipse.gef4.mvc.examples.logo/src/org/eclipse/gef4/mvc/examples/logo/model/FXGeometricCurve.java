@@ -52,8 +52,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
 
-	public FXGeometricCurve(Point[] waypoints, Paint stroke,
-			double strokeWidth, double[] dashes, Effect effect) {
+	public FXGeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth,
+			double[] dashes, Effect effect) {
 		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
 				effect);
 		this.waypoints.addAll(Arrays.asList(waypoints));

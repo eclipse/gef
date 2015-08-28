@@ -11,7 +11,6 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
-
 /**
  * An interface for subgraphs in layout. A subgraph is a set of pruned nodes
  * that will be displayed as one element. A subgraph must contain at least one

@@ -25,8 +25,8 @@ import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
-public class FXViewportBehavior extends AbstractBehavior<Node> implements
-		PropertyChangeListener {
+public class FXViewportBehavior extends AbstractBehavior<Node>
+		implements PropertyChangeListener {
 
 	/*
 	 * TODO: When applying the translation values stored in the ViewportModel to
@@ -123,14 +123,14 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (ViewportModel.VIEWPORT_TRANSLATE_X_PROPERTY.equals(evt
-				.getPropertyName())
-				|| ViewportModel.VIEWPORT_TRANSLATE_Y_PROPERTY.equals(evt
-						.getPropertyName())
-				|| ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(evt
-						.getPropertyName())
-				|| ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt
-						.getPropertyName())
+		if (ViewportModel.VIEWPORT_TRANSLATE_X_PROPERTY
+				.equals(evt.getPropertyName())
+				|| ViewportModel.VIEWPORT_TRANSLATE_Y_PROPERTY
+						.equals(evt.getPropertyName())
+				|| ViewportModel.VIEWPORT_WIDTH_PROPERTY
+						.equals(evt.getPropertyName())
+				|| ViewportModel.VIEWPORT_HEIGHT_PROPERTY
+						.equals(evt.getPropertyName())
 				|| ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
 						.equals(evt.getPropertyName())) {
 			applyViewport(viewportModel.getTranslateX(),

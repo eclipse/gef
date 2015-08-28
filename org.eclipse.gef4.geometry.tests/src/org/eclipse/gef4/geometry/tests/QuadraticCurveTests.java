@@ -39,9 +39,10 @@ public class QuadraticCurveTests {
 
 		// check 0 <= t <= 1:
 		for (double t = 0; t <= 1; t += 0.0123456789) {
-			assertEquals("curve.get(t = " + t
-					+ " in range [0, 1]) lies on the curve", true,
-					curve.contains(curve.get(t)));
+			assertEquals(
+					"curve.get(t = " + t
+							+ " in range [0, 1]) lies on the curve",
+					true, curve.contains(curve.get(t)));
 		}
 	}
 

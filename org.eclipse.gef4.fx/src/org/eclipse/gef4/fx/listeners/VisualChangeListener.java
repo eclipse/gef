@@ -169,8 +169,8 @@ public abstract class VisualChangeListener {
 
 	/**
 	 * Checks if the given Transform contains NaN values. Returns
-	 * <code>true</code> if no NaN values are found, otherwise
-	 * <code>false/<code>.
+	 * <code>true</code> if no NaN values are found, otherwise <code>false/
+	 * <code>.
 	 *
 	 * @param t
 	 * @return
@@ -332,8 +332,8 @@ public abstract class VisualChangeListener {
 					}
 				}
 			};
-			tmp.localToParentTransformProperty().addListener(
-					transformChangeListener);
+			tmp.localToParentTransformProperty()
+					.addListener(transformChangeListener);
 			localToParentTransformListeners.put(transformChangeListener, tmp);
 			tmp = tmp.getParent();
 		}

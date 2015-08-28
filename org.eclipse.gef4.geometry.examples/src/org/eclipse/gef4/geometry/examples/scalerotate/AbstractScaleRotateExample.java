@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class AbstractScaleRotateExample implements PaintListener,
-MouseWheelListener, MouseMoveListener, MouseListener, Listener {
+		MouseWheelListener, MouseMoveListener, MouseListener, Listener {
 
 	// TODO: The new angle interface is easier to use and should be used here!
 
@@ -128,9 +128,9 @@ MouseWheelListener, MouseMoveListener, MouseListener, Listener {
 		if (shape.contains(new Point(e.x, e.y))) {
 			dragBegin = new Vector(shape.getCenter(), new Point(e.x, e.y));
 		} // else {
-		// dragBeginAngle = shape.rotationAngle;
-		// dragBegin = null;
-		// }
+			// dragBeginAngle = shape.rotationAngle;
+			// dragBegin = null;
+			// }
 	}
 
 	@Override

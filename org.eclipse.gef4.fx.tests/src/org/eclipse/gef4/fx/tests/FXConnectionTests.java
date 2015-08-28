@@ -51,8 +51,7 @@ public class FXConnectionTests {
 	}
 
 	@Test
-	public void test_generateWayAnchorKey() throws IllegalArgumentException,
-			IllegalAccessException {
+	public void test_generateWayAnchorKey() throws IllegalArgumentException, IllegalAccessException {
 		FXConnection connection = new FXConnection();
 		Point startPoint = new Point(123, 456);
 		Point wayPoint = new Point(789, 123);
@@ -60,8 +59,7 @@ public class FXConnectionTests {
 		connection.setStartPoint(startPoint);
 		connection.setEndPoint(endPoint);
 
-		Field nextWayAnchorId = ReflectionUtils.getPrivateField(connection,
-				"nextWayAnchorId");
+		Field nextWayAnchorId = ReflectionUtils.getPrivateField(connection, "nextWayAnchorId");
 		/*
 		 * The first way anchor ID should be 0.
 		 */

@@ -112,8 +112,7 @@ public class TagCloudViewerTests {
 	public void testInvalidContentProvider2() {
 		TagCloudViewer viewer = new TagCloudViewer(cloud);
 		viewer.setContentProvider(new IContentProvider() {
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
 			public void dispose() {
@@ -170,8 +169,7 @@ public class TagCloudViewerTests {
 		for (Word word : words) {
 			Assert.assertEquals(TestLabelProvider.COLOR, word.getColor());
 			for (int i = 0; i < TestLabelProvider.FONT_DATA.length; i++) {
-				Assert.assertEquals(TestLabelProvider.FONT_DATA[i],
-						word.getFontData()[i]);
+				Assert.assertEquals(TestLabelProvider.FONT_DATA[i], word.getFontData()[i]);
 			}
 			Assert.assertEquals(TestLabelProvider.ANGLE, word.angle, DELTA);
 			Assert.assertEquals(TestLabelProvider.WEIGHT, word.weight, DELTA);

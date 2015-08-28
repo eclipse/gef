@@ -18,15 +18,12 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-public class TestLabelProvider extends BaseLabelProvider implements
-		ICloudLabelProvider {
+public class TestLabelProvider extends BaseLabelProvider implements ICloudLabelProvider {
 
 	public static final double WEIGHT = 0.987D;
 	public static final float ANGLE = 12.34F;
-	public static Color COLOR = new Color(Display.getDefault(), new RGB(100,
-			100, 100));
-	public static FontData[] FONT_DATA = Display.getDefault().getShells()[0]
-			.getFont().getFontData();
+	public static Color COLOR = new Color(Display.getDefault(), new RGB(100, 100, 100));
+	public static FontData[] FONT_DATA = Display.getDefault().getShells()[0].getFont().getFontData();
 
 	public String getLabel(Object element) {
 		return element.toString();

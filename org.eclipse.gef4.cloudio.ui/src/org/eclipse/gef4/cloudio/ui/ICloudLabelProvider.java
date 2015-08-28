@@ -17,42 +17,45 @@ import org.eclipse.swt.graphics.FontData;
 
 /**
  * Defines the label of an element within the cloud. Besides of the
- * string-label, each element can be assigned a unique weight (used
- * to calculate the font size of the rendered element), color, 
- * font and angle.  
+ * string-label, each element can be assigned a unique weight (used to calculate
+ * the font size of the rendered element), color, font and angle.
+ * 
  * @author sschwieb
  *
  */
 public interface ICloudLabelProvider extends IBaseLabelProvider {
 
 	/**
-	 * The label of the given element, which must not
-	 * be <code>null</code>.
+	 * The label of the given element, which must not be <code>null</code>.
+	 * 
 	 * @param element
 	 * @return the label of the given element
 	 */
 	public String getLabel(Object element);
-	
+
 	/**
-	 * The weight of the given element, which must be between
-	 * 0 and 1 (inclusive).
+	 * The weight of the given element, which must be between 0 and 1
+	 * (inclusive).
+	 * 
 	 * @param element
 	 * @return the weight of the given element
 	 */
 	public double getWeight(Object element);
-	
+
 	/**
-	 * The {@link Color} of the given element, which must not
-	 * be <code>null</code>.
+	 * The {@link Color} of the given element, which must not be
+	 * <code>null</code>.
+	 * 
 	 * @param element
 	 * @return the color of the given element
 	 */
 	public Color getColor(Object element);
-	
+
 	/**
-	 * The {@link FontData}-array which defines the font
-	 * of the given element. Each element must be provided
-	 * with a unique array. Must not return <code>null</code>.
+	 * The {@link FontData}-array which defines the font of the given element.
+	 * Each element must be provided with a unique array. Must not return
+	 * <code>null</code>.
+	 * 
 	 * @param element
 	 * @return the font data for the given element
 	 */
@@ -60,6 +63,7 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 
 	/**
 	 * The angle of the element, which must be between -90 and 90, inclusive.
+	 * 
 	 * @param element
 	 * @return the angle of the given element
 	 */
@@ -67,9 +71,10 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 
 	/**
 	 * Return the tool tip of the element, or <code>null</code>, if none.
+	 * 
 	 * @param element
 	 * @return the tooltip of the given element
 	 */
 	public String getToolTip(Object element);
-	
+
 }

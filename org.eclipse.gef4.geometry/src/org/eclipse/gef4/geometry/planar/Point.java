@@ -158,8 +158,8 @@ public class Point implements Cloneable, Serializable {
 		int minIdx = 0;
 		Point min = points[minIdx];
 		for (int i = 1; i < points.length; i++) {
-			if (points[i].y < min.y || points[i].y == min.y
-					&& points[i].x < min.x) {
+			if (points[i].y < min.y
+					|| points[i].y == min.y && points[i].x < min.x) {
 				min = points[i];
 				minIdx = i;
 			}

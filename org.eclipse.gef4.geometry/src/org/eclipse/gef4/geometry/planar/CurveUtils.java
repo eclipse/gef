@@ -130,7 +130,8 @@ class CurveUtils {
 	 *            the {@link IMultiShape} of which the outline is intersected
 	 * @return an array of intersection {@link Point}s
 	 */
-	public static Point[] getIntersections(ICurve curve, IMultiShape multiShape) {
+	public static Point[] getIntersections(ICurve curve,
+			IMultiShape multiShape) {
 		Set<Point> intersections = new HashSet<Point>();
 
 		for (IShape shape : multiShape.getShapes()) {
@@ -177,14 +178,14 @@ class CurveUtils {
 
 			if (geom1 instanceof IShape) {
 				for (ICurve curve : ((IShape) geom1).getOutlineSegments()) {
-					intersections.addAll(Arrays.asList(getIntersections(curve,
-							geom2)));
+					intersections.addAll(
+							Arrays.asList(getIntersections(curve, geom2)));
 				}
 			} else if (geom1 instanceof IMultiShape) {
 				for (IShape shape : ((IMultiShape) geom1).getShapes()) {
 					for (ICurve curve : shape.getOutlineSegments()) {
-						intersections.addAll(Arrays.asList(getIntersections(
-								curve, geom2)));
+						intersections.addAll(
+								Arrays.asList(getIntersections(curve, geom2)));
 					}
 				}
 			} else {
@@ -270,7 +271,8 @@ class CurveUtils {
 				} else if (length == 2) {
 					p.lineTo(c.getX2(), c.getY2());
 				} else if (length == 3) {
-					p.quadTo(points[1].x, points[1].y, points[2].x, points[2].y);
+					p.quadTo(points[1].x, points[1].y, points[2].x,
+							points[2].y);
 				} else if (length == 4) {
 					p.cubicTo(points[1].x, points[1].y, points[2].x,
 							points[2].y, points[3].x, points[3].y);

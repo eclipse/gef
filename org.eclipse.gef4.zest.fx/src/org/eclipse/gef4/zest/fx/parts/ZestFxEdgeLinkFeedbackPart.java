@@ -29,8 +29,7 @@ public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 		}
 
 		@Override
-		protected void localToParentTransformChanged(Node observed,
-				Transform oldTransform, Transform newTransform) {
+		protected void localToParentTransformChanged(Node observed, Transform oldTransform, Transform newTransform) {
 			refreshVisual();
 		}
 	};
@@ -39,13 +38,11 @@ public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		if (anchorage instanceof EdgeContentPart) {
 			EdgeContentPart edgeContentPart = (EdgeContentPart) anchorage;
 			// find EdgeLabelPart in the anchorages of the EdgeContentPart
-			for (IVisualPart<Node, ? extends Node> anchored : edgeContentPart
-					.getAnchoreds()) {
+			for (IVisualPart<Node, ? extends Node> anchored : edgeContentPart.getAnchoreds()) {
 				if (anchored instanceof EdgeLabelPart) {
 					visualListener.register(anchored.getVisual(), getVisual());
 					break;
@@ -55,8 +52,7 @@ public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		visualListener.unregister();
 	}
 

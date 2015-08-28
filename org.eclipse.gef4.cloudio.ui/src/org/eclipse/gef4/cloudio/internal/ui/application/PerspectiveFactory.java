@@ -23,7 +23,8 @@ public class PerspectiveFactory implements IPerspectiveFactory {
 
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
-		layout.addStandaloneView("org.eclipse.gef4.cloudio.internal.tagcloud", false, IPageLayout.TOP, 0.95f, layout.getEditorArea());
+		layout.addStandaloneView("org.eclipse.gef4.cloudio.internal.tagcloud", false, IPageLayout.TOP, 0.95f,
+				layout.getEditorArea());
 		layout.setFixed(true);
 		layout.setEditorAreaVisible(false);
 	}

@@ -21,8 +21,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 /**
  * Use this class to register components to be used within the IDE.
  */
-public class DotUiModule extends
-		org.eclipse.gef4.internal.dot.parser.ui.AbstractDotUiModule {
+public class DotUiModule
+		extends org.eclipse.gef4.internal.dot.parser.ui.AbstractDotUiModule {
 	public DotUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}

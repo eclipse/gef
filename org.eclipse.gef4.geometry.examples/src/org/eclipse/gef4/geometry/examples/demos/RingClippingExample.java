@@ -48,8 +48,8 @@ public class RingClippingExample extends AbstractExample {
 			public Ring getShape() {
 				Point[] cp = getPoints();
 				Ring ring = new Ring(new Polygon(cp[0], cp[1], cp[2]),
-						new Polygon(cp[3], cp[4], cp[5]), new Polygon(cp[6],
-								cp[7], cp[8]));
+						new Polygon(cp[3], cp[4], cp[5]),
+						new Polygon(cp[6], cp[7], cp[8]));
 				return ring;
 			}
 
@@ -58,8 +58,8 @@ public class RingClippingExample extends AbstractExample {
 				Ring ring = getShape();
 
 				gc.setClipping(Geometry2SWT.toSWTRegion(ring));
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_WIDGET_BACKGROUND));
+				gc.setBackground(Display.getCurrent()
+						.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 				for (int y = 0; y < 800; y += 20) {
 					gc.drawString(
 							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
@@ -68,8 +68,8 @@ public class RingClippingExample extends AbstractExample {
 
 				gc.setClipping((org.eclipse.swt.graphics.Region) null);
 				gc.setAlpha(128);
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLUE));
+				gc.setBackground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 				for (Polyline p : ring.getOutlines()) {
 					gc.fillPolygon(Geometry2SWT.toSWTPointArray(p));
 				}

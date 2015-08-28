@@ -37,9 +37,9 @@ public class ConvexHullExample extends AbstractExample {
 				// These are the points which are displayed on the screen.
 				// We will compute their convex hull later.
 				addControlPoints(new Point(100, 100), new Point(150, 400),
-						new Point(200, 300), new Point(250, 150), new Point(
-								300, 250), new Point(350, 200), new Point(400,
-								350));
+						new Point(200, 300), new Point(250, 150),
+						new Point(300, 250), new Point(350, 200),
+						new Point(400, 350));
 			}
 
 			@Override
@@ -57,9 +57,9 @@ public class ConvexHullExample extends AbstractExample {
 				Polygon convexHull = getShape();
 
 				// Display the convex hull as an SWT Path.
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(convexHull
-						.toPath())));
+				gc.drawPath(new org.eclipse.swt.graphics.Path(
+						Display.getCurrent(),
+						Geometry2SWT.toSWTPathData(convexHull.toPath())));
 			}
 		} };
 	}

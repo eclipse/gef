@@ -19,8 +19,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 
-public class FXCreateCurveHoverHandlePart extends
-		AbstractLogoHoverHandlePart<StackPane> {
+public class FXCreateCurveHoverHandlePart
+		extends AbstractLogoHoverHandlePart<StackPane> {
 
 	@Override
 	protected StackPane createVisual() {

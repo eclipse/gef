@@ -51,8 +51,8 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-public class FXGeometricCurvePart extends
-		AbstractFXGeometricElementPart<FXConnection> {
+public class FXGeometricCurvePart
+		extends AbstractFXGeometricElementPart<FXConnection> {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
@@ -76,8 +76,8 @@ public class FXGeometricCurvePart extends
 		}
 	}
 
-	private static final class ChangeWayPointsOperation extends
-			AbstractOperation {
+	private static final class ChangeWayPointsOperation
+			extends AbstractOperation {
 
 		private final FXGeometricCurve curve;
 		private final List<Point> newWayPoints;
@@ -157,8 +157,8 @@ public class FXGeometricCurvePart extends
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IFXAnchor anchor = anchorage.getAdapter(
-				new TypeToken<Provider<? extends IFXAnchor>>() {
+		IFXAnchor anchor = anchorage
+				.getAdapter(new TypeToken<Provider<? extends IFXAnchor>>() {
 				}).get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
@@ -208,14 +208,14 @@ public class FXGeometricCurvePart extends
 
 		// then attach source and target (if available)
 		contentPolicy.init();
-		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(getVisual()
-				.getStartAnchor());
+		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(
+				getVisual().getStartAnchor());
 		if (sourceContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(sourceContentAnchorage,
 					"START");
 		}
-		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(getVisual()
-				.getEndAnchor());
+		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(
+				getVisual().getEndAnchor());
 		if (targetContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(targetContentAnchorage,
 					"END");
@@ -265,7 +265,8 @@ public class FXGeometricCurvePart extends
 	}
 
 	@Override
-	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+	public void detachFromContentAnchorage(Object contentAnchorage,
+			String role) {
 		if ("START".equals(role)) {
 			getContent().getSourceAnchorages().remove(contentAnchorage);
 		} else if ("END".equals(role)) {
@@ -280,9 +281,9 @@ public class FXGeometricCurvePart extends
 		List<Point> wayPoints = content.getWayPoints();
 
 		AffineTransform transform = content.getTransform();
-		if (previousContent == null
-				|| (transform != null
-						&& !transform.equals(previousContent.getTransform()) || transform == null
+		if (previousContent == null || (transform != null
+				&& !transform.equals(previousContent.getTransform())
+				|| transform == null
 						&& previousContent.getTransform() != null)) {
 			if (transform != null) {
 				Point[] transformedWayPoints = transform
@@ -334,10 +335,10 @@ public class FXGeometricCurvePart extends
 			}
 			break;
 		}
-		Shape startDecorationVisual = visual.getStartDecoration() != null ? ((Shape) visual
-				.getStartDecoration().getVisual()) : null;
-		Shape endDecorationVisual = visual.getEndDecoration() != null ? ((Shape) visual
-				.getEndDecoration().getVisual()) : null;
+		Shape startDecorationVisual = visual.getStartDecoration() != null
+				? ((Shape) visual.getStartDecoration().getVisual()) : null;
+		Shape endDecorationVisual = visual.getEndDecoration() != null
+				? ((Shape) visual.getEndDecoration().getVisual()) : null;
 
 		// stroke paint
 		if (visual.getCurveNode().getStroke() != content.getStroke()) {
@@ -353,17 +354,16 @@ public class FXGeometricCurvePart extends
 		}
 
 		// stroke width
-		if (visual.getCurveNode().getStrokeWidth() != content.getStrokeWidth()) {
+		if (visual.getCurveNode().getStrokeWidth() != content
+				.getStrokeWidth()) {
 			visual.getCurveNode().setStrokeWidth(content.getStrokeWidth());
 		}
-		if (startDecorationVisual != null
-				&& startDecorationVisual.getStrokeWidth() != content
-						.getStrokeWidth()) {
+		if (startDecorationVisual != null && startDecorationVisual
+				.getStrokeWidth() != content.getStrokeWidth()) {
 			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
-		if (endDecorationVisual != null
-				&& endDecorationVisual.getStrokeWidth() != content
-						.getStrokeWidth()) {
+		if (endDecorationVisual != null && endDecorationVisual
+				.getStrokeWidth() != content.getStrokeWidth()) {
 			endDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 
@@ -382,7 +382,8 @@ public class FXGeometricCurvePart extends
 		super.doRefreshVisual(visual);
 	}
 
-	protected AbstractFXGeometricElement<?> getAnchorageContent(IFXAnchor anchor) {
+	protected AbstractFXGeometricElement<?> getAnchorageContent(
+			IFXAnchor anchor) {
 		Node anchorageNode = anchor.getAnchorage();
 		if (anchorageNode != getVisual()) {
 			IVisualPart<Node, ? extends Node> part = getViewer()

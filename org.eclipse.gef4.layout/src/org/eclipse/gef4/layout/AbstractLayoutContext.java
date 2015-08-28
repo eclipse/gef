@@ -388,7 +388,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		pcs.firePropertyChange(name, oldValue, value);
 	}
 
-	public void setStaticLayoutAlgorithm(ILayoutAlgorithm staticLayoutAlgorithm) {
+	public void setStaticLayoutAlgorithm(
+			ILayoutAlgorithm staticLayoutAlgorithm) {
 		ILayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
 		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
 			this.staticLayoutAlgorithm = staticLayoutAlgorithm;
@@ -402,7 +403,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		if (!postLayoutPass.contains(runnable)) {
 			new IllegalArgumentException(
 					"Given Runnable is not contained in the list.")
-					.printStackTrace();
+							.printStackTrace();
 		}
 		postLayoutPass.remove(runnable);
 	}
@@ -411,7 +412,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		if (!preLayoutPass.contains(runnable)) {
 			new IllegalArgumentException(
 					"Given Runnable is not contained in the list.")
-					.printStackTrace();
+							.printStackTrace();
 		}
 		preLayoutPass.remove(runnable);
 	}

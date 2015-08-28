@@ -22,8 +22,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
-public class VisualOutlineGeometryProvider implements
-		IAdaptable.Bound<IVisualPart<Node, ? extends Node>>,
+public class VisualOutlineGeometryProvider
+		implements IAdaptable.Bound<IVisualPart<Node, ? extends Node>>,
 		Provider<IGeometry> {
 
 	private IVisualPart<Node, ? extends Node> host;

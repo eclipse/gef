@@ -25,11 +25,12 @@ package org.eclipse.gef4.mvc.parts;
  * @param <V>
  *            The visual node used by this {@link AbstractFeedbackPart}.
  */
-public abstract class AbstractFeedbackPart<VR, V extends VR> extends
-		AbstractVisualPart<VR, V> implements IFeedbackPart<VR, V> {
+public abstract class AbstractFeedbackPart<VR, V extends VR>
+		extends AbstractVisualPart<VR, V>implements IFeedbackPart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index) {
 		throw new UnsupportedOperationException(
 				"IFeedbackParts do not support children");
 	}

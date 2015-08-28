@@ -24,8 +24,8 @@ import org.junit.Test;
 
 public class ObservableMapTests {
 
-	private static class ExpectingMapObserver<K, V> implements
-			IMapObserver<K, V> {
+	private static class ExpectingMapObserver<K, V>
+			implements IMapObserver<K, V> {
 		private Map<K, V> expectationNew = Collections.emptyMap();
 		private Map<K, V> expectationOld = Collections.emptyMap();
 

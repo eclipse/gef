@@ -19,8 +19,8 @@ import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class PolygonEllipseIntersection extends
-		AbstractPolygonIntersectionExample {
+public class PolygonEllipseIntersection
+		extends AbstractPolygonIntersectionExample {
 
 	/**
 	 * @param args
@@ -35,12 +35,13 @@ public class PolygonEllipseIntersection extends
 
 	@Override
 	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return ((Polygon) g1).getOutline().getIntersections(
-				((Ellipse) g2).getOutline());
+		return ((Polygon) g1).getOutline()
+				.getIntersections(((Ellipse) g2).getOutline());
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

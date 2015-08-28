@@ -30,7 +30,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  *
  */
 public class Polyline extends AbstractPointListBasedGeometry<Polyline>
-implements ICurve {
+		implements ICurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -239,8 +239,8 @@ implements ICurve {
 		StringBuffer stringBuffer = new StringBuffer("Polyline: ");
 		if (points.length > 0) {
 			for (int i = 0; i < points.length; i++) {
-				stringBuffer.append("(" + points[i].x + ", " + points[i].y
-						+ ")");
+				stringBuffer
+						.append("(" + points[i].x + ", " + points[i].y + ")");
 				if (i < points.length - 1) {
 					stringBuffer.append(" -> ");
 				}

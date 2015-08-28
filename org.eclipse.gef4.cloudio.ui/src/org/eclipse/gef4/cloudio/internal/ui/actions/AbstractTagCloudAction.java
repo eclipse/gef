@@ -29,27 +29,26 @@ public abstract class AbstractTagCloudAction implements IWorkbenchWindowActionDe
 	private Shell shell;
 	private TagCloudView tcViewPart;
 
-	
 	@Override
-	public void selectionChanged(IAction action, ISelection selection) {}
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+	}
 
 	@Override
 	public void init(IWorkbenchWindow window) {
 		this.shell = window.getShell();
 		tcViewPart = (TagCloudView) window.getActivePage().getActivePart();
 	}
-	
+
 	public Shell getShell() {
 		return shell;
 	}
-	
 
 	protected TagCloudViewer getViewer() {
 		return tcViewPart.getViewer();
 	}
-
 
 }

@@ -25,14 +25,15 @@ public class FXRelocateLinkedOnDragPolicy extends FXRelocateOnDragPolicy {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
-		List<IContentPart<Node, ? extends Node>> selected = super
-				.getTargetParts();
+		List<IContentPart<Node, ? extends Node>> selected = super.getTargetParts();
 		List<IContentPart<Node, ? extends Node>> linked = new ArrayList<IContentPart<Node, ? extends Node>>();
 		for (IContentPart<Node, ? extends Node> cp : selected) {
 			// ensure that linked parts are moved with us during dragging
-			linked.addAll((Collection<? extends IContentPart<Node, ? extends Node>>) new ArrayList<>(
-					PartUtils.filterParts(PartUtils.getAnchoreds(cp, "link"),
-							IContentPart.class)));
+			linked.addAll(
+					(Collection<? extends IContentPart<Node, ? extends Node>>) new ArrayList<>(
+							PartUtils.filterParts(
+									PartUtils.getAnchoreds(cp, "link"),
+									IContentPart.class)));
 		}
 		return linked;
 	}

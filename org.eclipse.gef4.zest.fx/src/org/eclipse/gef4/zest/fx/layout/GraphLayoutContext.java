@@ -60,8 +60,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		IConnectionLayout[] all = super.getConnections();
 		// filter out any hidden nodes
 		for (IConnectionLayout c : all) {
-			if (isLayoutIrrelevant(c) || isLayoutIrrelevant(c.getSource())
-					|| isLayoutIrrelevant(c.getTarget())) {
+			if (isLayoutIrrelevant(c) || isLayoutIrrelevant(c.getSource()) || isLayoutIrrelevant(c.getTarget())) {
 				continue;
 			}
 			connections.add(c);

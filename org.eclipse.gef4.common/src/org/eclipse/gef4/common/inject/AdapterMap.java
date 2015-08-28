@@ -88,5 +88,5 @@ public @interface AdapterMap {
 	 * @return The {@link Class} used as type of this {@link AdapterMap}.
 	 *         {@link IAdaptable} by default.
 	 */
-	Class<?> adaptableType() default IAdaptable.class;
+	Class<?>adaptableType() default IAdaptable.class;
 }

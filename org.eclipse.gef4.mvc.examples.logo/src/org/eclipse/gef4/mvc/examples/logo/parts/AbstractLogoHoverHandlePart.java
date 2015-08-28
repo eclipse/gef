@@ -22,8 +22,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
 
-public abstract class AbstractLogoHoverHandlePart<T extends Node> extends
-		AbstractFXHandlePart<T> {
+public abstract class AbstractLogoHoverHandlePart<T extends Node>
+		extends AbstractFXHandlePart<T> {
 
 	private boolean registered = false;
 	private final PropertyChangeListener parentAnchoragesChangeListener = new PropertyChangeListener() {

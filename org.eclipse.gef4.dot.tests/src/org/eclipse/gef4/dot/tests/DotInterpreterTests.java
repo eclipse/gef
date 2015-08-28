@@ -111,8 +111,8 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void globalEdgeLabel() {
-		Graph graph = interpreter
-				.interpret(parse("graph Sample{edge[label=\"Edge1\"];1;2;1->2}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(
+				parse("graph Sample{edge[label=\"Edge1\"];1;2;1->2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Edge1", DotProperties.getLabel(graph.getEdges() //$NON-NLS-1$
 				.get(0)));
@@ -165,8 +165,8 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void layoutHorizontalTreeViaLayout() {
-		Graph graph = interpreter
-				.interpret(parse("graph Sample{graph[layout=dot];rankdir=LR;1;}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(
+				parse("graph Sample{graph[layout=dot];rankdir=LR;1;}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotProperties.GRAPH_LAYOUT_DOT,
 				DotProperties.getLayout(graph));
@@ -223,8 +223,8 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void nodesAfterEdges() {
-		Graph graph = interpreter
-				.interpret(parse("graph{1->2;2->3;2->4;1[label=\"node\"];2;3;4}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(
+				parse("graph{1->2;2->3;2->4;1[label=\"node\"];2;3;4}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(4, graph.getNodes().size());
 		Assert.assertEquals(3, graph.getEdges().size());
@@ -248,9 +248,9 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter.interpret(parse(dot));
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		List<Node> list = graph.getNodes();
-		Assert.assertEquals("node 1",//$NON-NLS-1$
+		Assert.assertEquals("node 1", //$NON-NLS-1$
 				DotProperties.getId(list.get(0)));
-		Assert.assertEquals("node 2",//$NON-NLS-1$
+		Assert.assertEquals("node 2", //$NON-NLS-1$
 				DotProperties.getId(list.get(1)));
 	}
 
@@ -259,7 +259,7 @@ public final class DotInterpreterTests {
 		String dot = "graph{n1[label=\"node \\\"1\\\"\"]}"; //$NON-NLS-1$
 		Graph graph = interpreter.interpret(parse(dot));
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals("node \"1\"",//$NON-NLS-1$
+		Assert.assertEquals("node \"1\"", //$NON-NLS-1$
 				DotProperties.getLabel(graph.getNodes().get(0)));
 	}
 
@@ -283,9 +283,9 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter.interpret(parse(dot));
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		List<Node> list = graph.getNodes();
-		Assert.assertEquals("node 1",//$NON-NLS-1$
+		Assert.assertEquals("node 1", //$NON-NLS-1$
 				DotProperties.getLabel(list.get(0)));
-		Assert.assertEquals("node 2",//$NON-NLS-1$
+		Assert.assertEquals("node 2", //$NON-NLS-1$
 				DotProperties.getLabel(list.get(1)));
 		Assert.assertEquals("edge 1",
 				DotProperties.getLabel(graph.getEdges().get(0)));
@@ -296,7 +296,7 @@ public final class DotInterpreterTests {
 		String dot = "graph{n1[label=\"node\n1\"]}"; //$NON-NLS-1$
 		Graph graph = interpreter.interpret(parse(dot));
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals("node\n1",//$NON-NLS-1$
+		Assert.assertEquals("node\n1", //$NON-NLS-1$
 				DotProperties.getLabel(graph.getNodes().get(0)));
 	}
 
@@ -324,15 +324,16 @@ public final class DotInterpreterTests {
 	@Test
 	/* see http://www.graphviz.org/doc/info/attrs.html#d:style */
 	public void edgeStyleInvis() {
-		Graph graph = new DotImport("digraph{1->2[style=invis]}").newGraphInstance(); //$NON-NLS-1$
+		Graph graph = new DotImport("digraph{1->2[style=invis]}") //$NON-NLS-1$
+				.newGraphInstance();
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getEdges().size());
 	}
 
 	@Test
 	public void otherUnsupportedStyles() {
-		Graph graph = interpreter
-				.interpret(parse("graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(parse(
+				"graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")); //$NON-NLS-1$
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getEdges().size());
 	}

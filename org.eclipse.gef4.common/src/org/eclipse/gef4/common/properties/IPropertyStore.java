@@ -32,8 +32,8 @@ import org.eclipse.gef4.common.adapt.AdaptableSupport;
 public interface IPropertyStore extends IPropertyChangeNotifier {
 
 	/**
-	 * Sets the value of the property specified by <i>name</i> with the passed-in
-	 * <i>value</i>.
+	 * Sets the value of the property specified by <i>name</i> with the
+	 * passed-in <i>value</i>.
 	 * 
 	 * @param name
 	 *            The name of the property whose value is to set/update.

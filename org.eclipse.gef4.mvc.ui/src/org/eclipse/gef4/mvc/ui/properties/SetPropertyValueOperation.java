@@ -65,11 +65,12 @@ public class SetPropertyValueOperation extends AbstractOperation {
 	 *            reset.
 	 */
 	public SetPropertyValueOperation(String propertyLabel,
-			IPropertySource propertySource, Object propertyId, Object newValue) {
-		super(MessageFormat.format(
-				Messages.SetPropertyValueCommand_Label,
-				new Object[] { propertyLabel,
-						getValueLabel(propertySource, propertyId, newValue) })
+			IPropertySource propertySource, Object propertyId,
+			Object newValue) {
+		super(MessageFormat
+				.format(Messages.SetPropertyValueCommand_Label,
+						new Object[] { propertyLabel, getValueLabel(
+								propertySource, propertyId, newValue) })
 				.trim());
 		this.propertySource = propertySource;
 		this.propertyId = propertyId;
@@ -188,9 +189,8 @@ public class SetPropertyValueOperation extends AbstractOperation {
 		// DEFAULT_VALUE the old value may not have been the default value as
 		// well, as the command would not be executable in this case.
 		if (propertySource instanceof IPropertySource2) {
-			if (!wasPropertySet
-					&& ((IPropertySource2) propertySource)
-							.isPropertyResettable(propertyId)) {
+			if (!wasPropertySet && ((IPropertySource2) propertySource)
+					.isPropertyResettable(propertyId)) {
 				oldValue = DEFAULT_VALUE;
 			}
 		} else {

@@ -112,7 +112,8 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 				restoreInitialCursor();
 				// unregister key handler
 				Scene scene = getHost().getVisual().getScene();
-				scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyPressedHandler);
+				scene.removeEventFilter(KeyEvent.KEY_PRESSED,
+						keyPressedHandler);
 				scene.removeEventFilter(KeyEvent.KEY_RELEASED,
 						keyReleasedHandler);
 			}
@@ -146,7 +147,8 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 		restoreInitialCursor();
 		// remove mouse listeners
 		Node visual = getHost().getVisual();
-		visual.removeEventHandler(MouseEvent.MOUSE_ENTERED, mouseEnteredHandler);
+		visual.removeEventHandler(MouseEvent.MOUSE_ENTERED,
+				mouseEnteredHandler);
 		visual.removeEventHandler(MouseEvent.MOUSE_EXITED, mouseExitedHandler);
 		// remove keyboard listeners
 		Scene scene = getHost().getVisual().getScene();

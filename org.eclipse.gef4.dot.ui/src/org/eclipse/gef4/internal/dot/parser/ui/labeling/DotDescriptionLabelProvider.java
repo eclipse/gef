@@ -18,8 +18,8 @@ import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider;
  * see
  * http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class DotDescriptionLabelProvider extends
-		DefaultDescriptionLabelProvider {
+public class DotDescriptionLabelProvider
+		extends DefaultDescriptionLabelProvider {
 
 	/*
 	 * //Labels and icons can be computed like this:

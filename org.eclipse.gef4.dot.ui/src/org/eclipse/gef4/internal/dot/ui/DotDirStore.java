@@ -51,7 +51,9 @@ public class DotDirStore {
 		return dotUiPrefs().get(DOT_PATH_PREF_KEY, ""); //$NON-NLS-1$
 	}
 
-	/** @return The path to the folder containing the local 'dot' executable */
+	/**
+	 * @return The path to the folder containing the local 'dot' executable
+	 */
 	public static String getDotDirPath() {
 		if (dotPathFromPreferences().length() == 0) {
 			setDotDirPath(); // set the preferences
@@ -68,8 +70,8 @@ public class DotDirStore {
 						NOT_FOUND_LONG);
 			} else {
 				Preferences preferences = dotUiPrefs();
-				preferences.put(DOT_PATH_PREF_KEY, selectedPath
-						+ File.separator);
+				preferences.put(DOT_PATH_PREF_KEY,
+						selectedPath + File.separator);
 				try {
 					preferences.flush();
 				} catch (BackingStoreException e) {

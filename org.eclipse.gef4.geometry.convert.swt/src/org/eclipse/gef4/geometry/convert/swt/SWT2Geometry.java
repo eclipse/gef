@@ -53,8 +53,7 @@ public class SWT2Geometry {
 			throw new IllegalArgumentException(
 					"Cannot convert the given integer array to a GEF4 Line, because the integer array does not consist of exactly 4 coordinate values.");
 		}
-		return new Line(swtPointArray[0], swtPointArray[1], swtPointArray[2],
-				swtPointArray[3]);
+		return new Line(swtPointArray[0], swtPointArray[1], swtPointArray[2], swtPointArray[3]);
 	}
 
 	/**
@@ -131,10 +130,8 @@ public class SWT2Geometry {
 	 * @return a new {@link Rectangle} at the position of the given
 	 *         {@link org.eclipse.swt.graphics.Rectangle SWT Rectangle}
 	 */
-	public static Rectangle toRectangle(
-			org.eclipse.swt.graphics.Rectangle swtRectangle) {
-		return new Rectangle(swtRectangle.x, swtRectangle.y,
-				swtRectangle.width, swtRectangle.height);
+	public static Rectangle toRectangle(org.eclipse.swt.graphics.Rectangle swtRectangle) {
+		return new Rectangle(swtRectangle.x, swtRectangle.y, swtRectangle.width, swtRectangle.height);
 	}
 
 	private SWT2Geometry() {

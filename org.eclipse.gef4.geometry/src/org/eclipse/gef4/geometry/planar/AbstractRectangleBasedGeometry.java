@@ -40,8 +40,8 @@ package org.eclipse.gef4.geometry.planar;
  *
  */
 abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?, ?>, S extends IGeometry>
-		extends AbstractGeometry implements ITranslatable<T>, IScalable<T>,
-		IRotatable<S> {
+		extends AbstractGeometry
+		implements ITranslatable<T>, IScalable<T>, IRotatable<S> {
 
 	private static final long serialVersionUID = 1L;
 

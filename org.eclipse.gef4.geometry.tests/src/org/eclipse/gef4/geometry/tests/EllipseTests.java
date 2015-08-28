@@ -46,34 +46,34 @@ public class EllipseTests {
 		assertTrue(g.contains(r.getCenter()));
 
 		assertTrue(g.contains(r.getLeft()));
-		assertTrue(g.contains(r.getLeft().getTranslated(PRECISION_FRACTION * 1,
-				0)));
-		assertFalse(g.contains(r.getLeft().getTranslated(
-				-PRECISION_FRACTION * 1000, 0)));
+		assertTrue(g.contains(
+				r.getLeft().getTranslated(PRECISION_FRACTION * 1, 0)));
+		assertFalse(g.contains(
+				r.getLeft().getTranslated(-PRECISION_FRACTION * 1000, 0)));
 
 		// due to AWT's behavior, we won't check getTop() but a point very near
 		// to it, so that the Path() will survive these tests, too
 		assertTrue(g.contains(r.getTop().getTranslated(0, 1)));
-		assertTrue(g.contains(r.getTop().getTranslated(0,
-				PRECISION_FRACTION * 100)));
-		assertFalse(g.contains(r.getTop().getTranslated(0,
-				-PRECISION_FRACTION * 100)));
+		assertTrue(g.contains(
+				r.getTop().getTranslated(0, PRECISION_FRACTION * 100)));
+		assertFalse(g.contains(
+				r.getTop().getTranslated(0, -PRECISION_FRACTION * 100)));
 
 		// due to AWT's behavior, we won't check getRight() but a point very
 		// near to it, so that the Path() will survive these tests, too
 		assertTrue(g.contains(r.getRight().getTranslated(-1, 0)));
-		assertTrue(g.contains(r.getRight().getTranslated(
-				-PRECISION_FRACTION * 100, 0)));
-		assertFalse(g.contains(r.getRight().getTranslated(
-				PRECISION_FRACTION * 100, 0)));
+		assertTrue(g.contains(
+				r.getRight().getTranslated(-PRECISION_FRACTION * 100, 0)));
+		assertFalse(g.contains(
+				r.getRight().getTranslated(PRECISION_FRACTION * 100, 0)));
 
 		// due to AWT's behavior, we won't check getBottom() but a point very
 		// near to it, so that the Path() will survive these tests, too
 		assertTrue(g.contains(r.getBottom().getTranslated(0, -1)));
-		assertTrue(g.contains(r.getBottom().getTranslated(0,
-				-PRECISION_FRACTION * 100)));
-		assertFalse(g.contains(r.getBottom().getTranslated(0,
-				PRECISION_FRACTION * 100)));
+		assertTrue(g.contains(
+				r.getBottom().getTranslated(0, -PRECISION_FRACTION * 100)));
+		assertFalse(g.contains(
+				r.getBottom().getTranslated(0, PRECISION_FRACTION * 100)));
 	}
 
 	private void checkPoints(Point[] expected, Point[] obtained) {
@@ -108,8 +108,9 @@ public class EllipseTests {
 			}
 		}
 		for (int i = 0; i < expected.length; i++) {
-			assertTrue("An expected point of intersection " + expected[i]
-					+ " not found in the list of intersections.",
+			assertTrue(
+					"An expected point of intersection " + expected[i]
+							+ " not found in the list of intersections.",
 					foundExpected[i]);
 		}
 	}
@@ -136,12 +137,12 @@ public class EllipseTests {
 		assertTrue(e.contains(r.getRight()));
 		assertTrue(e.contains(r.getBottom()));
 
-		for (Point p : e.getIntersections(new Line(r.getTopLeft(), r
-				.getBottomRight()))) {
+		for (Point p : e.getIntersections(
+				new Line(r.getTopLeft(), r.getBottomRight()))) {
 			assertTrue(e.contains(p));
 		}
-		for (Point p : e.getIntersections(new Line(r.getTopRight(), r
-				.getBottomLeft()))) {
+		for (Point p : e.getIntersections(
+				new Line(r.getTopRight(), r.getBottomLeft()))) {
 			assertTrue(e.contains(p));
 		}
 
@@ -273,7 +274,8 @@ public class EllipseTests {
 		assertEquals(new Point(), e.getCenter());
 	}
 
-	// @Ignore("This test is too strict. For a liberal test see below: test_getIntersections_with_Ellipse_Bezier_special_tolerance")
+	// @Ignore("This test is too strict. For a liberal test see below:
+	// test_getIntersections_with_Ellipse_Bezier_special_tolerance")
 	@Test
 	public void test_getIntersections_Ellipse_Bezier_special() {
 		// 3 nearly tangential intersections

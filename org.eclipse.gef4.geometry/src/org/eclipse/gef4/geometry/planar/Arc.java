@@ -26,7 +26,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  *
  */
 public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
-implements ICurve {
+		implements ICurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -137,8 +137,8 @@ implements ICurve {
 
 	@Override
 	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
-				cx, cy);
+		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle, cx,
+				cy);
 	}
 
 	@Override

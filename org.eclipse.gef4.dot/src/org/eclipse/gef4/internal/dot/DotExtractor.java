@@ -51,7 +51,8 @@ public final class DotExtractor {
 
 	private String trimNonDotPrefix() {
 		Matcher m = Pattern
-				.compile("((?:di)?graph\\s*[^{\\s]*\\s*\\{.+)", Pattern.DOTALL).matcher(input); //$NON-NLS-1$
+				.compile("((?:di)?graph\\s*[^{\\s]*\\s*\\{.+)", Pattern.DOTALL) //$NON-NLS-1$
+				.matcher(input);
 		String dotSubstring = m.find() ? m.group(1) : NO_DOT;
 		return dotSubstring;
 	}

@@ -18,8 +18,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 /**
  * @author anyssen
  */
-public class FXEditorActionBarContributor extends
-		EditorActionBarContributor {
+public class FXEditorActionBarContributor extends EditorActionBarContributor {
 
 	@Override
 	public void setActiveEditor(final IEditorPart targetEditor) {

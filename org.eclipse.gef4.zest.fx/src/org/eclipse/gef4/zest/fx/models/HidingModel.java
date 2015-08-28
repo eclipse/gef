@@ -26,16 +26,14 @@ public class HidingModel implements IPropertyChangeNotifier {
 	public static final String HIDDEN_PROPERTY = "hidden";
 
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private final Set<Node> hidden = Collections
-			.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+	private final Set<Node> hidden = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public Set<org.eclipse.gef4.graph.Node> getHiddenNeighbors(
-			org.eclipse.gef4.graph.Node node) {
+	public Set<org.eclipse.gef4.graph.Node> getHiddenNeighbors(org.eclipse.gef4.graph.Node node) {
 		Set<org.eclipse.gef4.graph.Node> neighbors = node.getLocalNeighbors();
 		Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = Collections
 				.newSetFromMap(new IdentityHashMap<org.eclipse.gef4.graph.Node, Boolean>());
@@ -48,8 +46,7 @@ public class HidingModel implements IPropertyChangeNotifier {
 	}
 
 	public Set<Node> getHiddenNodes() {
-		Set<Node> copy = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> copy = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		copy.addAll(hidden);
 		return copy;
 	}

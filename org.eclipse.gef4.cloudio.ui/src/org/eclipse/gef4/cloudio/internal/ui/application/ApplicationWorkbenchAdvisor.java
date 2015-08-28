@@ -35,20 +35,14 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		super.initialize(configurer);
 	}
 
-	
 	@Override
-	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
-			IWorkbenchWindowConfigurer configurer) {
+	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
 	@Override
-	public void fillActionBars(IWorkbenchWindow window,
-			IActionBarConfigurer configurer, int flags) {
-		
+	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
+
 	}
-	
-	
-	
-	
+
 }

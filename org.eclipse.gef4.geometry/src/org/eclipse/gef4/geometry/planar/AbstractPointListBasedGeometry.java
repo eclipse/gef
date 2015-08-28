@@ -34,8 +34,8 @@ import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
  *
  */
 abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGeometry<?>>
-extends AbstractGeometry implements ITranslatable<T>, IScalable<T>,
-IRotatable<T> {
+		extends AbstractGeometry
+		implements ITranslatable<T>, IScalable<T>, IRotatable<T> {
 
 	private static final long serialVersionUID = 1L;
 

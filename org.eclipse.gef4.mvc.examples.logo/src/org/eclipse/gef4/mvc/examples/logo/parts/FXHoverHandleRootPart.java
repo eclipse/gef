@@ -72,8 +72,8 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 		if (parent != null) {
 			hostBounds = parent.localToScene(hostBounds);
 		}
-		Point2D location = getVisual().getParent().sceneToLocal(
-				hostBounds.getMaxX(), hostBounds.getMinY());
+		Point2D location = getVisual().getParent()
+				.sceneToLocal(hostBounds.getMaxX(), hostBounds.getMinY());
 		getVisual().setLayoutX(location.getX());
 		getVisual().setLayoutY(location.getY());
 	}

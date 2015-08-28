@@ -41,9 +41,9 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 			final IVisualPart<Node, ? extends Node> targetPart,
 			final Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
-		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super
-				.createCurveSelectionHandlePart(targetPart, segmentsProvider,
-						segmentCount, segmentIndex, segmentParameter);
+		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super.createCurveSelectionHandlePart(
+				targetPart, segmentsProvider, segmentCount, segmentIndex,
+				segmentParameter);
 		injector.injectMembers(part);
 
 		if (segmentIndex + segmentParameter > 0
@@ -65,7 +65,8 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
 			IVisualPart<Node, ? extends Node> target,
-			HoverBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+			HoverBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		if (target instanceof FXGeometricShapePart) {
 			// create root handle part
@@ -84,8 +85,8 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 
 			return handles;
 		}
-		return super
-				.createHoverHandleParts(target, contextBehavior, contextMap);
+		return super.createHoverHandleParts(target, contextBehavior,
+				contextMap);
 	}
 
 }

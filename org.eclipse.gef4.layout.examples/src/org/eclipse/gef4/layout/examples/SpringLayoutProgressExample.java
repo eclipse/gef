@@ -42,8 +42,8 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 	 * that we can use the {@link #performNIteration(int)} method to gradually
 	 * apply the layout.
 	 */
-	public static class ManualSpringLayoutAlgorithm extends
-			SpringLayoutAlgorithm {
+	public static class ManualSpringLayoutAlgorithm
+			extends SpringLayoutAlgorithm {
 		@Override
 		public void applyLayout(boolean clean) {
 		}
@@ -97,7 +97,8 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 					Node n2 = n(LABEL, "2 - " + j);
 					nodes.add(n2);
 					Edge e = e(n, n2, LABEL, "", "weight", "-1");
-					edges.addAll(Arrays.asList(e, e(mix[j % 3], n2, LABEL, "")));
+					edges.addAll(
+							Arrays.asList(e, e(mix[j % 3], n2, LABEL, "")));
 				}
 				edges.add(e(root, n, LABEL, ""));
 			}

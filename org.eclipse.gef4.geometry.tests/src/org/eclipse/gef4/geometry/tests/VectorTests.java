@@ -105,8 +105,8 @@ public class VectorTests {
 		assertFalse(a.equals(new Point(3, 2)));
 		assertTrue(a.equals(a.getAdded(new Vector(UNRECOGNIZABLE_FRACTION / 10,
 				UNRECOGNIZABLE_FRACTION / 10))));
-		assertFalse(a.equals(a.getAdded(new Vector(RECOGNIZABLE_FRACTION,
-				RECOGNIZABLE_FRACTION))));
+		assertFalse(a.equals(a.getAdded(
+				new Vector(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION))));
 	}
 
 	@Test
@@ -114,8 +114,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(a.getAdded(b).equals(
-						new Vector(a.x + b.x, a.y + b.y)));
+				assertTrue(
+						a.getAdded(b).equals(new Vector(a.x + b.x, a.y + b.y)));
 			}
 		});
 	}
@@ -125,8 +125,7 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(PrecisionUtils.equal(
-						a.getDotProduct(b),
+				assertTrue(PrecisionUtils.equal(a.getDotProduct(b),
 						a.getLength() * b.getLength()
 								* Math.cos(a.getAngle(b).rad())));
 			}
@@ -134,7 +133,8 @@ public class VectorTests {
 
 		// test for the ArithmeticException is case of a null-vector
 		for (Vector a : new Vector[] { new Vector(1, 2), new Vector(0, 0) }) {
-			for (Vector b : new Vector[] { new Vector(0, 0), new Vector(1, 2) }) {
+			for (Vector b : new Vector[] { new Vector(0, 0),
+					new Vector(1, 2) }) {
 				boolean thrown = a.getLength() != 0 && b.getLength() != 0;
 				try {
 					a.getAngle(b);
@@ -185,8 +185,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(a.getAveraged(b).equals(
-						a.getAdded(b).getMultiplied(0.5)));
+				assertTrue(a.getAveraged(b)
+						.equals(a.getAdded(b).getMultiplied(0.5)));
 			}
 		});
 	}
@@ -196,8 +196,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(PrecisionUtils.equal(a.getCrossProduct(b), a.x * b.y
-						- a.y * b.x));
+				assertTrue(PrecisionUtils.equal(a.getCrossProduct(b),
+						a.x * b.y - a.y * b.x));
 			}
 		});
 	}
@@ -229,10 +229,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(PrecisionUtils.equal(
-						a.getDissimilarity(b),
-						Math.abs(a.getNormalized().getCrossProduct(
-								b.getNormalized()))));
+				assertTrue(PrecisionUtils.equal(a.getDissimilarity(b), Math.abs(
+						a.getNormalized().getCrossProduct(b.getNormalized()))));
 			}
 		});
 	}
@@ -244,8 +242,8 @@ public class VectorTests {
 				for (double r = -2; r <= 2; r += 0.2) {
 					// TODO: no PrecisionUtils in getDivided()
 					assertTrue(r != 0);
-					assertTrue(a.getDivided(r).equals(
-							new Vector(a.x / r, a.y / r)));
+					assertTrue(a.getDivided(r)
+							.equals(new Vector(a.x / r, a.y / r)));
 				}
 
 				boolean thrown = false;
@@ -264,8 +262,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(PrecisionUtils.equal(a.getDotProduct(b), a.x * b.x
-						+ a.y * b.y));
+				assertTrue(PrecisionUtils.equal(a.getDotProduct(b),
+						a.x * b.x + a.y * b.y));
 			}
 		});
 	}
@@ -282,9 +280,9 @@ public class VectorTests {
 				} else if (b.isNull()) {
 					assertTrue(PrecisionUtils.equal(b.getLength(), 0));
 				} else {
-					assertTrue(PrecisionUtils.equal(a.getDivided(a.getLength())
-							.getLength(), (b.getDivided(b.getLength())
-							.getLength())));
+					assertTrue(PrecisionUtils.equal(
+							a.getDivided(a.getLength()).getLength(),
+							(b.getDivided(b.getLength()).getLength())));
 				}
 			}
 		});
@@ -295,10 +293,10 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(a.getMultiplied(b.x).equals(
-						new Vector(a.x * b.x, a.y * b.x)));
-				assertTrue(a.getMultiplied(b.y).equals(
-						new Vector(a.x * b.y, a.y * b.y)));
+				assertTrue(a.getMultiplied(b.x)
+						.equals(new Vector(a.x * b.x, a.y * b.x)));
+				assertTrue(a.getMultiplied(b.y)
+						.equals(new Vector(a.x * b.y, a.y * b.y)));
 			}
 		});
 	}
@@ -317,8 +315,8 @@ public class VectorTests {
 				Angle normAlpha = normalized.getAngleCW(x);
 
 				assertTrue(PrecisionUtils.equal(normalized.getLength(), 1));
-				assertTrue(PrecisionUtils.equal(origAlpha.rad(),
-						normAlpha.rad()));
+				assertTrue(
+						PrecisionUtils.equal(origAlpha.rad(), normAlpha.rad()));
 			}
 		});
 	}
@@ -330,8 +328,8 @@ public class VectorTests {
 
 		forVectors(new VectorAction() {
 			public void action(Vector a) {
-				assertTrue(PrecisionUtils.equal(a.getOrthogonalComplement()
-						.getDotProduct(a), 0));
+				assertTrue(PrecisionUtils.equal(
+						a.getOrthogonalComplement().getDotProduct(a), 0));
 			}
 		});
 	}
@@ -352,8 +350,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(a.getSubtracted(b).equals(
-						new Vector(a.x - b.x, a.y - b.y)));
+				assertTrue(a.getSubtracted(b)
+						.equals(new Vector(a.x - b.x, a.y - b.y)));
 			}
 		});
 	}
@@ -371,8 +369,8 @@ public class VectorTests {
 	public void test_isNull() {
 		forVectors(new VectorAction() {
 			public void action(Vector a) {
-				assertTrue(a.isNull() == (PrecisionUtils.equal(a.x, 0) && PrecisionUtils
-						.equal(a.y, 0)));
+				assertTrue(a.isNull() == (PrecisionUtils.equal(a.x, 0)
+						&& PrecisionUtils.equal(a.y, 0)));
 			}
 		});
 	}
@@ -382,8 +380,8 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				assertTrue(a.isOrthogonalTo(b) == PrecisionUtils.equal(
-						a.getDotProduct(b), 0));
+				assertTrue(a.isOrthogonalTo(b) == PrecisionUtils
+						.equal(a.getDotProduct(b), 0));
 			}
 		});
 	}
@@ -394,8 +392,8 @@ public class VectorTests {
 			@Override
 			public void action(Vector a, Vector b) {
 				// TODO: rewrite this test!
-				assertTrue(a.isParallelTo(b) == PrecisionUtils.equal(
-						a.getDissimilarity(b), 0));
+				assertTrue(a.isParallelTo(b) == PrecisionUtils
+						.equal(a.getDissimilarity(b), 0));
 			}
 		});
 	}

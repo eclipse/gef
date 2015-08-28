@@ -144,8 +144,8 @@ public class IGeometryTests {
 
 		@Test
 		public void Line_Ring() {
-			Ring r = new Ring(new Polygon(10, 10, 20, 10, 15, 20), new Polygon(
-					10, 25, 20, 25, 15, 15));
+			Ring r = new Ring(new Polygon(10, 10, 20, 10, 15, 20),
+					new Polygon(10, 25, 20, 25, 15, 15));
 
 			// identical not possible (different types)
 
@@ -248,8 +248,8 @@ public class IGeometryTests {
 
 		@Test
 		public void Polygon_Region() {
-			Region r = new Region(new Rectangle(0, 0, 15, 10), new Rectangle(5,
-					5, 15, 10));
+			Region r = new Region(new Rectangle(0, 0, 15, 10),
+					new Rectangle(5, 5, 15, 10));
 
 			// identical not possible
 
@@ -300,60 +300,60 @@ public class IGeometryTests {
 
 		@Test
 		public void Ring_Ring() {
-			Ring r1 = new Ring(new Polygon(5, 5, 10, 15, 15, 5), new Polygon(
-					10, 10, 20, 10, 15, 0));
+			Ring r1 = new Ring(new Polygon(5, 5, 10, 15, 15, 5),
+					new Polygon(10, 10, 20, 10, 15, 0));
 
 			// identical
-			Ring r2 = new Ring(new Polygon(5, 5, 10, 15, 15, 5), new Polygon(
-					10, 10, 20, 10, 15, 0));
+			Ring r2 = new Ring(new Polygon(5, 5, 10, 15, 15, 5),
+					new Polygon(10, 10, 20, 10, 15, 0));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// shared edge
-			r2 = new Ring(new Polygon(15, 0, 20, 10, 25, 0), new Polygon(20,
-					-5, 20, 5, 30, 10));
+			r2 = new Ring(new Polygon(15, 0, 20, 10, 25, 0),
+					new Polygon(20, -5, 20, 5, 30, 10));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// overlapping edge
-			r2 = new Ring(new Polygon(17.5, 5, 22.5, 15, 25, 0), new Polygon(
-					20, -5, 20, 5, 30, 10));
+			r2 = new Ring(new Polygon(17.5, 5, 22.5, 15, 25, 0),
+					new Polygon(20, -5, 20, 5, 30, 10));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// shared vertex
-			r2 = new Ring(new Polygon(20, 10, 20, 15, 25, 10), new Polygon(20,
-					12.5, 22.5, 10, 25, 15));
+			r2 = new Ring(new Polygon(20, 10, 20, 15, 25, 10),
+					new Polygon(20, 12.5, 22.5, 10, 25, 15));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// edge through vertex
-			r2 = new Ring(new Polygon(15, 15, 25, 5, 25, 15), new Polygon(20,
-					15, 25, 10, 30, 10));
+			r2 = new Ring(new Polygon(15, 15, 25, 5, 25, 15),
+					new Polygon(20, 15, 25, 10, 30, 10));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// intersecting edge/edge
-			r2 = new Ring(new Polygon(7.5, 7.5, 12.5, 7.5, 10, 0), new Polygon(
-					7.5, 2.5, 12.5, 2.5, 0, -5));
+			r2 = new Ring(new Polygon(7.5, 7.5, 12.5, 7.5, 10, 0),
+					new Polygon(7.5, 2.5, 12.5, 2.5, 0, -5));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// intersecting edge/vertex
-			r2 = new Ring(new Polygon(10, 7.5, 10, 20, 0, 2.5), new Polygon(
-					2.5, 0, 2.5, 15, 0, 10));
+			r2 = new Ring(new Polygon(10, 7.5, 10, 20, 0, 2.5),
+					new Polygon(2.5, 0, 2.5, 15, 0, 10));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 
 			// not touching
-			r2 = new Ring(new Polygon(15, 20, 15, 25, 25, 20), new Polygon(20,
-					20, 20, 25, 25, 25));
+			r2 = new Ring(new Polygon(15, 20, 15, 25, 25, 20),
+					new Polygon(20, 20, 20, 25, 25, 25));
 			assertFalse(r1.touches(r2));
 			assertFalse(r2.touches(r1));
 
 			// containment
-			r2 = new Ring(new Polygon(10, 8, 15, 5, 15, 7.5), new Polygon(10,
-					7, 15, 7.5, 15, 8));
+			r2 = new Ring(new Polygon(10, 8, 15, 5, 15, 7.5),
+					new Polygon(10, 7, 15, 7.5, 15, 8));
 			assertTrue(r1.touches(r2));
 			assertTrue(r2.touches(r1));
 		}

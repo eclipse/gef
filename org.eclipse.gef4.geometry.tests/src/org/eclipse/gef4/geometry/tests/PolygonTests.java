@@ -42,9 +42,8 @@ public class PolygonTests {
 			new Point(0, 4), new Point(2, 4), new Point(2, 2), new Point(4, 2),
 			new Point(4, 4), new Point(6, 4), new Point(6, 0));
 
-	private static final Polygon CONCAVE_PENTAGON = new Polygon(
-			new Point(0, 0), new Point(0, 8), new Point(4, 4), new Point(8, 8),
-			new Point(8, 0));
+	private static final Polygon CONCAVE_PENTAGON = new Polygon(new Point(0, 0),
+			new Point(0, 8), new Point(4, 4), new Point(8, 8), new Point(8, 0));
 
 	private static final double PRECISION_FRACTION = TestUtils
 			.getPrecisionFraction();
@@ -80,11 +79,11 @@ public class PolygonTests {
 
 	@Test
 	public void test_contains_imprecision() {
-		Polygon poly = new Polygon(new Point(0.16384889386958243,
-				0.5199137157713366), new Point(0.16388083282075672,
-				0.5199518598437528), new Point(0.1639056804775328,
-				0.5199687901987595), new Point(0.16381011945655763,
-				0.5198551130149273));
+		Polygon poly = new Polygon(
+				new Point(0.16384889386958243, 0.5199137157713366),
+				new Point(0.16388083282075672, 0.5199518598437528),
+				new Point(0.1639056804775328, 0.5199687901987595),
+				new Point(0.16381011945655763, 0.5198551130149273));
 		Point p = new Point(0.16383865075635337, 0.5198962222767928);
 		assertTrue(poly.contains(p));
 	}
@@ -99,15 +98,15 @@ public class PolygonTests {
 		assertTrue(RHOMB.contains(new Line(0, 2, 2, 2)));
 		assertTrue(RHOMB.contains(new Line(1, 2, 3, 2)));
 		assertTrue(new Polygon(new Point(), new Point(0, 5), new Point(5, 5),
-				new Point(5, 0), new Point(2.5, 2.5)).contains(new Line(1, 2.5,
-				4, 2.5)));
+				new Point(5, 0), new Point(2.5, 2.5))
+						.contains(new Line(1, 2.5, 4, 2.5)));
 		assertFalse(new Polygon(new Point(), new Point(0, 5), new Point(5, 5),
-				new Point(5, 0), new Point(2.5, 2.5)).contains(new Line(1, 2,
-				4, 2)));
+				new Point(5, 0), new Point(2.5, 2.5))
+						.contains(new Line(1, 2, 4, 2)));
 
 		Polygon mouth = new Polygon(new Point(0, 5), new Point(2, 1),
-				new Point(4, 1), new Point(6, 5), new Point(4, 6), new Point(6,
-						7), new Point(4, 10), new Point(2, 10));
+				new Point(4, 1), new Point(6, 5), new Point(4, 6),
+				new Point(6, 7), new Point(4, 10), new Point(2, 10));
 		assertFalse(mouth.contains(new Line(6, 5, 6, 7)));
 	}
 
@@ -373,10 +372,10 @@ public class PolygonTests {
 		assertFalse(RHOMB.equals(new Point()));
 
 		// check unequal polygon
-		assertFalse(RHOMB.equals(new Polygon(new Point(), new Point(1, 1),
-				new Point(0, 2))));
-		assertFalse(RHOMB.equals(new Point[] { new Point(), new Point(1, 1),
-				new Point(0, 2) }));
+		assertFalse(RHOMB.equals(
+				new Polygon(new Point(), new Point(1, 1), new Point(0, 2))));
+		assertFalse(RHOMB.equals(
+				new Point[] { new Point(), new Point(1, 1), new Point(0, 2) }));
 		assertFalse(RHOMB.equals(new Polygon(new Point(), new Point(1, 1),
 				new Point(0, 2), new Point(-1, 1))));
 		assertFalse(RHOMB.equals(new Point[] { new Point(), new Point(1, 1),
@@ -385,15 +384,17 @@ public class PolygonTests {
 		// check degenerated case:
 		assertFalse(new Polygon(new Point(), new Point(1, 0), new Point(),
 				new Point(1, 0), new Point(), new Point(2, 0))
-				.equals(new Polygon(new Point(), new Point(1, 0), new Point(),
-						new Point(2, 0), new Point(), new Point(2, 0))));
+						.equals(new Polygon(new Point(), new Point(1, 0),
+								new Point(), new Point(2, 0), new Point(),
+								new Point(2, 0))));
 	}
 
 	@Test
 	public void test_getArea() {
 		// test area of 1x1 square
 		Polygon quad = new Polygon(0, 0, 0, 1, 1, 1, 1, 0);
-		assertTrue("" + quad.getArea(), PrecisionUtils.equal(1, quad.getArea()));
+		assertTrue("" + quad.getArea(),
+				PrecisionUtils.equal(1, quad.getArea()));
 
 		// test area of 10,5 triangle
 		Polygon tri = new Polygon(0, 0, 5, 5, 10, 0);
@@ -418,51 +419,37 @@ public class PolygonTests {
 
 	@Test
 	public void test_getIntersections_Ellipse() {
-		assertTrue(new Polygon(RHOMB.getOutline().getIntersections(
-				new Ellipse(0, 0, 4, 4).getOutline())).getBounds().equals(
-				RHOMB.getBounds()));
+		assertTrue(new Polygon(RHOMB.getOutline()
+				.getIntersections(new Ellipse(0, 0, 4, 4).getOutline()))
+						.getBounds().equals(RHOMB.getBounds()));
 	}
 
 	@Test
 	public void test_getIntersections_Polygon() {
-		assertEquals(
-				2,
-				RHOMB.getOutline().getIntersections(RECTANGLE.getOutline()).length);
-		assertEquals(
-				4,
-				RHOMB.getOutline().getIntersections(
-						RHOMB.getBounds().toPolygon().getOutline()).length);
+		assertEquals(2, RHOMB.getOutline()
+				.getIntersections(RECTANGLE.getOutline()).length);
+		assertEquals(4, RHOMB.getOutline().getIntersections(
+				RHOMB.getBounds().toPolygon().getOutline()).length);
 	}
 
 	@Test
 	public void test_getIntersections_Polyline() {
-		assertEquals(
-				1,
-				RHOMB.getOutline().getIntersections(new Polyline(0, 0, 0, 4)).length);
-		assertEquals(
-				2,
-				RHOMB.getOutline().getIntersections(
-						new Polyline(0, 0, 0, 4, 4, 4)).length);
-		assertEquals(
-				3,
-				RHOMB.getOutline().getIntersections(
-						new Polyline(0, 0, 0, 4, 4, 4, 2, 2)).length);
-		assertEquals(
-				4,
-				RHOMB.getOutline().getIntersections(
-						new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0)).length);
-		assertEquals(
-				5,
-				RHOMB.getOutline().getIntersections(
-						new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0, 0, 0)).length);
+		assertEquals(1, RHOMB.getOutline()
+				.getIntersections(new Polyline(0, 0, 0, 4)).length);
+		assertEquals(2, RHOMB.getOutline()
+				.getIntersections(new Polyline(0, 0, 0, 4, 4, 4)).length);
+		assertEquals(3, RHOMB.getOutline()
+				.getIntersections(new Polyline(0, 0, 0, 4, 4, 4, 2, 2)).length);
+		assertEquals(4, RHOMB.getOutline().getIntersections(
+				new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0)).length);
+		assertEquals(5, RHOMB.getOutline().getIntersections(
+				new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0, 0, 0)).length);
 	}
 
 	@Test
 	public void test_getIntersections_Rectangle() {
-		assertEquals(
-				4,
-				RHOMB.getOutline().getIntersections(
-						RHOMB.getBounds().getOutline()).length);
+		assertEquals(4, RHOMB.getOutline()
+				.getIntersections(RHOMB.getBounds().getOutline()).length);
 	}
 
 	@Test
@@ -495,16 +482,16 @@ public class PolygonTests {
 	public void test_getTranslated() {
 		assertTrue(RHOMB.equals(RHOMB.getTranslated(new Point())));
 		assertTrue(RHOMB.equals(RHOMB.getTranslated(0, 0)));
-		assertTrue(RHOMB.equals(RHOMB.getTranslated(new Point(
-				UNRECOGNIZABLE_FRACTION, 0))));
-		assertTrue(RHOMB.equals(RHOMB.getTranslated(new Point(0,
-				UNRECOGNIZABLE_FRACTION))));
-		assertTrue(RHOMB.equals(RHOMB.getTranslated(new Point(
-				UNRECOGNIZABLE_FRACTION, UNRECOGNIZABLE_FRACTION))));
-		assertTrue(RHOMB
-				.equals(RHOMB.getTranslated(UNRECOGNIZABLE_FRACTION, 0)));
-		assertTrue(RHOMB
-				.equals(RHOMB.getTranslated(0, UNRECOGNIZABLE_FRACTION)));
+		assertTrue(RHOMB.equals(
+				RHOMB.getTranslated(new Point(UNRECOGNIZABLE_FRACTION, 0))));
+		assertTrue(RHOMB.equals(
+				RHOMB.getTranslated(new Point(0, UNRECOGNIZABLE_FRACTION))));
+		assertTrue(RHOMB.equals(RHOMB.getTranslated(
+				new Point(UNRECOGNIZABLE_FRACTION, UNRECOGNIZABLE_FRACTION))));
+		assertTrue(
+				RHOMB.equals(RHOMB.getTranslated(UNRECOGNIZABLE_FRACTION, 0)));
+		assertTrue(
+				RHOMB.equals(RHOMB.getTranslated(0, UNRECOGNIZABLE_FRACTION)));
 		assertTrue(RHOMB.equals(RHOMB.getTranslated(UNRECOGNIZABLE_FRACTION,
 				UNRECOGNIZABLE_FRACTION)));
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(new Point(1, 0))));
@@ -513,14 +500,16 @@ public class PolygonTests {
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(1, 0)));
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(0, 1)));
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(1, 1)));
-		assertFalse(RHOMB.equals(RHOMB.getTranslated(new Point(
-				RECOGNIZABLE_FRACTION, 0))));
-		assertFalse(RHOMB.equals(RHOMB.getTranslated(new Point(9,
-				RECOGNIZABLE_FRACTION))));
-		assertFalse(RHOMB.equals(RHOMB.getTranslated(new Point(
-				RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION))));
-		assertFalse(RHOMB.equals(RHOMB.getTranslated(RECOGNIZABLE_FRACTION, 0)));
-		assertFalse(RHOMB.equals(RHOMB.getTranslated(9, RECOGNIZABLE_FRACTION)));
+		assertFalse(RHOMB.equals(
+				RHOMB.getTranslated(new Point(RECOGNIZABLE_FRACTION, 0))));
+		assertFalse(RHOMB.equals(
+				RHOMB.getTranslated(new Point(9, RECOGNIZABLE_FRACTION))));
+		assertFalse(RHOMB.equals(RHOMB.getTranslated(
+				new Point(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION))));
+		assertFalse(
+				RHOMB.equals(RHOMB.getTranslated(RECOGNIZABLE_FRACTION, 0)));
+		assertFalse(
+				RHOMB.equals(RHOMB.getTranslated(9, RECOGNIZABLE_FRACTION)));
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(RECOGNIZABLE_FRACTION,
 				RECOGNIZABLE_FRACTION)));
 	}
@@ -570,8 +559,8 @@ public class PolygonTests {
 		assertTrue(RHOMB.touches(new Line(0, 2, 2, 2)));
 		assertTrue(RHOMB.touches(new Line(1, 2, 3, 2)));
 		assertTrue(new Polygon(new Point(), new Point(0, 5), new Point(5, 5),
-				new Point(5, 0), new Point(2.5, 2.5)).touches(new Line(1, 2.5,
-				4, 2.5)));
+				new Point(5, 0), new Point(2.5, 2.5))
+						.touches(new Line(1, 2.5, 4, 2.5)));
 		assertTrue(RHOMB.touches(new Line(-1, 2, 5, 2)));
 	}
 
@@ -590,8 +579,8 @@ public class PolygonTests {
 				RHOMB.touches(RHOMB.getCopy().scale(2, new Point(2, 2))));
 
 		assertTrue(RHOMB.contains(new Point(4, 2)));
-		assertTrue(RHOMB.getTranslated(new Point(4, 0)).contains(
-				new Point(4, 2)));
+		assertTrue(
+				RHOMB.getTranslated(new Point(4, 0)).contains(new Point(4, 2)));
 
 		assertTrue("The rhomb touches the given one",
 				RHOMB.touches(RHOMB.getTranslated(4, 0)));
@@ -606,8 +595,8 @@ public class PolygonTests {
 		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4)));
 		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2)));
 		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0)));
-		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0, 0,
-				0)));
+		assertTrue(RHOMB
+				.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0, 0, 0)));
 	}
 
 	@Test

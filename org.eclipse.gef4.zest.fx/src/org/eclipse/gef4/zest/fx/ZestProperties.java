@@ -80,24 +80,20 @@ public class ZestProperties {
 		return null;
 	}
 
-	public static Boolean getLayoutIrrelevant(Edge edge,
-			boolean returnDefaultIfMissing) {
+	public static Boolean getLayoutIrrelevant(Edge edge, boolean returnDefaultIfMissing) {
 		Map<String, Object> attrs = edge.getAttrs();
 		if (attrs.containsKey(ELEMENT_LAYOUT_IRRELEVANT)) {
 			return (Boolean) attrs.get(ELEMENT_LAYOUT_IRRELEVANT);
 		}
-		return returnDefaultIfMissing ? ELEMENT_LAYOUT_IRRELEVANT_DEFAULT
-				: null;
+		return returnDefaultIfMissing ? ELEMENT_LAYOUT_IRRELEVANT_DEFAULT : null;
 	}
 
-	public static Boolean getLayoutIrrelevant(Node node,
-			boolean returnDefaultIfMissing) {
+	public static Boolean getLayoutIrrelevant(Node node, boolean returnDefaultIfMissing) {
 		Map<String, Object> attrs = node.getAttrs();
 		if (attrs.containsKey(ELEMENT_LAYOUT_IRRELEVANT)) {
 			return (Boolean) attrs.get(ELEMENT_LAYOUT_IRRELEVANT);
 		}
-		return returnDefaultIfMissing ? ELEMENT_LAYOUT_IRRELEVANT_DEFAULT
-				: null;
+		return returnDefaultIfMissing ? ELEMENT_LAYOUT_IRRELEVANT_DEFAULT : null;
 	}
 
 	public static String getNodeLabelCssStyle(Node node) {
@@ -203,22 +199,19 @@ public class ZestProperties {
 		edge.getAttrs().put(EDGE_ROUTER, router);
 	}
 
-	public static void setSourceDecoration(Edge edge,
-			IFXDecoration sourceDecoration) {
+	public static void setSourceDecoration(Edge edge, IFXDecoration sourceDecoration) {
 		edge.getAttrs().put(EDGE_SOURCE_DECORATION, sourceDecoration);
 	}
 
 	public static void setStyle(Edge edge, String style) {
 		if (!EDGE_STYLE_VALUES.contains(style)) {
-			throw new IllegalArgumentException("Cannot set edge attribute \""
-					+ EDGE_STYLE + "\" to \"" + style
+			throw new IllegalArgumentException("Cannot set edge attribute \"" + EDGE_STYLE + "\" to \"" + style
 					+ "\"; supported values: " + EDGE_STYLE_VALUES);
 		}
 		edge.getAttrs().put(EDGE_STYLE, style);
 	}
 
-	public static void setTargetDecoration(Edge edge,
-			IFXDecoration targetDecoration) {
+	public static void setTargetDecoration(Edge edge, IFXDecoration targetDecoration) {
 		edge.getAttrs().put(EDGE_TARGET_DECORATION, targetDecoration);
 	}
 
@@ -228,9 +221,8 @@ public class ZestProperties {
 
 	public static void setType(Graph graph, String type) {
 		if (!GRAPH_TYPE_VALUES.contains(type)) {
-			throw new IllegalArgumentException("Cannot set graph attribute \""
-					+ GRAPH_TYPE + "\" to \"" + type + "\"; supported values: "
-					+ GRAPH_TYPE_VALUES);
+			throw new IllegalArgumentException("Cannot set graph attribute \"" + GRAPH_TYPE + "\" to \"" + type
+					+ "\"; supported values: " + GRAPH_TYPE_VALUES);
 		}
 		graph.getAttrs().put(GRAPH_TYPE, type);
 	}
@@ -267,9 +259,8 @@ public class ZestProperties {
 	public static final String EDGE_STYLE_SOLID = "solid";
 	public static final String EDGE_STYLE_DASHDOT = "dashdot";
 	public static final String EDGE_STYLE_DASHDOTDOT = "dashdotdot";
-	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
-			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
-					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
+	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(Arrays.asList(EDGE_STYLE_DASHED,
+			EDGE_STYLE_DOTTED, EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
 	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
 
 	public static final String GRAPH_TYPE = "type";

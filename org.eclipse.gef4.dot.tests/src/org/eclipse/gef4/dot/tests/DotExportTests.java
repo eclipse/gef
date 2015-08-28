@@ -55,8 +55,8 @@ public class DotExportTests extends DotTemplateTests {
 
 		File file = new File(OUTPUT, new DotExport(graph).toString() + ".dot"); //$NON-NLS-1$
 		dotExport.toDotFile(file);
-		Assert.assertTrue(
-				"Generated file " + file.getName() + " must exist!", file.exists()); //$NON-NLS-1$
+		Assert.assertTrue("Generated file " + file.getName() + " must exist!", //$NON-NLS-1$
+				file.exists());
 		String dotRead = read(file);
 		Assert.assertTrue(
 				"DOT file output representation must contain simple class name of Zest input!", //$NON-NLS-1$
@@ -99,10 +99,12 @@ public class DotExportTests extends DotTemplateTests {
 		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DOT);
 		assertTrue("'dot'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=dot]"));
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_TWOPI);
+		graph.attr(DotProperties.GRAPH_LAYOUT,
+				DotProperties.GRAPH_LAYOUT_TWOPI);
 		assertTrue("'twopi'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=twopi]"));
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_OSAGE);
+		graph.attr(DotProperties.GRAPH_LAYOUT,
+				DotProperties.GRAPH_LAYOUT_OSAGE);
 		assertTrue("'osage'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=osage]"));
 		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_FDP);

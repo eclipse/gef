@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-
 /**
  * 
  * @author sschwieb
@@ -35,15 +34,13 @@ public class CloudioUiBundle extends AbstractUIPlugin {
 
 	// The shared instance
 	private static CloudioUiBundle plugin;
-	
 
 	public static final String ADD = "add.gif";
-	
+
 	public static final String REMOVE = "remove.gif";
 
 	public static final String TOGGLE_COLORS = "toggle_colors.gif";
 
-	
 	/**
 	 * The constructor
 	 */
@@ -52,7 +49,9 @@ public class CloudioUiBundle extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+	 * BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -62,9 +61,9 @@ public class CloudioUiBundle extends AbstractUIPlugin {
 		loadImage(il, REMOVE);
 		loadImage(il, TOGGLE_COLORS);
 	}
-	
+
 	private void loadImage(ImageLoader il, String fileName) throws IOException {
-		InputStream stream = getBundle().getResource("icons/"+fileName).openStream();
+		InputStream stream = getBundle().getResource("icons/" + fileName).openStream();
 		ImageData[] data = il.load(stream);
 		Image image = new Image(Display.getDefault(), data[0]);
 		getImageRegistry().put(fileName, image);
@@ -72,7 +71,9 @@ public class CloudioUiBundle extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
+	 * BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;

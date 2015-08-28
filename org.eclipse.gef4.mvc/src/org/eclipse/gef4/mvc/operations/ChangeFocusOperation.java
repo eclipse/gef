@@ -39,8 +39,8 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 
 	public ChangeFocusOperation(IViewer<VR> viewer,
 			IContentPart<VR, ? extends VR> newFocused) {
-		this(DEFAULT_LABEL, viewer, viewer.getAdapter(FocusModel.class)
-				.getFocused(), newFocused);
+		this(DEFAULT_LABEL, viewer,
+				viewer.getAdapter(FocusModel.class).getFocused(), newFocused);
 	}
 
 	public ChangeFocusOperation(IViewer<VR> viewer,

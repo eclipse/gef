@@ -32,8 +32,8 @@ import com.google.inject.multibindings.MapBinder;
 public class AdaptableScopeTests {
 
 	// an adapter for an adapter store
-	public static class AdapterStoreAdapter implements
-			IAdaptable.Bound<AdapterStore> {
+	public static class AdapterStoreAdapter
+			implements IAdaptable.Bound<AdapterStore> {
 
 		@Inject
 		protected InjectionTarget fieldTarget;
@@ -58,8 +58,8 @@ public class AdaptableScopeTests {
 
 	// a scoped adapter store implementation that may be bound as an adapter to
 	// another adapter store.
-	public static class ScopingAdapterStore extends AdapterStore implements
-			IAdaptable.Bound<AdapterStore> {
+	public static class ScopingAdapterStore extends AdapterStore
+			implements IAdaptable.Bound<AdapterStore> {
 
 		@Inject
 		protected InjectionTarget fieldTarget;
@@ -101,15 +101,15 @@ public class AdaptableScopeTests {
 						.getAdapterMapBinder(binder(),
 								ScopingAdapterStore.class);
 				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a1")).to(
-								AdapterStoreAdapter.class);
+						AdapterKey.get(AdapterStoreAdapter.class, "a1"))
+						.to(AdapterStoreAdapter.class);
 				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a2")).to(
-								AdapterStoreAdapter.class);
+						AdapterKey.get(AdapterStoreAdapter.class, "a2"))
+						.to(AdapterStoreAdapter.class);
 
 				binder().bind(ScopingAdapterStore.class);
-				binder().bind(AdapterStoreAdapter.class).in(
-						AdaptableScopes.typed(ScopingAdapterStore.class));
+				binder().bind(AdapterStoreAdapter.class)
+						.in(AdaptableScopes.typed(ScopingAdapterStore.class));
 				binder().bind(InjectionTarget.class);
 			}
 		};
@@ -147,16 +147,16 @@ public class AdaptableScopeTests {
 						.getAdapterMapBinder(binder(),
 								ScopingAdapterStore.class);
 				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a1")).to(
-						AdapterStoreAdapter.class);
+						AdapterKey.get(AdapterStoreAdapter.class, "a1"))
+						.to(AdapterStoreAdapter.class);
 				s1Binder.addBinding(
-						AdapterKey.get(AdapterStoreAdapter.class, "a2")).to(
-						AdapterStoreAdapter.class);
+						AdapterKey.get(AdapterStoreAdapter.class, "a2"))
+						.to(AdapterStoreAdapter.class);
 
 				binder().bind(ScopingAdapterStore.class);
 				binder().bind(AdapterStoreAdapter.class);
-				binder().bind(InjectionTarget.class).in(
-						AdaptableScopes.typed(ScopingAdapterStore.class));
+				binder().bind(InjectionTarget.class)
+						.in(AdaptableScopes.typed(ScopingAdapterStore.class));
 			}
 		};
 		Injector injector = Guice.createInjector(module);
@@ -165,19 +165,15 @@ public class AdaptableScopeTests {
 		ScopingAdapterStore s2 = injector
 				.getInstance(ScopingAdapterStore.class);
 
-		Assert.assertSame(
-				s1.fieldTarget,
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")).fieldTarget);
-		Assert.assertSame(
-				s1.fieldTarget,
-				s1.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")).fieldTarget);
+		Assert.assertSame(s1.fieldTarget, s1.getAdapter(
+				AdapterKey.get(AdapterStoreAdapter.class, "a1")).fieldTarget);
+		Assert.assertSame(s1.fieldTarget, s1.getAdapter(
+				AdapterKey.get(AdapterStoreAdapter.class, "a2")).fieldTarget);
 
-		Assert.assertSame(
-				s2.fieldTarget,
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a1")).fieldTarget);
-		Assert.assertSame(
-				s2.fieldTarget,
-				s2.getAdapter(AdapterKey.get(AdapterStoreAdapter.class, "a2")).fieldTarget);
+		Assert.assertSame(s2.fieldTarget, s2.getAdapter(
+				AdapterKey.get(AdapterStoreAdapter.class, "a1")).fieldTarget);
+		Assert.assertSame(s2.fieldTarget, s2.getAdapter(
+				AdapterKey.get(AdapterStoreAdapter.class, "a2")).fieldTarget);
 
 		Assert.assertNotSame(s1.fieldTarget, s2.fieldTarget);
 	}

@@ -76,8 +76,8 @@ public class FXFillCellEditor extends DialogCellEditor {
 			image.dispose();
 		}
 
-		ImageData id = createPaintImage(getDefaultLabel().getParent()
-				.getParent(), paint);
+		ImageData id = createPaintImage(
+				getDefaultLabel().getParent().getParent(), paint);
 		image = new Image(getDefaultLabel().getDisplay(), id,
 				id.getTransparencyMask());
 

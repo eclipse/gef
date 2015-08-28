@@ -76,13 +76,14 @@ public class JFaceColorsExample {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 			input = newInput;
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements
-			IColorProvider {
+	static class MyLabelProvider extends LabelProvider
+			implements IColorProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -96,16 +97,16 @@ public class JFaceColorsExample {
 
 		@Override
 		public Color getForeground(Object element) {
-			return Display.getCurrent().getSystemColor(
-					((String) element).charAt(0) == 'F' ? SWT.COLOR_BLACK
-							: SWT.COLOR_RED);
+			return Display.getCurrent()
+					.getSystemColor(((String) element).charAt(0) == 'F'
+							? SWT.COLOR_BLACK : SWT.COLOR_RED);
 		}
 
 		@Override
 		public Color getBackground(Object element) {
-			return Display.getCurrent().getSystemColor(
-					((String) element).charAt(0) == 'S' ? SWT.COLOR_YELLOW
-							: SWT.COLOR_WHITE);
+			return Display.getCurrent()
+					.getSystemColor(((String) element).charAt(0) == 'S'
+							? SWT.COLOR_YELLOW : SWT.COLOR_WHITE);
 		}
 	}
 
@@ -132,8 +133,8 @@ public class JFaceColorsExample {
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				System.out.println("Selection changed: "
-						+ (event.getSelection()));
+				System.out.println(
+						"Selection changed: " + (event.getSelection()));
 			}
 		});
 		viewer.setInput(new Object());

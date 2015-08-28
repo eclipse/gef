@@ -68,8 +68,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 
 	private ChangeListener<? super Bounds> nestingVisualLayoutBoundsChangeListener = new ChangeListener<Bounds>() {
 		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldLayoutBounds, Bounds newLayoutBounds) {
+		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
+				Bounds newLayoutBounds) {
 			onNestingVisualLayoutBoundsChange(oldLayoutBounds, newLayoutBounds);
 		}
 	};
@@ -95,12 +95,10 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			 * changes to update the layout bounds in the context accordingly.
 			 */
 			ViewportModel viewportModel = getViewportModel();
-			viewportModel
-					.addPropertyChangeListener(viewportModelPropertyChangeListener);
+			viewportModel.addPropertyChangeListener(viewportModelPropertyChangeListener);
 			// read initial bounds
 			FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-			double[] scrollableBounds = fxViewer.getScrollPane()
-					.computeScrollableBoundsInLocal();
+			double[] scrollableBounds = fxViewer.getScrollPane().computeScrollableBoundsInLocal();
 			initialBounds.setX(scrollableBounds[0]);
 			initialBounds.setY(scrollableBounds[1]);
 			initialBounds.setWidth(fxViewer.getScrollPane().getWidth());
@@ -111,38 +109,32 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			 * listen to changes of that node's layout-bounds.
 			 */
 			nestingVisual = getNestingPart().getNestedChildrenPane();
-			nestingVisual.layoutBoundsProperty().addListener(
-					nestingVisualLayoutBoundsChangeListener);
+			nestingVisual.layoutBoundsProperty().addListener(nestingVisualLayoutBoundsChangeListener);
 			Bounds layoutBounds = nestingVisual.getLayoutBounds();
 			// read initial bounds
 			initialBounds.setWidth(layoutBounds.getWidth());
 			initialBounds.setHeight(layoutBounds.getHeight());
 		} else {
-			throw new IllegalStateException(
-					"Graph is neither nested nor root?!");
+			throw new IllegalStateException("Graph is neither nested nor root?!");
 		}
 
 		// retrieve layout context
 		layoutContext = getGraphLayoutContext();
 
 		// add layout filter for hidden/layout irrelevant elements
-		final HidingModel hidingModel = getHost().getRoot().getViewer()
-				.getAdapter(HidingModel.class);
+		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
 		layoutContext.addLayoutFilter(new ILayoutFilter() {
 			@Override
 			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
-				return ZestProperties.getLayoutIrrelevant(
-						((GraphEdgeLayout) connectionLayout).getEdge(), true)
+				return ZestProperties.getLayoutIrrelevant(((GraphEdgeLayout) connectionLayout).getEdge(), true)
 						|| isLayoutIrrelevant(connectionLayout.getSource())
 						|| isLayoutIrrelevant(connectionLayout.getTarget());
 			}
 
 			@Override
 			public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
-				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout
-						.getItems()[0];
-				return ZestProperties.getLayoutIrrelevant(node, true)
-						|| hidingModel.isHidden(node);
+				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout.getItems()[0];
+				return ZestProperties.getLayoutIrrelevant(node, true) || hidingModel.isHidden(node);
 			}
 		});
 
@@ -152,8 +144,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		// register listener for layout context property changes after setting
 		// the initial layout properties, so that this listener will not be
 		// called for the initial layout properties
-		layoutContext
-				.addPropertyChangeListener(layoutContextPropertyChangeListener);
+		layoutContext.addPropertyChangeListener(layoutContextPropertyChangeListener);
 	}
 
 	/**
@@ -165,8 +156,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			return;
 		}
 		// check if this layout pass should be skipped
-		NavigationModel viewportStackModel = getHost().getRoot().getViewer()
-				.getAdapter(NavigationModel.class);
+		NavigationModel viewportStackModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
 		if (viewportStackModel.removeSkipNextLayout(getHost().getContent())) {
 			return;
 		}
@@ -181,16 +171,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		getHost().removePropertyChangeListener(hostPropertyChangeListener);
 		// remove property change listener from context
 		if (layoutContext != null) {
-			layoutContext
-					.removePropertyChangeListener(layoutContextPropertyChangeListener);
+			layoutContext.removePropertyChangeListener(layoutContextPropertyChangeListener);
 		}
 		if (nestingVisual == null) {
 			// remove change listener from viewport model
-			getViewportModel().removePropertyChangeListener(
-					viewportModelPropertyChangeListener);
+			getViewportModel().removePropertyChangeListener(viewportModelPropertyChangeListener);
 		} else {
-			nestingVisual.layoutBoundsProperty().removeListener(
-					nestingVisualLayoutBoundsChangeListener);
+			nestingVisual.layoutBoundsProperty().removeListener(nestingVisualLayoutBoundsChangeListener);
 		}
 		// nullify variables
 		layoutContext = null;
@@ -199,8 +186,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected GraphLayoutContext getGraphLayoutContext() {
-		return getHost().<GraphLayoutContext> getAdapter(
-				GraphLayoutContext.class);
+		return getHost().<GraphLayoutContext> getAdapter(GraphLayoutContext.class);
 	}
 
 	@Override
@@ -209,29 +195,25 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected NodeContentPart getNestingPart() {
-		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent()
-				.getNestingNode();
-		IContentPart<Node, ? extends Node> nestingNodePart = getHost()
-				.getRoot().getViewer().getContentPartMap().get(nestingNode);
+		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent().getNestingNode();
+		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
+				.get(nestingNode);
 		return (NodeContentPart) nestingNodePart;
 	}
 
 	protected ViewportModel getViewportModel() {
-		return getHost().getRoot().getViewer()
-				.<ViewportModel> getAdapter(ViewportModel.class);
+		return getHost().getRoot().getViewer().<ViewportModel> getAdapter(ViewportModel.class);
 	}
 
 	protected void onHostPropertyChange(PropertyChangeEvent evt) {
-		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt
-				.getPropertyName())) {
+		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt.getPropertyName())) {
 			// TODO: Suppress Re-Layout when navigating back to a previously
 			// visited graph.
 			if ((Boolean) evt.getNewValue()) {
 				isHostActive = true;
 				applyStaticLayout();
 			}
-		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt
-				.getPropertyName()) && isHostActive) {
+		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt.getPropertyName()) && isHostActive) {
 			if ((Boolean) evt.getNewValue()) {
 				applyStaticLayout();
 			}
@@ -250,11 +232,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 *            context.
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
-		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt
-				.getPropertyName())) {
+		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
 			applyStaticLayout();
-		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt
-				.getPropertyName())) {
+		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt.getPropertyName())) {
 			applyStaticLayout();
 		}
 	}
@@ -267,8 +247,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * @param newLayoutBounds
 	 *            The current nesting node's bounds.
 	 */
-	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds,
-			Bounds newLayoutBounds) {
+	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds, Bounds newLayoutBounds) {
 		// update layout bounds to match the nesting visual layout bounds
 		double width = newLayoutBounds.getWidth();
 		double height = newLayoutBounds.getHeight();
@@ -279,20 +258,16 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	protected void onViewportModelPropertyChange(PropertyChangeEvent evt) {
-		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY
-				.equals(evt.getPropertyName())
-				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt
-						.getPropertyName())) {
+		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(evt.getPropertyName())
+				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt.getPropertyName())) {
 			// only width and height changes are of interest
 			return;
 		}
 		// update layout bounds to match the viewport bounds
 		FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-		double[] scrollableBounds = fxViewer.getScrollPane()
-				.computeScrollableBoundsInLocal();
-		Rectangle newBounds = new Rectangle(scrollableBounds[0],
-				scrollableBounds[1], fxViewer.getScrollPane().getWidth(),
-				fxViewer.getScrollPane().getHeight());
+		double[] scrollableBounds = fxViewer.getScrollPane().computeScrollableBoundsInLocal();
+		Rectangle newBounds = new Rectangle(scrollableBounds[0], scrollableBounds[1],
+				fxViewer.getScrollPane().getWidth(), fxViewer.getScrollPane().getHeight());
 
 		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
 			LayoutProperties.setBounds(layoutContext, newBounds);

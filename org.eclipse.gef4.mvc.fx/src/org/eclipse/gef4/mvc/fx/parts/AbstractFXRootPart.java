@@ -26,8 +26,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * @param <N>
  *            The visual {@link Node} used by this {@link AbstractFXRootPart}.
  */
-public abstract class AbstractFXRootPart<N extends Node> extends
-		AbstractRootPart<Node, N> {
+public abstract class AbstractFXRootPart<N extends Node>
+		extends AbstractRootPart<Node, N> {
 
 	public AbstractFXRootPart() {
 		super();

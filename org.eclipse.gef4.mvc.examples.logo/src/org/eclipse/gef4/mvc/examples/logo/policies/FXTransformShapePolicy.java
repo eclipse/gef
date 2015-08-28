@@ -46,12 +46,12 @@ public class FXTransformShapePolicy extends FXTransformPolicy {
 
 		// determine transformation
 		@SuppressWarnings("serial")
-		Provider<Affine> affineProvider = host.getAdapter(AdapterKey
-				.<Provider<? extends Affine>> get(
+		Provider<Affine> affineProvider = host
+				.getAdapter(AdapterKey.<Provider<? extends Affine>> get(
 						new TypeToken<Provider<? extends Affine>>() {
 						}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE));
-		AffineTransform tx = JavaFX2Geometry.toAffineTransform(affineProvider
-				.get());
+		AffineTransform tx = JavaFX2Geometry
+				.toAffineTransform(affineProvider.get());
 		final AffineTransform oldTransform = hostContent.getTransform();
 		final AffineTransform newTransform = new AffineTransform(tx.getM00(),
 				tx.getM10(), tx.getM01(), tx.getM11(), tx.getTranslateX(),

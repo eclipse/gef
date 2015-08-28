@@ -83,15 +83,15 @@ public class RoundedRectangleTests {
 				new Arc(px + pw - 2 * paw, py, 2 * paw, 2 * pah,
 						Angle.fromDeg(0), Angle.fromDeg(90)),
 				r.getTopRightArc());
-		assertEquals(
-				new Arc(px, py, 2 * paw, 2 * pah, Angle.fromDeg(90),
-						Angle.fromDeg(90)), r.getTopLeftArc());
+		assertEquals(new Arc(px, py, 2 * paw, 2 * pah, Angle.fromDeg(90),
+				Angle.fromDeg(90)), r.getTopLeftArc());
 		assertEquals(
 				new Arc(px, py + ph - 2 * pah, 2 * paw, 2 * pah,
 						Angle.fromDeg(180), Angle.fromDeg(90)),
 				r.getBottomLeftArc());
-		assertEquals(new Arc(px + pw - 2 * paw, py + ph - 2 * pah, 2 * paw,
-				2 * pah, Angle.fromDeg(270), Angle.fromDeg(90)),
+		assertEquals(
+				new Arc(px + pw - 2 * paw, py + ph - 2 * pah, 2 * paw, 2 * pah,
+						Angle.fromDeg(270), Angle.fromDeg(90)),
 				r.getBottomRightArc());
 
 		assertEquals(new Line(px + paw, py, px + pw - paw, py), r.getTop());

@@ -39,8 +39,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual node used by this {@link IRootPart}.
  *
  */
-public interface IRootPart<VR, V extends VR> extends IVisualPart<VR, V>,
-		IAdaptable.Bound<IViewer<VR>> {
+public interface IRootPart<VR, V extends VR>
+		extends IVisualPart<VR, V>, IAdaptable.Bound<IViewer<VR>> {
 
 	/**
 	 * Returns all children of type {@link IContentPart} contained by this

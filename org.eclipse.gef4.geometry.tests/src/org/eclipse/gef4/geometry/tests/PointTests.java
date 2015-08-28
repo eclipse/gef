@@ -73,8 +73,8 @@ public class PointTests {
 	public void test_getBounds() {
 		Point[] points = new Point[9];
 		for (int x = -4; x <= 4; x++) {
-			double y = (1f / 3f) * x * x * x + 2f * x * x - (3f / 2f) * x - 1f
-					/ 5f;
+			double y = (1f / 3f) * x * x * x + 2f * x * x - (3f / 2f) * x
+					- 1f / 5f;
 			points[x + 4] = new Point(x, y);
 		}
 
@@ -107,17 +107,16 @@ public class PointTests {
 				129.33333333333334, 505.81519000000003, 100.0,
 				505.81519000000003, 129.33333333333334, 592.66301, 100.0,
 				592.66301, 129.33333333333334, 594.66301, 100.0, 594.66301,
-				129.33333333333334, 681.5108299999999, 100.0,
-				681.5108299999999, 129.33333333333334, 470.81519, 100.0,
-				470.81519, 150.0, 503.81519, 100.0, 503.81519, 150.0,
-				683.5108299999999, 100.0, 683.5108299999999,
-				129.33333333333334, 927.7896999999999, 100.0,
-				927.7896999999999, 129.33333333333334, 929.7896999999999,
-				100.0, 929.7896999999999, 129.33333333333334,
-				1095.3089466666665, 100.0, 1095.3089466666665,
-				129.33333333333334, 1167.3089466666665, 100.0,
-				1167.3089466666665, 129.33333333333334, 1254.06857, 100.0,
-				1254.06857, 129.33333333333334, 1256.06857, 100.0, 1256.06857,
+				129.33333333333334, 681.5108299999999, 100.0, 681.5108299999999,
+				129.33333333333334, 470.81519, 100.0, 470.81519, 150.0,
+				503.81519, 100.0, 503.81519, 150.0, 683.5108299999999, 100.0,
+				683.5108299999999, 129.33333333333334, 927.7896999999999, 100.0,
+				927.7896999999999, 129.33333333333334, 929.7896999999999, 100.0,
+				929.7896999999999, 129.33333333333334, 1095.3089466666665,
+				100.0, 1095.3089466666665, 129.33333333333334,
+				1167.3089466666665, 100.0, 1167.3089466666665,
+				129.33333333333334, 1254.06857, 100.0, 1254.06857,
+				129.33333333333334, 1256.06857, 100.0, 1256.06857,
 				129.33333333333334, 1342.8281933333333, 100.0,
 				1342.8281933333333, 129.33333333333334, 1097.3089466666665,
 				100.0, 1097.3089466666665, 150.0, 1130.3089466666665, 100.0,
@@ -364,17 +363,19 @@ public class PointTests {
 		assertEquals(
 				new Polygon(PointListUtils.toPointsArray(new double[] { 0, 75,
 						0.3333333333333333, 0.9411910020934172,
-						0.6666666666666666, -60, 1, -60 })), new Polygon(
-								convexHull));
+						0.6666666666666666, -60, 1, -60 })),
+				new Polygon(convexHull));
 	}
 
 	@Test
 	public void test_getConvexHull3() {
-		Point[] convexHull = Point.getConvexHull(new Point[] {
-				new Point(0.0, -1.8277675577160887E-4),
-				new Point(0.3333333333333333, -1.1294769632887472E-4),
-				new Point(0.6666666666666666, -4.311817922240293E-5),
-				new Point(1.0, 2.671179560675793E-5) });
+		Point[] convexHull = Point
+				.getConvexHull(
+						new Point[] { new Point(0.0, -1.8277675577160887E-4),
+								new Point(0.3333333333333333,
+										-1.1294769632887472E-4),
+						new Point(0.6666666666666666, -4.311817922240293E-5),
+						new Point(1.0, 2.671179560675793E-5) });
 		assertEquals(4, convexHull.length);
 	}
 
@@ -383,17 +384,17 @@ public class PointTests {
 		Point[] convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
 				new Point(0, 0), new Point(10, 0), new Point(10, 10),
 				new Point(0, 10) });
-		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
-				convexHull));
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(),
+				new Polygon(convexHull));
 	}
 
 	@Test
 	public void test_getConvexHull5() {
-		Point[] convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
-				new Point(10, 0), new Point(10, 10), new Point(0, 0),
-				new Point(0, 10) });
-		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
-				convexHull));
+		Point[] convexHull = Point
+				.getConvexHull(new Point[] { new Point(0, 0), new Point(10, 0),
+						new Point(10, 10), new Point(0, 0), new Point(0, 10) });
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(),
+				new Polygon(convexHull));
 	}
 
 	@Test
@@ -401,8 +402,8 @@ public class PointTests {
 		Point[] convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
 				new Point(10, 0), new Point(), new Point(10, 10), new Point(),
 				new Point(0, 10), new Point(), new Point(10, 10) });
-		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
-				convexHull));
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(),
+				new Polygon(convexHull));
 	}
 
 	@Test
@@ -411,8 +412,8 @@ public class PointTests {
 				new Point(10, 10), new Point(5, 5), new Point(0, 0),
 				new Point(10, 10), new Point(5, 5), new Point(10, 0),
 				new Point(10, 10), new Point(0, 10), new Point(10, 10) });
-		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
-				convexHull));
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(),
+				new Polygon(convexHull));
 	}
 
 	@Test
@@ -458,26 +459,26 @@ public class PointTests {
 
 	@Test
 	public void test_max() {
-		assertTrue(Point.max(new Point(1, 3), new Point(2, 6)).equals(
-				new Point(2, 6)));
-		assertTrue(Point.max(new Point(4, 8), new Point(2, 6)).equals(
-				new Point(4, 8)));
-		assertTrue(Point.max(new Point(4, 8), new Point(2, 10)).equals(
-				new Point(4, 10)));
-		assertTrue(Point.max(new Point(4, 12), new Point(6, 10)).equals(
-				new Point(6, 12)));
+		assertTrue(Point.max(new Point(1, 3), new Point(2, 6))
+				.equals(new Point(2, 6)));
+		assertTrue(Point.max(new Point(4, 8), new Point(2, 6))
+				.equals(new Point(4, 8)));
+		assertTrue(Point.max(new Point(4, 8), new Point(2, 10))
+				.equals(new Point(4, 10)));
+		assertTrue(Point.max(new Point(4, 12), new Point(6, 10))
+				.equals(new Point(6, 12)));
 	}
 
 	@Test
 	public void test_min() {
-		assertTrue(Point.min(new Point(1, 3), new Point(2, 6)).equals(
-				new Point(1, 3)));
-		assertTrue(Point.min(new Point(4, 8), new Point(2, 6)).equals(
-				new Point(2, 6)));
-		assertTrue(Point.min(new Point(4, 8), new Point(2, 10)).equals(
-				new Point(2, 8)));
-		assertTrue(Point.min(new Point(4, 12), new Point(6, 10)).equals(
-				new Point(4, 10)));
+		assertTrue(Point.min(new Point(1, 3), new Point(2, 6))
+				.equals(new Point(1, 3)));
+		assertTrue(Point.min(new Point(4, 8), new Point(2, 6))
+				.equals(new Point(2, 6)));
+		assertTrue(Point.min(new Point(4, 8), new Point(2, 10))
+				.equals(new Point(2, 8)));
+		assertTrue(Point.min(new Point(4, 12), new Point(6, 10))
+				.equals(new Point(4, 10)));
 	}
 
 	@Test
@@ -545,8 +546,8 @@ public class PointTests {
 
 		assertTrue(p1.getTranslated(3, 0).equals(new Point(6, 6)));
 		assertTrue(p1.getTranslated(p1).equals(new Point(6, 12)));
-		assertTrue(p1.getTranslated(new Dimension(10, 2)).equals(
-				new Point(13, 8)));
+		assertTrue(p1.getTranslated(new Dimension(10, 2))
+				.equals(new Point(13, 8)));
 	}
 
 	@Test

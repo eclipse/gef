@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class ControllableShapeViewer implements PaintListener, MouseListener,
-		MouseMoveListener, Listener {
+public class ControllableShapeViewer
+		implements PaintListener, MouseListener, MouseMoveListener, Listener {
 
 	public Canvas canvas;
 	private ArrayList<ControllableShape> shapes = new ArrayList<ControllableShape>();
@@ -79,7 +79,8 @@ public class ControllableShapeViewer implements PaintListener, MouseListener,
 					ControlPoint cp = cs.controlPoints.get(i);
 					double dx = cp.getX() - e.x;
 					double dy = cp.getY() - e.y;
-					if (dx * dx + dy * dy < cs.controlRadius * cs.controlRadius) {
+					if (dx * dx + dy * dy < cs.controlRadius
+							* cs.controlRadius) {
 						isDragging = true;
 						draggedShape = cs;
 						dragPointIndex = i;
@@ -109,20 +110,20 @@ public class ControllableShapeViewer implements PaintListener, MouseListener,
 
 	public void paintControl(PaintEvent e) {
 		for (ControllableShape shape : shapes) {
-			e.gc.setForeground(canvas.getDisplay().getSystemColor(
-					shape.shapeColor));
-			e.gc.setBackground(canvas.getDisplay().getSystemColor(
-					shape.shapeColor));
+			e.gc.setForeground(
+					canvas.getDisplay().getSystemColor(shape.shapeColor));
+			e.gc.setBackground(
+					canvas.getDisplay().getSystemColor(shape.shapeColor));
 
 			shape.onDraw(e.gc);
 		}
 
 		for (ControllableShape shape : shapes) {
 			if (shape.isActive()) {
-				e.gc.setForeground(canvas.getDisplay().getSystemColor(
-						shape.controlColor));
-				e.gc.setBackground(canvas.getDisplay().getSystemColor(
-						shape.controlColor));
+				e.gc.setForeground(
+						canvas.getDisplay().getSystemColor(shape.controlColor));
+				e.gc.setBackground(
+						canvas.getDisplay().getSystemColor(shape.controlColor));
 
 				for (ControlPoint cp : shape.controlPoints) {
 					e.gc.fillOval((int) (cp.getX() - shape.controlRadius),

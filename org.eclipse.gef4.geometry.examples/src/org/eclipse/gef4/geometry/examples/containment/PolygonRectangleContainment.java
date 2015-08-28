@@ -20,8 +20,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class PolygonRectangleContainment extends
-		AbstractPolygonContainmentExample {
+public class PolygonRectangleContainment
+		extends AbstractPolygonContainmentExample {
 
 	public static void main(String[] args) {
 		new PolygonRectangleContainment();
@@ -42,7 +42,8 @@ public class PolygonRectangleContainment extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			private final double WIDTH = 50;
 			private final double HEIGHT = 75;
@@ -55,8 +56,8 @@ public class PolygonRectangleContainment extends
 			@Override
 			public Rectangle createGeometry() {
 				Point[] points = getControlPoints();
-				return new Rectangle(points[0].x - WIDTH / 2, points[0].y
-						- HEIGHT / 2, WIDTH, HEIGHT);
+				return new Rectangle(points[0].x - WIDTH / 2,
+						points[0].y - HEIGHT / 2, WIDTH, HEIGHT);
 			}
 
 			@Override

@@ -80,9 +80,8 @@ public class FilterLayoutExample extends AbstractZestExample {
 	protected void customizeUi(ScrollPaneEx scrollPane) {
 		super.customizeUi(scrollPane);
 		// TODO: Find it via bundle in OSGI context.
-		scrollPane.getStylesheets().add(
-				getClass().getResource("FilterGraphExample.css")
-						.toExternalForm());
+		scrollPane.getStylesheets().add(getClass()
+				.getResource("FilterGraphExample.css").toExternalForm());
 	}
 
 	@Override

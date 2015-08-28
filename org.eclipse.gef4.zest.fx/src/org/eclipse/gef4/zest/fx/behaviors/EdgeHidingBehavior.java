@@ -20,8 +20,7 @@ public class EdgeHidingBehavior extends AbstractHidingBehavior {
 	@Override
 	protected boolean determineHiddenStatus() {
 		return getHidingModel().isHidden(getHost().getContent().getSource())
-				|| getHidingModel()
-						.isHidden(getHost().getContent().getTarget());
+				|| getHidingModel().isHidden(getHost().getContent().getTarget());
 	}
 
 	@Override

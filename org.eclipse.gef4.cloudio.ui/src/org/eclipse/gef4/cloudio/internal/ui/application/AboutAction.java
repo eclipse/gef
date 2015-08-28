@@ -21,7 +21,7 @@ import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
  *
  */
 public class AboutAction extends Action implements IWorkbenchAction {
-	
+
 	public AboutAction() {
 		super.setId("about");
 		setText("About");
@@ -35,7 +35,7 @@ public class AboutAction extends Action implements IWorkbenchAction {
 
 	@Override
 	public void dispose() {
-		
+
 	}
 
 }

@@ -26,9 +26,9 @@ public final class DotExportExample {
 		Node node2 = new Node.Builder().attr(DotProperties.NODE_ID, "2")
 				.attr(DotProperties.NODE_LABEL, "Node 2").build();
 		Edge edge = new Edge.Builder(node1, node2)
-		.attr(DotProperties.EDGE_LABEL, "A dotted edge")
-		.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
-		.build();
+				.attr(DotProperties.EDGE_LABEL, "A dotted edge")
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
+				.build();
 		graph.attr(DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
 				.nodes(node1, node2).edges(edge);
 

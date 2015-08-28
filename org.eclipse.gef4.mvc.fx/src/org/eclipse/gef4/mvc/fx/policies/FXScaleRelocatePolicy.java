@@ -23,8 +23,8 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+public class FXScaleRelocatePolicy extends AbstractPolicy<Node>
+		implements ITransactional {
 
 	private AffineTransform oldTransform;
 
@@ -51,8 +51,8 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		// initialize delegate policies
 		getTransformPolicy().init();
 		getResizePolicy().init();
-		oldTransform = JavaFX2Geometry.toAffineTransform(getTransformPolicy()
-				.getNodeTransform());
+		oldTransform = JavaFX2Geometry
+				.toAffineTransform(getTransformPolicy().getNodeTransform());
 	}
 
 	public void performScaleRelocate(Bounds oldBoundsInScene,
@@ -60,8 +60,8 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		// compute scale
 		double sx = newBoundsInScene.getWidth() / oldBoundsInScene.getWidth();
 		double sy = newBoundsInScene.getHeight() / oldBoundsInScene.getHeight();
-		AffineTransform scale = JavaFX2Geometry.toAffineTransform(new Scale(sx,
-				sy, 0, 0));
+		AffineTransform scale = JavaFX2Geometry
+				.toAffineTransform(new Scale(sx, sy, 0, 0));
 		// compute translation in host's parent
 		double dx = newBoundsInScene.getMinX() - oldBoundsInScene.getMinX();
 		double dy = newBoundsInScene.getMinY() - oldBoundsInScene.getMinY();

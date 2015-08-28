@@ -40,8 +40,8 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author mwienand
  *
  */
-public class BezierCurve extends AbstractGeometry implements ICurve,
-		ITranslatable<BezierCurve>, IScalable<BezierCurve>,
+public class BezierCurve extends AbstractGeometry
+		implements ICurve, ITranslatable<BezierCurve>, IScalable<BezierCurve>,
 		IRotatable<BezierCurve> {
 
 	/**
@@ -347,10 +347,11 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 *         converge, otherwise <code>false</code>
 		 */
 		public boolean converges(int shift) {
-			return (pi.converges(shift) || pointsEquals(
-					p.getHC(pi.a).toPoint(), p.getHC(pi.b).toPoint(), shift))
-					&& (qi.converges(shift) || pointsEquals(q.getHC(qi.a)
-							.toPoint(), q.getHC(qi.b).toPoint(), shift));
+			return (pi.converges(shift) || pointsEquals(p.getHC(pi.a).toPoint(),
+					p.getHC(pi.b).toPoint(), shift))
+					&& (qi.converges(shift)
+							|| pointsEquals(q.getHC(qi.a).toPoint(),
+									q.getHC(qi.b).toPoint(), shift));
 		}
 
 		/**
@@ -403,10 +404,13 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		public IntervalPair[] getPSplit() {
 			double pm = (pi.a + pi.b) / 2;
 			return new IntervalPair[] {
-					new IntervalPair(p, new Interval(pi.a, pm), q, qi.getCopy()),
-					new IntervalPair(p, new Interval(pm + 10
-							* UNRECOGNIZABLE_PRECISION_FRACTION, pi.b), q,
-							qi.getCopy()) };
+					new IntervalPair(p, new Interval(pi.a, pm), q,
+							qi.getCopy()),
+					new IntervalPair(p,
+							new Interval(
+									pm + 10 * UNRECOGNIZABLE_PRECISION_FRACTION,
+									pi.b),
+							q, qi.getCopy()) };
 		}
 
 		/**
@@ -430,10 +434,13 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		public IntervalPair[] getQSplit() {
 			double qm = (qi.a + qi.b) / 2;
 			return new IntervalPair[] {
-					new IntervalPair(q, new Interval(qi.a, qm), p, pi.getCopy()),
-					new IntervalPair(q, new Interval(qm + 10
-							* UNRECOGNIZABLE_PRECISION_FRACTION, qi.b), p,
-							pi.getCopy()) };
+					new IntervalPair(q, new Interval(qi.a, qm), p,
+							pi.getCopy()),
+					new IntervalPair(q,
+							new Interval(
+									qm + 10 * UNRECOGNIZABLE_PRECISION_FRACTION,
+									qi.b),
+							p, pi.getCopy()) };
 		}
 
 		/**
@@ -483,9 +490,9 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * <p>
 	 * Clusters consecutive {@link IntervalPair}s into a new array of
 	 * {@link IntervalPair}s. Two {@link IntervalPair}s are regarded to be
-	 * consecutive if they are
-	 * {@link #isNextTo(IntervalPair, IntervalPair, int) next to} each other
-	 * within the imprecision specified by the given <i>shift</i>.
+	 * consecutive if they are {@link #isNextTo(IntervalPair, IntervalPair, int)
+	 * next to} each other within the imprecision specified by the given
+	 * <i>shift</i>.
 	 * </p>
 	 *
 	 * @param intervalPairs
@@ -698,11 +705,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 			if (PrecisionUtils.smallerEqual(overlap.pi.a, 0)
 					&& PrecisionUtils.greaterEqual(overlap.pi.b, 1)
 					|| PrecisionUtils.smallerEqual(overlap.qi.a, 0)
-					&& PrecisionUtils.greaterEqual(overlap.qi.b, 1)
-					|| (PrecisionUtils.smallerEqual(overlap.pi.a, 0) || PrecisionUtils
-							.greaterEqual(overlap.pi.b, 1))
-					&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0) || PrecisionUtils
-							.greaterEqual(overlap.qi.b, 1))) {
+							&& PrecisionUtils.greaterEqual(overlap.qi.b, 1)
+					|| (PrecisionUtils.smallerEqual(overlap.pi.a, 0)
+							|| PrecisionUtils.greaterEqual(overlap.pi.b, 1))
+							&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0)
+									|| PrecisionUtils.greaterEqual(overlap.qi.b,
+											1))) {
 				// it overlaps
 				if (PrecisionUtils.smallerEqual(overlap.pi.a, 0,
 						CHUNK_SHIFT - 1)
@@ -710,16 +718,16 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 								CHUNK_SHIFT - 1)
 						|| PrecisionUtils.greaterEqual(overlap.pi.a, 1,
 								CHUNK_SHIFT - 1)
-						&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
-								CHUNK_SHIFT - 1)
+								&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
+										CHUNK_SHIFT - 1)
 						|| PrecisionUtils.smallerEqual(overlap.qi.a, 0,
 								CHUNK_SHIFT - 1)
-						&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
-								CHUNK_SHIFT - 1)
+								&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
+										CHUNK_SHIFT - 1)
 						|| PrecisionUtils.greaterEqual(overlap.qi.a, 1,
 								CHUNK_SHIFT - 1)
-						&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
-								CHUNK_SHIFT - 1)) {
+								&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
+										CHUNK_SHIFT - 1)) {
 					// only end-point-intersection
 					return null;
 				}
@@ -876,8 +884,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * @param q
 	 * @return
 	 */
-	private static Interval refineOverlapHi(BezierCurve p, double mid,
-			double b, BezierCurve q) {
+	private static Interval refineOverlapHi(BezierCurve p, double mid, double b,
+			BezierCurve q) {
 		Interval i = new Interval(Math.max(mid, 0), Math.min(b, 1));
 		double prevLo;
 		Point pLo;
@@ -913,8 +921,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * @param q
 	 * @return
 	 */
-	private static Interval refineOverlapLo(BezierCurve p, double a,
-			double mid, BezierCurve q) {
+	private static Interval refineOverlapLo(BezierCurve p, double a, double mid,
+			BezierCurve q) {
 		Interval i = new Interval(Math.max(a, 0), Math.min(mid, 1));
 		double prevHi;
 		Point pHi;
@@ -1228,8 +1236,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 			interval[0] = (interval[0] + interval[1]) / 2;
 			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
 			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p, new Interval(0,
-					ip.pi.a), ip.q, new Interval(interval)));
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(0, ip.pi.a), ip.q, new Interval(interval)));
 			intersections.add(poi);
 		}
 
@@ -1241,8 +1249,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 			interval[0] = (interval[0] + interval[1]) / 2;
 			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
 			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p, new Interval(
-					ip.pi.b, 1), ip.q, new Interval(interval)));
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(ip.pi.b, 1), ip.q, new Interval(interval)));
 			intersections.add(poi);
 		}
 
@@ -1254,8 +1262,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 			interval[0] = (interval[0] + interval[1]) / 2;
 			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
 			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p, new Interval(
-					interval), ip.q, new Interval(0, ip.qi.a)));
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(interval), ip.q, new Interval(0, ip.qi.a)));
 			intersections.add(poi);
 		}
 
@@ -1267,8 +1275,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 			interval[0] = (interval[0] + interval[1]) / 2;
 			interval[1] = interval[0] + CHUNK_SHIFT_EPSILON / 2;
 			interval[0] = interval[0] - CHUNK_SHIFT_EPSILON / 2;
-			endPointIntervalPairs.add(new IntervalPair(ip.p, new Interval(
-					interval), ip.q, new Interval(ip.qi.b, 1)));
+			endPointIntervalPairs.add(new IntervalPair(ip.p,
+					new Interval(interval), ip.q, new Interval(ip.qi.b, 1)));
 			intersections.add(poi);
 		}
 	}
@@ -1483,8 +1491,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 				 * parameter interval, so that only one of the getIntersection()
 				 * calls can converge in the middle.
 				 */
-				IntervalPair[] nip = ip.isPLonger() ? ip.getPSplit() : ip
-						.getQSplit();
+				IntervalPair[] nip = ip.isPLonger() ? ip.getPSplit()
+						: ip.getQSplit();
 				partStack.push(nip[1]);
 				partStack.push(nip[0]);
 			} else {
@@ -1578,7 +1586,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	public Rectangle getControlBounds() {
 		Point[] realPoints = getPoints();
 
-		double xmin = realPoints[0].x, xmax = realPoints[0].x, ymin = realPoints[0].y, ymax = realPoints[0].y;
+		double xmin = realPoints[0].x, xmax = realPoints[0].x,
+				ymin = realPoints[0].y, ymax = realPoints[0].y;
 
 		for (int i = 1; i < realPoints.length; i++) {
 			if (realPoints[i].x < xmin) {
@@ -1725,8 +1734,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 					|| !isNextTo(overlapIntervalPair, epip, CHUNK_SHIFT)) {
 				results.add(epip);
 			} else {
-				for (Iterator<Point> iterator = intersections.iterator(); iterator
-						.hasNext();) {
+				for (Iterator<Point> iterator = intersections
+						.iterator(); iterator.hasNext();) {
 					if (overlap.contains(iterator.next())) {
 						iterator.remove();
 					}
@@ -2117,9 +2126,10 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 */
 	public BezierCurve rotateCCW(Angle angle, Point center) {
 		for (int i = 0; i < points.length; i++) {
-			points[i] = new Vector3D(new Vector(points[i].toPoint()
-					.getTranslated(center.getNegated())).getRotatedCCW(angle)
-					.toPoint().getTranslated(center));
+			points[i] = new Vector3D(new Vector(
+					points[i].toPoint().getTranslated(center.getNegated()))
+							.getRotatedCCW(angle).toPoint()
+							.getTranslated(center));
 		}
 		return this;
 	}
@@ -2252,13 +2262,9 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 */
 	public BezierCurve setPoint(int i, Point p) {
 		if (i < 0 || i >= points.length) {
-			throw new IllegalArgumentException(
-					"setPoint("
-							+ i
-							+ ", "
-							+ p
-							+ "): You can only index this BezierCurve's points from 0 to "
-							+ (points.length - 1) + ".");
+			throw new IllegalArgumentException("setPoint(" + i + ", " + p
+					+ "): You can only index this BezierCurve's points from 0 to "
+					+ (points.length - 1) + ".");
 		}
 		points[i] = new Vector3D(p);
 		return this;

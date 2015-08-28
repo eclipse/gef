@@ -75,14 +75,16 @@ public class FXFillSelectionDialog extends Dialog {
 		container.setFont(parent.getFont());
 		GridLayout gl = new GridLayout(1, true);
 		gl.marginHeight = 0;
-		gl.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		gl.marginTop = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		gl.marginWidth = convertHorizontalDLUsToPixels(
+				IDialogConstants.HORIZONTAL_MARGIN);
+		gl.marginTop = convertVerticalDLUsToPixels(
+				IDialogConstants.VERTICAL_MARGIN);
 		container.setLayout(gl);
 		container.setBackground(parent.getBackground());
 
 		Composite labelContainer = new Composite(container, SWT.NONE);
-		labelContainer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-				false));
+		labelContainer
+				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		gl = new GridLayout(2, true);
 		gl.marginWidth = 3; // align with combo below
 		labelContainer.setLayout(gl);
@@ -95,31 +97,36 @@ public class FXFillSelectionDialog extends Dialog {
 		imageLabel.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
 
 		Composite optionsContainer = new Composite(container, SWT.NONE);
-		optionsContainer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-				false));
+		optionsContainer
+				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		gl = new GridLayout(1, true);
 		gl.marginWidth = 3; // align with combo above
 		optionsContainer.setLayout(gl);
 
-		optionsCombo = new Combo(optionsContainer, SWT.DROP_DOWN
-				| SWT.READ_ONLY | SWT.BORDER);
+		optionsCombo = new Combo(optionsContainer,
+				SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		optionsCombo.setItems(new String[] { "No Fill", "Color Fill",
 				"Gradient Fill", "Advanced Gradient Fill"/*
-														 * , "Image Fill"
-														 */});
-		optionsCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
-				false));
-		final Composite optionsComposite = createNoFillComposite(optionsContainer);
+															 * , "Image Fill"
+															 */ });
+		optionsCombo.setLayoutData(
+				new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		final Composite optionsComposite = createNoFillComposite(
+				optionsContainer);
 		final StackLayout sl = new StackLayout();
 		optionsComposite.setLayout(sl);
 		optionsComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL,
 				GridData.BEGINNING, true, false));
 
 		// no fill
-		final Composite noFillComposite = createNoFillComposite(optionsComposite);
-		final Composite colorFillComposite = createColorFillComposite(optionsComposite);
-		final Composite simpleGradientFillComposite = createSimpleGradientFillComposite(optionsComposite);
-		final Composite advancedGradientFillComposite = createAdvancedGradientFillComposite(optionsComposite);
+		final Composite noFillComposite = createNoFillComposite(
+				optionsComposite);
+		final Composite colorFillComposite = createColorFillComposite(
+				optionsComposite);
+		final Composite simpleGradientFillComposite = createSimpleGradientFillComposite(
+				optionsComposite);
+		final Composite advancedGradientFillComposite = createAdvancedGradientFillComposite(
+				optionsComposite);
 		// TODO: others
 
 		optionsCombo.addModifyListener(new ModifyListener() {
@@ -183,7 +190,8 @@ public class FXFillSelectionDialog extends Dialog {
 		return container;
 	}
 
-	protected Composite createNoFillComposite(final Composite optionsComposite) {
+	protected Composite createNoFillComposite(
+			final Composite optionsComposite) {
 		final Composite noFillComposite = new Composite(optionsComposite,
 				SWT.NONE); // dummy for no-fill
 		return noFillComposite;
@@ -208,8 +216,8 @@ public class FXFillSelectionDialog extends Dialog {
 		Composite composite = new Composite(optionsComposite, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		simpleGradientPicker = new FXSimpleGradientPicker(composite);
-		simpleGradientPicker.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		simpleGradientPicker.getControl()
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		simpleGradientPicker
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -226,8 +234,8 @@ public class FXFillSelectionDialog extends Dialog {
 		Composite composite = new Composite(optionsComposite, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		advancedGradientPicker = new FXAdvancedGradientPicker(composite);
-		advancedGradientPicker.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		advancedGradientPicker.getControl()
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		advancedGradientPicker
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -266,8 +274,8 @@ public class FXFillSelectionDialog extends Dialog {
 			graphicsContext.setStroke(Color.RED);
 			graphicsContext.strokeLine(0, height - 1, width, 1);
 		}
-		WritableImage snapshot = canvas
-				.snapshot(new SnapshotParameters(), null);
+		WritableImage snapshot = canvas.snapshot(new SnapshotParameters(),
+				null);
 		return SWTFXUtils.fromFXImage(snapshot, null);
 	}
 
@@ -294,7 +302,8 @@ public class FXFillSelectionDialog extends Dialog {
 							.createSimpleGradient(Color.WHITE, (Color) paint);
 					lastAdvancedGradient = FXAdvancedGradientPicker
 							.createAdvancedLinearGradient(Color.WHITE,
-									((Color) paint).brighter(), ((Color) paint));
+									((Color) paint).brighter(),
+									((Color) paint));
 				}
 			} else if (FXSimpleGradientPicker.isSimpleGradient(paint)) {
 				lastSimpleGradient = paint;
@@ -302,16 +311,17 @@ public class FXFillSelectionDialog extends Dialog {
 				lastFillColor = stops.get(1).getColor();
 				lastAdvancedGradient = FXAdvancedGradientPicker
 						.createAdvancedLinearGradient(stops.get(0).getColor(),
-								stops.get(1).getColor().brighter(), stops
-										.get(1).getColor());
+								stops.get(1).getColor().brighter(),
+								stops.get(1).getColor());
 			} else if (FXAdvancedGradientPicker.isAdvancedGradient(paint)) {
 				lastAdvancedGradient = paint;
-				List<Stop> stops = paint instanceof LinearGradient ? ((LinearGradient) paint)
-						.getStops() : ((RadialGradient) paint).getStops();
+				List<Stop> stops = paint instanceof LinearGradient
+						? ((LinearGradient) paint).getStops()
+						: ((RadialGradient) paint).getStops();
 				lastFillColor = stops.get(stops.size() - 1).getColor();
 				lastSimpleGradient = FXSimpleGradientPicker
-						.createSimpleGradient(stops.get(0).getColor(), stops
-								.get(stops.size() - 1).getColor());
+						.createSimpleGradient(stops.get(0).getColor(),
+								stops.get(stops.size() - 1).getColor());
 			}
 		}
 

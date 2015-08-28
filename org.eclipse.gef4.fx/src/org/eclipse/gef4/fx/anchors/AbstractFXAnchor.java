@@ -83,14 +83,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
 				unregisterVCLs();
-				oldAnchorage.sceneProperty().removeListener(
-						anchorageVisualSceneChangeListener);
+				oldAnchorage.sceneProperty()
+						.removeListener(anchorageVisualSceneChangeListener);
 			}
 			if (newAnchorage != null) {
 				// register listener on scene property, so we can react to
 				// changes of the scene property of the anchorage node
-				newAnchorage.sceneProperty().addListener(
-						anchorageVisualSceneChangeListener);
+				newAnchorage.sceneProperty()
+						.addListener(anchorageVisualSceneChangeListener);
 				// if scene is already set, register anchorage visual listener
 				// directly (else do this within scene change listener)
 				Scene scene = newAnchorage.getScene();
@@ -259,7 +259,8 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			@Override
 			public void changed(ObservableValue<? extends Scene> observed,
 					Scene oldScene, Scene newScene) {
-				if (getAnchorage() == null || getAnchorage().getScene() == null) {
+				if (getAnchorage() == null
+						|| getAnchorage().getScene() == null) {
 					return;
 				}
 				VisualChangeListener vcl = vcls.get(anchored);

@@ -76,13 +76,14 @@ public class JFaceTooltipExample {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 			input = newInput;
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements
-			IToolTipProvider {
+	static class MyLabelProvider extends LabelProvider
+			implements IToolTipProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -131,8 +132,8 @@ public class JFaceTooltipExample {
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				System.out.println("Selection changed: "
-						+ (event.getSelection()));
+				System.out.println(
+						"Selection changed: " + (event.getSelection()));
 			}
 		});
 		viewer.setInput(new Object());

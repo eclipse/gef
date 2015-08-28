@@ -28,7 +28,8 @@ import org.eclipse.swt.widgets.Canvas;
  * @author Matthias Wienand (matthias.wienand@itemis.de)
  * 
  */
-public class PolygonLineIntersection extends AbstractPolygonIntersectionExample {
+public class PolygonLineIntersection
+		extends AbstractPolygonIntersectionExample {
 
 	public static void main(String[] args) {
 		new PolygonLineIntersection();
@@ -44,7 +45,8 @@ public class PolygonLineIntersection extends AbstractPolygonIntersectionExample 
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

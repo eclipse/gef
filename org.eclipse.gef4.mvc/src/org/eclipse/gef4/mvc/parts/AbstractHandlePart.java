@@ -24,11 +24,12 @@ package org.eclipse.gef4.mvc.parts;
  * @param <V>
  *            The visual node used by this {@link AbstractHandlePart}.
  */
-public abstract class AbstractHandlePart<VR, V extends VR> extends
-		AbstractVisualPart<VR, V> implements IHandlePart<VR, V> {
+public abstract class AbstractHandlePart<VR, V extends VR>
+		extends AbstractVisualPart<VR, V>implements IHandlePart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support children");
 	}

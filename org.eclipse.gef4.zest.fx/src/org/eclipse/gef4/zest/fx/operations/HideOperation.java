@@ -44,8 +44,7 @@ public class HideOperation extends AbstractOperation {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (isHidden) {
 			show();
 		} else {
@@ -54,8 +53,7 @@ public class HideOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
-	protected org.eclipse.gef4.graph.Node[] getNeighbors(
-			org.eclipse.gef4.graph.Node node) {
+	protected org.eclipse.gef4.graph.Node[] getNeighbors(org.eclipse.gef4.graph.Node node) {
 		Set<org.eclipse.gef4.graph.Node> neighbors = new HashSet<org.eclipse.gef4.graph.Node>();
 		neighbors.addAll(node.getLocalPredecessorNodes());
 		neighbors.addAll(node.getLocalSuccessorNodes());
@@ -63,24 +61,20 @@ public class HideOperation extends AbstractOperation {
 	}
 
 	protected void hide() {
-		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class)
-				.hide(node.getContent());
+		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).hide(node.getContent());
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		return execute(monitor, info);
 	}
 
 	protected void show() {
-		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class)
-				.show(node.getContent());
+		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).show(node.getContent());
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (isHidden) {
 			hide();
 		} else {

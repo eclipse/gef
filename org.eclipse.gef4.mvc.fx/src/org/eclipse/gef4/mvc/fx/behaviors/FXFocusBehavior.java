@@ -25,8 +25,8 @@ import org.eclipse.gef4.mvc.models.FocusModel;
  * @author anyssen
  *
  */
-public class FXFocusBehavior extends AbstractBehavior<Node> implements
-		PropertyChangeListener {
+public class FXFocusBehavior extends AbstractBehavior<Node>
+		implements PropertyChangeListener {
 
 	@Override
 	public void activate() {

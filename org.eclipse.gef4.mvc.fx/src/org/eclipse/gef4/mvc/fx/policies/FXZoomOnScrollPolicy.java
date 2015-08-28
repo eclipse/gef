@@ -31,7 +31,8 @@ public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		}
 	}
 
-	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
+	public void zoomRelative(double relativeZoom, double sceneX,
+			double sceneY) {
 		FXChangeViewportPolicy viewportPolicy = getViewportPolicy();
 		viewportPolicy.init();
 		viewportPolicy.zoomRelative(relativeZoom, sceneX, sceneY);

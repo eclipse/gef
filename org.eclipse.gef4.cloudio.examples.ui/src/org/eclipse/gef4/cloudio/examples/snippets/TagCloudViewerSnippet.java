@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This snippet demonstrates how to create a {@link TagCloudViewer},
- * how to use label- and content-providers and how to add an
+ * This snippet demonstrates how to create a {@link TagCloudViewer}, how to use
+ * label- and content-providers and how to add an
  * {@link ISelectionChangedListener}.
  * 
  * @author sschwieb
@@ -42,104 +42,104 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class TagCloudViewerSnippet {
 
-    static class CustomLabelProvider extends BaseLabelProvider implements ICloudLabelProvider {
+	static class CustomLabelProvider extends BaseLabelProvider implements ICloudLabelProvider {
 
-        private Font font;
+		private Font font;
 
-        public CustomLabelProvider(Font font) {
-            this.font = font;
-        }
+		public CustomLabelProvider(Font font) {
+			this.font = font;
+		}
 
-        @Override
-        public String getLabel(Object element) {
-            return element.toString();
-        }
+		@Override
+		public String getLabel(Object element) {
+			return element.toString();
+		}
 
-        @Override
-        public double getWeight(Object element) {
-            return Math.random();
-        }
+		@Override
+		public double getWeight(Object element) {
+			return Math.random();
+		}
 
-        @Override
-        public Color getColor(Object element) {
-            return Display.getDefault().getSystemColor(SWT.COLOR_GREEN);
-        }
+		@Override
+		public Color getColor(Object element) {
+			return Display.getDefault().getSystemColor(SWT.COLOR_GREEN);
+		}
 
-        @Override
-        public FontData[] getFontData(Object element) {
-            return font.getFontData();
-        }
+		@Override
+		public FontData[] getFontData(Object element) {
+			return font.getFontData();
+		}
 
-        @Override
-        public float getAngle(Object element) {
-            return (float) (-90 + Math.random() * 180);
-        }
+		@Override
+		public float getAngle(Object element) {
+			return (float) (-90 + Math.random() * 180);
+		}
 
-        @Override
-        public String getToolTip(Object element) {
-            return element.toString();
-        }
+		@Override
+		public String getToolTip(Object element) {
+			return element.toString();
+		}
 
-    }
+	}
 
+	public static void main(String[] args) {
+		final Display display = new Display();
+		final Shell shell = new Shell(display);
+		TagCloud cloud = new TagCloud(shell, SWT.NONE);
 
+		final TagCloudViewer viewer = new TagCloudViewer(cloud);
 
-    public static void main(String [] args) {
-        final Display display = new Display();
-        final Shell shell = new Shell(display);
-        TagCloud cloud = new TagCloud(shell, SWT.NONE);
+		// A simple content provider for a list of elements
+		viewer.setContentProvider(new IStructuredContentProvider() {
 
-        final TagCloudViewer viewer = new TagCloudViewer(cloud);
+			@Override
+			public void dispose() {
+			}
 
-        // A simple content provider for a list of elements 
-        viewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
 
-            @Override
-            public void dispose() { }
+			@Override
+			public Object[] getElements(Object inputElement) {
+				return ((List<?>) inputElement).toArray();
+			}
 
-            @Override
-            public void inputChanged(Viewer viewer, Object oldInput,
-                    Object newInput) {}
+		});
 
-            @Override
-            public Object[] getElements(Object inputElement) {
-                return ((List<?>)inputElement).toArray();
-            }
+		// A simple label provider (see above)
+		viewer.setLabelProvider(new CustomLabelProvider(cloud.getFont()));
 
-        });
+		// Demo of an selection listener
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-        // A simple label provider (see above)
-        viewer.setLabelProvider(new CustomLabelProvider(cloud.getFont()));
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				System.out.println("Selection: " + selection);
+			}
+		});
 
-        // Demo of an selection listener
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		// Demo data
+		List<String> data = new ArrayList<String>();
+		data.add("Hello");
+		data.add("World");
+		data.add("Hello Cloudio");
 
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-                System.out.println("Selection: " + selection);
-            }
-        });
+		shell.setBounds(50, 50, 300, 300);
+		cloud.setBounds(0, 0, shell.getBounds().width, shell.getBounds().height);
 
-        // Demo data
-        List<String> data = new ArrayList<String>();
-        data.add("Hello");
-        data.add("World");
-        data.add("Hello Cloudio");
+		// Set the input of the viewer
+		viewer.setInput(data);
 
-        shell.setBounds(50,50, 300, 300);
-        cloud.setBounds(0,0, shell.getBounds().width, shell.getBounds().height);
+		// Set initial selection:
+		viewer.setSelection(new StructuredSelection(Arrays.asList("Hello Cloudio")));
 
-        // Set the input of the viewer
-        viewer.setInput(data);
-
-        // Set initial selection:
-        viewer.setSelection(new StructuredSelection(Arrays.asList("Hello Cloudio")));
-
-        shell.open();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) display.sleep();
-        }
-        display.dispose();
-    }
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		display.dispose();
+	}
 }

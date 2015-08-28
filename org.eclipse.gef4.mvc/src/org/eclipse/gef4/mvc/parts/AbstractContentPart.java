@@ -35,8 +35,8 @@ import com.google.common.collect.SetMultimap;
  * @param <V>
  *            The visual node used by this {@link AbstractContentPart}.
  */
-public abstract class AbstractContentPart<VR, V extends VR> extends
-		AbstractVisualPart<VR, V> implements IContentPart<VR, V> {
+public abstract class AbstractContentPart<VR, V extends VR>
+		extends AbstractVisualPart<VR, V>implements IContentPart<VR, V> {
 
 	private Object content;
 
@@ -55,7 +55,8 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 	}
 
 	@Override
-	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+	public void detachFromContentAnchorage(Object contentAnchorage,
+			String role) {
 		throw new UnsupportedOperationException(
 				"Need to implement detachFromContentAnchorage(Object, String) for "
 						+ this.getClass());
@@ -98,7 +99,8 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 	 * @param content
 	 *            The content to register.
 	 */
-	protected void registerAtContentPartMap(IViewer<VR> viewer, Object content) {
+	protected void registerAtContentPartMap(IViewer<VR> viewer,
+			Object content) {
 		viewer.getContentPartMap().put(content, this);
 	}
 
@@ -122,7 +124,8 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 		}
 
 		Object oldContent = this.content;
-		if (oldContent != null && oldContent != content && getViewer() != null) {
+		if (oldContent != null && oldContent != content
+				&& getViewer() != null) {
 			unregisterFromContentPartMap(getViewer(), oldContent);
 		}
 		this.content = content;

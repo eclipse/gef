@@ -39,15 +39,13 @@ public class SWT2AWT {
 	 *            {@link SWT#FILL_EVEN_ODD}.
 	 * @return a new {@link PathIterator} representing the same path
 	 */
-	public static PathIterator toAWTPathIterator(PathData pathData,
-			int windingRule) {
+	public static PathIterator toAWTPathIterator(PathData pathData, int windingRule) {
 		if (windingRule != SWT.FILL_WINDING && windingRule != SWT.FILL_EVEN_ODD) {
 			throw new IllegalArgumentException(
 					"Unsupported winding rule. Must be one of SWT.FILL_WINDING or SWT.FILL_EVEN_ODD");
 		}
 		Path2D.Double path = new Path2D.Double(
-				windingRule == SWT.FILL_EVEN_ODD ? Path2D.WIND_EVEN_ODD
-						: Path2D.WIND_NON_ZERO);
+				windingRule == SWT.FILL_EVEN_ODD ? Path2D.WIND_EVEN_ODD : Path2D.WIND_NON_ZERO);
 		int j = 0;
 		byte[] types = pathData.types;
 		float[] points = pathData.points;

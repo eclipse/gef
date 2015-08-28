@@ -18,19 +18,19 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * Helper class which stores all data
- * required to render an element.
+ * Helper class which stores all data required to render an element.
+ * 
  * @author sschwieb
  *
  */
 public class Word {
-	
+
 	public Word(String string) {
 		this.string = string;
 	}
 
 	public final String string;
-	
+
 	public double weight;
 
 	public int x;
@@ -38,7 +38,7 @@ public class Word {
 	public int y;
 
 	private Color color;
-	
+
 	public RectTree tree;
 
 	public float angle;
@@ -63,7 +63,7 @@ public class Word {
 	public Object data;
 
 	public Point stringExtent;
-	
+
 	@Override
 	public String toString() {
 		return string;
@@ -74,7 +74,7 @@ public class Word {
 		Assert.isLegal(!color.isDisposed(), "Color is disposed!");
 		this.color = color;
 	}
-	
+
 	public Color getColor() {
 		Assert.isLegal(color != null, "Color must not be null!");
 		Assert.isLegal(!color.isDisposed(), "Color is disposed!");

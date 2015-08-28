@@ -33,8 +33,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
-		ITransactional {
+public class CreationPolicy<VR> extends AbstractPolicy<VR>
+		implements ITransactional {
 
 	private List<Entry<IContentPart<VR, ? extends VR>, Object>> contentToCreate;
 
@@ -83,9 +83,9 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 			throw new IllegalArgumentException(
 					"The given parent may not be null.");
 		}
-		contentToCreate
-				.add(new SimpleEntry<IContentPart<VR, ? extends VR>, Object>(
-						parent, content));
+		contentToCreate.add(
+				new SimpleEntry<IContentPart<VR, ? extends VR>, Object>(parent,
+						content));
 	}
 
 	@Override

@@ -114,17 +114,19 @@ public class FXImageViewHoverOverlay extends Group {
 		setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						baseImageView.opacityProperty(), 0), new KeyValue(
-						overlayImageView.opacityProperty(), 1))).play();
+				new Timeline(new KeyFrame(Duration.millis(150),
+						new KeyValue(baseImageView.opacityProperty(), 0),
+						new KeyValue(overlayImageView.opacityProperty(), 1)))
+								.play();
 			}
 		});
 		setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						baseImageView.opacityProperty(), 0.8), new KeyValue(
-						overlayImageView.opacityProperty(), 0))).play();
+				new Timeline(new KeyFrame(Duration.millis(150),
+						new KeyValue(baseImageView.opacityProperty(), 0.8),
+						new KeyValue(overlayImageView.opacityProperty(), 0)))
+								.play();
 			}
 		});
 	}

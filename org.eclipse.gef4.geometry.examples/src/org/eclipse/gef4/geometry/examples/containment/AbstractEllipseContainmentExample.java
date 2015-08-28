@@ -16,15 +16,16 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public abstract class AbstractEllipseContainmentExample extends
-		AbstractContainmentExample {
+public abstract class AbstractEllipseContainmentExample
+		extends AbstractContainmentExample {
 
 	public AbstractEllipseContainmentExample(String title) {
 		super(title);
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape1(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

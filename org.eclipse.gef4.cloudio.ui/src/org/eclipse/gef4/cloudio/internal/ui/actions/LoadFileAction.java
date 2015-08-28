@@ -33,10 +33,11 @@ public class LoadFileAction extends AbstractTagCloudAction {
 	@Override
 	public void run(IAction action) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-		
+
 		dialog.setText("Select text file...");
 		String sourceFile = dialog.open();
-		if(sourceFile == null) return;
+		if (sourceFile == null)
+			return;
 		ProgressMonitorDialog pd = new ProgressMonitorDialog(getShell());
 		try {
 			List<Type> types = TypeCollector.getData(new File(sourceFile), "UTF-8");
@@ -45,7 +46,7 @@ public class LoadFileAction extends AbstractTagCloudAction {
 			pd.getProgressMonitor().beginTask("Generating cloud...", 200);
 			TagCloudViewer viewer = getViewer();
 			viewer.setInput(types, pd.getProgressMonitor());
-			//viewer.getCloud().layoutCloud(pd.getProgressMonitor(), false);
+			// viewer.getCloud().layoutCloud(pd.getProgressMonitor(), false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

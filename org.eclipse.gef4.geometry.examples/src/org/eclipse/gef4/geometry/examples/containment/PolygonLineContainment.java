@@ -41,7 +41,8 @@ public class PolygonLineContainment extends AbstractPolygonContainmentExample {
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

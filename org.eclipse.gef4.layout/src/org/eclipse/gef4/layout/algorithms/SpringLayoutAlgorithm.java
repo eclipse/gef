@@ -407,16 +407,18 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		IConnectionLayout[] connections = context.getConnections();
 		for (int i = 0; i < connections.length; i++) {
 			IConnectionLayout connection = connections[i];
-			Integer source = entityToPosition.get(getEntity(connection
-					.getSource()));
-			Integer target = entityToPosition.get(getEntity(connection
-					.getTarget()));
+			Integer source = entityToPosition
+					.get(getEntity(connection.getSource()));
+			Integer target = entityToPosition
+					.get(getEntity(connection.getTarget()));
 			if (source == null || target == null)
 				continue;
 			double weight = LayoutProperties.getWeight(connection);
 			weight = (weight <= 0 ? 0.1 : weight);
-			srcDestToSumOfWeights[source.intValue()][target.intValue()] += weight;
-			srcDestToSumOfWeights[target.intValue()][source.intValue()] += weight;
+			srcDestToSumOfWeights[source.intValue()][target
+					.intValue()] += weight;
+			srcDestToSumOfWeights[target.intValue()][source
+					.intValue()] += weight;
 		}
 
 		if (sprRandom)
@@ -472,7 +474,8 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			return;
 
 		long currentTime = System.currentTimeMillis();
-		double fractionComplete = (double) ((double) (currentTime - startTime) / ((double) maxTimeMS));
+		double fractionComplete = (double) ((double) (currentTime - startTime)
+				/ ((double) maxTimeMS));
 		int currentIteration = (int) (fractionComplete * sprIterations);
 		if (currentIteration > iteration) {
 			iteration = currentIteration;
@@ -521,10 +524,10 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			locationsX[1] = bounds.getX() + bounds.getWidth();
 			locationsY[1] = bounds.getY() + bounds.getHeight();
 			for (int i = 2; i < locationsX.length; i++) {
-				locationsX[i] = bounds.getX() + Math.random()
-						* bounds.getWidth();
-				locationsY[i] = bounds.getY() + Math.random()
-						* bounds.getHeight();
+				locationsX[i] = bounds.getX()
+						+ Math.random() * bounds.getWidth();
+				locationsY[i] = bounds.getY()
+						+ Math.random() * bounds.getHeight();
 			}
 		}
 	}
@@ -688,8 +691,8 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private void improveBoundScaleX(Rectangle currentBounds) {
 		double boundaryProportionX = currentBounds.getWidth()
 				/ bounds.getWidth();
-		// double boundaryProportion = Math.max(currentBounds.width /
-		// bounds.width, currentBounds.height / bounds.height);
+				// double boundaryProportion = Math.max(currentBounds.width /
+				// bounds.width, currentBounds.height / bounds.height);
 
 		// if (boundaryProportionX < 0.1)
 		// boundsScaleX *= 2;
@@ -715,8 +718,8 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private void improveBoundScaleY(Rectangle currentBounds) {
 		double boundaryProportionY = currentBounds.getHeight()
 				/ bounds.getHeight();
-		// double boundaryProportion = Math.max(currentBounds.width /
-		// bounds.width, currentBounds.height / bounds.height);
+				// double boundaryProportion = Math.max(currentBounds.width /
+				// bounds.width, currentBounds.height / bounds.height);
 
 		// if (boundaryProportionY < 0.1)
 		// boundsScaleY *= 2;

@@ -291,8 +291,10 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 					NodeWrapper nw = map.get(adjacentNodesOfB.get(i));
 					if (!alreadyCrossed.contains(i) && nw != null) {
 						// only if on the same side
-						if ((nw.layer > nodeA.layer && aNodeWrapper.layer > nodeA.layer)
-								|| (nw.layer < nodeA.layer && aNodeWrapper.layer < nodeA.layer)) {
+						if ((nw.layer > nodeA.layer
+								&& aNodeWrapper.layer > nodeA.layer)
+								|| (nw.layer < nodeA.layer
+										&& aNodeWrapper.layer < nodeA.layer)) {
 							if (nodeA.index < nodeB.index) {
 								if (aNodeWrapper.index > nw.index) {
 									numOfCrosses++;
@@ -300,16 +302,20 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 								} else if (nw.index == aNodeWrapper.index) {
 									if (nodeA.index >= nw.index) {
 										// implies nodeB.index > nw.index
-										if ((aNodeWrapper.layer > nw.layer && nodeA.layer < nw.layer)
-												|| (aNodeWrapper.layer < nw.layer && nw.layer < nodeA.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& nodeA.layer < nw.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& nw.layer < nodeA.layer)) {
 											// top-left or bottom-left quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
 										}
 									} else if (nodeB.index <= nw.index) {
 										// implies nodeA.index < nw.index
-										if ((aNodeWrapper.layer > nw.layer && aNodeWrapper.layer < nodeB.layer)
-												|| (aNodeWrapper.layer < nw.layer && aNodeWrapper.layer > nodeB.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& aNodeWrapper.layer < nodeB.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& aNodeWrapper.layer > nodeB.layer)) {
 											// top-right or bottom-right quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
@@ -323,16 +329,20 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 								} else if (nw.index == aNodeWrapper.index) {
 									if (nodeB.index >= nw.index) {
 										// implies nodeB.index > nw.index
-										if ((aNodeWrapper.layer > nw.layer && nodeB.layer > aNodeWrapper.layer)
-												|| (aNodeWrapper.layer < nw.layer && aNodeWrapper.layer > nodeB.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& nodeB.layer > aNodeWrapper.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& aNodeWrapper.layer > nodeB.layer)) {
 											// top-left or bottom-left quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
 										}
 									} else if (nodeA.index <= nw.index) {
 										// implies nodeA.index < nw.index
-										if ((aNodeWrapper.layer > nw.layer && nw.layer > nodeA.layer)
-												|| (aNodeWrapper.layer < nw.layer && nw.layer < nodeA.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& nw.layer > nodeA.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& nw.layer < nodeA.layer)) {
 											// top-right or bottom-right quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
@@ -376,7 +386,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 					else {
 						if (num1 == num2 && num1 > 0) {
 							int tmpindex = map.get(pivot.node).index;
-							map.get(pivot.node).index = map.get(node.node).index;
+							map.get(pivot.node).index = map
+									.get(node.node).index;
 							map.get(node.node).index = tmpindex;
 						}
 						if (node.index < pivot.index)
@@ -468,8 +479,10 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 					NodeWrapper nw = map.get(adjacentNodesOfB.get(i));
 					if (!alreadyCrossed.contains(i) && nw != null) {
 						// only if on the same side
-						if ((nw.layer > nodeA.layer && aNodeWrapper.layer > nodeA.layer)
-								|| (nw.layer < nodeA.layer && aNodeWrapper.layer < nodeA.layer)) {
+						if ((nw.layer > nodeA.layer
+								&& aNodeWrapper.layer > nodeA.layer)
+								|| (nw.layer < nodeA.layer
+										&& aNodeWrapper.layer < nodeA.layer)) {
 							if (nodeA.index < nodeB.index) {
 								if (aNodeWrapper.index > nw.index) {
 									numOfCrosses++;
@@ -477,16 +490,20 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 								} else if (nw.index == aNodeWrapper.index) {
 									if (nodeA.index >= nw.index) {
 										// implies nodeB.index > nw.index
-										if ((aNodeWrapper.layer > nw.layer && nodeA.layer < nw.layer)
-												|| (aNodeWrapper.layer < nw.layer && nw.layer < nodeA.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& nodeA.layer < nw.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& nw.layer < nodeA.layer)) {
 											// top-left or bottom-left quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
 										}
 									} else if (nodeB.index <= nw.index) {
 										// implies nodeA.index < nw.index
-										if ((aNodeWrapper.layer > nw.layer && aNodeWrapper.layer < nodeB.layer)
-												|| (aNodeWrapper.layer < nw.layer && aNodeWrapper.layer > nodeB.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& aNodeWrapper.layer < nodeB.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& aNodeWrapper.layer > nodeB.layer)) {
 											// top-right or bottom-right quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
@@ -500,16 +517,20 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 								} else if (nw.index == aNodeWrapper.index) {
 									if (nodeB.index >= nw.index) {
 										// implies nodeB.index > nw.index
-										if ((aNodeWrapper.layer > nw.layer && nodeB.layer > aNodeWrapper.layer)
-												|| (aNodeWrapper.layer < nw.layer && aNodeWrapper.layer > nodeB.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& nodeB.layer > aNodeWrapper.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& aNodeWrapper.layer > nodeB.layer)) {
 											// top-left or bottom-left quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
 										}
 									} else if (nodeA.index <= nw.index) {
 										// implies nodeA.index < nw.index
-										if ((aNodeWrapper.layer > nw.layer && nw.layer > nodeA.layer)
-												|| (aNodeWrapper.layer < nw.layer && nw.layer < nodeA.layer)) {
+										if ((aNodeWrapper.layer > nw.layer
+												&& nw.layer > nodeA.layer)
+												|| (aNodeWrapper.layer < nw.layer
+														&& nw.layer < nodeA.layer)) {
 											// top-right or bottom-right quarter
 											numOfCrosses++;
 											alreadyCrossed.add(i);
@@ -544,15 +565,16 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 						if (num1 > num2 || (num1 == num2 && num1 > 0)) {
 							if (!crossesForLayers
 									.containsKey((layer.get(i).layer))
-									|| crossesForLayers.get(layer.get(i).layer) > num2) {
+									|| crossesForLayers
+											.get(layer.get(i).layer) > num2) {
 								crossesForLayers.put(layer.get(i).layer, num2);
 								res = true;
 								int level = layer.get(0).layer;
 
 								NodeWrapper tmp = layers.get(level).get(i);
 								int tmpindex = layers.get(level).get(i).index;
-								layers.get(level).get(i).index = layers.get(
-										level).get(i + 1).index;
+								layers.get(level).get(i).index = layers
+										.get(level).get(i + 1).index;
 								layers.get(level).set(i,
 										layers.get(level).get(i + 1));
 								layers.get(level).get(i + 1).index = tmpindex;
@@ -796,7 +818,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		 * @param list
 		 */
 		private void addLayer(List<INodeLayout> list,
-				List<List<NodeWrapper>> layers, Map<INodeLayout, NodeWrapper> map) {
+				List<List<NodeWrapper>> layers,
+				Map<INodeLayout, NodeWrapper> map) {
 			ArrayList<NodeWrapper> layer = new ArrayList<NodeWrapper>(
 					list.size());
 			for (INodeLayout node : list) {
@@ -1000,12 +1023,14 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				layer.add(nw);
 				// insert dummy nodes if the adjacent layer does not contain the
 				// predecessor
-				for (INodeLayout node_predecessor : node.getPredecessingNodes()) { // for
-																					// all
-																					// predecessors
+				for (INodeLayout node_predecessor : node
+						.getPredecessingNodes()) { // for
+													// all
+													// predecessors
 					NodeWrapper nw_predecessor = map.get(node_predecessor);
 					if (nw_predecessor != null) {
-						for (int level = nw_predecessor.layer + 1; level < nw.layer; level++) {
+						for (int level = nw_predecessor.layer
+								+ 1; level < nw.layer; level++) {
 							// add "virtual" wrappers (dummies) to the layers in
 							// between
 							// virtual wrappers are in fact parts of a double
@@ -1031,7 +1056,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				list.get(index).index = index;
 		}
 
-		public List<List<NodeWrapper>> calculateLayers(List<INodeLayout> nodes) {
+		public List<List<NodeWrapper>> calculateLayers(
+				List<INodeLayout> nodes) {
 			map.clear();
 
 			List<INodeLayout> predecessors = findRoots(nodes);
@@ -1047,8 +1073,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 									+ "! (Graph not directed? Cycles?)");
 				List<INodeLayout> layer = new ArrayList<INodeLayout>();
 				for (INodeLayout item : nodes) {
-					if (predecessors.containsAll(Arrays.asList(item
-							.getPredecessingNodes())))
+					if (predecessors.containsAll(
+							Arrays.asList(item.getPredecessingNodes())))
 						layer.add(item);
 				}
 				if (layer.size() == 0)
@@ -1171,14 +1197,14 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		if (direction == Direction.HORIZONTAL)
 			for (INodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				LayoutProperties.setLocation(node,
-						(nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
+				LayoutProperties.setLocation(node, (nw.layer + 0.5d) * dx,
+						(nw.index + 0.5d) * dy);
 			}
 		else
 			for (INodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				LayoutProperties.setLocation(node,
-						(nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);
+				LayoutProperties.setLocation(node, (nw.index + 0.5d) * dx,
+						(nw.layer + 0.5d) * dy);
 			}
 	}
 

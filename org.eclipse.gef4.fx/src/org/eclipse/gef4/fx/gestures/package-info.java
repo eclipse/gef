@@ -18,8 +18,8 @@
  * implemented as an abstract class, with different abstract methods for state
  * changes within the gesture, i.e. <code>press()</code>, <code>drag()</code>,
  * and <code>release()</code> in the case of an
- * {@link org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture}. Besides, every
- * gesture provides a <code>setScene()</code> method to register/unregister
- * JavaFX event listeners.
+ * {@link org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture}. Besides,
+ * every gesture provides a <code>setScene()</code> method to
+ * register/unregister JavaFX event listeners.
  */
 package org.eclipse.gef4.fx.gestures;

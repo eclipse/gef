@@ -48,7 +48,8 @@ import org.eclipse.swt.widgets.Composite;
  * will forward all focus events to the embedded JavaFX stage), so SWT
  * {@link FocusListener} will not be notified</li>
  * <li>Support for setting cursors via JavaFX (i.e. the cursor of the embedded
- * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})</li>
+ * JavaFX stage, its transferred into an SWT cursor on this {@link FXCanvasEx})
+ * </li>
  * </ul>
  *
  * @author anyssen
@@ -96,13 +97,13 @@ public class FXCanvasEx extends FXCanvas {
 				double hotspotX = ((ImageCursor) newCursor).getHotspotX();
 				double hotspotY = ((ImageCursor) newCursor).getHotspotY();
 				org.eclipse.swt.graphics.Cursor swtCursor = new org.eclipse.swt.graphics.Cursor(
-						getDisplay(), imageData, (int) hotspotX, (int) hotspotY);
+						getDisplay(), imageData, (int) hotspotX,
+						(int) hotspotY);
 				getShell().setCursor(swtCursor);
 			} else if (CURSOR_FROM_FX_TO_SWT.containsKey(newCursor)) {
 				// standard cursor, look up in map
-				getShell().setCursor(
-						new org.eclipse.swt.graphics.Cursor(getDisplay(),
-								CURSOR_FROM_FX_TO_SWT.get(newCursor)));
+				getShell().setCursor(new org.eclipse.swt.graphics.Cursor(
+						getDisplay(), CURSOR_FROM_FX_TO_SWT.get(newCursor)));
 			} else {
 				// unknown cursor, use default
 				getShell().setCursor(null);

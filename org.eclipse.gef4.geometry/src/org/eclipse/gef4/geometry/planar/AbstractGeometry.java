@@ -83,7 +83,8 @@ abstract class AbstractGeometry implements IGeometry {
 				return false;
 			} else {
 				throw new UnsupportedOperationException(
-						"Not yet implemented: touches(" + this + ", " + g + ")");
+						"Not yet implemented: touches(" + this + ", " + g
+								+ ")");
 			}
 		} else if (this instanceof IShape) {
 			if (g instanceof ICurve) {
@@ -92,8 +93,8 @@ abstract class AbstractGeometry implements IGeometry {
 			} else if (g instanceof IShape) {
 				return ((IShape) this).contains(g)
 						|| ((IShape) g).contains(this)
-						|| ((IShape) this).getOutline().touches(
-								((IShape) g).getOutline());
+						|| ((IShape) this).getOutline()
+								.touches(((IShape) g).getOutline());
 			} else if (g instanceof IMultiShape) {
 				if (((IShape) this).contains(g)) {
 					return true;
@@ -110,7 +111,8 @@ abstract class AbstractGeometry implements IGeometry {
 				return false;
 			} else {
 				throw new UnsupportedOperationException(
-						"Not yet implemented: touches(" + this + ", " + g + ")");
+						"Not yet implemented: touches(" + this + ", " + g
+								+ ")");
 			}
 		} else if (this instanceof IMultiShape) {
 			IMultiShape thisPolyShape = (IMultiShape) this;
@@ -144,8 +146,10 @@ abstract class AbstractGeometry implements IGeometry {
 						|| gMultiShape.contains(thisPolyShape)) {
 					return true;
 				}
-				for (ICurve thisOutlineSeg : thisPolyShape.getOutlineSegments()) {
-					for (ICurve gOutlineSeg : gMultiShape.getOutlineSegments()) {
+				for (ICurve thisOutlineSeg : thisPolyShape
+						.getOutlineSegments()) {
+					for (ICurve gOutlineSeg : gMultiShape
+							.getOutlineSegments()) {
 						if (thisOutlineSeg.touches(gOutlineSeg)) {
 							return true;
 						}
@@ -154,7 +158,8 @@ abstract class AbstractGeometry implements IGeometry {
 				return false;
 			} else {
 				throw new UnsupportedOperationException(
-						"Not yet implemented: touches(" + this + ", " + g + ")");
+						"Not yet implemented: touches(" + this + ", " + g
+								+ ")");
 			}
 		} else {
 			throw new UnsupportedOperationException(

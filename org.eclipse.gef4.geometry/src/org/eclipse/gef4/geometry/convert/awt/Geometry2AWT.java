@@ -51,8 +51,8 @@ public class Geometry2AWT {
 	public static java.awt.geom.AffineTransform toAWTAffineTransform(
 			AffineTransform t) {
 		double[] matrix = t.getMatrix();
-		return new java.awt.geom.AffineTransform(Arrays.copyOf(matrix,
-				matrix.length));
+		return new java.awt.geom.AffineTransform(
+				Arrays.copyOf(matrix, matrix.length));
 	}
 
 	/**
@@ -92,8 +92,8 @@ public class Geometry2AWT {
 				path.quadTo(points[0].x, points[0].y, points[1].x, points[1].y);
 				break;
 			case Segment.CUBIC_TO:
-				path.curveTo(points[0].x, points[0].y, points[1].x,
-						points[1].y, points[2].x, points[2].y);
+				path.curveTo(points[0].x, points[0].y, points[1].x, points[1].y,
+						points[2].x, points[2].y);
 				break;
 			case Segment.CLOSE:
 				path.closePath();
@@ -197,7 +197,8 @@ public class Geometry2AWT {
 	 *         y, width, height, arcWidth, and arcHeight values of the passed in
 	 *         {@link RoundedRectangle}
 	 */
-	public static RoundRectangle2D.Double toAWTRoundRectangle(RoundedRectangle r) {
+	public static RoundRectangle2D.Double toAWTRoundRectangle(
+			RoundedRectangle r) {
 		return new RoundRectangle2D.Double(r.getX(), r.getY(), r.getWidth(),
 				r.getHeight(), r.getArcWidth(), r.getArcHeight());
 	}

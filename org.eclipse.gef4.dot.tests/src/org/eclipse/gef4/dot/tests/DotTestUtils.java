@@ -82,26 +82,27 @@ public final class DotTestUtils {
 
 	public static Graph getLabeledGraph() {
 		/* Global settings: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotProperties.GRAPH_TYPE,
+						DotProperties.GRAPH_TYPE_DIRECTED)
 				.attr(DotProperties.GRAPH_LAYOUT,
 						DotProperties.GRAPH_LAYOUT_DOT);
 
 		/* Nodes: */
-		Node n1 = new Node.Builder()
-				.attr(DotProperties.NODE_ID, "1").attr(DotProperties.NODE_LABEL, "one").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder()
-				.attr(DotProperties.NODE_ID, "2").attr(DotProperties.NODE_LABEL, "two").build(); //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(DotProperties.NODE_ID, "1") //$NON-NLS-1$
+				.attr(DotProperties.NODE_LABEL, "one").build();
+		Node n2 = new Node.Builder().attr(DotProperties.NODE_ID, "2") //$NON-NLS-1$
+				.attr(DotProperties.NODE_LABEL, "two").build();
 		Node n3 = new Node.Builder().attr(DotProperties.NODE_ID, "3").build(); //$NON-NLS-1$
 		Node n4 = new Node.Builder().attr(DotProperties.NODE_ID, "4").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
-		Edge e1 = new Edge.Builder(n1, n2)
-				.attr(DotProperties.EDGE_LABEL, "+1").build(); //$NON-NLS-1$
+		Edge e1 = new Edge.Builder(n1, n2).attr(DotProperties.EDGE_LABEL, "+1") //$NON-NLS-1$
+				.build();
 
 		/* Connection from n1 to n3: */
-		Edge e2 = new Edge.Builder(n1, n3)
-				.attr(DotProperties.EDGE_LABEL, "+2").build(); //$NON-NLS-1$
+		Edge e2 = new Edge.Builder(n1, n3).attr(DotProperties.EDGE_LABEL, "+2") //$NON-NLS-1$
+				.build();
 
 		/* Connection from n3 to n4: */
 		Edge e3 = new Edge.Builder(n3, n4).build();
@@ -118,18 +119,17 @@ public final class DotTestUtils {
 						DotProperties.GRAPH_LAYOUT_DOT);
 
 		/* Nodes: */
-		Node n1 = new Node.Builder()
-				.attr(DotProperties.NODE_LABEL, "Node").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder()
-				.attr(DotProperties.NODE_LABEL, "Node").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder()
-				.attr(DotProperties.NODE_LABEL, "Leaf1").build(); //$NON-NLS-1$
-		Node n4 = new Node.Builder()
-				.attr(DotProperties.NODE_LABEL, "Leaf2").build(); //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node") //$NON-NLS-1$
+				.build();
+		Node n2 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node") //$NON-NLS-1$
+				.build();
+		Node n3 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Leaf1") //$NON-NLS-1$
+				.build();
+		Node n4 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Leaf2") //$NON-NLS-1$
+				.build();
 
 		/* Connection from n1 to n2: */
-		new Edge.Builder(n1, n2)
-				.attr(DotProperties.EDGE_LABEL, "Edge")
+		new Edge.Builder(n1, n2).attr(DotProperties.EDGE_LABEL, "Edge")
 				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DASHED)
 				.build();
 
@@ -151,15 +151,16 @@ public final class DotTestUtils {
 	public static Graph getSimpleDiGraph() {
 
 		/* Global settings, here we set the directed property: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotProperties.GRAPH_TYPE,
+						DotProperties.GRAPH_TYPE_DIRECTED)
 				.attr(DotProperties.GRAPH_LAYOUT,
 						DotProperties.GRAPH_LAYOUT_DOT);
 
 		/* Nodes: */
 		Node n1 = new Node.Builder().attr(DotProperties.NODE_ID, "1").build(); //$NON-NLS-1$
 		Node n2 = new Node.Builder().attr(DotProperties.NODE_ID, "2").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder().attr(DotProperties.NODE_ID, "3").build(); //$NON-NLS-1$ 
+		Node n3 = new Node.Builder().attr(DotProperties.NODE_ID, "3").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2).build();
@@ -172,15 +173,16 @@ public final class DotTestUtils {
 
 	public static Graph getSimpleGraph() {
 		/* Set a layout algorithm: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_UNDIRECTED)
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotProperties.GRAPH_TYPE,
+						DotProperties.GRAPH_TYPE_UNDIRECTED)
 				.attr(DotProperties.GRAPH_LAYOUT,
 						DotProperties.GRAPH_LAYOUT_DOT);
 
 		/* Set the nodes: */
 		Node n1 = new Node.Builder().attr(DotProperties.NODE_ID, "1").build(); //$NON-NLS-1$
 		Node n2 = new Node.Builder().attr(DotProperties.NODE_ID, "2").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder().attr(DotProperties.NODE_ID, "3").build(); //$NON-NLS-1$ 
+		Node n3 = new Node.Builder().attr(DotProperties.NODE_ID, "3").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2).build();
@@ -193,8 +195,9 @@ public final class DotTestUtils {
 
 	public static Graph getStyledGraph() {
 		/* Global properties: */
-		Graph.Builder graph = new Graph.Builder().attr(
-				DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
+		Graph.Builder graph = new Graph.Builder()
+				.attr(DotProperties.GRAPH_TYPE,
+						DotProperties.GRAPH_TYPE_DIRECTED)
 				.attr(DotProperties.GRAPH_LAYOUT,
 						DotProperties.GRAPH_LAYOUT_DOT);
 
@@ -206,12 +209,14 @@ public final class DotTestUtils {
 		Node n5 = new Node.Builder().attr(DotProperties.NODE_ID, "5").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
-		Edge e1 = new Edge.Builder(n1, n2).attr(DotProperties.EDGE_STYLE,
-				DotProperties.EDGE_STYLE_DASHED).build();
+		Edge e1 = new Edge.Builder(n1, n2)
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DASHED)
+				.build();
 
 		/* Connection from n2 to n3: */
-		Edge e2 = new Edge.Builder(n2, n3).attr(DotProperties.EDGE_STYLE,
-				DotProperties.EDGE_STYLE_DOTTED).build();
+		Edge e2 = new Edge.Builder(n2, n3)
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
+				.build();
 
 		/* Connection from n3 to n4: */
 		Edge e3 = new Edge.Builder(n3, n4).attr(DotProperties.EDGE_STYLE,
@@ -221,8 +226,9 @@ public final class DotTestUtils {
 		Edge e4 = new Edge.Builder(n3, n5).attr(DotProperties.EDGE_STYLE,
 				DotProperties.EDGE_STYLE_DASHDOTDOT).build();
 
-		Edge e5 = new Edge.Builder(n4, n5).attr(DotProperties.EDGE_STYLE,
-				DotProperties.EDGE_STYLE_SOLID).build();
+		Edge e5 = new Edge.Builder(n4, n5)
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_SOLID)
+				.build();
 
 		return graph.nodes(n1, n2, n3, n4, n5).edges(e1, e2, e3, e4, e5)
 				.build();

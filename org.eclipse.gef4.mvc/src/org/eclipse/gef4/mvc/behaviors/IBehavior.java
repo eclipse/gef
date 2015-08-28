@@ -26,8 +26,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            javafx.scene.Node in case of JavaFX.
  */
 // TODO: change generic parameter to specify IVisualPart<VR> rather than VR
-public interface IBehavior<VR> extends IActivatable,
-		IAdaptable.Bound<IVisualPart<VR, ? extends VR>> {
+public interface IBehavior<VR>
+		extends IActivatable, IAdaptable.Bound<IVisualPart<VR, ? extends VR>> {
 
 	/**
 	 * Returns the host {@link IVisualPart} of this {@link IBehavior}, i.e. the

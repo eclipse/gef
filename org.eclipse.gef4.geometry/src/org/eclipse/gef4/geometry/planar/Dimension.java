@@ -47,8 +47,8 @@ public class Dimension implements Cloneable, Serializable {
 	 *         {@link Dimension}s
 	 */
 	public static Dimension max(Dimension d1, Dimension d2) {
-		return new Dimension(Math.max(d1.width, d2.width), Math.max(d1.height,
-				d2.height));
+		return new Dimension(Math.max(d1.width, d2.width),
+				Math.max(d1.height, d2.height));
 	}
 
 	/**
@@ -63,8 +63,8 @@ public class Dimension implements Cloneable, Serializable {
 	 *         provided {@link Dimension}s
 	 */
 	public static Dimension min(Dimension d1, Dimension d2) {
-		return new Dimension(Math.min(d1.width, d2.width), Math.min(d1.height,
-				d2.height));
+		return new Dimension(Math.min(d1.width, d2.width),
+				Math.min(d1.height, d2.height));
 	}
 
 	/**

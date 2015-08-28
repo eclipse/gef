@@ -94,7 +94,8 @@ public class JFaceNestingExample {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 			input = newInput;
 		}
 
@@ -148,8 +149,8 @@ public class JFaceNestingExample {
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				System.out.println("Selection changed: "
-						+ (event.getSelection()));
+				System.out.println(
+						"Selection changed: " + (event.getSelection()));
 			}
 		});
 		viewer.setInput(new Object());

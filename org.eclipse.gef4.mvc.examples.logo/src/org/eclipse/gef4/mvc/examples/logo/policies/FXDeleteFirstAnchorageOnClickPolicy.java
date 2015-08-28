@@ -22,7 +22,8 @@ import org.eclipse.gef4.mvc.policies.ContentPolicy;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
+public class FXDeleteFirstAnchorageOnClickPolicy
+		extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
@@ -40,8 +41,8 @@ public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy
 
 	@Override
 	public IVisualPart<Node, ? extends Node> getHost() {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = super
-				.getHost().getParent().getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = super.getHost()
+				.getParent().getAnchorages();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return null;
 		}

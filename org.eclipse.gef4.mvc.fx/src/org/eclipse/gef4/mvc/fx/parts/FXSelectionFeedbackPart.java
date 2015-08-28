@@ -36,15 +36,17 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-public class FXSelectionFeedbackPart extends
-		AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
+public class FXSelectionFeedbackPart
+		extends AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (FocusModel.VIEWER_FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			if (FocusModel.VIEWER_FOCUS_PROPERTY
+					.equals(evt.getPropertyName())) {
 				refreshVisual();
-			} else if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			} else
+				if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
 				refreshVisual();
 			}
 		}
@@ -115,7 +117,8 @@ public class FXSelectionFeedbackPart extends
 
 		// update color according to focused and selected state
 		boolean focused = viewer.getAdapter(FocusModel.class).isViewerFocused()
-				&& viewer.getAdapter(FocusModel.class).getFocused() == anchorage;
+				&& viewer.getAdapter(FocusModel.class)
+						.getFocused() == anchorage;
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
@@ -130,8 +133,8 @@ public class FXSelectionFeedbackPart extends
 	}
 
 	protected IGeometry getFeedbackGeometry() {
-		return FXUtils
-				.sceneToLocal(getVisual(), feedbackGeometryProvider.get());
+		return FXUtils.sceneToLocal(getVisual(),
+				feedbackGeometryProvider.get());
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
@@ -141,8 +144,8 @@ public class FXSelectionFeedbackPart extends
 					.iterator().next();
 			String providerRole = focused ? PRIMARY_FOCUSED_EFFECT_PROVIDER
 					: PRIMARY_UNFOCUSED_EFFECT_PROVIDER;
-			effectProvider = host.getAdapter(AdapterKey.get(
-					new TypeToken<Provider<? extends Effect>>() {
+			effectProvider = host.getAdapter(
+					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {
 					}, providerRole));
 		}
 		if (effectProvider == null) {
@@ -162,8 +165,8 @@ public class FXSelectionFeedbackPart extends
 					.iterator().next();
 			String providerRole = focused ? SECONDARY_FOCUSED_EFFECT_PROVIDER
 					: SECONDARY_UNFOCUSED_EFFECT_PROVIDER;
-			effectProvider = host.getAdapter(AdapterKey.get(
-					new TypeToken<Provider<? extends Effect>>() {
+			effectProvider = host.getAdapter(
+					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {
 					}, providerRole));
 		}
 		if (effectProvider == null) {

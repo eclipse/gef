@@ -44,8 +44,7 @@ final public class GraphCopier {
 		this.attributeNameForId = attributeNameForId;
 	}
 
-	private Edge copy(Edge edge, Graph.Builder targetGraph,
-			Map<Node, Node> copiedNodes, Map<Object, Node> ids) {
+	private Edge copy(Edge edge, Graph.Builder targetGraph, Map<Node, Node> copiedNodes, Map<Object, Node> ids) {
 		// determine source and target
 		Node srcSource = edge.getSource();
 		Node source = find(ids, srcSource);

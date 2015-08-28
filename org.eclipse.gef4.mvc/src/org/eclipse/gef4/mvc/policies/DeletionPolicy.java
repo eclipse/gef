@@ -32,8 +32,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class DeletionPolicy<VR> extends AbstractPolicy<VR> implements
-		ITransactional {
+public class DeletionPolicy<VR> extends AbstractPolicy<VR>
+		implements ITransactional {
 
 	private Set<IContentPart<VR, ? extends VR>> partsToDelete;
 

@@ -19,8 +19,8 @@ import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class PolygonEllipseContainment extends
-		AbstractPolygonContainmentExample {
+public class PolygonEllipseContainment
+		extends AbstractPolygonContainmentExample {
 
 	public static void main(String[] args) {
 		new PolygonEllipseContainment();
@@ -41,7 +41,8 @@ public class PolygonEllipseContainment extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

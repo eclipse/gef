@@ -100,16 +100,16 @@ public class CAGExample extends AbstractExample {
 				Path ellipsePath = csEllipse.getShape().toPath();
 				Path intersection = Path.intersect(trianglePath, ellipsePath);
 
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_RED));
+				gc.setBackground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 				gc.fillPath(makeSWTPath(trianglePath));
 
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_GREEN));
+				gc.setBackground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
 				gc.fillPath(makeSWTPath(ellipsePath));
 
-				gc.setBackground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_YELLOW));
+				gc.setBackground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
 				gc.fillPath(makeSWTPath(intersection));
 			}
 		} };

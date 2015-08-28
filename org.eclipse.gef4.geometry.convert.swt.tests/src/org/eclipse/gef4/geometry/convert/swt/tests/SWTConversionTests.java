@@ -38,15 +38,13 @@ public class SWTConversionTests {
 	@Test
 	public void test_AWT_Path() {
 		PathIterator pathIteratorBefore = new java.awt.geom.Path2D.Double(
-				new java.awt.geom.RoundRectangle2D.Double(0, 0, 100, 80, 10, 10))
-				.getPathIterator(null);
+				new java.awt.geom.RoundRectangle2D.Double(0, 0, 100, 80, 10, 10)).getPathIterator(null);
 
 		PathData swtPathData = AWT2SWT.toSWTPathData(pathIteratorBefore);
-		int windingRuleSWT = pathIteratorBefore.getWindingRule() == java.awt.geom.Path2D.WIND_EVEN_ODD ? SWT.FILL_EVEN_ODD
-				: SWT.FILL_WINDING;
+		int windingRuleSWT = pathIteratorBefore.getWindingRule() == java.awt.geom.Path2D.WIND_EVEN_ODD
+				? SWT.FILL_EVEN_ODD : SWT.FILL_WINDING;
 
-		PathIterator pathIteratorAfter = SWT2AWT.toAWTPathIterator(swtPathData,
-				windingRuleSWT);
+		PathIterator pathIteratorAfter = SWT2AWT.toAWTPathIterator(swtPathData, windingRuleSWT);
 
 		while (!pathIteratorBefore.isDone()) {
 			assertFalse(pathIteratorAfter.isDone());
@@ -72,8 +70,7 @@ public class SWTConversionTests {
 			}
 
 			for (int i = 0; i < numCoords; i++) {
-				assertTrue(PrecisionUtils
-						.equal(coordsBefore[i], coordsAfter[i]));
+				assertTrue(PrecisionUtils.equal(coordsBefore[i], coordsAfter[i]));
 			}
 
 			pathIteratorBefore.next();
@@ -91,8 +88,7 @@ public class SWTConversionTests {
 				for (int x1 = -5; x1 <= 5; x1++) {
 					for (int y1 = -5; y1 <= 5; y1++) {
 						Line l = new Line(x0, y0, x1, y1);
-						assertEquals(l, SWT2Geometry.toLine(Geometry2SWT
-								.toSWTPointArray(l)));
+						assertEquals(l, SWT2Geometry.toLine(Geometry2SWT.toSWTPointArray(l)));
 					}
 				}
 			}
@@ -104,13 +100,9 @@ public class SWTConversionTests {
 		// Create a Path whose coordinate values are convertible from double to
 		// float without loosing precision so that we can compare the Path with
 		// an SWT equivalent as an SWT Path consists of float coordinates.
-		Path p = new Path().moveTo(50, 50).lineTo(100, 100)
-				.quadTo(100, 150, 50, 150).cubicTo(20, 120, 20, 80, 50, 50)
+		Path p = new Path().moveTo(50, 50).lineTo(100, 100).quadTo(100, 150, 50, 150).cubicTo(20, 120, 20, 80, 50, 50)
 				.close();
-		assertEquals(
-				p,
-				SWT2Geometry.toPath(Path.WIND_NON_ZERO,
-						Geometry2SWT.toSWTPathData(p)));
+		assertEquals(p, SWT2Geometry.toPath(Path.WIND_NON_ZERO, Geometry2SWT.toSWTPathData(p)));
 	}
 
 	@Test
@@ -121,8 +113,7 @@ public class SWTConversionTests {
 		for (int x = -15; x <= 15; x++) {
 			for (int y = -15; y <= 15; y++) {
 				Point p = new Point(12, -3);
-				assertEquals(p,
-						SWT2Geometry.toPoint(Geometry2SWT.toSWTPoint(p)));
+				assertEquals(p, SWT2Geometry.toPoint(Geometry2SWT.toSWTPoint(p)));
 			}
 		}
 	}
@@ -136,11 +127,8 @@ public class SWTConversionTests {
 			for (int y1 = -5; y1 <= 5; y1++) {
 				for (int x2 = -5; x2 <= 5; x2++) {
 					for (int y3 = -5; y3 <= 5; y3++) {
-						Polygon polygon = new Polygon(x0, -1, 1, y1, x2, 10, 1,
-								y3);
-						assertEquals(polygon,
-								SWT2Geometry.toPolygon(Geometry2SWT
-										.toSWTPointArray(polygon)));
+						Polygon polygon = new Polygon(x0, -1, 1, y1, x2, 10, 1, y3);
+						assertEquals(polygon, SWT2Geometry.toPolygon(Geometry2SWT.toSWTPointArray(polygon)));
 					}
 				}
 			}
@@ -156,11 +144,8 @@ public class SWTConversionTests {
 			for (int y1 = -5; y1 <= 5; y1++) {
 				for (int x2 = -5; x2 <= 5; x2++) {
 					for (int y3 = -5; y3 <= 5; y3++) {
-						Polyline polyline = new Polyline(x0, -1, 1, y1, x2, 10,
-								1, y3);
-						assertEquals(polyline,
-								SWT2Geometry.toPolyline(Geometry2SWT
-										.toSWTPointArray(polyline)));
+						Polyline polyline = new Polyline(x0, -1, 1, y1, x2, 10, 1, y3);
+						assertEquals(polyline, SWT2Geometry.toPolyline(Geometry2SWT.toSWTPointArray(polyline)));
 					}
 				}
 			}
@@ -177,8 +162,7 @@ public class SWTConversionTests {
 				for (int w = -5; w <= 5; w++) {
 					for (int h = -5; h <= 5; h++) {
 						Rectangle r = new Rectangle(x, y, w, h);
-						assertEquals(r, SWT2Geometry.toRectangle(Geometry2SWT
-								.toSWTRectangle(r)));
+						assertEquals(r, SWT2Geometry.toRectangle(Geometry2SWT.toSWTRectangle(r)));
 					}
 				}
 			}

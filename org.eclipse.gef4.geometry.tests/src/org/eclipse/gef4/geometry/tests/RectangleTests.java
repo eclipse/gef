@@ -93,44 +93,44 @@ public class RectangleTests {
 		Point top = preciseRect.getTop();
 		assertTrue(preciseRect.contains(top));
 		assertTrue(preciseRect.contains(top.x, top.y));
-		assertFalse(preciseRect.contains(top.getTranslated(0,
-				-RECOGNIZABLE_FRACTION)));
+		assertFalse(preciseRect
+				.contains(top.getTranslated(0, -RECOGNIZABLE_FRACTION)));
 
 		Point topRight = preciseRect.getTopRight();
 		assertTrue(preciseRect.contains(topRight));
 		assertTrue(preciseRect.contains(topRight.x, topRight.y));
-		assertFalse(preciseRect.contains(topRight.getTranslated(
-				RECOGNIZABLE_FRACTION, -RECOGNIZABLE_FRACTION)));
+		assertFalse(preciseRect.contains(topRight
+				.getTranslated(RECOGNIZABLE_FRACTION, -RECOGNIZABLE_FRACTION)));
 
 		Point left = preciseRect.getLeft();
 		assertTrue(preciseRect.contains(left));
 		assertTrue(preciseRect.contains(left.x, left.y));
-		assertFalse(preciseRect.contains(left.getTranslated(
-				-RECOGNIZABLE_FRACTION, 0)));
+		assertFalse(preciseRect
+				.contains(left.getTranslated(-RECOGNIZABLE_FRACTION, 0)));
 
 		Point right = preciseRect.getRight();
 		assertTrue(preciseRect.contains(right));
 		assertTrue(preciseRect.contains(right.x, right.y));
-		assertFalse(preciseRect.contains(right.getTranslated(
-				RECOGNIZABLE_FRACTION, 0)));
+		assertFalse(preciseRect
+				.contains(right.getTranslated(RECOGNIZABLE_FRACTION, 0)));
 
 		Point bottomLeft = preciseRect.getBottomLeft();
 		assertTrue(preciseRect.contains(bottomLeft));
 		assertTrue(preciseRect.contains(bottomLeft.x, bottomLeft.y));
-		assertFalse(preciseRect.contains(bottomLeft.getTranslated(
-				-RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
+		assertFalse(preciseRect.contains(bottomLeft
+				.getTranslated(-RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
 
 		Point bottom = preciseRect.getBottom();
 		assertTrue(preciseRect.contains(bottom));
 		assertTrue(preciseRect.contains(bottom.x, bottom.y));
-		assertFalse(preciseRect.contains(bottom.getTranslated(0,
-				RECOGNIZABLE_FRACTION)));
+		assertFalse(preciseRect
+				.contains(bottom.getTranslated(0, RECOGNIZABLE_FRACTION)));
 
 		Point bottomRight = preciseRect.getBottomRight();
 		assertTrue(preciseRect.contains(bottomRight));
 		assertTrue(preciseRect.contains(bottomRight.x, bottomRight.y));
-		assertFalse(preciseRect.contains(bottomRight.getTranslated(
-				RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
+		assertFalse(preciseRect.contains(bottomRight
+				.getTranslated(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
 	}
 
 	@Test
@@ -140,8 +140,8 @@ public class RectangleTests {
 
 		// test self containment
 		assertTrue(preciseRect.contains(preciseRect));
-		assertFalse(preciseRect.contains(preciseRect.getExpanded(
-				RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
+		assertFalse(preciseRect.contains(preciseRect
+				.getExpanded(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
 
 		// test precision tolerance, therefore increment by an amount not
 		// 'recognizable'
@@ -173,8 +173,8 @@ public class RectangleTests {
 		// Regression test for a contains() bug that caused false positives for
 		// a "containing" Rectangle with smaller x and y coordinates and greater
 		// width and height as the "contained" one.
-		assertFalse(new Rectangle(0, 0, 100, 100).contains(new Rectangle(200,
-				200, 1, 1)));
+		assertFalse(new Rectangle(0, 0, 100, 100)
+				.contains(new Rectangle(200, 200, 1, 1)));
 	}
 
 	@Test
@@ -283,8 +283,9 @@ public class RectangleTests {
 	@Test
 	public void test_getScaled() {
 		Rectangle rect = new Rectangle(-9.486614173228347, -34.431496062992125,
-				41.99055118110236, 25.92755905511811).getScaled(
-				26.458333333333332).getScaled(1.0 / 26.458333333333332);
+				41.99055118110236, 25.92755905511811)
+						.getScaled(26.458333333333332)
+						.getScaled(1.0 / 26.458333333333332);
 
 		assertTrue(PrecisionUtils.equal(-9.486614173228347, rect.getX()));
 		assertTrue(PrecisionUtils.equal(-34.431496062992125, rect.getY()));
@@ -295,8 +296,10 @@ public class RectangleTests {
 				2 * 9.486614173228347, 34.431496062992125).getScaled(2, 0);
 
 		assertTrue(PrecisionUtils.equal(2 * -9.486614173228347, rect.getX()));
-		assertTrue(PrecisionUtils.equal(0.5 * -34.431496062992125, rect.getY()));
-		assertTrue(PrecisionUtils.equal(4 * 9.486614173228347, rect.getWidth()));
+		assertTrue(
+				PrecisionUtils.equal(0.5 * -34.431496062992125, rect.getY()));
+		assertTrue(
+				PrecisionUtils.equal(4 * 9.486614173228347, rect.getWidth()));
 		assertTrue(PrecisionUtils.equal(0, rect.getHeight()));
 
 		// TODO: is this the desired behavior?
@@ -432,30 +435,30 @@ public class RectangleTests {
 
 	@Test
 	public void test_intersects_with_Rectangle() {
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, 0,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(50, 50,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(100,
-				100, 100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(-100,
-				-100, 100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(-50, 0,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(-100, 0,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(50, 0,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(100, 0,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, -50,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, -100,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, 50,
-				100, 100)));
-		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, 100,
-				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(0, 0, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(50, 50, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(100, 100, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(-100, -100, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(-50, 0, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(-100, 0, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(50, 0, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(100, 0, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(0, -50, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(0, -100, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(0, 50, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100)
+				.touches(new Rectangle(0, 100, 100, 100)));
 	}
 
 	@Test
@@ -494,26 +497,26 @@ public class RectangleTests {
 		assertEquals(new Rectangle(5, 5, 0, 10), new Rectangle(5, 5, -10, 10));
 		assertEquals(new Rectangle(5, 5, 10, 0), new Rectangle(5, 5, 10, -10));
 
-		assertEquals(new Rectangle(), new Rectangle(new Rectangle(0, 0, -10,
-				-10)));
-		assertEquals(new Rectangle(5, 5, 0, 10), new Rectangle(new Rectangle(5,
-				5, -10, 10)));
-		assertEquals(new Rectangle(5, 5, 10, 0), new Rectangle(new Rectangle(5,
-				5, 10, -10)));
+		assertEquals(new Rectangle(),
+				new Rectangle(new Rectangle(0, 0, -10, -10)));
+		assertEquals(new Rectangle(5, 5, 0, 10),
+				new Rectangle(new Rectangle(5, 5, -10, 10)));
+		assertEquals(new Rectangle(5, 5, 10, 0),
+				new Rectangle(new Rectangle(5, 5, 10, -10)));
 
-		assertEquals(new Rectangle(), new Rectangle(new Point(0, 0),
-				new Dimension(-10, -10)));
-		assertEquals(new Rectangle(5, 5, 0, 10), new Rectangle(new Point(5, 5),
-				new Dimension(-10, 10)));
-		assertEquals(new Rectangle(5, 5, 10, 0), new Rectangle(new Point(5, 5),
-				new Dimension(10, -10)));
+		assertEquals(new Rectangle(),
+				new Rectangle(new Point(0, 0), new Dimension(-10, -10)));
+		assertEquals(new Rectangle(5, 5, 0, 10),
+				new Rectangle(new Point(5, 5), new Dimension(-10, 10)));
+		assertEquals(new Rectangle(5, 5, 10, 0),
+				new Rectangle(new Point(5, 5), new Dimension(10, -10)));
 
-		assertEquals(new Rectangle(-10, -10, 10, 10), new Rectangle(new Point(
-				0, 0), new Point(-10, -10)));
-		assertEquals(new Rectangle(-10, 5, 15, 5), new Rectangle(
-				new Point(5, 5), new Point(-10, 10)));
-		assertEquals(new Rectangle(5, -10, 5, 15), new Rectangle(
-				new Point(5, 5), new Point(10, -10)));
+		assertEquals(new Rectangle(-10, -10, 10, 10),
+				new Rectangle(new Point(0, 0), new Point(-10, -10)));
+		assertEquals(new Rectangle(-10, 5, 15, 5),
+				new Rectangle(new Point(5, 5), new Point(-10, 10)));
+		assertEquals(new Rectangle(5, -10, 5, 15),
+				new Rectangle(new Point(5, 5), new Point(10, -10)));
 	}
 
 	@Test
@@ -611,10 +614,10 @@ public class RectangleTests {
 	public void test_shrink_AND_expand() {
 		Rectangle preciseRect = new Rectangle(-9.486614173228347,
 				-34.431496062992125, 41.99055118110236, 25.92755905511811);
-		Rectangle recognizableExpanded = preciseRect.getExpanded(
-				RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION);
-		Rectangle recognizableShrinked = preciseRect.getShrinked(
-				RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION);
+		Rectangle recognizableExpanded = preciseRect
+				.getExpanded(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION);
+		Rectangle recognizableShrinked = preciseRect
+				.getShrinked(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION);
 		assertFalse(preciseRect.equals(recognizableExpanded));
 		assertFalse(preciseRect.equals(recognizableShrinked));
 		assertFalse(recognizableExpanded.equals(recognizableShrinked));

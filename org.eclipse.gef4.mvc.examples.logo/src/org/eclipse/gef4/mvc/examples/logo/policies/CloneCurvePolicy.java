@@ -22,8 +22,8 @@ public class CloneCurvePolicy extends AbstractCloneContentPolicy {
 	@Override
 	public Object cloneContent() {
 		FXGeometricCurve original = getHost().getContent();
-		FXGeometricCurve clone = new FXGeometricCurve(original
-				.getWayPointsCopy().toArray(new Point[] {}),
+		FXGeometricCurve clone = new FXGeometricCurve(
+				original.getWayPointsCopy().toArray(new Point[] {}),
 				original.getStroke(), original.getStrokeWidth(),
 				original.getDashes(), original.getEffect());
 		clone.setGeometry((ICurve) original.getGeometry().getCopy());

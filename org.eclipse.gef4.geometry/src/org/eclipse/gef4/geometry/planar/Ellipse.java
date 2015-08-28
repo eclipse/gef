@@ -34,8 +34,8 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author mwienand
  *
  */
-public class Ellipse extends
-		AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
+public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse, PolyBezier>
+		implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -103,9 +103,10 @@ public class Ellipse extends
 		double normalizedY = p.y - (y + height / 2);
 
 		// then check if it fulfills the ellipse equation
-		if (PrecisionUtils.smallerEqual(normalizedX * normalizedX
-				/ (width * width * 0.25d) + normalizedY * normalizedY
-				/ (height * height * 0.25d), 1d)) {
+		if (PrecisionUtils.smallerEqual(
+				normalizedX * normalizedX / (width * width * 0.25d)
+						+ normalizedY * normalizedY / (height * height * 0.25d),
+				1d)) {
 			return true;
 		}
 

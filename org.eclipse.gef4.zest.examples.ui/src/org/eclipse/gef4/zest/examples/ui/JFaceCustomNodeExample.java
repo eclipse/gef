@@ -101,13 +101,14 @@ public class JFaceCustomNodeExample {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput,
+				Object newInput) {
 			input = newInput;
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements
-			IGraphNodeLabelProvider {
+	static class MyLabelProvider extends LabelProvider
+			implements IGraphNodeLabelProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -158,8 +159,8 @@ public class JFaceCustomNodeExample {
 					return part;
 				}
 			}
-			return super
-					.createContentPart(content, contextBehavior, contextMap);
+			return super.createContentPart(content, contextBehavior,
+					contextMap);
 		}
 	}
 
@@ -181,8 +182,8 @@ public class JFaceCustomNodeExample {
 				StackPane nestedContentStackPane) {
 			ImageView ian = new ImageView(new javafx.scene.image.Image(
 					getClass().getResource("ibull.jpg").toExternalForm()));
-			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90,
-					0, 60, 0, 25, 25, 0, 0, 25, -25, 0);
+			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90, 0,
+					60, 0, 25, 25, 0, 0, 25, -25, 0);
 			body.setTranslateX(ian.getLayoutBounds().getWidth() / 2
 					- body.getLayoutBounds().getWidth() / 2 - 5);
 			body.setTranslateY(-15);
@@ -217,8 +218,8 @@ public class JFaceCustomNodeExample {
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				System.out.println("Selection changed: "
-						+ (event.getSelection()));
+				System.out.println(
+						"Selection changed: " + (event.getSelection()));
 			}
 		});
 		viewer.setInput(new Object());

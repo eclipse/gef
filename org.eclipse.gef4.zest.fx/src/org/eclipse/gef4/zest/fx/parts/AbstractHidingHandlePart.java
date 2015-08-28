@@ -25,17 +25,15 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public abstract class AbstractHidingHandlePart extends
-		AbstractFXSegmentHandlePart<FXImageViewHoverOverlay> {
+public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePart<FXImageViewHoverOverlay> {
 
 	private boolean isVisible = false;
 
 	@Override
-	protected void attachToAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		if (!(anchorage instanceof NodeContentPart)) {
-			throw new IllegalArgumentException("Anchorage not applicable <"
-					+ anchorage + ">. Can only attach to NodeContentPart.");
+			throw new IllegalArgumentException(
+					"Anchorage not applicable <" + anchorage + ">. Can only attach to NodeContentPart.");
 		}
 		super.attachToAnchorageVisual(anchorage, role);
 	}
@@ -61,12 +59,10 @@ public abstract class AbstractHidingHandlePart extends
 		// TODO: extract magic numbers to properties
 		if (!wasVisible && isVisible) {
 			opacityProperty.set(0);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-					opacityProperty, 1))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 1))).play();
 		} else if (wasVisible && !isVisible) {
 			opacityProperty.set(1);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-					opacityProperty, 0))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 0))).play();
 		}
 	}
 
@@ -83,8 +79,7 @@ public abstract class AbstractHidingHandlePart extends
 	}
 
 	@Override
-	protected void registerAtVisualPartMap(IViewer<Node> viewer,
-			FXImageViewHoverOverlay visual) {
+	protected void registerAtVisualPartMap(IViewer<Node> viewer, FXImageViewHoverOverlay visual) {
 		super.registerAtVisualPartMap(viewer, visual);
 		// put base ImageView and overlay ImageView into visual->part map
 		viewer.getVisualPartMap().put(visual.getBaseImageView(), this);

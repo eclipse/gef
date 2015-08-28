@@ -34,8 +34,8 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author mwienand
  *
  */
-public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
-		IShape {
+public class Polygon extends AbstractPointListBasedGeometry<Polygon>
+		implements IShape {
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -74,7 +74,8 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		}
 	}
 
-	private static Polygon clipEar(Polygon p, int[] ear, ArrayList<Polygon> ears) {
+	private static Polygon clipEar(Polygon p, int[] ear,
+			ArrayList<Polygon> ears) {
 		Point[] points = p.getPoints();
 		ears.add(new Polygon(points[ear[0]], points[ear[1]], points[ear[2]]));
 		return new Polygon(getPointsWithout(points, ear[1]));
@@ -117,7 +118,8 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 			}
 			j = indicesToRemove[i] + 1;
 		}
-		for (int i = indicesToRemove[indicesToRemove.length - 1] + 1; i < points.length; i++) {
+		for (int i = indicesToRemove[indicesToRemove.length - 1]
+				+ 1; i < points.length; i++) {
 			rest[i - indicesToRemove.length] = points[i];
 		}
 		return rest;
@@ -561,8 +563,8 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 		double area = 0;
 		for (int i = 0; i < points.length - 1; i++) {
-			area += points[i].x * points[i + 1].y - points[i].y
-					* points[i + 1].x;
+			area += points[i].x * points[i + 1].y
+					- points[i].y * points[i + 1].x;
 		}
 
 		// closing segment
@@ -615,8 +617,8 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		StringBuffer stringBuffer = new StringBuffer("Polygon: ");
 		if (points.length > 0) {
 			for (int i = 0; i < points.length; i++) {
-				stringBuffer.append("(" + points[i].x + ", " + points[i].y
-						+ ")");
+				stringBuffer
+						.append("(" + points[i].x + ", " + points[i].y + ")");
 				stringBuffer.append(" -> ");
 			}
 			stringBuffer.append("(" + points[0].x + ", " + points[0].y + ")");

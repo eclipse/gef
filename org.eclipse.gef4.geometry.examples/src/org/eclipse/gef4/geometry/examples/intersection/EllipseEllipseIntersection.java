@@ -20,8 +20,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-public class EllipseEllipseIntersection extends
-		AbstractEllipseIntersectionExample {
+public class EllipseEllipseIntersection
+		extends AbstractEllipseIntersectionExample {
 
 	/**
 	 * @param args
@@ -40,7 +40,8 @@ public class EllipseEllipseIntersection extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {
@@ -63,9 +64,9 @@ public class EllipseEllipseIntersection extends
 			@Override
 			public void drawShape(GC gc) {
 				Ellipse ellipse = createGeometry();
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(ellipse
-						.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(ellipse.toPath())));
 			}
 		};
 	}

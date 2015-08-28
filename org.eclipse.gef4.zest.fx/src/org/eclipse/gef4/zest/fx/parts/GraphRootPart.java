@@ -17,8 +17,7 @@ import org.eclipse.gef4.mvc.models.GridModel;
 
 public class GraphRootPart extends FXRootPart {
 
-	public static final String STYLES_CSS_FILE = GraphRootPart.class
-			.getResource("styles.css").toExternalForm();
+	public static final String STYLES_CSS_FILE = GraphRootPart.class.getResource("styles.css").toExternalForm();
 
 	@Override
 	protected void doActivate() {

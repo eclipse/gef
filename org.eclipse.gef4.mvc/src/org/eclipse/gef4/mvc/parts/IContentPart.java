@@ -80,7 +80,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	 * @param role
 	 *            The role under which the attachment is established.
 	 */
-	public void detachFromContentAnchorage(Object contentAnchorage, String role);
+	public void detachFromContentAnchorage(Object contentAnchorage,
+			String role);
 
 	/**
 	 * Returns this part's content.

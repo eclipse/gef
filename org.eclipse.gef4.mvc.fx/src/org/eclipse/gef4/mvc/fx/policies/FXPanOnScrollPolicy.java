@@ -29,8 +29,8 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	 */
 
 	protected void applyPanning(double dx, double dy) {
-		FXChangeViewportPolicy viewportPolicy = getHost().getRoot().getAdapter(
-				FXChangeViewportPolicy.class);
+		FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
+				.getAdapter(FXChangeViewportPolicy.class);
 		init(viewportPolicy);
 		viewportPolicy.scrollRelative(dx, dy);
 		commit(viewportPolicy);
@@ -50,8 +50,8 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	protected boolean isSuitable(ScrollEvent event) {
 		// Do not scroll when a modifier key (<Alt>, <Control>, <Meta>) is
 		// pressed.
-		return !(event.isAltDown() || event.isControlDown() || event
-				.isMetaDown());
+		return !(event.isAltDown() || event.isControlDown()
+				|| event.isMetaDown());
 	}
 
 	protected boolean isSwapDirection(ScrollEvent event) {
@@ -96,8 +96,8 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	private boolean stopAtContentBounds(Dimension delta) {
 		ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer())
 				.getScrollPane();
-		Bounds contentBounds = scrollPane.getBoundsInViewport(scrollPane
-				.getContentGroup());
+		Bounds contentBounds = scrollPane
+				.getBoundsInViewport(scrollPane.getContentGroup());
 		boolean stopped = false;
 		if (contentBounds.getMinX() < 0
 				&& contentBounds.getMinX() + delta.width >= 0) {

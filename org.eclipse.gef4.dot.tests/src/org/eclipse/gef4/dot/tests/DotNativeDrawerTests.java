@@ -47,8 +47,8 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 			InputStream stream = DotNativeDrawerTests.class
 					.getResourceAsStream("test.properties"); //$NON-NLS-1$
 			if (stream == null) {
-				System.err
-						.println("Could not load the test.properties file in directory of " //$NON-NLS-1$
+				System.err.println(
+						"Could not load the test.properties file in directory of " //$NON-NLS-1$
 								+ DotNativeDrawerTests.class.getSimpleName());
 			} else
 				try {
@@ -59,9 +59,9 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 					 */
 					dotDir = props.getProperty(DotDirStore.DOT_PATH_PREF_KEY);
 					if (dotDir == null || dotDir.trim().length() == 0) {
-						System.err
-								.printf("Graphviz DOT directory not set in test.properties file under '%s' key.\n",//$NON-NLS-1$
-										DotDirStore.DOT_PATH_PREF_KEY);
+						System.err.printf(
+								"Graphviz DOT directory not set in test.properties file under '%s' key.\n", //$NON-NLS-1$
+								DotDirStore.DOT_PATH_PREF_KEY);
 					} else
 						stream.close();
 				} catch (IOException e) {
@@ -80,8 +80,8 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 		 */
 		if (dotDir != null) {
 			super.testDotGeneration(graph);
-			File dotFile = DotFileUtils.write(new DotExport(graph)
-					.toDotString());
+			File dotFile = DotFileUtils
+					.write(new DotExport(graph).toDotString());
 			File image = DotNativeDrawer.renderImage(new File(dotDir), dotFile,
 					"pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$

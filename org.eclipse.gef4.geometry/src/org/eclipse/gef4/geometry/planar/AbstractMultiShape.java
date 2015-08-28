@@ -40,8 +40,8 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author mwienand
  *
  */
-abstract class AbstractMultiShape extends AbstractGeometry implements
-IMultiShape {
+abstract class AbstractMultiShape extends AbstractGeometry
+		implements IMultiShape {
 
 	/**
 	 * <p>
@@ -132,8 +132,8 @@ IMultiShape {
 
 		way.add(0, initial.getP1());
 
-		return new Polyline(CurveUtils.toSegmentsArray(
-				way.toArray(new Point[] {}), true));
+		return new Polyline(
+				CurveUtils.toSegmentsArray(way.toArray(new Point[] {}), true));
 	}
 
 	/**
@@ -207,7 +207,7 @@ IMultiShape {
 		for (Line nextSeg : nextSegs) {
 			@SuppressWarnings("unchecked")
 			Set<Point> visitedCopy = (Set<Point>) ((HashSet<Point>) visited)
-			.clone();
+					.clone();
 			Point nextPoint = start.equals(nextSeg.getP1()) ? nextSeg.getP2()
 					: nextSeg.getP1();
 			List<Point> way = findWay(segmentsByEndPoints, visitedCopy,
@@ -284,20 +284,22 @@ IMultiShape {
 				// // unconnectedEndPoints.add(segments.get(0).getP1());
 				// // unconnectedEndPoints.add(segments.get(0).getP2());
 				// }
-				// System.out.println("     | remove point/segment from tree");
+				// System.out.println(" | remove point/segment from tree");
 			}
 		}
 
 		while (!outlineSegments.isEmpty()) {
-			Polyline outline = findOutline(outlineSegments, segmentsByEndPoints);
+			Polyline outline = findOutline(outlineSegments,
+					segmentsByEndPoints);
 			// System.out.println("outline: " + outline);
 			outlines.add(outline);
 
 			// Remove the segments of the previously found outline from the set
 			// of remaining outline segments.
-			for (Line outlineSeg : CurveUtils.toSegmentsArray(
-					outline.getPoints(), false)) {
-				if (comparePoints(outlineSeg.getP1(), outlineSeg.getP2()) == 1) {
+			for (Line outlineSeg : CurveUtils
+					.toSegmentsArray(outline.getPoints(), false)) {
+				if (comparePoints(outlineSeg.getP1(),
+						outlineSeg.getP2()) == 1) {
 					outlineSeg = new Line(outlineSeg.getP2(),
 							outlineSeg.getP1());
 				}
@@ -360,8 +362,8 @@ IMultiShape {
 	 * @return the sorted {@link Point}s
 	 */
 	private Point[] getSortedEndpoints(Line toAdd, Line seg) {
-		final Point[] p = new Point[] { seg.getP1(), seg.getP2(),
-				toAdd.getP1(), toAdd.getP2() };
+		final Point[] p = new Point[] { seg.getP1(), seg.getP2(), toAdd.getP1(),
+				toAdd.getP2() };
 		Arrays.sort(p, new Comparator<Point>() {
 			@Override
 			public int compare(Point p1, Point p2) {
@@ -383,7 +385,8 @@ IMultiShape {
 	 * @param start
 	 * @param end
 	 */
-	private void markOverlap(HashMap<Line, Integer> seen, Point start, Point end) {
+	private void markOverlap(HashMap<Line, Integer> seen, Point start,
+			Point end) {
 		if (!start.equals(end)) {
 			// Count an overlapping segment twice to assure that it is going to
 			// get deleted afterwards.

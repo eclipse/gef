@@ -28,7 +28,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author anyssen
  * @author mwienand
  */
-public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
+public class Pie extends AbstractArcBasedGeometry<Pie, Path>implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -105,8 +105,9 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 	public boolean contains(Point p) {
 		// check if the point is in the arc's angle
 		Angle pAngle = new Vector(1, 0).getAngleCCW(new Vector(getCenter(), p));
-		if (!(PrecisionUtils.greater(pAngle.rad(), startAngle.rad()) && PrecisionUtils
-				.smaller(pAngle.rad(), startAngle.getAdded(angularExtent).rad()))) {
+		if (!(PrecisionUtils.greater(pAngle.rad(), startAngle.rad())
+				&& PrecisionUtils.smaller(pAngle.rad(),
+						startAngle.getAdded(angularExtent).rad()))) {
 			return false;
 		}
 
@@ -153,14 +154,14 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	@Override
 	public Path getRotatedCCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
-				cx, cy).toPath();
+		return new PolyBezier(computeBezierApproximation())
+				.rotateCCW(angle, cx, cy).toPath();
 	}
 
 	@Override
 	public Path getRotatedCCW(Angle angle, Point center) {
-		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
-				center).toPath();
+		return new PolyBezier(computeBezierApproximation())
+				.rotateCCW(angle, center).toPath();
 	}
 
 	@Override
@@ -170,14 +171,14 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	@Override
 	public Path getRotatedCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(computeBezierApproximation()).rotateCW(angle, cx,
-				cy).toPath();
+		return new PolyBezier(computeBezierApproximation())
+				.rotateCW(angle, cx, cy).toPath();
 	}
 
 	@Override
 	public Path getRotatedCW(Angle angle, Point center) {
-		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
-				center).toPath();
+		return new PolyBezier(computeBezierApproximation())
+				.rotateCW(angle, center).toPath();
 	}
 
 	/**

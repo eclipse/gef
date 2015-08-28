@@ -23,8 +23,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected GraphLayoutContext getGraphLayoutContext() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
-				.getViewer().getContentPartMap()
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
 		return graphPart.getAdapter(GraphLayoutContext.class);
 	}

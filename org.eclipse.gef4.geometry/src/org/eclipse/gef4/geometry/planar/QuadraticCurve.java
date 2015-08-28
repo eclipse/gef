@@ -175,10 +175,10 @@ public class QuadraticCurve extends BezierCurve {
 		// "Curves and Surfaces for Computer Aided Geometric Design" by Farin,
 		// Gerald E., Academic Press 1988
 		controlPoints[0] = getP1();
-		controlPoints[1] = getP1().getScaled(1d / 3d).getTranslated(
-				getCtrl().getScaled(2d / 3d));
-		controlPoints[2] = getCtrl().getScaled(2d / 3d).getTranslated(
-				getP2().getScaled(1d / 3d));
+		controlPoints[1] = getP1().getScaled(1d / 3d)
+				.getTranslated(getCtrl().getScaled(2d / 3d));
+		controlPoints[2] = getCtrl().getScaled(2d / 3d)
+				.getTranslated(getP2().getScaled(1d / 3d));
 		controlPoints[3] = getP2();
 
 		return new CubicCurve(controlPoints);

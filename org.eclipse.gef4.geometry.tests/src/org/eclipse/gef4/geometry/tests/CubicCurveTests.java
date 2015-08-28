@@ -41,9 +41,10 @@ public class CubicCurveTests {
 
 		// check 0 <= t <= 1:
 		for (double t = 0; t <= 1; t += 0.0123456789) {
-			assertEquals("curve.get(t = " + t
-					+ " in range [0, 1]) lies on the curve", true,
-					curve.contains(curve.get(t)));
+			assertEquals(
+					"curve.get(t = " + t
+							+ " in range [0, 1]) lies on the curve",
+					true, curve.contains(curve.get(t)));
 		}
 	}
 
@@ -190,7 +191,8 @@ public class CubicCurveTests {
 
 		cc1 = new CubicCurve(164.0, 143.0, 78.0, 122.0, 124.0, 131.0, 126.0,
 				113.0);
-		cc2 = new CubicCurve(350.0, 61.0, 227.0, 62.0, 78.0, 145.0, 76.0, 242.0);
+		cc2 = new CubicCurve(350.0, 61.0, 227.0, 62.0, 78.0, 145.0, 76.0,
+				242.0);
 		assertEquals(1, cc1.getIntersections(cc2).length);
 
 		// not sure about these: (getIntersections() returns 3)

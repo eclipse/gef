@@ -36,8 +36,8 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 		setFill(fill);
 	}
 
-	public FXGeometricShape(IShape shape, AffineTransform transform,
-			Paint fill, Effect effect) {
+	public FXGeometricShape(IShape shape, AffineTransform transform, Paint fill,
+			Effect effect) {
 		this(shape, transform, new Color(0, 0, 0, 1), 1.0, fill, effect);
 	}
 

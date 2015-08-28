@@ -112,7 +112,8 @@ public class StyledTextFXControlAdapterSnippet extends AbstractFXUIExample {
 						b.setText("Lorem Ipsum");
 						b.addSelectionListener(new SelectionListener() {
 							@Override
-							public void widgetDefaultSelected(SelectionEvent e) {
+							public void widgetDefaultSelected(
+									SelectionEvent e) {
 							}
 
 							@Override
@@ -134,7 +135,8 @@ public class StyledTextFXControlAdapterSnippet extends AbstractFXUIExample {
 						b.setText("New");
 						b.addSelectionListener(new SelectionListener() {
 							@Override
-							public void widgetDefaultSelected(SelectionEvent e) {
+							public void widgetDefaultSelected(
+									SelectionEvent e) {
 							}
 
 							@Override

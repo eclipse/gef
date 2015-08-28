@@ -38,25 +38,25 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_check_contains_difficult_cases() {
-		BezierCurve c1 = new BezierCurve(new Point(0.5402658595791646,
-				0.9741509829024984), new Point(0.16279154085195757,
-				0.6904753002704389), new Point(0.5362586913177897,
-				0.03544287335013263), new Point(0.34435494116180165,
-				0.31041629374338775), new Point(0.3850664934271003,
-				0.5238288178983336), new Point(0.13829366099352602,
-				0.7410634269933081), new Point(0.8948987750498976,
-				0.6198888125981984), new Point(0.11349279987471517,
-				0.3388985501965609));
+		BezierCurve c1 = new BezierCurve(
+				new Point(0.5402658595791646, 0.9741509829024984),
+				new Point(0.16279154085195757, 0.6904753002704389),
+				new Point(0.5362586913177897, 0.03544287335013263),
+				new Point(0.34435494116180165, 0.31041629374338775),
+				new Point(0.3850664934271003, 0.5238288178983336),
+				new Point(0.13829366099352602, 0.7410634269933081),
+				new Point(0.8948987750498976, 0.6198888125981984),
+				new Point(0.11349279987471517, 0.3388985501965609));
 
-		BezierCurve c2 = new BezierCurve(new Point(0.3494484760769454,
-				0.47795072857018706), new Point(0.9841912220562209,
-				0.10765341979304721), new Point(0.27977429726230696,
-				0.7303050467844633), new Point(0.28022390386455787,
-				0.3313265057575542), new Point(0.3914004373221056,
-				0.6451799723354514), new Point(0.2875477493472879,
-				0.5132577259019093), new Point(0.13579952633028602,
-				0.5665583087171101), new Point(0.09831516780965299,
-				0.25959706254491044));
+		BezierCurve c2 = new BezierCurve(
+				new Point(0.3494484760769454, 0.47795072857018706),
+				new Point(0.9841912220562209, 0.10765341979304721),
+				new Point(0.27977429726230696, 0.7303050467844633),
+				new Point(0.28022390386455787, 0.3313265057575542),
+				new Point(0.3914004373221056, 0.6451799723354514),
+				new Point(0.2875477493472879, 0.5132577259019093),
+				new Point(0.13579952633028602, 0.5665583087171101),
+				new Point(0.09831516780965299, 0.25959706254491044));
 
 		Point p = new Point(0.3736012772933578, 0.4639965007739409);
 
@@ -111,8 +111,9 @@ public class CurveUtilsTests {
 			}
 		}
 
-		BezierCurve c = new BezierCurve(new Point(0.0, 0.0), new Point(0.05,
-				0.1), new Point(0.05, 0.1), new Point(0.1, -0.1));
+		BezierCurve c = new BezierCurve(new Point(0.0, 0.0),
+				new Point(0.05, 0.1), new Point(0.05, 0.1),
+				new Point(0.1, -0.1));
 
 		assertTrue(!c.contains(new Point(0.1, 0.1)));
 	}
@@ -142,8 +143,8 @@ public class CurveUtilsTests {
 		Random rng = new Random(SEED);
 
 		for (int i = 0; i < 1000; i++) {
-			double w = Math.abs(rng.nextDouble()), h = Math.abs(rng
-					.nextDouble());
+			double w = Math.abs(rng.nextDouble()),
+					h = Math.abs(rng.nextDouble());
 			Rectangle controlBounds = new Rectangle(rng.nextDouble(),
 					rng.nextDouble(), w, h);
 
@@ -154,8 +155,8 @@ public class CurveUtilsTests {
 				points[n - 1] = controlBounds.getBottomRight();
 
 				if (n == 3) {
-					points[1] = points[0].getTranslated(points[2]).getScaled(
-							0.5);
+					points[1] = points[0].getTranslated(points[2])
+							.getScaled(0.5);
 				}
 				if (n > 3) {
 					double span = controlBounds.getWidth() / (n - 3);
@@ -179,16 +180,17 @@ public class CurveUtilsTests {
 				assertEquals(bounds, c.getBounds());
 
 				// x maximum
-				controlBounds = controlBounds.getRotatedCCW(Angle.fromDeg(90),
-						new Point()).getBounds();
+				controlBounds = controlBounds
+						.getRotatedCCW(Angle.fromDeg(90), new Point())
+						.getBounds();
 				c.rotateCCW(Angle.fromDeg(90), new Point());
 
 				d = controlBounds.getX() + controlBounds.getWidth()
 						- c.get(0.5).x;
 
-				bounds = new Rectangle(controlBounds.getX()
-						+ controlBounds.getWidth() - d, controlBounds.getY(),
-						d, controlBounds.getHeight());
+				bounds = new Rectangle(
+						controlBounds.getX() + controlBounds.getWidth() - d,
+						controlBounds.getY(), d, controlBounds.getHeight());
 
 				if (!bounds.equals(c.getBounds())) {
 					System.out.println("DEBUG");
@@ -251,9 +253,9 @@ public class CurveUtilsTests {
 	public void test_getIntersections_linear() {
 		BezierCurve yAxis = new BezierCurve(new Point(0, 0), new Point(1, 0));
 
-		BezierCurve curve = new BezierCurve(new Point(0, -20), new Point(
-				0.3333333333333333, -10.0), new Point(0.6666666666666666, 0.0),
-				new Point(1, -10));
+		BezierCurve curve = new BezierCurve(new Point(0, -20),
+				new Point(0.3333333333333333, -10.0),
+				new Point(0.6666666666666666, 0.0), new Point(1, -10));
 
 		assertEquals(0, yAxis.getIntersections(curve).length);
 	}
@@ -325,23 +327,23 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_getIntersections_simple() {
-		CubicCurve c1 = new CubicCurve(new double[] { 100, 200, 200, 100, 300,
-				300, 400, 200 });
-		CubicCurve c2 = new CubicCurve(new double[] { 250, 100, 350, 200, 150,
-				300, 250, 400 });
+		CubicCurve c1 = new CubicCurve(
+				new double[] { 100, 200, 200, 100, 300, 300, 400, 200 });
+		CubicCurve c2 = new CubicCurve(
+				new double[] { 250, 100, 350, 200, 150, 300, 250, 400 });
 
 		assertEquals(1, c1.getIntersections(c2).length);
 
 		c1 = new CubicCurve(new Point(201.89274447949526, 106.43015521064301),
-				new Point(213.0, 325.0), new Point(387.0, 119.0), new Point(
-						118.0, 310.0));
+				new Point(213.0, 325.0), new Point(387.0, 119.0),
+				new Point(118.0, 310.0));
 		Line l = new Line(new Point(105.66666666666667, 75.16666666666667),
 				new Point(528.3333333333334, 375.8333333333333));
 
 		assertEquals(1, c1.getIntersections(l).length);
 
-		QuadraticCurve q1 = new QuadraticCurve(new Point(200, 50), new Point(
-				210, 100), new Point(190, 150));
+		QuadraticCurve q1 = new QuadraticCurve(new Point(200, 50),
+				new Point(210, 100), new Point(190, 150));
 		l = new Line(new Point(100, 100), new Point(300, 100));
 
 		assertEquals(1, q1.getIntersections(l).length);
@@ -407,25 +409,33 @@ public class CurveUtilsTests {
 	public void test_getSignedDistance_abs() {
 		// do only check for the absolute value of the signed distance
 
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(0, -5), new Point(0, 5), new Point(5, 0))), 5));
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(0, 5), new Point(0, -5), new Point(5, 0))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(0, -5),
+						new Point(0, 5), new Point(5, 0))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(0, 5),
+						new Point(0, -5), new Point(5, 0))), 5));
 
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(0, -1), new Point(0, 1), new Point(5, 0))), 5));
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(0, 1), new Point(0, -1), new Point(5, 0))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(0, -1),
+						new Point(0, 1), new Point(5, 0))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(0, 1),
+						new Point(0, -1), new Point(5, 0))), 5));
 
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(-5, 0), new Point(5, 0), new Point(0, 5))), 5));
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(-5, 0), new Point(5, 0), new Point(0, 5))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(-5, 0),
+						new Point(5, 0), new Point(0, 5))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(-5, 0),
+						new Point(5, 0), new Point(0, 5))), 5));
 
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(-1, 0), new Point(1, 0), new Point(0, 5))), 5));
-		assertTrue(PrecisionUtils.equal(Math.abs(Straight.getSignedDistanceCCW(
-				new Point(-1, 0), new Point(1, 0), new Point(0, 5))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(-1, 0),
+						new Point(1, 0), new Point(0, 5))), 5));
+		assertTrue(PrecisionUtils
+				.equal(Math.abs(Straight.getSignedDistanceCCW(new Point(-1, 0),
+						new Point(1, 0), new Point(0, 5))), 5));
 	}
 
 	@Test
@@ -440,20 +450,20 @@ public class CurveUtilsTests {
 				new Point(10, -10), new Point(1, -1)) == 0);
 
 		// second quadrant (y-axis is inverted)
-		assertTrue(Straight.getSignedDistanceCCW(new Point(), new Point(-10,
-				-10), new Point(0, -10)) < 0);
+		assertTrue(Straight.getSignedDistanceCCW(new Point(),
+				new Point(-10, -10), new Point(0, -10)) < 0);
 		assertTrue(Straight.getSignedDistanceCCW(new Point(-10, -10),
 				new Point(), new Point(0, -10)) > 0);
-		assertTrue(Straight.getSignedDistanceCCW(new Point(), new Point(-10,
-				-10), new Point(-1, -1)) == 0);
+		assertTrue(Straight.getSignedDistanceCCW(new Point(),
+				new Point(-10, -10), new Point(-1, -1)) == 0);
 
 		// third quadrant (y-axis is inverted)
-		assertTrue(Straight.getSignedDistanceCCW(new Point(),
-				new Point(10, 10), new Point(0, 10)) < 0);
-		assertTrue(Straight.getSignedDistanceCCW(new Point(10, 10),
-				new Point(), new Point(0, 10)) > 0);
-		assertTrue(Straight.getSignedDistanceCCW(new Point(),
-				new Point(10, 10), new Point(1, 1)) == 0);
+		assertTrue(Straight.getSignedDistanceCCW(new Point(), new Point(10, 10),
+				new Point(0, 10)) < 0);
+		assertTrue(Straight.getSignedDistanceCCW(new Point(10, 10), new Point(),
+				new Point(0, 10)) > 0);
+		assertTrue(Straight.getSignedDistanceCCW(new Point(), new Point(10, 10),
+				new Point(1, 1)) == 0);
 
 		// forth quadrant (y-axis is inverted)
 		assertTrue(Straight.getSignedDistanceCCW(new Point(),

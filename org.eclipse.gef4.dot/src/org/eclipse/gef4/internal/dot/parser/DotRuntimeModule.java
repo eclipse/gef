@@ -14,7 +14,7 @@ package org.eclipse.gef4.internal.dot.parser;
  * Use this class to register components to be used at runtime / without the
  * Equinox extension registry.
  */
-public class DotRuntimeModule extends
-		org.eclipse.gef4.internal.dot.parser.AbstractDotRuntimeModule {
+public class DotRuntimeModule
+		extends org.eclipse.gef4.internal.dot.parser.AbstractDotRuntimeModule {
 
 }

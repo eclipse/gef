@@ -138,7 +138,8 @@ public final class DotFileUtils {
 				// Recursively create sub-directories:
 				File destinationFolder = new File(destinationRootFolder,
 						source.getName());
-				if (!destinationFolder.mkdirs() && !destinationFolder.exists()) {
+				if (!destinationFolder.mkdirs()
+						&& !destinationFolder.exists()) {
 					throw new IllegalStateException("Could not create" + ": " //$NON-NLS-1$ //$NON-NLS-2$
 							+ destinationFolder);
 				}

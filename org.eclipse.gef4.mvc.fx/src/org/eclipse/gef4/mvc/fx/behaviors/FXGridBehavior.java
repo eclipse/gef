@@ -24,8 +24,8 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
-public class FXGridBehavior extends AbstractBehavior<Node> implements
-		PropertyChangeListener {
+public class FXGridBehavior extends AbstractBehavior<Node>
+		implements PropertyChangeListener {
 
 	private boolean isListeningOnViewport = false;
 
@@ -107,11 +107,11 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (GridModel.SHOW_GRID_PROPERTY.equals(evt.getPropertyName())) {
 			applyShowGrid(((Boolean) evt.getNewValue()).booleanValue());
-		} else if (GridModel.GRID_CELL_WIDTH_PROPERTY.equals(evt
-				.getPropertyName())) {
+		} else if (GridModel.GRID_CELL_WIDTH_PROPERTY
+				.equals(evt.getPropertyName())) {
 			applyGridCellWidth(((Double) evt.getNewValue()).doubleValue());
-		} else if (GridModel.GRID_CELL_HEIGHT_PROPERTY.equals(evt
-				.getPropertyName())) {
+		} else if (GridModel.GRID_CELL_HEIGHT_PROPERTY
+				.equals(evt.getPropertyName())) {
 			applyGridCellHeight(((Double) evt.getNewValue()).doubleValue());
 		} else if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
 				.equals(evt.getPropertyName())) {

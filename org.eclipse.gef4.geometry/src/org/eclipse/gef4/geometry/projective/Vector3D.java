@@ -94,8 +94,8 @@ public final class Vector3D {
 	 *         {@link Vector3D} and the given other {@link Vector3D}
 	 */
 	public Vector3D getAdded(Vector3D other) {
-		return new Vector3D(this.x + other.x, this.y + other.y, this.z
-				+ other.z);
+		return new Vector3D(this.x + other.x, this.y + other.y,
+				this.z + other.z);
 	}
 
 	/**
@@ -117,9 +117,9 @@ public final class Vector3D {
 	 *         and the given other {@link Vector3D}
 	 */
 	public Vector3D getCrossProduct(Vector3D other) {
-		return new Vector3D(this.y * other.z - this.z * other.y, this.z
-				* other.x - this.x * other.z, this.x * other.y - this.y
-				* other.x);
+		return new Vector3D(this.y * other.z - this.z * other.y,
+				this.z * other.x - this.x * other.z,
+				this.x * other.y - this.y * other.x);
 	}
 
 	/**
@@ -176,8 +176,8 @@ public final class Vector3D {
 	 *         {@link Vector3D} and the given other {@link Vector3D}
 	 */
 	public Vector3D getSubtracted(Vector3D other) {
-		return new Vector3D(this.x - other.x, this.y - other.y, this.z
-				- other.z);
+		return new Vector3D(this.x - other.x, this.y - other.y,
+				this.z - other.z);
 	}
 
 	@Override

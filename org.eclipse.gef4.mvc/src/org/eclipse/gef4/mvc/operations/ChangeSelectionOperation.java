@@ -42,8 +42,10 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
 			List<IContentPart<VR, ? extends VR>> newSelection) {
-		this(DEFAULT_LABEL, viewer, viewer.<SelectionModel<VR>> getAdapter(
-				SelectionModel.class).getSelected(), newSelection);
+		this(DEFAULT_LABEL, viewer,
+				viewer.<SelectionModel<VR>> getAdapter(SelectionModel.class)
+						.getSelected(),
+				newSelection);
 	}
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,

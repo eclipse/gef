@@ -35,14 +35,12 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	protected IHandlePart<Node, ? extends Node> createHoverSegmentHandlePart(
-			final IVisualPart<Node, ? extends Node> target,
-			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
+			final IVisualPart<Node, ? extends Node> target, Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
 			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
 		if (target instanceof NodeContentPart) {
 			if (segmentIndex == 0) {
 				// create prune handle at first vertex
-				ZestFxHidingHandlePart part = injector
-						.getInstance(ZestFxHidingHandlePart.class);
+				ZestFxHidingHandlePart part = injector.getInstance(ZestFxHidingHandlePart.class);
 				part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
 				part.setSegmentIndex(segmentIndex);
 				part.setSegmentParameter(0);
@@ -50,12 +48,9 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 			} else if (segmentIndex == 1) {
 				// create expand handle at second vertex
 				// but check if we have pruned neighbors, first
-				HidingModel hidingModel = target.getRoot().getViewer()
-						.getAdapter(HidingModel.class);
-				if (!hidingModel.getHiddenNeighbors(
-						((NodeContentPart) target).getContent()).isEmpty()) {
-					ZestFxExpandingHandlePart part = injector
-							.getInstance(ZestFxExpandingHandlePart.class);
+				HidingModel hidingModel = target.getRoot().getViewer().getAdapter(HidingModel.class);
+				if (!hidingModel.getHiddenNeighbors(((NodeContentPart) target).getContent()).isEmpty()) {
+					ZestFxExpandingHandlePart part = injector.getInstance(ZestFxExpandingHandlePart.class);
 					part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
 					part.setSegmentIndex(segmentIndex);
 					part.setSegmentParameter(0);
@@ -68,8 +63,7 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Map<Object, Object> contextMap) {
+			List<? extends IVisualPart<Node, ? extends Node>> targets, Map<Object, Object> contextMap) {
 		return Collections.emptyList();
 	}
 

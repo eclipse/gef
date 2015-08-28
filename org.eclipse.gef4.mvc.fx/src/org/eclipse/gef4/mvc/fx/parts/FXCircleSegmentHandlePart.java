@@ -28,8 +28,8 @@ import com.google.common.collect.SetMultimap;
  * @author anyssen
  *
  */
-public class FXCircleSegmentHandlePart extends
-		AbstractFXSegmentHandlePart<Circle> {
+public class FXCircleSegmentHandlePart
+		extends AbstractFXSegmentHandlePart<Circle> {
 
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 	public static final Color DEFAULT_FILL = Color.WHITE;
@@ -84,7 +84,8 @@ public class FXCircleSegmentHandlePart extends
 				if (getSegmentIndex() + getSegmentParameter() == 0.0) {
 					// handle at start point
 					connected = connection.isStartConnected();
-				} else if (getSegmentParameter() + getSegmentIndex() == getSegmentsInScene().length) {
+				} else if (getSegmentParameter()
+						+ getSegmentIndex() == getSegmentsInScene().length) {
 					// handle at end point
 					connected = connection.isEndConnected();
 				}

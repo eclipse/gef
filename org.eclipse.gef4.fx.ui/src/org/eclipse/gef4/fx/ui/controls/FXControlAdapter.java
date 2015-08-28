@@ -42,8 +42,8 @@ import org.eclipse.swt.widgets.Listener;
 public class FXControlAdapter<T extends Control> extends Region {
 
 	private static final int[] FORWARD_SWT_EVENT_TYPES = new int[] {
-			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp,
-			SWT.Gesture, SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
+			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp, SWT.Gesture,
+			SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
 			SWT.MouseHorizontalWheel, SWT.MouseHover, SWT.MouseMove,
 			SWT.MouseUp, SWT.MouseVerticalWheel, SWT.Move, SWT.Traverse,
 			SWT.Verify, SWT.FocusIn };
@@ -231,7 +231,8 @@ public class FXControlAdapter<T extends Control> extends Region {
 			// of FXCanvas$HostContainer
 			FXCanvas canvas = ReflectionUtils.getPrivateFieldValue(
 					ReflectionUtils.<Object> getPrivateFieldValue(window,
-							"host"), "this$0");
+							"host"),
+					"this$0");
 			return canvas;
 		}
 		return null;
@@ -308,8 +309,8 @@ public class FXControlAdapter<T extends Control> extends Region {
 				// register/unregister listener to detect SwtFXCanvas changes of
 				// new scene
 				if (oldValue != null) {
-					oldValue.windowProperty().removeListener(
-							sceneWindowChangeListener);
+					oldValue.windowProperty()
+							.removeListener(sceneWindowChangeListener);
 					sceneWindowChangeListener = null;
 				}
 				if (newValue != null) {
@@ -322,8 +323,8 @@ public class FXControlAdapter<T extends Control> extends Region {
 							setCanvas(getFXCanvas(newValue));
 						}
 					};
-					newValue.windowProperty().addListener(
-							sceneWindowChangeListener);
+					newValue.windowProperty()
+							.addListener(sceneWindowChangeListener);
 				}
 			}
 		};

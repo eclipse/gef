@@ -40,7 +40,8 @@ public class LayoutListenerSupportTests {
 			lls.addContextListener(listener);
 		}
 
-		public void addGraphStructureListener(IGraphStructureListener listener) {
+		public void addGraphStructureListener(
+				IGraphStructureListener listener) {
 			lls.addGraphStructureListener(listener);
 		}
 
@@ -173,7 +174,8 @@ public class LayoutListenerSupportTests {
 			lls.removeLayoutListener(listener);
 		}
 
-		public void removePropertyChangeListener(PropertyChangeListener listener) {
+		public void removePropertyChangeListener(
+				PropertyChangeListener listener) {
 		}
 
 		public void removePruningListener(IPruningListener listener) {
@@ -333,40 +335,46 @@ public class LayoutListenerSupportTests {
 
 	@Test
 	public void test_dynamic_onConnectionAdded() {
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireConnectionAddedEvent(null);
 		expectedDynamicLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireConnectionAddedEvent(null);
 		// add another non-intercepting listener and change again to
 		// verify that one intercepting listener prevents dynamic layout
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireConnectionAddedEvent(null);
 	}
 
 	@Test
 	public void test_dynamic_onConnectionRemoved() {
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireConnectionRemovedEvent(null);
 		expectedDynamicLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireConnectionRemovedEvent(null);
 		// add another non-intercepting listener and change again to
 		// verify that one intercepting listener prevents dynamic layout
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireConnectionRemovedEvent(null);
 	}
 
 	@Test
 	public void test_dynamic_onNodeAdded() {
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireNodeAddedEvent(null);
 		expectedDynamicLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireNodeAddedEvent(null);
 		// add another non-intercepting listener and change again to
 		// verify that one intercepting listener prevents dynamic layout
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireNodeAddedEvent(null);
 	}
 
@@ -385,14 +393,16 @@ public class LayoutListenerSupportTests {
 
 	@Test
 	public void test_dynamic_onNodeRemoved() {
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireNodeRemovedEvent(null);
 		expectedDynamicLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireNodeRemovedEvent(null);
 		// add another non-intercepting listener and change again to
 		// verify that one intercepting listener prevents dynamic layout
-		context.addGraphStructureListener(nonInterceptingGraphStructureListener);
+		context.addGraphStructureListener(
+				nonInterceptingGraphStructureListener);
 		context.fireNodeRemovedEvent(null);
 	}
 

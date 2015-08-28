@@ -55,8 +55,9 @@ public class LineTests {
 		assertTrue(l1.contains(l1.getP1()));
 		assertTrue(l1.contains(l1.getP2()));
 		for (double x = -5; x <= 10; x += 0.1) {
-			assertTrue(l1.contains(new Point(x, 0)) == (PrecisionUtils
-					.smallerEqual(0, x) && PrecisionUtils.smallerEqual(x, 5)));
+			assertTrue(l1.contains(
+					new Point(x, 0)) == (PrecisionUtils.smallerEqual(0, x)
+							&& PrecisionUtils.smallerEqual(x, 5)));
 		}
 
 		l1 = new Line(0, 0, 0, 0);
@@ -92,12 +93,12 @@ public class LineTests {
 		assertTrue(l1.equals(new Line(-UNRECOGNIZABLE_FRACTION,
 				-UNRECOGNIZABLE_FRACTION, 5.0 - UNRECOGNIZABLE_FRACTION,
 				-UNRECOGNIZABLE_FRACTION)));
-		assertFalse(l1.equals(new Line(RECOGNIZABLE_FRACTION,
-				RECOGNIZABLE_FRACTION, 5.0 + RECOGNIZABLE_FRACTION,
-				RECOGNIZABLE_FRACTION)));
-		assertFalse(l1.equals(new Line(-RECOGNIZABLE_FRACTION,
-				-RECOGNIZABLE_FRACTION, 5.0 - RECOGNIZABLE_FRACTION,
-				-RECOGNIZABLE_FRACTION)));
+		assertFalse(
+				l1.equals(new Line(RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION,
+						5.0 + RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
+		assertFalse(l1
+				.equals(new Line(-RECOGNIZABLE_FRACTION, -RECOGNIZABLE_FRACTION,
+						5.0 - RECOGNIZABLE_FRACTION, -RECOGNIZABLE_FRACTION)));
 	}
 
 	@Test
@@ -204,8 +205,8 @@ public class LineTests {
 		assertEquals(new Point(-5, 0), closeSp.getIntersection(normal));
 
 		// non parallel, end point intersection
-		Line closeEp = new Line(new Point(-5, 10), new Point(-5,
-				UNRECOGNIZABLE_FRACTION));
+		Line closeEp = new Line(new Point(-5, 10),
+				new Point(-5, UNRECOGNIZABLE_FRACTION));
 		assertEquals(new Point(-5, 0), normal.getIntersection(closeEp));
 		assertEquals(new Point(-5, 0), closeEp.getIntersection(normal));
 
@@ -226,7 +227,8 @@ public class LineTests {
 
 		// single end point intersection with parallel lines:
 		// X-------X-------X
-		Line l1 = new Line(400.0, 102.48618784530387, 399.99999999999994, 100.0);
+		Line l1 = new Line(400.0, 102.48618784530387, 399.99999999999994,
+				100.0);
 		Line l2 = new Line(400.0, 51.10497237569061, 399.99999999999994, 100.0);
 		assertNotNull(l1.getIntersection(l2));
 	}
@@ -336,8 +338,8 @@ public class LineTests {
 		assertTrue(normal.touches(closeSp));
 		assertTrue(closeSp.touches(normal));
 
-		Line closeEp = new Line(new Point(-5, 10), new Point(-5,
-				UNRECOGNIZABLE_FRACTION));
+		Line closeEp = new Line(new Point(-5, 10),
+				new Point(-5, UNRECOGNIZABLE_FRACTION));
 		assertTrue(normal.touches(closeEp));
 		assertTrue(closeEp.touches(normal));
 
@@ -355,12 +357,12 @@ public class LineTests {
 
 		// big lines, imprecisely parallel but intersecting
 		Line bigX = new Line(new Point(-1000, 0), new Point(1000, 0));
-		Line impreciselyParallel = new Line(new Point(-1000,
-				-UNRECOGNIZABLE_FRACTION), new Point(1000,
-						UNRECOGNIZABLE_FRACTION));
+		Line impreciselyParallel = new Line(
+				new Point(-1000, -UNRECOGNIZABLE_FRACTION),
+				new Point(1000, UNRECOGNIZABLE_FRACTION));
 		assertTrue(new Vector(bigX.getP1(), bigX.getP2())
-		.isParallelTo(new Vector(impreciselyParallel.getP1(),
-				impreciselyParallel.getP2())));
+				.isParallelTo(new Vector(impreciselyParallel.getP1(),
+						impreciselyParallel.getP2())));
 		assertTrue(bigX.touches(impreciselyParallel));
 	}
 
@@ -410,8 +412,8 @@ public class LineTests {
 					for (double y2 = -2; y2 <= 2; y2 += 0.5) {
 						Point p2 = new Point(x2, y2);
 
-						Line line = new Line(new Point(-5, -5), new Point(-10,
-								-10));
+						Line line = new Line(new Point(-5, -5),
+								new Point(-10, -10));
 
 						assertFalse(line.getP1().equals(p1));
 						assertFalse(line.getP2().equals(p2));

@@ -19,8 +19,8 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
-public abstract class AbstractFXGeometricElementPart<N extends Node> extends
-		AbstractFXContentPart<N> implements PropertyChangeListener {
+public abstract class AbstractFXGeometricElementPart<N extends Node>
+		extends AbstractFXContentPart<N>implements PropertyChangeListener {
 
 	@Override
 	protected void doActivate() {

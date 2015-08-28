@@ -26,8 +26,8 @@ import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
  * @author mwienand
  *
  */
-public class PolyBezier extends AbstractGeometry implements ICurve,
-		ITranslatable<PolyBezier>, IScalable<PolyBezier>,
+public class PolyBezier extends AbstractGeometry
+		implements ICurve, ITranslatable<PolyBezier>, IScalable<PolyBezier>,
 		IRotatable<PolyBezier> {
 
 	private static BezierCurve[] copy(BezierCurve... beziers) {

@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-public class EllipseQuadraticCurveIntersection extends
-		AbstractEllipseIntersectionExample {
+public class EllipseQuadraticCurveIntersection
+		extends AbstractEllipseIntersectionExample {
 
 	/**
 	 * @param args
@@ -41,7 +41,8 @@ public class EllipseQuadraticCurveIntersection extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {
@@ -58,8 +59,9 @@ public class EllipseQuadraticCurveIntersection extends
 			@Override
 			public void drawShape(GC gc) {
 				QuadraticCurve c = createGeometry();
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(c.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(c.toPath())));
 			}
 		};
 	}

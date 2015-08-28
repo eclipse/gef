@@ -38,7 +38,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> {
+public class FXDefaultFeedbackPartFactory
+		implements IFeedbackPartFactory<Node> {
 
 	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
 
@@ -84,8 +85,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
 		final Provider<? extends IGeometry> hoverFeedbackGeometryProvider = target
-				.getAdapter(AdapterKey.get(
-						new TypeToken<Provider<? extends IGeometry>>() {
+				.getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 		if (hoverFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
@@ -209,8 +210,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
 		final Provider<IGeometry> selectionFeedbackGeometryProvider = target
-				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-						new TypeToken<Provider<? extends IGeometry>>() {
+				.<Provider<IGeometry>> getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {

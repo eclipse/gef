@@ -14,8 +14,8 @@ package org.eclipse.gef4.cloudio.ui.util;
 import org.eclipse.swt.SWT;
 
 /**
- * A custom variation of a rectangle, which stores the required values
- * as short instead of int, thus saving some space.
+ * A custom variation of a rectangle, which stores the required values as short
+ * instead of int, thus saving some space.
  * 
  * @author sschwieb
  *

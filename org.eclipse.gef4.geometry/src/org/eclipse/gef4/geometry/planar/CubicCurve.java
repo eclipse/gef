@@ -111,7 +111,8 @@ public class CubicCurve extends BezierCurve {
 	 *      double, double, double)
 	 */
 	public CubicCurve(Point start, Point ctrl1, Point ctrl2, Point end) {
-		this(start.x, start.y, ctrl1.x, ctrl1.y, ctrl2.x, ctrl2.y, end.x, end.y);
+		this(start.x, start.y, ctrl1.x, ctrl1.y, ctrl2.x, ctrl2.y, end.x,
+				end.y);
 	}
 
 	@Override

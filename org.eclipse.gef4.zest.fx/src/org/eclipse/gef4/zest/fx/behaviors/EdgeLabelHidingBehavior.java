@@ -21,8 +21,7 @@ public class EdgeLabelHidingBehavior extends AbstractHidingBehavior {
 	@Override
 	protected boolean determineHiddenStatus() {
 		Edge edge = getHost().getHost().getContent();
-		return getHidingModel().isHidden(edge.getSource())
-				|| getHidingModel().isHidden(edge.getTarget());
+		return getHidingModel().isHidden(edge.getSource()) || getHidingModel().isHidden(edge.getTarget());
 	}
 
 	@Override

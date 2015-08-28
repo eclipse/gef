@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class EllipsePolylineContainment extends
-		AbstractEllipseContainmentExample {
+public class EllipsePolylineContainment
+		extends AbstractEllipseContainmentExample {
 
 	public static void main(String[] args) {
 		new EllipsePolylineContainment();
@@ -43,7 +43,8 @@ public class EllipsePolylineContainment extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

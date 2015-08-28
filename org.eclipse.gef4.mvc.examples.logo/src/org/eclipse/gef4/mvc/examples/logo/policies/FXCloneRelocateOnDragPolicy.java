@@ -80,16 +80,17 @@ public class FXCloneRelocateOnDragPolicy extends FXRelocateOnDragPolicy {
 		cloneOperations = new ReverseUndoCompositeOperation("Clone");
 
 		// clone content
-		Object cloneContent = getHost().getAdapter(
-				AbstractCloneContentPolicy.class).cloneContent();
+		Object cloneContent = getHost()
+				.getAdapter(AbstractCloneContentPolicy.class).cloneContent();
 
 		// build create operation
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		CreationPolicy<Node> creationPolicy = root
 				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
 		creationPolicy.init();
-		creationPolicy.create((IContentPart<Node, ? extends Node>) getHost()
-				.getParent(), cloneContent);
+		creationPolicy.create(
+				(IContentPart<Node, ? extends Node>) getHost().getParent(),
+				cloneContent);
 		cloneOperations.add(creationPolicy.commit());
 
 		// build operation to copy the transformation

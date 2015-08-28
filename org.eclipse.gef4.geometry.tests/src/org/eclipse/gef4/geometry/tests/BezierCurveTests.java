@@ -55,13 +55,13 @@ public class BezierCurveTests {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		assertEquals(c0, new BezierCurve(new Point(1, 1), new Point(1, 10),
 				new Point(10, 1), new Point(10, 10)));
-		assertEquals(c0, new BezierCurve(new CubicCurve(1, 1, 1, 10, 10, 1, 10,
-				10)));
+		assertEquals(c0,
+				new BezierCurve(new CubicCurve(1, 1, 1, 10, 10, 1, 10, 10)));
 		BezierCurve c1 = new BezierCurve(1, 1, 10, 1, 10, 10);
 		assertEquals(c1, new BezierCurve(new Point(1, 1), new Point(10, 1),
 				new Point(10, 10)));
-		assertEquals(c1, new BezierCurve(
-				new QuadraticCurve(1, 1, 10, 1, 10, 10)));
+		assertEquals(c1,
+				new BezierCurve(new QuadraticCurve(1, 1, 10, 1, 10, 10)));
 
 		// getCopy()
 		BezierCurve c0copy = c0.getCopy();
@@ -210,8 +210,8 @@ public class BezierCurveTests {
 	public void test_getParameterAt() {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		assertTrue(PrecisionUtils.equal(0, c0.getParameterAt(new Point(1, 1))));
-		assertTrue(PrecisionUtils
-				.equal(1, c0.getParameterAt(new Point(10, 10))));
+		assertTrue(
+				PrecisionUtils.equal(1, c0.getParameterAt(new Point(10, 10))));
 		assertTrue(PrecisionUtils.equal(0.5,
 				c0.getParameterAt(new Point(5.5, 5.5))));
 

@@ -45,12 +45,14 @@ public class AWTConversionTests {
 
 	@Test
 	public void test_Path() {
-		Path path = new Path(Path.WIND_NON_ZERO, new Segment(Segment.MOVE_TO,
-				new Point(-10, -20)), new Segment(Segment.LINE_TO, new Point(
-				20, 10)), new Segment(Segment.QUAD_TO, new Point(15, 30),
-				new Point(-5, 15)), new Segment(Segment.CUBIC_TO, new Point(-5,
-				0), new Point(5, -20), new Point(10, 0)), new Segment(
-				Segment.CLOSE));
+		Path path = new Path(Path.WIND_NON_ZERO,
+				new Segment(Segment.MOVE_TO, new Point(-10, -20)),
+				new Segment(Segment.LINE_TO, new Point(20, 10)),
+				new Segment(Segment.QUAD_TO, new Point(15, 30),
+						new Point(-5, 15)),
+				new Segment(Segment.CUBIC_TO, new Point(-5, 0),
+						new Point(5, -20), new Point(10, 0)),
+				new Segment(Segment.CLOSE));
 		java.awt.geom.Path2D.Double pathAWT = Geometry2AWT.toAWTPath(path);
 		assertEquals(path, AWT2Geometry.toPath(pathAWT));
 	}

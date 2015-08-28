@@ -51,8 +51,8 @@ public final class Straight3D {
 		self.sp = start;
 		self.line = self.sp.getCrossProduct(end);
 
-		self.f = Math.sqrt(self.line.x * self.line.x + self.line.y
-				* self.line.y);
+		self.f = Math
+				.sqrt(self.line.x * self.line.x + self.line.y * self.line.y);
 		if (self.f == 0d) {
 			return null;
 		}
@@ -103,8 +103,8 @@ public final class Straight3D {
 	 *         {@link Vector3D}
 	 */
 	public Straight3D getOrtho(Vector3D vp) {
-		return Straight3D.through(vp, new Vector3D(vp.x + line.x,
-				vp.y + line.y, vp.z));
+		return Straight3D.through(vp,
+				new Vector3D(vp.x + line.x, vp.y + line.y, vp.z));
 	}
 
 	/**
@@ -129,8 +129,8 @@ public final class Straight3D {
 	 * @return a representative {@link Straight}
 	 */
 	public Straight toStraight() {
-		return new Straight(sp.toPoint(), sp.toPoint().getTranslated(
-				new Point(line.y, -line.x)));
+		return new Straight(sp.toPoint(),
+				sp.toPoint().getTranslated(new Point(line.y, -line.x)));
 	}
 
 }

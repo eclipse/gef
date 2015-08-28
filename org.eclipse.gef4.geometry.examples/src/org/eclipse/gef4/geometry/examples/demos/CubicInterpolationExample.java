@@ -45,9 +45,9 @@ public class CubicInterpolationExample extends AbstractExample {
 				 * interpolation.
 				 */
 				addControlPoints(new Point(100, 200), new Point(150, 250),
-						new Point(200, 150), new Point(250, 250), new Point(
-								300, 150), new Point(350, 250), new Point(400,
-								200));
+						new Point(200, 150), new Point(250, 250),
+						new Point(300, 150), new Point(350, 250),
+						new Point(400, 200));
 			}
 
 			@Override
@@ -70,9 +70,9 @@ public class CubicInterpolationExample extends AbstractExample {
 				PolyBezier curve = getShape();
 
 				// display it as an SWT Path
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(curve
-						.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(curve.toPath())));
 			}
 		} };
 	}

@@ -63,8 +63,8 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	@SuppressWarnings("serial")
 	private Affine getTargetTransform() {
-		return getTargetPart().getAdapter(
-				AdapterKey.get(new TypeToken<Provider<Affine>>() {
+		return getTargetPart()
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Affine>>() {
 				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).get();
 	}
 

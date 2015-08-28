@@ -38,7 +38,7 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  *
  */
 public final class Rectangle extends
-		AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
+		AbstractRectangleBasedGeometry<Rectangle, Polygon>implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -146,8 +146,8 @@ public final class Rectangle extends
 		return PrecisionUtils.smallerEqual(this.x, x)
 				&& PrecisionUtils.smallerEqual(this.y, y)
 				&& PrecisionUtils.greaterEqual(this.x + this.width, x + width)
-				&& PrecisionUtils
-						.greaterEqual(this.y + this.height, y + height);
+				&& PrecisionUtils.greaterEqual(this.y + this.height,
+						y + height);
 	}
 
 	@Override
@@ -308,8 +308,8 @@ public final class Rectangle extends
 
 	@Override
 	public Polyline getOutline() {
-		return new Polyline(x, y, x + width, y, x + width, y + height, x, y
-				+ height, x, y);
+		return new Polyline(x, y, x + width, y, x + width, y + height, x,
+				y + height, x, y);
 	}
 
 	/**
@@ -554,8 +554,8 @@ public final class Rectangle extends
 		double y2 = Math.min(y + height, r.y + r.height);
 		if (PrecisionUtils.greaterEqual(x2 - x1, 0)
 				&& PrecisionUtils.greaterEqual(y2 - y1, 0)) {
-			setBounds(x1, y1, x2 - x1 < 0 ? 0 : x2 - x1, y2 - y1 < 0 ? 0 : y2
-					- y1);
+			setBounds(x1, y1, x2 - x1 < 0 ? 0 : x2 - x1,
+					y2 - y1 < 0 ? 0 : y2 - y1);
 			return this;
 		}
 		setBounds(0, 0, 0, 0); // no intersection

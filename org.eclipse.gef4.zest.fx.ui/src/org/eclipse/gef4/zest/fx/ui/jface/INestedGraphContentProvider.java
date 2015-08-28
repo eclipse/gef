@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.ui.jface;
 
-
 /**
  * The {@link INestedGraphContentProvider} extends the
  * {@link IGraphNodeContentProvider} with parent-child-relations. You can use

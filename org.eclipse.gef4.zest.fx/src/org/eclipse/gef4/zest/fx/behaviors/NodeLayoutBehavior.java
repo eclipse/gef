@@ -44,13 +44,11 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	public void adaptLayoutInformation() {
-		FXResizeRelocatePolicy policy = getHost().getAdapter(
-				RESIZE_RELOCATE_POLICY_KEY);
+		FXResizeRelocatePolicy policy = getHost().getAdapter(RESIZE_RELOCATE_POLICY_KEY);
 		if (policy != null) {
 			Node visual = getHost().getVisual();
 			Bounds layoutBounds = visual.getLayoutBounds();
-			FXTransformPolicy txPolicy = getHost().getAdapter(
-					FXTransformPolicy.class);
+			FXTransformPolicy txPolicy = getHost().getAdapter(FXTransformPolicy.class);
 			Affine transform = txPolicy.getNodeTransform();
 			double x = transform.getTx();
 			double y = transform.getTy();
@@ -83,8 +81,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected GraphLayoutContext getGraphLayoutContext() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot()
-				.getViewer().getContentPartMap()
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
 		return graphPart.getAdapter(GraphLayoutContext.class);
 	}
@@ -96,11 +93,9 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	protected GraphNodeLayout getNodeLayout() {
 		// TODO: use event to update node layout
-		GraphNodeLayout nodeLayout = getGraphLayoutContext().getNodeLayout(
-				getHost().getContent());
+		GraphNodeLayout nodeLayout = getGraphLayoutContext().getNodeLayout(getHost().getContent());
 		if (nodeLayout == null) {
-			throw new IllegalStateException(
-					"Cannot find INodeLayout in NavigationModel.");
+			throw new IllegalStateException("Cannot find INodeLayout in NavigationModel.");
 		}
 		return nodeLayout;
 	}
@@ -124,28 +119,24 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
 		// union node bounds with bounds of feedback visuals
-		for (IVisualPart<Node, ? extends Node> anchored : getHost()
-				.getAnchoreds()) {
+		for (IVisualPart<Node, ? extends Node> anchored : getHost().getAnchoreds()) {
 			if (!(anchored instanceof IFeedbackPart)) {
 				continue;
 			}
 			Node anchoredVisual = anchored.getVisual();
 			Bounds anchoredBounds = anchoredVisual.getLayoutBounds();
-			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual
-					.localToScene(anchoredBounds));
+			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual.localToScene(anchoredBounds));
 			minx = Math.min(minx, anchoredBoundsInHost.getMinX());
 			miny = Math.min(miny, anchoredBoundsInHost.getMinY());
 			maxx = Math.max(maxx, anchoredBoundsInHost.getMaxX());
 			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
 		}
 
-		FXTransformPolicy txPolicy = getHost().getAdapter(
-				FXTransformPolicy.class);
+		FXTransformPolicy txPolicy = getHost().getAdapter(FXTransformPolicy.class);
 		Affine transform = txPolicy.getNodeTransform();
 
 		GraphNodeLayout nodeLayout = getNodeLayout();
-		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx,
-				transform.getTy() + miny);
+		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx, transform.getTy() + miny);
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
 		LayoutProperties.setResizable(nodeLayout, visual.isResizable());
 	}

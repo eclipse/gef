@@ -210,8 +210,8 @@ public class TreeLayoutObserver {
 				height = 0;
 				numOfLeaves = 0;
 				numOfDescendants = 0;
-				for (ListIterator<TreeNode> iterator = children.listIterator(); iterator
-						.hasNext();) {
+				for (ListIterator<TreeNode> iterator = children
+						.listIterator(); iterator.hasNext();) {
 					TreeNode child = iterator.next();
 					child.depth = this.depth + 1;
 					child.order = this.order + this.numOfLeaves;
@@ -346,8 +346,8 @@ public class TreeLayoutObserver {
 			TreeNode treeNode = layoutToTree.get(node);
 			treeNode.parent.children.remove(treeNode);
 			superRoot.precomputeTree();
-			for (Iterator<TreeListener> iterator = treeListeners.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<TreeListener> iterator = treeListeners
+					.iterator(); iterator.hasNext();) {
 				TreeListener listener = iterator.next();
 				listener.nodeRemoved(treeNode);
 			}
@@ -358,8 +358,8 @@ public class TreeLayoutObserver {
 			TreeNode treeNode = getTreeNode(node);
 			superRoot.addChild(treeNode);
 			superRoot.precomputeTree();
-			for (Iterator<TreeListener> iterator = treeListeners.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<TreeListener> iterator = treeListeners
+					.iterator(); iterator.hasNext();) {
 				TreeListener listener = iterator.next();
 				listener.nodeAdded(treeNode);
 			}
@@ -412,8 +412,8 @@ public class TreeLayoutObserver {
 		}
 
 		private void fireParentChanged(TreeNode node, TreeNode previousParent) {
-			for (Iterator<TreeListener> iterator = treeListeners.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<TreeListener> iterator = treeListeners
+					.iterator(); iterator.hasNext();) {
 				TreeListener listener = iterator.next();
 				listener.parentChanged(node, previousParent);
 			}
@@ -432,7 +432,8 @@ public class TreeLayoutObserver {
 	 * @param context
 	 * @param nodeFactory
 	 */
-	public TreeLayoutObserver(ILayoutContext context, TreeNodeFactory nodeFactory) {
+	public TreeLayoutObserver(ILayoutContext context,
+			TreeNodeFactory nodeFactory) {
 		if (nodeFactory == null)
 			this.factory = new TreeNodeFactory();
 		else
@@ -528,8 +529,8 @@ public class TreeLayoutObserver {
 		}
 		while (!nodesToAdd.isEmpty()) {
 			Object[] dequeued = nodesToAdd.removeFirst();
-			TreeNode currentNode = factory.createTreeNode(
-					(INodeLayout) dequeued[0], this);
+			TreeNode currentNode = factory
+					.createTreeNode((INodeLayout) dequeued[0], this);
 			layoutToTree.put(dequeued[0], currentNode);
 			TreeNode currentRoot = (TreeNode) dequeued[1];
 

@@ -43,7 +43,8 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 	protected static LinearGradient createSimpleGradient(Color c1, Color c2) {
 		// TODO: add angle
 		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(1, c2) };
-		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+				stops);
 	}
 
 	public static boolean isSimpleGradient(Paint paint) {

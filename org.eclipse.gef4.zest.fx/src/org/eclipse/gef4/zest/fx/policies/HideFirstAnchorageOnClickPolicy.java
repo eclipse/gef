@@ -24,15 +24,12 @@ public class HideFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost()
-				.getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost().getAnchorages();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
-				.iterator().next();
-		HideNodePolicy hideNodePolicy = anchorage
-				.getAdapter(HideNodePolicy.class);
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
+		HideNodePolicy hideNodePolicy = anchorage.getAdapter(HideNodePolicy.class);
 		hideNodePolicy.hide();
 	}
 

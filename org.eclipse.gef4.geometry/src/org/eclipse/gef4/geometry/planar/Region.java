@@ -40,8 +40,8 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  * @author mwienand
  *
  */
-public class Region extends AbstractMultiShape implements
-ITranslatable<Region>, IScalable<Region>, IRotatable<Ring> {
+public class Region extends AbstractMultiShape
+		implements ITranslatable<Region>, IScalable<Region>, IRotatable<Ring> {
 
 	/**
 	 * Cuts the given {@link Rectangle}s along the given parallel to the x-axis.
@@ -149,15 +149,14 @@ ITranslatable<Region>, IScalable<Region>, IRotatable<Ring> {
 
 				if (addend.x <= retain.x && retain.x <= addend.x + addend.width
 						|| retain.x <= addend.x
-						&& addend.x <= retain.x + retain.width) {
+								&& addend.x <= retain.x + retain.width) {
 					cutH(retain.y, parts);
 					cutH(retain.y + retain.height, parts);
 				}
 
-				if (addend.y <= retain.y
-						&& retain.y <= addend.y + addend.height
+				if (addend.y <= retain.y && retain.y <= addend.y + addend.height
 						|| retain.y <= addend.y
-						&& addend.y <= retain.y + retain.height) {
+								&& addend.y <= retain.y + retain.height) {
 					cutV(retain.x, parts);
 					cutV(retain.x + retain.width, parts);
 				}

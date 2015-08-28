@@ -29,12 +29,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual {@link Node} used by this
  *            {@link AbstractFXFeedbackPart}.
  */
-abstract public class AbstractFXFeedbackPart<N extends Node> extends
-		AbstractFeedbackPart<Node, N> {
+abstract public class AbstractFXFeedbackPart<N extends Node>
+		extends AbstractFeedbackPart<Node, N> {
 
 	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
-		protected void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds) {
+		protected void boundsInLocalChanged(Bounds oldBounds,
+				Bounds newBounds) {
 			refreshVisual();
 		}
 

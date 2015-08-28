@@ -20,8 +20,10 @@ import java.util.Map;
  * 
  * @author mwienand
  *
- * @param <K> The type of the map's keys.
- * @param <V> The type of the map's values.
+ * @param <K>
+ *            The type of the map's keys.
+ * @param <V>
+ *            The type of the map's values.
  */
 public interface IMapObserver<K, V> {
 

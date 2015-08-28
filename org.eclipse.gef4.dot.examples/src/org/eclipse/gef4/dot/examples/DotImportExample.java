@@ -23,9 +23,11 @@ public final class DotImportExample {
 		/* We can create Graphs based on GraphViz Dot files/string */
 		Graph graph = new DotImport("graph { 1--2 ; 1--3 }").newGraphInstance();
 		Graph digraph = new DotImport("digraph { 1->2 ; 1->3 }")
-		.newGraphInstance();
+				.newGraphInstance();
 
-		/* We can also import GraphViz Dot files/string into an existing graph */
+		/*
+		 * We can also import GraphViz Dot files/string into an existing graph
+		 */
 		Graph.Builder graph2 = new Graph.Builder();
 		new DotImport("digraph{1->2}").into(graph2);
 		new DotImport("node[label=zested]; 2->3; 2->4").into(graph2);

@@ -25,8 +25,8 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 
-public class DotSemanticHighlightingCalculator extends
-		DefaultSemanticHighlightingCalculator {
+public class DotSemanticHighlightingCalculator
+		extends DefaultSemanticHighlightingCalculator {
 
 	@Override
 	public void provideHighlightingFor(XtextResource resource,
@@ -44,21 +44,17 @@ public class DotSemanticHighlightingCalculator extends
 				if (r.getName().equals("ID") //$NON-NLS-1$
 						&& ((Assignment) c).getFeature().equals("name")) { //$NON-NLS-1$
 					if (node.getSemanticElement() instanceof DotGraph) {
-						acceptor.addPosition(node.getOffset(),
-								node.getLength(),
+						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.GRAPH_NAME_ID);
 					} else if (node.getSemanticElement() instanceof NodeStmt
 							|| node.getSemanticElement() instanceof NodeId) {
-						acceptor.addPosition(node.getOffset(),
-								node.getLength(),
+						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.NODE_NAME_ID);
 					} else if (node.getSemanticElement() instanceof Attribute) {
-						acceptor.addPosition(node.getOffset(),
-								node.getLength(),
+						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.ATTRIBUTE_NAME_ID);
 					} else if (node.getSemanticElement() instanceof Port) {
-						acceptor.addPosition(node.getOffset(),
-								node.getLength(),
+						acceptor.addPosition(node.getOffset(), node.getLength(),
 								DotHighlightingConfiguration.PORT_NAME_ID);
 					}
 				}

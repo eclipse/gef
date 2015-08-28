@@ -52,22 +52,22 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 			public int compare(List<IEntityLayout> o1, List<IEntityLayout> o2) {
 				IEntityLayout entity0 = o1.get(0);
 				IEntityLayout entity1 = o2.get(0);
-				return (int) (LayoutProperties.getLocation(entity0).y - LayoutProperties
-						.getLocation(entity1).y);
+				return (int) (LayoutProperties.getLocation(entity0).y
+						- LayoutProperties.getLocation(entity1).y);
 			}
 		});
 
 		Comparator<IEntityLayout> entityComparator = new Comparator<IEntityLayout>() {
 			public int compare(IEntityLayout o1, IEntityLayout o2) {
-				return (int) (LayoutProperties.getLocation(o1).y - LayoutProperties
-						.getLocation(o2).y);
+				return (int) (LayoutProperties.getLocation(o1).y
+						- LayoutProperties.getLocation(o2).y);
 			}
 		};
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		int heightSoFar = 0;
 
-		for (Iterator<List<IEntityLayout>> iterator = rowsList.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<List<IEntityLayout>> iterator = rowsList
+				.iterator(); iterator.hasNext();) {
 			List<IEntityLayout> currentRow = iterator.next();
 			Collections.sort(currentRow, entityComparator);
 
@@ -76,12 +76,13 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 
 			heightSoFar += LayoutProperties.getSize(currentRow.get(0)).height
 					+ VSPACING;
-			for (Iterator<IEntityLayout> iterator2 = currentRow.iterator(); iterator2
-					.hasNext();) {
+			for (Iterator<IEntityLayout> iterator2 = currentRow
+					.iterator(); iterator2.hasNext();) {
 				IEntityLayout entity = (IEntityLayout) iterator2.next();
 				Dimension size = LayoutProperties.getSize(entity);
-				LayoutProperties.setLocation(entity, width + 10 * ++i
-						+ size.width / 2, heightSoFar + size.height / 2);
+				LayoutProperties.setLocation(entity,
+						width + 10 * ++i + size.width / 2,
+						heightSoFar + size.height / 2);
 				width += size.width;
 			}
 		}
@@ -99,11 +100,12 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 			ArrayList<List<IEntityLayout>> rowsList) {
 		double layoutY = LayoutProperties.getLocation(entity).y;
 
-		for (Iterator<List<IEntityLayout>> iterator = rowsList.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<List<IEntityLayout>> iterator = rowsList
+				.iterator(); iterator.hasNext();) {
 			List<IEntityLayout> currentRow = iterator.next();
 			IEntityLayout currentRowEntity = currentRow.get(0);
-			double currentRowY = LayoutProperties.getLocation(currentRowEntity).y;
+			double currentRowY = LayoutProperties
+					.getLocation(currentRowEntity).y;
 			if (layoutY >= currentRowY - DELTA
 					&& layoutY <= currentRowY + DELTA) {
 				currentRow.add(entity);

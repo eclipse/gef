@@ -29,8 +29,8 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-public class FXGeometricShapePart extends
-		AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
+public class FXGeometricShapePart
+		extends AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
 
 	@Override
 	protected void attachToAnchorageVisual(
@@ -45,8 +45,8 @@ public class FXGeometricShapePart extends
 			throw new IllegalArgumentException(
 					"Cannot attach to content anchorage: wrong type!");
 		}
-		getContent().getAnchorages().add(
-				(AbstractFXGeometricElement<?>) contentAnchorage);
+		getContent().getAnchorages()
+				.add((AbstractFXGeometricElement<?>) contentAnchorage);
 	}
 
 	@Override
@@ -61,7 +61,8 @@ public class FXGeometricShapePart extends
 	}
 
 	@Override
-	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+	public void detachFromContentAnchorage(Object contentAnchorage,
+			String role) {
 		getContent().getAnchorages().remove(contentAnchorage);
 	}
 
@@ -81,7 +82,7 @@ public class FXGeometricShapePart extends
 					AdapterKey.<Provider<? extends Affine>> get(
 							new TypeToken<Provider<? extends Affine>>() {
 							}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE))
-					.get();
+									.get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());
 			affine.setMyx(transform.getM10());

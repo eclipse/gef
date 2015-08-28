@@ -44,8 +44,8 @@ public class CubicCurveScaleRotate extends AbstractScaleRotateExample {
 				double padx = w / 10;
 				double pady = h / 10;
 
-				CubicCurve me = new CubicCurve(padx, pady, w + w, h, -w, h, w
-						- padx, pady);
+				CubicCurve me = new CubicCurve(padx, pady, w + w, h, -w, h,
+						w - padx, pady);
 				me.rotateCW(getRotationAngle(), getCenter());
 				me.scale(getZoomFactor(), getCenter());
 
@@ -56,8 +56,9 @@ public class CubicCurveScaleRotate extends AbstractScaleRotateExample {
 			public void draw(GC gc) {
 				CubicCurve me = createGeometry();
 				gc.fillRectangle(Geometry2SWT.toSWTRectangle(me.getBounds()));
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(me.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(me.toPath())));
 			}
 		};
 	}

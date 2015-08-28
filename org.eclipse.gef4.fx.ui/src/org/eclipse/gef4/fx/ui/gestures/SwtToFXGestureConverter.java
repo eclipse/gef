@@ -332,8 +332,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				final Object scenePeer = ReflectionUtils.getPrivateFieldValue(
-						canvas, "scenePeer");
+				final Object scenePeer = ReflectionUtils
+						.getPrivateFieldValue(canvas, "scenePeer");
 				AccessController.doPrivileged(new PrivilegedAction<Void>() {
 					@Override
 					public Void run() {
@@ -350,7 +350,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 							changeState(StateType.IDLE, event, sceneListener);
 							break;
 						case SWT.GESTURE_MAGNIFY:
-							changeState(StateType.ZOOMING, event, sceneListener);
+							changeState(StateType.ZOOMING, event,
+									sceneListener);
 							break;
 						case SWT.GESTURE_PAN:
 							changeState(StateType.SCROLLING, event,
@@ -366,8 +367,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 						return null;
 					}
 
-				}, (AccessControlContext) ReflectionUtils.getPrivateFieldValue(
-						scenePeer, "accessCtrlCtx"));
+				}, (AccessControlContext) ReflectionUtils
+						.getPrivateFieldValue(scenePeer, "accessCtrlCtx"));
 			}
 		});
 	}
@@ -375,16 +376,14 @@ public class SwtToFXGestureConverter implements GestureListener {
 	private void sendRotateEvent(EventType<RotateEvent> fxEventType,
 			final GestureEvent event, TKSceneListener sceneListener) {
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
-		double rotation = (fxEventType == RotateEvent.ROTATION_FINISHED) ? currentState.lastRotation
-				: -event.rotation;
+		double rotation = (fxEventType == RotateEvent.ROTATION_FINISHED)
+				? currentState.lastRotation : -event.rotation;
 		// System.out.println(fxEventType + " " + rotation);
 		sceneListener.rotateEvent(fxEventType,
 				rotation - currentState.lastRotation, // rotation
 				rotation, // totalRotation
-				event.x,
-				event.y, // x, y
-				screenPosition.x,
-				screenPosition.y, // screenX, screenY
+				event.x, event.y, // x, y
+				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
 				false); // inertia
@@ -399,22 +398,15 @@ public class SwtToFXGestureConverter implements GestureListener {
 		// System.out.println(fxEventType + " " + screenPosition);
 
 		// only forward scroll events that are not also emulated
-		sceneListener.scrollEvent(fxEventType,
-				event.xDirection,
+		sceneListener.scrollEvent(fxEventType, event.xDirection,
 				event.yDirection, // scrollX, scrollY
-				0,
-				0, // totalScrollX, totalScrollY
-				-5.0,
-				-5.0, // xMultiplier, yMultiplier
+				0, 0, // totalScrollX, totalScrollY
+				-5.0, -5.0, // xMultiplier, yMultiplier
 				0, // touchCount
-				0,
-				0, // scrollTextX, scrollTextY
-				0,
-				0, // defaultTextX, defaultTextY
-				event.x,
-				event.y, // x, y
-				screenPosition.x,
-				screenPosition.y, // screenX, screenY
+				0, 0, // scrollTextX, scrollTextY
+				0, 0, // defaultTextX, defaultTextY
+				event.x, event.y, // x, y
+				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
 				false); // inertia
@@ -434,12 +426,9 @@ public class SwtToFXGestureConverter implements GestureListener {
 			fxEventType = SwipeEvent.SWIPE_LEFT;
 		}
 		// System.out.println(fxEventType.toString());
-		sceneListener.swipeEvent(fxEventType,
-				0, // touch
-				event.x,
-				event.y, // x, y
-				screenPosition.x,
-				screenPosition.y, // screenX, screenY
+		sceneListener.swipeEvent(fxEventType, 0, // touch
+				event.x, event.y, // x, y
+				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false); // direct
 	}
@@ -447,16 +436,14 @@ public class SwtToFXGestureConverter implements GestureListener {
 	private void sendZoomEvent(EventType<ZoomEvent> fxEventType,
 			final GestureEvent event, TKSceneListener sceneListener) {
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
-		double magnification = (fxEventType == ZoomEvent.ZOOM_FINISHED) ? currentState.lastZoomFactor
-				: event.magnification;
+		double magnification = (fxEventType == ZoomEvent.ZOOM_FINISHED)
+				? currentState.lastZoomFactor : event.magnification;
 		// System.out.println(fxEventType + " " + magnification);
 		sceneListener.zoomEvent(fxEventType,
 				magnification / currentState.lastZoomFactor, // zoom factor
 				magnification, // totalZoomFactor
-				event.x,
-				event.y, // x, y
-				screenPosition.x,
-				screenPosition.y, // screenX, screenY
+				event.x, event.y, // x, y
+				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
 				false); // inertia

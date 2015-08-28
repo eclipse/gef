@@ -68,9 +68,9 @@ public class CubicCurveDeCasteljauExample extends AbstractExample {
 				CubicCurve curve = getShape();
 
 				// Draw the CubicCurve as an SWT Path.
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(curve
-						.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(curve.toPath())));
 
 				/*
 				 * Retrieve control points to compute the linear interpolations
@@ -85,14 +85,14 @@ public class CubicCurveDeCasteljauExample extends AbstractExample {
 				 * algorithm reduces the number of control points in each
 				 * iteration until it reaches the actual point on the curve.
 				 */
-				int[] colors = new int[] { SWT.COLOR_DARK_GREEN,
-						SWT.COLOR_BLUE, SWT.COLOR_DARK_RED };
+				int[] colors = new int[] { SWT.COLOR_DARK_GREEN, SWT.COLOR_BLUE,
+						SWT.COLOR_DARK_RED };
 
 				for (int ci = 0; ci < colors.length; ci++) {
 					for (int i = 0; i < 3 - ci; i++) {
 						// set line color
-						gc.setForeground(Display.getCurrent().getSystemColor(
-								colors[ci]));
+						gc.setForeground(Display.getCurrent()
+								.getSystemColor(colors[ci]));
 
 						// draw line
 						gc.drawLine((int) points[i].x, (int) points[i].y,
@@ -103,8 +103,8 @@ public class CubicCurveDeCasteljauExample extends AbstractExample {
 								.get(parameterValue);
 
 						// set color to black
-						gc.setForeground(Display.getCurrent().getSystemColor(
-								SWT.COLOR_BLACK));
+						gc.setForeground(Display.getCurrent()
+								.getSystemColor(SWT.COLOR_BLACK));
 
 						// draw point
 						gc.drawOval((int) (points[i].x - 2),

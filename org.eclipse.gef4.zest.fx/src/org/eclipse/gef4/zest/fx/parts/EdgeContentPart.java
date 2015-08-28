@@ -48,8 +48,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
-					0.0);
+			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0, 0.0);
 		}
 
 		@Override
@@ -90,29 +89,25 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	private EdgeLabelPart edgeLabelPart;
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		if (!getVisual().getChildren().contains(child.getVisual())) {
 			getVisual().getChildren().add(child.getVisual());
 		}
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		@SuppressWarnings("serial")
 		Provider<? extends IFXAnchor> anchorProvider = anchorage
-				.getAdapter(AdapterKey
-						.get(new TypeToken<Provider<? extends IFXAnchor>>() {
-						}));
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+				}));
 		IFXAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
 			getVisual().setEndAnchor(anchor);
 		} else {
-			throw new IllegalStateException(
-					"Cannot attach to anchor with role <" + role + ">.");
+			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
 	}
 
@@ -125,13 +120,11 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		FXConnection connection = getVisual();
 		if (role.equals("START")) {
 			Point startPoint = connection.getStartPoint();
-			connection.setStartPoint(startPoint == null ? new Point()
-					: startPoint);
+			connection.setStartPoint(startPoint == null ? new Point() : startPoint);
 		} else {
 			Point endPoint = connection.getEndPoint();
 			connection.setEndPoint(endPoint == null ? new Point() : endPoint);
@@ -141,8 +134,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getContent().addPropertyChangeListener(
-				edgeAttributesPropertyChangeListener);
+		getContent().addPropertyChangeListener(edgeAttributesPropertyChangeListener);
 		// add label part
 		if (edgeLabelPart == null) {
 			edgeLabelPart = injector.getInstance(EdgeLabelPart.class);
@@ -154,8 +146,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	@Override
 	protected void doDeactivate() {
-		getContent().removePropertyChangeListener(
-				edgeAttributesPropertyChangeListener);
+		getContent().removePropertyChangeListener(edgeAttributesPropertyChangeListener);
 		super.doDeactivate();
 	}
 
@@ -201,21 +192,18 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		}
 
 		// default decoration for directed graphs
-		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(
-				glc.getGraph(), true))) {
+		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(glc.getGraph(), true))) {
 			visual.setEndDecoration(new ArrowHead());
 		} else {
 			visual.setEndDecoration(null);
 		}
 
 		// custom decoration
-		IFXDecoration sourceDecoration = ZestProperties
-				.getSourceDecoration(edge);
+		IFXDecoration sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
 		}
-		IFXDecoration targetDecoration = ZestProperties
-				.getTargetDecoration(edge);
+		IFXDecoration targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
 		}
@@ -231,11 +219,10 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		if (style == ZestProperties.EDGE_STYLE_DASHED) {
 			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
 		} else if (style == ZestProperties.EDGE_STYLE_DASHDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
-					DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
 		} else if (style == ZestProperties.EDGE_STYLE_DASHDOTDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
-					DOT_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH, DOT_LENGTH,
+					GAP_LENGTH);
 		} else if (style == ZestProperties.EDGE_STYLE_DOTTED) {
 			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
 		} else {
@@ -257,8 +244,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	protected GraphLayoutContext getGraphLayoutContext() {
-		return getViewer().getContentPartMap().get(getContent().getGraph())
-				.getAdapter(GraphLayoutContext.class);
+		return getViewer().getContentPartMap().get(getContent().getGraph()).getAdapter(GraphLayoutContext.class);
 	}
 
 	@Override
@@ -267,8 +253,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 
@@ -282,28 +267,20 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
 		final FXConnection visual = getVisual();
-		setAdapter(
-				AdapterKey
-						.get(Provider.class,
-								FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils
-								.localToParent(visual.getCurveNode(),
-										((FXGeometryNode<?>) visual
-												.getCurveNode()).getGeometry()));
+						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
+								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
-		setAdapter(AdapterKey.get(Provider.class,
-				FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils
-								.localToParent(visual.getCurveNode(),
-										((FXGeometryNode<?>) visual
-												.getCurveNode()).getGeometry()));
+						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
+								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
 	}

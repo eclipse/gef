@@ -49,11 +49,12 @@ public final class DotImportTests {
 	@Test
 	public void testBasicFileImport() {
 		// simple graphs
-		Graph graph = importFrom(new File(RESOURCES_TESTS + "simple_graph.dot")); //$NON-NLS-1$
+		Graph graph = importFrom(
+				new File(RESOURCES_TESTS + "simple_graph.dot")); //$NON-NLS-1$
 		Assert.assertEquals(DotTestUtils.getSimpleGraph().toString(),
 				graph.toString());
 
-		graph = importFrom(new File(RESOURCES_TESTS + "simple_digraph.dot")); //$NON-NLS-1$		
+		graph = importFrom(new File(RESOURCES_TESTS + "simple_digraph.dot")); //$NON-NLS-1$
 		Assert.assertEquals(DotTestUtils.getSimpleDiGraph().toString(),
 				graph.toString());
 
@@ -83,13 +84,14 @@ public final class DotImportTests {
 		importFrom(new File(RESOURCES_TESTS + "layout_grid_graph.dot")); //$NON-NLS-1$
 
 		// graphs with animations
-		importFrom(new File(RESOURCES_TESTS
-				+ "experimental_animation_simple.dot")); //$NON-NLS-1$
-		importFrom(new File(RESOURCES_TESTS
-				+ "experimental_animation_bintree.dot")); //$NON-NLS-1$
-		importFrom(new File(RESOURCES_TESTS
-				+ "experimental_animation_layout.dot")); //$NON-NLS-1$
-		importFrom(new File(RESOURCES_TESTS + "experimental_animation_full.dot")); //$NON-NLS-1$
+		importFrom(new File(
+				RESOURCES_TESTS + "experimental_animation_simple.dot")); //$NON-NLS-1$
+		importFrom(new File(
+				RESOURCES_TESTS + "experimental_animation_bintree.dot")); //$NON-NLS-1$
+		importFrom(new File(
+				RESOURCES_TESTS + "experimental_animation_layout.dot")); //$NON-NLS-1$
+		importFrom(
+				new File(RESOURCES_TESTS + "experimental_animation_full.dot")); //$NON-NLS-1$
 	}
 
 	/**

@@ -61,8 +61,8 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 			}
 		};
 		operationHistory.addOperationHistoryListener(operationHistoryListener);
-		setRootEntry(new UndoablePropertySheetEntry(operationHistory,
-				undoContext));
+		setRootEntry(
+				new UndoablePropertySheetEntry(operationHistory, undoContext));
 	}
 
 	@Override

@@ -20,8 +20,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class EllipseRectangleIntersection extends
-		AbstractEllipseIntersectionExample {
+public class EllipseRectangleIntersection
+		extends AbstractEllipseIntersectionExample {
 
 	/**
 	 * @param args
@@ -36,12 +36,13 @@ public class EllipseRectangleIntersection extends
 
 	@Override
 	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return ((Ellipse) g1).getOutline().getIntersections(
-				((Rectangle) g2).getOutline());
+		return ((Ellipse) g1).getOutline()
+				.getIntersections(((Rectangle) g2).getOutline());
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

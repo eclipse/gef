@@ -83,30 +83,30 @@ public class StraightTests {
 		}
 		assertTrue(thrown);
 
-		assertTrue(s1.containsWithinSegment(new Vector(0, 0),
-				new Vector(0, 10), new Vector(0, 0)));
+		assertTrue(s1.containsWithinSegment(new Vector(0, 0), new Vector(0, 10),
+				new Vector(0, 0)));
 		assertTrue(s1.containsWithinSegment(new Vector(0, 0),
 				new Vector(0, -10), new Vector(0, 0)));
 		assertTrue(s1.containsWithinSegment(new Vector(0, 0), new Vector(0, 0),
 				new Vector(0, 0)));
-		assertTrue(s1.containsWithinSegment(new Vector(0, 0),
-				new Vector(0, 10), new Vector(0, 5)));
+		assertTrue(s1.containsWithinSegment(new Vector(0, 0), new Vector(0, 10),
+				new Vector(0, 5)));
 		assertTrue(s1.containsWithinSegment(new Vector(0, 0),
 				new Vector(0, -10), new Vector(0, -5)));
 		assertFalse(s1.containsWithinSegment(new Vector(0, 1),
 				new Vector(0, 10), new Vector(0, 0)));
-		assertFalse(s1.containsWithinSegment(new Vector(0, -1), new Vector(0,
-				-10), new Vector(0, 0)));
+		assertFalse(s1.containsWithinSegment(new Vector(0, -1),
+				new Vector(0, -10), new Vector(0, 0)));
 		assertFalse(s1.containsWithinSegment(new Vector(0, 0),
 				new Vector(0, 10), new Vector(0, -5)));
-		assertFalse(s1.containsWithinSegment(new Vector(0, 0), new Vector(0,
-				-10), new Vector(0, 5)));
+		assertFalse(s1.containsWithinSegment(new Vector(0, 0),
+				new Vector(0, -10), new Vector(0, 5)));
 
 		s1 = new Straight(new Point(), new Point(1, 0));
 		assertTrue(s1.containsWithinSegment(new Vector(0, 0), new Vector(3, 0),
 				new Vector(2, 0)));
-		assertFalse(s1.containsWithinSegment(new Vector(0, 0),
-				new Vector(3, 0), new Vector(5, 0)));
+		assertFalse(s1.containsWithinSegment(new Vector(0, 0), new Vector(3, 0),
+				new Vector(5, 0)));
 	}
 
 	@Test
@@ -280,19 +280,19 @@ public class StraightTests {
 
 		assertTrue("fallthrough", s1.intersectsWithinSegment(new Vector(0, 0),
 				new Vector(0, 0), s2));
-		assertTrue(s1.intersectsWithinSegment(new Vector(-1, -1), new Vector(0,
-				0), s2));
+		assertTrue(s1.intersectsWithinSegment(new Vector(-1, -1),
+				new Vector(0, 0), s2));
 		assertTrue(s1.intersectsWithinSegment(new Vector(1, 1),
 				new Vector(0, 0), s2));
-		assertTrue(s1.intersectsWithinSegment(new Vector(-1, -1), new Vector(1,
-				1), s2));
-		assertFalse(s1.intersectsWithinSegment(new Vector(-1, -1), new Vector(
-				-20, -20), s2));
-		assertFalse(s1.intersectsWithinSegment(new Vector(1, 1), new Vector(20,
-				20), s2));
+		assertTrue(s1.intersectsWithinSegment(new Vector(-1, -1),
+				new Vector(1, 1), s2));
+		assertFalse(s1.intersectsWithinSegment(new Vector(-1, -1),
+				new Vector(-20, -20), s2));
+		assertFalse(s1.intersectsWithinSegment(new Vector(1, 1),
+				new Vector(20, 20), s2));
 		assertFalse(s1.intersectsWithinSegment(new Vector(-20, -20),
-				new Vector(20, 20), new Straight(new Vector(10, 0), new Vector(
-						10, 10))));
+				new Vector(20, 20),
+				new Straight(new Vector(10, 0), new Vector(10, 10))));
 	}
 
 	@Test
@@ -312,11 +312,12 @@ public class StraightTests {
 		// parameter's value
 		Straight s1 = new Straight(new Point(), new Point(0, -1));
 
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 0)), 0));
-		assertTrue(PrecisionUtils
-				.equal(s1.getParameterAt(new Vector(0, -1)), 1));
-		assertTrue(PrecisionUtils
-				.equal(s1.getParameterAt(new Vector(0, 1)), -1));
+		assertTrue(
+				PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 0)), 0));
+		assertTrue(
+				PrecisionUtils.equal(s1.getParameterAt(new Vector(0, -1)), 1));
+		assertTrue(
+				PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 1)), -1));
 
 		assertTrue(s1.getPositionVectorAt(0).equals(new Vector(0, 0)));
 		assertTrue(s1.getPositionVectorAt(2).equals(new Vector(0, -2)));
@@ -324,10 +325,12 @@ public class StraightTests {
 
 		s1 = new Straight(new Point(), new Point(1, 0));
 
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 0)), 0));
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(2, 0)), 2));
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(-2, 0)),
-				-2));
+		assertTrue(
+				PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 0)), 0));
+		assertTrue(
+				PrecisionUtils.equal(s1.getParameterAt(new Vector(2, 0)), 2));
+		assertTrue(
+				PrecisionUtils.equal(s1.getParameterAt(new Vector(-2, 0)), -2));
 
 		assertTrue(s1.getPositionVectorAt(0).equals(new Vector(0, 0)));
 		assertTrue(s1.getPositionVectorAt(1).equals(new Vector(1, 0)));

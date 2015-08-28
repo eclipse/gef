@@ -26,8 +26,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
-public class SelectionForwarder<VR> implements PropertyChangeListener,
-		ISelectionChangedListener {
+public class SelectionForwarder<VR>
+		implements PropertyChangeListener, ISelectionChangedListener {
 
 	private final ISelectionProvider selectionProvider;
 	private final IViewer<VR> viewer;
@@ -84,8 +84,8 @@ public class SelectionForwarder<VR> implements PropertyChangeListener,
 				// selection provider
 				// TODO: verify no events are fired when the same selection is
 				// set again
-				selectionProvider.setSelection(new StructuredSelection(
-						selectedContentElements));
+				selectionProvider.setSelection(
+						new StructuredSelection(selectedContentElements));
 			}
 		}
 	}

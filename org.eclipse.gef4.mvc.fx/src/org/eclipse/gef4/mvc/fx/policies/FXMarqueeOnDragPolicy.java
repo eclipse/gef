@@ -52,8 +52,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	// TODO: move to utility
-	public static List<Node> findContainedNodes(Node root, double x0,
-			double y0, double x1, double y1) {
+	public static List<Node> findContainedNodes(Node root, double x0, double y0,
+			double x1, double y1) {
 		Bounds bounds;
 		double bx1, bx0, by1, by0;
 
@@ -116,10 +116,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 			@Override
 			protected void doRefreshVisual(Rectangle visual) {
 				IRootPart<Node, ? extends Node> root = getRoot();
-				Point2D start = visual.sceneToLocal(root.getVisual()
-						.localToScene(startPosInRoot));
-				Point2D end = visual.sceneToLocal(root.getVisual()
-						.localToScene(endPosInRoot));
+				Point2D start = visual.sceneToLocal(
+						root.getVisual().localToScene(startPosInRoot));
+				Point2D end = visual.sceneToLocal(
+						root.getVisual().localToScene(endPosInRoot));
 				double[] bbox = bbox(start, end);
 
 				// offset x and y by half a pixel to ensure the rectangle gets a
@@ -141,7 +141,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		updateFeedback();
 	}
 
-	protected List<IContentPart<Node, ? extends Node>> getParts(List<Node> nodes) {
+	protected List<IContentPart<Node, ? extends Node>> getParts(
+			List<Node> nodes) {
 		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<IContentPart<Node, ? extends Node>>();
 		for (Node node : nodes) {
 			IVisualPart<Node, ? extends Node> part = getHost().getRoot()
@@ -157,7 +158,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	public void press(MouseEvent e) {
 		startPosInRoot = getHost().getRoot().getVisual()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
-		endPosInRoot = new Point2D(startPosInRoot.getX(), startPosInRoot.getY());
+		endPosInRoot = new Point2D(startPosInRoot.getX(),
+				startPosInRoot.getY());
 		addFeedback();
 	}
 

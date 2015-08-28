@@ -258,10 +258,10 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			// check canvas pane:
 			p.x = inRange(canvas.getClientArea().x + radius, p.x,
 					canvas.getClientArea().x + canvas.getClientArea().width
-					- radius);
+							- radius);
 			p.y = inRange(canvas.getClientArea().y + radius, p.y,
 					canvas.getClientArea().y + canvas.getClientArea().height
-					- radius);
+							- radius);
 
 			// check links:
 			if (xLink != null) {

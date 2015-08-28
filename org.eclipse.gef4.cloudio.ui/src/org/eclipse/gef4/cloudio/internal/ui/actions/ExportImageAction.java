@@ -33,15 +33,18 @@ public class ExportImageAction extends AbstractTagCloudAction {
 		dialog.setFileName("Cloud.png");
 		dialog.setText("Export PNG image to...");
 		String destFile = dialog.open();
-		if(destFile == null) return;
+		if (destFile == null)
+			return;
 		File f = new File(destFile);
-		if(f.exists()) {
-			boolean confirmed = MessageDialog.openConfirm(getShell(), "File already exists", "The file '" + f.getName() + "' does already exist. Do you want to override it?");
-			if(!confirmed) return;
+		if (f.exists()) {
+			boolean confirmed = MessageDialog.openConfirm(getShell(), "File already exists",
+					"The file '" + f.getName() + "' does already exist. Do you want to override it?");
+			if (!confirmed)
+				return;
 		}
 		ImageLoader il = new ImageLoader();
 		try {
-			il.data = new ImageData[] {getViewer().getCloud().getImageData()};
+			il.data = new ImageData[] { getViewer().getCloud().getImageData() };
 			il.save(destFile, SWT.IMAGE_PNG);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -23,9 +23,9 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author mwienand
  * 
  */
-public class CurvedPolygon extends AbstractGeometry implements IShape,
-		ITranslatable<CurvedPolygon>, IRotatable<CurvedPolygon>,
-		IScalable<CurvedPolygon> {
+public class CurvedPolygon extends AbstractGeometry
+		implements IShape, ITranslatable<CurvedPolygon>,
+		IRotatable<CurvedPolygon>, IScalable<CurvedPolygon> {
 
 	private static final long serialVersionUID = 1L;
 	private BezierCurve[] edges;
@@ -56,16 +56,14 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 			} else if (!c.getP2().equals(curvedSides[i + 1].getP1())) {
 				throw new IllegalArgumentException(
 						"Subsequent BezierCurves used to construct a CurvedPolygon need to be connected with each other. The "
-								+ i
-								+ "th and "
-								+ (i + 1)
+								+ i + "th and " + (i + 1)
 								+ "th passed-in BezierCurves violate this condition. new CurvedPolygon("
 								+ curvedSides + ")");
 			}
 
 			edges[i] = c.getCopy();
-			edges[i].setP2(curvedSides[i == edges.length - 1 ? 0 : i + 1]
-					.getP1());
+			edges[i].setP2(
+					curvedSides[i == edges.length - 1 ? 0 : i + 1].getP1());
 		}
 	}
 

@@ -140,25 +140,21 @@ public final class Graph implements IPropertyChangeNotifier {
 
 	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
 		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap,
-				Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap,
-					observableMap);
+		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
+			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
 		}
 	};
 
 	private IListObserver<Node> nodesObserver = new IListObserver<Node>() {
 		@Override
-		public void afterChange(ObservableList<Node> observableList,
-				List<Node> previousList) {
+		public void afterChange(ObservableList<Node> observableList, List<Node> previousList) {
 			pcs.firePropertyChange(NODES_PROPERTY, previousList, observableList);
 		}
 	};
 
 	private IListObserver<Edge> edgesObserver = new IListObserver<Edge>() {
 		@Override
-		public void afterChange(ObservableList<Edge> observableList,
-				List<Edge> previousList) {
+		public void afterChange(ObservableList<Edge> observableList, List<Edge> previousList) {
 			pcs.firePropertyChange(EDGES_PROPERTY, previousList, observableList);
 		}
 	};
@@ -192,8 +188,7 @@ public final class Graph implements IPropertyChangeNotifier {
 	 * edges.
 	 */
 	public Graph() {
-		this(new HashMap<String, Object>(), new ArrayList<Node>(),
-				new ArrayList<Edge>());
+		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
 	}
 
 	/**

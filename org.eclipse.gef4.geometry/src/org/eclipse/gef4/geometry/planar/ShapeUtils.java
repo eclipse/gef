@@ -60,8 +60,8 @@ class ShapeUtils {
 	public static CubicCurve computeEllipticalArcApproximation(double x,
 			double y, double width, double height, Angle start, Angle end) {
 		// TODO: verify that the following test is valid
-		if (!PrecisionUtils.smallerEqual(end.getAdded(start.getOppositeFull())
-				.deg(), 90)) {
+		if (!PrecisionUtils.smallerEqual(
+				end.getAdded(start.getOppositeFull()).deg(), 90)) {
 			throw new IllegalArgumentException(
 					"Only angular extents of up to 90 degrees are allowed.");
 		}
@@ -74,23 +74,25 @@ class ShapeUtils {
 		double erad = end.rad();
 
 		// calculate start and end points of the arc from start to end
-		Point startPoint = new Point(x + a + a * Math.cos(srad), y + b - b
-				* Math.sin(srad));
-		Point endPoint = new Point(x + a + a * Math.cos(erad), y + b - b
-				* Math.sin(erad));
+		Point startPoint = new Point(x + a + a * Math.cos(srad),
+				y + b - b * Math.sin(srad));
+		Point endPoint = new Point(x + a + a * Math.cos(erad),
+				y + b - b * Math.sin(erad));
 
 		// approximation by cubic Bezier according to approximation provided in:
 		// http://www.spaceroots.org/documents/ellipse/elliptical-arc.pdf
 		double t = Math.tan((erad - srad) / 2);
 		double alpha = Math.sin(erad - srad)
 				* (Math.sqrt(4.0d + 3.0d * t * t) - 1) / 3;
-		Point controlPoint1 = new Point(startPoint.x + alpha * -a
-				* Math.sin(srad), startPoint.y - alpha * b * Math.cos(srad));
-		Point controlPoint2 = new Point(endPoint.x - alpha * -a
-				* Math.sin(erad), endPoint.y + alpha * b * Math.cos(erad));
+		Point controlPoint1 = new Point(
+				startPoint.x + alpha * -a * Math.sin(srad),
+				startPoint.y - alpha * b * Math.cos(srad));
+		Point controlPoint2 = new Point(
+				endPoint.x - alpha * -a * Math.sin(erad),
+				endPoint.y + alpha * b * Math.cos(erad));
 
-		Point[] points = new Point[] { startPoint, controlPoint1,
-				controlPoint2, endPoint };
+		Point[] points = new Point[] { startPoint, controlPoint1, controlPoint2,
+				endPoint };
 		return new CubicCurve(points);
 	}
 
@@ -131,7 +133,8 @@ class ShapeUtils {
 	 */
 	public static boolean contains(IMultiShape multiShape, BezierCurve c) {
 		// TODO: generalize the contains() method for IShape and IMultiShape.
-		if (!(multiShape.contains(c.getP1()) && multiShape.contains(c.getP2()))) {
+		if (!(multiShape.contains(c.getP1())
+				&& multiShape.contains(c.getP2()))) {
 			return false;
 		}
 
@@ -143,8 +146,8 @@ class ShapeUtils {
 				Set<IntervalPair> ips = c.getIntersectionIntervalPairs(seg,
 						inters);
 				for (IntervalPair ip : ips) {
-					intersectionParams.add(ip.p == c ? ip.pi.getMid() : ip.qi
-							.getMid());
+					intersectionParams
+							.add(ip.p == c ? ip.pi.getMid() : ip.qi.getMid());
 				}
 				for (Point poi : inters) {
 					intersectionParams.add(c.getParameterAt(poi));
@@ -179,13 +182,13 @@ class ShapeUtils {
 			return false;
 		}
 		for (int i = 0; i < poiParams.length - 1; i++) {
-			if (!multiShape.contains(c
-					.get((poiParams[i] + poiParams[i + 1]) / 2))) {
+			if (!multiShape
+					.contains(c.get((poiParams[i] + poiParams[i + 1]) / 2))) {
 				return false;
 			}
 		}
-		return multiShape.contains(c
-				.get((poiParams[poiParams.length - 1] + 1) / 2));
+		return multiShape
+				.contains(c.get((poiParams[poiParams.length - 1] + 1) / 2));
 	}
 
 	/**

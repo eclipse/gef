@@ -24,7 +24,8 @@ public class PieTests {
 
 	@Test
 	public void test_getOutlineSegments() {
-		Pie pie = new Pie(0, 0, 100, 100, Angle.fromDeg(90), Angle.fromDeg(270));
+		Pie pie = new Pie(0, 0, 100, 100, Angle.fromDeg(90),
+				Angle.fromDeg(270));
 		BezierCurve[] outlineSegments = pie.getOutlineSegments();
 		CurvedPolygon bakery = new CurvedPolygon(outlineSegments);
 		assertTrue("the curved polygon must contain the pie",

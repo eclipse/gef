@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ SWTConversionTests.class})
+@SuiteClasses({ SWTConversionTests.class })
 public class AllTests {
 
 }

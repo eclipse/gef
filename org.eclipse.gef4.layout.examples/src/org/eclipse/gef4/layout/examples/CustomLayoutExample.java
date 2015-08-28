@@ -65,14 +65,17 @@ public class CustomLayoutExample extends AbstractZestExample {
 			public void applyLayout(boolean clean) {
 				IEntityLayout[] entitiesToLayout = context.getEntities();
 				int totalSteps = entitiesToLayout.length;
-				double distance = LayoutProperties.getBounds(context)
-						.getWidth() / totalSteps;
+				double distance = LayoutProperties.getBounds(context).getWidth()
+						/ totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
 					IEntityLayout layoutEntity = entitiesToLayout[currentStep];
-					LayoutProperties.setLocation(layoutEntity, xLocation,
-					/* LayoutProperties.getLocation(layoutEntity).y */0);
+					LayoutProperties.setLocation(layoutEntity,
+							xLocation, /*
+										 * LayoutProperties.getLocation(
+										 * layoutEntity).y
+										 */0);
 					xLocation += distance;
 				}
 			}

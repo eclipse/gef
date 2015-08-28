@@ -28,8 +28,8 @@ public class FXDeletionPolicy extends DeletionPolicy<Node> {
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"Delete Selected");
 		fwd.add(deleteOperation);
-		fwd.add(new ClearHoverFocusSelectionOperation<Node>(getHost().getRoot()
-				.getViewer()));
+		fwd.add(new ClearHoverFocusSelectionOperation<Node>(
+				getHost().getRoot().getViewer()));
 		return fwd;
 	}
 

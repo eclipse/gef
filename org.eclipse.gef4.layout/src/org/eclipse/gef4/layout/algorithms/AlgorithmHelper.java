@@ -35,9 +35,9 @@ public class AlgorithmHelper {
 	public static void fitWithinBounds(IEntityLayout[] entities,
 			Rectangle destinationBounds, boolean resize) {
 		Rectangle startingBounds = getLayoutBounds(entities, false);
-		double sizeScale = Math.min(destinationBounds.getWidth()
-				/ startingBounds.getWidth(), destinationBounds.getHeight()
-				/ startingBounds.getHeight());
+		double sizeScale = Math.min(
+				destinationBounds.getWidth() / startingBounds.getWidth(),
+				destinationBounds.getHeight() / startingBounds.getHeight());
 		if (entities.length == 1) {
 			fitSingleEntity(entities[0], destinationBounds, resize);
 			return;
@@ -60,10 +60,10 @@ public class AlgorithmHelper {
 
 				location.x = destinationBounds.getX() + size.width / 2
 						+ percentX
-						* (destinationBounds.getWidth() - size.width);
+								* (destinationBounds.getWidth() - size.width);
 				location.y = destinationBounds.getY() + size.height / 2
 						+ percentY
-						* (destinationBounds.getHeight() - size.height);
+								* (destinationBounds.getHeight() - size.height);
 				LayoutProperties.setLocation(entity, location.x, location.y);
 			} else if (resize && LayoutProperties.isResizable(entity)) {
 				LayoutProperties.setSize(entity, size.width * sizeScale,
@@ -75,10 +75,10 @@ public class AlgorithmHelper {
 	private static void fitSingleEntity(IEntityLayout entity,
 			Rectangle destinationBounds, boolean resize) {
 		if (LayoutProperties.isMovable(entity)) {
-			LayoutProperties.setLocation(entity, destinationBounds.getX()
-					+ destinationBounds.getWidth() / 2,
-					destinationBounds.getY() + destinationBounds.getHeight()
-							/ 2);
+			LayoutProperties.setLocation(entity,
+					destinationBounds.getX() + destinationBounds.getWidth() / 2,
+					destinationBounds.getY()
+							+ destinationBounds.getHeight() / 2);
 		}
 		if (resize && LayoutProperties.isResizable(entity)) {
 			double width = destinationBounds.getWidth();

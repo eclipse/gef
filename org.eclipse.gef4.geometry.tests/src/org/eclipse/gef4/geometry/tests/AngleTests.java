@@ -55,8 +55,8 @@ public class AngleTests {
 		assertTrue(PrecisionUtils.equal(180, beta.deg()));
 
 		for (double rad = 0; rad <= 2 * Math.PI; rad += 0.1) {
-			assertTrue(Angle.fromDeg(Angle.fromRad(rad).deg()).equals(
-					Angle.fromRad(rad)));
+			assertTrue(Angle.fromDeg(Angle.fromRad(rad).deg())
+					.equals(Angle.fromRad(rad)));
 		}
 	}
 

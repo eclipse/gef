@@ -312,7 +312,8 @@ public class LayoutProperties {
 	 */
 	public static void setDynamicLayoutEnabled(ILayoutContext graph,
 			boolean dynamicLayoutEnabled) {
-		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY, dynamicLayoutEnabled);
+		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY,
+				dynamicLayoutEnabled);
 	}
 
 	/**
@@ -680,7 +681,8 @@ public class LayoutProperties {
 	 */
 	public static void setDirectionDependant(ISubgraphLayout subgraph,
 			boolean isDirectionDependant) {
-		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY, isDirectionDependant);
+		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY,
+				isDirectionDependant);
 	}
 
 	/**

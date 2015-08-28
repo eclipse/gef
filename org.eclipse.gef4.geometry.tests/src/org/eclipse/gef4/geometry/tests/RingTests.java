@@ -55,12 +55,12 @@ public class RingTests {
 
 			assertFalse(ring.contains(new Polygon(0, 0, 1, 0, 1, 1, 0, 1)));
 			assertFalse(ring.contains(new Polygon(1, 1, 3, 1, 2, 2)));
-			assertFalse(ring.contains(new Polygon(4.5, 4.5, 4.5, 5.5, 5.5, 5.5,
-					5.5, 4.5)));
+			assertFalse(ring.contains(
+					new Polygon(4.5, 4.5, 4.5, 5.5, 5.5, 5.5, 5.5, 4.5)));
 			assertFalse(ring.contains(new Polygon(3, 3, 5, 3, 5, 5)));
 			assertTrue(ring.contains(new Polygon(2, 2, 2, 3, 3, 3, 3, 2)));
-			assertTrue(ring.contains(new Polygon(4.1, 4.1, 4.9, 4.1, 4.9, 4.9,
-					4.1, 4.9)));
+			assertTrue(ring.contains(
+					new Polygon(4.1, 4.1, 4.9, 4.1, 4.9, 4.9, 4.1, 4.9)));
 			assertTrue(ring.contains(p1));
 			assertTrue(ring.contains(p2));
 		}
@@ -74,8 +74,8 @@ public class RingTests {
 
 			assertFalse(ring.contains(new Polygon(0, 0, 1, 0, 1, 1, 0, 1)));
 			assertFalse(ring.contains(new Polygon(1, 1, 3, 1, 2, 2)));
-			assertFalse(ring.contains(new Polygon(4.5, 4.5, 4.5, 5.5, 5.5, 5.5,
-					5.5, 4.5)));
+			assertFalse(ring.contains(
+					new Polygon(4.5, 4.5, 4.5, 5.5, 5.5, 5.5, 5.5, 4.5)));
 			assertTrue(ring.contains(new Polygon(2, 2, 2, 3, 3, 3, 3, 2)));
 			assertTrue(ring.contains(new Polygon(3, 3, 5, 3, 5, 5)));
 			assertTrue(ring.contains(p1));
@@ -86,17 +86,17 @@ public class RingTests {
 		@Test
 		public void equals() {
 			Ring r0 = new Ring(new Polygon(0, 0, 100, 100, 0, 100));
-			Ring r1 = new Ring(new Polygon(0, 0, 50, 50, 0, 100), new Polygon(
-					50, 50, 0, 100, 100, 100));
+			Ring r1 = new Ring(new Polygon(0, 0, 50, 50, 0, 100),
+					new Polygon(50, 50, 0, 100, 100, 100));
 			assertEquals(r0, r1);
 			assertEquals(r1, r0);
-			r0 = new Ring(new Polygon(0, 0, 100, 100, 0, 50), new Polygon(0,
-					50, 0, 100, 100, 100));
+			r0 = new Ring(new Polygon(0, 0, 100, 100, 0, 50),
+					new Polygon(0, 50, 0, 100, 100, 100));
 			assertEquals(r0, r1);
 			assertEquals(r1, r0);
 
-			r1 = new Ring(new Polygon(0, 0, 100, 100, 0, 100), new Polygon(50,
-					50, 100, 100, 100, 50));
+			r1 = new Ring(new Polygon(0, 0, 100, 100, 0, 100),
+					new Polygon(50, 50, 100, 100, 100, 50));
 			assertFalse(r0.equals(r1));
 			assertFalse(r1.equals(r0));
 		}
@@ -107,8 +107,9 @@ public class RingTests {
 
 		@Test
 		public void toPath_with_void() {
-			Ring r = new Ring(new Polygon(0, 0, 100, 0, 100, 50, 50, 50, 50,
-					100, 100, 100, 100, 150, 0, 150),
+			Ring r = new Ring(
+					new Polygon(0, 0, 100, 0, 100, 50, 50, 50, 50, 100, 100,
+							100, 100, 150, 0, 150),
 					new Polygon(100, 0, 200, 0, 200, 150, 100, 150, 100, 100,
 							150, 100, 150, 50, 100, 50));
 
@@ -191,8 +192,8 @@ public class RingTests {
 					cause = cause.getCause();
 				}
 
-				assertTrue(cause.getClass().equals(
-						IllegalArgumentException.class));
+				assertTrue(cause.getClass()
+						.equals(IllegalArgumentException.class));
 			}
 		}
 
@@ -206,8 +207,8 @@ public class RingTests {
 					cause = cause.getCause();
 				}
 
-				assertTrue(cause.getClass().equals(
-						IllegalArgumentException.class));
+				assertTrue(cause.getClass()
+						.equals(IllegalArgumentException.class));
 			}
 		}
 
@@ -221,8 +222,8 @@ public class RingTests {
 			try {
 				Class<?> parameterTypes[] = new Class<?>[] { Polygon.class,
 						Line.class };
-				Method triangulate = Ring.class.getDeclaredMethod(
-						"triangulate", parameterTypes);
+				Method triangulate = Ring.class.getDeclaredMethod("triangulate",
+						parameterTypes);
 				triangulate.setAccessible(true);
 				return (Polygon[]) triangulate.invoke(null, p, s);
 			} catch (Exception x) {
@@ -233,18 +234,18 @@ public class RingTests {
 		@Test
 		public void triangulate_ee_overlaps_edge_ntd() {
 			// p1 on edge, p2 on edge, overlaps edge, nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 150),
-					new Point(100, 250)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 150), new Point(100, 250)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(150, 125),
-					new Point(250, 175)));
+			r = triangulate(p,
+					new Line(new Point(150, 125), new Point(250, 175)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(150, 275),
-					new Point(250, 225)));
+			r = triangulate(p,
+					new Line(new Point(150, 275), new Point(250, 225)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -305,17 +306,18 @@ public class RingTests {
 		@Test
 		public void triangulate_eo1re_ntd() {
 			// p1 on edge, p2 outside, 1 real intersection (edge), nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 200),
-					new Point(100, 0)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 200), new Point(100, 0)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(200, 150), new Point(200, 0)));
+			r = triangulate(p,
+					new Line(new Point(200, 150), new Point(200, 0)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(200, 250),
-					new Point(200, 300)));
+			r = triangulate(p,
+					new Line(new Point(200, 250), new Point(200, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -323,33 +325,33 @@ public class RingTests {
 		@Test
 		public void triangulate_ev_overlaps_edge_ntd() {
 			// p1 on edge, p2 on vertex, overlaps edge, nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 200),
-					new Point(100, 100)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 200), new Point(100, 100)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(150, 125),
-					new Point(100, 100)));
+			r = triangulate(p,
+					new Line(new Point(150, 125), new Point(100, 100)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(150, 125),
-					new Point(300, 200)));
+			r = triangulate(p,
+					new Line(new Point(150, 125), new Point(300, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(150, 275),
-					new Point(300, 200)));
+			r = triangulate(p,
+					new Line(new Point(150, 275), new Point(300, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(150, 275),
-					new Point(100, 300)));
+			r = triangulate(p,
+					new Line(new Point(150, 275), new Point(100, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(100, 200),
-					new Point(100, 300)));
+			r = triangulate(p,
+					new Line(new Point(100, 200), new Point(100, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -449,20 +451,20 @@ public class RingTests {
 		public void triangulate_io1re1ie_s3() {
 			// p1 inside, p2 outside, 1 real intersection (edge), 1 imaginary
 			// intersection (edge), split into 3 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(150, 200),
-					new Point(150, 50)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(150, 200), new Point(150, 50)));
 			assertEquals("split into three", 3, r.length);
 
-			r = triangulate(p, new Line(new Point(150, 200),
-					new Point(250, 100)));
+			r = triangulate(p,
+					new Line(new Point(150, 200), new Point(250, 100)));
 			assertEquals("split into three", 3, r.length);
 
-			r = triangulate(p, new Line(new Point(150, 200),
-					new Point(150, 350)));
+			r = triangulate(p,
+					new Line(new Point(150, 200), new Point(150, 350)));
 			assertEquals("split into three", 3, r.length);
 
-			r = triangulate(p, new Line(new Point(150, 200),
-					new Point(250, 300)));
+			r = triangulate(p,
+					new Line(new Point(150, 200), new Point(250, 300)));
 			assertEquals("split into three", 3, r.length);
 
 			r = triangulate(p,
@@ -478,12 +480,12 @@ public class RingTests {
 		public void triangulate_io1re1iv_s2() {
 			// p1 inside, p2 outside, 1 real intersection (edge), 1 imaginary
 			// intersection (vertex), split into 2 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(150, 200),
-					new Point(200, 100)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(150, 200), new Point(200, 100)));
 			assertEquals("split into two", 2, r.length);
 
-			r = triangulate(p, new Line(new Point(150, 200),
-					new Point(200, 300)));
+			r = triangulate(p,
+					new Line(new Point(150, 200), new Point(200, 300)));
 			assertEquals("split into two", 2, r.length);
 
 			r = triangulate(p,
@@ -495,15 +497,15 @@ public class RingTests {
 		public void triangulate_io1rv1ie_s2() {
 			// p1 inside, p2 outside, 1 real intersection (vertex), 1 imaginary
 			// intersection (edge), split into 2 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(150, 200),
-					new Point(50, 400)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(150, 200), new Point(50, 400)));
 			assertEquals("split into two", 2, r.length);
 
 			r = triangulate(p, new Line(new Point(150, 200), new Point(50, 0)));
 			assertEquals("split into two", 2, r.length);
 
-			r = triangulate(p, new Line(new Point(150, 200),
-					new Point(400, 200)));
+			r = triangulate(p,
+					new Line(new Point(150, 200), new Point(400, 200)));
 			assertEquals("split into two", 2, r.length);
 		}
 
@@ -525,17 +527,18 @@ public class RingTests {
 		@Test
 		public void triangulate_oe1re_ntd() {
 			// p1 outside, p2 on edge, 1 real intersection (edge), nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 0), new Point(
-					100, 200)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 0), new Point(100, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(200, 0), new Point(200, 150)));
+			r = triangulate(p,
+					new Line(new Point(200, 0), new Point(200, 150)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(200, 300),
-					new Point(200, 250)));
+			r = triangulate(p,
+					new Line(new Point(200, 300), new Point(200, 250)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -544,20 +547,20 @@ public class RingTests {
 		public void triangulate_oi1re1ie_s3() {
 			// p1 outside, p2 inside, 1 real intersection (edge), 1 imaginary
 			// intersection (edge), split into 3 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(150, 50),
-					new Point(150, 200)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(150, 50), new Point(150, 200)));
 			assertEquals("split into three", 3, r.length);
 
-			r = triangulate(p, new Line(new Point(250, 100),
-					new Point(150, 200)));
+			r = triangulate(p,
+					new Line(new Point(250, 100), new Point(150, 200)));
 			assertEquals("split into three", 3, r.length);
 
-			r = triangulate(p, new Line(new Point(150, 350),
-					new Point(150, 200)));
+			r = triangulate(p,
+					new Line(new Point(150, 350), new Point(150, 200)));
 			assertEquals("split into three", 3, r.length);
 
-			r = triangulate(p, new Line(new Point(250, 300),
-					new Point(150, 200)));
+			r = triangulate(p,
+					new Line(new Point(250, 300), new Point(150, 200)));
 			assertEquals("split into three", 3, r.length);
 
 			r = triangulate(p,
@@ -573,12 +576,12 @@ public class RingTests {
 		public void triangulate_oi1re1iv_s2() {
 			// p1 outside, p2 inside, 1 real intersection (edge), 1 imaginary
 			// intersection (vertex), split into 2 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(200, 100),
-					new Point(150, 200)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(200, 100), new Point(150, 200)));
 			assertEquals("split into two", 2, r.length);
 
-			r = triangulate(p, new Line(new Point(200, 300),
-					new Point(150, 200)));
+			r = triangulate(p,
+					new Line(new Point(200, 300), new Point(150, 200)));
 			assertEquals("split into two", 2, r.length);
 
 			r = triangulate(p,
@@ -590,23 +593,23 @@ public class RingTests {
 		public void triangulate_oi1rv1ie_s2() {
 			// p1 outside, p2 inside, 1 real intersection (vertex), 1 imaginary
 			// intersection (edge), split into 2 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(50, 400),
-					new Point(150, 200)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(50, 400), new Point(150, 200)));
 			assertEquals("split into two", 2, r.length);
 
 			r = triangulate(p, new Line(new Point(50, 0), new Point(150, 200)));
 			assertEquals("split into two", 2, r.length);
 
-			r = triangulate(p, new Line(new Point(400, 200),
-					new Point(150, 200)));
+			r = triangulate(p,
+					new Line(new Point(400, 200), new Point(150, 200)));
 			assertEquals("split into two", 2, r.length);
 		}
 
 		@Test
 		public void triangulate_oo_ntd() {
 			// p1 outside, p2 outside, nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(0, 0), new Point(
-					400, 0)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(0, 0), new Point(400, 0)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -614,12 +617,13 @@ public class RingTests {
 		@Test
 		public void triangulate_oo_overlaps_edge_ntd() {
 			// p1 outside, p2 outside, overlaps edge, nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(0, 50), new Point(
-					400, 250)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(0, 50), new Point(400, 250)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(0, 350), new Point(400, 150)));
+			r = triangulate(p,
+					new Line(new Point(0, 350), new Point(400, 150)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
@@ -633,17 +637,18 @@ public class RingTests {
 		public void triangulate_oo1rv_ntd() {
 			// p1 outside, p2 outside, 1 real intersection (vertex), nothing to
 			// do
-			Polygon[] r = triangulate(p, new Line(new Point(0, 100), new Point(
-					200, 100)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(0, 100), new Point(200, 100)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(0, 300), new Point(200, 300)));
+			r = triangulate(p,
+					new Line(new Point(0, 300), new Point(200, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(300, 100),
-					new Point(300, 300)));
+			r = triangulate(p,
+					new Line(new Point(300, 100), new Point(300, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -653,8 +658,8 @@ public class RingTests {
 			// p1 outside, p2 outside, 2 real intersections (edge, edge), split
 			// into
 			// 3 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(200, 100),
-					new Point(200, 300)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(200, 100), new Point(200, 300)));
 			assertEquals("split into three", 3, r.length);
 			// TODO: verify that the created three polygons are those you wanted
 			// to
@@ -673,14 +678,16 @@ public class RingTests {
 		public void triangulate_oo2rve_s2() {
 			// p1 outside, p2 outside, 2 real intersections (vertex, edge),
 			// split into 2 pieces
-			Polygon[] r = triangulate(p, new Line(new Point(50, 200),
-					new Point(350, 200)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(50, 200), new Point(350, 200)));
 			assertEquals("split into two", 2, r.length);
 
-			r = triangulate(p, new Line(new Point(50, 50), new Point(300, 300)));
+			r = triangulate(p,
+					new Line(new Point(50, 50), new Point(300, 300)));
 			assertEquals("split into two", 2, r.length);
 
-			r = triangulate(p, new Line(new Point(50, 350), new Point(350, 50)));
+			r = triangulate(p,
+					new Line(new Point(50, 350), new Point(350, 50)));
 			assertEquals("split into two", 2, r.length);
 		}
 
@@ -688,18 +695,18 @@ public class RingTests {
 		public void triangulate_ov1rv_ntd() {
 			// p1 outside, p2 on vertex, 1 real intersection (vertex), nothing
 			// to do
-			Polygon[] r = triangulate(p, new Line(new Point(200, 100),
-					new Point(100, 100)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(200, 100), new Point(100, 100)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(200, 300),
-					new Point(100, 300)));
+			r = triangulate(p,
+					new Line(new Point(200, 300), new Point(100, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(300, 300),
-					new Point(300, 200)));
+			r = triangulate(p,
+					new Line(new Point(300, 300), new Point(300, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -717,33 +724,33 @@ public class RingTests {
 		@Test
 		public void triangulate_ve_overlaps_edge_ntd() {
 			// p1 on vertex, p2 on edge, overlaps edge, nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 100),
-					new Point(100, 200)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 100), new Point(100, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(100, 100),
-					new Point(150, 125)));
+			r = triangulate(p,
+					new Line(new Point(100, 100), new Point(150, 125)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(300, 200),
-					new Point(150, 125)));
+			r = triangulate(p,
+					new Line(new Point(300, 200), new Point(150, 125)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(300, 200),
-					new Point(150, 275)));
+			r = triangulate(p,
+					new Line(new Point(300, 200), new Point(150, 275)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(100, 300),
-					new Point(150, 275)));
+			r = triangulate(p,
+					new Line(new Point(100, 300), new Point(150, 275)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(100, 300),
-					new Point(100, 200)));
+			r = triangulate(p,
+					new Line(new Point(100, 300), new Point(100, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -782,18 +789,18 @@ public class RingTests {
 		public void triangulate_vo1rv_ntd() {
 			// p1 on vertex, p2 outside, 1 real intersection (vertex), nothing
 			// to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 100),
-					new Point(200, 100)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 100), new Point(200, 100)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(100, 300),
-					new Point(200, 300)));
+			r = triangulate(p,
+					new Line(new Point(100, 300), new Point(200, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(300, 200),
-					new Point(300, 300)));
+			r = triangulate(p,
+					new Line(new Point(300, 200), new Point(300, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -801,18 +808,18 @@ public class RingTests {
 		@Test
 		public void triangulate_vv_overlaps_edge_ntd() {
 			// p1 on vertex, p2 on vertex, overlaps edge, nothing to do
-			Polygon[] r = triangulate(p, new Line(new Point(100, 100),
-					new Point(100, 300)));
+			Polygon[] r = triangulate(p,
+					new Line(new Point(100, 100), new Point(100, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(100, 100),
-					new Point(300, 200)));
+			r = triangulate(p,
+					new Line(new Point(100, 100), new Point(300, 200)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 
-			r = triangulate(p, new Line(new Point(300, 200),
-					new Point(100, 300)));
+			r = triangulate(p,
+					new Line(new Point(300, 200), new Point(100, 300)));
 			assertEquals("nothing to do", 1, r.length);
 			assertEquals("polygon remains the same", p, r[0]);
 		}
@@ -835,8 +842,8 @@ public class RingTests {
 		@Test
 		public void both_points_on_first_edge() {
 			// inner
-			Polygon[] r = triangulate(p, new Point(100, 150), new Point(100,
-					250));
+			Polygon[] r = triangulate(p, new Point(100, 150),
+					new Point(100, 250));
 			assertEquals("1 resulting polygon", 1, r.length);
 			assertEquals("result equal to original", r[0], p);
 			assertNotSame("a copy is returned", r[0], p);
@@ -883,8 +890,8 @@ public class RingTests {
 		@Test
 		public void both_points_on_second_edge() {
 			// inner
-			Polygon[] r = triangulate(p, new Point(250, 225), new Point(150,
-					275));
+			Polygon[] r = triangulate(p, new Point(250, 225),
+					new Point(150, 275));
 			assertEquals("1 resulting polygon", 1, r.length);
 			assertEquals("result equal to original", r[0], p);
 			assertNotSame("a copy is returned", r[0], p);
@@ -931,8 +938,8 @@ public class RingTests {
 		@Test
 		public void both_points_on_third_edge() {
 			// inner
-			Polygon[] r = triangulate(p, new Point(150, 125), new Point(250,
-					175));
+			Polygon[] r = triangulate(p, new Point(150, 125),
+					new Point(250, 175));
 			assertEquals("1 resulting polygon", 1, r.length);
 			assertEquals("result equal to original", r[0], p);
 			assertNotSame("a copy is returned", r[0], p);
@@ -978,52 +985,44 @@ public class RingTests {
 
 		@Test
 		public void edge1_and_edge2() {
-			Polygon[] r = triangulate(p, new Point(100, 200), new Point(200,
-					250));
+			Polygon[] r = triangulate(p, new Point(100, 200),
+					new Point(200, 250));
 			assertEquals("3 resulting polygons", 3, r.length);
-			assertEquals(
-					"isolated-vertex polygon exists",
-					true,
-					exists(r, new Polygon(new Point(100, 300), new Point(100,
-							200), new Point(200, 250))));
+			assertEquals("isolated-vertex polygon exists", true,
+					exists(r, new Polygon(new Point(100, 300),
+							new Point(100, 200), new Point(200, 250))));
 			// TODO: test for existence of the other two pieces
 
 			r = triangulate(p, new Point(200, 250), new Point(100, 200));
 			assertEquals("3 resulting polygons", 3, r.length);
-			assertEquals(
-					"isolated-vertex polygon exists",
-					true,
-					exists(r, new Polygon(new Point(100, 300), new Point(100,
-							200), new Point(200, 250))));
+			assertEquals("isolated-vertex polygon exists", true,
+					exists(r, new Polygon(new Point(100, 300),
+							new Point(100, 200), new Point(200, 250))));
 			// TODO: test for existence of the other two pieces
 		}
 
 		@Test
 		public void edge1_and_edge3() {
-			Polygon[] r = triangulate(p, new Point(100, 200), new Point(200,
-					150));
+			Polygon[] r = triangulate(p, new Point(100, 200),
+					new Point(200, 150));
 			assertEquals("3 resulting polygons", 3, r.length);
-			assertEquals(
-					"isolated-vertex polygon exists",
-					true,
-					exists(r, new Polygon(new Point(100, 100), new Point(100,
-							200), new Point(200, 150))));
+			assertEquals("isolated-vertex polygon exists", true,
+					exists(r, new Polygon(new Point(100, 100),
+							new Point(100, 200), new Point(200, 150))));
 			// TODO: test for existence of the other two pieces
 
 			r = triangulate(p, new Point(200, 150), new Point(100, 200));
 			assertEquals("3 resulting polygons", 3, r.length);
-			assertEquals(
-					"isolated-vertex polygon exists",
-					true,
-					exists(r, new Polygon(new Point(100, 100), new Point(100,
-							200), new Point(200, 150))));
+			assertEquals("isolated-vertex polygon exists", true,
+					exists(r, new Polygon(new Point(100, 100),
+							new Point(100, 200), new Point(200, 150))));
 			// TODO: test for existence of the other two pieces
 		}
 
 		@Test
 		public void edge1_vertex3() {
-			Polygon[] r = triangulate(p, new Point(100, 200), new Point(300,
-					200));
+			Polygon[] r = triangulate(p, new Point(100, 200),
+					new Point(300, 200));
 			assertEquals("2 resulting polygons", 2, r.length);
 			assertEquals("left-side polygon exists", true,
 					exists(r, new Polygon(100, 100, 100, 200, 300, 200)));
@@ -1040,30 +1039,26 @@ public class RingTests {
 
 		@Test
 		public void edge2_and_edge3() {
-			Polygon[] r = triangulate(p, new Point(200, 250), new Point(200,
-					150));
+			Polygon[] r = triangulate(p, new Point(200, 250),
+					new Point(200, 150));
 			assertEquals("3 resulting polygons", 3, r.length);
-			assertEquals(
-					"isolated-vertex polygon exists",
-					true,
-					exists(r, new Polygon(new Point(200, 250), new Point(200,
-							150), new Point(300, 200))));
+			assertEquals("isolated-vertex polygon exists", true,
+					exists(r, new Polygon(new Point(200, 250),
+							new Point(200, 150), new Point(300, 200))));
 			// TODO: test for existence of the other two pieces
 
 			r = triangulate(p, new Point(200, 150), new Point(200, 250));
 			assertEquals("3 resulting polygons", 3, r.length);
-			assertEquals(
-					"isolated-vertex polygon exists",
-					true,
-					exists(r, new Polygon(new Point(200, 250), new Point(200,
-							150), new Point(300, 200))));
+			assertEquals("isolated-vertex polygon exists", true,
+					exists(r, new Polygon(new Point(200, 250),
+							new Point(200, 150), new Point(300, 200))));
 			// TODO: test for existence of the other two pieces
 		}
 
 		@Test
 		public void edge2_vertex1() {
-			Polygon[] r = triangulate(p, new Point(200, 250), new Point(100,
-					100));
+			Polygon[] r = triangulate(p, new Point(200, 250),
+					new Point(100, 100));
 			assertEquals("2 resulting polygons", 2, r.length);
 			assertEquals("left-side polygon exists", true,
 					exists(r, new Polygon(100, 100, 200, 250, 100, 300)));
@@ -1080,8 +1075,8 @@ public class RingTests {
 
 		@Test
 		public void edge3_vertex2() {
-			Polygon[] r = triangulate(p, new Point(200, 150), new Point(100,
-					300));
+			Polygon[] r = triangulate(p, new Point(200, 150),
+					new Point(100, 300));
 			assertEquals("2 resulting polygons", 2, r.length);
 			assertEquals("left-side polygon exists", true,
 					exists(r, new Polygon(200, 150, 100, 300, 100, 100)));
@@ -1106,8 +1101,8 @@ public class RingTests {
 					cause = cause.getCause();
 				}
 
-				assertTrue(cause.getClass().equals(
-						IllegalArgumentException.class));
+				assertTrue(cause.getClass()
+						.equals(IllegalArgumentException.class));
 			}
 		}
 
@@ -1122,8 +1117,8 @@ public class RingTests {
 					cause = cause.getCause();
 				}
 
-				assertTrue(cause.getClass().equals(
-						IllegalArgumentException.class));
+				assertTrue(cause.getClass()
+						.equals(IllegalArgumentException.class));
 			}
 		}
 
@@ -1138,8 +1133,8 @@ public class RingTests {
 					cause = cause.getCause();
 				}
 
-				assertTrue(cause.getClass().equals(
-						IllegalArgumentException.class));
+				assertTrue(cause.getClass()
+						.equals(IllegalArgumentException.class));
 			}
 		}
 
@@ -1154,8 +1149,8 @@ public class RingTests {
 					cause = cause.getCause();
 				}
 
-				assertTrue(cause.getClass().equals(
-						IllegalArgumentException.class));
+				assertTrue(cause.getClass()
+						.equals(IllegalArgumentException.class));
 			}
 		}
 
@@ -1169,8 +1164,8 @@ public class RingTests {
 			try {
 				Class<?> parameterTypes[] = new Class<?>[] { Polygon.class,
 						Point.class, Point.class };
-				Method triangulate = Ring.class.getDeclaredMethod(
-						"triangulate", parameterTypes);
+				Method triangulate = Ring.class.getDeclaredMethod("triangulate",
+						parameterTypes);
 				triangulate.setAccessible(true);
 				return (Polygon[]) triangulate.invoke(null, p, p1, p2);
 			} catch (Exception x) {

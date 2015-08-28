@@ -61,8 +61,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	 * @return A graph instance for the given DOT AST
 	 */
 	public Graph interpret(DotAst dotAst) {
-		return interpret(dotAst, new Graph.Builder().attr(
-				DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DEFAULT));
+		return interpret(dotAst,
+				new Graph.Builder().attr(DotProperties.GRAPH_LAYOUT,
+						DotProperties.GRAPH_LAYOUT_DEFAULT));
 	}
 
 	private Graph interpret(DotAst dotAst, Graph.Builder graph) {
@@ -73,8 +74,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		}
 		this.graph = graph;
 		nodes = new HashMap<String, Node>();
-		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(
-				dotAst.resource(), false);
+		TreeIterator<Object> contents = EcoreUtil
+				.getAllProperContents(dotAst.resource(), false);
 		while (contents.hasNext()) {
 			doSwitch((EObject) contents.next());
 		}
@@ -160,12 +161,13 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		/* Set the optional style, if set in the DOT input and supported: */
 		String currentEdgeStyleLc = new String(
 				currentEdgeStyleValue == null ? "" : currentEdgeStyleValue)
-				.toLowerCase();
-		String globalEdgeStyleLc = new String(globalEdgeStyle == null ? ""
-				: globalEdgeStyle).toLowerCase();
+						.toLowerCase();
+		String globalEdgeStyleLc = new String(
+				globalEdgeStyle == null ? "" : globalEdgeStyle).toLowerCase();
 		if (supported(currentEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
 			graphConnection.attr(DotProperties.EDGE_STYLE, currentEdgeStyleLc);
-		} else if (supported(globalEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
+		} else
+			if (supported(globalEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
 			graphConnection.attr(DotProperties.EDGE_STYLE, globalEdgeStyleLc);
 		}
 		graph.edges(graphConnection.build());
@@ -196,9 +198,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		graph.attr(DotProperties.GRAPH_LAYOUT,
 				DotProperties.GRAPH_LAYOUT_DEFAULT);
 		GraphType graphType = object.getType();
-		graph.attr(
-				DotProperties.GRAPH_TYPE,
-				graphType == GraphType.DIGRAPH ? DotProperties.GRAPH_TYPE_DIRECTED
+		graph.attr(DotProperties.GRAPH_TYPE,
+				graphType == GraphType.DIGRAPH
+						? DotProperties.GRAPH_TYPE_DIRECTED
 						: DotProperties.GRAPH_TYPE_UNDIRECTED);
 	}
 
@@ -230,9 +232,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					DotProperties.GRAPH_LAYOUT);
 			if (graphLayout != null) {
 				String graphLayoutLc = new String(graphLayout).toLowerCase();
-				if (!supported(graphLayoutLc, DotProperties.GRAPH_LAYOUT_VALUES)) {
+				if (!supported(graphLayoutLc,
+						DotProperties.GRAPH_LAYOUT_VALUES)) {
 					throw new IllegalArgumentException(
-							"Unknown layout algorithm <" + graphLayoutLc + ">.");
+							"Unknown layout algorithm <" + graphLayoutLc
+									+ ">.");
 				}
 				graph.attr(DotProperties.GRAPH_LAYOUT, graphLayoutLc);
 			}
@@ -311,8 +315,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private String escaped(String id) {
 		return id
-		/* In DOT, an ID can be quoted... */
-		.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$
+				/* In DOT, an ID can be quoted... */
+				.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$
 				/*
 				 * ...and may contain escaped quotes, see footnote on
 				 * http://www.graphviz.org/doc/info/lang.html

@@ -146,14 +146,14 @@ public class DimensionTests {
 
 	@Test
 	public void test_negate() {
-		assertTrue(new Dimension(1, 2).getNegated().equals(
-				new Dimension(-1, -2)));
-		assertTrue(new Dimension(-2, 1).getNegated().equals(
-				new Dimension(2, -1)));
-		assertTrue(new Dimension(1, -2).getNegated().equals(
-				new Dimension(-1, 2)));
-		assertTrue(new Dimension(-1, -2).getNegated().equals(
-				new Dimension(1, 2)));
+		assertTrue(
+				new Dimension(1, 2).getNegated().equals(new Dimension(-1, -2)));
+		assertTrue(
+				new Dimension(-2, 1).getNegated().equals(new Dimension(2, -1)));
+		assertTrue(
+				new Dimension(1, -2).getNegated().equals(new Dimension(-1, 2)));
+		assertTrue(
+				new Dimension(-1, -2).getNegated().equals(new Dimension(1, 2)));
 	}
 
 	@Test

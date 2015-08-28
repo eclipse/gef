@@ -139,9 +139,9 @@ public class Line extends BezierCurve {
 				&& PrecisionUtils.equal(x2, getX2())
 				&& PrecisionUtils.equal(y2, getY2())
 				|| PrecisionUtils.equal(x2, getX1())
-				&& PrecisionUtils.equal(y2, getY1())
-				&& PrecisionUtils.equal(x1, getX2())
-				&& PrecisionUtils.equal(y1, getY2());
+						&& PrecisionUtils.equal(y2, getY1())
+						&& PrecisionUtils.equal(x1, getX2())
+						&& PrecisionUtils.equal(y1, getY2());
 	}
 
 	@Override
@@ -302,8 +302,9 @@ public class Line extends BezierCurve {
 				double param2 = s2.getParameterAt(vi);
 				param1 = param1 < 0 ? 0 : param1 > 1 ? 1 : param1;
 				param2 = param2 < 0 ? 0 : param2 > 1 ? 1 : param2;
-				intervalPairs.add(new IntervalPair(this, new Interval(param1,
-						param1), other, new Interval(param2, param2)));
+				intervalPairs.add(
+						new IntervalPair(this, new Interval(param1, param1),
+								other, new Interval(param2, param2)));
 			}
 		}
 		return intervalPairs;
@@ -532,7 +533,8 @@ public class Line extends BezierCurve {
 
 	@Override
 	public String toString() {
-		return "Line: (" + getX1() + ", " + getY1() + ") -> (" + getX2() + ", " + getY2() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		return "Line: (" + getX1() + ", " + getY1() + ") -> (" + getX2() + ", " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ getY2() + ")"; //$NON-NLS-1$
 	}
 
 	@Override

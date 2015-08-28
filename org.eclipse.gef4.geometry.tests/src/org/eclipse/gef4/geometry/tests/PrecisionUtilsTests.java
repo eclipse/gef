@@ -97,7 +97,8 @@ public class PrecisionUtilsTests {
 		assertTrue(PrecisionUtils.greaterEqual(-unrec, 0));
 		assertTrue(PrecisionUtils.greaterEqual(-PRECISION_FRACTION, 0));
 		assertFalse(PrecisionUtils.greaterEqual(-1, 0));
-		assertFalse(PrecisionUtils.greaterEqual(-PRECISION_FRACTION - unrec, 0));
+		assertFalse(
+				PrecisionUtils.greaterEqual(-PRECISION_FRACTION - unrec, 0));
 	}
 
 	@Test

@@ -70,20 +70,17 @@ import com.google.inject.multibindings.MapBinder;
  */
 public class ContentSynchronizationTests {
 
-	public static class ContentPartFactory implements
-			IContentPartFactory<Object> {
+	public static class ContentPartFactory implements IContentPartFactory<Object> {
 		@Inject
 		private Provider<TreeContentPart> treeContentPartProvider;
 
 		@Override
-		public IContentPart<Object, ? extends Object> createContentPart(
-				Object content, IBehavior<Object> contextBehavior,
-				Map<Object, Object> contextMap) {
+		public IContentPart<Object, ? extends Object> createContentPart(Object content,
+				IBehavior<Object> contextBehavior, Map<Object, Object> contextMap) {
 			if (content instanceof Tree) {
 				return treeContentPartProvider.get();
 			}
-			throw new IllegalArgumentException("Unknown content type: "
-					+ content);
+			throw new IllegalArgumentException("Unknown content type: " + content);
 		}
 	}
 
@@ -99,12 +96,10 @@ public class ContentSynchronizationTests {
 		}
 	}
 
-	public static class FeedbackPartFactory implements
-			IFeedbackPartFactory<Object> {
+	public static class FeedbackPartFactory implements IFeedbackPartFactory<Object> {
 		@Override
 		public List<IFeedbackPart<Object, ? extends Object>> createFeedbackParts(
-				List<? extends IVisualPart<Object, ? extends Object>> targets,
-				IBehavior<Object> contextBehavior,
+				List<? extends IVisualPart<Object, ? extends Object>> targets, IBehavior<Object> contextBehavior,
 				Map<Object, Object> contextMap) {
 			return Collections.emptyList();
 		}
@@ -113,8 +108,7 @@ public class ContentSynchronizationTests {
 	public static class HandlePartFactory implements IHandlePartFactory<Object> {
 		@Override
 		public List<IHandlePart<Object, ? extends Object>> createHandleParts(
-				List<? extends IVisualPart<Object, ? extends Object>> targets,
-				IBehavior<Object> contextBehavior,
+				List<? extends IVisualPart<Object, ? extends Object>> targets, IBehavior<Object> contextBehavior,
 				Map<Object, Object> contextMap) {
 			return Collections.emptyList();
 		}
@@ -126,14 +120,11 @@ public class ContentSynchronizationTests {
 			install(new AdapterMapInjectionSupport());
 			// undo context and operation history (required because of field
 			// injections)
-			binder().bind(IUndoContext.class).to(UndoContext.class)
-					.in(AdaptableScopes.typed(IDomain.class));
-			binder().bind(IOperationHistory.class)
-					.to(DefaultOperationHistory.class)
+			binder().bind(IUndoContext.class).to(UndoContext.class).in(AdaptableScopes.typed(IDomain.class));
+			binder().bind(IOperationHistory.class).to(DefaultOperationHistory.class)
 					.in(AdaptableScopes.typed(IDomain.class));
 			// bind default viewer models
-			binder().bind(ContentModel.class).in(
-					AdaptableScopes.typed(IViewer.class));
+			binder().bind(ContentModel.class).in(AdaptableScopes.typed(IViewer.class));
 			// bind factories (required because of field injections)
 			binder().bind(new TypeLiteral<IHandlePartFactory<Object>>() {
 			}).to(HandlePartFactory.class);
@@ -146,48 +137,41 @@ public class ContentSynchronizationTests {
 			}).to(Domain.class);
 			binder().bind(new TypeLiteral<IViewer<Object>>() {
 			}).to(Viewer.class);
-			binder().bind(
-					new TypeLiteral<IRootPart<Object, ? extends Object>>() {
-					}).to(RootPart.class);
+			binder().bind(new TypeLiteral<IRootPart<Object, ? extends Object>>() {
+			}).to(RootPart.class);
 			// bind Viewer as adapter for Domain
-			AdapterMaps.getAdapterMapBinder(binder(), Domain.class)
-					.addBinding(AdapterKey.get(IViewer.class))
+			AdapterMaps.getAdapterMapBinder(binder(), Domain.class).addBinding(AdapterKey.get(IViewer.class))
 					.to(new TypeLiteral<IViewer<Object>>() {
 					});
 			// bind RootPart as viewer adapter
-			MapBinder<AdapterKey<?>, Object> viewerAdapterMapBinder = AdapterMaps
-					.getAdapterMapBinder(binder(), Viewer.class);
+			MapBinder<AdapterKey<?>, Object> viewerAdapterMapBinder = AdapterMaps.getAdapterMapBinder(binder(),
+					Viewer.class);
 			viewerAdapterMapBinder.addBinding(AdapterKey.get(IRootPart.class))
 					.to(new TypeLiteral<IRootPart<Object, ? extends Object>>() {
 					});
-			viewerAdapterMapBinder.addBinding(
-					AdapterKey.get(ContentModel.class)).to(ContentModel.class);
+			viewerAdapterMapBinder.addBinding(AdapterKey.get(ContentModel.class)).to(ContentModel.class);
 			viewerAdapterMapBinder.addBinding(AdapterKey.get(HoverModel.class))
 					.to(new TypeLiteral<HoverModel<Object>>() {
 					});
-			viewerAdapterMapBinder.addBinding(
-					AdapterKey.get(SelectionModel.class)).to(
-					new TypeLiteral<SelectionModel<Object>>() {
+			viewerAdapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class))
+					.to(new TypeLiteral<SelectionModel<Object>>() {
 					});
 			// bind ContentBehavior for RootPart
-			MapBinder<AdapterKey<?>, Object> rootPartAdapterMapBinder = AdapterMaps
-					.getAdapterMapBinder(binder(), RootPart.class);
-			rootPartAdapterMapBinder.addBinding(
-					AdapterKey.get(ContentBehavior.class)).to(
-					new TypeLiteral<ContentBehavior<Object>>() {
+			MapBinder<AdapterKey<?>, Object> rootPartAdapterMapBinder = AdapterMaps.getAdapterMapBinder(binder(),
+					RootPart.class);
+			rootPartAdapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
+					.to(new TypeLiteral<ContentBehavior<Object>>() {
 					});
 			// bind ContentBehavior for the TreeContentPart
 			AdapterMaps.getAdapterMapBinder(binder(), TreeContentPart.class)
-					.addBinding(AdapterKey.get(ContentBehavior.class))
-					.to(new TypeLiteral<ContentBehavior<Object>>() {
+					.addBinding(AdapterKey.get(ContentBehavior.class)).to(new TypeLiteral<ContentBehavior<Object>>() {
 					});
 		}
 	}
 
 	public static class RootPart extends AbstractRootPart<Object, Object> {
 		@Override
-		protected void addChildVisual(
-				IVisualPart<Object, ? extends Object> child, int index) {
+		protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 
 		@Override
@@ -200,8 +184,7 @@ public class ContentSynchronizationTests {
 		}
 
 		@Override
-		protected void removeChildVisual(
-				IVisualPart<Object, ? extends Object> child, int index) {
+		protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 	}
 
@@ -234,11 +217,9 @@ public class ContentSynchronizationTests {
 		}
 	}
 
-	public static class TreeContentPart extends
-			AbstractContentPart<Object, Object> {
+	public static class TreeContentPart extends AbstractContentPart<Object, Object> {
 		@Override
-		protected void addChildVisual(
-				IVisualPart<Object, ? extends Object> child, int index) {
+		protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 
 		@Override
@@ -271,8 +252,7 @@ public class ContentSynchronizationTests {
 		}
 
 		@Override
-		protected void removeChildVisual(
-				IVisualPart<Object, ? extends Object> child, int index) {
+		protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 	}
 
@@ -301,8 +281,7 @@ public class ContentSynchronizationTests {
 
 	@After
 	public void deactivate() {
-		viewer.getAdapter(ContentModel.class).setContents(
-				Collections.emptyList());
+		viewer.getAdapter(ContentModel.class).setContents(Collections.emptyList());
 		domain.deactivate();
 	}
 

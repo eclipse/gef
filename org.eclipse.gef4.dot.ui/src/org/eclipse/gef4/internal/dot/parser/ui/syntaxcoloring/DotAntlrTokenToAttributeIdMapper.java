@@ -19,8 +19,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeId
  * @author anyssen
  *
  */
-public class DotAntlrTokenToAttributeIdMapper extends
-		DefaultAntlrTokenToAttributeIdMapper {
+public class DotAntlrTokenToAttributeIdMapper
+		extends DefaultAntlrTokenToAttributeIdMapper {
 
 	@Override
 	protected String calculateId(String tokenName, int tokenType) {

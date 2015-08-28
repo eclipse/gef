@@ -71,7 +71,7 @@ public final class DotExport {
 	public String toString() {
 		/* The exact name 'Graph' is not valid for rendering with Graphviz: */
 		return graphName.equals("Graph") ? "Dot" + graphName //$NON-NLS-1$//$NON-NLS-2$
-		: graphName;
+				: graphName;
 	}
 
 	private static String graphToDot(final Graph graph) {

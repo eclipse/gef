@@ -40,7 +40,8 @@ import com.google.common.collect.SetMultimap;
  * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
  * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
- * <code>[n:m]</code> anchorage-anchored relationship ( {@link #getAnchorages()}, {@link #getAnchoreds()}) may be established between {@link IVisualPart}s
+ * <code>[n:m]</code> anchorage-anchored relationship ( {@link #getAnchorages()}
+ * , {@link #getAnchoreds()}) may be established between {@link IVisualPart}s
  * located at arbitrary places within the hierarchy.
  * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
@@ -71,8 +72,8 @@ import com.google.common.collect.SetMultimap;
  * @param <V>
  *            The visual node used by this {@link IVisualPart}.
  */
-public interface IVisualPart<VR, V extends VR> extends IAdaptable,
-		IActivatable, IPropertyChangeNotifier, IDisposable {
+public interface IVisualPart<VR, V extends VR>
+		extends IAdaptable, IActivatable, IPropertyChangeNotifier, IDisposable {
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";

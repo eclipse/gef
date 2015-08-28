@@ -85,7 +85,8 @@ public class FXGridLayer extends Pane {
 
 			final Scale scale = gridScaleProperty.get();
 			// don't paint grid points if size is to large
-			if (((width / scale.getX()) * (height / scale.getY()) > GRID_THRESHOLD)) {
+			if (((width / scale.getX())
+					* (height / scale.getY()) > GRID_THRESHOLD)) {
 				return;
 			}
 
@@ -95,7 +96,8 @@ public class FXGridLayer extends Pane {
 					* scale.getX();
 			double scaledGridCellHeight = gridCellHeightProperty.get()
 					* scale.getY();
-			for (double x = (-getParent().getLayoutX()) % scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
+			for (double x = (-getParent().getLayoutX())
+					% scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
 				for (double y = (-getParent().getLayoutY())
 						% scaledGridCellHeight; y < height; y += scaledGridCellHeight) {
 					gc.fillRect(Math.floor(x) - 0.5 * scale.getX(),
@@ -183,7 +185,8 @@ public class FXGridLayer extends Pane {
 			final ReadOnlyObjectProperty<Bounds> minSizeProperty) {
 		minWidthProperty().bind(new DoubleBinding() {
 			{
-				super.bind(minSizeProperty, gridScaleProperty.get().xProperty());
+				super.bind(minSizeProperty,
+						gridScaleProperty.get().xProperty());
 			}
 
 			@Override
@@ -197,7 +200,8 @@ public class FXGridLayer extends Pane {
 
 		minHeightProperty().bind(new DoubleBinding() {
 			{
-				super.bind(minSizeProperty, gridScaleProperty.get().yProperty());
+				super.bind(minSizeProperty,
+						gridScaleProperty.get().yProperty());
 			}
 
 			@Override

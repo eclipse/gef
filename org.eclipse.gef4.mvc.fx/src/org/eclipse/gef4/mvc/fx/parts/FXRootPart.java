@@ -120,8 +120,8 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		 * value will not be recomputed (computeBounds() will not be called)
 		 * even if invalidated.
 		 */
-		contentLayer.boundsInLocalProperty().addListener(
-				new ChangeListener<Bounds>() {
+		contentLayer.boundsInLocalProperty()
+				.addListener(new ChangeListener<Bounds>() {
 					@Override
 					public void changed(
 							ObservableValue<? extends Bounds> observable,
@@ -133,8 +133,8 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 
 		handleLayer = createHandleLayer();
 
-		return createScrollPaneContent(new Node[] { contentLayer,
-				feedbackLayer, handleLayer });
+		return createScrollPaneContent(
+				new Node[] { contentLayer, feedbackLayer, handleLayer });
 	}
 
 	@Override

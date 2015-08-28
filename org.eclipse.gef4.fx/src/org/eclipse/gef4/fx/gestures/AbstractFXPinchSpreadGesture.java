@@ -48,8 +48,8 @@ public abstract class AbstractFXPinchSpreadGesture extends AbstractFXGesture {
 
 	@Override
 	protected void register() {
-		getScene()
-				.addEventHandler(ZoomEvent.ZOOM_FINISHED, zoomFinishedHandler);
+		getScene().addEventHandler(ZoomEvent.ZOOM_FINISHED,
+				zoomFinishedHandler);
 		getScene().addEventHandler(ZoomEvent.ZOOM_STARTED, zoomStartedHandler);
 		getScene().addEventHandler(ZoomEvent.ZOOM, zoomHandler);
 	}

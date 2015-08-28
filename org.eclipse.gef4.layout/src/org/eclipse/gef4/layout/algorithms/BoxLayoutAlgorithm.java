@@ -41,8 +41,8 @@ public class BoxLayoutAlgorithm extends GridLayoutAlgorithm {
 			throw new RuntimeException("Invalid orientation: " + orientation);
 	}
 
-	protected int[] calculateNumberOfRowsAndCols(int numChildren,
-			double boundX, double boundY, double boundWidth, double boundHeight) {
+	protected int[] calculateNumberOfRowsAndCols(int numChildren, double boundX,
+			double boundY, double boundWidth, double boundHeight) {
 		if (orientation == HORIZONTAL)
 			return new int[] { numChildren, 1 };
 		else

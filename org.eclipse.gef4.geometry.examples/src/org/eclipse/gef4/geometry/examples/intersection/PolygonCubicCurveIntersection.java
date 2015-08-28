@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.Display;
  * @author Matthias Wienand (matthias.wienand@itemis.de)
  * 
  */
-public class PolygonCubicCurveIntersection extends
-		AbstractPolygonIntersectionExample {
+public class PolygonCubicCurveIntersection
+		extends AbstractPolygonIntersectionExample {
 
 	public static void main(String[] args) {
 		new PolygonCubicCurveIntersection();
@@ -47,7 +47,8 @@ public class PolygonCubicCurveIntersection extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {
@@ -69,8 +70,9 @@ public class PolygonCubicCurveIntersection extends
 			@Override
 			public void drawShape(GC gc) {
 				CubicCurve c = createGeometry();
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(c.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(c.toPath())));
 			}
 		};
 	}

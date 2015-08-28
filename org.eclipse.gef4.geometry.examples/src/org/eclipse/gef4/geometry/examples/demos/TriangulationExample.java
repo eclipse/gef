@@ -34,8 +34,9 @@ public class TriangulationExample extends AbstractExample {
 	protected ControllableShape[] getControllableShapes() {
 		return new ControllableShape[] { new ControllableShape() {
 			{
-				addControlPoints(new Point(300 / 2, 100 / 2), new Point(
-						100 / 2, 200 / 2), new Point(200 / 2, 300 / 2),
+				addControlPoints(new Point(300 / 2, 100 / 2),
+						new Point(100 / 2, 200 / 2),
+						new Point(200 / 2, 300 / 2),
 						new Point(100 / 2, 500 / 2),
 						new Point(300 / 2, 400 / 2),
 						new Point(500 / 2, 600 / 2),
@@ -57,8 +58,8 @@ public class TriangulationExample extends AbstractExample {
 
 				// System.out.println("p = " + p);
 
-				gc.setForeground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_RED));
+				gc.setForeground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 
 				Polygon[] triangulation;
 				try {
@@ -72,8 +73,8 @@ public class TriangulationExample extends AbstractExample {
 
 				int lineWidth = gc.getLineWidth();
 				gc.setLineWidth(lineWidth + 2);
-				gc.setForeground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLACK));
+				gc.setForeground(
+						Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 
 				gc.drawPolygon(Geometry2SWT.toSWTPointArray(p));
 

@@ -162,8 +162,7 @@ public class ZestContentViewerTests {
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements
-			IColorProvider, IFontProvider, IToolTipProvider,
+	static class MyLabelProvider extends LabelProvider implements IColorProvider, IFontProvider, IToolTipProvider,
 			IGraphNodeLabelProvider, INestedGraphLabelProvider {
 		private static Image image = new Image(display, 10, 10);
 
@@ -173,16 +172,14 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public Map<String, Object> getEdgeAttributes(Object sourceNode,
-				Object targetNode) {
+		public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
 			return Collections.singletonMap("edge", (Object) true);
 		}
 
 		@Override
 		public Font getFont(Object element) {
-			return element.toString().startsWith("F") ? new Font(display,
-					"Times New Roman", 12, SWT.BOLD) : new Font(display,
-					"Times New Roman", 8, SWT.ITALIC);
+			return element.toString().startsWith("F") ? new Font(display, "Times New Roman", 12, SWT.BOLD)
+					: new Font(display, "Times New Roman", 8, SWT.ITALIC);
 		}
 
 		@Override
@@ -254,8 +251,7 @@ public class ZestContentViewerTests {
 		}
 	}
 
-	static class NullLabelProvider extends LabelProvider implements
-			IColorProvider, IFontProvider, IToolTipProvider,
+	static class NullLabelProvider extends LabelProvider implements IColorProvider, IFontProvider, IToolTipProvider,
 			IGraphNodeLabelProvider, INestedGraphLabelProvider {
 		@Override
 		public Color getBackground(Object element) {
@@ -263,8 +259,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public Map<String, Object> getEdgeAttributes(Object sourceNode,
-				Object targetNode) {
+		public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
 			return null;
 		}
 
@@ -337,14 +332,11 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_colorProvider() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node firstNode = contentNodeMap
-				.get(MyContentProvider.first());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		// green background, black foreground
 		String rectCssStyle = ZestProperties.getNodeRectCssStyle(firstNode);
-		assertEquals("-fx-fill: rgb(0,255,0);-fx-stroke: rgb(0,0,0);",
-				rectCssStyle);
+		assertEquals("-fx-fill: rgb(0,255,0);-fx-stroke: rgb(0,0,0);", rectCssStyle);
 		// => black label
 		String labelCssStyle = ZestProperties.getNodeLabelCssStyle(firstNode);
 		assertTrue(labelCssStyle.startsWith("-fx-fill: rgb(0,0,0);"));
@@ -353,24 +345,19 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_fontProvider() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node firstNode = contentNodeMap
-				.get(MyContentProvider.first());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		String labelCssStyle = ZestProperties.getNodeLabelCssStyle(firstNode);
 		// -fx-fill due to IColorProvider
 		assertTrue(labelCssStyle.startsWith("-fx-fill: rgb(0,0,0);"));
-		assertTrue(labelCssStyle
-				.contains("-fx-font-family: \"Times New Roman\";"));
+		assertTrue(labelCssStyle.contains("-fx-font-family: \"Times New Roman\";"));
 		assertTrue(labelCssStyle.contains("-fx-font-size: 12pt;"));
 		assertTrue(labelCssStyle.contains("-fx-font-weight: bold;"));
 		// check second style (italic)
-		org.eclipse.gef4.graph.Node secondNode = contentNodeMap
-				.get(MyContentProvider.second());
+		org.eclipse.gef4.graph.Node secondNode = contentNodeMap.get(MyContentProvider.second());
 		labelCssStyle = ZestProperties.getNodeLabelCssStyle(secondNode);
 		assertTrue(labelCssStyle.startsWith("-fx-fill: rgb(0,0,0);"));
-		assertTrue(labelCssStyle
-				.contains("-fx-font-family: \"Times New Roman\";"));
+		assertTrue(labelCssStyle.contains("-fx-font-family: \"Times New Roman\";"));
 		assertTrue(labelCssStyle.contains("-fx-font-size: 8pt;"));
 		assertTrue(labelCssStyle.contains("-fx-font-style: italic;"));
 	}
@@ -378,10 +365,8 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_labelProvider() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node firstNode = contentNodeMap
-				.get(MyContentProvider.first());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		String label = ZestProperties.getLabel(firstNode);
 		assertEquals(MyContentProvider.first(), label);
 		javafx.scene.image.Image icon = ZestProperties.getIcon(firstNode);
@@ -392,24 +377,19 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_nestedGraphContentProvider() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node firstNode = contentNodeMap
-				.get(MyContentProvider.first());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		Graph nestedGraph = firstNode.getNestedGraph();
 		assertNotNull(nestedGraph);
-		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap
-				.get(MyContentProvider.alpha());
+		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
 		assertEquals(nestedGraph, alphaNode.getGraph());
 	}
 
 	@Test
 	public void test_nestedLabelProvder_nestedGraphAttributes() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap
-				.get(MyContentProvider.alpha());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
 		Graph nestedGraph = alphaNode.getGraph();
 		assertTrue(nestedGraph.getAttrs().containsKey("nested"));
 		assertTrue((Boolean) nestedGraph.getAttrs().get("nested"));
@@ -420,10 +400,8 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_nodeLabelProvder_edgeAttributes() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap
-				.get(MyContentProvider.alpha());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
 		Graph nestedGraph = alphaNode.getGraph();
 		Edge edge = nestedGraph.getEdges().get(0);
 		assertTrue(edge.getAttrs().containsKey("edge"));
@@ -435,10 +413,8 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_nodeLabelProvder_nodeAttributes() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap
-				.get(MyContentProvider.alpha());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
 		assertTrue(alphaNode.getAttrs().containsKey("node"));
 		assertTrue((Boolean) alphaNode.getAttrs().get("node"));
 		// ensure node does not get edge attributes
@@ -448,10 +424,8 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_nodeLabelProvder_rootGraphAttributes() {
 		viewer.setInput(new Object());
-		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer
-				.getContentNodeMap();
-		org.eclipse.gef4.graph.Node firstNode = contentNodeMap
-				.get(MyContentProvider.first());
+		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
+		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		Graph rootGraph = firstNode.getGraph();
 		assertTrue(rootGraph.getAttrs().containsKey("root"));
 		assertTrue((Boolean) rootGraph.getAttrs().get("root"));
@@ -492,8 +466,7 @@ public class ZestContentViewerTests {
 		ISelectionChangedListener expectingSelectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				StructuredSelection structuredSelection = (StructuredSelection) event
-						.getSelection();
+				StructuredSelection structuredSelection = (StructuredSelection) event.getSelection();
 				assertEquals(expectation, structuredSelection.toList());
 				expectation.clear();
 			}
@@ -503,15 +476,12 @@ public class ZestContentViewerTests {
 
 		// determine "First" node
 		FXViewer fxViewer = viewer.getFXViewer();
-		org.eclipse.gef4.graph.Node firstNode = viewer.getContentNodeMap().get(
-				MyContentProvider.first());
+		org.eclipse.gef4.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 
 		// select "First" node
 		expectation.add(firstNode);
-		IContentPart<Node, ? extends Node> firstPart = fxViewer
-				.getContentPartMap().get(firstNode);
-		fxViewer.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.select(Collections.singletonList(firstPart));
+		IContentPart<Node, ? extends Node> firstPart = fxViewer.getContentPartMap().get(firstNode);
+		fxViewer.<SelectionModel<Node>> getAdapter(SelectionModel.class).select(Collections.singletonList(firstPart));
 	}
 
 	@Test
@@ -521,21 +491,17 @@ public class ZestContentViewerTests {
 		viewer.setLayoutAlgorithm(layoutAlgorithm);
 		assertEquals(layoutAlgorithm, viewer.getLayoutAlgorithm());
 		viewer.setInput(new Object());
-		Graph rootGraph = (Graph) viewer.getFXViewer()
-				.getAdapter(ContentModel.class).getContents().get(0);
+		Graph rootGraph = (Graph) viewer.getFXViewer().getAdapter(ContentModel.class).getContents().get(0);
 		assertEquals(layoutAlgorithm, ZestProperties.getLayout(rootGraph));
 	}
 
 	@Test
 	public void test_setSelection() {
 		viewer.setInput(new Object());
-		org.eclipse.gef4.graph.Node firstNode = viewer.getContentNodeMap().get(
-				MyContentProvider.first());
+		org.eclipse.gef4.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 		viewer.setSelection(new StructuredSelection(Arrays.asList(firstNode)));
-		List<IContentPart<Node, ? extends Node>> selected = viewer
-				.getFXViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelected();
+		List<IContentPart<Node, ? extends Node>> selected = viewer.getFXViewer()
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class).getSelected();
 		assertEquals(1, selected.size());
 		IContentPart<Node, ? extends Node> selectedPart = selected.get(0);
 		assertEquals(firstNode, selectedPart.getContent());
@@ -544,13 +510,10 @@ public class ZestContentViewerTests {
 	@Test
 	public void test_toolTipProvider() {
 		viewer.setInput(new Object());
-		org.eclipse.gef4.graph.Node node = viewer.getContentNodeMap().get(
-				MyContentProvider.first());
-		assertEquals(MyContentProvider.first().toUpperCase(),
-				ZestProperties.getTooltip(node));
+		org.eclipse.gef4.graph.Node node = viewer.getContentNodeMap().get(MyContentProvider.first());
+		assertEquals(MyContentProvider.first().toUpperCase(), ZestProperties.getTooltip(node));
 		node = viewer.getContentNodeMap().get(MyContentProvider.second());
-		assertEquals(MyContentProvider.second().toUpperCase(),
-				ZestProperties.getTooltip(node));
+		assertEquals(MyContentProvider.second().toUpperCase(), ZestProperties.getTooltip(node));
 	}
 
 }

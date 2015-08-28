@@ -39,8 +39,7 @@ public interface IGraphNodeLabelProvider extends ILabelProvider {
 	 * @return A mapping from attribute names to values that should be set on
 	 *         the specified edge.
 	 */
-	public Map<String, Object> getEdgeAttributes(Object sourceNode,
-			Object targetNode);
+	public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode);
 
 	/**
 	 * Determines the attributes that should be set on the node represented by

@@ -16,10 +16,8 @@ import org.eclipse.gef4.fx.nodes.IFXDecoration;
 
 public interface IEdgeDecorationProvider {
 
-	public IFXDecoration getSourceDecoration(Object contentSourceNode,
-			Object contentTargetNode);
+	public IFXDecoration getSourceDecoration(Object contentSourceNode, Object contentTargetNode);
 
-	public IFXDecoration getTargetDecoration(Object contentSourceNode,
-			Object contentTargetNode);
+	public IFXDecoration getTargetDecoration(Object contentSourceNode, Object contentTargetNode);
 
 }

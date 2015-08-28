@@ -20,8 +20,8 @@ import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public abstract class AbstractFXContentPart<V extends Node> extends
-		AbstractContentPart<Node, V> {
+public abstract class AbstractFXContentPart<V extends Node>
+		extends AbstractContentPart<Node, V> {
 
 	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, V visual) {

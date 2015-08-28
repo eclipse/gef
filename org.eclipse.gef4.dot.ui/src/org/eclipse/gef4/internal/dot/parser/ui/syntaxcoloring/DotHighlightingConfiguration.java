@@ -17,8 +17,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfigurati
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
-public class DotHighlightingConfiguration extends
-		DefaultHighlightingConfiguration {
+public class DotHighlightingConfiguration
+		extends DefaultHighlightingConfiguration {
 
 	public static final String GRAPH_NAME_ID = "graph_name"; //$NON-NLS-1$
 	public static final String NODE_NAME_ID = "node_name"; //$NON-NLS-1$

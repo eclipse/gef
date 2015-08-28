@@ -23,8 +23,7 @@ public class FXConversionTests {
 	public void test_PathConversion() {
 		// create a simple path and convert it from geometry to javafx and back
 		// again!
-		Path p = new Path().moveTo(50, 50).lineTo(100, 100)
-				.quadTo(100, 150, 50, 150).cubicTo(20, 120, 20, 80, 50, 50)
+		Path p = new Path().moveTo(50, 50).lineTo(100, 100).quadTo(100, 150, 50, 150).cubicTo(20, 120, 20, 80, 50, 50)
 				.close();
 		assertEquals(p, JavaFX2Geometry.toPath(Geometry2JavaFX.toPath(p)));
 	}

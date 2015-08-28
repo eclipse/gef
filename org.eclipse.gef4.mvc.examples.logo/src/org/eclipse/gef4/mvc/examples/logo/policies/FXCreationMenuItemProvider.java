@@ -27,8 +27,8 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 
 import com.google.inject.Provider;
 
-public class FXCreationMenuItemProvider implements
-		Provider<List<IFXCreationMenuItem>> {
+public class FXCreationMenuItemProvider
+		implements Provider<List<IFXCreationMenuItem>> {
 
 	static class GeometricShapeItem implements IFXCreationMenuItem {
 		private final FXGeometricShape template;
@@ -69,19 +69,21 @@ public class FXCreationMenuItemProvider implements
 	public List<IFXCreationMenuItem> get() {
 		List<IFXCreationMenuItem> items = new ArrayList<IFXCreationMenuItem>();
 		// handle shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel
-				.createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1,
-				0, 0), Color.WHITE, FXGeometricModel.GEF_SHADOW_EFFECT)));
+		items.add(new GeometricShapeItem(new FXGeometricShape(
+				FXGeometricModel.createHandleShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 0, 0), Color.WHITE,
+				FXGeometricModel.GEF_SHADOW_EFFECT)));
 		// E shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel
-				.createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100,
-				22), FXGeometricModel.GEF_COLOR_BLUE,
-				FXGeometricModel.GEF_SHADOW_EFFECT)));
+		items.add(new GeometricShapeItem(
+				new FXGeometricShape(FXGeometricModel.createEShapeGeometry(),
+						new AffineTransform(1, 0, 0, 1, 100, 22),
+						FXGeometricModel.GEF_COLOR_BLUE,
+						FXGeometricModel.GEF_SHADOW_EFFECT)));
 		// cursor shape
-		items.add(new GeometricShapeItem(new FXGeometricShape(FXGeometricModel
-				.createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1,
-				227, 45), Color.WHITE, 2, Color.BLACK,
-				FXGeometricModel.GEF_SHADOW_EFFECT)));
+		items.add(new GeometricShapeItem(new FXGeometricShape(
+				FXGeometricModel.createCursorShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 227, 45), Color.WHITE, 2,
+				Color.BLACK, FXGeometricModel.GEF_SHADOW_EFFECT)));
 		return items;
 	}
 

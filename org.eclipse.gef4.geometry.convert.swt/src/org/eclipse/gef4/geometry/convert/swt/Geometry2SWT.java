@@ -42,8 +42,7 @@ public class Geometry2SWT {
 	 * @return The {@link PathData} representing this path.
 	 */
 	public static final PathData toSWTPathData(Path p) {
-		return AWT2SWT.toSWTPathData(Geometry2AWT.toAWTPath(p).getPathIterator(
-				null));
+		return AWT2SWT.toSWTPathData(Geometry2AWT.toAWTPath(p).getPathIterator(null));
 	}
 
 	/**
@@ -70,8 +69,7 @@ public class Geometry2SWT {
 	 *         x1, y1, x2, y2
 	 */
 	public static final int[] toSWTPointArray(Line l) {
-		return PointListUtils.toIntegerArray(PointListUtils
-				.toCoordinatesArray(l.getPoints()));
+		return PointListUtils.toIntegerArray(PointListUtils.toCoordinatesArray(l.getPoints()));
 	}
 
 	/**
@@ -98,10 +96,9 @@ public class Geometry2SWT {
 	private static final int[] toSWTPointArray(Point[] points, Point centroid) {
 		int[] SWTPointArray = new int[points.length * 2];
 		for (int i = 0; i < points.length; i++) {
-			SWTPointArray[2 * i] = (int) (points[i].x < centroid.x ? Math
-					.floor(points[i].x) : Math.ceil(points[i].x));
-			SWTPointArray[2 * i + 1] = (int) (points[i].y < centroid.y ? Math
-					.floor(points[i].y) : Math.ceil(points[i].y));
+			SWTPointArray[2 * i] = (int) (points[i].x < centroid.x ? Math.floor(points[i].x) : Math.ceil(points[i].x));
+			SWTPointArray[2 * i
+					+ 1] = (int) (points[i].y < centroid.y ? Math.floor(points[i].y) : Math.ceil(points[i].y));
 		}
 		return SWTPointArray;
 	}
@@ -174,14 +171,10 @@ public class Geometry2SWT {
 	 * @return An {@link org.eclipse.swt.graphics.Rectangle} representation of
 	 *         this {@link Rectangle}.
 	 */
-	public static final org.eclipse.swt.graphics.Rectangle toSWTRectangle(
-			Rectangle r) {
-		return new org.eclipse.swt.graphics.Rectangle(
-				(int) Math.floor(r.getX()),
-				(int) Math.floor(r.getY()),
+	public static final org.eclipse.swt.graphics.Rectangle toSWTRectangle(Rectangle r) {
+		return new org.eclipse.swt.graphics.Rectangle((int) Math.floor(r.getX()), (int) Math.floor(r.getY()),
 				(int) Math.ceil(r.getWidth() + r.getX() - Math.floor(r.getX())),
-				(int) Math
-						.ceil(r.getHeight() + r.getY() - Math.floor(r.getY())));
+				(int) Math.ceil(r.getHeight() + r.getY() - Math.floor(r.getY())));
 	}
 
 	/**

@@ -64,16 +64,14 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 						"SynchronizeContentChildren", GraphContentPart.this);
 				SynchronizeContentAnchoragesOperation<Node> syncAnchoragesOp = new SynchronizeContentAnchoragesOperation<Node>(
 						"SynchronizeContentAnchorage", GraphContentPart.this);
-				ForwardUndoCompositeOperation syncOp = new ForwardUndoCompositeOperation(
-						"SynchronizeContent");
+				ForwardUndoCompositeOperation syncOp = new ForwardUndoCompositeOperation("SynchronizeContent");
 				syncOp.add(syncChildrenOp);
 				syncOp.add(syncAnchoragesOp);
 				try {
 					syncOp.execute(null, null);
 					pcs.firePropertyChange(SYNC_COMPLETE_PROPERTY, false, true);
 				} catch (ExecutionException e) {
-					throw new IllegalStateException(
-							"Cannot synchronize with contents.", e);
+					throw new IllegalStateException("Cannot synchronize with contents.", e);
 				}
 			}
 		}
@@ -82,17 +80,15 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy
-		setAdapter(AdapterKey.get(AbstractFXOnHoverPolicy.class),
-				new AbstractFXOnHoverPolicy() {
-					@Override
-					public void hover(MouseEvent e) {
-					}
-				});
+		setAdapter(AdapterKey.get(AbstractFXOnHoverPolicy.class), new AbstractFXOnHoverPolicy() {
+			@Override
+			public void hover(MouseEvent e) {
+			}
+		});
 	}
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
 	}
 
@@ -138,8 +134,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
-			int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
 
@@ -154,8 +149,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
 			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
-			if (layoutContext != null
-					&& layoutContext.getStaticLayoutAlgorithm() != algo) {
+			if (layoutContext != null && layoutContext.getStaticLayoutAlgorithm() != algo) {
 				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
 			}
 		}

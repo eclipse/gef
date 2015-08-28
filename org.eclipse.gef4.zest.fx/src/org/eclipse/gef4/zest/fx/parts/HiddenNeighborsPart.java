@@ -32,11 +32,9 @@ public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 	private Text text;
 
 	@Override
-	protected void attachToAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		super.attachToAnchorageVisual(anchorage, role);
-		getVisual().visibleProperty().bind(
-				anchorage.getVisual().visibleProperty());
+		getVisual().visibleProperty().bind(anchorage.getVisual().visibleProperty());
 	}
 
 	// TODO: extract visual to its own type
@@ -57,16 +55,14 @@ public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		super.detachFromAnchorageVisual(anchorage, role);
 		getVisual().visibleProperty().unbind();
 	}
 
 	@Override
 	protected void doRefreshVisual(Group visual) {
-		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchorages()
-				.keySet();
+		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchorages().keySet();
 		if (keySet.isEmpty()) {
 			return;
 		}
@@ -76,9 +72,8 @@ public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 		}
 
 		// update position
-		Bounds anchorageLayoutBoundsInLocal = getVisual().sceneToLocal(
-				anchorage.getVisual().localToScene(
-						anchorage.getVisual().getLayoutBounds()));
+		Bounds anchorageLayoutBoundsInLocal = getVisual()
+				.sceneToLocal(anchorage.getVisual().localToScene(anchorage.getVisual().getLayoutBounds()));
 		double x = anchorageLayoutBoundsInLocal.getMaxX();
 		double y = anchorageLayoutBoundsInLocal.getMaxY();
 		circle.setCenterX(x);
@@ -86,8 +81,7 @@ public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 
 		// update text
 		HidingModel hidingModel = getViewer().getAdapter(HidingModel.class);
-		int count = hidingModel.getHiddenNeighbors(
-				((NodeContentPart) anchorage).getContent()).size();
+		int count = hidingModel.getHiddenNeighbors(((NodeContentPart) anchorage).getContent()).size();
 		text.setText(Integer.toString(count));
 
 		Bounds textLayoutBounds = text.getLayoutBounds();
@@ -100,8 +94,7 @@ public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 		circle.setRadius(size / 2);
 
 		// update text position
-		text.relocate(x - textLayoutBounds.getWidth() / 2,
-				y - textLayoutBounds.getHeight() / 2);
+		text.relocate(x - textLayoutBounds.getWidth() / 2, y - textLayoutBounds.getHeight() / 2);
 	}
 
 }

@@ -15,16 +15,16 @@ package org.eclipse.gef4.cloudio.ui.util;
 import org.eclipse.gef4.cloudio.ui.util.RectTree.RectNode;
 
 /**
- * This class contains all global information about the drawable area 
- * and the layouted words in form of a {@link RectTree}.
+ * This class contains all global information about the drawable area and the
+ * layouted words in form of a {@link RectTree}.
  * 
  * @author sschwieb
  *
  */
 public class CloudMatrix {
-	
+
 	private RectTree tree;
-	
+
 	private final int max;
 
 	private final int minResolution;
@@ -38,13 +38,13 @@ public class CloudMatrix {
 		this.minResolution = minResolution;
 		reset();
 	}
-	
+
 	public short get(int x, int y) {
-		return tree.getRoot().getWordId(x*minResolution,y*minResolution);
+		return tree.getRoot().getWordId(x * minResolution, y * minResolution);
 	}
-	
+
 	public boolean isEmpty(int x, int y) {
-		short id = tree.getRoot().getWordId(x*minResolution, y*minResolution);
+		short id = tree.getRoot().getWordId(x * minResolution, y * minResolution);
 		return id == RectTree.EMPTY;
 	}
 
@@ -59,5 +59,5 @@ public class CloudMatrix {
 		SmallRect rect = new SmallRect(cleanX, cleanY, minResolution, minResolution);
 		tree.insert(rect, id);
 	}
-	
+
 }

@@ -20,8 +20,8 @@ import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class EllipsePolylineIntersection extends
-		AbstractEllipseIntersectionExample {
+public class EllipsePolylineIntersection
+		extends AbstractEllipseIntersectionExample {
 
 	/**
 	 * @param args
@@ -40,7 +40,8 @@ public class EllipsePolylineIntersection extends
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

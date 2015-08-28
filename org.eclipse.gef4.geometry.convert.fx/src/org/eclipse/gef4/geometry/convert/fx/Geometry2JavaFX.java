@@ -111,19 +111,17 @@ public class Geometry2JavaFX {
 				elements[i] = new LineTo(points[0].x, points[0].y);
 				break;
 			case Segment.QUAD_TO:
-				elements[i] = new QuadCurveTo(points[0].x, points[0].y,
-						points[1].x, points[1].y);
+				elements[i] = new QuadCurveTo(points[0].x, points[0].y, points[1].x, points[1].y);
 				break;
 			case Segment.CUBIC_TO:
-				elements[i] = new CubicCurveTo(points[0].x, points[0].y,
-						points[1].x, points[1].y, points[2].x, points[2].y);
+				elements[i] = new CubicCurveTo(points[0].x, points[0].y, points[1].x, points[1].y, points[2].x,
+						points[2].y);
 				break;
 			case Segment.CLOSE:
 				elements[i] = new ClosePath();
 				break;
 			default:
-				throw new IllegalStateException("Unknown Path.Segment: <"
-						+ segments[i] + ">");
+				throw new IllegalStateException("Unknown Path.Segment: <" + segments[i] + ">");
 			}
 		}
 		return elements;
@@ -138,10 +136,8 @@ public class Geometry2JavaFX {
 	 * @return The new JavaFX {@link javafx.scene.shape.Path}.
 	 */
 	public static javafx.scene.shape.Path toPath(Path path) {
-		javafx.scene.shape.Path fxPath = new javafx.scene.shape.Path(
-				toPathElements(path));
-		fxPath.setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD
-				: FillRule.NON_ZERO);
+		javafx.scene.shape.Path fxPath = new javafx.scene.shape.Path(toPathElements(path));
+		fxPath.setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD : FillRule.NON_ZERO);
 		return fxPath;
 	}
 

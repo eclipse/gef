@@ -55,7 +55,8 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
 				.getChildren().get(0);
 		if (!(modelPart instanceof FXGeometricModelPart)) {
-			throw new IllegalStateException("Cannot find FXGeometricModelPart.");
+			throw new IllegalStateException(
+					"Cannot find FXGeometricModelPart.");
 		}
 
 		creationPolicy.create((FXGeometricModelPart) modelPart, curve);
@@ -109,10 +110,7 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 		}
 
 		// override drag target with segment handle part
-		getHost()
-				.getRoot()
-				.getViewer()
-				.getDomain()
+		getHost().getRoot().getViewer().getDomain()
 				.getAdapter(FXClickDragTool.class)
 				.overrideTargetForThisInteraction(eventTarget,
 						lastSegmentHandlePart);

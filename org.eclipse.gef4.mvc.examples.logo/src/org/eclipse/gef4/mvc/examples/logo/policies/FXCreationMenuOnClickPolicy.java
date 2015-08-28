@@ -145,8 +145,8 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 	 * Stores the padding around visuals used to circumvent translation issues
 	 * when applying a drop shadow effect.
 	 */
-	private final double padding = DROP_SHADOW_RADIUS + 1 + ARROW_STROKE_WIDTH
-			* 2 + 1;
+	private final double padding = DROP_SHADOW_RADIUS + 1
+			+ ARROW_STROKE_WIDTH * 2 + 1;
 
 	/**
 	 * The {@link HBox} in which all menu visuals are layed out.
@@ -238,10 +238,8 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 		// highlighting
 		templateGroup.setEffect(createDropShadowReflectionEffect(
 				DROP_SHADOW_RADIUS, Color.TRANSPARENT));
-		effectOnHover(
-				templateGroup,
-				createDropShadowReflectionEffect(DROP_SHADOW_RADIUS,
-						HIGHLIGHT_COLOR));
+		effectOnHover(templateGroup, createDropShadowReflectionEffect(
+				DROP_SHADOW_RADIUS, HIGHLIGHT_COLOR));
 
 		// register click action
 		templateGroup.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -314,12 +312,12 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 
 		// compute translation based on the bounds, scaling, and width/height
 		// deltas
-		AffineTransform contentsTransform = getViewer().getAdapter(
-				ViewportModel.class).getContentsTransform();
-		double x = boundsInContent.getMinX() - bounds.getMinX()
-				/ contentsTransform.getScaleX() - dx / 2;
-		double y = boundsInContent.getMinY() - bounds.getMinY()
-				/ contentsTransform.getScaleY() - dy / 2;
+		AffineTransform contentsTransform = getViewer()
+				.getAdapter(ViewportModel.class).getContentsTransform();
+		double x = boundsInContent.getMinX()
+				- bounds.getMinX() / contentsTransform.getScaleX() - dx / 2;
+		double y = boundsInContent.getMinY()
+				- bounds.getMinY() / contentsTransform.getScaleY() - dy / 2;
 
 		// create the new semantic element
 		IFXCreationMenuItem item = items.get(currentItemIndex);
@@ -369,17 +367,17 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 	private void refreshMenuItem() {
 		// exchange template visual
 		templateGroup.getChildren().clear();
-		templateGroup.getChildren().add(
-				items.get(currentItemIndex).createVisual());
+		templateGroup.getChildren()
+				.add(items.get(currentItemIndex).createVisual());
 	}
 
 	private void refreshMenuItems() {
 		@SuppressWarnings("serial")
 		List<IFXCreationMenuItem> menuItems = getHost()
-				.<Provider<List<IFXCreationMenuItem>>> getAdapter(
-						AdapterKey
-								.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
-								}, MENU_ITEM_PROVIDER_ROLE)).get();
+				.<Provider<List<IFXCreationMenuItem>>> getAdapter(AdapterKey
+						.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
+						}, MENU_ITEM_PROVIDER_ROLE))
+				.get();
 		this.items.clear();
 		this.items.addAll(menuItems);
 		// compute max width and height
@@ -401,17 +399,15 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 	}
 
 	private StackPane wrapWithPadding(Node node, double padding) {
-		return wrapWithPadding(node, padding,
-				node.getLayoutBounds().getWidth(), node.getLayoutBounds()
-						.getHeight());
+		return wrapWithPadding(node, padding, node.getLayoutBounds().getWidth(),
+				node.getLayoutBounds().getHeight());
 	}
 
 	private StackPane wrapWithPadding(Node node, double padding, double width,
 			double height) {
 		StackPane stack = new StackPane();
-		stack.getChildren().addAll(
-				new Rectangle(width + padding + padding, height + padding
-						+ padding, Color.TRANSPARENT), node);
+		stack.getChildren().addAll(new Rectangle(width + padding + padding,
+				height + padding + padding, Color.TRANSPARENT), node);
 		return stack;
 	}
 

@@ -90,17 +90,17 @@ public class AdaptableTypeListener implements TypeListener {
 	public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
 		if (IAdaptable.class.isAssignableFrom(type.getRawType())) {
 			for (final Method method : type.getRawType().getMethods()) {
-				for (int i = 0; i < method.getParameterAnnotations().length; i++) {
+				for (int i = 0; i < method
+						.getParameterAnnotations().length; i++) {
 					AdapterMap methodAnnotation = getAnnotation(
 							method.getParameterAnnotations()[i],
 							AdapterMap.class);
 					// we have a method annotated with AdapterBinding
 					if (methodAnnotation != null) {
 						if (method.getParameterTypes().length != 1) {
-							encounter
-									.addError(
-											"AdapterBinding annotation is only valid on one-parameter operations.",
-											method);
+							encounter.addError(
+									"AdapterBinding annotation is only valid on one-parameter operations.",
+									method);
 						}
 						// TODO: check parameter type is appropriate
 						// System.out.println("Registering member injector to "

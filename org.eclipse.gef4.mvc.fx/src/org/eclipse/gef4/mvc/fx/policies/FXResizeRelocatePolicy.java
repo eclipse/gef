@@ -21,8 +21,8 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 // TODO: check if we really need this policy, as we now have the transform policy
-public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
+		implements ITransactional {
 
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
@@ -31,8 +31,8 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"ResizeRelocate");
 		FXResizePolicy resizePolicy = getResizePolicy();
-		IUndoableOperation commit = resizePolicy == null ? null : resizePolicy
-				.commit();
+		IUndoableOperation commit = resizePolicy == null ? null
+				: resizePolicy.commit();
 		if (commit != null) {
 			fwd.add(commit);
 		}
@@ -78,7 +78,8 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
+	public void performResizeRelocate(double dx, double dy, double dw,
+			double dh) {
 		// relocate in middle of resize area if no resize policy is available
 		FXResizePolicy resizePolicy = getResizePolicy();
 		if (resizePolicy == null) {
@@ -93,8 +94,8 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 		FXTransformPolicy transformPolicy = getTransformPolicy();
 		if (transformPolicy != null) {
-			transformPolicy.setPreConcatenation(new AffineTransform()
-					.setToTranslation(dx, dy));
+			transformPolicy.setPreConcatenation(
+					new AffineTransform().setToTranslation(dx, dy));
 		}
 	}
 

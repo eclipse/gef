@@ -33,8 +33,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
-		ITransactional {
+public class ContentPolicy<VR> extends AbstractPolicy<VR>
+		implements ITransactional {
 
 	private ForwardUndoCompositeOperation commitOperation;
 
@@ -74,8 +74,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
 		ForwardUndoCompositeOperation attachOperation = new ForwardUndoCompositeOperation(
 				"Attach To Content Anchorage");
-		attachOperation.add(new AttachToContentAnchorageOperation<VR>(
-				getHost(), contentAnchorage, role));
+		attachOperation.add(new AttachToContentAnchorageOperation<VR>(getHost(),
+				contentAnchorage, role));
 		attachOperation.add(new SynchronizeContentAnchoragesOperation<VR>(
 				"Synchronize Anchorages", getHost()));
 		commitOperation.add(attachOperation);
@@ -109,15 +109,17 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	public void detachAllContentAnchoreds() {
 		ForwardUndoCompositeOperation detachOps = new ForwardUndoCompositeOperation(
 				"Detach All Anchoreds");
-		for (IVisualPart<VR, ? extends VR> anchored : getHost().getAnchoreds()) {
+		for (IVisualPart<VR, ? extends VR> anchored : getHost()
+				.getAnchoreds()) {
 			if (anchored instanceof IContentPart) {
 				ContentPolicy<VR> policy = anchored
 						.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
 				if (policy != null) {
 					policy.init();
-					for (String role : anchored.getAnchorages().get(getHost())) {
-						policy.detachFromContentAnchorage(getHost()
-								.getContent(), role);
+					for (String role : anchored.getAnchorages()
+							.get(getHost())) {
+						policy.detachFromContentAnchorage(
+								getHost().getContent(), role);
 					}
 					IUndoableOperation detachOperation = policy.commit();
 					if (detachOperation != null) {
@@ -137,8 +139,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	 * this {@link ContentPolicy} from all content anchorages.
 	 */
 	public void detachFromAllContentAnchorages() {
-		for (IVisualPart<VR, ? extends VR> anchorage : getHost()
-				.getAnchorages().keySet()) {
+		for (IVisualPart<VR, ? extends VR> anchorage : getHost().getAnchorages()
+				.keySet()) {
 			if (anchorage instanceof IContentPart) {
 				for (String role : getHost().getAnchorages().get(anchorage)) {
 					detachFromContentAnchorage(
@@ -161,7 +163,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	 * @param role
 	 *            The role under which the anchorage is detached.
 	 */
-	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+	public void detachFromContentAnchorage(Object contentAnchorage,
+			String role) {
 		// assemble content operations in forward-undo-operations, so that
 		// synchronization is always performed after changing the content
 		// model (in execute() and undo())
@@ -197,8 +200,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	public void removeContentChild(Object contentChild) {
 		ForwardUndoCompositeOperation removeOperation = new ForwardUndoCompositeOperation(
 				"Remove Content Child");
-		removeOperation.add(new RemoveContentChildOperation<VR>(getHost(),
-				contentChild));
+		removeOperation.add(
+				new RemoveContentChildOperation<VR>(getHost(), contentChild));
 		removeOperation.add(new SynchronizeContentChildrenOperation<VR>(
 				"Synchronize Children", getHost()));
 		commitOperation.add(removeOperation);

@@ -28,8 +28,8 @@ public class DotAstTests {
 
 	@Test
 	public void parseSampleInput() {
-		DotAst ast = new DotAst(DotFileUtils.read(new File(RESOURCES_TESTS
-				+ "sample_input.dot")));
+		DotAst ast = new DotAst(DotFileUtils
+				.read(new File(RESOURCES_TESTS + "sample_input.dot")));
 		Assert.assertEquals("SampleGraph", ast.graphName()); //$NON-NLS-1$
 		Assert.assertEquals(0, ast.errors().size());
 	}

@@ -41,18 +41,18 @@ public class TypeCollector {
 
 	public static List<Type> getData(File file, String encoding) throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-		BufferedReader br = new BufferedReader(new InputStreamReader(bis, encoding));			
+		BufferedReader br = new BufferedReader(new InputStreamReader(bis, encoding));
 		StringBuffer text = new StringBuffer();
 		String s;
-		while((s = br.readLine()) != null) {
+		while ((s = br.readLine()) != null) {
 			text.append(s + "\n");
 		}
 		br.close();
 		Set<String> stops = new HashSet<String>();
-		if(stopWords != null) {
+		if (stopWords != null) {
 			bis = new BufferedInputStream(new FileInputStream(stopWords));
 			br = new BufferedReader(new InputStreamReader(bis, encoding));
-			while((s = br.readLine()) != null) {
+			while ((s = br.readLine()) != null) {
 				stops.add(s.toLowerCase().trim());
 			}
 			br.close();
@@ -88,11 +88,11 @@ public class TypeCollector {
 		}
 		return getMostImportantTypes(strings);
 	}
-	
+
 	private static List<Type> getMostImportantTypes(final Map<String, Integer> strings) {
 		List<Type> types = new ArrayList<Type>();
 		Iterator<Entry<String, Integer>> iterator = strings.entrySet().iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Entry<String, Integer> entry = iterator.next();
 			Type type = new Type(entry.getKey(), entry.getValue());
 			types.add(type);

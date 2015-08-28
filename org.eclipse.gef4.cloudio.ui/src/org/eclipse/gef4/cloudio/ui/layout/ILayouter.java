@@ -22,10 +22,11 @@ import org.eclipse.swt.graphics.Rectangle;
  *
  */
 public interface ILayouter {
-	
+
 	/**
-	 * Places the given word within the defined rectangle, starting
-	 * at the initial position. 
+	 * Places the given word within the defined rectangle, starting at the
+	 * initial position.
+	 * 
 	 * @param initial
 	 * @param word
 	 * @param cloudArea
@@ -33,20 +34,21 @@ public interface ILayouter {
 	 * @return whether the given word could be placed or not
 	 */
 	public boolean layout(Point initial, final Word word, final Rectangle cloudArea, CloudMatrix cloudMatrix);
-	
+
 	/**
-	 * Calculates the initial offset of the given word, within the bounds
-	 * of the specified rectangle. The layout algorithm will try to find
-	 * a matching position around the initial offset.
+	 * Calculates the initial offset of the given word, within the bounds of the
+	 * specified rectangle. The layout algorithm will try to find a matching
+	 * position around the initial offset.
+	 * 
 	 * @param word
 	 * @param cloudArea
 	 * @return the initial offset for the given word
 	 */
 	public Point getInitialOffset(Word word, Rectangle cloudArea);
-	
+
 	/**
-	 * Set Layouter-specific options. See {@link DefaultLayouter}
-	 * as an example.
+	 * Set Layouter-specific options. See {@link DefaultLayouter} as an example.
+	 * 
 	 * @param optionName
 	 * @param object
 	 */

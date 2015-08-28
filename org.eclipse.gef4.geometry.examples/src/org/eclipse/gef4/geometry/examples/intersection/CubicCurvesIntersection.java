@@ -59,24 +59,26 @@ public class CubicCurvesIntersection extends AbstractIntersectionExample {
 			public void drawShape(GC gc) {
 				CubicCurve curve = (CubicCurve) createGeometry();
 
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(curve
-						.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(curve.toPath())));
 			}
 		};
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
-		return createControllableCubicBezierCurveShape(canvas, new Point(100,
-				100), new Point(150, 50), new Point(310, 300), new Point(400,
-				200));
+	protected AbstractControllableShape createControllableShape1(
+			Canvas canvas) {
+		return createControllableCubicBezierCurveShape(canvas,
+				new Point(100, 100), new Point(150, 50), new Point(310, 300),
+				new Point(400, 200));
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
-		return createControllableCubicBezierCurveShape(canvas, new Point(400,
-				100), new Point(310, 110), new Point(210, 210), new Point(100,
-				200));
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
+		return createControllableCubicBezierCurveShape(canvas,
+				new Point(400, 100), new Point(310, 110), new Point(210, 210),
+				new Point(100, 200));
 	}
 }

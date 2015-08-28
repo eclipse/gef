@@ -51,8 +51,8 @@ public class GraphLayoutContextTests {
 	}
 
 	public static Node n(String label) {
-		return new Node.Builder().attr(ZestProperties.ELEMENT_LABEL, label)
-				.attr(ZestProperties.ELEMENT_CSS_ID, ID++).build();
+		return new Node.Builder().attr(ZestProperties.ELEMENT_LABEL, label).attr(ZestProperties.ELEMENT_CSS_ID, ID++)
+				.build();
 	}
 
 	public static List<Node> nodes(String... labels) {
@@ -93,8 +93,7 @@ public class GraphLayoutContextTests {
 	 * @see IConnectionLayout#getSource()
 	 * @see IConnectionLayout#getTarget()
 	 */
-	private void checkEdgeIdentity(List<Edge> edges, GraphLayoutContext glc,
-			int x) {
+	private void checkEdgeIdentity(List<Edge> edges, GraphLayoutContext glc, int x) {
 		IConnectionLayout layout = glc.getConnections()[x];
 		INodeLayout source = layout.getSource();
 		INodeLayout target = layout.getTarget();
@@ -142,8 +141,7 @@ public class GraphLayoutContextTests {
 	 * @param x
 	 *            node index
 	 */
-	private void checkNodeIdentity(List<Node> nodes, GraphLayoutContext glc,
-			int x) {
+	private void checkNodeIdentity(List<Node> nodes, GraphLayoutContext glc, int x) {
 		Object[] items = glc.getNodes()[x].getItems();
 		assertEquals(1, items.length);
 		assertSame(nodes.get(x), items[0]);
@@ -159,8 +157,7 @@ public class GraphLayoutContextTests {
 	 * @param glc
 	 *            layout context to check
 	 */
-	private void checkNodesAndEdges(List<Node> nodes, List<Edge> edges,
-			GraphLayoutContext glc) {
+	private void checkNodesAndEdges(List<Node> nodes, List<Edge> edges, GraphLayoutContext glc) {
 		for (int i = 0; i < nodes.size(); i++) {
 			checkNodeIdentity(nodes, glc, i);
 		}
@@ -180,8 +177,7 @@ public class GraphLayoutContextTests {
 	 * @param glc
 	 *            layout context
 	 */
-	private void checkSizes(List<Node> nodes, List<Edge> edges,
-			GraphLayoutContext glc) {
+	private void checkSizes(List<Node> nodes, List<Edge> edges, GraphLayoutContext glc) {
 		assertEquals(nodes.size(), glc.getNodes().length);
 		assertEquals(edges.size(), glc.getConnections().length);
 		assertEquals(nodes.size(), glc.getEntities().length);

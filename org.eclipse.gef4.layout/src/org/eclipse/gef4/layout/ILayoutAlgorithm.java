@@ -13,7 +13,6 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
-
 /**
  * An interface for all layout algorithms.
  * 

@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class AboutDialog extends Dialog {
-	
+
 	private static final int RE_LAYOUT = 2;
 	private TagCloud tc;
 
@@ -46,20 +46,20 @@ public class AboutDialog extends Dialog {
 		super(parentShell);
 		setBlockOnOpen(false);
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		parent.setLayout(new GridLayout());
 		tc = new TagCloud(parent, SWT.NONE) {
-			
+
 			public Rectangle getClientArea() {
 				return new Rectangle(0, 0, 400, 330);
 			};
-			
+
 		};
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint=330;
-		data.widthHint=400;
+		data.heightHint = 330;
+		data.widthHint = 400;
 		tc.setLayoutData(data);
 		tc.setMaxFontSize(50);
 		tc.setMinFontSize(15);
@@ -73,22 +73,24 @@ public class AboutDialog extends Dialog {
 		colors[3] = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);
 		colors[4] = Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
 		Word w = getWord("Cloudio", fontNames, colors);
-		w.weight=0.95;
-		w.angle=-35;
+		w.weight = 0.95;
+		w.angle = -35;
 		w.setColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		values.add(w);
 		w = getWord("Inspired by Wordle", fontNames, colors);
 		w.setColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		w.angle = (float) (Math.random() * 90);
-		if(Math.random() < 0.5) w.angle = -w.angle;
-		w.weight=0.2;
-		if(Math.random() < 0.5) w.angle = -w.angle;
+		if (Math.random() < 0.5)
+			w.angle = -w.angle;
+		w.weight = 0.2;
+		if (Math.random() < 0.5)
+			w.angle = -w.angle;
 		values.add(w);
 		w = getWord("Used by " + System.getProperty("user.name"), fontNames, colors);
 		w.setColor(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		w.weight = 0.2;
 		values.add(w);
-		for(int i = 0; i < 20; i++) {
+		for (int i = 0; i < 20; i++) {
 			w = getWord("Cloudio", fontNames, colors);
 			values.add(w);
 			w = getWord("Tag Cloud", fontNames, colors);
@@ -101,28 +103,28 @@ public class AboutDialog extends Dialog {
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-				true);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, RE_LAYOUT, "Do the inevitable...", false);
 	}
 
 	@Override
 	protected void buttonPressed(int buttonId) {
-		if(buttonId == RE_LAYOUT) {
+		if (buttonId == RE_LAYOUT) {
 			tc.layoutCloud(null, false);
 		} else {
-			super.buttonPressed(buttonId);			
+			super.buttonPressed(buttonId);
 		}
 	}
 
 	private Word getWord(String string, String[] fontNames, Color[] colors) {
 		Word w = new Word(string);
-		w.setColor(colors[(int) (Math.random()*colors.length-1)]);
-		w.weight = Math.random()/2;
+		w.setColor(colors[(int) (Math.random() * colors.length - 1)]);
+		w.weight = Math.random() / 2;
 		w.setFontData(getShell().getFont().getFontData());
 		w.angle = (float) (Math.random() * 20);
-		if(Math.random() < 0.5) w.angle = -w.angle;
-		String name = fontNames[(int) (Math.random()*(fontNames.length-1))];
+		if (Math.random() < 0.5)
+			w.angle = -w.angle;
+		String name = fontNames[(int) (Math.random() * (fontNames.length - 1))];
 		for (FontData fd : w.getFontData()) {
 			fd.setName(name);
 		}

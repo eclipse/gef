@@ -27,7 +27,8 @@ import org.eclipse.swt.widgets.Canvas;
  * @author Matthias Wienand (matthias.wienand@itemis.de)
  * 
  */
-public class EllipseLineIntersection extends AbstractEllipseIntersectionExample {
+public class EllipseLineIntersection
+		extends AbstractEllipseIntersectionExample {
 
 	public static void main(String[] args) {
 		new EllipseLineIntersection();
@@ -43,7 +44,8 @@ public class EllipseLineIntersection extends AbstractEllipseIntersectionExample 
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

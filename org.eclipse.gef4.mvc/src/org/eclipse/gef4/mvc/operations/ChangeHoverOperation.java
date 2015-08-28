@@ -39,8 +39,8 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 
 	public ChangeHoverOperation(IViewer<VR> viewer,
 			IVisualPart<VR, ? extends VR> newHovered) {
-		this(DEFAULT_LABEL, viewer, viewer.getAdapter(HoverModel.class)
-				.getHover(), newHovered);
+		this(DEFAULT_LABEL, viewer,
+				viewer.getAdapter(HoverModel.class).getHover(), newHovered);
 	}
 
 	public ChangeHoverOperation(IViewer<VR> viewer,

@@ -27,8 +27,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-public class FXHoverFeedbackPart extends
-		AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
+public class FXHoverFeedbackPart
+		extends AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
 
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 	public static final String EFFECT_PROVIDER = "HoverFeedbackEffectProvider";
@@ -76,8 +76,8 @@ public class FXHoverFeedbackPart extends
 	}
 
 	protected IGeometry getFeedbackGeometry() {
-		return FXUtils
-				.sceneToLocal(getVisual(), feedbackGeometryProvider.get());
+		return FXUtils.sceneToLocal(getVisual(),
+				feedbackGeometryProvider.get());
 	}
 
 	public Effect getHoverFeedbackEffect() {
@@ -85,8 +85,8 @@ public class FXHoverFeedbackPart extends
 		if (!getAnchorages().isEmpty()) {
 			IVisualPart<Node, ? extends Node> host = getAnchorages().keys()
 					.iterator().next();
-			effectProvider = host.getAdapter(AdapterKey.get(
-					new TypeToken<Provider<? extends Effect>>() {
+			effectProvider = host.getAdapter(
+					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {
 					}, EFFECT_PROVIDER));
 		}
 		if (effectProvider == null) {

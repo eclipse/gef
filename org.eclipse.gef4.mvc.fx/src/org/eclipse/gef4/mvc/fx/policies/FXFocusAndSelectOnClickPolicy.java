@@ -46,23 +46,20 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 				if (append) {
 					// deselect the target edit part (ensure we get a new
 					// primary selection)
-					selectionModel
-							.deselect(Collections
-									.singleton((IContentPart<Node, ? extends Node>) host));
+					selectionModel.deselect(Collections.singleton(
+							(IContentPart<Node, ? extends Node>) host));
 				}
 			} else {
 				if (append) {
 					// append to current selection (as new primary)
-					selectionModel
-							.select(Collections
-									.singletonList((IContentPart<Node, ? extends Node>) host));
+					selectionModel.select(Collections.singletonList(
+							(IContentPart<Node, ? extends Node>) host));
 				} else {
 					// clear old selection, target should become the only
 					// selected
 					selectionModel.deselectAll();
-					selectionModel
-							.select(Collections
-									.singletonList((IContentPart<Node, ? extends Node>) host));
+					selectionModel.select(Collections.singletonList(
+							(IContentPart<Node, ? extends Node>) host));
 				}
 			}
 		} else if (host instanceof IRootPart) {

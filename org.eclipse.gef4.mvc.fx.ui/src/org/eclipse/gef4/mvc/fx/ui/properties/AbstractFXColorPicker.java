@@ -42,8 +42,8 @@ public abstract class AbstractFXColorPicker extends Group {
 			Color.LIGHTGREY);
 
 	public static class ColorWheel {
-		public static void render(WritableImage image, int offsetX,
-				int offsetY, int size) {
+		public static void render(WritableImage image, int offsetX, int offsetY,
+				int size) {
 			PixelWriter px = image.getPixelWriter();
 			double radius = size / 2;
 			Point2D mid = new Point2D(radius, radius);
@@ -52,8 +52,8 @@ public abstract class AbstractFXColorPicker extends Group {
 					double d = mid.distance(x, y);
 					if (d <= radius) {
 						// compute hue angle
-						double angleRad = d == 0 ? 0 : Math.atan2(
-								y - mid.getY(), x - mid.getX());
+						double angleRad = d == 0 ? 0
+								: Math.atan2(y - mid.getY(), x - mid.getX());
 						// compute saturation depending on distance to middle
 						// ([0;1])
 						double sat = d / radius;
@@ -61,7 +61,8 @@ public abstract class AbstractFXColorPicker extends Group {
 								1);
 						px.setColor(offsetX + x, offsetY + y, color);
 					} else {
-						px.setColor(offsetX + x, offsetY + y, Color.TRANSPARENT);
+						px.setColor(offsetX + x, offsetY + y,
+								Color.TRANSPARENT);
 					}
 				}
 			}
@@ -100,8 +101,8 @@ public abstract class AbstractFXColorPicker extends Group {
 		// color rect
 		Rectangle colorRect = new Rectangle(50, 20);
 		// bind to ColorWheel instead of buttonPane to prevent layout problems.
-		colorRect.widthProperty().bind(
-				colorWheel.fitWidthProperty().add(insets.getLeft())
+		colorRect.widthProperty()
+				.bind(colorWheel.fitWidthProperty().add(insets.getLeft())
 						.add(insets.getRight()).multiply(2.5)
 						.subtract(l.strokeWidthProperty()));
 		colorRect.heightProperty().bind(buttonPane.heightProperty());

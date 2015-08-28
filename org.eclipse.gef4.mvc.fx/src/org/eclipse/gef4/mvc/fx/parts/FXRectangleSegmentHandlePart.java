@@ -22,8 +22,8 @@ import javafx.scene.shape.StrokeType;
  * @author anyssen
  *
  */
-public class FXRectangleSegmentHandlePart extends
-		AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
+public class FXRectangleSegmentHandlePart
+		extends AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
 
 	public static final double DEFAULT_SIZE = 5;
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");

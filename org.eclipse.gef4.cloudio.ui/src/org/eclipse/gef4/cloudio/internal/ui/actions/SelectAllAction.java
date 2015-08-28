@@ -25,7 +25,7 @@ public class SelectAllAction extends AbstractTagCloudAction {
 
 	@Override
 	public void run(IAction action) {
-		StructuredSelection selection = new StructuredSelection((List<?>)getViewer().getInput());
+		StructuredSelection selection = new StructuredSelection((List<?>) getViewer().getInput());
 		getViewer().setSelection(selection);
 	}
 

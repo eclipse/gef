@@ -23,26 +23,29 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class ClearHoverFocusSelectionOperation<VR> extends
-		ReverseUndoCompositeOperation {
+public class ClearHoverFocusSelectionOperation<VR>
+		extends ReverseUndoCompositeOperation {
 
 	public ClearHoverFocusSelectionOperation(IViewer<VR> viewer) {
 		super("Clear Hover, Focus, Selection");
 
 		// clear hover first
-		ChangeHoverOperation<VR> changeHoverOperation = getChangeHoverOperation(viewer);
+		ChangeHoverOperation<VR> changeHoverOperation = getChangeHoverOperation(
+				viewer);
 		if (changeHoverOperation != null) {
 			add(changeHoverOperation);
 		}
 
 		// then focus
-		ChangeFocusOperation<VR> changeFocusOperation = getChangeFocusOperation(viewer);
+		ChangeFocusOperation<VR> changeFocusOperation = getChangeFocusOperation(
+				viewer);
 		if (changeFocusOperation != null) {
 			add(changeFocusOperation);
 		}
 
 		// selection last
-		ChangeSelectionOperation<VR> changeSelectionOperation = getChangeSelectionOperation(viewer);
+		ChangeSelectionOperation<VR> changeSelectionOperation = getChangeSelectionOperation(
+				viewer);
 		if (changeSelectionOperation != null) {
 			add(changeSelectionOperation);
 		}

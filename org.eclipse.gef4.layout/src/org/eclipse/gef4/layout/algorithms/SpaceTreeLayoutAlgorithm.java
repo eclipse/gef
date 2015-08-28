@@ -151,8 +151,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				if (child.depth < spaceTreeLayers.size())
 					childLayer = spaceTreeLayers.get(child.depth);
 				else
-					spaceTreeLayers.add(childLayer = new SpaceTreeLayer(
-							child.depth));
+					spaceTreeLayers
+							.add(childLayer = new SpaceTreeLayer(child.depth));
 
 				if (childLayer.nodes.isEmpty())
 					child.order = 0;
@@ -168,8 +168,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			if (this == owner.getSuperRoot()) {
 				expanded = true;
 				while (spaceTreeLayers.size() <= this.height)
-					spaceTreeLayers.add(new SpaceTreeLayer(spaceTreeLayers
-							.size()));
+					spaceTreeLayers
+							.add(new SpaceTreeLayer(spaceTreeLayers.size()));
 
 				if (treeObserver != null)
 					refreshLayout(animate);
@@ -228,8 +228,9 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		public void adjustPosition(Point preferredLocation) { // !
 			protectedNode = (SpaceTreeNode) owner.getSuperRoot();
 
-			double newPositionInLayer = (direction == BOTTOM_UP || direction == TOP_DOWN) ? preferredLocation.x
-					: preferredLocation.y;
+			double newPositionInLayer = (direction == BOTTOM_UP
+					|| direction == TOP_DOWN) ? preferredLocation.x
+							: preferredLocation.y;
 			if (((SpaceTreeNode) parent).expanded) {
 				spaceTreeLayers.get(depth).moveNode(this, newPositionInLayer);
 				centerParentsTopDown();
@@ -254,13 +255,13 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 							- (nodeSize.height + subgraphSize.height) / 2;
 					break;
 				case LEFT_RIGHT:
-					x = nodeLocation.x + (nodeSize.width + subgraphSize.width)
-							/ 2;
+					x = nodeLocation.x
+							+ (nodeSize.width + subgraphSize.width) / 2;
 					y = nodeLocation.y;
 					break;
 				case RIGHT_LEFT:
-					x = nodeLocation.x - (nodeSize.width + subgraphSize.height)
-							/ 2;
+					x = nodeLocation.x
+							- (nodeSize.width + subgraphSize.height) / 2;
 					y = nodeLocation.y;
 					break;
 				}
@@ -353,9 +354,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					SpaceTreeNode lastChild = (SpaceTreeNode) children
 							.get(children.size() - 1);
 					SpaceTreeLayer layer = spaceTreeLayers.get(depth);
-					layer.moveNode(
-							this,
-							(firstChild.positionInLayer + lastChild.positionInLayer) / 2);
+					layer.moveNode(this, (firstChild.positionInLayer
+							+ lastChild.positionInLayer) / 2);
 				}
 			}
 		}
@@ -366,24 +366,26 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			}
 			if (!children.isEmpty() && expanded) {
 				SpaceTreeNode firstChild = (SpaceTreeNode) children.get(0);
-				SpaceTreeNode lastChild = (SpaceTreeNode) children.get(children
-						.size() - 1);
+				SpaceTreeNode lastChild = (SpaceTreeNode) children
+						.get(children.size() - 1);
 				double offset = this.positionInLayer
-						- (firstChild.positionInLayer + lastChild.positionInLayer)
-						/ 2;
+						- (firstChild.positionInLayer
+								+ lastChild.positionInLayer) / 2;
 				if (firstChild.positionInLayer
 						- firstChild.spaceRequiredForNode() / 2 + offset < 0)
 					offset = -firstChild.positionInLayer
 							+ firstChild.spaceRequiredForNode() / 2;
 				double availableSpace = getAvailableSpace();
 				if (lastChild.positionInLayer
-						+ lastChild.spaceRequiredForNode() / 2 + offset > availableSpace) {
+						+ lastChild.spaceRequiredForNode() / 2
+						+ offset > availableSpace) {
 					offset = availableSpace - lastChild.positionInLayer
 							- lastChild.spaceRequiredForNode() / 2;
 				}
 				SpaceTreeLayer layer = spaceTreeLayers.get(depth + 1);
-				layer.fitNodesWithinBounds(children, firstChild.positionInLayer
-						+ offset, lastChild.positionInLayer + offset);
+				layer.fitNodesWithinBounds(children,
+						firstChild.positionInLayer + offset,
+						lastChild.positionInLayer + offset);
 
 				for (Iterator<TreeNode> iterator = children.iterator(); iterator
 						.hasNext();) {
@@ -473,9 +475,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				}
 			}
 			if (expanded && subgraph == null) {
-				thicknessSoFar += (depth >= 0 ? spaceTreeLayers.get(depth).thickness
-						: 0)
-						+ layerGap;
+				thicknessSoFar += (depth >= 0
+						? spaceTreeLayers.get(depth).thickness : 0) + layerGap;
 				for (Iterator<TreeNode> iterator = children.iterator(); iterator
 						.hasNext();) {
 					SpaceTreeNode child = (SpaceTreeNode) iterator.next();
@@ -532,11 +533,10 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					if (nodeInLayer.order >= nodeToAdd.order)
 						break;
 					double expectedPostion = (previousNode == null) ? 0
-							: previousNode.positionInLayer
-									+ expectedDistance(previousNode,
-											nodeInLayer);
-					nodeInLayer.positionInLayer = Math.max(
-							nodeInLayer.positionInLayer, expectedPostion);
+							: previousNode.positionInLayer + expectedDistance(
+									previousNode, nodeInLayer);
+					nodeInLayer.positionInLayer = Math
+							.max(nodeInLayer.positionInLayer, expectedPostion);
 					previousNode = nodeInLayer;
 				}
 
@@ -557,8 +557,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				double expectedPostion = (previousNode == null) ? 0
 						: previousNode.positionInLayer
 								+ expectedDistance(previousNode, nodeInLayer);
-				nodeInLayer.positionInLayer = Math.max(
-						nodeInLayer.positionInLayer, expectedPostion);
+				nodeInLayer.positionInLayer = Math
+						.max(nodeInLayer.positionInLayer, expectedPostion);
 				previousNode = nodeInLayer;
 			}
 
@@ -575,8 +575,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		public void removeNodes(List<TreeNode> nodesToRemove) {
 			if (this.nodes.removeAll(nodesToRemove)) {
 				SpaceTreeLayer nextLayer = spaceTreeLayers.get(depth + 1);
-				for (Iterator<TreeNode> iterator = nodesToRemove.iterator(); iterator
-						.hasNext();) {
+				for (Iterator<TreeNode> iterator = nodesToRemove
+						.iterator(); iterator.hasNext();) {
 					SpaceTreeNode nodeToRemove = (SpaceTreeNode) iterator
 							.next();
 					nextLayer.removeNodes(nodeToRemove.children);
@@ -588,12 +588,12 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		public void checkThickness(SpaceTreeNode node) {
 			double nodeThickness = 0;
 			Dimension size = LayoutProperties.getSize(node.node);
-			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
-					: size.width;
+			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP)
+					? size.height : size.width;
 			if (node.subgraph != null) {
 				size = LayoutProperties.getSize(node.subgraph);
-				nodeThickness += (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
-						: size.width;
+				nodeThickness += (direction == TOP_DOWN
+						|| direction == BOTTOM_UP) ? size.height : size.width;
 			}
 			this.thickness = Math.max(this.thickness, nodeThickness);
 		}
@@ -609,8 +609,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		public void fitNodesWithinBounds(List<TreeNode> nodeList,
 				double startPosition, double endPosition) {
 			NodeSnapshot[][] snapShot = takeSnapShot();
-			SpaceTreeNode[] nodes = nodeList.toArray(new SpaceTreeNode[nodeList
-					.size()]);
+			SpaceTreeNode[] nodes = nodeList
+					.toArray(new SpaceTreeNode[nodeList.size()]);
 			double initialStartPosition = nodes[0].positionInLayer;
 			double initialNodesBredth = nodes[nodes.length - 1].positionInLayer
 					- initialStartPosition;
@@ -618,8 +618,9 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			// calculate desired positions for every node, regarding their
 			// initial initial proportions
 			for (int i = 0; i < nodes.length; i++) {
-				double initialPositionAsPercent = (initialNodesBredth > 0) ? (nodes[i].positionInLayer - initialStartPosition)
-						/ initialNodesBredth
+				double initialPositionAsPercent = (initialNodesBredth > 0)
+						? (nodes[i].positionInLayer - initialStartPosition)
+								/ initialNodesBredth
 						: 0;
 				desiredPositions[i] = initialPositionAsPercent
 						* (endPosition - startPosition);
@@ -630,21 +631,25 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				SpaceTreeNode node = nodes[i];
 				SpaceTreeNode previousNode = nodes[i - 1];
 				double expectedDistance = expectedDistance(previousNode, node);
-				if (desiredPositions[i] - desiredPositions[i - 1] < expectedDistance) {
+				if (desiredPositions[i]
+						- desiredPositions[i - 1] < expectedDistance) {
 					desiredPositions[i] = desiredPositions[i - 1]
 							+ expectedDistance;
 				}
 			}
 			// if the above operation caused some nodes to fall out of requested
 			// bounds, push them back
-			if (desiredPositions[nodes.length - 1] > (endPosition - startPosition)) {
-				desiredPositions[nodes.length - 1] = (endPosition - startPosition);
+			if (desiredPositions[nodes.length - 1] > (endPosition
+					- startPosition)) {
+				desiredPositions[nodes.length - 1] = (endPosition
+						- startPosition);
 				for (int i = nodes.length - 1; i > 0; i--) {
 					SpaceTreeNode node = nodes[i];
 					SpaceTreeNode previousNode = nodes[i - 1];
 					double expectedDistance = expectedDistance(previousNode,
 							node);
-					if (desiredPositions[i] - desiredPositions[i - 1] < expectedDistance) {
+					if (desiredPositions[i]
+							- desiredPositions[i - 1] < expectedDistance) {
 						desiredPositions[i - 1] = desiredPositions[i]
 								- expectedDistance;
 					} else
@@ -714,8 +719,9 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					for (int i = nodeIndex; i < nodes.size(); i++) {
 						SpaceTreeNode nextNode = nodes.get(i);
 						if (protectedNode == null
-								|| (!protectedNode.isAncestorOf(nextNode) && !nextNode.parent
-										.isAncestorOf(protectedNode))) {
+								|| (!protectedNode.isAncestorOf(nextNode)
+										&& !nextNode.parent
+												.isAncestorOf(protectedNode))) {
 							collapseNode((SpaceTreeNode) nextNode.parent);
 							if (nextNode.parent == nodeToMove.parent)
 								break mainLoop;
@@ -767,8 +773,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 									.get(depth + 1);
 							double expectedDistanceBetweenChildren = currentNodeToMove
 									.spaceRequiredForChildren()
-									- firstChild.spaceRequiredForNode()
-									/ 2
+									- firstChild.spaceRequiredForNode() / 2
 									- lastChild.spaceRequiredForNode() / 2;
 							childLayer.moveNodeForward(firstChild,
 									newPositionForCurrent
@@ -839,8 +844,9 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					for (int i = nodeIndex; i >= 0; i--) {
 						SpaceTreeNode nextNode = nodes.get(i);
 						if (protectedNode == null
-								|| (!protectedNode.isAncestorOf(nextNode) && !nextNode.parent
-										.isAncestorOf(protectedNode))) {
+								|| (!protectedNode.isAncestorOf(nextNode)
+										&& !nextNode.parent
+												.isAncestorOf(protectedNode))) {
 							collapseNode((SpaceTreeNode) nextNode.parent);
 							if (nextNode.parent == nodeToMove.parent)
 								break mainLoop;
@@ -893,8 +899,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 									.get(depth + 1);
 							double expectedDistanceBetweenChildren = currentNodeToMove
 									.spaceRequiredForChildren()
-									- firstChild.spaceRequiredForNode()
-									/ 2
+									- firstChild.spaceRequiredForNode() / 2
 									- lastChild.spaceRequiredForNode() / 2;
 							childLayer.moveNodeBackward(lastChild,
 									newPositionForCurrent
@@ -945,8 +950,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			node.expanded = false;
 			SpaceTreeLayer layer = spaceTreeLayers.get(node.depth + 1);
 			layer.removeNodes(node.children);
-			for (Iterator<TreeNode> iterator = node.children.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<TreeNode> iterator = node.children
+					.iterator(); iterator.hasNext();) {
 				SpaceTreeNode child = (SpaceTreeNode) iterator.next();
 				if (child.expanded)
 					collapseNode(child);
@@ -954,8 +959,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	private class SpaceTreeExpandCollapseManager implements
-			ExpandCollapseManager {
+	private class SpaceTreeExpandCollapseManager
+			implements ExpandCollapseManager {
 		public void initExpansion(ILayoutContext context) {
 			// do nothing - initialization performed in #setLayoutContext()
 		}
@@ -969,8 +974,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				refreshLayout(animate);
 			} else if (spaceTreeNode.expanded) {
 				spaceTreeNode.expanded = false;
-				spaceTreeLayers.get(spaceTreeNode.depth + 1).removeNodes(
-						spaceTreeNode.children);
+				spaceTreeLayers.get(spaceTreeNode.depth + 1)
+						.removeNodes(spaceTreeNode.children);
 				refreshLayout(animate);
 			}
 		}
@@ -1001,8 +1006,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			double availableSpace = getAvailableSpace();
 			double requiredSpace = 0;
 
-			spaceTreeLayers.get(nodeToExpand.depth + 1).removeNodes(
-					nodeToExpand.children);
+			spaceTreeLayers.get(nodeToExpand.depth + 1)
+					.removeNodes(nodeToExpand.children);
 
 			ArrayList<TreeNode> nodesInThisLayer = null;
 			ArrayList<TreeNode> nodesInNextLayer = new ArrayList<TreeNode>();
@@ -1019,8 +1024,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				nodesInNextLayer = new ArrayList<TreeNode>();
 
 				int numOfNodesWithChildren = 0;
-				for (Iterator<TreeNode> iterator = nodesInThisLayer.iterator(); iterator
-						.hasNext();) {
+				for (Iterator<TreeNode> iterator = nodesInThisLayer
+						.iterator(); iterator.hasNext();) {
 					SpaceTreeNode node = (SpaceTreeNode) iterator.next();
 					if (!node.children.isEmpty()) {
 						node.expanded = true;
@@ -1031,8 +1036,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					}
 				}
 
-				for (Iterator<TreeNode> iterator = nodesInNextLayer.iterator(); iterator
-						.hasNext();) {
+				for (Iterator<TreeNode> iterator = nodesInNextLayer
+						.iterator(); iterator.hasNext();) {
 					SpaceTreeNode node = (SpaceTreeNode) iterator.next();
 					node.expanded = false;
 				}
@@ -1045,8 +1050,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 				boolean addedNewLayer = false;
 				if ((spaceRequiredInNextLayer <= requiredSpace
-						|| spaceRequiredInNextLayer <= availableSpace || (layer < 1 && nodeToExpand.depth
-						+ layer < 1))
+						|| spaceRequiredInNextLayer <= availableSpace
+						|| (layer < 1 && nodeToExpand.depth + layer < 1))
 						&& !nodesInNextLayer.isEmpty()) {
 					// add next layer and center its nodes
 
@@ -1085,14 +1090,13 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private IContextListener contextListener = new IContextListener.Stub() {
 		public boolean boundsChanged(ILayoutContext context) {
-			boolean previousBoundsWrong = (bounds == null || bounds.getWidth()
-					* bounds.getHeight() <= 0);
+			boolean previousBoundsWrong = (bounds == null
+					|| bounds.getWidth() * bounds.getHeight() <= 0);
 			bounds = LayoutProperties.getBounds(context);
 			if (bounds.getWidth() * bounds.getHeight() > 0
 					&& previousBoundsWrong) {
-				expandCollapseManager
-						.maximizeExpansion((SpaceTreeNode) treeObserver
-								.getSuperRoot());
+				expandCollapseManager.maximizeExpansion(
+						(SpaceTreeNode) treeObserver.getSuperRoot());
 				refreshLayout(false);
 			}
 			return false;
@@ -1152,7 +1156,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			return false;
 		}
 
-		private boolean defaultNodeHandle(ILayoutContext context, INodeLayout node) {
+		private boolean defaultNodeHandle(ILayoutContext context,
+				INodeLayout node) {
 			if (bounds.getWidth() * bounds.getHeight() <= 0)
 				return false;
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
@@ -1282,8 +1287,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					checkPendingChangeDirection();
 			}
 		} else
-			throw new IllegalArgumentException("Invalid direction: "
-					+ direction);
+			throw new IllegalArgumentException(
+					"Invalid direction: " + direction);
 	}
 
 	public void applyLayout(boolean clean) {
@@ -1294,9 +1299,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 		if (clean) {
 			treeObserver.recomputeTree();
-			expandCollapseManager
-					.maximizeExpansion((SpaceTreeNode) treeObserver
-							.getSuperRoot());
+			expandCollapseManager.maximizeExpansion(
+					(SpaceTreeNode) treeObserver.getSuperRoot());
 		}
 		SpaceTreeNode superRoot = ((SpaceTreeNode) treeObserver.getSuperRoot());
 		superRoot.flushExpansionChanges();
@@ -1380,21 +1384,21 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 * @return
 	 */
 	private double getAvailableSpace() {
-		double result = (direction == TOP_DOWN || direction == BOTTOM_UP) ? bounds
-				.getWidth() : bounds.getHeight();
+		double result = (direction == TOP_DOWN || direction == BOTTOM_UP)
+				? bounds.getWidth() : bounds.getHeight();
 		result = Math.max(result, this.availableSpace);
-		for (Iterator<SpaceTreeLayer> iterator = spaceTreeLayers.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<SpaceTreeLayer> iterator = spaceTreeLayers
+				.iterator(); iterator.hasNext();) {
 			SpaceTreeLayer layer = iterator.next();
 			if (!layer.nodes.isEmpty()) {
 				SpaceTreeNode first = layer.nodes.get(0);
 				SpaceTreeNode last = layer.nodes.get(layer.nodes.size() - 1);
-				result = Math.max(
-						result,
-						last.positionInLayer
-								- first.positionInLayer
-								+ (first.spaceRequiredForNode() + last
-										.spaceRequiredForNode()) / 2);
+				result = Math
+						.max(result,
+								last.positionInLayer - first.positionInLayer
+										+ (first.spaceRequiredForNode()
+												+ last.spaceRequiredForNode())
+												/ 2);
 			} else
 				break;
 		}
@@ -1411,9 +1415,10 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		this.availableSpace = availableSpace;
 	}
 
-	private double expectedDistance(SpaceTreeNode node, SpaceTreeNode neighbor) {
-		double expectedDistance = (node.spaceRequiredForNode() + neighbor
-				.spaceRequiredForNode()) / 2;
+	private double expectedDistance(SpaceTreeNode node,
+			SpaceTreeNode neighbor) {
+		double expectedDistance = (node.spaceRequiredForNode()
+				+ neighbor.spaceRequiredForNode()) / 2;
 		expectedDistance += (node.parent == neighbor.parent) ? leafGap
 				: branchGap;
 		return expectedDistance;

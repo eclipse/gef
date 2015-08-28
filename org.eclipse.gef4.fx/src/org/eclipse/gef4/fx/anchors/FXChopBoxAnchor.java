@@ -67,10 +67,12 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * <li>Compute the anchorage geometry based on its visual (
 		 * {@link #getAnchorageReferenceGeometryInLocal(Node)}).</li>
 		 * <li>Compute an anchorage reference position based on its geometry (
-		 * {@link #computeAnchorageReferencePointInLocal(Node, IGeometry)}).</li>
+		 * {@link #computeAnchorageReferencePointInLocal(Node, IGeometry)}).
+		 * </li>
 		 * <li>Transform this reference position into the coordinate system of
 		 * the scene (
-		 * {@link #computeAnchorageReferencePointInScene(Node, IGeometry)}).</li>
+		 * {@link #computeAnchorageReferencePointInScene(Node, IGeometry)}).
+		 * </li>
 		 * <li>Connect anchored and anchorage reference positions.</li>
 		 * <li>Compute the intersection of the connection and the outline of the
 		 * anchorage geometry ({@link #getOutline(IGeometry)}).</li>
@@ -146,8 +148,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			 */
 			protected Point computeAnchorageReferencePointInScene(Node node,
 					IGeometry geometryInLocal) {
-				return FXUtils.localToScene(
-						node,
+				return FXUtils.localToScene(node,
 						computeAnchorageReferencePointInLocal(node,
 								geometryInLocal));
 			}
@@ -164,10 +165,11 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			@Override
 			public Point computePositionInScene(Node anchorage, Node anchored,
 					Point anchoredReferencePointInLocal) {
-				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(anchorage);
+				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(
+						anchorage);
 
-				Point anchoredReferencePointInScene = FXUtils.localToScene(
-						anchored, anchoredReferencePointInLocal);
+				Point anchoredReferencePointInScene = FXUtils
+						.localToScene(anchored, anchoredReferencePointInLocal);
 
 				Point anchorageReferencePointInScene = computeAnchorageReferencePointInScene(
 						anchorage, anchorageReferenceGeometryInLocal);
@@ -178,7 +180,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 				IGeometry anchorageGeometryInScene = FXUtils.localToScene(
 						anchorage, anchorageReferenceGeometryInLocal);
-				ICurve anchorageOutlineInScene = getOutline(anchorageGeometryInScene);
+				ICurve anchorageOutlineInScene = getOutline(
+						anchorageGeometryInScene);
 
 				Point nearestIntersectionInScene = anchorageOutlineInScene
 						.getNearestIntersection(referenceLineInScene,
@@ -210,8 +213,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				}
 				if (!(geometry instanceof IShape)) {
 					// TODO: ICurve, Path
-					geometry = JavaFX2Geometry.toRectangle(anchorage
-							.getLayoutBounds());
+					geometry = JavaFX2Geometry
+							.toRectangle(anchorage.getLayoutBounds());
 				}
 				return geometry;
 			}
@@ -407,8 +410,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		super.attach(key, info);
 
 		// add listener to reference point changes
-		referencePointProvider.referencePointProperty().addListener(
-				anchoredReferencePointsChangeListener);
+		referencePointProvider.referencePointProperty()
+				.addListener(anchoredReferencePointsChangeListener);
 	}
 
 	/**
@@ -449,8 +452,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	protected Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
-		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
-				.toFXPoint(computationStrategy
+		return JavaFX2Geometry.toPoint(anchored
+				.sceneToLocal(Geometry2JavaFX.toFXPoint(computationStrategy
 						.computePositionInScene(getAnchorage(), anchored,
 								anchoredReferencePointInLocal))));
 	}
@@ -482,8 +485,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 
 		// unregister reference point listener
-		helper.referencePointProperty().removeListener(
-				anchoredReferencePointsChangeListener);
+		helper.referencePointProperty()
+				.removeListener(anchoredReferencePointsChangeListener);
 
 		super.detach(key, info);
 

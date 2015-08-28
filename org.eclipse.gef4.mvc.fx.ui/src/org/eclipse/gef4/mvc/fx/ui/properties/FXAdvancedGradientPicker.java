@@ -86,7 +86,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 					newOffset = Math.max(getPrevOffset(index),
 							Math.min(getNextOffset(index), newOffset));
 					offsetProperty.set(newOffset);
-					updateStop(index, offsetProperty.get(), colorProperty.get());
+					updateStop(index, offsetProperty.get(),
+							colorProperty.get());
 				}
 			}
 		};
@@ -105,8 +106,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 			this.index = index;
 
 			// bind translation to offset
-			translateXProperty().bind(
-					preview.widthProperty().multiply(offsetProperty));
+			translateXProperty()
+					.bind(preview.widthProperty().multiply(offsetProperty));
 
 			// mouse feedback
 			setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -116,13 +117,13 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 						BoxBlur boxBlur = new BoxBlur(0, 0, 1);
 						setEffect(boxBlur);
 						Timeline timeline = new Timeline(
-								new KeyFrame(Duration.millis(0), new KeyValue(
-										boxBlur.widthProperty(), 0),
-										new KeyValue(boxBlur.heightProperty(),
-												0)),
-								new KeyFrame(
-										Duration.millis(150),
-										new KeyValue(boxBlur.widthProperty(), 3),
+								new KeyFrame(Duration.millis(0),
+										new KeyValue(boxBlur.widthProperty(),
+												0),
+								new KeyValue(boxBlur.heightProperty(), 0)),
+								new KeyFrame(Duration.millis(150),
+										new KeyValue(boxBlur.widthProperty(),
+												3),
 										new KeyValue(boxBlur.heightProperty(),
 												3)));
 						timeline.play();
@@ -170,8 +171,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 								control.getShell(), colorProperty.get()));
 						updateStop(StopPicker.this.index, offsetProperty.get(),
 								colorProperty.get());
-					} else if (draggable
-							&& MouseButton.SECONDARY.equals(event.getButton())) {
+					} else if (draggable && MouseButton.SECONDARY
+							.equals(event.getButton())) {
 						removeStop(StopPicker.this.index);
 					}
 				}
@@ -197,7 +198,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 			Color c2, Color c3) {
 		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(0.5, c2),
 				new Stop(1, c3) };
-		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+				stops);
 	}
 
 	public static boolean isAdvancedGradient(Paint paint) {
@@ -244,17 +246,18 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		// create preview pane and direction circle
 		root = new AnchorPane();
 		final Pane previewPane = new Pane();
-		final Circle directionCircle = new Circle(DIRECTION_RADIUS, Color.WHITE);
+		final Circle directionCircle = new Circle(DIRECTION_RADIUS,
+				Color.WHITE);
 		directionLine = new Line();
 		directionLine.setMouseTransparent(true);
 		directionLine.setEndX(DIRECTION_RADIUS);
 		directionLine.setEndY(0);
 		directionLine.startXProperty().bind(directionCircle.centerXProperty());
 		directionLine.startYProperty().bind(directionCircle.centerYProperty());
-		directionLine.translateXProperty().bind(
-				directionCircle.layoutXProperty());
-		directionLine.translateYProperty().bind(
-				directionCircle.layoutYProperty());
+		directionLine.translateXProperty()
+				.bind(directionCircle.layoutXProperty());
+		directionLine.translateYProperty()
+				.bind(directionCircle.layoutYProperty());
 		root.getChildren().addAll(previewPane, directionCircle, directionLine);
 		// layout preview pane
 		AnchorPane.setTopAnchor(previewPane, 2d);
@@ -288,8 +291,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		final Rectangle highlightSpotCreation = new Rectangle();
 		highlightSpotCreation.setStroke(Color.TRANSPARENT);
 		highlightSpotCreation.setFill(new Color(1, 1, 0, 0.5));
-		highlightSpotCreation.heightProperty().bind(
-				preview.heightProperty().add(10));
+		highlightSpotCreation.heightProperty()
+				.bind(preview.heightProperty().add(10));
 		highlightSpotCreation.yProperty().bind(preview.yProperty());
 		highlightSpotCreation.setWidth(3);
 		highlightSpotCreation.setTranslateX(-1.5);
@@ -323,8 +326,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 			public void handle(MouseEvent event) {
 				if (MouseButton.PRIMARY.equals(event.getButton())) {
 					// create new stop
-					Point2D previewPosition = previewPane.sceneToLocal(
-							event.getSceneX(), event.getSceneY());
+					Point2D previewPosition = previewPane
+							.sceneToLocal(event.getSceneX(), event.getSceneY());
 					double offset = previewPosition.getX() / preview.getWidth();
 					offset = Math.max(0, Math.min(1, offset));
 					createStop(offset);

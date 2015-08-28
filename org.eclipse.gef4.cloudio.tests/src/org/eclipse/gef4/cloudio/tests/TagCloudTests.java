@@ -492,8 +492,8 @@ public class TagCloudTests {
 	// Assert.assertEquals(0, placed);
 	// }
 
-	class UniversalListener implements MouseListener, MouseTrackListener,
-			MouseWheelListener, MouseMoveListener, SelectionListener {
+	class UniversalListener
+			implements MouseListener, MouseTrackListener, MouseWheelListener, MouseMoveListener, SelectionListener {
 
 		private int mouseUp;
 		private int mouseDown;

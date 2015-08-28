@@ -33,16 +33,14 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		}
 
 		@Override
-		protected void localToParentTransformChanged(Node observed,
-				Transform oldTransform, Transform newTransform) {
+		protected void localToParentTransformChanged(Node observed, Transform oldTransform, Transform newTransform) {
 			refreshVisual();
 		}
 	};
 	private Translate translate;
 
 	@Override
-	protected void attachToAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
 	}
 
@@ -59,8 +57,7 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(
-			IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.unregister();
 	}
 
@@ -71,20 +68,16 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 			return;
 		}
 		// determine bounds of anchorage visual
-		Rectangle bounds = edgeContentPart.getVisual().getCurveNode()
-				.getGeometry().getBounds();
+		Rectangle bounds = edgeContentPart.getVisual().getCurveNode().getGeometry().getBounds();
 		// determine text bounds
 		Bounds textBounds = getVisual().getLayoutBounds();
 		// compute label position
-		visual.setTranslateX(bounds.getX() + bounds.getWidth() / 2
-				- textBounds.getWidth() / 2);
-		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2
-				- textBounds.getHeight());
+		visual.setTranslateX(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2);
+		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight());
 	}
 
 	public EdgeContentPart getHost() {
-		return getAnchorages().isEmpty() ? null
-				: (EdgeContentPart) getAnchorages().keys().iterator().next();
+		return getAnchorages().isEmpty() ? null : (EdgeContentPart) getAnchorages().keys().iterator().next();
 	}
 
 	public Translate getOffset() {

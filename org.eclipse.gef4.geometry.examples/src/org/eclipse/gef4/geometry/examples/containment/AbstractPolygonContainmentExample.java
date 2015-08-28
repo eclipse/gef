@@ -19,15 +19,16 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
-public abstract class AbstractPolygonContainmentExample extends
-		AbstractContainmentExample {
+public abstract class AbstractPolygonContainmentExample
+		extends AbstractContainmentExample {
 
 	public AbstractPolygonContainmentExample(String title) {
 		super(title);
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape1(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

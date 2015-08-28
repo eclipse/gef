@@ -28,8 +28,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
-		PropertyChangeListener {
+public class HoverBehavior<VR> extends AbstractBehavior<VR>
+		implements PropertyChangeListener {
 
 	@Override
 	public void activate() {

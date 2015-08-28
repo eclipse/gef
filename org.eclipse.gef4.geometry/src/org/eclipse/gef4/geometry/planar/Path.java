@@ -399,8 +399,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *         within this {@link IGeometry}
 	 */
 	public boolean contains(Rectangle r) {
-		return Geometry2AWT.toAWTPath(this).contains(
-				Geometry2AWT.toAWTRectangle(r));
+		return Geometry2AWT.toAWTPath(this)
+				.contains(Geometry2AWT.toAWTRectangle(r));
 	}
 
 	/**
@@ -424,8 +424,9 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 */
 	public final Path cubicTo(double control1X, double control1Y,
 			double control2X, double control2Y, double x, double y) {
-		segments.add(new Segment(Segment.CUBIC_TO, new Point(control1X,
-				control1Y), new Point(control2X, control2Y), new Point(x, y)));
+		segments.add(
+				new Segment(Segment.CUBIC_TO, new Point(control1X, control1Y),
+						new Point(control2X, control2Y), new Point(x, y)));
 		return this;
 	}
 
@@ -444,8 +445,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	@Override
 	public Rectangle getBounds() {
-		return AWT2Geometry.toRectangle(Geometry2AWT.toAWTPath(this)
-				.getBounds2D());
+		return AWT2Geometry
+				.toRectangle(Geometry2AWT.toAWTPath(this).getBounds2D());
 	}
 
 	@Override
@@ -469,8 +470,9 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	@Override
 	public Path getTransformed(AffineTransform t) {
-		return AWT2Geometry.toPath(new Path2D.Double(Geometry2AWT
-				.toAWTPath(this), Geometry2AWT.toAWTAffineTransform(t)));
+		return AWT2Geometry
+				.toPath(new Path2D.Double(Geometry2AWT.toAWTPath(this),
+						Geometry2AWT.toAWTAffineTransform(t)));
 	}
 
 	/**
@@ -530,8 +532,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 */
 	public final Path quadTo(double controlX, double controlY, double x,
 			double y) {
-		segments.add(new Segment(Segment.QUAD_TO,
-				new Point(controlX, controlY), new Point(x, y)));
+		segments.add(new Segment(Segment.QUAD_TO, new Point(controlX, controlY),
+				new Point(x, y)));
 		return this;
 	}
 
@@ -582,8 +584,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * @see IGeometry#touches(IGeometry)
 	 */
 	public boolean touches(Rectangle r) {
-		return Geometry2AWT.toAWTPath(this).intersects(
-				Geometry2AWT.toAWTRectangle(r));
+		return Geometry2AWT.toAWTPath(this)
+				.intersects(Geometry2AWT.toAWTRectangle(r));
 	}
 
 }

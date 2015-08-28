@@ -49,7 +49,8 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> key) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> key) {
 		return as.getAdapters(key);
 	}
 

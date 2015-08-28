@@ -58,22 +58,24 @@ public class QuadraticCurvesIntersection extends AbstractIntersectionExample {
 			public void drawShape(GC gc) {
 				QuadraticCurve curve = (QuadraticCurve) createGeometry();
 
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(curve
-						.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(curve.toPath())));
 			}
 		};
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
-		return createControllableQuadraticBezierCurveShape(canvas, new Point(
-				100, 100), new Point(300, 150), new Point(400, 400));
+	protected AbstractControllableShape createControllableShape1(
+			Canvas canvas) {
+		return createControllableQuadraticBezierCurveShape(canvas,
+				new Point(100, 100), new Point(300, 150), new Point(400, 400));
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
-		return createControllableQuadraticBezierCurveShape(canvas, new Point(
-				400, 100), new Point(310, 290), new Point(100, 400));
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
+		return createControllableQuadraticBezierCurveShape(canvas,
+				new Point(400, 100), new Point(310, 290), new Point(100, 400));
 	}
 }

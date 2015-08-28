@@ -127,8 +127,8 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 				|| direction == LEFT_RIGHT || direction == RIGHT_LEFT)
 			this.direction = direction;
 		else
-			throw new IllegalArgumentException("Invalid direction: "
-					+ direction);
+			throw new IllegalArgumentException(
+					"Invalid direction: " + direction);
 	}
 
 	/**
@@ -193,8 +193,8 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		bounds = LayoutProperties.getBounds(context);
 		updateLeafAndLayerSizes();
 		int leafCountSoFar = 0;
-		for (Iterator<TreeNode> iterator = superRoot.getChildren().iterator(); iterator
-				.hasNext();) {
+		for (Iterator<TreeNode> iterator = superRoot.getChildren()
+				.iterator(); iterator.hasNext();) {
 			TreeNode rootInfo = iterator.next();
 			computePositionRecursively(rootInfo, leafCountSoFar);
 			leafCountSoFar = leafCountSoFar + rootInfo.numOfLeaves;
@@ -227,22 +227,23 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 */
 	private void computePositionRecursively(TreeNode entityInfo,
 			int relativePosition) {
-		double breadthPosition = relativePosition + entityInfo.numOfLeaves
-				/ 2.0;
+		double breadthPosition = relativePosition
+				+ entityInfo.numOfLeaves / 2.0;
 		double depthPosition = (entityInfo.depth + 0.5);
 
 		switch (direction) {
 		case TOP_DOWN:
-			LayoutProperties.setLocation(entityInfo.getNode(), breadthPosition
-					* leafSize, depthPosition * layerSize);
+			LayoutProperties.setLocation(entityInfo.getNode(),
+					breadthPosition * leafSize, depthPosition * layerSize);
 			break;
 		case BOTTOM_UP:
-			LayoutProperties.setLocation(entityInfo.getNode(), breadthPosition
-					* leafSize, bounds.getHeight() - depthPosition * layerSize);
+			LayoutProperties.setLocation(entityInfo.getNode(),
+					breadthPosition * leafSize,
+					bounds.getHeight() - depthPosition * layerSize);
 			break;
 		case LEFT_RIGHT:
-			LayoutProperties.setLocation(entityInfo.getNode(), depthPosition
-					* layerSize, breadthPosition * leafSize);
+			LayoutProperties.setLocation(entityInfo.getNode(),
+					depthPosition * layerSize, breadthPosition * leafSize);
 			break;
 		case RIGHT_LEFT:
 			LayoutProperties.setLocation(entityInfo.getNode(),
@@ -251,8 +252,8 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 			break;
 		}
 
-		for (Iterator<TreeNode> iterator = entityInfo.children.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<TreeNode> iterator = entityInfo.children
+				.iterator(); iterator.hasNext();) {
 			TreeNode childInfo = iterator.next();
 			computePositionRecursively(childInfo, relativePosition);
 			relativePosition += childInfo.numOfLeaves;

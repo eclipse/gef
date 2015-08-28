@@ -81,10 +81,8 @@ public final class Node implements IPropertyChangeNotifier {
 
 	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
 		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap,
-				Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap,
-					observableMap);
+		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
+			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
 		}
 	};
 
@@ -153,8 +151,7 @@ public final class Node implements IPropertyChangeNotifier {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
-		Set<Edge> incoming = Collections
-				.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
+		Set<Edge> incoming = Collections.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
 		incoming.addAll(getLocalIncomingEdges());
 		if (graph.getNestingNode() != null) {
 			incoming.addAll(graph.getNestingNode().getAllIncomingEdges());
@@ -170,8 +167,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 * @return All neighbors.
 	 */
 	public Set<Node> getAllNeighbors() {
-		Set<Node> neighbors = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> neighbors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		neighbors.addAll(getAllPredecessorNodes());
 		neighbors.addAll(getAllSuccessorNodes());
 		return neighbors;
@@ -188,8 +184,7 @@ public final class Node implements IPropertyChangeNotifier {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
-		Set<Edge> outgoing = Collections
-				.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
+		Set<Edge> outgoing = Collections.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
 		outgoing.addAll(getLocalOutgoingEdges());
 		if (graph.getNestingNode() != null) {
 			outgoing.addAll(graph.getNestingNode().getAllOutgoingEdges());
@@ -208,12 +203,10 @@ public final class Node implements IPropertyChangeNotifier {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
-		Set<Node> predecessors = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> predecessors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		predecessors.addAll(getLocalPredecessorNodes());
 		if (graph.getNestingNode() != null) {
-			predecessors
-					.addAll(graph.getNestingNode().getAllPredecessorNodes());
+			predecessors.addAll(graph.getNestingNode().getAllPredecessorNodes());
 		}
 		return predecessors;
 	}
@@ -229,8 +222,7 @@ public final class Node implements IPropertyChangeNotifier {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
-		Set<Node> successors = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> successors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		successors.addAll(getLocalSuccessorNodes());
 		if (graph.getNestingNode() != null) {
 			successors.addAll(graph.getNestingNode().getAllSuccessorNodes());
@@ -269,8 +261,7 @@ public final class Node implements IPropertyChangeNotifier {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
-		Set<Edge> incoming = Collections
-				.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
+		Set<Edge> incoming = Collections.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
 		for (Edge e : graph.getEdges()) {
 			if (e.getTarget() == this) {
 				incoming.add(e);
@@ -287,8 +278,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 * @return All (local) neighbors of this {@link Node}.
 	 */
 	public Set<Node> getLocalNeighbors() {
-		Set<Node> neighbors = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> neighbors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		neighbors.addAll(getLocalPredecessorNodes());
 		neighbors.addAll(getLocalSuccessorNodes());
 		return neighbors;
@@ -305,8 +295,7 @@ public final class Node implements IPropertyChangeNotifier {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
-		Set<Edge> outgoing = Collections
-				.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
+		Set<Edge> outgoing = Collections.newSetFromMap(new IdentityHashMap<Edge, Boolean>());
 		for (Edge e : graph.getEdges()) {
 			if (e.getSource() == this) {
 				outgoing.add(e);
@@ -323,8 +312,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 * @return The local predecessor {@link Node}s.
 	 */
 	public Set<Node> getLocalPredecessorNodes() {
-		Set<Node> predecessors = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> predecessors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		for (Edge incoming : getLocalIncomingEdges()) {
 			predecessors.add(incoming.getSource());
 		}
@@ -339,8 +327,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 * @return The local successor {@link Node}s.
 	 */
 	public Set<Node> getLocalSuccessorNodes() {
-		Set<Node> successors = Collections
-				.newSetFromMap(new IdentityHashMap<Node, Boolean>());
+		Set<Node> successors = Collections.newSetFromMap(new IdentityHashMap<Node, Boolean>());
 		for (Edge outgoing : getLocalOutgoingEdges()) {
 			successors.add(outgoing.getTarget());
 		}

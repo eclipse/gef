@@ -164,8 +164,8 @@ public class AffineTransform {
 	 * @return a new, transformed {@link Point}
 	 */
 	public Point deltaTransform(Point pt) {
-		return AWT2Geometry.toPoint(delegate.deltaTransform(
-				Geometry2AWT.toAWTPoint(pt), null));
+		return AWT2Geometry.toPoint(
+				delegate.deltaTransform(Geometry2AWT.toAWTPoint(pt), null));
 	}
 
 	@Override
@@ -287,8 +287,8 @@ public class AffineTransform {
 	 * @return a new, transformed {@link Point}
 	 */
 	public Point getTransformed(Point ptSrc) {
-		return AWT2Geometry.toPoint(delegate.transform(
-				Geometry2AWT.toAWTPoint(ptSrc), null));
+		return AWT2Geometry.toPoint(
+				delegate.transform(Geometry2AWT.toAWTPoint(ptSrc), null));
 	}
 
 	/**
@@ -389,8 +389,8 @@ public class AffineTransform {
 	 */
 	public Point inverseTransform(Point pt)
 			throws NoninvertibleTransformException {
-		return AWT2Geometry.toPoint(delegate.inverseTransform(
-				Geometry2AWT.toAWTPoint(pt), null));
+		return AWT2Geometry.toPoint(
+				delegate.inverseTransform(Geometry2AWT.toAWTPoint(pt), null));
 	}
 
 	/**
@@ -510,7 +510,8 @@ public class AffineTransform {
 	 *            the y coordinate of the {@link Point} to rotate around
 	 * @return <code>this</code> for convenience
 	 */
-	public AffineTransform rotate(double theta, double anchorx, double anchory) {
+	public AffineTransform rotate(double theta, double anchorx,
+			double anchory) {
 		delegate.rotate(theta, anchorx, anchory);
 		return this;
 	}

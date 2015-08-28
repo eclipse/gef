@@ -63,8 +63,8 @@ public class AWT2Geometry {
 	 *         of the passed-in {@link Line2D}
 	 */
 	public static final Line toLine(Line2D l) {
-		return new Line(AWT2Geometry.toPoint(l.getP1()), AWT2Geometry.toPoint(l
-				.getP2()));
+		return new Line(AWT2Geometry.toPoint(l.getP1()),
+				AWT2Geometry.toPoint(l.getP2()));
 	}
 
 	/**
@@ -77,9 +77,8 @@ public class AWT2Geometry {
 	 */
 	public static Path toPath(Path2D p) {
 		PathIterator iterator = p.getPathIterator(null);
-		Path path = new Path(
-				p.getWindingRule() == Path2D.WIND_NON_ZERO ? Path.WIND_NON_ZERO
-						: Path.WIND_EVEN_ODD);
+		Path path = new Path(p.getWindingRule() == Path2D.WIND_NON_ZERO
+				? Path.WIND_NON_ZERO : Path.WIND_EVEN_ODD);
 		while (!iterator.isDone()) {
 			double[] segment = new double[6];
 			int type = iterator.currentSegment(segment);
@@ -184,7 +183,8 @@ public class AWT2Geometry {
 	 * If you wish to retain this interpretation, you have to modify the
 	 * resulting GEF4 {@link RoundedRectangle} object as follows:<br>
 	 * <code>roundedRectangle.shrink(0, 0, 1, 1);</code><br>
-	 * (see also {@link RoundedRectangle#shrink(double, double, double, double)}, {@link RoundedRectangle#getShrinked(double, double, double, double)})
+	 * (see also {@link RoundedRectangle#shrink(double, double, double, double)}
+	 * , {@link RoundedRectangle#getShrinked(double, double, double, double)})
 	 * </p>
 	 * 
 	 * @param r

@@ -33,7 +33,8 @@ public interface IEntityLayout extends IPropertyStore {
 	 * <li>all unpruned nodes that are successor of at least one node from
 	 * subgraph S</li>
 	 * <li>all subgraphs that are <code>GraphEntities</code> and contain at
-	 * least one node that is a successor of at least one node from subgraph S</li>
+	 * least one node that is a successor of at least one node from subgraph S
+	 * </li>
 	 * </ul>
 	 * 
 	 * For subgraphs that are not <code>GraphEntities</code> an empty array will

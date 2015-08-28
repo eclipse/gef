@@ -124,7 +124,8 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	 * The scope may not be switched back to the {@link IAdaptable} instance
 	 * before having been re-entered for it (see {@link #enter(IAdaptable)}).
 	 * 
-	 * @param instance The {@link IAdaptable} instance to (unbind and) leave this
+	 * @param instance
+	 *            The {@link IAdaptable} instance to (unbind and) leave this
 	 *            {@link AdaptableScope} for.
 	 */
 	public void leave(A instance) {

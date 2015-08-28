@@ -51,13 +51,10 @@ public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 	protected void unprune() {
 		IViewer<javafx.scene.Node> viewer = getHost().getRoot().getViewer();
 		HidingModel hidingModel = viewer.getAdapter(HidingModel.class);
-		Set<Node> hiddenNeighbors = hidingModel.getHiddenNeighbors(getHost()
-				.getContent());
+		Set<Node> hiddenNeighbors = hidingModel.getHiddenNeighbors(getHost().getContent());
 		if (hiddenNeighbors != null && !hiddenNeighbors.isEmpty()) {
 			for (Node node : hiddenNeighbors) {
-				viewer.getContentPartMap().get(node)
-						.<HideNodePolicy> getAdapter(HideNodePolicy.class)
-						.show();
+				viewer.getContentPartMap().get(node).<HideNodePolicy> getAdapter(HideNodePolicy.class).show();
 			}
 		}
 	}

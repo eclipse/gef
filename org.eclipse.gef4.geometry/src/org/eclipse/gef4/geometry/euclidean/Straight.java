@@ -151,8 +151,8 @@ public class Straight implements Cloneable, Serializable {
 	 *         {@link Vector} lies on this {@link Straight}, within the
 	 *         specified segment, otherwise <code>false</code>
 	 */
-	public boolean containsWithinSegment(Vector segmentStart,
-			Vector segmentEnd, Vector vector) {
+	public boolean containsWithinSegment(Vector segmentStart, Vector segmentEnd,
+			Vector vector) {
 		// precondition: segment start and end have to be points on this
 		// straight.
 		if (!contains(segmentStart) || !contains(segmentEnd)) {
@@ -171,8 +171,8 @@ public class Straight implements Cloneable, Serializable {
 		if (new Straight(segmentStart, segmentDirection).contains(vector)) {
 			// compute parameter s, so that vector = segmentStart + s *
 			// (segmentEnd - segmentStart).
-			double s = segmentDirection.isVertical() ? (vector.y - segmentStart.y)
-					/ segmentDirection.y
+			double s = segmentDirection.isVertical()
+					? (vector.y - segmentStart.y) / segmentDirection.y
 					: (vector.x - segmentStart.x) / segmentDirection.x;
 			// if s is between 0 and 1, the intersection point lies within
 			// segment
@@ -304,12 +304,11 @@ public class Straight implements Cloneable, Serializable {
 	 *         <code>null</code> if no intersection {@link Point} exists
 	 */
 	public Vector getIntersection(Straight other) {
-		Vector3D l1 = new Vector3D(this.position.toPoint())
-				.getCrossProduct(new Vector3D(this.position.getAdded(
-						this.direction).toPoint()));
+		Vector3D l1 = new Vector3D(this.position.toPoint()).getCrossProduct(
+				new Vector3D(this.position.getAdded(this.direction).toPoint()));
 		Vector3D l2 = new Vector3D(other.position.toPoint())
-				.getCrossProduct(new Vector3D(other.position.getAdded(
-						other.direction).toPoint()));
+				.getCrossProduct(new Vector3D(
+						other.position.getAdded(other.direction).toPoint()));
 
 		Point poi = l1.getCrossProduct(l2).toPoint();
 
@@ -372,8 +371,8 @@ public class Straight implements Cloneable, Serializable {
 	 *         parameter value
 	 */
 	public Vector getPositionVectorAt(double parameter) {
-		return new Vector(position.x + direction.x * parameter, position.y
-				+ direction.y * parameter);
+		return new Vector(position.x + direction.x * parameter,
+				position.y + direction.y * parameter);
 	}
 
 	/**
@@ -391,8 +390,8 @@ public class Straight implements Cloneable, Serializable {
 		// calculate with a normalized direction vector to prevent rounding
 		// effects
 		Vector normalized = direction.getNormalized();
-		return new Straight(position, normalized).getIntersection(new Straight(
-				vector, normalized.getOrthogonalComplement()));
+		return new Straight(position, normalized).getIntersection(
+				new Straight(vector, normalized.getOrthogonalComplement()));
 	}
 
 	/**
@@ -464,8 +463,8 @@ public class Straight implements Cloneable, Serializable {
 	 *         single {@link Point}, otherwise <code>false</code>
 	 */
 	public boolean intersects(Straight other) {
-		return !PrecisionUtils.equal(direction.getDotProduct(other.direction
-				.getOrthogonalComplement()), 0, +6);
+		return !PrecisionUtils.equal(direction.getDotProduct(
+				other.direction.getOrthogonalComplement()), 0, +6);
 	}
 
 	/**
@@ -505,7 +504,8 @@ public class Straight implements Cloneable, Serializable {
 		// legal segment, check if there is an intersection within the segment
 		if (intersects(other)) {
 			Vector intersection = getIntersection(other);
-			return containsWithinSegment(segmentStart, segmentEnd, intersection);
+			return containsWithinSegment(segmentStart, segmentEnd,
+					intersection);
 		}
 		return false;
 	}
@@ -531,7 +531,8 @@ public class Straight implements Cloneable, Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "Straight: " + position.toString() + " + s * " + direction.toString(); //$NON-NLS-1$
+		return "Straight: " + position.toString() + " + s * " //$NON-NLS-1$
+				+ direction.toString();
 	}
 
 }

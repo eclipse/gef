@@ -29,9 +29,9 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * @author mwienand
  *
  */
-public final class RoundedRectangle extends
-		AbstractRectangleBasedGeometry<RoundedRectangle, PolyBezier> implements
-		IShape {
+public final class RoundedRectangle
+		extends AbstractRectangleBasedGeometry<RoundedRectangle, PolyBezier>
+		implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -170,8 +170,8 @@ public final class RoundedRectangle extends
 	 * @return the bottom edge of this {@link RoundedRectangle}.
 	 */
 	public Line getBottom() {
-		return new Line(x + arcWidth, y + height, x + width - arcWidth, y
-				+ height);
+		return new Line(x + arcWidth, y + height, x + width - arcWidth,
+				y + height);
 	}
 
 	/**
@@ -223,24 +223,24 @@ public final class RoundedRectangle extends
 	@Override
 	public BezierCurve[] getOutlineSegments() {
 		return new BezierCurve[] {
-				ShapeUtils.computeEllipticalArcApproximation(x + width - 2
-						* arcWidth, y, 2 * arcWidth, 2 * arcHeight,
-						Angle.fromDeg(0), Angle.fromDeg(90)),
+				ShapeUtils.computeEllipticalArcApproximation(
+						x + width - 2 * arcWidth, y, 2 * arcWidth,
+						2 * arcHeight, Angle.fromDeg(0), Angle.fromDeg(90)),
 				new Line(x + width - arcWidth, y, x + arcWidth, y),
-				ShapeUtils.computeEllipticalArcApproximation(x, y,
-						2 * arcWidth, 2 * arcHeight, Angle.fromDeg(90),
-						Angle.fromDeg(180)),
+				ShapeUtils.computeEllipticalArcApproximation(x, y, 2 * arcWidth,
+						2 * arcHeight, Angle.fromDeg(90), Angle.fromDeg(180)),
 				new Line(x, y + arcHeight, x, y + height - arcHeight),
-				ShapeUtils.computeEllipticalArcApproximation(x, y + height - 2
-						* arcHeight, 2 * arcWidth, 2 * arcHeight,
+				ShapeUtils.computeEllipticalArcApproximation(x,
+						y + height - 2 * arcHeight, 2 * arcWidth, 2 * arcHeight,
 						Angle.fromDeg(180), Angle.fromDeg(270)),
-				new Line(x + arcWidth, y + height, x + width - arcWidth, y
-						+ height),
-				ShapeUtils.computeEllipticalArcApproximation(x + width - 2
-						* arcWidth, y + height - 2 * arcHeight, 2 * arcWidth,
-						2 * arcHeight, Angle.fromDeg(270), Angle.fromDeg(360)),
-				new Line(x + width, y + height - arcHeight, x + width, y
-						+ arcHeight) };
+				new Line(x + arcWidth, y + height, x + width - arcWidth,
+						y + height),
+				ShapeUtils.computeEllipticalArcApproximation(
+						x + width - 2 * arcWidth, y + height - 2 * arcHeight,
+						2 * arcWidth, 2 * arcHeight, Angle.fromDeg(270),
+						Angle.fromDeg(360)),
+				new Line(x + width, y + height - arcHeight, x + width,
+						y + arcHeight) };
 	}
 
 	/**
@@ -249,8 +249,8 @@ public final class RoundedRectangle extends
 	 * @return the right edge of this {@link RoundedRectangle}.
 	 */
 	public Line getRight() {
-		return new Line(x + width, y + arcHeight, x + width, y + height
-				- arcHeight);
+		return new Line(x + width, y + arcHeight, x + width,
+				y + height - arcHeight);
 	}
 
 	@Override
@@ -308,8 +308,8 @@ public final class RoundedRectangle extends
 	 * @return the top right {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getTopRightArc() {
-		return new Arc(x + width - 2 * arcWidth, y, 2 * arcWidth,
-				2 * arcHeight, Angle.fromDeg(0), Angle.fromDeg(90));
+		return new Arc(x + width - 2 * arcWidth, y, 2 * arcWidth, 2 * arcHeight,
+				Angle.fromDeg(0), Angle.fromDeg(90));
 	}
 
 	/**
@@ -367,7 +367,8 @@ public final class RoundedRectangle extends
 
 	@Override
 	public String toString() {
-		return "RoundedRectangle(" + x + ", " + y + ", " + width + ", " + height + ", " + arcWidth + ", " + arcHeight + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		return "RoundedRectangle(" + x + ", " + y + ", " + width + ", " + height //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ ", " + arcWidth + ", " + arcHeight + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

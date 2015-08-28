@@ -36,9 +36,9 @@ import com.google.inject.Provider;
  *            The type of visual used by this handle. Needs to be a sub-type of
  *            {@link Node}.
  */
-public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
-		AbstractFXHandlePart<N> implements
-		Comparable<AbstractFXSegmentHandlePart<? extends Node>> {
+public abstract class AbstractFXSegmentHandlePart<N extends Node>
+		extends AbstractFXHandlePart<N>
+		implements Comparable<AbstractFXSegmentHandlePart<? extends Node>> {
 
 	private Provider<BezierCurve[]> segmentsProvider;
 	private BezierCurve[] segments;
@@ -53,8 +53,8 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
-		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter()) - (100 * o
-				.getSegmentIndex() + 10 * o.getSegmentParameter()));
+		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter())
+				- (100 * o.getSegmentIndex() + 10 * o.getSegmentParameter()));
 	}
 
 	@Override
@@ -155,14 +155,14 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 			visual.setVisible(true);
 
 			// get new position (in parent coordinate space)
-			BezierCurve segmentInParent = (BezierCurve) FXUtils.sceneToLocal(
-					visual.getParent(), segments[segmentIndex]);
+			BezierCurve segmentInParent = (BezierCurve) FXUtils
+					.sceneToLocal(visual.getParent(), segments[segmentIndex]);
 			Point positionInParent = getPosition(segmentInParent);
 
 			// transform to handle space
-			visual.relocate(positionInParent.x
-					+ visual.getLayoutBounds().getMinX(), positionInParent.y
-					+ visual.getLayoutBounds().getMinY());
+			visual.relocate(
+					positionInParent.x + visual.getLayoutBounds().getMinX(),
+					positionInParent.y + visual.getLayoutBounds().getMinY());
 		}
 	}
 

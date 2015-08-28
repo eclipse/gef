@@ -90,7 +90,8 @@ public class DotProperties {
 	 */
 	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
 			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
-					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
+					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT,
+					EDGE_STYLE_DASHDOTDOT));
 
 	/**
 	 * Defines the default value for the {@link #EDGE_STYLE} property, which is

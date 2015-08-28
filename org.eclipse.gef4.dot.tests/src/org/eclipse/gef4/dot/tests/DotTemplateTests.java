@@ -25,16 +25,18 @@ import org.junit.Test;
  */
 public class DotTemplateTests {
 
-	/** Zest-To-Dot transformation for a Zest graph itself (no subclass used). */
+	/**
+	 * Zest-To-Dot transformation for a Zest graph itself (no subclass used).
+	 */
 	@Test
 	public void zestGraph() {
 		Graph.Builder graph = new Graph.Builder();
 		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DOT);
 		graph.attr(DotProperties.GRAPH_RANKDIR, DotProperties.GRAPH_RANKDIR_LR);
-		Node node1 = new Node.Builder()
-				.attr(DotProperties.NODE_LABEL, "Node 1").build();
-		Node node2 = new Node.Builder()
-				.attr(DotProperties.NODE_LABEL, "Node 2").build();
+		Node node1 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node 1")
+				.build();
+		Node node2 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node 2")
+				.build();
 		Edge edge = new Edge.Builder(node1, node2)
 				.attr(DotProperties.EDGE_LABEL, "A dotted edge")
 				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
@@ -75,7 +77,9 @@ public class DotTemplateTests {
 		testDotGeneration(DotTestUtils.getLabeledGraph());
 	}
 
-	/** Zest-To-Dot transformation for a graph with styled edges (dotted, etc). */
+	/**
+	 * Zest-To-Dot transformation for a graph with styled edges (dotted, etc).
+	 */
 	@Test
 	public void styledGraph() {
 		testDotGeneration(DotTestUtils.getStyledGraph());
@@ -93,7 +97,8 @@ public class DotTemplateTests {
 				"DOT representation must contain simple class name of Dot input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
 		Assert.assertTrue(DotProperties.GRAPH_TYPE_DIRECTED
-				.equals(DotProperties.getType(graph)) ? dot.contains("digraph") : !dot.contains("digraph")); //$NON-NLS-1$ //$NON-NLS-2$
+				.equals(DotProperties.getType(graph)) ? dot.contains("digraph") //$NON-NLS-1$
+						: !dot.contains("digraph")); //$NON-NLS-1$
 		System.out.println(dot);
 	}
 }

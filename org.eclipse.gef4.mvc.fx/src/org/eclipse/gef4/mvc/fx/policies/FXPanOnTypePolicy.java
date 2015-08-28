@@ -157,12 +157,12 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 		double dx = ((totalMillisLeft + currentMillisLeft) / 1000d)
 				* scrollAmount
 				- ((totalMillisRight + currentMillisRight) / 1000d)
-				* scrollAmount;
+						* scrollAmount;
 		double dy = ((totalMillisUp + currentMillisUp) / 1000d) * scrollAmount
 				- ((totalMillisDown + currentMillisDown) / 1000d)
-				* scrollAmount;
-		FXChangeViewportPolicy viewportPolicy = getHost().getRoot().getAdapter(
-				FXChangeViewportPolicy.class);
+						* scrollAmount;
+		FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
+				.getAdapter(FXChangeViewportPolicy.class);
 		viewportPolicy.scrollRelative(dx, dy);
 	}
 

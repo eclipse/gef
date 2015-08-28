@@ -65,8 +65,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 				setSegmentParameter(part, 0.0);
 
 				// skip mid point handles around newly created waypoints
-				if (createdSegmentIndex < 0
-						|| part.getSegmentIndex() != createdSegmentIndex - 1
+				if (createdSegmentIndex < 0 || part
+						.getSegmentIndex() != createdSegmentIndex - 1
 						&& part.getSegmentIndex() != createdSegmentIndex) {
 					// param 0.5
 					part = it.next();
@@ -165,8 +165,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 			// increment segment index of succeeding parts
 			for (FXCircleSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
-						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-								.getSegmentParameter() == 1)) {
+						|| (p.getSegmentIndex() == hp.getSegmentIndex()
+								&& p.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
@@ -200,7 +200,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 	}
 
-	private void setSegmentParameter(FXCircleSegmentHandlePart part, double value) {
+	private void setSegmentParameter(FXCircleSegmentHandlePart part,
+			double value) {
 		if (part.getSegmentParameter() != value) {
 			part.setSegmentParameter(value);
 		}

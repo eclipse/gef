@@ -20,8 +20,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 
-public class PolygonRectangleIntersection extends
-		AbstractPolygonIntersectionExample {
+public class PolygonRectangleIntersection
+		extends AbstractPolygonIntersectionExample {
 
 	public static void main(String[] args) {
 		new PolygonRectangleIntersection();
@@ -33,12 +33,13 @@ public class PolygonRectangleIntersection extends
 
 	@Override
 	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return ((Polygon) g1).getOutline().getIntersections(
-				((Rectangle) g2).getOutline());
+		return ((Polygon) g1).getOutline()
+				.getIntersections(((Rectangle) g2).getOutline());
 	}
 
 	@Override
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
+	protected AbstractControllableShape createControllableShape2(
+			Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
 			public void createControlPoints() {

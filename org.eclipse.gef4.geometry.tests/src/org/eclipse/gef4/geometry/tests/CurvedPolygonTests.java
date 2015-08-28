@@ -29,7 +29,8 @@ public class CurvedPolygonTests {
 	public void test_contains_Point() {
 		CurvedPolygon curvedPolygon = new CurvedPolygon(PolyBezier
 				.interpolateCubic(new Point(100, 100), new Point(200, 200),
-						new Point(100, 300), new Point(100, 100)).toBezier());
+						new Point(100, 300), new Point(100, 100))
+				.toBezier());
 
 		assertFalse(curvedPolygon.contains(new Point(0, 0)));
 		assertFalse(curvedPolygon.contains(new Point(300, 0)));
@@ -45,11 +46,11 @@ public class CurvedPolygonTests {
 	@Test
 	public void test_getBounds() {
 		// TODO: store points in variables
-		CurvedPolygon curvedPolygon = new CurvedPolygon(new Line(100, 100, 200,
-				100), new Line(200, 100, 200, 200),
+		CurvedPolygon curvedPolygon = new CurvedPolygon(
+				new Line(100, 100, 200, 100), new Line(200, 100, 200, 200),
 				new Line(200, 200, 100, 200), new Line(100, 200, 100, 100));
-		Rectangle expectation = new Rectangle(new Point(100, 100), new Point(
-				200, 200));
+		Rectangle expectation = new Rectangle(new Point(100, 100),
+				new Point(200, 200));
 		Rectangle reality = curvedPolygon.getBounds();
 		assertEquals(expectation, reality);
 	}

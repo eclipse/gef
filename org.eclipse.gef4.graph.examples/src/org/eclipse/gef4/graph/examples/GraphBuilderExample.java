@@ -45,15 +45,14 @@ public final class GraphBuilderExample {
 		graphBuilder.attr(DotProperties.GRAPH_TYPE,
 				DotProperties.GRAPH_TYPE_UNDIRECTED);
 		graphBuilder.attr("g_attr", "g1");
-		graphBuilder.edges(
-				new Edge.Builder(n1, n2).attr(DotProperties.EDGE_LABEL, "e1")
-				.build(), e2);
+		graphBuilder.edges(new Edge.Builder(n1, n2)
+				.attr(DotProperties.EDGE_LABEL, "e1").build(), e2);
 		Graph g2 = graphBuilder.nodes(n1, n2, n3).build();
 
 		/* The builders can be chained: */
 		Graph g3 = new Graph.Builder()
 				.attr(DotProperties.GRAPH_TYPE,
-						DotProperties.GRAPH_TYPE_DIRECTED).nodes(n1, n2, n3)
-				.edges(e1, e2).build();
+						DotProperties.GRAPH_TYPE_DIRECTED)
+				.nodes(n1, n2, n3).edges(e1, e2).build();
 	}
 }

@@ -40,9 +40,9 @@ public class BezierApproximationExample extends AbstractExample {
 				 * BezierCurve below.
 				 */
 				addControlPoints(new Point(100, 200), new Point(150, 250),
-						new Point(200, 150), new Point(250, 250), new Point(
-								300, 150), new Point(350, 250), new Point(400,
-								200));
+						new Point(200, 150), new Point(250, 250),
+						new Point(300, 150), new Point(350, 250),
+						new Point(400, 200));
 			}
 
 			@Override
@@ -63,14 +63,14 @@ public class BezierApproximationExample extends AbstractExample {
 				BezierCurve curve = getShape();
 
 				// Display the BezierCurve as a Path.
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), Geometry2SWT.toSWTPathData(curve
-						.toPath())));
+				gc.drawPath(
+						new org.eclipse.swt.graphics.Path(Display.getCurrent(),
+								Geometry2SWT.toSWTPathData(curve.toPath())));
 
 				// Display the connection line of its control points.
 				gc.setLineStyle(SWT.LINE_DOT);
-				gc.drawPolyline(Geometry2SWT.toSWTPointArray(new Polyline(curve
-						.getPoints())));
+				gc.drawPolyline(Geometry2SWT
+						.toSWTPointArray(new Polyline(curve.getPoints())));
 
 			}
 		} };

@@ -139,7 +139,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * ignoring the role under which it is registered (see
 	 * {@link AdapterKey#getRole()}).
 	 * 
-	 * @param <T> The adapter type.
+	 * @param <T>
+	 *            The adapter type.
 	 * @param key
 	 *            The {@link Class} key used to retrieve a registered adapter.
 	 * @return The unambiguously retrievable adapter for the given {@link Class}
@@ -158,7 +159,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * ignoring the role under which it is registered (see
 	 * {@link AdapterKey#getRole()}).
 	 * 
-	 * @param <T> The adapter type.
+	 * @param <T>
+	 *            The adapter type.
 	 * @param key
 	 *            The {@link TypeToken} key used to retrieve a registered
 	 *            adapter.
@@ -211,7 +213,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
 	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
 	 * 
-	 * @param <T> The adapter type.
+	 * @param <T>
+	 *            The adapter type.
 	 * @param key
 	 *            The {@link Class} key to retrieve adapters for.
 	 * @return A {@link Map} containing all those adapters registered at this
@@ -234,7 +237,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * given {@link TypeToken} key (see
 	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
 	 * 
-	 * @param <T> The adapter type.
+	 * @param <T>
+	 *            The adapter type.
 	 * @param key
 	 *            The {@link TypeToken} key to retrieve adapters for.
 	 * @return A {@link Map} containing all those adapters registered at this
@@ -290,7 +294,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * {@link TypeToken#of(Class)}, as well as the default role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}.
 	 * 
-	 * @param <T> The adapter type.
+	 * @param <T>
+	 *            The adapter type.
 	 * @param key
 	 *            The {@link Class} under which to register the given adapter.
 	 * @param adapter
@@ -405,7 +410,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * Unregisters the adapter registered under the exact {@link AdapterKey}
 	 * given, returning it for convenience.
 	 * 
-	 * @param <T> The adapter type.
+	 * @param <T>
+	 *            The adapter type.
 	 * @param key
 	 *            The {@link AdapterKey} for which to remove a registered
 	 *            adapter.

@@ -88,7 +88,8 @@ public class GridModel implements IPropertyChangeNotifier {
 	public void setSnapToGrid(boolean snapToGrid) {
 		boolean oldSnapToGrid = this.snapToGrid;
 		this.snapToGrid = snapToGrid;
-		pcs.firePropertyChange(SNAP_TO_GRID_PROPERTY, oldSnapToGrid, snapToGrid);
+		pcs.firePropertyChange(SNAP_TO_GRID_PROPERTY, oldSnapToGrid,
+				snapToGrid);
 	}
 
 	public void setZoomGrid(boolean zoomGrid) {

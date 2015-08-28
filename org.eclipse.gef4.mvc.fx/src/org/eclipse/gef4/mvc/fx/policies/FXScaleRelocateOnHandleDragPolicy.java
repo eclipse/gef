@@ -49,7 +49,8 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	 *
 	 * @param targetPart
 	 */
-	private void computeRelatives(IContentPart<Node, ? extends Node> targetPart) {
+	private void computeRelatives(
+			IContentPart<Node, ? extends Node> targetPart) {
 		Rectangle bounds = getVisualBounds(targetPart);
 
 		double left = bounds.getX() - selectionBounds.getX();

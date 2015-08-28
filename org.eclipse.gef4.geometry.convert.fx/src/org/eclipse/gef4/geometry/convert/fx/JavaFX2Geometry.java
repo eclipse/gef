@@ -52,8 +52,7 @@ public class JavaFX2Geometry {
 	 * @return The new {@link AffineTransform}.
 	 */
 	public static final AffineTransform toAffineTransform(Transform t) {
-		return new AffineTransform(t.getMxx(), t.getMyx(), t.getMxy(),
-				t.getMyy(), t.getTx(), t.getTy());
+		return new AffineTransform(t.getMxx(), t.getMyx(), t.getMxy(), t.getMyy(), t.getTx(), t.getTy());
 	}
 
 	/**
@@ -64,8 +63,7 @@ public class JavaFX2Geometry {
 	 * @return The new {@link Rectangle}.
 	 */
 	public static final Rectangle toRectangle(Bounds b) {
-		return new Rectangle(b.getMinX(), b.getMinY(), b.getWidth(),
-				b.getHeight());
+		return new Rectangle(b.getMinX(), b.getMinY(), b.getWidth(), b.getHeight());
 	}
 
 	/**
@@ -96,24 +94,19 @@ public class JavaFX2Geometry {
 			PathElement element = elements.get(i);
 			if (element instanceof MoveTo) {
 				MoveTo moveTo = (MoveTo) element;
-				segments[i] = new Segment(Segment.MOVE_TO, new Point(
-						moveTo.getX(), moveTo.getY()));
+				segments[i] = new Segment(Segment.MOVE_TO, new Point(moveTo.getX(), moveTo.getY()));
 			} else if (element instanceof LineTo) {
 				LineTo lineTo = (LineTo) element;
-				segments[i] = new Segment(Segment.LINE_TO, new Point(
-						lineTo.getX(), lineTo.getY()));
+				segments[i] = new Segment(Segment.LINE_TO, new Point(lineTo.getX(), lineTo.getY()));
 			} else if (element instanceof QuadCurveTo) {
 				QuadCurveTo quadTo = (QuadCurveTo) element;
-				segments[i] = new Segment(Segment.QUAD_TO, new Point(
-						quadTo.getControlX(), quadTo.getControlY()), new Point(
-						quadTo.getX(), quadTo.getY()));
+				segments[i] = new Segment(Segment.QUAD_TO, new Point(quadTo.getControlX(), quadTo.getControlY()),
+						new Point(quadTo.getX(), quadTo.getY()));
 			} else if (element instanceof CubicCurveTo) {
 				CubicCurveTo cubicTo = (CubicCurveTo) element;
-				segments[i] = new Segment(Segment.CUBIC_TO, new Point(
-						cubicTo.getControlX1(), cubicTo.getControlY1()),
-						new Point(cubicTo.getControlX2(), cubicTo
-								.getControlY2()), new Point(cubicTo.getX(),
-								cubicTo.getY()));
+				segments[i] = new Segment(Segment.CUBIC_TO, new Point(cubicTo.getControlX1(), cubicTo.getControlY1()),
+						new Point(cubicTo.getControlX2(), cubicTo.getControlY2()),
+						new Point(cubicTo.getX(), cubicTo.getY()));
 			} else if (element instanceof ClosePath) {
 				segments[i] = new Segment(Segment.CLOSE);
 			}

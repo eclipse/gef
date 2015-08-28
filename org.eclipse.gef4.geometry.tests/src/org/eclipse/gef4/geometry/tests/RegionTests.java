@@ -106,26 +106,26 @@ public class RegionTests {
 	@Test
 	public void test_equals() {
 		Region r0 = new Region(new Rectangle(0, 0, 100, 100));
-		Region r1 = new Region(new Rectangle(0, 0, 50, 100), new Rectangle(50,
-				0, 50, 100));
+		Region r1 = new Region(new Rectangle(0, 0, 50, 100),
+				new Rectangle(50, 0, 50, 100));
 		assertEquals(r0, r1);
 		assertEquals(r1, r0);
-		r0 = new Region(new Rectangle(0, 0, 100, 50), new Rectangle(0, 50, 100,
-				50));
+		r0 = new Region(new Rectangle(0, 0, 100, 50),
+				new Rectangle(0, 50, 100, 50));
 		assertEquals(r0, r1);
 		assertEquals(r1, r0);
 
-		r1 = new Region(new Rectangle(0, 0, 100, 100), new Rectangle(50, 50,
-				100, 100));
+		r1 = new Region(new Rectangle(0, 0, 100, 100),
+				new Rectangle(50, 50, 100, 100));
 		assertFalse(r0.equals(r1));
 		assertFalse(r1.equals(r0));
 	}
 
 	@Test
 	public void test_toPath_with_void() {
-		Region r = new Region(new Rectangle(0, 0, 200, 50), new Rectangle(0, 0,
-				50, 150), new Rectangle(0, 100, 200, 50), new Rectangle(150, 0,
-				50, 150));
+		Region r = new Region(new Rectangle(0, 0, 200, 50),
+				new Rectangle(0, 0, 50, 150), new Rectangle(0, 100, 200, 50),
+				new Rectangle(150, 0, 50, 150));
 
 		Path p = r.toPath();
 

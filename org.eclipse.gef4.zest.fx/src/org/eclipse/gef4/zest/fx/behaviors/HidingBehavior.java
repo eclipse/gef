@@ -31,8 +31,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  */
 
 // Only applicable for NodeContentPart (seee #getHost())
-public class HidingBehavior extends AbstractBehavior<Node> implements
-		PropertyChangeListener {
+public class HidingBehavior extends AbstractBehavior<Node>implements PropertyChangeListener {
 
 	private IVisualPart<Node, ? extends Node> hiddenNeighborsPart;
 	private boolean isHidden;
@@ -58,8 +57,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		}
 	}
 
-	private boolean containsAny(Set<org.eclipse.gef4.graph.Node> hidden,
-			Set<org.eclipse.gef4.graph.Node> neighbors) {
+	private boolean containsAny(Set<org.eclipse.gef4.graph.Node> hidden, Set<org.eclipse.gef4.graph.Node> neighbors) {
 		boolean containsAny = false;
 		for (org.eclipse.gef4.graph.Node n : neighbors) {
 			if (hidden.contains(n)) {
@@ -73,8 +71,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	protected void createHiddenNeighborPart() {
 		// TODO: delegate to factory
 		hiddenNeighborsPart = new HiddenNeighborsPart();
-		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(),
-				Collections.singletonList(getHost()),
+		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsPart));
 	}
 
@@ -94,8 +91,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected HidingModel getHidingModel() {
-		return getHost().getRoot().getViewer()
-				.<HidingModel> getAdapter(HidingModel.class);
+		return getHost().getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class);
 	}
 
 	@Override
@@ -107,8 +103,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		return hiddenNeighborsPart;
 	}
 
-	private boolean hasHiddenNeighbors(org.eclipse.gef4.graph.Node node,
-			HidingModel hidingModel) {
+	private boolean hasHiddenNeighbors(org.eclipse.gef4.graph.Node node, HidingModel hidingModel) {
 		return !hidingModel.getHiddenNeighbors(node).isEmpty();
 	}
 
@@ -133,20 +128,15 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 			}
 
 			// check if we have to show/hide/update the pruned neighbors part
-			Set<org.eclipse.gef4.graph.Node> oldHidden = (Set<org.eclipse.gef4.graph.Node>) event
-					.getOldValue();
-			Set<org.eclipse.gef4.graph.Node> newHidden = (Set<org.eclipse.gef4.graph.Node>) event
-					.getNewValue();
+			Set<org.eclipse.gef4.graph.Node> oldHidden = (Set<org.eclipse.gef4.graph.Node>) event.getOldValue();
+			Set<org.eclipse.gef4.graph.Node> newHidden = (Set<org.eclipse.gef4.graph.Node>) event.getNewValue();
 
 			org.eclipse.gef4.graph.Node content = getHost().getContent();
-			Set<org.eclipse.gef4.graph.Node> neighbors = content
-					.getLocalNeighbors();
+			Set<org.eclipse.gef4.graph.Node> neighbors = content.getLocalNeighbors();
 
-			if (!containsAny(oldHidden, neighbors)
-					&& containsAny(newHidden, neighbors)) {
+			if (!containsAny(oldHidden, neighbors) && containsAny(newHidden, neighbors)) {
 				createHiddenNeighborPart();
-			} else if (containsAny(oldHidden, neighbors)
-					&& !containsAny(newHidden, neighbors)) {
+			} else if (containsAny(oldHidden, neighbors) && !containsAny(newHidden, neighbors)) {
 				removeHiddenNeighborPart();
 			} else {
 				// TODO: only necessary when neighbors change
@@ -154,8 +144,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 					updateHiddenNeighborPart();
 				}
 			}
-		} else if (IVisualPart.ANCHOREDS_PROPERTY.equals(event
-				.getPropertyName())) {
+		} else if (IVisualPart.ANCHOREDS_PROPERTY.equals(event.getPropertyName())) {
 			if (hiddenNeighborsPart == null) {
 				Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = getHidingModel()
 						.getHiddenNeighbors(getHost().getContent());
@@ -169,8 +158,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected void removeHiddenNeighborPart() {
-		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(),
-				Collections.singletonList(getHost()),
+		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsPart));
 		hiddenNeighborsPart = null;
 	}

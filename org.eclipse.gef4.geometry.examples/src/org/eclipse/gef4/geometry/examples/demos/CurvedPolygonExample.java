@@ -70,9 +70,9 @@ public class CurvedPolygonExample extends AbstractExample {
 				CurvedPolygon curvedPoly = getShape();
 
 				for (BezierCurve c : curvedPoly.getOutlineSegments()) {
-					gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-							.getCurrent(), Geometry2SWT.toSWTPathData(c
-							.toPath())));
+					gc.drawPath(new org.eclipse.swt.graphics.Path(
+							Display.getCurrent(),
+							Geometry2SWT.toSWTPathData(c.toPath())));
 				}
 			}
 

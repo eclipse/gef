@@ -32,7 +32,7 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  *
  */
 abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>, S extends IGeometry>
-extends AbstractRectangleBasedGeometry<T, S> {
+		extends AbstractRectangleBasedGeometry<T, S> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -114,18 +114,17 @@ extends AbstractRectangleBasedGeometry<T, S> {
 				if (angularExtent.deg() <= 270.0) {
 					// three segments, calculate the third (which is below 90
 					// degrees)
-					segments.add(ShapeUtils.computeEllipticalArcApproximation(
-							x, y, width, height,
-							Angle.fromRad(start + Math.PI), Angle.fromRad(end)));
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(x,
+							y, width, height, Angle.fromRad(start + Math.PI),
+							Angle.fromRad(end)));
 				} else {
 					// four segments (fourth below 90 degrees), so calculate the
 					// third and fourth
-					segments.add(ShapeUtils.computeEllipticalArcApproximation(
-							x, y, width, height,
-							Angle.fromRad(start + Math.PI),
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(x,
+							y, width, height, Angle.fromRad(start + Math.PI),
 							Angle.fromRad(start + 3 * Math.PI / 2)));
-					segments.add(ShapeUtils.computeEllipticalArcApproximation(
-							x, y, width, height,
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(x,
+							y, width, height,
 							Angle.fromRad(start + 3 * Math.PI / 2),
 							Angle.fromRad(end)));
 				}
@@ -178,9 +177,9 @@ extends AbstractRectangleBasedGeometry<T, S> {
 	public Point getPoint(Angle angularExtent) {
 		double a = width / 2;
 		double b = height / 2;
-		return new Point(x + a + a
-				* Math.cos(startAngle.rad() + angularExtent.rad()), y + b - b
-				* Math.sin(startAngle.rad() + angularExtent.rad()));
+		return new Point(
+				x + a + a * Math.cos(startAngle.rad() + angularExtent.rad()),
+				y + b - b * Math.sin(startAngle.rad() + angularExtent.rad()));
 	}
 
 	/**
