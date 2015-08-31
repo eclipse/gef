@@ -36,7 +36,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * An {@link ITool} to handle a click/drag interaction gestures.
+ * An {@link ITool} to handle click/drag interaction gestures.
  * <p>
  * As click and drag are 'overlapping' gestures (a click is part of each drag,
  * which is composed out of click, drag, and release), these are handled
@@ -47,9 +47,9 @@ import javafx.scene.input.MouseEvent;
  * {@link IVisualPart}s that serve as interaction targets for click and drag
  * respectively. They are identified via hit-testing on the visuals and the
  * availability of a corresponding {@link AbstractFXOnClickPolicy} or
- * {@link AbstractFXOnDragPolicy} (see @
+ * {@link AbstractFXOnDragPolicy} (see
  * {@link #getTargetPart(IViewer, Node, Class)}) and can even be temporarily
- * overwritten (see @
+ * overwritten (see
  * {@link #overrideTargetForThisInteraction(EventTarget, IVisualPart)}).
  * <p>
  * The {@link FXClickDragTool} handles the opening and closing of an transaction

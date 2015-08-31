@@ -18,17 +18,37 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.fx.gestures.AbstractFXPinchSpreadGesture;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
+/**
+ * An {@link ITool} to handle pinch/spread (zoom) interaction gestures.
+ * <p>
+ * During each pinch/spread interaction, the tool identifies an
+ * {@link IVisualPart} that serves as interaction target. It is identified via
+ * hit-testing on the visuals and the availability of a corresponding
+ * {@link AbstractFXOnPinchSpreadPolicy} (see
+ * {@link #getTargetPart(IViewer, Node)}).
+ * <p>
+ * The {@link FXPinchSpreadTool} handles the opening and closing of an
+ * transaction operation via the {@link FXDomain}, to which it is adapted. It
+ * controls that a single transaction operation is used for the complete
+ * interaction, so all interaction results can be undone in a single undo step.
+ *
+ * @author mwienand
+ * @author anyssen
+ *
+ */
 public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	// TODO: Rename to ON_PINCH_SPREAD_POLICY_KEY
@@ -36,15 +56,20 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	private final Map<IViewer<Node>, AbstractFXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractFXPinchSpreadGesture>();
 
-	public FXPinchSpreadTool() {
-	}
-
 	// TODO: Rename to getOnPinchSpreachPolicies()
 	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getPinchSpreadPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<>(targetPart
 				.<AbstractFXOnPinchSpreadPolicy> getAdapters(TOOL_POLICY_KEY)
 				.values());
+	}
+
+	protected IVisualPart<Node, ? extends Node> getTargetPart(
+			IViewer<Node> viewer, Node target) {
+		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+				.getTargetPart(Collections.singleton(viewer), target,
+						TOOL_POLICY_KEY, true);
+		return targetPart;
 	}
 
 	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getTargetPolicies(
@@ -55,9 +80,8 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 		}
 
 		Node targetNode = (Node) target;
-		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
-				.getTargetPart(Collections.singleton(viewer), targetNode,
-						TOOL_POLICY_KEY, true);
+		IVisualPart<Node, ? extends Node> targetPart = getTargetPart(viewer,
+				targetNode);
 
 		// send event to root part if no target part can be found
 		if (targetPart == null) {
