@@ -137,6 +137,17 @@ public class FXChangeViewportOperation extends AbstractOperation {
 		return viewportModel;
 	}
 
+	public boolean hasEffect() {
+		if (getNewWidth() == getOldWidth()
+				&& getNewHeight() == getOldHeight()
+				&& (getNewTransform() == null ? getOldTransform() == null
+						: getNewTransform().equals(getOldTransform()))
+				&& getNewTx() == getOldTx() && getNewTy() == getOldTy()) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Stores all relevant values in fields, so that they can be restored later.
 	 *

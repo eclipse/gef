@@ -53,12 +53,7 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node> implements
 
 		// clear operation and return current one (and formerly pushed
 		// operations)
-		if (operation.getNewWidth() == operation.getOldWidth()
-				&& operation.getNewHeight() == operation.getOldHeight()
-				&& operation.getNewTransform().equals(
-						operation.getOldTransform())
-				&& operation.getNewTx() == operation.getOldTx()
-				&& operation.getNewTy() == operation.getOldTy()) {
+		if (operation.hasEffect()) {
 			IUndoableOperation commit = operation;
 			operation = null;
 			return commit;

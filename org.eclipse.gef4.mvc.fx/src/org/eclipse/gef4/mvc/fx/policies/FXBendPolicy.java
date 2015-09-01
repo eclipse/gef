@@ -83,7 +83,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	@Override
 	public IUndoableOperation commit() {
-		if (op != null && !op.getOldAnchors().equals(op.getNewAnchors())) {
+		if (op != null && op.hasEffect()) {
 			// get current selection
 			IViewer<Node> viewer = getHost().getRoot().getViewer();
 			SelectionModel<Node> selectionModel = viewer

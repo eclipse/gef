@@ -31,10 +31,7 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	@Override
 	public IUndoableOperation commit() {
-		if (op.getOldAnchors().equals(op.getNewAnchors())) {
-			return null;
-		}
-		return op;
+		return op.hasEffect() ? op : null;
 	}
 
 	/**

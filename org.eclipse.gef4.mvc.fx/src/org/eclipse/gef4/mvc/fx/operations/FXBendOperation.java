@@ -72,6 +72,10 @@ public class FXBendOperation extends AbstractOperation {
 		return oldAnchors;
 	}
 
+	public boolean hasEffect() {
+		return !oldAnchors.equals(newAnchors);
+	}
+
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
