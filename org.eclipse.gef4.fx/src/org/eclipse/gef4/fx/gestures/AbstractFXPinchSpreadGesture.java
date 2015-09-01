@@ -25,10 +25,19 @@ import javafx.scene.input.ZoomEvent;
  */
 public abstract class AbstractFXPinchSpreadGesture extends AbstractFXGesture {
 
+	private boolean inZoom = false;
+
 	private EventHandler<? super ZoomEvent> zoomStartedHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			zoomStarted(event);
+			/*
+			 * Sometimes a zoom gesture will fire multiple ZOOM_STARTED events.
+			 * These should not be reported since zooming is still in progress.
+			 */
+			if (!inZoom) {
+				inZoom = true;
+				zoomStarted(event);
+			}
 		}
 	};
 
@@ -43,13 +52,14 @@ public abstract class AbstractFXPinchSpreadGesture extends AbstractFXGesture {
 		@Override
 		public void handle(ZoomEvent event) {
 			zoomFinished(event);
+			inZoom = false;
 		}
 	};
 
 	@Override
 	protected void register() {
-		getScene().addEventHandler(ZoomEvent.ZOOM_FINISHED,
-				zoomFinishedHandler);
+		getScene()
+				.addEventHandler(ZoomEvent.ZOOM_FINISHED, zoomFinishedHandler);
 		getScene().addEventHandler(ZoomEvent.ZOOM_STARTED, zoomStartedHandler);
 		getScene().addEventHandler(ZoomEvent.ZOOM, zoomHandler);
 	}
