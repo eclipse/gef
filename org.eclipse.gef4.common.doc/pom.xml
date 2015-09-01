@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>org.eclipse.gef4.plugins</groupId>
 	<artifactId>org.eclipse.gef4.common.doc</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	<build>
 		<plugins>

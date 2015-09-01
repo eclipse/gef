@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.gef4.geometry_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.geometry_0.2.0.qualifier.jar" id="org.eclipse.gef4.geometry" version="0.2.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.geometry.convert.fx_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.fx" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.geometry.convert.fx_0.2.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.fx" version="0.2.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.geometry.convert.swt_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.swt" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.geometry.convert.swt_0.2.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.swt" version="0.2.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.geometry.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.doc" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.geometry.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.geometry.doc" version="0.2.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.geometry.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.sdk" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.geometry.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.geometry.sdk" version="0.2.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
    <feature url="features/org.eclipse.gef4.cloudio.ui_0.2.0.qualifier.jar" id="org.eclipse.gef4.cloudio.ui" version="0.2.0.qualifier">
@@ -57,7 +57,7 @@
    <feature url="features/org.eclipse.gef4.fx_0.2.0.qualifier.jar" id="org.eclipse.gef4.fx" version="0.2.0.qualifier">
       <category name="GEF4 FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.fx.ui_0.1.0.qualifier.jar" id="org.eclipse.gef4.fx.ui" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.fx.ui_0.2.0.qualifier.jar" id="org.eclipse.gef4.fx.ui" version="0.2.0.qualifier">
       <category name="GEF4 FX"/>
    </feature>
    <feature url="features/org.eclipse.gef4.fx.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.fx.doc" version="0.2.0.qualifier">
@@ -66,13 +66,13 @@
    <feature url="features/org.eclipse.gef4.fx.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.fx.sdk" version="0.2.0.qualifier">
       <category name="GEF4 FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graph_0.1.0.qualifier.jar" id="org.eclipse.gef4.graph" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graph_0.2.0.qualifier.jar" id="org.eclipse.gef4.graph" version="0.2.0.qualifier">
       <category name="GEF4 Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graph.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.graph.doc" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graph.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.graph.doc" version="0.2.0.qualifier">
       <category name="GEF4 Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graph.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.graph.sdk" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graph.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.graph.sdk" version="0.2.0.qualifier">
       <category name="GEF4 Graph"/>
    </feature>
    <feature url="features/org.eclipse.gef4.dot_0.2.0.qualifier.jar" id="org.eclipse.gef4.dot" version="0.2.0.qualifier">
@@ -87,13 +87,13 @@
    <feature url="features/org.eclipse.gef4.dot.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.dot.sdk" version="0.2.0.qualifier">
       <category name="GEF4 DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.common_0.1.0.qualifier.jar" id="org.eclipse.gef4.common" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.common_0.2.0.qualifier.jar" id="org.eclipse.gef4.common" version="0.2.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.common.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.common.doc" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.common.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.common.doc" version="0.2.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.common.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.common.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.common.sdk" version="0.2.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
    <feature url="features/org.eclipse.gef4.zest.fx_0.2.0.qualifier.jar" id="org.eclipse.gef4.zest.fx" version="0.2.0.qualifier">

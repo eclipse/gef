@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.graph"
       label="GEF4 Graph"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.graph"
       license-feature="org.eclipse.license"
@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.common" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.common" version="0.2.0" match="equivalent"/>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
    </requires>
 

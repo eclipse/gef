@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.geometry"
       label="GEF4 Geometry"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.geometry"
       license-feature="org.eclipse.license"
@@ -15,9 +15,9 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <plugin

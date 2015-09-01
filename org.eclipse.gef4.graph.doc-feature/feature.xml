@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.graph.doc"
       label="GEF4 Graph Documentation"
-      version="0.1.0.qualifier"
+      version="0.2.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.graph.doc"
       license-feature="org.eclipse.license"
@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.common.doc" version="0.1.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.common.doc" version="0.2.0" match="equivalent"/>
    </requires>
 
    <plugin
