@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -23,9 +26,6 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-
 /**
  * A transactional {@link IPolicy} to change the viewport of an {@link IViewer}
  * via its attached {@link ViewportModel}. The {@link ViewportModel} is expected
@@ -36,8 +36,8 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class FXChangeViewportPolicy extends AbstractPolicy<Node>
-		implements ITransactional {
+public class FXChangeViewportPolicy extends AbstractPolicy<Node> implements
+		ITransactional {
 
 	private FXChangeViewportOperation operation = null;
 	private boolean initialized = false;
@@ -53,9 +53,17 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 
 		// clear operation and return current one (and formerly pushed
 		// operations)
-		IUndoableOperation commit = operation;
-		operation = null;
-		return commit;
+		if (operation.getNewWidth() == operation.getOldWidth()
+				&& operation.getNewHeight() == operation.getOldHeight()
+				&& operation.getNewTransform().equals(
+						operation.getOldTransform())
+				&& operation.getNewTx() == operation.getOldTx()
+				&& operation.getNewTy() == operation.getOldTy()) {
+			IUndoableOperation commit = operation;
+			operation = null;
+			return commit;
+		}
+		return null;
 	}
 
 	@Override
@@ -66,8 +74,8 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 			throw new IllegalStateException(
 					"ViewportModel could not be obtained!");
 		}
-		operation = new FXChangeViewportOperation(viewportModel,
-				viewportModel.getContentsTransform().getCopy());
+		operation = new FXChangeViewportOperation(viewportModel, viewportModel
+				.getContentsTransform().getCopy());
 		// we are properly initialized now
 		initialized = true;
 	}
@@ -86,8 +94,7 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		}
 	}
 
-	public void zoomRelative(double relativeZoom, double sceneX,
-			double sceneY) {
+	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
 		// ensure we have been properly initialized
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
@@ -96,10 +103,13 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		// compute transformation
 		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
 				.getScrollPane().getContentGroup().sceneToLocal(sceneX, sceneY);
-		operation.concatenateToNewTransform(new AffineTransform()
-				.translate(contentGroupPivot.getX(), contentGroupPivot.getY())
-				.scale(relativeZoom, relativeZoom).translate(
-						-contentGroupPivot.getX(), -contentGroupPivot.getY()));
+		operation
+				.concatenateToNewTransform(new AffineTransform()
+						.translate(contentGroupPivot.getX(),
+								contentGroupPivot.getY())
+						.scale(relativeZoom, relativeZoom)
+						.translate(-contentGroupPivot.getX(),
+								-contentGroupPivot.getY()));
 		// locally execute operation
 		try {
 			operation.execute(null, null);
