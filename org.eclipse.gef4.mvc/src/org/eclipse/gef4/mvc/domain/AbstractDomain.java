@@ -41,6 +41,7 @@ import com.google.inject.Inject;
 /**
  *
  * @author anyssen
+ * @author mwienand
  *
  * @param <VR>
  *            The visual root node of the UI toolkit used, e.g.
@@ -110,8 +111,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		// check if the transaction has an effect (or is empty)
 		if (transaction != null && !transaction.getOperations().isEmpty()) {
 			// adjust the label
-			transaction.setLabel(
-					transaction.getOperations().iterator().next().getLabel());
+			transaction.setLabel(transaction.getOperations().iterator().next()
+					.getLabel());
 			// successfully close operation
 			getOperationHistory().closeOperation(true, true,
 					IOperationHistory.EXECUTE);
@@ -129,6 +130,14 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		}
 	}
 
+	/**
+	 * Creates a {@link ForwardUndoCompositeOperation} which is used to store
+	 * the operations within an execution transaction. The operation is opened
+	 * on the {@link #getOperationHistory() operation history}.
+	 *
+	 * @return A new {@link ForwardUndoCompositeOperation} which is configured
+	 *         to store the operations within an execution transaction.
+	 */
 	protected ForwardUndoCompositeOperation createExecutionTransaction() {
 		ForwardUndoCompositeOperation transaction = new ForwardUndoCompositeOperation(
 				"Transaction");
@@ -225,6 +234,13 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		return acs.isActive();
 	}
 
+	/**
+	 * Returns <code>true</code> if an execution transaction is currently open.
+	 * Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if an execution transaction is currently open,
+	 *         otherwise <code>false</code>.
+	 */
 	protected boolean isExecutionTransactionOpen() {
 		return transaction != null;
 	}
@@ -284,6 +300,14 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		ads.setAdapters(adaptersWithKeys, false);
 	}
 
+	/**
+	 * Sets the {@link IOperationHistory} that is used by this
+	 * {@link AbstractDomain} to the given value. Operation history listeners
+	 * are un-/registered accordingly.
+	 *
+	 * @param stack
+	 *            The new {@link IOperationHistory} for this domain.
+	 */
 	@Inject
 	public void setOperationHistory(IOperationHistory stack) {
 		if (operationHistory != null && operationHistory != stack) {
@@ -299,6 +323,13 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		}
 	}
 
+	/**
+	 * Sets the {@link IUndoContext} that is used by this {@link AbstractDomain}
+	 * to the given value.
+	 *
+	 * @param undoContext
+	 *            The new {@link IUndoContext} for this domain.
+	 */
 	@Inject
 	public void setUndoContext(IUndoContext undoContext) {
 		this.undoContext = undoContext;

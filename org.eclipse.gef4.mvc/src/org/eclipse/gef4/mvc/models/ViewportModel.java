@@ -42,12 +42,31 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		private double height = 0;
 		private AffineTransform contentsTransform = null;
 
+		/**
+		 * Creates a new {@link ViewportState} with
+		 * <code>tx = ty = width = height = 0</code> and an identity transform.
+		 */
 		public ViewportState() {
 			this(0, 0, 0, 0, new AffineTransform());
 		}
 
-		public ViewportState(double translateX, double translateY, double width,
-				double height, AffineTransform contentsTransform) {
+		/**
+		 * Creates a new {@link ViewportState} for the given translation, size,
+		 * and transform.
+		 *
+		 * @param translateX
+		 *            The horizontal translation.
+		 * @param translateY
+		 *            The vertical translation.
+		 * @param width
+		 *            The viewport width.
+		 * @param height
+		 *            The viewport height.
+		 * @param contentsTransform
+		 *            The contents transform.
+		 */
+		public ViewportState(double translateX, double translateY,
+				double width, double height, AffineTransform contentsTransform) {
 			this.translateX = translateX;
 			this.translateY = translateY;
 			this.width = width;
@@ -93,27 +112,62 @@ public class ViewportModel implements IPropertyChangeNotifier {
 			return true;
 		}
 
+		/**
+		 * Returns the contents transform associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The contents transform.
+		 */
 		public AffineTransform getContentsTransform() {
 			return contentsTransform;
 		}
 
+		/**
+		 * Returns a copy of this {@link ViewportState}.
+		 *
+		 * @return A copy of this {@link ViewportState}.
+		 */
 		public ViewportState getCopy() {
 			return new ViewportState(translateX, translateY, width, height,
 					contentsTransform.getCopy());
 		}
 
+		/**
+		 * Returns the viewport height associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The viewport height.
+		 */
 		public double getHeight() {
 			return height;
 		}
 
+		/**
+		 * Returns the horizontal translation associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The horizontal translation.
+		 */
 		public double getTranslateX() {
 			return translateX;
 		}
 
+		/**
+		 * Returns the vertical translation associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The vertical translation.
+		 */
 		public double getTranslateY() {
 			return translateY;
 		}
 
+		/**
+		 * Returns the viewport width associated with this {@link ViewportState}
+		 * .
+		 *
+		 * @return The viewport width.
+		 */
 		public double getWidth() {
 			return width;
 		}
@@ -122,8 +176,10 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((contentsTransform == null) ? 0
-					: contentsTransform.hashCode());
+			result = prime
+					* result
+					+ ((contentsTransform == null) ? 0 : contentsTransform
+							.hashCode());
 			long temp;
 			temp = Double.doubleToLongBits(height);
 			result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -175,9 +231,31 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Applies the given {@link ViewportState} to this {@link ViewportModel}.
+	 * Only the specified properties are transferred.
+	 *
+	 * @param state
+	 *            The {@link ViewportState} to apply.
+	 * @param ignoreTranslateX
+	 *            <code>true</code> if the horizontal translation should not be
+	 *            transferred, otherwise <code>false</code>.
+	 * @param ignoreTranslateY
+	 *            <code>true</code> if the vertical translation should not be
+	 *            transferred, otherwise <code>false</code>.
+	 * @param ignoreWidth
+	 *            <code>true</code> if the viewport width should not be
+	 *            transferred, otherwise <code>false</code>.
+	 * @param ignoreHeight
+	 *            <code>true</code> if the viewport height should not be
+	 *            transferred, otherwise <code>false</code>.
+	 * @param ignoreContentsTransform
+	 *            <code>true</code> if the contents transform should not be
+	 *            transferred, otherwise <code>false</code>.
+	 */
 	public void applyState(ViewportState state, boolean ignoreTranslateX,
-			boolean ignoreTranslateY, boolean ignoreWidth, boolean ignoreHeight,
-			boolean ignoreContentsTransform) {
+			boolean ignoreTranslateY, boolean ignoreWidth,
+			boolean ignoreHeight, boolean ignoreContentsTransform) {
 		// System.out.println("APPLY: (" + state.translateX + ", " +
 		// state.translateY
 		// + ", " + state.width + ", " + state.height + ") -> "
@@ -251,9 +329,32 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * Creates a new {@link ViewportState} representing the current state of
+	 * this {@link ViewportModel}. Only the specified properties are saved in
+	 * the {@link ViewportState}.
+	 *
+	 * @param ignoreTranslateX
+	 *            <code>true</code> if the horizontal translation should not be
+	 *            retrieved, otherwise <code>false</code>.
+	 * @param ignoreTranslateY
+	 *            <code>true</code> if the vertical translation should not be
+	 *            retrieved, otherwise <code>false</code>.
+	 * @param ignoreWidth
+	 *            <code>true</code> if the viewport width should not be
+	 *            retrieved, otherwise <code>false</code>.
+	 * @param ignoreHeight
+	 *            <code>true</code> if the viewport height should not be
+	 *            retrieved, otherwise <code>false</code>.
+	 * @param ignoreContentsTransform
+	 *            <code>true</code> if the contents transform should not be
+	 *            retrieved, otherwise <code>false</code>.
+	 * @return A new {@link ViewportState} representing the current state of
+	 *         this {@link ViewportModel}.
+	 */
 	public ViewportState retrieveState(boolean ignoreTranslateX,
-			boolean ignoreTranslateY, boolean ignoreWidth, boolean ignoreHeight,
-			boolean ignoreContentsTransform) {
+			boolean ignoreTranslateY, boolean ignoreWidth,
+			boolean ignoreHeight, boolean ignoreContentsTransform) {
 		ViewportState state = new ViewportState(getTranslateX(),
 				getTranslateY(), getWidth(), getHeight(),
 				getContentsTransform());

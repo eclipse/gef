@@ -20,10 +20,32 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+/**
+ * The {@link SynchronizeContentChildrenOperation} can be used to trigger the
+ * synchronization of children and content children using the
+ * {@link ContentBehavior} of a specified {@link IContentPart}.
+ *
+ * @author mwienand
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ */
 public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 
 	private IContentPart<VR, ? extends VR> parent;
 
+	/**
+	 * Creates a new {@link SynchronizeContentChildrenOperation} for the
+	 * synchronization of children and content children of the given
+	 * {@link IContentPart}.
+	 *
+	 * @param label
+	 *            The operation's label.
+	 * @param parent
+	 *            The {@link IContentPart} for which the content children
+	 *            synchronization is performed.
+	 */
 	public SynchronizeContentChildrenOperation(String label,
 			IContentPart<VR, ? extends VR> parent) {
 		super(label);
@@ -34,8 +56,8 @@ public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		// System.out.println("EXEC sync content children for " + parent);
-		ContentBehavior contentBehavior = parent
-				.getAdapter(ContentBehavior.class);
+		ContentBehavior<VR> contentBehavior = parent
+				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());
 		return Status.OK_STATUS;
 	}
@@ -50,8 +72,8 @@ public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		// System.out.println("UNDO sync content children for " + parent);
-		ContentBehavior contentBehavior = parent
-				.getAdapter(ContentBehavior.class);
+		ContentBehavior<VR> contentBehavior = parent
+				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());
 		return Status.OK_STATUS;
 	}

@@ -33,6 +33,18 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 	private final Object contentChild;
 	private int index;
 
+	/**
+	 * Creates a new {@link RemoveContentChildOperation} for removing the given
+	 * <i>contentChild</i> {@link Object} from the content children of the given
+	 * <i>parent</i> {@link IContentPart}.
+	 *
+	 * @param parent
+	 *            The {@link IContentPart} from which a content child is to be
+	 *            removed.
+	 * @param contentChild
+	 *            The content {@link Object} which is to be removed from the
+	 *            content children of the <i>parent</i>.
+	 */
 	public RemoveContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild) {
 		super("Remove Content Child");

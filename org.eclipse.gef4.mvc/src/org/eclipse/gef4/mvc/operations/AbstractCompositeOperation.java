@@ -26,11 +26,30 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.MvcBundle;
 
+/**
+ * The {@link AbstractCompositeOperation} is an abstract implementation of the
+ * {@link ICompositeOperation} interface. The individual operations are stored
+ * in a {@link List}. They are executed/redone/undone in forward order.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 public abstract class AbstractCompositeOperation extends AbstractOperation
 		implements ICompositeOperation {
 
+	/**
+	 * The list containing the {@link IUndoableOperation}s which are combined in
+	 * this composite operation.
+	 */
 	List<IUndoableOperation> operations = new ArrayList<IUndoableOperation>();
 
+	/**
+	 * Creates a new {@link AbstractCompositeOperation} with the given label.
+	 *
+	 * @param label
+	 *            The label for this {@link AbstractCompositeOperation}.
+	 */
 	public AbstractCompositeOperation(String label) {
 		super(label);
 	}
@@ -44,6 +63,13 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		operations.add(operation);
 	}
 
+	/**
+	 * Adds the given {@link IUndoableOperation}s to this composite operation.
+	 *
+	 * @param operations
+	 *            The {@link IUndoableOperation}s which are added to this
+	 *            composite operation.
+	 */
 	public void addAll(List<IUndoableOperation> operations) {
 		/*
 		 * Do not use <code>operations.addAll()</code> because we need to check
@@ -89,6 +115,16 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		return true;
 	}
 
+	/**
+	 * Return an {@link IStatus} representing the merge of the given first and
+	 * second {@link IStatus}s.
+	 *
+	 * @param s1
+	 *            The first {@link IStatus}.
+	 * @param s2
+	 *            The second {@link IStatus}.
+	 * @return The merge of the first and second {@link IStatus}.
+	 */
 	protected IStatus combine(IStatus s1, IStatus s2) {
 		MultiStatus status = new MultiStatus(MvcBundle.PLUGIN_ID, IStatus.OK,
 				null, null);
@@ -107,10 +143,24 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		return status;
 	}
 
+	/**
+	 * Returns the list of operations which are combined in this composite
+	 * operation.
+	 *
+	 * @return The list of operations which are combined in this composite
+	 *         operation.
+	 */
 	public List<IUndoableOperation> getOperations() {
 		return operations;
 	}
 
+	/**
+	 * Returns <code>true</code> if no operations are currently combined in this
+	 * composite operation. Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if no operations are currently combined in this
+	 *         composite operation, otherwise <code>false</code>.
+	 */
 	public boolean isEmpty() {
 		return operations.isEmpty();
 	}
@@ -140,6 +190,17 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		return status;
 	}
 
+	/**
+	 * Simplifies this composite operation if possible and returns the
+	 * simplified operation. When this composite operation does not contain any
+	 * operations, <code>null</code> is returned. When this composite operation
+	 * contains exactly one operation, that one operation is returned.
+	 * Otherwise, this composite operation is returned.
+	 *
+	 * @return <code>null</code> when no operations are contained, the one
+	 *         operation when only one operation is contained, this composite
+	 *         when multiple operations are contained.
+	 */
 	public IUndoableOperation unwrap() {
 		if (operations.size() == 0) {
 			return null;

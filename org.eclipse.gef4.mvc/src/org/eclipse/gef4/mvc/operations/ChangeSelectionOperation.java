@@ -24,6 +24,16 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+/**
+ * The {@link ChangeSelectionOperation} can be used to change the
+ * {@link SelectionModel} of an {@link IViewer}.
+ *
+ * @author mwienand
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ */
 public class ChangeSelectionOperation<VR> extends AbstractOperation {
 
 	/**
@@ -40,20 +50,55 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	private List<IContentPart<VR, ? extends VR>> oldSelection;
 	private List<IContentPart<VR, ? extends VR>> newSelection;
 
+	/**
+	 * Creates a new {@link ChangeSelectionOperation} to change the selection
+	 * within the given {@link IViewer} to the given list of
+	 * {@link IContentPart}s.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which the selection is changed.
+	 * @param newSelection
+	 *            The new selection.
+	 */
 	public ChangeSelectionOperation(IViewer<VR> viewer,
 			List<IContentPart<VR, ? extends VR>> newSelection) {
-		this(DEFAULT_LABEL, viewer,
-				viewer.<SelectionModel<VR>> getAdapter(SelectionModel.class)
-						.getSelected(),
-				newSelection);
+		this(DEFAULT_LABEL, viewer, viewer.<SelectionModel<VR>> getAdapter(
+				SelectionModel.class).getSelected(), newSelection);
 	}
 
+	/**
+	 * Creates a new {@link ChangeSelectionOperation} to change the selection
+	 * within the given {@link IViewer} to the given <i>newSelection</i>. When
+	 * undoing this operation, the given <i>oldSelection</i> is restored.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which the selection is changed.
+	 * @param oldSelection
+	 *            The old selection.
+	 * @param newSelection
+	 *            The new selection.
+	 */
 	public ChangeSelectionOperation(IViewer<VR> viewer,
 			List<IContentPart<VR, ? extends VR>> oldSelection,
 			List<IContentPart<VR, ? extends VR>> newSelection) {
 		this(DEFAULT_LABEL, viewer, oldSelection, newSelection);
 	}
 
+	/**
+	 * Creates a new {@link ChangeSelectionOperation} to change the selection
+	 * within the given {@link IViewer} to the given <i>newSelection</i>. When
+	 * undoing this operation, the given <i>oldSelection</i> is restored. The
+	 * given label is used as the label for the operation.
+	 *
+	 * @param label
+	 *            The operation's label.
+	 * @param viewer
+	 *            The {@link IViewer} for which the selection is changed.
+	 * @param oldSelection
+	 *            The old selection.
+	 * @param newSelection
+	 *            The new selection.
+	 */
 	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
 			List<IContentPart<VR, ? extends VR>> oldSelection,
 			List<IContentPart<VR, ? extends VR>> newSelection) {

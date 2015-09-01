@@ -33,6 +33,22 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
 	private final Object contentAnchorage;
 	private final String role;
 
+	/**
+	 * Creates a new {@link DetachFromContentAnchorageOperation} to detach the
+	 * given <i>anchored</i> {@link IContentPart} from the given
+	 * <i>contentAnchorage</i> under the specified <i>role</i>, so that it will
+	 * not be returned by subsequent calls to
+	 * {@link IContentPart#getContentAnchorages()}.
+	 *
+	 * @param anchored
+	 *            The {@link IContentPart} which is to be detached from the
+	 *            given <i>contentAnchorage</i>.
+	 * @param contentAnchorage
+	 *            The content object from which the given <i>anchored</i> is to
+	 *            be detached.
+	 * @param role
+	 *            The role under which the <i>contentAnchorage</i> is anchored.
+	 */
 	public DetachFromContentAnchorageOperation(
 			IContentPart<VR, ? extends VR> anchored, Object contentAnchorage,
 			String role) {

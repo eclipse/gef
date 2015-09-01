@@ -38,6 +38,22 @@ public class SetRefreshVisualOperation<VR> extends AbstractOperation {
 	private boolean from;
 	private boolean to;
 
+	/**
+	 * Creates a new {@link SetRefreshVisualOperation} for setting the
+	 * {@link IVisualPart#isRefreshVisual()} flag of the given
+	 * {@link IVisualPart} to the <i>to</i> value on execution and to the
+	 * <i>from</i> value on undoing.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} of which the
+	 *            {@link IVisualPart#isRefreshVisual()} flag is changed.
+	 * @param from
+	 *            The value to which the flag is changed when undoing this
+	 *            operation.
+	 * @param to
+	 *            The value to which the flag is changed when executing this
+	 *            operation.
+	 */
 	public SetRefreshVisualOperation(IVisualPart<VR, ? extends VR> part,
 			boolean from, boolean to) {
 		super("Enable/Disable Visual Refresh");

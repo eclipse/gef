@@ -19,8 +19,20 @@ import java.util.List;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 
+/**
+ * The {@link ContentModel} stores the content {@link Object}s that are
+ * visualized. The {@link ContentModel} fires a property change event when the
+ * contents are changed.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 public class ContentModel implements IPropertyChangeNotifier {
 
+	/**
+	 * Property name used when notifying listeners about content changes.
+	 */
 	public static final String CONTENTS_PROPERTY = "contents";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -31,6 +43,11 @@ public class ContentModel implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Returns an unmodifiable list containing the current content objects.
+	 *
+	 * @return An unmodifiable list containing the current content objects.
+	 */
 	public List<? extends Object> getContents() {
 		return Collections.unmodifiableList(this.contents);
 	}
@@ -40,6 +57,14 @@ public class ContentModel implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * Replaces the currently stored content objects with the given list of new
+	 * content objects.
+	 *
+	 * @param contents
+	 *            A list containing the new content objects to store in this
+	 *            {@link ContentModel}.
+	 */
 	public void setContents(List<? extends Object> contents) {
 		List<Object> oldContents = Collections
 				.unmodifiableList(new ArrayList<Object>(this.contents));
@@ -47,4 +72,5 @@ public class ContentModel implements IPropertyChangeNotifier {
 		this.contents.addAll(contents);
 		pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents, getContents());
 	}
+
 }

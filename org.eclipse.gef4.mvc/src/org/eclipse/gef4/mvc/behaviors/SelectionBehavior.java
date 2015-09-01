@@ -31,8 +31,8 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class SelectionBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener {
+public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
+		PropertyChangeListener {
 
 	@Override
 	public void activate() {
@@ -47,6 +47,14 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 		addFeedbackAndHandles(selectionModel.getSelected());
 	}
 
+	/**
+	 * Creates feedback parts and handle parts for the given list of (selected)
+	 * {@link IContentPart}s.
+	 *
+	 * @param selected
+	 *            The list of {@link IContentPart}s for which feedback and
+	 *            handles are created.
+	 */
 	protected void addFeedbackAndHandles(
 			List<? extends IContentPart<VR, ? extends VR>> selected) {
 		// root is responsible for multi selection
@@ -91,6 +99,14 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
+	/**
+	 * Removes feedback parts and handle parts for the given list of (selected)
+	 * {@link IContentPart}s.
+	 *
+	 * @param selected
+	 *            The list of {@link IContentPart}s for which feedback and
+	 *            handles are removed.
+	 */
 	protected void removeFeedbackAndHandles(
 			List<? extends IContentPart<VR, ? extends VR>> selected) {
 		// root is responsible for multi selection

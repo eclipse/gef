@@ -21,7 +21,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**
  * The {@link AttachToContentAnchorageOperation} uses the {@link IContentPart}
- * API to detach an anchored from the given anchorage.
+ * API to attach an anchored to the given anchorage.
+ *
+ * @author mwienand
  *
  * @param <VR>
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
@@ -33,6 +35,22 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation {
 	private final Object contentAnchorage;
 	private final String role;
 
+	/**
+	 * Creates a new {@link AttachToContentAnchorageOperation} to attach the
+	 * given <i>anchored</i> {@link IContentPart} to the given
+	 * <i>contentAnchorage</i> under the specified <i>role</i>, so that it will
+	 * be returned by subsequent calls to
+	 * {@link IContentPart#getContentAnchorages()}.
+	 *
+	 * @param anchored
+	 *            The {@link IContentPart} which is to be attached to the given
+	 *            <i>contentAnchorage</i>.
+	 * @param contentAnchorage
+	 *            The content object to which the given <i>anchored</i> is to be
+	 *            attached.
+	 * @param role
+	 *            The role under which the <i>contentAnchorage</i> is anchored.
+	 */
 	public AttachToContentAnchorageOperation(
 			IContentPart<VR, ? extends VR> anchored, Object contentAnchorage,
 			String role) {
@@ -65,4 +83,5 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation {
 		anchored.detachFromContentAnchorage(contentAnchorage, role);
 		return Status.OK_STATUS;
 	}
+
 }

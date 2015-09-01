@@ -72,17 +72,47 @@ import com.google.common.collect.SetMultimap;
  * @param <V>
  *            The visual node used by this {@link IVisualPart}.
  */
-public interface IVisualPart<VR, V extends VR>
-		extends IAdaptable, IActivatable, IPropertyChangeNotifier, IDisposable {
+public interface IVisualPart<VR, V extends VR> extends IAdaptable,
+		IActivatable, IPropertyChangeNotifier, IDisposable {
 
+	/**
+	 * Name of the property storing this part's parent.
+	 */
 	public static final String PARENT_PROPERTY = "parent";
+	/**
+	 * Name of the property storing this part's children.
+	 */
 	public static final String CHILDREN_PROPERTY = "children";
+	/**
+	 * Name of the property storing this part's anchorages.
+	 */
 	public static final String ANCHORAGES_PROPERTY = "anchorages";
+	/**
+	 * Name of the property storing this part's anchoreds.
+	 */
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
+	/**
+	 * Adds the given {@link IVisualPart} to the anchorages of this
+	 * {@link IVisualPart} under the "default" role.
+	 *
+	 * @param anchorage
+	 *            The {@link IVisualPart} which is added to this part's
+	 *            anchorages.
+	 */
 	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage);
 
-	// role may be null
+	/**
+	 * Adds the given {@link IVisualPart} to the anchorages of this
+	 * {@link IVisualPart} under the given role.
+	 *
+	 * @param anchorage
+	 *            The {@link IVisualPart} which is added to this part's
+	 *            anchorages.
+	 * @param role
+	 *            The role under which the anchorage is added, or
+	 *            <code>null</code>.
+	 */
 	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage,
 			String role);
 
@@ -105,26 +135,98 @@ public interface IVisualPart<VR, V extends VR>
 	 */
 	public void addAnchored(IVisualPart<VR, ? extends VR> anchored);
 
+	/**
+	 * Adds the given child to the list of this part's children.
+	 *
+	 * @param child
+	 *            The {@link IVisualPart} which is added to the list of this
+	 *            part's children.
+	 */
 	public void addChild(IVisualPart<VR, ? extends VR> child);
 
+	/**
+	 * Adds the given child to the list of this part's children at the specified
+	 * index.
+	 *
+	 * @param child
+	 *            The {@link IVisualPart} which is added to the list of this
+	 *            part's children.
+	 * @param index
+	 *            The index at which the given {@link IVisualPart} is inserted
+	 *            into this part's children list.
+	 */
 	public void addChild(IVisualPart<VR, ? extends VR> child, int index);
 
+	/**
+	 * Adds the given children to the list of this part's children.
+	 *
+	 * @param children
+	 *            The {@link IVisualPart}s which are added to the list of this
+	 *            part's children.
+	 */
 	public void addChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children);
 
+	/**
+	 * Adds the given children to the list of this part's children at the
+	 * specified index.
+	 *
+	 * @param children
+	 *            The {@link IVisualPart}s which are added to the list of this
+	 *            part's children.
+	 * @param index
+	 *            The index at which the given {@link IVisualPart}s are inserted
+	 *            into this part's children list.
+	 */
 	public void addChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children, int index);
 
+	/**
+	 * Returns a {@link SetMultimap} of this part's anchorages and their
+	 * corresponding roles.
+	 *
+	 * @return A {@link SetMultimap} of this part's anchorages and their
+	 *         corresponding roles.
+	 */
 	public SetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchorages();
 
+	/**
+	 * Returns a {@link Multiset} of this part's anchoreds.
+	 *
+	 * @return A {@link Multiset} of this part's anchoreds.
+	 */
 	public Multiset<IVisualPart<VR, ? extends VR>> getAnchoreds();
 
+	/**
+	 * Returns a {@link Map} of this part's behaviors and their corresponding
+	 * {@link AdapterKey}s.
+	 *
+	 * @return A {@link Map} of this part's behaviors and their corresponding
+	 *         {@link AdapterKey}s.
+	 */
 	public Map<AdapterKey<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors();
 
+	/**
+	 * Returns a {@link List} of this part's children.
+	 *
+	 * @return A {@link List} of this part's children.
+	 */
 	public List<IVisualPart<VR, ? extends VR>> getChildren();
 
+	/**
+	 * Returns the parent of this part.
+	 *
+	 * @return The parent of this part.
+	 */
 	public IVisualPart<VR, ? extends VR> getParent();
 
+	/**
+	 * Returns a {@link Map} of this part's policies and their corresponding
+	 * {@link AdapterKey}s.
+	 *
+	 * @return A {@link Map} of this part's policies and their corresponding
+	 *         {@link AdapterKey}s.
+	 */
 	public Map<AdapterKey<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies();
 
 	/**
@@ -136,14 +238,48 @@ public interface IVisualPart<VR, V extends VR>
 	 */
 	public IRootPart<VR, ? extends VR> getRoot();
 
+	/**
+	 * Returns this part's visual.
+	 *
+	 * @return This part's visual.
+	 */
 	public abstract V getVisual();
 
+	/**
+	 * Returns <code>true</code> if this part is allowed to refresh its
+	 * visualization based on its content. Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if this part is allowed to refresh its
+	 *         visualization based on its content, otherwise <code>false</code>.
+	 */
 	public boolean isRefreshVisual();
 
+	/**
+	 * Refreshes this part's visualization based on this part's content.
+	 */
 	public void refreshVisual();
 
+	/**
+	 * Removes the given {@link IVisualPart} from the map of this part's
+	 * anchorages.
+	 *
+	 * @param anchorage
+	 *            The {@link IVisualPart} which is removed from this part's
+	 *            anchorages.
+	 */
 	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage);
 
+	/**
+	 * Removes the given {@link IVisualPart} and role from the map of this
+	 * part's anchorages.
+	 *
+	 * @param anchorage
+	 *            The {@link IVisualPart} which is removed from this part's
+	 *            anchorages.
+	 * @param role
+	 *            The role under which the {@link IVisualPart} can be found in
+	 *            this part's anchorages.
+	 */
 	// role may be null
 	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage,
 			String role);
@@ -168,11 +304,36 @@ public interface IVisualPart<VR, V extends VR>
 	 */
 	public void removeAnchored(IVisualPart<VR, ? extends VR> anchored);
 
+	/**
+	 * Removes the given {@link IVisualPart} from the list of this part's
+	 * children.
+	 *
+	 * @param child
+	 *            The {@link IVisualPart} which is removed from the list of this
+	 *            part's children.
+	 */
 	public void removeChild(IVisualPart<VR, ? extends VR> child);
 
+	/**
+	 * Removes the given {@link IVisualPart}s from the list of this part's
+	 * children.
+	 *
+	 * @param children
+	 *            The {@link IVisualPart}s which are removed from the list of
+	 *            this part's children.
+	 */
 	public void removeChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children);
 
+	/**
+	 * Swaps the given {@link IVisualPart} with the part at the given index
+	 * position within this part's list of children.
+	 *
+	 * @param child
+	 *            The {@link IVisualPart} which is reordered.
+	 * @param index
+	 *            The index to which the part is reordered.
+	 */
 	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index);
 
 	/**
@@ -210,4 +371,5 @@ public interface IVisualPart<VR, V extends VR>
 	 *            <code>false</code>).
 	 */
 	public void setRefreshVisual(boolean refreshVisual);
+
 }

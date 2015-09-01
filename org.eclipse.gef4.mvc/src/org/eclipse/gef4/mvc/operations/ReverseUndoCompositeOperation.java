@@ -21,8 +21,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 // TODO: init label when adding nested operations
+/**
+ * The {@link ReverseUndoCompositeOperation} is an
+ * {@link AbstractCompositeOperation} which undoes its combined operations in
+ * the reverse order of their execution.
+ *
+ * @author anyssen
+ *
+ */
 public class ReverseUndoCompositeOperation extends AbstractCompositeOperation {
 
+	/**
+	 * Creates a new {@link ReverseUndoCompositeOperation} with the given label.
+	 *
+	 * @param label
+	 *            The operation's label.
+	 */
 	public ReverseUndoCompositeOperation(String label) {
 		super(label);
 	}
@@ -31,8 +45,8 @@ public class ReverseUndoCompositeOperation extends AbstractCompositeOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		ListIterator<IUndoableOperation> li = getOperations()
-				.listIterator(getOperations().size());
+		ListIterator<IUndoableOperation> li = getOperations().listIterator(
+				getOperations().size());
 		while (li.hasPrevious()) {
 			status = combine(status, li.previous().undo(monitor, info));
 		}

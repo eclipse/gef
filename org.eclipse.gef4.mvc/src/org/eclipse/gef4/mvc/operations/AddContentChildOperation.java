@@ -23,6 +23,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * The {@link AddContentChildOperation} uses the {@link IContentPart} API to
  * remove a content object from an {@link IContentPart}.
  *
+ * @author mwienand
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
@@ -33,6 +35,21 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 	private final Object contentChild;
 	private int index;
 
+	/**
+	 * Creates a new {@link AddContentChildOperation} for adding the given
+	 * <i>contentChild</i> {@link Object} to the content children of the given
+	 * <i>parent</i> {@link IContentPart}.
+	 *
+	 * @param parent
+	 *            The {@link IContentPart} to which a content child is to be
+	 *            added.
+	 * @param contentChild
+	 *            The content {@link Object} which is to be added to the content
+	 *            children of the <i>parent</i>.
+	 * @param index
+	 *            The index of the <i>contentChild</i> within the
+	 *            <i>parent</i>'s list of content children.
+	 */
 	public AddContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild, int index) {
 		super("Add Content Child");

@@ -71,11 +71,38 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 	}
 
+	/**
+	 * Switches to the relevant adaptable scopes (
+	 * {@link #switchAdaptableScopes()}) and uses the injected
+	 * {@link IFeedbackPartFactory} to create feedback parts for the given list
+	 * of target parts. The resulting feedback parts are anchored to the target
+	 * parts and added as children to the {@link #getHost() host's} root part.
+	 *
+	 * @see #addFeedback(List, Map)
+	 * @param targets
+	 *            The {@link IVisualPart}s for which feedback parts should be
+	 *            generated.
+	 */
 	protected void addFeedback(
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		addFeedback(targets, Collections.<Object, Object> emptyMap());
 	}
 
+	/**
+	 * Switches to the relevant adaptable scopes (
+	 * {@link #switchAdaptableScopes()}) and uses the injected
+	 * {@link IFeedbackPartFactory} to create feedback parts for the given list
+	 * of target parts and the given context map. The resulting feedback parts
+	 * are anchored to the target parts and added as children to the
+	 * {@link #getHost() host's} root part.
+	 *
+	 * @param targets
+	 *            The {@link IVisualPart}s for which feedback parts should be
+	 *            generated.
+	 * @param contextMap
+	 *            A map containing context information for the creation of the
+	 *            feedback parts.
+	 */
 	protected void addFeedback(
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
@@ -90,11 +117,38 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 	}
 
+	/**
+	 * Switches to the relevant adaptable scopes (
+	 * {@link #switchAdaptableScopes()}) and uses the injected
+	 * {@link IHandlePartFactory} to create handle parts for the given list of
+	 * target parts. The resulting handle parts are anchored to the target parts
+	 * and added as children to the {@link #getHost() host's} root part.
+	 *
+	 * @see #addHandles(List, Map)
+	 * @param targets
+	 *            The {@link IVisualPart}s for which handle parts should be
+	 *            generated.
+	 */
 	protected void addHandles(
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		addHandles(targets, Collections.<Object, Object> emptyMap());
 	}
 
+	/**
+	 * Switches to the relevant adaptable scopes (
+	 * {@link #switchAdaptableScopes()}) and uses the injected
+	 * {@link IHandlePartFactory} to create handle parts for the given list of
+	 * target parts and the given context map. The resulting handle parts are
+	 * anchored to the target parts and added as children to the
+	 * {@link #getHost() host's} root part.
+	 *
+	 * @param targets
+	 *            The {@link IVisualPart}s for which handle parts should be
+	 *            generated.
+	 * @param contextMap
+	 *            A map containing context information for the creation of the
+	 *            handle parts.
+	 */
 	protected void addHandles(
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
@@ -129,10 +183,24 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		return getHost();
 	}
 
+	/**
+	 * Returns a list containing the feedback parts most recently created by
+	 * this behavior.
+	 *
+	 * @return A list containing the feedback parts most recently created by
+	 *         this behavior.
+	 */
 	protected List<IFeedbackPart<VR, ? extends VR>> getFeedbackParts() {
 		return feedbackParts;
 	}
 
+	/**
+	 * Returns a list containing the handle parts most recently created by this
+	 * behavior.
+	 *
+	 * @return A list containing the handle parts most recently created by this
+	 *         behavior.
+	 */
 	protected List<IHandlePart<VR, ? extends VR>> getHandleParts() {
 		return handleParts;
 	}
@@ -147,6 +215,13 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		return active;
 	}
 
+	/**
+	 * Removes the feedback parts previously created for the given target parts.
+	 *
+	 * @param targets
+	 *            The list of target parts for which previously created feedback
+	 *            is to be removed.
+	 */
 	protected void removeFeedback(
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
@@ -158,6 +233,13 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 	}
 
+	/**
+	 * Removes the handle parts previously created for the given target parts.
+	 *
+	 * @param targets
+	 *            The list of target parts for which previously created handles
+	 *            are to be removed.
+	 */
 	protected void removeHandles(
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (handleParts != null && !handleParts.isEmpty()) {
@@ -179,6 +261,10 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		this.host = adaptable;
 	}
 
+	/**
+	 * Adjusts the relevant adaptable scopes to refer to the host of this
+	 * behavior, it's viewer, and it's domain, respectively.
+	 */
 	protected void switchAdaptableScopes() {
 		// adjust relevant adaptable scopes before creating new part
 		// TODO: move this into AdaptableScopes, making it more generic (i.e.

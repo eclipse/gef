@@ -28,8 +28,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class HoverBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener {
+public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
+		PropertyChangeListener {
 
 	@Override
 	public void activate() {
@@ -59,11 +59,27 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 		super.deactivate();
 	}
 
+	/**
+	 * Returns the {@link HoverModel} in the context of the {@link #getHost()
+	 * host}.
+	 *
+	 * @return The {@link HoverModel} in the context of the {@link #getHost()
+	 *         host}.
+	 */
 	@SuppressWarnings("unchecked")
 	protected HoverModel<VR> getHoverModel() {
 		return getHost().getRoot().getViewer().getAdapter(HoverModel.class);
 	}
 
+	/**
+	 * Called when the {@link HoverModel} changes, i.e. a part is unhovered or
+	 * hovered. Adds/Removes feedback accordingly.
+	 *
+	 * @param oldHovered
+	 *            The previously hovered part, or <code>null</code>.
+	 * @param newHovered
+	 *            The newly hovered part, or <code>null</code>.
+	 */
 	protected void onHoverChange(IVisualPart<VR, ? extends VR> oldHovered,
 			IVisualPart<VR, ? extends VR> newHovered) {
 		if (getHost() != oldHovered && getHost() == newHovered) {

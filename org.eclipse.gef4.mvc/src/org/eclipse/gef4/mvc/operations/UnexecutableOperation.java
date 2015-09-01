@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -17,8 +17,20 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+/**
+ * The {@link UnexecutableOperation} cannot be executed.
+ *
+ * @author anyssen
+ *
+ */
 public class UnexecutableOperation extends AbstractOperation {
 
+	/**
+	 * Creates a new {@link UnexecutableOperation} with the given label.
+	 *
+	 * @param label
+	 *            The operation's label.
+	 */
 	public UnexecutableOperation(String label) {
 		super(label);
 	}

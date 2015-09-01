@@ -20,11 +20,33 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class SynchronizeContentAnchoragesOperation<VR>
-		extends AbstractOperation {
+/**
+ * The {@link SynchronizeContentAnchoragesOperation} can be used to trigger the
+ * synchronization of anchorages and content anchorages using the
+ * {@link ContentBehavior} of a specified {@link IContentPart}.
+ *
+ * @author mwienand
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ */
+public class SynchronizeContentAnchoragesOperation<VR> extends
+		AbstractOperation {
 
 	private IContentPart<VR, ? extends VR> anchored;
 
+	/**
+	 * Creates a new {@link SynchronizeContentAnchoragesOperation} for the
+	 * synchronization of anchorages and content anchorages of the given
+	 * {@link IContentPart}.
+	 *
+	 * @param label
+	 *            The operation's label.
+	 * @param anchored
+	 *            The {@link IContentPart} for which the content anchorages
+	 *            synchronization is performed.
+	 */
 	public SynchronizeContentAnchoragesOperation(String label,
 			IContentPart<VR, ? extends VR> anchored) {
 		super(label);
@@ -37,8 +59,8 @@ public class SynchronizeContentAnchoragesOperation<VR>
 		// System.out.println("EXEC sync content anchorages for " + anchored);
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
-		contentBehavior
-				.synchronizeContentAnchorages(anchored.getContentAnchorages());
+		contentBehavior.synchronizeContentAnchorages(anchored
+				.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 
@@ -54,8 +76,8 @@ public class SynchronizeContentAnchoragesOperation<VR>
 		// System.out.println("UNDO sync content anchorages for " + anchored);
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
-		contentBehavior
-				.synchronizeContentAnchorages(anchored.getContentAnchorages());
+		contentBehavior.synchronizeContentAnchorages(anchored
+				.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 

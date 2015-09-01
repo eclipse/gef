@@ -12,8 +12,22 @@
 package org.eclipse.gef4.mvc.operations;
 
 //TODO: init label when adding nested operations
+/**
+ * The {@link ForwardUndoCompositeOperation} is an
+ * {@link AbstractCompositeOperation} which undoes its combined operations in
+ * the same order as they are executed.
+ *
+ * @author anyssen
+ *
+ */
 public class ForwardUndoCompositeOperation extends AbstractCompositeOperation {
 
+	/**
+	 * Creates a new {@link ForwardUndoCompositeOperation} with the given label.
+	 *
+	 * @param label
+	 *            The label of this operation.
+	 */
 	public ForwardUndoCompositeOperation(String label) {
 		super(label);
 	}

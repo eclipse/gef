@@ -27,6 +27,20 @@ import com.google.common.collect.Multiset;
  */
 public class PartUtils {
 
+	/**
+	 * Searches the given collection of {@link IVisualPart}s for elements of the
+	 * specified type.
+	 *
+	 * @param <T>
+	 *            The type of returned elements.
+	 * @param <VR>
+	 *            The visual root type.
+	 * @param parts
+	 *            The collection of parts which is filtered.
+	 * @param type
+	 *            The type of returned elements.
+	 * @return A list of all elements of the specified type.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends IVisualPart<VR, ? extends VR>, VR> List<T> filterParts(
 			Collection<? extends IVisualPart<VR, ? extends VR>> parts,
@@ -40,6 +54,17 @@ public class PartUtils {
 		return filtered;
 	}
 
+	/**
+	 * Collects the anchoreds of all given {@link IVisualPart}s.
+	 *
+	 * @param <VR>
+	 *            The visual root type.
+	 * @param anchorages
+	 *            The collection of {@link IVisualPart}s for which the anchoreds
+	 *            are collected.
+	 * @return A list of all the anchoreds of all the given {@link IVisualPart}
+	 *         s.
+	 */
 	public static <VR> List<IVisualPart<VR, ? extends VR>> getAnchoreds(
 			Collection<? extends IVisualPart<VR, ? extends VR>> anchorages) {
 		List<IVisualPart<VR, ? extends VR>> anchoreds = new ArrayList<IVisualPart<VR, ? extends VR>>();
@@ -49,6 +74,20 @@ public class PartUtils {
 		return anchoreds;
 	}
 
+	/**
+	 * Collects the anchoreds of the given {@link IVisualPart} which are
+	 * registered under the specified role.
+	 *
+	 * @param <VR>
+	 *            The visual root type.
+	 * @param anchorage
+	 *            The {@link IVisualPart} for which the anchoreds are collected.
+	 * @param role
+	 *            The role under which the anchoreds have to be registered to be
+	 *            collected.
+	 * @return A list of the anchoreds of the given {@link IVisualPart} which
+	 *         are registered under the specified role.
+	 */
 	public static <VR> Set<IVisualPart<VR, ? extends VR>> getAnchoreds(
 			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		HashSet<IVisualPart<VR, ? extends VR>> result = new HashSet<IVisualPart<VR, ? extends VR>>();
