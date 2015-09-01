@@ -127,7 +127,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 			return guardedUpdateOperation;
 		}
-		return op;
+		return null;
 	}
 
 	public void createAndSelectSegmentPoint(int segmentIndex, Point mouseInScene) {
