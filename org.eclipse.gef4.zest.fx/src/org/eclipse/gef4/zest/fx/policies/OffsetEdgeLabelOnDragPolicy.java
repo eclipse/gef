@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -25,8 +26,14 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		getHost().getOffset().setX(initialOffsetX + delta.width);
-		getHost().getOffset().setY(initialOffsetY + delta.height);
+		Point2D p = getHost().getVisual().sceneToLocal(initialOffsetX,
+				initialOffsetY);
+		Point2D q = getHost().getVisual().sceneToLocal(
+				initialOffsetX + delta.width, initialOffsetY + delta.height);
+		double dx = q.getX() - p.getX();
+		double dy = q.getY() - p.getY();
+		getHost().getOffset().setX(initialOffsetX + dx);
+		getHost().getOffset().setY(initialOffsetY + dy);
 	}
 
 	@Override
@@ -42,8 +49,14 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		getHost().getOffset().setX(initialOffsetX + delta.width);
-		getHost().getOffset().setY(initialOffsetY + delta.height);
+		Point2D p = getHost().getVisual().sceneToLocal(initialOffsetX,
+				initialOffsetY);
+		Point2D q = getHost().getVisual().sceneToLocal(
+				initialOffsetX + delta.width, initialOffsetY + delta.height);
+		double dx = q.getX() - p.getX();
+		double dy = q.getY() - p.getY();
+		getHost().getOffset().setX(initialOffsetX + dx);
+		getHost().getOffset().setY(initialOffsetY + dy);
 	}
 
 }
