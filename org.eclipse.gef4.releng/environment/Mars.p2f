@@ -17,7 +17,7 @@
         <repository location='http://download.eclipse.org/releases/mars'/>
       </repositories>
     </iu>
-    <iu id='org.eclipse.oomph.version.headless.feature.group' name='Oomph Version Management (Headless)'>
+    <iu id='org.eclipse.oomph.version.headless.feature.group' name='Oomph Version Management (Headless)' version='1.1.0'>
       <repositories size='1'>
         <repository location='http://download.eclipse.org/releases/mars'/>
       </repositories>
