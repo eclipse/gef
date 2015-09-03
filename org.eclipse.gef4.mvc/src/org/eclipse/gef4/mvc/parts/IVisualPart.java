@@ -72,8 +72,8 @@ import com.google.common.collect.SetMultimap;
  * @param <V>
  *            The visual node used by this {@link IVisualPart}.
  */
-public interface IVisualPart<VR, V extends VR> extends IAdaptable,
-		IActivatable, IPropertyChangeNotifier, IDisposable {
+public interface IVisualPart<VR, V extends VR>
+		extends IAdaptable, IActivatable, IPropertyChangeNotifier, IDisposable {
 
 	/**
 	 * Name of the property storing this part's parent.

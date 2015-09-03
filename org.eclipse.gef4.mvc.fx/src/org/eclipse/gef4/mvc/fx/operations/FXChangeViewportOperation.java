@@ -138,8 +138,7 @@ public class FXChangeViewportOperation extends AbstractOperation {
 	}
 
 	public boolean hasEffect() {
-		if (getNewWidth() == getOldWidth()
-				&& getNewHeight() == getOldHeight()
+		if (getNewWidth() == getOldWidth() && getNewHeight() == getOldHeight()
 				&& (getNewTransform() == null ? getOldTransform() == null
 						: getNewTransform().equals(getOldTransform()))
 				&& getNewTx() == getOldTx() && getNewTy() == getOldTy()) {

@@ -47,8 +47,8 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 	 *            The content {@link Object} which is to be added to the content
 	 *            children of the <i>parent</i>.
 	 * @param index
-	 *            The index of the <i>contentChild</i> within the
-	 *            <i>parent</i>'s list of content children.
+	 *            The index of the <i>contentChild</i> within the <i>parent</i>
+	 *            's list of content children.
 	 */
 	public AddContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild, int index) {

@@ -60,8 +60,9 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	 */
 	public ChangeHoverOperation(IViewer<VR> viewer,
 			IVisualPart<VR, ? extends VR> newHovered) {
-		this(DEFAULT_LABEL, viewer, viewer.<HoverModel<VR>> getAdapter(
-				HoverModel.class).getHover(), newHovered);
+		this(DEFAULT_LABEL, viewer,
+				viewer.<HoverModel<VR>> getAdapter(HoverModel.class).getHover(),
+				newHovered);
 	}
 
 	/**
@@ -115,8 +116,8 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.<HoverModel<VR>> getAdapter(HoverModel.class).setHover(
-				newHovered);
+		viewer.<HoverModel<VR>> getAdapter(HoverModel.class)
+				.setHover(newHovered);
 		return Status.OK_STATUS;
 	}
 
@@ -129,8 +130,8 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.<HoverModel<VR>> getAdapter(HoverModel.class).setHover(
-				oldHovered);
+		viewer.<HoverModel<VR>> getAdapter(HoverModel.class)
+				.setHover(oldHovered);
 		return Status.OK_STATUS;
 	}
 

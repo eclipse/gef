@@ -89,15 +89,13 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 		for (int i : getIndicesOfMovableAnchors()) {
 			Point p = initialPositions[i];
 			// TODO: make stepping (0.5) configurable
-			Dimension snapToGridOffset = getSnapToGridOffset(
-					getHost().getRoot().getViewer()
-							.<GridModel> getAdapter(GridModel.class), p.x + dx,
-					p.y + dy, 0.5, 0.5);
-			op.getNewAnchors().set(
-					i,
-					new FXStaticAnchor(getHost().getVisual(), new Point(p.x
-							+ dx - snapToGridOffset.width, p.y + dy
-							- snapToGridOffset.height)));
+			Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
+					.getViewer().<GridModel> getAdapter(GridModel.class),
+					p.x + dx, p.y + dy, 0.5, 0.5);
+			op.getNewAnchors().set(i,
+					new FXStaticAnchor(getHost().getVisual(),
+							new Point(p.x + dx - snapToGridOffset.width,
+									p.y + dy - snapToGridOffset.height)));
 		}
 		locallyExecuteOperation();
 	}

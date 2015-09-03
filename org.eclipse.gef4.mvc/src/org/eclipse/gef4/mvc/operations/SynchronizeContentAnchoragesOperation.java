@@ -31,8 +31,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class SynchronizeContentAnchoragesOperation<VR> extends
-		AbstractOperation {
+public class SynchronizeContentAnchoragesOperation<VR>
+		extends AbstractOperation {
 
 	private IContentPart<VR, ? extends VR> anchored;
 
@@ -59,8 +59,8 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 		// System.out.println("EXEC sync content anchorages for " + anchored);
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
-		contentBehavior.synchronizeContentAnchorages(anchored
-				.getContentAnchorages());
+		contentBehavior
+				.synchronizeContentAnchorages(anchored.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 
@@ -76,8 +76,8 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 		// System.out.println("UNDO sync content anchorages for " + anchored);
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
-		contentBehavior.synchronizeContentAnchorages(anchored
-				.getContentAnchorages());
+		contentBehavior
+				.synchronizeContentAnchorages(anchored.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 

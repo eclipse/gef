@@ -65,8 +65,8 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		 * @param contentsTransform
 		 *            The contents transform.
 		 */
-		public ViewportState(double translateX, double translateY,
-				double width, double height, AffineTransform contentsTransform) {
+		public ViewportState(double translateX, double translateY, double width,
+				double height, AffineTransform contentsTransform) {
 			this.translateX = translateX;
 			this.translateY = translateY;
 			this.width = width;
@@ -176,10 +176,8 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime
-					* result
-					+ ((contentsTransform == null) ? 0 : contentsTransform
-							.hashCode());
+			result = prime * result + ((contentsTransform == null) ? 0
+					: contentsTransform.hashCode());
 			long temp;
 			temp = Double.doubleToLongBits(height);
 			result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -254,8 +252,8 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 *            transferred, otherwise <code>false</code>.
 	 */
 	public void applyState(ViewportState state, boolean ignoreTranslateX,
-			boolean ignoreTranslateY, boolean ignoreWidth,
-			boolean ignoreHeight, boolean ignoreContentsTransform) {
+			boolean ignoreTranslateY, boolean ignoreWidth, boolean ignoreHeight,
+			boolean ignoreContentsTransform) {
 		// System.out.println("APPLY: (" + state.translateX + ", " +
 		// state.translateY
 		// + ", " + state.width + ", " + state.height + ") -> "
@@ -353,8 +351,8 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 *         this {@link ViewportModel}.
 	 */
 	public ViewportState retrieveState(boolean ignoreTranslateX,
-			boolean ignoreTranslateY, boolean ignoreWidth,
-			boolean ignoreHeight, boolean ignoreContentsTransform) {
+			boolean ignoreTranslateY, boolean ignoreWidth, boolean ignoreHeight,
+			boolean ignoreContentsTransform) {
 		ViewportState state = new ViewportState(getTranslateX(),
 				getTranslateY(), getWidth(), getHeight(),
 				getContentsTransform());

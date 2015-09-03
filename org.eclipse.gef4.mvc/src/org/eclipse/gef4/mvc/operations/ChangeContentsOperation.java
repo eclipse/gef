@@ -79,13 +79,13 @@ public class ChangeContentsOperation extends AbstractOperation {
 		super(label);
 		this.viewer = viewer;
 		this.newContents = new ArrayList<Object>(contents);
-		oldContents = new ArrayList<Object>(viewer.getAdapter(
-				ContentModel.class).getContents());
+		oldContents = new ArrayList<Object>(
+				viewer.getAdapter(ContentModel.class).getContents());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#execute(org.
 	 * eclipse.core.runtime.IProgressMonitor,
 	 * org.eclipse.core.runtime.IAdaptable)
@@ -100,7 +100,7 @@ public class ChangeContentsOperation extends AbstractOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse.
 	 * core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
@@ -113,7 +113,7 @@ public class ChangeContentsOperation extends AbstractOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse.
 	 * core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)

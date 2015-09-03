@@ -45,8 +45,8 @@ public class ReverseUndoCompositeOperation extends AbstractCompositeOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		ListIterator<IUndoableOperation> li = getOperations().listIterator(
-				getOperations().size());
+		ListIterator<IUndoableOperation> li = getOperations()
+				.listIterator(getOperations().size());
 		while (li.hasPrevious()) {
 			status = combine(status, li.previous().undo(monitor, info));
 		}

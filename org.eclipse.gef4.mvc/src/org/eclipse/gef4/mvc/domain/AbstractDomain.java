@@ -111,8 +111,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		// check if the transaction has an effect (or is empty)
 		if (transaction != null && !transaction.getOperations().isEmpty()) {
 			// adjust the label
-			transaction.setLabel(transaction.getOperations().iterator().next()
-					.getLabel());
+			transaction.setLabel(
+					transaction.getOperations().iterator().next().getLabel());
 			// successfully close operation
 			getOperationHistory().closeOperation(true, true,
 					IOperationHistory.EXECUTE);
