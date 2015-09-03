@@ -4,27 +4,27 @@
   <ius size='5'>
     <iu id='org.eclipse.fx.ide.pde.feature.feature.group' name='e(fx)clipse - IDE - PDE' version='2.0.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/mars'/>
+        <repository location='http://download.eclipse.org/releases/mars/201506241002/'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.xtext.sdk.feature.group' name='Xtext Complete SDK' version='2.8.3'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/mars'/>
+        <repository location='http://download.eclipse.org/releases/mars/201506241002/'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.pde.api.tools.ee.feature.feature.group' name='API Tools Execution Environment Descriptions' version='1.0.1'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/mars'/>
+        <repository location='http://download.eclipse.org/releases/mars/201506241002/'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.oomph.version.headless.feature.group' name='Oomph Version Management (Headless)' version='1.1.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/mars'/>
+        <repository location='http://download.eclipse.org/oomph/updates/release/latest/'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.m2e.feature.feature.group' name='m2e - Maven Integration for Eclipse (includes Incubating components)' version='1.6.0'>
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/mars'/>
+        <repository location='http://download.eclipse.org/releases/mars/201506241002/'/>
       </repositories>
     </iu>
   </ius>
