@@ -74,6 +74,7 @@ public class NodeLayoutBehaviorTests {
 									resizeOperation = new FXResizeNodeOperation(getHost().getVisual());
 									resizeAndRevealOperation = new ForwardUndoCompositeOperation("Resize");
 									resizeAndRevealOperation.add(resizeOperation);
+									initialized = true;
 								}
 							});
 							FXTransformProvider transformProvider = new FXTransformProvider();
