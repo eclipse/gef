@@ -44,16 +44,12 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 
 	@Override
 	public IUndoableOperation commit() {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
 		// after commit, we need to be re-initialized
 		initialized = false;
 
 		// clear operation and return current one (and formerly pushed
 		// operations)
-		if (operation.hasEffect()) {
+		if (operation != null && operation.hasEffect()) {
 			IUndoableOperation commit = operation;
 			operation = null;
 			return commit;
