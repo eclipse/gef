@@ -40,7 +40,12 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
 	private FXChangeViewportOperation operation = null;
-	private boolean initialized = false;
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
 
 	@Override
 	public IUndoableOperation commit() {

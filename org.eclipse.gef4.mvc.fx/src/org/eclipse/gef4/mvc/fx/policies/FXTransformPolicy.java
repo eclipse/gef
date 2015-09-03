@@ -63,15 +63,26 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		return new Dimension(snapOffsetX, snapOffsetY);
 	}
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
+
 	private FXTransformOperation transformOperation;
 	private AffineTransform oldTransform;
 	private Affine nodeTransform;
 
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+		// after commit, we need to be re-initialized
+		initialized = false;
+
 		IUndoableOperation commit = null;
-		// transformOperation may be null if commit() is called more than once
-		// (see bug #475554)
 		if (transformOperation != null && transformOperation.hasEffect()) {
 			commit = transformOperation;
 		}
@@ -95,17 +106,30 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		transformOperation = new FXTransformOperation(getNodeTransform());
 		oldTransform = JavaFX2Geometry
 				.toAffineTransform(transformOperation.getOldTransform());
+		initialized = true;
 	}
 
 	public void setConcatenation(AffineTransform transform) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		setTransform(oldTransform.getCopy().concatenate(transform));
 	}
 
 	public void setPreConcatenation(AffineTransform transform) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		setTransform(oldTransform.getCopy().preConcatenate(transform));
 	}
 
 	public void setTransform(AffineTransform newTransform) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		// snap to grid if needed (TODO: check that this is correct)
 		Dimension snapToGridOffset = getSnapToGridOffset(
 				getHost().getRoot().getViewer().getAdapter(GridModel.class),

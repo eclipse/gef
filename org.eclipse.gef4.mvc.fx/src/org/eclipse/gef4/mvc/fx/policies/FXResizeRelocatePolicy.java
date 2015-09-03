@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
@@ -20,13 +18,28 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
+import javafx.scene.Node;
+
 // TODO: check if we really need this policy, as we now have the transform policy
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
+
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+		// after commit, we need to be re-initialized
+		initialized = false;
+
 		// assemble commits of delegate policies to one operation
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"ResizeRelocate");
@@ -62,7 +75,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -76,10 +89,15 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
 		if (resizePolicy != null) {
 			resizePolicy.init();
 		}
+		initialized = true;
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw,
 			double dh) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		// relocate in middle of resize area if no resize policy is available
 		FXResizePolicy resizePolicy = getResizePolicy();
 		if (resizePolicy == null) {

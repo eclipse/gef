@@ -36,6 +36,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
+
 	private ForwardUndoCompositeOperation commitOperation;
 
 	/**
@@ -50,6 +57,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 *            The index of the new content child.
 	 */
 	public void addContentChild(Object contentChild, int index) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ForwardUndoCompositeOperation addOperation = new ForwardUndoCompositeOperation(
 				"Add Content Child");
 		addOperation.add(new AddContentChildOperation<VR>(getHost(),
@@ -72,6 +83,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 *
 	 */
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ForwardUndoCompositeOperation attachOperation = new ForwardUndoCompositeOperation(
 				"Attach To Content Anchorage");
 		attachOperation.add(new AttachToContentAnchorageOperation<VR>(getHost(),
@@ -83,9 +98,14 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 
 	@Override
 	public IUndoableOperation commit() {
-		IUndoableOperation commit = commitOperation.unwrap();
-		commitOperation = null;
-		return commit;
+		// after commit, we need to be re-initialized
+		initialized = false;
+		if (commitOperation != null) {
+			IUndoableOperation commit = commitOperation.unwrap();
+			commitOperation = null;
+			return commit;
+		}
+		return null;
 	}
 
 	/**
@@ -95,6 +115,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 * its parent's content children.
 	 */
 	public void deleteContent() {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		// unestablish anchor relations
 		detachAllContentAnchoreds();
 		detachFromAllContentAnchorages();
@@ -107,6 +131,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 * {@link #getHost() host} of this {@link ContentPolicy}.
 	 */
 	public void detachAllContentAnchoreds() {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ForwardUndoCompositeOperation detachOps = new ForwardUndoCompositeOperation(
 				"Detach All Anchoreds");
 		for (IVisualPart<VR, ? extends VR> anchored : getHost()
@@ -139,6 +167,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 * this {@link ContentPolicy} from all content anchorages.
 	 */
 	public void detachFromAllContentAnchorages() {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		for (IVisualPart<VR, ? extends VR> anchorage : getHost().getAnchorages()
 				.keySet()) {
 			if (anchorage instanceof IContentPart) {
@@ -165,6 +197,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 */
 	public void detachFromContentAnchorage(Object contentAnchorage,
 			String role) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		// assemble content operations in forward-undo-operations, so that
 		// synchronization is always performed after changing the content
 		// model (in execute() and undo())
@@ -185,6 +221,7 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	@Override
 	public void init() {
 		commitOperation = new ForwardUndoCompositeOperation("Content Change");
+		initialized = true;
 	}
 
 	/**
@@ -198,6 +235,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 *            {@link ContentPolicy}.
 	 */
 	public void removeContentChild(Object contentChild) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ForwardUndoCompositeOperation removeOperation = new ForwardUndoCompositeOperation(
 				"Remove Content Child");
 		removeOperation.add(
@@ -212,6 +253,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 * {@link ContentPolicy}'s {@link #getHost() host} from its parent.
 	 */
 	public void removeFromParent() {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
 				"Delete Content");
 		if (getHost().getParent() instanceof IContentPart) {

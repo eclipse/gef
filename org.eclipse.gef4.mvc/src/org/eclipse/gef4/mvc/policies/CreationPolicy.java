@@ -36,10 +36,20 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class CreationPolicy<VR> extends AbstractPolicy<VR>
 		implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
 	private List<Entry<IContentPart<VR, ? extends VR>, Object>> contentToCreate;
 
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"Create Content");
 		for (Entry<IContentPart<VR, ? extends VR>, Object> entry : contentToCreate) {
@@ -62,6 +72,11 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 			contentPolicy.addContentChild(content, index);
 			fwd.add(contentPolicy.commit());
 		}
+
+		// after commit, we need to be re-initialized
+		initialized = false;
+		contentToCreate = null;
+
 		return fwd.unwrap();
 	}
 
@@ -76,6 +91,9 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	 *            given <i>parent</i>.
 	 */
 	public void create(IContentPart<VR, ? extends VR> parent, Object content) {
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		if (content == null) {
 			throw new IllegalArgumentException(
 					"The given content may not be null.");
@@ -91,6 +109,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	@Override
 	public void init() {
 		contentToCreate = new ArrayList<Map.Entry<IContentPart<VR, ? extends VR>, Object>>();
+		initialized = true;
 	}
 
 }

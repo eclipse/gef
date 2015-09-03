@@ -31,10 +31,22 @@ import javafx.scene.Node;
  */
 public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
 	private ChangeContentsOperation changeContentsOperation = null;
 
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+		// after commit, we need to be re-initialized
+		initialized = false;
+
 		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation("Open Graph");
 		// add change viewport operation
 		FXChangeViewportPolicy changeViewportPolicy = getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
@@ -70,6 +82,7 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 			throw new IllegalStateException("FXChangeViewportPolicy could not be obtained!");
 		}
 		changeViewportPolicy.init();
+		initialized = true;
 	}
 
 	protected void openGraph(final Graph currentGraph, final Graph newGraph, final boolean resetNewGraphViewport) {
@@ -129,14 +142,23 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 	}
 
 	public void openNestedGraph(Graph newGraph) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
 		final Graph currentGraph = (Graph) contentModel.getContents().get(0);
 		openGraph(currentGraph, newGraph, true);
 	}
 
 	public void openNestingGraph(Graph newGraph) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
 		final Graph currentGraph = (Graph) contentModel.getContents().get(0);
 		openGraph(currentGraph, newGraph, false);
 	}
+
 }

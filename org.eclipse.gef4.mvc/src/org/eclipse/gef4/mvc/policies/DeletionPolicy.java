@@ -35,10 +35,20 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 		implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
 	private Set<IContentPart<VR, ? extends VR>> partsToDelete;
 
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+
 		// unestablish anchor relations
 		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
 				"Unestablish Anchor Relations");
@@ -70,7 +80,10 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 			}
 		}
 
+		// after commit, we need to be re-initialized
+		initialized = false;
 		partsToDelete = null;
+
 		return rev.unwrap();
 	}
 
@@ -82,6 +95,9 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 	 */
 	public void delete(
 			Collection<IContentPart<VR, ? extends VR>> contentPartsToDelete) {
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		partsToDelete.addAll(contentPartsToDelete);
 	}
 
@@ -92,12 +108,16 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 	 *            The {@link IContentPart}s to mark for deletion.
 	 */
 	public void delete(IContentPart<VR, ? extends VR>... contentPartsToDelete) {
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
 		partsToDelete.addAll(Arrays.asList(contentPartsToDelete));
 	}
 
 	@Override
 	public void init() {
 		partsToDelete = new HashSet<IContentPart<VR, ? extends VR>>();
+		initialized = true;
 	}
 
 }

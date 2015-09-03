@@ -26,8 +26,20 @@ import javafx.scene.transform.Affine;
 public class FXRotatePolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
+
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+		// after commit, we need to be re-initialized
+		initialized = false;
 		return getTransformPolicy().commit();
 	}
 
@@ -39,9 +51,15 @@ public class FXRotatePolicy extends AbstractPolicy<Node>
 	public void init() {
 		// initialize transaction policy
 		getTransformPolicy().init();
+		initialized = true;
 	}
 
 	public void performRotation(Angle rotationAngle, Point pivotInScene) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
+		// convert to local coordinates
 		Point2D pivotLocal = getHost().getVisual().sceneToLocal(pivotInScene.x,
 				pivotInScene.y);
 		// take scaling into account
@@ -50,6 +68,7 @@ public class FXRotatePolicy extends AbstractPolicy<Node>
 				.toAffineTransform(transformPolicy.getNodeTransform());
 		double scaleX = oldTransform.getScaleX();
 		double scaleY = oldTransform.getScaleY();
+		// update operation
 		updateOperation(rotationAngle, new Point(pivotLocal.getX() * scaleX,
 				pivotLocal.getY() * scaleY));
 	}

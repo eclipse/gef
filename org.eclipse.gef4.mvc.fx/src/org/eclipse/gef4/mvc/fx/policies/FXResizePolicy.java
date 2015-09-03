@@ -27,15 +27,25 @@ import javafx.scene.Node;
 public class FXResizePolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
+	/**
+	 * Stores the <i>initialized</i> flag for this policy, i.e.
+	 * <code>true</code> after {@link #init()} was called, and
+	 * <code>false</code> after {@link #commit()} was called, respectively.
+	 */
+	protected boolean initialized;
 	protected FXResizeNodeOperation resizeOperation;
 	protected ForwardUndoCompositeOperation resizeAndRevealOperation;
 
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
 	public IUndoableOperation commit() {
+		if (!initialized) {
+			return null;
+		}
+		// after commit, we need to be re-initialized
+		initialized = false;
+
 		IUndoableOperation commit = null;
-		// resizeOperation may be null if commit() is called more than once (see
-		// bug #475554)
 		if (resizeOperation != null && resizeOperation.hasEffect()) {
 			commit = resizeAndRevealOperation;
 		}
@@ -76,9 +86,15 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 				resizeOperation.getLabel());
 		resizeAndRevealOperation.add(resizeOperation);
 		resizeAndRevealOperation.add(new FXRevealOperation(getHost()));
+		initialized = true;
 	}
 
 	public void performResize(double dw, double dh) {
+		// ensure we have been properly initialized
+		if (!initialized) {
+			throw new IllegalStateException("Not yet initialized!");
+		}
+
 		Node visual = resizeOperation.getVisual();
 		boolean resizable = visual.isResizable();
 
