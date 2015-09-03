@@ -107,11 +107,6 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 			changeViewportOperation.setNewTx(newViewportState.getTranslateX());
 			changeViewportOperation.setNewTy(newViewportState.getTranslateY());
 			changeViewportOperation.setNewTransform(newViewportState.getContentsTransform().getCopy());
-			try {
-				changeViewportOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
 
 			// change contents and suppress next layout pass
 			changeContentsOperation = new ChangeContentsOperation(getHost().getRoot().getViewer(),
@@ -133,11 +128,6 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 					return super.undo(monitor, info);
 				}
 			};
-			try {
-				changeContentsOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

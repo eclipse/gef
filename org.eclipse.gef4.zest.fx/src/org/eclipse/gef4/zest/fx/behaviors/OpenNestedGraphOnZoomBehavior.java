@@ -15,6 +15,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -39,6 +40,17 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
+			/*
+			 * The PropertyChangeEvent could have been processed already and
+			 * could have deactivated our host, in which case we should not do
+			 * anything.
+			 */
+			if (!isActive()) {
+				// TODO: Enhance property change mechanism to allow for easier
+				// decoupling of behaviors. For example, an event could be
+				// consumed to not notify any more listeners.
+				return;
+			}
 			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt.getPropertyName())) {
 				Transform localToSceneTransform = getHost().getVisual().getLocalToSceneTransform();
 				AffineTransform transform = JavaFX2Geometry.toAffineTransform(localToSceneTransform);
@@ -98,9 +110,12 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 				final Graph nestedGraph = getHost().getContent().getNestedGraph();
 				if (nestedGraph != null) {
 					NavigationPolicy semanticZoomPolicy = getSemanticZoomPolicy();
-					// semanticZoomPolicy.init();
+					semanticZoomPolicy.init();
 					semanticZoomPolicy.openNestedGraph(nestedGraph);
-					// semanticZoomPolicy.commit();
+					IUndoableOperation commit = semanticZoomPolicy.commit();
+					if (commit != null) {
+						getHost().getRoot().getViewer().getDomain().execute(commit);
+					}
 				}
 			}
 		}

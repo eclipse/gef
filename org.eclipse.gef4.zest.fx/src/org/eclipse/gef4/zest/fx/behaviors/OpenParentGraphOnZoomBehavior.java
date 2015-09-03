@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
@@ -92,9 +93,12 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 
 			if (nestingGraph != null) {
 				NavigationPolicy semanticZoomPolicy = getSemanticZoomPolicy();
-				// semanticZoomPolicy.init();
+				semanticZoomPolicy.init();
 				semanticZoomPolicy.openNestingGraph(nestingGraph);
-				// semanticZoomPolicy.commit();
+				IUndoableOperation commit = semanticZoomPolicy.commit();
+				if (commit != null) {
+					getHost().getRoot().getViewer().getDomain().execute(commit);
+				}
 			}
 		}
 	}
