@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
+
 import javafx.scene.input.ZoomEvent;
 
 /**
@@ -26,11 +28,6 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractFXOnPinchSpreadPolicy {
 	}
 
 	@Override
-	public void zoomStarted(ZoomEvent e) {
-		getViewportPolicy().init();
-	}
-
-	@Override
 	public void zoom(ZoomEvent e) {
 		getViewportPolicy().zoomRelative(e.getZoomFactor(), e.getSceneX(),
 				e.getSceneY());
@@ -38,8 +35,15 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractFXOnPinchSpreadPolicy {
 
 	@Override
 	public void zoomFinished(ZoomEvent e) {
-		getHost().getRoot().getViewer().getDomain()
-				.execute(getViewportPolicy().commit());
+		IUndoableOperation commit = getViewportPolicy().commit();
+		if (commit != null) {
+			getHost().getRoot().getViewer().getDomain().execute(commit);
+		}
+	}
+
+	@Override
+	public void zoomStarted(ZoomEvent e) {
+		getViewportPolicy().init();
 	}
 
 }
