@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
+
 import javafx.scene.input.ScrollEvent;
 
 public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
@@ -36,8 +38,10 @@ public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		FXChangeViewportPolicy viewportPolicy = getViewportPolicy();
 		viewportPolicy.init();
 		viewportPolicy.zoomRelative(relativeZoom, sceneX, sceneY);
-		// TODO: does it make sense to make this undoable?
-		viewportPolicy.commit();
+		IUndoableOperation commit = viewportPolicy.commit();
+		if (commit != null) {
+			getHost().getRoot().getViewer().getDomain().execute(commit);
+		}
 	}
 
 }
