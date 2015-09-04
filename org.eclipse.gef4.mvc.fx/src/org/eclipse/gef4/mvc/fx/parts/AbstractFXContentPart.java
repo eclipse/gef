@@ -13,13 +13,26 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Map;
 
-import javafx.scene.Node;
-import javafx.scene.Parent;
-
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.scene.Node;
+import javafx.scene.Parent;
+
+/**
+ * The {@link AbstractFXContentPart} is an {@link IContentPart} implementation
+ * that binds the VR type parameter (visual root type) to {@link Node}.
+ * Furthermore, it implements the un-/registration of visuals at the visual part
+ * map of the {@link IViewer}.
+ *
+ * @author anyssen
+ *
+ * @param <V>
+ *            The visual {@link Node} used by this {@link AbstractFXContentPart}
+ *            .
+ */
 public abstract class AbstractFXContentPart<V extends Node>
 		extends AbstractContentPart<Node, V> {
 

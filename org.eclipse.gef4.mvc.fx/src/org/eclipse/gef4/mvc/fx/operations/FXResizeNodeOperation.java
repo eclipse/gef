@@ -22,6 +22,14 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 
 import javafx.scene.Node;
 
+/**
+ * The {@link FXResizeNodeOperation} can be used to alter the size of a
+ * {@link Node visual}.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 public class FXResizeNodeOperation extends AbstractOperation {
 
 	private final Node visual;
@@ -29,10 +37,30 @@ public class FXResizeNodeOperation extends AbstractOperation {
 	private double dw;
 	private double dh;
 
+	/**
+	 * Constructs a new {@link FXResizeNodeOperation} for the manipulation of
+	 * the given {@link Node}.
+	 *
+	 * @param visual
+	 *            The {@link Node} that is manipulated by this operation.
+	 */
 	public FXResizeNodeOperation(Node visual) {
 		this(visual, 0, 0);
 	}
 
+	/**
+	 * Constructs a new {@link FXResizeNodeOperation} for the manipulation of
+	 * the given {@link Node}. The given delta width and height will be applied
+	 * when executing this operation.
+	 *
+	 * @param visual
+	 *            The {@link Node} that is manipulated by this operation.
+	 * @param dw
+	 *            The delta width that is applied when executing this operation.
+	 * @param dh
+	 *            The delta height that is applied when executing this
+	 *            operation.
+	 */
 	public FXResizeNodeOperation(Node visual, double dw, double dh) {
 		this("Resize", visual,
 				new Dimension(visual.getLayoutBounds().getWidth(),
@@ -79,22 +107,49 @@ public class FXResizeNodeOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Returns the delta height that is applied when executing this operation.
+	 *
+	 * @return The delta height that is applied when executing this operation.
+	 */
 	public double getDh() {
 		return dh;
 	}
 
+	/**
+	 * Returns the delta width that is applied when executing this operation.
+	 *
+	 * @return The delta width that is applied when executing this operation.
+	 */
 	public double getDw() {
 		return dw;
 	}
 
+	/**
+	 * Returns the dimensions that are applied when undoing this operation.
+	 *
+	 * @return The dimensions that are applied when undoing this operation.
+	 */
 	public Dimension getOldSize() {
 		return oldSize;
 	}
 
+	/**
+	 * Returns the {@link Node} that is manipulated by this operation.
+	 *
+	 * @return The {@link Node} that is manipulated by this operation.
+	 */
 	public Node getVisual() {
 		return visual;
 	}
 
+	/**
+	 * Returns <code>true</code> if the execution of this operation will result
+	 * in a manipulation. Otherwise, <code>false</code> is returned.
+	 *
+	 * @return <code>true</code> if the execution of this operation will result
+	 *         in a manipulation, otherwise <code>false</code>.
+	 */
 	public boolean hasEffect() {
 		return dw != 0 && dh != 0;
 	}
@@ -105,10 +160,26 @@ public class FXResizeNodeOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
+	/**
+	 * Sets the delta height that will be applied when executing this operation
+	 * to the given value.
+	 *
+	 * @param dh
+	 *            The delta height that will be applied when executing this
+	 *            operation.
+	 */
 	public void setDh(double dh) {
 		this.dh = dh;
 	}
 
+	/**
+	 * Sets the delta width that will be applied when executing this operation
+	 * to the given value.
+	 *
+	 * @param dw
+	 *            The delta width that will be applied when executing this
+	 *            operation.
+	 */
 	public void setDw(double dw) {
 		this.dw = dw;
 	}

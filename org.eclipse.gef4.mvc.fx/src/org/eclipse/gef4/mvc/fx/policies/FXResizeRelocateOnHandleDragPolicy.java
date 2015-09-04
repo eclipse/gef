@@ -11,11 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.transform.Affine;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -26,7 +21,21 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-// Only applicable for AbstractFXCornerHandlePart, see #getHost().
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
+
+/**
+ * The {@link FXResizeRelocateOnHandleDragPolicy} is an
+ * {@link AbstractFXOnDragPolicy} that handles the resize and relocation of its
+ * (selected) first anchorage when an {@link AbstractFXSegmentHandlePart} of the
+ * box selection of the first anchorage is dragged with the mouse.
+ *
+ * @author mwienand
+ *
+ */
+// Only applicable for AbstractFXSegmentHandlePart, see #getHost().
 public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialPointerLocation;
@@ -53,10 +62,23 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return (AbstractFXSegmentHandlePart<? extends Node>) super.getHost();
 	}
 
+	/**
+	 * Returns the {@link FXResizeRelocatePolicy} that is installed on the
+	 * {@link #getTargetPart()}.
+	 *
+	 * @return The {@link FXResizeRelocatePolicy} that is installed on the
+	 *         {@link #getTargetPart()}.
+	 */
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy() {
 		return getTargetPart().getAdapter(FXResizeRelocatePolicy.class);
 	}
 
+	/**
+	 * Returns the target {@link IVisualPart} for this policy. Per default the
+	 * first anchorage is returned.
+	 *
+	 * @return The target {@link IVisualPart} for this policy.
+	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart() {
 		return getHost().getAnchorages().keySet().iterator().next();
 	}
@@ -97,6 +119,21 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		commit(getResizeRelocatePolicy());
 	}
 
+	/**
+	 * Computes the resize and relocation deltas from the given
+	 * {@link MouseEvent}. The
+	 * {@link AbstractFXSegmentHandlePart#getSegmentIndex()} of the host
+	 * determines the logical position of the handle:
+	 * <ul>
+	 * <li>0: top left
+	 * <li>1: top right
+	 * <li>2: bottom right
+	 * <li>3: bottom left
+	 * </ul>
+	 *
+	 * @param e
+	 *            The drag {@link MouseEvent}.
+	 */
 	protected void updateDeltas(MouseEvent e) {
 		dx = dy = dw = dh = 0;
 		Node visual = getTargetPart().getVisual();

@@ -13,6 +13,14 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -23,15 +31,20 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
-
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
-
+/**
+ * The {@link FXCursorBehavior} can be used to change the mouse cursor depending
+ * on the currently pressed modifier keys.
+ *
+ * @author mwienand
+ *
+ */
 public class FXCursorBehavior extends AbstractBehavior<Node> {
 
+	/**
+	 * Role name for the <code>Provider&lt;Map&lt;KeyCode, Cursor&gt;&gt;</code>
+	 * which can be registered on an {@link IVisualPart} to provide the mouse
+	 * {@link Cursor}s for the individual modifier keys.
+	 */
 	public static final String CURSOR_PROVIDER_ROLE = "cursorProvider";
 
 	private boolean inGesture = false;
@@ -120,6 +133,9 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 		}
 	};
 
+	/**
+	 * Default constructor.
+	 */
 	public FXCursorBehavior() {
 	}
 
@@ -131,6 +147,13 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 		visual.addEventHandler(MouseEvent.MOUSE_EXITED, mouseExitedHandler);
 	}
 
+	/**
+	 * Changes the mouse cursor to the given {@link Cursor} and saves the
+	 * initial mouse cursor so that it can later be restored.
+	 *
+	 * @param cursor
+	 *            The new mouse {@link Cursor}.
+	 */
 	protected void changeCursor(Cursor cursor) {
 		Scene scene = getHost().getVisual().getScene();
 		if (!inGesture) {
@@ -159,6 +182,15 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 		super.deactivate();
 	}
 
+	/**
+	 * Returns the <code>Provider&lt;Map&lt;KeyCode, Cursor&gt;&gt;</code> which
+	 * is registered on the {@link #getHost() host} under the
+	 * {@link #CURSOR_PROVIDER_ROLE} role.
+	 *
+	 * @return The <code>Provider&lt;Map&lt;KeyCode, Cursor&gt;&gt;</code> which
+	 *         is registered on the {@link #getHost() host} under the
+	 *         {@link #CURSOR_PROVIDER_ROLE} role.
+	 */
 	@SuppressWarnings("serial")
 	protected Provider<Map<KeyCode, Cursor>> getCursorProvider() {
 		return getHost().<Provider<Map<KeyCode, Cursor>>> getAdapter(
@@ -166,6 +198,9 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 				}, CURSOR_PROVIDER_ROLE));
 	}
 
+	/**
+	 * Restores the initial mouse cursor.
+	 */
 	protected void restoreInitialCursor() {
 		inGesture = false;
 		Scene scene = getHost().getVisual().getScene();

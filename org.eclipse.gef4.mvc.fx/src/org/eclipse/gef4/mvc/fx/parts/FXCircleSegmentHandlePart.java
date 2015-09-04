@@ -7,22 +7,25 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - code refactoring
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
-
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
+
 /**
- * An {@link AbstractFXSegmentHandlePart} with a {@link Circle} visual.
+ * The {@link FXCircleSegmentHandlePart} is an
+ * {@link AbstractFXSegmentHandlePart} that uses {@link Circle} for the
+ * visualization.
  *
  * @author mwienand
  * @author anyssen
@@ -31,10 +34,33 @@ import com.google.common.collect.SetMultimap;
 public class FXCircleSegmentHandlePart
 		extends AbstractFXSegmentHandlePart<Circle> {
 
+	/**
+	 * The default stroke color for this part's visualization.
+	 */
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
+
+	/**
+	 * The default fill color for this part's visualization.
+	 */
 	public static final Color DEFAULT_FILL = Color.WHITE;
+
+	/**
+	 * The default fill color for this part's visualization when it's anchorage
+	 * is an {@link FXConnection} and this handle part represents a connected
+	 * point of that {@link FXConnection}.
+	 */
 	public static final Color CONNECTED_FILL = Color.web("#ff0000");
+
+	/**
+	 * The default fill color for this part's visualization when it's anchorage
+	 * is an {@link FXConnection} and this handle part represents an unconnected
+	 * point of that {@link FXConnection}.
+	 */
 	public static final Color UNCONNECTED_FILL = Color.web("#d5faff");
+
+	/**
+	 * The default size for this part's visualization.
+	 */
 	public static final double DEFAULT_SIZE = 5d;
 
 	/**
@@ -59,6 +85,14 @@ public class FXCircleSegmentHandlePart
 		updateColor();
 	}
 
+	/**
+	 * Updates the color of this part's visualization. If this handle part
+	 * represents a way or end point of an {@link FXConnection}, it's color will
+	 * be set to {@link #CONNECTED_FILL} if that handle is connected to another
+	 * part, and {@link #UNCONNECTED_FILL} otherwise. If this handle part
+	 * represents a middle point on a segment, it's color will be set to
+	 * {@link #DEFAULT_FILL}.
+	 */
 	protected void updateColor() {
 		// only update when bound to anchorage
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();

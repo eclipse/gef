@@ -57,15 +57,37 @@ public abstract class FXView extends ViewPart {
 	private UndoRedoActionGroup undoRedoActionGroup;
 	private IPropertySheetPage propertySheetPage;
 
+	/**
+	 * Constructs a new {@link FXView} that uses the given {@link Injector} to
+	 * inject its members.
+	 *
+	 * @param injector
+	 *            The {@link Injector} that is used to inject the members of
+	 *            this {@link FXView}.
+	 */
 	// TOOD: use executable extension factory to inject this class
 	public FXView(final Injector injector) {
 		injector.injectMembers(this);
 	}
 
+	/**
+	 * Activates this {@link FXView} by activating the {@link FXDomain} that was
+	 * previously injected.
+	 */
 	protected void activate() {
 		domain.activate();
 	}
 
+	/**
+	 * Creates an {@link FXCanvas} to allow the interoperability between SWT and
+	 * JavaFX using the {@link IFXCanvasFactory} that was previously injected.
+	 *
+	 * @param parent
+	 *            The {@link Composite} that serves as the parent for the
+	 *            created {@link FXCanvas}.
+	 * @return The {@link FXCanvas} that is created by the previously injected
+	 *         {@link IFXCanvasFactory}.
+	 */
 	protected FXCanvas createCanvas(final Composite parent) {
 		return canvasFactory.createCanvas(parent);
 	}
@@ -82,6 +104,10 @@ public abstract class FXView extends ViewPart {
 		activate();
 	}
 
+	/**
+	 * Deactivates this {@link FXView} by deactivating its {@link FXDomain} that
+	 * was previously injected.
+	 */
 	protected void deactivate() {
 		domain.deactivate();
 	}
@@ -136,18 +162,44 @@ public abstract class FXView extends ViewPart {
 		return super.getAdapter(key);
 	}
 
+	/**
+	 * Returns the {@link FXCanvas} that was previously created by the injected
+	 * {@link IFXCanvasFactory}.
+	 *
+	 * @return The {@link FXCanvas} that was previously created by the injected
+	 *         {@link IFXCanvasFactory}.
+	 */
 	protected FXCanvas getCanvas() {
 		return canvas;
 	}
 
+	/**
+	 * Returns the {@link FXDomain} that was previously injected.
+	 *
+	 * @return The {@link FXDomain} that was previously injected.
+	 */
 	protected FXDomain getDomain() {
 		return domain;
 	}
 
+	/**
+	 * Returns the {@link FXViewer} of the {@link FXDomain} that was previously
+	 * injected.
+	 *
+	 * @return The {@link FXViewer} of the {@link FXDomain} that was previously
+	 *         injected.
+	 */
 	protected FXViewer getViewer() {
 		return domain.getAdapter(IViewer.class);
 	}
 
+	/**
+	 * Hooks all viewers that are part of this {@link FXView} into the
+	 * {@link FXCanvas} that was previously created by the injected
+	 * {@link IFXCanvasFactory}. Also registers listeners for the propagation of
+	 * a selection from the Eclipse Workbench to this {@link FXView} and vice
+	 * versa.
+	 */
 	protected void hookViewers() {
 		// by default we only have a single (content) viewer, so hook its
 		// visuals as root visuals into the scene
@@ -182,6 +234,11 @@ public abstract class FXView extends ViewPart {
 		canvas.setFocus();
 	}
 
+	/**
+	 * Unhooks all viewers that are part of this {@link FXView} by unregistering
+	 * the selection listeners.
+	 */
+	// TODO: What about taking the visuals out of the canvas?
 	protected void unhookViewers() {
 		// unregister listener to provide selections
 		if (selectionForwarder != null) {

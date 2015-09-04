@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx;
 
+import javafx.scene.Node;
+import javafx.scene.transform.Affine;
+
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
@@ -66,9 +69,6 @@ import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
-import javafx.scene.Node;
-import javafx.scene.transform.Affine;
-
 /**
  * The Guice module which contains all (default) bindings related to the MVC.FX
  * bundle. It extends the MVC Guice module of the MVC bundle, which provides
@@ -115,22 +115,22 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindAbstractFXContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register default providers
-		adapterMapBinder
-				.addBinding(AdapterKey.get(new TypeToken<Provider<Affine>>() {
-				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE))
-				.to(FXTransformProvider.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<Provider<Affine>>() {
+				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).to(
+				FXTransformProvider.class);
 
 		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class))
-				.to(new TypeLiteral<HoverBehavior<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
+				new TypeLiteral<HoverBehavior<Node>>() {
 				});
 		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class))
-				.to(FXFocusBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
+				FXFocusBehavior.class);
 
 		// register default policies
-		adapterMapBinder.addBinding(AdapterKey.get(ContentPolicy.class))
-				.to(new TypeLiteral<ContentPolicy<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(ContentPolicy.class)).to(
+				new TypeLiteral<ContentPolicy<Node>>() {
 				});
 	}
 
@@ -170,20 +170,32 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindOnHoverPoliciesAsFXRootPartAdapters(adapterMapBinder);
 		// register behavior which reacts to changes of the hover model and
 		// updates selection (and handles)
-		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class))
-				.to(new TypeLiteral<HoverBehavior<Node>>() {
-				});
-	}
-
-	protected void bindContentBehaviorAsFXRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
-				.to(new TypeLiteral<ContentBehavior<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
+				new TypeLiteral<HoverBehavior<Node>>() {
 				});
 	}
 
 	/**
-	 * Binds {@link ContentPartPool}, parameterized with {@link Node}, to the
+	 * Adds a binding for {@link ContentBehavior}, parameterized by {@link Node}
+	 * , to the {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindContentBehaviorAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
+				new TypeLiteral<ContentBehavior<Node>>() {
+				});
+	}
+
+	/**
+	 * Binds {@link ContentPartPool}, parameterized by {@link Node}, to the
 	 * {@link FXViewer} adaptable scope.
 	 */
 	// TODO: rename to bindContentPartPool()
@@ -193,7 +205,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Binds {@link FocusModel}, parameterized with {@link Node}, to the
+	 * Binds {@link FocusModel}, parameterized by {@link Node}, to the
 	 * {@link FXViewer} adaptable scope.
 	 */
 	protected void bindFocusModel() {
@@ -201,26 +213,50 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Adds a binding for {@link FocusModel}, parameterized by {@link Node}, to
+	 * the {@link AdapterMap} binder for {@link FXViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindFocusModelAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class))
-				.to(new TypeLiteral<FocusModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class)).to(
+				new TypeLiteral<FocusModel<Node>>() {
 				});
 	}
 
+	/**
+	 * Adds a binding for {@link FXChangeViewportPolicy} to the
+	 * {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXChangeViewportPolicy.class))
-				.to(FXChangeViewportPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXChangeViewportPolicy.class)).to(
+				FXChangeViewportPolicy.class);
 	}
 
 	/**
 	 * Binds {@link FXClickDragTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXClickDragTool() {
-		binder().bind(FXClickDragTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXClickDragTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
@@ -238,23 +274,23 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
-				.to(FXHoverTool.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
-				.to(FXClickDragTool.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
-				.to(FXTypeTool.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXRotateTool.class))
-				.to(FXRotateTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class)).to(
+				FXHoverTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class)).to(
+				FXClickDragTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class)).to(
+				FXTypeTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXRotateTool.class)).to(
+				FXRotateTool.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
 				.to(FXPinchSpreadTool.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
-				.to(FXScrollTool.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
-				.to(FXFocusTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class)).to(
+				FXScrollTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class)).to(
+				FXFocusTool.class);
 
-		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class))
-				.to(new TypeLiteral<IViewer<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
+				new TypeLiteral<IViewer<Node>>() {
 				});
 	}
 
@@ -262,24 +298,24 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * Binds {@link FXFocusTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXFocusTool() {
-		binder().bind(FXFocusTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXFocusTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
 	 * Binds {@link FXHoverTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXHoverTool() {
-		binder().bind(FXHoverTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXHoverTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
 	 * Binds {@link FXPinchSpreadTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXPinchSpreadTool() {
-		binder().bind(FXPinchSpreadTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXPinchSpreadTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
@@ -320,24 +356,24 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * Binds {@link FXRotateTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXRotateTool() {
-		binder().bind(FXRotateTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXRotateTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
 	 * Binds {@link FXScrollTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXScrollTool() {
-		binder().bind(FXScrollTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXScrollTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
 	 * Binds {@link FXTypeTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXTypeTool() {
-		binder().bind(FXTypeTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
+		binder().bind(FXTypeTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
@@ -364,10 +400,22 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindSelectionModelAsFXViewerAdapter(adapterMapBinder);
 	}
 
+	/**
+	 * Adds a binding for {@link FXGridBehavior} to the {@link AdapterMap}
+	 * binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindGridBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class))
-				.to(FXGridBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class)).to(
+				FXGridBehavior.class);
 	}
 
 	/**
@@ -380,7 +428,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Binds {@link HoverModel}, parameterized with {@link Node} to the
+	 * Binds {@link HoverModel}, parameterized by {@link Node} to the
 	 * {@link FXViewer} adaptable scope.
 	 */
 	protected void bindHoverModel() {
@@ -388,10 +436,22 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Adds a binding for {@link HoverModel}, parameterized by {@link Node}, to
+	 * the {@link AdapterMap} binder for {@link FXViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindHoverModelAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(HoverModel.class))
-				.to(new TypeLiteral<HoverModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(HoverModel.class)).to(
+				new TypeLiteral<HoverModel<Node>>() {
 				});
 	}
 
@@ -437,10 +497,22 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Adds a binding for {@link IRootPart}, parameterized by {@link Node}, to
+	 * the {@link AdapterMap} binder for {@link FXViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindIRootPartAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class))
-				.to(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class)).to(
+				new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 				});
 	}
 
@@ -453,42 +525,113 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).to(FXViewer.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXFocusAndSelectOnClickPolicy} to the
+	 * {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnClickPoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
-				.to(FXFocusAndSelectOnClickPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
+				FXFocusAndSelectOnClickPolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXMarqueeOnDragPolicy} to the
+	 * {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnDragPoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
-				.to(FXMarqueeOnDragPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
+				FXMarqueeOnDragPolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXHoverOnHoverPolicy} to the {@link AdapterMap}
+	 * binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnHoverPoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY))
-				.to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder
+				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+						FXHoverOnHoverPolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXZoomOnPinchSpreadPolicy} to the
+	 * {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnPinchSpreadPoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY))
-				.to(FXZoomOnPinchSpreadPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
+				FXZoomOnPinchSpreadPolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXRotateSelectedOnRotatePolicy} to the
+	 * {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnRotatePoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXRotateTool.TOOL_POLICY_KEY))
-				.to(FXRotateSelectedOnRotatePolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXRotateTool.TOOL_POLICY_KEY)).to(
+				FXRotateSelectedOnRotatePolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXPanOnScrollPolicy} to the {@link AdapterMap}
+	 * binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnScrollPoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(
@@ -496,12 +639,36 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXPanOnScrollPolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXPanOnTypePolicy} to the {@link AdapterMap}
+	 * binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnTypePoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXPanOnTypePolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXZoomOnScrollPolicy} to the {@link AdapterMap}
+	 * binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindOnZoomPoliciesAsFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(
@@ -509,6 +676,18 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXZoomOnScrollPolicy.class);
 	}
 
+	/**
+	 * Adds a binding for {@link SelectionBehavior}, parameterized by
+	 * {@link Node}, to the {@link AdapterMap} binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindSelectionBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
@@ -525,13 +704,37 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Adds a binding for {@link SelectionModel}, parameterized by {@link Node},
+	 * to the {@link AdapterMap} binder for {@link FXViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindSelectionModelAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class))
-				.to(new TypeLiteral<SelectionModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class)).to(
+				new TypeLiteral<SelectionModel<Node>>() {
 				});
 	}
 
+	/**
+	 * Adds a binding for {@link FXViewportBehavior} to the {@link AdapterMap}
+	 * binder for {@link FXRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindViewportBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXViewportBehavior.class))
@@ -574,24 +777,24 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindContentBehaviorPartPool();
 
 		// bind additional adapters for FXDomain
-		bindFXDomainAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXDomain.class));
+		bindFXDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXDomain.class));
 
 		// bind additional adapters for FXViewer
-		bindFXViewerAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXViewer.class));
+		bindFXViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXViewer.class));
 
 		// bind additional adapters for FXRootPart
-		bindFXRootPartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXRootPart.class));
+		bindFXRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXRootPart.class));
 
 		// bind additional adapters for FX specific visual parts
-		bindAbstractFXContentPartAdapters(AdapterMaps
-				.getAdapterMapBinder(binder(), AbstractFXContentPart.class));
-		bindAbstractFXFeedbackPartAdapters(AdapterMaps
-				.getAdapterMapBinder(binder(), AbstractFXFeedbackPart.class));
-		bindAbstractFXHandlePartAdapters(AdapterMaps
-				.getAdapterMapBinder(binder(), AbstractFXHandlePart.class));
+		bindAbstractFXContentPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFXContentPart.class));
+		bindAbstractFXFeedbackPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFXFeedbackPart.class));
+		bindAbstractFXHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFXHandlePart.class));
 	}
 
 }

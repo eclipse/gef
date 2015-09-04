@@ -11,14 +11,26 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.eclipse.gef4.mvc.models.ViewportModel;
-
+/**
+ * The {@link FXPanOnTypePolicy} is an {@link AbstractFXOnTypePolicy} that
+ * performs viewport panning via the keyboard.
+ *
+ * @author mwienand
+ *
+ */
 public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 
+	/**
+	 * The default scroll amount per second, i.e. how many pixels the viewport
+	 * is moved per second.
+	 */
 	public static final double DEFAULT_SCROLL_AMOUNT_PER_SECOND = 150d;
 
 	private AnimationTimer timer;
@@ -56,6 +68,13 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 		return DEFAULT_SCROLL_AMOUNT_PER_SECOND;
 	}
 
+	/**
+	 * Returns the {@link ViewportModel} of the {@link IViewer} which the
+	 * {@link #getHost() host} belongs to.
+	 *
+	 * @return The {@link ViewportModel} of the {@link IViewer} which the
+	 *         {@link #getHost() host} belongs to.
+	 */
 	protected ViewportModel getViewportModel() {
 		return getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
 	}
@@ -152,6 +171,10 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 		}
 	}
 
+	/**
+	 * Computes the viewport translation and applies it to the
+	 * {@link #getViewportModel() viewport model}.
+	 */
 	protected void updateScrollPosition() {
 		double scrollAmount = getScrollAmountPerSecond();
 		double dx = ((totalMillisLeft + currentMillisLeft) / 1000d)

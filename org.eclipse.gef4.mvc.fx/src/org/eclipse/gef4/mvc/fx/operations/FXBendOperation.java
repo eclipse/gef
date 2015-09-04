@@ -60,18 +60,44 @@ public class FXBendOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Returns the {@link FXConnection} which is manipulated by this operation.
+	 *
+	 * @return The {@link FXConnection} which is manipulated by this operation.
+	 */
 	public FXConnection getConnection() {
 		return connection;
 	}
 
+	/**
+	 * Returns the list of {@link IFXAnchor}s which will replace the
+	 * connection's anchors upon execution.
+	 *
+	 * @return The list of {@link IFXAnchor}s which will replace the
+	 *         connection's anchors upon execution.
+	 */
 	public List<IFXAnchor> getNewAnchors() {
 		return newAnchors;
 	}
 
+	/**
+	 * Returns the list of {@link IFXAnchor}s which will replace the
+	 * connection's anchors upon undoing.
+	 *
+	 * @return The list of {@link IFXAnchor}s which will replace the
+	 *         connection's anchors upon undoing.
+	 */
 	public List<IFXAnchor> getOldAnchors() {
 		return oldAnchors;
 	}
 
+	/**
+	 * Returns <code>true</code> if this operation will result in any
+	 * manipulations. Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if this operation will result in any
+	 *         manipulations, otherwise <code>false</code>.
+	 */
 	public boolean hasEffect() {
 		return !oldAnchors.equals(newAnchors);
 	}
@@ -82,6 +108,14 @@ public class FXBendOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
+	/**
+	 * Sets the list of {@link IFXAnchor}s which will replace the connection's
+	 * anchors upon execution.
+	 *
+	 * @param newAnchors
+	 *            The list of {@link IFXAnchor}s which will replace the
+	 *            connection's anchors upon execution.
+	 */
 	public void setNewAnchors(List<IFXAnchor> newAnchors) {
 		this.newAnchors = newAnchors;
 	}

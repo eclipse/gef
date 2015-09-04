@@ -32,13 +32,37 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The {@link FXHoverTool} is an {@link AbstractTool} that handles mouse hover
+ * changes.
+ *
+ * @author mwienand
+ *
+ */
 public class FXHoverTool extends AbstractTool<Node> {
 
+	/**
+	 * The type of the policy that has to be supported by target parts.
+	 */
 	// TODO: Rename to ON_HOVER_POLICY_KEY
 	public static final Class<AbstractFXOnHoverPolicy> TOOL_POLICY_KEY = AbstractFXOnHoverPolicy.class;
 
 	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<FXViewer, EventHandler<MouseEvent>>();
 
+	/**
+	 * Creates an {@link EventHandler} for hover {@link MouseEvent}s. The
+	 * handler will search for a target part within the given {@link FXViewer}
+	 * and notify all hover policies of that target part about hover changes.
+	 * <p>
+	 * If no target part can be identified, then the root part of the given
+	 * {@link FXViewer} is used as the target part.
+	 *
+	 * @param viewer
+	 *            The {@link FXViewer} for which to create the
+	 *            {@link EventHandler}.
+	 * @return The {@link EventHandler} that handles hover changes for the given
+	 *         {@link FXViewer}.
+	 */
 	protected EventHandler<MouseEvent> createHoverFilter(
 			final FXViewer viewer) {
 		return new EventHandler<MouseEvent>() {
@@ -99,6 +123,16 @@ public class FXHoverTool extends AbstractTool<Node> {
 		};
 	}
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnHoverPolicy}s
+	 * that are installed on the given target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The target {@link IVisualPart} of which the installed
+	 *            {@link AbstractFXOnHoverPolicy}s are returned.
+	 * @return A {@link Set} containing all {@link AbstractFXOnHoverPolicy}s
+	 *         that are installed on the given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnHoverPolicies()
 	protected Set<? extends AbstractFXOnHoverPolicy> getHoverPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {

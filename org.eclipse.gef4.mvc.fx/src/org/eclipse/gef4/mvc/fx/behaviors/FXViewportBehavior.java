@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #449870 and refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
@@ -14,17 +15,27 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ViewportModel;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
-
+/**
+ * The {@link FXViewportBehavior} can be registered on an {@link FXRootPart} in
+ * order to keep the {@link ViewportModel} in sync with the {@link ScrollPaneEx}
+ * of the {@link FXViewer} and vice versa.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 public class FXViewportBehavior extends AbstractBehavior<Node>
 		implements PropertyChangeListener {
 
@@ -38,6 +49,11 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 	 * in progress.
 	 */
 
+	/**
+	 * The {@link Affine} which is used to temporarily store the contents
+	 * transformation.
+	 */
+	// TODO: make contentsTx private
 	protected final Affine contentsTx = new Affine();
 	private ViewportModel viewportModel;
 	private final ChangeListener<Number> translateXListener = new ChangeListener<Number>() {
@@ -77,6 +93,11 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		}
 	};
 
+	/**
+	 * Flag which indicates if
+	 * {@link #applyViewport(double, double, double, double, AffineTransform)}
+	 * is currently in progress.
+	 */
 	boolean inApplyViewport = false;
 
 	@Override
@@ -93,6 +114,22 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 				.addListener(translateYListener);
 	}
 
+	/**
+	 * Applies the given translation, size, and transformation (provided by the
+	 * {@link ViewportModel}) to the {@link ScrollPaneEx} of the
+	 * {@link #getHost() host's} {@link FXViewer}.
+	 *
+	 * @param translateX
+	 *            The horizontal translation.
+	 * @param translateY
+	 *            The vertical translation.
+	 * @param width
+	 *            The viewport width.
+	 * @param height
+	 *            The viewport height.
+	 * @param contentsTransform
+	 *            The contents transformation.
+	 */
 	protected void applyViewport(double translateX, double translateY,
 			double width, double height, AffineTransform contentsTransform) {
 		inApplyViewport = true;
@@ -117,6 +154,13 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		super.deactivate();
 	}
 
+	/**
+	 * Returns the {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 * {@link FXViewer}.
+	 *
+	 * @return The {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 *         {@link FXViewer}.
+	 */
 	protected ScrollPaneEx getScrollPane() {
 		return ((FXViewer) getHost().getRoot().getViewer()).getScrollPane();
 	}
@@ -140,6 +184,16 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		}
 	}
 
+	/**
+	 * Transfers the values of the given {@link java.awt.geom.AffineTransform}
+	 * to the given {@link Affine}.
+	 *
+	 * @param tx
+	 *            The {@link Affine} to which the transformation values are
+	 *            transfered.
+	 * @param at
+	 *            The {@link java.awt.geom.AffineTransform} which is transfered.
+	 */
 	protected void setTx(Affine tx, AffineTransform at) {
 		double[] m = at.getMatrix();
 		tx.setMxx(m[0]);

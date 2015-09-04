@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
@@ -15,11 +15,18 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+/**
+ * The {@link FXFillPropertyDescriptor} is a {@link PropertyDescriptor} that
+ * uses the {@link FXFillCellEditor} to edit its value.
+ *
+ * @author anyssen
+ *
+ */
 public class FXFillPropertyDescriptor extends PropertyDescriptor {
 
 	/**
 	 * Creates an property descriptor with the given id and display name.
-	 * 
+	 *
 	 * @param id
 	 *            The id of this property
 	 * @param displayName

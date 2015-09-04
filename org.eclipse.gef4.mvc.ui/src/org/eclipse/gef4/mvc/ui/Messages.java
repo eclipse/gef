@@ -12,10 +12,21 @@ package org.eclipse.gef4.mvc.ui;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * The {@link Messages} class contains all messages within GEF4 MVC.UI that can
+ * be internationalized.
+ *
+ * @author anyssen
+ *
+ */
 public class Messages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.gef4.mvc.ui.messages"; //$NON-NLS-1$
 
+	/**
+	 * Stores the value of the <code>"SetPropertyValueCommand_Label"</code>
+	 * message key.
+	 */
 	public static String SetPropertyValueCommand_Label;
 
 	static {
@@ -25,4 +36,5 @@ public class Messages extends NLS {
 
 	private Messages() {
 	}
+
 }

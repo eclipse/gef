@@ -60,6 +60,10 @@ import javafx.scene.Node;
 public class FXBendPolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
+	/**
+	 * The overlay threshold, i.e. the distance between two points so that they
+	 * are regarded as overlying.
+	 */
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
 
 	/**
@@ -80,6 +84,14 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	private Point initialMousePositionInScene;
 	private Point initialReferencePositionInLocal;
 
+	/**
+	 * Returns <code>true</code> if the currently modified point can be attached
+	 * to an {@link IVisualPart}. Otherwise returns <code>false</code>. Per
+	 * default, only the start and the end point can be attached.
+	 *
+	 * @return <code>true</code> if the currently modified point can be attached
+	 *         to an {@link IVisualPart}. Otherwise returns <code>false</code>.
+	 */
 	protected boolean canAttach() {
 		// up to now, only allow attaching start and end point.
 		return currentAnchorIndex == 0
@@ -141,6 +153,15 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		return null;
 	}
 
+	/**
+	 * Creates a new way point at the given segment. The new way point is then
+	 * selected for further manipulation.
+	 *
+	 * @param segmentIndex
+	 *            The index of the segment for which a new way point is created.
+	 * @param mouseInScene
+	 *            The mouse position in scene coordinates.
+	 */
 	public void createAndSelectSegmentPoint(int segmentIndex,
 			Point mouseInScene) {
 		if (!initialized) {
@@ -157,6 +178,21 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		selectSegmentPoint(segmentIndex + 1, 0, mouseInScene);
 	}
 
+	/**
+	 * Determines the {@link IFXAnchor} that replaces the anchor of the
+	 * currently modified point. If the point can be attached to an underlying
+	 * anchor, then the {@link IVisualPart} at the mouse position is queried for
+	 * an {@link IFXAnchor}. Otherwise a static anchor is generated using
+	 * {@link #generateStaticAnchor(Point)}.
+	 *
+	 * @param currentReferencePositionInScene
+	 *            The mouse position in scene coordinates.
+	 * @param canAttach
+	 *            <code>true</code> if the point can be attached to an
+	 *            underlying {@link IVisualPart}, otherwise <code>false</code>.
+	 * @return The {@link IFXAnchor} that replaces the anchor of the currently
+	 *         modified point.
+	 */
 	@SuppressWarnings("serial")
 	protected IFXAnchor findAnchor(Point currentReferencePositionInScene,
 			boolean canAttach) {
@@ -182,6 +218,14 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		return anchor;
 	}
 
+	/**
+	 * Generates an {@link FXStaticAnchor} that yields the given position (in
+	 * scene coordinates).
+	 *
+	 * @param scene
+	 *            The static position in scene coordinates.
+	 * @return An {@link FXStaticAnchor} that yields the given position.
+	 */
 	protected IFXAnchor generateStaticAnchor(Point scene) {
 		return new FXStaticAnchor(getConnection(), JavaFX2Geometry
 				.toPoint(getConnection().sceneToLocal(scene.x, scene.y)));
@@ -202,18 +246,44 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		return null;
 	}
 
+	/**
+	 * Returns the {@link FXConnection} that is manipulated by this policy.
+	 *
+	 * @return The {@link FXConnection} that is manipulated by this policy.
+	 */
 	protected FXConnection getConnection() {
 		return (FXConnection) getHost().getVisual();
 	}
 
+	/**
+	 * Returns the initial mouse position in scene coordinates.
+	 *
+	 * @return The initial mouse position in scene coordinates.
+	 */
 	protected Point getInitialMousePositionInScene() {
 		return initialMousePositionInScene;
 	}
 
+	/**
+	 * Returns the initial reference position in the local coordinate system of
+	 * the {@link FXConnection} that is manipulated by this policy.
+	 *
+	 * @return The initial reference position in the local coordinate system of
+	 *         the {@link FXConnection}.
+	 */
 	protected Point getInitialReferencePositionInLocal() {
 		return initialReferencePositionInLocal;
 	}
 
+	/**
+	 * Removes the overlay threshold, i.e. the distance between two points, so
+	 * that they are regarded as overlaying. When the background grid is enables
+	 * ( {@link GridModel#isShowGrid()}, then the grid cell size is used to
+	 * determine the overlay threshold. Otherwise, the
+	 * {@link #DEFAULT_OVERLAY_THRESHOLD} is used.
+	 *
+	 * @return The overlay threshold.
+	 */
 	protected double getOverlayThreshold() {
 		GridModel model = getHost().getRoot().getViewer()
 				.getAdapter(GridModel.class);
@@ -241,6 +311,17 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		return parts;
 	}
 
+	/**
+	 * <ol>
+	 * <li>Restores a point that was previously removed because it was overlaid.
+	 * <li>Checks if the currently modified point overlays another point of the
+	 * {@link FXConnection}. The overlaid point is removed and saved so that it
+	 * can be restored later.
+	 * </ol>
+	 *
+	 * @param currentPositionInScene
+	 *            The current mouse position in scene coordinates.
+	 */
 	protected void hideShowOverlain(Point currentPositionInScene) {
 		// put removed back in (may be removed againg before returning)
 		if (removedOverlainAnchor != null) {
@@ -298,6 +379,25 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		initialized = true;
 	}
 
+	/**
+	 * Returns <code>true</code> if the points given by the specified indices
+	 * are overlaying, i.e. their distance is smaller than the
+	 * {@link #getOverlayThreshold() overlay threshold} and they are above the
+	 * same anchorage. Otherwise returns <code>false</code>. If the points are
+	 * overlaying, then the anchor at the current index is replaced by the
+	 * anchor that can be found at the candidate location. The point at the
+	 * candidate index is later on removed within
+	 * {@link #hideShowOverlain(Point)}.
+	 *
+	 * @param candidateIndex
+	 *            The candidate index.
+	 * @param currentIndex
+	 *            The currently modified index.
+	 * @param currentReferencePositionInScene
+	 *            The current reference position in scene coordinates.
+	 * @return <code>true</code> if the specified points are overlying,
+	 *         otherwise <code>false</code>.
+	 */
 	protected boolean isOverlain(int candidateIndex, int currentIndex,
 			Point currentReferencePositionInScene) {
 		Point candidateLocation = null;
@@ -330,6 +430,10 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		return overlay;
 	}
 
+	/**
+	 * Locally executes the {@link FXBendOperation} that is updated by this
+	 * policy, i.e. not on the operation history.
+	 */
 	protected void locallyExecuteOperation() {
 		try {
 			op.execute(null, null);
@@ -338,6 +442,14 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		}
 	}
 
+	/**
+	 * Moves the currently selected point to the given mouse position in scene
+	 * coordinates. Checks if the selected point overlays another point using
+	 * {@link #hideShowOverlain(Point)}.
+	 *
+	 * @param mouseInScene
+	 *            The current mouse position in scene coordinates.
+	 */
 	public void moveSelectedSegmentPoint(Point mouseInScene) {
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
@@ -377,6 +489,18 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		hideShowOverlain(currentReferencePositionInScene);
 	}
 
+	/**
+	 * Selects the point specified by the given segment index and parameter for
+	 * manipulation.
+	 *
+	 * @param segmentIndex
+	 *            The index of the segment of which a point is to be
+	 *            manipulated.
+	 * @param segmentParameter
+	 *            The parameter on the segment to identify if its the end point.
+	 * @param mouseInScene
+	 *            The current mouse position in scene coordinates.
+	 */
 	public void selectSegmentPoint(int segmentIndex, double segmentParameter,
 			Point mouseInScene) {
 		if (!initialized) {

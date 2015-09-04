@@ -13,10 +13,6 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
 
-import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -24,8 +20,30 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+/**
+ * The {@link FXDeleteSelectedOnTypePolicy} is an {@link AbstractFXOnTypePolicy}
+ * that performs content deletion upon the press of a key.
+ *
+ * @author mwienand
+ *
+ */
 public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 
+	/**
+	 * Returns <code>true</code> if the given {@link KeyEvent} is a "delete"
+	 * event, i.e. the {@link KeyEvent#getCode()} is {@link KeyCode#DELETE} and
+	 * no drag policy is currently running. Otherwise returns <code>false</code>
+	 * .
+	 *
+	 * @param event
+	 *            The {@link KeyEvent} in question.
+	 * @return <code>true</code> if the given {@link KeyEvent} should trigger
+	 *         content deletion, otherwise <code>false</code>.
+	 */
 	protected boolean isDelete(KeyEvent event) {
 		// only delete on <DELETE> key
 		if (event.getCode() != KeyCode.DELETE) {

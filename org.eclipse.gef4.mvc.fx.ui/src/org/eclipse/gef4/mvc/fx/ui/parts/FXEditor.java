@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #470612
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
@@ -36,7 +37,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 
 /**
- * Abstract base class for editors.
+ * Abstract base class for editors. The {@link FXDomain},
+ * {@link IFXCanvasFactory}, and {@link ISelectionProvider} are injected into
+ * the editor on construction.
  *
  * @author Alexander Nyßen (anyssen)
  * @author Matthias Wienand (mwienand)
@@ -63,15 +66,35 @@ public abstract class FXEditor extends EditorPart {
 	private IOperationHistoryListener operationHistoryListener;
 	private boolean isDirty;
 
+	/**
+	 * Constructs a new {@link FXEditor} and uses the given {@link Injector} to
+	 * inject its members.
+	 *
+	 * @param injector
+	 *            The {@link Injector} that is used to inject the editor's
+	 *            members.
+	 */
 	// TOOD: use executable extension factory to inject this class
 	public FXEditor(final Injector injector) {
 		injector.injectMembers(this);
 	}
 
+	/**
+	 * Activates the editor by activating its {@link FXDomain}.
+	 */
 	protected void activate() {
 		domain.activate();
 	}
 
+	/**
+	 * Uses the {@link IFXCanvasFactory} to create the {@link FXCanvas} that
+	 * allows the interoperability between SWT and JavaFX.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite} in which the {@link FXCanvas} is
+	 *            created.
+	 * @return The {@link FXCanvas} created by the {@link IFXCanvasFactory}.
+	 */
 	protected FXCanvas createCanvas(final Composite parent) {
 		return canvasFactory.createCanvas(parent);
 	}
@@ -88,6 +111,9 @@ public abstract class FXEditor extends EditorPart {
 		activate();
 	}
 
+	/**
+	 * Deactivates the editor by deactivating its {@link FXDomain}.
+	 */
 	protected void deactivate() {
 		domain.deactivate();
 	}
@@ -146,18 +172,44 @@ public abstract class FXEditor extends EditorPart {
 		return super.getAdapter(key);
 	}
 
+	/**
+	 * Returns the {@link FXCanvas} that was previously created by the
+	 * {@link IFXCanvasFactory} which was previously injected into this editor.
+	 *
+	 * @return The {@link FXCanvas} that was previously created by the
+	 *         {@link IFXCanvasFactory}.
+	 */
 	protected FXCanvas getCanvas() {
 		return canvas;
 	}
 
+	/**
+	 * Returns the {@link FXDomain} that was previously injected into this
+	 * editor.
+	 *
+	 * @return The {@link FXDomain} that was previously injected into this
+	 *         editor.
+	 */
 	protected FXDomain getDomain() {
 		return domain;
 	}
 
+	/**
+	 * Returns the {@link FXViewer} of the {@link FXDomain} which was previously
+	 * injected into this editor.
+	 *
+	 * @return The {@link FXViewer} of the {@link FXDomain} which was previously
+	 *         injected into this editor.
+	 */
 	protected FXViewer getViewer() {
 		return domain.getAdapter(IViewer.class);
 	}
 
+	/**
+	 * Hooks all viewers that are part of this editor into the {@link FXCanvas}.
+	 * Also registers listeners for the propagation of a selection from the
+	 * Eclipse Workbench to the editor and vice versa.
+	 */
 	protected void hookViewers() {
 		// by default we only have a single (content) viewer, so hook its
 		// visuals as root visuals into the scene
@@ -202,6 +254,13 @@ public abstract class FXEditor extends EditorPart {
 		return isDirty;
 	}
 
+	/**
+	 * Sets the dirty flag of this editor to the given value.
+	 *
+	 * @param isDirty
+	 *            <code>true</code> to indicate that the editor's contents
+	 *            changed, otherwise <code>false</code>.
+	 */
 	protected void setDirty(boolean isDirty) {
 		if (this.isDirty != isDirty) {
 			this.isDirty = isDirty;
@@ -214,6 +273,11 @@ public abstract class FXEditor extends EditorPart {
 		canvas.setFocus();
 	}
 
+	/**
+	 * Unhooks all viewers that are part of this editor by unregistering the
+	 * selection listeners.
+	 */
+	// TODO: What about taking the visuals out of the canvas?
 	protected void unhookViewers() {
 		// unregister listener to provide selections
 		if (selectionForwarder != null) {

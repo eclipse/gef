@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -39,9 +37,27 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link FXDefaultHandlePartFactory} is an {@link IHandlePartFactory}
+ * implementation that is parameterized by {@link Node}.
+ *
+ * @author mwienand
+ *
+ */
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
+	/**
+	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
+	 * used to generate selection handles.
+	 */
 	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
+
+	/**
+	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
+	 * used to generate hover handles.
+	 */
 	public static final String HOVER_HANDLES_GEOMETRY_PROVIDER = "HOVER_HANDLES_GEOMETRY_PROVIDER";
 
 	@Inject
@@ -93,6 +109,26 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return part;
 	}
 
+	/**
+	 * Creates handle parts for a multi selection. The handle parts will be
+	 * located in the corners of the selection bounds.
+	 *
+	 * @param targets
+	 *            A list containing the {@link IVisualPart}s that are part of
+	 *            the multi selection.
+	 * @param handleGeometryProvider
+	 *            The <code>Provider&lt;IGeometry&gt;</code> that provides the
+	 *            selection bounds geometry.
+	 * @param contextMap
+	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by this factory, or may be passed back by the factory to the
+	 *            calling {@link SelectionBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link SelectionBehavior} to identify the creation context).
+	 * @return A list containing the created handle parts.
+	 */
 	// TODO: Maybe inline this method
 	// TODO: if we pass in the contextMap here, we should also pass in the
 	// contextBehavior, because otherwise a back-query scenario cannot be
@@ -227,6 +263,25 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Creates hover handle parts for the given (hovered) <i>target</i>
+	 * {@link IVisualPart}.
+	 *
+	 * @param target
+	 *            The (hovered) target {@link IVisualPart} for which hover
+	 *            handles are created.
+	 * @param contextBehavior
+	 *            The {@link HoverBehavior} that initiated the creation process.
+	 * @param contextMap
+	 *            A map in which the state-less {@link HoverBehavior} may place
+	 *            additional context information for the creation process. It
+	 *            may either directly contain additional information needed by
+	 *            this factory, or may be passed back by the factory to the
+	 *            calling {@link HoverBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link HoverBehavior} to identify the creation context).
+	 * @return A list containing the created hover handle parts.
+	 */
 	@SuppressWarnings("serial")
 	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
 			final IVisualPart<Node, ? extends Node> target,
@@ -295,6 +350,31 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return handleParts;
 	}
 
+	/**
+	 * Creates an {@link FXCircleSegmentHandlePart} for the given (hovered)
+	 * <i>target</i> {@link IVisualPart}. The segments provider and segment
+	 * index determine the position of the hover handle.
+	 *
+	 * @param target
+	 *            The (hovered) target {@link IVisualPart}.
+	 * @param hoverHandlesSegmentsInSceneProvider
+	 *            The <code>Provider&lt;BezierCurve[]&gt;</code> that is used to
+	 *            determine the handle's position.
+	 * @param segmentCount
+	 *            The number of segments returned by the segments provider.
+	 * @param segmentIndex
+	 *            The segment index on which the created handle part is located.
+	 * @param contextMap
+	 *            A map in which the state-less {@link HoverBehavior} may place
+	 *            additional context information for the creation process. It
+	 *            may either directly contain additional information needed by
+	 *            this factory, or may be passed back by the factory to the
+	 *            calling {@link HoverBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link HoverBehavior} to identify the creation context).
+	 * @return An {@link FXCircleSegmentHandlePart} for the given target at the
+	 *         specified position.
+	 */
 	protected IHandlePart<Node, ? extends Node> createHoverSegmentHandlePart(
 			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
@@ -308,6 +388,22 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return part;
 	}
 
+	/**
+	 * Creates handle parts for a multi selection.
+	 *
+	 * @param targets
+	 *            The list of {@link IVisualPart}s for which handles are
+	 *            created.
+	 * @param contextMap
+	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by this factory, or may be passed back by the factory to the
+	 *            calling {@link SelectionBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link SelectionBehavior} to identify the creation context).
+	 * @return A list containing the created handle parts.
+	 */
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Map<Object, Object> contextMap) {
@@ -346,6 +442,25 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		};
 	}
 
+	/**
+	 * Creates handle parts for a selection.
+	 *
+	 * @param targets
+	 *            The list of {@link IVisualPart}s for which handles are
+	 *            created.
+	 * @param selectionBehavior
+	 *            The {@link SelectionBehavior} that initiated the creation
+	 *            process.
+	 * @param contextMap
+	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by this factory, or may be passed back by the factory to the
+	 *            calling {@link SelectionBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link SelectionBehavior} to identify the creation context).
+	 * @return A list containing the created handle parts.
+	 */
 	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
@@ -392,6 +507,23 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return part;
 	}
 
+	/**
+	 * Creates handle parts for a single selection.
+	 *
+	 * @param target
+	 *            The {@link IVisualPart} for which handles are created.
+	 * @param contextMap
+	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by this factory, or may be passed back by the factory to the
+	 *            calling {@link SelectionBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link SelectionBehavior} to identify the creation context).
+	 * @return A list containing the created handle parts.
+	 */
+	// TODO: Add parameter for SelectionBehavior so that back queries are
+	// possible
 	@SuppressWarnings("serial")
 	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(
 			final IVisualPart<Node, ? extends Node> target,
@@ -456,6 +588,30 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return handleParts;
 	}
 
+	/**
+	 * Creates {@link FXRectangleSegmentHandlePart}s for the segments provided
+	 * by the given segments provider.
+	 *
+	 * @param targetParts
+	 *            A list containing the {@link IVisualPart}s for which handles
+	 *            are created.
+	 * @param segmentsProvider
+	 *            The <code>Provider&lt;BezierCurve[]&gt;</code> that is used to
+	 *            determine the handles's positions.
+	 * @param contextMap
+	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by this factory, or may be passed back by the factory to the
+	 *            calling {@link SelectionBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link SelectionBehavior} to identify the creation context).
+	 * @return A list containing the created handle parts.
+	 */
+	// TODO: Remove parameter targetParts since they are not used (maybe pass in
+	// the single target part)
+	// TODO: Add parameter for SelectionBehavior so that back queries are
+	// possible
 	protected Collection<? extends IHandlePart<Node, ? extends Node>> createTightBoundsSelectionHandleParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targetParts,
 			Provider<BezierCurve[]> segmentsProvider,

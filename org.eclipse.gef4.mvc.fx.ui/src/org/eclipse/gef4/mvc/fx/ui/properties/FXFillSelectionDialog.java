@@ -7,24 +7,13 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-
-import javafx.embed.swt.SWTFXUtils;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Paint;
-import javafx.scene.paint.RadialGradient;
-import javafx.scene.paint.Stop;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -42,31 +31,147 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import javafx.embed.swt.SWTFXUtils;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+
+/**
+ * The {@link FXFillSelectionDialog} is a {@link Dialog} that allows to select a
+ * JavaFX fill, i.e. a {@link Paint}. It provides a simple color picker, a
+ * simple gradient picker, and an advanced gradient picker.
+ *
+ * @author anyssen
+ *
+ */
 public class FXFillSelectionDialog extends Dialog {
 
-	private Paint paint;
-	private String title;
+	/**
+	 * Creates a rectangular {@link Image} to visualize the given {@link Paint}.
+	 *
+	 * @param width
+	 *            The width of the resulting {@link Image}.
+	 * @param height
+	 *            The height of the resulting {@link Image}.
+	 * @param paint
+	 *            The {@link Paint} to use for filling the {@link Image}.
+	 * @return The resulting (filled) {@link Image}.
+	 */
+	protected static ImageData createPaintImage(int width, int height,
+			Paint paint) {
+		// use JavaFX canvas to render a rectangle with the given paint
+		Canvas canvas = new Canvas(width, height);
+		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+		graphicsContext.setFill(paint);
+		graphicsContext.fillRect(0, 0, width, height);
+		graphicsContext.setStroke(Color.BLACK);
+		graphicsContext.strokeRect(0, 0, width, height);
+		// handle transparent color separately (we want to differentiate it from
+		// transparent fill)
+		if (paint instanceof Color && ((Color) paint).getOpacity() == 0) {
+			// draw a red line from bottom-left to top-right to indicate a
+			// transparent fill color
+			graphicsContext.setStroke(Color.RED);
+			graphicsContext.strokeLine(0, height - 1, width, 1);
+		}
+		WritableImage snapshot = canvas.snapshot(new SnapshotParameters(),
+				null);
+		return SWTFXUtils.fromFXImage(snapshot, null);
+	}
 
+	private Paint paint;
+
+	private String title;
 	// store the last selection when switching options
 	private Combo optionsCombo;
+
 	private Label imageLabel;
-
 	private Paint lastFillColor = Color.WHITE;
-	private FXColorPicker colorPicker;
 
+	private FXColorPicker colorPicker;
 	private Paint lastSimpleGradient = FXSimpleGradientPicker
 			.createSimpleGradient(Color.WHITE, Color.BLACK);
-	private FXSimpleGradientPicker simpleGradientPicker;
 
+	private FXSimpleGradientPicker simpleGradientPicker;
 	private Paint lastAdvancedGradient = FXAdvancedGradientPicker
 			.createAdvancedLinearGradient(Color.WHITE, Color.GREY, Color.BLACK);
-	private FXAdvancedGradientPicker advancedGradientPicker;
 
 	// TODO: add support for image pattern
 
+	private FXAdvancedGradientPicker advancedGradientPicker;
+
+	/**
+	 * Constructs a new {@link FXFillSelectionDialog}.
+	 *
+	 * @param parent
+	 *            The parent {@link Shell}.
+	 * @param title
+	 *            The title for this dialog.
+	 */
 	public FXFillSelectionDialog(Shell parent, String title) {
 		super(parent);
 		this.title = title;
+	}
+
+	// overriding this methods allows you to set the
+	// title of the custom dialog
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(title);
+	}
+
+	/**
+	 * Creates a {@link Composite} that contains the advanced gradient picker.
+	 *
+	 * @param optionsComposite
+	 *            The parent {@link Composite}.
+	 * @return The {@link Composite} that contains the advanced gradient picker.
+	 */
+	protected Composite createAdvancedGradientFillComposite(
+			Composite optionsComposite) {
+		Composite composite = new Composite(optionsComposite, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		advancedGradientPicker = new FXAdvancedGradientPicker(composite);
+		advancedGradientPicker.getControl()
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		advancedGradientPicker
+				.addPropertyChangeListener(new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						setPaint(advancedGradientPicker.getAdvancedGradient());
+					}
+				});
+		return composite;
+	}
+
+	/**
+	 * Creates a {@link Composite} that contains the simple color picker.
+	 *
+	 * @param optionsComposite
+	 *            The parent {@link Composite}.
+	 * @return The {@link Composite} that contains the simple color picker.
+	 */
+	public Composite createColorFillComposite(Composite optionsComposite) {
+		Composite composite = new Composite(optionsComposite, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		colorPicker = new FXColorPicker(composite);
+		colorPicker.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				setPaint(colorPicker.getColor());
+			}
+		});
+		return composite;
 	}
 
 	@Override
@@ -190,6 +295,13 @@ public class FXFillSelectionDialog extends Dialog {
 		return container;
 	}
 
+	/**
+	 * Creates a {@link Composite} that contains nothing to represent "no fill".
+	 *
+	 * @param optionsComposite
+	 *            The parent {@link Composite}.
+	 * @return The {@link Composite} that contains nothing.
+	 */
 	protected Composite createNoFillComposite(
 			final Composite optionsComposite) {
 		final Composite noFillComposite = new Composite(optionsComposite,
@@ -197,20 +309,13 @@ public class FXFillSelectionDialog extends Dialog {
 		return noFillComposite;
 	}
 
-	public Composite createColorFillComposite(Composite optionsComposite) {
-		Composite composite = new Composite(optionsComposite, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		colorPicker = new FXColorPicker(composite);
-		colorPicker.addPropertyChangeListener(new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				setPaint(colorPicker.getColor());
-			}
-		});
-		return composite;
-	}
-
+	/**
+	 * Creates a {@link Composite} that contains the simple gradient picker.
+	 *
+	 * @param optionsComposite
+	 *            The parent {@link Composite}.
+	 * @return The {@link Composite} that contains the simple gradient picker.
+	 */
 	protected Composite createSimpleGradientFillComposite(
 			Composite optionsComposite) {
 		Composite composite = new Composite(optionsComposite, SWT.NONE);
@@ -229,62 +334,13 @@ public class FXFillSelectionDialog extends Dialog {
 		return composite;
 	}
 
-	protected Composite createAdvancedGradientFillComposite(
-			Composite optionsComposite) {
-		Composite composite = new Composite(optionsComposite, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		advancedGradientPicker = new FXAdvancedGradientPicker(composite);
-		advancedGradientPicker.getControl()
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		advancedGradientPicker
-				.addPropertyChangeListener(new PropertyChangeListener() {
-
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						setPaint(advancedGradientPicker.getAdvancedGradient());
-					}
-				});
-		return composite;
-	}
-
-	protected void updateImageLabel() {
-		if (optionsCombo != null && imageLabel != null && paint != null) {
-			ImageData imageData = createPaintImage(64,
-					((Combo) optionsCombo).getItemHeight() - 1, paint);
-			imageLabel.setImage(new Image(imageLabel.getDisplay(), imageData,
-					imageData.getTransparencyMask()));
-		}
-	}
-
-	// create a rectangular image to visualize the given paint value
-	protected static ImageData createPaintImage(int width, int height,
-			Paint paint) {
-		// use JavaFX canvas to render a rectangle with the given paint
-		Canvas canvas = new Canvas(width, height);
-		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-		graphicsContext.setFill(paint);
-		graphicsContext.fillRect(0, 0, width, height);
-		graphicsContext.setStroke(Color.BLACK);
-		graphicsContext.strokeRect(0, 0, width, height);
-		// handle transparent color separately (we want to differentiate it from
-		// transparent fill)
-		if (paint instanceof Color && ((Color) paint).getOpacity() == 0) {
-			// draw a red line from bottom-left to top-right to indicate a
-			// transparent fill color
-			graphicsContext.setStroke(Color.RED);
-			graphicsContext.strokeLine(0, height - 1, width, 1);
-		}
-		WritableImage snapshot = canvas.snapshot(new SnapshotParameters(),
-				null);
-		return SWTFXUtils.fromFXImage(snapshot, null);
-	}
-
-	// overriding this methods allows you to set the
-	// title of the custom dialog
-	@Override
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(title);
+	/**
+	 * Returns the currently selected {@link Paint}.
+	 *
+	 * @return The currently selected {@link Paint}.
+	 */
+	public Paint getPaint() {
+		return paint;
 	}
 
 	// @Override
@@ -292,6 +348,12 @@ public class FXFillSelectionDialog extends Dialog {
 	// return new Point(450, 300);
 	// }
 
+	/**
+	 * Changes the currently selected {@link Paint} to the given value.
+	 *
+	 * @param paint
+	 *            The new value for the selected {@link Paint}.
+	 */
 	public void setPaint(Paint paint) {
 		// initialize history with initial values (if not initialized before)
 		if (this.paint == null) {
@@ -332,8 +394,17 @@ public class FXFillSelectionDialog extends Dialog {
 		updateImageLabel();
 	}
 
-	public Paint getPaint() {
-		return paint;
+	/**
+	 * Re-renders the image that visualizes the currently selected {@link Paint}
+	 * .
+	 */
+	protected void updateImageLabel() {
+		if (optionsCombo != null && imageLabel != null && paint != null) {
+			ImageData imageData = createPaintImage(64,
+					optionsCombo.getItemHeight() - 1, paint);
+			imageLabel.setImage(new Image(imageLabel.getDisplay(), imageData,
+					imageData.getTransparencyMask()));
+		}
 	}
 
 }

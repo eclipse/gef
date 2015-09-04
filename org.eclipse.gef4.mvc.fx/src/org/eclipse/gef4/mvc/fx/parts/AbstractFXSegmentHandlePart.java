@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -22,6 +20,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
+
+import javafx.scene.Node;
+import javafx.scene.Scene;
 
 /**
  * An {@link AbstractFXSegmentHandlePart} is bound to a segment of a poly-bezier
@@ -62,10 +63,24 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 		updateLocation(visual);
 	}
 
+	/**
+	 * Returns the position of this {@link AbstractFXSegmentHandlePart} on the
+	 * given segment using the segment parameter that is assigned to this part.
+	 *
+	 * @param segment
+	 *            The {@link BezierCurve} on which the position is evaluated.
+	 * @return The position of this part on the given segment using the segment
+	 *         parameter of this part.
+	 */
 	protected Point getPosition(BezierCurve segment) {
 		return segment.get(segmentParameter);
 	}
 
+	/**
+	 * Returns the number of segments that are provided to this part.
+	 *
+	 * @return The number of segments that are provided to this part.
+	 */
 	// TODO: Make protected
 	public int getSegmentCount() {
 		return segments == null ? 0 : segments.length;
@@ -101,6 +116,13 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 		return segmentParameter;
 	}
 
+	/**
+	 * Returns the {@link BezierCurve}s that are provided to this part in the
+	 * coordinate system of the {@link Scene}.
+	 *
+	 * @return The {@link BezierCurve}s that are provided to this part in the
+	 *         coordinate system of the {@link Scene}.
+	 */
 	protected BezierCurve[] getSegmentsInScene() {
 		return segments;
 	}
@@ -135,10 +157,26 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 		}
 	}
 
+	/**
+	 * Sets the <code>Provider&lt;BezierCurve[]&gt;</code> for this part to the
+	 * given value.
+	 *
+	 * @param segmentsProvider
+	 *            The new <code>Provider&lt;BezierCurve[]&gt;</code> for this
+	 *            part.
+	 */
 	public void setSegmentsProvider(Provider<BezierCurve[]> segmentsProvider) {
 		this.segmentsProvider = segmentsProvider;
 	}
 
+	/**
+	 * Computes the location for this part and relocates its visual to that
+	 * location. The visual is made invisible if this part has an invalid index
+	 * (out of bounds), i.e. when no location can be computed.
+	 *
+	 * @param visual
+	 *            This part's visual for convenience.
+	 */
 	protected void updateLocation(N visual) {
 		// only update when bound to anchorage
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();

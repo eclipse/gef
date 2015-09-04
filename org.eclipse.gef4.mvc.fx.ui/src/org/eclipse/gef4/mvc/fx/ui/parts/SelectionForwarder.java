@@ -26,6 +26,16 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
+/**
+ * The {@link SelectionForwarder} can be used to propagate selections from the
+ * Eclipse workbench to the MVC application and vice versa.
+ *
+ * @author anyssen
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ */
 public class SelectionForwarder<VR>
 		implements PropertyChangeListener, ISelectionChangedListener {
 
@@ -33,6 +43,18 @@ public class SelectionForwarder<VR>
 	private final IViewer<VR> viewer;
 	private final SelectionModel<VR> selectionModel;
 
+	/**
+	 * Creates a new {@link SelectionForwarder} that registers listeners on the
+	 * given {@link ISelectionProvider} and the {@link SelectionModel} of the
+	 * given {@link IViewer} to propagate selections from the Eclipse workbench
+	 * to the viewer, and vice versa.
+	 *
+	 * @param selectionProvider
+	 *            The {@link ISelectionProvider} of the Eclipse workbench
+	 * @param viewer
+	 *            The {@link IViewer} of which the {@link SelectionModel} should
+	 *            be held in sync with the Eclipse workbench selection.
+	 */
 	public SelectionForwarder(final ISelectionProvider selectionProvider,
 			IViewer<VR> viewer) {
 		if (viewer == null) {
@@ -53,6 +75,9 @@ public class SelectionForwarder<VR>
 		}
 	}
 
+	/**
+	 * Unregisters all listeners.
+	 */
 	public void dispose() {
 		// unregister listeners
 		if (this.selectionProvider != null) {

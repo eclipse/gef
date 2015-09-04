@@ -16,11 +16,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -29,6 +24,21 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * The {@link FXScaleRelocateOnHandleDragPolicy} is an
+ * {@link AbstractFXOnDragPolicy} that relocates and scales the whole
+ * {@link SelectionModel selection} when its host (a box selection handle,
+ * {@link AbstractFXSegmentHandlePart}) is dragged.
+ *
+ * @author mwienand
+ *
+ */
 public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocation = null;
@@ -39,6 +49,9 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
 	private boolean invalidGesture = false;
 
+	/**
+	 * Default constructor.
+	 */
 	public FXScaleRelocateOnHandleDragPolicy() {
 	}
 
@@ -102,6 +115,16 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return (AbstractFXSegmentHandlePart<Node>) super.getHost();
 	}
 
+	/**
+	 * Returns the {@link FXScaleRelocatePolicy} that is installed on the given
+	 * {@link IContentPart}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} of which the
+	 *            {@link FXScaleRelocatePolicy} is returned.
+	 * @return The {@link FXScaleRelocatePolicy} that is installed on the given
+	 *         {@link IContentPart}.
+	 */
 	protected FXScaleRelocatePolicy getScaleRelocatePolicy(
 			IContentPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXScaleRelocatePolicy.class);
@@ -134,12 +157,31 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return bounds;
 	}
 
+	/**
+	 * Returns a {@link List} containing all {@link IContentPart}s that should
+	 * be scaled/relocated by this policy. Per default, the whole
+	 * {@link SelectionModel selection} is returned.
+	 *
+	 * @return A {@link List} containing all {@link IContentPart}s that should
+	 *         be scaled/relocated by this policy.
+	 */
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
 	}
 
+	/**
+	 * Returns a {@link Rectangle} representing the visual bounds of the given
+	 * {@link IContentPart} within the coordinate system of the {@link Scene}.
+	 *
+	 * @param contentPart
+	 *            The {@link IContentPart} of which the visual bounds are
+	 *            computed.
+	 * @return A {@link Rectangle} representing the visual bounds of the given
+	 *         {@link IContentPart} within the coordinate system of the
+	 *         {@link Scene}.
+	 */
 	protected Rectangle getVisualBounds(
 			IContentPart<Node, ? extends Node> contentPart) {
 		if (contentPart == null) {

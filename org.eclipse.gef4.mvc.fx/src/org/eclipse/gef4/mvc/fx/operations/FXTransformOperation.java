@@ -18,10 +18,30 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
+/**
+ * The {@link FXTransformOperation} can be used to change an {@link Affine}, for
+ * example, one that is contained within the transformations list of a
+ * {@link Node} to transform that {@link Node}.
+ *
+ * @author mwienand
+ *
+ */
 public class FXTransformOperation extends AbstractOperation {
 
+	/**
+	 * Returns <code>true</code> if the given {@link Affine}s are equal.
+	 * Otherwise returns <code>false</code>.
+	 *
+	 * @param a1
+	 *            The first operand.
+	 * @param a2
+	 *            The second operand.
+	 * @return <code>true</code> if the given {@link Affine}s are equal,
+	 *         otherwise <code>false</code>.
+	 */
 	protected static boolean equals(Affine a1, Affine a2) {
 		// Affine does not properly implement equals, so we have to implement
 		// that here
@@ -33,6 +53,16 @@ public class FXTransformOperation extends AbstractOperation {
 				&& a1.getTy() == a2.getTy() && a1.getTz() == a2.getTz();
 	}
 
+	/**
+	 * Assigns the transformation values of the <i>src</i> {@link Affine} to the
+	 * <i>dst</i> {@link Affine}.
+	 *
+	 * @param dst
+	 *            The destination {@link Affine}.
+	 * @param src
+	 *            The source {@link Affine}.
+	 * @return The destination {@link Affine} for convenience.
+	 */
 	protected static Affine setAffine(Affine dst, Affine src) {
 		dst.setMxx(src.getMxx());
 		dst.setMxy(src.getMxy());
@@ -54,6 +84,13 @@ public class FXTransformOperation extends AbstractOperation {
 	private Affine oldTransform;
 	private Affine newTransform;
 
+	/**
+	 * Constructs a new {@link FXTransformOperation} to change the given
+	 * <i>nodeTransform</i>.
+	 *
+	 * @param nodeTransform
+	 *            The {@link Affine} that will be changed by this operation.
+	 */
 	public FXTransformOperation(Affine nodeTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
@@ -61,6 +98,17 @@ public class FXTransformOperation extends AbstractOperation {
 		this.newTransform = setAffine(new Affine(), nodeTransform);
 	}
 
+	/**
+	 * Constructs a new {@link FXTransformOperation} to change the given
+	 * <i>nodeTransform</i>. The given <i>newTransform</i> will be applied to
+	 * the <i>nodeTransform</i> upon execution of this operation.
+	 *
+	 * @param nodeTransform
+	 *            The {@link Affine} that will be changed by this operation.
+	 * @param newTransform
+	 *            The {@link Affine} that will be applied to the
+	 *            <i>nodeTransform</i> upon execution of this operation.
+	 */
 	public FXTransformOperation(Affine nodeTransform, Affine newTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
@@ -68,6 +116,22 @@ public class FXTransformOperation extends AbstractOperation {
 		this.newTransform = newTransform;
 	}
 
+	/**
+	 * Constructs a new {@link FXTransformOperation} to change the given
+	 * <i>nodeTransform</i>. The given <i>oldTransform</i> will be applied to
+	 * the <i>nodeTransform</i> upon undoing of this operation. The given
+	 * <i>newTransform</i> will be applied to the <i>nodeTransform</i> upon
+	 * execution of this operation.
+	 *
+	 * @param nodeTransform
+	 *            The {@link Affine} that will be changed by this operation.
+	 * @param oldTransform
+	 *            The {@link Affine} that will be applied to the
+	 *            <i>nodeTransform</i> upon undoing of this operation.
+	 * @param newTransform
+	 *            The {@link Affine} that will be applied to the
+	 *            <i>nodeTransform</i> upon execution of this operation.
+	 */
 	public FXTransformOperation(Affine nodeTransform, Affine oldTransform,
 			Affine newTransform) {
 		super("Transform");
@@ -83,14 +147,35 @@ public class FXTransformOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Returns the {@link Affine} that will be applied to the
+	 * <i>nodeTransform</i> upon execution of this operation.
+	 *
+	 * @return The {@link Affine} that will be applied to the
+	 *         <i>nodeTransform</i> upon execution of this operation.
+	 */
 	public Affine getNewTransform() {
 		return newTransform;
 	}
 
+	/**
+	 * Returns the {@link Affine} that will be applied to the
+	 * <i>nodeTransform</i> upon undoing of this operation.
+	 *
+	 * @return The {@link Affine} that will be applied to the
+	 *         <i>nodeTransform</i> upon undoing of this operation.
+	 */
 	public Affine getOldTransform() {
 		return oldTransform;
 	}
 
+	/**
+	 * Returns <code>true</code> if the execution of this operation will result
+	 * in changes. Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if the execution of this operation will result
+	 *         in changes, otherwise <code>false</code>.
+	 */
 	public boolean hasEffect() {
 		return !equals(newTransform, oldTransform);
 	}
@@ -101,10 +186,26 @@ public class FXTransformOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
+	/**
+	 * Sets the {@link Affine} that will be applied to the <i>nodeTransform</i>
+	 * upon execution of this operation to the given value.
+	 *
+	 * @param newTransform
+	 *            The {@link Affine} that will be applied upon execution of this
+	 *            operation.
+	 */
 	public void setNewTransform(Affine newTransform) {
 		this.newTransform = newTransform;
 	}
 
+	/**
+	 * Sets the {@link Affine} that will be applied to the <i>nodeTransform</i>
+	 * upon undoing of this operation to the given value.
+	 *
+	 * @param oldTransform
+	 *            The {@link Affine} that will be applied upon undoing of this
+	 *            operation.
+	 */
 	public void setOldTransform(Affine oldTransform) {
 		this.oldTransform = oldTransform;
 	}

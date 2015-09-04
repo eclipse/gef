@@ -11,24 +11,32 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
 /**
  * An {@link AbstractFXOnClickPolicy} is called upon mouse click events by the
- * {@link FXClickDragTool}. You can use it as an adapter on any IVisualPart for
- * which mouse click interaction is desired, and you can also register multiple
- * instances of {@link AbstractFXOnClickPolicy} on the same {@link IVisualPart}
- * (with different adapter roles).
+ * {@link FXClickDragTool}. You can use it as an adapter on any
+ * {@link IVisualPart} for which mouse click interaction is desired, and you can
+ * also register multiple instances of {@link AbstractFXOnClickPolicy} on the
+ * same {@link IVisualPart} (with different adapter roles).
  *
  * @author anyssen
  *
  */
 public abstract class AbstractFXOnClickPolicy extends AbstractPolicy<Node> {
 
+	/**
+	 * This callback method is invoked when the user performs a mouse click on
+	 * the {@link #getHost() host}.
+	 *
+	 * @param e
+	 *            The original {@link MouseEvent}.
+	 */
 	public abstract void click(MouseEvent e);
+
 }

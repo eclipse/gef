@@ -14,16 +14,25 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javafx.scene.Node;
-import javafx.scene.transform.Scale;
-
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
+import javafx.scene.Node;
+import javafx.scene.transform.Scale;
+
+/**
+ * The {@link FXGridBehavior} can be registered on an {@link FXRootPart} to
+ * apply the information from the {@link GridModel} to the {@link FXGridLayer}
+ * that is managed by the {@link FXViewer}.
+ *
+ * @author anyssen
+ *
+ */
 public class FXGridBehavior extends AbstractBehavior<Node>
 		implements PropertyChangeListener {
 
@@ -41,20 +50,48 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 		applyGridCellHeight(gridModel.getGridCellHeight());
 	}
 
+	/**
+	 * Applies the given {@link java.awt.geom.AffineTransform transformation} to
+	 * the {@link FXGridLayer}.
+	 *
+	 * @param contentsTransform
+	 *            An {@link java.awt.geom.AffineTransform} which is applied to
+	 *            the {@link FXGridLayer}.
+	 */
 	protected void applyContentsTransform(AffineTransform contentsTransform) {
+		// TODO: What about rotation?
 		double sx = contentsTransform.getScaleX();
 		double sy = contentsTransform.getScaleY();
 		getGridLayer().gridScaleProperty().set(new Scale(sx, sy));
 	}
 
+	/**
+	 * Applies the given cell height to the {@link FXGridLayer}.
+	 *
+	 * @param height
+	 *            The new cell height for the {@link FXGridLayer}.
+	 */
 	protected void applyGridCellHeight(double height) {
 		getGridLayer().setGridHeight(height);
 	}
 
+	/**
+	 * Applies the given cell width to the {@link FXGridLayer}.
+	 *
+	 * @param width
+	 *            The new cell width for the {@link FXGridLayer}.
+	 */
 	protected void applyGridCellWidth(double width) {
 		getGridLayer().setGridWidth(width);
 	}
 
+	/**
+	 * Enables/Disables the {@link FXGridLayer}.
+	 *
+	 * @param showGrid
+	 *            <code>true</code> to enable the {@link FXGridLayer}, otherwise
+	 *            <code>false</code>.
+	 */
 	protected void applyShowGrid(boolean showGrid) {
 		if (showGrid) {
 			getGridLayer().setVisible(true);
@@ -65,6 +102,15 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 		}
 	}
 
+	/**
+	 * Enables/Disables zooming of the {@link FXGridLayer}. Registers a listener
+	 * on the {@link ViewportModel} to keep the {@link FXGridLayer}'s zoom level
+	 * in sync with the viewport zoom level.
+	 *
+	 * @param zoomGrid
+	 *            <code>true</code> to enable grid zooming, otherwise
+	 *            <code>false</code>.
+	 */
 	protected void applyZoomGrid(boolean zoomGrid) {
 		ViewportModel viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
@@ -99,6 +145,13 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 		super.deactivate();
 	}
 
+	/**
+	 * Returns the {@link FXGridLayer} of the {@link #getHost() host's}
+	 * {@link FXViewer}.
+	 *
+	 * @return The {@link FXGridLayer} of the {@link #getHost() host's}
+	 *         {@link FXViewer}.
+	 */
 	protected FXGridLayer getGridLayer() {
 		return ((FXViewer) getHost().getRoot().getViewer()).getGridLayer();
 	}

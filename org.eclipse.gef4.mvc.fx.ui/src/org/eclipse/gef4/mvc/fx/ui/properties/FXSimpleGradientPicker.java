@@ -16,6 +16,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+
+import com.sun.prism.paint.Gradient;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
@@ -28,18 +36,25 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
 /**
+ * The {@link FXSimpleGradientPicker} allows the selection of two colors from
+ * which a gradient is constructed.
+ *
  * @author anyssen
  *
  */
 public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 
+	/**
+	 * Creates a simple color gradient from the given start color to the given
+	 * end color.
+	 *
+	 * @param c1
+	 *            The start {@link Color}.
+	 * @param c2
+	 *            The end {@link Color}.
+	 * @return The resulting {@link LinearGradient}.
+	 */
 	protected static LinearGradient createSimpleGradient(Color c1, Color c2) {
 		// TODO: add angle
 		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(1, c2) };
@@ -47,6 +62,16 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 				stops);
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link Paint} is a "simple"
+	 * gradient, i.e. it has exactly 2 stops. Otherwise returns
+	 * <code>false</code>.
+	 *
+	 * @param paint
+	 *            The {@link Paint} in question.
+	 * @return <code>true</code> if the given {@link Paint} is a simple
+	 *         gradient, otherwise <code>false</code>.
+	 */
 	public static boolean isSimpleGradient(Paint paint) {
 		if (paint instanceof LinearGradient) {
 			return ((LinearGradient) paint).getStops().size() == 2;
@@ -63,6 +88,12 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 
 	private Control control;
 
+	/**
+	 * Constructs a new {@link FXSimpleGradientPicker}.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite}.
+	 */
 	public FXSimpleGradientPicker(Composite parent) {
 		control = createControl(parent);
 		setSimpleGradient(createSimpleGradient(Color.WHITE, Color.BLACK));
@@ -73,6 +104,14 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Creates the visualization for this {@link FXSimpleGradientPicker}.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite}.
+	 * @return The {@link Control} visualizing this
+	 *         {@link FXSimpleGradientPicker}.
+	 */
 	protected Control createControl(final Composite parent) {
 		// create an SwtFXCanvas that contains the two color pickers as well as
 		// JavaFX controls
@@ -130,10 +169,22 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		return canvas;
 	}
 
+	/**
+	 * Returns the {@link Control} visualizing this
+	 * {@link FXSimpleGradientPicker}.
+	 *
+	 * @return The {@link Control} visualizing this
+	 *         {@link FXSimpleGradientPicker}.
+	 */
 	public Control getControl() {
 		return control;
 	}
 
+	/**
+	 * Returns the currently selected simple gradient.
+	 *
+	 * @return The currently selected simple gradient.
+	 */
 	public LinearGradient getSimpleGradient() {
 		return simpleGradient;
 	}
@@ -143,6 +194,12 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * Changes the currently selected gradient to the given value.
+	 *
+	 * @param simpleGradient
+	 *            The new simple {@link Gradient} to select.
+	 */
 	public void setSimpleGradient(LinearGradient simpleGradient) {
 		if (!isSimpleGradient(simpleGradient)) {
 			throw new IllegalArgumentException("Given value '" + simpleGradient

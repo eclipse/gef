@@ -18,13 +18,27 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.inject.AbstractModule;
 
+/**
+ * The {@link MvcUiModule} contains Eclipse UI specific bindings in the context
+ * of an MVC application.
+ *
+ * @author anyssen
+ *
+ */
 public class MvcUiModule extends AbstractModule {
 
+	/**
+	 * Binds {@link IOperationHistory} to the operation history of the Eclipse
+	 * workbench.
+	 */
 	protected void bindIOperationHistory() {
 		binder().bind(IOperationHistory.class).toInstance(PlatformUI
 				.getWorkbench().getOperationSupport().getOperationHistory());
 	}
 
+	/**
+	 * Binds {@link ISelectionProvider} to {@link DefaultSelectionProvider}.
+	 */
 	protected void bindISelectionProvider() {
 		binder().bind(ISelectionProvider.class)
 				.to(DefaultSelectionProvider.class);

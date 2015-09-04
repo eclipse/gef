@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
@@ -51,11 +52,26 @@ import javafx.scene.input.ZoomEvent;
  */
 public class FXPinchSpreadTool extends AbstractTool<Node> {
 
+	/**
+	 * The type of the policy that has to be supported by target parts.
+	 */
 	// TODO: Rename to ON_PINCH_SPREAD_POLICY_KEY
 	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
 
 	private final Map<IViewer<Node>, AbstractFXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractFXPinchSpreadGesture>();
 
+	/**
+	 * Returns a {@link Set} containing all
+	 * {@link AbstractFXOnPinchSpreadPolicy}s that are installed on the given
+	 * target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The target {@link IVisualPart} of which the installed
+	 *            {@link AbstractFXOnPinchSpreadPolicy}s are returned.
+	 * @return A {@link Set} containing all
+	 *         {@link AbstractFXOnPinchSpreadPolicy}s that are installed on the
+	 *         given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnPinchSpreachPolicies()
 	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getPinchSpreadPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -64,6 +80,17 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				.values());
 	}
 
+	/**
+	 * Returns the target {@link IVisualPart} for the given target {@link Node}
+	 * within the given {@link IViewer}.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} which is searched for the target
+	 *            {@link IVisualPart}.
+	 * @param target
+	 *            The target {@link Node} that received the input event.
+	 * @return The target {@link IVisualPart} that was determined.
+	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart(
 			IViewer<Node> viewer, Node target) {
 		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
@@ -72,6 +99,20 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 		return targetPart;
 	}
 
+	/**
+	 * Returns a {@link Set} containing all
+	 * {@link AbstractFXOnPinchSpreadPolicy}s that are supported by the target
+	 * {@link IVisualPart} for the given {@link ZoomEvent}.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} that is searched for a target
+	 *            {@link IVisualPart}.
+	 * @param e
+	 *            The {@link ZoomEvent} that has to be transfered.
+	 * @return A {@link Set} containing all
+	 *         {@link AbstractFXOnPinchSpreadPolicy}s that are supported by the
+	 *         target {@link IVisualPart} for the given {@link ZoomEvent}.
+	 */
 	protected Set<? extends AbstractFXOnPinchSpreadPolicy> getTargetPolicies(
 			IViewer<Node> viewer, ZoomEvent e) {
 		EventTarget target = e.getTarget();

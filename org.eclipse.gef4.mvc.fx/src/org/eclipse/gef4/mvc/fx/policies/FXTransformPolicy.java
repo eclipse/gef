@@ -22,6 +22,7 @@ import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
@@ -29,11 +30,40 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
+/**
+ * The {@link FXTransformPolicy} is a {@link ITransactional transactional}
+ * {@link AbstractPolicy policy} that handles the transformation of its
+ * {@link #getHost() host}.
+ *
+ * @author mwienand
+ *
+ */
 public class FXTransformPolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
+	/**
+	 * The role name for the <code>Provider&lt;Affine&gt;</code> that will be
+	 * used to obtain the host's {@link Affine} transformation.
+	 */
 	public static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
 
+	/**
+	 * Computes the offset which needs to be added to the given local
+	 * coordinates in order to stay on the grid/snap to the grid.
+	 *
+	 * @param gridModel
+	 *            The {@link GridModel} of the host's {@link IViewer}.
+	 * @param localX
+	 *            The x-coordinate in host coordinates.
+	 * @param localY
+	 *            The y-coordinate in host coordinates.
+	 * @param gridCellWidthFraction
+	 *            The granularity of the horizontal grid steps.
+	 * @param gridCellHeightFraction
+	 *            The granularity of the vertical grid steps.
+	 * @return A {@link Dimension} representing the offset that needs to be
+	 *         added to the local coordinates so that they snap to the grid.
+	 */
 	protected static Dimension getSnapToGridOffset(GridModel gridModel,
 			final double localX, final double localY,
 			final double gridCellWidthFraction,
@@ -91,6 +121,17 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		return commit;
 	}
 
+	/**
+	 * Returns the {@link Affine} transformation that is returned by the
+	 * <code>Provider&lt;Affine&gt;</code> that is installed on the
+	 * {@link #getHost() host} under the {@link #TRANSFORMATION_PROVIDER_ROLE}
+	 * role.
+	 *
+	 * @return The {@link Affine} transformation that is returned by the
+	 *         <code>Provider&lt;Affine&gt;</code> that is installed on the
+	 *         {@link #getHost() host} under the
+	 *         {@link #TRANSFORMATION_PROVIDER_ROLE} role.
+	 */
 	@SuppressWarnings("serial")
 	public Affine getNodeTransform() {
 		if (nodeTransform == null) {
@@ -109,6 +150,14 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		initialized = true;
 	}
 
+	/**
+	 * Concatenates the given {@link AffineTransform} to the initial
+	 * transformation.
+	 *
+	 * @param transform
+	 *            The {@link AffineTransform} that is concatenated to the
+	 *            initial transformation.
+	 */
 	public void setConcatenation(AffineTransform transform) {
 		// ensure we have been properly initialized
 		if (!initialized) {
@@ -117,6 +166,14 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		setTransform(oldTransform.getCopy().concatenate(transform));
 	}
 
+	/**
+	 * Concatenates the initial transformation to the given
+	 * {@link AffineTransform}.
+	 *
+	 * @param transform
+	 *            The {@link AffineTransform} to which the initial
+	 *            transformation is concatenated.
+	 */
 	public void setPreConcatenation(AffineTransform transform) {
 		// ensure we have been properly initialized
 		if (!initialized) {
@@ -125,6 +182,14 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		setTransform(oldTransform.getCopy().preConcatenate(transform));
 	}
 
+	/**
+	 * Changes the {@link #getHost() host's} transformation to the given
+	 * {@link AffineTransform}.
+	 *
+	 * @param newTransform
+	 *            The new {@link AffineTransform} for the {@link #getHost()
+	 *            host}.
+	 */
 	public void setTransform(AffineTransform newTransform) {
 		// ensure we have been properly initialized
 		if (!initialized) {

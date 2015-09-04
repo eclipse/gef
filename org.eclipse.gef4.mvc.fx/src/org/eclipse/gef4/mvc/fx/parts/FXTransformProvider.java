@@ -11,20 +11,32 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.scene.Node;
-import javafx.scene.transform.Affine;
-
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+import javafx.scene.transform.Affine;
+
+/**
+ * The {@link FXTransformProvider} can be registered on an {@link IVisualPart}
+ * to insert an {@link Affine} into its visual's transformations list and access
+ * that {@link Affine}. Per default, this {@link Affine} is manipulated to
+ * relocate or transform an {@link IVisualPart}.
+ *
+ * @author mwienand
+ *
+ */
 public class FXTransformProvider implements
 		IAdaptable.Bound<IVisualPart<Node, ? extends Node>>, Provider<Affine> {
 
 	private IVisualPart<Node, ? extends Node> host;
 	private Affine affine = null;
 
+	/**
+	 * Default constructor.
+	 */
 	public void FXTransformaionProvider() {
 	}
 

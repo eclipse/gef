@@ -23,7 +23,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
-// This tool should be removed. Focus is no user interaction with the viewer. The viewer should rather react to focus.
+/**
+ * The {@link FXFocusTool} is an {@link AbstractTool} that listens to focus
+ * changes. It transfers focus changes to the {@link FocusModel}.
+ *
+ * @author mwienand
+ *
+ */
+// This tool should be removed. Focus is no user interaction with the viewer.
+// The viewer should rather react to focus.
 public class FXFocusTool extends AbstractTool<Node> {
 
 	private final Map<IViewer<Node>, ChangeListener<? super Boolean>> viewerFocusListenerMap = new HashMap<IViewer<Node>, ChangeListener<? super Boolean>>();

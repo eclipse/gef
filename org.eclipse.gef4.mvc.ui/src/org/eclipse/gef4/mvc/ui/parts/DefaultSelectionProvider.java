@@ -21,6 +21,14 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
+/**
+ * The {@link DefaultSelectionProvider} is an {@link ISelectionProvider}
+ * implementation that manages the un-/registration of listeners and their
+ * execution upon selection changes.
+ *
+ * @author anyssen
+ *
+ */
 public class DefaultSelectionProvider implements ISelectionProvider {
 
 	private ISelection selection;

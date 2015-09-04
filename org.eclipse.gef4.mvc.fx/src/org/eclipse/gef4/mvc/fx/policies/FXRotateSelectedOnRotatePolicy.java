@@ -24,15 +24,42 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import javafx.scene.Node;
 import javafx.scene.input.RotateEvent;
 
+/**
+ * The {@link FXRotateSelectedOnRotatePolicy} is an
+ * {@link AbstractFXOnRotatePolicy} that rotates the whole {@link SelectionModel
+ * selection} when its {@link #getHost() host} experiences a touch rotate
+ * gesture.
+ *
+ * @author anyssen
+ *
+ */
 public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 
 	private Point pivotInScene;
 
+	/**
+	 * Returns the {@link FXRotatePolicy} that is installed on the given
+	 * {@link IVisualPart}.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} of which the {@link FXRotatePolicy} is
+	 *            returned.
+	 * @return The {@link FXRotatePolicy} that is installed on the given
+	 *         {@link IVisualPart}.
+	 */
 	protected FXRotatePolicy getRotatePolicy(
 			IVisualPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXRotatePolicy.class);
 	}
 
+	/**
+	 * Returns a {@link List} containing all {@link IContentPart}s that should
+	 * be rotated by this policy. Per default, the whole {@link SelectionModel
+	 * selection} is returned.
+	 *
+	 * @return A {@link List} containing all {@link IContentPart}s that should
+	 *         be rotated by this policy.
+	 */
 	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)

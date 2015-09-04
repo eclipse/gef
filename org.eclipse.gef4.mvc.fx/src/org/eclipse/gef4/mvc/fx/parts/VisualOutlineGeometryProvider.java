@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
-
-import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.FXConnection;
@@ -22,6 +21,16 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link VisualOutlineGeometryProvider} can be registered on an
+ * {@link IVisualPart} to provide an {@link IGeometry} based on the outline of
+ * the part's visualization.
+ *
+ * @author anyssen
+ *
+ */
 public class VisualOutlineGeometryProvider
 		implements IAdaptable.Bound<IVisualPart<Node, ? extends Node>>,
 		Provider<IGeometry> {

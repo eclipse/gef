@@ -7,15 +7,34 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
 
-import javafx.embed.swt.FXCanvas;
-
 import org.eclipse.swt.widgets.Composite;
 
+import javafx.embed.swt.FXCanvas;
+
+/**
+ * The {@link IFXCanvasFactory} provides a method for the creation of an
+ * {@link FXCanvas} inside a {@link Composite}. Using the
+ * {@link IFXCanvasFactory} allows to exchange the {@link FXCanvas}
+ * implementation.
+ *
+ * @author anyssen
+ *
+ */
 public interface IFXCanvasFactory {
 
+	/**
+	 * Creates an {@link FXCanvas} inside of the given {@link Composite}.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite} for the {@link FXCanvas} that is
+	 *            created.
+	 * @return The new {@link FXCanvas} that was created as a child of the given
+	 *         {@link Composite}.
+	 */
 	public FXCanvas createCanvas(Composite parent);
+
 }

@@ -44,17 +44,29 @@ import javafx.scene.input.RotateEvent;
  * a single transaction operation is used for the complete interaction , so all
  * interaction results can be undone in a single undo step.
  *
- * @author mwienand
  * @author anyssen
  *
  */
 public class FXRotateTool extends AbstractTool<Node> {
 
+	/**
+	 * The type of the policy that has to be supported by target parts.
+	 */
 	// TODO: Rename to ON_ROTATE_POLICY_KEY
 	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
 
 	private final Map<IViewer<Node>, AbstractFXRotateGesture> gestures = new HashMap<IViewer<Node>, AbstractFXRotateGesture>();
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnRotatePolicy}s
+	 * that are installed on the given target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The target {@link IVisualPart} of which the
+	 *            {@link AbstractFXOnRotatePolicy}s are returned.
+	 * @return A {@link Set} containing all {@link AbstractFXOnRotatePolicy}s
+	 *         that are installed on the given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnRotatePolicies()
 	protected Set<? extends AbstractFXOnRotatePolicy> getRotatePolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -63,6 +75,17 @@ public class FXRotateTool extends AbstractTool<Node> {
 				.values());
 	}
 
+	/**
+	 * Returns the target {@link IVisualPart} within the given {@link IViewer}
+	 * for the given target {@link Node} that received the input event.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} in which a target {@link IVisualPart} is
+	 *            searched.
+	 * @param target
+	 *            The target {@link Node} that received the input event.
+	 * @return The determined target {@link IVisualPart}.
+	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart(
 			IViewer<Node> viewer, Node target) {
 		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
@@ -71,6 +94,20 @@ public class FXRotateTool extends AbstractTool<Node> {
 		return targetPart;
 	}
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnRotatePolicy}s
+	 * that are installed on the target {@link IVisualPart} for the given
+	 * {@link RotateEvent}. The target {@link IVisualPart} is determined using
+	 * {@link #getTargetPart(IViewer, Node)}.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} in which the input event occured.
+	 * @param e
+	 *            The input {@link RotateEvent}.
+	 * @return A {@link Set} containing all {@link AbstractFXOnRotatePolicy}s
+	 *         that are installed on the target {@link IVisualPart} for the
+	 *         given input event.
+	 */
 	protected Set<? extends AbstractFXOnRotatePolicy> getTargetPolicies(
 			IViewer<Node> viewer, RotateEvent e) {
 		EventTarget target = e.getTarget();

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - contribution for Bugzilla #450231
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
@@ -14,12 +15,16 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import javafx.scene.Node;
 
 /**
+ * The {@link FXFocusBehavior} can be registered on an {@link IVisualPart} to
+ * transfer the focus information from the {@link FocusModel} to the part's
+ * visualization.
  *
  * @author mwienand
  * @author anyssen
@@ -35,6 +40,9 @@ public class FXFocusBehavior extends AbstractBehavior<Node>
 				.addPropertyChangeListener(this);
 	}
 
+	/**
+	 * Assigns keyboard focus to the visualization of the host.
+	 */
 	protected void applyFocus() {
 		getHost().getVisual().requestFocus();
 	}

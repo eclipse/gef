@@ -31,8 +31,18 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.ScrollEvent;
 
+/**
+ * The {@link FXScrollTool} is an {@link AbstractTool} that handles mouse scroll
+ * events.
+ *
+ * @author mwienand
+ *
+ */
 public class FXScrollTool extends AbstractTool<Node> {
 
+	/**
+	 * The type of the policy that has to be supported by target parts.
+	 */
 	// TODO: Rename to ON_SCROLL_POLICY_KEY
 	public static final Class<AbstractFXOnScrollPolicy> TOOL_POLICY_KEY = AbstractFXOnScrollPolicy.class;
 
@@ -76,6 +86,16 @@ public class FXScrollTool extends AbstractTool<Node> {
 		};
 	}
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnScrollPolicy}s
+	 * that are installed on the given target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The target {@link IVisualPart} of which the
+	 *            {@link AbstractFXOnScrollPolicy}s are returned.
+	 * @return A {@link Set} containing all {@link AbstractFXOnScrollPolicy}s
+	 *         that are installed on the given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnScrollPolicies
 	protected Set<? extends AbstractFXOnScrollPolicy> getScrollPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {

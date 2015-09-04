@@ -7,19 +7,38 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+/**
+ * The {@link MvcFxUiBundle} is the plug-in that integrates MVC.FX with the
+ * Eclipse platform UI.
+ *
+ * @author anyssen
+ *
+ */
 public class MvcFxUiBundle extends AbstractUIPlugin {
 
-	// The plug-in ID
+	/**
+	 * The plug-in ID.
+	 */
 	public static final String PLUGIN_ID = "org.eclipse.gef4.mvc.fx.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static MvcFxUiBundle plugin;
+
+	/**
+	 * Returns the shared instance
+	 *
+	 * @return the shared instance
+	 */
+	public static MvcFxUiBundle getDefault() {
+		return plugin;
+	}
 
 	/**
 	 * The constructor
@@ -29,10 +48,11 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
 	 * BundleContext )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -40,22 +60,14 @@ public class MvcFxUiBundle extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
 	 * BundleContext )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-	}
-
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static MvcFxUiBundle getDefault() {
-		return plugin;
 	}
 
 }

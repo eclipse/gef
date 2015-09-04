@@ -17,6 +17,13 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -45,13 +52,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 /**
  * A picker for multi-stop {@link LinearGradient}s.
@@ -194,6 +194,22 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 
 	}
 
+	private static final int DIRECTION_RADIUS = 16;
+
+	private static final double OFFSET_THRESHOLD = 0.005;
+
+	/**
+	 * Creates an "advanced" linear color gradient with 3 stops from the given
+	 * colors.
+	 *
+	 * @param c1
+	 *            The start color.
+	 * @param c2
+	 *            The middle color (t = 0.5).
+	 * @param c3
+	 *            The end color.
+	 * @return An "advanced" {@link LinearGradient} from the given colors.
+	 */
 	protected static LinearGradient createAdvancedLinearGradient(Color c1,
 			Color c2, Color c3) {
 		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(0.5, c2),
@@ -202,6 +218,17 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 				stops);
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link Paint} is considered to be
+	 * an "advanced" gradient. Otherwise returns <code>false</code>. An advanced
+	 * gradient can either be a linear gradient with at least 3 stops, or any
+	 * radial gradient.
+	 *
+	 * @param paint
+	 *            The {@link Paint} in question.
+	 * @return <code>true</code> if the given {@link Paint} is considered to be
+	 *         an "advanced" gradient, othwerise <code>false</code>.
+	 */
 	public static boolean isAdvancedGradient(Paint paint) {
 		if (paint instanceof LinearGradient) {
 			return ((LinearGradient) paint).getStops().size() > 2;
@@ -210,9 +237,6 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		}
 		return false;
 	}
-
-	private static final int DIRECTION_RADIUS = 16;
-	private static final double OFFSET_THRESHOLD = 0.005;
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private Paint advancedGradient;
@@ -224,6 +248,12 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	private Group pickerGroup;
 	private Line directionLine;
 
+	/**
+	 * Constructs a new {@link FXAdvancedGradientPicker}.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite}.
+	 */
 	public FXAdvancedGradientPicker(Composite parent) {
 		control = createControl(parent);
 		// TODO: start with three stops
@@ -236,6 +266,14 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Creates the visualization for this {@link FXAdvancedGradientPicker}.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite}.
+	 * @return The {@link Control} that visualizes this
+	 *         {@link FXAdvancedGradientPicker}.
+	 */
 	protected Control createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -375,10 +413,22 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		updateGradient(newStops);
 	}
 
+	/**
+	 * Returns the currently selected advanced gradient.
+	 *
+	 * @return The currently selected advanced gradient.
+	 */
 	public Paint getAdvancedGradient() {
 		return advancedGradient;
 	}
 
+	/**
+	 * Returns the {@link Control} that visualizes this
+	 * {@link FXAdvancedGradientPicker}.
+	 *
+	 * @return The {@link Control} that visualizes this
+	 *         {@link FXAdvancedGradientPicker}.
+	 */
 	public Control getControl() {
 		return control;
 	}
@@ -387,6 +437,7 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 * Computes the maximum offset for the given stop index.
 	 *
 	 * @param stopIndex
+	 *            The index of the stop for which to compute the next offset.
 	 * @return The maximum offset for the given stop index.
 	 */
 	protected double getNextOffset(int stopIndex) {
@@ -400,6 +451,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 * Computes the minimum offset for the given stop index.
 	 *
 	 * @param stopIndex
+	 *            The index of the stop for which to compute the previous
+	 *            offset.
 	 * @return The minimum offset for the given stop index.
 	 */
 	protected double getPrevOffset(int stopIndex) {
@@ -409,6 +462,13 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		return getStops().get(stopIndex - 1).getOffset() + OFFSET_THRESHOLD;
 	}
 
+	/**
+	 * Returns a list of the {@link Stop}s of the currently selected advanced
+	 * gradient.
+	 *
+	 * @return A list of the {@link Stop}s of the currently selected advanced
+	 *         gradient.
+	 */
 	protected List<Stop> getStops() {
 		return ((LinearGradient) advancedGradient).getStops();
 	}
@@ -489,6 +549,14 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		directionLine.setEndY(directionY * DIRECTION_RADIUS);
 	}
 
+	/**
+	 * Changes the currently selected advanced gradient to a new linear gradient
+	 * that is constructed from the given list of {@link Stop}s.
+	 *
+	 * @param newStops
+	 *            The list of {@link Stop}s from which the newly selected
+	 *            advanced gradient is constructed.
+	 */
 	protected void updateGradient(List<Stop> newStops) {
 		setAdvancedGradient(new LinearGradient(0, 0, directionX, directionY,
 				true, CycleMethod.NO_CYCLE, newStops));

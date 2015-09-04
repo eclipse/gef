@@ -23,6 +23,13 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The {@link FXRelocateOnDragPolicy} is an {@link AbstractFXOnDragPolicy} that
+ * relocates its {@link #getHost() host} when it is dragged with the mouse.
+ *
+ * @author anyssen
+ *
+ */
 public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
@@ -47,15 +54,37 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 		}
 	}
 
+	/**
+	 * Returns the initial mouse location in scene coordinates.
+	 *
+	 * @return The initial mouse location in scene coordinates.
+	 */
 	protected Point getInitialMouseLocationInScene() {
 		return initialMouseLocationInScene;
 	}
 
+	/**
+	 * Returns the {@link FXResizeRelocatePolicy} that is installed on the given
+	 * {@link IContentPart}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} for which to return the installed
+	 *            {@link FXResizeRelocatePolicy}.
+	 * @return The {@link FXResizeRelocatePolicy} that is installed on the given
+	 *         {@link IContentPart}.
+	 */
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
+	/**
+	 * Returns a {@link List} containing all {@link IContentPart}s that should
+	 * be relocated by this policy.
+	 *
+	 * @return A {@link List} containing all {@link IContentPart}s that should
+	 *         be relocated by this policy.
+	 */
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
@@ -88,6 +117,12 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 		setInitialMouseLocationInScene(null);
 	}
 
+	/**
+	 * Sets the initial mouse location to the given value.
+	 *
+	 * @param point
+	 *            The initial mouse location.
+	 */
 	protected void setInitialMouseLocationInScene(Point point) {
 		initialMouseLocationInScene = point;
 	}

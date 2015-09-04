@@ -17,9 +17,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -27,7 +24,17 @@ import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
 /**
+ * The {@link FXBendOnSegmentHandleDragPolicy} is an
+ * {@link AbstractFXOnDragPolicy} that can be installed on the handle parts of
+ * an {@link FXConnection}, so that the user is able to manipulate that
+ * connection by dragging its handles. This policy expects that a handle is
+ * created for each anchor point of the connection (start, way, end), as well as
+ * for each middle point of a segment. Moreover, this policy expects that the
+ * respective handles are of type {@link FXCircleSegmentHandlePart}.
  *
  * @author mwienand
  * @author anyssen
@@ -98,6 +105,11 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 	}
 
+	/**
+	 * Disables refreshing visuals from model data for the first anchorage of
+	 * this policy. The initial state of the refresh flag is saved so that it
+	 * can be restored later.
+	 */
 	protected void disableRefreshVisuals() {
 		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
 				.keySet().iterator().next();
@@ -121,12 +133,27 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		adjustHandles(before, after);
 	}
 
+	/**
+	 * Restores the initial state of the refresh flag that was previously saved
+	 * within {@link #disableRefreshVisuals()}.
+	 */
+	// TODO: Rename to restoreRefreshVisuals()
 	protected void enableRefreshVisuals() {
 		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
 				.keySet().iterator().next();
 		anchorage.setRefreshVisual(initialRefreshVisual);
 	}
 
+	/**
+	 * Returns the {@link FXBendPolicy} that is installed on the given
+	 * {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The {@link IVisualPart} of which the installed
+	 *            {@link FXBendPolicy} is returned.
+	 * @return The {@link FXBendPolicy} that is installed on the given
+	 *         {@link IVisualPart}.
+	 */
 	protected FXBendPolicy getBendPolicy(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		// retrieve the default bend policy

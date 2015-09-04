@@ -11,15 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.scene.Node;
+
 /**
- * Abstract base implementation for an JavaFX-specific {@link IRootPart}.
+ * Abstract base implementation for a JavaFX-specific {@link IRootPart}.
  *
  * @author anyssen
  *
@@ -29,6 +29,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 public abstract class AbstractFXRootPart<N extends Node>
 		extends AbstractRootPart<Node, N> {
 
+	/**
+	 * Constructs a new {@link AbstractFXRootPart}.
+	 */
 	public AbstractFXRootPart() {
 		super();
 	}

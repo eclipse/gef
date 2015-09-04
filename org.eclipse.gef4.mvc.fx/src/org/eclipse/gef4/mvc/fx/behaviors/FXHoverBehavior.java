@@ -19,6 +19,9 @@ import java.util.Map;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -34,11 +37,32 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
+/**
+ * The {@link FXHoverBehavior} can be registered on an {@link IVisualPart} in
+ * order to react to {@link HoverModel} changes. It generates
+ * {@link AbstractFXFeedbackPart}s and {@link AbstractFXHandlePart}s.
+ *
+ * @author mwienand
+ *
+ */
 public class FXHoverBehavior extends HoverBehavior<Node> {
 
+	/**
+	 * Time in milliseconds until the hover handles are removed when the host is
+	 * not hovered anymore.
+	 */
 	public static final int REMOVAL_DELAY_MILLIS = 500;
 
+	/**
+	 * Time in milliseconds until the hover handles are created when the host is
+	 * hovered.
+	 */
 	public static final int CREATION_DELAY_MILLIS = 250;
+
+	/**
+	 * Distance in pixels which the mouse is allowed to move so that it is
+	 * regarded to be stationary.
+	 */
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
 	/**
@@ -216,7 +240,12 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	/**
-	 * Called when the mouse moves while the mouse handler is active.
+	 * Called when the mouse moves while the creation delay is running. Restarts
+	 * the creation delay if the mouse moves past the
+	 * {@link #MOUSE_MOVE_THRESHOLD}.
+	 *
+	 * @param event
+	 *            The {@link MouseEvent} for the mouse move.
 	 */
 	protected void onMouseMove(MouseEvent event) {
 		if (!isInCreationDelay()) {
@@ -295,6 +324,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		}
 	}
 
+	/**
+	 * Starts the handle creation delay.
+	 */
 	protected void startHandleCreationDelay() {
 		registerMouseHandler();
 		// start creation delay transition
@@ -309,6 +341,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		creationDelayTransition.play();
 	}
 
+	/**
+	 * Starts the handle removal delay.
+	 */
 	protected void startHandleRemovalDelay() {
 		removalDelayTransition = new PauseTransition(
 				Duration.millis(REMOVAL_DELAY_MILLIS));
@@ -321,15 +356,24 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		removalDelayTransition.play();
 	}
 
+	/**
+	 * Stops the handle creation delay.
+	 */
 	protected void stopCreationDelay() {
 		creationDelayTransition.stop();
 		unregisterMouseHandler();
 	}
 
+	/**
+	 * Stops the handle removal delay.
+	 */
 	protected void stopRemovalDelay() {
 		removalDelayTransition.stop();
 	}
 
+	/**
+	 * Unregisters the mouse handler.
+	 */
 	protected void unregisterMouseHandler() {
 		final Scene scene = getHost().getVisual().getScene();
 		scene.removeEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);

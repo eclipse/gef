@@ -13,24 +13,54 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Map;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
+
+/**
+ * The {@link FXRootPart} is an {@link AbstractFXRootPart} that is parameterized
+ * by {@link Group}. It manages a number of layers for the visualization,
+ * namely, the content layer, feedback layer, and handle layer. The visuals of
+ * the different {@link IVisualPart}s are inserted into these layers depending
+ * on their type, i.e. {@link IContentPart} visuals are inserted into the
+ * content layer, {@link IFeedbackPart} visuals are inserted into the feedback
+ * layer, and {@link IHandlePart} visuals are inserted into the handle layer.
+ * <p>
+ * The layers are stacked on top of each other with the content layer at the
+ * bottom and the handle layer at the top. The feedback layer in the middle is
+ * mouse transparent, i.e. you cannot interact with the visuals in this layer.
+ *
+ * @author anyssen
+ *
+ */
 public class FXRootPart extends AbstractFXRootPart<Group> {
 
+	/**
+	 * The content layer visual.
+	 */
 	public Group contentLayer;
+
+	/**
+	 * The handle layer visual.
+	 */
 	public Group handleLayer;
+
+	/**
+	 * The feedback layer visual.
+	 */
 	public Group feedbackLayer;
 
+	/**
+	 * Default constructor.
+	 */
 	public FXRootPart() {
 	}
 
@@ -70,20 +100,45 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		}
 	}
 
+	/**
+	 * Creates the content layer visual.
+	 *
+	 * @return The content layer visual.
+	 */
 	protected Group createContentLayer() {
 		Group contentLayer = createLayer(false);
 		contentLayer.setPickOnBounds(true);
 		return contentLayer;
 	}
 
+	/**
+	 * Creates the feedback layer visual.
+	 *
+	 * @return The feedback layer visual.
+	 */
 	protected Group createFeedbackLayer() {
 		return createLayer(true);
 	}
 
+	/**
+	 * Creates the handle layer visual.
+	 *
+	 * @return The handle layer visual.
+	 */
 	protected Group createHandleLayer() {
 		return createLayer(false);
 	}
 
+	/**
+	 * Creates a {@link Group} and sets its {@link Group#pickOnBoundsProperty()}
+	 * to <code>false</code>. Does also set its
+	 * {@link Group#mouseTransparentProperty()} to the given value.
+	 *
+	 * @param mouseTransparent
+	 *            The value for the layer's
+	 *            {@link Group#mouseTransparentProperty()}.
+	 * @return The created layer.
+	 */
 	protected Group createLayer(boolean mouseTransparent) {
 		Group layer = new Group();
 		layer.setPickOnBounds(false);
@@ -91,6 +146,14 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		return layer;
 	}
 
+	/**
+	 * Creates a {@link Group} which contains the given {@link Node}s.
+	 *
+	 * @param layers
+	 *            The {@link Node}s which are put into the new {@link Group}.
+	 * @return The created {@link Group}.
+	 */
+	// TODO: Remove this method.
 	protected Group createScrollPaneContent(Node... layers) {
 		return new Group(layers);
 	}
@@ -103,11 +166,11 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 * 
+		 *
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 * 
+		 *
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -142,6 +205,14 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		// nothing to do
 	}
 
+	/**
+	 * Returns the content layer visual. The content layer visual is created in
+	 * case it was not created before.
+	 *
+	 * @see #createContentLayer()
+	 *
+	 * @return The content layer visual.
+	 */
 	protected Group getContentLayer() {
 		if (contentLayer == null) {
 			createVisual();
@@ -149,6 +220,14 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		return contentLayer;
 	}
 
+	/**
+	 * Returns the feedback layer visual. The feedback layer visual is created
+	 * in case it was not created before.
+	 *
+	 * @see #createFeedbackLayer()
+	 *
+	 * @return The feedback layer visual.
+	 */
 	protected Group getFeedbackLayer() {
 		if (feedbackLayer == null) {
 			createVisual();
@@ -156,6 +235,14 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		return feedbackLayer;
 	}
 
+	/**
+	 * Returns the handle layer visual. The handle layer visual is created in
+	 * case it was not created before.
+	 *
+	 * @see #createHandleLayer()
+	 *
+	 * @return The handle layer visual.
+	 */
 	protected Group getHandleLayer() {
 		if (handleLayer == null) {
 			createVisual();

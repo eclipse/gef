@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - contribution for Bugzilla #451852
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -14,15 +16,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
@@ -33,6 +26,25 @@ import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
+
+/**
+ * The {@link FXMarqueeOnDragPolicy} is an {@link AbstractFXOnDragPolicy} that
+ * performs marquee selection when the mouse is dragged. The start and end
+ * position of the mouse span a marquee area. Everything within that area will
+ * be selected.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private static double[] bbox(Point2D start, Point2D end) {
@@ -51,6 +63,25 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		return bbox;
 	}
 
+	/**
+	 * Returns a {@link List} of all {@link Node}s that are descendants of the
+	 * given root {@link Node} and fully contained within the bounds specified
+	 * by <code>[x0, y0, x1, y1]</code>.
+	 *
+	 * @param root
+	 *            The root {@link Node}.
+	 * @param x0
+	 *            The minimum x-coordinate.
+	 * @param y0
+	 *            The minimum y-coordinate.
+	 * @param x1
+	 *            The maximum x-coordinate.
+	 * @param y1
+	 *            The maximum y-coordinate.
+	 * @return A {@link List} containing all {@link Node}s that are descendants
+	 *         of the given root {@link Node} and fully contained within the
+	 *         specified bounds.
+	 */
 	// TODO: move to utility
 	public static List<Node> findContainedNodes(Node root, double x0, double y0,
 			double x1, double y1) {
@@ -96,6 +127,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	// feedback
 	private IFeedbackPart<Node, ? extends Node> feedback;
 
+	/**
+	 * Adds a feedback rectangle to the root part of the {@link #getHost() host}
+	 * . The rectangle will show the marquee area.
+	 */
 	protected void addFeedback() {
 		if (feedback != null) {
 			removeFeedback();
@@ -141,6 +176,16 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		updateFeedback();
 	}
 
+	/**
+	 * Returns a {@link List} containing all {@link IContentPart}s that are
+	 * corresponding to the given {@link List} of {@link Node}s.
+	 *
+	 * @param nodes
+	 *            The {@link List} of {@link Node}s for which the corresponding
+	 *            {@link IContentPart}s are returned.
+	 * @return A {@link List} containing all {@link IContentPart}s that are
+	 *         corresponding to the given {@link Node}s.
+	 */
 	protected List<IContentPart<Node, ? extends Node>> getParts(
 			List<Node> nodes) {
 		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<IContentPart<Node, ? extends Node>>();
@@ -184,6 +229,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		removeFeedback();
 	}
 
+	/**
+	 * Removes the feedback rectangle.
+	 */
 	protected void removeFeedback() {
 		if (feedback != null) {
 			getHost().getRoot().removeChild(feedback);
@@ -191,6 +239,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		}
 	}
 
+	/**
+	 * Updates the feedback rectangle.
+	 */
 	protected void updateFeedback() {
 		feedback.refreshVisual();
 	}

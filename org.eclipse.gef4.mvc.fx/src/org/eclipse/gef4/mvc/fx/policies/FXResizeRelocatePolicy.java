@@ -20,7 +20,16 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 import javafx.scene.Node;
 
-// TODO: check if we really need this policy, as we now have the transform policy
+/**
+ * The {@link FXResizeRelocatePolicy} is a {@link ITransactional transactional}
+ * {@link AbstractPolicy policy} that handles the resize and relocation of its
+ * {@link #getHost() host}.
+ *
+ * @author anyssen
+ *
+ */
+// TODO: check if we really need this policy, as we now have the transform
+// policy
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
@@ -57,18 +66,44 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
 		return fwd.unwrap();
 	}
 
+	/**
+	 * Returns the minimum height. The host cannot be resized below this minimum
+	 * height.
+	 *
+	 * @return The minimum height.
+	 */
 	protected double getMinimumHeight() {
 		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
 	}
 
+	/**
+	 * Returns the minimum width. The host cannot be resized below this minimum
+	 * width.
+	 *
+	 * @return The minimum width.
+	 */
 	protected double getMinimumWidth() {
 		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
 	}
 
+	/**
+	 * Returns the {@link FXResizePolicy} that is installed on the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link FXResizePolicy} that is installed on the
+	 *         {@link #getHost() host}.
+	 */
 	protected FXResizePolicy getResizePolicy() {
 		return getHost().getAdapter(FXResizePolicy.class);
 	}
 
+	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link FXTransformPolicy} that is installed on the
+	 *         {@link #getHost() host}.
+	 */
 	protected FXTransformPolicy getTransformPolicy() {
 		return getHost().getAdapter(FXTransformPolicy.class);
 	}
@@ -92,6 +127,19 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node>
 		initialized = true;
 	}
 
+	/**
+	 * Performs resize and relocation based on the given deltas by using the
+	 * {@link #getTransformPolicy()} and {@link #getResizePolicy()}.
+	 *
+	 * @param dx
+	 *            The horizontal relocation delta.
+	 * @param dy
+	 *            The vertical relocation delta.
+	 * @param dw
+	 *            The horizontal resize delta.
+	 * @param dh
+	 *            The vertical resize delta.
+	 */
 	public void performResizeRelocate(double dx, double dy, double dw,
 			double dh) {
 		// ensure we have been properly initialized

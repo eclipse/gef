@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -23,6 +21,16 @@ import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link FXRevealOperation} can be used to reveal an {@link IVisualPart}
+ * within its {@link IViewer}, i.e. manipulates the viewport translation so that
+ * the part is visible.
+ *
+ * @author mwienand
+ *
+ */
 public class FXRevealOperation extends AbstractOperation {
 
 	private double tx = 0d;
@@ -32,6 +40,14 @@ public class FXRevealOperation extends AbstractOperation {
 	private ViewportModel viewportModel;
 	private IVisualPart<Node, ? extends Node> part = null;
 
+	/**
+	 * Constrcuts a new {@link FXRevealOperation} that will reveal the given
+	 * {@link IVisualPart} upon execution.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} that will be revealed upon execution
+	 *            of this operation.
+	 */
 	public FXRevealOperation(IVisualPart<Node, ? extends Node> part) {
 		super("Reveal");
 		this.part = part;

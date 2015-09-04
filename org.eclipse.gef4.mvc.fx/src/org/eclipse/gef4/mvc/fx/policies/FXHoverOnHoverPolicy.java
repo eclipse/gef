@@ -11,11 +11,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import org.eclipse.gef4.mvc.models.HoverModel;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.models.HoverModel;
-
+/**
+ * The {@link FXHoverOnHoverPolicy} is an {@link AbstractFXOnHoverPolicy} that
+ * hovers its {@link #getHost() host} by altering the {@link HoverModel} when
+ * the {@link #getHost() host} is hovered by the mouse.
+ *
+ * @author anyssen
+ *
+ */
 public class FXHoverOnHoverPolicy extends AbstractFXOnHoverPolicy {
 
 	@Override

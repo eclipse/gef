@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #476507
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
@@ -32,8 +33,8 @@ import javafx.scene.Node;
  * to be registered as adapter on the {@link IViewer}, which is retrieved
  * through navigating via the {@link IRootPart} of this policy's host.
  *
- * @author mwienand
  * @author anyssen
+ * @author mwienand
  *
  */
 public class FXChangeViewportPolicy extends AbstractPolicy<Node>
@@ -76,6 +77,14 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		initialized = true;
 	}
 
+	/**
+	 * Advances the viewport transformation by the given translation values.
+	 *
+	 * @param deltaTranslateX
+	 *            The horizontal translation delta.
+	 * @param deltaTranslateY
+	 *            The vertical translation delta.
+	 */
 	public void scrollRelative(double deltaTranslateX, double deltaTranslateY) {
 		// ensure we have been properly initialized
 		if (!initialized) {
@@ -90,6 +99,17 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		}
 	}
 
+	/**
+	 * Concatenates a scaling transformation to the current viewport
+	 * transformation.
+	 *
+	 * @param relativeZoom
+	 *            The scale factor.
+	 * @param sceneX
+	 *            The pivot x-coordinate.
+	 * @param sceneY
+	 *            The pivot y-coordinate.
+	 */
 	public void zoomRelative(double relativeZoom, double sceneX,
 			double sceneY) {
 		// ensure we have been properly initialized

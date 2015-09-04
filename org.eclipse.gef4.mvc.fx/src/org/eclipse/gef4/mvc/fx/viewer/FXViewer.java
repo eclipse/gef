@@ -25,6 +25,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+/**
+ * The {@link FXViewer} is an {@link AbstractViewer} that is parameterized by
+ * {@link Node}. It manages a {@link ScrollPaneEx} and an {@link FXGridLayer}.
+ * The scroll pane displays the viewer's contents and adds scrollbars when
+ * necessary. The grid layer displays a grid in the background when enabled.
+ *
+ * @author anyssen
+ *
+ */
 public class FXViewer extends AbstractViewer<Node> {
 
 	/**
@@ -33,7 +42,14 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 
+	/**
+	 * The {@link ScrollPaneEx} that displays the viewer's contents.
+	 */
 	protected ScrollPaneEx scrollPane;
+
+	/**
+	 * The {@link FXGridLayer} that displays the grid in the background.
+	 */
 	protected FXGridLayer gridLayer;
 
 	@Override
@@ -41,14 +57,35 @@ public class FXViewer extends AbstractViewer<Node> {
 		return (FXDomain) super.getDomain();
 	}
 
+	/**
+	 * Returns the {@link FXGridLayer} that is managed by this {@link FXViewer}.
+	 *
+	 * @return The {@link FXGridLayer} that is managed by this {@link FXViewer}.
+	 */
+	// TODO: if (gridLayer == null) createVisuals();
 	public FXGridLayer getGridLayer() {
 		return gridLayer;
 	}
 
+	/**
+	 * Returns the {@link Scene} in which the {@link ScrollPaneEx} of this
+	 * {@link FXViewer} is displayed.
+	 *
+	 * @return The {@link Scene} in which the {@link ScrollPaneEx} of this
+	 *         {@link FXViewer} is displayed.
+	 */
 	public Scene getScene() {
 		return scrollPane.getScene();
 	}
 
+	/**
+	 * Returns the {@link ScrollPaneEx} that is managed by this {@link FXViewer}
+	 * .
+	 *
+	 * @return The {@link ScrollPaneEx} that is managed by this {@link FXViewer}
+	 *         .
+	 */
+	// TODO: if (scrollPane == null) createVisuals();
 	@SuppressWarnings("unchecked")
 	public ScrollPaneEx getScrollPane() {
 		if (scrollPane == null) {

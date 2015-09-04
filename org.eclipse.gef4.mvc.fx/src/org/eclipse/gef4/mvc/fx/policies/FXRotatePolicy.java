@@ -23,6 +23,14 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
+/**
+ * The {@link FXRotatePolicy} is a {@link ITransactional transactional}
+ * {@link AbstractPolicy policy} that handles the rotation of its
+ * {@link #getHost() host}.
+ *
+ * @author anyssen
+ *
+ */
 public class FXRotatePolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
@@ -43,6 +51,13 @@ public class FXRotatePolicy extends AbstractPolicy<Node>
 		return getTransformPolicy().commit();
 	}
 
+	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link FXTransformPolicy} that is installed on the
+	 *         {@link #getHost() host}.
+	 */
 	protected FXTransformPolicy getTransformPolicy() {
 		return getHost().getAdapter(FXTransformPolicy.class);
 	}
@@ -54,6 +69,15 @@ public class FXRotatePolicy extends AbstractPolicy<Node>
 		initialized = true;
 	}
 
+	/**
+	 * Rotates the {@link #getHost() host} by the given {@link Angle} around the
+	 * given pivot {@link Point}.
+	 *
+	 * @param rotationAngle
+	 *            The rotation {@link Angle}.
+	 * @param pivotInScene
+	 *            The pivot {@link Point} in scene coordinates.
+	 */
 	public void performRotation(Angle rotationAngle, Point pivotInScene) {
 		// ensure we have been properly initialized
 		if (!initialized) {
@@ -73,6 +97,15 @@ public class FXRotatePolicy extends AbstractPolicy<Node>
 				pivotLocal.getY() * scaleY));
 	}
 
+	/**
+	 * Applies the rotation given by the rotation {@link Angle} and the pivot
+	 * {@link Point} to the {@link #getHost() host}.
+	 *
+	 * @param rotationAngle
+	 *            The rotation {@link Angle}.
+	 * @param pivotInHostVisual
+	 *            The pivot {@link Point} in host coordinates.
+	 */
 	protected void updateOperation(Angle rotationAngle,
 			Point pivotInHostVisual) {
 		// determine scaling

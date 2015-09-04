@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
@@ -82,6 +83,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXOnDragPolicy, MouseEvent>();
 	private Map<EventTarget, IVisualPart<Node, ? extends Node>> interactionTargetOverrides = new HashMap<EventTarget, IVisualPart<Node, ? extends Node>>();
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnClickPolicy}s of
+	 * the given target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The {@link IVisualPart} of which the
+	 *            {@link AbstractFXOnClickPolicy}s are returned.
+	 * @return A {@link Set} containing all {@link AbstractFXOnClickPolicy}s of
+	 *         the given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnClickPolicies()
 	protected Set<? extends AbstractFXOnClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -90,6 +101,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				.values());
 	}
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnDragPolicy}s of
+	 * the given target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The {@link IVisualPart} of which the
+	 *            {@link AbstractFXOnDragPolicy}s are returned.
+	 * @return A {@link Set} containing all {@link AbstractFXOnDragPolicy}s of
+	 *         the given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnDragPolicies()
 	protected Set<? extends AbstractFXOnDragPolicy> getDragPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -98,6 +119,26 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				.values());
 	}
 
+	/**
+	 * Returns the target {@link IVisualPart} for the given target {@link Node}
+	 * within the given {@link IViewer} that supports the given <i>policy</i>.
+	 * <p>
+	 * If a target override was previously registered for the given {@link Node}
+	 * using {@link #overrideTargetForThisInteraction(EventTarget, IVisualPart)}
+	 * , then the override target will be returned (and the override will be
+	 * removed).
+	 *
+	 * @param <T>
+	 *            The type of the policy that has to be supported.
+	 * @param viewer
+	 *            The {@link IViewer} which is searched for the target
+	 *            {@link IVisualPart}.
+	 * @param target
+	 *            The target {@link Node} that received the input event.
+	 * @param policy
+	 *            The {@link Class} of the policy that has to be supported.
+	 * @return The target {@link IVisualPart} that was determined.
+	 */
 	protected <T extends IPolicy<Node>> IVisualPart<Node, ? extends Node> getTargetPart(
 			final IViewer<Node> viewer, Node target, Class<T> policy) {
 		if (interactionTargetOverrides.containsKey(target)) {

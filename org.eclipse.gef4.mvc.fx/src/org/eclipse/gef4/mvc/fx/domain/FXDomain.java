@@ -11,10 +11,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.domain;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link FXDomain} is an implementation of {@link AbstractDomain} which
+ * binds the visual root type to {@link Node}.
+ *
+ * @author anyssen
+ *
+ */
 public class FXDomain extends AbstractDomain<Node> {
 
 }

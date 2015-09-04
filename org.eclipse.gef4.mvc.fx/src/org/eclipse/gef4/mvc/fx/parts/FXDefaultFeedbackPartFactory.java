@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
@@ -38,13 +36,34 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link FXDefaultFeedbackPartFactory} is an {@link IFeedbackPartFactory}
+ * implementation that is parameterized by {@link Node}.
+ *
+ * @author mwienand
+ *
+ */
 public class FXDefaultFeedbackPartFactory
 		implements IFeedbackPartFactory<Node> {
 
+	/**
+	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
+	 * used to generate selection feedback.
+	 */
 	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
 
+	/**
+	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
+	 * used to generate selection link feedback.
+	 */
 	public static final String SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER";
 
+	/**
+	 * The role name for the <code>Provider&lt;IGeometry&gt;</code> that will be
+	 * used to generate hover feedback.
+	 */
 	public static final String HOVER_FEEDBACK_GEOMETRY_PROVIDER = "HOVER_FEEDBACK_GEOMETRY_PROVIDER";
 
 	@Inject
@@ -72,6 +91,25 @@ public class FXDefaultFeedbackPartFactory
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Creates {@link FXHoverFeedbackPart}s for the given <i>targets</i>.
+	 *
+	 * @param targets
+	 *            The list of {@link IVisualPart}s for which hover feedback is
+	 *            generated.
+	 * @param hoverBehavior
+	 *            The {@link HoverBehavior} that initiated the feedback
+	 *            creation.
+	 * @param contextMap
+	 *            A map in which the state-less {@link HoverBehavior} may place
+	 *            additional context information for the creation process. It
+	 *            may either directly contain additional information needed by
+	 *            this factory, or may be passed back by the factory to the
+	 *            calling {@link HoverBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link HoverBehavior} to identify the creation context).
+	 * @return A list containing the created feedback parts.
+	 */
 	@SuppressWarnings("serial")
 	protected List<IFeedbackPart<Node, ? extends Node>> createHoverFeedbackParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
@@ -193,6 +231,26 @@ public class FXDefaultFeedbackPartFactory
 		return null;
 	}
 
+	/**
+	 * Creates {@link FXSelectionFeedbackPart}s and
+	 * {@link FXSelectionLinkFeedbackPart}s for the <i>targets</i>.
+	 *
+	 * @param targets
+	 *            The list of {@link IVisualPart}s for which selection feedback
+	 *            is created.
+	 * @param selectionBehavior
+	 *            The {@link SelectionBehavior} that initiated the feedback
+	 *            creation.
+	 * @param contextMap
+	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by this factory, or may be passed back by the factory to the
+	 *            calling {@link SelectionBehavior} to query such kind of
+	 *            information (in which case it will allow the
+	 *            {@link SelectionBehavior} to identify the creation context).
+	 * @return A list containing the created feedback parts.
+	 */
 	@SuppressWarnings("serial")
 	protected List<IFeedbackPart<Node, ? extends Node>> createSelectionFeedbackParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
@@ -245,4 +303,5 @@ public class FXDefaultFeedbackPartFactory
 
 		return feedbackParts;
 	}
+
 }

@@ -29,8 +29,18 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * The {@link FXTypeTool} is an {@link AbstractTool} that handles keyboard
+ * input.
+ *
+ * @author mwienand
+ *
+ */
 public class FXTypeTool extends AbstractTool<Node> {
 
+	/**
+	 * The type of the policy that has to be supported by target parts.
+	 */
 	// TODO: Rename to ON_TYPE_POLICY_KEY
 	public static final Class<AbstractFXOnTypePolicy> TOOL_POLICY_KEY = AbstractFXOnTypePolicy.class;
 
@@ -58,6 +68,16 @@ public class FXTypeTool extends AbstractTool<Node> {
 		}
 	};
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
+	 * are installed on the given target {@link IVisualPart}.
+	 *
+	 * @param targetPart
+	 *            The target {@link IVisualPart} of which the
+	 *            {@link AbstractFXOnTypePolicy}s are returned.
+	 * @return A {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
+	 *         are installed on the given target {@link IVisualPart}.
+	 */
 	// TODO: Rename to getOnTypePolicies()
 	protected Set<? extends AbstractFXOnTypePolicy> getKeyPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -66,6 +86,18 @@ public class FXTypeTool extends AbstractTool<Node> {
 						.values());
 	}
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
+	 * are installed on the target {@link IVisualPart} for the given
+	 * {@link KeyEvent}. The target {@link IVisualPart} is determined by using
+	 * {@link #getTargetPolicies(Scene)}.
+	 *
+	 * @param event
+	 *            The {@link KeyEvent} to transfer.
+	 * @return A {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
+	 *         are installed on the target {@link IVisualPart} for the given
+	 *         {@link KeyEvent}.
+	 */
 	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
 			KeyEvent event) {
 		EventTarget target = event.getTarget();
@@ -82,6 +114,22 @@ public class FXTypeTool extends AbstractTool<Node> {
 		}
 	}
 
+	/**
+	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
+	 * are installed on the target {@link IVisualPart} for the given
+	 * {@link Scene}. If an {@link IVisualPart} within the given {@link Scene}
+	 * has keyboard focus, that part is used as the target part. Otherwise, the
+	 * root part of the {@link IViewer} that is rendered in the given
+	 * {@link Scene} is used as the target part.
+	 *
+	 * @param scene
+	 *            The {@link Scene} for which to determine the
+	 *            {@link AbstractFXOnTypePolicy}s that are installed on the
+	 *            target {@link IVisualPart}.
+	 * @return A {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
+	 *         are installed on the target {@link IVisualPart} for the given
+	 *         {@link Scene}.
+	 */
 	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
 			Scene scene) {
 		IVisualPart<Node, ? extends Node> targetPart = null;

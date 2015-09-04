@@ -24,6 +24,15 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 
+/**
+ * The {@link FXRelocateConnectionPolicy} is an {@link FXTransformPolicy} that
+ * is adjusted for the relocation of an {@link FXConnection}. It uses an
+ * {@link FXBendOperation} to update the anchors of the {@link FXConnection}
+ * according to the applied translation.
+ *
+ * @author mwienand
+ *
+ */
 public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	private FXBendOperation op;

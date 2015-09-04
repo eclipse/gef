@@ -20,7 +20,17 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.scene.Node;
+import javafx.scene.Scene;
 
+/**
+ * The {@link FXPartUtils} class contains utility methods for the identification
+ * of possible event targets (
+ * {@link #getTargetPart(Collection, Node, Class, boolean)}) and the computation
+ * of collective bounds ({@link #getUnionedVisualBoundsInScene(Collection)}).
+ *
+ * @author anyssen
+ *
+ */
 public class FXPartUtils {
 
 	/**
@@ -37,6 +47,9 @@ public class FXPartUtils {
 	 *
 	 * When the <i>searchHierarchy</i> is set to <code>false</code> only the
 	 * first visual part is considered.
+	 *
+	 * @param <T>
+	 *            The type of the {@link IPolicy} that should be supported.
 	 *
 	 * @param viewers
 	 *            {@link Collection} of all {@link IViewer}s.
@@ -90,6 +103,16 @@ public class FXPartUtils {
 		return null;
 	}
 
+	/**
+	 * Returns the unioned visual bounds of the given {@link IVisualPart}s in
+	 * the coordinate system of the {@link Scene}.
+	 *
+	 * @param parts
+	 *            The {@link IVisualPart}s for which the unioned bounds are
+	 *            computed.
+	 * @return The unioned visual bounds of the given {@link IVisualPart}s in
+	 *         the coordinate system of the {@link Scene}.
+	 */
 	public static Rectangle getUnionedVisualBoundsInScene(
 			Collection<? extends IVisualPart<Node, ? extends Node>> parts) {
 		Rectangle bounds = null;

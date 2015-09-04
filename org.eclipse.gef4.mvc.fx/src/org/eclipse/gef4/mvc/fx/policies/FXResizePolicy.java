@@ -19,11 +19,20 @@ import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+/**
+ * The {@link FXResizePolicy} is a {@link ITransactional transactional}
+ * {@link AbstractPolicy policy} that handles the resize of an
+ * {@link IVisualPart}.
+ *
+ * @author mwienand
+ *
+ */
 public class FXResizePolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
@@ -33,7 +42,15 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 	 * <code>false</code> after {@link #commit()} was called, respectively.
 	 */
 	protected boolean initialized;
+	/**
+	 * The {@link FXResizeNodeOperation} that is used to resize the host's
+	 * visual.
+	 */
 	protected FXResizeNodeOperation resizeOperation;
+	/**
+	 * The {@link ForwardUndoCompositeOperation} that assembles the resize
+	 * operation and the reveal operation.
+	 */
 	protected ForwardUndoCompositeOperation resizeAndRevealOperation;
 
 	// can be overridden by subclasses to add an operation for model changes
@@ -54,19 +71,45 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 		return commit;
 	}
 
+	/**
+	 * Returns the current size of the passed-in {@link Node}, i.e. the width
+	 * and height of its layout-bounds.
+	 *
+	 * @param visualToResize
+	 *            The {@link Node} for which to return the current size.
+	 * @return The current size of the passed-in {@link Node}.
+	 */
 	protected Dimension getInitialSize(Node visualToResize) {
 		Bounds layoutBounds = visualToResize.getLayoutBounds();
 		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
 	}
 
+	/**
+	 * Returns the minimum height. The height of a {@link Node} cannot be
+	 * changed below this limit.
+	 *
+	 * @return The minimum height.
+	 */
 	protected double getMinimumHeight() {
 		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
 	}
 
+	/**
+	 * Returns the minimum width. The width of a {@link Node} cannot be changed
+	 * below this limit.
+	 *
+	 * @return The minimum width.
+	 */
 	protected double getMinimumWidth() {
 		return FXCircleSegmentHandlePart.DEFAULT_SIZE;
 	}
 
+	/**
+	 * Returns the {@link Node} that should be resized. Per default, this is the
+	 * {@link #getHost() host's} visual.
+	 *
+	 * @return The {@link Node} that should be resized.
+	 */
 	protected Node getVisualToResize() {
 		return getHost().getVisual();
 	}
@@ -89,6 +132,15 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 		initialized = true;
 	}
 
+	/**
+	 * Resizes the {@link #getVisualToResize() visual} by the given delta width
+	 * and delta height.
+	 *
+	 * @param dw
+	 *            The delta width.
+	 * @param dh
+	 *            The delta height.
+	 */
 	public void performResize(double dw, double dh) {
 		// ensure we have been properly initialized
 		if (!initialized) {
@@ -126,6 +178,15 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 		}
 	}
 
+	/**
+	 * Updates the resize operation to use the given delta width and delta
+	 * height.
+	 *
+	 * @param layoutDw
+	 *            The new delta width.
+	 * @param layoutDh
+	 *            The new delta height.
+	 */
 	protected void updateOperation(double layoutDw, double layoutDh) {
 		resizeOperation.setDw(layoutDw);
 		resizeOperation.setDh(layoutDh);

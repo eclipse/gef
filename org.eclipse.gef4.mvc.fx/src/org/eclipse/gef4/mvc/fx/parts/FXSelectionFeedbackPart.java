@@ -16,12 +16,6 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
 
-import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeType;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
@@ -36,8 +30,47 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
+
+/**
+ * The {@link FXSelectionFeedbackPart} is an {@link AbstractFXFeedbackPart} that
+ * is parameterized by <code>FXGeometryNode&lt;IGeometry&gt;</code>.
+ *
+ * @author mwienand
+ *
+ */
 public class FXSelectionFeedbackPart
 		extends AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
+
+	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
+
+	/**
+	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
+	 * used to decorate a primary, focused selection.
+	 */
+	public static final String PRIMARY_FOCUSED_EFFECT_PROVIDER = "PrimaryFocusedSelectionFeedbackEffectProvider";
+
+	/**
+	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
+	 * used to decorate a primary, unfocused selection.
+	 */
+	public static final String PRIMARY_UNFOCUSED_EFFECT_PROVIDER = "PrimaryUnfocusedSelectionFeedbackEffectProvider";
+
+	/**
+	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
+	 * used to decorate a secondary, focused selection.
+	 */
+	public static final String SECONDARY_FOCUSED_EFFECT_PROVIDER = "SecondaryFocusedSelectionFeedbackEffectProvider";
+
+	/**
+	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
+	 * used to decorate a secondary, unfocused selection.
+	 */
+	public static final String SECONDARY_UNFOCUSED_EFFECT_PROVIDER = "SecondaryUnfocusedSelectionFeedbackEffectProvider";
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
@@ -51,16 +84,11 @@ public class FXSelectionFeedbackPart
 			}
 		}
 	};
-
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
-	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
-
-	public static final String PRIMARY_FOCUSED_EFFECT_PROVIDER = "PrimaryFocusedSelectionFeedbackEffectProvider";
-	public static final String PRIMARY_UNFOCUSED_EFFECT_PROVIDER = "PrimaryUnfocusedSelectionFeedbackEffectProvider";
-	public static final String SECONDARY_FOCUSED_EFFECT_PROVIDER = "SecondaryFocusedSelectionFeedbackEffectProvider";
-	public static final String SECONDARY_UNFOCUSED_EFFECT_PROVIDER = "SecondaryUnfocusedSelectionFeedbackEffectProvider";
-
+	/**
+	 * Default constructor.
+	 */
 	public FXSelectionFeedbackPart() {
 	}
 
@@ -132,11 +160,31 @@ public class FXSelectionFeedbackPart
 		}
 	}
 
+	/**
+	 * Returns the {@link IGeometry} that is provided by this part's
+	 * {@link #setGeometryProvider(Provider) feedback geometry provider}.
+	 *
+	 * @return The {@link IGeometry} that is provided by this part's
+	 *         {@link #setGeometryProvider(Provider) feedback geometry provider}
+	 *         .
+	 */
 	protected IGeometry getFeedbackGeometry() {
 		return FXUtils.sceneToLocal(getVisual(),
 				feedbackGeometryProvider.get());
 	}
 
+	/**
+	 * Returns the {@link Effect} that is applied to a primary selection. When
+	 * an effect provider (either {@link #PRIMARY_FOCUSED_EFFECT_PROVIDER} or
+	 * {@link #PRIMARY_UNFOCUSED_EFFECT_PROVIDER}) is registered on this part's
+	 * anchorage, the provided {@link Effect} is returned. Otherwise, a
+	 * {@link DropShadow} is used.
+	 *
+	 * @param focused
+	 *            <code>true</code> if the selection is focused, otherwise
+	 *            <code>false</code>.
+	 * @return The {@link Effect} that is applied to a primary selection.
+	 */
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
 		Provider<? extends Effect> effectProvider = null;
 		if (!getAnchorages().isEmpty()) {
@@ -158,6 +206,18 @@ public class FXSelectionFeedbackPart
 		return effectProvider.get();
 	}
 
+	/**
+	 * Returns the {@link Effect} that is applied to a secondary selection. When
+	 * an effect provider (either {@link #SECONDARY_FOCUSED_EFFECT_PROVIDER} or
+	 * {@link #SECONDARY_UNFOCUSED_EFFECT_PROVIDER}) is registered on this
+	 * part's anchorage, the provided {@link Effect} is returned. Otherwise, a
+	 * {@link DropShadow} is used.
+	 *
+	 * @param focused
+	 *            <code>true</code> if the selection is focused, otherwise
+	 *            <code>false</code>.
+	 * @return The {@link Effect} that is applied to a primary selection.
+	 */
 	protected Effect getSecondarySelectionFeedbackEffect(boolean focused) {
 		Provider<? extends Effect> effectProvider = null;
 		if (!getAnchorages().isEmpty()) {
@@ -179,6 +239,13 @@ public class FXSelectionFeedbackPart
 		return effectProvider.get();
 	}
 
+	/**
+	 * Sets the feedback geometry provider (
+	 * <code>Provider&lt;IGeometry&gt;</code>) of this part to the given value.
+	 *
+	 * @param geometryProvider
+	 *            The new feedback geometry provider for this part.
+	 */
 	public void setGeometryProvider(
 			Provider<? extends IGeometry> geometryProvider) {
 		feedbackGeometryProvider = geometryProvider;

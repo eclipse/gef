@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
@@ -29,19 +29,40 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * The {@link AbstractFXColorPicker} is a control that can be used to select a
+ * color. It consists of an area that is filled with the currently selected
+ * color, as well as a color wheel next to it.
+ * <p>
+ * Subclasses have to implement the {@link #pickColor()} method that is used to
+ * change the selected color. The method is called when the color wheel is
+ * pressed.
+ *
+ * @author mwienand
+ *
+ */
 public abstract class AbstractFXColorPicker extends Group {
 
-	public static final Color DEFAULT_COLOR = Color.WHITE;
-
-	private SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(
-			DEFAULT_COLOR);
-
-	private SimpleObjectProperty<Color> borderColorProperty = new SimpleObjectProperty<Color>(
-			Color.GREY);
-	private SimpleObjectProperty<Color> backgroundColorProperty = new SimpleObjectProperty<Color>(
-			Color.LIGHTGREY);
-
+	/**
+	 * The {@link ColorWheel} provides a
+	 * {@link #render(WritableImage, int, int, int)} method to draw a color
+	 * wheel into a {@link WritableImage}.
+	 */
 	public static class ColorWheel {
+		/**
+		 * Draws a color wheel into the given {@link WritableImage}, starting at
+		 * the given offsets, in the given size (in pixel).
+		 *
+		 * @param image
+		 *            The {@link WritableImage} in which the color wheel is
+		 *            drawn.
+		 * @param offsetX
+		 *            The horizontal offset (in pixel).
+		 * @param offsetY
+		 *            The vertical offset (in pixel).
+		 * @param size
+		 *            The size (in pixel).
+		 */
 		public static void render(WritableImage image, int offsetX, int offsetY,
 				int size) {
 			PixelWriter px = image.getPixelWriter();
@@ -69,12 +90,29 @@ public abstract class AbstractFXColorPicker extends Group {
 		}
 	}
 
+	/**
+	 * The default color for a color picker.
+	 */
+	public static final Color DEFAULT_COLOR = Color.WHITE;
+
 	private static String toRgbString(Color color) {
 		return "rgb(" + (int) (255 * color.getRed()) + ","
 				+ (int) (255 * color.getGreen()) + ","
 				+ (int) (255 * color.getBlue()) + ")";
 	}
 
+	private SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(
+			DEFAULT_COLOR);
+
+	private SimpleObjectProperty<Color> borderColorProperty = new SimpleObjectProperty<Color>(
+			Color.GREY);
+
+	private SimpleObjectProperty<Color> backgroundColorProperty = new SimpleObjectProperty<Color>(
+			Color.LIGHTGREY);
+
+	/**
+	 * Constructs a new {@link AbstractFXColorPicker}. Builds the visualization.
+	 */
 	public AbstractFXColorPicker() {
 		// container
 		HBox hbox = new HBox();
@@ -138,26 +176,61 @@ public abstract class AbstractFXColorPicker extends Group {
 		});
 	}
 
-	public abstract Color pickColor();
-
-	public ObjectProperty<Color> colorProperty() {
-		return colorProperty;
+	/**
+	 * Returns the "background-color" property of this
+	 * {@link AbstractFXColorPicker}.
+	 *
+	 * @return The "background-color" property of this
+	 *         {@link AbstractFXColorPicker}.
+	 */
+	public ObjectProperty<Color> backgroundColorProperty() {
+		return backgroundColorProperty;
 	}
 
-	public Color getColor() {
-		return colorProperty.get();
-	}
-
-	public void setColor(Color color) {
-		colorProperty.set(color);
-	}
-
+	/**
+	 * Returns the "border-color" property of this {@link AbstractFXColorPicker}
+	 * .
+	 *
+	 * @return The "border-color" property of this {@link AbstractFXColorPicker}
+	 *         .
+	 */
 	public ObjectProperty<Color> borderColorProperty() {
 		return borderColorProperty;
 	}
 
-	public ObjectProperty<Color> backgroundColorProperty() {
-		return backgroundColorProperty;
+	/**
+	 * Returns the "color" property of this {@link AbstractFXColorPicker}.
+	 *
+	 * @return The "color" property of this {@link AbstractFXColorPicker}.
+	 */
+	public ObjectProperty<Color> colorProperty() {
+		return colorProperty;
+	}
+
+	/**
+	 * Returns the currently selected {@link Color}.
+	 *
+	 * @return The currently selected {@link Color}.
+	 */
+	public Color getColor() {
+		return colorProperty.get();
+	}
+
+	/**
+	 * Let's the user select a {@link Color} and returns that {@link Color}.
+	 *
+	 * @return The user selected {@link Color}.
+	 */
+	public abstract Color pickColor();
+
+	/**
+	 * Changes the currently selected color to the given value.
+	 *
+	 * @param color
+	 *            The newly selected {@link Color}.
+	 */
+	public void setColor(Color color) {
+		colorProperty.set(color);
 	}
 
 }

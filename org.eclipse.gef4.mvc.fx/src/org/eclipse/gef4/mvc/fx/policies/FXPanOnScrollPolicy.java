@@ -7,17 +7,26 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzillas #449129 & #468780
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
-
-import javafx.geometry.Bounds;
-import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 
+import javafx.geometry.Bounds;
+import javafx.scene.input.ScrollEvent;
+
+/**
+ * The {@link FXPanOnScrollPolicy} is an {@link AbstractFXOnScrollPolicy} that
+ * pans (i.e. moves/scrolls) the viewport upon scrolling the mouse wheel.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
 	private static final int SAME_SCROLL_MILLIS = 100;
@@ -28,6 +37,14 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	 * TODO: stoppedHorizontal, stoppedVertical (as context)
 	 */
 
+	/**
+	 * Applies the given translation to the viewport.
+	 *
+	 * @param dx
+	 *            The horizontal translation.
+	 * @param dy
+	 *            The vertical translation.
+	 */
 	protected void applyPanning(double dx, double dy) {
 		FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
 				.getAdapter(FXChangeViewportPolicy.class);
@@ -36,6 +53,16 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		commit(viewportPolicy);
 	}
 
+	/**
+	 * Computes the translation for the given {@link ScrollEvent}. The
+	 * horizontal and vertical translation is inverted when
+	 * {@link #isSwapDirection(ScrollEvent)} returns <code>true</code>.
+	 *
+	 * @param event
+	 *            The original {@link ScrollEvent}.
+	 * @return A {@link Dimension} storing the horizontal and vertical
+	 *         translation.
+	 */
 	protected Dimension computeDelta(ScrollEvent event) {
 		double dx = event.getDeltaX();
 		double dy = event.getDeltaY();
@@ -47,6 +74,15 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		return new Dimension(dx, dy);
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link ScrollEvent} should trigger
+	 * panning. Otherwise returns <code>false</code>.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link ScrollEvent}
+	 *         should trigger panning, otherwise <code>false</code>.
+	 */
 	protected boolean isSuitable(ScrollEvent event) {
 		// Do not scroll when a modifier key (<Alt>, <Control>, <Meta>) is
 		// pressed.
@@ -54,6 +90,15 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 				|| event.isMetaDown());
 	}
 
+	/**
+	 * Returns <code>true</code> if the pan direction should be inverted for the
+	 * given {@link ScrollEvent}. Otherwise returns <code>false</code>.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} in question.
+	 * @return <code>true</code> if the pan direction should be inverted,
+	 *         otherwise <code>false</code>.
+	 */
 	protected boolean isSwapDirection(ScrollEvent event) {
 		// Swap horizontal/vertical when the <Shift> key is pressed.
 		return event.isShiftDown();

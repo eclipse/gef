@@ -15,12 +15,31 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 
 import javafx.scene.input.ScrollEvent;
 
+/**
+ * The {@link FXZoomOnScrollPolicy} is an {@link AbstractFXOnScrollPolicy} that
+ * scales the viewport when the user scroll with the mouse wheel while pressing
+ * either <code>&lt;Control&gt;</code> or <code>&lt;Alt&gt;</code>.
+ *
+ * @author mwienand
+ *
+ */
 public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
 	private FXChangeViewportPolicy getViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link ScrollEvent} should trigger
+	 * zooming. Otherwise returns <code>false</code>. Per default, either
+	 * <code>&lt;Control&gt;</code> or <code>&lt;Alt&gt;</code> has to be
+	 * pressed so that <code>true</code> is returned.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} in question.
+	 * @return <code>true</code> if the given {@link ScrollEvent} should trigger
+	 *         zooming, otherwise <code>false</code>.
+	 */
 	protected boolean isZoom(ScrollEvent event) {
 		return event.isControlDown() || event.isAltDown();
 	}
@@ -33,6 +52,17 @@ public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		}
 	}
 
+	/**
+	 * Scales the viewport by the given <i>relativeZoom</i> factor around the
+	 * given pivot point in scene coordinates.
+	 *
+	 * @param relativeZoom
+	 *            The scale factor.
+	 * @param sceneX
+	 *            The pivot x-coordinate.
+	 * @param sceneY
+	 *            The pivot y-coordinate.
+	 */
 	public void zoomRelative(double relativeZoom, double sceneX,
 			double sceneY) {
 		FXChangeViewportPolicy viewportPolicy = getViewportPolicy();

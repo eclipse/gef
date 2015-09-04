@@ -19,14 +19,24 @@ import javafx.scene.shape.StrokeType;
  * {@link javafx.scene.shape.Rectangle} visual.
  *
  * @author mwienand
- * @author anyssen
  *
  */
 public class FXRectangleSegmentHandlePart
 		extends AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
 
+	/**
+	 * The default size for this part's visualization.
+	 */
 	public static final double DEFAULT_SIZE = 5;
+
+	/**
+	 * The default stroke color for this part's visualization.
+	 */
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
+
+	/**
+	 * The default fill color for this part's visualization.
+	 */
 	public static final Color DEFAULT_FILL = Color.web("#d5faff");
 
 	@Override
