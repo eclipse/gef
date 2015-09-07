@@ -6,9 +6,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Ian Bull (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -18,19 +18,41 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
+/**
+ * The {@link AlgorithmHelper} class contains utility methods for the laying out
+ * of entities within bounds.
+ * 
+ * @author Ian Bull
+ * @author Mateusz Matela
+ * @author mwienand
+ */
 public class AlgorithmHelper {
 
+	/**
+	 * The minimum size of a node.
+	 */
 	public static int MIN_NODE_SIZE = 8;
 
+	/**
+	 * This percent of a node's maximum size is reserved for the node, the rest
+	 * is used as padding, i.e.
+	 * <code>node_size = max_size * PADDING_PERCENT</code>.
+	 */
 	public static double PADDING_PERCENT = 0.8;
 
 	/**
 	 * Fits given entities within given bounds, preserving their relative
-	 * locations.
+	 * locations. If an entity is resizable and the <i>resize</i> flag is set to
+	 * <code>true</code>, then the entity will be scaled according to the bounds
+	 * change, i.e. <code>scale_factor = dst_bounds / start_bounds</code>.
 	 * 
 	 * @param entities
+	 *            The {@link IEntityLayout}s to fit.
 	 * @param destinationBounds
+	 *            The {@link Rectangle} representing the layout bounds.
 	 * @param resize
+	 *            <code>true</code> to indicate that the entities can be
+	 *            resized, otherwise <code>false</code>.
 	 */
 	public static void fitWithinBounds(IEntityLayout[] entities,
 			Rectangle destinationBounds, boolean resize) {
@@ -102,6 +124,7 @@ public class AlgorithmHelper {
 	 * height, if bigger). It does nothing if there's less than two nodes.
 	 * 
 	 * @param entities
+	 *            The {@link IEntityLayout}s of which the sizes are maximized.
 	 */
 	public static void maximizeSizes(IEntityLayout[] entities) {
 		if (entities.length > 1) {
@@ -154,6 +177,15 @@ public class AlgorithmHelper {
 	 * within the real bounds. The bounds can be determined either including the
 	 * size of the nodes or not. If the size is not included, the bounds will
 	 * only be guaranteed to include the center of each node.
+	 * 
+	 * @param entities
+	 *            The {@link IEntityLayout}s for which the layout bounds are
+	 *            computed.
+	 * @param includeNodeSize
+	 *            <code>true</code> to indicate that the entities' sizes should
+	 *            be taken into consideration, otherwise <code>false</code>.
+	 * @return A {@link Rectangle} representing the layout bounds of the given
+	 *         {@link IEntityLayout}s.
 	 */
 	public static Rectangle getLayoutBounds(IEntityLayout[] entities,
 			boolean includeNodeSize) {
@@ -203,7 +235,11 @@ public class AlgorithmHelper {
 	 *         |_______|
 	 * </pre>
 	 * 
-	 * 
+	 * @param entities
+	 *            The {@link IEntityLayout}s for which the minimum distance is
+	 *            computed.
+	 * @return A {@link Dimension} representing the minimum distance (in x- and
+	 *         y-direction).
 	 */
 	public static Dimension getMinimumDistance(IEntityLayout[] entities) {
 		Dimension horAndVertdistance = new Dimension(Double.MAX_VALUE,

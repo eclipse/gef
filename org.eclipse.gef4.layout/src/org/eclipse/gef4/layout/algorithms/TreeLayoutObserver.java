@@ -6,9 +6,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Ian Bull (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
+ *               
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -33,6 +34,10 @@ import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
  * keeps track of changes in observed layout context and stores current
  * information about the tree structure - children of each node and several
  * other parameters.
+ * 
+ * @author Ian Bull
+ * @author Mateusz Matela
+ * @author mwienand
  */
 public class TreeLayoutObserver {
 
@@ -43,6 +48,17 @@ public class TreeLayoutObserver {
 	 * structure made of <code>TreeNode</code>'s subclasses.
 	 */
 	public static class TreeNodeFactory {
+		/**
+		 * Creates a new {@link TreeNode} for the given {@link INodeLayout} and
+		 * {@link TreeLayoutObserver}.
+		 * 
+		 * @param nodeLayout
+		 *            The {@link INodeLayout} that is wrapped.
+		 * @param observer
+		 *            The {@link TreeLayoutObserver} that initiated the
+		 *            creation.
+		 * @return The new {@link TreeNode}.
+		 */
 		public TreeNode createTreeNode(INodeLayout nodeLayout,
 				TreeLayoutObserver observer) {
 			return new TreeNode(nodeLayout, observer);
@@ -54,16 +70,52 @@ public class TreeLayoutObserver {
 	 * to it. May be subclassed if additional data and behavior is necessary.
 	 */
 	public static class TreeNode {
+		/**
+		 * The wrapped {@link INodeLayout}.
+		 */
 		final protected INodeLayout node;
+		/**
+		 * The {@link TreeLayoutObserver} that controls this {@link TreeNode}.
+		 */
 		final protected TreeLayoutObserver owner;
+		/**
+		 * The height of the node.
+		 */
 		protected int height = 0;
+		/**
+		 * The depth of the node.
+		 */
 		protected int depth = -1;
+		/**
+		 * The number of leaves.
+		 */
 		protected int numOfLeaves = 0;
+		/**
+		 * The number of descendants.
+		 */
 		protected int numOfDescendants = 0;
+		/**
+		 * The order of this node.
+		 */
 		protected int order = 0;
+		/**
+		 * The children of this node.
+		 */
 		protected final List<TreeNode> children = new ArrayList<TreeNode>();
+		/**
+		 * The parent of this node.
+		 */
 		protected TreeNode parent;
-		protected boolean firstChild = false, lastChild = false;
+		/**
+		 * <code>true</code> if this node is the first child, otherwise
+		 * <code>false</code>.
+		 */
+		protected boolean firstChild = false;
+		/**
+		 * <code>true</code> if this node is the last child, otherwise
+		 * <code>false</code>.
+		 */
+		protected boolean lastChild = false;
 
 		/**
 		 * 
@@ -275,8 +327,8 @@ public class TreeLayoutObserver {
 		}
 
 		/**
-		 * 
 		 * @param descendant
+		 *            The {@link TreeNode} in question.
 		 * @return true if this node is an ancestor if given descendant node
 		 */
 		public boolean isAncestorOf(TreeNode descendant) {
@@ -427,10 +479,15 @@ public class TreeLayoutObserver {
 	private ArrayList<TreeListener> treeListeners = new ArrayList<TreeListener>();
 
 	/**
-	 * Creates a
+	 * Constructs a new {@link TreeLayoutObserver} for observing the given
+	 * {@link ILayoutContext}. The given {@link TreeNodeFactory} will be used
+	 * for the construction of {@link TreeNode}s. If no factory is supplied, the
+	 * {@link TreeNodeFactory} will be used.
 	 * 
 	 * @param context
+	 *            The {@link ILayoutContext} that is observed.
 	 * @param nodeFactory
+	 *            The {@link TreeNodeFactory} to use.
 	 */
 	public TreeLayoutObserver(ILayoutContext context,
 			TreeNodeFactory nodeFactory) {
@@ -477,6 +534,8 @@ public class TreeLayoutObserver {
 	 * <code>TreeNode</code> doesn't exist, it's created.
 	 * 
 	 * @param node
+	 *            The {@link INodeLayout} for which to return the corresponding
+	 *            {@link TreeNode}.
 	 * @return The already existing {@link TreeNode} related to the given
 	 *         {@link INodeLayout} or a newly created one in case there was no
 	 *         related {@link TreeNode} before.

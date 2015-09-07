@@ -6,38 +6,85 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Casey Best, Ian Bull, Rob Lintern (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IEntityLayout;
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
- * @version 2.0
+ * The {@link GridLayoutAlgorithm} lays out nodes in a grid.
+ * 
+ * @author Casey Best
  * @author Ian Bull
- * @author Casey Best and Rob Lintern
+ * @author Rob Lintern
+ * @author Mateusz Matela
+ * @author mwienand
  */
 public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private static final double PADDING_PERCENTAGE = 0.95;
 	private static final int MIN_ENTITY_SIZE = 5;
 
+	/**
+	 * The width/height ratio.
+	 */
 	protected double aspectRatio = 1.0;
+
+	/**
+	 * The padding around rows.
+	 */
 	protected int rowPadding = 0;
 	private boolean resize = false;
-	protected int rows, cols, numChildren;
-	protected double colWidth, rowHeight, offsetX, offsetY;
-	protected double childrenHeight, childrenWidth;
+	/**
+	 * The number of rows.
+	 */
+	protected int rows;
+	/**
+	 * The number of columns.
+	 */
+	protected int cols;
+	/**
+	 * The number of nodes.
+	 */
+	protected int numChildren;
+	/**
+	 * The column width.
+	 */
+	protected double colWidth;
+	/**
+	 * The row height.
+	 */
+	protected double rowHeight;
+	/**
+	 * The horizontal offset.
+	 */
+	protected double offsetX;
+	/**
+	 * The vertical offset.
+	 */
+	protected double offsetY;
+	/**
+	 * The height of a single node.
+	 */
+	protected double childrenHeight;
+	/**
+	 * The width of a single node.
+	 */
+	protected double childrenWidth;
 
 	private ILayoutContext context;
 
+	/**
+	 * Default constructor.
+	 */
 	public GridLayoutAlgorithm() {
 	}
 
@@ -60,6 +107,7 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	 * {@link #offsetX}, {@link #offsetY}
 	 * 
 	 * @param bounds
+	 *            A {@link Rectangle} representing the layout bounds.
 	 */
 	protected void calculateGrid(Rectangle bounds) {
 		numChildren = context.getNodes().length;
@@ -115,8 +163,26 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Calculates and returns an array containing the number of columns,
-	 * followed by the number of rows
+	 * Calculates and returns an array containing the number of columns and the
+	 * number of rows. If the {@link #aspectRatio} is set to <code>1</code>,
+	 * then the
+	 * {@link #calculateNumberOfRowsAndCols_square(int, double, double, double, double)}
+	 * method is used for the computation. Otherwise, the
+	 * {@link #calculateNumberOfRowsAndCols_rectangular(int)} is used for the
+	 * computation.
+	 * 
+	 * @param numChildren
+	 *            The number of nodes.
+	 * @param boundX
+	 *            The horizontal offset.
+	 * @param boundY
+	 *            The vertical offset.
+	 * @param boundWidth
+	 *            The bounds' width.
+	 * @param boundHeight
+	 *            The bounds' height.
+	 * @return An array containing the number of columns, and the number of
+	 *         rows.
 	 */
 	protected int[] calculateNumberOfRowsAndCols(int numChildren, double boundX,
 			double boundY, double boundWidth, double boundHeight) {
@@ -128,6 +194,22 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
+	/**
+	 * Calculates and returns an array containing the number of columns and the
+	 * number of rows, so that the nodes are layed out in squares.
+	 * 
+	 * @param numChildren
+	 *            The number of nodes.
+	 * @param boundX
+	 *            The horizontal offset.
+	 * @param boundY
+	 *            The vertical offset.
+	 * @param boundWidth
+	 *            The bounds' width.
+	 * @param boundHeight
+	 *            The bounds' height.
+	 * @return An array containing the number of columns and the number of rows.
+	 */
 	protected int[] calculateNumberOfRowsAndCols_square(int numChildren,
 			double boundX, double boundY, double boundWidth,
 			double boundHeight) {
@@ -174,6 +256,14 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 		return result;
 	}
 
+	/**
+	 * Calculates and returns an array containing the number of columns and the
+	 * number of rows, so that there is an equal number of rows and columns.
+	 * 
+	 * @param numChildren
+	 *            The number of nodes.
+	 * @return An array containing the number of columns and the number of rows.
+	 */
 	protected int[] calculateNumberOfRowsAndCols_rectangular(int numChildren) {
 		int rows = Math.max(1, (int) Math.ceil(Math.sqrt(numChildren)));
 		int cols = Math.max(1, (int) Math.ceil(Math.sqrt(numChildren)));
@@ -181,6 +271,17 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 		return result;
 	}
 
+	/**
+	 * Calculates and returns the width and height of a single node depending on
+	 * the padding (20%), <i>colWidth</i>, <i>rowHeight</i>, and
+	 * {@link #aspectRatio}.
+	 * 
+	 * @param colWidth
+	 *            The width of a column.
+	 * @param rowHeight
+	 *            The height of a row.
+	 * @return An array containing the width and height of a node.
+	 */
 	protected double[] calculateNodeSize(double colWidth, double rowHeight) {
 		double childW = Math.max(MIN_ENTITY_SIZE,
 				PADDING_PERCENTAGE * colWidth);

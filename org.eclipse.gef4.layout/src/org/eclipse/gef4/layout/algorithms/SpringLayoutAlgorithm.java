@@ -6,9 +6,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Jingwei Wu, Rob Lintern, Casey Best, Ian Bull (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
+ * 
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -31,9 +32,12 @@ import org.eclipse.gef4.layout.listeners.ILayoutListener;
  * repository. A user can populate the repository, specify the layout
  * conditions, do the computation and query the computed results.
  * 
- * @version 2.0
+ * @author Jingwei Wu
+ * @author Rob Lintern
+ * @author Casey Best
  * @author Ian Bull
- * @author Casey Best (version 1.0 by Jingwei Wu/Rob Lintern)
+ * @author Mateusz Matela
+ * @author mwienand
  */
 public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
@@ -143,10 +147,18 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private double boundsScaleX = 0.2;
 	private double boundsScaleY = 0.2;
 
+	/**
+	 * 
+	 */
 	public boolean fitWithinBounds = true;
 
 	private ILayoutContext context;
 
+	/**
+	 * The {@link SpringLayoutListener} is an implementation of
+	 * {@link ILayoutListener} that updates the locations of nodes when they are
+	 * moved.
+	 */
 	class SpringLayoutListener implements ILayoutListener {
 
 		public boolean nodeMoved(ILayoutContext context, INodeLayout node) {
@@ -211,6 +223,12 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		return context;
 	}
 
+	/**
+	 * Performs the given number of iterations.
+	 * 
+	 * @param n
+	 *            The number of iterations to perform.
+	 */
 	public void performNIteration(int n) {
 		if (iteration == 0) {
 			entities = context.getEntities();
@@ -225,6 +243,9 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		context.flushChanges(false);
 	}
 
+	/**
+	 * Performs one single iteration.
+	 */
 	public void performOneIteration() {
 		if (iteration == 0) {
 			entities = context.getEntities();
@@ -315,17 +336,18 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Sets the spring timeout
+	 * Sets the spring timeout to the given value (in millis).
 	 * 
 	 * @param timeout
+	 *            The new spring timeout (in millis).
 	 */
 	public void setSpringTimeout(long timeout) {
 		maxTimeMS = timeout;
 	}
 
 	/**
-	 * Returns the length-control value of this SpringLayoutAlgorithm in double
-	 * presion.
+	 * Returns the length-control value of this {@link SpringLayoutAlgorithm} in
+	 * double precision.
 	 * 
 	 * @return The length-control value.
 	 */
@@ -345,7 +367,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * Returns the gravitation-control value of this SpringLayoutAlgorithm in
-	 * double presion.
+	 * double precision.
 	 * 
 	 * @return The gravitation-control value.
 	 */
@@ -384,8 +406,11 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Returns whether or not this SpringLayoutAlgorithm will layout the nodes
-	 * randomly before beginning iterations.
+	 * Returns whether or not this {@link SpringLayoutAlgorithm} will layout the
+	 * nodes randomly before beginning iterations.
+	 * 
+	 * @return <code>true</code> if this algorithm will layout the nodes
+	 *         randomly before iterating, otherwise <code>false</code>.
 	 */
 	public boolean getRandom() {
 		return sprRandom;
@@ -483,19 +508,39 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	}
 
+	/**
+	 * Performs one iteration based on time.
+	 * 
+	 * @return <code>true</code> if the maximum number of iterations was not
+	 *         reached yet, otherwise <code>false</code>.
+	 */
 	protected boolean performAnotherNonContinuousIteration() {
 		setSprIterationsBasedOnTime();
 		return (iteration <= sprIterations);
 	}
 
+	/**
+	 * Returns the current iteration.
+	 * 
+	 * @return The current iteration.
+	 */
 	protected int getCurrentLayoutStep() {
 		return iteration;
 	}
 
+	/**
+	 * Returns the maximum number of iterations.
+	 * 
+	 * @return The maximum number of iterations.
+	 */
 	protected int getTotalNumberOfLayoutSteps() {
 		return sprIterations;
 	}
 
+	/**
+	 * Computes one iteration (forces, positions) and increases the iteration
+	 * counter.
+	 */
 	protected void computeOneIteration() {
 		computeForces();
 		computePositions();

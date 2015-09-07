@@ -6,9 +6,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Casey Best, Ian Bull, Rob Lintern (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -24,7 +24,10 @@ import org.eclipse.gef4.layout.LayoutProperties;
  * then display the tree in a circular fashion with the roots in the center.
  * 
  * @author Casey Best
+ * @author Ian Bull
  * @author Rob Lintern
+ * @author Mateusz Matela
+ * @author mwienand
  */
 public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 
@@ -37,6 +40,9 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private TreeLayoutAlgorithm treeLayout = new TreeLayoutAlgorithm();
 
+	/**
+	 * Default constructor.
+	 */
 	public RadialLayoutAlgorithm() {
 	}
 
@@ -87,8 +93,13 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Set the range the radial layout will use when applyLayout is called. Both
-	 * values must be in radians.
+	 * Set the range the radial layout will use when
+	 * {@link #applyLayout(boolean)} is called. Both values must be in radians.
+	 * 
+	 * @param startDegree
+	 *            The start angle for this algorithm (in degree).
+	 * @param endDegree
+	 *            The end angle for this algorithm (in degree).
 	 */
 	public void setRangeToLayout(double startDegree, double endDegree) {
 		this.startDegree = startDegree;

@@ -6,9 +6,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Ian Bull (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -21,14 +21,16 @@ import java.util.List;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IEntityLayout;
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
  * This layout shifts overlapping nodes to the right.
  * 
  * @author Ian Bull
+ * @author Mateusz Matela
+ * @author mwienand
  */
 public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 

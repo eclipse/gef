@@ -6,10 +6,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Casey Best, Ian Bull, Rob Lintern, Jingwei Wu (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
  *               Miles Parker - optional node space configuration
+ *               Matthias Wienand (itemis AG) - refactorings
+ *               
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -27,10 +28,13 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
  * The TreeLayoutAlgorithm class implements a simple algorithm to arrange graph
  * nodes in a layered tree-like layout.
  * 
- * @version 3.0
+ * @author Casey Best
+ * @author Ian Bull
+ * @author Rob Lintern
+ * @author Jingwei Wu
  * @author Mateusz Matela
- * @author Casey Best and Rob Lintern (version 2.0)
- * @author Jingwei Wu (version 1.0)
+ * @author Miles Parker
+ * @author mwienand
  */
 public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
@@ -118,10 +122,23 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		this.nodeSpace = nodeSpace;
 	}
 
+	/**
+	 * Returns the direction of this {@link TreeLayoutAlgorithm}.
+	 * 
+	 * @return The direction of this {@link TreeLayoutAlgorithm}.
+	 */
 	public int getDirection() {
 		return direction;
 	}
 
+	/**
+	 * Changes the direction of this {@link TreeLayoutAlgorithm} to the given
+	 * value. The direction may either be {@link #TOP_DOWN}, {@link #BOTTOM_UP},
+	 * {@link #LEFT_RIGHT}, or {@link #RIGHT_LEFT}.
+	 * 
+	 * @param direction
+	 *            The new direction for this {@link TreeLayoutAlgorithm}.
+	 */
 	public void setDirection(int direction) {
 		if (direction == TOP_DOWN || direction == BOTTOM_UP
 				|| direction == LEFT_RIGHT || direction == RIGHT_LEFT)
@@ -188,6 +205,10 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
+	/**
+	 * Performs a layout pass for the tree without scaling the entities to
+	 * maximum size / use the whole bounds.
+	 */
 	void internalApplyLayout() {
 		TreeNode superRoot = treeObserver.getSuperRoot();
 		bounds = LayoutProperties.getBounds(context);

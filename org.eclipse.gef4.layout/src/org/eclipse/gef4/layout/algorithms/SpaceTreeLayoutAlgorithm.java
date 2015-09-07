@@ -6,9 +6,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group - initial API and implementation
- *               Mateusz Matela 
- *               Ian Bull
+ * Contributors: Ian Bull (The Chisel Group) - initial API and implementation
+ *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
+ *               Matthias Wienand (itemis AG) - refactorings
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
@@ -24,10 +24,10 @@ import java.util.ListIterator;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 import org.eclipse.gef4.layout.listeners.IContextListener;
@@ -41,6 +41,10 @@ import org.eclipse.gef4.layout.listeners.ILayoutListener;
  * to keep the tree structure clearly visible, it also keeps track of the nodes'
  * positions to makes sure they stay in their current layer and don't overlap
  * with each other.
+ * 
+ * @author Ian Bull
+ * @author Mateusz Matela
+ * @author mwienand
  */
 public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
@@ -221,9 +225,10 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 		/**
 		 * Moves the node back to its layer, as close as possible to given
-		 * preferred location
+		 * preferred location.
 		 * 
 		 * @param preferredLocation
+		 *            The location to which the node should be moved.
 		 */
 		public void adjustPosition(Point preferredLocation) { // !
 			protectedNode = (SpaceTreeNode) owner.getSuperRoot();
@@ -304,6 +309,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		 * it tries to fix them.
 		 * 
 		 * @param nodesToCheck
+		 *            An {@link ArrayList} of the {@link TreeNode}s that are
+		 *            checked for proper positions.
 		 * @return true if all locations are correct or could be corrected while
 		 *         checking.
 		 */
@@ -1180,7 +1187,11 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	private double layerGap = 20;
 
 	/**
-	 * Sets the distance between leaf nodes. Default value is 15.
+	 * Sets the distance between leaf nodes to the given value. Default value is
+	 * 15.
+	 * 
+	 * @param value
+	 *            The new distance between leaf nodes.
 	 * 
 	 */
 	public void setLeafGap(double value) {
@@ -1188,7 +1199,11 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Sets the distance between branches. Default value is 20.
+	 * Sets the distance between branches to the given value. Default value is
+	 * 20.
+	 * 
+	 * @param value
+	 *            The new distance between branches.
 	 * 
 	 */
 	public void setBranchGap(double value) {
@@ -1196,21 +1211,39 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Sets the distance between layers. Default value is 20.
+	 * Sets the distance between layers to the given value. Default value is 20.
+	 * 
+	 * @param value
+	 *            The new distance between layers.
 	 * 
 	 */
 	public void setLayerGap(double value) {
 		this.layerGap = value;
 	}
 
+	/**
+	 * Returns the distance between leaf nodes. Default value is 15.
+	 * 
+	 * @return The distance between leaf nodes.
+	 */
 	public double getLeafGap() {
 		return this.leafGap;
 	}
 
+	/**
+	 * Returns the distance between branches. Default value is 20.
+	 * 
+	 * @return The distance between branches.
+	 */
 	public double getBranchGap() {
 		return this.branchGap;
 	}
 
+	/**
+	 * Returns the distance between layers. Default value is 20.
+	 * 
+	 * @return The distance between layers.
+	 */
 	public double getLayerGap() {
 		return this.layerGap;
 	}
@@ -1360,6 +1393,14 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		throw new RuntimeException();
 	}
 
+	/**
+	 * Called in response to layout context changes. Dynamically refreshes the
+	 * layout to accommodate the changes.
+	 * 
+	 * @param animation
+	 *            <code>true</code> to indicate that layout changes are
+	 *            animated, otherwise <code>false</code>.
+	 */
 	protected void refreshLayout(boolean animation) {
 		if (!LayoutProperties.isDynamicLayoutEnables(context))
 			return;

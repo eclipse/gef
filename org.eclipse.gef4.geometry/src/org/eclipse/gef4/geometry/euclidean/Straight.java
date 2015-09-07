@@ -31,6 +31,8 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  */
 public class Straight implements Cloneable, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * <p>
 	 * Computes the counter-clockwise (CCW) signed distance of the third
@@ -64,8 +66,6 @@ public class Straight implements Cloneable, Serializable {
 		}
 		return -line.getSignedDistanceCW(new Vector3D(r));
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	/** The position {@link Vector} of this {@link Straight}. */
 	public Vector position;
@@ -483,7 +483,6 @@ public class Straight implements Cloneable, Serializable {
 	 * @return <code>true</code> if the two {@link Straight}s intersect and the
 	 *         intersection {@link Point} is contained within the specified
 	 *         segment, otherwise <code>false</code>
-	 * @since 3.2
 	 */
 	public boolean intersectsWithinSegment(Vector segmentStart,
 			Vector segmentEnd, Straight other) {

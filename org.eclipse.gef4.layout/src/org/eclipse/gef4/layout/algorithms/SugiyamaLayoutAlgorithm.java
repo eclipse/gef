@@ -12,6 +12,7 @@
  *          associated to bugzilla entry #384730  
  *    Adam Kovacs - implements the new LayerProvider and 
  *    		CrossingReducer interfaces
+ *    Matthias Wienand (itemis AG) - refactorings
  *    
  *******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
@@ -31,9 +32,9 @@ import java.util.Set;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -53,12 +54,24 @@ import org.eclipse.gef4.layout.LayoutProperties;
  * 
  * @author Rene Kuhlemann
  * @author Adam Kovacs
+ * @author mwienand
  */
 public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 
+	/**
+	 * Specifies the direction for the {@link SugiyamaLayoutAlgorithm}.
+	 */
 	public enum Direction {
-		HORIZONTAL, VERTICAL
-	};
+		/**
+		 * Horizontal direction, i.e. left to right.
+		 */
+		HORIZONTAL,
+
+		/**
+		 * Vertical direction, i.e. top to bottom.
+		 */
+		VERTICAL
+	}
 
 	/**
 	 * 
@@ -613,49 +626,123 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Structure to store nodes and there positions in the layers. Furthermore
+	 * Structure to store nodes and their positions in the layers. Furthermore
 	 * predecessors and successors can be assigned to the nodes.
 	 * 
 	 * @author Adam Kovacs
-	 * 
 	 */
 	public static class NodeWrapper {
+		/**
+		 * The index of this {@link NodeWrapper} (used to find crossings).
+		 */
 		int index;
+		/**
+		 * The layer this {@link NodeWrapper} is in (used to find crossings).
+		 */
 		final int layer;
+		/**
+		 * The wrapped {@link INodeLayout}.
+		 */
 		final INodeLayout node;
+		/**
+		 * A {@link List} containing the predecessors of this
+		 * {@link NodeWrapper}.
+		 */
 		final List<NodeWrapper> pred = new LinkedList<NodeWrapper>();
+		/**
+		 * A {@link List} containing the successors of this {@link NodeWrapper}.
+		 */
 		final List<NodeWrapper> succ = new LinkedList<NodeWrapper>();
+
 		private static final int PADDING = -1;
 
+		/**
+		 * Constructs a new {@link NodeWrapper} to wrap the given
+		 * {@link INodeLayout}.
+		 * 
+		 * @param n
+		 *            The {@link INodeLayout} that is wrapped.
+		 * @param l
+		 *            The layer this {@link NodeWrapper} is on.
+		 */
 		NodeWrapper(INodeLayout n, int l) {
 			node = n;
 			layer = l;
 		} // NodeLayout wrapper
 
+		/**
+		 * Constructs a new dummy {@link NodeWrapper} on the specified layer.
+		 * Dummy nodes are used to make the hierarchy proper, i.e. it does only
+		 * have edges between two consecutive layers.
+		 * 
+		 * @param l
+		 *            The layer this {@link NodeWrapper} is on.
+		 */
 		NodeWrapper(int l) {
 			this(null, l);
 		} // Dummy to connect two NodeLayout objects
 
+		/**
+		 * Constructs a new padding {@link NodeWrapper} (layer -1).
+		 */
 		NodeWrapper() {
 			this(null, PADDING);
 		} // Padding for final refinement phase
 
+		/**
+		 * Adds the given {@link NodeWrapper} to the list of predecessors that
+		 * is managed by this {@link NodeWrapper}.
+		 * 
+		 * @param node
+		 *            The {@link NodeWrapper} that is added to the list of
+		 *            predecessors.
+		 */
 		void addPredecessor(NodeWrapper node) {
 			pred.add(node);
 		}
 
+		/**
+		 * Adds the given {@link NodeWrapper} to the list of successors that is
+		 * managed by this {@link NodeWrapper}.
+		 * 
+		 * @param node
+		 *            The {@link NodeWrapper} that is added to the list of
+		 *            successors.
+		 */
 		void addSuccessor(NodeWrapper node) {
 			succ.add(node);
 		}
 
+		/**
+		 * Returns <code>true</code> if this {@link NodeWrapper} is a dummy.
+		 * Otherwise returns <code>false</code>.
+		 * 
+		 * @return <code>true</code> if this {@link NodeWrapper} is a dummy,
+		 *         otherwise <code>false</code>.
+		 */
 		boolean isDummy() {
 			return ((node == null) && (layer != PADDING));
 		}
 
+		/**
+		 * Returns <code>true</code> if this {@link NodeWrapper} is a padding
+		 * node. Otherwise returns <code>false</code>.
+		 * 
+		 * @return <code>true</code> if this {@link NodeWrapper} is a padding
+		 *         node, otherwise <code>false</code>.
+		 */
 		boolean isPadding() {
 			return ((node == null) && (layer == PADDING));
 		}
 
+		/**
+		 * Computes the barycenter of the given list of {@link NodeWrapper}s.
+		 * 
+		 * @param list
+		 *            The list of {@link NodeWrapper}s for which to compute the
+		 *            barycenter.
+		 * @return The barycenter of the given {@link NodeWrapper}s.
+		 */
 		int getBaryCenter(List<NodeWrapper> list) {
 			if (list.isEmpty())
 				return (this.index);
@@ -669,6 +756,17 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 														// position refining!!!
 		}
 
+		/**
+		 * Returns the down priority for this {@link NodeWrapper}:
+		 * <ol>
+		 * <li>Padding nodes: <code>0</code>
+		 * <li>Dummy nodes: <code>Integer.MAX_VALUE >> 1</code>
+		 * <li>Dummy nodes with dummy successor: <code>Integer.MAX_VALUE</code>
+		 * <li>Otherwise: Number of predecessors.
+		 * </ol>
+		 * 
+		 * @return The down priority for this {@link NodeWrapper}.
+		 */
 		int getPriorityDown() {
 			if (isPadding())
 				return (0);
@@ -684,6 +782,18 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			return (pred.size());
 		}
 
+		/**
+		 * Returns the up priority for this {@link NodeWrapper}:
+		 * <ol>
+		 * <li>Padding nodes: <code>0</code>
+		 * <li>Dummy nodes: <code>Integer.MAX_VALUE >> 1</code>
+		 * <li>Dummy nodes with dummy predecessor:
+		 * <code>Integer.MAX_VALUE</code>
+		 * <li>Otherwise: Number of successors.
+		 * </ol>
+		 * 
+		 * @return The up priority for this {@link NodeWrapper}.
+		 */
 		int getPriorityUp() {
 			if (isPadding())
 				return (0);
@@ -765,6 +875,8 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		 * connections.
 		 * 
 		 * @param nodes
+		 *            The list of {@link INodeLayout}s for which to find the
+		 *            root elements.
 		 * @return the list of root elements
 		 */
 		public ArrayList<INodeLayout> getRoots(List<INodeLayout> nodes) {
@@ -795,14 +907,32 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 			return res;
 		}
 
+		/**
+		 * Returns a {@link Map} that stores the assignment of layers to
+		 * {@link INodeLayout}s.
+		 * 
+		 * @return A {@link Map} that stores the assignment of layers to
+		 *         {@link INodeLayout}s.
+		 */
 		public Map<INodeLayout, Integer> getAssignedNodes() {
 			return assignedNodes;
 		}
 
+		/**
+		 * Assigns the given layer to the given {@link INodeLayout}.
+		 * 
+		 * @param node
+		 *            The {@link INodeLayout} to which a layer is assigned.
+		 * @param layer
+		 *            The layer that is assigned to that {@link INodeLayout}.
+		 */
 		public void addAssignedNode(INodeLayout node, int layer) {
 			assignedNodes.put(node, layer);
 		}
 
+		/**
+		 * Clears the {@link Map} that stores the layer assignments.
+		 */
 		public void clearAssignedNodes() {
 			assignedNodes.clear();
 		}
@@ -1129,27 +1259,83 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				: crossing;
 	}
 
+	/**
+	 * Constructs a new {@link SugiyamaLayoutAlgorithm} with the given
+	 * {@link Direction}, {@link LayerProvider}, and {@link CrossingReducer}.
+	 * 
+	 * @param dir
+	 *            The {@link Direction} for this {@link SugiyamaLayoutAlgorithm}
+	 *            .
+	 * @param layerProvider
+	 *            The LayerProvider for this {@link SugiyamaLayoutAlgorithm}.
+	 * @param crossing
+	 *            The CrossingReducer for this {@link SugiyamaLayoutAlgorithm}.
+	 */
 	public SugiyamaLayoutAlgorithm(Direction dir, LayerProvider layerProvider,
 			CrossingReducer crossing) {
 		this(dir, null, layerProvider, crossing);
 	}
 
+	/**
+	 * Constructs a new {@link SugiyamaLayoutAlgorithm} with the given
+	 * {@link Direction}, {@link LayerProvider}, and a
+	 * {@link BarycentricCrossingReducer}.
+	 * 
+	 * @param dir
+	 *            The {@link Direction} for this {@link SugiyamaLayoutAlgorithm}
+	 *            .
+	 * @param layerProvider
+	 *            The LayerProvider for this {@link SugiyamaLayoutAlgorithm}.
+	 */
 	public SugiyamaLayoutAlgorithm(Direction dir, LayerProvider layerProvider) {
 		this(dir, null, layerProvider, new BarycentricCrossingReducer());
 	}
 
+	/**
+	 * Constructs a new {@link SugiyamaLayoutAlgorithm} with the given
+	 * {@link Direction}, and {@link CrossingReducer}.
+	 * 
+	 * @param dir
+	 *            The {@link Direction} for this {@link SugiyamaLayoutAlgorithm}
+	 *            .
+	 * @param crossing
+	 *            The CrossingReducer for this {@link SugiyamaLayoutAlgorithm}.
+	 */
 	public SugiyamaLayoutAlgorithm(Direction dir, CrossingReducer crossing) {
 		this(dir, null, null, crossing);
 	}
 
+	/**
+	 * Constructs a new {@link SugiyamaLayoutAlgorithm} with the given
+	 * {@link Direction}, and the given dimension.
+	 * 
+	 * @param dir
+	 *            The {@link Direction} for this {@link SugiyamaLayoutAlgorithm}
+	 *            .
+	 * @param dim
+	 *            The desired size of the layout area. Uses the BOUNDS_PROPERTY
+	 *            of the LayoutContext if not set.
+	 */
 	public SugiyamaLayoutAlgorithm(Direction dir, Dimension dim) {
 		this(dir, dim, null, null);
 	}
 
+	/**
+	 * Constructs a new {@link SugiyamaLayoutAlgorithm} with the given
+	 * {@link Direction}.
+	 * 
+	 * @param dir
+	 *            The {@link Direction} for this {@link SugiyamaLayoutAlgorithm}
+	 *            .
+	 */
 	public SugiyamaLayoutAlgorithm(Direction dir) {
 		this(dir, null, null, null);
 	}
 
+	/**
+	 * Constructs a new {@link SugiyamaLayoutAlgorithm} with
+	 * {@link Direction#VERTICAL} direction.
+	 */
 	public SugiyamaLayoutAlgorithm() {
 		this(Direction.VERTICAL, null, null, null);
 	}
