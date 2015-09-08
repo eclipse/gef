@@ -45,8 +45,9 @@ public class BoxLayoutAlgorithm extends GridLayoutAlgorithm {
 	 * 
 	 * @param orientation
 	 *            Either {@link #HORIZONTAL} or {@link #VERTICAL}.
-	 * @throw RuntimeException when the given <i>orientation</i> is neither
-	 *        {@link #HORIZONTAL} nor {@link #VERTICAL}.
+	 * @throws RuntimeException
+	 *             when the given <i>orientation</i> is neither
+	 *             {@link #HORIZONTAL} nor {@link #VERTICAL}.
 	 */
 	public BoxLayoutAlgorithm(int orientation) {
 		setOrientation(orientation);
@@ -68,8 +69,9 @@ public class BoxLayoutAlgorithm extends GridLayoutAlgorithm {
 	 * 
 	 * @param orientation
 	 *            The new orientation for this {@link BoxLayoutAlgorithm}.
-	 * @throw RuntimeException when the given <i>orientation</i> is neither
-	 *        {@link #HORIZONTAL} nor {@link #VERTICAL}.
+	 * @throws RuntimeException
+	 *             when the given <i>orientation</i> is neither
+	 *             {@link #HORIZONTAL} nor {@link #VERTICAL}.
 	 */
 	public void setOrientation(int orientation) {
 		if (orientation == HORIZONTAL || orientation == VERTICAL)
