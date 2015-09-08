@@ -1,6 +1,16 @@
-/**
+/*******************************************************************************
+ * Copyright (c) 2015 itemis AG and others.
  *
- */
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API & implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzillas #476278 and #476507
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
 import java.util.Collections;
@@ -26,7 +36,14 @@ import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import javafx.scene.Node;
 
 /**
+ * The {@link NavigationPolicy} is a {@link ITransactional transactional}
+ * {@link AbstractPolicy policy} that can be used to navigate between
+ * {@link Graph}s in a nested {@link Graph}s scenario. It saves the layout and
+ * viewport of the current {@link Graph} when opening another {@link Graph} and
+ * restores those values when navigating back to the {@link Graph}.
+ *
  * @author anyssen
+ * @author mwienand
  *
  */
 public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactional {
@@ -85,6 +102,23 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 		initialized = true;
 	}
 
+	/**
+	 * Saves the layout and viewport for the <i>currentGraph</i>, loads the
+	 * layout and viewport of the <i>newGraph</i>, and changes the viewer
+	 * contents. If the <i>resetNewGraphViewport</i> flag is set to
+	 * <code>true</code>, then the viewport that was saved for <i>newGraph</i>
+	 * will not be restored, but instead it will be reset.
+	 *
+	 * @param currentGraph
+	 *            The currently open {@link Graph} of which the layout and
+	 *            viewport and saved.
+	 * @param newGraph
+	 *            The new {@link Graph} that is opened.
+	 * @param resetNewGraphViewport
+	 *            <code>true</code> if the viewport that was saved for
+	 *            <i>newGraph</i> should not be restored, otherwise
+	 *            <code>false</code>.
+	 */
 	protected void openGraph(final Graph currentGraph, final Graph newGraph, final boolean resetNewGraphViewport) {
 		if (newGraph != null) {
 			// persist the state of the current graph
@@ -131,6 +165,13 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 		}
 	}
 
+	/**
+	 * Opens the given {@link Graph} without restoring the viewport that was
+	 * saved for that {@link Graph}.
+	 *
+	 * @param newGraph
+	 *            The {@link Graph} to open.
+	 */
 	public void openNestedGraph(Graph newGraph) {
 		// ensure we have been properly initialized
 		if (!initialized) {
@@ -141,6 +182,13 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 		openGraph(currentGraph, newGraph, true);
 	}
 
+	/**
+	 * Opens the given {@link Graph} and restores the viewport that was saved
+	 * for that {@link Graph}.
+	 *
+	 * @param newGraph
+	 *            The {@link Graph} to open.
+	 */
 	public void openNestingGraph(Graph newGraph) {
 		// ensure we have been properly initialized
 		if (!initialized) {

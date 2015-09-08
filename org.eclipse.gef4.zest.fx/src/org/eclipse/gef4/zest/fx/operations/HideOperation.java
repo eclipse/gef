@@ -21,15 +21,41 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+/**
+ * The {@link HideOperation} can be used to hide/show a {@link NodeContentPart}
+ * by changing the {@link HidingModel} accordingly.
+ *
+ * @author mwienand
+ *
+ */
 public class HideOperation extends AbstractOperation {
 
+	/**
+	 * Constructs a new {@link HideOperation} that will hide the given
+	 * {@link NodeContentPart} upon execution.
+	 *
+	 * @param toHide
+	 *            The {@link NodeContentPart} to hide.
+	 * @return The new {@link HideOperation} that will hide the given
+	 *         {@link NodeContentPart} upon execution.
+	 */
 	public static HideOperation hide(NodeContentPart toHide) {
 		return new HideOperation(toHide, false);
 	}
 
+	/**
+	 * Constructs a new {@link HideOperation} that will show the given
+	 * {@link NodeContentPart} upon execution.
+	 *
+	 * @param toShow
+	 *            The {@link NodeContentPart} to show.
+	 * @return The new {@link HideOperation} that will show the given
+	 *         {@link NodeContentPart} upon execution.
+	 */
 	public static HideOperation show(NodeContentPart toShow) {
 		return new HideOperation(toShow, true);
 	}
@@ -37,6 +63,19 @@ public class HideOperation extends AbstractOperation {
 	private NodeContentPart node;
 	private boolean isHidden;
 
+	/**
+	 * Constructs a new {@link HideOperation} that will show or hide the given
+	 * {@link NodeContentPart} depending on the <i>isHidden</i> flag. If the
+	 * node is currently hidden (as indicated by the flag being set to
+	 * <code>true</code>), then the node will be shown, otherwise it will be
+	 * hidden upon execution.
+	 *
+	 * @param node
+	 *            The {@link NodeContentPart} to show/hide.
+	 * @param isHidden
+	 *            <code>true</code> if the {@link NodeContentPart} should be
+	 *            shown, otherwise <code>false</code>.
+	 */
 	public HideOperation(NodeContentPart node, boolean isHidden) {
 		super("hide/show");
 		this.node = node;
@@ -53,6 +92,15 @@ public class HideOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Returns the neighbors of the given {@link Node}, i.e. all of its
+	 * {@link Node#getLocalPredecessorNodes() predecessors} and
+	 * {@link Node#getLocalSuccessorNodes() successors}.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the neighbors are returned.
+	 * @return An array containing all neighbors of the given {@link Node}.
+	 */
 	protected org.eclipse.gef4.graph.Node[] getNeighbors(org.eclipse.gef4.graph.Node node) {
 		Set<org.eclipse.gef4.graph.Node> neighbors = new HashSet<org.eclipse.gef4.graph.Node>();
 		neighbors.addAll(node.getLocalPredecessorNodes());
@@ -60,6 +108,10 @@ public class HideOperation extends AbstractOperation {
 		return neighbors.toArray(new org.eclipse.gef4.graph.Node[] {});
 	}
 
+	/**
+	 * Adjusts the {@link HidingModel} so that the {@link NodeContentPart} of
+	 * this {@link HideOperation} will be hidden.
+	 */
 	protected void hide() {
 		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).hide(node.getContent());
 	}
@@ -69,6 +121,10 @@ public class HideOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
+	/**
+	 * Adjusts the {@link HidingModel} so that the {@link NodeContentPart} of
+	 * this {@link HideOperation} will be shown.
+	 */
 	protected void show() {
 		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).show(node.getContent());
 	}

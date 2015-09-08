@@ -19,6 +19,15 @@ import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The {@link OffsetEdgeLabelOnDragPolicy} is an {@link AbstractFXOnDragPolicy}
+ * that can be installed on {@link EdgeLabelPart}s (see {@link #getHost()}). It
+ * moves its {@link #getHost() host} when the {@link #getHost() host} is
+ * dragged.
+ *
+ * @author mwienand
+ *
+ */
 public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private double initialOffsetX;

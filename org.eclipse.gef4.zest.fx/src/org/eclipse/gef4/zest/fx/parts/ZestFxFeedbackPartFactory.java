@@ -15,10 +15,6 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.List;
 import java.util.Map;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -34,11 +30,36 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+
+/**
+ * The {@link ZestFxFeedbackPartFactory} is an extension to the
+ * {@link FXDefaultFeedbackPartFactory} that creates link feedback for edges and
+ * their labels (see
+ * {@link #createEdgeLabelLinkFeedbackPart(EdgeContentPart, EdgeLabelPart)}).
+ *
+ * @author mwienand
+ *
+ */
 public class ZestFxFeedbackPartFactory extends FXDefaultFeedbackPartFactory {
 
 	@Inject
 	private Injector injector;
 
+	/**
+	 * Creates a {@link ZestFxEdgeLinkFeedbackPart} for the given
+	 * {@link EdgeContentPart} and the given {@link EdgeLabelPart}.
+	 *
+	 * @param edgeContentPart
+	 *            The {@link EdgeContentPart} of the link for which feedback is
+	 *            generated.
+	 * @param edgeLabelPart
+	 *            The {@link EdgeLabelPart} of the link for which feedback is
+	 *            generated.
+	 * @return The new {@link ZestFxEdgeLinkFeedbackPart}.
+	 */
 	protected IFeedbackPart<Node, ? extends Node> createEdgeLabelLinkFeedbackPart(final EdgeContentPart edgeContentPart,
 			final EdgeLabelPart edgeLabelPart) {
 		Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {

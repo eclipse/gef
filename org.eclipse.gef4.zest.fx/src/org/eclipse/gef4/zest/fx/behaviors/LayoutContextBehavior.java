@@ -25,6 +25,7 @@ import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -40,7 +41,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 /**
- * The LayoutContextBehavior is responsible for initiating layout passes.
+ * The {@link LayoutContextBehavior} is responsible for initiating layout
+ * passes. It is only applicable to {@link GraphContentPart}.
  *
  * @author mwienand
  *
@@ -185,6 +187,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		isHostActive = false;
 	}
 
+	/**
+	 * Returns the {@link GraphLayoutContext} that corresponds to the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link GraphLayoutContext} that corresponds to the
+	 *         {@link #getHost() host}.
+	 */
 	protected GraphLayoutContext getGraphLayoutContext() {
 		return getHost().<GraphLayoutContext> getAdapter(GraphLayoutContext.class);
 	}
@@ -194,6 +203,13 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		return (GraphContentPart) super.getHost();
 	}
 
+	/**
+	 * Returns the {@link NodeContentPart} that contains the nested graph to
+	 * which the {@link #getGraphLayoutContext()} corresponds.
+	 *
+	 * @return The {@link NodeContentPart} that contains the nested graph to
+	 *         which the {@link #getGraphLayoutContext()} corresponds.
+	 */
 	protected NodeContentPart getNestingPart() {
 		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent().getNestingNode();
 		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
@@ -201,10 +217,26 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		return (NodeContentPart) nestingNodePart;
 	}
 
+	/**
+	 * Returns the {@link ViewportModel} that is installed on the
+	 * {@link IViewer} of the {@link #getHost() host}.
+	 *
+	 * @return The {@link ViewportModel} that is installed on the
+	 *         {@link IViewer} of the {@link #getHost() host}.
+	 */
 	protected ViewportModel getViewportModel() {
 		return getHost().getRoot().getViewer().<ViewportModel> getAdapter(ViewportModel.class);
 	}
 
+	/**
+	 * Called upon property change notifications fired by the {@link #getHost()
+	 * host}. Performs a layout pass when either the activation of the host has
+	 * finished, or the content synchronization for the host has finished.
+	 *
+	 * @param evt
+	 *            The {@link PropertyChangeEvent} that was fired by the
+	 *            {@link #getHost() host}.
+	 */
 	protected void onHostPropertyChange(PropertyChangeEvent evt) {
 		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt.getPropertyName())) {
 			// TODO: Suppress Re-Layout when navigating back to a previously
@@ -257,6 +289,15 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		}
 	}
 
+	/**
+	 * Called upon property change notifications fired by the
+	 * {@link ViewportModel} of the {@link IViewer} of the {@link #getHost()
+	 * host}. Updates the layout bounds in the {@link GraphLayoutContext}.
+	 *
+	 * @param evt
+	 *            The {@link PropertyChangeEvent} that was fired by the
+	 *            {@link ViewportModel}.
+	 */
 	protected void onViewportModelPropertyChange(PropertyChangeEvent evt) {
 		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(evt.getPropertyName())
 				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt.getPropertyName())) {

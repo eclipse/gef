@@ -12,14 +12,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-import javafx.scene.transform.Transform;
-
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionLinkFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.transform.Transform;
+
+/**
+ * The {@link ZestFxEdgeLinkFeedbackPart} displays link feedback (a dashes line)
+ * between an {@link EdgeContentPart} and its anchored {@link EdgeLabelPart}.
+ *
+ * @author mwienand
+ *
+ */
 public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 
 	private final VisualChangeListener visualListener = new VisualChangeListener() {
@@ -34,6 +41,9 @@ public class ZestFxEdgeLinkFeedbackPart extends FXSelectionLinkFeedbackPart {
 		}
 	};
 
+	/**
+	 * Default constructor.
+	 */
 	public ZestFxEdgeLinkFeedbackPart() {
 	}
 

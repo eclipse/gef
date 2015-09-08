@@ -23,6 +23,13 @@ import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
 
+/**
+ * The {@link GraphSubgraphLayout} is a general {@link ISubgraphLayout}
+ * implementation.
+ *
+ * @author mwienand
+ *
+ */
 public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	private List<INodeLayout> nodes = new ArrayList<INodeLayout>();

@@ -15,11 +15,25 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link AbstractHidingBehavior} registers listeners on the
+ * {@link HidingModel} upon activation. When the {@link HidingModel} changes,
+ * the hidden status of the {@link #getHost() host} is
+ * {@link #determineHiddenStatus() determined}. If the hidden status of the
+ * {@link #getHost() host} changed, either {@link #hide()} or {@link #show()}
+ * will be called, respectively. By default, the {@link #getHost() host}'s
+ * visual's visibility and mouse-transparency are changed depending on the
+ * hidden status.
+ *
+ * @author mwienand
+ *
+ */
 public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 
 	private PropertyChangeListener hidingModelListener = new PropertyChangeListener() {
@@ -48,22 +62,56 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 		super.deactivate();
 	}
 
+	/**
+	 * Returns <code>true</code> if the {@link #getHost() host} is currently
+	 * hidden. Otherwise, returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if the {@link #getHost() host} is currently
+	 *         hidden, otherwise <code>false</code>.
+	 */
 	protected abstract boolean determineHiddenStatus();
 
+	/**
+	 * Returns the {@link HidingModel} that is installed on the {@link IViewer}
+	 * of the {@link #getHost() host}.
+	 *
+	 * @return The {@link HidingModel} that is installed on the {@link IViewer}
+	 *         of the {@link #getHost() host}.
+	 */
 	protected HidingModel getHidingModel() {
 		return getHost().getRoot().getViewer().getAdapter(HidingModel.class);
 	}
 
+	/**
+	 * Hides the {@link #getHost() host}. By default, the {@link #getHost()
+	 * host}'s visual's visibility will be set to <code>false</code> and its
+	 * mouse-transparency will be set to <code>true</code>.
+	 */
 	protected void hide() {
 		// hide host
 		getHost().getVisual().setVisible(false);
 		getHost().getVisual().setMouseTransparent(true);
 	}
 
+	/**
+	 * Returns <code>true</code> if the {@link #getHost() host} is currently
+	 * considered to be hidden. Otherwise, returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if the {@link #getHost() host} is currently
+	 *         considered to be hidden, otherwise <code>false</code>.
+	 */
 	protected boolean isHidden() {
 		return isHidden;
 	}
 
+	/**
+	 * Called upon {@link HidingModel} changes. Determines if the
+	 * {@link #getHost() host} is now hidden using
+	 * {@link #determineHiddenStatus()} and compares the result with the
+	 * previous hidden status. If the {@link #getHost() host} was previously
+	 * hidden and is not hidden anymore, {@link #show()} is called. Otherwise,
+	 * {@link #hide()} is called.
+	 */
 	protected void onHidingModelChange() {
 		// check if we have to prune/unprune the host
 		boolean wasHidden = isHidden;
@@ -75,6 +123,11 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 		}
 	}
 
+	/**
+	 * Shows the {@link #getHost() host}. By default, the {@link #getHost()
+	 * host}'s visual's visibility will be set to <code>true</code> and its
+	 * mouse-transparency will be set to <code>false</code>.
+	 */
 	protected void show() {
 		// show host
 		getHost().getVisual().setVisible(true);

@@ -14,15 +14,29 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import java.util.Set;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnTypePolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+/**
+ * The {@link HideOnTypePolicy} is an {@link AbstractFXOnTypePolicy} that
+ * hides/shows its {@link #getHost() host} {@link NodeContentPart} upon the
+ * press of a button:
+ * <ul>
+ * <li>{@link KeyCode#P}: hides the {@link #getHost() host}
+ * {@link NodeContentPart}
+ * <li>{@link KeyCode#E}: shows all hidden neighbors of the {@link #getHost()
+ * host} {@link NodeContentPart}
+ * </ul>
+ *
+ * @author mwienand
+ *
+ */
 public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	@Override
@@ -40,6 +54,11 @@ public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 		}
 	}
 
+	/**
+	 * Uses the {@link HideNodePolicy} of the {@link #getHost() host}
+	 * {@link NodeContentPart} to hide it.
+	 */
+	// TODO: Rename to #hide()
 	protected void prune() {
 		getHost().<HideNodePolicy> getAdapter(HideNodePolicy.class).hide();
 	}
@@ -48,6 +67,13 @@ public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 	public void released(KeyEvent event) {
 	}
 
+	/**
+	 * Shows all hidden neighbors of the {@link #getHost() host}
+	 * {@link NodeContentPart} by iterating over the
+	 * {@link HidingModel#getHiddenNeighbors(Node) hidden neighbors} and
+	 * individually using the {@link HideNodePolicy} to show them.
+	 */
+	// TODO: Rename to #showHiddenNeighbors()
 	protected void unprune() {
 		IViewer<javafx.scene.Node> viewer = getHost().getRoot().getViewer();
 		HidingModel hidingModel = viewer.getAdapter(HidingModel.class);

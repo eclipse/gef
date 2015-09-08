@@ -27,6 +27,13 @@ import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
+/**
+ * The {@link GraphNodeLayout} is a {@link Node}-specific {@link INodeLayout}
+ * implementation.
+ *
+ * @author mwienand
+ *
+ */
 public class GraphNodeLayout implements INodeLayout {
 
 	// initialization context
@@ -36,6 +43,16 @@ public class GraphNodeLayout implements INodeLayout {
 	private Node node;
 	private ISubgraphLayout subgraph;
 
+	/**
+	 * Constructs a new {@link GraphNodeLayout} for the given {@link Node} in
+	 * the given {@link GraphLayoutContext}.
+	 *
+	 * @param context
+	 *            The {@link GraphLayoutContext} that contains this
+	 *            {@link GraphNodeLayout}.
+	 * @param node
+	 *            The corresponding {@link Node}.
+	 */
 	public GraphNodeLayout(GraphLayoutContext context, Node node) {
 		this.context = context;
 		this.node = node;

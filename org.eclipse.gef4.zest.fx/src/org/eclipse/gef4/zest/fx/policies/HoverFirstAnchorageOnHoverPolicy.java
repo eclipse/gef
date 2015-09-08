@@ -12,15 +12,29 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxExpandingHandlePart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
 
 import com.google.common.collect.SetMultimap;
 
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * The {@link HoverFirstAnchorageOnHoverPolicy} is an extension to the
+ * {@link FXHoverOnHoverPolicy} that hovers its first anchorage instead of its
+ * {@link #getHost() host}. By default, this policy is installed on
+ * {@link ZestFxExpandingHandlePart}s and {@link ZestFxHidingHandlePart}s, so
+ * that the corresponding {@link NodeContentPart} is hovered instead of the
+ * handle parts.
+ *
+ * @author mwienand
+ *
+ */
 public class HoverFirstAnchorageOnHoverPolicy extends FXHoverOnHoverPolicy {
 
 	@Override

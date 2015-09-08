@@ -12,12 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link EdgeLayoutBehavior} is an {@link EdgeContentPart}-specific
+ * {@link AbstractLayoutBehavior} implementation.
+ *
+ * @author mwienand
+ *
+ */
 // only applicable for EdgeContentPart (see #getHost())
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
@@ -35,6 +42,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void postLayout() {
+		// TODO: Refresh should not be necessary.
 		getHost().refreshVisual();
 	}
 

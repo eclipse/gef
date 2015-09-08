@@ -14,8 +14,6 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Map;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
@@ -25,6 +23,17 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link ContentPartFactory} is a {@link Graph}-specific
+ * {@link IContentPartFactory}. It creates {@link GraphContentPart}s,
+ * {@link NodeContentPart}s, and {@link EdgeContentPart}s for the corresponding
+ * {@link Graph}s, {@link Node}s, and {@link Edge}s.
+ *
+ * @author mwienand
+ *
+ */
 public class ContentPartFactory implements IContentPartFactory<Node> {
 
 	@Inject
@@ -46,4 +55,5 @@ public class ContentPartFactory implements IContentPartFactory<Node> {
 		}
 		return part;
 	}
+
 }

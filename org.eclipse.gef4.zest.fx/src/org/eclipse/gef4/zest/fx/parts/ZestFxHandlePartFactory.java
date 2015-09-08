@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -28,6 +26,18 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link ZestFxHandlePartFactory} is an extension to
+ * {@link FXDefaultHandlePartFactory} that creates
+ * {@link ZestFxHidingHandlePart}s and {@link ZestFxExpandingHandlePart}s for
+ * hovered {@link NodeContentPart}s. Moreover, it disables the creation of
+ * handle parts for a multi selection.
+ *
+ * @author mwienand
+ *
+ */
 public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Inject

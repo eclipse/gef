@@ -16,9 +16,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
-import javafx.scene.Node;
-import javafx.scene.shape.Polyline;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
@@ -30,6 +27,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -44,9 +42,26 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import javafx.scene.Node;
+import javafx.scene.shape.Polyline;
+
+/**
+ * The {@link EdgeContentPart} is the controller for an {@link Edge} content
+ * object. It uses {@link FXConnection} for the visualization.
+ *
+ * @author mwienand
+ *
+ */
 public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
+	/**
+	 * The {@link ArrowHead} is an {@link IFXDecoration} implementation that can
+	 * be used to displays an arrow at either side of an {@link FXConnection}.
+	 */
 	public static class ArrowHead extends Polyline implements IFXDecoration {
+		/**
+		 * Default constructor.
+		 */
 		public ArrowHead() {
 			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0, 0.0);
 		}
@@ -67,9 +82,29 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		}
 	}
 
+	/**
+	 * The CSS class that is assigned to the {@link FXConnection} of this
+	 * {@link EdgeContentPart}.
+	 */
+	public static final String CSS_CLASS = "edge";
+
+	/**
+	 * The CSS class that is assigned to the {@link FXConnection#getCurveNode()
+	 * curve node} of the {@link FXConnection} of this {@link EdgeContentPart}.
+	 */
+	public static final String CSS_CLASS_CURVE = "curve";
+
+	/**
+	 * The CSS class that is assigned to the visualization of the
+	 * {@link EdgeLabelPart} of this {@link EdgeContentPart}.
+	 */
+	public static final String CSS_CLASS_LABEL = "label";
+
+	private static final double GAP_LENGTH = 7d;
+	private static final double DASH_LENGTH = 7d;
+	private static final Double DOT_LENGTH = 1d;
 	@Inject
 	private Injector injector;
-
 	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -78,13 +113,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			}
 		}
 	};
-
-	public static final String CSS_CLASS = "edge";
-	public static final String CSS_CLASS_CURVE = "curve";
-	public static final String CSS_CLASS_LABEL = "label";
-	private static final double GAP_LENGTH = 7d;
-	private static final double DASH_LENGTH = 7d;
-	private static final Double DOT_LENGTH = 1d;
 
 	private EdgeLabelPart edgeLabelPart;
 
@@ -243,6 +271,15 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		return anchorages;
 	}
 
+	/**
+	 * Returns the {@link GraphLayoutContext} that corresponds to the
+	 * {@link Graph} to which the content of this {@link EdgeContentPart}
+	 * belongs.
+	 *
+	 * @return The {@link GraphLayoutContext} that corresponds to the
+	 *         {@link Graph} to which the content of this
+	 *         {@link EdgeContentPart} belongs.
+	 */
 	protected GraphLayoutContext getGraphLayoutContext() {
 		return getViewer().getContentPartMap().get(getContent().getGraph()).getAdapter(GraphLayoutContext.class);
 	}

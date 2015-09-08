@@ -14,6 +14,13 @@ package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 
+/**
+ * The {@link EdgeHidingBehavior} is an {@link EdgeContentPart}-specific
+ * {@link AbstractHidingBehavior} implementation.
+ *
+ * @author mwienand
+ *
+ */
 // only applicable for EdgeContentPart (see #getHost())
 public class EdgeHidingBehavior extends AbstractHidingBehavior {
 

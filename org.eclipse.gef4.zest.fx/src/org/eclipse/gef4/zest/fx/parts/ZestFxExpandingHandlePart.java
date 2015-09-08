@@ -12,11 +12,30 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import org.eclipse.gef4.zest.fx.policies.ExpandFirstAnchorageOnClickPolicy;
+
 import javafx.scene.image.Image;
 
+/**
+ * The {@link ZestFxExpandingHandlePart} is an {@link AbstractHidingHandlePart}
+ * that displays an expansion image. By default, the
+ * {@link ExpandFirstAnchorageOnClickPolicy} is installed for
+ * {@link ZestFxExpandingHandlePart}, so that the corresponding
+ * {@link NodeContentPart} can be expanded by a click on this part.
+ *
+ * @author mwienand
+ *
+ */
 public class ZestFxExpandingHandlePart extends AbstractHidingHandlePart {
 
+	/**
+	 * The url to the image that is displayed when hovering this part.
+	 */
 	public static final String IMG_EXPAND = "/expandall.gif";
+
+	/**
+	 * The url to the image that is displayed when not hovering this part.
+	 */
 	public static final String IMG_EXPAND_DISABLED = "/expandall_disabled.gif";
 
 	@Override

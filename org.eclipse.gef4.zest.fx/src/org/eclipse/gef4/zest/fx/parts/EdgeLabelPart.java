@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -19,11 +24,16 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
-import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-
+/**
+ * The {@link EdgeLabelPart} is an {@link AbstractVisualPart} that is used to
+ * display the label of an edge. It is created be an {@link EdgeContentPart}
+ * upon activation. By separating the {@link EdgeLabelPart} from the
+ * {@link EdgeContentPart}, bindings can be defined individually for both types
+ * of parts.
+ *
+ * @author mwienand
+ *
+ */
 public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 
 	private VisualChangeListener vcl = new VisualChangeListener() {
@@ -76,10 +86,22 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight());
 	}
 
+	/**
+	 * Returns the {@link EdgeContentPart} for which this {@link EdgeLabelPart}
+	 * displays the label.
+	 *
+	 * @return The {@link EdgeContentPart} for which this {@link EdgeLabelPart}
+	 *         displays the label.
+	 */
 	public EdgeContentPart getHost() {
 		return getAnchorages().isEmpty() ? null : (EdgeContentPart) getAnchorages().keys().iterator().next();
 	}
 
+	/**
+	 * Returns the offset that is currently applied to the label.
+	 *
+	 * @return The offset that is currently applied to the label.
+	 */
 	public Translate getOffset() {
 		return translate;
 	}

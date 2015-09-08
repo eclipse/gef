@@ -15,16 +15,27 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link SynchronizeChildrenOnZoomBehavior} starts a content
+ * synchronization for the {@link NodeContentPart} on which it is installed when
+ * the zoom level is changed. This enables the {@link NodeContentPart} to report
+ * a nested {@link Graph} as a child depending on the zoom level (see
+ * {@link NodeContentPart#getContentChildren()}).
+ *
+ * @author mwienand
+ *
+ */
 // only applicable for NodeContentPart (see #getHost())
 public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 
@@ -62,6 +73,17 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 		return (NodeContentPart) super.getHost();
 	}
 
+	/**
+	 * Called upon zoom level changes (reported by the {@link ViewportModel}).
+	 * When this behavior {@link #isActive()} a
+	 * {@link SynchronizeContentChildrenOperation} is executed for the
+	 * {@link #getHost()}.
+	 *
+	 * @param oldScale
+	 *            The old zoom level.
+	 * @param newScale
+	 *            The new zoom level.
+	 */
 	protected void onZoomLevelChange(double oldScale, double newScale) {
 		/*
 		 * The PropertyChangeEvent could be processed already by another

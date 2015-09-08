@@ -17,10 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
@@ -28,6 +24,7 @@ import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
@@ -35,17 +32,32 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * The {@link GraphContentPart} is the controller for a {@link Graph} content
+ * object. It fires two special property changes:
+ * <ul>
+ * <li>{@link #ACTIVATION_COMPLETE_PROPERTY}
+ * <li>{@link #SYNC_COMPLETE_PROPERTY}
+ * </ul>
+ *
+ * @author mwienand
+ *
+ */
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * A property change event is fired as soon as {@link #activate()
-	 * activation} is finished.
+	 * activation} has finished.
 	 */
 	public static final String ACTIVATION_COMPLETE_PROPERTY = "activationComplete";
 
 	/**
 	 * A property change event for this property name is fired when a content
-	 * synchronization, based on a Graph property change, is finished.
+	 * synchronization, based on a Graph property change, has finished.
 	 */
 	public static final String SYNC_COMPLETE_PROPERTY = "synchronizationComplete";
 
@@ -77,6 +89,11 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		}
 	};
 
+	/**
+	 * Constructs a new {@link GraphContentPart}. Installs a "NoHoverPolicy" for
+	 * the {@link GraphContentPart}, so that it will not be put into the
+	 * {@link HoverModel} when hovered.
+	 */
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy

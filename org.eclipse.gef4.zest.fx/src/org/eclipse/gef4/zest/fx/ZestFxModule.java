@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -72,12 +73,13 @@ import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
+import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
-import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
@@ -86,6 +88,13 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 
+/**
+ * The {@link ZestFxModule} defines Zest.FX specific bindings additional to the
+ * bindings defined within {@link MvcFxModule}.
+ *
+ * @author mwienand
+ *
+ */
 public class ZestFxModule extends MvcFxModule {
 
 	@SuppressWarnings("serial")
@@ -129,6 +138,19 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(NavigationModel.class)).to(NavigationModel.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link EdgeContentPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link EdgeContentPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	@SuppressWarnings("serial")
 	protected void bindEdgeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout
@@ -141,6 +163,19 @@ public class ZestFxModule extends MvcFxModule {
 				.to(VisualOutlineGeometryProvider.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link EdgeLabelPart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link EdgeLabelPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	@SuppressWarnings("serial")
 	protected void bindEdgeLabelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hiding
@@ -157,6 +192,19 @@ public class ZestFxModule extends MvcFxModule {
 				.to(VisualOutlineGeometryProvider.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link ZestFxExpandingHandlePart} and all sub-classes. May be overwritten
+	 * by sub-classes to change the default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link ZestFxExpandingHandlePart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindExpandingHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY, "hoverFirstAnchorage"))
 				.to(HoverFirstAnchorageOnHoverPolicy.class);
@@ -181,12 +229,38 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(HidingModel.class)).to(HidingModel.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link GraphContentPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link GraphContentPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindGraphContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(GraphLayoutContext.class)).to(GraphLayoutContext.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXRotatePolicy.class)).to(FXRotatePolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(LayoutContextBehavior.class)).to(LayoutContextBehavior.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link ZestFxHidingHandlePart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link ZestFxHidingHandlePart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindHidingHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY, "hoverFirstAnchorage"))
 				.to(HoverFirstAnchorageOnHoverPolicy.class);
@@ -194,6 +268,9 @@ public class ZestFxModule extends MvcFxModule {
 				.to(HideFirstAnchorageOnClickPolicy.class);
 	}
 
+	/**
+	 * Binds {@link IContentPartFactory} to {@link ContentPartFactory}.
+	 */
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).to(ContentPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
@@ -217,6 +294,19 @@ public class ZestFxModule extends MvcFxModule {
 		}).to(GraphRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link NodeContentPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link NodeContentPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	@SuppressWarnings("serial")
 	protected void bindNodeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout

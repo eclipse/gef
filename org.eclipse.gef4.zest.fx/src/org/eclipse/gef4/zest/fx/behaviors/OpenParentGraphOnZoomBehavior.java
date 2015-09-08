@@ -22,13 +22,21 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 
 import javafx.scene.Node;
 
+/**
+ * The {@link OpenParentGraphOnZoomBehavior} handles the navigation to a parent
+ * graph when the user zooms out of a nested graph.
+ *
+ * @author mwienand
+ *
+ */
 // only applicable for GraphRootPart (see #getHost())
-//TODO: refactor into policy -> directly react on zoom level change
+// TODO: refactor into policy -> directly react on zoom level change
 public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 
 	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
@@ -76,10 +84,28 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 		return (GraphRootPart) super.getHost();
 	}
 
+	/**
+	 * Returns the {@link NavigationPolicy} that is installed on the
+	 * {@link IRootPart} of the {@link #getHost() host}.
+	 *
+	 * @return The {@link NavigationPolicy} that is installed on the
+	 *         {@link IRootPart} of the {@link #getHost() host}.
+	 */
 	protected NavigationPolicy getSemanticZoomPolicy() {
 		return getHost().getRoot().getAdapter(NavigationPolicy.class);
 	}
 
+	/**
+	 * Called upon zoom level changes (reported by the {@link ViewportModel}).
+	 * If the {@link #getHost() host} is nested inside a {@link Node} and the
+	 * zoom level is changed below <code>0.7</code>, then the {@link Graph} to
+	 * which the nesting {@link Node} belongs is opened.
+	 *
+	 * @param oldScale
+	 *            The previous zoom level.
+	 * @param newScale
+	 *            The new zoom level.
+	 */
 	protected void onZoomLevelChange(double oldScale, double newScale) {
 		if (oldScale > newScale && newScale < 0.7) {
 			ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
@@ -102,4 +128,5 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 			}
 		}
 	}
+
 }

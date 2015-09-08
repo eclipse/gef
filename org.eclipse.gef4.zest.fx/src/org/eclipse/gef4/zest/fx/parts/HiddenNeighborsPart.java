@@ -14,6 +14,10 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Set;
 
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
+
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -21,10 +25,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.HidingModel;
-
+/**
+ * The {@link HiddenNeighborsPart} is an {@link AbstractFXFeedbackPart} that
+ * displays the number of hidden neighbors (see
+ * {@link HidingModel#getHiddenNeighbors(org.eclipse.gef4.graph.Node)}) of its
+ * first anchorage.
+ *
+ * @author mwienand
+ *
+ */
 // TODO: only applicable for NodeContentPart (anchorage)
 public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 

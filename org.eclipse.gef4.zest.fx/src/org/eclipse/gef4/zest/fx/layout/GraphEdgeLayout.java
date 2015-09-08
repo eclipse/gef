@@ -23,6 +23,13 @@ import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+/**
+ * The {@link GraphEdgeLayout} is an {@link Edge}-specific
+ * {@link IConnectionLayout} implementation.
+ *
+ * @author mwienand
+ *
+ */
 public class GraphEdgeLayout implements IConnectionLayout {
 
 	private GraphLayoutContext context;
@@ -30,6 +37,16 @@ public class GraphEdgeLayout implements IConnectionLayout {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 
+	/**
+	 * Constructs a new {@link GraphEdgeLayout} for the given {@link Edge} in
+	 * the given {@link GraphLayoutContext}.
+	 *
+	 * @param context
+	 *            The {@link GraphLayoutContext} that contains this
+	 *            {@link GraphEdgeLayout}.
+	 * @param edge
+	 *            The corresponding {@link Edge}.
+	 */
 	public GraphEdgeLayout(GraphLayoutContext context, Edge edge) {
 		this.context = context;
 		this.edge = edge;
@@ -51,6 +68,11 @@ public class GraphEdgeLayout implements IConnectionLayout {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Returns the corresponding {@link Edge}.
+	 *
+	 * @return The corresponding {@link Edge}.
+	 */
 	public Edge getEdge() {
 		return edge;
 	}

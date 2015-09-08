@@ -16,6 +16,14 @@ import java.util.Map;
 
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+/**
+ * The {@link INestedGraphLabelProvider} is an extension to the
+ * {@link IGraphNodeLabelProvider} that additionally allows the provision of
+ * attributes for nested graphs.
+ *
+ * @author mwienand
+ *
+ */
 public interface INestedGraphLabelProvider extends IGraphNodeLabelProvider {
 
 	/**

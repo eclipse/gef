@@ -15,6 +15,13 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 
+/**
+ * The {@link EdgeLabelHidingBehavior} is an {@link EdgeLabelPart}-specific
+ * {@link AbstractHidingBehavior} implementation.
+ *
+ * @author mwienand
+ *
+ */
 // only applicable for EdgeLabelPart (see #getHost())
 public class EdgeLabelHidingBehavior extends AbstractHidingBehavior {
 

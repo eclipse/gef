@@ -17,20 +17,32 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Set;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.behaviors.BehaviorUtils;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-/*
- * TODO: Rename HidingBehavior to NodeHidingBehavior and let it extend AbstractHidingBehavior. (Bugzilla #466851)
- */
+import javafx.scene.Node;
 
-// Only applicable for NodeContentPart (seee #getHost())
+/**
+ * The {@link HidingBehavior} is specific to {@link NodeContentPart}. It
+ * registers listeners on the {@link HidingModel} upon activation. When the
+ * {@link HidingModel} changes, the hidden status of the {@link NodeContentPart}
+ * is determined. If the hidden status of the part changed, either
+ * {@link #hide()} or {@link #show()} will be called, respectively, to hide/show
+ * the part. Additionally, a {@link HiddenNeighborsPart} is managed by this
+ * {@link HidingBehavior}. The {@link HiddenNeighborsPart} shows the number of
+ * hidden neighbors of the {@link NodeContentPart}.
+ *
+ * @author mwienand
+ *
+ */
+// TODO: Rename HidingBehavior to NodeHidingBehavior and let it extend
+// AbstractHidingBehavior. (Bugzilla #466851)
+// Only applicable for NodeContentPart (see #getHost())
 public class HidingBehavior extends AbstractBehavior<Node>implements PropertyChangeListener {
 
 	private IVisualPart<Node, ? extends Node> hiddenNeighborsPart;
@@ -68,6 +80,11 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 		return containsAny;
 	}
 
+	/**
+	 * Creates the {@link HiddenNeighborsPart} that shows the hidden neighbors
+	 * of the {@link NodeContentPart} on which this {@link HidingBehavior} is
+	 * installed.
+	 */
 	protected void createHiddenNeighborPart() {
 		// TODO: delegate to factory
 		hiddenNeighborsPart = new HiddenNeighborsPart();
@@ -90,6 +107,13 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 		super.deactivate();
 	}
 
+	/**
+	 * Returns the {@link HidingModel} that is installed on the {@link IViewer}
+	 * of the {@link #getHost() host}.
+	 *
+	 * @return The {@link HidingModel} that is installed on the {@link IViewer}
+	 *         of the {@link #getHost() host}.
+	 */
 	protected HidingModel getHidingModel() {
 		return getHost().getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class);
 	}
@@ -99,6 +123,14 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 		return (NodeContentPart) super.getHost();
 	}
 
+	/**
+	 * Returns the {@link HiddenNeighborsPart} that is managed by this
+	 * {@link HidingBehavior}.
+	 *
+	 * @return The {@link HiddenNeighborsPart} that is managed by this
+	 *         {@link HidingBehavior}.
+	 */
+	// TODO: Rename to getHiddenNeighborsPart
 	protected IVisualPart<Node, ? extends Node> getPrunedNeighborsPart() {
 		return hiddenNeighborsPart;
 	}
@@ -107,6 +139,11 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 		return !hidingModel.getHiddenNeighbors(node).isEmpty();
 	}
 
+	/**
+	 * Hides the {@link #getHost() host} by setting its visual's visibility to
+	 * <code>false</code> and its visual's mouse transparency to
+	 * <code>true</code>.
+	 */
 	protected void hide() {
 		// hide visual
 		getHost().getVisual().setVisible(false);
@@ -157,18 +194,31 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 		}
 	}
 
+	/**
+	 * Removes the {@link HiddenNeighborsPart} that is managed by this
+	 * {@link HidingBehavior}.
+	 */
 	protected void removeHiddenNeighborPart() {
 		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsPart));
 		hiddenNeighborsPart = null;
 	}
 
+	/**
+	 * Shows the {@link #getHost() host} by setting its visual's visibility to
+	 * <code>true</code> and its visual's mouse transparency to
+	 * <code>false</code>.
+	 */
 	protected void show() {
 		// show node
 		getHost().getVisual().setVisible(true);
 		getHost().getVisual().setMouseTransparent(false);
 	}
 
+	/**
+	 * Refreshes the {@link HiddenNeighborsPart} that is managed by this
+	 * {@link HidingBehavior}.
+	 */
 	protected void updateHiddenNeighborPart() {
 		hiddenNeighborsPart.refreshVisual();
 	}

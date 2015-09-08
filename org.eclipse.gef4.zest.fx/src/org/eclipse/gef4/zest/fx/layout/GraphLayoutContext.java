@@ -23,11 +23,13 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.AbstractLayoutContext;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.ISubgraphLayout;
 
 /**
- * Transformation from GEF4 Graph with ZestProperties to GEF4 Layout.
+ * The {@link GraphLayoutContext} is a {@link Graph}-specific
+ * {@link ILayoutContext} implementation. It adapts GEF4 Graph to GEF4 Layout.
  *
  * @author mwienand
  *
@@ -40,10 +42,21 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 
 	// TODO: subgraphs
 
+	/**
+	 * Constructs a new {@link GraphLayoutContext} without nodes and edges.
+	 */
 	public GraphLayoutContext() {
 		setGraph(null);
 	}
 
+	/**
+	 * Constructs a new {@link GraphLayoutContext} from the given {@link Graph}.
+	 * The {@link Node}s and {@link Edge}s of the {@link Graph} are transfered
+	 * into {@link GraphNodeLayout}s and {@link GraphEdgeLayout}s.
+	 *
+	 * @param graph
+	 *            The {@link Graph} that is transfered.
+	 */
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
 	}
@@ -68,6 +81,16 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return connections.toArray(new IConnectionLayout[] {});
 	}
 
+	/**
+	 * Returns the {@link GraphEdgeLayout} corresponding to the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} for which to return the corresponding
+	 *            {@link GraphEdgeLayout}.
+	 * @return The {@link GraphEdgeLayout} corresponding to the given
+	 *         {@link Edge}.
+	 */
 	public GraphEdgeLayout getEdgeLayout(Edge edge) {
 		return edgeMap.get(edge);
 	}
@@ -77,10 +100,25 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return getNodes();
 	}
 
+	/**
+	 * Returns the transfered {@link Graph}.
+	 *
+	 * @return The transfered {@link Graph}.
+	 */
 	public Graph getGraph() {
 		return g;
 	}
 
+	/**
+	 * Returns the {@link GraphNodeLayout} corresponding to the given
+	 * {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to return the corrsponding
+	 *            {@link GraphNodeLayout}.
+	 * @return The {@link GraphNodeLayout} corresponding to the given
+	 *         {@link Node}.
+	 */
 	public GraphNodeLayout getNodeLayout(Node node) {
 		return nodeMap.get(node);
 	}
@@ -99,6 +137,15 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return nodes.toArray(new INodeLayout[] {});
 	}
 
+	/**
+	 * Transfers the given {@link Graph} into this {@link GraphLayoutContext},
+	 * i.e. creates {@link GraphNodeLayout}s and {@link GraphEdgeLayout}s for
+	 * the {@link Node}s and {@link Edge}s of the given {@link Graph}.
+	 *
+	 * @param graph
+	 *            The {@link Graph} that is transfered into this
+	 *            {@link GraphLayoutContext}.
+	 */
 	public void setGraph(Graph graph) {
 		if (graph == null) {
 			graph = new Graph();

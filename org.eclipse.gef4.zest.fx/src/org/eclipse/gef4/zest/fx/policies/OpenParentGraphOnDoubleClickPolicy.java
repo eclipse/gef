@@ -21,6 +21,16 @@ import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The {@link OpenParentGraphOnDoubleClickPolicy} is an
+ * {@link AbstractFXOnClickPolicy} that can be installed on
+ * {@link GraphRootPart}s (see {@link #getHost()}). It opens the {@link Graph}
+ * that contains the node that contains the {@link Graph} that is currently open
+ * when the background is double clicked.
+ *
+ * @author mwienand
+ *
+ */
 public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override

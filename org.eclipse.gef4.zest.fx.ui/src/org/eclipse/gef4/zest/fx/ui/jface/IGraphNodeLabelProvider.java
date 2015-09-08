@@ -17,6 +17,14 @@ import java.util.Map;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.jface.viewers.ILabelProvider;
 
+/**
+ * The {@link IGraphNodeLabelProvider} can be used to provide arbitrary
+ * attributes for nodes, edges, and the root graph (i.e. not for nested graphs).
+ *
+ * @author mwienand
+ *
+ */
+// TODO: Rename to IGraphNodeAttrProvider?
 public interface IGraphNodeLabelProvider extends ILabelProvider {
 
 	/**

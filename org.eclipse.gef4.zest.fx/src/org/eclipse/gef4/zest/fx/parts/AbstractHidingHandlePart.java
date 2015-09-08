@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -20,11 +25,19 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
-import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
-
+/**
+ * The {@link AbstractHidingHandlePart} is an
+ * {@link AbstractFXSegmentHandlePart} that displays an
+ * {@link FXImageViewHoverOverlay} that uses the {@link #getImage() image} and
+ * {@link #getHoverImage() hover image} that are provided by subclasses.
+ * <p>
+ * An {@link AbstractHidingHandlePart} can only be attached to
+ * {@link NodeContentPart}s due a check within
+ * {@link #attachToAnchorageVisual(IVisualPart, String)}.
+ *
+ * @author mwienand
+ *
+ */
 public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePart<FXImageViewHoverOverlay> {
 
 	private boolean isVisible = false;
@@ -66,8 +79,20 @@ public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePa
 		}
 	}
 
+	/**
+	 * Returns the {@link Image} that is displayed when hovering this part.
+	 *
+	 * @return The {@link Image} that is displayed when hovering this part.
+	 */
 	protected abstract Image getHoverImage();
 
+	/**
+	 * Returns the {@link Image} that is displayed when this part is not
+	 * hovered.
+	 *
+	 * @return The {@link Image} that is displayed when this part is not
+	 *         hovered.
+	 */
 	protected abstract Image getImage();
 
 	@Override

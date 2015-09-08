@@ -15,13 +15,23 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.inject.Provider;
+
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 
-import com.google.inject.Provider;
-
+/**
+ * The {@link ZestFxCursorProvider} is a
+ * <code>Provider&lt;Map&lt;KeyCode, Cursor&gt;&gt;</code> implementation that
+ * provides the mouse cursor for a modifier key in the context of a Zest.FX
+ * application. By default, a "rotation" cursor is shown when
+ * {@link KeyCode#CONTROL} is pressed.
+ *
+ * @author mwienand
+ *
+ */
 public class ZestFxCursorProvider implements Provider<Map<KeyCode, Cursor>> {
 
 	@Override

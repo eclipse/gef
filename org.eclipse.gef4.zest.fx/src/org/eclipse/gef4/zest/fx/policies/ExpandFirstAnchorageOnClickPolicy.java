@@ -14,9 +14,6 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import java.util.Set;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -25,6 +22,17 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import com.google.common.collect.SetMultimap;
 
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * The {@link ExpandFirstAnchorageOnClickPolicy} is an
+ * {@link AbstractFXOnClickPolicy} that shows all hidden neighbors of its host
+ * upon mouse click by removing them from the {@link HidingModel}.
+ *
+ * @author mwienand
+ *
+ */
 public class ExpandFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override

@@ -20,6 +20,16 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * The {@link OpenNestedGraphOnDoubleClickPolicy} is an
+ * {@link AbstractFXOnClickPolicy} that can be installed on
+ * {@link NodeContentPart}s (see {@link #getHost()}). It opens the {@link Graph}
+ * that is nested inside of its {@link NodeContentPart} when the
+ * {@link NodeContentPart} is double clicked.
+ *
+ * @author mwienand
+ *
+ */
 public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override

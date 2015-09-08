@@ -60,6 +60,13 @@ import javafx.embed.swt.FXCanvas;
 import javafx.embed.swt.SWTFXUtils;
 import javafx.scene.Scene;
 
+/**
+ * The {@link ZestContentViewer} is a {@link ContentViewer} that is capable of
+ * displaying {@link Graph}s.
+ *
+ * @author mwienand
+ *
+ */
 public class ZestContentViewer extends ContentViewer {
 
 	private Module module;
@@ -71,26 +78,64 @@ public class ZestContentViewer extends ContentViewer {
 	private ILayoutAlgorithm layoutAlgorithm;
 	private Map<Object, Node> contentNodeMap = new IdentityHashMap<Object, Node>();
 
+	/**
+	 * Constructs a new {@link ZestContentViewer}. The {@link #createModule()}
+	 * method is evaluated to retrieve the {@link Module} that is later used to
+	 * create the {@link Injector} that is later used for the injection of
+	 * members and the construction of the {@link FXDomain}.
+	 */
 	public ZestContentViewer() {
 		this.module = createModule();
 	}
 
+	/**
+	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
+	 * saved so that it can be later used to create an {@link Injector} that is
+	 * later used for the injection of members and the construction of the
+	 * {@link FXDomain}.
+	 *
+	 * @param module
+	 *            The {@link Module} from which an {@link Injector} is created
+	 *            later.
+	 */
 	public ZestContentViewer(Module module) {
 		this.module = module;
 	}
 
+	/**
+	 * Creates an {@link FXCanvas} inside of the given <i>parent</i>
+	 * {@link Composite}. The {@link FXCanvas} serves as the container for the
+	 * JavaFX {@link Scene} which renders the contents.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite}.
+	 * @return An {@link FXCanvas} inside of the given <i>parent</i>.
+	 */
 	protected FXCanvas createCanvas(final Composite parent) {
+		// TODO: expect SWT style
 		// TODO: inject canvasFactory
 		// return canvasFactory.createCanvas(parent);
+		// What about SWT style?
 		return new FXCanvasEx(parent, SWT.NONE);
 	}
 
+	/**
+	 * Creates the control for this {@link ZestContentViewer} inside of the
+	 * given <i>parent</i> {@link Composite}.
+	 *
+	 * @param parent
+	 *            The parent {@link Composite}.
+	 * @param style
+	 *            The SWT style for this {@link ZestContentViewer}, currently
+	 *            not used.
+	 */
 	public void createControl(Composite parent, int style) {
 		// create injector
 		Injector injector = Guice.createInjector(module);
 		injector.injectMembers(this);
 
 		// create viewer and canvas only after toolkit has been initialized
+		// TODO: pass in SWT style / with factory possible?
 		canvas = createCanvas(parent);
 
 		// inject domain
@@ -171,6 +216,15 @@ public class ZestContentViewer extends ContentViewer {
 		return graph;
 	}
 
+	/**
+	 * Creates the {@link Module} that is used by default for the construction
+	 * of an {@link Injector} that will be used for the injection of members
+	 * into this {@link ZestContentViewer}.
+	 *
+	 * @return The {@link Module} that is used by default for the construction
+	 *         of an {@link Injector} that will be used for the injection of
+	 *         members into this {@link ZestContentViewer}.
+	 */
 	protected Module createModule() {
 		if (PlatformUI.isWorkbenchRunning()) {
 			return Modules.override(new ZestFxUiModule()).with(new ZestFxModule());
@@ -184,6 +238,7 @@ public class ZestContentViewer extends ContentViewer {
 	 * <i>contentNestingNode</i>.
 	 *
 	 * @param contentNestingNode
+	 *            The content {@link Object} that represents the nesting node.
 	 * @param nestedGraphContentProvider
 	 *            This viewer's {@link INestedGraphContentProvider} for
 	 *            convenience.
@@ -215,6 +270,7 @@ public class ZestContentViewer extends ContentViewer {
 	 * node is put into the given <i>contentToGraphMap</i>.
 	 *
 	 * @param contentNode
+	 *            The content {@link Object} that represents the node.
 	 * @param graphContentProvider
 	 *            This viewer's {@link IGraphNodeContentProvider} for
 	 *            convenience.
@@ -388,6 +444,11 @@ public class ZestContentViewer extends ContentViewer {
 		return graph;
 	}
 
+	/**
+	 * Returns an unmodifiable view of the content-node-map.
+	 *
+	 * @return An unmodifiable view of the content-node-map.
+	 */
 	public Map<Object, Node> getContentNodeMap() {
 		return Collections.unmodifiableMap(contentNodeMap);
 	}
@@ -397,6 +458,11 @@ public class ZestContentViewer extends ContentViewer {
 		return canvas;
 	}
 
+	/**
+	 * Returns the {@link FXViewer} that displays the contents.
+	 *
+	 * @return The {@link FXViewer} that displays the contents.
+	 */
 	public FXViewer getFXViewer() {
 		return viewer;
 	}
@@ -406,6 +472,13 @@ public class ZestContentViewer extends ContentViewer {
 		return (ILabelProvider) super.getLabelProvider();
 	}
 
+	/**
+	 * Returns the {@link ILayoutAlgorithm} that is used for laying out the
+	 * contents.
+	 *
+	 * @return The {@link ILayoutAlgorithm} that is used for laying out the
+	 *         contents.
+	 */
 	public ILayoutAlgorithm getLayoutAlgorithm() {
 		return layoutAlgorithm;
 	}
@@ -442,6 +515,13 @@ public class ZestContentViewer extends ContentViewer {
 				.setContents(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
 	}
 
+	/**
+	 * Changes the {@link ILayoutAlgorithm} that is used for laying out the
+	 * contents to the given value.
+	 *
+	 * @param layoutAlgorithm
+	 *            The new {@link ILayoutAlgorithm} to use.
+	 */
 	public void setLayoutAlgorithm(ILayoutAlgorithm layoutAlgorithm) {
 		this.layoutAlgorithm = layoutAlgorithm;
 	}
@@ -469,6 +549,14 @@ public class ZestContentViewer extends ContentViewer {
 		}
 	}
 
+	/**
+	 * Converts the given {@link Color} into a CSS string:
+	 * <code>"rgb(red,green,blue)"</code>.
+	 *
+	 * @param color
+	 *            The {@link Color} to convert.
+	 * @return The corresponding CSS string.
+	 */
 	protected String toCssRgb(Color color) {
 		return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
 	}

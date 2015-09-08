@@ -12,11 +12,22 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
+import javafx.scene.Node;
+
+/**
+ * The {@link AbstractLayoutBehavior} is an abstract behavior that schedules
+ * {@link #preLayout()} and {@link #postLayout()} to be called before or after a
+ * layout pass, respectively. The {@link #preLayout()} method can be used to
+ * write layout information into the layout model. Similarly, the
+ * {@link #postLayout()} method can be used to read layout information from the
+ * layout model.
+ *
+ * @author mwienand
+ *
+ */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
 	private Runnable postLayout = new Runnable() {
@@ -49,6 +60,15 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 		super.deactivate();
 	}
 
+	/**
+	 * Returns the {@link GraphLayoutContext} for which {@link #preLayout()} and
+	 * {@link #postLayout()} shall be called before or after a layout pass,
+	 * respectively.
+	 *
+	 * @return The {@link GraphLayoutContext} for which {@link #preLayout()} and
+	 *         {@link #postLayout()} shall be called before or after a layout
+	 *         pass, respectively.
+	 */
 	protected abstract GraphLayoutContext getGraphLayoutContext();
 
 	/**

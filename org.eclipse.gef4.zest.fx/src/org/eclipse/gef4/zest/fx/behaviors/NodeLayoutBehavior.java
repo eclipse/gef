@@ -31,10 +31,25 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
+/**
+ * The {@link NodeLayoutBehavior} is a {@link NodeContentPart}-specific
+ * {@link AbstractLayoutBehavior} implementation.
+ *
+ * @author mwienand
+ *
+ */
+// only applicable to NodeContentPart (see #getHost())
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
+	/**
+	 * The class key that is used to retrieve the {@link FXResizeRelocatePolicy}
+	 * that is installed on a {@link NodeContentPart}.
+	 */
 	public static Class<FXResizeRelocatePolicy> RESIZE_RELOCATE_POLICY_KEY = FXResizeRelocatePolicy.class;
 
+	/**
+	 * Default constructor.
+	 */
 	public NodeLayoutBehavior() {
 	}
 
@@ -43,6 +58,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		super.activate();
 	}
 
+	/**
+	 * Reads the location and size of its host {@link NodeContentPart} from the
+	 * layout model and updates the visualization accordingly.
+	 */
 	public void adaptLayoutInformation() {
 		FXResizeRelocatePolicy policy = getHost().getAdapter(RESIZE_RELOCATE_POLICY_KEY);
 		if (policy != null) {
@@ -91,6 +110,15 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		return (NodeContentPart) super.getHost();
 	}
 
+	/**
+	 * Returns the {@link GraphNodeLayout} that corresponds to the
+	 * {@link NodeContentPart} on which this {@link NodeLayoutBehavior} is
+	 * installed.
+	 *
+	 * @return The {@link GraphNodeLayout} that corresponds to the
+	 *         {@link NodeContentPart} on which this {@link NodeLayoutBehavior}
+	 *         is installed.
+	 */
 	protected GraphNodeLayout getNodeLayout() {
 		// TODO: use event to update node layout
 		GraphNodeLayout nodeLayout = getGraphLayoutContext().getNodeLayout(getHost().getContent());
@@ -111,6 +139,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		provideLayoutInformation();
 	}
 
+	/**
+	 * Writes the location and size of its host {@link NodeContentPart} into the
+	 * layout model.
+	 */
 	public void provideLayoutInformation() {
 		Node visual = getHost().getVisual();
 		Bounds hostBounds = visual.getLayoutBounds();

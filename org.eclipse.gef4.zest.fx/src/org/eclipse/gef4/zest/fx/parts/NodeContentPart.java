@@ -55,6 +55,13 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 
+/**
+ * The {@link NodeContentPart} is the controller for a
+ * {@link org.eclipse.gef4.graph.Node} content object.
+ *
+ * @author mwienand
+ *
+ */
 public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	/**
@@ -83,18 +90,65 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	// defaults
+	/**
+	 * The default padding between the node's border and its content.
+	 */
 	protected static final double DEFAULT_PADDING = 5;
+
+	/**
+	 * The zoom level that needs to be reached for the
+	 * {@link #getContentChildren()} method to return a nested {@link Graph}.
+	 */
 	protected static final double ZOOMLEVEL_SHOW_NESTED_GRAPH = 2;
+
+	/**
+	 * The default width of the nested graph area.
+	 */
 	protected static final double DEFAULT_CHILDREN_PANE_WIDTH = 300;
+
+	/**
+	 * The default height of the nested graph area.
+	 */
 	protected static final double DEFAULT_CHILDREN_PANE_HEIGHT = 300;
+
+	/**
+	 * The minimum width for the nested graph area.
+	 */
 	protected static final double CHILDREN_PANE_WIDTH_THRESHOLD = 100;
+
+	/**
+	 * The minimum height for the nested graph area.
+	 */
 	protected static final double CHILDREN_PANE_HEIGHT_THRESHOLD = 100;
+
+	/**
+	 * The default zoom factor that is applied to the nested graph area.
+	 */
 	public static final double DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR = 0.25;
 
 	// CSS classes for styling nodes
+	/**
+	 * The CSS class that is applied to the {@link #getVisual() visual} of this
+	 * {@link NodeContentPart}.
+	 */
 	public static final String CSS_CLASS = "node";
+
+	/**
+	 * The CSS class that is applied to the {@link Rectangle} that displays
+	 * border and background.
+	 */
 	public static final String CSS_CLASS_SHAPE = "shape";
+
+	/**
+	 * The CSS class that is applied to the {@link Text} that displays the
+	 * label.
+	 */
 	public static final String CSS_CLASS_LABEL = "label";
+
+	/**
+	 * The CSS class that is applied to the {@link Image} that displays the
+	 * icon.
+	 */
 	public static final String CSS_CLASS_ICON = "icon";
 
 	private static final String NODE_LABEL_EMPTY = "-";
@@ -143,6 +197,11 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		nestedChildrenPaneScaled.getChildren().add(index, child.getVisual());
 	}
 
+	/**
+	 * Creates the {@link Pane} that is used to display nested content.
+	 *
+	 * @return The {@link Pane} that is used to display nested content.
+	 */
 	protected Pane createNestedContentPane() {
 		final AnchorPane pane = new AnchorPane();
 		pane.setStyle("-fx-background-color: white;");
@@ -159,6 +218,16 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		return pane;
 	}
 
+	/**
+	 * Creates the {@link StackPane} that is used to either display nested
+	 * content, or an icon indicating that nested content exists for this
+	 * {@link NodeContentPart}. The given {@link Pane} is inserted into the
+	 * children list of the created {@link StackPane}.
+	 *
+	 * @param nestedContentPane
+	 *            The nested content {@link Pane}.
+	 * @return The created {@link StackPane}.
+	 */
 	protected StackPane createNestedContentStackPane(Pane nestedContentPane) {
 		StackPane stackPane = new StackPane();
 		stackPane.getChildren().add(nestedContentPane);
@@ -173,6 +242,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 *
 	 * @param group
 	 *            This node's visual.
+	 * @param rect
+	 *            The {@link Rectangle} displaying border and background.
 	 * @param iconImageView
 	 *            The {@link ImageView} displaying the node's icon.
 	 * @param labelText
@@ -345,34 +416,84 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Returns the {@link ImageView} that displays the node's icon.
+	 *
+	 * @return The {@link ImageView} that displays the node's icon.
+	 */
 	protected ImageView getIconImageView() {
 		return iconImageView;
 	}
 
+	/**
+	 * Returns the {@link Text} that displays the node's label.
+	 *
+	 * @return The {@link Text} that displays the node's label.
+	 */
 	protected Text getLabelText() {
 		return labelText;
 	}
 
+	/**
+	 * Returns the {@link Pane} to which nested children are added.
+	 *
+	 * @return The {@link Pane} to which nested children are added.
+	 */
 	public Pane getNestedChildrenPane() {
 		return nestedChildrenPaneScaled;
 	}
 
+	/**
+	 * Returns the {@link StackPane} that either displays nested content or an
+	 * icon indicating that nested content exists for this
+	 * {@link NodeContentPart}.
+	 *
+	 * @return The {@link StackPane} that wraps nested content.
+	 */
 	protected StackPane getNestedContentStackPane() {
 		return nestedContentStackPane;
 	}
 
+	/**
+	 * Returns the {@link Node} that is displayed in the
+	 * {@link #getNestedContentStackPane()} when nested content is available,
+	 * but not rendered, currently.
+	 *
+	 * @return The {@link Node} that is displayed in the
+	 *         {@link #getNestedContentStackPane()} when nested content is
+	 *         available, but not rendered, currently.
+	 */
 	protected Node getNestedGraphIcon() {
 		return nestedGraphIcon;
 	}
 
+	/**
+	 * Returns the {@link Rectangle} that displays the node's border and
+	 * background.
+	 *
+	 * @return The {@link Rectangle} that displays the node's border and
+	 *         background.
+	 */
 	protected Rectangle getNodeRect() {
 		return rect;
 	}
 
+	/**
+	 * Returns the padding that is maintained between the node's border and its
+	 * content.
+	 *
+	 * @return The padding that is maintained between the node's border and its
+	 *         content.
+	 */
 	protected double getPadding() {
 		return DEFAULT_PADDING;
 	}
 
+	/**
+	 * Removes the {@link #getNestedGraphIcon()} from the
+	 * {@link #getNestedContentStackPane()} and {@link #setNestedGraphIcon(Node)
+	 * sets} the nested graph icon to <code>null</code>.
+	 */
 	protected void hideNestedGraphIcon() {
 		if (getNestedGraphIcon() != null) {
 			getNestedContentStackPane().getChildren().remove(getNestedGraphIcon());
@@ -380,14 +501,43 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 	}
 
+	/**
+	 * Returns <code>true</code> if this {@link NodeContentPart} contains a
+	 * nested {@link Graph}. Otherwise, <code>false</code> is returned.
+	 *
+	 * @return <code>true</code> if this {@link NodeContentPart} contains a
+	 *         nested {@link Graph}, otherwise <code>false</code>.
+	 */
 	protected boolean isNesting() {
 		return getContent().getNestedGraph() != null;
 	}
 
+	/**
+	 * Adds the given CSS class to the given visual.
+	 *
+	 * @param visual
+	 *            The visual to which the CSS class is added.
+	 * @param cssClass
+	 *            The CSS class that is added to the visual.
+	 */
 	protected void refreshCssClass(Group visual, String cssClass) {
 		visual.getStyleClass().add(cssClass);
 	}
 
+	/**
+	 * Adjusts the visualization to reflect the fisheye state of the node. If
+	 * the node is in fisheye state, its label will be reduced to the first
+	 * letter.
+	 *
+	 * @param visual
+	 *            The visual of this {@link NodeContentPart}.
+	 * @param attrs
+	 *            The attributes map that stores the fisheye state of this
+	 *            {@link NodeContentPart}.
+	 * @param str
+	 *            The label of this {@link NodeContentPart}.
+	 * @return The adjusted label for this {@link NodeContentPart}.
+	 */
 	protected String refreshFisheye(Group visual, Map<String, Object> attrs, String str) {
 		// limit label to first letter when in fisheye mode (and not hovered)
 		Object fisheye = attrs.get(ZestProperties.NODE_FISHEYE);
@@ -418,12 +568,29 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		return str;
 	}
 
+	/**
+	 * If the given <i>icon</i> is an {@link Image}, that {@link Image} will be
+	 * used as the icon of this {@link NodeContentPart}.
+	 *
+	 * @param visual
+	 *            The visual of this {@link NodeContentPart}.
+	 * @param icon
+	 *            The new icon for this {@link NodeContentPart}.
+	 */
 	protected void refreshIcon(Group visual, Object icon) {
 		if (iconImageView.getImage() != icon && icon instanceof Image) {
 			iconImageView.setImage((Image) icon);
 		}
 	}
 
+	/**
+	 * Changes the label of this {@link NodeContentPart} to the given value.
+	 *
+	 * @param visual
+	 *            The visual of this {@link NodeContentPart}.
+	 * @param str
+	 *            The new label for this {@link NodeContentPart}.
+	 */
 	protected void refreshLabel(Group visual, String str) {
 		if (!labelText.getText().equals(str)) {
 			labelText.setText(str);
@@ -453,6 +620,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 	}
 
+	/**
+	 * Changes the tooltip of this {@link NodeContentPart} to the given value.
+	 *
+	 * @param visual
+	 *            The visual of this {@link NodeContentPart}.
+	 * @param tooltip
+	 *            The new tooltip for this {@link NodeContentPart}.
+	 */
 	protected void refreshTooltip(Group visual, Object tooltip) {
 		if (tooltip instanceof String) {
 			if (tooltipNode == null) {
@@ -492,10 +667,21 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		originalBounds = null;
 	}
 
+	/**
+	 * Changes the nested graph icon that is displayed to indicate that nested
+	 * content is available to the given value.
+	 *
+	 * @param nestedGraphIcon
+	 *            The new nested graph icon.
+	 */
 	protected void setNestedGraphIcon(Node nestedGraphIcon) {
 		this.nestedGraphIcon = nestedGraphIcon;
 	}
 
+	/**
+	 * Creates the nested graph icon and adds it to the
+	 * {@link #getNestedContentStackPane()}.
+	 */
 	protected void showNestedGraphIcon() {
 		if (getNestedGraphIcon() == null) {
 			setNestedGraphIcon(new NestedGraphIcon());
