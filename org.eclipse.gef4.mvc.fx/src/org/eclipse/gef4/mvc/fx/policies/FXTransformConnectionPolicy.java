@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 
 /**
- * The {@link FXRelocateConnectionPolicy} is an {@link FXTransformPolicy} that
+ * The {@link FXTransformConnectionPolicy} is an {@link FXTransformPolicy} that
  * is adjusted for the relocation of an {@link FXConnection}. It uses an
  * {@link FXBendOperation} to update the anchors of the {@link FXConnection}
  * according to the applied translation.
@@ -33,13 +34,40 @@ import org.eclipse.gef4.mvc.models.GridModel;
  * @author mwienand
  *
  */
-public class FXRelocateConnectionPolicy extends FXTransformPolicy {
+public class FXTransformConnectionPolicy extends FXTransformPolicy {
 
 	private FXBendOperation op;
 	private Point[] initialPositions;
 
 	@Override
+	public void applyTransform(AffineTransform newTransform) {
+		// transform all anchor points
+		for (int i : getIndicesOfMovableAnchors()) {
+			Point p = initialPositions[i];
+			Point pTx = newTransform.getTransformed(p);
+			double nx = pTx.x;
+			double ny = pTx.y;
+			// TODO: make stepping (0.5) configurable
+			Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
+					.getViewer().<GridModel> getAdapter(GridModel.class), nx,
+					ny, 0.5, 0.5);
+			op.getNewAnchors().set(i,
+					new FXStaticAnchor(getHost().getVisual(),
+							new Point(nx - snapToGridOffset.width,
+									ny - snapToGridOffset.height)));
+		}
+		try {
+			op.execute(null, null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
 	public IUndoableOperation commit() {
+		// super#commit() so that it is reset properly, but throw away its
+		// operation as we have prepared our own
+		super.commit();
 		return op.hasEffect() ? op : null;
 	}
 
@@ -68,52 +96,22 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	@Override
 	public void init() {
+		// super#init() so that the policy is properly initialized
+		super.init();
+		// create operation
 		op = new FXBendOperation((FXConnection) getHost().getVisual());
-		initialPositions = op.getConnection().getPoints();
-	}
-
-	/**
-	 * Executes the current operation without pushing it onto the operation
-	 * history.
-	 */
-	protected void locallyExecuteOperation() {
+		// compute inverse transformation
+		AffineTransform inverse = null;
 		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
+			inverse = oldTransform.invert();
+		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void setConcatenation(AffineTransform transform) {
-		setPreConcatenation(transform);
-	}
-
-	@Override
-	public void setPreConcatenation(AffineTransform transform) {
-		// determine relocation offset
-		double dx = transform.getTranslateX();
-		double dy = transform.getTranslateY();
-		// update operation
+		// compute initial anchor positions (inverse transformed)
+		initialPositions = op.getConnection().getPoints();
 		for (int i : getIndicesOfMovableAnchors()) {
-			Point p = initialPositions[i];
-			// TODO: make stepping (0.5) configurable
-			Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
-					.getViewer().<GridModel> getAdapter(GridModel.class),
-					p.x + dx, p.y + dy, 0.5, 0.5);
-			op.getNewAnchors().set(i,
-					new FXStaticAnchor(getHost().getVisual(),
-							new Point(p.x + dx - snapToGridOffset.width,
-									p.y + dy - snapToGridOffset.height)));
+			initialPositions[i] = inverse.getTransformed(initialPositions[i]);
 		}
-		locallyExecuteOperation();
-	}
-
-	@Override
-	public void setTransform(AffineTransform newTransform) {
-		double dx = newTransform.getTranslateX() - getNodeTransform().getTx();
-		double dy = newTransform.getTranslateY() - getNodeTransform().getTy();
-		setPreConcatenation(new AffineTransform().translate(dx, dy));
 	}
 
 }

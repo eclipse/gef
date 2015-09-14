@@ -27,7 +27,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
 /**
- * The {@link FXResizeRelocateOnHandleDragPolicy} is an
+ * The {@link FXResizeTranslateOnHandleDragPolicy} is an
  * {@link AbstractFXOnDragPolicy} that handles the resize and relocation of its
  * (selected) first anchorage when an {@link AbstractFXSegmentHandlePart} of the
  * box selection of the first anchorage is dragged with the mouse.
@@ -36,25 +36,67 @@ import javafx.scene.transform.Affine;
  *
  */
 // Only applicable for AbstractFXSegmentHandlePart, see #getHost().
-public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
+public class FXResizeTranslateOnHandleDragPolicy
+		extends AbstractFXOnDragPolicy {
 
+	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private double initialTx;
 	private double initialTy;
-	private double dx;
-	private double dy;
-	private double dw;
-	private double dh;
-	private boolean invalidGesture = false;
+	private int translationIndex;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		// guard against uninitialized access
 		if (invalidGesture) {
 			return;
 		}
-
-		updateDeltas(e);
-		getResizeRelocatePolicy().performResizeRelocate(dx, dy, dw, dh);
+		// compute delta in local coordinates
+		Node visual = getTargetPart().getVisual();
+		Point2D startLocal = visual.sceneToLocal(initialPointerLocation.x,
+				initialPointerLocation.y);
+		Point2D endLocal = visual.sceneToLocal(e.getSceneX(), e.getSceneY());
+		double deltaX = endLocal.getX() - startLocal.getX();
+		double deltaY = endLocal.getY() - startLocal.getY();
+		// determine current layout position in local coordinates
+		Point2D layout = visual.parentToLocal(initialTx, initialTy);
+		double lx = layout.getX();
+		double ly = layout.getY();
+		// segment index determines logical position (0 = top left, 1 = top
+		// right, 2 = bottom right, 3 = bottom left)
+		int segment = getHost().getSegmentIndex();
+		if (segment == 0 || segment == 3) {
+			// left side => change layout x by local delta x
+			lx += deltaX;
+		}
+		if (segment == 0 || segment == 1) {
+			// top side => change layout y by local delta y
+			ly += deltaY;
+		}
+		// transform new layout position to parent coordinates
+		Point2D layoutParent = visual.localToParent(lx, ly);
+		// compute layout delta in parent coordinates
+		double pdx = layoutParent.getX() - initialTx;
+		double pdy = layoutParent.getY() - initialTy;
+		// determine resize in local coordinates
+		double ldw, ldh;
+		if (segment == 1 || segment == 2) {
+			// right side
+			ldw = deltaX;
+		} else {
+			// left side
+			ldw = -deltaX;
+		}
+		if (segment == 2 || segment == 3) {
+			// bottom side
+			ldh = deltaY;
+		} else {
+			// top side
+			ldh = -deltaY;
+		}
+		// apply translation and resize using underlying policies
+		getResizePolicy().performResize(ldw, ldh);
+		getTransformPolicy().setPreTranslate(translationIndex, pdx, pdy);
 	}
 
 	@Override
@@ -63,14 +105,14 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	/**
-	 * Returns the {@link FXResizeRelocatePolicy} that is installed on the
+	 * Returns the {@link FXResizePolicy} that is installed on the
 	 * {@link #getTargetPart()}.
 	 *
-	 * @return The {@link FXResizeRelocatePolicy} that is installed on the
+	 * @return The {@link FXResizePolicy} that is installed on the
 	 *         {@link #getTargetPart()}.
 	 */
-	protected FXResizeRelocatePolicy getResizeRelocatePolicy() {
-		return getTargetPart().getAdapter(FXResizeRelocatePolicy.class);
+	protected FXResizePolicy getResizePolicy() {
+		return getTargetPart().getAdapter(FXResizePolicy.class);
 	}
 
 	/**
@@ -90,6 +132,17 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).get();
 	}
 
+	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the
+	 * {@link #getTargetPart()}.
+	 *
+	 * @return The {@link FXTransformPolicy} that is installed on the
+	 *         {@link #getTargetPart()}.
+	 */
+	protected FXTransformPolicy getTransformPolicy() {
+		return getTargetPart().getAdapter(FXTransformPolicy.class);
+	}
+
 	private boolean isMultiSelection() {
 		return getTargetPart().getRoot().getViewer()
 				.getAdapter(SelectionModel.class).getSelected().size() > 1;
@@ -101,11 +154,13 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			invalidGesture = true;
 			return;
 		}
-
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
-		initialTx = getTargetTransform().getTx();
-		initialTy = getTargetTransform().getTy();
-		init(getResizeRelocatePolicy());
+		Affine targetTransform = getTargetTransform();
+		initialTx = targetTransform.getTx();
+		initialTy = targetTransform.getTy();
+		init(getResizePolicy());
+		init(getTransformPolicy());
+		translationIndex = getTransformPolicy().createPreTransform();
 	}
 
 	@Override
@@ -114,69 +169,8 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			invalidGesture = false;
 			return;
 		}
-
-		updateDeltas(e);
-		commit(getResizeRelocatePolicy());
-	}
-
-	/**
-	 * Computes the resize and relocation deltas from the given
-	 * {@link MouseEvent}. The
-	 * {@link AbstractFXSegmentHandlePart#getSegmentIndex()} of the host
-	 * determines the logical position of the handle:
-	 * <ul>
-	 * <li>0: top left
-	 * <li>1: top right
-	 * <li>2: bottom right
-	 * <li>3: bottom left
-	 * </ul>
-	 *
-	 * @param e
-	 *            The drag {@link MouseEvent}.
-	 */
-	protected void updateDeltas(MouseEvent e) {
-		dx = dy = dw = dh = 0;
-		Node visual = getTargetPart().getVisual();
-		Point2D startLocal = visual.sceneToLocal(initialPointerLocation.x,
-				initialPointerLocation.y);
-		Point2D endLocal = visual.sceneToLocal(e.getSceneX(), e.getSceneY());
-		double deltaX = endLocal.getX() - startLocal.getX();
-		double deltaY = endLocal.getY() - startLocal.getY();
-
-		// segment index determines logical position (0 = top left, 1 = top
-		// right, 2 = bottom right, 3 = bottom left)
-		int segment = getHost().getSegmentIndex();
-
-		Point2D layout = visual.parentToLocal(initialTx, initialTy);
-		double lx = layout.getX();
-		double ly = layout.getY();
-		if (segment == 0 || segment == 3) {
-			// left side => change x
-			lx += deltaX;
-		}
-		if (segment == 0 || segment == 1) {
-			// top side => change y
-			ly += deltaY;
-		}
-
-		Point2D layoutParent = visual.localToParent(lx, ly);
-		dx = layoutParent.getX() - initialTx;
-		dy = layoutParent.getY() - initialTy;
-
-		if (segment == 1 || segment == 2) {
-			// right side
-			dw = deltaX;
-		} else {
-			// left side
-			dw = -deltaX;
-		}
-		if (segment == 2 || segment == 3) {
-			// bottom side
-			dh = deltaY;
-		} else {
-			// top side
-			dh = -deltaY;
-		}
+		commit(getResizePolicy());
+		commit(getTransformPolicy());
 	}
 
 }

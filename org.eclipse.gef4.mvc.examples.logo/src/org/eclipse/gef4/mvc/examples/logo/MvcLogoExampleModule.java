@@ -14,10 +14,6 @@ package org.eclipse.gef4.mvc.examples.logo;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -53,16 +49,16 @@ import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXRotatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXScaleRelocateOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXScaleRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
+import org.eclipse.gef4.mvc.fx.tools.FXRotateTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -73,6 +69,10 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
+
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 
 public class MvcLogoExampleModule extends MvcFxModule {
 
@@ -150,9 +150,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindFXGeometricCurvePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// transaction policy for resize + transform
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXResizeRelocatePolicy.class))
-				.to(FXResizeRelocatePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class))
+				.to(FXResizeConnectionPolicy.class);
 		// interaction policy to relocate on drag
 		adapterMapBinder
 				.addBinding(
@@ -175,16 +174,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXTransformShapePolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class))
 				.to(FXResizeShapePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXRotatePolicy.class))
-				.to(FXRotatePolicy.class);
-		// transaction policy for resize + relocate (transform)
-		adapterMapBinder
-				.addBinding((AdapterKey.get(FXResizeRelocatePolicy.class)))
-				.to(FXResizeRelocatePolicy.class);
-		// transaction policy for scale + relocate (transform)
-		adapterMapBinder
-				.addBinding((AdapterKey.get(FXScaleRelocatePolicy.class)))
-				.to(FXScaleRelocatePolicy.class);
 		// interaction policies to relocate on drag (including anchored
 		// elements, which are linked)
 		adapterMapBinder
@@ -214,17 +203,22 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// single selection: resize relocate on handle drag without modifier
 		adapterMapBinder
 				.addBinding(AdapterKey
-						.get(FXResizeRelocateOnHandleDragPolicy.class))
-				.to(FXResizeRelocateOnHandleDragPolicy.class);
+						.get(FXResizeTranslateOnHandleDragPolicy.class))
+				.to(FXResizeTranslateOnHandleDragPolicy.class);
 		// rotate on drag + control
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
 				.to(FXRotateSelectedOnHandleDragPolicy.class);
-		// multi selection: scale relocate on handle drag without modifier
+		// rotate via touch
 		adapterMapBinder
 				.addBinding(
-						AdapterKey.get(FXScaleRelocateOnHandleDragPolicy.class))
-				.to(FXScaleRelocateOnHandleDragPolicy.class);
+						AdapterKey.get(FXRotateTool.TOOL_POLICY_KEY, "rotate"))
+				.to(FXRotateSelectedOnRotatePolicy.class);
+		// multi selection: scale relocate on handle drag without modifier
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.get(FXResizeTransformSelectedOnHandleDragPolicy.class))
+				.to(FXResizeTransformSelectedOnHandleDragPolicy.class);
 		// change cursor for rotation
 		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class))
 				.to(FXCursorBehavior.class);

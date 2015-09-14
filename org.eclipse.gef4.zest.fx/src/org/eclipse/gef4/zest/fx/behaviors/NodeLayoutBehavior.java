@@ -18,8 +18,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -42,10 +43,16 @@ import javafx.scene.transform.Affine;
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	/**
-	 * The class key that is used to retrieve the {@link FXResizeRelocatePolicy}
-	 * that is installed on a {@link NodeContentPart}.
+	 * The class key that is used to retrieve the {@link FXResizePolicy} that is
+	 * installed on a {@link NodeContentPart}.
 	 */
-	public static Class<FXResizeRelocatePolicy> RESIZE_RELOCATE_POLICY_KEY = FXResizeRelocatePolicy.class;
+	public static Class<FXResizePolicy> RESIZE_POLICY_KEY = FXResizePolicy.class;
+
+	/**
+	 * The class key that is used to retrieve the {@link FXTransformPolicy} that
+	 * is installed on a {@link NodeContentPart}.
+	 */
+	public static Class<FXTransformPolicy> TRANSFORM_POLICY_KEY = FXTransformPolicy.class;
 
 	/**
 	 * Default constructor.
@@ -63,12 +70,12 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	 * layout model and updates the visualization accordingly.
 	 */
 	public void adaptLayoutInformation() {
-		FXResizeRelocatePolicy policy = getHost().getAdapter(RESIZE_RELOCATE_POLICY_KEY);
-		if (policy != null) {
+		FXResizePolicy resizePolicy = getHost().getAdapter(RESIZE_POLICY_KEY);
+		FXTransformPolicy transformPolicy = getHost().getAdapter(TRANSFORM_POLICY_KEY);
+		if (resizePolicy != null && transformPolicy != null) {
 			Node visual = getHost().getVisual();
 			Bounds layoutBounds = visual.getLayoutBounds();
-			FXTransformPolicy txPolicy = getHost().getAdapter(FXTransformPolicy.class);
-			Affine transform = txPolicy.getNodeTransform();
+			Affine transform = transformPolicy.getNodeTransform();
 			double x = transform.getTx();
 			double y = transform.getTy();
 			double w = layoutBounds.getWidth();
@@ -85,9 +92,20 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			double dw = size.width - w;
 			double dh = size.height - h;
 
-			policy.init();
-			policy.performResizeRelocate(dx, dy, dw, dh);
-			IUndoableOperation operation = policy.commit();
+			resizePolicy.init();
+			transformPolicy.init();
+			resizePolicy.performResize(dw, dh);
+			transformPolicy.setPreTranslate(transformPolicy.createPreTransform(), dx, dy);
+			ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation("AdaptLayout");
+			IUndoableOperation operation = resizePolicy.commit();
+			if (operation != null) {
+				fwd.add(operation);
+			}
+			operation = transformPolicy.commit();
+			if (operation != null) {
+				fwd.add(operation);
+			}
+			operation = fwd.unwrap();
 			if (operation != null) {
 				try {
 					operation.execute(new NullProgressMonitor(), null);

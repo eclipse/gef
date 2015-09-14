@@ -11,45 +11,38 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXRelocateOnDragPolicy} is an {@link AbstractFXOnDragPolicy} that
- * relocates its {@link #getHost() host} when it is dragged with the mouse.
+ * The {@link FXTranslateSelectedOnDragPolicy} is an
+ * {@link AbstractFXOnDragPolicy} that relocates its {@link #getHost() host}
+ * when it is dragged with the mouse.
  *
  * @author anyssen
  *
  */
-public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
+public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
+	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
-			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
-				Node visual = part.getVisual();
-				Point2D initialPosInParent = visual
-						.localToParent(visual.sceneToLocal(Geometry2JavaFX
-								.toFXPoint(getInitialMouseLocationInScene())));
-				Point2D currentPosInParent = visual.localToParent(
-						visual.sceneToLocal(e.getSceneX(), e.getSceneY()));
-				Point2D deltaPoint = new Point2D(
-						currentPosInParent.getX() - initialPosInParent.getX(),
-						currentPosInParent.getY() - initialPosInParent.getY());
-				policy.performResizeRelocate(deltaPoint.getX(),
-						deltaPoint.getY(), 0, 0);
+				policy.setPreTranslateInScene(translationIndices.get(part),
+						delta.width, delta.height);
 			}
 		}
 	}
@@ -61,21 +54,6 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 	 */
 	protected Point getInitialMouseLocationInScene() {
 		return initialMouseLocationInScene;
-	}
-
-	/**
-	 * Returns the {@link FXResizeRelocatePolicy} that is installed on the given
-	 * {@link IContentPart}.
-	 *
-	 * @param part
-	 *            The {@link IContentPart} for which to return the installed
-	 *            {@link FXResizeRelocatePolicy}.
-	 * @return The {@link FXResizeRelocatePolicy} that is installed on the given
-	 *         {@link IContentPart}.
-	 */
-	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
-			IContentPart<Node, ? extends Node> part) {
-		return part.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
 	/**
@@ -91,20 +69,38 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 				.getSelected();
 	}
 
+	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the given
+	 * {@link IContentPart}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} for which to return the installed
+	 *            {@link FXTransformPolicy}.
+	 * @return The {@link FXTransformPolicy} that is installed on the given
+	 *         {@link IContentPart}.
+	 */
+	protected FXTransformPolicy getTransformPolicy(
+			IContentPart<Node, ? extends Node> part) {
+		return part.getAdapter(FXTransformPolicy.class);
+	}
+
 	@Override
 	public void press(MouseEvent e) {
+		translationIndices.clear();
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			disableRefreshVisuals(part);
 			// init transaction policy
-			init(getResizeRelocatePolicy(part));
+			init(getTransformPolicy(part));
+			translationIndices.put(part,
+					getTransformPolicy(part).createPreTransform());
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
-			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
 				enableRefreshVisuals(part);
 				// TODO: we need to ensure this can be done before
@@ -115,6 +111,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXOnDragPolicy {
 			}
 		}
 		setInitialMouseLocationInScene(null);
+		translationIndices.clear();
 	}
 
 	/**

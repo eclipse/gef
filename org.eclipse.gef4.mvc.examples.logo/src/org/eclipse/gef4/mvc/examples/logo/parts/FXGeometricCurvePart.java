@@ -16,11 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javafx.scene.Node;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Shape;
-
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -38,7 +33,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
@@ -50,6 +45,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
+
+import javafx.scene.Node;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Shape;
 
 public class FXGeometricCurvePart
 		extends AbstractFXGeometricElementPart<FXConnection> {
@@ -139,7 +139,7 @@ public class FXGeometricCurvePart
 	public FXGeometricCurvePart() {
 		// TODO: extract into own classes and use binding
 		setAdapter(AdapterKey.get(FXTransformPolicy.class),
-				new FXRelocateConnectionPolicy() {
+				new FXTransformConnectionPolicy() {
 					@Override
 					public IUndoableOperation commit() {
 						return chainModelChanges(super.commit());

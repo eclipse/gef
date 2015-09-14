@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -36,21 +38,7 @@ import javafx.scene.input.RotateEvent;
 public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 
 	private Point pivotInScene;
-
-	/**
-	 * Returns the {@link FXRotatePolicy} that is installed on the given
-	 * {@link IVisualPart}.
-	 *
-	 * @param part
-	 *            The {@link IVisualPart} of which the {@link FXRotatePolicy} is
-	 *            returned.
-	 * @return The {@link FXRotatePolicy} that is installed on the given
-	 *         {@link IVisualPart}.
-	 */
-	protected FXRotatePolicy getRotatePolicy(
-			IVisualPart<Node, ? extends Node> part) {
-		return part.getAdapter(FXRotatePolicy.class);
-	}
+	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
 
 	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should
@@ -66,6 +54,21 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 				.getSelected();
 	}
 
+	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the given
+	 * {@link IVisualPart}.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} of which the {@link FXTransformPolicy}
+	 *            is returned.
+	 * @return The {@link FXTransformPolicy} that is installed on the given
+	 *         {@link IVisualPart}.
+	 */
+	protected FXTransformPolicy getTransformPolicy(
+			IVisualPart<Node, ? extends Node> part) {
+		return part.getAdapter(FXTransformPolicy.class);
+	}
+
 	@Override
 	public void rotate(RotateEvent e) {
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
@@ -77,10 +80,10 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 	public void rotationFinished(RotateEvent e) {
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
-			FXRotatePolicy rotatePolicy = getRotatePolicy(part);
-			if (rotatePolicy != null) {
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
 				getHost().getRoot().getViewer().getDomain()
-						.execute(rotatePolicy.commit());
+						.execute(transformPolicy.commit());
 			}
 		}
 	}
@@ -93,11 +96,14 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 		pivotInScene = bounds == null ? null : bounds.getCenter();
 
 		// initialize for all target parts
-		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
+		rotationIndices.clear();
+		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			// transform pivot point to local coordinates
-			FXRotatePolicy rotatePolicy = getRotatePolicy(part);
-			if (rotatePolicy != null) {
-				rotatePolicy.init();
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				transformPolicy.init();
+				rotationIndices.put(part,
+						transformPolicy.createPreRotate(pivotInScene));
 			}
 		}
 	}
@@ -106,9 +112,11 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			IVisualPart<Node, ? extends Node> part) {
 		// Point2D pivot = pivotInTargetPartVisuals.get(part);
 		Angle rotationAngle = Angle.fromDeg(e.getTotalAngle());
-		FXRotatePolicy rotatePolicy = getRotatePolicy(part);
-		if (rotatePolicy != null) {
-			rotatePolicy.performRotation(rotationAngle, pivotInScene);
+		FXTransformPolicy transformPolicy = getTransformPolicy(part);
+		if (transformPolicy != null) {
+			transformPolicy.setPreRotate(rotationIndices.get(part),
+					rotationAngle);
 		}
 	}
+
 }

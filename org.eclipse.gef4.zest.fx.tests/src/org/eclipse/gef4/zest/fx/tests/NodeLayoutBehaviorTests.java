@@ -24,7 +24,6 @@ import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.parts.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -62,12 +61,6 @@ public class NodeLayoutBehaviorTests {
 				if (host == null) {
 					host = new NodeContentPart() {
 						{
-							setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class), new FXResizeRelocatePolicy() {
-								@Override
-								public org.eclipse.core.commands.operations.IUndoableOperation commit() {
-									return null;
-								}
-							});
 							setAdapter(AdapterKey.get(FXResizePolicy.class), new FXResizePolicy() {
 								@Override
 								public void init() {

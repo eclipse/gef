@@ -17,6 +17,8 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.euclidean.Angle;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -26,12 +28,13 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXScaleRelocateOnHandleDragPolicy} is an
+ * The {@link FXResizeTransformSelectedOnHandleDragPolicy} is an
  * {@link AbstractFXOnDragPolicy} that relocates and scales the whole
  * {@link SelectionModel selection} when its host (a box selection handle,
  * {@link AbstractFXSegmentHandlePart}) is dragged.
@@ -39,7 +42,8 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
+public class FXResizeTransformSelectedOnHandleDragPolicy
+		extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
@@ -48,11 +52,13 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	private Map<IContentPart<Node, ? extends Node>, Double> relX2 = null;
 	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
 	private boolean invalidGesture = false;
+	private Map<IContentPart<Node, ? extends Node>, Integer> scaleIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
+	private Map<IContentPart<Node, ? extends Node>, Integer> translateIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
 
 	/**
 	 * Default constructor.
 	 */
-	public FXScaleRelocateOnHandleDragPolicy() {
+	public FXResizeTransformSelectedOnHandleDragPolicy() {
 	}
 
 	/**
@@ -91,11 +97,47 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 		Rectangle sel = updateSelectionBounds(e);
 		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
-			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(targetPart);
-			if (policy != null) {
-				Bounds initialBounds = getBounds(selectionBounds, targetPart);
-				Bounds newBounds = getBounds(sel, targetPart);
-				policy.performScaleRelocate(initialBounds, newBounds);
+			// compute initial and new bounds for this target
+			Bounds initialBounds = getBounds(selectionBounds, targetPart);
+			Bounds newBounds = getBounds(sel, targetPart);
+
+			// compute translation in scene coordinates
+			double dx = newBounds.getMinX() - initialBounds.getMinX();
+			double dy = newBounds.getMinY() - initialBounds.getMinY();
+
+			// transform translation to parent coordinates
+			Node visual = targetPart.getVisual();
+			Point2D originInParent = visual.getParent().sceneToLocal(0, 0);
+			Point2D deltaInParent = visual.getParent().sceneToLocal(dx, dy);
+			dx = deltaInParent.getX() - originInParent.getX();
+			dy = deltaInParent.getY() - originInParent.getY();
+
+			// apply translation
+			getTransformPolicy(targetPart)
+					.setPreTranslate(translateIndices.get(targetPart), dx, dy);
+
+			// check if we can resize the part
+			AffineTransform affineTransform = JavaFX2Geometry.toAffineTransform(
+					getTransformPolicy(targetPart).getNodeTransform());
+			if (affineTransform.getRotation().equals(Angle.fromDeg(0))) {
+				// no rotation => resize possible
+				// TODO: special case 90 degree rotations
+				double dw = newBounds.getWidth() - initialBounds.getWidth();
+				double dh = newBounds.getHeight() - initialBounds.getHeight();
+				Point2D originInLocal = visual.sceneToLocal(newBounds.getMinX(),
+						newBounds.getMinY());
+				Point2D dstInLocal = visual.sceneToLocal(
+						newBounds.getMinX() + dw, newBounds.getMinY() + dh);
+				dw = dstInLocal.getX() - originInLocal.getX();
+				dh = dstInLocal.getY() - originInLocal.getY();
+				getResizePolicy(targetPart).performResize(dw, dh);
+			} else {
+				// compute scaling based on bounds change
+				double sx = newBounds.getWidth() / initialBounds.getWidth();
+				double sy = newBounds.getHeight() / initialBounds.getHeight();
+				// apply scaling
+				getTransformPolicy(targetPart)
+						.setPreScale(scaleIndices.get(targetPart), sx, sy);
 			}
 		}
 	}
@@ -116,18 +158,18 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	/**
-	 * Returns the {@link FXScaleRelocatePolicy} that is installed on the given
+	 * Returns the {@link FXResizePolicy} that is installed on the given
 	 * {@link IContentPart}.
 	 *
 	 * @param part
-	 *            The {@link IContentPart} of which the
-	 *            {@link FXScaleRelocatePolicy} is returned.
-	 * @return The {@link FXScaleRelocatePolicy} that is installed on the given
+	 *            The {@link IContentPart} of which the {@link FXResizePolicy}
+	 *            is returned.
+	 * @return The {@link FXResizePolicy} that is installed on the given
 	 *         {@link IContentPart}.
 	 */
-	protected FXScaleRelocatePolicy getScaleRelocatePolicy(
+	protected FXResizePolicy getResizePolicy(
 			IContentPart<Node, ? extends Node> part) {
-		return part.getAdapter(FXScaleRelocatePolicy.class);
+		return part.getAdapter(FXResizePolicy.class);
 	}
 
 	/**
@@ -172,6 +214,21 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the given
+	 * {@link IContentPart}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} of which the
+	 *            {@link FXTransformPolicy} is returned.
+	 * @return The {@link FXTransformPolicy} that is installed on the given
+	 *         {@link IContentPart}.
+	 */
+	protected FXTransformPolicy getTransformPolicy(
+			IContentPart<Node, ? extends Node> part) {
+		return part.getAdapter(FXTransformPolicy.class);
+	}
+
+	/**
 	 * Returns a {@link Rectangle} representing the visual bounds of the given
 	 * {@link IContentPart} within the coordinate system of the {@link Scene}.
 	 *
@@ -199,7 +256,6 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			invalidGesture = true;
 			return;
 		}
-
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
 		selectionBounds = getSelectionBounds(targetParts);
@@ -209,10 +265,20 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		relY2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
 		// init scale relocate policies
 		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
-			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(targetPart);
-			if (policy != null) {
+			FXTransformPolicy transformPolicy = getTransformPolicy(targetPart);
+			if (transformPolicy != null) {
 				computeRelatives(targetPart);
-				init(policy);
+				init(transformPolicy);
+				// create transforms for scaling and translating the target part
+				scaleIndices.put(targetPart, transformPolicy.createPreScale(
+						getVisualBounds(targetPart).getTopLeft()));
+				translateIndices.put(targetPart,
+						transformPolicy.createPreTransform());
+				// initialize resize policy if available
+				FXResizePolicy resizePolicy = getResizePolicy(targetPart);
+				if (resizePolicy != null) {
+					init(resizePolicy);
+				}
 			}
 		}
 	}
@@ -225,11 +291,18 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
-			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(part);
-			if (policy != null) {
-				commit(policy);
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				commit(transformPolicy);
+				FXResizePolicy resizePolicy = getResizePolicy(part);
+				if (resizePolicy != null) {
+					commit(resizePolicy);
+				}
 			}
 		}
+		// clear transformation indices lists
+		scaleIndices.clear();
+		translateIndices.clear();
 		// null resize context vars
 		selectionBounds = null;
 		initialMouseLocation = null;

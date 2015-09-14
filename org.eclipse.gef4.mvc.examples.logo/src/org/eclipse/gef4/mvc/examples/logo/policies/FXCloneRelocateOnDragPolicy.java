@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -23,14 +20,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
-public class FXCloneRelocateOnDragPolicy extends FXRelocateOnDragPolicy {
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
+public class FXCloneRelocateOnDragPolicy
+		extends FXTranslateSelectedOnDragPolicy {
 
 	class CopyTransformOperation extends AbstractOperation {
 		private final Object targetContent;

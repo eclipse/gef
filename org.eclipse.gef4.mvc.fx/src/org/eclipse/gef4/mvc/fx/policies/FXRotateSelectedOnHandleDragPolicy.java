@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
@@ -39,6 +41,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	private boolean invalidGesture = false;
 	private Point initialPointerLocationInScene;
 	private Point pivotInScene;
+	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
 
 	/**
 	 * Computes the clock-wise rotation angle based on the initial mouse
@@ -71,21 +74,6 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	/**
-	 * Returns the {@link FXRotatePolicy} that is installed on the given
-	 * {@link IVisualPart}.
-	 *
-	 * @param part
-	 *            The {@link IVisualPart} of which the {@link FXRotatePolicy} is
-	 *            returned.
-	 * @return The {@link FXRotatePolicy} that is installed on the given
-	 *         {@link IVisualPart}.
-	 */
-	protected FXRotatePolicy getRotatePolicy(
-			IVisualPart<Node, ? extends Node> part) {
-		return part.getAdapter(FXRotatePolicy.class);
-	}
-
-	/**
 	 * Returns a {@link List} containing the whole {@link SelectionModel
 	 * selection}.
 	 *
@@ -96,6 +84,21 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
+	}
+
+	/**
+	 * Returns the {@link FXTransformPolicy} that is installed on the given
+	 * {@link IVisualPart}.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} of which the {@link FXTransformPolicy}
+	 *            is returned.
+	 * @return The {@link FXTransformPolicy} that is installed on the given
+	 *         {@link IVisualPart}.
+	 */
+	protected FXTransformPolicy getTransformPolicy(
+			IVisualPart<Node, ? extends Node> part) {
+		return part.getAdapter(FXTransformPolicy.class);
 	}
 
 	@Override
@@ -112,14 +115,21 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		// determine pivot point
 		Rectangle bounds = FXPartUtils
 				.getUnionedVisualBoundsInScene(getTargetParts());
-		pivotInScene = bounds == null ? null : bounds.getCenter();
+		if (bounds == null) {
+			throw new IllegalStateException(
+					"Cannot determine visual bounds (null).");
+		}
+		pivotInScene = bounds.getCenter();
 
 		// initialize for all target parts
-		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
+		rotationIndices.clear();
+		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			// transform pivot point to local coordinates
-			FXRotatePolicy rotatePolicy = getRotatePolicy(part);
-			if (rotatePolicy != null) {
-				rotatePolicy.init();
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				transformPolicy.init();
+				rotationIndices.put(part,
+						transformPolicy.createPreRotate(pivotInScene));
 			}
 		}
 	}
@@ -133,10 +143,9 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
-			FXRotatePolicy rotatePolicy = getRotatePolicy(part);
-			if (rotatePolicy != null) {
-				getHost().getRoot().getViewer().getDomain()
-						.execute(rotatePolicy.commit());
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				commit(transformPolicy);
 			}
 		}
 	}
@@ -144,10 +153,10 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	private void updateOperation(MouseEvent e,
 			IVisualPart<Node, ? extends Node> part) {
 		// determine scaling
-		FXRotatePolicy rotatePolicy = getRotatePolicy(part);
-		if (rotatePolicy != null) {
-			rotatePolicy.performRotation(computeRotationAngleCW(e, part),
-					pivotInScene);
+		FXTransformPolicy transformPolicy = getTransformPolicy(part);
+		if (transformPolicy != null) {
+			transformPolicy.setPreRotate(rotationIndices.get(part),
+					computeRotationAngleCW(e, part));
 		}
 	}
 

@@ -16,11 +16,11 @@ import java.util.List;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class FXRelocateLinkedOnDragPolicy extends FXRelocateOnDragPolicy {
+public class FXRelocateLinkedOnDragPolicy extends FXTranslateSelectedOnDragPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
