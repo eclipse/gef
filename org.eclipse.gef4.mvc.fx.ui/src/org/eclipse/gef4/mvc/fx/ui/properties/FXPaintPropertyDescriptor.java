@@ -16,13 +16,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 /**
- * The {@link FXFillPropertyDescriptor} is a {@link PropertyDescriptor} that
- * uses the {@link FXFillCellEditor} to edit its value.
+ * The {@link FXPaintPropertyDescriptor} is a {@link PropertyDescriptor} that
+ * uses the {@link FXPaintCellEditor} to edit its value.
  *
  * @author anyssen
  *
  */
-public class FXFillPropertyDescriptor extends PropertyDescriptor {
+public class FXPaintPropertyDescriptor extends PropertyDescriptor {
 
 	/**
 	 * Creates an property descriptor with the given id and display name.
@@ -32,13 +32,13 @@ public class FXFillPropertyDescriptor extends PropertyDescriptor {
 	 * @param displayName
 	 *            The name to display for this property
 	 */
-	public FXFillPropertyDescriptor(Object id, String displayName) {
+	public FXPaintPropertyDescriptor(Object id, String displayName) {
 		super(id, displayName);
 	}
 
 	@Override
 	public CellEditor createPropertyEditor(Composite parent) {
-		CellEditor editor = new FXFillCellEditor(parent);
+		CellEditor editor = new FXPaintCellEditor(parent);
 		if (getValidator() != null) {
 			editor.setValidator(getValidator());
 		}

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
-import javafx.scene.paint.Paint;
-
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.ui.properties.FXFillPropertyDescriptor;
+import org.eclipse.gef4.mvc.fx.ui.properties.FXPaintPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import javafx.scene.paint.Paint;
+
 public class FXShapePropertySource implements IPropertySource {
 
-	private static final IPropertyDescriptor FILL_PROPERTY_DESCRIPTOR = new FXFillPropertyDescriptor(
+	private static final IPropertyDescriptor FILL_PROPERTY_DESCRIPTOR = new FXPaintPropertyDescriptor(
 			FXGeometricShape.FILL_PROPERTY, "Fill");
 
 	private FXGeometricShape shape;

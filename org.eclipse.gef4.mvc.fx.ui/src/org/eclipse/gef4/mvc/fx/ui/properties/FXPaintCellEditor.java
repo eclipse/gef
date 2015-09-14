@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.fx.ui.properties;
 import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Composite;
@@ -26,38 +25,36 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 /**
- * The {@link FXFillCellEditor} is a {@link DialogCellEditor} that is capable of
- * displaying a currently selected {@link Color} and of changing that color via
- * a dialog.
+ * The {@link FXPaintCellEditor} is a {@link DialogCellEditor} that is capable
+ * of displaying a currently selected {@link Color} and of changing that color
+ * via a dialog.
  *
  * @author anyssen
  *
  */
-// TODO: maybe move the cell editor to swtfx (and introduce jface dependency
-// there) or swtfx.ui
-public class FXFillCellEditor extends DialogCellEditor {
+public class FXPaintCellEditor extends DialogCellEditor {
 
 	private Image image;
 
 	/**
-	 * Constructs a new {@link FXFillCellEditor}.
+	 * Constructs a new {@link FXPaintCellEditor}.
 	 *
 	 * @param parent
 	 *            The parent {@link Composite}.
 	 */
-	public FXFillCellEditor(Composite parent) {
+	public FXPaintCellEditor(Composite parent) {
 		this(parent, SWT.NONE);
 	}
 
 	/**
-	 * Constructs a new {@link FXFillCellEditor}.
+	 * Constructs a new {@link FXPaintCellEditor}.
 	 *
 	 * @param parent
 	 *            The parent {@link Composite}.
 	 * @param style
 	 *            The SWT style for this control.
 	 */
-	public FXFillCellEditor(Composite parent, int style) {
+	public FXPaintCellEditor(Composite parent, int style) {
 		super(parent, style);
 		doSetValue(Color.TRANSPARENT);
 	}
@@ -73,17 +70,15 @@ public class FXFillCellEditor extends DialogCellEditor {
 	 *            The {@link Paint} to use for filling the {@link ImageData}.
 	 * @return The filled {@link ImageData}.
 	 */
-	ImageData createPaintImage(Control w, Paint paint) {
+	protected ImageData createPaintImage(Control w, Paint paint) {
 		int width = 64;
 		int height = 16;
 		if (w instanceof Table) {
 			height = ((Table) w).getItemHeight() - 1;
 		} else if (w instanceof Tree) {
 			height = ((Tree) w).getItemHeight() - 1;
-		} else if (w instanceof TableTree) {
-			height = ((TableTree) w).getItemHeight() - 1;
 		}
-		return FXFillSelectionDialog.createPaintImage(width, height, paint);
+		return FXPaintSelectionDialog.createPaintImage(width, height, paint);
 	}
 
 	@Override
@@ -97,7 +92,7 @@ public class FXFillCellEditor extends DialogCellEditor {
 
 	@Override
 	protected Object openDialogBox(Control cellEditorWindow) {
-		FXFillSelectionDialog dialog = new FXFillSelectionDialog(
+		FXPaintSelectionDialog dialog = new FXPaintSelectionDialog(
 				cellEditorWindow.getShell(), "Select Fill");
 		Object value = getValue();
 		if (value != null) {

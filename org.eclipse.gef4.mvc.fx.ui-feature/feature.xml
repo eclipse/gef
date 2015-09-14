@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.mvc.fx.ui"
       label="GEF4 MVC.FX.UI"
-      version="0.2.0.qualifier"
+      version="0.3.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.mvc.fx.ui"
       license-feature="org.eclipse.license"

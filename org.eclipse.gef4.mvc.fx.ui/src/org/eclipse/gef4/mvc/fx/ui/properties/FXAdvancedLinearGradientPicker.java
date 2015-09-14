@@ -19,10 +19,8 @@ import java.util.List;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -60,8 +58,8 @@ import javafx.util.Duration;
  * @author mwienand
  *
  */
-// TODO: This is a linear gradient picker.
-public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
+public class FXAdvancedLinearGradientPicker extends Composite
+		implements IPropertyChangeNotifier {
 
 	private class StopPicker extends Group {
 
@@ -167,8 +165,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 				public void handle(MouseEvent event) {
 					if (event.getClickCount() > 1) {
 						// double click
-						colorProperty.set(FXColorPicker.pickColor(
-								control.getShell(), colorProperty.get()));
+						colorProperty.set(FXColorPicker.pickColor(getShell(),
+								colorProperty.get()));
 						updateStop(StopPicker.this.index, offsetProperty.get(),
 								colorProperty.get());
 					} else if (draggable && MouseButton.SECONDARY
@@ -210,7 +208,7 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 *            The end color.
 	 * @return An "advanced" {@link LinearGradient} from the given colors.
 	 */
-	protected static LinearGradient createAdvancedLinearGradient(Color c1,
+	public static LinearGradient createAdvancedLinearGradient(Color c1,
 			Color c2, Color c3) {
 		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(0.5, c2),
 				new Stop(1, c3) };
@@ -229,7 +227,7 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 * @return <code>true</code> if the given {@link Paint} is considered to be
 	 *         an "advanced" gradient, othwerise <code>false</code>.
 	 */
-	public static boolean isAdvancedGradient(Paint paint) {
+	public static boolean isAdvancedLinearGradient(Paint paint) {
 		if (paint instanceof LinearGradient) {
 			return ((LinearGradient) paint).getStops().size() > 2;
 		} else if (paint instanceof RadialGradient) {
@@ -239,50 +237,41 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	}
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private Paint advancedGradient;
+	private LinearGradient advancedLinearGradient;
 	private double directionX = 1;
 	private double directionY = 0;
-	private Control control;
 	private AnchorPane root;
 	private Rectangle preview;
 	private Group pickerGroup;
 	private Line directionLine;
 
 	/**
-	 * Constructs a new {@link FXAdvancedGradientPicker}.
+	 * Constructs a new {@link FXAdvancedLinearGradientPicker}.
 	 *
 	 * @param parent
 	 *            The parent {@link Composite}.
+	 * @param color1
+	 *            The first color of the initial three-stop
+	 *            {@link LinearGradient}.
+	 * @param color2
+	 *            The second color of the initial three-stop
+	 *            {@link LinearGradient}.
+	 * @param color3
+	 *            The third color of the initial three-stop
+	 *            {@link LinearGradient}.
 	 */
-	public FXAdvancedGradientPicker(Composite parent) {
-		control = createControl(parent);
-		// TODO: start with three stops
-		setAdvancedGradient(createAdvancedLinearGradient(Color.WHITE,
-				Color.GREY, Color.BLACK));
-	}
+	public FXAdvancedLinearGradientPicker(Composite parent, Color color1,
+			Color color2, Color color3) {
+		super(parent, SWT.NONE);
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
+		setLayout(new FillLayout());
 
-	/**
-	 * Creates the visualization for this {@link FXAdvancedGradientPicker}.
-	 *
-	 * @param parent
-	 *            The parent {@link Composite}.
-	 * @return The {@link Control} that visualizes this
-	 *         {@link FXAdvancedGradientPicker}.
-	 */
-	protected Control createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		// TODO: use canvas factory
-		FXCanvas canvas = new FXCanvas(composite, SWT.NONE);
-		canvas.setLayoutData(new GridData(230, 60));
+		// create a canvas to render the JavaFX controls
+		FXCanvas canvas = new FXCanvas(this, SWT.NONE);
 
 		// create preview pane and direction circle
 		root = new AnchorPane();
+		root.setStyle("-fx-background-color: transparent;");
 		final Pane previewPane = new Pane();
 		final Circle directionCircle = new Circle(DIRECTION_RADIUS,
 				Color.WHITE);
@@ -308,22 +297,14 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 
 		// create a preview rectangle that displays the gradient
 		preview = new Rectangle();
-		preview.setStroke(Color.BLACK);
+		preview.setStroke(Color.DARKGRAY);
 		pickerGroup = new Group();
 		root.getChildren().addAll(preview, pickerGroup);
 		preview.xProperty().bind(previewPane.layoutXProperty());
 		preview.yProperty().bind(previewPane.layoutYProperty());
 		preview.widthProperty().bind(previewPane.widthProperty());
 		preview.heightProperty().bind(previewPane.heightProperty());
-		preview.setFill(advancedGradient);
-		Scene scene = new Scene(root);
-
-		// copy background color from parent composite
-		org.eclipse.swt.graphics.Color background = parent.getBackground();
-		Color backgroundColor = new Color(background.getRed() / 255d,
-				background.getGreen() / 255d, background.getBlue() / 255d,
-				background.getAlpha() / 255d);
-		scene.setFill(backgroundColor);
+		preview.setFill(advancedLinearGradient);
 
 		// create highlight line for showing where new spots are created
 		final Rectangle highlightSpotCreation = new Rectangle();
@@ -390,8 +371,21 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 			}
 		});
 
+		Scene scene = new Scene(root);
+		// copy background color from parent composite
+		org.eclipse.swt.graphics.Color backgroundColor = parent.getBackground();
+		scene.setFill(Color.rgb(backgroundColor.getRed(),
+				backgroundColor.getGreen(), backgroundColor.getBlue()));
 		canvas.setScene(scene);
-		return composite;
+
+		// create an initial linear gradient with three stops
+		setAdvancedGradient(
+				createAdvancedLinearGradient(color1, color2, color3));
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	/**
@@ -418,19 +412,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 *
 	 * @return The currently selected advanced gradient.
 	 */
-	public Paint getAdvancedGradient() {
-		return advancedGradient;
-	}
-
-	/**
-	 * Returns the {@link Control} that visualizes this
-	 * {@link FXAdvancedGradientPicker}.
-	 *
-	 * @return The {@link Control} that visualizes this
-	 *         {@link FXAdvancedGradientPicker}.
-	 */
-	public Control getControl() {
-		return control;
+	public LinearGradient getAdvancedLinearGradient() {
+		return advancedLinearGradient;
 	}
 
 	/**
@@ -470,7 +453,7 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 *         gradient.
 	 */
 	protected List<Stop> getStops() {
-		return ((LinearGradient) advancedGradient).getStops();
+		return advancedLinearGradient.getStops();
 	}
 
 	@Override
@@ -494,50 +477,53 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	 * Sets the gradient managed by this gradient picker to the given value.
 	 * Does also update the UI so that the new gradient can be manipulated.
 	 *
-	 * @param advancedGradient
+	 * @param advancedLinearGradient
 	 *            The new gradient.
 	 */
-	public void setAdvancedGradient(Paint advancedGradient) {
-		Paint oldAdvancedGradient = this.advancedGradient;
-		this.advancedGradient = advancedGradient;
-		preview.setFill(advancedGradient);
+	public void setAdvancedGradient(LinearGradient advancedLinearGradient) {
+		if (!isAdvancedLinearGradient(advancedLinearGradient)) {
+			throw new IllegalArgumentException(
+					"Given value '" + advancedLinearGradient
+							+ "' is no advanced linear gradient");
+		}
 
-		// update stop pickers
-		if (advancedGradient instanceof LinearGradient) {
-			// adapt direction
-			directionX = ((LinearGradient) advancedGradient).getEndX();
-			if (directionX == 1) {
-				directionY = 0;
+		Paint oldAdvancedGradient = this.advancedLinearGradient;
+		this.advancedLinearGradient = advancedLinearGradient;
+		preview.setFill(advancedLinearGradient);
+
+		// adapt direction
+		directionX = advancedLinearGradient.getEndX();
+		if (directionX == 1) {
+			directionY = 0;
+		} else {
+			directionX = 0;
+			directionY = 1;
+		}
+		updateDirectionLine();
+		// adapt stops
+		List<Stop> stops = getStops();
+		for (int i = 0; i < stops.size(); i++) {
+			if (pickerGroup.getChildren().size() > i) {
+				// refresh existing stop pickers
+				((StopPicker) pickerGroup.getChildren().get(i)).refresh();
 			} else {
-				directionX = 0;
-				directionY = 1;
+				// add new stop pickers
+				StopPicker stopPicker = new StopPicker(i);
+				pickerGroup.getChildren().add(stopPicker);
+				stopPicker.layoutXProperty().bind(preview.xProperty());
+				stopPicker.layoutYProperty().bind(
+						preview.yProperty().add(preview.heightProperty()));
 			}
-			updateDirectionLine();
-			// adapt stops
-			List<Stop> stops = getStops();
-			for (int i = 0; i < stops.size(); i++) {
-				if (pickerGroup.getChildren().size() > i) {
-					// refresh existing stop pickers
-					((StopPicker) pickerGroup.getChildren().get(i)).refresh();
-				} else {
-					// add new stop pickers
-					StopPicker stopPicker = new StopPicker(i);
-					pickerGroup.getChildren().add(stopPicker);
-					stopPicker.layoutXProperty().bind(preview.xProperty());
-					stopPicker.layoutYProperty().bind(
-							preview.yProperty().add(preview.heightProperty()));
-				}
-			}
-			// remove unused stop pickers
-			for (int i = pickerGroup.getChildren().size() - 1; i >= stops
-					.size(); i--) {
-				pickerGroup.getChildren().remove(i);
-			}
+		}
+		// remove unused stop pickers
+		for (int i = pickerGroup.getChildren().size() - 1; i >= stops
+				.size(); i--) {
+			pickerGroup.getChildren().remove(i);
 		}
 
 		// send notification
-		pcs.firePropertyChange("simpleGradient", oldAdvancedGradient,
-				advancedGradient);
+		pcs.firePropertyChange("advancedLinearGradient", oldAdvancedGradient,
+				advancedLinearGradient);
 	}
 
 	/**

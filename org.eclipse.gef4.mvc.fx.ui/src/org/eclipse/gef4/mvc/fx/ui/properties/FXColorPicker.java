@@ -17,16 +17,25 @@ import java.beans.PropertyChangeSupport;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * An SWT control that can be used to select a JavaFX color (and indicates the
@@ -35,7 +44,8 @@ import javafx.scene.paint.Color;
  * @author anyssen
  *
  */
-public class FXColorPicker implements IPropertyChangeNotifier {
+public class FXColorPicker extends Composite
+		implements IPropertyChangeNotifier {
 
 	/**
 	 * Opens a {@link ColorDialog} to let the user pick a {@link Color}. Returns
@@ -65,21 +75,86 @@ public class FXColorPicker implements IPropertyChangeNotifier {
 	/**
 	 * Supporter for property change notifications/listener registration.
 	 */
-	PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private Color color;
-	private Control control;
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private AbstractFXColorPicker colorPicker;
+	private Color color;
+	private Rectangle colorRectangle;
 
 	/**
 	 * Constructs a new {@link FXColorPicker}.
 	 *
 	 * @param parent
 	 *            The parent {@link Composite}.
+	 * @param color
+	 *            The initial {@link Color} to set.
 	 */
-	public FXColorPicker(final Composite parent) {
-		control = createControl(parent);
-		setColor(Color.WHITE);
+	public FXColorPicker(final Composite parent, Color color) {
+		super(parent, SWT.NONE);
+		setLayout(new FillLayout());
+
+		FXCanvas canvas = new FXCanvas(this, SWT.NONE);
+
+		// container
+		Group colorPickerGroup = new Group();
+		HBox hbox = new HBox();
+		colorPickerGroup.getChildren().add(hbox);
+
+		// color wheel
+		WritableImage colorWheelImage = new WritableImage(64, 64);
+		renderColorWheel(colorWheelImage, 0, 0, 64);
+		ImageView colorWheel = new ImageView(colorWheelImage);
+		colorWheel.setFitWidth(16);
+		colorWheel.setFitHeight(16);
+
+		BorderPane colorWheelPane = new BorderPane();
+		Insets insets = new Insets(2.0);
+		colorWheelPane.setPadding(insets);
+		colorWheelPane.setCenter(colorWheel);
+		// use background color of parent composite (the wheel image is
+		// transparent outside the wheel, so otherwise the hbox color would look
+		// through)
+		colorWheelPane.setStyle("-fx-background-color: "
+				+ computeRgbString(Color.rgb(parent.getBackground().getRed(),
+						parent.getBackground().getGreen(),
+						parent.getBackground().getBlue())));
+
+		colorRectangle = new Rectangle(50, 20);
+		// bind to ColorWheel instead of buttonPane to prevent layout
+		// problems.
+		colorRectangle.widthProperty().bind(colorWheel.fitWidthProperty()
+				.add(insets.getLeft()).add(insets.getRight()).multiply(2.5));
+		colorRectangle.heightProperty().bind(colorWheelPane.heightProperty());
+
+		// draw 'border' around hbox (and fill background, which covers the
+		// space beween color rect and wheel
+		hbox.setStyle("-fx-border-color: " + computeRgbString(Color.DARKGREY)
+				+ "; -fx-background-color: "
+				+ computeRgbString(Color.DARKGREY));
+		hbox.getChildren().addAll(colorRectangle, colorWheelPane);
+		hbox.setSpacing(0.5);
+
+		// interaction
+		colorWheelPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				Color colorOrNull = FXColorPicker.pickColor(getShell(),
+						getColor());
+				if (colorOrNull != null) {
+					setColor(colorOrNull);
+				}
+			}
+		});
+
+		Scene scene = new Scene(colorPickerGroup);
+
+		// copy background color from parent composite
+		org.eclipse.swt.graphics.Color backgroundColor = parent.getBackground();
+		scene.setFill(Color.rgb(backgroundColor.getRed(),
+				backgroundColor.getGreen(), backgroundColor.getBlue()));
+		canvas.setScene(scene);
+
+		// initialize some color
+		setColor(color);
 	}
 
 	@Override
@@ -87,33 +162,10 @@ public class FXColorPicker implements IPropertyChangeNotifier {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	/**
-	 * Creates the visualization for this {@link FXColorPicker}.
-	 *
-	 * @param parent
-	 *            The parent {@link Composite}.
-	 * @return The {@link Control} that visualizes this {@link FXColorPicker}.
-	 */
-	protected Control createControl(final Composite parent) {
-		FXCanvas canvas = new FXCanvas(parent, SWT.NONE);
-		colorPicker = new AbstractFXColorPicker() {
-
-			@Override
-			public Color pickColor() {
-				return FXColorPicker.pickColor(parent.getShell(), getColor());
-			}
-		};
-		colorPicker.colorProperty().addListener(new ChangeListener<Color>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Color> observable,
-					Color oldValue, Color newValue) {
-				setColor(newValue);
-			}
-		});
-		Scene scene = new Scene(colorPicker);
-		canvas.setScene(scene);
-		return canvas;
+	private String computeRgbString(Color color) {
+		return "rgb(" + (int) (255 * color.getRed()) + ","
+				+ (int) (255 * color.getGreen()) + ","
+				+ (int) (255 * color.getBlue()) + ")";
 	}
 
 	/**
@@ -125,18 +177,47 @@ public class FXColorPicker implements IPropertyChangeNotifier {
 		return color;
 	}
 
-	/**
-	 * Returns the {@link Control} that visualizes this {@link FXColorPicker}.
-	 *
-	 * @return The {@link Control} that visualizes this {@link FXColorPicker}.
-	 */
-	public Control getControl() {
-		return control;
-	}
-
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
+	}
+
+	/**
+	 * Draws a color wheel into the given {@link WritableImage}, starting at the
+	 * given offsets, in the given size (in pixel).
+	 *
+	 * @param image
+	 *            The {@link WritableImage} in which the color wheel is drawn.
+	 * @param offsetX
+	 *            The horizontal offset (in pixel).
+	 * @param offsetY
+	 *            The vertical offset (in pixel).
+	 * @param size
+	 *            The size (in pixel).
+	 */
+	private void renderColorWheel(WritableImage image, int offsetX, int offsetY,
+			int size) {
+		PixelWriter px = image.getPixelWriter();
+		double radius = size / 2;
+		Point2D mid = new Point2D(radius, radius);
+		for (int y = 0; y < size; y++) {
+			for (int x = 0; x < size; x++) {
+				double d = mid.distance(x, y);
+				if (d <= radius) {
+					// compute hue angle
+					double angleRad = d == 0 ? 0
+							: Math.atan2(y - mid.getY(), x - mid.getX());
+					// compute saturation depending on distance to
+					// middle
+					// ([0;1])
+					double sat = d / radius;
+					Color color = Color.hsb(angleRad * 180 / Math.PI, sat, 1);
+					px.setColor(offsetX + x, offsetY + y, color);
+				} else {
+					px.setColor(offsetX + x, offsetY + y, Color.TRANSPARENT);
+				}
+			}
+		}
 	}
 
 	/**
@@ -149,7 +230,7 @@ public class FXColorPicker implements IPropertyChangeNotifier {
 		if (this.color == null ? color != null : !this.color.equals(color)) {
 			Color oldColor = this.color;
 			this.color = color;
-			colorPicker.setColor(color);
+			colorRectangle.fillProperty().set(color);
 			pcs.firePropertyChange("color", oldColor, color);
 		}
 	}

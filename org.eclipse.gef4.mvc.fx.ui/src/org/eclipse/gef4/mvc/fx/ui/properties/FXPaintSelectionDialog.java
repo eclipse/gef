@@ -44,14 +44,14 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
 /**
- * The {@link FXFillSelectionDialog} is a {@link Dialog} that allows to select a
- * JavaFX fill, i.e. a {@link Paint}. It provides a simple color picker, a
- * simple gradient picker, and an advanced gradient picker.
+ * The {@link FXPaintSelectionDialog} is a {@link Dialog} that allows to select
+ * a JavaFX {@link Paint}. It provides a simple color picker, a simple gradient
+ * picker, and an advanced gradient picker.
  *
  * @author anyssen
  *
  */
-public class FXFillSelectionDialog extends Dialog {
+public class FXPaintSelectionDialog extends Dialog {
 
 	/**
 	 * Creates a rectangular {@link Image} to visualize the given {@link Paint}.
@@ -96,26 +96,26 @@ public class FXFillSelectionDialog extends Dialog {
 	private Paint lastFillColor = Color.WHITE;
 
 	private FXColorPicker colorPicker;
-	private Paint lastSimpleGradient = FXSimpleGradientPicker
-			.createSimpleGradient(Color.WHITE, Color.BLACK);
+	private Paint lastSimpleGradient = FXSimpleLinearGradientPicker
+			.createSimpleLinearGradient(Color.WHITE, Color.BLACK);
 
-	private FXSimpleGradientPicker simpleGradientPicker;
-	private Paint lastAdvancedGradient = FXAdvancedGradientPicker
+	private FXSimpleLinearGradientPicker simpleGradientPicker;
+	private Paint lastAdvancedGradient = FXAdvancedLinearGradientPicker
 			.createAdvancedLinearGradient(Color.WHITE, Color.GREY, Color.BLACK);
 
 	// TODO: add support for image pattern
 
-	private FXAdvancedGradientPicker advancedGradientPicker;
+	private FXAdvancedLinearGradientPicker advancedGradientPicker;
 
 	/**
-	 * Constructs a new {@link FXFillSelectionDialog}.
+	 * Constructs a new {@link FXPaintSelectionDialog}.
 	 *
 	 * @param parent
 	 *            The parent {@link Shell}.
 	 * @param title
 	 *            The title for this dialog.
 	 */
-	public FXFillSelectionDialog(Shell parent, String title) {
+	public FXPaintSelectionDialog(Shell parent, String title) {
 		super(parent);
 		this.title = title;
 	}
@@ -131,39 +131,36 @@ public class FXFillSelectionDialog extends Dialog {
 	/**
 	 * Creates a {@link Composite} that contains the advanced gradient picker.
 	 *
-	 * @param optionsComposite
+	 * @param parent
 	 *            The parent {@link Composite}.
 	 * @return The {@link Composite} that contains the advanced gradient picker.
 	 */
-	protected Composite createAdvancedGradientFillComposite(
-			Composite optionsComposite) {
-		Composite composite = new Composite(optionsComposite, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		advancedGradientPicker = new FXAdvancedGradientPicker(composite);
-		advancedGradientPicker.getControl()
+	protected Control createAdvancedGradientFillControl(Composite parent) {
+		advancedGradientPicker = new FXAdvancedLinearGradientPicker(parent,
+				Color.WHITE, Color.GREY, Color.BLACK);
+		advancedGradientPicker
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		advancedGradientPicker
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
-						setPaint(advancedGradientPicker.getAdvancedGradient());
+						setPaint(advancedGradientPicker
+								.getAdvancedLinearGradient());
 					}
 				});
-		return composite;
+		return advancedGradientPicker;
 	}
 
 	/**
 	 * Creates a {@link Composite} that contains the simple color picker.
 	 *
-	 * @param optionsComposite
+	 * @param parent
 	 *            The parent {@link Composite}.
 	 * @return The {@link Composite} that contains the simple color picker.
 	 */
-	public Composite createColorFillComposite(Composite optionsComposite) {
-		Composite composite = new Composite(optionsComposite, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		colorPicker = new FXColorPicker(composite);
+	protected Control createColorFillControl(Composite parent) {
+		colorPicker = new FXColorPicker(parent, Color.WHITE);
 		colorPicker.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
@@ -171,12 +168,13 @@ public class FXFillSelectionDialog extends Dialog {
 				setPaint(colorPicker.getColor());
 			}
 		});
-		return composite;
+		return colorPicker;
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
+		container.setBackground(parent.getBackground());
 		container.setFont(parent.getFont());
 		GridLayout gl = new GridLayout(1, true);
 		gl.marginHeight = 0;
@@ -185,7 +183,6 @@ public class FXFillSelectionDialog extends Dialog {
 		gl.marginTop = convertVerticalDLUsToPixels(
 				IDialogConstants.VERTICAL_MARGIN);
 		container.setLayout(gl);
-		container.setBackground(parent.getBackground());
 
 		Composite labelContainer = new Composite(container, SWT.NONE);
 		labelContainer
@@ -202,6 +199,7 @@ public class FXFillSelectionDialog extends Dialog {
 		imageLabel.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
 
 		Composite optionsContainer = new Composite(container, SWT.NONE);
+		optionsContainer.setBackground(parent.getBackground());
 		optionsContainer
 				.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		gl = new GridLayout(1, true);
@@ -215,22 +213,24 @@ public class FXFillSelectionDialog extends Dialog {
 															 * , "Image Fill"
 															 */ });
 		optionsCombo.setLayoutData(
-				new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		final Composite optionsComposite = createNoFillComposite(
-				optionsContainer);
+				new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
+		final Composite optionsComposite = new Composite(optionsContainer,
+				SWT.NONE);
+		optionsComposite.setLayoutData(
+				new GridData(GridData.FILL, GridData.FILL, true, true));
+		optionsComposite.setBackground(parent.getBackground());
 		final StackLayout sl = new StackLayout();
+
 		optionsComposite.setLayout(sl);
-		optionsComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL,
-				GridData.BEGINNING, true, false));
 
 		// no fill
-		final Composite noFillComposite = createNoFillComposite(
+		final Control noFillControl = new Composite(optionsComposite, SWT.NONE);
+		final Control colorFillControl = createColorFillControl(
 				optionsComposite);
-		final Composite colorFillComposite = createColorFillComposite(
+		final Control simpleGradientFillControl = createSimpleGradientFillControl(
 				optionsComposite);
-		final Composite simpleGradientFillComposite = createSimpleGradientFillComposite(
-				optionsComposite);
-		final Composite advancedGradientFillComposite = createAdvancedGradientFillComposite(
+		final Control advancedGradientFillControl = createAdvancedGradientFillControl(
 				optionsComposite);
 		// TODO: others
 
@@ -243,34 +243,36 @@ public class FXFillSelectionDialog extends Dialog {
 					if (paint instanceof Color
 							&& !Color.TRANSPARENT.equals(paint)) {
 						lastFillColor = paint;
-					} else if (FXSimpleGradientPicker.isSimpleGradient(paint)) {
+					} else if (FXSimpleLinearGradientPicker
+							.isSimpleLinearGradient(paint)) {
 						lastSimpleGradient = paint;
-					} else if (FXAdvancedGradientPicker
-							.isAdvancedGradient(paint)) {
+					} else if (FXAdvancedLinearGradientPicker
+							.isAdvancedLinearGradient(paint)) {
 						lastAdvancedGradient = paint;
 					}
 				}
 				// set new option value
 				switch (optionsCombo.getSelectionIndex()) {
 				case 0:
-					sl.topControl = noFillComposite;
+					sl.topControl = noFillControl;
 					paint = Color.TRANSPARENT;
 					break;
 				case 1:
-					sl.topControl = colorFillComposite;
+					sl.topControl = colorFillControl;
 					setPaint(lastFillColor); // restore last fill color
 					colorPicker.setColor((Color) paint);
 					break;
 				case 2:
-					sl.topControl = simpleGradientFillComposite;
+					sl.topControl = simpleGradientFillControl;
 					setPaint(lastSimpleGradient);
 					simpleGradientPicker
 							.setSimpleGradient((LinearGradient) paint);
 					break;
 				case 3:
-					sl.topControl = advancedGradientFillComposite;
+					sl.topControl = advancedGradientFillControl;
 					setPaint(lastAdvancedGradient);
-					advancedGradientPicker.setAdvancedGradient(paint);
+					advancedGradientPicker
+							.setAdvancedGradient((LinearGradient) paint);
 					break;
 				default:
 					throw new IllegalArgumentException("Unsupported option");
@@ -285,9 +287,10 @@ public class FXFillSelectionDialog extends Dialog {
 			optionsCombo.select(0);
 		} else if (paint instanceof Color) {
 			optionsCombo.select(1);
-		} else if (FXSimpleGradientPicker.isSimpleGradient(paint)) {
+		} else if (FXSimpleLinearGradientPicker.isSimpleLinearGradient(paint)) {
 			optionsCombo.select(2);
-		} else if (FXAdvancedGradientPicker.isAdvancedGradient(paint)) {
+		} else if (FXAdvancedLinearGradientPicker
+				.isAdvancedLinearGradient(paint)) {
 			optionsCombo.select(3);
 		} else if (paint instanceof ImagePattern) {
 			optionsCombo.select(4);
@@ -296,42 +299,25 @@ public class FXFillSelectionDialog extends Dialog {
 	}
 
 	/**
-	 * Creates a {@link Composite} that contains nothing to represent "no fill".
-	 *
-	 * @param optionsComposite
-	 *            The parent {@link Composite}.
-	 * @return The {@link Composite} that contains nothing.
-	 */
-	protected Composite createNoFillComposite(
-			final Composite optionsComposite) {
-		final Composite noFillComposite = new Composite(optionsComposite,
-				SWT.NONE); // dummy for no-fill
-		return noFillComposite;
-	}
-
-	/**
 	 * Creates a {@link Composite} that contains the simple gradient picker.
 	 *
-	 * @param optionsComposite
+	 * @param parent
 	 *            The parent {@link Composite}.
 	 * @return The {@link Composite} that contains the simple gradient picker.
 	 */
-	protected Composite createSimpleGradientFillComposite(
-			Composite optionsComposite) {
-		Composite composite = new Composite(optionsComposite, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		simpleGradientPicker = new FXSimpleGradientPicker(composite);
-		simpleGradientPicker.getControl()
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+	protected Control createSimpleGradientFillControl(Composite parent) {
+		simpleGradientPicker = new FXSimpleLinearGradientPicker(parent,
+				Color.WHITE, Color.BLACK);
 		simpleGradientPicker
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
-						setPaint(simpleGradientPicker.getSimpleGradient());
+						setPaint(
+								simpleGradientPicker.getSimpleLinearGradient());
 					}
 				});
-		return composite;
+		return simpleGradientPicker;
 	}
 
 	/**
@@ -342,11 +328,6 @@ public class FXFillSelectionDialog extends Dialog {
 	public Paint getPaint() {
 		return paint;
 	}
-
-	// @Override
-	// protected Point getInitialSize() {
-	// return new Point(450, 300);
-	// }
 
 	/**
 	 * Changes the currently selected {@link Paint} to the given value.
@@ -360,29 +341,32 @@ public class FXFillSelectionDialog extends Dialog {
 			if (paint instanceof Color) {
 				if (!Color.TRANSPARENT.equals(paint)) {
 					lastFillColor = paint;
-					lastSimpleGradient = FXSimpleGradientPicker
-							.createSimpleGradient(Color.WHITE, (Color) paint);
-					lastAdvancedGradient = FXAdvancedGradientPicker
+					lastSimpleGradient = FXSimpleLinearGradientPicker
+							.createSimpleLinearGradient(Color.WHITE,
+									(Color) paint);
+					lastAdvancedGradient = FXAdvancedLinearGradientPicker
 							.createAdvancedLinearGradient(Color.WHITE,
 									((Color) paint).brighter(),
 									((Color) paint));
 				}
-			} else if (FXSimpleGradientPicker.isSimpleGradient(paint)) {
+			} else if (FXSimpleLinearGradientPicker
+					.isSimpleLinearGradient(paint)) {
 				lastSimpleGradient = paint;
 				List<Stop> stops = ((LinearGradient) paint).getStops();
 				lastFillColor = stops.get(1).getColor();
-				lastAdvancedGradient = FXAdvancedGradientPicker
+				lastAdvancedGradient = FXAdvancedLinearGradientPicker
 						.createAdvancedLinearGradient(stops.get(0).getColor(),
 								stops.get(1).getColor().brighter(),
 								stops.get(1).getColor());
-			} else if (FXAdvancedGradientPicker.isAdvancedGradient(paint)) {
+			} else if (FXAdvancedLinearGradientPicker
+					.isAdvancedLinearGradient(paint)) {
 				lastAdvancedGradient = paint;
 				List<Stop> stops = paint instanceof LinearGradient
 						? ((LinearGradient) paint).getStops()
 						: ((RadialGradient) paint).getStops();
 				lastFillColor = stops.get(stops.size() - 1).getColor();
-				lastSimpleGradient = FXSimpleGradientPicker
-						.createSimpleGradient(stops.get(0).getColor(),
+				lastSimpleGradient = FXSimpleLinearGradientPicker
+						.createSimpleLinearGradient(stops.get(0).getColor(),
 								stops.get(stops.size() - 1).getColor());
 			}
 		}
