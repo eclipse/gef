@@ -1,7 +1,7 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.fx/src@args.list.delimiter@../org.eclipse.gef4.fx.ui/src"
+-sourcepath "../org.eclipse.gef4.fx/src@args.list.delimiter@../org.eclipse.gef4.fx.swt/src@args.list.delimiter@../org.eclipse.gef4.fx.jface/src@args.list.delimiter@../org.eclipse.gef4.fx.ui/src"
 -d reference/api
 -classpath "@rt@@args.list.delimiter@@context@"
 -use
@@ -23,6 +23,8 @@ org.eclipse.gef4.fx.anchors
 org.eclipse.gef4.fx.gestures
 org.eclipse.gef4.fx.listeners
 org.eclipse.gef4.fx.nodes
-org.eclipse.gef4.fx.ui.canvas
-org.eclipse.gef4.fx.ui.controls
-org.eclipse.gef4.fx.ui.gestures
+org.eclipse.gef4.fx.swt.canvas
+org.eclipse.gef4.fx.swt.controls
+org.eclipse.gef4.fx.swt.gestures
+org.eclipse.gef4.fx.jface
+org.eclipse.gef4.fx.ui.properties

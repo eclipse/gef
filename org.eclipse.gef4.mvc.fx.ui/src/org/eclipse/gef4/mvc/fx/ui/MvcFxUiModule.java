@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui;
 
-import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
+import org.eclipse.gef4.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef4.mvc.fx.ui.parts.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.ui.MvcUiModule;

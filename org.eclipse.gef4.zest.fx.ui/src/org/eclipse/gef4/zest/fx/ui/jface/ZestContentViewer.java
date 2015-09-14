@@ -19,7 +19,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
-import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
+import org.eclipse.gef4.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;

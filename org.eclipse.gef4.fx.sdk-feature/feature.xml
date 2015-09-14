@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.fx.sdk"
       label="GEF4 FX SDK"
-      version="0.2.0.qualifier"
+      version="0.3.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -32,6 +32,14 @@
          id="org.eclipse.gef4.fx.doc"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.gef4.fx.swt.source"
+         version="0.0.0"/>
+         
+   <includes
+         id="org.eclipse.gef4.fx.jface.source"
+         version="0.0.0"/>
+         
    <includes
          id="org.eclipse.gef4.fx.ui.source"
          version="0.0.0"/>
