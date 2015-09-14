@@ -13,12 +13,6 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 
 import java.util.Collections;
 
-import javafx.event.EventTarget;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
@@ -30,10 +24,16 @@ import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
 import com.google.common.collect.Multiset;
+
+import javafx.event.EventTarget;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 
@@ -60,7 +60,7 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 		}
 
 		creationPolicy.create((FXGeometricModelPart) modelPart, curve);
-		IUndoableOperation createOperation = creationPolicy.commit();
+		ITransactionalOperation createOperation = creationPolicy.commit();
 
 		// execute on stack
 		getHost().getRoot().getViewer().getDomain().execute(createOperation);

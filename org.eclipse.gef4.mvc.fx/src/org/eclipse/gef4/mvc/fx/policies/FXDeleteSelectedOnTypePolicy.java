@@ -13,9 +13,9 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -88,7 +88,7 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 		// delete part
 		deletionPolicy.init();
 		deletionPolicy.delete(selected);
-		IUndoableOperation deleteOperation = deletionPolicy.commit();
+		ITransactionalOperation deleteOperation = deletionPolicy.commit();
 
 		// execute on stack
 		getHost().getRoot().getViewer().getDomain().execute(deleteOperation);

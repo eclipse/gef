@@ -14,30 +14,50 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.ui.Messages;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
 
 /**
- * An {@link IUndoableOperation} used to set or reset the value of a property.
- * 
+ * An {@link ITransactionalOperation} used to set or reset the value of a
+ * property.
+ *
  * @author pshah
  * @author anyssen
- * 
+ *
  */
-public class SetPropertyValueOperation extends AbstractOperation {
+public class SetPropertyValueOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * Value constant to indicate that the property is to be reset to its
 	 * default value during execute/redo and undo.
 	 */
 	protected static final Object DEFAULT_VALUE = new Object();
+
+	private static IPropertyDescriptor getPropertyDescriptor(
+			IPropertySource propertySource, Object propertyId) {
+		for (IPropertyDescriptor propertyDescriptor : propertySource
+				.getPropertyDescriptors()) {
+			if (propertyDescriptor.getId().equals(propertyId)) {
+				return propertyDescriptor;
+			}
+		}
+		return null;
+	}
+
+	private static String getValueLabel(IPropertySource propertySource,
+			Object propertyId, Object newValue) {
+		IPropertyDescriptor propertyDescriptor = getPropertyDescriptor(
+				propertySource, propertyId);
+		return propertyDescriptor.getLabelProvider().getText(newValue);
+	}
 
 	/** the value to set for the property */
 	private Object newValue;
@@ -50,7 +70,7 @@ public class SetPropertyValueOperation extends AbstractOperation {
 
 	/**
 	 * Constructs a new {@link SetPropertyValueOperation}.
-	 * 
+	 *
 	 * @param propertyLabel
 	 *            A label to identify the property whose value is set by this
 	 *            command.
@@ -77,24 +97,7 @@ public class SetPropertyValueOperation extends AbstractOperation {
 		this.newValue = newValue;
 	}
 
-	private static String getValueLabel(IPropertySource propertySource,
-			Object propertyId, Object newValue) {
-		IPropertyDescriptor propertyDescriptor = getPropertyDescriptor(
-				propertySource, propertyId);
-		return propertyDescriptor.getLabelProvider().getText(newValue);
-	}
-
-	private static IPropertyDescriptor getPropertyDescriptor(
-			IPropertySource propertySource, Object propertyId) {
-		for (IPropertyDescriptor propertyDescriptor : propertySource
-				.getPropertyDescriptors()) {
-			if (propertyDescriptor.getId().equals(propertyId)) {
-				return propertyDescriptor;
-			}
-		}
-		return null;
-	}
-
+	@Override
 	public boolean canExecute() {
 		if (propertySource == null || propertyId == null) {
 			return false;
@@ -111,54 +114,6 @@ public class SetPropertyValueOperation extends AbstractOperation {
 			return canExecute;
 		}
 		return true;
-	}
-
-	/**
-	 * Returns the new value to be set for the property when executing or
-	 * redoing.
-	 * 
-	 * @return the new value or {@link #DEFAULT_VALUE} to indicate that the
-	 *         default value should be set as the new value.
-	 */
-	protected Object getNewValue() {
-		return newValue;
-	}
-
-	/**
-	 * After the command has been executed or redone, returns the old value of
-	 * the property or {@link #DEFAULT_VALUE} if the property did not have a
-	 * value before.
-	 * 
-	 * @return the old value of the property or {@link #DEFAULT_VALUE}.
-	 */
-	protected Object getOldValue() {
-		return oldValue;
-	}
-
-	/**
-	 * Returns the id by which to identify the property whose value is to be
-	 * set.
-	 * 
-	 * @return the id of the property whose value is to be set.
-	 */
-	protected Object getPropertyId() {
-		return propertyId;
-	}
-
-	/**
-	 * Returns the {@link IPropertySource} which provides the property, whose
-	 * value is to be set.
-	 * 
-	 * @return the {@link IPropertySource} which provides the property.
-	 */
-	protected IPropertySource getPropertySource() {
-		return propertySource;
-	}
-
-	private Object unwrapValue(Object value) {
-		if (value instanceof IPropertySource)
-			return ((IPropertySource) value).getEditableValue();
-		return value;
 	}
 
 	@Override
@@ -202,6 +157,54 @@ public class SetPropertyValueOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Returns the new value to be set for the property when executing or
+	 * redoing.
+	 *
+	 * @return the new value or {@link #DEFAULT_VALUE} to indicate that the
+	 *         default value should be set as the new value.
+	 */
+	protected Object getNewValue() {
+		return newValue;
+	}
+
+	/**
+	 * After the command has been executed or redone, returns the old value of
+	 * the property or {@link #DEFAULT_VALUE} if the property did not have a
+	 * value before.
+	 *
+	 * @return the old value of the property or {@link #DEFAULT_VALUE}.
+	 */
+	protected Object getOldValue() {
+		return oldValue;
+	}
+
+	/**
+	 * Returns the id by which to identify the property whose value is to be
+	 * set.
+	 *
+	 * @return the id of the property whose value is to be set.
+	 */
+	protected Object getPropertyId() {
+		return propertyId;
+	}
+
+	/**
+	 * Returns the {@link IPropertySource} which provides the property, whose
+	 * value is to be set.
+	 *
+	 * @return the {@link IPropertySource} which provides the property.
+	 */
+	protected IPropertySource getPropertySource() {
+		return propertySource;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return oldValue == newValue
+				|| (oldValue != null && oldValue.equals(newValue));
+	}
+
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
@@ -217,6 +220,13 @@ public class SetPropertyValueOperation extends AbstractOperation {
 			propertySource.setPropertyValue(propertyId, oldValue);
 		}
 		return Status.OK_STATUS;
+	}
+
+	private Object unwrapValue(Object value) {
+		if (value instanceof IPropertySource) {
+			return ((IPropertySource) value).getEditableValue();
+		}
+		return value;
 	}
 
 }

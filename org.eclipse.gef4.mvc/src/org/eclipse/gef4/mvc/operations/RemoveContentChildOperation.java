@@ -27,7 +27,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class RemoveContentChildOperation<VR> extends AbstractOperation {
+public class RemoveContentChildOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private final IContentPart<VR, ? extends VR> parent;
 	private final Object contentChild;
@@ -47,6 +48,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 	 */
 	public RemoveContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild) {
+		// TODO: expect index as in AddContentChildOperation
 		super("Remove Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
@@ -60,6 +62,12 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 		index = parent.getContentChildren().indexOf(contentChild);
 		parent.removeContentChild(contentChild, index);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		// TODO: noop if child is not present (at that index)
+		return false;
 	}
 
 	@Override

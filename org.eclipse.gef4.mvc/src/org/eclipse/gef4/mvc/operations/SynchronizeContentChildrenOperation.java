@@ -31,7 +31,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
+public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private IContentPart<VR, ? extends VR> parent;
 
@@ -60,6 +61,11 @@ public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return false;
 	}
 
 	@Override

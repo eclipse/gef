@@ -29,7 +29,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class AddContentChildOperation<VR> extends AbstractOperation {
+public class AddContentChildOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private final IContentPart<VR, ? extends VR> parent;
 	private final Object contentChild;
@@ -66,6 +67,12 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 		// + ".");
 		parent.addContentChild(contentChild, index);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		// TODO: noop if child already at that index
+		return false;
 	}
 
 	@Override

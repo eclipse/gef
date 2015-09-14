@@ -13,7 +13,6 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -22,6 +21,7 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -33,9 +33,10 @@ import javafx.scene.input.MouseEvent;
 public class FXCloneRelocateOnDragPolicy
 		extends FXTranslateSelectedOnDragPolicy {
 
-	class CopyTransformOperation extends AbstractOperation {
+	class CopyTransformOperation extends AbstractOperation
+			implements ITransactionalOperation {
 		private final Object targetContent;
-		private IUndoableOperation operation; // generated on first execute
+		private ITransactionalOperation operation; // generated on first execute
 
 		public CopyTransformOperation(Object targetContent) {
 			super("CopyTransform");
@@ -58,6 +59,11 @@ public class FXCloneRelocateOnDragPolicy
 				operation = cloneTransformPolicy.commit();
 			}
 			return operation.execute(null, null);
+		}
+
+		@Override
+		public boolean isNoOp() {
+			return false;
 		}
 
 		@Override

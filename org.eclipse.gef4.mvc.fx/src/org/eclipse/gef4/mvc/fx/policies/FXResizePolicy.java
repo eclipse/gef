@@ -12,13 +12,13 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
@@ -55,15 +55,15 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		if (!initialized) {
 			return null;
 		}
 		// after commit, we need to be re-initialized
 		initialized = false;
 
-		IUndoableOperation commit = null;
-		if (resizeOperation != null && resizeOperation.hasEffect()) {
+		ITransactionalOperation commit = null;
+		if (resizeOperation != null && !resizeOperation.isNoOp()) {
 			commit = resizeAndRevealOperation;
 		}
 		resizeAndRevealOperation = null;

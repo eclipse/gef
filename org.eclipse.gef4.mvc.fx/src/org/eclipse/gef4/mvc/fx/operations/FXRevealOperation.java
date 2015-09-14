@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -31,7 +32,8 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class FXRevealOperation extends AbstractOperation {
+public class FXRevealOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private double tx = 0d;
 	private double ty = 0d;
@@ -63,6 +65,11 @@ public class FXRevealOperation extends AbstractOperation {
 		ty = viewportModel.getTranslateY();
 		viewer.reveal(part);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return false;
 	}
 
 	@Override

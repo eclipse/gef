@@ -30,7 +30,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * @author anyssen
  *
  */
-public class ChangeContentsOperation extends AbstractOperation {
+public class ChangeContentsOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * <pre>
@@ -96,6 +97,12 @@ public class ChangeContentsOperation extends AbstractOperation {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
 		contentModel.setContents(newContents);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return oldContents == newContents
+				|| (oldContents != null && oldContents.equals(newContents));
 	}
 
 	/*

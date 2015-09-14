@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -29,7 +30,8 @@ import javafx.scene.transform.Affine;
  * @author mwienand
  *
  */
-public class FXTransformOperation extends AbstractOperation {
+public class FXTransformOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * Returns <code>true</code> if the given {@link Affine}s are equal.
@@ -169,15 +171,9 @@ public class FXTransformOperation extends AbstractOperation {
 		return oldTransform;
 	}
 
-	/**
-	 * Returns <code>true</code> if the execution of this operation will result
-	 * in changes. Otherwise returns <code>false</code>.
-	 *
-	 * @return <code>true</code> if the execution of this operation will result
-	 *         in changes, otherwise <code>false</code>.
-	 */
-	public boolean hasEffect() {
-		return !equals(newTransform, oldTransform);
+	@Override
+	public boolean isNoOp() {
+		return equals(newTransform, oldTransform);
 	}
 
 	@Override

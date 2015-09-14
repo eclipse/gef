@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import javafx.scene.Node;
 
@@ -30,7 +31,8 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class FXResizeNodeOperation extends AbstractOperation {
+public class FXResizeNodeOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private final Node visual;
 	private final Dimension oldSize;
@@ -143,15 +145,9 @@ public class FXResizeNodeOperation extends AbstractOperation {
 		return visual;
 	}
 
-	/**
-	 * Returns <code>true</code> if the execution of this operation will result
-	 * in a manipulation. Otherwise, <code>false</code> is returned.
-	 *
-	 * @return <code>true</code> if the execution of this operation will result
-	 *         in a manipulation, otherwise <code>false</code>.
-	 */
-	public boolean hasEffect() {
-		return dw != 0 && dh != 0;
+	@Override
+	public boolean isNoOp() {
+		return dw == 0 && dh == 0;
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
  * An {@link FXBendOperation} can be used to manipulate an {@link FXConnection}
@@ -30,7 +31,8 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
  * @author mwienand
  *
  */
-public class FXBendOperation extends AbstractOperation {
+public class FXBendOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private final FXConnection connection;
 	private final List<IFXAnchor> oldAnchors;
@@ -91,15 +93,9 @@ public class FXBendOperation extends AbstractOperation {
 		return oldAnchors;
 	}
 
-	/**
-	 * Returns <code>true</code> if this operation will result in any
-	 * manipulations. Otherwise returns <code>false</code>.
-	 *
-	 * @return <code>true</code> if this operation will result in any
-	 *         manipulations, otherwise <code>false</code>.
-	 */
-	public boolean hasEffect() {
-		return !oldAnchors.equals(newAnchors);
+	@Override
+	public boolean isNoOp() {
+		return oldAnchors.equals(newAnchors);
 	}
 
 	@Override

@@ -31,7 +31,9 @@ import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMapInjector;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -168,6 +170,18 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public void execute(IUndoableOperation operation) {
+		// TODO: reconsider
+		// reduce composite operations
+		if (operation instanceof AbstractCompositeOperation) {
+			operation = ((AbstractCompositeOperation) operation).unwrap(true);
+		}
+		// do not execute NoOps
+		if (operation instanceof ITransactionalOperation) {
+			if (((ITransactionalOperation) operation).isNoOp()) {
+				return;
+			}
+		}
+		// execute on history
 		IOperationHistory operationHistory = getOperationHistory();
 		// IMPORTANT: if we have an open transaction in the domain, we should
 		// not add an undo context, because our operation will be added to the

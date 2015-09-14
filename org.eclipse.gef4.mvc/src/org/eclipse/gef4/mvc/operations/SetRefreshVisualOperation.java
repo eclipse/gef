@@ -32,7 +32,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public class SetRefreshVisualOperation<VR> extends AbstractOperation {
+public class SetRefreshVisualOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private IVisualPart<VR, ? extends VR> part;
 	private boolean from;
@@ -67,6 +68,11 @@ public class SetRefreshVisualOperation<VR> extends AbstractOperation {
 			throws ExecutionException {
 		part.setRefreshVisual(to);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return from == to;
 	}
 
 	@Override

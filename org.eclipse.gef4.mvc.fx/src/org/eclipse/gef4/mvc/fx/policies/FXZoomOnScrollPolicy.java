@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import javafx.scene.input.ScrollEvent;
 
@@ -68,7 +68,7 @@ public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		FXChangeViewportPolicy viewportPolicy = getViewportPolicy();
 		viewportPolicy.init();
 		viewportPolicy.zoomRelative(relativeZoom, sceneX, sceneY);
-		IUndoableOperation commit = viewportPolicy.commit();
+		ITransactionalOperation commit = viewportPolicy.commit();
 		if (commit != null) {
 			getHost().getRoot().getViewer().getDomain().execute(commit);
 		}

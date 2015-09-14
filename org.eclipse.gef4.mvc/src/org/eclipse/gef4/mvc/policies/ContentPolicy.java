@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.operations.AddContentChildOperation;
 import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.RemoveContentChildOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
@@ -97,11 +97,11 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	}
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		// after commit, we need to be re-initialized
 		initialized = false;
 		if (commitOperation != null) {
-			IUndoableOperation commit = commitOperation.unwrap();
+			ITransactionalOperation commit = commitOperation.unwrap(true);
 			commitOperation = null;
 			return commit;
 		}
@@ -149,14 +149,14 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 						policy.detachFromContentAnchorage(
 								getHost().getContent(), role);
 					}
-					IUndoableOperation detachOperation = policy.commit();
+					ITransactionalOperation detachOperation = policy.commit();
 					if (detachOperation != null) {
 						detachOps.add(detachOperation);
 					}
 				}
 			}
 		}
-		IUndoableOperation detachOperation = detachOps.unwrap();
+		ITransactionalOperation detachOperation = detachOps.unwrap(true);
 		if (detachOperation != null) {
 			commitOperation.add(detachOperation);
 		}
@@ -265,13 +265,13 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 			if (policy != null) {
 				policy.init();
 				policy.removeContentChild(getHost().getContent());
-				IUndoableOperation removeOperation = policy.commit();
+				ITransactionalOperation removeOperation = policy.commit();
 				if (removeOperation != null) {
 					deleteOps.add(removeOperation);
 				}
 			}
 		}
-		IUndoableOperation deleteOperation = deleteOps.unwrap();
+		ITransactionalOperation deleteOperation = deleteOps.unwrap(true);
 		if (deleteOperation != null) {
 			commitOperation.add(deleteOperation);
 		}

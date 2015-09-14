@@ -34,7 +34,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class ChangeSelectionOperation<VR> extends AbstractOperation {
+public class ChangeSelectionOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * <pre>
@@ -120,6 +121,12 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 		selectionModel.deselectAll();
 		selectionModel.select(newSelection);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return oldSelection == newSelection
+				|| (oldSelection != null && oldSelection.equals(newSelection));
 	}
 
 	@Override

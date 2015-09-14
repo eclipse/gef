@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
@@ -44,7 +44,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 	private Set<IContentPart<VR, ? extends VR>> partsToDelete;
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		if (!initialized) {
 			return null;
 		}
@@ -59,7 +59,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 				policy.init();
 				policy.detachAllContentAnchoreds();
 				policy.detachFromAllContentAnchorages();
-				IUndoableOperation detachOperation = policy.commit();
+				ITransactionalOperation detachOperation = policy.commit();
 				if (detachOperation != null) {
 					rev.add(detachOperation);
 				}
@@ -73,7 +73,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 			if (policy != null) {
 				policy.init();
 				policy.removeFromParent();
-				IUndoableOperation removeOperation = policy.commit();
+				ITransactionalOperation removeOperation = policy.commit();
 				if (removeOperation != null) {
 					rev.add(removeOperation);
 				}
@@ -84,7 +84,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 		initialized = false;
 		partsToDelete = null;
 
-		return rev.unwrap();
+		return rev.unwrap(true);
 	}
 
 	/**

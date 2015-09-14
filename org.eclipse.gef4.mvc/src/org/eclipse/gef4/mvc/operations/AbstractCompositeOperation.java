@@ -36,13 +36,13 @@ import org.eclipse.gef4.mvc.MvcBundle;
  *
  */
 public abstract class AbstractCompositeOperation extends AbstractOperation
-		implements ICompositeOperation {
+		implements ICompositeOperation, ITransactionalOperation {
 
 	/**
-	 * The list containing the {@link IUndoableOperation}s which are combined in
-	 * this composite operation.
+	 * The list containing the {@link ITransactionalOperation}s which are
+	 * combined in this composite operation.
 	 */
-	List<IUndoableOperation> operations = new ArrayList<IUndoableOperation>();
+	List<ITransactionalOperation> operations = new ArrayList<ITransactionalOperation>();
 
 	/**
 	 * Creates a new {@link AbstractCompositeOperation} with the given label.
@@ -56,11 +56,12 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 
 	@Override
 	public void add(IUndoableOperation operation) {
-		if (operation == null) {
+		if (operation instanceof ITransactionalOperation) {
+			operations.add((ITransactionalOperation) operation);
+		} else {
 			throw new IllegalArgumentException(
-					"The given operation may not be null.");
+					"The given operation may not be null and must implement ITransactionalOperation.");
 		}
-		operations.add(operation);
 	}
 
 	/**
@@ -70,12 +71,12 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	 *            The {@link IUndoableOperation}s which are added to this
 	 *            composite operation.
 	 */
-	public void addAll(List<IUndoableOperation> operations) {
+	public void addAll(List<ITransactionalOperation> operations) {
 		/*
 		 * Do not use <code>operations.addAll()</code> because we need to check
 		 * for <code>null</code> operations.
 		 */
-		for (IUndoableOperation op : operations) {
+		for (ITransactionalOperation op : operations) {
 			add(op);
 		}
 	}
@@ -87,7 +88,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 
 	@Override
 	public boolean canExecute() {
-		for (IUndoableOperation operation : operations) {
+		for (ITransactionalOperation operation : operations) {
 			if (!operation.canExecute()) {
 				return false;
 			}
@@ -97,7 +98,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 
 	@Override
 	public boolean canRedo() {
-		for (IUndoableOperation operation : operations) {
+		for (ITransactionalOperation operation : operations) {
 			if (!operation.canRedo()) {
 				return false;
 			}
@@ -107,7 +108,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 
 	@Override
 	public boolean canUndo() {
-		for (IUndoableOperation operation : operations) {
+		for (ITransactionalOperation operation : operations) {
 			if (!operation.canUndo()) {
 				return false;
 			}
@@ -137,20 +138,20 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		for (IUndoableOperation operation : operations) {
+		for (ITransactionalOperation operation : operations) {
 			combine(status, operation.execute(monitor, info));
 		}
 		return status;
 	}
 
 	/**
-	 * Returns the list of operations which are combined in this composite
-	 * operation.
+	 * Returns the list of {@link ITransactionalOperation}s which are combined
+	 * in this composite operation.
 	 *
-	 * @return The list of operations which are combined in this composite
-	 *         operation.
+	 * @return The list of {@link ITransactionalOperation}s which are combined
+	 *         in this composite operation.
 	 */
-	public List<IUndoableOperation> getOperations() {
+	public List<ITransactionalOperation> getOperations() {
 		return operations;
 	}
 
@@ -166,10 +167,20 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isNoOp() {
+		for (ITransactionalOperation op : operations) {
+			if (!op.isNoOp()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		for (IUndoableOperation operation : operations) {
+		for (ITransactionalOperation operation : operations) {
 			combine(status, operation.redo(monitor, info));
 		}
 		return status;
@@ -184,7 +195,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		for (IUndoableOperation operation : operations) {
+		for (ITransactionalOperation operation : operations) {
 			combine(status, operation.undo(monitor, info));
 		}
 		return status;
@@ -197,11 +208,25 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	 * contains exactly one operation, that one operation is returned.
 	 * Otherwise, this composite operation is returned.
 	 *
+	 * @param filterNoOps
+	 *            <code>true</code> if no-ops (see
+	 *            {@link ITransactionalOperation#isNoOp()}) should be removed
+	 *            from the list of operations, otherwise <code>false</code>.
 	 * @return <code>null</code> when no operations are contained, the one
 	 *         operation when only one operation is contained, this composite
 	 *         when multiple operations are contained.
 	 */
-	public IUndoableOperation unwrap() {
+	public ITransactionalOperation unwrap(boolean filterNoOps) {
+		if (filterNoOps) {
+			// remove no-op operations
+			for (int i = operations.size() - 1; i >= 0; i--) {
+				ITransactionalOperation op = operations.get(i);
+				if (op.isNoOp()) {
+					operations.remove(i);
+				}
+			}
+		}
+		// reduce operation
 		if (operations.size() == 0) {
 			return null;
 		} else if (operations.size() == 1) {

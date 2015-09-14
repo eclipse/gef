@@ -31,7 +31,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class ChangeHoverOperation<VR> extends AbstractOperation {
+public class ChangeHoverOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * <pre>
@@ -119,6 +120,11 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 		viewer.<HoverModel<VR>> getAdapter(HoverModel.class)
 				.setHover(newHovered);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return oldHovered == newHovered;
 	}
 
 	@Override

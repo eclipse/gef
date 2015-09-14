@@ -15,7 +15,6 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -23,6 +22,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
@@ -144,7 +144,7 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 					NavigationPolicy semanticZoomPolicy = getSemanticZoomPolicy();
 					semanticZoomPolicy.init();
 					semanticZoomPolicy.openNestedGraph(nestedGraph);
-					IUndoableOperation commit = semanticZoomPolicy.commit();
+					ITransactionalOperation commit = semanticZoomPolicy.commit();
 					if (commit != null) {
 						getHost().getRoot().getViewer().getDomain().execute(commit);
 					}

@@ -27,7 +27,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
+public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	private final IContentPart<VR, ? extends VR> anchored;
 	private final Object contentAnchorage;
@@ -65,6 +66,12 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
 		// + contentAnchorage + " with role " + role + ".");
 		anchored.detachFromContentAnchorage(contentAnchorage, role);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return !anchored.getContentAnchorages().containsEntry(contentAnchorage,
+				role);
 	}
 
 	@Override

@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import javafx.geometry.Bounds;
 
@@ -39,9 +39,9 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	private Double[] relY = null;
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		super.commit();
-		IUndoableOperation commit = op.hasEffect() ? op : null;
+		ITransactionalOperation commit = op.isNoOp() ? null : op;
 		op = null;
 		initialPositions = null;
 		relX = null;

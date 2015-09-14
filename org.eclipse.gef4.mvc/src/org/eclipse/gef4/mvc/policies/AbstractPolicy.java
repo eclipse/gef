@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -45,7 +46,7 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 	 */
 	protected void commit(IPolicy<VR> policy) {
 		if (policy != null && policy instanceof ITransactional) {
-			IUndoableOperation o = ((ITransactional) policy).commit();
+			ITransactionalOperation o = ((ITransactional) policy).commit();
 			if (o != null && o.canExecute()) {
 				getHost().getRoot().getViewer().getDomain().execute(o);
 			}

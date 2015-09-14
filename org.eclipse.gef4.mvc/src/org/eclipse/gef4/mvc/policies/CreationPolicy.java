@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**
@@ -45,7 +45,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	private List<Entry<IContentPart<VR, ? extends VR>, Object>> contentToCreate;
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		if (!initialized) {
 			return null;
 		}
@@ -77,7 +77,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 		initialized = false;
 		contentToCreate = null;
 
-		return fwd.unwrap();
+		return fwd.unwrap(true);
 	}
 
 	/**

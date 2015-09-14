@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,6 +35,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -77,7 +77,7 @@ public class FXGeometricCurvePart
 	}
 
 	private static final class ChangeWayPointsOperation
-			extends AbstractOperation {
+			extends AbstractOperation implements ITransactionalOperation {
 
 		private final FXGeometricCurve curve;
 		private final List<Point> newWayPoints;
@@ -95,6 +95,12 @@ public class FXGeometricCurvePart
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
 			curve.setWayPoints(newWayPoints.toArray(new Point[] {}));
 			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean isNoOp() {
+			return oldWayPoints == newWayPoints || (oldWayPoints != null
+					&& oldWayPoints.equals(newWayPoints));
 		}
 
 		@Override
@@ -141,13 +147,13 @@ public class FXGeometricCurvePart
 		setAdapter(AdapterKey.get(FXTransformPolicy.class),
 				new FXTransformConnectionPolicy() {
 					@Override
-					public IUndoableOperation commit() {
+					public ITransactionalOperation commit() {
 						return chainModelChanges(super.commit());
 					}
 				});
 		setAdapter(AdapterKey.get(FXBendPolicy.class), new FXBendPolicy() {
 			@Override
-			public IUndoableOperation commit() {
+			public ITransactionalOperation commit() {
 				return chainModelChanges(super.commit());
 			}
 		});
@@ -184,8 +190,8 @@ public class FXGeometricCurvePart
 		}
 	}
 
-	IUndoableOperation chainModelChanges(
-			final IUndoableOperation updateVisualOperation) {
+	ITransactionalOperation chainModelChanges(
+			final ITransactionalOperation updateVisualOperation) {
 		if (updateVisualOperation == null) {
 			return null;
 		}
@@ -196,7 +202,7 @@ public class FXGeometricCurvePart
 		final List<Point> newWayPoints = getVisual().getWayPoints();
 
 		// create model operation
-		final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
+		final ITransactionalOperation updateModelOperation = new ChangeWayPointsOperation(
 				"Update Model", curve, oldWayPoints, newWayPoints);
 
 		// create anchorage operations, start with detaching all anchorages
@@ -204,7 +210,7 @@ public class FXGeometricCurvePart
 				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 		contentPolicy.init();
 		contentPolicy.detachFromAllContentAnchorages();
-		final IUndoableOperation detachOperation = contentPolicy.commit();
+		final ITransactionalOperation detachOperation = contentPolicy.commit();
 
 		// then attach source and target (if available)
 		contentPolicy.init();
@@ -220,7 +226,7 @@ public class FXGeometricCurvePart
 			contentPolicy.attachToContentAnchorage(targetContentAnchorage,
 					"END");
 		}
-		final IUndoableOperation attachOperation = contentPolicy.commit();
+		final ITransactionalOperation attachOperation = contentPolicy.commit();
 
 		// compose operations
 		return new ForwardUndoCompositeOperation(

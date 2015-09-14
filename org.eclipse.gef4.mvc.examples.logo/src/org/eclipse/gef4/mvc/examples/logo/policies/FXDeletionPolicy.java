@@ -12,25 +12,25 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
-import javafx.scene.Node;
-
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.operations.ClearHoverFocusSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
+
+import javafx.scene.Node;
 
 public class FXDeletionPolicy extends DeletionPolicy<Node> {
 
 	@Override
-	public IUndoableOperation commit() {
-		IUndoableOperation deleteOperation = super.commit();
+	public ITransactionalOperation commit() {
+		ITransactionalOperation deleteOperation = super.commit();
 		// clear interaction models
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"Delete Selected");
 		fwd.add(deleteOperation);
 		fwd.add(new ClearHoverFocusSelectionOperation<Node>(
 				getHost().getRoot().getViewer()));
-		return fwd;
+		return fwd.unwrap(true);
 	}
 
 }

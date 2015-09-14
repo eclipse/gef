@@ -11,11 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
-import javafx.scene.transform.Affine;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,15 +24,58 @@ import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.scene.transform.Affine;
+
 public class FXTransformShapePolicy extends FXTransformPolicy {
 
+	private class ModelOperation extends AbstractOperation
+			implements ITransactionalOperation {
+		private final FXGeometricShape hostContent;
+		private final AffineTransform newTx;
+		private final AffineTransform oldTx;
+
+		public ModelOperation(FXGeometricShape hostContent,
+				AffineTransform oldTransform, AffineTransform newTransform) {
+			super("Update Model");
+			this.hostContent = hostContent;
+			this.oldTx = oldTransform;
+			this.newTx = newTransform;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			hostContent.setTransform(newTx);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean isNoOp() {
+			return oldTx == newTx || (oldTx != null && oldTx.equals(newTx));
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			hostContent.setTransform(oldTx);
+			return Status.OK_STATUS;
+		}
+	}
+
 	@Override
-	public IUndoableOperation commit() {
-		final IUndoableOperation updateVisualOperation = super.commit();
+	public ITransactionalOperation commit() {
+		final ITransactionalOperation updateVisualOperation = super.commit();
 		if (updateVisualOperation == null) {
 			return null;
 		}
@@ -58,31 +98,10 @@ public class FXTransformShapePolicy extends FXTransformPolicy {
 				tx.getTranslateY());
 
 		// create operation to write the changes to the model
-		final IUndoableOperation updateModelOperation = new AbstractOperation(
-				"Update Model") {
-
-			@Override
-			public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-					throws ExecutionException {
-				hostContent.setTransform(newTransform);
-				return Status.OK_STATUS;
-			}
-
-			@Override
-			public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-					throws ExecutionException {
-				return execute(monitor, info);
-			}
-
-			@Override
-			public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-					throws ExecutionException {
-				hostContent.setTransform(oldTransform);
-				return Status.OK_STATUS;
-			}
-		};
+		final ITransactionalOperation updateModelOperation = new ModelOperation(
+				hostContent, oldTransform, newTransform);
 		// compose operations
-		IUndoableOperation compositeOperation = new ForwardUndoCompositeOperation(
+		ITransactionalOperation compositeOperation = new ForwardUndoCompositeOperation(
 				updateVisualOperation.getLabel()) {
 			{
 				add(updateVisualOperation);

@@ -31,7 +31,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class ChangeFocusOperation<VR> extends AbstractOperation {
+public class ChangeFocusOperation<VR> extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * <pre>
@@ -118,6 +119,11 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 		viewer.<FocusModel<VR>> getAdapter(FocusModel.class)
 				.setFocused(newFocused);
 		return Status.OK_STATUS;
+	}
+
+	@Override
+	public boolean isNoOp() {
+		return oldFocused == newFocused;
 	}
 
 	@Override

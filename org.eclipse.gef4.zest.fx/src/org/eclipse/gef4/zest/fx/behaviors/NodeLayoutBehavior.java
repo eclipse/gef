@@ -13,7 +13,6 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -21,6 +20,7 @@ import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -97,7 +97,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			resizePolicy.performResize(dw, dh);
 			transformPolicy.setPreTranslate(transformPolicy.createPreTransform(), dx, dy);
 			ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation("AdaptLayout");
-			IUndoableOperation operation = resizePolicy.commit();
+			ITransactionalOperation operation = resizePolicy.commit();
 			if (operation != null) {
 				fwd.add(operation);
 			}
@@ -105,7 +105,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			if (operation != null) {
 				fwd.add(operation);
 			}
-			operation = fwd.unwrap();
+			operation = fwd.unwrap(true);
 			if (operation != null) {
 				try {
 					operation.execute(new NullProgressMonitor(), null);

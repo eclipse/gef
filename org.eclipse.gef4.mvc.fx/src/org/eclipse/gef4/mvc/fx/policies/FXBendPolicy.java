@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
@@ -31,6 +30,7 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SetRefreshVisualOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -99,14 +99,14 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	}
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		if (!initialized) {
 			return null;
 		}
 		// after commit, we need to be re-initialized
 		initialized = false;
 
-		if (op != null && op.hasEffect()) {
+		if (op != null && !op.isNoOp()) {
 			// get current selection
 			IViewer<Node> viewer = getHost().getRoot().getViewer();
 			SelectionModel<Node> selectionModel = viewer

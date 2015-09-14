@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -24,6 +23,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
  * The {@link FXTransformConnectionPolicy} is an {@link FXTransformPolicy} that
@@ -64,11 +64,11 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	}
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		// super#commit() so that it is reset properly, but throw away its
 		// operation as we have prepared our own
 		super.commit();
-		return op.hasEffect() ? op : null;
+		return op.isNoOp() ? null : op;
 	}
 
 	/**

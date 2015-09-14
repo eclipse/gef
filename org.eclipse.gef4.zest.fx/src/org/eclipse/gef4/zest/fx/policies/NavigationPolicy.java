@@ -16,7 +16,6 @@ package org.eclipse.gef4.zest.fx.policies;
 import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +28,7 @@ import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.models.ViewportModel.ViewportState;
 import org.eclipse.gef4.mvc.operations.ChangeContentsOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
@@ -57,7 +57,7 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 	private ChangeContentsOperation changeContentsOperation = null;
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		if (!initialized) {
 			return null;
 		}
@@ -67,13 +67,13 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation("Open Graph");
 		// add change viewport operation
 		FXChangeViewportPolicy changeViewportPolicy = getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
-		IUndoableOperation operation = changeViewportPolicy.commit();
+		ITransactionalOperation operation = changeViewportPolicy.commit();
 		if (operation != null) {
 			commit.add(operation);
 		}
 		commit.add(changeContentsOperation);
 		changeContentsOperation = null;
-		return commit.unwrap();
+		return commit.unwrap(true);
 	}
 
 	@Override

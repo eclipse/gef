@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
  * The {@link FXChangeViewportOperation} can be used to alter a
@@ -27,7 +28,8 @@ import org.eclipse.gef4.mvc.models.ViewportModel;
  * @author mwienand
  *
  */
-public class FXChangeViewportOperation extends AbstractOperation {
+public class FXChangeViewportOperation extends AbstractOperation
+		implements ITransactionalOperation {
 
 	/**
 	 * The {@link ViewportModel} that is manipulated by this operation.
@@ -346,22 +348,13 @@ public class FXChangeViewportOperation extends AbstractOperation {
 		return viewportModel;
 	}
 
-	/**
-	 * Returns <code>true</code> if the execution of this operation will result
-	 * in a manipulation, i.e. if it will have an effect. Otherwise
-	 * <code>false</code> is returned.
-	 *
-	 * @return <code>true</code> if the execution of this operation will result
-	 *         in a manipulation, otherwise <code>false</code>.
-	 */
-	public boolean hasEffect() {
-		if (getNewWidth() == getOldWidth() && getNewHeight() == getOldHeight()
+	@Override
+	public boolean isNoOp() {
+		return getNewWidth() == getOldWidth()
+				&& getNewHeight() == getOldHeight()
 				&& (getNewTransform() == null ? getOldTransform() == null
 						: getNewTransform().equals(getOldTransform()))
-				&& getNewTx() == getOldTx() && getNewTy() == getOldTy()) {
-			return false;
-		}
-		return true;
+				&& getNewTx() == getOldTx() && getNewTy() == getOldTy();
 	}
 
 	/**

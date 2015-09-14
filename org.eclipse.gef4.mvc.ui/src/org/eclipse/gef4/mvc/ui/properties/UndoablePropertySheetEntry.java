@@ -15,10 +15,10 @@ import org.eclipse.core.commands.operations.ICompositeOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
@@ -162,11 +162,11 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 			compositeOperation.add(setOperation);
 		}
 		valueChanged((UndoablePropertySheetEntry) child,
-				compositeOperation.unwrap());
+				compositeOperation.unwrap(true));
 	}
 
 	private void valueChanged(UndoablePropertySheetEntry child,
-			IUndoableOperation operation) {
+			ITransactionalOperation operation) {
 		// inform our parent
 		if (getParent() != null) {
 			((UndoablePropertySheetEntry) getParent()).valueChanged(this,

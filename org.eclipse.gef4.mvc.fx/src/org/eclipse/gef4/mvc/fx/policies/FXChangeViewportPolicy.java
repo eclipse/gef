@@ -13,12 +13,12 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -49,14 +49,14 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 	protected boolean initialized;
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		// after commit, we need to be re-initialized
 		initialized = false;
 
 		// clear operation and return current one (and formerly pushed
 		// operations)
-		if (operation != null && operation.hasEffect()) {
-			IUndoableOperation commit = operation;
+		if (operation != null && !operation.isNoOp()) {
+			ITransactionalOperation commit = operation;
 			operation = null;
 			return commit;
 		}

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -26,6 +25,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -194,15 +194,15 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	}
 
 	@Override
-	public IUndoableOperation commit() {
+	public ITransactionalOperation commit() {
 		if (!initialized) {
 			return null;
 		}
 		// after commit, we need to be re-initialized
 		initialized = false;
 
-		IUndoableOperation commit = null;
-		if (transformOperation != null && transformOperation.hasEffect()) {
+		ITransactionalOperation commit = null;
+		if (transformOperation != null && !transformOperation.isNoOp()) {
 			commit = transformOperation;
 		}
 		reset();
