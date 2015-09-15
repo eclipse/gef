@@ -267,6 +267,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
 			FXTransformPolicy transformPolicy = getTransformPolicy(targetPart);
 			if (transformPolicy != null) {
+				disableRefreshVisuals(targetPart);
 				computeRelatives(targetPart);
 				init(transformPolicy);
 				// create transforms for scaling and translating the target part
@@ -293,6 +294,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
+				enableRefreshVisuals(part);
 				commit(transformPolicy);
 				FXResizePolicy resizePolicy = getResizePolicy(part);
 				if (resizePolicy != null) {

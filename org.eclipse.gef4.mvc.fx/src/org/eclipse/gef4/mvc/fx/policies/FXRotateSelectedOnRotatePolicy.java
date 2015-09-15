@@ -82,6 +82,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			updateOperation(e, part);
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
+				enableRefreshVisuals(part);
 				getHost().getRoot().getViewer().getDomain()
 						.execute(transformPolicy.commit());
 			}
@@ -101,6 +102,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			// transform pivot point to local coordinates
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
+				disableRefreshVisuals(part);
 				transformPolicy.init();
 				rotationIndices.put(part,
 						transformPolicy.createPostRotate(pivotInScene));
