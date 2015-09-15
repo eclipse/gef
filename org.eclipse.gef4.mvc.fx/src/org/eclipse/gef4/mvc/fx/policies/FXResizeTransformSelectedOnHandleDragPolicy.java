@@ -114,7 +114,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 
 			// apply translation
 			getTransformPolicy(targetPart)
-					.setPreTranslate(translateIndices.get(targetPart), dx, dy);
+					.setPostTranslate(translateIndices.get(targetPart), dx, dy);
 
 			// check if we can resize the part
 			AffineTransform affineTransform = JavaFX2Geometry.toAffineTransform(
@@ -137,7 +137,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 				double sy = newBounds.getHeight() / initialBounds.getHeight();
 				// apply scaling
 				getTransformPolicy(targetPart)
-						.setPreScale(scaleIndices.get(targetPart), sx, sy);
+						.setPostScale(scaleIndices.get(targetPart), sx, sy);
 			}
 		}
 	}
@@ -270,10 +270,10 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 				computeRelatives(targetPart);
 				init(transformPolicy);
 				// create transforms for scaling and translating the target part
-				scaleIndices.put(targetPart, transformPolicy.createPreScale(
+				scaleIndices.put(targetPart, transformPolicy.createPostScale(
 						getVisualBounds(targetPart).getTopLeft()));
 				translateIndices.put(targetPart,
-						transformPolicy.createPreTransform());
+						transformPolicy.createPostTransform());
 				// initialize resize policy if available
 				FXResizePolicy resizePolicy = getResizePolicy(targetPart);
 				if (resizePolicy != null) {

@@ -103,7 +103,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		// compute inverse transformation
 		AffineTransform inverse = null;
 		try {
-			inverse = oldTransform.invert();
+			inverse = initialNodeTransform.invert();
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}

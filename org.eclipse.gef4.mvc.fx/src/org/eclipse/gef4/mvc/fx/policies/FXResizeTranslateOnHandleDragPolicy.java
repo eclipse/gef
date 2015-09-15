@@ -96,7 +96,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 		}
 		// apply translation and resize using underlying policies
 		getResizePolicy().performResize(ldw, ldh);
-		getTransformPolicy().setPreTranslate(translationIndex, pdx, pdy);
+		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 		initialTy = targetTransform.getTy();
 		init(getResizePolicy());
 		init(getTransformPolicy());
-		translationIndex = getTransformPolicy().createPreTransform();
+		translationIndex = getTransformPolicy().createPostTransform();
 	}
 
 	@Override

@@ -129,7 +129,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			if (transformPolicy != null) {
 				transformPolicy.init();
 				rotationIndices.put(part,
-						transformPolicy.createPreRotate(pivotInScene));
+						transformPolicy.createPostRotate(pivotInScene));
 			}
 		}
 	}
@@ -155,7 +155,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		// determine scaling
 		FXTransformPolicy transformPolicy = getTransformPolicy(part);
 		if (transformPolicy != null) {
-			transformPolicy.setPreRotate(rotationIndices.get(part),
+			transformPolicy.setPostRotate(rotationIndices.get(part),
 					computeRotationAngleCW(e, part));
 		}
 	}

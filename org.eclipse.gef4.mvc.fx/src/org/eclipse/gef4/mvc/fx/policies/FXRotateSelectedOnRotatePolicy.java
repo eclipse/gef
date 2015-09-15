@@ -103,7 +103,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			if (transformPolicy != null) {
 				transformPolicy.init();
 				rotationIndices.put(part,
-						transformPolicy.createPreRotate(pivotInScene));
+						transformPolicy.createPostRotate(pivotInScene));
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 		Angle rotationAngle = Angle.fromDeg(e.getTotalAngle());
 		FXTransformPolicy transformPolicy = getTransformPolicy(part);
 		if (transformPolicy != null) {
-			transformPolicy.setPreRotate(rotationIndices.get(part),
+			transformPolicy.setPostRotate(rotationIndices.get(part),
 					rotationAngle);
 		}
 	}

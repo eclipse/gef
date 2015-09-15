@@ -41,7 +41,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
-				policy.setPreTranslateInScene(translationIndices.get(part),
+				policy.setPostTranslateInScene(translationIndices.get(part),
 						delta.width, delta.height);
 			}
 		}
@@ -93,7 +93,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 			// init transaction policy
 			init(getTransformPolicy(part));
 			translationIndices.put(part,
-					getTransformPolicy(part).createPreTransform());
+					getTransformPolicy(part).createPostTransform());
 		}
 	}
 
