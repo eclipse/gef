@@ -16,6 +16,7 @@ import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -58,6 +59,10 @@ public class FXCloneRelocateOnDragPolicy
 				cloneTransformPolicy.setTransform(originalTransform);
 				operation = cloneTransformPolicy.commit();
 			}
+			// maybe no clone/transformation has to be performed
+			if (operation == null) {
+				return Status.OK_STATUS;
+			}
 			return operation.execute(null, null);
 		}
 
@@ -75,6 +80,10 @@ public class FXCloneRelocateOnDragPolicy
 		@Override
 		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
+			if (operation == null) {
+				// in case no clone/transformation was performed
+				return Status.OK_STATUS;
+			}
 			return operation.undo(monitor, info);
 		}
 	}
