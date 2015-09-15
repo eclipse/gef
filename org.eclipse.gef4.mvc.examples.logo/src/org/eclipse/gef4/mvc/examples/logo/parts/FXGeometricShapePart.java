@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
-import javafx.scene.Node;
-import javafx.scene.transform.Affine;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -28,6 +25,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
+
+import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 public class FXGeometricShapePart
 		extends AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
