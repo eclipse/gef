@@ -1,63 +1,83 @@
+/*******************************************************************************
+ * Copyright (c) 2015 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tests;
 
 import static org.junit.Assert.assertEquals;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
+import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
+import com.sun.glass.events.KeyEvent;
 
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 
 public class FXTypeToolTests {
 
-	/**
-	 * Ensure all tests are executed on the JavaFX application thread (and the
-	 * JavaFX toolkit is properly initialized).
-	 */
-	@Rule
-	public FxApplicationThreadRule fxApplicationThreadRule = new FxApplicationThreadRule();
-
-	private class FXDomainDriver extends FXDomain {
+	private static class FXDomainDriver extends FXDomain {
 		protected int openedExecutionTransactions = 0;
 		protected int closedExecutionTransactions = 0;
+
+		@Override
+		public void closeExecutionTransaction(ITool<Node> tool) {
+			closedExecutionTransactions++;
+			super.closeExecutionTransaction(tool);
+		}
 
 		@Override
 		public void openExecutionTransaction(ITool<Node> tool) {
 			super.openExecutionTransaction(tool);
 			openedExecutionTransactions++;
-		}
-
-		public void closeExecutionTransaction(ITool<Node> tool) {
-			closedExecutionTransactions++;
-			super.closeExecutionTransaction(tool);
 		};
 	}
+
+	/**
+	 * Ensure that the JavaFX toolkit is properly initialized.
+	 */
+	@Rule
+	public FxNonApplicationThreadRule ctx = new FxNonApplicationThreadRule();
+
+	@Inject
+	private FXDomainDriver domain;
 
 	/**
 	 * It is important that a (single) execution transaction (see
 	 * {@link IDomain#openExecutionTransaction(org.eclipse.gef4.mvc.tools.ITool)}
 	 * ) is used for a complete press/drag interaction gesture, because
 	 * otherwise the transactional results of the gesture could not be undone.
+	 *
+	 * @throws AWTException
+	 * @throws InterruptedException
 	 */
 	@Test
-	public void singleExecutionTransactionUsedForInteraction()
-			throws InterruptedException, InvocationTargetException, AWTException {
+	public void singleExecutionTransactionUsedForInteraction() throws InterruptedException, AWTException {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
 			@Override
@@ -67,31 +87,46 @@ public class FXTypeToolTests {
 				binder().bind(new TypeLiteral<IDomain<Node>>() {
 				}).to(FXDomainDriver.class);
 			}
+
+			@Override
+			protected void configure() {
+				super.configure();
+				// bind IContentPartFactory
+				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+				}).toInstance(new IContentPartFactory<Node>() {
+					@Override
+					public IContentPart<Node, ? extends Node> createContentPart(Object content,
+							IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+						return null;
+					}
+				});
+			}
 		});
+		injector.injectMembers(this);
 
-		// create domain (i.e. FXDomainDriver stub)
-		final FXDomainDriver domain = (FXDomainDriver) injector.getInstance(IDomain.class);
-
-		// hook viewer to scene
-		Scene scene = new Scene(domain.<FXViewer> getAdapter(IViewer.class).getScrollPane(), 100, 100);
-		JFXPanel panel = new JFXPanel();
-		panel.setScene(scene);
+		ScrollPaneEx scrollPane = domain.<FXViewer> getAdapter(IViewer.class).getScrollPane();
+		ctx.createScene(scrollPane, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
 		domain.activate();
 
-		// create robot to simulate events
-		Robot robot = new Robot();
-
-		// simulate press/release gesture
+		// initialize
 		domain.openedExecutionTransactions = 0;
 		domain.closedExecutionTransactions = 0;
 		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.keyPress(KeyEvent.VK_K);
+
+		// create robot to simulate events
+		Robot robot = new Robot();
+
+		// move robot to scene
+		ctx.moveTo(robot, scrollPane, 50, 50);
+
+		// simulate press/release gesture
+		ctx.keyPress(robot, KeyEvent.VK_K);
 		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.keyRelease(KeyEvent.VK_K);
+		ctx.keyRelease(robot, KeyEvent.VK_K);
 		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
 		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
 	}

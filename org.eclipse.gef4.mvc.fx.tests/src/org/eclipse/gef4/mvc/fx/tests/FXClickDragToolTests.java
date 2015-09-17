@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2015 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tests;
 
 import static org.junit.Assert.assertEquals;
@@ -6,49 +18,57 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
 public class FXClickDragToolTests {
 
-	/**
-	 * Ensure all tests are executed on the JavaFX application thread (and the
-	 * JavaFX toolkit is properly initialized).
-	 */
-	@Rule
-	public FxApplicationThreadRule fxApplicationThreadRule = new FxApplicationThreadRule();
-
-	private class FXDomainDriver extends FXDomain {
+	private static class FXDomainDriver extends FXDomain {
 		protected int openedExecutionTransactions = 0;
 		protected int closedExecutionTransactions = 0;
+
+		@Override
+		public void closeExecutionTransaction(ITool<Node> tool) {
+			closedExecutionTransactions++;
+			super.closeExecutionTransaction(tool);
+		}
 
 		@Override
 		public void openExecutionTransaction(ITool<Node> tool) {
 			super.openExecutionTransaction(tool);
 			openedExecutionTransactions++;
 		}
-
-		public void closeExecutionTransaction(ITool<Node> tool) {
-			closedExecutionTransactions++;
-			super.closeExecutionTransaction(tool);
-		};
 	}
+
+	/**
+	 * Ensure all tests are executed on the JavaFX application thread (and the
+	 * JavaFX toolkit is properly initialized).
+	 */
+	@Rule
+	public FxNonApplicationThreadRule ctx = new FxNonApplicationThreadRule();
+
+	@Inject
+	private FXDomainDriver domain;
 
 	/**
 	 * It is important that a single execution transaction (see
@@ -70,49 +90,68 @@ public class FXClickDragToolTests {
 				binder().bind(new TypeLiteral<IDomain<Node>>() {
 				}).to(FXDomainDriver.class);
 			}
+
+			@Override
+			protected void configure() {
+				super.configure();
+				// bind IContentPartFactory
+				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+				}).toInstance(new IContentPartFactory<Node>() {
+					@Override
+					public IContentPart<Node, ? extends Node> createContentPart(Object content,
+							IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+						return null;
+					}
+				});
+			}
 		});
 
-		// create domain (i.e. FXDomainDriver stub)
-		final FXDomainDriver domain = (FXDomainDriver) injector.getInstance(IDomain.class);
+		// inject domain
+		injector.injectMembers(this);
 
-		// hook viewer to scene
-		Scene scene = new Scene(domain.<FXViewer> getAdapter(IViewer.class).getScrollPane(), 100, 100);
-		JFXPanel panel = new JFXPanel();
-		panel.setScene(scene);
+		final Scene scene = ctx.createScene(domain.<FXViewer> getAdapter(IViewer.class).getScrollPane(), 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
 		domain.activate();
 
-		// create robot to simulate events
+		// move mouse to viewer center
 		Robot robot = new Robot();
+		ctx.moveTo(robot, scene.getRoot(), 50, 50);
+
+		// initialize
+		domain.openedExecutionTransactions = 0;
+		domain.closedExecutionTransactions = 0;
+		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
+		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
 
 		// simulate click gesture
+		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
+		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
+		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
+		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
+		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
+
+		// wait one second so that the next press does not count as a double
+		// click
+		robot.delay(1000);
+
+		// re-initialize
 		domain.openedExecutionTransactions = 0;
 		domain.closedExecutionTransactions = 0;
 		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mousePress(InputEvent.BUTTON1_MASK);
+
+		// simulate click/drag
+		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
 		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
 		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mouseRelease(InputEvent.BUTTON1_MASK);
+		ctx.mouseDrag(robot, 20, 20);
+		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
+		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
+		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
 		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
 		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
-
-		// simulate click/drag gesture
-		domain.openedExecutionTransactions = 0;
-		domain.closedExecutionTransactions = 0;
-		assertEquals("No execution transaction should have been opened", 0, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mousePress(InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mouseMove(20, 20);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("No execution transaction should have been closed", 0, domain.closedExecutionTransactions);
-		robot.mouseRelease(InputEvent.BUTTON1_MASK);
-		assertEquals("A single execution transaction should have been opened", 1, domain.openedExecutionTransactions);
-		assertEquals("A single execution transaction should have been closed", 1, domain.closedExecutionTransactions);
-
 	}
 
 }

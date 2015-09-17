@@ -17,10 +17,6 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
-import javafx.scene.Node;
-
 import javax.swing.SwingUtilities;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
@@ -32,9 +28,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Group;
+import javafx.scene.Node;
+
 /**
  * Tests for {@link AbstractFXHandlePart}.
- * 
+ *
  * @author anyssen
  *
  */
@@ -54,6 +54,11 @@ public class AbstractFXHandlePartTests {
 	private AbstractFXRootPart<Group> rp = new AbstractFXRootPart<Group>() {
 
 		@Override
+		protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+			getVisual().getChildren().add(index, child.getVisual());
+		}
+
+		@Override
 		protected Group createVisual() {
 			return new Group();
 		}
@@ -61,12 +66,9 @@ public class AbstractFXHandlePartTests {
 		@Override
 		protected void doRefreshVisual(Group visual) {
 			// nothing to do
-		}
-
-		protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-			getVisual().getChildren().add(index, child.getVisual());
 		};
 
+		@Override
 		protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 			getVisual().getChildren().remove(index);
 		};
@@ -96,6 +98,11 @@ public class AbstractFXHandlePartTests {
 			// nothing to do
 		}
 	};
+
+	protected Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> getVisualChangeListeners(
+			AbstractFXHandlePart<Node> hp) {
+		return ReflectionUtils.getPrivateFieldValue(hp, "visualChangeListeners");
+	}
 
 	/**
 	 * Tests that an {@link AbstractFXHandlePart} only registers a single
@@ -130,11 +137,6 @@ public class AbstractFXHandlePartTests {
 		// ensure no visual change listener is registered any more
 		hp.removeAnchorage(cp, "r1");
 		assertEquals(0, getVisualChangeListeners(hp).size());
-	}
-
-	protected Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> getVisualChangeListeners(
-			AbstractFXHandlePart<Node> hp) {
-		return ReflectionUtils.getPrivateFieldValue(hp, "visualChangeListeners");
 	}
 
 }
