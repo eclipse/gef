@@ -400,6 +400,13 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 
 	@Override
 	public void init() {
+		if (initialized) {
+			// If init() is called after manipulations have been performed using
+			// this policy, then the node transformation is not in its initial
+			// state anymore. That's why it is set to the initial node
+			// transformation here.
+			setTransform(initialNodeTransform);
+		}
 		reset();
 		transformOperation = new FXTransformOperation(getNodeTransform());
 		initialNodeTransform = JavaFX2Geometry
