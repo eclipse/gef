@@ -24,15 +24,6 @@
    <feature url="features/org.eclipse.gef4.cloudio.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.cloudio.sdk" version="0.2.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.mvc_0.2.0.qualifier.jar" id="org.eclipse.gef4.mvc" version="0.2.0.qualifier">
-      <category name="GEF4 MVC"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.mvc.ui_0.2.0.qualifier.jar" id="org.eclipse.gef4.mvc.ui" version="0.2.0.qualifier">
-      <category name="GEF4 MVC"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.mvc.fx_0.2.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="0.2.0.qualifier">
-      <category name="GEF4 MVC"/>
-   </feature>
    <feature url="features/org.eclipse.gef4.mvc.fx.ui_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx.ui" version="0.3.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
@@ -53,9 +44,6 @@
    </feature>
    <feature url="features/org.eclipse.gef4.layout.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.layout.sdk" version="0.2.0.qualifier">
       <category name="GEF4 Layout"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.fx_0.2.0.qualifier.jar" id="org.eclipse.gef4.fx" version="0.2.0.qualifier">
-      <category name="GEF4 FX"/>
    </feature>
    <feature url="features/org.eclipse.gef4.fx.swt_0.3.0.qualifier.jar" id="org.eclipse.gef4.fx.ui" version="0.3.0.qualifier">
       <category name="GEF4 FX"/>
@@ -102,9 +90,6 @@
    <feature url="features/org.eclipse.gef4.common.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.common.sdk" version="0.2.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.fx_0.2.0.qualifier.jar" id="org.eclipse.gef4.zest.fx" version="0.2.0.qualifier">
-      <category name="GEF4 Zest"/>
-   </feature>
    <feature url="features/org.eclipse.gef4.zest.fx.ui_0.3.0.qualifier.jar" id="org.eclipse.gef4.zest.fx.ui" version="0.3.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
@@ -117,16 +102,31 @@
    <feature url="features/org.eclipse.gef4.zest.examples.source_0.3.0.qualifier.jar" id="org.eclipse.gef4.zest.examples.source" version="0.3.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.fx.compatibility.luna_0.2.0.qualifier.jar" id="org.eclipse.gef4.fx.compatibility.luna" version="0.2.0.qualifier" patch="true">
+   <feature url="features/org.eclipse.gef4.mvc_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc" version="0.3.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.fx_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="0.3.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.ui_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc.ui" version="0.3.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.zest.fx_0.3.0.qualifier.jar" id="org.eclipse.gef4.zest.fx" version="0.3.0.qualifier">
+      <category name="GEF4 Zest"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.fx_0.3.0.qualifier.jar" id="org.eclipse.gef4.fx" version="0.3.0.qualifier">
+      <category name="GEF4 FX"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.fx.compatibility.luna_0.3.0.qualifier.jar" id="org.eclipse.gef4.fx.compatibility.luna" version="0.3.0.qualifier">
       <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.mvc.compatibility.luna_0.2.0.qualifier.jar" id="org.eclipse.gef4.mvc.compatibility.luna" version="0.2.0.qualifier" patch="true">
+   <feature url="features/org.eclipse.gef4.mvc.compatibility.luna_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc.compatibility.luna" version="0.3.0.qualifier">
       <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.mvc.fx.compatibility.luna_0.2.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx.compatibility.luna" version="0.2.0.qualifier" patch="true">
+   <feature url="features/org.eclipse.gef4.mvc.fx.compatibility.luna_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx.compatibility.luna" version="0.3.0.qualifier">
       <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.fx.compatibility.luna_0.2.0.qualifier.jar" id="org.eclipse.gef4.zest.fx.compatibility.luna" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.zest.fx.compatibility.luna_0.3.0.qualifier.jar" id="org.eclipse.gef4.zest.fx.compatibility.luna" version="0.3.0.qualifier">
       <category name="Luna Compatibility Patches (GEF4 FX, GEF4 MVC, GEF4 MVC.FX, GEF4 Zest.FX)"/>
    </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.mvc.fx"
       label="GEF4 MVC.FX"
-      version="0.2.0.qualifier"
+      version="0.3.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.mvc.fx"
       license-feature="org.eclipse.license"
@@ -25,8 +25,8 @@
       <import feature="org.eclipse.gef4.common" version="0.2.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.geometry" version="0.2.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.geometry.convert.fx" version="0.2.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.fx" version="0.2.0" match="equivalent"/>
-      <import feature="org.eclipse.gef4.mvc" version="0.2.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.fx" version="0.3.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.mvc" version="0.3.0" match="equivalent"/>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
       <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
       <import plugin="com.google.inject.multibindings" version="3.0.0" match="compatible"/>
