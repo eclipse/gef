@@ -6,17 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Fabian Steeg    - intial Xtext generation (see bug #277380)
+ *     Alexander Nyßen - initial implementation
+ *
  *******************************************************************************/
 
 package org.eclipse.gef4.internal.dot.parser.validation;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.internal.dot.parser.dot.AttrStmt;
+import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
+import org.eclipse.gef4.internal.dot.parser.dot.AttributeType;
 import org.eclipse.gef4.internal.dot.parser.dot.DotGraph;
 import org.eclipse.gef4.internal.dot.parser.dot.DotPackage;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeOp;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeRhsNode;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeRhsSubgraph;
+import org.eclipse.gef4.internal.dot.parser.dot.EdgeStmtNode;
+import org.eclipse.gef4.internal.dot.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef4.internal.dot.parser.dot.GraphType;
 import org.eclipse.xtext.validation.Check;
 
@@ -29,6 +37,61 @@ import org.eclipse.xtext.validation.Check;
 public class DotJavaValidator extends AbstractDotJavaValidator {
 
 	/**
+	 * Error code for invalid edge 'style' attribute value. Used to bind quick
+	 * fixes.
+	 */
+	public static final String ATTRIBUTE__INVALID_VALUE__EDGE_STYLE = "ATTRIBUTE__INVALID_VALUE__EDGE_STYLE";
+
+	/**
+	 * Checks that within an {@link Attribute} only valid attribute values are
+	 * used (dependent on context, in which the attribute is specified).
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to validate.
+	 */
+	@Check
+	public void checkAttributeValue(Attribute attribute) {
+		if (isEdgeAttribute(attribute)
+				&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
+			// 'style' can also be used for nodes or clusters, so we have to
+			// check the context as well
+			if (!DotProperties.EDGE_STYLE_VALUES
+					.contains(attribute.getValue())) {
+				// provide (issue) code and data for quickfix
+				error("Style '" + attribute.getValue()
+						+ "' is not a valid DOT style for Edge.",
+						DotPackage.eINSTANCE.getAttribute_Value(),
+						ATTRIBUTE__INVALID_VALUE__EDGE_STYLE,
+						attribute.getValue());
+			}
+		}
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of an
+	 * edge. That is, it is either nested below an {@link EdgeStmtNode} or an
+	 * {@link EdgeStmtSubgraph}, or used within an {@link AttrStmt} with edge
+	 * {@link AttributeType}.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of an edge, <code>false</code> otherwise.
+	 */
+	public static boolean isEdgeAttribute(Attribute attribute) {
+		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		if (getAncestorOfType(attribute, EdgeStmtNode.class) != null
+				|| getAncestorOfType(attribute,
+						EdgeStmtSubgraph.class) != null) {
+			return true;
+		}
+		// global AttrStmt with AttributeType 'edge'
+		AttrStmt attrStmt = getAncestorOfType(attribute, AttrStmt.class);
+		return attrStmt != null
+				&& AttributeType.EDGE.equals(attrStmt.getType());
+	}
+
+	/**
 	 * Ensures that within {@link EdgeRhsNode}, '->' is used in directed graphs,
 	 * while '--' is used in undirected graphs.
 	 * 
@@ -38,7 +101,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkEdgeOpCorrespondsToGraphType(EdgeRhsNode edgeRhsNode) {
 		checkEdgeOpCorrespondsToGraphType(edgeRhsNode.getOp(),
-				getDotGraph(edgeRhsNode).getType());
+				getAncestorOfType(edgeRhsNode, DotGraph.class).getType());
 	}
 
 	/**
@@ -52,7 +115,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	public void checkEdgeOpCorrespondsToGraphType(
 			EdgeRhsSubgraph edgeRhsSubgraph) {
 		checkEdgeOpCorrespondsToGraphType(edgeRhsSubgraph.getOp(),
-				getDotGraph(edgeRhsSubgraph).getType());
+				getAncestorOfType(edgeRhsSubgraph, DotGraph.class).getType());
 	}
 
 	private void checkEdgeOpCorrespondsToGraphType(EdgeOp edgeOp,
@@ -69,12 +132,15 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 	}
 
-	private DotGraph getDotGraph(EObject eObject) {
+	@SuppressWarnings("unchecked")
+	private static <T extends EObject> T getAncestorOfType(EObject eObject,
+			Class<T> type) {
 		EObject container = eObject.eContainer();
-		while (container != null && !(container instanceof DotGraph)) {
+		while (container != null
+				&& !type.isAssignableFrom(container.getClass())) {
 			container = container.eContainer();
 		}
-		return (DotGraph) container;
+		return (T) container;
 	}
 
 }

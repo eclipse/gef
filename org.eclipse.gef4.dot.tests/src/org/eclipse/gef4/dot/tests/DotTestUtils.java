@@ -219,12 +219,14 @@ public final class DotTestUtils {
 				.build();
 
 		/* Connection from n3 to n4: */
-		Edge e3 = new Edge.Builder(n3, n4).attr(DotProperties.EDGE_STYLE,
-				DotProperties.EDGE_STYLE_DASHDOT).build();
+		Edge e3 = new Edge.Builder(n3, n4)
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DASHED)
+				.build();
 
 		/* Connection from n3 to n5: */
-		Edge e4 = new Edge.Builder(n3, n5).attr(DotProperties.EDGE_STYLE,
-				DotProperties.EDGE_STYLE_DASHDOTDOT).build();
+		Edge e4 = new Edge.Builder(n3, n5)
+				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DASHED)
+				.build();
 
 		Edge e5 = new Edge.Builder(n4, n5)
 				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_SOLID)

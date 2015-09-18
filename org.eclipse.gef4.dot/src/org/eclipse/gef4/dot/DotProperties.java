@@ -25,6 +25,7 @@ import org.eclipse.gef4.graph.Node;
  * by the {@link DotImport}, i.e. they are set on the resulting {@link Graph}.
  * 
  * @author mwienand
+ * @author anyssen
  *
  */
 public class DotProperties {
@@ -75,23 +76,28 @@ public class DotProperties {
 
 	/**
 	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
-	 * alternately dashed and dotted ("-.").
+	 * invisible.
 	 */
-	public static final String EDGE_STYLE_DASHDOT = "dashdot";
+	public static final String EDGE_STYLE_INVIS = "invis";
+
+	/**
+	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered bold.
+	 */
+	public static final String EDGE_STYLE_BOLD = "bold";
 
 	/**
 	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
-	 * alternately dashed and dotted ("-..").
+	 * tapered.
 	 */
-	public static final String EDGE_STYLE_DASHDOTDOT = "dashdotdot";
+	public static final String EDGE_STYLE_TAPERED = "tapered";
 
 	/**
 	 * Defines all possible values for the {@link #EDGE_STYLE} property.
 	 */
 	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
 			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
-					EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT,
-					EDGE_STYLE_DASHDOTDOT));
+					EDGE_STYLE_SOLID, EDGE_STYLE_INVIS, EDGE_STYLE_BOLD,
+					EDGE_STYLE_TAPERED));
 
 	/**
 	 * Defines the default value for the {@link #EDGE_STYLE} property, which is

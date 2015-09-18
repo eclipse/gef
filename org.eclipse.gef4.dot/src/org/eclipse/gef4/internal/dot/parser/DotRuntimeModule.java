@@ -6,9 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Fabian Steeg    - intial Xtext generation (see bug #277380)
+ *     Alexander Nyßen - initial implementation (value converter binding)
  *******************************************************************************/
 package org.eclipse.gef4.internal.dot.parser;
+
+import org.eclipse.gef4.internal.dot.parser.conversion.DotTerminalConverters;
+import org.eclipse.xtext.conversion.IValueConverterService;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -17,4 +21,8 @@ package org.eclipse.gef4.internal.dot.parser;
 public class DotRuntimeModule
 		extends org.eclipse.gef4.internal.dot.parser.AbstractDotRuntimeModule {
 
+	@Override
+	public Class<? extends IValueConverterService> bindIValueConverterService() {
+		return DotTerminalConverters.class;
+	}
 }

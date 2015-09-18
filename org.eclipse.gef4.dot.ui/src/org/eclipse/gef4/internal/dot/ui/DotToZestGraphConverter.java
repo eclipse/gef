@@ -80,16 +80,14 @@ public class DotToZestGraphConverter {
 		// convert edge style
 		Object dotStyle = dot.get(DotProperties.EDGE_STYLE);
 		String zestStyle = ZestProperties.EDGE_STYLE_DEFAULT;
-		if (DotProperties.EDGE_STYLE_DASHDOT.equals(dotStyle)) {
-			zestStyle = ZestProperties.EDGE_STYLE_DASHDOT;
-		} else if (DotProperties.EDGE_STYLE_DASHDOTDOT.equals(dotStyle)) {
-			zestStyle = ZestProperties.EDGE_STYLE_DASHDOTDOT;
-		} else if (DotProperties.EDGE_STYLE_DASHED.equals(dotStyle)) {
+		if (DotProperties.EDGE_STYLE_DASHED.equals(dotStyle)) {
 			zestStyle = ZestProperties.EDGE_STYLE_DASHED;
 		} else if (DotProperties.EDGE_STYLE_DOTTED.equals(dotStyle)) {
 			zestStyle = ZestProperties.EDGE_STYLE_DOTTED;
 		} else if (DotProperties.EDGE_STYLE_SOLID.equals(dotStyle)) {
 			zestStyle = ZestProperties.EDGE_STYLE_SOLID;
+		} else {
+			// TODO: report unsupported DOT edge style
 		}
 		zest.put(ZestProperties.EDGE_STYLE, zestStyle);
 	}
