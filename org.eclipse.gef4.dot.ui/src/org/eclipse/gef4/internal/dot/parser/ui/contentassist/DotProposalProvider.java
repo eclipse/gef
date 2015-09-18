@@ -36,8 +36,13 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			if (DotJavaValidator.isEdgeAttribute(attribute)
 					&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
 				for (String edgeStyle : DotProperties.EDGE_STYLE_VALUES) {
+					// quote attribute value if needed only
+					final String proposedValue = (edgeStyle.isEmpty()
+							|| edgeStyle.matches(".*\\s.*")) //$NON-NLS-1$
+									? "\"" + edgeStyle + "\"" //$NON-NLS-1$ //$NON-NLS-2$
+									: edgeStyle;
 					acceptor.accept(
-							createCompletionProposal(edgeStyle, context));
+							createCompletionProposal(proposedValue, context));
 				}
 			} else {
 				super.completeAttribute_Value(model, assignment, context,

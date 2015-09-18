@@ -58,6 +58,12 @@ public class DotProperties {
 	public static final String EDGE_STYLE = "style";
 
 	/**
+	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered with
+	 * the void, which means the the original Dot default value is used.
+	 */
+	public static final String EDGE_STYLE_VOID = "";
+
+	/**
 	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
 	 * dashed.
 	 */
@@ -97,7 +103,7 @@ public class DotProperties {
 	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
 			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
 					EDGE_STYLE_SOLID, EDGE_STYLE_INVIS, EDGE_STYLE_BOLD,
-					EDGE_STYLE_TAPERED));
+					EDGE_STYLE_TAPERED, EDGE_STYLE_VOID));
 
 	/**
 	 * Defines the default value for the {@link #EDGE_STYLE} property, which is

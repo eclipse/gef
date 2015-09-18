@@ -33,18 +33,22 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_STYLE)
 	public void fixEdgeStyleAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		for (final String edgeStyle : DotProperties.EDGE_STYLE_VALUES) {
+		for (String edgeStyle : DotProperties.EDGE_STYLE_VALUES) {
+			// quote values if needed, otherwise use plain attribute value
+			final String validValue = (edgeStyle.isEmpty()
+					|| edgeStyle.matches(".*\\s.*")) ? "\"" + edgeStyle + "\"" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							: edgeStyle;
 			acceptor.accept(issue,
-					"Replace '" + issue.getData()[0] + "' with '" + edgeStyle //$NON-NLS-1$ //$NON-NLS-2$
+					"Replace '" + issue.getData()[0] + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
 							+ "'.", //$NON-NLS-1$
-					"Use valid '" + edgeStyle + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
+					"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
 							+ issue.getData()[0] + "' edge style.", //$NON-NLS-1$
 					null, new ISemanticModification() {
 
 						@Override
 						public void apply(EObject element,
 								IModificationContext context) throws Exception {
-							((Attribute) element).setValue(edgeStyle);
+							((Attribute) element).setValue(validValue);
 						}
 					});
 		}

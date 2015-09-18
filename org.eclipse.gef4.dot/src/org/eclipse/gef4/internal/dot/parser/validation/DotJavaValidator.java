@@ -26,6 +26,8 @@ import org.eclipse.gef4.internal.dot.parser.dot.EdgeRhsSubgraph;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeStmtNode;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef4.internal.dot.parser.dot.GraphType;
+import org.eclipse.gef4.internal.dot.parser.dot.NodeStmt;
+import org.eclipse.gef4.internal.dot.parser.dot.Subgraph;
 import org.eclipse.xtext.validation.Check;
 
 /**
@@ -50,13 +52,13 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 *            The {@link Attribute} to validate.
 	 */
 	@Check
-	public void checkAttributeValue(Attribute attribute) {
+	public void checkValidAttributeValue(Attribute attribute) {
 		if (isEdgeAttribute(attribute)
 				&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
 			// 'style' can also be used for nodes or clusters, so we have to
 			// check the context as well
 			if (!DotProperties.EDGE_STYLE_VALUES
-					.contains(attribute.getValue())) {
+					.contains(unquoted(attribute.getValue()))) {
 				// provide (issue) code and data for quickfix
 				error("Style '" + attribute.getValue()
 						+ "' is not a valid DOT style for Edge.",
@@ -67,11 +69,74 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 	}
 
+	private String unquoted(String value) {
+		if (value.startsWith("\"") && value.endsWith("\"")) {
+			return value.substring(1, value.length() - 1);
+		}
+		return value;
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of a
+	 * node. That is, it is either nested below an {@link NodeStmt} or used
+	 * within an {@link AttrStmt} of type {@link AttributeType#NODE}.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of an node, <code>false</code> otherwise.
+	 */
+	public static boolean isNodeAttribute(Attribute attribute) {
+		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		if (getAncestorOfType(attribute, NodeStmt.class) != null) {
+			return true;
+		}
+		// global AttrStmt with AttributeType 'node'
+		AttrStmt attrStmt = getAncestorOfType(attribute, AttrStmt.class);
+		return attrStmt != null
+				&& AttributeType.NODE.equals(attrStmt.getType());
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of a
+	 * subgraph.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of subgraph, <code>false</code> otherwise.
+	 */
+	public static boolean isSubgraphAttribute(Attribute attribute) {
+		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)) {
+			return false;
+		}
+		// attribute nested below Subgraph
+		return getAncestorOfType(attribute, Subgraph.class) != null;
+	}
+
+	/**
+	 * Checks whether the given {@link Attribute} is used in the context of a
+	 * top-level graph.
+	 * 
+	 * @param attribute
+	 *            The {@link Attribute} to test.
+	 * @return <code>true</code> if the {@link Attribute} is used in the context
+	 *         of a top-level graph, <code>false</code> otherwise.
+	 */
+	public static boolean isRootGraphAttribute(Attribute attribute) {
+		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
+		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)
+				|| isSubgraphAttribute(attribute)) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Checks whether the given {@link Attribute} is used in the context of an
 	 * edge. That is, it is either nested below an {@link EdgeStmtNode} or an
-	 * {@link EdgeStmtSubgraph}, or used within an {@link AttrStmt} with edge
-	 * {@link AttributeType}.
+	 * {@link EdgeStmtSubgraph}, or used within an {@link AttrStmt} of type
+	 * {@link AttributeType#EDGE}.
 	 * 
 	 * @param attribute
 	 *            The {@link Attribute} to test.
