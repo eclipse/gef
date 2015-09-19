@@ -15,6 +15,7 @@ package org.eclipse.gef4.internal.dot.parser.validation;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.internal.dot.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.internal.dot.parser.dot.AttrStmt;
 import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
 import org.eclipse.gef4.internal.dot.parser.dot.AttributeType;
@@ -57,23 +58,16 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
 			// 'style' can also be used for nodes or clusters, so we have to
 			// check the context as well
-			if (!DotProperties.EDGE_STYLE_VALUES
-					.contains(unquoted(attribute.getValue()))) {
+			String unquotedValue = DotTerminalConverters
+					.unquote(attribute.getValue());
+			if (!DotProperties.EDGE_STYLE_VALUES.contains(unquotedValue)) {
 				// provide (issue) code and data for quickfix
-				error("Style '" + attribute.getValue()
+				error("Style '" + unquotedValue
 						+ "' is not a valid DOT style for Edge.",
 						DotPackage.eINSTANCE.getAttribute_Value(),
-						ATTRIBUTE__INVALID_VALUE__EDGE_STYLE,
-						attribute.getValue());
+						ATTRIBUTE__INVALID_VALUE__EDGE_STYLE, unquotedValue);
 			}
 		}
-	}
-
-	private String unquoted(String value) {
-		if (value.startsWith("\"") && value.endsWith("\"")) {
-			return value.substring(1, value.length() - 1);
-		}
-		return value;
 	}
 
 	/**

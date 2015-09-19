@@ -14,6 +14,7 @@ package org.eclipse.gef4.internal.dot.parser.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.internal.dot.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
 import org.eclipse.gef4.internal.dot.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.Assignment;
@@ -37,9 +38,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 					&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
 				for (String edgeStyle : DotProperties.EDGE_STYLE_VALUES) {
 					// quote attribute value if needed only
-					final String proposedValue = (edgeStyle.isEmpty()
-							|| edgeStyle.matches(".*\\s.*")) //$NON-NLS-1$
-									? "\"" + edgeStyle + "\"" //$NON-NLS-1$ //$NON-NLS-2$
+					final String proposedValue = DotTerminalConverters
+							.needsToBeQuoted(edgeStyle)
+									? DotTerminalConverters.quote(edgeStyle)
 									: edgeStyle;
 					acceptor.accept(
 							createCompletionProposal(proposedValue, context));
@@ -52,4 +53,5 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			super.completeAttribute_Value(model, assignment, context, acceptor);
 		}
 	}
+
 }

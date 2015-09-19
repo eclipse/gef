@@ -14,6 +14,7 @@ package org.eclipse.gef4.internal.dot.parser.ui.quickfix;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.internal.dot.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
 import org.eclipse.gef4.internal.dot.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
@@ -35,8 +36,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 			IssueResolutionAcceptor acceptor) {
 		for (String edgeStyle : DotProperties.EDGE_STYLE_VALUES) {
 			// quote values if needed, otherwise use plain attribute value
-			final String validValue = (edgeStyle.isEmpty()
-					|| edgeStyle.matches(".*\\s.*")) ? "\"" + edgeStyle + "\"" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			final String validValue = DotTerminalConverters.needsToBeQuoted(
+					edgeStyle) ? DotTerminalConverters.quote(edgeStyle)
 							: edgeStyle;
 			acceptor.accept(issue,
 					"Replace '" + issue.getData()[0] + "' with '" + validValue //$NON-NLS-1$ //$NON-NLS-2$
