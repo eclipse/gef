@@ -22,7 +22,7 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
 /**
- * A proposel provider for Dot.
+ * A proposal provider for Dot.
  * 
  * @author anyssen
  */
