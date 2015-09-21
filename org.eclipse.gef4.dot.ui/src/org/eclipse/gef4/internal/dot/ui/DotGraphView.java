@@ -108,8 +108,8 @@ public class DotGraphView extends ZestFxUiView {
 		super.createPartControl(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 		Scene scene = getViewer().getScene();
-		// overwrite the stylesheet set by the GraphRootPart
-		scene.getStylesheets().set(0, STYLES_CSS_FILE);
+		// specify stylesheet
+		scene.getStylesheets().add(STYLES_CSS_FILE);
 	}
 
 	private void initResourceLabel(final Composite parent,
