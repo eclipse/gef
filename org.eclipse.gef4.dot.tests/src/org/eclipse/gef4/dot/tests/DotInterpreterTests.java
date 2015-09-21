@@ -68,7 +68,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void edgeCount() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{1;2;1->2;2->2;1->1}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{1;2;1--2;2--2;1--1}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(3, graph.getEdges().size());
 	}
@@ -85,7 +85,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void edgeLabel() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{1;2;1->2[label=\"Edge1\"]}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{1;2;1--2[label=\"Edge1\"]}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Edge1", DotProperties.getLabel(graph.getEdges() //$NON-NLS-1$
 				.get(0)));
@@ -103,7 +103,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void globalEdgeStyle() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{edge[style=dashed];1;2;1->2}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{edge[style=dashed];1;2;1--2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotProperties.EDGE_STYLE_DASHED,
 				DotProperties.getStyle(graph.getEdges().get(0)));
@@ -112,7 +112,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void globalEdgeLabel() {
 		Graph graph = interpreter.interpret(
-				parse("graph Sample{edge[label=\"Edge1\"];1;2;1->2}")); //$NON-NLS-1$
+				parse("graph Sample{edge[label=\"Edge1\"];1;2;1--2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Edge1", DotProperties.getLabel(graph.getEdges() //$NON-NLS-1$
 				.get(0)));

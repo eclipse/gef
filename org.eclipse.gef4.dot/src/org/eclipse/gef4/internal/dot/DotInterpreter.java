@@ -164,10 +164,15 @@ public final class DotInterpreter extends DotSwitch<Object> {
 						.toLowerCase();
 		String globalEdgeStyleLc = new String(
 				globalEdgeStyle == null ? "" : globalEdgeStyle).toLowerCase();
-		if (supported(currentEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
+		if (!DotProperties.EDGE_STYLE_VOID.equals(currentEdgeStyleLc)
+				&& supported(currentEdgeStyleLc,
+						DotProperties.EDGE_STYLE_VALUES)) {
+			// if an explicit local style is set, use it
 			graphConnection.attr(DotProperties.EDGE_STYLE, currentEdgeStyleLc);
-		} else
-			if (supported(globalEdgeStyleLc, DotProperties.EDGE_STYLE_VALUES)) {
+		} else if (!DotProperties.EDGE_STYLE_VOID.equals(globalEdgeStyleLc)
+				&& supported(globalEdgeStyleLc,
+						DotProperties.EDGE_STYLE_VALUES)) {
+			// if an explicit global style is set, use it
 			graphConnection.attr(DotProperties.EDGE_STYLE, globalEdgeStyleLc);
 		}
 		graph.edges(graphConnection.build());

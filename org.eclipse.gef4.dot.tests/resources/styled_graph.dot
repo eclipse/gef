@@ -12,10 +12,7 @@ digraph StyledGraph{
 	/* Edges can have drawing styles: */
 	1->2[style=dashed]
 	2->3[style=dotted]
-	/* Zest supports dashdot style, so we map to 
-	   that (this is not supported by Graphviz, 
-	   which renders the line solid). */
-	3->4[style="dashdot"]
-	3->5[style="dashdotdot"]
+	3->4[style="dashed"]
+	3->5[style="dashed"]
 	4->5[style="solid"]
 }
