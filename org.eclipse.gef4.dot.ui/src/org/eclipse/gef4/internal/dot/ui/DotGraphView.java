@@ -15,8 +15,6 @@ package org.eclipse.gef4.internal.dot.ui;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import javafx.scene.Scene;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -64,6 +62,8 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
+import javafx.scene.Scene;
+
 /**
  * Render DOT content with ZestFx and Graphviz
  *
@@ -74,8 +74,9 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 /* provisional API */@SuppressWarnings("restriction")
 public class DotGraphView extends ZestFxUiView {
 
-	public static final String STYLES_CSS_FILE = ZestFxUiView.class
-			.getResource("styles.css").toExternalForm(); //$NON-NLS-1$
+	public static final String STYLES_CSS_FILE = DotGraphView.class
+			.getResource("styles.css") //$NON-NLS-1$
+			.toExternalForm();
 	private static final String EXTENSION = "dot"; //$NON-NLS-1$
 	private static final String LOAD_DOT_FILE = DotUiMessages.DotGraphView_0;
 	private static final String SYNC_EXPORT_PDF = DotUiMessages.DotGraphView_1;
@@ -107,7 +108,8 @@ public class DotGraphView extends ZestFxUiView {
 		super.createPartControl(parent);
 		getCanvas().setLayoutData(new GridData(GridData.FILL_BOTH));
 		Scene scene = getViewer().getScene();
-		scene.getStylesheets().add(STYLES_CSS_FILE);
+		// overwrite the stylesheet set by the GraphRootPart
+		scene.getStylesheets().set(0, STYLES_CSS_FILE);
 	}
 
 	private void initResourceLabel(final Composite parent,
