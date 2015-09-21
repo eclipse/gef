@@ -215,7 +215,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void nodesBeforeEdges() {
 		Graph graph = interpreter
-				.interpret(parse("graph{1;2;3;4; 1->2;2->3;2->4}")); //$NON-NLS-1$
+				.interpret(parse("graph{1;2;3;4; 1--2;2--3;2--4}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(4, graph.getNodes().size());
 		Assert.assertEquals(3, graph.getEdges().size());
@@ -224,7 +224,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void nodesAfterEdges() {
 		Graph graph = interpreter.interpret(
-				parse("graph{1->2;2->3;2->4;1[label=\"node\"];2;3;4}")); //$NON-NLS-1$
+				parse("graph{1--2;2--3;2--4;1[label=\"node\"];2;3;4}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(4, graph.getNodes().size());
 		Assert.assertEquals(3, graph.getEdges().size());
@@ -234,7 +234,7 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void useInterpreterTwice() {
-		String dot = "graph{1;2;3;4; 1->2;2->3;2->4}"; //$NON-NLS-1$
+		String dot = "graph{1;2;3;4; 1--2;2--3;2--4}"; //$NON-NLS-1$
 		Graph graph = interpreter.interpret(parse(dot));
 		graph = interpreter.interpret(parse(dot));
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
@@ -265,7 +265,7 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void fullyQuoted() {
-		String dot = "graph{\"n1\";\"n2\";\"n1\"->\"n2\"}"; //$NON-NLS-1$
+		String dot = "graph{\"n1\";\"n2\";\"n1\"--\"n2\"}"; //$NON-NLS-1$
 		Graph graph = interpreter.interpret(parse(dot));
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(2, graph.getNodes().size());
