@@ -12,12 +12,9 @@
  * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.jface.GraphJFaceSnippet1
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.examples.ui;
+package org.eclipse.gef4.zest.examples.jface;
 
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.fx.jface.IEdgeDecorationProvider;
 import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
@@ -34,11 +31,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import javafx.scene.Node;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polyline;
-
-public class JFaceEdgeDecorationExample {
+public class JFaceSimpleExample {
 
 	static class MyContentProvider implements IGraphNodeContentProvider {
 		private Object input;
@@ -87,50 +80,7 @@ public class JFaceEdgeDecorationExample {
 		}
 	}
 
-	static class CircleHead extends Circle implements IFXDecoration {
-		public CircleHead() {
-			super(5);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
-		}
-	}
-
-	static class DiamondHead extends Polyline implements IFXDecoration {
-		public DiamondHead() {
-			super(15.0, 0.0, 7.5, -7.5, 0.0, 0.0, 7.5, 7.5, 15.0, 0.0);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
-		}
-	}
-
-	static class MyLabelProvider extends LabelProvider
-			implements IEdgeDecorationProvider {
+	static class MyLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -140,18 +90,6 @@ public class JFaceEdgeDecorationExample {
 				return element.toString();
 			}
 			return null;
-		}
-
-		@Override
-		public IFXDecoration getSourceDecoration(Object contentSourceNode,
-				Object contentTargetNode) {
-			return new CircleHead();
-		}
-
-		@Override
-		public IFXDecoration getTargetDecoration(Object contentSourceNode,
-				Object contentTargetNode) {
-			return new DiamondHead();
 		}
 	}
 

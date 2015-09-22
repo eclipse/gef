@@ -12,13 +12,14 @@
  * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.jface.GraphJFaceSnippet1
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.examples.ui;
+package org.eclipse.gef4.zest.examples.jface;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
@@ -31,7 +32,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class JFaceSimpleExample {
+import com.google.common.base.Strings;
+
+public class JFaceTooltipExample {
 
 	static class MyContentProvider implements IGraphNodeContentProvider {
 		private Object input;
@@ -80,7 +83,8 @@ public class JFaceSimpleExample {
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider {
+	static class MyLabelProvider extends LabelProvider
+			implements IToolTipProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -90,6 +94,19 @@ public class JFaceSimpleExample {
 				return element.toString();
 			}
 			return null;
+		}
+
+		@Override
+		public String getToolTipText(Object element) {
+			if (element instanceof String) {
+				String str = element.toString();
+				int length = str.length();
+				int startIndex = (int) (8 * length * Math.random());
+				return Strings.repeat(str, 9)
+						.substring(startIndex, startIndex + length)
+						.toUpperCase();
+			}
+			return "?";
 		}
 	}
 

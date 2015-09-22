@@ -12,7 +12,7 @@
  * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.jface.GraphJFaceSnippet1
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.examples.ui;
+package org.eclipse.gef4.zest.examples.jface;
 
 import java.util.Collections;
 import java.util.Map;

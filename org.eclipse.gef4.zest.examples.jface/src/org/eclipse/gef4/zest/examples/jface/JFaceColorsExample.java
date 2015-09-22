@@ -12,29 +12,29 @@
  * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.jface.GraphJFaceSnippet1
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.examples.ui;
+package org.eclipse.gef4.zest.examples.jface;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.google.common.base.Strings;
-
-public class JFaceTooltipExample {
+// TODO: change data model to get rid of "Note: ..." in copyright notice
+public class JFaceColorsExample {
 
 	static class MyContentProvider implements IGraphNodeContentProvider {
 		private Object input;
@@ -84,7 +84,7 @@ public class JFaceTooltipExample {
 	}
 
 	static class MyLabelProvider extends LabelProvider
-			implements IToolTipProvider {
+			implements IColorProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -97,16 +97,17 @@ public class JFaceTooltipExample {
 		}
 
 		@Override
-		public String getToolTipText(Object element) {
-			if (element instanceof String) {
-				String str = element.toString();
-				int length = str.length();
-				int startIndex = (int) (8 * length * Math.random());
-				return Strings.repeat(str, 9)
-						.substring(startIndex, startIndex + length)
-						.toUpperCase();
-			}
-			return "?";
+		public Color getForeground(Object element) {
+			return Display.getCurrent()
+					.getSystemColor(((String) element).charAt(0) == 'F'
+							? SWT.COLOR_BLACK : SWT.COLOR_RED);
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			return Display.getCurrent()
+					.getSystemColor(((String) element).charAt(0) == 'S'
+							? SWT.COLOR_YELLOW : SWT.COLOR_WHITE);
 		}
 	}
 

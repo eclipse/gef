@@ -12,20 +12,10 @@
  * Note: Parts of this class have been transferred from org.eclipse.gef4.zest.examples.jface.GraphJFaceSnippet1
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.examples.ui;
+package org.eclipse.gef4.zest.examples.jface;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
-import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
+import org.eclipse.gef4.zest.fx.jface.INestedGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,9 +31,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class JFaceEdgeRouterExample {
+public class JFaceNestingExample {
 
-	static class MyContentProvider implements IGraphNodeContentProvider {
+	static class MyContentProvider implements INestedGraphContentProvider {
 		private Object input;
 
 		private static String first() {
@@ -56,6 +46,18 @@ public class JFaceEdgeRouterExample {
 
 		private static String third() {
 			return "Third";
+		}
+
+		private static String alpha() {
+			return "alpha";
+		}
+
+		private static String beta() {
+			return "beta";
+		}
+
+		private static String gamma() {
+			return "gamma";
 		}
 
 		@Override
@@ -76,6 +78,15 @@ public class JFaceEdgeRouterExample {
 			if (entity.equals(third())) {
 				return new Object[] { first() };
 			}
+			if (entity.equals(alpha())) {
+				return new Object[] { beta() };
+			}
+			if (entity.equals(beta())) {
+				return new Object[] { gamma() };
+			}
+			if (entity.equals(gamma())) {
+				return new Object[] { alpha() };
+			}
 			return null;
 		}
 
@@ -88,43 +99,22 @@ public class JFaceEdgeRouterExample {
 				Object newInput) {
 			input = newInput;
 		}
-	}
 
-	protected static IFXConnectionRouter getManhattenRouter() {
-		return new IFXConnectionRouter() {
-			@Override
-			public ICurve routeConnection(Point[] points) {
-				if (points == null || points.length < 2) {
-					return new org.eclipse.gef4.geometry.planar.Polyline(0, 0,
-							0, 0);
-				}
-				List<Point> manhattenPoints = new ArrayList<Point>();
-				Point start = points[0];
-				Point end = points[points.length - 1];
-				Point mid = start.getTranslated(end).getScaled(0.5);
-				boolean isHorizontal = Math.abs(end.x - start.x) > Math
-						.abs(end.y - start.y);
-
-				manhattenPoints.add(start);
-				if (isHorizontal) {
-					manhattenPoints.add(new Point(mid.x, start.y));
-					manhattenPoints.add(new Point(mid.x, mid.y));
-					manhattenPoints.add(new Point(mid.x, end.y));
-				} else {
-					manhattenPoints.add(new Point(start.x, mid.y));
-					manhattenPoints.add(new Point(mid.x, mid.y));
-					manhattenPoints.add(new Point(end.x, mid.y));
-				}
-				manhattenPoints.add(end);
-
-				return new org.eclipse.gef4.geometry.planar.Polyline(
-						manhattenPoints.toArray(new Point[] {}));
+		@Override
+		public Object[] getChildren(Object node) {
+			if (node.equals(first())) {
+				return new Object[] { alpha(), beta(), gamma() };
 			}
-		};
+			return new Object[] {};
+		}
+
+		@Override
+		public boolean hasChildren(Object node) {
+			return node.equals(first());
+		}
 	}
 
-	static class MyLabelProvider extends LabelProvider
-			implements IGraphNodeLabelProvider {
+	static class MyLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -133,23 +123,6 @@ public class JFaceEdgeRouterExample {
 			if (element instanceof String) {
 				return element.toString();
 			}
-			return null;
-		}
-
-		@Override
-		public Map<String, Object> getEdgeAttributes(Object sourceNode,
-				Object targetNode) {
-			return Collections.singletonMap(ZestProperties.EDGE_ROUTER,
-					(Object) getManhattenRouter());
-		}
-
-		@Override
-		public Map<String, Object> getNodeAttributes(Object node) {
-			return null;
-		}
-
-		@Override
-		public Map<String, Object> getRootGraphAttributes() {
 			return null;
 		}
 	}
