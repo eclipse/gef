@@ -67,8 +67,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 				} else {
 					// clear old selection, target should become the only
 					// selected
-					selectionModel.deselectAll();
-					selectionModel.select(Collections.singletonList(
+					selectionModel.updateSelection(Collections.singletonList(
 							(IContentPart<Node, ? extends Node>) host));
 				}
 			}
