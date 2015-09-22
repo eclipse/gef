@@ -3,13 +3,13 @@
 -charset "UTF-8"
 -sourcepath "../org.eclipse.gef4.common/src"
 -d reference/api
--classpath "${bootclasspath}:/usr/lib/jvm/java-7-oracle/jre/lib/jfxrt.jar:/usr/lib/jvm/java-7-oracle/jre/lib/jfxswt.jar:/home/wienand/git/org.eclipse.gef4/org.eclipse.gef4.common.doc/api-context-libs/com.google.guava.jar:/home/wienand/git/org.eclipse.gef4/org.eclipse.gef4.common.doc/api-context-libs/com.google.inject.jar:/home/wienand/git/org.eclipse.gef4/org.eclipse.gef4.common.doc/api-context-libs/com.google.inject.multibindings.jar:/home/wienand/git/org.eclipse.gef4/org.eclipse.gef4.common.doc/api-context-libs/javax.inject.jar"
+-classpath "@rt@@args.list.delimiter@@context@"
 -use
 -breakiterator
 -splitIndex
 -windowtitle "GEF4 Common API Reference"
 -doctitle "GEF4 Common API Reference"
--header "<b>GEF4 Common</b><br>0.2.0.201509201838"
+-header "<b>GEF4 Common</b><br>@build@"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/7/docs/api/
 -link http://docs.oracle.com/javafx/2/api/

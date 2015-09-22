@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)";resolut
  org.eclipse.gef4.fx;bundle-version="[0.1.0,0.4.0)";resolution:=optional,
  org.eclipse.gef4.fx.swt;bundle-version="[0.3.0,0.4.0)";resolution:=optional,
  org.eclipse.gef4.fx.jface;bundle-version="[0.3.0,0.4.0)";resolution:=optional,
- org.eclipse.gef4.fx.ui;bundle-version="[0.1.0,0.4.0)";resolution:=optional,
  org.eclipse.platform.doc.isv;bundle-version="[3.0.0,5.0.0)",
  org.eclipse.gef4.common.doc;bundle-version="[0.1.0,0.3.0)",
  org.eclipse.gef4.geometry.doc;bundle-version="[0.1.0,0.3.0)",

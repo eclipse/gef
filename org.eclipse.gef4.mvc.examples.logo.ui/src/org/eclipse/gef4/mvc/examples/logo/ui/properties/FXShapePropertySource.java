@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
-import org.eclipse.gef4.fx.ui.properties.FXPaintPropertyDescriptor;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.fx.ui.properties.FXPaintPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 

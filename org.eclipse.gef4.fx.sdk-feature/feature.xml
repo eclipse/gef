@@ -29,19 +29,15 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.gef4.fx.doc"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.gef4.fx.swt.source"
          version="0.0.0"/>
          
    <includes
          id="org.eclipse.gef4.fx.jface.source"
          version="0.0.0"/>
-         
+
    <includes
-         id="org.eclipse.gef4.fx.ui.source"
+         id="org.eclipse.gef4.fx.doc"
          version="0.0.0"/>
 
    <requires>

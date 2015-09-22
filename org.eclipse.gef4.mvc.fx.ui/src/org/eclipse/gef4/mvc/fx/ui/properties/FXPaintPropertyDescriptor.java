@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.ui.properties;
+package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import org.eclipse.gef4.fx.jface.FXPaintCellEditor;
 import org.eclipse.jface.viewers.CellEditor;

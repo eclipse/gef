@@ -13,4 +13,4 @@
  * This package contains helper classes for the integration and manipulation of
  * properties within the Eclipse "Properties View".
  */
-package org.eclipse.gef4.fx.ui.properties;
+package org.eclipse.gef4.mvc.fx.ui.properties;

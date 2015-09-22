@@ -463,9 +463,6 @@
 		<module>../org.eclipse.gef4.fx.swt-feature</module>
 		<module>../org.eclipse.gef4.fx.jface</module>
 		<module>../org.eclipse.gef4.fx.jface-feature</module>
-		<module>../org.eclipse.gef4.fx.ui</module>
-		<module>../org.eclipse.gef4.fx.ui-feature</module>
-		<!-- <module>../org.eclipse.gef4.fx.ui.tests</module> -->
 		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
