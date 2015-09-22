@@ -1,7 +1,7 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.zest.fx/src@args.list.delimiter@../org.eclipse.gef4.zest.fx.ui/src"
+-sourcepath "../org.eclipse.gef4.zest.fx/src@args.list.delimiter@../org.eclipse.gef4.zest.fx.jface/src@args.list.delimiter@../org.eclipse.gef4.zest.fx.ui/src"
 -d reference/api
 -classpath "@rt@@args.list.delimiter@@context@"
 -use
@@ -30,6 +30,6 @@ org.eclipse.gef4.zest.fx.models
 org.eclipse.gef4.zest.fx.operations
 org.eclipse.gef4.zest.fx.parts
 org.eclipse.gef4.zest.fx.policies
+org.eclipse.gef4.zest.fx.jface
 org.eclipse.gef4.zest.fx.ui
-org.eclipse.gef4.zest.fx.ui.jface
 org.eclipse.gef4.zest.fx.ui.parts

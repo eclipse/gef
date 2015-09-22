@@ -28,6 +28,10 @@
          id="org.eclipse.gef4.zest.fx.source"
          version="0.0.0"/>
 
+ <includes
+         id="org.eclipse.gef4.zest.fx.jface.source"
+         version="0.0.0"/>
+
    <includes
          id="org.eclipse.gef4.zest.fx.ui.source"
          version="0.0.0"/>

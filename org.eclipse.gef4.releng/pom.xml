@@ -532,9 +532,11 @@
 		<module>../org.eclipse.gef4.zest.fx</module>
 		<module>../org.eclipse.gef4.zest.fx-feature</module>
 		<module>../org.eclipse.gef4.zest.fx.tests</module>
+		<module>../org.eclipse.gef4.zest.fx.jface</module>
+		<module>../org.eclipse.gef4.zest.fx.jface-feature</module>
+		<module>../org.eclipse.gef4.zest.fx.jface.tests</module>
 		<module>../org.eclipse.gef4.zest.fx.ui</module>
 		<module>../org.eclipse.gef4.zest.fx.ui-feature</module>
-		<module>../org.eclipse.gef4.zest.fx.ui.tests</module>
 		<module>../org.eclipse.gef4.zest.doc</module>
 		<module>../org.eclipse.gef4.zest.doc-feature</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>

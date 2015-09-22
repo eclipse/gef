@@ -13,11 +13,13 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -89,7 +91,7 @@ public abstract class FXView extends ViewPart {
 	 *         {@link IFXCanvasFactory}.
 	 */
 	protected FXCanvas createCanvas(final Composite parent) {
-		return canvasFactory.createCanvas(parent);
+		return canvasFactory.createCanvas(parent, SWT.NONE);
 	}
 
 	@Override

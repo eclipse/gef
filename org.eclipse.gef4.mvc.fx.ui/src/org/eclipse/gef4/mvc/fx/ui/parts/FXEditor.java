@@ -16,11 +16,13 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -96,7 +98,7 @@ public abstract class FXEditor extends EditorPart {
 	 * @return The {@link FXCanvas} created by the {@link IFXCanvasFactory}.
 	 */
 	protected FXCanvas createCanvas(final Composite parent) {
-		return canvasFactory.createCanvas(parent);
+		return canvasFactory.createCanvas(parent, SWT.NONE);
 	}
 
 	@Override
