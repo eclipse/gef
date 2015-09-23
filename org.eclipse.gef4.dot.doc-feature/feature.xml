@@ -21,7 +21,6 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.common.doc" version="0.2.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.graph.doc" version="0.2.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.layout.doc" version="0.2.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.mvc.doc" version="0.3.0" match="equivalent"/>
