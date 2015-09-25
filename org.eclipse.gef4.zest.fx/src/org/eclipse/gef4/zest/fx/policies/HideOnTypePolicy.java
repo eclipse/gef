@@ -67,6 +67,10 @@ public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 	public void released(KeyEvent event) {
 	}
 
+	@Override
+	public void typed(KeyEvent event) {
+	}
+
 	/**
 	 * Shows all hidden neighbors of the {@link #getHost() host}
 	 * {@link NodeContentPart} by iterating over the

@@ -98,4 +98,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 	public void released(KeyEvent event) {
 	}
 
+	@Override
+	public void typed(KeyEvent event) {
+	}
+
 }

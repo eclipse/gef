@@ -68,6 +68,25 @@ public class FXTypeTool extends AbstractTool<Node> {
 		}
 	};
 
+	private final EventHandler<? super KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
+		@Override
+		public void handle(KeyEvent event) {
+			boolean wasOpen = getDomain()
+					.isExecutionTransactionOpen(FXTypeTool.this);
+			if (!wasOpen) {
+				getDomain().openExecutionTransaction(FXTypeTool.this);
+			}
+			Collection<? extends AbstractFXOnTypePolicy> policies = getTargetPolicies(
+					event);
+			for (AbstractFXOnTypePolicy policy : policies) {
+				policy.typed(event);
+			}
+			if (!wasOpen) {
+				getDomain().closeExecutionTransaction(FXTypeTool.this);
+			}
+		}
+	};
+
 	/**
 	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
 	 * are installed on the given target {@link IVisualPart}.
@@ -160,6 +179,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 			Scene scene = viewer.getRootPart().getVisual().getScene();
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
 			scene.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+			scene.addEventFilter(KeyEvent.KEY_TYPED, typedFilter);
 		}
 	}
 
@@ -169,6 +189,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 			Scene scene = viewer.getRootPart().getVisual().getScene();
 			scene.removeEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
 			scene.removeEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+			scene.removeEventFilter(KeyEvent.KEY_TYPED, typedFilter);
 		}
 	}
 

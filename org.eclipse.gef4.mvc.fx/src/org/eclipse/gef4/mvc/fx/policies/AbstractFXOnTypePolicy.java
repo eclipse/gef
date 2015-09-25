@@ -48,4 +48,13 @@ public abstract class AbstractFXOnTypePolicy extends AbstractPolicy<Node> {
 	 */
 	public abstract void released(KeyEvent event);
 
+	/**
+	 * This callback method is invoked when the user types a unicode key while
+	 * the {@link #getHost() host} has keyboard focus.
+	 *
+	 * @param event
+	 *            The original {@link KeyEvent}.
+	 */
+	public abstract void typed(KeyEvent event);
+
 }

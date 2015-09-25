@@ -171,6 +171,10 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 		}
 	}
 
+	@Override
+	public void typed(KeyEvent event) {
+	}
+
 	/**
 	 * Computes the viewport translation and applies it to the
 	 * {@link #getViewportModel() viewport model}.
