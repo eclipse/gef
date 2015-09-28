@@ -6,13 +6,13 @@ Bundle-Version: 0.3.0.qualifier
 Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.emf.common;bundle-version="[2.9.0,3.0.0)",
  org.eclipse.emf.ecore;bundle-version="[2.9.0,3.0.0)",
- org.eclipse.xtext;bundle-version="[2.6.0,3.0.0)",
- org.eclipse.xtext.util;bundle-version="[2.6.0,3.0.0)",
+ org.eclipse.xtext;bundle-version="[2.7.3,3.0.0)",
+ org.eclipse.xtext.util;bundle-version="[2.7.3,3.0.0)",
  org.eclipse.gef4.graph;bundle-version="[0.1.0,0.3.0)",
  org.apache.commons.logging;bundle-version="[1.1.1,2.0.0)";resolution:=optional,
  org.eclipse.equinox.common;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
- org.eclipse.xtext.generator;bundle-version="[2.6.0,3.0.0)";resolution:=optional,
- org.eclipse.emf.mwe2.launch;bundle-version="[2.6.0,3.0.0)";resolution:=optional
+ org.eclipse.xtext.generator;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
+ org.eclipse.emf.mwe2.launch;bundle-version="[2.7.1,3.0.0)";resolution:=optional
 Export-Package: org.eclipse.gef4.dot;x-internal:=true,
  org.eclipse.gef4.internal.dot;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
@@ -21,12 +21,12 @@ Export-Package: org.eclipse.gef4.dot;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser.dot.impl;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.dot.util;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.formatting;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot.parser.parseTreeConstruction;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.parser.antlr;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.parser.antlr.internal;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.scoping;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.internal.dot.parser.services;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.internal.dot.parser.validation;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui"
+ org.eclipse.gef4.internal.dot.parser.validation;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.internal.dot.parser.serializer;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse GEF
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"

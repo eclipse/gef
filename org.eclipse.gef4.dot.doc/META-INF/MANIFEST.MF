@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.gef4.dot.doc;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Vendor: Eclipse GEF
 Require-Bundle: org.eclipse.emf.ecore;bundle-version="[2.9.0,3.0.0)";resolution:=optional,
- org.eclipse.xtext;bundle-version="[2.6.0,3.0.0)";resolution:=optional,
+ org.eclipse.xtext;bundle-version="[2.7.3,3.0.0)";resolution:=optional,
  org.eclipse.gef4.graph;bundle-version="[0.1.0,0.3.0)";resolution:=optional,
  org.eclipse.gef4.layout;bundle-version="[0.1.0,0.3.0)";resolution:=optional,
  org.eclipse.gef4.mvc.fx;bundle-version="[0.1.0,0.4.0)";resolution:=optional,

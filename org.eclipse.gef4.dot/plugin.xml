@@ -6,7 +6,6 @@
     <package 
        uri = "http://www.eclipse.org/gef4/internal/dot/parser/Dot" 
        class = "org.eclipse.gef4.internal.dot.parser.dot.DotPackage"
-       genModel = "src-gen/org/eclipse/gef4/internal/dot/parser/Dot.genmodel" />
-	
+       genModel = "model/generated/Dot.genmodel" /> 
   </extension>
 </plugin>

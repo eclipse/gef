@@ -13,6 +13,8 @@
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<tycho.version>0.21.0</tycho.version>
 		<cbi-plugins.version>1.0.4</cbi-plugins.version>
+		<!-- Use Xtext generator 2.7.3, which corresponds to Luna SR2 release -->
+		<xtext.version>2.7.3</xtext.version>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/gef/org.eclipse.gef4.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
