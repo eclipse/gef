@@ -23,7 +23,7 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 	@Override
 	public void setActiveEditor(final IEditorPart targetEditor) {
 		super.setActiveEditor(targetEditor);
-		final UndoRedoActionGroup undoRedoActionGroup = targetEditor
+		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) targetEditor
 				.getAdapter(UndoRedoActionGroup.class);
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.fillActionBars(getActionBars());
