@@ -15,6 +15,7 @@ package org.eclipse.gef4.internal.dot.parser.conversion;
 import org.eclipse.xtext.conversion.IValueConverter;
 import org.eclipse.xtext.conversion.ValueConverter;
 import org.eclipse.xtext.conversion.impl.AbstractDeclarativeValueConverterService;
+import org.eclipse.xtext.conversion.impl.IDValueConverter;
 import org.eclipse.xtext.conversion.impl.STRINGValueConverter;
 
 import com.google.inject.Inject;
@@ -29,10 +30,13 @@ public class DotTerminalConverters
 		extends AbstractDeclarativeValueConverterService {
 
 	@Inject
-	private IDValueConverter stringValueConverter;
+	private IDValueConverter compassPtValueConverter;
 
 	@Inject
 	private IDValueConverter numeralValueConverter;
+
+	@Inject
+	private DotStringValueConverter stringValueConverter;
 
 	@Inject
 	private STRINGValueConverter quotedStringValueConverter;
@@ -65,6 +69,21 @@ public class DotTerminalConverters
 	@ValueConverter(rule = "NUMERAL")
 	public IValueConverter<String> NUMERAL() {
 		return numeralValueConverter;
+	}
+
+	/**
+	 * A {@link ValueConverter} for Dot "NUMERAL" terminals:
+	 * 
+	 * <pre>
+	 * terminal COMPASS_PT:
+	 * 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'c' | '_';
+	 * </pre>
+	 * 
+	 * @return The {@link String} value converted from a "NUMERAL" terminal.
+	 */
+	@ValueConverter(rule = "COMPASS_PT")
+	public IValueConverter<String> COMPASS_PT() {
+		return compassPtValueConverter;
 	}
 
 	/**

@@ -4,7 +4,10 @@
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: Fabian Steeg - initial implementation; see bug 277380
+ * Contributors: 
+ * 		Fabian Steeg    - initial implementation (bug #277380)
+ * 		Alexander Nyßen - migration to Xtext 2.7.3 (bug #478562); 
+ *                        support for case insensitive keywords (bug #454626)
  *******************************************************************************/
 module org.eclipse.gef4.internal.dot.parser.Dot
 
@@ -55,10 +58,11 @@ Workflow {
 			// a custom ResourceFactory for use with EMF
 			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
 
-			// The antlr parser generator fragment.
-			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {
+			// The antlr parser generator fragment (for case-insensitive keywords)
+			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {
 				options = {
 					backtrack = true
+					ignoreCase = true
 				}
 			}
 
@@ -80,13 +84,14 @@ Workflow {
 
 			// Java-based content assist API
 			fragment = contentAssist.JavaBasedContentAssistFragment auto-inject {}
-			
-			// generates a more lightweight Antlr parser and lexer tailored for content assist
-    		fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject {
-    			options = {
+
+			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
+				options = {
 					backtrack = true
+					ignoreCase = true
 				}
-    		}
+			}
 		}
 	}
 }

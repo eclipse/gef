@@ -18,12 +18,12 @@ import org.eclipse.xtext.conversion.impl.AbstractValueConverter;
 import org.eclipse.xtext.nodemodel.INode;
 
 /**
- * A converter that converts the terminals used in valid Dot IDs into Strings.
+ * A converter that converts terminals that are valid IDs into Strings.
  * 
  * @author anyssen
  *
  */
-public class IDValueConverter extends AbstractValueConverter<String>
+public class DotStringValueConverter extends AbstractValueConverter<String>
 		implements IValueConverter<String> {
 
 	@Override

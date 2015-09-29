@@ -16,10 +16,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.internal.dot.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
+import org.eclipse.gef4.internal.dot.parser.services.DotGrammarAccess;
 import org.eclipse.gef4.internal.dot.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+
+import com.google.inject.Inject;
 
 /**
  * A proposal provider for Dot.
@@ -27,6 +32,21 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
  * @author anyssen
  */
 public class DotProposalProvider extends AbstractDotProposalProvider {
+
+	@Inject
+	DotGrammarAccess dotGrammarAccess;
+
+	@Override
+	public void completePort_Compass_pt(EObject model, Assignment assignment,
+			ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		for (Keyword k : EcoreUtil2.getAllContentsOfType(
+				dotGrammarAccess.getCOMPASS_PTRule().getAlternatives(),
+				Keyword.class)) {
+			acceptor.accept(createCompletionProposal(k.getValue(), context));
+		}
+		super.completePort_Compass_pt(model, assignment, context, acceptor);
+	}
 
 	@Override
 	public void completeAttribute_Value(EObject model, Assignment assignment,

@@ -6,12 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *    Michael Clay    - initial API and implementation (#277380)
+ *    Michael Clay    - initial API and implementation (bug #277380)
  *    Fabian Steeg    - updates for current Xtext and minor tweaks
- *    Alexander Nyßen - fixed grammar generation problems w.r.t. terminals (#429512)
+ *    Alexander Nyßen - fixed generation problems w.r.t. terminals (bug #429512)
  *                    - fixed problems resulting from non-optional subgraph names 
- *                      and shadowing of IDs by CommentPt literals (#430132)
- *                    - refactored grammar to be more consistent (#451097)
+ *                      and shadowing of IDs by CommentPt literals (bug #430132)
+ *                    - completely refactored grammar to be more consistent to 
+ *                      Dot language definition (bug #451097)
+ *                    - transferred CompassPt into terminal rule to realize case
+ *                      insensitive keywords properly (bug #454626)
  * 
  *******************************************************************************/
 grammar org.eclipse.gef4.internal.dot.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
@@ -52,7 +55,7 @@ Subgraph:
 	{Subgraph} ("subgraph" name=ID?)? "{" (stmts+=Stmt)* "}";
 
 Port:
-	":" name=ID (":" compass_pt=CompassPt)? | ":" compass_pt=CompassPt;
+	":" name=ID (":" compass_pt=COMPASS_PT)? | ":" compass_pt=COMPASS_PT;
 
 EdgeRhs:
 	(EdgeRhsNode | EdgeRhsSubgraph);
@@ -69,7 +72,7 @@ NodeId:
 // compass point values are no keywords (and thus allowed as part of an ID), 
 // whereas node, edge, graph, digraph, subgraph, strict are keywords (and thus not allowed as part of an ID)
 ID:
-	STRING | QUOTED_STRING | NUMERAL | "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_";
+	STRING | QUOTED_STRING | NUMERAL | COMPASS_PT;
 
 enum EdgeOp:
 	directed="->" | undirected="--";
@@ -80,9 +83,8 @@ enum GraphType:
 enum AttributeType:
 	graph="graph" | node="node" | edge="edge";
 
-enum CompassPt:
-	north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west="w" | northwest="nw" |
-	center="c" | wildcard="_";
+terminal COMPASS_PT:
+	'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'c' | '_';
 
 terminal STRING:
 	('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
