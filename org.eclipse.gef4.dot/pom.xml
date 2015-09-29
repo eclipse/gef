@@ -46,32 +46,29 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>${exec-maven-plugin.version}</version>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<property name="compile.classpath" refid="maven.compile.classpath" />
+								<property name="runtime.classpath" refid="maven.runtime.classpath" />
+								<java classpath="${compile.classpath}:${runtime.classpath}:src"
+									classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher"
+									fork="true" failonerror="true">
+									<arg
+										value="src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2" />
+									<sysproperty key="file.encoding" value="UTF-8" />
+								</java>
+							</target>
+						</configuration>
 						<goals>
-							<goal>java</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<includeProjectDependencies>false</includeProjectDependencies>
-					<includePluginDependencies>true</includePluginDependencies>
-					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
-					<arguments>
-						<argument>file://${project.basedir}/src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2</argument>
-					</arguments>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xtext</artifactId>
-						<version>${xtext.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 		<resources>
