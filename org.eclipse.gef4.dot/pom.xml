@@ -58,18 +58,14 @@
 					</execution>
 				</executions>
 				<configuration>
-					<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					<daemonThreadJoinTimeout>60000</daemonThreadJoinTimeout>
 					<includeProjectDependencies>false</includeProjectDependencies>
 					<includePluginDependencies>true</includePluginDependencies>
 					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
 					<arguments>
 						<argument>file://${project.basedir}/src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2</argument>
-						<argument>
-							-p
-						</argument>
-						<argument>
-							runtimeProject=${project.basedir}
-						</argument>
+						<argument>-p</argument>
+						<argument>runtimeProject=${project.basedir}</argument>
 					</arguments>
 				</configuration>
 				<dependencies>
