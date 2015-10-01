@@ -16,6 +16,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var projectName = "org.eclipse.gef4.dot"
+// grammarURI has to be platform:/resource as it is not on the classpath
 var grammarURI = "platform:/resource/${projectName}/src/org/eclipse/gef4/internal/dot/parser/Dot.xtext"
 var fileExtensions = "dot"
 var runtimeProject = "../${projectName}"
@@ -23,7 +24,9 @@ var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
-		scanClassPath = true
+		// use an XtextResourceSet throughout the process, which is able to resolve classpath:/ URIs.
+    	resourceSet = org.eclipse.xtext.resource.XtextResourceSet:standaloneResourceSet {}
+		
 		platformUri = "${runtimeProject}/.."
 	}
 
@@ -47,6 +50,9 @@ Workflow {
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
 		language = auto-inject {
+			// make sure we use the resourceSet created during standalone setup.
+    		forcedResourceSet = standaloneResourceSet
+			
 			uri = grammarURI
 
 			// Java API to access grammar elements (required by several other fragments)
