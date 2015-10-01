@@ -15,14 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
-import javafx.scene.effect.Light.Distant;
-import javafx.scene.effect.Lighting;
-import javafx.scene.paint.Color;
-
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
@@ -32,7 +24,25 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Light.Distant;
+import javafx.scene.effect.Lighting;
+import javafx.scene.paint.Color;
+
 public class FXGeometricModel {
+
+	public static final double GEF_STROKE_WIDTH = 3.5;
+
+	public static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
+
+	public static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
+
+	public static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
+
+	public static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
 
 	public static IShape createCursorShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
@@ -245,15 +255,6 @@ public class FXGeometricModel {
 		return effects;
 	}
 
-	public static final double GEF_STROKE_WIDTH = 3.5;
-
-	public static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
-
-	public static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
-
-	public static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
-
-	public static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
 	// selection handles
 	private final FXGeometricShape topLeftSelectionHandle = new FXGeometricShape(
 			createHandleShapeGeometry(),
@@ -285,12 +286,12 @@ public class FXGeometricModel {
 			GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
 
 	private final FXGeometricCurve selectionBoundsBottomLine = new FXGeometricCurve(
-			new Point[] { new Point(140, 118) }, GEF_COLOR_GREEN, 3.5,
-			new double[] { 15, 10 }, null);
+			new Point[] { new Point(140, 118) }, GEF_COLOR_GREEN,
+			GEF_STROKE_WIDTH, new double[] { 15, 10 }, null);
 
 	private final FXGeometricCurve selectionBoundsRightLine = new FXGeometricCurve(
-			new Point[] { new Point(250, 70) }, GEF_COLOR_GREEN, 3.5,
-			new double[] { 15, 10 }, null);
+			new Point[] { new Point(250, 70) }, GEF_COLOR_GREEN,
+			GEF_STROKE_WIDTH, new double[] { 15, 10 }, null);
 	// g shapes
 	// TODO: create multi shape visual for G shape
 	private final FXGeometricShape gBaseShape = new FXGeometricShape(
