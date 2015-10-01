@@ -13,4 +13,18 @@
 	<artifactId>org.eclipse.gef4.dot.ui</artifactId>
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>${maven-clean-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>gen-clean</id>
+						<phase>clean</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

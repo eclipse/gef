@@ -60,8 +60,12 @@
 					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
 					<arguments>
 						<argument>file://${project.basedir}/src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2</argument>
-						<argument>-p</argument>
-						<argument>runtimeProject=/${project.basedir}</argument>
+						<argument>
+							-p
+						</argument>
+						<argument>
+							runtimeProject=/${project.basedir}
+						</argument>
 					</arguments>
 				</configuration>
 				<dependencies>
@@ -69,6 +73,16 @@
 						<groupId>org.eclipse.xtext</groupId>
 						<artifactId>org.eclipse.xtext.xtext</artifactId>
 						<version>${xtext.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.xtext</groupId>
+						<artifactId>org.eclipse.xtext.xbase</artifactId>
+						<version>${xtext.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.equinox</groupId>
+						<artifactId>common</artifactId>
+						<version>3.6.200-v20130402-1505</version>
 					</dependency>
 				</dependencies>
 			</plugin>

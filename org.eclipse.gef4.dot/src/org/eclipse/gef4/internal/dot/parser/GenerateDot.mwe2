@@ -16,17 +16,16 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var projectName = "org.eclipse.gef4.dot"
-// grammarURI has to be platform:/resource as it is not on the classpath
-var grammarURI = "platform:/resource/${projectName}/src/org/eclipse/gef4/internal/dot/parser/Dot.xtext"
 var fileExtensions = "dot"
+
+// grammarURI has to be platform:/resource for headless execution (Tycho)
+var grammarURI = "platform:/resource/${projectName}/src/org/eclipse/gef4/internal/dot/parser/Dot.xtext"
 var runtimeProject = "../${projectName}"
 var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
-		// use an XtextResourceSet throughout the process, which is able to resolve classpath:/ URIs.
-    	resourceSet = org.eclipse.xtext.resource.XtextResourceSet:standaloneResourceSet {}
-		
+		// register current projects and its siblings for platform URI map, as they are not on the classpath.
 		platformUri = "${runtimeProject}/.."
 	}
 
@@ -50,16 +49,16 @@ Workflow {
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
 		language = auto-inject {
-			// make sure we use the resourceSet created during standalone setup.
-    		forcedResourceSet = standaloneResourceSet
-			
 			uri = grammarURI
 
 			// Java API to access grammar elements (required by several other fragments)
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
-			fragment = ecore.EMFGeneratorFragment auto-inject {}
+			fragment = ecore.EMFGeneratorFragment auto-inject {
+				// has to be explicitly set for headless execution (Tycho)
+				javaModelDirectory = "/${projectName}/src-gen"
+			}
 
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
