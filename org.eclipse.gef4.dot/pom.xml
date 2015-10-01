@@ -74,16 +74,6 @@
 						<artifactId>org.eclipse.xtext.xtext</artifactId>
 						<version>${xtext.version}</version>
 					</dependency>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xbase</artifactId>
-						<version>${xtext.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.equinox</groupId>
-						<artifactId>common</artifactId>
-						<version>3.6.200-v20130402-1505</version>
-					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
