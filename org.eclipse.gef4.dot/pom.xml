@@ -65,7 +65,7 @@
 					<arguments>
 						<argument>file://${project.basedir}/src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2</argument>
 						<argument>-p</argument>
-						<argument>runtimeProject=${project.basedir}</argument>
+						<argument>runtimeProject=/${project.basedir}</argument>
 					</arguments>
 				</configuration>
 				<dependencies>
