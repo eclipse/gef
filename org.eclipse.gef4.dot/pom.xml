@@ -68,7 +68,7 @@
 							-p
 						</argument>
 						<argument>
-							runtimeProject=${project.basedir}
+							runtimeProject=/${project.basedir}
 						</argument>
 					</arguments>
 				</configuration>

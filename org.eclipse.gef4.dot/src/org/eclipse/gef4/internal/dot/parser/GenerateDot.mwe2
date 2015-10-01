@@ -23,6 +23,7 @@ var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
+		scanClassPath = true
 		platformUri = "${runtimeProject}/.."
 	}
 
@@ -37,9 +38,9 @@ Workflow {
 	component = Generator {
 		activator = "org.eclipse.gef4.internal.dot.parser.DotParserActivator"
 		pathRtProject = runtimeProject
-		pathUiProject = "../org.eclipse.gef4.dot.ui"
+		pathUiProject = "${runtimeProject}.ui"
 		projectNameRt = projectName
-		projectNameUi = "org.eclipse.gef4.dot.ui"
+		projectNameUi = "${projectName}.ui"
 		encoding = encoding
 		language = auto-inject {
 			uri = grammarURI
