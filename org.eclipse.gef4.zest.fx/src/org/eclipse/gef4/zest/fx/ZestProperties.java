@@ -177,61 +177,6 @@ public class ZestProperties {
 	public static final String EDGE_ROUTER = "edge-router";
 
 	/**
-	 * This attribute determines the dash style for an edge.
-	 *
-	 * @see #EDGE_STYLE_VALUES
-	 * @see #EDGE_STYLE_DEFAULT
-	 * @see #getStyle(Edge)
-	 * @see #setStyle(Edge, String)
-	 */
-	public static final String EDGE_STYLE = "style";
-
-	/**
-	 * This {@link #EDGE_STYLE} will draw the edge dashed, i.e. "---".
-	 */
-	public static final String EDGE_STYLE_DASHED = "dashed";
-
-	/**
-	 * This {@link #EDGE_STYLE} will draw the edge dotted, i.e. "...".
-	 */
-	public static final String EDGE_STYLE_DOTTED = "dotted";
-
-	/**
-	 * This {@link #EDGE_STYLE} will draw the edge solid, i.e. "___".
-	 */
-	public static final String EDGE_STYLE_SOLID = "solid";
-
-	/**
-	 * This {@link #EDGE_STYLE} will draw the edge alternating dashed and
-	 * dotted, i.e. "-.-.-.".
-	 */
-	public static final String EDGE_STYLE_DASHDOT = "dashdot";
-
-	/**
-	 * This {@link #EDGE_STYLE} will draw the edge alternating dashed and double
-	 * dotted, i.e. "-..-..-..".
-	 */
-	public static final String EDGE_STYLE_DASHDOTDOT = "dashdotdot";
-
-	/**
-	 * These are the possible {@link #EDGE_STYLE} values:
-	 * <ul>
-	 * <li>{@link #EDGE_STYLE_DASHDOTDOT}
-	 * <li>{@link #EDGE_STYLE_DASHDOT}
-	 * <li>{@link #EDGE_STYLE_DASHED}
-	 * <li>{@link #EDGE_STYLE_DOTTED}
-	 * <li>{@link #EDGE_STYLE_SOLID} (default)
-	 * </ul>
-	 */
-	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(Arrays.asList(EDGE_STYLE_DASHED,
-			EDGE_STYLE_DOTTED, EDGE_STYLE_SOLID, EDGE_STYLE_DASHDOT, EDGE_STYLE_DASHDOTDOT));
-
-	/**
-	 * The default value for the {@link #EDGE_STYLE} attribute.
-	 */
-	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
-
-	/**
 	 * This attribute determines if a graph is directed or undirected.
 	 *
 	 * @see #GRAPH_TYPE_VALUES
@@ -537,19 +482,6 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EDGE_STYLE} attribute of the given
-	 * {@link Edge}.
-	 *
-	 * @param edge
-	 *            The {@link Edge} of which the style is determined.
-	 * @return The style of the given {@link Edge}.
-	 */
-	// TODO: Return null if not present.
-	public static String getStyle(Edge edge) {
-		return (String) edge.getAttrs().get(EDGE_STYLE);
-	}
-
-	/**
 	 * Returns the value of the {@link #EDGE_TARGET_DECORATION} attribute of the
 	 * given {@link Edge}.
 	 *
@@ -827,26 +759,6 @@ public class ZestProperties {
 	 */
 	public static void setSourceDecoration(Edge edge, IFXDecoration sourceDecoration) {
 		edge.getAttrs().put(EDGE_SOURCE_DECORATION, sourceDecoration);
-	}
-
-	/**
-	 * Sets the value of the {@link #EDGE_STYLE} attribute of the given
-	 * {@link Edge} to the given value.
-	 *
-	 * @param edge
-	 *            The {@link Edge} of which the style is changed.
-	 * @param style
-	 *            The new style for the given {@link Edge}.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>style</i> value is not contained within
-	 *             {@link #EDGE_STYLE_VALUES}.
-	 */
-	public static void setStyle(Edge edge, String style) {
-		if (!EDGE_STYLE_VALUES.contains(style)) {
-			throw new IllegalArgumentException("Cannot set edge attribute \"" + EDGE_STYLE + "\" to \"" + style
-					+ "\"; supported values: " + EDGE_STYLE_VALUES);
-		}
-		edge.getAttrs().put(EDGE_STYLE, style);
 	}
 
 	/**

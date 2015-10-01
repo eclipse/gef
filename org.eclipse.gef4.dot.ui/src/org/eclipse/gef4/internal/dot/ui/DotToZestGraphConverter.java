@@ -79,17 +79,19 @@ public class DotToZestGraphConverter {
 
 		// convert edge style
 		Object dotStyle = dot.get(DotProperties.EDGE_STYLE);
-		String zestStyle = ZestProperties.EDGE_STYLE_DEFAULT;
+		String curveCssStyle = null;
 		if (DotProperties.EDGE_STYLE_DASHED.equals(dotStyle)) {
-			zestStyle = ZestProperties.EDGE_STYLE_DASHED;
+			curveCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
 		} else if (DotProperties.EDGE_STYLE_DOTTED.equals(dotStyle)) {
-			zestStyle = ZestProperties.EDGE_STYLE_DOTTED;
-		} else if (DotProperties.EDGE_STYLE_SOLID.equals(dotStyle)) {
-			zestStyle = ZestProperties.EDGE_STYLE_SOLID;
-		} else {
-			// TODO: report unsupported DOT edge style
+			curveCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
+		} else if (DotProperties.EDGE_STYLE_BOLD.equals(dotStyle)) {
+			curveCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
 		}
-		zest.put(ZestProperties.EDGE_STYLE, zestStyle);
+		// TODO: handle tapered edges
+
+		if (curveCssStyle != null) {
+			zest.put(ZestProperties.EDGE_CURVE_CSS_STYLE, curveCssStyle);
+		}
 	}
 
 	private Node convertNode(Node dotNode) {

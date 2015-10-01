@@ -100,9 +100,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	 */
 	public static final String CSS_CLASS_LABEL = "label";
 
-	private static final double GAP_LENGTH = 7d;
-	private static final double DASH_LENGTH = 7d;
-	private static final Double DOT_LENGTH = 1d;
 	@Inject
 	private Injector injector;
 	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
@@ -240,21 +237,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		IFXConnectionRouter router = ZestProperties.getRouter(edge);
 		if (router != null) {
 			visual.setRouter(router);
-		}
-
-		// dashes
-		Object style = attrs.get(ZestProperties.EDGE_STYLE);
-		if (style == ZestProperties.EDGE_STYLE_DASHED) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
-		} else if (style == ZestProperties.EDGE_STYLE_DASHDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
-		} else if (style == ZestProperties.EDGE_STYLE_DASHDOTDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH, DOT_LENGTH,
-					GAP_LENGTH);
-		} else if (style == ZestProperties.EDGE_STYLE_DOTTED) {
-			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
-		} else {
-			curveNode.getStrokeDashArray().clear();
 		}
 	}
 
