@@ -24,7 +24,7 @@
 				<version>${maven-clean-plugin.version}</version>
 				<executions>
 					<execution>
-						<id>gen-clean</id>
+						<id>clean-generated</id>
 						<phase>clean</phase>
 						<configuration>
 							<filesets combine.children="append">
@@ -73,10 +73,5 @@
 				</dependencies>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-		</resources>
 	</build>
 </project>
