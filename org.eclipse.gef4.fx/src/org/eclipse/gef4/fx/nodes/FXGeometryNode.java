@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import javafx.geometry.Bounds;
-import javafx.scene.shape.Path;
-
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
@@ -25,6 +22,14 @@ import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
+import javafx.scene.shape.Path;
 
 /**
  * A {@link Path} that can be constructed using an underlying {@link IGeometry}.
@@ -40,13 +45,21 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
  */
 public class FXGeometryNode<T extends IGeometry> extends Path {
 
-	private T geometry;
+	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<T>();
 
 	/**
 	 * Constructs a new {@link FXGeometryNode} without an {@link IGeometry}.
 	 */
 	public FXGeometryNode() {
-		super();
+		// update path elements whenever the geometry property is changed
+		geometryProperty.addListener(new ChangeListener<T>() {
+
+			@Override
+			public void changed(ObservableValue<? extends T> observable,
+					T oldValue, T newValue) {
+				updatePathElements();
+			}
+		});
 	}
 
 	/**
@@ -61,12 +74,22 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	}
 
 	/**
+	 * Provides a {@link Property} holding the geometry of this
+	 * {@link FXGeometryNode}.
+	 *
+	 * @return A (writable) property for the geomtry of this node.
+	 */
+	public ObjectProperty<T> geometryProperty() {
+		return geometryProperty;
+	}
+
+	/**
 	 * Returns the {@link IGeometry} of this {@link FXGeometryNode}.
 	 *
 	 * @return The {@link IGeometry} of this {@link FXGeometryNode}.
 	 */
 	public T getGeometry() {
-		return geometry;
+		return geometryProperty.getValue();
 	}
 
 	@Override
@@ -77,12 +100,12 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		 * the offset between geometric bounds and layout bounds, we set the
 		 * geometric bounds to the resize width and height and tweak the layout
 		 * bounds here to match the geometric bounds.
-		 * 
+		 *
 		 * TODO: Re-implement this fix by only using public API, for example, a
 		 * Group can be used as the super class. (Bug #443954)
 		 */
-		return Geometry2JavaFX.toFXBounds(
-				geometry == null ? new Rectangle() : geometry.getBounds());
+		return Geometry2JavaFX.toFXBounds(geometryProperty.getValue() == null
+				? new Rectangle() : geometryProperty.getValue().getBounds());
 	}
 
 	@Override
@@ -112,12 +135,12 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	@Override
 	public double prefHeight(double width) {
-		return geometry.getBounds().getHeight();
+		return geometryProperty.getValue().getBounds().getHeight();
 	}
 
 	@Override
 	public double prefWidth(double height) {
-		return geometry.getBounds().getWidth();
+		return geometryProperty.getValue().getBounds().getWidth();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -139,6 +162,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 
 		// set the new size, either by resizing or scaling the underlying
 		// geometry
+		T geometry = geometryProperty.getValue();
 		if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
 		} else if (geometry instanceof RoundedRectangle) {
@@ -163,12 +187,12 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 				// apply transform to path
 				Point boundsOrigin = new Point(geometricBounds.getX(),
 						geometricBounds.getY());
-				geometry = (T) geometry
+				geometryProperty.setValue((T) geometry
 						.getTransformed(new AffineTransform(1, 0, 0, 1,
 								-boundsOrigin.x, -boundsOrigin.y))
 						.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
 						.getTransformed(new AffineTransform(1, 0, 0, 1,
-								boundsOrigin.x, boundsOrigin.y));
+								boundsOrigin.x, boundsOrigin.y)));
 			}
 		}
 		updatePathElements();
@@ -182,8 +206,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	 *            The new {@link IGeometry} for this {@link FXGeometryNode}.
 	 */
 	public void setGeometry(T geometry) {
-		this.geometry = geometry;
-		updatePathElements();
+		this.geometryProperty.setValue(geometry);
 	}
 
 	/**
@@ -193,6 +216,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	 * its visual counter part.
 	 */
 	private void updatePathElements() {
-		getElements().setAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
+		getElements().setAll(Geometry2JavaFX
+				.toPathElements(geometryProperty.getValue().toPath()));
 	}
 }

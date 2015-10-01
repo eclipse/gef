@@ -34,8 +34,10 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -45,6 +47,7 @@ import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 /**
@@ -381,6 +384,7 @@ public class FXConnection extends Group {
 
 	// visuals
 	private FXGeometryNode<ICurve> curveNode = new FXGeometryNode<ICurve>();
+
 	private IFXConnectionRouter router = new FXPolylineConnectionRouter();
 
 	// used to pass as argument to IFXAnchor#attach() and #detach()
@@ -399,6 +403,11 @@ public class FXConnection extends Group {
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
 
+	// transparent 'fat' curve overlaying the actual curve (serving as mouse
+	// target)
+	private FXGeometryNode<ICurve> curveNodeClickableArea = new FXGeometryNode<ICurve>();
+	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty(5);
+
 	/**
 	 * Constructs a new {@link FXConnection} whose start and end point are set
 	 * to <code>null</code>.
@@ -411,6 +420,18 @@ public class FXConnection extends Group {
 		// register any adapters that will be needed during attach() and
 		// detach() at anchors
 		registerAnchorInfos(as);
+
+		// initialize clickable area
+		curveNodeClickableArea.setFill(Color.TRANSPARENT);
+		curveNodeClickableArea.setStroke(Color.TRANSPARENT);
+		curveNodeClickableArea.setMouseTransparent(false);
+
+		// bind geometry of clickable area to that of curve node
+		curveNodeClickableArea.geometryProperty()
+				.bind(curveNode.geometryProperty());
+
+		// bind stroke width of clickable area to the respective property
+		curveNodeClickableArea.strokeWidthProperty().bind(clickableAreaWidth);
 	}
 
 	/**
@@ -591,15 +612,28 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Creates a position change listener (PCL) which {@link #refreshGeometry()
+	 * Returns a (writable) property that controls the width of the clickable
+	 * area. The clickable area is a transparent 'fat' curve overlaying the
+	 * actual curve and serving as mouse target. It is only used if the value of
+	 * the property is greater than the stroke width of the underlying curve.
+	 *
+	 * @return A property to control the width of the clickable area of this
+	 *         connection.
+	 */
+	public DoubleProperty clickableAreaWidthProperty() {
+		return clickableAreaWidth;
+	}
+
+	/**
+	 * Creates a position change listener (PCL) which {@link #refresh()
 	 * refreshes} this {@link FXConnection} upon anchor position changes
 	 * corresponding to the given {@link AnchorKey}.
 	 *
 	 * @param anchorKey
 	 *            The {@link AnchorKey} for which a position change will trigger
-	 *            a {@link #refreshGeometry()} with the returned PCL.
-	 * @return A position change listener to {@link #refreshGeometry() refresh}
-	 *         this {@link FXConnection} when the position for the given
+	 *            a {@link #refresh()} with the returned PCL.
+	 * @return A position change listener to {@link #refresh() refresh} this
+	 *         {@link FXConnection} when the position for the given
 	 *         {@link AnchorKey} changes.
 	 */
 	protected MapChangeListener<? super AnchorKey, ? super Point> createPCL(
@@ -609,7 +643,7 @@ public class FXConnection extends Group {
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 				if (change.getKey().equals(anchorKey)) {
-					refreshGeometry();
+					refresh();
 				}
 			}
 		};
@@ -712,6 +746,16 @@ public class FXConnection extends Group {
 		anchors.add(endAnchor);
 
 		return anchors;
+	}
+
+	/**
+	 * Returns the value of the clickable area width property (
+	 * {@link #clickableAreaWidthProperty()}).
+	 *
+	 * @return The current value of the {@link #clickableAreaWidthProperty()}.
+	 */
+	public double getClickableAreaWidth() {
+		return clickableAreaWidth.get();
 	}
 
 	/**
@@ -1058,8 +1102,7 @@ public class FXConnection extends Group {
 	 * {@link #registerAnchorInfos(IAdaptable) registered} anchor information.
 	 * Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
 	 * {@link AnchorKey} is registered on the position property of the
-	 * {@link IFXAnchor} and the visualization is {@link #refreshGeometry()
-	 * refreshed}.
+	 * {@link IFXAnchor} and the visualization is {@link #refresh() refreshed}.
 	 *
 	 * @param anchor
 	 *            The {@link IFXAnchor} which is inserted.
@@ -1088,7 +1131,7 @@ public class FXConnection extends Group {
 			anchorKeyPCL.put(anchorKey, pcl);
 			anchor.positionProperty().addListener(pcl);
 		}
-		refreshGeometry();
+		refresh();
 	}
 
 	/**
@@ -1105,29 +1148,33 @@ public class FXConnection extends Group {
 	 * </li>
 	 * </ol>
 	 */
-	protected void refreshGeometry() {
+	protected void refresh() {
 		// TODO: this should not be here
 		// guard against recomputing the curve while recomputing the curve
 		if (inRefresh) {
 			return;
 		}
 
-		ICurve newGeometry = router.routeConnection(getPoints());
-		if (curveNode != null && curveNode.getGeometry() != null
-				&& curveNode.getGeometry().equals(newGeometry)) {
-			return;
-		}
 		inRefresh = true;
+
+		ICurve newGeometry = router.routeConnection(getPoints());
 
 		// clear current visuals
 		getChildren().clear();
 
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
-		curveNode.setGeometry(newGeometry);
+		if (!newGeometry.equals(curveNode.getGeometry())) {
+			curveNode.setGeometry(newGeometry);
+		}
+
+		// add new curve visuals
+		getChildren().add(curveNode);
+
+		// add transparent clickable area on top
+		getChildren().add(curveNodeClickableArea);
 
 		// z-order decorations above curve
-		getChildren().add(curveNode);
 		if (startDecoration != null) {
 			getChildren().add(startDecoration.getVisual());
 			arrangeStartDecoration();
@@ -1218,7 +1265,7 @@ public class FXConnection extends Group {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		removeAnchor(anchorKey, oldAnchor);
 
-		refreshGeometry();
+		refresh();
 	}
 
 	/**
@@ -1246,6 +1293,17 @@ public class FXConnection extends Group {
 			removeAllWayPoints();
 		}
 		setEndAnchor(anchors.get(anchors.size() - 1));
+	}
+
+	/**
+	 * Sets the value of the clickable area width property (
+	 * {@link #clickableAreaWidthProperty()}).
+	 *
+	 * @param clickableAreaWidth
+	 *            The new value of the {@link #clickableAreaWidthProperty()}
+	 */
+	public void setClickableAreaWidth(double clickableAreaWidth) {
+		this.clickableAreaWidth.set(clickableAreaWidth);
 	}
 
 	/**
@@ -1287,7 +1345,7 @@ public class FXConnection extends Group {
 				styleClasses.add(CSS_CLASS_DECORATION);
 			}
 		}
-		refreshGeometry();
+		refresh();
 	}
 
 	/**
@@ -1316,7 +1374,7 @@ public class FXConnection extends Group {
 	 */
 	public void setRouter(IFXConnectionRouter router) {
 		this.router = router;
-		refreshGeometry();
+		refresh();
 	}
 
 	/**
@@ -1358,7 +1416,7 @@ public class FXConnection extends Group {
 				styleClasses.add(CSS_CLASS_DECORATION);
 			}
 		}
-		refreshGeometry();
+		refresh();
 	}
 
 	/**

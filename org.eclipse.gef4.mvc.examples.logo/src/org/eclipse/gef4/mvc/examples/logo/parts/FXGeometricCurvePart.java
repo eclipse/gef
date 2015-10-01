@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +31,13 @@ import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
@@ -46,6 +50,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.beans.binding.DoubleBinding;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
@@ -136,6 +141,55 @@ public class FXGeometricCurvePart
 		}
 	}
 
+	public class FXClickableBehavior extends AbstractBehavior<Node> {
+
+		private static final double ABSOLUTE_CLICKABLE_WIDTH = 5;
+
+		private final PropertyChangeListener zoomListener = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
+						.equals(evt.getPropertyName())) {
+					clickableAreaBinding.invalidate();
+				}
+			}
+		};
+		private DoubleBinding clickableAreaBinding;
+
+		@Override
+		public void activate() {
+			clickableAreaBinding = new DoubleBinding() {
+				@Override
+				protected double computeValue() {
+					double localClickableWidth = ABSOLUTE_CLICKABLE_WIDTH
+							/ getHost().getRoot().getViewer()
+									.getAdapter(ViewportModel.class)
+									.getContentsTransform().getScaleX();
+					return Math.min(localClickableWidth,
+							ABSOLUTE_CLICKABLE_WIDTH);
+				}
+			};
+			getHost().getVisual().clickableAreaWidthProperty()
+					.bind(clickableAreaBinding);
+			getHost().getRoot().getViewer().getAdapter(ViewportModel.class)
+					.addPropertyChangeListener(zoomListener);
+		}
+
+		@Override
+		public void deactivate() {
+			getHost().getRoot().getViewer().getAdapter(ViewportModel.class)
+					.removePropertyChangeListener(zoomListener);
+			clickableAreaBinding.dispose();
+			super.deactivate();
+		}
+
+		@Override
+		public FXGeometricCurvePart getHost() {
+			return (FXGeometricCurvePart) super.getHost();
+		}
+	}
+
 	private final CircleHead START_CIRCLE_HEAD = new CircleHead();
 	private final CircleHead END_CIRCLE_HEAD = new CircleHead();
 	private final ArrowHead START_ARROW_HEAD = new ArrowHead();
@@ -157,6 +211,8 @@ public class FXGeometricCurvePart
 				return chainModelChanges(super.commit());
 			}
 		});
+		setAdapter(AdapterKey.get(FXClickableBehavior.class),
+				new FXClickableBehavior());
 	}
 
 	@SuppressWarnings("serial")
