@@ -30,7 +30,7 @@ import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
  * @author Fabian Steeg
  *
  */
-public final class Edge implements IPropertyChangeNotifier {
+public class Edge implements IPropertyChangeNotifier {
 
 	/*
 	 * TODO: How to check consistency? The associated graph has to be an

@@ -202,7 +202,7 @@ public final class Graph implements IPropertyChangeNotifier {
 	 * @param edges
 	 *            List of {@link Edge}s.
 	 */
-	public Graph(Map<String, Object> attrs, List<Node> nodes, List<Edge> edges) {
+	public Graph(Map<String, Object> attrs, List<? extends Node> nodes, List<? extends Edge> edges) {
 		this.attrs.putAll(attrs);
 		this.attrs.addMapObserver(attributesObserver);
 		this.nodes.addAll(nodes);

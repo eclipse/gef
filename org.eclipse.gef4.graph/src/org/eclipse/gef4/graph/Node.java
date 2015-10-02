@@ -32,7 +32,7 @@ import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
  * @author Fabian Steeg
  *
  */
-public final class Node implements IPropertyChangeNotifier {
+public class Node implements IPropertyChangeNotifier {
 
 	/**
 	 * The {@link Builder} can be used to construct a {@link Node} little by
@@ -147,7 +147,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 *
 	 * @return All incoming {@link Edge}s.
 	 */
-	public Set<? extends Edge> getAllIncomingEdges() {
+	public Set<Edge> getAllIncomingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -180,7 +180,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 *
 	 * @return All outgoing {@link Edge}s.
 	 */
-	public Set<? extends Edge> getAllOutgoingEdges() {
+	public Set<Edge> getAllOutgoingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -199,7 +199,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 *
 	 * @return All predecessor {@link Node}s.
 	 */
-	public Set<? extends Node> getAllPredecessorNodes() {
+	public Set<Node> getAllPredecessorNodes() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -218,7 +218,7 @@ public final class Node implements IPropertyChangeNotifier {
 	 *
 	 * @return All successor {@link Node}s.
 	 */
-	public Set<? extends Node> getAllSuccessorNodes() {
+	public Set<Node> getAllSuccessorNodes() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}

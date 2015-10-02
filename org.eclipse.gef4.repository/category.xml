@@ -57,13 +57,13 @@
    <feature url="features/org.eclipse.gef4.fx.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.fx.sdk" version="0.3.0.qualifier">
       <category name="GEF4 FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graph_0.2.0.qualifier.jar" id="org.eclipse.gef4.graph" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graph_0.3.0.qualifier.jar" id="org.eclipse.gef4.graph" version="0.3.0.qualifier">
       <category name="GEF4 Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graph.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.graph.doc" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graph.doc_0.3.0.qualifier.jar" id="org.eclipse.gef4.graph.doc" version="0.3.0.qualifier">
       <category name="GEF4 Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graph.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.graph.sdk" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graph.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.graph.sdk" version="0.3.0.qualifier">
       <category name="GEF4 Graph"/>
    </feature>
    <feature url="features/org.eclipse.gef4.dot_0.3.0.qualifier.jar" id="org.eclipse.gef4.dot" version="0.3.0.qualifier">
