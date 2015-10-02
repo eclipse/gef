@@ -18,13 +18,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javafx.scene.effect.Effect;
-import javafx.scene.paint.Paint;
-
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
+
+import javafx.scene.effect.Effect;
+import javafx.scene.paint.Paint;
 
 // TODO: parameterize with concrete ICurve and encapsulate construction of geometry; limit the number of waypoints if needed
 public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
@@ -32,6 +32,9 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	public enum Decoration {
 		NONE, ARROW, CIRCLE
 	}
+
+	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
+	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
 
 	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
 		if (waypoints == null || waypoints.length == 0) {
@@ -41,9 +44,6 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		}
 		return PolyBezier.interpolateCubic(waypoints);
 	}
-
-	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
-	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
 
 	private final List<Point> waypoints = new ArrayList<>();
 	private Decoration sourceDecoration = Decoration.NONE;

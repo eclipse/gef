@@ -15,6 +15,7 @@ import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class FXCurvePropertySource implements IPropertySource {
 
@@ -26,6 +27,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			FXGeometricCurve.TARGET_DECORATION_PROPERTY, "Target Decoration",
 			new String[] { Decoration.NONE.name(), Decoration.ARROW.name(),
 					Decoration.CIRCLE.name() });
+	private static final IPropertyDescriptor STROKE_WIDTH_PROPERTY = new TextPropertyDescriptor(
+			FXGeometricCurve.STROKE_WIDTH_PROPERTY, "Stroke Width");
 
 	private FXGeometricCurve curve;
 
@@ -42,7 +45,7 @@ public class FXCurvePropertySource implements IPropertySource {
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return new IPropertyDescriptor[] { SOURCE_DECORATION_PROPERTY,
-				TARGET_DECORATION_PROPERTY };
+				TARGET_DECORATION_PROPERTY, STROKE_WIDTH_PROPERTY };
 	}
 
 	@Override
@@ -51,6 +54,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			return curve.getSourceDecoration().ordinal();
 		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
 			return curve.getTargetDecoration().ordinal();
+		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
+			return new Double(curve.getStrokeWidth()).toString();
 		} else {
 			return null;
 		}
@@ -62,6 +67,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			return !curve.getSourceDecoration().equals(Decoration.NONE);
 		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
 			return !curve.getTargetDecoration().equals(Decoration.NONE);
+		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
+			return curve.getStrokeWidth() != 1;
 		} else {
 			return false;
 		}
@@ -73,6 +80,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			curve.setSourceDecoration(Decoration.NONE);
 		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
 			curve.setTargetDecoration(Decoration.NONE);
+		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
+			curve.setStrokeWidth(1);
 		}
 	}
 
@@ -82,7 +91,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			curve.setSourceDecoration(Decoration.values()[(int) value]);
 		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
 			curve.setTargetDecoration(Decoration.values()[(int) value]);
+		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
+			curve.setStrokeWidth(Double.parseDouble((String)value));
 		}
 	}
-
 }
