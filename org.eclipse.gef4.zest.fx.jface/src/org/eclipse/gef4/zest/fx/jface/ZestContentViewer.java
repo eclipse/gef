@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -69,6 +68,7 @@ import javafx.scene.Scene;
  * displaying {@link Graph}s.
  *
  * @author mwienand
+ * @author anyssen
  *
  */
 public class ZestContentViewer extends ContentViewer {
@@ -201,19 +201,6 @@ public class ZestContentViewer extends ContentViewer {
 	protected Edge createEdge(ILabelProvider labelProvider, Object contentSourceNode, Node sourceNode,
 			Object contentTargetNode, Node targetNode) {
 		Edge edge = new Edge(sourceNode, targetNode);
-		if (labelProvider instanceof IEdgeDecorationProvider) {
-			IEdgeDecorationProvider edgeDecorationProvider = (IEdgeDecorationProvider) labelProvider;
-			IFXDecoration sourceDecoration = edgeDecorationProvider.getSourceDecoration(contentSourceNode,
-					contentTargetNode);
-			if (sourceDecoration != null) {
-				ZestProperties.setSourceDecoration(edge, sourceDecoration);
-			}
-			IFXDecoration targetDecoration = edgeDecorationProvider.getTargetDecoration(contentSourceNode,
-					contentTargetNode);
-			if (targetDecoration != null) {
-				ZestProperties.setTargetDecoration(edge, targetDecoration);
-			}
-		}
 		if (labelProvider instanceof IGraphNodeLabelProvider) {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
 			Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,

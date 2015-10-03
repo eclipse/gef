@@ -14,11 +14,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.jface;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.fx.jface.IEdgeDecorationProvider;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -130,7 +135,7 @@ public class JFaceEdgeDecorationExample {
 	}
 
 	static class MyLabelProvider extends LabelProvider
-			implements IEdgeDecorationProvider {
+			implements IGraphNodeLabelProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -143,15 +148,24 @@ public class JFaceEdgeDecorationExample {
 		}
 
 		@Override
-		public IFXDecoration getSourceDecoration(Object contentSourceNode,
-				Object contentTargetNode) {
-			return new CircleHead();
+		public Map<String, Object> getEdgeAttributes(Object sourceNode,
+				Object targetNode) {
+			Map<String, Object> edgeAttributes = new HashMap<String, Object>();
+			edgeAttributes.put(ZestProperties.EDGE_SOURCE_DECORATION,
+					new CircleHead());
+			edgeAttributes.put(ZestProperties.EDGE_TARGET_DECORATION,
+					new DiamondHead());
+			return edgeAttributes;
 		}
 
 		@Override
-		public IFXDecoration getTargetDecoration(Object contentSourceNode,
-				Object contentTargetNode) {
-			return new DiamondHead();
+		public Map<String, Object> getNodeAttributes(Object node) {
+			return Collections.emptyMap();
+		}
+
+		@Override
+		public Map<String, Object> getRootGraphAttributes() {
+			return Collections.emptyMap();
 		}
 	}
 
