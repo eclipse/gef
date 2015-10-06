@@ -42,7 +42,6 @@ Workflow {
 	}
 
 	component = Generator {
-		activator = "org.eclipse.gef4.internal.dot.parser.DotParserActivator"
 		pathRtProject = runtimeProject
 		pathUiProject = "${runtimeProject}.ui"
 		projectNameRt = projectName

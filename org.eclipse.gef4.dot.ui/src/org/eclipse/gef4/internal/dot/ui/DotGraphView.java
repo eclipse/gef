@@ -36,6 +36,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.internal.dot.DotExtractor;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
 import org.eclipse.gef4.internal.dot.DotNativeDrawer;
+import org.eclipse.gef4.internal.dot.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -166,9 +167,11 @@ public class DotGraphView extends ZestFxUiView {
 						String message = String.format(
 								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
 								dotImport.getErrors(), dot);
-						DotUiActivator.getDefault().getLog()
-								.log(new Status(Status.ERROR,
-										DotUiActivator.PLUGIN_ID, message));
+						DotActivator.getInstance().getLog()
+								.log(new Status(
+										Status.ERROR, DotActivator.getInstance()
+												.getBundle().getSymbolicName(),
+										message));
 						return;
 					}
 					setGraph(dotImport.newGraphInstance());
