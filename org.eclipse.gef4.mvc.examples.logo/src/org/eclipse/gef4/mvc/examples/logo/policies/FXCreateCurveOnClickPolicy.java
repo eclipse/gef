@@ -71,6 +71,7 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(e));
 
+		// TODO: we should ensure only a single transaction is used
 		// close current execution transaction and open it again for the drag
 		// tool, so that a new transaction is started (the bend should be done
 		// after the create, so that they are undone in reverse, i.e. first undo
