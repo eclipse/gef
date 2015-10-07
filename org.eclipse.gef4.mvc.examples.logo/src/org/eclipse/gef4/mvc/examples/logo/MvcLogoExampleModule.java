@@ -18,6 +18,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.examples.logo.behaviors.FXClickableAreaBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
@@ -164,6 +165,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
 				.to(CloneCurvePolicy.class);
+		// clickable area resizing
+		adapterMapBinder
+				.addBinding(AdapterKey.get(FXClickableAreaBehavior.class))
+				.to(FXClickableAreaBehavior.class);
+
 	}
 
 	@SuppressWarnings("serial")
