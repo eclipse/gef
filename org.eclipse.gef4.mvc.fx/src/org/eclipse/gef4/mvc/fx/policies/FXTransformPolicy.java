@@ -102,11 +102,16 @@ import javafx.scene.transform.Affine;
 public class FXTransformPolicy extends AbstractPolicy<Node>
 		implements ITransactional {
 
+	private static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
+
 	/**
-	 * The role name for the <code>Provider&lt;Affine&gt;</code> that will be
+	 * The adapter key for the <code>Provider&lt;Affine&gt;</code> that will be
 	 * used to obtain the host's {@link Affine} transformation.
 	 */
-	public static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
+	@SuppressWarnings("serial")
+	public static final AdapterKey<Provider<Affine>> TRANSFORM_PROVIDER_KEY = AdapterKey
+			.get(new TypeToken<Provider<Affine>>() {
+			}, TRANSFORMATION_PROVIDER_ROLE);
 
 	/**
 	 * Computes the offset which needs to be added to the given local
@@ -380,20 +385,17 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	/**
 	 * Returns the {@link Affine} transformation that is returned by the
 	 * <code>Provider&lt;Affine&gt;</code> that is installed on the
-	 * {@link #getHost() host} under the {@link #TRANSFORMATION_PROVIDER_ROLE}
-	 * role.
+	 * {@link #getHost() host} under the {@link #TRANSFORM_PROVIDER_KEY}.
 	 *
 	 * @return The {@link Affine} transformation that is returned by the
 	 *         <code>Provider&lt;Affine&gt;</code> that is installed on the
-	 *         {@link #getHost() host} under the
-	 *         {@link #TRANSFORMATION_PROVIDER_ROLE} role.
+	 *         {@link #getHost() host} under the {@link #TRANSFORM_PROVIDER_KEY}
+	 *         .
 	 */
-	@SuppressWarnings("serial")
 	public Affine getNodeTransform() {
 		if (currentNodeTransform == null) {
-			currentNodeTransform = getHost().getAdapter(
-					AdapterKey.get(new TypeToken<Provider<Affine>>() {
-					}, TRANSFORMATION_PROVIDER_ROLE)).get();
+			currentNodeTransform = getHost().getAdapter(TRANSFORM_PROVIDER_KEY)
+					.get();
 		}
 		return currentNodeTransform;
 	}

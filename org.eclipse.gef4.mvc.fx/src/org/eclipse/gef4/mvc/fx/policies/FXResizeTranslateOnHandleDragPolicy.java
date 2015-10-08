@@ -11,15 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -125,11 +121,9 @@ public class FXResizeTranslateOnHandleDragPolicy
 		return getHost().getAnchorages().keySet().iterator().next();
 	}
 
-	@SuppressWarnings("serial")
 	private Affine getTargetTransform() {
 		return getTargetPart()
-				.getAdapter(AdapterKey.get(new TypeToken<Provider<Affine>>() {
-				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).get();
+				.getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 	}
 
 	/**

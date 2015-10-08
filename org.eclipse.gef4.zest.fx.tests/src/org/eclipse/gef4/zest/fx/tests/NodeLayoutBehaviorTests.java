@@ -33,9 +33,6 @@ import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.junit.Test;
 
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
-
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.transform.Affine;
@@ -55,7 +52,6 @@ public class NodeLayoutBehaviorTests {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
 			private NodeContentPart host;
 
-			@SuppressWarnings("serial")
 			@Override
 			public NodeContentPart getHost() {
 				if (host == null) {
@@ -71,8 +67,7 @@ public class NodeLayoutBehaviorTests {
 								}
 							});
 							FXTransformProvider transformProvider = new FXTransformProvider();
-							setAdapter(AdapterKey.get(new TypeToken<Provider<Affine>>() {
-							}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE), transformProvider);
+							setAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY, transformProvider);
 							setAdapter(AdapterKey.get(FXTransformPolicy.class), new FXTransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);

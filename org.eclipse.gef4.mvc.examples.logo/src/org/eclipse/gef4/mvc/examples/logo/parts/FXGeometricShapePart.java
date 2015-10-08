@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -23,8 +22,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -77,12 +74,8 @@ public class FXGeometricShapePart
 		AffineTransform transform = content.getTransform();
 		if (transform != null) {
 			// transfer transformation to JavaFX
-			@SuppressWarnings("serial")
-			Affine affine = getAdapter(
-					AdapterKey.<Provider<? extends Affine>> get(
-							new TypeToken<Provider<? extends Affine>>() {
-							}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE))
-									.get();
+			Affine affine = getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY)
+					.get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());
 			affine.setMyx(transform.getM10());
