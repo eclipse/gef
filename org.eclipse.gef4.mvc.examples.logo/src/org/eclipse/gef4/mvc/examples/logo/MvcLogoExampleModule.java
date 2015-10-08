@@ -29,6 +29,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.policies.AbstractCloneContentPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXBendCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
@@ -37,6 +38,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClick
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.IFXCreationMenuItem;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -47,6 +49,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
+import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -153,6 +156,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// transaction policy for resize + transform
 		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class))
 				.to(FXResizeConnectionPolicy.class);
+
+		adapterMapBinder.addBinding(AdapterKey.get(FXBendPolicy.class))
+				.to(FXBendCurvePolicy.class);
+
 		// interaction policy to relocate on drag
 		adapterMapBinder
 				.addBinding(
@@ -161,6 +168,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
+
+		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class))
+				.to(FXTransformCurvePolicy.class);
+
 		// cloning
 		adapterMapBinder
 				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))

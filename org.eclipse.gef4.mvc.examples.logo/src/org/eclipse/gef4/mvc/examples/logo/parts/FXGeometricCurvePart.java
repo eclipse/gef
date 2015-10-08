@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXPolyBezierConnectionRouter;
@@ -31,9 +30,6 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
@@ -142,23 +138,6 @@ public class FXGeometricCurvePart
 	private final ArrowHead END_ARROW_HEAD = new ArrowHead();
 	private FXGeometricCurve previousContent;
 
-	public FXGeometricCurvePart() {
-		// TODO: extract into own classes and use binding
-		setAdapter(AdapterKey.get(FXTransformPolicy.class),
-				new FXTransformConnectionPolicy() {
-					@Override
-					public ITransactionalOperation commit() {
-						return chainModelChanges(super.commit());
-					}
-				});
-		setAdapter(AdapterKey.get(FXBendPolicy.class), new FXBendPolicy() {
-			@Override
-			public ITransactionalOperation commit() {
-				return chainModelChanges(super.commit());
-			}
-		});
-	}
-
 	@SuppressWarnings("serial")
 	@Override
 	protected void attachToAnchorageVisual(
@@ -190,7 +169,7 @@ public class FXGeometricCurvePart
 		}
 	}
 
-	ITransactionalOperation chainModelChanges(
+	public ITransactionalOperation chainModelChanges(
 			final ITransactionalOperation updateVisualOperation) {
 		if (updateVisualOperation == null) {
 			return null;
