@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -45,63 +45,71 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private int createdSegmentIndex;
 	private boolean initialRefreshVisual = true;
+	private IVisualPart<Node, ? extends Node> anchorage;
 
-	private void adjustHandles(List<Point> oldWaypoints,
-			List<Point> newWaypoints) {
-		if (oldWaypoints.size() != newWaypoints.size()) {
-			// re-assign segment index and segment parameter
-			// System.out.println("Before: " + oldWaypoints.size() +
-			// " waypoints");
-			// System.out.println("After: " + newWaypoints.size() +
-			// " waypoints");
-			List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-					PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
-					FXCircleSegmentHandlePart.class);
-			Collections.<FXCircleSegmentHandlePart> sort(parts);
-			// System.out.println("Found " + parts.size() +
-			// " FXSelectionHandleParts");
-			Iterator<FXCircleSegmentHandlePart> it = parts.iterator();
-			FXCircleSegmentHandlePart part = null;
-			for (int i = 0; i <= newWaypoints.size(); i++) {
-				// param 0
+	private void adjustHandles(List<Point> points,
+			boolean skipMidPointsAroundCreated) {
+		// re-assign segment index and segment parameter
+		List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
+				PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
+				FXCircleSegmentHandlePart.class);
+
+		Collections.<FXCircleSegmentHandlePart> sort(parts);
+		// System.out.println("Found " + points.size() + " points.");
+		// System.out.println(
+		// "Found " + parts.size() + " FXSelectionHandleParts");
+		Iterator<FXCircleSegmentHandlePart> it = parts.iterator();
+		FXCircleSegmentHandlePart part = null;
+		for (int i = 0; i < points.size() - 1; i++) {
+			// param 0
+			if (it.hasNext()) {
 				part = it.next();
 				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex() + " - " + part.getSegmentParameter() +
-				// " to " + i + " - " + 0.0);
+				// part.getSegmentIndex()
+				// + " - " + part.getSegmentParameter() + " to " + i
+				// + " - " + 0.0);
 				setSegmentIndex(part, i);
 				setSegmentParameter(part, 0.0);
+			}
 
-				// skip mid point handles around newly created waypoints
-				if (createdSegmentIndex < 0 || part
-						.getSegmentIndex() != createdSegmentIndex - 1
-						&& part.getSegmentIndex() != createdSegmentIndex) {
-					// param 0.5
+			// skip mid point handles around newly created waypoints
+			if (createdSegmentIndex < 0 || !skipMidPointsAroundCreated
+					|| part.getSegmentIndex() != createdSegmentIndex - 1
+							&& part.getSegmentIndex() != createdSegmentIndex) {
+				// param 0.5
+				if (it.hasNext()) {
 					part = it.next();
-					// System.out.println("Reassigned index " +
-					// part.getSegmentIndex() + " - " +
-					// part.getSegmentParameter() + " to " + i + " - " + 0.5);
+					// System.out.println(
+					// "Reassigned index " + part.getSegmentIndex() + " - "
+					// + part.getSegmentParameter() + " to " + i
+					// + " - " + 0.5);
 					setSegmentIndex(part, i);
 					setSegmentParameter(part, 0.5);
 				}
 			}
-			// param 1
-			part = it.next();
-			// System.out.println("Reassigned index " + part.getSegmentIndex() +
-			// " - " + part.getSegmentParameter() + " to " +
-			// (newWaypoints.size()) + " - " + 1.0);
-			setSegmentIndex(part, newWaypoints.size());
-			setSegmentParameter(part, 1.0);
 
-			// not used -> could be removed (and re-added)
-			while (it.hasNext()) {
-				part = it.next();
-				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex() + " - " + part.getSegmentParameter() +
-				// " to " + -1 + " - " + 1.0);
-				// hide (but do not remove from root part and anchorage yet
-				// (this will be initiated upon commit)
-				setSegmentIndex(part, -1);
+			// param 1
+			if (i == points.size() - 2) {
+				if (it.hasNext()) {
+					part = it.next();
+					// System.out.println(
+					// "Reassigned index " + part.getSegmentIndex() + " - "
+					// + part.getSegmentParameter() + " to " + i
+					// + " - " + 1.0);
+					setSegmentIndex(part, i);
+					setSegmentParameter(part, 1.0);
+				}
 			}
+		}
+		// not used -> could be removed (and re-added)
+		while (it.hasNext()) {
+			part = it.next();
+			// System.out.println("Reassigned index " + part.getSegmentIndex()
+			// + " - " + part.getSegmentParameter() + " to " + -1 + " - "
+			// + 1.0);
+			// hide (but do not remove from root part and anchorage yet
+			// (this will be initiated upon commit)
+			setSegmentIndex(part, -1);
 		}
 	}
 
@@ -111,26 +119,24 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	 * can be restored later.
 	 */
 	protected void disableRefreshVisuals() {
-		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
 		anchorage.setRefreshVisual(false);
 		initialRefreshVisual = anchorage.isRefreshVisual();
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
 		FXConnection connection = (FXConnection) anchorage.getVisual();
 
-		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
+		List<Point> before = Arrays.asList(connection.getPoints());
 
-		getBendPolicy(anchorage).moveSelectedSegmentPoint(
-				new Point(e.getSceneX(), e.getSceneY()));
+		getBendPolicy(anchorage)
+				.moveSelectedPoint(new Point(e.getSceneX(), e.getSceneY()));
 
-		List<Point> after = new ArrayList<Point>(connection.getWayPoints());
+		List<Point> after = Arrays.asList(connection.getPoints());
 
-		adjustHandles(before, after);
+		if (before.size() != after.size()) {
+			adjustHandles(after, true);
+		}
 	}
 
 	/**
@@ -139,8 +145,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	 */
 	// TODO: Rename to restoreRefreshVisuals()
 	protected void enableRefreshVisuals() {
-		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
 		anchorage.setRefreshVisual(initialRefreshVisual);
 	}
 
@@ -169,16 +173,14 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hp = getHost();
-		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
+		anchorage = getHost().getAnchorages().keySet().iterator().next();
 
 		disableRefreshVisuals(anchorage);
 		init(getBendPolicy(anchorage));
 
 		if (hp.getSegmentParameter() == 0.5) {
 			// create new way point
-			getBendPolicy(anchorage).createAndSelectSegmentPoint(
-					hp.getSegmentIndex(),
+			getBendPolicy(anchorage).createAndSelectPoint(hp.getSegmentIndex(),
 					new Point(e.getSceneX(), e.getSceneY()));
 
 			// find other segment handle parts
@@ -204,7 +206,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 			createdSegmentIndex = hp.getSegmentIndex();
 		} else {
 			// select existing way point
-			getBendPolicy(anchorage).selectSegmentPoint(hp.getSegmentIndex(),
+			getBendPolicy(anchorage).selectPoint(hp.getSegmentIndex(),
 					hp.getSegmentParameter(),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
@@ -212,13 +214,19 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
 		enableRefreshVisuals();
 		// TODO: we need to ensure this can be done before
 		// enableRefreshVisuals(), because visuals should already be up to date
 		// (and we thus save a potential refresh)
 		commit(getBendPolicy(anchorage));
+
+		// it may be that the bend policy returns null (no-op) because a newly
+		// created segment point was direcly removed through overlay. In this
+		// case, we need to adjust the handles as well
+		adjustHandles(
+				Arrays.asList(
+						((FXConnection) anchorage.getVisual()).getPoints()),
+				false);
 	}
 
 	private void setSegmentIndex(FXCircleSegmentHandlePart part, int value) {
