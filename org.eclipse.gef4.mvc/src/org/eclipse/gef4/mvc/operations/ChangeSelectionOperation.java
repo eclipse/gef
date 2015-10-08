@@ -118,8 +118,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		selectionModel.deselectAll();
-		selectionModel.select(newSelection);
+		selectionModel.updateSelection(newSelection);
 		return Status.OK_STATUS;
 	}
 
@@ -140,8 +139,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		selectionModel.deselectAll();
-		selectionModel.select(oldSelection);
+		selectionModel.updateSelection(oldSelection);
 		return Status.OK_STATUS;
 	}
 
