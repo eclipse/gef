@@ -1110,7 +1110,8 @@ public class FXConnection extends Group {
 	 *            The {@link AnchorKey} under which the {@link IFXAnchor} is
 	 *            registered.
 	 * @param wayIndex
-	 *            The way anchor index (only for way point anchors).
+	 *            The way anchor index (only for way point anchors, ignored for
+	 *            start and end anchors).
 	 */
 	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey,
 			int wayIndex) {
@@ -1240,6 +1241,8 @@ public class FXConnection extends Group {
 		}
 		anchorsProperty.remove(anchorKey);
 		oldAnchor.detach(anchorKey, as);
+
+		refresh();
 	}
 
 	/**
@@ -1264,8 +1267,6 @@ public class FXConnection extends Group {
 
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		removeAnchor(anchorKey, oldAnchor);
-
-		refresh();
 	}
 
 	/**
