@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
@@ -71,18 +71,6 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(e));
 
-		// TODO: we should ensure only a single transaction is used
-		// close current execution transaction and open it again for the drag
-		// tool, so that a new transaction is started (the bend should be done
-		// after the create, so that they are undone in reverse, i.e. first undo
-		// bend, then undo create).
-		FXClickDragTool dragTool = getHost().getRoot().getViewer().getDomain()
-				.getAdapter(FXClickDragTool.class);
-		getHost().getRoot().getViewer().getDomain()
-				.closeExecutionTransaction(dragTool);
-		getHost().getRoot().getViewer().getDomain()
-				.openExecutionTransaction(dragTool);
-
 		updateDragTargetToLastSegmentHandlePart(curvePart, e.getTarget());
 	}
 
@@ -101,11 +89,12 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 	protected void updateDragTargetToLastSegmentHandlePart(
 			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
 		// select curve part to generate segment handles
-		getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
-				.deselectAll();
-		getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.select(Collections.singletonList(curvePart));
+		// TODO: execute command to select curve, so this can be undone
+		ChangeSelectionOperation<Node> changeSelectionOperation = new ChangeSelectionOperation<Node>(
+				getHost().getRoot().getViewer(),
+				Collections.singletonList(curvePart));
+		getHost().getRoot().getViewer().getDomain()
+				.execute(changeSelectionOperation);
 
 		// find last segment handle part
 		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart

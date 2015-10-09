@@ -62,7 +62,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 	 *            The new selection.
 	 */
 	public ChangeSelectionOperation(IViewer<VR> viewer,
-			List<IContentPart<VR, ? extends VR>> newSelection) {
+			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
 		this(DEFAULT_LABEL, viewer,
 				viewer.<SelectionModel<VR>> getAdapter(SelectionModel.class)
 						.getSelected(),
@@ -82,8 +82,8 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 	 *            The new selection.
 	 */
 	public ChangeSelectionOperation(IViewer<VR> viewer,
-			List<IContentPart<VR, ? extends VR>> oldSelection,
-			List<IContentPart<VR, ? extends VR>> newSelection) {
+			List<? extends IContentPart<VR, ? extends VR>> oldSelection,
+			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
 		this(DEFAULT_LABEL, viewer, oldSelection, newSelection);
 	}
 
@@ -103,8 +103,8 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 	 *            The new selection.
 	 */
 	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
-			List<IContentPart<VR, ? extends VR>> oldSelection,
-			List<IContentPart<VR, ? extends VR>> newSelection) {
+			List<? extends IContentPart<VR, ? extends VR>> oldSelection,
+			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
 		super(label);
 		this.viewer = viewer;
 		this.oldSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
