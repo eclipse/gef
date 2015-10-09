@@ -20,6 +20,9 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
+					<systemProperties>
+						<SWT_GTK3>0</SWT_GTK3>
+					</systemProperties>
 					<includes>
 						<include>**/All*Tests.class</include>
 					</includes>
@@ -27,7 +30,8 @@
 					<useUIThread>false</useUIThread>
 					<useSystemClassLoader>true</useSystemClassLoader>
 					<testFailureIgnore>true</testFailureIgnore>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m
+						-Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
 					<frameworkExtensions>
 						<frameworkExtension>
 							<groupId>org.eclipse.fx.shared</groupId>
