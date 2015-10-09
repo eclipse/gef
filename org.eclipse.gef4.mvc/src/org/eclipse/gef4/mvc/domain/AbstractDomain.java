@@ -34,6 +34,7 @@ import org.eclipse.gef4.common.inject.AdapterMapInjector;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -63,7 +64,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
-	private ForwardUndoCompositeOperation transaction;
+	private AbstractCompositeOperation transaction;
 	private Set<ITool<VR>> transactionContext = new HashSet<ITool<VR>>();
 	private IOperationHistoryListener operationHistoryListener = new IOperationHistoryListener() {
 		@Override
@@ -140,8 +141,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 * @return A new {@link ForwardUndoCompositeOperation} which is configured
 	 *         to store the operations within an execution transaction.
 	 */
-	protected ForwardUndoCompositeOperation createExecutionTransaction() {
-		ForwardUndoCompositeOperation transaction = new ForwardUndoCompositeOperation(
+	protected AbstractCompositeOperation createExecutionTransaction() {
+		ReverseUndoCompositeOperation transaction = new ReverseUndoCompositeOperation(
 				"Transaction");
 		transaction.addContext(getUndoContext());
 		getOperationHistory().openOperation(transaction,
