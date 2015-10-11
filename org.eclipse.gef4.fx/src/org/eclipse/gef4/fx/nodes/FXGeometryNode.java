@@ -70,6 +70,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	 *            The {@link IGeometry} to display.
 	 */
 	public FXGeometryNode(T geom) {
+		this();
 		setGeometry(geom);
 	}
 
