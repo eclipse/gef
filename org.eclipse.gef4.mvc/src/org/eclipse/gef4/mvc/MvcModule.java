@@ -189,16 +189,13 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindAbstractViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind (default) viewer models as adapters
-		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class))
-				.to(ContentModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(ViewportModel.class))
-				.to(ViewportModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(GridModel.class))
-				.to(GridModel.class);
+		bindContentModelAsAbstractViewerAdapter(adapterMapBinder);
+		bindViewportModelAsAbstractViewerAdapter(adapterMapBinder);
+		bindGridModelAsAbstractViewerAdapter(adapterMapBinder);
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractVisualPart}
+	 * Adds (default) {@link AdapterMap} binding for {@link AbstractVisualPart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
 	 *
@@ -224,10 +221,46 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
+	 * Adds a binding for {@link ContentModel} to the {@link AdapterMap} binder
+	 * for {@link AbstractViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindContentModelAsAbstractViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class))
+				.to(ContentModel.class);
+	}
+
+	/**
 	 * Binds {@link GridModel} in adaptable scope of {@link IViewer}.
 	 */
 	protected void bindGridModel() {
 		binder().bind(GridModel.class).in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	/**
+	 * Adds a binding for {@link GridModel} to the {@link AdapterMap} binder for
+	 * {@link AbstractViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindGridModelAsAbstractViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(GridModel.class))
+				.to(GridModel.class);
 	}
 
 	/**
@@ -254,6 +287,24 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindViewportModel() {
 		binder().bind(ViewportModel.class)
 				.in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	/**
+	 * Adds a binding for {@link ViewportModel} to the {@link AdapterMap} binder
+	 * for {@link AbstractViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindViewportModelAsAbstractViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(ViewportModel.class))
+				.to(ViewportModel.class);
 	}
 
 	@Override
