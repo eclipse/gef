@@ -89,7 +89,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 		translationIndices.clear();
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
-			disableRefreshVisuals(part);
+			storeAndDisableRefreshVisuals(part);
 			// init transaction policy
 			init(getTransformPolicy(part));
 			translationIndices.put(part,
@@ -102,7 +102,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
-				enableRefreshVisuals(part);
+				restoreRefreshVisuals(part);
 				// TODO: we need to ensure this can be done before
 				// enableRefreshVisuals(), because visuals should already be up
 				// to date

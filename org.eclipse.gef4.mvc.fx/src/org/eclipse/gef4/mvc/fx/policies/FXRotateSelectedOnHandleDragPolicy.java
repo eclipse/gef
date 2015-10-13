@@ -127,7 +127,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			// transform pivot point to local coordinates
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
-				disableRefreshVisuals(part);
+				storeAndDisableRefreshVisuals(part);
 				transformPolicy.init();
 				rotationIndices.put(part,
 						transformPolicy.createPostRotate(pivotInScene));
@@ -146,7 +146,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			updateOperation(e, part);
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
-				enableRefreshVisuals(part);
+				restoreRefreshVisuals(part);
 				commit(transformPolicy);
 			}
 		}

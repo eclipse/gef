@@ -44,8 +44,6 @@ import javafx.scene.input.MouseEvent;
 public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	private int createdSegmentIndex;
-	private boolean initialRefreshVisual = true;
-	private IVisualPart<Node, ? extends Node> anchorage;
 
 	private void adjustHandles(List<Point> points,
 			boolean skipMidPointsAroundCreated) {
@@ -113,23 +111,14 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 	}
 
-	/**
-	 * Disables refreshing visuals from model data for the first anchorage of
-	 * this policy. The initial state of the refresh flag is saved so that it
-	 * can be restored later.
-	 */
-	protected void disableRefreshVisuals() {
-		anchorage.setRefreshVisual(false);
-		initialRefreshVisual = anchorage.isRefreshVisual();
-	}
-
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		FXConnection connection = (FXConnection) anchorage.getVisual();
+		IVisualPart<Node, ? extends FXConnection> targetPart = getTargetPart();
+		FXConnection connection = targetPart.getVisual();
 
 		List<Point> before = Arrays.asList(connection.getPoints());
 
-		getBendPolicy(anchorage)
+		getBendPolicy(targetPart)
 				.moveSelectedPoint(new Point(e.getSceneX(), e.getSceneY()));
 
 		List<Point> after = Arrays.asList(connection.getPoints());
@@ -137,15 +126,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		if (before.size() != after.size()) {
 			adjustHandles(after, true);
 		}
-	}
-
-	/**
-	 * Restores the initial state of the refresh flag that was previously saved
-	 * within {@link #disableRefreshVisuals()}.
-	 */
-	// TODO: Rename to restoreRefreshVisuals()
-	protected void enableRefreshVisuals() {
-		anchorage.setRefreshVisual(initialRefreshVisual);
 	}
 
 	/**
@@ -169,18 +149,32 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return (FXCircleSegmentHandlePart) super.getHost();
 	}
 
+	/**
+	 * Returns the target {@link IVisualPart} for this policy. Per default the
+	 * first anchorage is returned, which has to be an {@link IVisualPart} with
+	 * an {@link FXConnection} visual.
+	 *
+	 * @return The target {@link IVisualPart} for this policy.
+	 */
+	@SuppressWarnings("unchecked")
+	protected IVisualPart<Node, ? extends FXConnection> getTargetPart() {
+		return (IVisualPart<Node, ? extends FXConnection>) getHost()
+				.getAnchorages().keySet().iterator().next();
+	}
+
 	@Override
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
-		FXCircleSegmentHandlePart hp = getHost();
-		anchorage = getHost().getAnchorages().keySet().iterator().next();
+		FXCircleSegmentHandlePart hostPart = getHost();
+		IVisualPart<Node, ? extends FXConnection> targetPart = getTargetPart();
 
-		disableRefreshVisuals(anchorage);
-		init(getBendPolicy(anchorage));
+		storeAndDisableRefreshVisuals(targetPart);
+		init(getBendPolicy(targetPart));
 
-		if (hp.getSegmentParameter() == 0.5) {
+		if (hostPart.getSegmentParameter() == 0.5) {
 			// create new way point
-			getBendPolicy(anchorage).createAndSelectPoint(hp.getSegmentIndex(),
+			getBendPolicy(targetPart).createAndSelectPoint(
+					hostPart.getSegmentIndex(),
 					new Point(e.getSceneX(), e.getSceneY()));
 
 			// find other segment handle parts
@@ -193,39 +187,40 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 			// increment segment index of succeeding parts
 			for (FXCircleSegmentHandlePart p : parts) {
-				if (p.getSegmentIndex() > hp.getSegmentIndex()
-						|| (p.getSegmentIndex() == hp.getSegmentIndex()
+				if (p.getSegmentIndex() > hostPart.getSegmentIndex()
+						|| (p.getSegmentIndex() == hostPart.getSegmentIndex()
 								&& p.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
 
 			// adjust index and parameter of this segment handle part
-			hp.setSegmentIndex(hp.getSegmentIndex() + 1);
-			hp.setSegmentParameter(0);
-			createdSegmentIndex = hp.getSegmentIndex();
+			hostPart.setSegmentIndex(hostPart.getSegmentIndex() + 1);
+			hostPart.setSegmentParameter(0);
+			createdSegmentIndex = hostPart.getSegmentIndex();
 		} else {
 			// select existing way point
-			getBendPolicy(anchorage).selectPoint(hp.getSegmentIndex(),
-					hp.getSegmentParameter(),
+			getBendPolicy(targetPart).selectPoint(hostPart.getSegmentIndex(),
+					hostPart.getSegmentParameter(),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		enableRefreshVisuals();
+		IVisualPart<Node, ? extends FXConnection> targetPart = getTargetPart();
+		restoreRefreshVisuals(targetPart);
 		// TODO: we need to ensure this can be done before
 		// enableRefreshVisuals(), because visuals should already be up to date
 		// (and we thus save a potential refresh)
-		commit(getBendPolicy(anchorage));
+		commit(getBendPolicy(targetPart));
 
 		// it may be that the bend policy returns null (no-op) because a newly
 		// created segment point was direcly removed through overlay. In this
 		// case, we need to adjust the handles as well
 		adjustHandles(
 				Arrays.asList(
-						((FXConnection) anchorage.getVisual()).getPoints()),
+						((FXConnection) targetPart.getVisual()).getPoints()),
 				false);
 	}
 

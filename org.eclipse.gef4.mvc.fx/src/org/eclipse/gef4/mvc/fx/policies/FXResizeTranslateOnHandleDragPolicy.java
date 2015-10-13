@@ -148,7 +148,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 			invalidGesture = true;
 			return;
 		}
-		disableRefreshVisuals(getTargetPart());
+		storeAndDisableRefreshVisuals(getTargetPart());
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
 		Affine targetTransform = getTargetTransform();
 		initialTx = targetTransform.getTx();
@@ -164,7 +164,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 			invalidGesture = false;
 			return;
 		}
-		enableRefreshVisuals(getTargetPart());
+		restoreRefreshVisuals(getTargetPart());
 		commit(getResizePolicy());
 		commit(getTransformPolicy());
 	}

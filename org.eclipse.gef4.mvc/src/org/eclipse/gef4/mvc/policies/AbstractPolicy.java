@@ -53,36 +53,6 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 		}
 	}
 
-	/**
-	 * Disable that the given {@link IVisualPart} refreshes its visual, if this
-	 * was not already the case (see
-	 * {@link IVisualPart#setRefreshVisual(boolean)}). Stores the state (whether
-	 * the part was still refreshing its visual or not) so it can be restored
-	 * later (see {@link #enableRefreshVisuals(IVisualPart)}).
-	 *
-	 * @param part
-	 *            The {@link IVisualPart} whose visual refresh is to be
-	 *            disabled.
-	 */
-	// TODO: rename to storeAndDisableRefreshVisual()
-	protected void disableRefreshVisuals(IVisualPart<VR, ? extends VR> part) {
-		initialRefreshVisual.put(part, part.isRefreshVisual());
-		part.setRefreshVisual(false);
-	}
-
-	/**
-	 * Restores that the given {@link IVisualPart} refreshes its visual if this
-	 * was the case prior to disabling the refresh of visuals.
-	 *
-	 * @param part
-	 *            The {@link IVisualPart} for which refreshing of visuals is
-	 *            restored.
-	 */
-	// TODO: rename to restoreRefreshVisual()
-	protected void enableRefreshVisuals(IVisualPart<VR, ? extends VR> part) {
-		part.setRefreshVisual(initialRefreshVisual.remove(part));
-	}
-
 	@Override
 	public IVisualPart<VR, ? extends VR> getAdaptable() {
 		return getHost();
@@ -106,9 +76,38 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 		}
 	}
 
+	/**
+	 * Restores that the given {@link IVisualPart} refreshes its visual if this
+	 * was the case prior to disabling the refresh of visuals.
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} for which refreshing of visuals is
+	 *            restored.
+	 */
+	protected void restoreRefreshVisuals(IVisualPart<VR, ? extends VR> part) {
+		part.setRefreshVisual(initialRefreshVisual.remove(part));
+	}
+
 	@Override
 	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
 		this.host = adaptable;
+	}
+
+	/**
+	 * Disable that the given {@link IVisualPart} refreshes its visual, if this
+	 * was not already the case (see
+	 * {@link IVisualPart#setRefreshVisual(boolean)}). Stores the state (whether
+	 * the part was still refreshing its visual or not) so it can be restored
+	 * later (see {@link #restoreRefreshVisuals(IVisualPart)}).
+	 *
+	 * @param part
+	 *            The {@link IVisualPart} whose visual refresh is to be
+	 *            disabled.
+	 */
+	protected void storeAndDisableRefreshVisuals(
+			IVisualPart<VR, ? extends VR> part) {
+		initialRefreshVisual.put(part, part.isRefreshVisual());
+		part.setRefreshVisual(false);
 	}
 
 }
