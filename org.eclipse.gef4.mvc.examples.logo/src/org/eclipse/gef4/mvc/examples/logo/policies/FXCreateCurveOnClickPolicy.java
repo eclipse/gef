@@ -89,7 +89,6 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 	protected void updateDragTargetToLastSegmentHandlePart(
 			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
 		// select curve part to generate segment handles
-		// TODO: execute command to select curve, so this can be undone
 		ChangeSelectionOperation<Node> changeSelectionOperation = new ChangeSelectionOperation<Node>(
 				getHost().getRoot().getViewer(),
 				Collections.singletonList(curvePart));
