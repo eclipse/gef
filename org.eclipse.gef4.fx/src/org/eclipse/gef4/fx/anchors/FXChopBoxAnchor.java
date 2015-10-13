@@ -14,10 +14,6 @@ package org.eclipse.gef4.fx.anchors;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.collections.MapChangeListener;
-import javafx.scene.Node;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ComputationStrategy.Impl;
@@ -31,7 +27,13 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import com.sun.javafx.collections.ObservableMapWrapper;
 import com.sun.javafx.geom.Rectangle;
+
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
+import javafx.scene.Node;
 
 /**
  * The {@link FXChopBoxAnchor} computes anchor positions based on a reference
@@ -308,6 +310,36 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 *
 	 */
 	public interface ReferencePointProvider {
+
+		/**
+		 * A simple {@link ReferencePointProvider} implementation that allows to
+		 * statically set reference points for {@link AnchorKey}s.
+		 *
+		 */
+		public class Impl implements ReferencePointProvider {
+
+			private ObservableMap<AnchorKey, Point> referencePoints = new ObservableMapWrapper<AnchorKey, Point>(
+					new HashMap<AnchorKey, Point>());
+
+			/**
+			 * Sets or updates the reference point for the given
+			 * {@link AnchorKey}.
+			 *
+			 * @param anchorKey
+			 *            The {@link AnchorKey} for which the reference point is
+			 *            to be set or updated.
+			 * @param referencePoint
+			 *            The new reference point to set.
+			 */
+			public void put(AnchorKey anchorKey, Point referencePoint) {
+				referencePoints.put(anchorKey, referencePoint);
+			}
+
+			@Override
+			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
+				return new ReadOnlyMapWrapper<>(referencePoints);
+			}
+		}
 
 		/**
 		 * Provides a read-only (map) property with positions (in local

@@ -12,18 +12,22 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.AdapterStore;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ReferencePointProvider;
 import org.eclipse.gef4.fx.examples.AbstractFXExample;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableMap;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 public class FXChopBoxSnippet extends AbstractFXExample {
@@ -32,75 +36,77 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 		launch();
 	}
 
-	private Rectangle nodeA;
-
-	private Rectangle nodeB;
-	private Rectangle nodeC;
-	private FXChopBoxAnchor anchorA;
-	private FXChopBoxAnchor anchorB;
-	private FXChopBoxAnchor anchorC;
+	private Rectangle r1;
+	private Rectangle r2;
 
 	public FXChopBoxSnippet() {
 		super("FXChopBoxSnippet");
 	}
 
-	private EventHandler<ActionEvent> createMoveHandler(final String label,
-			final Node node, final double x, final double y0, final double y1) {
-		return new EventHandler<ActionEvent>() {
-			boolean flag = false;
-
-			@Override
-			public void handle(ActionEvent event) {
-				node.relocate(x, flag ? y0 : y1);
-				flag = !flag;
-			}
-		};
-	}
-
 	@Override
 	public Scene createScene() {
 		BorderPane root = new BorderPane();
-		Scene scene = new Scene(root, 640, 480);
+		Scene scene = new Scene(root, 400, 400);
 
-		nodeA = new Rectangle(50, 50);
-		nodeA.setFill(Color.RED);
+		r1 = new Rectangle(50, 50);
+		r1.setFill(Color.RED);
+		r1.relocate(100, 100);
+		r2 = new Rectangle(50, 50);
+		r2.setFill(Color.BLUE);
+		r2.relocate(200, 200);
+		final Line l = new Line();
 
-		nodeB = new Rectangle(50, 50);
-		nodeB.setFill(Color.BLUE);
+		FXChopBoxAnchor startAnchor = new FXChopBoxAnchor(r1);
+		FXChopBoxAnchor endAnchor = new FXChopBoxAnchor(r2);
+		final AnchorKey startKey = new AnchorKey(l, "start");
+		final AnchorKey endKey = new AnchorKey(l, "end");
 
-		nodeC = new Rectangle(50, 50);
-		nodeC.setFill(Color.GREEN);
+		// update start and end point in case provided position values change
+		ChangeListener<ObservableMap<AnchorKey, Point>> changeListener = new ChangeListener<ObservableMap<AnchorKey, Point>>() {
 
-		Button btnA = new Button("move A");
-		btnA.setOnAction(createMoveHandler("A", nodeA, 100, 100, 200));
-		btnA.relocate(0, 0);
+			@Override
+			public void changed(
+					ObservableValue<? extends ObservableMap<AnchorKey, Point>> observable,
+					ObservableMap<AnchorKey, Point> oldValue,
+					ObservableMap<AnchorKey, Point> newValue) {
+				if (newValue.containsKey(startKey)) {
+					l.setStartX(newValue.get(startKey).x);
+					l.setStartY(newValue.get(startKey).y);
+				}
+				if (newValue.containsKey(endKey)) {
+					l.setEndX(newValue.get(endKey).x);
+					l.setEndY(newValue.get(endKey).y);
+				}
+			}
+		};
+		startAnchor.positionProperty().addListener(changeListener);
+		endAnchor.positionProperty().addListener(changeListener);
 
-		Button btnB = new Button("move B");
-		btnB.setOnAction(createMoveHandler("B", nodeB, 300, 100, 200));
-		btnB.relocate(70, 0);
+		Point r1Center = new Point(
+				r1.getLayoutBounds().getMinX() + r1.getLayoutX()
+						+ r1.getWidth() / 2,
+				r1.getLayoutBounds().getMinY() + r1.getLayoutY()
+						+ r1.getHeight() / 2);
+		Point r2Center = new Point(
+				r2.getLayoutBounds().getMinX() + r2.getLayoutX()
+						+ r2.getWidth() / 2,
+				r2.getLayoutBounds().getMinY() + r2.getLayoutY()
+						+ r2.getHeight() / 2);
 
-		Button btnC = new Button("move C");
-		btnC.setOnAction(createMoveHandler("C", nodeC, 200, 200, 300));
-		btnC.relocate(140, 0);
+		// use static values for chopbox anchor reference points
+		ReferencePointProvider.Impl referencePointProvider = new ReferencePointProvider.Impl();
+		referencePointProvider.put(startKey, r2Center);
+		referencePointProvider.put(endKey, r1Center);
 
-		FXConnection connectionAB = new FXConnection();
-		FXConnection connectionBC = new FXConnection();
+		startAnchor.attach(startKey,
+				new AdapterStore(AdapterKey.get(ReferencePointProvider.class),
+						referencePointProvider));
+		endAnchor.attach(endKey,
+				new AdapterStore(AdapterKey.get(ReferencePointProvider.class),
+						referencePointProvider));
 
-		Group group = new Group(nodeA, nodeB, nodeC, connectionAB, connectionBC,
-				btnA, btnB, btnC);
-		root.getChildren().add(group);
-
-		anchorA = new FXChopBoxAnchor(nodeA);
-		anchorB = new FXChopBoxAnchor(nodeB);
-		anchorC = new FXChopBoxAnchor(nodeC);
-		connectionAB.setStartAnchor(anchorA);
-		connectionAB.setEndAnchor(anchorB);
-		connectionBC.setStartAnchor(anchorB);
-		connectionBC.setEndAnchor(anchorC);
-
-		nodeA.relocate(100, 100);
-		nodeB.relocate(300, 100);
-		nodeC.relocate(200, 200);
+		Group g = new Group(r1, r2, l);
+		root.getChildren().add(g);
 
 		return scene;
 	}

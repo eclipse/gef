@@ -7,10 +7,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse GEF
 Export-Package: org.eclipse.gef4.zest.examples;x-friends:="org.eclipse.gef4.zest.examples.graph,org.eclipse.gef4.zest.examples.graph.ui"
-Require-Bundle: org.eclipse.gef4.common;bundle-version="[0.1.0,0.3.0)",
+Require-Bundle: org.eclipse.gef4.common;bundle-version="[0.1.0,0.4.0)",
  org.eclipse.gef4.geometry;bundle-version="[0.1.0,0.3.0)",
  org.eclipse.gef4.graph;bundle-version="[0.1.0,0.4.0)",
- org.eclipse.gef4.layout;bundle-version="[0.1.0,0.3.0)",
+ org.eclipse.gef4.layout;bundle-version="[0.1.0,0.4.0)",
  org.eclipse.gef4.fx;bundle-version="[0.2.0,0.4.0)",
  org.eclipse.gef4.mvc;bundle-version="[0.1.0,0.4.0)",
  org.eclipse.gef4.mvc.fx;bundle-version="[0.2.0,0.4.0)",

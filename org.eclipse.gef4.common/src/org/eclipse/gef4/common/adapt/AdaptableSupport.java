@@ -391,7 +391,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 *            otherwise, existing entries will be preserved.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setAdapters(Map<AdapterKey<?>, Object> adaptersWithKeys,
+	public void setAdapters(Map<AdapterKey<?>, ?> adaptersWithKeys,
 			boolean overwrite) {
 		for (AdapterKey<?> key : adaptersWithKeys.keySet()) {
 			if (!key.getKey()

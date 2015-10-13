@@ -28,6 +28,39 @@ public class AdapterStore implements IAdaptable {
 	private AdaptableSupport<AdapterStore> as = new AdaptableSupport<AdapterStore>(
 			this, pcs);
 
+	/**
+	 * Creates a new {@link AdapterStore} with no initial adapters.
+	 */
+	public AdapterStore() {
+	}
+
+	/**
+	 * Creates a new AdapterStore with the provided initial adapters.
+	 * 
+	 * @param adapters
+	 *            The adapters to initially add to this {@link AdapterStore}.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public AdapterStore(Map<AdapterKey<?>, ?> adapters) {
+		for (AdapterKey<?> key : adapters.keySet()) {
+			setAdapter((AdapterKey) key, adapters.get(key));
+		}
+	}
+
+	/**
+	 * Creates a new AdapterStore with the single given initial adapter.
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param key
+	 *            The key under which to register the adapter.
+	 * @param adapter
+	 *            The adapter to be registered.
+	 */
+	public <T> AdapterStore(AdapterKey<? super T> key, T adapter) {
+		setAdapter(key, adapter);
+	}
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);

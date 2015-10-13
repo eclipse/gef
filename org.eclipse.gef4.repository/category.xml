@@ -36,13 +36,13 @@
    <feature url="features/org.eclipse.gef4.mvc.examples.source_0.3.0.qualifier.jar" id="org.eclipse.gef4.mvc.examples.source" version="0.3.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.layout_0.2.0.qualifier.jar" id="org.eclipse.gef4.layout" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.layout_0.3.0.qualifier.jar" id="org.eclipse.gef4.layout" version="0.3.0.qualifier">
       <category name="GEF4 Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.layout.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.layout.doc" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.layout.doc_0.3.0.qualifier.jar" id="org.eclipse.gef4.layout.doc" version="0.3.0.qualifier">
       <category name="GEF4 Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.layout.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.layout.sdk" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.layout.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.layout.sdk" version="0.3.0.qualifier">
       <category name="GEF4 Layout"/>
    </feature>
    <feature url="features/org.eclipse.gef4.fx.swt_0.3.0.qualifier.jar" id="org.eclipse.gef4.fx.swt" version="0.3.0.qualifier">
@@ -78,13 +78,13 @@
    <feature url="features/org.eclipse.gef4.dot.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.dot.sdk" version="0.3.0.qualifier">
       <category name="GEF4 DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.common_0.2.0.qualifier.jar" id="org.eclipse.gef4.common" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.common_0.3.0.qualifier.jar" id="org.eclipse.gef4.common" version="0.3.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.common.doc_0.2.0.qualifier.jar" id="org.eclipse.gef4.common.doc" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.common.doc_0.3.0.qualifier.jar" id="org.eclipse.gef4.common.doc" version="0.3.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.common.sdk_0.2.0.qualifier.jar" id="org.eclipse.gef4.common.sdk" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.gef4.common.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.common.sdk" version="0.3.0.qualifier">
       <category name="GEF4 Common"/>
    </feature>
     <feature url="features/org.eclipse.gef4.zest.fx.jface_0.3.0.qualifier.jar" id="org.eclipse.gef4.zest.fx.jface" version="0.3.0.qualifier">
