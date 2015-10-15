@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.FXGridLayer;
+import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.IGeometry;
+
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,16 +34,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.transform.Scale;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-
-import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXGridLayer;
-import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 
 public class GroupLayersSetup extends Application {
 
@@ -52,21 +53,10 @@ public class GroupLayersSetup extends Application {
 	private FXGridLayer gridLayer;
 	private Group bgLayer;
 
-	private final SimpleObjectProperty<Scale> scaleProperty = new SimpleObjectProperty<Scale>(
-			new Scale());
-
-	@Override
-	public void start(final Stage primaryStage) throws Exception {
-		primaryStage.setScene(createScene());
-		primaryStage.sizeToScene();
-		primaryStage.show();
-	}
+	private final SimpleObjectProperty<Affine> transformProperty = new SimpleObjectProperty<Affine>(
+			new Affine());
 
 	public Scene createScene() {
-		// scale
-		scaleProperty.get().setX(1);
-		scaleProperty.get().setY(1);
-
 		// layers
 		bgLayer = new Group();
 		bgLayer.setManaged(false);
@@ -104,7 +94,7 @@ public class GroupLayersSetup extends Application {
 		scene = new Scene(scrollPane, 800, 600);
 
 		// register the grid layer
-		gridLayer.gridScaleProperty().bind(scaleProperty);
+		gridLayer.gridTransformProperty().bind(transformProperty);
 		gridLayer.bindMinSizeToBounds(scrollPane.viewportBoundsProperty());
 		gridLayer.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] {
 				contentLayer.boundsInParentProperty(),
@@ -172,14 +162,22 @@ public class GroupLayersSetup extends Application {
 		feedbackLayer.getChildren().addAll(blue, feedbackElement);
 
 		// scale content layer
-		bgContent.getTransforms().add(scaleProperty.get());
-		contentLayer.getTransforms().add(scaleProperty.get());
+		bgContent.getTransforms().add(transformProperty.get());
+		contentLayer.getTransforms().add(transformProperty.get());
+		feedbackLayer.getTransforms().add(transformProperty.get());
+		handleLayer.getTransforms().add(transformProperty.get());
 
 		// move to initial positions
 		move(red, 100, 0);
 		move(blue, 200, 100);
 
 		new VisualChangeListener() {
+			@Override
+			protected void boundsInLocalChanged(final Bounds oldBounds,
+					final Bounds newBounds) {
+				update();
+			}
+
 			@Override
 			protected void localToParentTransformChanged(final Node source,
 					final Transform oldTransform,
@@ -197,12 +195,6 @@ public class GroupLayersSetup extends Application {
 						new AffineTransform(1, 0, 0, 1, 100, 100));
 				blue.setGeometry(transformedInBlue);
 			}
-
-			@Override
-			protected void boundsInLocalChanged(final Bounds oldBounds,
-					final Bounds newBounds) {
-				update();
-			}
 		}.register(red, blue);
 
 		draggable(red);
@@ -211,15 +203,66 @@ public class GroupLayersSetup extends Application {
 		return scene;
 	}
 
+	private void draggable(final Node n) {
+		n.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
+			double x = 0, y = 0;
+
+			@Override
+			public void handle(final MouseEvent event) {
+				if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+					move(n, event.getSceneX() - x, event.getSceneY() - y);
+				}
+				x = event.getSceneX();
+				y = event.getSceneY();
+			}
+		});
+	}
+
+	private Rectangle getBGRect(final double r, final double g, final double b,
+			final double a) {
+		final Rectangle bg = new Rectangle();
+		bg.setStrokeWidth(0);
+		bg.setFill(new Color(r, g, b, a));
+		bgLayer.getChildren().add(bg);
+		return bg;
+	}
+
+	private <T extends Node> T move(final T n, final double byX,
+			final double byY) {
+		n.relocate(n.getLayoutX() + n.getLayoutBounds().getMinX() + byX,
+				n.getLayoutY() + n.getLayoutBounds().getMinY() + byY);
+		return n;
+	}
+
+	private Rectangle q(final double size, final Color fill) {
+		final Rectangle q = new Rectangle(size, size);
+		q.setFill(fill);
+		q.setStroke(Color.BLACK);
+		return q;
+	}
+
 	private void scalable(Node n) {
 		n.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(final MouseEvent event) {
 				if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					Scale s = Scale.scale(scaleProperty.get().getX() + 0.1,
-							scaleProperty.get().getY() + 0.1);
-					scaleProperty.get().setX(s.getX());
-					scaleProperty.get().setY(s.getY());
+					double pivotX = 15;
+					double pivotY = 30;
+
+					AffineTransform backFromPivot = new AffineTransform();
+					backFromPivot.setToTranslation(-pivotX, -pivotY);
+					AffineTransform scale = new AffineTransform();
+					scale.setToScale(1.1, 1.1);
+					AffineTransform toPivot = new AffineTransform();
+					toPivot.setToTranslation(pivotX, pivotY);
+					AffineTransform concatenated = backFromPivot
+							.concatenate(scale).concatenate(toPivot)
+							.concatenate(JavaFX2Geometry.toAffineTransform(
+									transformProperty.get()));
+					transformProperty.get().setTx(concatenated.getTranslateX());
+					transformProperty.get().setTy(concatenated.getTranslateY());
+					transformProperty.get().setMxx(concatenated.getScaleX());
+					transformProperty.get().setMyy(concatenated.getScaleY());
 				}
 			}
 		});
@@ -239,42 +282,11 @@ public class GroupLayersSetup extends Application {
 		});
 	}
 
-	private Rectangle getBGRect(final double r, final double g, final double b,
-			final double a) {
-		final Rectangle bg = new Rectangle();
-		bg.setStrokeWidth(0);
-		bg.setFill(new Color(r, g, b, a));
-		bgLayer.getChildren().add(bg);
-		return bg;
-	}
-
-	private void draggable(final Node n) {
-		n.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
-			double x = 0, y = 0;
-
-			@Override
-			public void handle(final MouseEvent event) {
-				if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-					move(n, event.getSceneX() - x, event.getSceneY() - y);
-				}
-				x = event.getSceneX();
-				y = event.getSceneY();
-			}
-		});
-	}
-
-	private <T extends Node> T move(final T n, final double byX,
-			final double byY) {
-		n.relocate(n.getLayoutX() + n.getLayoutBounds().getMinX() + byX,
-				n.getLayoutY() + n.getLayoutBounds().getMinY() + byY);
-		return n;
-	}
-
-	private Rectangle q(final double size, final Color fill) {
-		final Rectangle q = new Rectangle(size, size);
-		q.setFill(fill);
-		q.setStroke(Color.BLACK);
-		return q;
+	@Override
+	public void start(final Stage primaryStage) throws Exception {
+		primaryStage.setScene(createScene());
+		primaryStage.sizeToScene();
+		primaryStage.show();
 	}
 
 }

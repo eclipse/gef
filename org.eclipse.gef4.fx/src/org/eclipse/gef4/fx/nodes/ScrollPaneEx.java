@@ -15,6 +15,8 @@ package org.eclipse.gef4.fx.nodes;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -67,7 +69,8 @@ public class ScrollPaneEx extends Region {
 	private ScrollBar verticalScrollBar;
 	private Pane scrolledPane;
 	private Group contentGroup;
-	private Affine viewportTransform = new Affine();
+	private ReadOnlyObjectWrapper<Affine> viewportTransformProperty = new ReadOnlyObjectWrapper<Affine>(
+			new Affine());
 	private double[] currentScrollableBounds = new double[] { 0d, 0d, 0d, 0d };
 	private ChangeListener<Number> widthChangeListener = new ChangeListener<Number>() {
 		@Override
@@ -265,7 +268,7 @@ public class ScrollPaneEx extends Region {
 	 */
 	protected Group createContentGroup() {
 		Group g = new Group();
-		g.getTransforms().add(viewportTransform);
+		g.getTransforms().add(viewportTransformProperty.get());
 		g.boundsInParentProperty()
 				.addListener(contentBoundsInParentChangeListener);
 		return g;
@@ -577,7 +580,7 @@ public class ScrollPaneEx extends Region {
 	 *         {@link #getContentGroup() content group}.
 	 */
 	public Affine getViewportTransform() {
-		return viewportTransform;
+		return viewportTransformProperty.get();
 	}
 
 	/**
@@ -849,6 +852,7 @@ public class ScrollPaneEx extends Region {
 	 *            {@link #getViewportTransform() viewport transform}.
 	 */
 	public void setViewportTransform(Affine tx) {
+		Affine viewportTransform = viewportTransformProperty.get();
 		viewportTransform.setMxx(tx.getMxx());
 		viewportTransform.setMxy(tx.getMxy());
 		viewportTransform.setMyx(tx.getMyx());
@@ -912,6 +916,15 @@ public class ScrollPaneEx extends Region {
 				.setValue(computeHv(getScrolledPane().getTranslateX()));
 		verticalScrollBar
 				.setValue(computeVv(getScrolledPane().getTranslateY()));
+	}
+
+	/**
+	 * Returns the viewport transform as a (read-only) property.
+	 *
+	 * @return The viewport transform as {@link ReadOnlyObjectProperty}.
+	 */
+	public ReadOnlyObjectProperty<Affine> viewportTransformProperty() {
+		return viewportTransformProperty.getReadOnlyProperty();
 	}
 
 }

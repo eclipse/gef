@@ -25,6 +25,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
 /**
@@ -83,7 +84,8 @@ public class FXGridLayer extends Pane {
 			gc.setFill(Color.WHITE);
 			gc.fillRect(0, 0, width, height);
 
-			final Scale scale = gridScaleProperty.get();
+			final Scale scale = new Scale(gridTransformProperty.get().getMxx(),
+					gridTransformProperty.get().getMyy());
 			// don't paint grid points if size is to large
 			if (((width / scale.getX())
 					* (height / scale.getY()) > GRID_THRESHOLD)) {
@@ -96,9 +98,11 @@ public class FXGridLayer extends Pane {
 					* scale.getX();
 			double scaledGridCellHeight = gridCellHeightProperty.get()
 					* scale.getY();
-			for (double x = (-getParent().getLayoutX())
+			for (double x = -(getParent().getLayoutX()
+					- gridTransformProperty.get().getTx())
 					% scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
-				for (double y = (-getParent().getLayoutY())
+				for (double y = -(getParent().getLayoutY()
+						- gridTransformProperty.get().getTy())
 						% scaledGridCellHeight; y < height; y += scaledGridCellHeight) {
 					gc.fillRect(Math.floor(x) - 0.5 * scale.getX(),
 							Math.floor(y) - 0.5 * scale.getY(), scale.getX(),
@@ -110,8 +114,8 @@ public class FXGridLayer extends Pane {
 
 	private final FXGridLayer.GridCanvas gridCanvas;
 
-	private final SimpleObjectProperty<Scale> gridScaleProperty = new SimpleObjectProperty<Scale>(
-			new Scale());
+	private final SimpleObjectProperty<Affine> gridTransformProperty = new SimpleObjectProperty<Affine>(
+			new Affine());
 
 	private final DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
 			10);
@@ -131,47 +135,35 @@ public class FXGridLayer extends Pane {
 		setPickOnBounds(false);
 		setMouseTransparent(true);
 
-		gridScaleProperty.addListener(new ChangeListener<Scale>() {
+		final ChangeListener<Number> repaintListener = new ChangeListener<Number>() {
+			@Override
+			public void changed(
+					final ObservableValue<? extends Number> observable,
+					final Number oldValue, final Number newValue) {
+				gridCanvas.repaintGrid();
+			}
+		};
+		gridTransformProperty.addListener(new ChangeListener<Affine>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Scale> observable,
-					Scale oldValue, Scale newValue) {
+			public void changed(ObservableValue<? extends Affine> observable,
+					Affine oldValue, Affine newValue) {
+				oldValue.txProperty().removeListener(repaintListener);
+				oldValue.tyProperty().removeListener(repaintListener);
+				oldValue.mxxProperty().removeListener(repaintListener);
+				oldValue.myyProperty().removeListener(repaintListener);
+				newValue.txProperty().addListener(repaintListener);
+				newValue.tyProperty().addListener(repaintListener);
+				newValue.mxxProperty().addListener(repaintListener);
+				newValue.myyProperty().addListener(repaintListener);
 				gridCanvas.repaintGrid();
 			}
 
 		});
-		gridCellWidthProperty.addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(
-					final ObservableValue<? extends Number> observable,
-					final Number oldValue, final Number newValue) {
-				gridCanvas.repaintGrid();
-			}
-		});
-		gridCellHeightProperty.addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(
-					final ObservableValue<? extends Number> observable,
-					final Number oldValue, final Number newValue) {
-				gridCanvas.repaintGrid();
-			}
-		});
-		layoutXProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(
-					final ObservableValue<? extends Number> observable,
-					final Number oldValue, final Number newValue) {
-				gridCanvas.repaintGrid();
-			}
-		});
-		layoutYProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(
-					final ObservableValue<? extends Number> observable,
-					final Number oldValue, final Number newValue) {
-				gridCanvas.repaintGrid();
-			}
-		});
+		gridCellWidthProperty.addListener(repaintListener);
+		gridCellHeightProperty.addListener(repaintListener);
+		layoutXProperty().addListener(repaintListener);
+		layoutYProperty().addListener(repaintListener);
 	}
 
 	/**
@@ -186,7 +178,7 @@ public class FXGridLayer extends Pane {
 		minWidthProperty().bind(new DoubleBinding() {
 			{
 				super.bind(minSizeProperty,
-						gridScaleProperty.get().xProperty());
+						gridTransformProperty.get().mxxProperty());
 			}
 
 			@Override
@@ -201,7 +193,7 @@ public class FXGridLayer extends Pane {
 		minHeightProperty().bind(new DoubleBinding() {
 			{
 				super.bind(minSizeProperty,
-						gridScaleProperty.get().yProperty());
+						gridTransformProperty.get().myyProperty());
 			}
 
 			@Override
@@ -291,14 +283,15 @@ public class FXGridLayer extends Pane {
 	}
 
 	/**
-	 * Returns the {@link Scale} property of this {@link FXGridLayer}. This can
-	 * be used to adapt the grid layer to zooming changes within the content
-	 * which is above the grid.
+	 * Returns the {@link Affine} transform property of this {@link FXGridLayer}
+	 * . This can be used to adapt the grid layer to zooming changes within the
+	 * content which is above the grid.
 	 *
-	 * @return The {@link Scale} property of this {@link FXGridLayer}.
+	 * @return The {@link Affine} transform property of this {@link FXGridLayer}
+	 *         .
 	 */
-	public ObjectProperty<Scale> gridScaleProperty() {
-		return gridScaleProperty;
+	public ObjectProperty<Affine> gridTransformProperty() {
+		return gridTransformProperty;
 	}
 
 	/**

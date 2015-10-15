@@ -15,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
 import javafx.scene.Node;
-import javafx.scene.transform.Scale;
+import javafx.scene.transform.Affine;
 
 /**
  * The {@link FXGridBehavior} can be registered on an {@link FXRootPart} to
@@ -48,21 +48,6 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 		applyZoomGrid(gridModel.isZoomGrid());
 		applyGridCellWidth(gridModel.getGridCellWidth());
 		applyGridCellHeight(gridModel.getGridCellHeight());
-	}
-
-	/**
-	 * Applies the given {@link java.awt.geom.AffineTransform transformation} to
-	 * the {@link FXGridLayer}.
-	 *
-	 * @param contentsTransform
-	 *            An {@link java.awt.geom.AffineTransform} which is applied to
-	 *            the {@link FXGridLayer}.
-	 */
-	protected void applyContentsTransform(AffineTransform contentsTransform) {
-		// TODO: What about rotation?
-		double sx = contentsTransform.getScaleX();
-		double sy = contentsTransform.getScaleY();
-		getGridLayer().gridScaleProperty().set(new Scale(sx, sy));
 	}
 
 	/**
@@ -119,14 +104,16 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 				viewportModel.addPropertyChangeListener(this);
 				isListeningOnViewport = true;
 				// apply current contents transform
-				applyContentsTransform(viewportModel.getContentsTransform());
+				getGridLayer().gridTransformProperty()
+						.bind(getScrollPane().viewportTransformProperty());
 			}
 		} else {
 			if (isListeningOnViewport) {
 				viewportModel.removePropertyChangeListener(this);
 				isListeningOnViewport = false;
 				// reset grid scale to (1, 1)
-				getGridLayer().gridScaleProperty().set(new Scale(1, 1));
+				getGridLayer().gridTransformProperty().unbind();
+				getGridLayer().gridTransformProperty().set(new Affine());
 			}
 		}
 	}
@@ -156,6 +143,17 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 		return ((FXViewer) getHost().getRoot().getViewer()).getGridLayer();
 	}
 
+	/**
+	 * Returns the {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 * {@link FXViewer}.
+	 *
+	 * @return The {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 *         {@link FXViewer}.
+	 */
+	protected ScrollPaneEx getScrollPane() {
+		return ((FXViewer) getHost().getRoot().getViewer()).getScrollPane();
+	}
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (GridModel.SHOW_GRID_PROPERTY.equals(evt.getPropertyName())) {
@@ -166,9 +164,6 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 		} else if (GridModel.GRID_CELL_HEIGHT_PROPERTY
 				.equals(evt.getPropertyName())) {
 			applyGridCellHeight(((Double) evt.getNewValue()).doubleValue());
-		} else if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
-				.equals(evt.getPropertyName())) {
-			applyContentsTransform((AffineTransform) evt.getNewValue());
 		}
 	}
 
