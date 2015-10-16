@@ -105,7 +105,7 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 				isListeningOnViewport = true;
 				// apply current contents transform
 				getGridLayer().gridTransformProperty()
-						.bind(getScrollPane().viewportTransformProperty());
+						.bind(getScrollPane().contentTransformProperty());
 			}
 		} else {
 			if (isListeningOnViewport) {

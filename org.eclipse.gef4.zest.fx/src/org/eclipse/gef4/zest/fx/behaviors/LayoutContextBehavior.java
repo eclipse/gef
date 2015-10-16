@@ -100,9 +100,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			viewportModel.addPropertyChangeListener(viewportModelPropertyChangeListener);
 			// read initial bounds
 			FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-			double[] scrollableBounds = fxViewer.getScrollPane().computeScrollableBoundsInLocal();
-			initialBounds.setX(scrollableBounds[0]);
-			initialBounds.setY(scrollableBounds[1]);
+			Bounds scrollableBounds = fxViewer.getScrollPane().scrollableBoundsProperty().get();
+			initialBounds.setX(scrollableBounds.getMinX());
+			initialBounds.setY(scrollableBounds.getMinY());
 			initialBounds.setWidth(fxViewer.getScrollPane().getWidth());
 			initialBounds.setHeight(fxViewer.getScrollPane().getHeight());
 		} else if (getHost().getContent().getNestingNode() != null) {
@@ -306,8 +306,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		}
 		// update layout bounds to match the viewport bounds
 		FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-		double[] scrollableBounds = fxViewer.getScrollPane().computeScrollableBoundsInLocal();
-		Rectangle newBounds = new Rectangle(scrollableBounds[0], scrollableBounds[1],
+		Bounds scrollableBounds = fxViewer.getScrollPane().scrollableBoundsProperty().get();
+		Rectangle newBounds = new Rectangle(scrollableBounds.getMinX(), scrollableBounds.getMinY(),
 				fxViewer.getScrollPane().getWidth(), fxViewer.getScrollPane().getHeight());
 
 		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {

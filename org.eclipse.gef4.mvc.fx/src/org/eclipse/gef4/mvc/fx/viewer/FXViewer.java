@@ -18,9 +18,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -100,16 +97,8 @@ public class FXViewer extends AbstractViewer<Node> {
 				scrollPane.getScrolledPane().getChildren().add(gridLayer);
 				gridLayer.toBack();
 
-				// bind grid layer size
-				SimpleObjectProperty<Bounds> scrollableBoundsProperty = new SimpleObjectProperty<Bounds>() {
-					{
-						bind(scrollPane.getScrollableBoundsBinding());
-					}
-				};
-				gridLayer.bindMinSizeToBounds(scrollableBoundsProperty);
-				gridLayer.bindPrefSizeToUnionedBounds(
-						new ReadOnlyObjectProperty[] {
-								scrollableBoundsProperty });
+				gridLayer.bindBounds(
+						scrollPane.scrollableBoundsProperty());
 			}
 		}
 		return scrollPane;

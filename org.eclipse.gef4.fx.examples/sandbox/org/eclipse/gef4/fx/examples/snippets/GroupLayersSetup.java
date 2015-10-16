@@ -19,7 +19,6 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -95,11 +94,7 @@ public class GroupLayersSetup extends Application {
 
 		// register the grid layer
 		gridLayer.gridTransformProperty().bind(transformProperty);
-		gridLayer.bindMinSizeToBounds(scrollPane.viewportBoundsProperty());
-		gridLayer.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] {
-				contentLayer.boundsInParentProperty(),
-				feedbackLayer.boundsInParentProperty(),
-				handleLayer.boundsInParentProperty() });
+		gridLayer.bindBounds(scrollPane.viewportBoundsProperty());
 
 		scrollPane.viewportBoundsProperty()
 				.addListener(new ChangeListener<Bounds>() {

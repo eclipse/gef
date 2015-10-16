@@ -76,7 +76,7 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 					double zoomFactor = event.isControlDown() ? 4d / 5 : 5d / 4;
 
 					// compute zoom transformation
-					Affine tx = scrollPane.getViewportTransform();
+					Affine tx = scrollPane.getContentTransform();
 					AffineTransform at = JavaFX2Geometry.toAffineTransform(tx);
 					at.concatenate(new AffineTransform()
 							.translate(contentPivot.getX(), contentPivot.getY())
@@ -86,7 +86,7 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 					Affine affine = Transform.affine(at.getM00(), at.getM01(),
 							at.getM10(), at.getM11(), at.getTranslateX(),
 							at.getTranslateY());
-					scrollPane.setViewportTransform(affine);
+					scrollPane.setContentTransform(affine);
 				}
 			}
 		});

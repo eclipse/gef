@@ -76,7 +76,7 @@ public class FXGridLayer extends Pane {
 			return getWidth();
 		}
 
-		public void repaintGrid() {
+		protected void repaintGrid() {
 			final double width = getWidth();
 			final double height = getHeight();
 
@@ -143,6 +143,11 @@ public class FXGridLayer extends Pane {
 				gridCanvas.repaintGrid();
 			}
 		};
+		Affine gridTransform = gridTransformProperty().get();
+		gridTransform.txProperty().addListener(repaintListener);
+		gridTransform.tyProperty().addListener(repaintListener);
+		gridTransform.mxxProperty().addListener(repaintListener);
+		gridTransform.myyProperty().addListener(repaintListener);
 		gridTransformProperty.addListener(new ChangeListener<Affine>() {
 
 			@Override
@@ -169,115 +174,55 @@ public class FXGridLayer extends Pane {
 	/**
 	 * Binds the minimum size of this {@link FXGridLayer} to the given property.
 	 *
-	 * @param minSizeProperty
+	 * @param bounds
 	 *            The {@link Bounds} property which determines the minimum size
 	 *            for this {@link FXGridLayer}.
 	 */
-	public void bindMinSizeToBounds(
-			final ReadOnlyObjectProperty<Bounds> minSizeProperty) {
-		minWidthProperty().bind(new DoubleBinding() {
-			{
-				super.bind(minSizeProperty,
-						gridTransformProperty.get().mxxProperty());
-			}
-
-			@Override
-			protected double computeValue() {
-				if (minSizeProperty.get() == null) {
-					return 0;
-				}
-				return minSizeProperty.get().getWidth();
-			}
-		});
-
-		minHeightProperty().bind(new DoubleBinding() {
-			{
-				super.bind(minSizeProperty,
-						gridTransformProperty.get().myyProperty());
-			}
-
-			@Override
-			protected double computeValue() {
-				if (minSizeProperty.get() == null) {
-					return 0;
-				}
-				return minSizeProperty.get().getHeight();
-			}
-		});
-	}
-
-	/**
-	 * Binds the preferred size of this {@link FXGridLayer} to the maximum of
-	 * the given properties.
-	 *
-	 * @param boundsProperties
-	 *            The {@link Bounds} properties which determine the preferred
-	 *            size for this {@link FXGridLayer}.
-	 */
-	public void bindPrefSizeToUnionedBounds(
-			@SuppressWarnings("unchecked") final ReadOnlyObjectProperty<Bounds>... boundsProperties) {
+	public void bindBounds(final ReadOnlyObjectProperty<Bounds> bounds) {
 		layoutXProperty().bind(new DoubleBinding() {
 			{
-				super.bind(boundsProperties);
+				super.bind(bounds);
 			}
 
 			@Override
 			protected double computeValue() {
-				double minX = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
-					minX = Math.min(minX, b.get().getMinX());
-				}
-				return minX;
+				return Math.min(0, bounds.get().getMinX());
 			}
 		});
 		layoutYProperty().bind(new DoubleBinding() {
 			{
-				super.bind(boundsProperties);
+				super.bind(bounds);
 			}
 
 			@Override
 			protected double computeValue() {
-				double minY = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
-					minY = Math.min(minY, b.get().getMinY());
-				}
-				return minY;
+				return Math.min(0, bounds.get().getMinY());
 			}
 		});
-		prefWidthProperty().bind(new DoubleBinding() {
+		minWidthProperty().bind(new DoubleBinding() {
 			{
-				super.bind(boundsProperties);
+				super.bind(bounds, gridTransformProperty.get().mxxProperty());
 			}
 
 			@Override
 			protected double computeValue() {
-				double minX = 0;
-				double maxX = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
-					Bounds bounds = b.get();
-					minX = Math.min(minX, bounds.getMinX());
-					maxX = Math.max(maxX, bounds.getMaxX());
+				if (bounds.get() == null) {
+					return 0;
 				}
-				// fill up to viewport width
-				return maxX - minX;
+				return bounds.get().getWidth();
 			}
 		});
-		prefHeightProperty().bind(new DoubleBinding() {
+		minHeightProperty().bind(new DoubleBinding() {
 			{
-				super.bind(boundsProperties);
+				super.bind(bounds, gridTransformProperty.get().myyProperty());
 			}
 
 			@Override
 			protected double computeValue() {
-				double minY = 0;
-				double maxY = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
-					Bounds bounds = b.get();
-					minY = Math.min(minY, bounds.getMinY());
-					maxY = Math.max(maxY, bounds.getMaxY());
+				if (bounds.get() == null) {
+					return 0;
 				}
-				// fill up to viewport height
-				return maxY - minY;
+				return bounds.get().getHeight();
 			}
 		});
 	}

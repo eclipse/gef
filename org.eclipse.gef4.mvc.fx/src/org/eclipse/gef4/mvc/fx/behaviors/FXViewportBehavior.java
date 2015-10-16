@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
@@ -53,10 +54,8 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 	 * The {@link Affine} which is used to temporarily store the contents
 	 * transformation.
 	 */
-	// TODO: make contentsTx private
-	protected final Affine contentsTx = new Affine();
 	private ViewportModel viewportModel;
-	private final ChangeListener<Number> translateXListener = new ChangeListener<Number>() {
+	private final ChangeListener<Number> horizontalScrollOffsetListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
@@ -65,7 +64,7 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 			}
 		}
 	};
-	private final ChangeListener<Number> translateYListener = new ChangeListener<Number>() {
+	private final ChangeListener<Number> verticalScrollOffsetListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
@@ -106,12 +105,12 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
 		viewportModel.addPropertyChangeListener(this);
+		getScrollPane().horizontalScrollOffsetProperty()
+				.addListener(horizontalScrollOffsetListener);
+		getScrollPane().verticalScrollOffsetProperty()
+				.addListener(verticalScrollOffsetListener);
 		getScrollPane().widthProperty().addListener(widthListener);
 		getScrollPane().heightProperty().addListener(heightListener);
-		getScrollPane().getScrolledPane().translateXProperty()
-				.addListener(translateXListener);
-		getScrollPane().getScrolledPane().translateYProperty()
-				.addListener(translateYListener);
 	}
 
 	/**
@@ -133,12 +132,14 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 	protected void applyViewport(double translateX, double translateY,
 			double width, double height, AffineTransform contentsTransform) {
 		inApplyViewport = true;
-		getScrollPane().setScrollOffsetX(translateX);
-		getScrollPane().setScrollOffsetY(translateY);
+		getScrollPane().setHorizontalScrollOffset(translateX);
+		getScrollPane().setVerticalScrollOffset(translateY);
+		// scroll width??
 		getScrollPane().setPrefWidth(width);
 		getScrollPane().setPrefHeight(height);
-		setTx(contentsTx, contentsTransform);
-		getScrollPane().setViewportTransform(contentsTx);
+
+		getScrollPane().setContentTransform(
+				Geometry2JavaFX.toFXAffine(contentsTransform));
 		inApplyViewport = false;
 	}
 
@@ -147,10 +148,10 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		viewportModel.removePropertyChangeListener(this);
 		getScrollPane().widthProperty().removeListener(widthListener);
 		getScrollPane().heightProperty().removeListener(heightListener);
-		getScrollPane().getScrolledPane().translateXProperty()
-				.removeListener(translateXListener);
-		getScrollPane().getScrolledPane().translateYProperty()
-				.removeListener(translateYListener);
+		getScrollPane().horizontalScrollOffsetProperty()
+				.removeListener(horizontalScrollOffsetListener);
+		getScrollPane().verticalScrollOffsetProperty()
+				.removeListener(verticalScrollOffsetListener);
 		super.deactivate();
 	}
 
@@ -182,26 +183,6 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 					viewportModel.getHeight(),
 					viewportModel.getContentsTransform());
 		}
-	}
-
-	/**
-	 * Transfers the values of the given {@link java.awt.geom.AffineTransform}
-	 * to the given {@link Affine}.
-	 *
-	 * @param tx
-	 *            The {@link Affine} to which the transformation values are
-	 *            transfered.
-	 * @param at
-	 *            The {@link java.awt.geom.AffineTransform} which is transfered.
-	 */
-	protected void setTx(Affine tx, AffineTransform at) {
-		double[] m = at.getMatrix();
-		tx.setMxx(m[0]);
-		tx.setMxy(m[1]);
-		tx.setMyx(m[2]);
-		tx.setMyy(m[3]);
-		tx.setTx(m[4]);
-		tx.setTy(m[5]);
 	}
 
 }
