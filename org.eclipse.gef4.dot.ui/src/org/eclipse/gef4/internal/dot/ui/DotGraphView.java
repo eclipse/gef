@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Fabian Steeg, hbz.
+ * Copyright (c) 2014, 2015 Fabian Steeg (hbz), and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg, hbz - initial API & implementation
+ *     Fabian Steeg (hbz) - initial API & implementation
+ *     Matthias Wienand (itemis AG) - Refactorings and cleanups
+ *     Alexander Nyßen (itemis AG) - Refactorings and cleanups
+ *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *
  *******************************************************************************/
 package org.eclipse.gef4.internal.dot.ui;
@@ -242,8 +245,9 @@ public class DotGraphView extends ZestFxUiView {
 				final String format, DotGraphView view) {
 			File dotFile = DotFileUtils.write(view.currentDot);
 			File image = DotNativeDrawer.renderImage(
-					new File(DotDirStore.getDotDirPath()), dotFile, format,
-					null);
+					new File(
+							GraphvizPreferencePage.getDotPathFromPreferences()),
+					dotFile, format, null);
 			if (view.currentFile == null) {
 				return image;
 			}
@@ -304,6 +308,18 @@ public class DotGraphView extends ZestFxUiView {
 			return new Action(DotGraphView.SYNC_EXPORT_PDF, SWT.TOGGLE) {
 				@Override
 				public void run() {
+					// check if Graphviz is configured properly
+					if (!GraphvizPreferencePage.isGraphvizConfigured()) {
+						GraphvizPreferencePage
+								.showGraphvizConfigurationDialog();
+					}
+
+					if (!GraphvizPreferencePage.isGraphvizConfigured()) {
+						linkImage = false;
+						setChecked(false);
+						return;
+					}
+
 					linkImage = toggle(this, linkImage);
 					if (view.currentFile != null) {
 						linkCorrespondingImage(view);
@@ -316,7 +332,9 @@ public class DotGraphView extends ZestFxUiView {
 			if (view.linkImage) {
 				File image = generateImageFromGraph(true,
 						DotGraphView.FORMAT_PDF, view);
-				openFile(image, view);
+				if (image != null) {
+					openFile(image, view);
+				}
 			}
 		}
 

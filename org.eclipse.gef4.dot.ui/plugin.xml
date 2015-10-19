@@ -68,6 +68,12 @@
             name="Templates">
             <keywordReference id="org.eclipse.gef4.internal.dot.parser.ui.keyword_Dot"/>
         </page>
+        <page
+              category="org.eclipse.gef4.internal.dot.parser.Dot"
+              class="org.eclipse.gef4.internal.dot.ui.GraphvizPreferencePage"
+              id="org.eclipse.gef4.internal.dot.ui.GraphvizPreferencePage"
+              name="Graphviz">
+        </page>
     </extension>
     <extension
         point="org.eclipse.ui.keywords">

@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg and others.
+ * Copyright (c) 2009, 2015 Fabian Steeg, and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,8 @@
  *
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
@@ -17,9 +20,9 @@ import java.util.Properties;
 
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.internal.dot.DotNativeDrawer;
 import org.eclipse.gef4.internal.dot.DotFileUtils;
-import org.eclipse.gef4.internal.dot.ui.DotDirStore;
+import org.eclipse.gef4.internal.dot.DotNativeDrawer;
+import org.eclipse.gef4.internal.dot.ui.GraphvizPreferencePage;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
@@ -57,11 +60,12 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 					 * Path to the local Graphviz folder containing the dot
 					 * executable file:
 					 */
-					dotDir = props.getProperty(DotDirStore.DOT_PATH_PREF_KEY);
+					dotDir = props.getProperty(
+							GraphvizPreferencePage.DOT_PATH_PREF_KEY);
 					if (dotDir == null || dotDir.trim().length() == 0) {
 						System.err.printf(
 								"Graphviz DOT directory not set in test.properties file under '%s' key.\n", //$NON-NLS-1$
-								DotDirStore.DOT_PATH_PREF_KEY);
+								GraphvizPreferencePage.DOT_PATH_PREF_KEY);
 					} else
 						stream.close();
 				} catch (IOException e) {
