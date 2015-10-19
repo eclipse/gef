@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import java.util.Arrays;
+
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
@@ -68,11 +70,21 @@ public class ScrollPaneEx extends Region {
 	private Group scrollbarGroup;
 	private ScrollBar horizontalScrollBar;
 	private ScrollBar verticalScrollBar;
+
 	private Pane scrolledPane;
 	private Group contentGroup;
+
 	private ReadOnlyObjectWrapper<Affine> contentTransformProperty = new ReadOnlyObjectWrapper<Affine>(
 			new Affine());
-	private double[] currentScrollableBounds = new double[] { 0d, 0d, 0d, 0d };
+
+	// content and scrollable bounds are cached
+	private double[] contentBounds = new double[] { 0d, 0d, 0d, 0d };
+	private double[] scrollableBounds = new double[] { 0d, 0d, 0d, 0d };
+	private ObjectBinding<Bounds> scrollableBoundsBinding;
+	private ObjectBinding<Bounds> contentBoundsBinding;
+	private ReadOnlyObjectWrapper<Bounds> scrollableBoundsProperty;
+	private ReadOnlyObjectWrapper<Bounds> contentBoundsProperty;
+
 	private ChangeListener<Number> widthChangeListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
@@ -87,14 +99,14 @@ public class ScrollPaneEx extends Region {
 			updateScrollbars();
 		}
 	};
-	private ChangeListener<Bounds> canvasBoundsInLocalChangeListener = new ChangeListener<Bounds>() {
+	private ChangeListener<Bounds> scrolledPaneBoundsInLocalChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldBounds, Bounds newBounds) {
 			updateScrollbars();
 		}
 	};
-	private ChangeListener<? super Bounds> contentBoundsInParentChangeListener = new ChangeListener<Bounds>() {
+	private ChangeListener<? super Bounds> contentGroupBoundsInParentChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
@@ -102,33 +114,35 @@ public class ScrollPaneEx extends Region {
 		}
 	};
 
-	private ReadOnlyObjectWrapper<Bounds> scrollableBoundsProperty;
-	private ReadOnlyObjectWrapper<Bounds> contentBoundsProperty;
-	private ObjectBinding<Bounds> scrollableBoundsBinding;
-	private ObjectBinding<Bounds> contentBoundsBinding;
-
 	/**
 	 * Constructs a new {@link ScrollPaneEx}.
 	 */
 	public ScrollPaneEx() {
 		getChildren().addAll(getScrolledPane(), getScrollbarGroup());
-		getScrolledPane().boundsInLocalProperty()
-				.addListener(canvasBoundsInLocalChangeListener);
+
 		widthProperty().addListener(widthChangeListener);
 		heightProperty().addListener(heightChangeListener);
 
-		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
-
-			{
-				bind(getContentGroup().boundsInParentProperty(),
-						widthProperty(), heightProperty());
-			}
-
+		contentBoundsBinding = new ObjectBinding<Bounds>() {
 			@Override
 			protected Bounds computeValue() {
-				double[] bb = computeScrollableBoundsInLocal();
-				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0],
-						bb[3] - bb[1]);
+				return new BoundingBox(contentBounds[0], contentBounds[1],
+						contentBounds[2] - contentBounds[0],
+						contentBounds[3] - contentBounds[1]);
+			}
+		};
+		contentBoundsProperty = new ReadOnlyObjectWrapper<Bounds>() {
+			{
+				bind(contentBoundsBinding);
+			}
+		};
+
+		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
+			@Override
+			protected Bounds computeValue() {
+				return new BoundingBox(scrollableBounds[0], scrollableBounds[1],
+						scrollableBounds[2] - scrollableBounds[0],
+						scrollableBounds[3] - scrollableBounds[1]);
 			}
 		};
 		scrollableBoundsProperty = new ReadOnlyObjectWrapper<Bounds>() {
@@ -136,26 +150,6 @@ public class ScrollPaneEx extends Region {
 				bind(scrollableBoundsBinding);
 			}
 		};
-		contentBoundsBinding = new ObjectBinding<Bounds>() {
-
-			{
-				bind(getContentGroup().boundsInParentProperty());
-			}
-
-			@Override
-			protected Bounds computeValue() {
-				double[] bb = computeContentBoundsInLocal();
-				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0],
-						bb[3] - bb[1]);
-			}
-		};
-
-		contentBoundsProperty = new ReadOnlyObjectWrapper<Bounds>() {
-			{
-				bind(contentBoundsBinding);
-			}
-		};
-
 	}
 
 	/**
@@ -194,8 +188,8 @@ public class ScrollPaneEx extends Region {
 	 */
 	protected double computeHv(double tx) {
 		return lerp(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
-				norm(currentScrollableBounds[0],
-						currentScrollableBounds[2] - getWidth(), -tx));
+				norm(scrollableBounds[0], scrollableBounds[2] - getWidth(),
+						-tx));
 	}
 
 	/**
@@ -206,7 +200,7 @@ public class ScrollPaneEx extends Region {
 	 *         <code>[minx, miny, maxx, maxy]</code>.
 	 */
 	protected double[] computeScrollableBoundsInLocal() {
-		double[] cb = computeContentBoundsInLocal();
+		double[] cb = Arrays.copyOf(contentBounds, contentBounds.length);
 		Bounds db = contentGroup.getBoundsInParent();
 
 		// factor in the viewport extending the content bounds
@@ -241,8 +235,7 @@ public class ScrollPaneEx extends Region {
 	 *         scrollbar value.
 	 */
 	protected double computeTx(double hv) {
-		return -lerp(currentScrollableBounds[0],
-				currentScrollableBounds[2] - getWidth(),
+		return -lerp(scrollableBounds[0], scrollableBounds[2] - getWidth(),
 				norm(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
 						hv));
 	}
@@ -257,8 +250,7 @@ public class ScrollPaneEx extends Region {
 	 *         scrollbar value.
 	 */
 	protected double computeTy(double vv) {
-		return -lerp(currentScrollableBounds[1],
-				currentScrollableBounds[3] - getHeight(),
+		return -lerp(scrollableBounds[1], scrollableBounds[3] - getHeight(),
 				norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
 						vv));
 	}
@@ -274,8 +266,8 @@ public class ScrollPaneEx extends Region {
 	 */
 	protected double computeVv(double ty) {
 		return lerp(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
-				norm(currentScrollableBounds[1],
-						currentScrollableBounds[3] - getHeight(), -ty));
+				norm(scrollableBounds[1], scrollableBounds[3] - getHeight(),
+						-ty));
 	}
 
 	/**
@@ -309,7 +301,7 @@ public class ScrollPaneEx extends Region {
 		Group g = new Group();
 		g.getTransforms().add(contentTransformProperty.get());
 		g.boundsInParentProperty()
-				.addListener(contentBoundsInParentChangeListener);
+				.addListener(contentGroupBoundsInParentChangeListener);
 		return g;
 	}
 
@@ -434,9 +426,11 @@ public class ScrollPaneEx extends Region {
 	 * @return The {@link Pane} which is translated when scrolling.
 	 */
 	protected Pane createScrolledPane() {
-		Pane canvas = new Pane();
-		canvas.getChildren().add(getContentGroup());
-		return canvas;
+		Pane scrolledPane = new Pane();
+		scrolledPane.getChildren().add(getContentGroup());
+		scrolledPane.boundsInLocalProperty()
+				.addListener(scrolledPaneBoundsInLocalChangeListener);
+		return scrolledPane;
 	}
 
 	/**
@@ -856,9 +850,6 @@ public class ScrollPaneEx extends Region {
 		viewportTransform.setTy(tx.getTy());
 
 		updateScrollbars();
-
-		contentBoundsBinding.invalidate();
-		scrollableBoundsBinding.invalidate();
 	}
 
 	/**
@@ -921,8 +912,11 @@ public class ScrollPaneEx extends Region {
 			return;
 		}
 
+		// determine current content bounds
+		contentBounds = computeContentBoundsInLocal();
+		contentBoundsBinding.invalidate();
+
 		// show/hide scrollbars
-		double[] contentBounds = computeContentBoundsInLocal();
 		if (contentBounds[0] < 0 || contentBounds[2] > getWidth()) {
 			horizontalScrollBar.setVisible(true);
 		} else {
@@ -935,19 +929,17 @@ public class ScrollPaneEx extends Region {
 		}
 
 		// determine current scrollable bounds
-		double[] bounds = computeScrollableBoundsInLocal();
-		for (int i = 0; i < bounds.length; i++) {
-			currentScrollableBounds[i] = bounds[i];
-		}
+		scrollableBounds = computeScrollableBoundsInLocal();
+		scrollableBoundsBinding.invalidate();
 
 		// update scrollbar ranges
-		horizontalScrollBar.setMin(currentScrollableBounds[0]);
-		horizontalScrollBar.setMax(currentScrollableBounds[2]);
+		horizontalScrollBar.setMin(scrollableBounds[0]);
+		horizontalScrollBar.setMax(scrollableBounds[2]);
 		horizontalScrollBar.setVisibleAmount(getWidth());
 		horizontalScrollBar.setBlockIncrement(getWidth() / 2);
 		horizontalScrollBar.setUnitIncrement(getWidth() / 10);
-		verticalScrollBar.setMin(currentScrollableBounds[1]);
-		verticalScrollBar.setMax(currentScrollableBounds[3]);
+		verticalScrollBar.setMin(scrollableBounds[1]);
+		verticalScrollBar.setMax(scrollableBounds[3]);
 		verticalScrollBar.setVisibleAmount(getHeight());
 		verticalScrollBar.setBlockIncrement(getHeight() / 2);
 		verticalScrollBar.setUnitIncrement(getHeight() / 10);

@@ -57,7 +57,7 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 	 *            The new cell height for the {@link FXGridLayer}.
 	 */
 	protected void applyGridCellHeight(double height) {
-		getGridLayer().setGridHeight(height);
+		getGridLayer().gridCellHeightProperty().set(height);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 	 *            The new cell width for the {@link FXGridLayer}.
 	 */
 	protected void applyGridCellWidth(double width) {
-		getGridLayer().setGridWidth(width);
+		getGridLayer().gridCellWidthProperty().set(width);
 	}
 
 	/**
@@ -99,21 +99,28 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 	protected void applyZoomGrid(boolean zoomGrid) {
 		ViewportModel viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
+		Affine gridTransform = getGridLayer().gridTransformProperty().get();
 		if (zoomGrid) {
 			if (!isListeningOnViewport) {
 				viewportModel.addPropertyChangeListener(this);
 				isListeningOnViewport = true;
 				// apply current contents transform
-				getGridLayer().gridTransformProperty()
-						.bind(getScrollPane().contentTransformProperty());
+				Affine contentTransform = getScrollPane()
+						.contentTransformProperty().get();
+				gridTransform.mxxProperty()
+						.bind(contentTransform.mxxProperty());
+				gridTransform.myyProperty()
+						.bind(contentTransform.myyProperty());
 			}
 		} else {
 			if (isListeningOnViewport) {
 				viewportModel.removePropertyChangeListener(this);
 				isListeningOnViewport = false;
 				// reset grid scale to (1, 1)
-				getGridLayer().gridTransformProperty().unbind();
-				getGridLayer().gridTransformProperty().set(new Affine());
+				gridTransform.mxxProperty().unbind();
+				gridTransform.myyProperty().unbind();
+				gridTransform.setMxx(1);
+				gridTransform.setMyy(1);
 			}
 		}
 	}

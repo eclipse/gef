@@ -97,8 +97,14 @@ public class FXViewer extends AbstractViewer<Node> {
 				scrollPane.getScrolledPane().getChildren().add(gridLayer);
 				gridLayer.toBack();
 
-				gridLayer.bindBounds(
-						scrollPane.scrollableBoundsProperty());
+				// bind translation and bounds of grid layer
+				gridLayer.gridTransformProperty().get().txProperty()
+						.bind(scrollPane.contentTransformProperty().get()
+								.txProperty());
+				gridLayer.gridTransformProperty().get().tyProperty()
+						.bind(scrollPane.contentTransformProperty().get()
+								.tyProperty());
+				gridLayer.bindBounds(scrollPane.scrollableBoundsProperty());
 			}
 		}
 		return scrollPane;

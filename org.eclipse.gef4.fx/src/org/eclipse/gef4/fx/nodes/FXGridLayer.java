@@ -14,10 +14,9 @@ package org.eclipse.gef4.fx.nodes;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
@@ -54,24 +53,7 @@ public class FXGridLayer extends Group {
 			gridTransform.tyProperty().addListener(repaintListener);
 			gridTransform.mxxProperty().addListener(repaintListener);
 			gridTransform.myyProperty().addListener(repaintListener);
-			gridTransformProperty.addListener(new ChangeListener<Affine>() {
 
-				@Override
-				public void changed(
-						ObservableValue<? extends Affine> observable,
-						Affine oldValue, Affine newValue) {
-					oldValue.txProperty().removeListener(repaintListener);
-					oldValue.tyProperty().removeListener(repaintListener);
-					oldValue.mxxProperty().removeListener(repaintListener);
-					oldValue.myyProperty().removeListener(repaintListener);
-					newValue.txProperty().addListener(repaintListener);
-					newValue.tyProperty().addListener(repaintListener);
-					newValue.mxxProperty().addListener(repaintListener);
-					newValue.myyProperty().addListener(repaintListener);
-					gridCanvas.repaintGrid();
-				}
-
-			});
 			gridCellWidthProperty.addListener(repaintListener);
 			gridCellHeightProperty.addListener(repaintListener);
 
@@ -131,7 +113,7 @@ public class FXGridLayer extends Group {
 
 	private final FXGridLayer.GridCanvas gridCanvas;
 
-	private final SimpleObjectProperty<Affine> gridTransformProperty = new SimpleObjectProperty<Affine>(
+	private final ReadOnlyObjectWrapper<Affine> gridTransformProperty = new ReadOnlyObjectWrapper<Affine>(
 			new Affine());
 
 	private final DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
@@ -216,28 +198,26 @@ public class FXGridLayer extends Group {
 	 * @return The {@link Affine} transform property of this {@link FXGridLayer}
 	 *         .
 	 */
-	public ObjectProperty<Affine> gridTransformProperty() {
-		return gridTransformProperty;
+	public ReadOnlyObjectProperty<Affine> gridTransformProperty() {
+		return gridTransformProperty.getReadOnlyProperty();
 	}
 
 	/**
-	 * Sets the grid cell height to the given value.
-	 *
-	 * @param height
-	 *            The new grid cell height.
+	 * Returns the grid cell height as a (writable) property.
+	 * 
+	 * @return The grid cell height as a {@link DoubleProperty}.
 	 */
-	public void setGridHeight(double height) {
-		gridCellHeightProperty.set(height);
+	public DoubleProperty gridCellHeightProperty() {
+		return gridCellHeightProperty;
 	}
 
 	/**
-	 * Sets the grid cell width to the given value.
-	 *
-	 * @param width
-	 *            The new grid cell width.
+	 * Returns the grid cell width as a (writable) property.
+	 * 
+	 * @return The grid cell width as a {@link DoubleProperty}.
 	 */
-	public void setGridWidth(double width) {
-		gridCellWidthProperty.set(width);
+	public DoubleProperty gridCellWidthProperty() {
+		return gridCellWidthProperty;
 	}
 
 }
