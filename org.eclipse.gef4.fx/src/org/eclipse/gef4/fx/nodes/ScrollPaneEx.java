@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - refactorings and cleanups
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
@@ -48,15 +49,16 @@ import javafx.util.Duration;
  * the scrolled pane.
  * <p>
  * In order to rotate or scale the viewport, you can access a
- * "viewport transformation" which is applied to the contents group. Scrolling
- * is done independently of this viewport transformation, using the translate-x
- * and translate-y properties of the scrolled pane.
+ * "content transformation" which is applied to the contents group. Scrolling is
+ * done independently of this transformation, using the translate-x and
+ * translate-y properties of the scrolled pane, which corresponds to the
+ * horizontal and vertical scroll offset.
  * <p>
  * The ScrollPaneEx computes two bounds: a) the contents-bounds, and b) the
  * scrollable bounds. The contents-bounds are the bounds of the contents group
  * within the ScrollPaneEx's coordinate system. The scrollable bounds are at
- * least as big as the contents-bounds but also include the viewport, i.e. any
- * empty space that is currently visible.
+ * least as big as the contents-bounds but also include the complete viewport,
+ * i.e. any empty space that is currently visible.
  * <p>
  * The ScrollPaneEx provides the scroll position in multiple formats: a) the
  * values of the scrollbars (depends on scrollable bounds), b) the ratios of the
