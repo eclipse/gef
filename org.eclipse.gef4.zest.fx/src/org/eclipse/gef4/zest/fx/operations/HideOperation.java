@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -32,7 +33,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  * @author mwienand
  *
  */
-public class HideOperation extends AbstractOperation {
+public class HideOperation extends AbstractOperation implements ITransactionalOperation {
 
 	/**
 	 * Constructs a new {@link HideOperation} that will hide the given
@@ -114,6 +115,15 @@ public class HideOperation extends AbstractOperation {
 	 */
 	protected void hide() {
 		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).hide(node.getContent());
+	}
+
+	@Override
+	public boolean isNoOp() {
+		if (isHidden) {
+			return !node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).isHidden(node.getContent());
+		} else {
+			return node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).isHidden(node.getContent());
+		}
 	}
 
 	@Override
