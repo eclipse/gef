@@ -915,8 +915,12 @@ public class ScrollPaneEx extends Region {
 		}
 
 		// determine current content bounds
+		double[] oldContentBounds = Arrays.copyOf(contentBounds,
+				contentBounds.length);
 		contentBounds = computeContentBoundsInLocal();
-		contentBoundsBinding.invalidate();
+		if (!Arrays.equals(oldContentBounds, contentBounds)) {
+			contentBoundsBinding.invalidate();
+		}
 
 		// show/hide scrollbars
 		if (contentBounds[0] < 0 || contentBounds[2] > getWidth()) {
@@ -931,8 +935,12 @@ public class ScrollPaneEx extends Region {
 		}
 
 		// determine current scrollable bounds
+		double[] oldScrollableBounds = Arrays.copyOf(scrollableBounds,
+				scrollableBounds.length);
 		scrollableBounds = computeScrollableBoundsInLocal();
-		scrollableBoundsBinding.invalidate();
+		if (!Arrays.equals(oldScrollableBounds, scrollableBounds)) {
+			scrollableBoundsBinding.invalidate();
+		}
 
 		// update scrollbar ranges
 		horizontalScrollBar.setMin(scrollableBounds[0]);
