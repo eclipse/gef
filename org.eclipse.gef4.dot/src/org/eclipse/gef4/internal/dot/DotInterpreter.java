@@ -175,7 +175,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			// if an explicit global style is set, use it
 			graphConnection.attr(DotProperties.EDGE_STYLE, globalEdgeStyleLc);
 		}
-		graph.edges(graphConnection.build());
+		graph.edges(graphConnection.buildEdge());
 	}
 
 	private boolean supported(String value, Set<String> vals) {
@@ -260,7 +260,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			node = nodes.get(nodeId);
 		} else {
 			node = new Node.Builder().attr(DotProperties.NODE_ID, nodeId)
-					.build();
+					.buildNode();
 		}
 
 		if (label != null) {
@@ -280,7 +280,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			Node node = new Node.Builder()
 					.attr(DotProperties.NODE_LABEL,
 							globalNodeLabel != null ? globalNodeLabel : id)
-					.attr(DotProperties.NODE_ID, id).build();
+					.attr(DotProperties.NODE_ID, id).buildNode();
 			nodes.put(id, node);
 			graph = graph.nodes(node);
 		}

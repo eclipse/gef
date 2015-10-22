@@ -33,14 +33,18 @@ import org.junit.Test;
 
 public class GraphLayoutContextTests {
 
-	public static Edge e(Node n, Node m) {
-		return new Edge.Builder(n, m).build();
-	}
+	private static int ID;
 
 	/*
 	 * The following constants and methods are for easily building graph
 	 * structures.
 	 */
+
+	public static Map<String, Object> ATTR_EMPTY = new HashMap<String, Object>();
+
+	public static Edge e(Node n, Node m) {
+		return new Edge.Builder(n, m).buildEdge();
+	}
 
 	public static List<Edge> edges(List<Node> nodes, int... indices) {
 		List<Edge> edges = new ArrayList<Edge>();
@@ -52,7 +56,7 @@ public class GraphLayoutContextTests {
 
 	public static Node n(String label) {
 		return new Node.Builder().attr(ZestProperties.ELEMENT_LABEL, label).attr(ZestProperties.ELEMENT_CSS_ID, ID++)
-				.build();
+				.buildNode();
 	}
 
 	public static List<Node> nodes(String... labels) {
@@ -62,10 +66,6 @@ public class GraphLayoutContextTests {
 		}
 		return Arrays.asList(nodes);
 	}
-
-	private static int ID;
-
-	public static Map<String, Object> ATTR_EMPTY = new HashMap<String, Object>();
 
 	/*
 	 * The test_n_m() functions test graphs with n nodes and m edges

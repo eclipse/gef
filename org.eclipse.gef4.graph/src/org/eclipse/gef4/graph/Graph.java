@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see #372365)
+ *     Fabian Steeg    - initial API and implementation (bug #372365)
+ *     Alexander Nyßen - refactoring of builder API (bug #480293)
  *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
@@ -16,9 +17,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.gef4.common.notify.IListObserver;
@@ -32,6 +37,7 @@ import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
  * those {@link Node}s.
  *
  * @author Fabian Steeg
+ * @author anyssen
  *
  */
 public final class Graph implements IPropertyChangeNotifier {
@@ -42,8 +48,33 @@ public final class Graph implements IPropertyChangeNotifier {
 	 */
 	public static class Builder {
 
-		private List<Node> nodes = new ArrayList<Node>();
+		/**
+		 * A context object passed to nested builders when creating a builder
+		 * chain.
+		 *
+		 */
+		protected class Context {
+			/**
+			 * The {@link Graph.Builder} used to construct the {@link Graph},
+			 * i.e. the root of the builder chain.
+			 */
+			protected Graph.Builder builder;
+			/**
+			 * {@link Node.Builder}s, which are part of the builder chain,
+			 * mapped to their keys.
+			 */
+			protected Map<Object, Node.Builder> nodeBuilders = new HashMap<Object, Node.Builder>();
+			/**
+			 * {@link Edge.Builder}s, which are part of the builder chain.
+			 */
+			protected Set<Edge.Builder> edgeBuilders = new HashSet<Edge.Builder>();
+		}
+
+		// use linked hash map to preserve ordering
+		private LinkedHashMap<Object, Node> nodes = new LinkedHashMap<Object, Node>();
 		private List<Edge> edges = new ArrayList<Edge>();
+		private Context context;
+
 		private Map<String, Object> attrs = new HashMap<String, Object>();
 
 		/**
@@ -51,6 +82,8 @@ public final class Graph implements IPropertyChangeNotifier {
 		 * {@link Edge}s.
 		 */
 		public Builder() {
+			context = new Context();
+			context.builder = this;
 		}
 
 		/**
@@ -77,7 +110,32 @@ public final class Graph implements IPropertyChangeNotifier {
 		 *         to this {@link Builder}.
 		 */
 		public Graph build() {
-			return new Graph(attrs, nodes, edges);
+			for (Node.Builder nb : context.nodeBuilders.values()) {
+				nodes.put(nb.getKey(), nb.buildNode());
+			}
+			for (Edge.Builder eb : context.edgeBuilders) {
+				edges.add(eb.buildEdge());
+			}
+
+			return new Graph(attrs, nodes.values(), edges);
+		}
+
+		/**
+		 * Constructs a new {@link Edge.Builder}.
+		 *
+		 * @param sourceNodeOrKey
+		 *            The source {@link Node} or a key to identify the source
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @param targetNodeOrKey
+		 *            The target {@link Node} or a key to identify the target
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @return A new {@link Edge.Builder}.
+		 */
+		public Edge.Builder edge(Object sourceNodeOrKey, Object targetNodeOrKey) {
+			Edge.Builder eb = new Edge.Builder(context, sourceNodeOrKey, targetNodeOrKey);
+			return eb;
 		}
 
 		/**
@@ -95,6 +153,51 @@ public final class Graph implements IPropertyChangeNotifier {
 		}
 
 		/**
+		 * Retrieves the node already created by a builder for the given key, or
+		 * creates a new one via the respective {@link Node.Builder}.
+		 *
+		 * @param key
+		 *            The key to identify the {@link Node} or
+		 *            {@link Node.Builder}.
+		 * @return An existing or newly created {@link Node}.
+		 */
+		protected Node findOrCreateNode(Object key) {
+			// if we have already created a new with the given key, return the
+			// created node
+			if (nodes.containsKey(key)) {
+				return nodes.get(key);
+			} else {
+				// create a new node
+				nodes.put(key, context.nodeBuilders.get(key).buildNode());
+			}
+			return nodes.get(key);
+		}
+
+		/**
+		 * Constructs a new (anonymous) {@link Node.Builder}.
+		 *
+		 * @return A new {@link Node.Builder}.
+		 */
+		public Node.Builder node() {
+			Node.Builder nb = new Node.Builder(context);
+			return nb;
+		}
+
+		/**
+		 * Constructs a new (identifiable) {@link Node.Builder}.
+		 *
+		 * @param key
+		 *            The key that can be used to identify the
+		 *            {@link Node.Builder}
+		 *
+		 * @return A new {@link Node.Builder}.
+		 */
+		public Node.Builder node(Object key) {
+			Node.Builder nb = new Node.Builder(context, key);
+			return nb;
+		}
+
+		/**
 		 * Adds the given {@link Node}s to the {@link Graph} which is
 		 * constructed by this {@link Builder}.
 		 *
@@ -104,10 +207,11 @@ public final class Graph implements IPropertyChangeNotifier {
 		 * @return <code>this</code> for convenience.
 		 */
 		public Graph.Builder nodes(Node... nodes) {
-			this.nodes.addAll(Arrays.asList(nodes));
+			for (Node n : nodes) {
+				this.nodes.put(System.identityHashCode(n), n);
+			}
 			return this;
 		}
-
 	}
 
 	/**
@@ -202,7 +306,7 @@ public final class Graph implements IPropertyChangeNotifier {
 	 * @param edges
 	 *            List of {@link Edge}s.
 	 */
-	public Graph(Map<String, Object> attrs, List<? extends Node> nodes, List<? extends Edge> edges) {
+	public Graph(Map<String, Object> attrs, Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
 		this.attrs.putAll(attrs);
 		this.attrs.addMapObserver(attributesObserver);
 		this.nodes.addAll(nodes);

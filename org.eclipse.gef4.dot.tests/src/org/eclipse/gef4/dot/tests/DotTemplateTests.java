@@ -34,13 +34,13 @@ public class DotTemplateTests {
 		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DOT);
 		graph.attr(DotProperties.GRAPH_RANKDIR, DotProperties.GRAPH_RANKDIR_LR);
 		Node node1 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node 1")
-				.build();
+				.buildNode();
 		Node node2 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node 2")
-				.build();
+				.buildNode();
 		Edge edge = new Edge.Builder(node1, node2)
 				.attr(DotProperties.EDGE_LABEL, "A dotted edge")
 				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
-				.build();
+				.buildEdge();
 		graph.attr(DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
 				.edges(edge);
 		String dot = new DotTemplate().generate(graph.build());

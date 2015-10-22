@@ -56,7 +56,7 @@ public abstract class AbstractZestExample extends Application {
 		for (int i = 0; i < attr.length; i += 2) {
 			builder.attr(attr[i].toString(), attr[i + 1]);
 		}
-		return builder.build();
+		return builder.buildEdge();
 	}
 
 	protected static Edge e(Graph graph, org.eclipse.gef4.graph.Node n,
@@ -74,7 +74,7 @@ public abstract class AbstractZestExample extends Application {
 		for (int i = 0; i < attr.length; i += 2) {
 			builder.attr(attr[i].toString(), attr[i + 1]);
 		}
-		return builder.build();
+		return builder.buildNode();
 	}
 
 	protected static org.eclipse.gef4.graph.Node n(Graph graph,

@@ -40,7 +40,7 @@ import javafx.scene.transform.Affine;
 public class NodeLayoutBehaviorTests {
 
 	private GraphNodeLayout createNodeLayout() {
-		Node node = new Node.Builder().build();
+		Node node = new Node.Builder().buildNode();
 		Graph graph = new Graph.Builder().nodes(node).build();
 		GraphLayoutContext glc = new GraphLayoutContext(graph);
 		GraphNodeLayout nodeLayout = new GraphNodeLayout(glc, node);

@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg                 - initial API and implementation (see #372365)
+ *     Fabian Steeg                 - initial API and implementation (bug #372365)
  *     Matthias Wienand (itemis AG) - contribution for bugs #438734, #461296
+ *     Alexander Nyßen              - refactoring of builder API (bug #480293)
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
@@ -25,6 +26,7 @@ import java.util.TreeMap;
 import org.eclipse.gef4.common.notify.IMapObserver;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.graph.Graph.Builder.Context;
 
 /**
  * A {@link Node} represents a vertex within a {@link Graph}.
@@ -40,6 +42,50 @@ public class Node implements IPropertyChangeNotifier {
 	 */
 	public static class Builder {
 		private Map<String, Object> attrs = new HashMap<String, Object>();
+
+		private Graph.Builder.Context context;
+		private Object key;
+
+		/**
+		 * Constructs a new (anonymous) context-free {@link Node.Builder}, which
+		 * can only be used to construct a single node via {@link #buildNode()},
+		 * i.e. which cannot be chained.
+		 */
+		public Builder() {
+			this(null);
+		}
+
+		/**
+		 * Constructs a new (anonymous) {@link Node.Builder} for the given
+		 * {@link Context}.
+		 *
+		 * @param context
+		 *            The context in which the {@link Node.Builder} is used.
+		 */
+		public Builder(Graph.Builder.Context context) {
+			this(context, null);
+		}
+
+		/**
+		 * Constructs a new identifiable {@link Node.Builder} for the given
+		 * {@link Context}.
+		 *
+		 * @param context
+		 *            The context in which the {@link Node.Builder} is used.
+		 * @param key
+		 *            The key to identify the builder.
+		 */
+		public Builder(Graph.Builder.Context context, Object key) {
+			this.context = context;
+			if (context != null) {
+				if (key == null) {
+					this.key = new Integer(System.identityHashCode(this)).toString();
+				} else {
+					this.key = key;
+				}
+				this.context.nodeBuilders.put(key, this);
+			}
+		}
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
@@ -58,15 +104,77 @@ public class Node implements IPropertyChangeNotifier {
 		}
 
 		/**
-		 * Constructs a new {@link Node} from the values which have been
-		 * supplied to this {@link Builder}.
+		 * Constructs a new {@link Graph} from the values which have been
+		 * supplied to the builder chain.
 		 *
-		 * @return A new {@link Node} from the values which have been supplied
-		 *         to this {@link Builder}.
+		 * @return A new {@link Graph}.
 		 */
-		public Node build() {
+		public Graph build() {
+			return context.builder.build();
+		}
+
+		/**
+		 * Creates a new {@link Node}, setting the values specified via this
+		 * {@link Node.Builder}.
+		 *
+		 * @return A newly created {@link Node}.
+		 */
+		public Node buildNode() {
 			return new Node(attrs);
 		}
+
+		/**
+		 * Constructs a new {@link Edge.Builder}.
+		 *
+		 * @param sourceNodeOrKey
+		 *            The source {@link Node} or a key to identify the source
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @param targetNodeOrKey
+		 *            The target {@link Node} or a key to identify the target
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @return A new {@link Edge.Builder}.
+		 */
+		public Edge.Builder edge(Object sourceNodeOrKey, Object targetNodeOrKey) {
+			Edge.Builder eb = new Edge.Builder(context, sourceNodeOrKey, targetNodeOrKey);
+			return eb;
+		}
+
+		/**
+		 * Returns the key that can be used to identify this
+		 * {@link Node.Builder}
+		 *
+		 * @return The key that can be used for identification.
+		 */
+		protected Object getKey() {
+			return key;
+		}
+
+		/**
+		 * Constructs a new (anonymous) {@link Node.Builder}.
+		 *
+		 * @return A new {@link Node.Builder}.
+		 */
+		public Node.Builder node() {
+			Node.Builder nb = new Node.Builder(context);
+			return nb;
+		}
+
+		/**
+		 * Constructs a new (identifiable) {@link Node.Builder}.
+		 *
+		 * @param key
+		 *            The key that can be used to identify the
+		 *            {@link Node.Builder}
+		 *
+		 * @return A new {@link Node.Builder}.
+		 */
+		public Node.Builder node(Object key) {
+			Node.Builder nb = new Node.Builder(context, key);
+			return nb;
+		}
+
 	}
 
 	/**

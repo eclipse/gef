@@ -67,7 +67,7 @@ final public class GraphCopier {
 		}
 
 		// put into graph
-		Edge build = copy.build();
+		Edge build = copy.buildEdge();
 		targetGraph.edges(build);
 		return build;
 	}
@@ -78,7 +78,7 @@ final public class GraphCopier {
 		for (Entry<String, Object> attr : node.getAttrs().entrySet()) {
 			copy.attr(attr.getKey(), attr.getValue());
 		}
-		Node copiedNode = copy.build();
+		Node copiedNode = copy.buildNode();
 		targetGraph.nodes(copiedNode);
 		return copiedNode;
 	}

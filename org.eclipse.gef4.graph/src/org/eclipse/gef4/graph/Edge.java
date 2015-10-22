@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see #372365)
+ *     Fabian Steeg    - initial API and implementation (bug #372365)
+ *     Alexander Nyßen - refactoring of builder API (bug #480293)
  *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
@@ -22,6 +23,7 @@ import java.util.TreeMap;
 import org.eclipse.gef4.common.notify.IMapObserver;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.graph.Graph.Builder.Context;
 
 /**
  * An {@link Edge} represents a (directed) connection between two {@link Node}s
@@ -43,25 +45,47 @@ public class Edge implements IPropertyChangeNotifier {
 	 */
 	public static class Builder {
 
+		private Graph.Builder.Context context;
 		private Map<String, Object> attrs = new HashMap<String, Object>();
-		private Node source;
-		private Node target;
+		private Object sourceNodeOrKey;
+		private Object targetNodeOrKey;
 
 		/**
-		 * Constructs a new {@link Builder} for an {@link Edge} which connects
-		 * the given <i>source</i> {@link Node} with the given <i>target</i>
-		 * {@link Node}.
+		 * Constructs a new (anonymous) {@link Edge.Builder} for the given
+		 * {@link Context}.
 		 *
-		 * @param source
-		 *            The source {@link Node} for the {@link Edge} which is
-		 *            constructed by this {@link Builder}.
-		 * @param target
-		 *            The target {@link Node} for the {@link Edge} which is
-		 *            constructed by this {@link Builder}.
+		 * @param context
+		 *            The context in which the {@link Edge.Builder} is used.
+		 * @param sourceNodeOrKey
+		 *            The source {@link Node} or a key to identify the source
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @param targetNodeOrKey
+		 *            The target {@link Node} or a key to identify the target
+		 *            {@link Node} (or its {@link Node.Builder}).
 		 */
-		public Builder(Node source, Node target) {
-			this.source = source;
-			this.target = target;
+		public Builder(Graph.Builder.Context context, Object sourceNodeOrKey, Object targetNodeOrKey) {
+			this.context = context;
+			if (context != null) {
+				context.edgeBuilders.add(this);
+			}
+			this.sourceNodeOrKey = sourceNodeOrKey;
+			this.targetNodeOrKey = targetNodeOrKey;
+		}
+
+		/**
+		 * Constructs a new (anonymous) context-free {@link Edge.Builder}, which
+		 * can only be used to construct a single edge via {@link #buildEdge()},
+		 * i.e. which cannot be chained.
+		 *
+		 * @param sourceNode
+		 *            The source {@link Node}.
+		 *
+		 * @param targetNode
+		 *            The target {@link Node}.
+		 */
+		public Builder(Node sourceNode, Node targetNode) {
+			this(null, sourceNode, targetNode);
 		}
 
 		/**
@@ -81,16 +105,81 @@ public class Edge implements IPropertyChangeNotifier {
 		}
 
 		/**
-		 * Constructs a new {@link Edge} from the values which have been
-		 * supplied to this {@link Builder}.
+		 * Constructs a new {@link Graph} from the values which have been
+		 * supplied to the builder chain.
 		 *
-		 * @return A new {@link Edge} from the values which have been supplied
-		 *         to this {@link Builder}.
+		 * @return A new {@link Graph}.
 		 */
-		public Edge build() {
-			return new Edge(attrs, source, target);
+		public Graph build() {
+			if (context == null) {
+				throw new IllegalStateException("The builder is not chained.");
+			}
+			return context.builder.build();
 		}
 
+		/**
+		 * Creates a new {@link Edge}, setting the values specified via this
+		 * {@link Edge.Builder}.
+		 *
+		 * @return A newly created {@link Edge}.
+		 */
+		public Edge buildEdge() {
+			if (context == null && !(sourceNodeOrKey instanceof Node)) {
+				throw new IllegalStateException("May only use builder keys in case of chained builders.");
+			}
+			if (context == null && !(targetNodeOrKey instanceof Node)) {
+				throw new IllegalStateException("May only use builder keys in case of chained builders.");
+			}
+			Node sourceNode = sourceNodeOrKey instanceof Node ? (Node) sourceNodeOrKey
+					: context.builder.findOrCreateNode(sourceNodeOrKey);
+			Node targetNode = targetNodeOrKey instanceof Node ? (Node) targetNodeOrKey
+					: context.builder.findOrCreateNode(targetNodeOrKey);
+
+			return new Edge(attrs, sourceNode, targetNode);
+
+		}
+
+		/**
+		 * Constructs a new {@link Edge.Builder}.
+		 *
+		 * @param sourceNodeOrKey
+		 *            The source {@link Node} or a key to identify the source
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @param targetNodeOrKey
+		 *            The target {@link Node} or a key to identify the target
+		 *            {@link Node} (or its {@link Node.Builder}).
+		 *
+		 * @return A new {@link Edge.Builder}.
+		 */
+		public Edge.Builder edge(Object sourceNodeOrKey, Object targetNodeOrKey) {
+			Edge.Builder eb = new Edge.Builder(context, sourceNodeOrKey, targetNodeOrKey);
+			return eb;
+		}
+
+		/**
+		 * Constructs a new (anonymous) {@link Node.Builder} for a node.
+		 *
+		 * @return A {@link Node.Builder}.
+		 */
+		public Node.Builder node() {
+			Node.Builder nb = new Node.Builder(context);
+			return nb;
+		}
+
+		/**
+		 * Constructs a new (identifiable) {@link Node.Builder} for a node.
+		 *
+		 * @param key
+		 *            The key that can be used to identify the
+		 *            {@link Node.Builder}
+		 *
+		 * @return A {@link Node.Builder}.
+		 */
+		public Node.Builder node(Object key) {
+			Node.Builder nb = new Node.Builder(context, key);
+			return nb;
+		}
 	}
 
 	/**
