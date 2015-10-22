@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.gef4.common.notify.IListObserver;
@@ -67,7 +65,7 @@ public final class Graph implements IPropertyChangeNotifier {
 			/**
 			 * {@link Edge.Builder}s, which are part of the builder chain.
 			 */
-			protected Set<Edge.Builder> edgeBuilders = new HashSet<Edge.Builder>();
+			protected List<Edge.Builder> edgeBuilders = new ArrayList<Edge.Builder>();
 		}
 
 		// use linked hash map to preserve ordering
