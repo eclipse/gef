@@ -270,9 +270,24 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 				storeAndDisableRefreshVisuals(targetPart);
 				computeRelatives(targetPart);
 				init(transformPolicy);
-				// create transforms for scaling and translating the target part
-				scaleIndices.put(targetPart, transformPolicy.createPostScale(
-						getVisualBounds(targetPart).getTopLeft()));
+				// transform scale pivot to parent coordinates
+				Point pivotInScene = getVisualBounds(targetPart).getTopLeft();
+				Point pivotInParent = JavaFX2Geometry
+						.toPoint(getHost().getVisual().getParent()
+								.sceneToLocal(pivotInScene.x, pivotInScene.y));
+				// create transformations for scaling around pivot
+				int translateToOriginIndex = transformPolicy
+						.createPostTransform();
+				int scaleIndex = transformPolicy.createPostTransform();
+				int translateBackIndex = transformPolicy.createPostTransform();
+				// set translation transforms for scaling
+				transformPolicy.setPostTranslate(translateToOriginIndex,
+						-pivotInParent.x, -pivotInParent.y);
+				transformPolicy.setPostTranslate(translateBackIndex,
+						pivotInParent.x, pivotInParent.y);
+				// save rotation index for later adjustments
+				scaleIndices.put(targetPart, scaleIndex);
+				// create transform for translation of the target part
 				translateIndices.put(targetPart,
 						transformPolicy.createPostTransform());
 				// initialize resize policy if available

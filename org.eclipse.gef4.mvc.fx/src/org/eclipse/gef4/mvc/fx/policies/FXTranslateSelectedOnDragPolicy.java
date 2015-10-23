@@ -20,6 +20,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -41,8 +42,16 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
-				policy.setPostTranslateInScene(translationIndices.get(part),
-						delta.width, delta.height);
+				Point2D startInParent = getHost().getVisual().getParent()
+						.sceneToLocal(0, 0);
+				Point2D endInParent = getHost().getVisual().getParent()
+						.sceneToLocal(delta.width, delta.height);
+				Point2D deltaInParent = new Point2D(
+						endInParent.getX() - startInParent.getX(),
+						endInParent.getY() - startInParent.getY());
+				// TODO: snap to grid
+				policy.setPostTranslate(translationIndices.get(part),
+						deltaInParent.getX(), deltaInParent.getY());
 			}
 		}
 	}

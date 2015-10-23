@@ -21,7 +21,6 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
@@ -32,7 +31,6 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
@@ -81,10 +79,6 @@ import javafx.scene.transform.Affine;
  * the index of that transform within the respective list will be returned. This
  * index can later be used to manipulate the transform.
  * <p>
- * Additionally, the {@link #createPostRotate(Point)}, and
- * {@link #createPostScale(Point)} methods can be used to create a rotation or
- * scaling around a pivot point (in scene coordinates) for convenience.
- * <p>
  * The {@link #setPostRotate(int, Angle)},
  * {@link #setPostScale(int, double, double)},
  * {@link #setPostTransform(int, AffineTransform)},
@@ -92,9 +86,7 @@ import javafx.scene.transform.Affine;
  * {@link #setPreRotate(int, Angle)}, {@link #setPreScale(int, double, double)},
  * {@link #setPreTransform(int, AffineTransform)}, and
  * {@link #setPreTranslate(int, double, double)} methods can be used to change a
- * previously created pre- or post-transform. Additionally, the
- * {@link #setPostTranslateInScene(int, double, double)} method can be used to
- * set a translation in scene coordinates for convenience.
+ * previously created pre- or post-transform.
  *
  * @author mwienand
  *
@@ -230,87 +222,6 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		}
 		reset();
 		return commit;
-	}
-
-	/**
-	 * Creates three transformations that are used as follows:
-	 * <ol>
-	 * <li>Translates the host so that its origin is at the given pivot point.
-	 * <li>Rotates the host (the rotation angle can later be set using
-	 * {@link #setPostRotate(int, Angle)}).
-	 * <li>Translates the host back to its original position.
-	 * </ol>
-	 * The transformations are appended to the postTransforms list. Therefore,
-	 * they are applied last, as shown below:
-	 *
-	 * <pre>
-	 *            --&gt; --&gt; --&gt;  direction of concatenation --&gt; --&gt; --&gt;
-	 *
-	 *            postTransforms  initialNodeTransform  preTransforms
-	 *            |------------|                        |-----------|
-	 * postIndex: n, n-1, ...  0              preIndex: 0, 1,  ...  m
-	 *
-	 *            &lt;-- &lt;-- &lt;-- &lt;-- direction of effect &lt;-- &lt;-- &lt;-- &lt;--
-	 * </pre>
-	 *
-	 * @param pivotInScene
-	 *            The pivot {@link Point} in scene coordinates.
-	 * @return The rotation transformation index for later manipulation.
-	 */
-	public int createPostRotate(Point pivotInScene) {
-		// transform pivot to parent coordinates
-		Point pivotInLocal = JavaFX2Geometry.toPoint(getHost().getVisual()
-				.getParent().sceneToLocal(pivotInScene.x, pivotInScene.y));
-		// create transformations
-		int translateIndex = createPostTransform();
-		int rotateIndex = createPostTransform();
-		int translateBackIndex = createPostTransform();
-		// set translation transforms
-		setPostTranslate(translateIndex, -pivotInLocal.x, -pivotInLocal.y);
-		setPostTranslate(translateBackIndex, pivotInLocal.x, pivotInLocal.y);
-		// return rotation index for later adjustments
-		return rotateIndex;
-	}
-
-	/**
-	 * Creates three transformations that are used as follows:
-	 * <ol>
-	 * <li>Translates the host so that its origin is at the given pivot point.
-	 * <li>Scales the host (the rotation angle can later be set using
-	 * {@link #setPreScale(int, double, double)}).
-	 * <li>Translates the host back to its original position.
-	 * </ol>
-	 * The transformations are appended to the preTransforms list. Therefore,
-	 * they are applied first, as shown below:
-	 *
-	 * <pre>
-	 *            --&gt; --&gt; --&gt;  direction of concatenation --&gt; --&gt; --&gt;
-	 *
-	 *            postTransforms  initialNodeTransform  preTransforms
-	 *            |------------|                        |-----------|
-	 * postIndex: n, n-1, ...  0              preIndex: 0, 1,  ...  m
-	 *
-	 *            &lt;-- &lt;-- &lt;-- &lt;-- direction of effect &lt;-- &lt;-- &lt;-- &lt;--
-	 * </pre>
-	 *
-	 * @param pivotInScene
-	 *            The pivot {@link Point} in scene coordinates.
-	 * @return The scaling transformation index for later manipulation.
-	 */
-	public int createPostScale(Point pivotInScene) {
-		// transform pivot to parent coordinates
-		Point pivotInParent = JavaFX2Geometry.toPoint(getHost().getVisual()
-				.getParent().sceneToLocal(pivotInScene.x, pivotInScene.y));
-		// create transformations
-		int translateToOriginIndex = createPostTransform();
-		int scaleIndex = createPostTransform();
-		int translateBackIndex = createPostTransform();
-		// set translation transforms
-		setPostTranslate(translateToOriginIndex, -pivotInParent.x,
-				-pivotInParent.y);
-		setPostTranslate(translateBackIndex, pivotInParent.x, pivotInParent.y);
-		// return rotation index for later adjustments
-		return scaleIndex;
 	}
 
 	/**
@@ -497,33 +408,6 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 		}
 		// TODO: snap to grid
 		postTransforms.get(index).setToTranslation(tx, ty);
-		updateTransform();
-	}
-
-	/**
-	 * Sets the specified pre-transform to a translation by the given offsets.
-	 *
-	 * @param index
-	 *            The index of the pre-transform to manipulate.
-	 * @param tx
-	 *            The horizontal translation offset (in scene coordinates).
-	 * @param ty
-	 *            The vertical translation offset (in scene coordinates).
-	 */
-	public void setPostTranslateInScene(int index, double tx, double ty) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		Point2D startInParent = getHost().getVisual().getParent()
-				.sceneToLocal(0, 0);
-		Point2D endInParent = getHost().getVisual().getParent().sceneToLocal(tx,
-				ty);
-		Point2D deltaInParent = new Point2D(
-				endInParent.getX() - startInParent.getX(),
-				endInParent.getY() - startInParent.getY());
-		// TODO: snap to grid
-		postTransforms.get(index).setToTranslation(deltaInParent.getX(),
-				deltaInParent.getY());
 		updateTransform();
 	}
 

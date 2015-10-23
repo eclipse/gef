@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -104,8 +105,21 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			if (transformPolicy != null) {
 				storeAndDisableRefreshVisuals(part);
 				transformPolicy.init();
-				rotationIndices.put(part,
-						transformPolicy.createPostRotate(pivotInScene));
+				// transform pivot to parent coordinates
+				Point pivotInLocal = JavaFX2Geometry
+						.toPoint(getHost().getVisual().getParent()
+								.sceneToLocal(pivotInScene.x, pivotInScene.y));
+				// create transformations
+				int translateIndex = transformPolicy.createPostTransform();
+				int rotateIndex = transformPolicy.createPostTransform();
+				int translateBackIndex = transformPolicy.createPostTransform();
+				// set translation transforms
+				transformPolicy.setPostTranslate(translateIndex,
+						-pivotInLocal.x, -pivotInLocal.y);
+				transformPolicy.setPostTranslate(translateBackIndex,
+						pivotInLocal.x, pivotInLocal.y);
+				// save rotation index for later adjustment
+				rotationIndices.put(part, rotateIndex);
 			}
 		}
 	}
