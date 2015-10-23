@@ -83,7 +83,6 @@ public class FXGridLayer extends Group {
 			final double height = getHeight();
 
 			final GraphicsContext gc = getGraphicsContext2D();
-			gc.setFill(Color.WHITE);
 			gc.clearRect(0, 0, width, height);
 
 			final double xScale = gridTransformProperty.get().getMxx();
