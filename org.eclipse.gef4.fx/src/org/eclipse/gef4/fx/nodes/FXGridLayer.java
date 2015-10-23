@@ -81,13 +81,13 @@ public class FXGridLayer extends Group {
 		protected void repaintGrid() {
 			final double width = getWidth();
 			final double height = getHeight();
-			final double xScale = gridTransformProperty.get().getMxx();
-			final double yScale = gridTransformProperty.get().getMyy();
 
 			final GraphicsContext gc = getGraphicsContext2D();
 			gc.setFill(Color.WHITE);
-			gc.fillRect(0, 0, width, height);
+			gc.clearRect(0, 0, width, height);
 
+			final double xScale = gridTransformProperty.get().getMxx();
+			final double yScale = gridTransformProperty.get().getMyy();
 			// don't paint grid points if size is to large
 			if (((width / xScale) * (height / yScale) > GRID_THRESHOLD)) {
 				return;
@@ -191,6 +191,24 @@ public class FXGridLayer extends Group {
 	}
 
 	/**
+	 * Returns the grid cell height as a (writable) property.
+	 *
+	 * @return The grid cell height as a {@link DoubleProperty}.
+	 */
+	public DoubleProperty gridCellHeightProperty() {
+		return gridCellHeightProperty;
+	}
+
+	/**
+	 * Returns the grid cell width as a (writable) property.
+	 *
+	 * @return The grid cell width as a {@link DoubleProperty}.
+	 */
+	public DoubleProperty gridCellWidthProperty() {
+		return gridCellWidthProperty;
+	}
+
+	/**
 	 * Returns the {@link Affine} transform property of this {@link FXGridLayer}
 	 * . This can be used to adapt the grid layer to zooming changes within the
 	 * content which is above the grid.
@@ -200,24 +218,6 @@ public class FXGridLayer extends Group {
 	 */
 	public ReadOnlyObjectProperty<Affine> gridTransformProperty() {
 		return gridTransformProperty.getReadOnlyProperty();
-	}
-
-	/**
-	 * Returns the grid cell height as a (writable) property.
-	 * 
-	 * @return The grid cell height as a {@link DoubleProperty}.
-	 */
-	public DoubleProperty gridCellHeightProperty() {
-		return gridCellHeightProperty;
-	}
-
-	/**
-	 * Returns the grid cell width as a (writable) property.
-	 * 
-	 * @return The grid cell width as a {@link DoubleProperty}.
-	 */
-	public DoubleProperty gridCellWidthProperty() {
-		return gridCellWidthProperty;
 	}
 
 }
