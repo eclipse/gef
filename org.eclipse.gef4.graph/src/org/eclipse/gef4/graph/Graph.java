@@ -166,7 +166,11 @@ public final class Graph implements IPropertyChangeNotifier {
 				return nodes.get(key);
 			} else {
 				// create a new node
-				nodes.put(key, context.nodeBuilders.get(key).buildNode());
+				org.eclipse.gef4.graph.Node.Builder nodeBuilder = context.nodeBuilders.get(key);
+				if (nodeBuilder == null) {
+					return null;
+				}
+				nodes.put(key, nodeBuilder.buildNode());
 			}
 			return nodes.get(key);
 		}

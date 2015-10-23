@@ -46,6 +46,9 @@ public final class GraphBuilderExample {
 				.node("n2")//
 				.attr(DotProperties.NODE_LABEL, "2")//
 				.attr(DotProperties.NODE_ID, "2")//
+				.node("n3")//
+				.attr(DotProperties.NODE_LABEL, "3")//
+				.attr(DotProperties.NODE_ID, "3")//
 				.edge("n1", "n2").attr(DotProperties.EDGE_LABEL, "e1")
 				.edge("n1", "n3").build();
 
