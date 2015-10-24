@@ -29,7 +29,7 @@ import org.eclipse.gef4.fx.swt.controls.IControlFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class ButtonFXControlAdapterSnippet extends AbstractFXUIExample {
+public class ButtonFXControlAdapterSnippet extends AbstractFxSwtExample {
 
 	protected static FXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
 			final String text) {
