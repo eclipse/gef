@@ -17,7 +17,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ContentSynchronizationTests.class })
+@SuiteClasses({ AbstractVisualPartTests.class, ContentSynchronizationTests.class })
 public class AllTests {
 
 }

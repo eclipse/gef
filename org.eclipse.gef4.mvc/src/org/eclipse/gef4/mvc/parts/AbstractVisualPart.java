@@ -188,7 +188,8 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void addChild(IVisualPart<VR, ? extends VR> child, int index) {
-		List<IVisualPart<VR, ? extends VR>> oldChildren = getChildren();
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+				getChildren());
 		addChildWithoutNotify(child, index);
 
 		child.setParent(this);
@@ -598,7 +599,8 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 		child.setParent(null);
 		removeChildVisual(child, index);
-		List<IVisualPart<VR, ? extends VR>> oldChildren = getChildren();
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+				getChildren());
 		removeChildWithoutNotify(child);
 
 		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
