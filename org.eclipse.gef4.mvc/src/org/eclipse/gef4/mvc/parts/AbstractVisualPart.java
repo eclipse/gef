@@ -188,6 +188,12 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void addChild(IVisualPart<VR, ? extends VR> child, int index) {
+		if (getChildren().indexOf(child) >= 0) {
+			throw new IllegalArgumentException(
+					"Cannot add " + child + " because its already a child.");
+		}
+
+		// store old children list (for notifying property change listeners)
 		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
 				getChildren());
 		addChildWithoutNotify(child, index);
@@ -589,18 +595,19 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void removeChild(IVisualPart<VR, ? extends VR> child) {
-		int index = getChildren().indexOf(child);
-		if (index < 0) {
-			return;
+		if (getChildren().indexOf(child) < 0) {
+			throw new IllegalArgumentException(
+					"Cannot remove " + child + " because its not a child.");
 		}
+		// store old children list (for notifying property change listeners)
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+				getChildren());
+
 		if (isActive()) {
 			child.deactivate();
 		}
-
+		removeChildVisual(child, getChildren().indexOf(child));
 		child.setParent(null);
-		removeChildVisual(child, index);
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
-				getChildren());
 		removeChildWithoutNotify(child);
 
 		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
