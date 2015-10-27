@@ -188,7 +188,18 @@ public class FXGeometricCurvePart
 		ContentPolicy<Node> contentPolicy = this
 				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 		contentPolicy.init();
-		contentPolicy.detachFromAllContentAnchorages();
+
+		for (IVisualPart<Node, ? extends Node> anchorage : getAnchorages()
+				.keySet()) {
+			if (anchorage instanceof IContentPart) {
+				for (String role : getAnchorages().get(anchorage)) {
+					contentPolicy.detachFromContentAnchorage(
+							((IContentPart<Node, ? extends Node>) anchorage)
+									.getContent(),
+							role);
+				}
+			}
+		}
 		final ITransactionalOperation detachOperation = contentPolicy.commit();
 
 		// then attach source and target (if available)

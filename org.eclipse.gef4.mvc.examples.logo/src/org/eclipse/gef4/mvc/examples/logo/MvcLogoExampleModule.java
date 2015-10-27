@@ -66,7 +66,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXRotateTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
 import com.google.common.reflect.TypeToken;
@@ -112,9 +111,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
 				}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
-		// deletion policy
-		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class))
-				.to(FXDeletionPolicy.class);
 	}
 
 	@SuppressWarnings("serial")
@@ -122,8 +118,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractRootPartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(CreationPolicy.class))
-				.to(CreationPolicy.class);
 		adapterMapBinder
 				.addBinding(
 						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
@@ -133,6 +127,16 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
 				}, FXCreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
 				.to(FXCreationMenuItemProvider.class);
+		// interaction policy to delete on key type
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
+				.to(FXDeleteSelectedOnTypePolicy.class);
+	}
+
+	@Override
+	protected void bindDeletionPolicyAsRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class))
+				.to(FXDeletionPolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(

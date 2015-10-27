@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.AddContentChildOperation;
 import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
@@ -18,6 +19,7 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.RemoveContentChildOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -43,7 +45,7 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 */
 	protected boolean initialized;
 
-	private ForwardUndoCompositeOperation commitOperation;
+	private AbstractCompositeOperation commitOperation;
 
 	/**
 	 * Creates and records operations to add the given <i>contentChild</i> to
@@ -109,82 +111,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	}
 
 	/**
-	 * Creates and records operations to delete the {@link #getHost() host} of
-	 * this {@link ContentPolicy} from the content model, i.e. detaches all
-	 * content anchoreds, detaches from all content anchorages, and removes from
-	 * its parent's content children.
-	 */
-	public void deleteContent() {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		// unestablish anchor relations
-		detachAllContentAnchoreds();
-		detachFromAllContentAnchorages();
-		// remove content from parent
-		removeFromParent();
-	}
-
-	/**
-	 * Creates and records operations to detach all content anchoreds from the
-	 * {@link #getHost() host} of this {@link ContentPolicy}.
-	 */
-	public void detachAllContentAnchoreds() {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		ForwardUndoCompositeOperation detachOps = new ForwardUndoCompositeOperation(
-				"Detach All Anchoreds");
-		for (IVisualPart<VR, ? extends VR> anchored : getHost()
-				.getAnchoreds()) {
-			if (anchored instanceof IContentPart) {
-				ContentPolicy<VR> policy = anchored
-						.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
-				if (policy != null) {
-					policy.init();
-					for (String role : anchored.getAnchorages()
-							.get(getHost())) {
-						policy.detachFromContentAnchorage(
-								getHost().getContent(), role);
-					}
-					ITransactionalOperation detachOperation = policy.commit();
-					if (detachOperation != null) {
-						detachOps.add(detachOperation);
-					}
-				}
-			}
-		}
-		ITransactionalOperation detachOperation = detachOps.unwrap(true);
-		if (detachOperation != null) {
-			commitOperation.add(detachOperation);
-		}
-	}
-
-	/**
-	 * Creates and records operations to detach the {@link #getHost() host} of
-	 * this {@link ContentPolicy} from all content anchorages.
-	 */
-	public void detachFromAllContentAnchorages() {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		for (IVisualPart<VR, ? extends VR> anchorage : getHost().getAnchorages()
-				.keySet()) {
-			if (anchorage instanceof IContentPart) {
-				for (String role : getHost().getAnchorages().get(anchorage)) {
-					detachFromContentAnchorage(
-							((IContentPart<VR, ? extends VR>) anchorage)
-									.getContent(),
-							role);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Creates and records operations to detach the {@link #getHost() host} of
 	 * this {@link ContentPolicy} from the specified <i>contentAnchorage</i>
 	 * under the specified <i>role</i>.
@@ -220,7 +146,7 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 
 	@Override
 	public void init() {
-		commitOperation = new ForwardUndoCompositeOperation("Content Change");
+		commitOperation = new ReverseUndoCompositeOperation("Content Change");
 		initialized = true;
 	}
 
@@ -246,35 +172,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		removeOperation.add(new SynchronizeContentChildrenOperation<VR>(
 				"Synchronize Children", getHost()));
 		commitOperation.add(removeOperation);
-	}
-
-	/**
-	 * Creates and records operations to remove the content of this
-	 * {@link ContentPolicy}'s {@link #getHost() host} from its parent.
-	 */
-	public void removeFromParent() {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
-				"Delete Content");
-		if (getHost().getParent() instanceof IContentPart) {
-			ContentPolicy<VR> policy = getHost().getParent()
-					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
-			if (policy != null) {
-				policy.init();
-				policy.removeContentChild(getHost().getContent());
-				ITransactionalOperation removeOperation = policy.commit();
-				if (removeOperation != null) {
-					deleteOps.add(removeOperation);
-				}
-			}
-		}
-		ITransactionalOperation deleteOperation = deleteOps.unwrap(true);
-		if (deleteOperation != null) {
-			commitOperation.add(deleteOperation);
-		}
 	}
 
 	@Override

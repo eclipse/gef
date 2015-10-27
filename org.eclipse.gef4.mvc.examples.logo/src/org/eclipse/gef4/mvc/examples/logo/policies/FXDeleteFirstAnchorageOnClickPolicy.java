@@ -12,41 +12,42 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.ContentPolicy;
+import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
-import com.google.common.collect.SetMultimap;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 public class FXDeleteFirstAnchorageOnClickPolicy
 		extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		IVisualPart<Node, ? extends Node> host = getHost();
-		if (host instanceof IContentPart) {
-			ContentPolicy<Node> policy = host
-					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
+		IVisualPart<Node, ? extends Node> targetPart = getTargetPart();
+		if (targetPart instanceof IContentPart) {
+			DeletionPolicy<Node> policy = getHost().getRoot()
+					.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
 			if (policy != null) {
 				init(policy);
-				policy.deleteContent();
+				// unestablish anchor relations
+				policy.delete((IContentPart<Node, ? extends Node>) targetPart);
 				commit(policy);
 			}
 		}
 	}
 
-	@Override
-	public IVisualPart<Node, ? extends Node> getHost() {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = super.getHost()
-				.getParent().getAnchorages();
-		if (anchorages == null || anchorages.isEmpty()) {
-			return null;
-		}
-		return anchorages.keySet().iterator().next();
+	/**
+	 * Returns the target {@link IVisualPart} for this policy. Per default the
+	 * first anchorage is returned.
+	 *
+	 * @return The target {@link IVisualPart} for this policy.
+	 */
+	protected IVisualPart<Node, ? extends Node> getTargetPart() {
+		// the hover handle is nested inside a handle root part, which is
+		// anchored, so we have to navigate via the parent here
+		return getHost().getParent().getAnchorages().keySet().iterator().next();
 	}
 
 }

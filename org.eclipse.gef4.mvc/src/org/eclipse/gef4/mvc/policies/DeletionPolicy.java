@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +19,7 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The {@link DeletionPolicy} is an {@link ITransactional}
@@ -49,16 +49,48 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 			return null;
 		}
 
-		// unestablish anchor relations
 		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
-				"Unestablish Anchor Relations");
+				"Delete");
+		// detach all content anchoreds
+		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
+			for (IVisualPart<VR, ? extends VR> anchored : p.getAnchoreds()) {
+				if (anchored instanceof IContentPart) {
+					ContentPolicy<VR> policy = anchored
+							.<ContentPolicy<VR>> getAdapter(
+									ContentPolicy.class);
+					if (policy != null) {
+						policy.init();
+						for (String role : anchored.getAnchorages().get(p)) {
+							policy.detachFromContentAnchorage(p.getContent(),
+									role);
+						}
+						ITransactionalOperation detachOperation = policy
+								.commit();
+						if (detachOperation != null) {
+							rev.add(detachOperation);
+						}
+					}
+				}
+			}
+		}
+
+		// detach from all content anchorages
 		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
 			ContentPolicy<VR> policy = p
 					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
 				policy.init();
-				policy.detachAllContentAnchoreds();
-				policy.detachFromAllContentAnchorages();
+				for (IVisualPart<VR, ? extends VR> anchorage : getHost()
+						.getAnchorages().keySet()) {
+					if (anchorage instanceof IContentPart) {
+						for (String role : p.getAnchorages().get(anchorage)) {
+							policy.detachFromContentAnchorage(
+									((IContentPart<VR, ? extends VR>) anchorage)
+											.getContent(),
+									role);
+						}
+					}
+				}
 				ITransactionalOperation detachOperation = policy.commit();
 				if (detachOperation != null) {
 					rev.add(detachOperation);
@@ -66,14 +98,15 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 			}
 		}
 
-		// remove content from parent
+		// remove from content parent
 		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
-			ContentPolicy<VR> policy = p
+			ContentPolicy<VR> parentContentPolicy = p.getParent()
 					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
-			if (policy != null) {
-				policy.init();
-				policy.removeFromParent();
-				ITransactionalOperation removeOperation = policy.commit();
+			if (parentContentPolicy != null) {
+				parentContentPolicy.init();
+				parentContentPolicy.removeContentChild(p.getContent());
+				ITransactionalOperation removeOperation = parentContentPolicy
+						.commit();
 				if (removeOperation != null) {
 					rev.add(removeOperation);
 				}
@@ -94,7 +127,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 	 *            The {@link IContentPart}s to mark for deletion.
 	 */
 	public void delete(
-			Collection<IContentPart<VR, ? extends VR>> contentPartsToDelete) {
+			Collection<? extends IContentPart<VR, ? extends VR>> contentPartsToDelete) {
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
@@ -104,14 +137,14 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 	/**
 	 * Marks the given {@link IContentPart}s for deletion.
 	 *
-	 * @param contentPartsToDelete
+	 * @param contentPartToDelete
 	 *            The {@link IContentPart}s to mark for deletion.
 	 */
-	public void delete(IContentPart<VR, ? extends VR>... contentPartsToDelete) {
+	public void delete(IContentPart<VR, ? extends VR> contentPartToDelete) {
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
-		partsToDelete.addAll(Arrays.asList(contentPartsToDelete));
+		partsToDelete.add(contentPartToDelete);
 	}
 
 	@Override
