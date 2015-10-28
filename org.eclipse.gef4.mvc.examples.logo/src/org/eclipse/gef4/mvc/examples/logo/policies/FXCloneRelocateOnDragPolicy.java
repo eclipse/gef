@@ -28,6 +28,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
+import com.google.common.collect.HashMultimap;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -104,9 +106,10 @@ public class FXCloneRelocateOnDragPolicy
 		CreationPolicy<Node> creationPolicy = root
 				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
 		creationPolicy.init();
-		creationPolicy.create(
+		creationPolicy.create(cloneContent,
 				(IContentPart<Node, ? extends Node>) getHost().getParent(),
-				cloneContent);
+				HashMultimap
+						.<IContentPart<Node, ? extends Node>, String> create());
 		cloneOperations.add(creationPolicy.commit());
 
 		// build operation to copy the transformation

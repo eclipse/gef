@@ -27,7 +27,28 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * A (transaction) policy to handle content changes, i.e. adding/removing of
- * content children, as well as attaching/detaching to/from content anchorages.
+ * content children as well as attaching/detaching to/from content anchorages.
+ * All changes are wrapped into {@link ITransactionalOperation}s that delegate
+ * to respective operations of the host {@link IContentPart} upon execution.
+ * <p>
+ * In detail, the following delegations are performed to operations of the host
+ * {@link IContentPart}:
+ * <ul>
+ * <li>{@link #addContentChild(Object, int)} will delegate through a
+ * {@link AddContentChildOperation} to
+ * {@link IContentPart#addContentChild(Object, int)}</li>
+ * <li>{@link #removeContentChild(Object)} will delegate through a
+ * {@link RemoveContentChildOperation} to
+ * {@link IContentPart#removeContentChild(Object, int)}</li>
+ * <li>{@link #attachToContentAnchorage(Object, String)} will delegate through a
+ * {@link AttachToContentAnchorageOperation} to
+ * {@link IContentPart#attachToContentAnchorage(Object, String)}</li>
+ * <li>{@link #detachFromContentAnchorage(Object, String)} will delegate through
+ * a {@link DetachFromContentAnchorageOperation} to
+ * IContentPart#detachFromContentAnchorage(Object, String)}</li>
+ * </ul>
+ * <p>
+ * This policy should be registered on each {@link IContentPart}.
  *
  * @author anyssen
  *
@@ -63,6 +84,9 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
+		// IMPORTANT: Assemble content operations in a
+		// ForwardUndoCompositeOperation, so content synchronization is
+		// performed after having changed the content during undo as well.
 		ForwardUndoCompositeOperation addOperation = new ForwardUndoCompositeOperation(
 				"Add Content Child");
 		addOperation.add(new AddContentChildOperation<VR>(getHost(),
@@ -89,6 +113,9 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
+		// IMPORTANT: Assemble content operations in a
+		// ForwardUndoCompositeOperation, so content synchronization is
+		// performed after having changed the content during undo as well.
 		ForwardUndoCompositeOperation attachOperation = new ForwardUndoCompositeOperation(
 				"Attach To Content Anchorage");
 		attachOperation.add(new AttachToContentAnchorageOperation<VR>(getHost(),
@@ -102,7 +129,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	public ITransactionalOperation commit() {
 		// after commit, we need to be re-initialized
 		initialized = false;
-		if (commitOperation != null) {
+
+		if (commitOperation != null && !commitOperation.isNoOp()) {
 			ITransactionalOperation commit = commitOperation.unwrap(true);
 			commitOperation = null;
 			return commit;
@@ -127,9 +155,9 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
-		// assemble content operations in forward-undo-operations, so that
-		// synchronization is always performed after changing the content
-		// model (in execute() and undo())
+		// IMPORTANT: Assemble content operations in a
+		// ForwardUndoCompositeOperation, so content synchronization is
+		// performed after having changed the content during undo as well.
 		ForwardUndoCompositeOperation detachOperation = new ForwardUndoCompositeOperation(
 				"Detach From Content Anchorage");
 		detachOperation.add(new DetachFromContentAnchorageOperation<VR>(
@@ -165,6 +193,9 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
+		// IMPORTANT: Assemble content operations in a
+		// ForwardUndoCompositeOperation, so content synchronization is
+		// performed after having changed the content during undo as well.
 		ForwardUndoCompositeOperation removeOperation = new ForwardUndoCompositeOperation(
 				"Remove Content Child");
 		removeOperation.add(

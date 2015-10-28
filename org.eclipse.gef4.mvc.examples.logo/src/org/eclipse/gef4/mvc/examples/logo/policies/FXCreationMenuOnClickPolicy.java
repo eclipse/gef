@@ -14,6 +14,24 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.CreationPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -37,40 +55,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.policies.CreationPolicy;
-import org.eclipse.gef4.mvc.viewer.IViewer;
-
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Provider;
-
 // TODO: only applicable for FXRootPart and FXViewer
 public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
-
-	private static Reflection createDropShadowReflectionEffect(
-			double effectRadius, Color color) {
-		DropShadow dropShadow = new DropShadow(effectRadius, color);
-		Reflection reflection = new Reflection();
-		reflection.setInput(dropShadow);
-		return reflection;
-	}
-
-	private static boolean isNested(Parent parent, Node node) {
-		while (node != null && node != parent) {
-			node = node.getParent();
-		}
-		return node == parent;
-	}
 
 	/**
 	 * The adapter role for the
@@ -114,6 +100,21 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 	 * The {@link Color} used for highlighting visuals.
 	 */
 	private static final Color HIGHLIGHT_COLOR = FXHoverFeedbackPart.DEFAULT_STROKE;
+
+	private static Reflection createDropShadowReflectionEffect(
+			double effectRadius, Color color) {
+		DropShadow dropShadow = new DropShadow(effectRadius, color);
+		Reflection reflection = new Reflection();
+		reflection.setInput(dropShadow);
+		return reflection;
+	}
+
+	private static boolean isNested(Parent parent, Node node) {
+		while (node != null && node != parent) {
+			node = node.getParent();
+		}
+		return node == parent;
+	}
 
 	/**
 	 * List of {@link IFXCreationMenuItem}s which can be constructed.
@@ -201,7 +202,8 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 		CreationPolicy<Node> creationPolicy = root
 				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
 		creationPolicy.init();
-		creationPolicy.create(contentParent, content);
+		creationPolicy.create(content, contentParent, HashMultimap
+				.<IContentPart<Node, ? extends Node>, String> create());
 
 		// execute on stack
 		viewer.getDomain().execute(creationPolicy.commit());

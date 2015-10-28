@@ -81,7 +81,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 		DeletionPolicy<Node> deletionPolicy = getHost().getRoot()
 				.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
 		init(deletionPolicy);
-		deletionPolicy.delete(selected);
+		for (IContentPart<Node, ? extends Node> s : selected) {
+			deletionPolicy.delete(s);
+		}
 		commit(deletionPolicy);
 	}
 

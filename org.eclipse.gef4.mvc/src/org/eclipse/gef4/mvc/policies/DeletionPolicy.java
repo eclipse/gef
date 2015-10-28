@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG)  - refactorings
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,14 +19,25 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The {@link DeletionPolicy} is an {@link ITransactional}
- * {@link AbstractPolicy} that handles the deletion of existing
- * {@link IContentPart}s via the {@link ContentPolicy}.
+ * {@link AbstractPolicy} that handles the deletion of content.
+ * <p>
+ * It handles the deletion of a {@link IContentPart}'s content by initiating the
+ * removal from the content parent via the {@link ContentPolicy} of the parent
+ * {@link IContentPart}, as well as the detachment of anchored content elements
+ * via the {@link ContentPolicy}s of anchored {@link IContentPart}s.
+ * <p>
+ * This policy should be registered at an {@link IRootPart}. It depends on
+ * {@link ContentPolicy}s being registered on all {@link IContentPart}s that are
+ * affected by the deletion.
+ *
  *
  * @author mwienand
+ * @author anyssen
  *
  * @param <VR>
  *            The visual root node of the UI toolkit used, e.g.
@@ -41,7 +52,8 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 	 * <code>false</code> after {@link #commit()} was called, respectively.
 	 */
 	protected boolean initialized;
-	private Set<IContentPart<VR, ? extends VR>> partsToDelete;
+	private Set<IContentPart<VR, ? extends VR>> contentPartsToDelete;
+	private ReverseUndoCompositeOperation deleteOperation;
 
 	@Override
 	public ITransactionalOperation commit() {
@@ -49,107 +61,77 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 			return null;
 		}
 
-		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
-				"Delete");
+		// IMPORTANT: The content synchronization performed by (ContentBehavior)
+		// will dispose the part (synchronizing any children and anchorages) if
+		// it does not have a parent and it does not have any anchoreds. As
+		// such, its sufficient to remove it from its parent and to detach all
+		// anchoreds here via the ContentPolicy, which will trigger
+		// synchronization.
+		deleteOperation = new ReverseUndoCompositeOperation("Delete Content");
 		// detach all content anchoreds
-		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
+		for (IContentPart<VR, ? extends VR> p : contentPartsToDelete) {
 			for (IVisualPart<VR, ? extends VR> anchored : p.getAnchoreds()) {
 				if (anchored instanceof IContentPart) {
-					ContentPolicy<VR> policy = anchored
+					ContentPolicy<VR> anchoredContentPolicy = anchored
 							.<ContentPolicy<VR>> getAdapter(
 									ContentPolicy.class);
-					if (policy != null) {
-						policy.init();
+					if (anchoredContentPolicy != null) {
+						anchoredContentPolicy.init();
 						for (String role : anchored.getAnchorages().get(p)) {
-							policy.detachFromContentAnchorage(p.getContent(),
-									role);
+							anchoredContentPolicy.detachFromContentAnchorage(
+									p.getContent(), role);
 						}
-						ITransactionalOperation detachOperation = policy
+						ITransactionalOperation detachAnchoredOperation = anchoredContentPolicy
 								.commit();
-						if (detachOperation != null) {
-							rev.add(detachOperation);
+						if (detachAnchoredOperation != null) {
+							deleteOperation.add(detachAnchoredOperation);
 						}
 					}
-				}
-			}
-		}
-
-		// detach from all content anchorages
-		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
-			ContentPolicy<VR> policy = p
-					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
-			if (policy != null) {
-				policy.init();
-				for (IVisualPart<VR, ? extends VR> anchorage : getHost()
-						.getAnchorages().keySet()) {
-					if (anchorage instanceof IContentPart) {
-						for (String role : p.getAnchorages().get(anchorage)) {
-							policy.detachFromContentAnchorage(
-									((IContentPart<VR, ? extends VR>) anchorage)
-											.getContent(),
-									role);
-						}
-					}
-				}
-				ITransactionalOperation detachOperation = policy.commit();
-				if (detachOperation != null) {
-					rev.add(detachOperation);
 				}
 			}
 		}
 
 		// remove from content parent
-		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
+		for (IContentPart<VR, ? extends VR> p : contentPartsToDelete) {
 			ContentPolicy<VR> parentContentPolicy = p.getParent()
 					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
 			if (parentContentPolicy != null) {
 				parentContentPolicy.init();
 				parentContentPolicy.removeContentChild(p.getContent());
-				ITransactionalOperation removeOperation = parentContentPolicy
+				ITransactionalOperation removeFromParentOperation = parentContentPolicy
 						.commit();
-				if (removeOperation != null) {
-					rev.add(removeOperation);
+				if (removeFromParentOperation != null) {
+					deleteOperation.add(removeFromParentOperation);
 				}
 			}
 		}
 
 		// after commit, we need to be re-initialized
 		initialized = false;
-		partsToDelete = null;
+		contentPartsToDelete = null;
 
-		return rev.unwrap(true);
+		return deleteOperation.unwrap(true);
 	}
 
 	/**
-	 * Marks the given {@link IContentPart}s for deletion.
-	 *
-	 * @param contentPartsToDelete
-	 *            The {@link IContentPart}s to mark for deletion.
-	 */
-	public void delete(
-			Collection<? extends IContentPart<VR, ? extends VR>> contentPartsToDelete) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		partsToDelete.addAll(contentPartsToDelete);
-	}
-
-	/**
-	 * Marks the given {@link IContentPart}s for deletion.
+	 * Deletes the given {@link IContentPart} by removing the
+	 * {@link IContentPart}'s content from the parent {@link IContentPart}'
+	 * content and by detaching the contents of all anchored
+	 * {@link IContentPart}s from the {@link IContentPart}'s content.
 	 *
 	 * @param contentPartToDelete
-	 *            The {@link IContentPart}s to mark for deletion.
+	 *            The {@link IContentPart} to mark for deletion.
 	 */
 	public void delete(IContentPart<VR, ? extends VR> contentPartToDelete) {
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
-		partsToDelete.add(contentPartToDelete);
+		contentPartsToDelete.add(contentPartToDelete);
 	}
 
 	@Override
 	public void init() {
-		partsToDelete = new HashSet<IContentPart<VR, ? extends VR>>();
+		contentPartsToDelete = new HashSet<IContentPart<VR, ? extends VR>>();
 		initialized = true;
 	}
 

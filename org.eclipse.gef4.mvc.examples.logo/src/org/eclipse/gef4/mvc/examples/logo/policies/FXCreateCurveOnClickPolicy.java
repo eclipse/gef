@@ -25,9 +25,11 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multiset;
 
 import javafx.event.EventTarget;
@@ -59,7 +61,9 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 					"Cannot find FXGeometricModelPart.");
 		}
 
-		creationPolicy.create((FXGeometricModelPart) modelPart, curve);
+		creationPolicy.create(curve, (FXGeometricModelPart) modelPart,
+				HashMultimap
+						.<IContentPart<Node, ? extends Node>, String> create());
 		ITransactionalOperation createOperation = creationPolicy.commit();
 
 		// execute on stack
