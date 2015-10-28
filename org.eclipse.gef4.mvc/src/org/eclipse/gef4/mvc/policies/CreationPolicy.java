@@ -95,7 +95,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 		}
 		if (anchoreds == null) {
 			throw new IllegalArgumentException(
-					"Te given anchored parts may not be null");
+					"The given anchored parts may not be null");
 		}
 
 		// add to parent via content policy
