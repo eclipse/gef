@@ -11,12 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import java.util.Map.Entry;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
@@ -25,6 +20,13 @@ import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
+
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 
@@ -42,6 +44,19 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().add(index, child.getVisual());
+		for (Entry<IVisualPart<Node, ? extends Node>, String> anchorage : getAnchorages()
+				.entries()) {
+			child.addAnchorage(anchorage.getKey(), anchorage.getValue());
+		}
+	}
+
+	@Override
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
+		super.attachToAnchorageVisual(anchorage, role);
+		for (IVisualPart<Node, ? extends Node> child : getChildren()) {
+			child.addAnchorage(anchorage, role);
+		}
 	}
 
 	@Override
@@ -49,6 +64,15 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 		VBox vBox = new VBox();
 		vBox.setPickOnBounds(true);
 		return vBox;
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
+		super.detachFromAnchorageVisual(anchorage, role);
+		for (IVisualPart<Node, ? extends Node> child : getChildren()) {
+			child.removeAnchorage(anchorage, role);
+		}
 	}
 
 	@Override

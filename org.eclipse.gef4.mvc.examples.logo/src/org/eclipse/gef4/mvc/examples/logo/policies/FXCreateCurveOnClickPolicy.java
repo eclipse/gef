@@ -86,8 +86,8 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 	}
 
 	protected FXGeometricShapePart getShapePart() {
-		return (FXGeometricShapePart) getHost().getParent().getAnchorages()
-				.keySet().iterator().next();
+		return (FXGeometricShapePart) getHost().getAnchorages().keySet()
+				.iterator().next();
 	}
 
 	protected void updateDragTargetToLastSegmentHandlePart(

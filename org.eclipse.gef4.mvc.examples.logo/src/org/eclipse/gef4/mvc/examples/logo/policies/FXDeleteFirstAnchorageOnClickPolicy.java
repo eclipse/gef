@@ -45,9 +45,7 @@ public class FXDeleteFirstAnchorageOnClickPolicy
 	 * @return The target {@link IVisualPart} for this policy.
 	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart() {
-		// the hover handle is nested inside a handle root part, which is
-		// anchored, so we have to navigate via the parent here
-		return getHost().getParent().getAnchorages().keySet().iterator().next();
+		return getHost().getAnchorages().keySet().iterator().next();
 	}
 
 }
