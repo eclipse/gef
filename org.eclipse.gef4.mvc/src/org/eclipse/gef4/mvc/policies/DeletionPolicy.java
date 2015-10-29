@@ -12,15 +12,22 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * The {@link DeletionPolicy} is an {@link ITransactional}
@@ -68,6 +75,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 		// anchoreds here via the ContentPolicy, which will trigger
 		// synchronization.
 		deleteOperation = new ReverseUndoCompositeOperation("Delete Content");
+
 		// detach all content anchoreds
 		for (IContentPart<VR, ? extends VR> p : contentPartsToDelete) {
 			for (IVisualPart<VR, ? extends VR> anchored : p.getAnchoreds()) {
@@ -101,6 +109,8 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 				ITransactionalOperation removeFromParentOperation = parentContentPolicy
 						.commit();
 				if (removeFromParentOperation != null) {
+					// clear viewer models
+					deleteOperation.add(createClearViewerModelsOperation(p));
 					deleteOperation.add(removeFromParentOperation);
 				}
 			}
@@ -111,6 +121,45 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 		contentPartsToDelete = null;
 
 		return deleteOperation.unwrap(true);
+	}
+
+	/**
+	 * Returns an {@link ITransactionalOperation} that removes the given
+	 * {@link IContentPart} from the {@link FocusModel} and from the
+	 * {@link SelectionModel} of the corresponding {@link IViewer}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} that is removed from the viewer
+	 *            models.
+	 * @return An {@link ITransactionalOperation} that changes the viewer
+	 *         models.
+	 */
+	protected ITransactionalOperation createClearViewerModelsOperation(
+			IContentPart<VR, ? extends VR> part) {
+		ReverseUndoCompositeOperation clearOp = new ReverseUndoCompositeOperation(
+				"RemoveFromViewerModels()");
+		IViewer<VR> viewer = part.getRoot().getViewer();
+		// remove from focus model
+		FocusModel<VR> focusModel = viewer
+				.<FocusModel<VR>> getAdapter(FocusModel.class);
+		if (focusModel != null && focusModel.getFocused() == part) {
+			clearOp.add(new ChangeFocusOperation<VR>(viewer, null));
+		}
+		// remove from selection model
+		SelectionModel<VR> selectionModel = viewer
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		if (selectionModel != null) {
+			List<IContentPart<VR, ? extends VR>> selected = selectionModel
+					.getSelected();
+			if (selected.contains(part)) {
+				List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
+						selected);
+				newSelection.remove(part);
+				clearOp.add(
+						new ChangeSelectionOperation<VR>(viewer, newSelection));
+			}
+		}
+		return clearOp.unwrap(true);
 	}
 
 	/**

@@ -35,7 +35,6 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
@@ -66,7 +65,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXRotateTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
@@ -130,13 +128,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
-	}
-
-	@Override
-	protected void bindDeletionPolicyAsRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class))
-				.to(FXDeletionPolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(
