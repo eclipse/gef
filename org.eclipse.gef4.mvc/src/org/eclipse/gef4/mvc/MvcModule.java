@@ -32,8 +32,6 @@ import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
-import org.eclipse.gef4.mvc.policies.CreationPolicy;
-import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -172,9 +170,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// creation and deletion policy
-		bindCreationPolicyAsRootPartAdapter(adapterMapBinder);
-		bindDeletionPolicyAsRootPartAdapter(adapterMapBinder);
+		// nothing to bind by default
 	}
 
 	/**
@@ -240,42 +236,6 @@ public class MvcModule<VR> extends AbstractModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class))
 				.to(ContentModel.class);
-	}
-
-	/**
-	 * Adds a binding for {@link CreationPolicy} to the {@link AdapterMap}
-	 * binder for {@link AbstractRootPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindCreationPolicyAsRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(CreationPolicy.class))
-				.to(CreationPolicy.class);
-	}
-
-	/**
-	 * Adds a binding for {@link DeletionPolicy} to the {@link AdapterMap}
-	 * binder for {@link AbstractRootPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindDeletionPolicyAsRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class))
-				.to(DeletionPolicy.class);
 	}
 
 	/**

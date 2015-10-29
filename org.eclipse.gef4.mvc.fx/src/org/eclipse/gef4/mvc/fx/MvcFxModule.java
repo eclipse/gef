@@ -54,10 +54,13 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
+import org.eclipse.gef4.mvc.policies.CreationPolicy;
+import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Binder;
@@ -223,6 +226,44 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(ContentPolicy.class))
 				.to(new TypeLiteral<ContentPolicy<Node>>() {
+				});
+	}
+
+	/**
+	 * Adds a binding for {@link CreationPolicy} to the {@link AdapterMap}
+	 * binder for {@link AbstractRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindCreationPolicyAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(CreationPolicy.class))
+				.to(new TypeLiteral<CreationPolicy<Node>>() {
+				});
+	}
+
+	/**
+	 * Adds a binding for {@link DeletionPolicy} to the {@link AdapterMap}
+	 * binder for {@link AbstractRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindDeletionPolicyAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class))
+				.to(new TypeLiteral<DeletionPolicy<Node>>() {
 				});
 	}
 
@@ -566,6 +607,9 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindViewportBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		// creation and deletion policy
+		bindCreationPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindDeletionPolicyAsFXRootPartAdapter(adapterMapBinder);
 	}
 
 	/**

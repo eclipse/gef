@@ -12,13 +12,26 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.mvc.behaviors.ContentPartPool;
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
+import com.google.inject.Inject;
 
 /**
  * The {@link CreationPolicy} is an {@link ITransactional}
@@ -51,6 +64,12 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	protected boolean initialized;
 	private ReverseUndoCompositeOperation createOperation;
 
+	@Inject
+	private IContentPartFactory<VR> contentPartFactory;
+
+	@Inject
+	private ContentPartPool<VR> contentPartPool;
+
 	@Override
 	public ITransactionalOperation commit() {
 		if (!initialized) {
@@ -67,20 +86,26 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	}
 
 	/**
-	 * Adds the given <i>content</i> to the collection of to-be-created contents
-	 * in the specified <i>parent</i>.
+	 * Creates an {@link IContentPart} for the given content {@link Object} and
+	 * establishes parent and anchored relationships for the newly created part.
+	 * Besides, operations are created for the establishment of the parent and
+	 * anchored relationships within the content model. These operations are
+	 * part of the operation returned by {@link #commit()}.
 	 *
 	 * @param content
 	 *            The content {@link Object} to be created.
 	 * @param parent
 	 *            The {@link IContentPart} where the <i>content</i> is added as
 	 *            a child.
-	 *
+	 * @param index
+	 *            The index for the new element.
 	 * @param anchoreds
 	 *            The {@link IContentPart} whose content should be attached to
 	 *            the new content under the given roles.
+	 * @return The {@link IContentPart} controlling the newly created content.
 	 */
-	public void create(Object content, IContentPart<VR, ? extends VR> parent,
+	public IContentPart<VR, ? extends VR> create(Object content,
+			IContentPart<VR, ? extends VR> parent, int index,
 			SetMultimap<IContentPart<VR, ? extends VR>, String> anchoreds) {
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
@@ -98,6 +123,20 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 					"The given anchored parts may not be null");
 		}
 
+		// create content part beforehand
+		IContentPart<VR, ? extends VR> contentPart = contentPartFactory
+				.createContentPart(content, null, null);
+		// establish relationships to parent and anchored parts
+		contentPart.setContent(content);
+		parent.addChild(contentPart, index);
+		for (Entry<IContentPart<VR, ? extends VR>, String> anchored : anchoreds
+				.entries()) {
+			anchored.getKey().addAnchorage(contentPart, anchored.getValue());
+		}
+		// register the content part, so that the ContentBehavior
+		// synchronization reuses it (when committing the create operation)
+		contentPartPool.add(contentPart);
+
 		// add to parent via content policy
 		ContentPolicy<VR> parentContentPolicy = parent
 				.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
@@ -106,8 +145,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 					"No ContentPolicy registered for <" + parent + ">.");
 		}
 		parentContentPolicy.init();
-		parentContentPolicy.addContentChild(content,
-				parent.getContentChildren().size());
+		parentContentPolicy.addContentChild(content, index);
 		ITransactionalOperation addToParentOperation = parentContentPolicy
 				.commit();
 		if (addToParentOperation != null && !addToParentOperation.isNoOp()) {
@@ -133,6 +171,106 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 				createOperation.add(attachToAnchorageOperation);
 			}
 		}
+
+		// set as focus part
+		ITransactionalOperation focusOperation = createFocusOperation(
+				contentPart);
+		if (focusOperation != null) {
+			createOperation.add(focusOperation);
+			try {
+				focusOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// select the newly created part
+		ITransactionalOperation selectOperation = createSelectOperation(
+				contentPart);
+		if (selectOperation != null) {
+			createOperation.add(selectOperation);
+			try {
+				selectOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return contentPart;
+	}
+
+	/**
+	 * Creates an {@link IContentPart} for the given content {@link Object} and
+	 * establishes parent and anchored relationships for the newly created part.
+	 * Besides, operations are created for the establishment of the parent and
+	 * anchored relationships within the content model. These operations are
+	 * part of the operation returned by {@link #commit()}.
+	 *
+	 * @param content
+	 *            The content {@link Object} to be created.
+	 * @param parent
+	 *            The {@link IContentPart} where the <i>content</i> is added as
+	 *            a child.
+	 * @param anchoreds
+	 *            The {@link IContentPart} whose content should be attached to
+	 *            the new content under the given roles.
+	 * @return The {@link IContentPart} controlling the newly created content.
+	 */
+	public IContentPart<VR, ? extends VR> create(Object content,
+			IContentPart<VR, ? extends VR> parent,
+			SetMultimap<IContentPart<VR, ? extends VR>, String> anchoreds) {
+		return create(content, parent, parent.getChildren().size(), anchoreds);
+	}
+
+	/**
+	 * Returns an {@link ITransactionalOperation} that adds the given
+	 * {@link IContentPart} to the {@link FocusModel} of the corresponding
+	 * {@link IViewer}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} that is added to the viewer models.
+	 * @return An {@link ITransactionalOperation} that changes the viewer
+	 *         models.
+	 */
+	protected ITransactionalOperation createFocusOperation(
+			IContentPart<VR, ? extends VR> part) {
+		IViewer<VR> viewer = part.getRoot().getViewer();
+		// remove from focus model
+		FocusModel<VR> focusModel = viewer
+				.<FocusModel<VR>> getAdapter(FocusModel.class);
+		if (focusModel != null) {
+			return new ChangeFocusOperation<VR>(viewer, part);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns an {@link ITransactionalOperation} that adds the given
+	 * {@link IContentPart} to the {@link SelectionModel} of the corresponding
+	 * {@link IViewer}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} that is added to the viewer models.
+	 * @return An {@link ITransactionalOperation} that changes the viewer
+	 *         models.
+	 */
+	protected ITransactionalOperation createSelectOperation(
+			IContentPart<VR, ? extends VR> part) {
+		IViewer<VR> viewer = part.getRoot().getViewer();
+		// remove from selection model
+		SelectionModel<VR> selectionModel = viewer
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		if (selectionModel != null) {
+			List<IContentPart<VR, ? extends VR>> selected = selectionModel
+					.getSelected();
+			if (!selected.contains(part)) {
+				List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
+						selected);
+				newSelection.add(part);
+				return new ChangeSelectionOperation<VR>(viewer, newSelection);
+			}
+		}
+		return null;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXBendCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneRelocateOnDragPolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnClickPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
@@ -132,10 +132,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXCreateCurveHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "create"))
-				.to(FXCreateCurveOnClickPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "create"))
+				.to(FXCreateCurveOnDragPolicy.class);
 	}
 
 	protected void bindFXDeleteHandlePartAdapters(

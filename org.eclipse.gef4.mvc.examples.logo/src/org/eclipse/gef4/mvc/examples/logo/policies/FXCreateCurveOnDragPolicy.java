@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
-import java.util.Collections;
+import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
@@ -20,10 +22,9 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -37,10 +38,55 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
+public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
+
+	private FXCircleSegmentHandlePart bendTargetPart;
 
 	@Override
-	public void click(MouseEvent e) {
+	public void drag(MouseEvent e, Dimension delta) {
+		if (bendTargetPart == null) {
+			return;
+		}
+
+		// forward drag events to bend target part
+		Map<AdapterKey<? extends AbstractFXOnDragPolicy>, AbstractFXOnDragPolicy> dragPolicies = bendTargetPart
+				.getAdapters(FXClickDragTool.DRAG_TOOL_POLICY_KEY);
+		for (AbstractFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+			dragPolicy.drag(e, delta);
+		}
+	}
+
+	protected FXCircleSegmentHandlePart findBendTargetPart(
+			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
+		// find last segment handle part
+		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart
+				.getAnchoreds();
+		for (IVisualPart<Node, ? extends Node> anchored : anchoreds) {
+			if (anchored instanceof FXCircleSegmentHandlePart) {
+				FXCircleSegmentHandlePart circleSegmentHandlePart = (FXCircleSegmentHandlePart) anchored;
+				if (circleSegmentHandlePart.getSegmentParameter() == 1.0) {
+					return circleSegmentHandlePart;
+				}
+			}
+		}
+
+		throw new IllegalStateException("Cannot find bend target part.");
+	}
+
+	protected Point getLocation(MouseEvent e) {
+		Point2D location = ((FXViewer) getHost().getRoot().getViewer())
+				.getScrollPane().getContentGroup()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
+		return new Point(location.getX(), location.getY());
+	}
+
+	protected FXGeometricShapePart getShapePart() {
+		return (FXGeometricShapePart) getHost().getAnchorages().keySet()
+				.iterator().next();
+	}
+
+	@Override
+	public void press(MouseEvent e) {
 		// create new curve
 		FXGeometricCurve curve = new FXGeometricCurve(new Point[] {},
 				FXGeometricModel.GEF_COLOR_GREEN,
@@ -75,49 +121,29 @@ public class FXCreateCurveOnClickPolicy extends AbstractFXOnClickPolicy {
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(e));
 
-		updateDragTargetToLastSegmentHandlePart(curvePart, e.getTarget());
+		// find bend target part
+		bendTargetPart = findBendTargetPart(curvePart, e.getTarget());
+
+		// forward event to bend target part
+		Map<AdapterKey<? extends AbstractFXOnDragPolicy>, AbstractFXOnDragPolicy> dragPolicies = bendTargetPart
+				.getAdapters(FXClickDragTool.DRAG_TOOL_POLICY_KEY);
+		for (AbstractFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+			dragPolicy.press(e);
+		}
 	}
 
-	protected Point getLocation(MouseEvent e) {
-		Point2D location = ((FXViewer) getHost().getRoot().getViewer())
-				.getScrollPane().getContentGroup()
-				.sceneToLocal(e.getSceneX(), e.getSceneY());
-		return new Point(location.getX(), location.getY());
-	}
-
-	protected FXGeometricShapePart getShapePart() {
-		return (FXGeometricShapePart) getHost().getAnchorages().keySet()
-				.iterator().next();
-	}
-
-	protected void updateDragTargetToLastSegmentHandlePart(
-			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
-		// select curve part to generate segment handles
-		ChangeSelectionOperation<Node> changeSelectionOperation = new ChangeSelectionOperation<Node>(
-				getHost().getRoot().getViewer(),
-				Collections.singletonList(curvePart));
-		getHost().getRoot().getViewer().getDomain()
-				.execute(changeSelectionOperation);
-
-		// find last segment handle part
-		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart
-				.getAnchoreds();
-		FXCircleSegmentHandlePart lastSegmentHandlePart = null;
-		for (IVisualPart<Node, ? extends Node> anchored : anchoreds) {
-			if (anchored instanceof FXCircleSegmentHandlePart) {
-				FXCircleSegmentHandlePart circleSegmentHandlePart = (FXCircleSegmentHandlePart) anchored;
-				if (circleSegmentHandlePart.getSegmentParameter() == 1.0) {
-					lastSegmentHandlePart = circleSegmentHandlePart;
-					break;
-				}
-			}
+	@Override
+	public void release(MouseEvent e, Dimension delta) {
+		if (bendTargetPart == null) {
+			return;
 		}
 
-		// override drag target with segment handle part
-		getHost().getRoot().getViewer().getDomain()
-				.getAdapter(FXClickDragTool.class)
-				.overrideTargetForThisInteraction(eventTarget,
-						lastSegmentHandlePart);
+		// forward event to bend target part
+		Map<AdapterKey<? extends AbstractFXOnDragPolicy>, AbstractFXOnDragPolicy> dragPolicies = bendTargetPart
+				.getAdapters(FXClickDragTool.DRAG_TOOL_POLICY_KEY);
+		for (AbstractFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+			dragPolicy.release(e, delta);
+		}
 	}
 
 }

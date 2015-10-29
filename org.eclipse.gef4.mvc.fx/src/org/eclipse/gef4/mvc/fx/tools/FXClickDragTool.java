@@ -32,7 +32,6 @@ import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -49,9 +48,7 @@ import javafx.scene.input.MouseEvent;
  * respectively. They are identified via hit-testing on the visuals and the
  * availability of a corresponding {@link AbstractFXOnClickPolicy} or
  * {@link AbstractFXOnDragPolicy} (see
- * {@link #getTargetPart(IViewer, Node, Class)}) and can even be temporarily
- * overwritten (see
- * {@link #overrideTargetForThisInteraction(EventTarget, IVisualPart)}).
+ * {@link #getTargetPart(IViewer, Node, Class)}).
  * <p>
  * The {@link FXClickDragTool} handles the opening and closing of an transaction
  * operation via the {@link FXDomain}, to which it is adapted. It controls that
@@ -81,7 +78,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<IViewer<Node>, AbstractFXMouseDragGesture> gestures = new HashMap<IViewer<Node>, AbstractFXMouseDragGesture>();
 	private boolean dragInProgress;
 	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXOnDragPolicy, MouseEvent>();
-	private Map<EventTarget, IVisualPart<Node, ? extends Node>> interactionTargetOverrides = new HashMap<EventTarget, IVisualPart<Node, ? extends Node>>();
 
 	/**
 	 * Returns a {@link Set} containing all {@link AbstractFXOnClickPolicy}s of
@@ -122,11 +118,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	/**
 	 * Returns the target {@link IVisualPart} for the given target {@link Node}
 	 * within the given {@link IViewer} that supports the given <i>policy</i>.
-	 * <p>
-	 * If a target override was previously registered for the given {@link Node}
-	 * using {@link #overrideTargetForThisInteraction(EventTarget, IVisualPart)}
-	 * , then the override target will be returned (and the override will be
-	 * removed).
 	 *
 	 * @param <T>
 	 *            The type of the policy that has to be supported.
@@ -141,34 +132,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	 */
 	protected <T extends IPolicy<Node>> IVisualPart<Node, ? extends Node> getTargetPart(
 			final IViewer<Node> viewer, Node target, Class<T> policy) {
-		if (interactionTargetOverrides.containsKey(target)) {
-			IVisualPart<Node, ? extends Node> overridingTarget = interactionTargetOverrides
-					.get(target);
-			if (policy != null
-					&& overridingTarget.getAdapters(policy).isEmpty()) {
-				return null;
-			}
-			return overridingTarget;
-		}
 		return FXPartUtils.getTargetPart(Collections.singleton(viewer), target,
 				policy, true);
-	}
-
-	/**
-	 * Registers the given {@link IVisualPart} as the target part for all JavaFX
-	 * events which are send to the given {@link EventTarget} during the
-	 * currently active or next press-drag-release gesture.
-	 *
-	 * @param target
-	 *            The JavaFX {@link EventTarget} for which the given target
-	 *            should be used.
-	 * @param targetPart
-	 *            The {@link IVisualPart} to use as the target for all JavaFX
-	 *            events directed at the given {@link EventTarget}.
-	 */
-	public void overrideTargetForThisInteraction(EventTarget target,
-			IVisualPart<Node, ? extends Node> targetPart) {
-		interactionTargetOverrides.put(target, targetPart);
 	}
 
 	@Override
@@ -261,7 +226,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 					getDomain().closeExecutionTransaction(FXClickDragTool.this);
 					dragInProgress = false;
-					interactionTargetOverrides.clear();
 				}
 			};
 
