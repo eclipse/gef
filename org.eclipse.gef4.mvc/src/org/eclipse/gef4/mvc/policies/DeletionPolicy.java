@@ -13,6 +13,7 @@
 package org.eclipse.gef4.mvc.policies;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,6 +77,15 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 		// synchronization.
 		deleteOperation = new ReverseUndoCompositeOperation("Delete Content");
 
+		// remove from viewer models
+		for (IContentPart<VR, ? extends VR> p : contentPartsToDelete) {
+			ITransactionalOperation clearOp = createClearViewerModelsOperation(
+					p);
+			if (clearOp != null) {
+				deleteOperation.add(clearOp);
+			}
+		}
+
 		// detach all content anchoreds
 		for (IContentPart<VR, ? extends VR> p : contentPartsToDelete) {
 			for (IVisualPart<VR, ? extends VR> anchored : p.getAnchoreds()) {
@@ -109,12 +119,6 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 				ITransactionalOperation removeFromParentOperation = parentContentPolicy
 						.commit();
 				if (removeFromParentOperation != null) {
-					// clear viewer models
-					ITransactionalOperation clearOp = createClearViewerModelsOperation(
-							p);
-					if (clearOp != null) {
-						deleteOperation.add(clearOp);
-					}
 					deleteOperation.add(removeFromParentOperation);
 				}
 			}
@@ -159,8 +163,8 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 				List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
 						selected);
 				newSelection.remove(part);
-				clearOp.add(
-						new ChangeSelectionOperation<VR>(viewer, newSelection));
+				clearOp.add(new ChangeSelectionOperation<VR>(viewer, Collections
+						.<IContentPart<VR, ? extends VR>> emptyList()));
 			}
 		}
 		return clearOp.unwrap(true);
