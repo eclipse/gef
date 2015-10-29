@@ -13,11 +13,11 @@
 package org.eclipse.gef4.mvc.policies;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
@@ -77,12 +77,27 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 		// synchronization.
 		deleteOperation = new ReverseUndoCompositeOperation("Delete Content");
 
-		// remove from viewer models
+		// remove from viewer models (execute directly and chain for deletion)
 		for (IContentPart<VR, ? extends VR> p : contentPartsToDelete) {
-			ITransactionalOperation clearOp = createClearViewerModelsOperation(
+			ITransactionalOperation deselectOperation = createDeselectOperation(
 					p);
-			if (clearOp != null) {
-				deleteOperation.add(clearOp);
+			if (deselectOperation != null) {
+				deleteOperation.add(deselectOperation);
+				try {
+					deselectOperation.execute(null, null);
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+			ITransactionalOperation unfocusOperation = createUnfocusOperation(
+					p);
+			if (unfocusOperation != null) {
+				deleteOperation.add(unfocusOperation);
+				try {
+					unfocusOperation.execute(null, null);
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -133,27 +148,19 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that removes the given
-	 * {@link IContentPart} from the {@link FocusModel} and from the
-	 * {@link SelectionModel} of the corresponding {@link IViewer}.
+	 * {@link IContentPart} from the {@link SelectionModel} of the corresponding
+	 * {@link IViewer}.
 	 *
 	 * @param part
-	 *            The {@link IContentPart} that is removed from the viewer
-	 *            models.
-	 * @return An {@link ITransactionalOperation} that changes the viewer
-	 *         models.
+	 *            The {@link IContentPart} that is removed from the
+	 *            {@link SelectionModel}.
+	 * @return An {@link ITransactionalOperation} that changes the
+	 *         {@link SelectionModel}.
 	 */
-	protected ITransactionalOperation createClearViewerModelsOperation(
+	protected ITransactionalOperation createDeselectOperation(
 			IContentPart<VR, ? extends VR> part) {
-		ReverseUndoCompositeOperation clearOp = new ReverseUndoCompositeOperation(
-				"RemoveFromViewerModels()");
 		IViewer<VR> viewer = part.getRoot().getViewer();
-		// remove from focus model
-		FocusModel<VR> focusModel = viewer
-				.<FocusModel<VR>> getAdapter(FocusModel.class);
-		if (focusModel != null && focusModel.getFocused() == part) {
-			clearOp.add(new ChangeFocusOperation<VR>(viewer, null));
-		}
-		// remove from selection model
+
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 		if (selectionModel != null) {
@@ -163,11 +170,36 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 				List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
 						selected);
 				newSelection.remove(part);
-				clearOp.add(new ChangeSelectionOperation<VR>(viewer, Collections
-						.<IContentPart<VR, ? extends VR>> emptyList()));
+				return new ChangeSelectionOperation<VR>(viewer, newSelection);
 			}
 		}
-		return clearOp.unwrap(true);
+		return null;
+	}
+
+	/**
+	 * Returns an {@link ITransactionalOperation} that removes the given
+	 * {@link IContentPart} from the {@link FocusModel} of the corresponding
+	 * {@link IViewer}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} that is removed from the
+	 *            {@link FocusModel}.
+	 * @return An {@link ITransactionalOperation} that changes the
+	 *         {@link FocusModel}.
+	 */
+	protected ITransactionalOperation createUnfocusOperation(
+			IContentPart<VR, ? extends VR> part) {
+		IViewer<VR> viewer = part.getRoot().getViewer();
+
+		FocusModel<VR> focusModel = viewer
+				.<FocusModel<VR>> getAdapter(FocusModel.class);
+		if (focusModel != null) {
+			if (focusModel.getFocused() == part) {
+				return new ChangeFocusOperation<VR>(viewer, null);
+
+			}
+		}
+		return null;
 	}
 
 	/**
