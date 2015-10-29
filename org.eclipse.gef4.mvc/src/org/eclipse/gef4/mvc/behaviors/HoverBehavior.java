@@ -51,8 +51,10 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 		HoverModel<VR> hoverModel = getHoverModel();
 
 		// remove any pending feedback and handles
-		removeFeedback(Collections.singletonList(getHost()));
-		removeHandles(Collections.singletonList(getHost()));
+		IVisualPart<VR, ? extends VR> hover = hoverModel.getHover();
+		if (hover != null) {
+			onHoverChange(hover, null);
+		}
 
 		// unregister
 		hoverModel.removePropertyChangeListener(this);

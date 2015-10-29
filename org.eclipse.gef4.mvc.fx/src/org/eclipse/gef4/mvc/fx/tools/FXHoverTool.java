@@ -110,7 +110,11 @@ public class FXHoverTool extends AbstractTool<Node> {
 			public void handle(MouseEvent event) {
 				if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
 						&& !event.getEventType()
-								.equals(MouseEvent.MOUSE_DRAGGED)) {
+								.equals(MouseEvent.MOUSE_DRAGGED)
+						&& !event.getEventType()
+								.equals(MouseEvent.MOUSE_ENTERED_TARGET)
+						&& !event.getEventType()
+								.equals(MouseEvent.MOUSE_EXITED_TARGET)) {
 					return;
 				}
 
