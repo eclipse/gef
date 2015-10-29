@@ -422,7 +422,6 @@ public class FXConnection extends Group {
 		registerAnchorInfos(as);
 
 		// initialize clickable area
-		curveNodeClickableArea.setFill(Color.TRANSPARENT);
 		curveNodeClickableArea.setStroke(Color.TRANSPARENT);
 		curveNodeClickableArea.setMouseTransparent(false);
 
