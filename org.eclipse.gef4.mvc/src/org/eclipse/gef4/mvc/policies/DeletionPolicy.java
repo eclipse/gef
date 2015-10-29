@@ -110,7 +110,11 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR>
 						.commit();
 				if (removeFromParentOperation != null) {
 					// clear viewer models
-					deleteOperation.add(createClearViewerModelsOperation(p));
+					ITransactionalOperation clearOp = createClearViewerModelsOperation(
+							p);
+					if (clearOp != null) {
+						deleteOperation.add(clearOp);
+					}
 					deleteOperation.add(removeFromParentOperation);
 				}
 			}
