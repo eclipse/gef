@@ -18,7 +18,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -104,8 +104,8 @@ public class FXTypeToolTests {
 		});
 		injector.injectMembers(this);
 
-		ScrollPaneEx scrollPane = domain.<FXViewer> getAdapter(IViewer.class).getScrollPane();
-		ctx.createScene(scrollPane, 100, 100);
+		InfiniteCanvas infiniteCanvas = domain.<FXViewer> getAdapter(IViewer.class).getCanvas();
+		ctx.createScene(infiniteCanvas, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
 		domain.activate();
@@ -120,7 +120,7 @@ public class FXTypeToolTests {
 		Robot robot = new Robot();
 
 		// move robot to scene
-		ctx.moveTo(robot, scrollPane, 50, 50);
+		ctx.moveTo(robot, infiniteCanvas, 50, 50);
 
 		// simulate press/release gesture
 		ctx.keyPress(robot, KeyEvent.VK_K);

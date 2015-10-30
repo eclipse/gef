@@ -13,7 +13,7 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
 import org.eclipse.gef4.fx.examples.AbstractFXExample;
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
@@ -32,25 +32,25 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
-public class ScrollPaneExSnippet extends AbstractFXExample {
+public class InifinteCanvasSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
 		launch();
 	}
 
-	private ScrollPaneEx scrollPane;
+	private InfiniteCanvas infiniteCanvas;
 
-	public ScrollPaneExSnippet() {
-		super("ScrollPaneExSnippet");
+	public InifinteCanvasSnippet() {
+		super("InfiniteCanvasSnippet");
 	}
 
 	@Override
 	public Scene createScene() {
 		BorderPane root = new BorderPane();
 
-		scrollPane = new ScrollPaneEx();
-		root.setCenter(scrollPane);
-		scrollPane.getContentGroup().getChildren().addAll(
+		infiniteCanvas = new InfiniteCanvas();
+		root.setCenter(infiniteCanvas);
+		infiniteCanvas.getContentGroup().getChildren().addAll(
 				rect(25, 25, 100, 50, Color.BLUE),
 				rect(25, 200, 25, 50, Color.BLUE),
 				rect(150, 100, 75, 75, Color.BLUE),
@@ -58,25 +58,25 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 				rect(75, 75, 150, 150, Color.RED));
 
 		// translate to top-left most content node
-		// TODO: implement ScrollPaneEx#reveal(Node);
-		Bounds canvasBounds = scrollPane.getScrolledPane().getBoundsInLocal();
+		Bounds canvasBounds = infiniteCanvas.getScrolledPane()
+				.getBoundsInLocal();
 		double minx = canvasBounds.getMinX();
 		double miny = canvasBounds.getMinY();
-		scrollPane.getScrolledPane().setTranslateX(-minx);
-		scrollPane.getScrolledPane().setTranslateY(-miny);
+		infiniteCanvas.getScrolledPane().setTranslateX(-minx);
+		infiniteCanvas.getScrolledPane().setTranslateY(-miny);
 
-		scrollPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		infiniteCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				if (MouseButton.SECONDARY.equals(event.getButton())) {
 					// determine pivot in content group
-					Group contentGroup = scrollPane.getContentGroup();
+					Group contentGroup = infiniteCanvas.getContentGroup();
 					Point2D contentPivot = contentGroup
 							.sceneToLocal(event.getSceneX(), event.getSceneY());
 					double zoomFactor = event.isControlDown() ? 4d / 5 : 5d / 4;
 
 					// compute zoom transformation
-					Affine tx = scrollPane.getContentTransform();
+					Affine tx = infiniteCanvas.getContentTransform();
 					AffineTransform at = JavaFX2Geometry.toAffineTransform(tx);
 					at.concatenate(new AffineTransform()
 							.translate(contentPivot.getX(), contentPivot.getY())
@@ -86,7 +86,7 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 					Affine affine = Transform.affine(at.getM00(), at.getM01(),
 							at.getM10(), at.getM11(), at.getTranslateX(),
 							at.getTranslateY());
-					scrollPane.setContentTransform(affine);
+					infiniteCanvas.setContentTransform(affine);
 				}
 			}
 		});
@@ -117,19 +117,9 @@ public class ScrollPaneExSnippet extends AbstractFXExample {
 			public void handle(MouseEvent event) {
 				double dx = event.getSceneX() - initialMouse[0];
 				double dy = event.getSceneY() - initialMouse[1];
-				boolean reveal = dx > 0 && scrollPane.getRightExcess(rect) > 0
-						|| dx < 0 && scrollPane.getLeftExcess(rect) > 0
-						|| dy > 0 && scrollPane.getBottomExcess(rect) > 0
-						|| dy < 0 && scrollPane.getTopExcess(rect) > 0;
 				rect.setLayoutX(initialLayout[0] + dx);
 				rect.setLayoutY(initialLayout[1] + dy);
-				if (reveal) {
-					scrollPane.reveal(rect);
-					initialMouse[0] = event.getSceneX();
-					initialMouse[1] = event.getSceneY();
-					initialLayout[0] = rect.getLayoutX();
-					initialLayout[1] = rect.getLayoutY();
-				}
+				infiniteCanvas.reveal(rect);
 			}
 		};
 		rect.setOnMouseDragged(dragHandler);

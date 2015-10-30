@@ -38,15 +38,15 @@ import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
 /**
- * A {@link ScrollPaneEx} provides a scrollable {@link Pane} in which contents
- * can be placed. {@link ScrollBar}s are automatically added to the ScrollPaneEx
- * when its contents exceed the viewport.
+ * A {@link InfiniteCanvas} provides a scrollable {@link Pane} in which contents
+ * can be placed. {@link ScrollBar}s are automatically added to the
+ * {@link InfiniteCanvas} when its contents exceed the viewport.
  * <p>
- * On the top level, a ScrollPaneEx consists of a "scrolled pane" and a
- * "scrollbars group". Inside of the scrolled pane, a "contents group" contains
- * all user nodes, which can be scrolled by the ScrollPaneEx. The scrollbars
- * group contains the horizontal and vertical scrollbars. It is rendered above
- * the scrolled pane.
+ * On the top level, a {@link InfiniteCanvas} consists of a "scrolled pane" and
+ * a "scrollbars group". Inside of the scrolled pane, a "contents group"
+ * contains all user nodes, which can be scrolled by the {@link InfiniteCanvas}.
+ * The scrollbars group contains the horizontal and vertical scrollbars. It is
+ * rendered above the scrolled pane.
  * <p>
  * In order to rotate or scale the viewport, you can access a
  * "content transformation" which is applied to the contents group. Scrolling is
@@ -54,25 +54,24 @@ import javafx.util.Duration;
  * translate-y properties of the scrolled pane, which corresponds to the
  * horizontal and vertical scroll offset.
  * <p>
- * The ScrollPaneEx computes two bounds: a) the contents-bounds, and b) the
- * scrollable bounds. The contents-bounds are the bounds of the contents group
- * within the ScrollPaneEx's coordinate system. The scrollable bounds are at
- * least as big as the contents-bounds but also include the complete viewport,
- * i.e. any empty space that is currently visible.
+ * The {@link InfiniteCanvas} computes two bounds: a) the contents-bounds, and
+ * b) the scrollable bounds. The contents-bounds are the bounds of the contents
+ * group within the {@link InfiniteCanvas}'s coordinate system. The scrollable
+ * bounds are at least as big as the contents-bounds but also include the
+ * complete viewport, i.e. any empty space that is currently visible.
  * <p>
- * The ScrollPaneEx provides the scroll position in multiple formats: a) the
- * values of the scrollbars (depends on scrollable bounds), b) the ratios of the
- * scrollbars (in range <code>[0;1]</code>), and c) the translation values of
- * the scrolled pane. You can use the various <code>compute()</code>,
+ * The {@link InfiniteCanvas} provides the scroll position in multiple formats:
+ * a) the values of the scrollbars (depends on scrollable bounds), b) the ratios
+ * of the scrollbars (in range <code>[0;1]</code>), and c) the translation
+ * values of the scrolled pane. You can use the various <code>compute()</code>,
  * <code>lerp()</code>, and <code>norm()</code> methods to convert from one
  * format to the other.
  */
-public class ScrollPaneEx extends Region {
+public class InfiniteCanvas extends Region {
 
 	private Group scrollbarGroup;
 	private ScrollBar horizontalScrollBar;
 	private ScrollBar verticalScrollBar;
-
 	private Pane scrolledPane;
 	private Group contentGroup;
 
@@ -117,9 +116,9 @@ public class ScrollPaneEx extends Region {
 	};
 
 	/**
-	 * Constructs a new {@link ScrollPaneEx}.
+	 * Constructs a new {@link InfiniteCanvas}.
 	 */
-	public ScrollPaneEx() {
+	public InfiniteCanvas() {
 		getChildren().addAll(getScrolledPane(), getScrollbarGroup());
 
 		widthProperty().addListener(widthChangeListener);
@@ -157,11 +156,11 @@ public class ScrollPaneEx extends Region {
 	/**
 	 * Computes the bounds <code>[min-x, min-y, max-x, max-y]</code> surrounding
 	 * the {@link #getContentGroup() content group} within the coordinate system
-	 * of this {@link ScrollPaneEx}.
+	 * of this {@link InfiniteCanvas}.
 	 *
 	 * @return The bounds <code>[min-x, min-y, max-x, max-y]</code> surrounding
 	 *         the {@link #getContentGroup() content group} within the
-	 *         coordinate system of this {@link ScrollPaneEx}.
+	 *         coordinate system of this {@link InfiniteCanvas}.
 	 */
 	protected double[] computeContentBoundsInLocal() {
 		Bounds contentBoundsInScrolledPane = contentGroup.getBoundsInParent();
@@ -196,7 +195,7 @@ public class ScrollPaneEx extends Region {
 
 	/**
 	 * Computes and returns the bounds of the scrollable area within this
-	 * {@link ScrollPaneEx}.
+	 * {@link InfiniteCanvas}.
 	 *
 	 * @return The bounds of the scrollable area, i.e.
 	 *         <code>[minx, miny, maxx, maxy]</code>.
@@ -274,7 +273,7 @@ public class ScrollPaneEx extends Region {
 
 	/**
 	 * Provides the visual bounds of the content group in the local coordinate
-	 * system of this {@link ScrollPaneEx}
+	 * system of this {@link InfiniteCanvas}
 	 *
 	 * @return The bounds of the content group, i.e.
 	 *         <code>minx, miny, maxx, maxy</code>.
@@ -436,31 +435,12 @@ public class ScrollPaneEx extends Region {
 	}
 
 	/**
-	 * Returns the amount of units the given child {@link Node} exceeds the
-	 * bottom side of the viewport.
+	 * Returns the value of the {@link #contentBoundsProperty()}.
 	 *
-	 * @param child
-	 *            A direct or indirect child {@link Node} of this
-	 *            {@link ScrollPaneEx}.
-	 * @return The amount of units the given child {@link Node} exceeds the
-	 *         bottom side of the viewport.
+	 * @return The value of the {@link #contentBoundsProperty()}.
 	 */
-	public double getBottomExcess(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
-		return bounds.getMaxY() - getHeight();
-	}
-
-	/**
-	 * Transforms the bounds-in-local of the given {@link Node} into the
-	 * coordinate system of this {@link ScrollPaneEx}, i.e. the viewport
-	 * coordinate system.
-	 *
-	 * @param child
-	 *            The {@link Node} whose bounds-in-local are transformed.
-	 * @return The new, transformed {@link Bounds}.
-	 */
-	public Bounds getBoundsInViewport(Node child) {
-		return sceneToLocal(child.localToScene(child.getBoundsInLocal()));
+	public Bounds getContentBounds() {
+		return contentBoundsProperty.get();
 	}
 
 	/**
@@ -505,36 +485,6 @@ public class ScrollPaneEx extends Region {
 	}
 
 	/**
-	 * Returns the amount of units the given child {@link Node} exceeds the left
-	 * side of the viewport.
-	 *
-	 * @param child
-	 *            A direct or indirect child {@link Node} of this
-	 *            {@link ScrollPaneEx}.
-	 * @return The amount of units the given child {@link Node} exceeds the left
-	 *         side of the viewport.
-	 */
-	public double getLeftExcess(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
-		return -bounds.getMinX();
-	}
-
-	/**
-	 * Returns the amount of units the given child {@link Node} exceeds the
-	 * right side of the viewport.
-	 *
-	 * @param child
-	 *            A direct or indirect child {@link Node} of this
-	 *            {@link ScrollPaneEx}.
-	 * @return The amount of units the given child {@link Node} exceeds the
-	 *         right side of the viewport.
-	 */
-	public double getRightExcess(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
-		return bounds.getMaxX() - getWidth();
-	}
-
-	/**
 	 * Returns the {@link Group} designated for holding the {@link ScrollBar}s.
 	 *
 	 * @return The {@link Group} designated for holding the {@link ScrollBar}s.
@@ -559,21 +509,6 @@ public class ScrollPaneEx extends Region {
 			scrolledPane = createScrolledPane();
 		}
 		return scrolledPane;
-	}
-
-	/**
-	 * Returns the amount of units the given child {@link Node} exceeds the top
-	 * side of the viewport.
-	 *
-	 * @param child
-	 *            A direct or indirect child {@link Node} of this
-	 *            {@link ScrollPaneEx}.
-	 * @return The amount of units the given child {@link Node} exceeds the top
-	 *         side of the viewport.
-	 */
-	public double getTopExcess(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
-		return -bounds.getMinY();
 	}
 
 	/**
@@ -605,40 +540,6 @@ public class ScrollPaneEx extends Region {
 	}
 
 	/**
-	 * Returns <code>true</code> when the given direct or indirect child
-	 * {@link Node} is fully visible, i.e. does not exceed the viewport in any
-	 * direction. Otherwise returns <code>false</code>.
-	 *
-	 * @param child
-	 *            A direct or indirect child {@link Node} of this
-	 *            {@link ScrollPaneEx}.
-	 * @return <code>true</code> when the given child {@link Node} is fully
-	 *         visible, otherwise <code>false</code>.
-	 */
-	public boolean isFullyVisible(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
-		return bounds.getMinX() >= 0 && bounds.getMaxX() <= getWidth()
-				&& bounds.getMinY() >= 0 && bounds.getMaxY() <= getHeight();
-	}
-
-	/**
-	 * Returns <code>true</code> when the given direct or indirect child
-	 * {@link Node} is visible, i.e. does not exceed the viewport in all
-	 * directions. Otherwise returns <code>false</code>.
-	 *
-	 * @param child
-	 *            A direct or indirect child {@link Node} of this
-	 *            {@link ScrollPaneEx}.
-	 * @return <code>true</code> when the given child {@link Node} is fully
-	 *         visible, otherwise <code>false</code>.
-	 */
-	public boolean isVisible(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
-		return bounds.getMaxX() >= 0 && bounds.getMinX() <= getWidth()
-				&& bounds.getMaxY() >= 0 && bounds.getMinY() <= getHeight();
-	}
-
-	/**
 	 * Linear interpolation between <i>min</i> and <i>max</i> at the given
 	 * <i>ratio</i>. Returns the interpolated value in the interval
 	 * <code>[min;max]</code>.
@@ -651,14 +552,15 @@ public class ScrollPaneEx extends Region {
 	 *            A value in the interval <code>[0;1]</code>.
 	 * @return The interpolated value.
 	 */
-	private double lerp(double min, double max, double ratio) {
+	protected double lerp(double min, double max, double ratio) {
 		double d = (1 - ratio) * min + ratio * max;
 		return Double.isNaN(d) ? 0 : Math.min(max, Math.max(min, d));
 	}
 
 	/**
 	 * Linear intERPolation (LERP) of the given horizontal ratio (in range
-	 * <code>[0;1]</code>) onto the horizontal scroll offset range.
+	 * <code>[0;1]</code>) onto the horizontal scroll offset (Horizontal Value)
+	 * range.
 	 *
 	 * @param hvRatio
 	 *            The horizontal ratio to lerp (in range <code>[0;1]</code>).
@@ -672,7 +574,8 @@ public class ScrollPaneEx extends Region {
 
 	/**
 	 * Linear intERPolation (LERP) of the given vertical ratio (in range
-	 * <code>[0;1]</code>) onto the vertical scroll offset range.
+	 * <code>[0;1]</code>) onto the vertical scroll offset (Vertical Value)
+	 * range.
 	 *
 	 * @param vvRatio
 	 *            The vertical ratio to lerp (in range <code>[0;1]</code>).
@@ -696,14 +599,14 @@ public class ScrollPaneEx extends Region {
 	 *            The value in the range.
 	 * @return The normalized value (in range <code>[0;1]</code>).
 	 */
-	private double norm(double min, double max, double value) {
+	protected double norm(double min, double max, double value) {
 		double d = (value - min) / (max - min);
 		return Double.isNaN(d) ? 0 : Math.min(1, Math.max(0, d));
 	}
 
 	/**
-	 * Normalizes the given horizontal scroll offset to a ratio in the range
-	 * <code>[0;1]</code>.
+	 * Normalizes the given horizontal scroll offset (Horizontal Value) to a
+	 * ratio in the range <code>[0;1]</code>.
 	 *
 	 * @param hv
 	 *            The horizontal scroll offset to normalize.
@@ -715,8 +618,8 @@ public class ScrollPaneEx extends Region {
 	}
 
 	/**
-	 * Normalizes the given vertical scroll offset to a ratio in the range
-	 * <code>[0;1]</code>.
+	 * Normalizes the given vertical scroll offset (Vertical Value) to a ratio
+	 * in the range <code>[0;1]</code>.
 	 *
 	 * @param vv
 	 *            The vertical scroll offset to normalize.
@@ -726,7 +629,15 @@ public class ScrollPaneEx extends Region {
 		return norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv);
 	}
 
-	private void registerInOutTransitions(final Node node) {
+	/**
+	 * Registers fade in/out transitions for the given {@link Node}. The
+	 * transitions are used when the mouse enters/exits the node.
+	 *
+	 * @param node
+	 *            The {@link Node} to which fade in/out transitions are added
+	 *            upon mouse enter/exit.
+	 */
+	protected void registerInOutTransitions(final Node node) {
 		// create transitions
 		final FadeTransition fadeInTransition = new FadeTransition(
 				Duration.millis(200), node);
@@ -798,7 +709,8 @@ public class ScrollPaneEx extends Region {
 	 *            The child {@link Node} to reveal.
 	 */
 	public void reveal(Node child) {
-		Bounds bounds = getBoundsInViewport(child);
+		Bounds bounds = sceneToLocal(
+				child.localToScene(child.getBoundsInLocal()));
 		if (bounds.getHeight() <= getHeight()) {
 			if (bounds.getMinY() < 0) {
 				setVerticalScrollOffset(
@@ -822,9 +734,9 @@ public class ScrollPaneEx extends Region {
 
 	/**
 	 * Returns the bounds of the scrollable area in local coordinates of this
-	 * {@link ScrollPaneEx}. The scrollable area corresponds to the visual
+	 * {@link InfiniteCanvas}. The scrollable area corresponds to the visual
 	 * bounds of the content group, which is expanded to cover at least the area
-	 * of this {@link ScrollPaneEx} (i.e. the viewport) if necessary. It is
+	 * of this {@link InfiniteCanvas} (i.e. the viewport) if necessary. It is
 	 * thereby also the area that can be navigated via the scroll bars.
 	 *
 	 * @return The bounds of the scrollable area, i.e.
@@ -850,7 +762,6 @@ public class ScrollPaneEx extends Region {
 		viewportTransform.setMyy(tx.getMyy());
 		viewportTransform.setTx(tx.getTx());
 		viewportTransform.setTy(tx.getTy());
-
 		updateScrollbars();
 	}
 

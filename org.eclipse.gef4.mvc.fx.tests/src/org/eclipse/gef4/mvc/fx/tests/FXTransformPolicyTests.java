@@ -117,7 +117,7 @@ public class FXTransformPolicyTests {
 		// get viewer
 		FXViewer viewer = domain.<FXViewer> getAdapter(IViewer.class);
 		// hook viewer to scene
-		Scene scene = new Scene(viewer.getScrollPane(), 100, 100);
+		Scene scene = new Scene(viewer.getCanvas(), 100, 100);
 		JFXPanel panel = new JFXPanel();
 		panel.setScene(scene);
 		// set viewer contents

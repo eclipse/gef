@@ -154,7 +154,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	 * @return The created {@link Group}.
 	 */
 	// TODO: Remove this method.
-	protected Group createScrollPaneContent(Node... layers) {
+	protected Group createCanvasContent(Node... layers) {
 		return new Group(layers);
 	}
 
@@ -196,7 +196,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 
 		handleLayer = createHandleLayer();
 
-		return createScrollPaneContent(
+		return createCanvasContent(
 				new Node[] { contentLayer, feedbackLayer, handleLayer });
 	}
 

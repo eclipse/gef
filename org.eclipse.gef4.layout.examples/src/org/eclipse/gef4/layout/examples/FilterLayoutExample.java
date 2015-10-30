@@ -16,7 +16,7 @@ package org.eclipse.gef4.layout.examples;
 
 import javafx.application.Application;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
@@ -77,10 +77,10 @@ public class FilterLayoutExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected void customizeUi(ScrollPaneEx scrollPane) {
-		super.customizeUi(scrollPane);
+	protected void customizeUi(InfiniteCanvas infiniteCanvas) {
+		super.customizeUi(infiniteCanvas);
 		// TODO: Find it via bundle in OSGI context.
-		scrollPane.getStylesheets().add(getClass()
+		infiniteCanvas.getStylesheets().add(getClass()
 				.getResource("FilterGraphExample.css").toExternalForm());
 	}
 

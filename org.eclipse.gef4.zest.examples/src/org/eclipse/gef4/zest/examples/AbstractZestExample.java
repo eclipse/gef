@@ -14,7 +14,7 @@ package org.eclipse.gef4.zest.examples;
 
 import java.util.Collections;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Edge.Builder;
 import org.eclipse.gef4.graph.Graph;
@@ -102,7 +102,7 @@ public abstract class AbstractZestExample extends Application {
 		Injector injector = Guice.createInjector(createModule());
 		domain = injector.getInstance(FXDomain.class);
 		viewer = domain.getAdapter(IViewer.class);
-		primaryStage.setScene(new Scene(viewer.getScrollPane()));
+		primaryStage.setScene(new Scene(viewer.getCanvas()));
 
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(getStageWidth());
@@ -125,7 +125,7 @@ public abstract class AbstractZestExample extends Application {
 			}
 		});
 
-		customizeUi(viewer.getScrollPane());
+		customizeUi(viewer.getCanvas());
 	}
 
 	protected int getStageHeight() {
@@ -136,7 +136,7 @@ public abstract class AbstractZestExample extends Application {
 		return 640;
 	}
 
-	protected void customizeUi(ScrollPaneEx scrollPane) {
+	protected void customizeUi(InfiniteCanvas canvas) {
 	}
 
 	protected Module createModule() {

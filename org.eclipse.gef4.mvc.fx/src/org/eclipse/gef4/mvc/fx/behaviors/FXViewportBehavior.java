@@ -15,7 +15,7 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
@@ -30,8 +30,8 @@ import javafx.scene.transform.Affine;
 
 /**
  * The {@link FXViewportBehavior} can be registered on an {@link FXRootPart} in
- * order to keep the {@link ViewportModel} in sync with the {@link ScrollPaneEx}
- * of the {@link FXViewer} and vice versa.
+ * order to keep the {@link ViewportModel} in sync with the
+ * {@link InfiniteCanvas} of the {@link FXViewer} and vice versa.
  *
  * @author anyssen
  * @author mwienand
@@ -41,13 +41,13 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		implements PropertyChangeListener {
 
 	/*
-	 * TODO: When applying the translation values stored in the ViewportModel to
-	 * the ScrollPaneEx, the values will be slightly adjusted by the
-	 * ScrollPaneEx. Therefore, the code that is applying the translation stored
-	 * in the ScrollPaneEx back to the ViewportModel has to be secure against
+	 * IMPOPRTANT: When applying the translation values stored in the
+	 * ViewportModel to the InfiniteCanvas, the values will be slightly adjusted
+	 * by the canvas. Therefore, the code that is applying the translation
+	 * stored in the canvas back to the ViewportModel has to be secure against
 	 * this adjustment. Currently, this is solved by only applying changes from
-	 * the ScrollPaneEx back to the ViewportModel when #applyViewport() is not
-	 * in progress.
+	 * the canvas back to the ViewportModel when #applyViewport() is not in
+	 * progress.
 	 */
 
 	/**
@@ -105,17 +105,17 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 		viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
 		viewportModel.addPropertyChangeListener(this);
-		getScrollPane().horizontalScrollOffsetProperty()
+		getCanvas().horizontalScrollOffsetProperty()
 				.addListener(horizontalScrollOffsetListener);
-		getScrollPane().verticalScrollOffsetProperty()
+		getCanvas().verticalScrollOffsetProperty()
 				.addListener(verticalScrollOffsetListener);
-		getScrollPane().widthProperty().addListener(widthListener);
-		getScrollPane().heightProperty().addListener(heightListener);
+		getCanvas().widthProperty().addListener(widthListener);
+		getCanvas().heightProperty().addListener(heightListener);
 	}
 
 	/**
 	 * Applies the given translation, size, and transformation (provided by the
-	 * {@link ViewportModel}) to the {@link ScrollPaneEx} of the
+	 * {@link ViewportModel}) to the {@link InfiniteCanvas} of the
 	 * {@link #getHost() host's} {@link FXViewer}.
 	 *
 	 * @param translateX
@@ -132,13 +132,13 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 	protected void applyViewport(double translateX, double translateY,
 			double width, double height, AffineTransform contentsTransform) {
 		inApplyViewport = true;
-		getScrollPane().setHorizontalScrollOffset(translateX);
-		getScrollPane().setVerticalScrollOffset(translateY);
+		getCanvas().setHorizontalScrollOffset(translateX);
+		getCanvas().setVerticalScrollOffset(translateY);
 		// scroll width??
-		getScrollPane().setPrefWidth(width);
-		getScrollPane().setPrefHeight(height);
+		getCanvas().setPrefWidth(width);
+		getCanvas().setPrefHeight(height);
 
-		getScrollPane().setContentTransform(
+		getCanvas().setContentTransform(
 				Geometry2JavaFX.toFXAffine(contentsTransform));
 		inApplyViewport = false;
 	}
@@ -146,24 +146,24 @@ public class FXViewportBehavior extends AbstractBehavior<Node>
 	@Override
 	public void deactivate() {
 		viewportModel.removePropertyChangeListener(this);
-		getScrollPane().widthProperty().removeListener(widthListener);
-		getScrollPane().heightProperty().removeListener(heightListener);
-		getScrollPane().horizontalScrollOffsetProperty()
+		getCanvas().widthProperty().removeListener(widthListener);
+		getCanvas().heightProperty().removeListener(heightListener);
+		getCanvas().horizontalScrollOffsetProperty()
 				.removeListener(horizontalScrollOffsetListener);
-		getScrollPane().verticalScrollOffsetProperty()
+		getCanvas().verticalScrollOffsetProperty()
 				.removeListener(verticalScrollOffsetListener);
 		super.deactivate();
 	}
 
 	/**
-	 * Returns the {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 * Returns the {@link InfiniteCanvas} of the {@link #getHost() host's}
 	 * {@link FXViewer}.
 	 *
-	 * @return The {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 * @return The {@link InfiniteCanvas} of the {@link #getHost() host's}
 	 *         {@link FXViewer}.
 	 */
-	protected ScrollPaneEx getScrollPane() {
-		return ((FXViewer) getHost().getRoot().getViewer()).getScrollPane();
+	protected InfiniteCanvas getCanvas() {
+		return ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 	}
 
 	@Override

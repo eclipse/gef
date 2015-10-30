@@ -46,7 +46,7 @@ public abstract class AbstractMvcExample extends Application {
 
 		// hook the (single) viewer into the stage
 		FXViewer viewer = domain.getAdapter(IViewer.class);
-		primaryStage.setScene(new Scene(viewer.getScrollPane()));
+		primaryStage.setScene(new Scene(viewer.getCanvas()));
 
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(640);

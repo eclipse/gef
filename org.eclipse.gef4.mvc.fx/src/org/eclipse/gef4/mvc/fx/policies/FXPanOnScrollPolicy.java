@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 
@@ -139,10 +139,9 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	}
 
 	private boolean stopAtContentBounds(Dimension delta) {
-		ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer())
-				.getScrollPane();
-		Bounds contentBounds = scrollPane
-				.getBoundsInViewport(scrollPane.getContentGroup());
+		InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot()
+				.getViewer()).getCanvas();
+		Bounds contentBounds = infiniteCanvas.getContentBounds();
 		boolean stopped = false;
 		if (contentBounds.getMinX() < 0
 				&& contentBounds.getMinX() + delta.width >= 0) {
@@ -153,15 +152,15 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 			// of the content-bounds now.
 			delta.width = -contentBounds.getMinX();
 			stopped = true;
-		} else if (contentBounds.getMaxX() > scrollPane.getWidth()
-				&& contentBounds.getMaxX() + delta.width <= scrollPane
+		} else if (contentBounds.getMaxX() > infiniteCanvas.getWidth()
+				&& contentBounds.getMaxX() + delta.width <= infiniteCanvas
 						.getWidth()) {
 			// If the right side of the content-bounds was right-of the viewport
 			// before scrolling and will not be right-of the viewport after
 			// scrolling, then the right side of the content-bounds was reached
 			// by scrolling. Therefore, scrolling should stop at the right side
 			// of the content-bounds now.
-			delta.width = scrollPane.getWidth() - contentBounds.getMaxX();
+			delta.width = infiniteCanvas.getWidth() - contentBounds.getMaxX();
 			stopped = true;
 		}
 		if (contentBounds.getMinY() < 0
@@ -173,15 +172,15 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 			// top side of the content-bounds now.
 			delta.height = -contentBounds.getMinY();
 			stopped = true;
-		} else if (contentBounds.getMaxY() > scrollPane.getHeight()
-				&& contentBounds.getMaxY() + delta.height <= scrollPane
+		} else if (contentBounds.getMaxY() > infiniteCanvas.getHeight()
+				&& contentBounds.getMaxY() + delta.height <= infiniteCanvas
 						.getHeight()) {
 			// If the bottom side of the content-bounds was bottom-of the
 			// viewport before scrolling and will not be top-of the viewport
 			// after scrolling, then the bottom side of the content-bounds was
 			// reached by scrolling. Therefore, scrolling should stop at the
 			// bottom side of the content-bounds now.
-			delta.height = scrollPane.getHeight() - contentBounds.getMaxY();
+			delta.height = infiniteCanvas.getHeight() - contentBounds.getMaxY();
 			stopped = true;
 		}
 		return stopped;

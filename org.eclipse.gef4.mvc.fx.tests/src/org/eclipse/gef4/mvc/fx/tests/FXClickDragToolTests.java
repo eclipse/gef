@@ -109,7 +109,7 @@ public class FXClickDragToolTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final Scene scene = ctx.createScene(domain.<FXViewer> getAdapter(IViewer.class).getScrollPane(), 100, 100);
+		final Scene scene = ctx.createScene(domain.<FXViewer> getAdapter(IViewer.class).getCanvas(), 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
 		domain.activate();

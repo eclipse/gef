@@ -15,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -105,7 +105,7 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 				viewportModel.addPropertyChangeListener(this);
 				isListeningOnViewport = true;
 				// apply current contents transform
-				Affine contentTransform = getScrollPane()
+				Affine contentTransform = getCanvas()
 						.contentTransformProperty().get();
 				gridTransform.mxxProperty()
 						.bind(contentTransform.mxxProperty());
@@ -151,14 +151,14 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 	}
 
 	/**
-	 * Returns the {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 * Returns the {@link InfiniteCanvas} of the {@link #getHost() host's}
 	 * {@link FXViewer}.
 	 *
-	 * @return The {@link ScrollPaneEx} of the {@link #getHost() host's}
+	 * @return The {@link InfiniteCanvas} of the {@link #getHost() host's}
 	 *         {@link FXViewer}.
 	 */
-	protected ScrollPaneEx getScrollPane() {
-		return ((FXViewer) getHost().getRoot().getViewer()).getScrollPane();
+	protected InfiniteCanvas getCanvas() {
+		return ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 	}
 
 	@Override

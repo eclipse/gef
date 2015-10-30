@@ -24,7 +24,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.ToggleButton;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -116,8 +116,8 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected void customizeUi(ScrollPaneEx scrollPane) {
-		Group overlay = scrollPane.getScrollbarGroup();
+	protected void customizeUi(InfiniteCanvas infiniteCanvas) {
+		Group overlay = infiniteCanvas.getScrollbarGroup();
 		final ToggleButton button = new ToggleButton("step");
 		final ManualSpringLayoutAlgorithm[] layoutAlgorithm = new ManualSpringLayoutAlgorithm[1];
 		button.setOnAction(new EventHandler<ActionEvent>() {

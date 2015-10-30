@@ -169,7 +169,7 @@ public class ZestContentViewer extends ContentViewer {
 
 		// hook viewer
 		viewer = domain.getAdapter(IViewer.class);
-		canvas.setScene(new Scene(viewer.getScrollPane()));
+		canvas.setScene(new Scene(viewer.getCanvas()));
 
 		getSelectionModel().addPropertyChangeListener(selectionNotifier);
 		selectionNotifier.activate();

@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
@@ -129,12 +129,12 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 			Group hostVisual = getHost().getVisual();
 			Bounds boundsInScene = hostVisual.localToScene(hostVisual.getLayoutBounds());
 			// transform into the viewport coordinate system
-			ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer()).getScrollPane();
+			InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 			org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = JavaFX2Geometry
-					.toRectangle(scrollPane.sceneToLocal(boundsInScene));
+					.toRectangle(infiniteCanvas.sceneToLocal(boundsInScene));
 			// compute intersection with the viewport
 			org.eclipse.gef4.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef4.geometry.planar.Rectangle(
-					0, 0, scrollPane.getWidth(), scrollPane.getHeight());
+					0, 0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			org.eclipse.gef4.geometry.planar.Rectangle intersected = boundsInViewport.getIntersected(viewportBounds);
 			// only open nested graph if we fill at least the half of the
 			// viewport

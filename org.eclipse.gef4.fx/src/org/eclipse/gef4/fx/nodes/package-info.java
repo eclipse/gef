@@ -22,8 +22,8 @@
  * {@link org.eclipse.gef4.fx.nodes.FXGridLayer}</li>
  * <li>a visual to display an image which is overlayed by another image on mouse
  * hover: {@link org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay}</li>
- * <li>a custom {@link javafx.scene.control.ScrollPane} implementation:
- * {@link org.eclipse.gef4.fx.nodes.ScrollPaneEx}</li>
+ * <li>a visual providing an scrollable infinite canvas:
+ * {@link org.eclipse.gef4.fx.nodes.InfiniteCanvas}</li>
  * <li>utilities (picking nodes, querying the pointer location,
  * transformations): {@link org.eclipse.gef4.fx.nodes.FXUtils}</li>
  * </ul>

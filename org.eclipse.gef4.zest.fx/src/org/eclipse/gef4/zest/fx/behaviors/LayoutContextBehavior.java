@@ -100,11 +100,11 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			viewportModel.addPropertyChangeListener(viewportModelPropertyChangeListener);
 			// read initial bounds
 			FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-			Bounds scrollableBounds = fxViewer.getScrollPane().scrollableBoundsProperty().get();
+			Bounds scrollableBounds = fxViewer.getCanvas().scrollableBoundsProperty().get();
 			initialBounds.setX(scrollableBounds.getMinX());
 			initialBounds.setY(scrollableBounds.getMinY());
-			initialBounds.setWidth(fxViewer.getScrollPane().getWidth());
-			initialBounds.setHeight(fxViewer.getScrollPane().getHeight());
+			initialBounds.setWidth(fxViewer.getCanvas().getWidth());
+			initialBounds.setHeight(fxViewer.getCanvas().getHeight());
 		} else if (getHost().getContent().getNestingNode() != null) {
 			/*
 			 * Our graph is nested inside a node of another graph, therefore we
@@ -306,9 +306,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		}
 		// update layout bounds to match the viewport bounds
 		FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-		Bounds scrollableBounds = fxViewer.getScrollPane().scrollableBoundsProperty().get();
+		Bounds scrollableBounds = fxViewer.getCanvas().scrollableBoundsProperty().get();
 		Rectangle newBounds = new Rectangle(scrollableBounds.getMinX(), scrollableBounds.getMinY(),
-				fxViewer.getScrollPane().getWidth(), fxViewer.getScrollPane().getHeight());
+				fxViewer.getCanvas().getWidth(), fxViewer.getCanvas().getHeight());
 
 		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
 			LayoutProperties.setBounds(layoutContext, newBounds);

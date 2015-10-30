@@ -216,7 +216,7 @@ public abstract class FXEditor extends EditorPart {
 		// by default we only have a single (content) viewer, so hook its
 		// visuals as root visuals into the scene
 		final FXViewer contentViewer = getViewer();
-		canvas.setScene(new Scene(contentViewer.getScrollPane()));
+		canvas.setScene(new Scene(contentViewer.getCanvas()));
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {

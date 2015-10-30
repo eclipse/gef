@@ -75,7 +75,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	protected Point getLocation(MouseEvent e) {
 		Point2D location = ((FXViewer) getHost().getRoot().getViewer())
-				.getScrollPane().getContentGroup()
+				.getCanvas().getContentGroup()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		return new Point(location.getX(), location.getY());
 	}

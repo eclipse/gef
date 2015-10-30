@@ -21,7 +21,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
@@ -47,8 +47,8 @@ public class FullyMeshedLayoutExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected void customizeUi(final ScrollPaneEx scrollPane) {
-		Group overlay = scrollPane.getScrollbarGroup();
+	protected void customizeUi(final InfiniteCanvas infiniteCanvas) {
+		Group overlay = infiniteCanvas.getScrollbarGroup();
 		Button addNodeButton = new Button("add node");
 		overlay.getChildren().add(addNodeButton);
 

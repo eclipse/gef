@@ -119,7 +119,7 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		// System.out.println("RELATIVE ZOOM: " + relativeZoom);
 		// compute transformation
 		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
-				.getScrollPane().getContentGroup().sceneToLocal(sceneX, sceneY);
+				.getCanvas().getContentGroup().sceneToLocal(sceneX, sceneY);
 		operation.concatenateToNewTransform(new AffineTransform()
 				.translate(contentGroupPivot.getX(), contentGroupPivot.getY())
 				.scale(relativeZoom, relativeZoom).translate(

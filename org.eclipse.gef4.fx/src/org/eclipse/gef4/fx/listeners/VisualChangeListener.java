@@ -15,12 +15,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.transform.Transform;
 
 /**
@@ -261,8 +262,8 @@ public abstract class VisualChangeListener {
 	 * <p>
 	 * The use of a visual change lister allows to react to relative transform
 	 * changes only. If the common parent of both nodes is for instance nested
-	 * below a {@link ScrollPane}, this allows to ignore transform changes that
-	 * result from scrolling, as these will (in most cases) not indicate a
+	 * below an {@link InfiniteCanvas}, this allows to ignore transform changes
+	 * that result from scrolling, as these will (in most cases) not indicate a
 	 * visual change.
 	 *
 	 * @param observed

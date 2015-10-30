@@ -12,7 +12,7 @@
 package org.eclipse.gef4.mvc.fx.viewer;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
-import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -24,7 +24,7 @@ import javafx.scene.Scene;
 
 /**
  * The {@link FXViewer} is an {@link AbstractViewer} that is parameterized by
- * {@link Node}. It manages a {@link ScrollPaneEx} and an {@link FXGridLayer}.
+ * {@link Node}. It manages a {@link InfiniteCanvas} and an {@link FXGridLayer}.
  * The scroll pane displays the viewer's contents and adds scrollbars when
  * necessary. The grid layer displays a grid in the background when enabled.
  *
@@ -34,20 +34,54 @@ import javafx.scene.Scene;
 public class FXViewer extends AbstractViewer<Node> {
 
 	/**
-	 * Per default, a ScrollPane draws a border and background color. We do not
-	 * want either.
+	 * Defines the default CSS styling for the {@link InfiniteCanvas}: no
+	 * background, no border.
 	 */
-	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
+	private static final String CANVAS_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 
 	/**
-	 * The {@link ScrollPaneEx} that displays the viewer's contents.
+	 * The {@link InfiniteCanvas} that displays the viewer's contents.
 	 */
-	protected ScrollPaneEx scrollPane;
+	protected InfiniteCanvas infiniteCanvas;
 
 	/**
 	 * The {@link FXGridLayer} that displays the grid in the background.
 	 */
 	protected FXGridLayer gridLayer;
+
+	/**
+	 * Returns the {@link InfiniteCanvas} that is managed by this
+	 * {@link FXViewer} .
+	 *
+	 * @return The {@link InfiniteCanvas} that is managed by this
+	 *         {@link FXViewer} .
+	 */
+	// TODO: if (scrollPane == null) createVisuals();
+	public InfiniteCanvas getCanvas() {
+		if (infiniteCanvas == null) {
+			IRootPart<Node, ? extends Node> rootPart = getRootPart();
+			if (rootPart != null) {
+				infiniteCanvas = new InfiniteCanvas();
+				infiniteCanvas.setStyle(CANVAS_STYLE);
+
+				gridLayer = new FXGridLayer();
+				infiniteCanvas.getContentGroup().getChildren()
+						.addAll((Parent) rootPart.getVisual());
+				infiniteCanvas.getScrolledPane().getChildren().add(gridLayer);
+				gridLayer.toBack();
+
+				// bind translation and bounds of grid layer
+				gridLayer.gridTransformProperty().get().txProperty()
+						.bind(infiniteCanvas.contentTransformProperty().get()
+								.txProperty());
+				gridLayer.gridTransformProperty().get().tyProperty()
+						.bind(infiniteCanvas.contentTransformProperty().get()
+								.tyProperty());
+				gridLayer.bindBounds(infiniteCanvas.scrollableBoundsProperty());
+			}
+		}
+		return infiniteCanvas;
+	}
 
 	@Override
 	public FXDomain getDomain() {
@@ -65,54 +99,19 @@ public class FXViewer extends AbstractViewer<Node> {
 	}
 
 	/**
-	 * Returns the {@link Scene} in which the {@link ScrollPaneEx} of this
+	 * Returns the {@link Scene} in which the {@link InfiniteCanvas} of this
 	 * {@link FXViewer} is displayed.
 	 *
-	 * @return The {@link Scene} in which the {@link ScrollPaneEx} of this
+	 * @return The {@link Scene} in which the {@link InfiniteCanvas} of this
 	 *         {@link FXViewer} is displayed.
 	 */
 	public Scene getScene() {
-		return scrollPane.getScene();
-	}
-
-	/**
-	 * Returns the {@link ScrollPaneEx} that is managed by this {@link FXViewer}
-	 * .
-	 *
-	 * @return The {@link ScrollPaneEx} that is managed by this {@link FXViewer}
-	 *         .
-	 */
-	// TODO: if (scrollPane == null) createVisuals();
-	@SuppressWarnings("unchecked")
-	public ScrollPaneEx getScrollPane() {
-		if (scrollPane == null) {
-			IRootPart<Node, ? extends Node> rootPart = getRootPart();
-			if (rootPart != null) {
-				scrollPane = new ScrollPaneEx();
-				scrollPane.setStyle(SCROLL_PANE_STYLE);
-
-				gridLayer = new FXGridLayer();
-				scrollPane.getContentGroup().getChildren()
-						.addAll((Parent) rootPart.getVisual());
-				scrollPane.getScrolledPane().getChildren().add(gridLayer);
-				gridLayer.toBack();
-
-				// bind translation and bounds of grid layer
-				gridLayer.gridTransformProperty().get().txProperty()
-						.bind(scrollPane.contentTransformProperty().get()
-								.txProperty());
-				gridLayer.gridTransformProperty().get().tyProperty()
-						.bind(scrollPane.contentTransformProperty().get()
-								.tyProperty());
-				gridLayer.bindBounds(scrollPane.scrollableBoundsProperty());
-			}
-		}
-		return scrollPane;
+		return infiniteCanvas.getScene();
 	}
 
 	@Override
 	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
-		scrollPane.reveal(visualPart.getVisual());
+		infiniteCanvas.reveal(visualPart.getVisual());
 	}
 
 }

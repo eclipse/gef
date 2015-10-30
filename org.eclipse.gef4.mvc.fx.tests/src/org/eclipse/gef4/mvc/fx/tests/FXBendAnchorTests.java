@@ -246,7 +246,7 @@ public class FXBendAnchorTests {
 		injector.injectMembers(this);
 
 		final FXViewer viewer = domain.<FXViewer> getAdapter(IViewer.class);
-		final Scene scene = ctx.createScene(viewer.getScrollPane(), 400, 200);
+		final Scene scene = ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
 		ctx.runAndWait(new Runnable() {
