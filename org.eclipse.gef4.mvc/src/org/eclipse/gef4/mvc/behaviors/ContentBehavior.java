@@ -178,7 +178,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			// TODO: flushing of models should be done somewhere more
 			// appropriate
 			getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
-					.deselectAll();
+					.clearSelection();
 			getHost().getRoot().getViewer().getAdapter(HoverModel.class)
 					.clearHover();
 		} else

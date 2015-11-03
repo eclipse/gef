@@ -291,7 +291,7 @@ public class FXBendAnchorTests {
 		robot.delay(1000);
 
 		// check the connection is selected
-		assertTrue(viewer.getAdapter(SelectionModel.class).getSelected().contains(firstConnectionPart));
+		assertTrue(viewer.getAdapter(SelectionModel.class).getSelection().contains(firstConnectionPart));
 
 		// move mouse to second anchorage
 		AnchoragePart secondPart = (AnchoragePart) viewer.getContentPartMap().get(contents.get(1));
@@ -306,7 +306,7 @@ public class FXBendAnchorTests {
 		robot.delay(1000);
 
 		// check the anchorage is selected
-		assertTrue(viewer.getAdapter(SelectionModel.class).getSelected().contains(secondPart));
+		assertTrue(viewer.getAdapter(SelectionModel.class).getSelection().contains(secondPart));
 
 		// check the second connection was moved too
 		assertNotEquals(initialP1, secondConnectionPart.getVisual().getCurveNode().getGeometry().toBezier()[0].getP1());

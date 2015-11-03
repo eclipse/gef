@@ -139,7 +139,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 
 	private boolean isMultiSelection() {
 		return getTargetPart().getRoot().getViewer()
-				.getAdapter(SelectionModel.class).getSelected().size() > 1;
+				.getAdapter(SelectionModel.class).getSelection().size() > 1;
 	}
 
 	@Override

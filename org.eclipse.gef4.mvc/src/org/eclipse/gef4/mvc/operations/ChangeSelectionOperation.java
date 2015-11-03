@@ -65,7 +65,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
 		this(DEFAULT_LABEL, viewer,
 				viewer.<SelectionModel<VR>> getAdapter(SelectionModel.class)
-						.getSelected(),
+						.getSelection(),
 				newSelection);
 	}
 
@@ -118,7 +118,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		selectionModel.updateSelection(newSelection);
+		selectionModel.setSelection(newSelection);
 		return Status.OK_STATUS;
 	}
 
@@ -139,7 +139,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		selectionModel.updateSelection(oldSelection);
+		selectionModel.setSelection(oldSelection);
 		return Status.OK_STATUS;
 	}
 

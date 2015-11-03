@@ -121,7 +121,7 @@ public class SelectionForwarder<VR>
 		if (selection instanceof StructuredSelection) {
 			StructuredSelection sel = (StructuredSelection) selection;
 			if (sel.isEmpty()) {
-				selectionModel.select(Collections
+				selectionModel.prependToSelection(Collections
 						.<IContentPart<VR, ? extends VR>> emptyList());
 			} else {
 				// find the content parts associated with the selection
@@ -137,8 +137,8 @@ public class SelectionForwarder<VR>
 				}
 				// set the content parts as the new selection on the
 				// SelectionModel
-				if (!selectionModel.getSelected().equals(parts)) {
-					selectionModel.select(parts);
+				if (!selectionModel.getSelection().equals(parts)) {
+					selectionModel.prependToSelection(parts);
 				}
 			}
 		}

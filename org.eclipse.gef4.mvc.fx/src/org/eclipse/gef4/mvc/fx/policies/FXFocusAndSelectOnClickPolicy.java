@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.Collections;
-
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -56,19 +54,19 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 				if (append) {
 					// deselect the target edit part (ensure we get a new
 					// primary selection)
-					selectionModel.deselect(Collections.singleton(
-							(IContentPart<Node, ? extends Node>) host));
+					selectionModel.removeFromSelection(
+							(IContentPart<Node, ? extends Node>) host);
 				}
 			} else {
 				if (append) {
-					// append to current selection (as new primary)
-					selectionModel.select(Collections.singletonList(
-							(IContentPart<Node, ? extends Node>) host));
+					// prepend to current selection (as new primary)
+					selectionModel.prependToSelection(
+							(IContentPart<Node, ? extends Node>) host);
 				} else {
 					// clear old selection, target should become the only
 					// selected
-					selectionModel.updateSelection(Collections.singletonList(
-							(IContentPart<Node, ? extends Node>) host));
+					selectionModel.setSelection(
+							(IContentPart<Node, ? extends Node>) host);
 				}
 			}
 		} else if (host instanceof IRootPart) {
@@ -80,7 +78,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 				// unset focus
 				focusModel.setFocused(null);
 				// remove all selected
-				selectionModel.deselectAll();
+				selectionModel.clearSelection();
 			}
 		}
 	}

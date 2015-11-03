@@ -224,7 +224,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		// change selection within selection model
 		SelectionModel<Node> selectionModel = root.getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
-		selectionModel.select(parts);
+		selectionModel.prependToSelection(parts);
 
 		removeFeedback();
 	}

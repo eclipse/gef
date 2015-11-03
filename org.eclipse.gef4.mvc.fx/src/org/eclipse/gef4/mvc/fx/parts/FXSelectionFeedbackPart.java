@@ -149,7 +149,7 @@ public class FXSelectionFeedbackPart
 						.getFocused() == anchorage;
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelected();
+				.getSelection();
 		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
 			visual.setEffect(getPrimarySelectionFeedbackEffect(focused));

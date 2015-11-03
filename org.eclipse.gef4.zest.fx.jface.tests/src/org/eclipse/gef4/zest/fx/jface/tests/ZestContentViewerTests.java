@@ -482,7 +482,7 @@ public class ZestContentViewerTests {
 		// select "First" node
 		expectation.add(firstNode);
 		IContentPart<Node, ? extends Node> firstPart = fxViewer.getContentPartMap().get(firstNode);
-		fxViewer.<SelectionModel<Node>> getAdapter(SelectionModel.class).select(Collections.singletonList(firstPart));
+		fxViewer.<SelectionModel<Node>> getAdapter(SelectionModel.class).prependToSelection(Collections.singletonList(firstPart));
 	}
 
 	@Test
@@ -502,7 +502,7 @@ public class ZestContentViewerTests {
 		org.eclipse.gef4.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 		viewer.setSelection(new StructuredSelection(Arrays.asList(firstNode)));
 		List<IContentPart<Node, ? extends Node>> selected = viewer.getFXViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class).getSelected();
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class).getSelection();
 		assertEquals(1, selected.size());
 		IContentPart<Node, ? extends Node> selectedPart = selected.get(0);
 		assertEquals(firstNode, selectedPart.getContent());

@@ -65,7 +65,7 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 		// remove from selection model
 		SelectionModel<Node> selectionModel = viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 		if (selectionModel != null) {
-			List<IContentPart<Node, ? extends Node>> selected = selectionModel.getSelected();
+			List<IContentPart<Node, ? extends Node>> selected = selectionModel.getSelection();
 			if (selected.contains(part)) {
 				List<IContentPart<Node, ? extends Node>> newSelection = new ArrayList<IContentPart<Node, ? extends Node>>(
 						selected);

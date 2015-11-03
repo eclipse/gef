@@ -262,7 +262,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 		if (selectionModel != null) {
 			List<IContentPart<VR, ? extends VR>> selected = selectionModel
-					.getSelected();
+					.getSelection();
 			if (!selected.contains(part)) {
 				List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
 						selected);

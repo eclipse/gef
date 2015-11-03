@@ -134,11 +134,11 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 			SelectionModel<Node> selectionModel = viewer
 					.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 			List<IContentPart<Node, ? extends Node>> selection = selectionModel
-					.getSelected();
+					.getSelection();
 
 			// get selection without host
 			List<IContentPart<Node, ? extends Node>> selectionWithoutHost = new ArrayList<IContentPart<Node, ? extends Node>>(
-					selectionModel.getSelected());
+					selectionModel.getSelection());
 			selectionWithoutHost.remove(getHost());
 
 			// build "deselect host" operation

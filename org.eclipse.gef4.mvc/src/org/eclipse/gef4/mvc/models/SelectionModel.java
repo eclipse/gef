@@ -20,17 +20,20 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**
- * The {@link SelectionModel} is used to store the current viewer's
- * {@link IContentPart} selection. A selection tool is used to update the
- * {@link SelectionModel} as the result of input events.
+ * The {@link SelectionModel} is used to store the current viewer's selection.
+ * It represents the selection as an ordered list of {@link IContentPart}s.
+ * Thereby, it supports a multi-selection and allows to identify a primary
+ * selection (the head element of the list) that may be treated specially.
+ * <p>
+ * The {@link SelectionModel} is an {@link IPropertyChangeNotifier} and will
+ * notify about changes to the selection, using the {@link #SELECTION_PROPERTY}
+ * property name.
  *
  * @author anyssen
  * @author mwienand
@@ -54,8 +57,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
 
-	private List<IContentPart<VR, ? extends VR>> selectionList = new ArrayList<IContentPart<VR, ? extends VR>>();
-	private Set<IContentPart<VR, ? extends VR>> selectionSet = new HashSet<IContentPart<VR, ? extends VR>>();
+	private List<IContentPart<VR, ? extends VR>> selection = new ArrayList<IContentPart<VR, ? extends VR>>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -63,50 +65,62 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	}
 
 	/**
-	 * Appends the given {@link IContentPart}s to the current selection, i.e.
-	 * inserts them at the end of the selection.
+	 * Updates the current selection by adding the given {@link IContentPart} to
+	 * it, preserving already selected elements.
+	 * <p>
+	 * If the given content part is not already selected, it will be added to
+	 * the back of the given selection, otherwise it will be moved to the back.
+	 * A member of the current selection that is not contained in the given
+	 * list, will remain selected.
 	 *
-	 * @param contentParts
-	 *            The {@link IContentPart}s which are appended to the selection.
+	 * @param toBeAppended
+	 *            The {@link IContentPart} to add to/move to the back of the
+	 *            current selection.
 	 */
-	public void appendSelection(
-			List<? extends IContentPart<VR, ? extends VR>> contentParts) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
-		for (IContentPart<VR, ? extends VR> p : contentParts) {
-			if (!selectionSet.contains(p)) {
-				selectionList.add(p);
-				selectionSet.add(p);
-			}
-		}
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelected());
+	public void appendToSelection(IContentPart<VR, ? extends VR> toBeAppended) {
+		appendToSelection(Collections.singletonList(toBeAppended));
 	}
 
 	/**
-	 * Removes the given {@link IContentPart}s from the current selection.
+	 * Updates the current selection by adding the given {@link IContentPart}s
+	 * to it, preserving already selected elements.
+	 * <p>
+	 * A member of the given list that is not contained in the current
+	 * selection, will be added to it. A member of the current selection that is
+	 * not contained in the given list, will remain selected.
+	 * <p>
+	 * The selection order will be adjusted, so that the members of the given
+	 * list are added at the back (in the order they are given), preceded by the
+	 * already selected elements not contained in the given list (preserving
+	 * their relative order).
 	 *
-	 * @param contentParts
-	 *            The {@link IContentPart}s which are removed from the
-	 *            selection.
+	 * @param toBeAppended
+	 *            The {@link IContentPart}s to add to/move to the back of the
+	 *            current selection.
 	 */
-	public void deselect(
-			Collection<? extends IContentPart<VR, ? extends VR>> contentParts) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
-		selectionList.removeAll(contentParts);
-		selectionSet.removeAll(contentParts);
+	public void appendToSelection(
+			List<? extends IContentPart<VR, ? extends VR>> toBeAppended) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		selection.removeAll(toBeAppended);
+		for (IContentPart<VR, ? extends VR> p : toBeAppended) {
+			if (selection.contains(p)) {
+				throw new IllegalArgumentException("The content part " + p
+						+ " is provided more than once in the given list.");
+			}
+			selection.add(p);
+		}
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelected());
+				oldSelection, getSelection());
 	}
 
 	/**
 	 * Clears the current selection.
 	 */
-	public void deselectAll() {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
-		selectionList.clear();
-		selectionSet.clear();
+	public void clearSelection() {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		selection.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelected());
+				oldSelection, getSelection());
 	}
 
 	/**
@@ -116,8 +130,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return An unmodifiable list of the currently selected
 	 *         {@link IContentPart}s.
 	 */
-	public List<IContentPart<VR, ? extends VR>> getSelected() {
-		return Collections.unmodifiableList(selectionList);
+	public List<IContentPart<VR, ? extends VR>> getSelection() {
+		return Collections.unmodifiableList(selection);
 	}
 
 	/**
@@ -127,13 +141,13 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return A modifiable list of the currently selected {@link IContentPart}
 	 *         s.
 	 */
-	private List<IContentPart<VR, ? extends VR>> getSelectionListCopy() {
-		return new ArrayList<IContentPart<VR, ? extends VR>>(selectionList);
+	private List<IContentPart<VR, ? extends VR>> getSelectionCopy() {
+		return new ArrayList<IContentPart<VR, ? extends VR>>(selection);
 	}
 
 	/**
-	 * Returns <code>true</code> if the given {@link IContentPart} is part of
-	 * the current selection.
+	 * Returns whether the given {@link IContentPart} is part of the current
+	 * selection.
 	 *
 	 * @param contentPart
 	 *            The {@link IContentPart} which is checked for containment.
@@ -141,7 +155,88 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *         current selection.
 	 */
 	public boolean isSelected(IContentPart<VR, ? extends VR> contentPart) {
-		return selectionSet.contains(contentPart);
+		return selection.contains(contentPart);
+	}
+
+	/**
+	 * Updates the current selection by adding the given {@link IContentPart} to
+	 * it, preserving already selected elements.
+	 * <p>
+	 * If the given content part is not already selected, it will be added to
+	 * the front of the given selection, otherwise it will be moved to the
+	 * front. A member of the current selection that is not contained in the
+	 * given list, will remain selected.
+	 *
+	 * @param toBePrepended
+	 *            The {@link IContentPart} to add to/move to the front of the
+	 *            current selection.
+	 */
+	public void prependToSelection(
+			IContentPart<VR, ? extends VR> toBePrepended) {
+		prependToSelection(Collections.singletonList(toBePrepended));
+	}
+
+	/**
+	 * Updates the current selection by adding the given {@link IContentPart}s
+	 * to it, preserving already selected elements.
+	 * <p>
+	 * A member of the given list that is not contained in the current
+	 * selection, will be added to it. A member of the current selection that is
+	 * not contained in the given list, will remain selected.
+	 * <p>
+	 * The selection order will be adjusted, so that the members of the given
+	 * list are added in front (in the order they are given), followed by the
+	 * already selected elements not contained in the given list (preserving
+	 * their relative order).
+	 *
+	 * @param toBePrepended
+	 *            The {@link IContentPart}s to add to/move to the front of the
+	 *            current selection.
+	 */
+	public void prependToSelection(
+			List<? extends IContentPart<VR, ? extends VR>> toBePrepended) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		selection.removeAll(toBePrepended);
+		int i = 0;
+		for (IContentPart<VR, ? extends VR> p : toBePrepended) {
+			if (selection.contains(p)) {
+				throw new IllegalArgumentException("The content part " + p
+						+ " is provided more than once in the given list.");
+			}
+			selection.add(i++, p);
+		}
+		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
+				oldSelection, getSelection());
+	}
+
+	/**
+	 * Removes the given {@link IContentPart}s from the current selection if
+	 * they are contained. Ignores those that are not part of the current
+	 * selection.
+	 *
+	 * @param contentParts
+	 *            The {@link IContentPart}s which are removed from the
+	 *            selection.
+	 */
+	public void removeFromSelection(
+			Collection<? extends IContentPart<VR, ? extends VR>> contentParts) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		selection.removeAll(contentParts);
+		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
+				oldSelection, getSelection());
+	}
+
+	/**
+	 * Removes the given {@link IContentPart} from the current selection if it
+	 * is currently selected. Will not change the current selection otherwise.
+	 *
+	 * @param contentPart
+	 *            The {@link IContentPart} that is to be removed from the
+	 *            selection.
+	 */
+	public void removeFromSelection(
+			IContentPart<VR, ? extends VR> contentPart) {
+		removeFromSelection(Collections.singletonList(contentPart));
 	}
 
 	@Override
@@ -150,57 +245,37 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	}
 
 	/**
-	 * Updates the current selection by adding the given list of
-	 * {@link IContentPart}s, preserving already selected elements. That is, if
-	 * a member of the given list is not contained in the current selection, it
-	 * will be added to it. If a member of the current selection is not
-	 * contained in the given list, it will remain selected. The selection order
-	 * will be adjusted, so that the given elements are in front.
+	 * Replaces the current selection with the given {@link IContentPart}.
 	 *
-	 * @param additionalSelected
-	 *            The {@link IContentPart}s to add to/move within the current
-	 *            selection.
+	 * @param newSelection
+	 *            The {@link IContentPart} constituting the new selection.
 	 */
-	// TODO: rename to prependSelection()
-	public void select(
-			List<? extends IContentPart<VR, ? extends VR>> additionalSelected) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
-		selectionList.removeAll(additionalSelected);
-		selectionSet.removeAll(additionalSelected);
-		int i = 0;
-		for (IContentPart<VR, ? extends VR> p : additionalSelected) {
-			if (!selectionSet.contains(p)) {
-				selectionList.add(i++, p);
-				selectionSet.add(p);
-			}
-		}
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelected());
+	public void setSelection(IContentPart<VR, ? extends VR> newSelection) {
+		setSelection(Collections.singletonList(newSelection));
 	}
 
 	/**
-	 * Replaces the whole selection with the given list of {@link IContentPart}
-	 * s.
+	 * Replaces the current selection with the given list of
+	 * {@link IContentPart} s.
 	 *
 	 * @param newSelection
 	 *            The list of {@link IContentPart}s constituting the new
 	 *            selection.
 	 */
-	// TODO: rename to replaceSelection()
-	public void updateSelection(
+	public void setSelection(
 			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionListCopy();
-		selectionList.clear();
-		selectionSet.clear();
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		selection.clear();
 		int i = 0;
 		for (IContentPart<VR, ? extends VR> p : newSelection) {
-			if (!selectionSet.contains(p)) {
-				selectionList.add(i++, p);
-				selectionSet.add(p);
+			if (selection.contains(p)) {
+				throw new IllegalArgumentException("The content part " + p
+						+ " is provided more than once in the given list.");
 			}
+			selection.add(i++, p);
 		}
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelected());
+				oldSelection, getSelection());
 	}
 
 }

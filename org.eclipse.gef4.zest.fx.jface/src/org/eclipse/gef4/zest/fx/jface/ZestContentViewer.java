@@ -484,7 +484,7 @@ public class ZestContentViewer extends ContentViewer {
 		// construct a new selection by using the selection model contents
 		List<Object> selectedContents = new ArrayList<Object>();
 		SelectionModel<javafx.scene.Node> selectionModel = getSelectionModel();
-		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel.getSelected()) {
+		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel.getSelection()) {
 			selectedContents.add(selectedPart.getContent());
 		}
 		return new StructuredSelection(selectedContents);
@@ -544,7 +544,7 @@ public class ZestContentViewer extends ContentViewer {
 	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 		if (selection.isEmpty()) {
-			getSelectionModel().deselectAll();
+			getSelectionModel().clearSelection();
 		} else if (selection instanceof StructuredSelection) {
 			StructuredSelection structuredSelection = (StructuredSelection) selection;
 			if (!structuredSelection.isEmpty()) {
@@ -563,7 +563,7 @@ public class ZestContentViewer extends ContentViewer {
 								toBeSelectedContent + " is not visualized by a content part of this viewer.");
 					}
 				}
-				getSelectionModel().select(toBeSelectedParts);
+				getSelectionModel().prependToSelection(toBeSelectedParts);
 			}
 		} else {
 			throw new IllegalArgumentException(

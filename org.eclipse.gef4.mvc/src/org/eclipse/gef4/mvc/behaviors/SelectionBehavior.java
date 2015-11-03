@@ -44,7 +44,7 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 		selectionModel.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already selected
-		addFeedbackAndHandles(selectionModel.getSelected());
+		addFeedbackAndHandles(selectionModel.getSelection());
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 		// remove any pending feedback
 		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		removeFeedbackAndHandles(selectionModel.getSelected());
+		removeFeedbackAndHandles(selectionModel.getSelection());
 
 		selectionModel.removePropertyChangeListener(this);
 		super.deactivate();

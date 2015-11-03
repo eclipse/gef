@@ -52,7 +52,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelected();
+				.getSelection();
 	}
 
 	/**

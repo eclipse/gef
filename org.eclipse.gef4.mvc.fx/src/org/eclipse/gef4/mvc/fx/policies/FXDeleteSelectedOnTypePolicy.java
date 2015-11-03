@@ -70,7 +70,7 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelected();
+				.getSelection();
 
 		// if no parts are selected, we do not delete anything
 		if (selected.isEmpty()) {
