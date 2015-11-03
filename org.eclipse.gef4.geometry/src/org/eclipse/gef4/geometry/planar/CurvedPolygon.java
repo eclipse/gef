@@ -15,7 +15,7 @@ package org.eclipse.gef4.geometry.planar;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * A {@link CurvedPolygon} is an {@link IShape} with {@link BezierCurve} edges.

@@ -16,7 +16,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.io.Serializable;
 
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * A {@link Dimension} represents a width and a height in 2-dimensional space.

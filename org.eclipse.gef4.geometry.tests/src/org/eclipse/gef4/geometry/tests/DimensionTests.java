@@ -17,8 +17,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
 /**

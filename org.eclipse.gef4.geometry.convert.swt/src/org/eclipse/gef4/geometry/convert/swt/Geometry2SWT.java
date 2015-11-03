@@ -13,6 +13,7 @@
 package org.eclipse.gef4.geometry.convert.swt;
 
 import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
+import org.eclipse.gef4.geometry.internal.utils.PointListUtils;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -21,7 +22,6 @@ import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.Region;
 import org.eclipse.gef4.geometry.planar.Ring;
-import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
 import org.eclipse.swt.graphics.PathData;
 
 /**

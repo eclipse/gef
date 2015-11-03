@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.geometry.sdk"
       label="GEF4 Geometry SDK"
-      version="0.2.0.qualifier"
+      version="0.3.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

@@ -19,8 +19,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.geometry.internal.utils.PointListUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a convex polygon.

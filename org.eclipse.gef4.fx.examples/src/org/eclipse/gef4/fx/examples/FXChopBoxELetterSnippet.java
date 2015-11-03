@@ -26,12 +26,12 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.FXCollections;

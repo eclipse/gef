@@ -13,4 +13,4 @@
  * This package provides utility classes being used internally for geometric
  * calculations.
  */
-package org.eclipse.gef4.internal.geometry.utils;
+package org.eclipse.gef4.geometry.internal.utils;

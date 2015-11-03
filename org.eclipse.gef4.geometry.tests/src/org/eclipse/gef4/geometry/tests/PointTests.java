@@ -20,12 +20,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.eclipse.gef4.geometry.internal.utils.PointListUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
 /**

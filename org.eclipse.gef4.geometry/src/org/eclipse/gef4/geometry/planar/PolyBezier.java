@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
+import org.eclipse.gef4.geometry.internal.utils.PointListUtils;
 
 /**
  * A {@link PolyBezier} is an {@link ICurve} which consists of one or more

@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of an ellipse.

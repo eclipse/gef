@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
 import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a path, which may consist of independent

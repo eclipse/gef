@@ -11,7 +11,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *
  *******************************************************************************/
-package org.eclipse.gef4.internal.geometry.utils;
+package org.eclipse.gef4.geometry.internal.utils;
 
 /**
  * A utility class for floating point calculations and comparisons that should

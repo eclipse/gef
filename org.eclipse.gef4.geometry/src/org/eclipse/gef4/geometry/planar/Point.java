@@ -24,7 +24,7 @@ import java.util.List;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * Represents a point (x, y) in 2-dimensional space. This class provides various
