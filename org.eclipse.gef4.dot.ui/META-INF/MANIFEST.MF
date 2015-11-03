@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 DOT.UI
 Bundle-SymbolicName: org.eclipse.gef4.dot.ui;singleton:=true
 Bundle-Version: 0.3.0.qualifier
-Bundle-Activator: org.eclipse.gef4.internal.dot.parser.ui.internal.DotActivator
+Bundle-Activator: org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator
 Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.4.0,2.0.0)",
@@ -24,12 +24,14 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"
 Bundle-ClassPath: .
-Export-Package: org.eclipse.gef4.internal.dot.ui;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui.contentassist;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui.contentassist.antlr;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui.contentassist.antlr.internal;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui.labeling;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui.outline;x-internal:=true,
- org.eclipse.gef4.internal.dot.parser.ui.quickfix;x-internal:=true
+Export-Package: org.eclipse.gef4.dot.internal.parser.ui.contentassist,
+ org.eclipse.gef4.dot.internal.parser.ui.quickfix,
+ org.eclipse.gef4.dot.internal.ui;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr.internal;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui.labeling;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui.outline;x-internal:=true,
+ org.eclipse.gef4.dot.internal.parser.ui.quickfix;x-internal:=true
 Bundle-Vendor: Eclipse GEF

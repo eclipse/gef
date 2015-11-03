@@ -5,7 +5,7 @@
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://www.eclipse.org/gef4/internal/dot/parser/Dot" 
-       class = "org.eclipse.gef4.internal.dot.parser.dot.DotPackage"
+       class = "org.eclipse.gef4.dot.internal.parser.dot.DotPackage"
        genModel = "model/generated/Dot.genmodel" /> 
   </extension>
 </plugin>

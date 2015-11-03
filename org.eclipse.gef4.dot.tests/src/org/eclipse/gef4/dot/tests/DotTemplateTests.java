@@ -11,10 +11,10 @@
 package org.eclipse.gef4.dot.tests;
 
 import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.dot.internal.DotTemplate;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.internal.dot.DotTemplate;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -13,7 +13,7 @@ package org.eclipse.gef4.dot.tests;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.internal.dot.DotExtractor;
+import org.eclipse.gef4.dot.internal.DotExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 

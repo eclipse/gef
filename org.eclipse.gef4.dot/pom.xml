@@ -59,7 +59,7 @@
 					<includePluginDependencies>true</includePluginDependencies>
 					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
 					<arguments>
-						<argument>file://${project.basedir}/src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2</argument>
+						<argument>file://${project.basedir}/src/org/eclipse/gef4/dot/internal/parser/GenerateDot.mwe2</argument>
 						<argument>
 							-p
 						</argument>

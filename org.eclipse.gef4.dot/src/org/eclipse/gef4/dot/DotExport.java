@@ -14,9 +14,9 @@ package org.eclipse.gef4.dot;
 import java.io.File;
 import java.util.Scanner;
 
+import org.eclipse.gef4.dot.internal.DotFileUtils;
+import org.eclipse.gef4.dot.internal.DotTemplate;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.internal.dot.DotFileUtils;
-import org.eclipse.gef4.internal.dot.DotTemplate;
 
 /**
  * Transformation of Graph instances to DOT strings or files, or via DOT to an

@@ -14,11 +14,11 @@ package org.eclipse.gef4.dot;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.gef4.dot.internal.DotAst;
+import org.eclipse.gef4.dot.internal.DotFileUtils;
+import org.eclipse.gef4.dot.internal.DotInterpreter;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.GraphCopier;
-import org.eclipse.gef4.internal.dot.DotAst;
-import org.eclipse.gef4.internal.dot.DotFileUtils;
-import org.eclipse.gef4.internal.dot.DotInterpreter;
 
 /**
  * Transformation of DOT files or strings to Zest Graph instances.

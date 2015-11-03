@@ -19,10 +19,10 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.eclipse.gef4.dot.DotExport;
+import org.eclipse.gef4.dot.internal.DotFileUtils;
+import org.eclipse.gef4.dot.internal.DotNativeDrawer;
+import org.eclipse.gef4.dot.internal.ui.GraphvizPreferencePage;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.internal.dot.DotFileUtils;
-import org.eclipse.gef4.internal.dot.DotNativeDrawer;
-import org.eclipse.gef4.internal.dot.ui.GraphvizPreferencePage;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 

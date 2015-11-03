@@ -14,8 +14,8 @@ import static org.eclipse.gef4.dot.tests.DotTestUtils.RESOURCES_TESTS;
 
 import java.io.File;
 
-import org.eclipse.gef4.internal.dot.DotAst;
-import org.eclipse.gef4.internal.dot.DotFileUtils;
+import org.eclipse.gef4.dot.internal.DotAst;
+import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
