@@ -30,22 +30,23 @@ import org.junit.BeforeClass;
  * Tests for the {@link DotExport} class.
  * 
  * @author Fabian Steeg (fsteeg)
+ * @author Tamas Miklossy
  */
 public class DotNativeDrawerTests extends DotTemplateTests {
 
-	private static String dotDir = null;
+	private static String dotExecutablePath = null;
 
 	@BeforeClass
 	public static void setup() throws IOException {
-		dotDir = dotBinDir();
+		dotExecutablePath = getDotExecutablePath();
 	}
 
 	/**
-	 * @return The directory containing the local Graphviz DOT executable, as
-	 *         specified in the test.properties file
+	 * @return The path of the local Graphviz DOT executable, as specified in
+	 *         the test.properties file
 	 */
-	public static String dotBinDir() {
-		if (dotDir == null) {
+	public static String getDotExecutablePath() {
+		if (dotExecutablePath == null) {
 			Properties props = new Properties();
 			InputStream stream = DotNativeDrawerTests.class
 					.getResourceAsStream("test.properties"); //$NON-NLS-1$
@@ -57,14 +58,14 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 				try {
 					props.load(stream);
 					/*
-					 * Path to the local Graphviz folder containing the dot
-					 * executable file:
+					 * Path to the local Graphviz DOT executable file
 					 */
-					dotDir = props.getProperty(
+					dotExecutablePath = props.getProperty(
 							GraphvizPreferencePage.DOT_PATH_PREF_KEY);
-					if (dotDir == null || dotDir.trim().length() == 0) {
+					if (dotExecutablePath == null
+							|| dotExecutablePath.trim().length() == 0) {
 						System.err.printf(
-								"Graphviz DOT directory not set in test.properties file under '%s' key.\n", //$NON-NLS-1$
+								"Graphviz DOT executable path not set in test.properties file under '%s' key.\n", //$NON-NLS-1$
 								GraphvizPreferencePage.DOT_PATH_PREF_KEY);
 					} else
 						stream.close();
@@ -73,7 +74,7 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 					return null;
 				}
 		}
-		return dotDir;
+		return dotExecutablePath;
 	}
 
 	@Override
@@ -82,12 +83,12 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 		 * The DotExport class wraps the simple DotTemplate class, so when we
 		 * test DotExport, we also run the test in the test superclass:
 		 */
-		if (dotDir != null) {
+		if (dotExecutablePath != null) {
 			super.testDotGeneration(graph);
 			File dotFile = DotFileUtils
 					.write(new DotExport(graph).toDotString());
-			File image = DotNativeDrawer.renderImage(new File(dotDir), dotFile,
-					"pdf", null); //$NON-NLS-1$
+			File image = DotNativeDrawer.renderImage(
+					new File(dotExecutablePath), dotFile, "pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$
 			System.out.println("Created image: " + image); //$NON-NLS-1$
 			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$

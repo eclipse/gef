@@ -56,7 +56,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	public static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
 
 	public static boolean isGraphvizConfigured() {
-		return getDotPathFromPreferences().length() != 0;
+		return getDotExecutablePath().length() != 0;
 	}
 
 	public static void showGraphvizConfigurationDialog() {
@@ -65,13 +65,9 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		new GraphvizConfigurationDialog(shell).open();
 	}
 
-	public static String getDotPathFromPreferences() {
+	public static String getDotExecutablePath() {
 		String dotExecutablePath = dotUiPrefs().get(DOT_PATH_PREF_KEY, ""); //$NON-NLS-1$
-		if (dotExecutablePath.isEmpty()) {
-			return "";//$NON-NLS-1$
-		}
-		String dotDirPath = new File(dotExecutablePath).getParent();
-		return dotDirPath;
+		return dotExecutablePath;
 	}
 
 	private static boolean isValidDotExecutable(String path) {

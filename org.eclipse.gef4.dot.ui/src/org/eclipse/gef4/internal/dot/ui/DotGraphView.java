@@ -246,7 +246,7 @@ public class DotGraphView extends ZestFxUiView {
 			File dotFile = DotFileUtils.write(view.currentDot);
 			File image = DotNativeDrawer.renderImage(
 					new File(
-							GraphvizPreferencePage.getDotPathFromPreferences()),
+							GraphvizPreferencePage.getDotExecutablePath()),
 					dotFile, format, null);
 			if (view.currentFile == null) {
 				return image;
