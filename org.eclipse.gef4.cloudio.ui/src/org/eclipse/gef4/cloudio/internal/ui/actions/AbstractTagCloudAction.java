@@ -16,6 +16,8 @@ import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
@@ -26,8 +28,38 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public abstract class AbstractTagCloudAction implements IWorkbenchWindowActionDelegate {
 
+	private final class ActivationListener implements IPartListener {
+		@Override
+		public void partOpened(IWorkbenchPart part) {
+			if (part instanceof TagCloudView) {
+				tcViewPart = (TagCloudView) part;
+			}
+		}
+
+		@Override
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+
+		@Override
+		public void partClosed(IWorkbenchPart part) {
+			if (part == tcViewPart) {
+				tcViewPart = null;
+			}
+		}
+
+		@Override
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+
+		@Override
+		public void partActivated(IWorkbenchPart part) {
+		}
+	}
+
 	private Shell shell;
 	private TagCloudView tcViewPart;
+	private ActivationListener activationListener;
+	private IWorkbenchWindow window;
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -35,12 +67,20 @@ public abstract class AbstractTagCloudAction implements IWorkbenchWindowActionDe
 
 	@Override
 	public void dispose() {
+		window.getPartService().removePartListener(activationListener);
+		activationListener = null;
+		window = null;
 	}
 
 	@Override
 	public void init(IWorkbenchWindow window) {
+		this.window = window;
 		this.shell = window.getShell();
-		tcViewPart = (TagCloudView) window.getActivePage().getActivePart();
+		activationListener = new ActivationListener();
+		window.getPartService().addPartListener(activationListener);
+		if (window.getActivePage().getActivePart() instanceof TagCloudView) {
+			tcViewPart = (TagCloudView) window.getActivePage().getActivePart();
+		}
 	}
 
 	public Shell getShell() {
