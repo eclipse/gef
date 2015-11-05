@@ -14,14 +14,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.layout.examples;
 
-import javafx.application.Application;
-
-import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
 
 public class FilterLayoutExample extends AbstractZestExample {
 
@@ -77,11 +78,11 @@ public class FilterLayoutExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected void customizeUi(InfiniteCanvas infiniteCanvas) {
-		super.customizeUi(infiniteCanvas);
-		// TODO: Find it via bundle in OSGI context.
-		infiniteCanvas.getStylesheets().add(getClass()
+	protected Scene createScene(FXViewer viewer) {
+		Scene scene = super.createScene(viewer);
+		scene.getStylesheets().add(getClass()
 				.getResource("FilterGraphExample.css").toExternalForm());
+		return scene;
 	}
 
 	@Override

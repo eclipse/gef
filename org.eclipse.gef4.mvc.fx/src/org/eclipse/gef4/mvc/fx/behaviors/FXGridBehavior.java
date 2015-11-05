@@ -14,29 +14,24 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.GridModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 
 import javafx.scene.Node;
-import javafx.scene.transform.Affine;
 
 /**
  * The {@link FXGridBehavior} can be registered on an {@link FXRootPart} to
- * apply the information from the {@link GridModel} to the {@link FXGridLayer}
- * that is managed by the {@link FXViewer}.
+ * apply the information from the {@link GridModel} to the background grid that
+ * is managed by the {@link FXViewer}.
  *
  * @author anyssen
  *
  */
 public class FXGridBehavior extends AbstractBehavior<Node>
 		implements PropertyChangeListener {
-
-	private boolean isListeningOnViewport = false;
 
 	@Override
 	public void activate() {
@@ -51,103 +46,52 @@ public class FXGridBehavior extends AbstractBehavior<Node>
 	}
 
 	/**
-	 * Applies the given cell height to the {@link FXGridLayer}.
+	 * Applies the given cell height to the background grid.
 	 *
 	 * @param height
-	 *            The new cell height for the {@link FXGridLayer}.
+	 *            The new cell height for the background grid.
 	 */
 	protected void applyGridCellHeight(double height) {
-		getGridLayer().gridCellHeightProperty().set(height);
+		getCanvas().gridCellHeightProperty().set(height);
 	}
 
 	/**
-	 * Applies the given cell width to the {@link FXGridLayer}.
+	 * Applies the given cell width to the background grid.
 	 *
 	 * @param width
-	 *            The new cell width for the {@link FXGridLayer}.
+	 *            The new cell width for the background grid.
 	 */
 	protected void applyGridCellWidth(double width) {
-		getGridLayer().gridCellWidthProperty().set(width);
+		getCanvas().gridCellWidthProperty().set(width);
 	}
 
 	/**
-	 * Enables/Disables the {@link FXGridLayer}.
+	 * Enables/Disables the background grid.
 	 *
 	 * @param showGrid
-	 *            <code>true</code> to enable the {@link FXGridLayer}, otherwise
+	 *            <code>true</code> to enable the background grid, otherwise
 	 *            <code>false</code>.
 	 */
 	protected void applyShowGrid(boolean showGrid) {
-		if (showGrid) {
-			getGridLayer().setVisible(true);
-			getGridLayer().setManaged(true);
-		} else {
-			getGridLayer().setVisible(false);
-			getGridLayer().setManaged(false);
-		}
+		getCanvas().setShowGrid(showGrid);
 	}
 
 	/**
-	 * Enables/Disables zooming of the {@link FXGridLayer}. Registers a listener
-	 * on the {@link ViewportModel} to keep the {@link FXGridLayer}'s zoom level
-	 * in sync with the viewport zoom level.
+	 * Enables/Disables zooming of the background grid.
 	 *
 	 * @param zoomGrid
 	 *            <code>true</code> to enable grid zooming, otherwise
 	 *            <code>false</code>.
 	 */
 	protected void applyZoomGrid(boolean zoomGrid) {
-		ViewportModel viewportModel = getHost().getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
-		Affine gridTransform = getGridLayer().gridTransformProperty().get();
-		if (zoomGrid) {
-			if (!isListeningOnViewport) {
-				viewportModel.addPropertyChangeListener(this);
-				isListeningOnViewport = true;
-				// apply current contents transform
-				Affine contentTransform = getCanvas()
-						.contentTransformProperty().get();
-				gridTransform.mxxProperty()
-						.bind(contentTransform.mxxProperty());
-				gridTransform.myyProperty()
-						.bind(contentTransform.myyProperty());
-			}
-		} else {
-			if (isListeningOnViewport) {
-				viewportModel.removePropertyChangeListener(this);
-				isListeningOnViewport = false;
-				// reset grid scale to (1, 1)
-				gridTransform.mxxProperty().unbind();
-				gridTransform.myyProperty().unbind();
-				gridTransform.setMxx(1);
-				gridTransform.setMyy(1);
-			}
-		}
+		getCanvas().setZoomGrid(zoomGrid);
 	}
 
 	@Override
 	public void deactivate() {
 		getHost().getRoot().getViewer().getAdapter(GridModel.class)
 				.removePropertyChangeListener(this);
-
-		if (isListeningOnViewport) {
-			ViewportModel viewportModel = getHost().getRoot().getViewer()
-					.getAdapter(ViewportModel.class);
-			viewportModel.removePropertyChangeListener(this);
-		}
-
 		super.deactivate();
-	}
-
-	/**
-	 * Returns the {@link FXGridLayer} of the {@link #getHost() host's}
-	 * {@link FXViewer}.
-	 *
-	 * @return The {@link FXGridLayer} of the {@link #getHost() host's}
-	 *         {@link FXViewer}.
-	 */
-	protected FXGridLayer getGridLayer() {
-		return ((FXViewer) getHost().getRoot().getViewer()).getGridLayer();
 	}
 
 	/**

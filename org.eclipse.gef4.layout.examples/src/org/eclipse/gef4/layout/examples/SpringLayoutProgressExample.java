@@ -18,22 +18,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.control.ToggleButton;
-
-import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+
+import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ToggleButton;
 
 public class SpringLayoutProgressExample extends AbstractZestExample {
 
@@ -116,8 +117,9 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected void customizeUi(InfiniteCanvas infiniteCanvas) {
-		Group overlay = infiniteCanvas.getScrollbarGroup();
+	protected Scene createScene(final FXViewer viewer) {
+		Scene scene = super.createScene(viewer);
+		Group overlay = viewer.getCanvas().getOverlayGroup();
 		final ToggleButton button = new ToggleButton("step");
 		final ManualSpringLayoutAlgorithm[] layoutAlgorithm = new ManualSpringLayoutAlgorithm[1];
 		button.setOnAction(new EventHandler<ActionEvent>() {
@@ -154,6 +156,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 				}
 			}
 		}.start();
+		return scene;
 	}
 
 }

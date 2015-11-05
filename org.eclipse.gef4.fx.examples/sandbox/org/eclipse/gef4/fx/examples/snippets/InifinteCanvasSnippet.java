@@ -58,12 +58,11 @@ public class InifinteCanvasSnippet extends AbstractFXExample {
 				rect(75, 75, 150, 150, Color.RED));
 
 		// translate to top-left most content node
-		Bounds canvasBounds = infiniteCanvas.getScrolledPane()
-				.getBoundsInLocal();
+		Bounds canvasBounds = infiniteCanvas.getContentBounds();
 		double minx = canvasBounds.getMinX();
 		double miny = canvasBounds.getMinY();
-		infiniteCanvas.getScrolledPane().setTranslateX(-minx);
-		infiniteCanvas.getScrolledPane().setTranslateY(-miny);
+		infiniteCanvas.setHorizontalScrollOffset(-minx);
+		infiniteCanvas.setVerticalScrollOffset(-miny);
 
 		infiniteCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override

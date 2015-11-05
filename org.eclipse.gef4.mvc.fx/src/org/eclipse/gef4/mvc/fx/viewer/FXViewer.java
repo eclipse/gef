@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.viewer;
 
-import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -24,15 +23,15 @@ import javafx.scene.Scene;
 
 /**
  * The {@link FXViewer} is an {@link AbstractViewer} that is parameterized by
- * {@link Node}. It manages a {@link InfiniteCanvas} and an {@link FXGridLayer}.
- * The scroll pane displays the viewer's contents and adds scrollbars when
- * necessary. The grid layer displays a grid in the background when enabled.
+ * {@link Node}. It manages an {@link InfiniteCanvas} that displays the viewer's
+ * contents, adds scrollbars when necessary, and renders a background grid.
  *
  * @author anyssen
  *
  */
 public class FXViewer extends AbstractViewer<Node> {
 
+	// TODO: evaluate if a style is still needed
 	/**
 	 * Defines the default CSS styling for the {@link InfiniteCanvas}: no
 	 * background, no border.
@@ -43,11 +42,6 @@ public class FXViewer extends AbstractViewer<Node> {
 	 * The {@link InfiniteCanvas} that displays the viewer's contents.
 	 */
 	protected InfiniteCanvas infiniteCanvas;
-
-	/**
-	 * The {@link FXGridLayer} that displays the grid in the background.
-	 */
-	protected FXGridLayer gridLayer;
 
 	/**
 	 * Returns the {@link InfiniteCanvas} that is managed by this
@@ -64,20 +58,8 @@ public class FXViewer extends AbstractViewer<Node> {
 				infiniteCanvas = new InfiniteCanvas();
 				infiniteCanvas.setStyle(CANVAS_STYLE);
 
-				gridLayer = new FXGridLayer();
 				infiniteCanvas.getContentGroup().getChildren()
 						.addAll((Parent) rootPart.getVisual());
-				infiniteCanvas.getScrolledPane().getChildren().add(gridLayer);
-				gridLayer.toBack();
-
-				// bind translation and bounds of grid layer
-				gridLayer.gridTransformProperty().get().txProperty()
-						.bind(infiniteCanvas.contentTransformProperty().get()
-								.txProperty());
-				gridLayer.gridTransformProperty().get().tyProperty()
-						.bind(infiniteCanvas.contentTransformProperty().get()
-								.tyProperty());
-				gridLayer.bindBounds(infiniteCanvas.scrollableBoundsProperty());
 			}
 		}
 		return infiniteCanvas;
@@ -86,16 +68,6 @@ public class FXViewer extends AbstractViewer<Node> {
 	@Override
 	public FXDomain getDomain() {
 		return (FXDomain) super.getDomain();
-	}
-
-	/**
-	 * Returns the {@link FXGridLayer} that is managed by this {@link FXViewer}.
-	 *
-	 * @return The {@link FXGridLayer} that is managed by this {@link FXViewer}.
-	 */
-	// TODO: if (gridLayer == null) createVisuals();
-	public FXGridLayer getGridLayer() {
-		return gridLayer;
 	}
 
 	/**

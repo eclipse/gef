@@ -18,9 +18,14 @@ import java.util.Arrays;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -30,62 +35,234 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
 /**
- * A {@link InfiniteCanvas} provides a scrollable {@link Pane} in which contents
- * can be placed. {@link ScrollBar}s are automatically added to the
- * {@link InfiniteCanvas} when its contents exceed the viewport.
+ * An {@link InfiniteCanvas} provides a means to render a section of arbitrary
+ * sized contents. The size of the {@link InfiniteCanvas} determines the visible
+ * area. Per default, scrollbars are added when content is outside of the
+ * visible area. Additionally, a background grid is rendered behind the contents
+ * per default.
  * <p>
- * On the top level, a {@link InfiniteCanvas} consists of a "scrolled pane" and
- * a "scrollbars group". Inside of the scrolled pane, a "contents group"
- * contains all user nodes, which can be scrolled by the {@link InfiniteCanvas}.
- * The scrollbars group contains the horizontal and vertical scrollbars. It is
- * rendered above the scrolled pane.
+ *
+ * <pre>
+ * The scrollable bounds contains both, the content bounds and the visible area:
+ * +----------------+---------+
+ * |content bounds  |         |
+ * |                |         |
+ * |         +----------------+
+ * |         |visible area    |
+ * |         |                |
+ * |         +----------------+
+ * |                |         |
+ * |                |         |
+ * +----------------+---------+
+ * </pre>
  * <p>
- * In order to rotate or scale the viewport, you can access a
- * "content transformation" which is applied to the contents group. Scrolling is
- * done independently of this transformation, using the translate-x and
- * translate-y properties of the scrolled pane, which corresponds to the
- * horizontal and vertical scroll offset.
+ * The {@link #getContentGroup()} can be used to add content to an
+ * {@link InfiniteCanvas}. The {@link #getOverlayGroup()} can be used to add UI
+ * elements (like the scrollbars) to an {@link InfiniteCanvas}.
  * <p>
- * The {@link InfiniteCanvas} computes two bounds: a) the contents-bounds, and
- * b) the scrollable bounds. The contents-bounds are the bounds of the contents
- * group within the {@link InfiniteCanvas}'s coordinate system. The scrollable
- * bounds are at least as big as the contents-bounds but also include the
- * complete viewport, i.e. any empty space that is currently visible.
+ * An arbitrary transformation can be applied to the contents that is controlled
+ * by the {@link #contentTransformProperty()}. Scrolling is independent from the
+ * content transformation, i.e. translating the content does not change the
+ * scroll offset. The horizontal and vertical scroll offsets are controlled by
+ * the {@link #horizontalScrollOffsetProperty()} and
+ * {@link #verticalScrollOffsetProperty()}.
  * <p>
- * The {@link InfiniteCanvas} provides the scroll position in multiple formats:
- * a) the values of the scrollbars (depends on scrollable bounds), b) the ratios
- * of the scrollbars (in range <code>[0;1]</code>), and c) the translation
- * values of the scrolled pane. You can use the various <code>compute()</code>,
- * <code>lerp()</code>, and <code>norm()</code> methods to convert from one
- * format to the other.
+ * The {@link InfiniteCanvas} provides a set of properties that can be used to
+ * alter the behavior of the background grid:
+ * <ul>
+ * <li>The {@link #showGridProperty()} determines whether or not to show the
+ * background grid
+ * <li>The {@link #zoomGridProperty()} determines whether or not to zoom the
+ * background grid with the contents.
+ * <li>The {@link #gridCellWidthProperty()} determines the grid cell width.
+ * <li>The {@link #gridCellHeightProperty()} determines the grid cell height.
+ * </ul>
+ * <p>
+ * The {@link InfiniteCanvas} provides a set of properties that can be used to
+ * alter the behavior of the scrollbars:
+ * <ul>
+ * <li>The {@link #horizontalScrollBarPolicyProperty()} determines the
+ * horizontal {@link ScrollBarPolicy}.
+ * <li>The {@link #verticalScrollBarPolicyProperty()} determines the vertical
+ * {@link ScrollBarPolicy}.
+ * </ul>
+ * <p>
+ * The {@link InfiniteCanvas} computes two bounds that are exposed as
+ * properties:
+ * <ul>
+ * <li>The {@link #contentBoundsProperty()} provides the bounds of the
+ * {@link #getContentGroup()} within the {@link InfiniteCanvas}'s coordinate
+ * system.
+ * <li>The {@link #scrollableBoundsProperty()} provides bounds at least as big
+ * as the {@link #contentBoundsProperty()} and also including the complete
+ * viewport, i.e. any empty space that is currently visible.
+ * </ul>
+ * <p>
+ * Internally, an {@link InfiniteCanvas} consists of a "scrolled" {@link Pane},
+ * a "grid canvas", a "content" {@link Group}, an "overlay" {@link Group}, and a
+ * "scrollbars" {@link Group}. A {@link Pane} is used for scrolling, because its
+ * origin is independent of its children, by contrast with {@link Group}, for
+ * example. The grid canvas and the content {@link Group} are rendered inside of
+ * the scrolled {@link Pane}. The overlay and the scrollbars {@link Group}s are
+ * rendered above the scrolled {@link Pane}, i.e. they are neither scrolled nor
+ * transformed.
  */
 public class InfiniteCanvas extends Region {
 
+	/**
+	 * The {@link GridCanvas} is a {@link Canvas} that draws grid points at
+	 * configurable steps. The grid points are scaled according to a
+	 * configurable transformation.
+	 */
+	public class GridCanvas extends Canvas {
+		private static final int GRID_THRESHOLD = 5000000;
+
+		/**
+		 * Constructs a new {@link GridCanvas}.
+		 */
+		public GridCanvas() {
+			final ChangeListener<Number> repaintListener = new ChangeListener<Number>() {
+				@Override
+				public void changed(
+						final ObservableValue<? extends Number> observable,
+						final Number oldValue, final Number newValue) {
+					repaintGrid();
+				}
+			};
+			Affine gridTransform = gridTransformProperty.get();
+			gridTransform.txProperty().addListener(repaintListener);
+			gridTransform.tyProperty().addListener(repaintListener);
+			gridTransform.mxxProperty().addListener(repaintListener);
+			gridTransform.myyProperty().addListener(repaintListener);
+
+			gridCellWidthProperty.addListener(repaintListener);
+			gridCellHeightProperty.addListener(repaintListener);
+
+			layoutXProperty().addListener(repaintListener);
+			layoutYProperty().addListener(repaintListener);
+			widthProperty().addListener(repaintListener);
+			heightProperty().addListener(repaintListener);
+		}
+
+		@Override
+		public boolean isResizable() {
+			return true;
+		}
+
+		@Override
+		public double prefHeight(final double width) {
+			return getHeight();
+		}
+
+		@Override
+		public double prefWidth(final double height) {
+			return getWidth();
+		}
+
+		/**
+		 * Repaints the grid points on this {@link GridCanvas}. This method is
+		 * called when the canvas size, the transformation, or the grid cell
+		 * size changes.
+		 */
+		protected void repaintGrid() {
+			final double width = getWidth();
+			final double height = getHeight();
+
+			final GraphicsContext gc = getGraphicsContext2D();
+			gc.clearRect(0, 0, width, height);
+
+			final double xScale = gridTransformProperty.get().getMxx();
+			final double yScale = gridTransformProperty.get().getMyy();
+			// don't paint grid points if size is to large
+			if (((width / xScale) * (height / yScale) > GRID_THRESHOLD)) {
+				return;
+			}
+
+			final double scaledGridCellWidth = gridCellWidthProperty.get()
+					* xScale;
+			final double scaledGridCellHeight = gridCellHeightProperty.get()
+					* yScale;
+			gc.setFill(Color.GREY);
+			for (double x = -(getLayoutX()
+					- gridTransformProperty.get().getTx())
+					% scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
+				for (double y = -(getLayoutY()
+						- gridTransformProperty.get().getTy())
+						% scaledGridCellHeight; y < height; y += scaledGridCellHeight) {
+					gc.fillRect(Math.floor(x) - 0.5 * xScale,
+							Math.floor(y) - 0.5 * yScale, xScale, yScale);
+				}
+			}
+		}
+	}
+
+	// background grid
+	private GridCanvas gridCanvas;
+	private final DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
+			10);
+	private final DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
+			10);
+	private final ReadOnlyObjectWrapper<Affine> gridTransformProperty = new ReadOnlyObjectWrapper<Affine>(
+			new Affine());
+	private final BooleanProperty showGridProperty = new SimpleBooleanProperty(
+			true);
+	private final BooleanProperty zoomGridProperty = new SimpleBooleanProperty(
+			true);
+
+	// scrollbars
 	private Group scrollbarGroup;
 	private ScrollBar horizontalScrollBar;
 	private ScrollBar verticalScrollBar;
-	private Pane scrolledPane;
-	private Group contentGroup;
+	private final ObjectProperty<ScrollBarPolicy> horizontalScrollBarPolicyProperty = new SimpleObjectProperty<ScrollBarPolicy>(
+			ScrollBarPolicy.ALWAYS);
+	private final ObjectProperty<ScrollBarPolicy> verticalScrollBarPolicyProperty = new SimpleObjectProperty<ScrollBarPolicy>(
+			ScrollBarPolicy.ALWAYS);
 
+	// contents
+	private Group contentGroup;
 	private ReadOnlyObjectWrapper<Affine> contentTransformProperty = new ReadOnlyObjectWrapper<Affine>(
 			new Affine());
 
-	// content and scrollable bounds are cached
+	// content and scrollable bounds
 	private double[] contentBounds = new double[] { 0d, 0d, 0d, 0d };
 	private double[] scrollableBounds = new double[] { 0d, 0d, 0d, 0d };
-	private ObjectBinding<Bounds> scrollableBoundsBinding;
-	private ObjectBinding<Bounds> contentBoundsBinding;
-	private ReadOnlyObjectWrapper<Bounds> scrollableBoundsProperty;
-	private ReadOnlyObjectWrapper<Bounds> contentBoundsProperty;
+	private ObjectBinding<Bounds> contentBoundsBinding = new ObjectBinding<Bounds>() {
+		@Override
+		protected Bounds computeValue() {
+			return new BoundingBox(contentBounds[0], contentBounds[1],
+					contentBounds[2] - contentBounds[0],
+					contentBounds[3] - contentBounds[1]);
+		}
+	};
+	private ObjectBinding<Bounds> scrollableBoundsBinding = new ObjectBinding<Bounds>() {
+		@Override
+		protected Bounds computeValue() {
+			return new BoundingBox(scrollableBounds[0], scrollableBounds[1],
+					scrollableBounds[2] - scrollableBounds[0],
+					scrollableBounds[3] - scrollableBounds[1]);
+		}
+	};
+	private ReadOnlyObjectWrapper<Bounds> contentBoundsProperty = new ReadOnlyObjectWrapper<Bounds>();
+	private ReadOnlyObjectWrapper<Bounds> scrollableBoundsProperty = new ReadOnlyObjectWrapper<Bounds>();
 
+	// scrolled pane
+	private Pane scrolledPane;
+	private Group overlayGroup;
+
+	// listener to update the scrollbars when the InfiniteCanvas#widthProperty()
+	// is changed.
 	private ChangeListener<Number> widthChangeListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
@@ -93,6 +270,9 @@ public class InfiniteCanvas extends Region {
 			updateScrollbars();
 		}
 	};
+
+	// listener to update the scrollbars when the
+	// InfiniteCanvas#heightProperty() is changed.
 	private ChangeListener<Number> heightChangeListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
@@ -100,6 +280,9 @@ public class InfiniteCanvas extends Region {
 			updateScrollbars();
 		}
 	};
+
+	// listener to update the scrollbars when the "scrolled"
+	// Pane#boundsInLocalProperty() is changed.
 	private ChangeListener<Bounds> scrolledPaneBoundsInLocalChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
@@ -107,6 +290,9 @@ public class InfiniteCanvas extends Region {
 			updateScrollbars();
 		}
 	};
+
+	// listener to update the scrollbars when the "content"
+	// Group#boundsInParentProperty() is changed.
 	private ChangeListener<? super Bounds> contentGroupBoundsInParentChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
@@ -119,38 +305,76 @@ public class InfiniteCanvas extends Region {
 	 * Constructs a new {@link InfiniteCanvas}.
 	 */
 	public InfiniteCanvas() {
-		getChildren().addAll(getScrolledPane(), getScrollbarGroup());
+		// create visualization
+		getScrolledPane().getChildren().addAll(getGridCanvas(),
+				getContentGroup());
+		getChildren().addAll(getScrolledPane(), getOverlayGroup(),
+				getScrollbarGroup());
 
+		// add size change listeners (update scrollbars)
 		widthProperty().addListener(widthChangeListener);
 		heightProperty().addListener(heightChangeListener);
 
-		contentBoundsBinding = new ObjectBinding<Bounds>() {
-			@Override
-			protected Bounds computeValue() {
-				return new BoundingBox(contentBounds[0], contentBounds[1],
-						contentBounds[2] - contentBounds[0],
-						contentBounds[3] - contentBounds[1]);
-			}
-		};
-		contentBoundsProperty = new ReadOnlyObjectWrapper<Bounds>() {
-			{
-				bind(contentBoundsBinding);
-			}
-		};
+		// bind bounds properties
+		contentBoundsProperty.bind(contentBoundsBinding);
+		scrollableBoundsProperty.bind(scrollableBoundsBinding);
 
-		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
+		// enable the background grid
+		if (showGridProperty.get()) {
+			showGrid();
+		}
+		// register for "showGrid" changes to enable/disable the grid
+		showGridProperty.addListener(new ChangeListener<Boolean>() {
 			@Override
-			protected Bounds computeValue() {
-				return new BoundingBox(scrollableBounds[0], scrollableBounds[1],
-						scrollableBounds[2] - scrollableBounds[0],
-						scrollableBounds[3] - scrollableBounds[1]);
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if (newValue.booleanValue()) {
+					showGrid();
+				} else {
+					hideGrid();
+				}
 			}
-		};
-		scrollableBoundsProperty = new ReadOnlyObjectWrapper<Bounds>() {
-			{
-				bind(scrollableBoundsBinding);
+		});
+
+		// enable grid zooming
+		if (showGridProperty.get()) {
+			zoomGrid();
+		}
+		// register for "zoomGrid" changes to enable/disable grid zooming
+		zoomGridProperty.addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if (newValue.booleanValue()) {
+					zoomGrid();
+				} else {
+					unzoomGrid();
+				}
 			}
-		};
+		});
+
+		// register listeners for the scrollbar policies to update the
+		// scrollbars accordingly
+		horizontalScrollBarPolicyProperty
+				.addListener(new ChangeListener<ScrollBarPolicy>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends ScrollBarPolicy> observable,
+							ScrollBarPolicy oldValue,
+							ScrollBarPolicy newValue) {
+						updateScrollbars();
+					}
+				});
+		verticalScrollBarPolicyProperty
+				.addListener(new ChangeListener<ScrollBarPolicy>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends ScrollBarPolicy> observable,
+							ScrollBarPolicy oldValue,
+							ScrollBarPolicy newValue) {
+						updateScrollbars();
+					}
+				});
 	}
 
 	/**
@@ -293,14 +517,14 @@ public class InfiniteCanvas extends Region {
 
 	/**
 	 * Creates the {@link Group} designated for holding the scrolled content.
-	 * The {@link #getContentTransform() viewport transform} is added to the
+	 * The {@link #getContentTransform() content transform} is added to the
 	 * transforms list of that {@link Group}.
 	 *
 	 * @return The {@link Group} designated for holding the scrolled content.
 	 */
 	protected Group createContentGroup() {
 		Group g = new Group();
-		g.getTransforms().add(contentTransformProperty.get());
+		g.getTransforms().add(getContentTransform());
 		g.boundsInParentProperty()
 				.addListener(contentGroupBoundsInParentChangeListener);
 		return g;
@@ -419,16 +643,15 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
-	 * Creates the {@link Pane} which is translated when scrolling and inserts
-	 * the {@link #getContentGroup() content group} into it. Therefore, the
-	 * {@link #getContentTransform() viewport transform} does not influence the
-	 * scroll offset.
+	 * Creates the {@link Pane} which is translated when scrolling. Therefore,
+	 * the {@link #getContentTransform() content transform} does not influence
+	 * the scroll offset. A {@link Pane} is used so that the origin is fixed and
+	 * not dependent on the children.
 	 *
 	 * @return The {@link Pane} which is translated when scrolling.
 	 */
 	protected Pane createScrolledPane() {
 		Pane scrolledPane = new Pane();
-		scrolledPane.getChildren().add(getContentGroup());
 		scrolledPane.boundsInLocalProperty()
 				.addListener(scrolledPaneBoundsInLocalChangeListener);
 		return scrolledPane;
@@ -467,12 +690,44 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
-	 * Returns the horizontal {@link ScrollBar}.
+	 * Returns the {@link GridCanvas} that is used to paint the background grid.
 	 *
-	 * @return The horizontal {@link ScrollBar}.
+	 * @return The {@link GridCanvas} that is used to paint the background grid.
 	 */
-	public ScrollBar getHorizontalScrollBar() {
-		return horizontalScrollBar;
+	protected GridCanvas getGridCanvas() {
+		if (gridCanvas == null) {
+			gridCanvas = new GridCanvas();
+		}
+		return gridCanvas;
+	}
+
+	/**
+	 * Returns the value of the {@link #gridCellHeightProperty()}.
+	 *
+	 * @return The value of the {@link #gridCellHeightProperty()}.
+	 */
+	public double getGridCellHeight() {
+		return gridCellHeightProperty.get();
+	}
+
+	/**
+	 * Returns the value of the {@link #gridCellWidthProperty()}.
+	 *
+	 * @return The value of the {@link #gridCellWidthProperty()}.
+	 */
+	public double getGridCellWidth() {
+		return gridCellWidthProperty.get();
+	}
+
+	/**
+	 * Returns the {@link ScrollBarPolicy} that is currently used to decide when
+	 * to show a horizontal scrollbar.
+	 *
+	 * @return The {@link ScrollBarPolicy} that is currently used to decide when
+	 *         to show a horizontal scrollbar.
+	 */
+	public ScrollBarPolicy getHorizontalScrollBarPolicy() {
+		return horizontalScrollBarPolicyProperty.get();
 	}
 
 	/**
@@ -485,11 +740,22 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Returns a {@link Group} that is not scrolled and displayed behind the
+	 * scrollbars (if any).
+	 *
+	 * @return A {@link Group} that is not scrolled and displayed behind the
+	 *         scrollbars (if any).
+	 */
+	public Group getOverlayGroup() {
+		return overlayGroup;
+	}
+
+	/**
 	 * Returns the {@link Group} designated for holding the {@link ScrollBar}s.
 	 *
 	 * @return The {@link Group} designated for holding the {@link ScrollBar}s.
 	 */
-	public Group getScrollbarGroup() {
+	protected Group getScrollbarGroup() {
 		if (scrollbarGroup == null) {
 			scrollbarGroup = createScrollbarGroup();
 		}
@@ -504,7 +770,7 @@ public class InfiniteCanvas extends Region {
 	 *
 	 * @return The {@link Pane} which is translated when scrolling.
 	 */
-	public Pane getScrolledPane() {
+	protected Pane getScrolledPane() {
 		if (scrolledPane == null) {
 			scrolledPane = createScrolledPane();
 		}
@@ -516,8 +782,19 @@ public class InfiniteCanvas extends Region {
 	 *
 	 * @return The vertical {@link ScrollBar}.
 	 */
-	public ScrollBar getVerticalScrollBar() {
+	protected ScrollBar getVerticalScrollBar() {
 		return verticalScrollBar;
+	}
+
+	/**
+	 * Returns the {@link ScrollBarPolicy} that is currently used to decide when
+	 * to show a vertical scrollbar.
+	 *
+	 * @return The {@link ScrollBarPolicy} that is currently used to decide when
+	 *         to show a vertical scrollbar.
+	 */
+	public ScrollBarPolicy getVerticalScrollBarPolicy() {
+		return verticalScrollBarPolicyProperty.get();
 	}
 
 	/**
@@ -530,6 +807,47 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Returns the grid cell height as a (writable) property.
+	 *
+	 * @return The grid cell height as a {@link DoubleProperty}.
+	 */
+	public DoubleProperty gridCellHeightProperty() {
+		return gridCellHeightProperty;
+	}
+
+	/**
+	 * Returns the grid cell width as a (writable) property.
+	 *
+	 * @return The grid cell width as a {@link DoubleProperty}.
+	 */
+	public DoubleProperty gridCellWidthProperty() {
+		return gridCellWidthProperty;
+	}
+
+	/**
+	 * Disables the background grid.
+	 */
+	protected void hideGrid() {
+		gridCanvas.setVisible(false);
+		gridCanvas.layoutXProperty().unbind();
+		gridCanvas.layoutYProperty().unbind();
+		gridCanvas.widthProperty().unbind();
+		gridCanvas.heightProperty().unbind();
+	}
+
+	/**
+	 * Returns the {@link ObjectProperty} that controls the
+	 * {@link ScrollBarPolicy} that decides when to show a horizontal scrollbar.
+	 *
+	 * @return The {@link ObjectProperty} that controls the
+	 *         {@link ScrollBarPolicy} that decides when to show a horizontal
+	 *         scrollbar.
+	 */
+	public ObjectProperty<ScrollBarPolicy> horizontalScrollBarPolicyProperty() {
+		return horizontalScrollBarPolicyProperty;
+	}
+
+	/**
 	 * Returns the horizontal scroll offset as a property.
 	 *
 	 * @return A {@link DoubleProperty} representing the horizontal scroll
@@ -537,6 +855,24 @@ public class InfiniteCanvas extends Region {
 	 */
 	public DoubleProperty horizontalScrollOffsetProperty() {
 		return getScrolledPane().translateXProperty();
+	}
+
+	/**
+	 * Returns the value of the {@link #showGridProperty()}.
+	 *
+	 * @return The value of the {@link #showGridProperty()}.
+	 */
+	public boolean isShowGrid() {
+		return showGridProperty.get();
+	}
+
+	/**
+	 * Returns the value of the {@link #zoomGridProperty()}.
+	 *
+	 * @return The value of the {@link #zoomGridProperty()}.
+	 */
+	public boolean isZoomGrid() {
+		return zoomGridProperty.get();
 	}
 
 	/**
@@ -558,36 +894,6 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
-	 * Linear intERPolation (LERP) of the given horizontal ratio (in range
-	 * <code>[0;1]</code>) onto the horizontal scroll offset (Horizontal Value)
-	 * range.
-	 *
-	 * @param hvRatio
-	 *            The horizontal ratio to lerp (in range <code>[0;1]</code>).
-	 * @return The corresponding value on the {@link #getHorizontalScrollBar()
-	 *         horizontal scrollbar}.
-	 */
-	protected double lerpHvRatio(double hvRatio) {
-		return lerp(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
-				hvRatio);
-	}
-
-	/**
-	 * Linear intERPolation (LERP) of the given vertical ratio (in range
-	 * <code>[0;1]</code>) onto the vertical scroll offset (Vertical Value)
-	 * range.
-	 *
-	 * @param vvRatio
-	 *            The vertical ratio to lerp (in range <code>[0;1]</code>).
-	 * @return The corresponding value on the {@link #getVerticalScrollBar()
-	 *         vertical scrollbar}.
-	 */
-	protected double lerpVvRatio(double vvRatio) {
-		return lerp(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
-				vvRatio);
-	}
-
-	/**
 	 * Normalizes a given <i>value</i> which is in range <code>[min;max]</code>
 	 * to range <code>[0;1]</code>.
 	 *
@@ -602,31 +908,6 @@ public class InfiniteCanvas extends Region {
 	protected double norm(double min, double max, double value) {
 		double d = (value - min) / (max - min);
 		return Double.isNaN(d) ? 0 : Math.min(1, Math.max(0, d));
-	}
-
-	/**
-	 * Normalizes the given horizontal scroll offset (Horizontal Value) to a
-	 * ratio in the range <code>[0;1]</code>.
-	 *
-	 * @param hv
-	 *            The horizontal scroll offset to normalize.
-	 * @return The normalized ratio in the range <code>[0;1]</code>.
-	 */
-	protected double normHv(double hv) {
-		return norm(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
-				hv);
-	}
-
-	/**
-	 * Normalizes the given vertical scroll offset (Vertical Value) to a ratio
-	 * in the range <code>[0;1]</code>.
-	 *
-	 * @param vv
-	 *            The vertical scroll offset to normalize.
-	 * @return The normalized ratio in the range <code>[0;1]</code>.
-	 */
-	protected double normVv(double vv) {
-		return norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv);
 	}
 
 	/**
@@ -766,17 +1047,49 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Assigns the given value to the {@link #gridCellHeightProperty()}.
+	 *
+	 * @param gridCellHeight
+	 *            The grid cell height that is assigned to the
+	 *            {@link #gridCellHeightProperty()}.
+	 */
+	public void setGridCellHeight(double gridCellHeight) {
+		gridCellHeightProperty.set(gridCellHeight);
+	}
+
+	/**
+	 * Assigns the given value to the {@link #gridCellWidthProperty()}.
+	 *
+	 * @param gridCellWidth
+	 *            The grid cell width that is assigned to the
+	 *            {@link #gridCellWidthProperty()}.
+	 */
+	public void setGridCellWidth(double gridCellWidth) {
+		gridCellWidthProperty.set(gridCellWidth);
+	}
+
+	/**
+	 * Sets the value of the {@link #horizontalScrollBarPolicyProperty()} to the
+	 * given {@link ScrollBarPolicy}.
+	 *
+	 * @param horizontalScrollBarPolicy
+	 *            The new {@link ScrollBarPolicy} for the horizontal scrollbar.
+	 */
+	public void setHorizontalScrollBarPolicy(
+			ScrollBarPolicy horizontalScrollBarPolicy) {
+		horizontalScrollBarPolicyProperty.set(horizontalScrollBarPolicy);
+	}
+
+	/**
 	 * Sets the horizontal scroll offset to the given value.
 	 *
 	 * @param scrollOffsetX
 	 *            The new horizontal scroll offset.
 	 * @throws IllegalArgumentException
 	 *             when the given horizontal scroll offset is outside of the
-	 *             value range of the {@link #getHorizontalScrollBar()
-	 *             horizontal scrollbar}.
+	 *             value range of the horizontal scrollbar.
 	 */
 	public void setHorizontalScrollOffset(double scrollOffsetX) {
-		updateScrollbars();
 		double hv = computeHv(scrollOffsetX);
 		if (hv < horizontalScrollBar.getMin()
 				|| hv > horizontalScrollBar.getMax()) {
@@ -786,6 +1099,29 @@ public class InfiniteCanvas extends Region {
 							+ horizontalScrollBar.getMax() + "]");
 		}
 		getScrolledPane().setTranslateX(scrollOffsetX);
+	}
+
+	/**
+	 * Assigns the given value to the {@link #showGridProperty()}.
+	 *
+	 * @param showGrid
+	 *            The new value that is assigned to the
+	 *            {@link #showGridProperty()}.
+	 */
+	public void setShowGrid(boolean showGrid) {
+		showGridProperty.set(showGrid);
+	}
+
+	/**
+	 * Sets the value of the {@link #verticalScrollBarPolicyProperty()} to the
+	 * given {@link ScrollBarPolicy}.
+	 *
+	 * @param verticalScrollBarPolicy
+	 *            The new {@link ScrollBarPolicy} for the vertical scrollbar.
+	 */
+	public void setVerticalScrollBarPolicy(
+			ScrollBarPolicy verticalScrollBarPolicy) {
+		verticalScrollBarPolicyProperty.set(verticalScrollBarPolicy);
 	}
 
 	/**
@@ -799,7 +1135,6 @@ public class InfiniteCanvas extends Region {
 	 *             scrollbar}.
 	 */
 	public void setVerticalScrollOffset(double scrollOffsetY) {
-		updateScrollbars();
 		double vv = computeVv(scrollOffsetY);
 		if (vv < verticalScrollBar.getMin()
 				|| vv > verticalScrollBar.getMax()) {
@@ -809,6 +1144,92 @@ public class InfiniteCanvas extends Region {
 							+ verticalScrollBar.getMax() + "]");
 		}
 		getScrolledPane().setTranslateY(scrollOffsetY);
+	}
+
+	/**
+	 * Assigns the given value to the {@link #showGridProperty()}.
+	 *
+	 * @param zoomGrid
+	 *            The new value that is assigned to the
+	 *            {@link #showGridProperty()}.
+	 */
+	public void setZoomGrid(boolean zoomGrid) {
+		zoomGridProperty.set(zoomGrid);
+	}
+
+	/**
+	 * Enables the background grid.
+	 */
+	protected void showGrid() {
+		gridCanvas.setVisible(true);
+		gridCanvas.layoutXProperty().bind(new DoubleBinding() {
+			{
+				super.bind(scrollableBoundsProperty);
+			}
+
+			@Override
+			protected double computeValue() {
+				return Math.min(0, scrollableBoundsProperty.get().getMinX());
+			}
+		});
+		gridCanvas.layoutYProperty().bind(new DoubleBinding() {
+			{
+				super.bind(scrollableBoundsProperty);
+			}
+
+			@Override
+			protected double computeValue() {
+				return Math.min(0, scrollableBoundsProperty.get().getMinY());
+			}
+		});
+		gridCanvas.widthProperty().bind(new DoubleBinding() {
+			{
+				super.bind(scrollableBoundsProperty);
+			}
+
+			@Override
+			protected double computeValue() {
+				if (scrollableBoundsProperty.get() == null) {
+					return 0;
+				}
+				return scrollableBoundsProperty.get().getWidth();
+			}
+		});
+		gridCanvas.heightProperty().bind(new DoubleBinding() {
+			{
+				super.bind(scrollableBoundsProperty);
+			}
+
+			@Override
+			protected double computeValue() {
+				if (scrollableBoundsProperty.get() == null) {
+					return 0;
+				}
+				return scrollableBoundsProperty.get().getHeight();
+			}
+		});
+	}
+
+	/**
+	 * Returns the {@link BooleanProperty} that determines if a background grid
+	 * is shown within this {@link InfiniteCanvas}.
+	 *
+	 * @return The {@link BooleanProperty} that determines if a background grid
+	 *         is shown within this {@link InfiniteCanvas}.
+	 */
+	public BooleanProperty showGridProperty() {
+		return showGridProperty;
+	}
+
+	/**
+	 * Disables zooming of the background grid.
+	 *
+	 * @see #zoomGrid()
+	 * @see #zoomGridProperty()
+	 */
+	protected void unzoomGrid() {
+		gridTransformProperty.unbind();
+		gridTransformProperty.set(new Affine());
 	}
 
 	/**
@@ -833,13 +1254,25 @@ public class InfiniteCanvas extends Region {
 			contentBoundsBinding.invalidate();
 		}
 
-		// show/hide scrollbars
-		if (contentBounds[0] < 0 || contentBounds[2] > getWidth()) {
+		// show/hide horizontal scrollbar
+		ScrollBarPolicy hbarPolicy = horizontalScrollBarPolicyProperty.get();
+		boolean hbarIsNeeded = contentBounds[0] < 0
+				|| contentBounds[2] > getWidth();
+		if (hbarPolicy.equals(ScrollBarPolicy.ALWAYS)
+				|| hbarPolicy.equals(ScrollBarPolicy.AS_NEEDED)
+						&& hbarIsNeeded) {
 			horizontalScrollBar.setVisible(true);
 		} else {
 			horizontalScrollBar.setVisible(false);
 		}
-		if (contentBounds[1] < 0 || contentBounds[3] > getHeight()) {
+
+		// show/hide vertical scrollbar
+		ScrollBarPolicy vbarPolicy = verticalScrollBarPolicyProperty.get();
+		boolean vbarIsNeeded = contentBounds[1] < 0
+				|| contentBounds[3] > getHeight();
+		if (vbarPolicy.equals(ScrollBarPolicy.ALWAYS)
+				|| vbarPolicy.equals(ScrollBarPolicy.AS_NEEDED)
+						&& vbarIsNeeded) {
 			verticalScrollBar.setVisible(true);
 		} else {
 			verticalScrollBar.setVisible(false);
@@ -874,12 +1307,42 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Returns the {@link ObjectProperty} that controls the
+	 * {@link ScrollBarPolicy} that decides when to show a vertical scrollbar.
+	 *
+	 * @return The {@link ObjectProperty} that controls the
+	 *         {@link ScrollBarPolicy} that decides when to show a vertical
+	 *         scrollbar.
+	 */
+	public ObjectProperty<ScrollBarPolicy> verticalScrollBarPolicyProperty() {
+		return horizontalScrollBarPolicyProperty;
+	}
+
+	/**
 	 * Returns the vertical scroll offset as a property.
 	 *
 	 * @return A {@link DoubleProperty} representing the vertical scroll offset.
 	 */
 	public DoubleProperty verticalScrollOffsetProperty() {
 		return getScrolledPane().translateYProperty();
+	}
+
+	/**
+	 * Enables zooming of the background grid when the contents are zoomed.
+	 */
+	protected void zoomGrid() {
+		gridTransformProperty.bind(contentTransformProperty);
+	}
+
+	/**
+	 * Returns the {@link BooleanProperty} that determines if the background
+	 * grid is zoomed when the contents are zoomed.
+	 *
+	 * @return The {@link BooleanProperty} that determines if the background
+	 *         grid is zoomed when the contents are zoomed.
+	 */
+	public BooleanProperty zoomGridProperty() {
+		return zoomGridProperty;
 	}
 
 }

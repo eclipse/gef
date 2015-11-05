@@ -189,8 +189,10 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	private void closeMenu() {
 		// remove menu visuals
-		getViewer().getCanvas().getScrolledPane().getChildren()
-				.remove(hbox);
+		// TODO: Place menu visuals in canvas' content group so that the
+		// scrolled pane (children.get(0)) is not needed anymore.
+		((Pane) getViewer().getCanvas().getChildrenUnmodifiable().get(0))
+				.getChildren().remove(hbox);
 	}
 
 	private void create(IContentPart<Node, ? extends Node> contentParent,
@@ -348,7 +350,10 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 				wrapWithPadding(menuItem, padding, maxWidth, maxHeight),
 				wrapWithPadding(rightArrow, padding));
 
-		final Pane scrolledPane = getViewer().getCanvas().getScrolledPane();
+		// TODO: Place menu visuals in canvas' content group so that the
+		// scrolled pane (children.get(0)) is not needed anymore.
+		final Pane scrolledPane = (Pane) getViewer().getCanvas()
+				.getChildrenUnmodifiable().get(0);
 		scrolledPane.getChildren().add(hbox);
 
 		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {

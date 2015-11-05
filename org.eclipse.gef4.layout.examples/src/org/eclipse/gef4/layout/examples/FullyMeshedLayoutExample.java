@@ -15,18 +15,19 @@ package org.eclipse.gef4.layout.examples;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.zest.examples.AbstractZestExample;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-
-import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.zest.examples.AbstractZestExample;
-import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public class FullyMeshedLayoutExample extends AbstractZestExample {
 
@@ -47,11 +48,11 @@ public class FullyMeshedLayoutExample extends AbstractZestExample {
 	}
 
 	@Override
-	protected void customizeUi(final InfiniteCanvas infiniteCanvas) {
-		Group overlay = infiniteCanvas.getScrollbarGroup();
+	protected Scene createScene(FXViewer viewer) {
+		Scene scene = super.createScene(viewer);
+		Group overlay = viewer.getCanvas().getOverlayGroup();
 		Button addNodeButton = new Button("add node");
 		overlay.getChildren().add(addNodeButton);
-
 		addNodeButton.setOnAction(new EventHandler<ActionEvent>() {
 			private int id = 0;
 			private List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
@@ -67,6 +68,7 @@ public class FullyMeshedLayoutExample extends AbstractZestExample {
 				nodes.add(newNode);
 			}
 		});
+		return scene;
 	}
 
 }
