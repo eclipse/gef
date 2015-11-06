@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
@@ -124,4 +126,14 @@ public abstract class AbstractRootPart<VR, V extends VR>
 		}
 	}
 
+	@Override
+	protected void unregister(IViewer<VR> viewer) {
+		// synchronize content children
+		ContentBehavior<VR> contentBehavior = this
+				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
+		if (contentBehavior != null) {
+			contentBehavior.synchronizeContentChildren(Collections.emptyList());
+		}
+		super.unregister(viewer);
+	}
 }

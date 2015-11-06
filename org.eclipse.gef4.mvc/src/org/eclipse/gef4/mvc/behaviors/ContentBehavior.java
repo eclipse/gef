@@ -34,7 +34,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
@@ -86,12 +85,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		if (getHost() == getHost().getRoot()) {
 			getHost().getRoot().getViewer().getAdapter(ContentModel.class)
 					.removePropertyChangeListener(this);
-			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			getHost().removePropertyChangeListener(this);
-			synchronizeContentAnchorages(
-					HashMultimap.<Object, String> create());
-			synchronizeContentChildren(Collections.emptyList());
 		}
 		super.deactivate();
 	}

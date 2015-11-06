@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
@@ -138,6 +139,14 @@ public abstract class AbstractContentPart<VR, V extends VR>
 
 	@Override
 	protected void unregister(IViewer<VR> viewer) {
+		// remove content children and anchorages
+		ContentBehavior<VR> contentBehavior = this
+				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
+		if (contentBehavior != null) {
+			contentBehavior.synchronizeContentChildren(Collections.emptyList());
+			contentBehavior.synchronizeContentAnchorages(
+					HashMultimap.<Object, String> create());
+		}
 		super.unregister(viewer);
 		if (content != null) {
 			unregisterFromContentPartMap(viewer, content);
