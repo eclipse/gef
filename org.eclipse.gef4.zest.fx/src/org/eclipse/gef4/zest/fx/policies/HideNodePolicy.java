@@ -45,24 +45,18 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that removes the given
-	 * {@link IContentPart} from the {@link FocusModel} and from the
-	 * {@link SelectionModel} of the corresponding {@link IViewer}.
+	 * {@link IContentPart} from the {@link SelectionModel} of the corresponding
+	 * {@link IViewer}.
 	 *
 	 * @param part
-	 *            The {@link IContentPart} that is removed from the viewer
-	 *            models.
-	 * @return An {@link ITransactionalOperation} that changes the viewer
-	 *         models.
+	 *            The {@link IContentPart} that is removed from the
+	 *            {@link SelectionModel}.
+	 * @return An {@link ITransactionalOperation} that changes the
+	 *         {@link SelectionModel}.
 	 */
-	protected ITransactionalOperation createClearViewerModelsOperation(IContentPart<Node, ? extends Node> part) {
-		ReverseUndoCompositeOperation clearOp = new ReverseUndoCompositeOperation("ClearViewerModels()");
+	protected ITransactionalOperation createDeselectOperation(IContentPart<Node, ? extends Node> part) {
 		IViewer<Node> viewer = part.getRoot().getViewer();
-		// remove from focus model
-		FocusModel<Node> focusModel = viewer.<FocusModel<Node>> getAdapter(FocusModel.class);
-		if (focusModel != null && focusModel.getFocused() == part) {
-			clearOp.add(new ChangeFocusOperation<Node>(viewer, null));
-		}
-		// remove from selection model
+
 		SelectionModel<Node> selectionModel = viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 		if (selectionModel != null) {
 			List<IContentPart<Node, ? extends Node>> selected = selectionModel.getSelection();
@@ -70,10 +64,34 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 				List<IContentPart<Node, ? extends Node>> newSelection = new ArrayList<IContentPart<Node, ? extends Node>>(
 						selected);
 				newSelection.remove(part);
-				clearOp.add(new ChangeSelectionOperation<Node>(viewer, newSelection));
+				return new ChangeSelectionOperation<Node>(viewer, newSelection);
 			}
 		}
-		return clearOp.unwrap(true);
+		return null;
+	}
+
+	/**
+	 * Returns an {@link ITransactionalOperation} that removes the given
+	 * {@link IContentPart} from the {@link FocusModel} of the corresponding
+	 * {@link IViewer}.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} that is removed from the
+	 *            {@link FocusModel}.
+	 * @return An {@link ITransactionalOperation} that changes the
+	 *         {@link FocusModel}.
+	 */
+	protected ITransactionalOperation createUnfocusOperation(IContentPart<Node, ? extends Node> part) {
+		IViewer<Node> viewer = part.getRoot().getViewer();
+
+		FocusModel<Node> focusModel = viewer.<FocusModel<Node>> getAdapter(FocusModel.class);
+		if (focusModel != null) {
+			if (focusModel.getFocused() == part) {
+				return new ChangeFocusOperation<Node>(viewer, null);
+
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -88,8 +106,19 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 	 */
 	public void hide() {
 		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation("Hide()");
-		revOp.add(createClearViewerModelsOperation(getHost()));
-		revOp.add(HideOperation.hide(getHost()));
+		ITransactionalOperation unfocusOperation = createUnfocusOperation(getHost());
+		if (unfocusOperation != null) {
+			revOp.add(unfocusOperation);
+		}
+		ITransactionalOperation deselectOperation = createDeselectOperation(getHost());
+		if (deselectOperation != null) {
+			revOp.add(deselectOperation);
+		}
+		HideOperation hideOperation = HideOperation.hide(getHost());
+		if (hideOperation != null) {
+			revOp.add(hideOperation);
+		}
+		// TODO: re-layout
 		getHost().getRoot().getViewer().getDomain().execute(revOp);
 	}
 
@@ -98,7 +127,11 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 	 * host} {@link NodeContentPart}.
 	 */
 	public void show() {
-		getHost().getRoot().getViewer().getDomain().execute(HideOperation.show(getHost()));
+		HideOperation showOperation = HideOperation.show(getHost());
+		// TODO: re-layout
+		if (showOperation != null) {
+			getHost().getRoot().getViewer().getDomain().execute(showOperation);
+		}
 	}
 
 }
