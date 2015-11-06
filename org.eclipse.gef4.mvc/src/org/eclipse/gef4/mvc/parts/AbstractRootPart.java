@@ -114,7 +114,14 @@ public abstract class AbstractRootPart<VR, V extends VR>
 
 	@Override
 	public void setAdaptable(IViewer<VR> viewer) {
+		IViewer<VR> oldViewer = this.viewer;
+		if (oldViewer != null && viewer != oldViewer) {
+			unregister(oldViewer);
+		}
 		this.viewer = viewer;
+		if (viewer != null && viewer != oldViewer) {
+			register(viewer);
+		}
 	}
 
 }

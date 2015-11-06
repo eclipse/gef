@@ -43,14 +43,12 @@ public abstract class AbstractFXRootPart<N extends Node>
 
 	@Override
 	public void setAdaptable(IViewer<Node> viewer) {
-		IViewer<Node> oldViewer = getViewer();
-		if (oldViewer != null && viewer != oldViewer) {
-			unregister(oldViewer);
+		if (viewer != null && !(viewer instanceof FXViewer)) {
+			throw new IllegalArgumentException(
+					"Adaptable needs to be of type FXViewer, but is of type "
+							+ viewer.getClass().getName());
 		}
 		super.setAdaptable(viewer);
-		if (viewer != null && viewer != oldViewer) {
-			register(viewer);
-		}
 	}
 
 }
