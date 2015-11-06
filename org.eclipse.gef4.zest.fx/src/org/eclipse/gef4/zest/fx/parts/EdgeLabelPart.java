@@ -12,10 +12,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.util.Map;
+
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
@@ -23,6 +31,7 @@ import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
+import javafx.util.Pair;
 
 /**
  * The {@link EdgeLabelPart} is an {@link AbstractVisualPart} that is used to
@@ -34,7 +43,13 @@ import javafx.scene.transform.Translate;
  * @author mwienand
  *
  */
-public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
+public class EdgeLabelPart extends AbstractFXContentPart<Text> {
+
+	/**
+	 * The CSS class that is assigned to the visualization of the
+	 * {@link EdgeLabelPart} of this {@link EdgeContentPart}.
+	 */
+	public static final String CSS_CLASS_LABEL = "label";
 
 	private VisualChangeListener vcl = new VisualChangeListener() {
 		@Override
@@ -63,6 +78,8 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		// add translation transform to the Text
 		translate = new Translate();
 		text.getTransforms().add(translate);
+		// add css class
+		text.getStyleClass().add(CSS_CLASS_LABEL);
 		return text;
 	}
 
@@ -73,6 +90,20 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 
 	@Override
 	protected void doRefreshVisual(Text visual) {
+		Edge edge = getContent().getKey();
+		Map<String, Object> attrs = edge.getAttrs();
+
+		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
+			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);
+			getVisual().setStyle(textCssStyle);
+		}
+
+		// label
+		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
+		if (label instanceof String) {
+			getVisual().setText((String) label);
+		}
+
 		EdgeContentPart edgeContentPart = getHost();
 		if (edgeContentPart == null) {
 			return;
@@ -84,6 +115,19 @@ public class EdgeLabelPart extends AbstractVisualPart<Node, Text> {
 		// compute label position
 		visual.setTranslateX(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2);
 		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Edge, String> getContent() {
+		return (Pair<Edge, String>) super.getContent();
+	}
+
+	@Override
+	public SetMultimap<? extends Object, String> getContentAnchorages() {
+		SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
+		contentAnchorages.put(getContent().getKey(), getContent().getValue());
+		return contentAnchorages;
 	}
 
 	/**

@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
@@ -35,6 +36,7 @@ import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
 
 /**
  * The {@link GraphContentPart} is the controller for a {@link Graph} content
@@ -146,6 +148,9 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public List<Object> getContentChildren() {
 		List<Object> children = new ArrayList<Object>();
 		children.addAll(getContent().getEdges());
+		for (Edge e : getContent().getEdges()) {
+			children.add(new Pair<Edge, String>(e, "LABEL"));
+		}
 		children.addAll(getContent().getNodes());
 		return children;
 	}

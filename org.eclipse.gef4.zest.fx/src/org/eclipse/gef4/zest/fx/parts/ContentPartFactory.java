@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import javafx.scene.Node;
+import javafx.util.Pair;
 
 /**
  * The {@link ContentPartFactory} is a {@link Graph}-specific
@@ -39,6 +40,7 @@ public class ContentPartFactory implements IContentPartFactory<Node> {
 	@Inject
 	private Injector injector;
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IContentPart<Node, ? extends Node> createContentPart(Object content, IBehavior<Node> contextBehavior,
 			Map<Object, Object> contextMap) {
@@ -49,6 +51,8 @@ public class ContentPartFactory implements IContentPartFactory<Node> {
 			part = new NodeContentPart();
 		} else if (content instanceof Edge) {
 			part = new EdgeContentPart();
+		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof Edge) {
+			part = new EdgeLabelPart();
 		}
 		if (part != null) {
 			injector.injectMembers(part);

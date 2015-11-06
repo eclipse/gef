@@ -38,8 +38,6 @@ import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
@@ -94,14 +92,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	 */
 	public static final String CSS_CLASS_CURVE = "curve";
 
-	/**
-	 * The CSS class that is assigned to the visualization of the
-	 * {@link EdgeLabelPart} of this {@link EdgeContentPart}.
-	 */
-	public static final String CSS_CLASS_LABEL = "label";
-
-	@Inject
-	private Injector injector;
 	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -110,8 +100,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 			}
 		}
 	};
-
-	private EdgeLabelPart edgeLabelPart;
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
@@ -160,13 +148,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	protected void doActivate() {
 		super.doActivate();
 		getContent().addPropertyChangeListener(edgeAttributesPropertyChangeListener);
-		// add label part
-		if (edgeLabelPart == null) {
-			edgeLabelPart = injector.getInstance(EdgeLabelPart.class);
-			edgeLabelPart.getVisual().getStyleClass().add(CSS_CLASS_LABEL);
-			getParent().addChild(edgeLabelPart);
-			edgeLabelPart.addAnchorage(this);
-		}
 	}
 
 	@Override
@@ -178,7 +159,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	@Override
 	public void doRefreshVisual(FXConnection visual) {
 		GraphLayoutContext glc = getGraphLayoutContext();
-		if (glc == null || edgeLabelPart == null) {
+		if (glc == null) {
 			return;
 		}
 
@@ -204,16 +185,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		if (attrs.containsKey(ZestProperties.EDGE_CURVE_CSS_STYLE)) {
 			String connCssStyle = ZestProperties.getEdgeCurveCssStyle(edge);
 			curveNode.setStyle(connCssStyle);
-		}
-		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
-			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);
-			edgeLabelPart.getVisual().setStyle(textCssStyle);
-		}
-
-		// label
-		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
-		if (label instanceof String) {
-			edgeLabelPart.getVisual().setText((String) label);
 		}
 
 		// default decoration for directed graphs
@@ -302,16 +273,6 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
-	}
-
-	@Override
-	protected void unregister(IViewer<Node> viewer) {
-		if (edgeLabelPart != null) {
-			removeAnchored(edgeLabelPart);
-			getParent().removeChild(edgeLabelPart);
-			edgeLabelPart = null;
-		}
-		super.unregister(viewer);
 	}
 
 }
