@@ -44,6 +44,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
@@ -259,6 +260,11 @@ public class InfiniteCanvas extends Region {
 	private final BooleanProperty zoomGridProperty = new SimpleBooleanProperty(
 			true);
 
+	// clipping
+	private Rectangle clippingRectangle = new Rectangle();
+	private final BooleanProperty clipContentProperty = new SimpleBooleanProperty(
+			true);
+
 	// scrollbars
 	private Group scrollBarGroup;
 	private ScrollBar horizontalScrollBar;
@@ -390,6 +396,44 @@ public class InfiniteCanvas extends Region {
 				}
 			}
 		});
+
+		// enable content clipping
+		if (clipContentProperty.get()) {
+			clipContent();
+		}
+		// register for "clipContent" changes to enable/disable content clipping
+		zoomGridProperty.addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if (newValue.booleanValue()) {
+					clipContent();
+				} else {
+					unclipContent();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Enables content clipping for this {@link InfiniteCanvas}.
+	 */
+	protected void clipContent() {
+		clippingRectangle.widthProperty().bind(widthProperty());
+		clippingRectangle.heightProperty().bind(heightProperty());
+		setClip(clippingRectangle);
+	}
+
+	/**
+	 * Returns the {@link BooleanProperty} that determines if this
+	 * {@link InfiniteCanvas} does clipping, i.e. restricts its visibility to
+	 * its {@link #layoutBoundsProperty()}.
+	 *
+	 * @return The {@link BooleanProperty} that determines if this
+	 *         {@link InfiniteCanvas} does clipping.
+	 */
+	public BooleanProperty clipContentProperty() {
+		return clipContentProperty;
 	}
 
 	/**
@@ -909,6 +953,15 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Returns the value of the {@link #clipContentProperty()}.
+	 *
+	 * @return The value of the {@link #clipContentProperty()}.
+	 */
+	public boolean isClipContent() {
+		return clipContentProperty.get();
+	}
+
+	/**
 	 * Returns the value of the {@link #showGridProperty()}.
 	 *
 	 * @return The value of the {@link #showGridProperty()}.
@@ -1115,6 +1168,16 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Sets the value of the {@link #clipContentProperty()} to the given value.
+	 *
+	 * @param clipContent
+	 *            The new value for the {@link #clipContentProperty()}.
+	 */
+	public void setClipContent(boolean clipContent) {
+		clipContentProperty.set(clipContent);
+	}
+
+	/**
 	 * Sets the transformation matrix of the {@link #getContentTransform()
 	 * viewport transform} to the values specified by the given {@link Affine}.
 	 *
@@ -1306,6 +1369,15 @@ public class InfiniteCanvas extends Region {
 	 */
 	public BooleanProperty showGridProperty() {
 		return showGridProperty;
+	}
+
+	/**
+	 * Disables content clipping for this {@link InfiniteCanvas}.
+	 */
+	protected void unclipContent() {
+		clippingRectangle.widthProperty().unbind();
+		clippingRectangle.heightProperty().unbind();
+		setClip(null);
 	}
 
 	/**
