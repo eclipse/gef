@@ -7,6 +7,6 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.geometry.convert.awt;x-internal:=true,
  org.eclipse.gef4.geometry.euclidean;x-internal:=true,
- org.eclipse.gef4.geometry.internal.utils;x-friends:="org.eclipse.gef4.geometry.tests,org.eclipse.gef4.geometry.convert.swt,org.eclipse.gef4.geometry.convert.swt.tests",
+ org.eclipse.gef4.geometry.internal.utils;x-friends:="org.eclipse.gef4.geometry.convert.swt,org.eclipse.gef4.geometry.tests,org.eclipse.gef4.geometry.tests.convert.swt",
  org.eclipse.gef4.geometry.planar;x-internal:=true,
  org.eclipse.gef4.geometry.projective;x-internal:=true
