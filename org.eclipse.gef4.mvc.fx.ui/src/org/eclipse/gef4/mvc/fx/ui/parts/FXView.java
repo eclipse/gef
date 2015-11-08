@@ -23,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -57,6 +58,7 @@ public abstract class FXView extends ViewPart {
 	private FXCanvas canvas = null;
 
 	private UndoRedoActionGroup undoRedoActionGroup;
+	private DeleteActionHandler deleteActionHandler;
 	private IPropertySheetPage propertySheetPage;
 
 	/**
@@ -126,6 +128,8 @@ public abstract class FXView extends ViewPart {
 		if (selectionProvider != null) {
 			getSite().setSelectionProvider(null);
 		}
+
+		deleteActionHandler.init(null);
 
 		domain.dispose();
 		super.dispose();
@@ -221,9 +225,16 @@ public abstract class FXView extends ViewPart {
 
 		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) getAdapter(
 				UndoRedoActionGroup.class);
+
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.fillActionBars(site.getActionBars());
 		}
+
+		deleteActionHandler = new DeleteActionHandler();
+		deleteActionHandler.init(getViewer());
+
+		site.getActionBars().setGlobalActionHandler(
+				ActionFactory.DELETE.getId(), deleteActionHandler);
 
 		// register selection provider (if we want to a provide selection)
 		if (selectionProvider != null) {

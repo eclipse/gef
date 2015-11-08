@@ -203,6 +203,7 @@ public abstract class FXEditor extends EditorPart {
 	 * @return The {@link FXViewer} of the {@link FXDomain} which was previously
 	 *         injected into this editor.
 	 */
+	// TODO: rename to content viewer (or main viewer)
 	protected FXViewer getViewer() {
 		return domain.getAdapter(IViewer.class);
 	}
