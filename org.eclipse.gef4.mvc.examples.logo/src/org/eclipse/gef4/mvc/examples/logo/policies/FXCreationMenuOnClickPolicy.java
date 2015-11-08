@@ -22,7 +22,6 @@ import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
@@ -48,12 +47,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Affine;
 
 // TODO: only applicable for FXRootPart and FXViewer
 public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
@@ -189,10 +188,8 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	private void closeMenu() {
 		// remove menu visuals
-		// TODO: Place menu visuals in canvas' content group so that the
-		// scrolled pane (children.get(0)) is not needed anymore.
-		((Pane) getViewer().getCanvas().getChildrenUnmodifiable().get(0))
-				.getChildren().remove(hbox);
+		getViewer().getCanvas().getScrolledOverlayGroup().getChildren()
+				.remove(hbox);
 	}
 
 	private void create(IContentPart<Node, ? extends Node> contentParent,
@@ -316,12 +313,12 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 
 		// compute translation based on the bounds, scaling, and width/height
 		// deltas
-		AffineTransform contentsTransform = getViewer()
-				.getAdapter(ViewportModel.class).getContentsTransform();
+		Affine contentsTransform = getViewer().getCanvas()
+				.contentTransformProperty().get();
 		double x = boundsInContent.getMinX()
-				- bounds.getMinX() / contentsTransform.getScaleX() - dx / 2;
+				- bounds.getMinX() / contentsTransform.getMxx() - dx / 2;
 		double y = boundsInContent.getMinY()
-				- bounds.getMinY() / contentsTransform.getScaleY() - dy / 2;
+				- bounds.getMinY() / contentsTransform.getMyy() - dy / 2;
 
 		// create the new semantic element
 		IFXCreationMenuItem item = items.get(currentItemIndex);
@@ -350,19 +347,22 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 				wrapWithPadding(menuItem, padding, maxWidth, maxHeight),
 				wrapWithPadding(rightArrow, padding));
 
-		// TODO: Place menu visuals in canvas' content group so that the
-		// scrolled pane (children.get(0)) is not needed anymore.
-		final Pane scrolledPane = (Pane) getViewer().getCanvas()
-				.getChildrenUnmodifiable().get(0);
-		scrolledPane.getChildren().add(hbox);
+		// place into overlay group
+		final Group overlayGroup = getViewer().getCanvas()
+				.getScrolledOverlayGroup();
+		overlayGroup.getChildren().add(hbox);
 
 		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable,
 					Bounds oldBounds, Bounds newBounds) {
+				Affine contentTransform = getViewer().getCanvas()
+						.getContentTransform();
 				hbox.setTranslateX(-newBounds.getWidth() / 2);
 				hbox.setTranslateY(-newBounds.getHeight() / 2);
-				Point2D pos = scrolledPane.sceneToLocal(
+				hbox.setScaleX(contentTransform.getMxx());
+				hbox.setScaleY(contentTransform.getMyy());
+				Point2D pos = overlayGroup.sceneToLocal(
 						initialMousePositionInScene.x,
 						initialMousePositionInScene.y);
 				hbox.setLayoutX(pos.getX());
