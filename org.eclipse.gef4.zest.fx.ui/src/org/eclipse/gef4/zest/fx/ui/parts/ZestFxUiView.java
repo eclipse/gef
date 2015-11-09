@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
+import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
@@ -27,7 +27,7 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
 /**
- * The {@link ZestFxUiView} is an extension to the {@link FXView}. It creates an
+ * The {@link ZestFxUiView} is an extension to the {@link AbstractFXView}. It creates an
  * {@link Injector} based on the {@link ZestFxModule} and {@link ZestFxUiModule}
  * by default. Other than that, it provides a {@link #setGraph(Graph) method} to
  * change the {@link Graph} that is displayed.
@@ -35,7 +35,7 @@ import com.google.inject.util.Modules;
  * @author mwienand
  *
  */
-public class ZestFxUiView extends FXView {
+public class ZestFxUiView extends AbstractFXView {
 
 	/**
 	 * Constructs a new {@link ZestFxUiView}. Uses an {@link Injector} that is

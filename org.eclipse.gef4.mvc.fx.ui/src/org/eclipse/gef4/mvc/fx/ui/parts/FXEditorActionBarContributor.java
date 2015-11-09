@@ -56,6 +56,6 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 	@Override
 	public void setActiveEditor(final IEditorPart activeEditor) {
 		registerUndoRedoActions(activeEditor);
-		deleteActionHandler.init(((FXEditor) activeEditor).getViewer());
+		deleteActionHandler.init(((AbstractFXEditor) activeEditor).getViewer());
 	}
 }
