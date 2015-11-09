@@ -12,6 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.swt;
 
+import org.eclipse.gef4.fx.swt.controls.FXControlAdapter;
+import org.eclipse.gef4.fx.swt.controls.FXControlAdapter.IControlFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -22,17 +33,6 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-
-import org.eclipse.gef4.fx.swt.controls.FXControlAdapter;
-import org.eclipse.gef4.fx.swt.controls.IControlFactory;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class StyledTextFXControlAdapterSnippet extends AbstractFxSwtExample {
 

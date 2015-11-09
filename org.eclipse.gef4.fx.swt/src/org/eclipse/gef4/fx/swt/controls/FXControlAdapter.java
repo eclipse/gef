@@ -11,6 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.controls;
 
+import org.eclipse.gef4.common.reflect.ReflectionUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -20,13 +28,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Window;
-
-import org.eclipse.gef4.common.reflect.ReflectionUtils;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * The FXControlAdapter can be used to embed SWT controls into a JavaFX scene
@@ -40,6 +41,31 @@ import org.eclipse.swt.widgets.Listener;
  *            {@link FXControlAdapter}.
  */
 public class FXControlAdapter<T extends Control> extends Region {
+
+	/**
+	 * The {@link FXControlAdapter.IControlFactory} can be used in conjunction
+	 * with {@link FXControlAdapter} to create the wrapped SWT {@link Control}
+	 * when the surrounding {@link FXCanvas} changes.
+	 *
+	 * @author anyssen
+	 *
+	 * @param <T>
+	 *            The kind of {@link Control} to be created by this factory
+	 */
+	public interface IControlFactory<T extends Control> {
+
+		/**
+		 * Creates the {@link Control} as a child of the given {@link Composite}
+		 * .
+		 *
+		 * @param parent
+		 *            The {@link Composite} in which to create the
+		 *            {@link Control}.
+		 * @return The new {@link Control}.
+		 */
+		public T createControl(Composite parent);
+
+	}
 
 	private static final int[] FORWARD_SWT_EVENT_TYPES = new int[] {
 			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp, SWT.Gesture,

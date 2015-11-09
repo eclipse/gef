@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.swt;
 
+import org.eclipse.gef4.fx.swt.controls.FXControlAdapter;
+import org.eclipse.gef4.fx.swt.controls.FXControlAdapter.IControlFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,11 +28,6 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-
-import org.eclipse.gef4.fx.swt.controls.FXControlAdapter;
-import org.eclipse.gef4.fx.swt.controls.IControlFactory;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 
 public class ButtonFXControlAdapterSnippet extends AbstractFxSwtExample {
 
