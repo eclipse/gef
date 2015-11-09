@@ -92,13 +92,19 @@ public class DeleteActionHandler extends Action {
 		// delete selected parts
 		DeletionPolicy<Node> deletionPolicy = viewer.getRootPart()
 				.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
+		if (deletionPolicy == null) {
+			throw new IllegalStateException(
+					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");
+		}
 		deletionPolicy.init();
 		for (IContentPart<Node, ? extends Node> s : getSelectionModel()
 				.getSelection()) {
 			deletionPolicy.delete(s);
 		}
 		IUndoableOperation deleteOperation = deletionPolicy.commit();
-		viewer.getDomain().execute(deleteOperation);
+		if (deleteOperation != null) {
+			viewer.getDomain().execute(deleteOperation);
+		}
 	}
 
 	/**
