@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -33,7 +33,7 @@ import javafx.scene.effect.Lighting;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
-public class FXGeometryNodeSnippet extends AbstractFXExample {
+public class GeometryNodeSnippet extends AbstractFxExample {
 
 	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
 
@@ -98,13 +98,13 @@ public class FXGeometryNodeSnippet extends AbstractFXExample {
 		Application.launch(args);
 	}
 
-	public FXGeometryNodeSnippet() {
-		super("FXGeometryNode Snippet");
+	public GeometryNodeSnippet() {
+		super("GeometryNode Snippet");
 	}
 
 	@Override
 	public Scene createScene() {
-		final FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
+		final GeometryNode<CurvedPolygon> eLetterShape = new GeometryNode<CurvedPolygon>(
 				createEShapeGeometry());
 		eLetterShape.relocate(25, 25);
 		eLetterShape.resize(250, 250);

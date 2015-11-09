@@ -36,7 +36,7 @@ import javafx.util.Duration;
  *
  */
 // TODO: extract magic numbers to properties
-public class FXImageViewHoverOverlay extends Group {
+public class HoverOverlayImageView extends Group {
 
 	private SimpleObjectProperty<Image> baseImageProperty = new SimpleObjectProperty<Image>();
 	private SimpleObjectProperty<Image> overlayImageProperty = new SimpleObjectProperty<Image>();
@@ -44,9 +44,9 @@ public class FXImageViewHoverOverlay extends Group {
 	private ImageView overlayImageView;
 
 	/**
-	 * Constructs a new {@link FXImageViewHoverOverlay}.
+	 * Constructs a new {@link HoverOverlayImageView}.
 	 */
-	public FXImageViewHoverOverlay() {
+	public HoverOverlayImageView() {
 		createImageViews();
 		registerHoverEffect();
 		registerPropertyListeners();
@@ -54,10 +54,10 @@ public class FXImageViewHoverOverlay extends Group {
 
 	/**
 	 * Returns the {@link SimpleObjectProperty} which stores the base
-	 * {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 * {@link Image} of this {@link HoverOverlayImageView}.
 	 *
 	 * @return The {@link SimpleObjectProperty} which stores the base
-	 *         {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 *         {@link Image} of this {@link HoverOverlayImageView}.
 	 */
 	public SimpleObjectProperty<Image> baseImageProperty() {
 		return baseImageProperty;
@@ -98,10 +98,10 @@ public class FXImageViewHoverOverlay extends Group {
 
 	/**
 	 * Returns the {@link SimpleObjectProperty} which stores the overlay
-	 * {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 * {@link Image} of this {@link HoverOverlayImageView}.
 	 *
 	 * @return The {@link SimpleObjectProperty} which stores the overlay
-	 *         {@link Image} of this {@link FXImageViewHoverOverlay}.
+	 *         {@link Image} of this {@link HoverOverlayImageView}.
 	 */
 	public SimpleObjectProperty<Image> overlayImageProperty() {
 		return overlayImageProperty;

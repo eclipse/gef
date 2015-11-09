@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.gestures.AbstractFXRotateGesture;
+import org.eclipse.gef4.fx.gestures.AbstractRotateGesture;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnRotatePolicy;
@@ -55,7 +55,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_ROTATE_POLICY_KEY
 	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
 
-	private final Map<IViewer<Node>, AbstractFXRotateGesture> gestures = new HashMap<IViewer<Node>, AbstractFXRotateGesture>();
+	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<IViewer<Node>, AbstractRotateGesture>();
 
 	/**
 	 * Returns a {@link Set} containing all {@link AbstractFXOnRotatePolicy}s
@@ -131,7 +131,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			AbstractFXRotateGesture gesture = new AbstractFXRotateGesture() {
+			AbstractRotateGesture gesture = new AbstractRotateGesture() {
 
 				@Override
 				protected void rotate(RotateEvent event) {
@@ -167,7 +167,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (AbstractFXRotateGesture gesture : gestures.values()) {
+		for (AbstractRotateGesture gesture : gestures.values()) {
 			gesture.setScene(null);
 		}
 		super.unregisterListeners();

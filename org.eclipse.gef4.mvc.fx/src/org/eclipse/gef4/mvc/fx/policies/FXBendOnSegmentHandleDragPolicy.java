@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
@@ -30,7 +30,7 @@ import javafx.scene.input.MouseEvent;
 /**
  * The {@link FXBendOnSegmentHandleDragPolicy} is an
  * {@link AbstractFXOnDragPolicy} that can be installed on the handle parts of
- * an {@link FXConnection}, so that the user is able to manipulate that
+ * an {@link Connection}, so that the user is able to manipulate that
  * connection by dragging its handles. This policy expects that a handle is
  * created for each anchor point of the connection (start, way, end), as well as
  * for each middle point of a segment. Moreover, this policy expects that the
@@ -113,8 +113,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		IVisualPart<Node, ? extends FXConnection> targetPart = getTargetPart();
-		FXConnection connection = targetPart.getVisual();
+		IVisualPart<Node, ? extends Connection> targetPart = getTargetPart();
+		Connection connection = targetPart.getVisual();
 
 		List<Point> before = Arrays.asList(connection.getPoints());
 
@@ -152,13 +152,13 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	/**
 	 * Returns the target {@link IVisualPart} for this policy. Per default the
 	 * first anchorage is returned, which has to be an {@link IVisualPart} with
-	 * an {@link FXConnection} visual.
+	 * an {@link Connection} visual.
 	 *
 	 * @return The target {@link IVisualPart} for this policy.
 	 */
 	@SuppressWarnings("unchecked")
-	protected IVisualPart<Node, ? extends FXConnection> getTargetPart() {
-		return (IVisualPart<Node, ? extends FXConnection>) getHost()
+	protected IVisualPart<Node, ? extends Connection> getTargetPart() {
+		return (IVisualPart<Node, ? extends Connection>) getHost()
 				.getAnchorages().keySet().iterator().next();
 	}
 
@@ -166,7 +166,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hostPart = getHost();
-		IVisualPart<Node, ? extends FXConnection> targetPart = getTargetPart();
+		IVisualPart<Node, ? extends Connection> targetPart = getTargetPart();
 
 		storeAndDisableRefreshVisuals(targetPart);
 		init(getBendPolicy(targetPart));
@@ -208,7 +208,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		IVisualPart<Node, ? extends FXConnection> targetPart = getTargetPart();
+		IVisualPart<Node, ? extends Connection> targetPart = getTargetPart();
 		restoreRefreshVisuals(targetPart);
 		// TODO: we need to ensure this can be done before
 		// enableRefreshVisuals(), because visuals should already be up to date
@@ -220,7 +220,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		// case, we need to adjust the handles as well
 		adjustHandles(
 				Arrays.asList(
-						((FXConnection) targetPart.getVisual()).getPoints()),
+						((Connection) targetPart.getVisual()).getPoints()),
 				false);
 	}
 

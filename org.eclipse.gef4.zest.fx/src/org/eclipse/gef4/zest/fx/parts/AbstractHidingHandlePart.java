@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
+import org.eclipse.gef4.fx.nodes.HoverOverlayImageView;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -28,7 +28,7 @@ import javafx.util.Duration;
 /**
  * The {@link AbstractHidingHandlePart} is an
  * {@link AbstractFXSegmentHandlePart} that displays an
- * {@link FXImageViewHoverOverlay} that uses the {@link #getImage() image} and
+ * {@link HoverOverlayImageView} that uses the {@link #getImage() image} and
  * {@link #getHoverImage() hover image} that are provided by subclasses.
  * <p>
  * An {@link AbstractHidingHandlePart} can only be attached to
@@ -38,7 +38,7 @@ import javafx.util.Duration;
  * @author mwienand
  *
  */
-public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePart<FXImageViewHoverOverlay> {
+public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePart<HoverOverlayImageView> {
 
 	private boolean isVisible = false;
 
@@ -52,19 +52,19 @@ public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePa
 	}
 
 	@Override
-	protected FXImageViewHoverOverlay createVisual() {
+	protected HoverOverlayImageView createVisual() {
 		// get image and hover image
 		final Image hoverImage = getHoverImage();
 		final Image image = getImage();
 		// create blending image view for both
-		FXImageViewHoverOverlay blendImageView = new FXImageViewHoverOverlay();
+		HoverOverlayImageView blendImageView = new HoverOverlayImageView();
 		blendImageView.baseImageProperty().set(image);
 		blendImageView.overlayImageProperty().set(hoverImage);
 		return blendImageView;
 	}
 
 	@Override
-	public void doRefreshVisual(FXImageViewHoverOverlay visual) {
+	public void doRefreshVisual(HoverOverlayImageView visual) {
 		boolean wasVisible = isVisible;
 		super.doRefreshVisual(visual);
 		isVisible = getVisual().isVisible();
@@ -104,7 +104,7 @@ public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePa
 	}
 
 	@Override
-	protected void registerAtVisualPartMap(IViewer<Node> viewer, FXImageViewHoverOverlay visual) {
+	protected void registerAtVisualPartMap(IViewer<Node> viewer, HoverOverlayImageView visual) {
 		super.registerAtVisualPartMap(viewer, visual);
 		// put base ImageView and overlay ImageView into visual->part map
 		viewer.getVisualPartMap().put(visual.getBaseImageView(), this);

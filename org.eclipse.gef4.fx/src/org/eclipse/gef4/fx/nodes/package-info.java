@@ -13,17 +13,15 @@
  * This package provides:
  * <ul>
  * <li>an adaptation of an {@link org.eclipse.gef4.geometry.planar.IGeometry} to
- * {@link javafx.scene.Node}: {@link org.eclipse.gef4.fx.nodes.FXGeometryNode}
+ * {@link javafx.scene.Node}: {@link org.eclipse.gef4.fx.nodes.GeometryNode}
  * </li>
  * <li>a connection abstraction that is based on
- * {@link org.eclipse.gef4.fx.anchors.IFXAnchor}:
- * {@link org.eclipse.gef4.fx.nodes.FXConnection}</li>
+ * {@link org.eclipse.gef4.fx.anchors.IAnchor}:
+ * {@link org.eclipse.gef4.fx.nodes.Connection}</li>
  * <li>a visual to display an image which is overlayed by another image on mouse
- * hover: {@link org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay}</li>
+ * hover: {@link org.eclipse.gef4.fx.nodes.HoverOverlayImageView}</li>
  * <li>a visual providing a scrollable infinite canvas with a background grid:
  * {@link org.eclipse.gef4.fx.nodes.InfiniteCanvas}</li>
- * <li>utilities (picking nodes, querying the pointer location,
- * transformations): {@link org.eclipse.gef4.fx.nodes.FXUtils}</li>
  * </ul>
  */
 package org.eclipse.gef4.fx.nodes;

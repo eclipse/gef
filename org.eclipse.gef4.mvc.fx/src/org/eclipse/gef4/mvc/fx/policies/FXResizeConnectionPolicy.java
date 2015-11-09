@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
@@ -25,7 +25,7 @@ import javafx.geometry.Bounds;
 
 /**
  * The {@link FXResizeConnectionPolicy} is a specialization of the
- * {@link FXResizePolicy} that performs a resize of an {@link FXConnection}
+ * {@link FXResizePolicy} that performs a resize of an {@link Connection}
  * visual by proportionally relocating its bend points.
  *
  * @author mwienand
@@ -76,7 +76,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	public void init() {
 		super.init();
 		// create operation
-		FXConnection connection = (FXConnection) getHost().getVisual();
+		Connection connection = (Connection) getHost().getVisual();
 		op = new FXBendOperation(connection);
 		// save initial anchor positions
 		initialPositions = connection.getPoints();
@@ -101,7 +101,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 					p.y + relY[i] * dh);
 			// relocate bend point
 			op.getNewAnchors().set(i,
-					new FXStaticAnchor(op.getConnection(), newPosition));
+					new StaticAnchor(op.getConnection(), newPosition));
 		}
 		// locally execute operation
 		try {

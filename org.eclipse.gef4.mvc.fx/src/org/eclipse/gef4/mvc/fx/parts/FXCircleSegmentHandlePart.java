@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
@@ -46,15 +46,15 @@ public class FXCircleSegmentHandlePart
 
 	/**
 	 * The default fill color for this part's visualization when it's anchorage
-	 * is an {@link FXConnection} and this handle part represents a connected
-	 * point of that {@link FXConnection}.
+	 * is an {@link Connection} and this handle part represents a connected
+	 * point of that {@link Connection}.
 	 */
 	public static final Color CONNECTED_FILL = Color.web("#ff0000");
 
 	/**
 	 * The default fill color for this part's visualization when it's anchorage
-	 * is an {@link FXConnection} and this handle part represents an unconnected
-	 * point of that {@link FXConnection}.
+	 * is an {@link Connection} and this handle part represents an unconnected
+	 * point of that {@link Connection}.
 	 */
 	public static final Color UNCONNECTED_FILL = Color.web("#d5faff");
 
@@ -87,7 +87,7 @@ public class FXCircleSegmentHandlePart
 
 	/**
 	 * Updates the color of this part's visualization. If this handle part
-	 * represents a way or end point of an {@link FXConnection}, it's color will
+	 * represents a way or end point of an {@link Connection}, it's color will
 	 * be set to {@link #CONNECTED_FILL} if that handle is connected to another
 	 * part, and {@link #UNCONNECTED_FILL} otherwise. If this handle part
 	 * represents a middle point on a segment, it's color will be set to
@@ -113,8 +113,8 @@ public class FXCircleSegmentHandlePart
 			boolean connected = false;
 			IVisualPart<Node, ? extends Node> targetPart = anchorages.keySet()
 					.iterator().next();
-			if (targetPart.getVisual() instanceof FXConnection) {
-				FXConnection connection = (FXConnection) targetPart.getVisual();
+			if (targetPart.getVisual() instanceof Connection) {
+				Connection connection = (Connection) targetPart.getVisual();
 				if (getSegmentIndex() + getSegmentParameter() == 0.0) {
 					// handle at start point
 					connected = connection.isStartConnected();

@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXPolyBezierConnectionRouter;
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.PolyBezierConnectionRouter;
+import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -48,9 +48,9 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 
 public class FXGeometricCurvePart
-		extends AbstractFXGeometricElementPart<FXConnection> {
+		extends AbstractFXGeometricElementPart<Connection> {
 
-	public static class ArrowHead extends Polyline implements IFXDecoration {
+	public static class ArrowHead extends Polyline implements IConnectionDecoration {
 		public ArrowHead() {
 			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
 					0.0);
@@ -111,7 +111,7 @@ public class FXGeometricCurvePart
 		}
 	}
 
-	public static class CircleHead extends Circle implements IFXDecoration {
+	public static class CircleHead extends Circle implements IConnectionDecoration {
 		public CircleHead() {
 			super(5);
 		}
@@ -142,8 +142,8 @@ public class FXGeometricCurvePart
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IFXAnchor anchor = anchorage
-				.getAdapter(new TypeToken<Provider<? extends IFXAnchor>>() {
+		IAnchor anchor = anchorage
+				.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
 				}).get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
@@ -241,9 +241,9 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	protected FXConnection createVisual() {
-		FXConnection visual = new FXConnection();
-		visual.setRouter(new FXPolyBezierConnectionRouter());
+	protected Connection createVisual() {
+		Connection visual = new Connection();
+		visual.setRouter(new PolyBezierConnectionRouter());
 		return visual;
 	}
 
@@ -271,7 +271,7 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	public void doRefreshVisual(FXConnection visual) {
+	public void doRefreshVisual(Connection visual) {
 		FXGeometricCurve content = getContent();
 
 		List<Point> wayPoints = content.getWayPoints();
@@ -379,7 +379,7 @@ public class FXGeometricCurvePart
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(
-			IFXAnchor anchor) {
+			IAnchor anchor) {
 		Node anchorageNode = anchor.getAnchorage();
 		if (anchorageNode != getVisual()) {
 			IVisualPart<Node, ? extends Node> part = getViewer()

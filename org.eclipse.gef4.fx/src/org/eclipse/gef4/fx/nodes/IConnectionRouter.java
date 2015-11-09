@@ -12,21 +12,26 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Polyline;
 
 /**
- * The {@link FXPolylineConnectionRouter} constructs a
- * {@link javafx.scene.shape.Polyline} through the supplied {@link Point}s.
+ * An {@link IConnectionRouter} {@link #routeConnection(Point[]) computes} an
+ * {@link ICurve} based on a number of supplied {@link Point}s.
  *
  * @author mwienand
  *
  */
-public class FXPolylineConnectionRouter implements IFXConnectionRouter {
+public interface IConnectionRouter {
 
-	@Override
-	public Polyline routeConnection(Point[] points) {
-		return new Polyline(points);
-	}
+	/**
+	 * Computes the curve geometry for a connection based on the given points.
+	 *
+	 * @param points
+	 *            start point, way points, and end point of the routed
+	 *            connection.
+	 * @return new curve geometry for the connection.
+	 */
+	public ICurve routeConnection(Point[] points);
 
 }

@@ -15,9 +15,9 @@ package org.eclipse.gef4.fx.examples.snippets;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ReferencePointProvider;
-import org.eclipse.gef4.fx.examples.AbstractFXExample;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
+import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.beans.value.ChangeListener;
@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class FXChopBoxSnippet extends AbstractFXExample {
+public class ChopBoxAnchorSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -39,8 +39,8 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 	private Rectangle r1;
 	private Rectangle r2;
 
-	public FXChopBoxSnippet() {
-		super("FXChopBoxSnippet");
+	public ChopBoxAnchorSnippet() {
+		super("ChopBoxAnchorSnippet");
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 		r2.relocate(200, 200);
 		final Line l = new Line();
 
-		FXChopBoxAnchor startAnchor = new FXChopBoxAnchor(r1);
-		FXChopBoxAnchor endAnchor = new FXChopBoxAnchor(r2);
+		ChopBoxAnchor startAnchor = new ChopBoxAnchor(r1);
+		ChopBoxAnchor endAnchor = new ChopBoxAnchor(r2);
 		final AnchorKey startKey = new AnchorKey(l, "start");
 		final AnchorKey endKey = new AnchorKey(l, "end");
 
@@ -94,15 +94,15 @@ public class FXChopBoxSnippet extends AbstractFXExample {
 						+ r2.getHeight() / 2);
 
 		// use static values for chopbox anchor reference points
-		ReferencePointProvider.Impl referencePointProvider = new ReferencePointProvider.Impl();
+		IReferencePointProvider.Impl referencePointProvider = new IReferencePointProvider.Impl();
 		referencePointProvider.put(startKey, r2Center);
 		referencePointProvider.put(endKey, r1Center);
 
 		startAnchor.attach(startKey,
-				new AdapterStore(AdapterKey.get(ReferencePointProvider.class),
+				new AdapterStore(AdapterKey.get(IReferencePointProvider.class),
 						referencePointProvider));
 		endAnchor.attach(endKey,
-				new AdapterStore(AdapterKey.get(ReferencePointProvider.class),
+				new AdapterStore(AdapterKey.get(IReferencePointProvider.class),
 						referencePointProvider));
 
 		Group g = new Group(r1, r2, l);

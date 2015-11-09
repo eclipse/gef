@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.FocusModel;
@@ -38,13 +38,13 @@ import javafx.scene.shape.StrokeType;
 
 /**
  * The {@link FXSelectionFeedbackPart} is an {@link AbstractFXFeedbackPart} that
- * is parameterized by <code>FXGeometryNode&lt;IGeometry&gt;</code>.
+ * is parameterized by <code>GeometryNode&lt;IGeometry&gt;</code>.
  *
  * @author mwienand
  *
  */
 public class FXSelectionFeedbackPart
-		extends AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
+		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
 
@@ -93,8 +93,8 @@ public class FXSelectionFeedbackPart
 	}
 
 	@Override
-	protected FXGeometryNode<IGeometry> createVisual() {
-		FXGeometryNode<IGeometry> feedbackVisual = new FXGeometryNode<IGeometry>();
+	protected GeometryNode<IGeometry> createVisual() {
+		GeometryNode<IGeometry> feedbackVisual = new GeometryNode<IGeometry>();
 		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);
@@ -117,7 +117,7 @@ public class FXSelectionFeedbackPart
 	}
 
 	@Override
-	public void doRefreshVisual(FXGeometryNode<IGeometry> visual) {
+	public void doRefreshVisual(GeometryNode<IGeometry> visual) {
 		Set<IVisualPart<Node, ? extends Node>> anchorages = getAnchorages()
 				.keySet();
 		if (anchorages.isEmpty()) {
@@ -169,7 +169,7 @@ public class FXSelectionFeedbackPart
 	 *         .
 	 */
 	protected IGeometry getFeedbackGeometry() {
-		return FXUtils.sceneToLocal(getVisual(),
+		return NodeUtils.sceneToLocal(getVisual(),
 				feedbackGeometryProvider.get());
 	}
 

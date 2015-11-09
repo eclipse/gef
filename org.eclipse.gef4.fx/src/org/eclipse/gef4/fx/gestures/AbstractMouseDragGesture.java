@@ -30,7 +30,7 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public abstract class AbstractFXMouseDragGesture extends AbstractFXGesture {
+public abstract class AbstractMouseDragGesture extends AbstractGesture {
 
 	private Node pressed;
 	private Point2D startMousePosition;

@@ -33,7 +33,7 @@ import javafx.scene.shape.Path;
 
 /**
  * A {@link Path} that can be constructed using an underlying {@link IGeometry}.
- * In contrast to a normal {@link Path}, a {@link FXGeometryNode} is resizable,
+ * In contrast to a normal {@link Path}, a {@link GeometryNode} is resizable,
  * performing a scale in case the underlying {@link IGeometry} is not directly
  * resizable.
  *
@@ -41,16 +41,16 @@ import javafx.scene.shape.Path;
  * @author anyssen
  *
  * @param <T>
- *            An {@link IGeometry} used to define this {@link FXGeometryNode}
+ *            An {@link IGeometry} used to define this {@link GeometryNode}
  */
-public class FXGeometryNode<T extends IGeometry> extends Path {
+public class GeometryNode<T extends IGeometry> extends Path {
 
 	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<T>();
 
 	/**
-	 * Constructs a new {@link FXGeometryNode} without an {@link IGeometry}.
+	 * Constructs a new {@link GeometryNode} without an {@link IGeometry}.
 	 */
-	public FXGeometryNode() {
+	public GeometryNode() {
 		// update path elements whenever the geometry property is changed
 		geometryProperty.addListener(new ChangeListener<T>() {
 
@@ -63,20 +63,20 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	}
 
 	/**
-	 * Constructs a new {@link FXGeometryNode} which displays the given
+	 * Constructs a new {@link GeometryNode} which displays the given
 	 * {@link IGeometry}.
 	 *
 	 * @param geom
 	 *            The {@link IGeometry} to display.
 	 */
-	public FXGeometryNode(T geom) {
+	public GeometryNode(T geom) {
 		this();
 		setGeometry(geom);
 	}
 
 	/**
 	 * Provides a {@link Property} holding the geometry of this
-	 * {@link FXGeometryNode}.
+	 * {@link GeometryNode}.
 	 *
 	 * @return A (writable) property for the geomtry of this node.
 	 */
@@ -85,9 +85,9 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	}
 
 	/**
-	 * Returns the {@link IGeometry} of this {@link FXGeometryNode}.
+	 * Returns the {@link IGeometry} of this {@link GeometryNode}.
 	 *
-	 * @return The {@link IGeometry} of this {@link FXGeometryNode}.
+	 * @return The {@link IGeometry} of this {@link GeometryNode}.
 	 */
 	public T getGeometry() {
 		return geometryProperty.getValue();
@@ -200,11 +200,11 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	}
 
 	/**
-	 * Sets the {@link IGeometry} of this {@link FXGeometryNode} to the given
+	 * Sets the {@link IGeometry} of this {@link GeometryNode} to the given
 	 * value.
 	 *
 	 * @param geometry
-	 *            The new {@link IGeometry} for this {@link FXGeometryNode}.
+	 *            The new {@link IGeometry} for this {@link GeometryNode}.
 	 */
 	public void setGeometry(T geometry) {
 		this.geometryProperty.setValue(geometry);

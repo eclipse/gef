@@ -14,14 +14,14 @@ package org.eclipse.gef4.fx.gestures;
 import javafx.scene.Scene;
 
 /**
- * The {@link AbstractFXGesture} is the base class for all gestures defined
+ * The {@link AbstractGesture} is the base class for all gestures defined
  * within GEF4 FX. It manages the (un-)registration of event listeners based on
  * the availability of a JavaFX {@link Scene}.
  *
  * @author mwienand
  *
  */
-public abstract class AbstractFXGesture {
+public abstract class AbstractGesture {
 
 	private Scene scene;
 

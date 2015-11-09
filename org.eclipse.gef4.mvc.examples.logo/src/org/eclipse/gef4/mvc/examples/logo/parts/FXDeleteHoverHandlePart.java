@@ -15,16 +15,16 @@ import java.net.URL;
 
 import javafx.scene.image.Image;
 
-import org.eclipse.gef4.fx.nodes.FXImageViewHoverOverlay;
+import org.eclipse.gef4.fx.nodes.HoverOverlayImageView;
 
 public class FXDeleteHoverHandlePart
-		extends AbstractLogoHoverHandlePart<FXImageViewHoverOverlay> {
+		extends AbstractLogoHoverHandlePart<HoverOverlayImageView> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
 
 	@Override
-	protected FXImageViewHoverOverlay createVisual() {
+	protected HoverOverlayImageView createVisual() {
 		URL overlayImageResource = FXDeleteHoverHandlePart.class
 				.getResource(IMG_DELETE);
 		if (overlayImageResource == null) {
@@ -41,7 +41,7 @@ public class FXDeleteHoverHandlePart
 		}
 		Image baseImage = new Image(baseImageResource.toExternalForm());
 
-		FXImageViewHoverOverlay blendImageView = new FXImageViewHoverOverlay();
+		HoverOverlayImageView blendImageView = new HoverOverlayImageView();
 		blendImageView.baseImageProperty().set(baseImage);
 		blendImageView.overlayImageProperty().set(overlayImage);
 		return blendImageView;

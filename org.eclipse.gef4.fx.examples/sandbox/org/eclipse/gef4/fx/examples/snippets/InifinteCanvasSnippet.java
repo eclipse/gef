@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.fx.examples.AbstractFXExample;
+import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -32,7 +32,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
-public class InifinteCanvasSnippet extends AbstractFXExample {
+public class InifinteCanvasSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();

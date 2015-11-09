@@ -12,8 +12,8 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
@@ -21,22 +21,22 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link ChopBoxAnchorProvider} is a <code>Provider&lt;IFXAnchor&gt;</code>
- * implementation that provides an {@link FXChopBoxAnchor} for the host visual.
+ * The {@link ChopBoxAnchorProvider} is a <code>Provider&lt;IAnchor&gt;</code>
+ * implementation that provides an {@link ChopBoxAnchor} for the host visual.
  *
  * @author anyssen
  *
  */
-public class ChopBoxAnchorProvider implements Provider<IFXAnchor>,
+public class ChopBoxAnchorProvider implements Provider<IAnchor>,
 		IAdaptable.Bound<IVisualPart<Node, ? extends Node>> {
 
 	private IVisualPart<Node, ? extends Node> visualPart;
-	private IFXAnchor anchor;
+	private IAnchor anchor;
 
 	@Override
-	public IFXAnchor get() {
+	public IAnchor get() {
 		if (anchor == null) {
-			anchor = new FXChopBoxAnchor(getAdaptable().getVisual());
+			anchor = new ChopBoxAnchor(getAdaptable().getVisual());
 		}
 		return anchor;
 	}

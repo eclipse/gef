@@ -18,9 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -130,7 +130,7 @@ public class FXDefaultFeedbackPartFactory
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 				@Override
 				public IGeometry get() {
-					return FXUtils.localToScene(target.getVisual(),
+					return NodeUtils.localToScene(target.getVisual(),
 							hoverFeedbackGeometryProvider.get());
 				}
 			};
@@ -162,7 +162,7 @@ public class FXDefaultFeedbackPartFactory
 			final IVisualPart<Node, ? extends Node> anchorage,
 			String anchorageRole) {
 		// only show link feedback when anchored is no connection
-		if (!(anchored.getVisual() instanceof FXConnection)) {
+		if (!(anchored.getVisual() instanceof Connection)) {
 			final Provider<IGeometry> anchorageGeometryProvider = anchorage
 					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
 							new TypeToken<Provider<? extends IGeometry>>() {
@@ -180,9 +180,9 @@ public class FXDefaultFeedbackPartFactory
 					return null;
 				}
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
-					// TODO (#471628): inject; maybe extend ComputationStrategy
+					// TODO (#471628): inject; maybe extend IComputationStrategy
 					// interface
-					private final FXChopBoxAnchor.ComputationStrategy.Impl computationStrategy = new FXChopBoxAnchor.ComputationStrategy.Impl();
+					private final ChopBoxAnchor.IComputationStrategy.Impl computationStrategy = new ChopBoxAnchor.IComputationStrategy.Impl();
 
 					private Point computePosition(Node anchoredVisual,
 							IGeometry anchoredGeometryInLocal,
@@ -275,7 +275,7 @@ public class FXDefaultFeedbackPartFactory
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 				@Override
 				public IGeometry get() {
-					return FXUtils.localToScene(target.getVisual(),
+					return NodeUtils.localToScene(target.getVisual(),
 							selectionFeedbackGeometryProvider.get());
 				}
 			};

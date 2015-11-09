@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
@@ -257,7 +257,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
 				|| Math.abs(dy) > MOUSE_MOVE_THRESHOLD) {
 			// update pointer location
-			initialPointerLocation = FXUtils.getPointerLocation();
+			initialPointerLocation = CursorUtils.getPointerLocation();
 			// restart creation timer when the mouse is moved beyond
 			// the threshold
 			creationDelayTransition.playFromStart();
@@ -303,7 +303,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	protected void registerMouseHandler() {
 		// store current pointer location to measure mouse movement
-		initialPointerLocation = FXUtils.getPointerLocation();
+		initialPointerLocation = CursorUtils.getPointerLocation();
 		final Scene scene = getHost().getVisual().getScene();
 		scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 		scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);

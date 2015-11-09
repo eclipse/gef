@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -45,9 +45,9 @@ import javafx.scene.Node;
 
 /**
  * The {@link FXBendPolicy} can be used to manipulate the points constituting an
- * {@link FXConnection}, i.e. its start, way, and end points. Each point is
- * realized though an {@link IFXAnchor}, which may either be local to the
- * {@link FXConnection} (i.e. the anchor refers to the {@link FXConnection} as
+ * {@link Connection}, i.e. its start, way, and end points. Each point is
+ * realized though an {@link IAnchor}, which may either be local to the
+ * {@link Connection} (i.e. the anchor refers to the {@link Connection} as
  * anchorage), or it may be provided by another {@link IVisualPart} (i.e. the
  * anchor is provided by a {@link Provider} adapted to the part), to which the
  * connection is being connected.
@@ -79,7 +79,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 */
 	protected boolean initialized;
 
-	private IFXAnchor removedOverlainAnchor;
+	private IAnchor removedOverlainAnchor;
 	private int removedOverlainAnchorIndex;
 
 	private int selectedPointIndex;
@@ -96,9 +96,9 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	/**
 	 * Returns <code>true</code> if the currently modified start, end, or way
 	 * point can be connected, i.e. realized by an anchor that is not anchored
-	 * to the {@link FXConnection} itself (see {@link IFXAnchor#getAnchorage()}
+	 * to the {@link Connection} itself (see {@link IAnchor#getAnchorage()}
 	 * ), but provided through a {@link IVisualPart}'s anchor provider (i.e. a
-	 * {@link Provider}&lt;{@link IFXAnchor}&gt; adapted to the
+	 * {@link Provider}&lt;{@link IAnchor}&gt; adapted to the
 	 * {@link IVisualPart}). Otherwise returns <code>false</code>. Per default,
 	 * only the start and the end point can be attached.
 	 *
@@ -106,12 +106,12 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 *            The index of the currently modified connection point.
 	 *
 	 * @return <code>true</code> if the currently modified point can be realized
-	 *         through an {@link IFXAnchor} not anchored on the
-	 *         {@link FXConnection}. Otherwise returns <code>false</code>.
+	 *         through an {@link IAnchor} not anchored on the
+	 *         {@link Connection}. Otherwise returns <code>false</code>.
 	 *
-	 * @see FXConnection#isStartConnected()
-	 * @see FXConnection#isWayConnected(int)
-	 * @see FXConnection#isEndConnected()
+	 * @see Connection#isStartConnected()
+	 * @see Connection#isWayConnected(int)
+	 * @see Connection#isEndConnected()
 	 *
 	 */
 	protected boolean canConnect(int pointIndex) {
@@ -203,23 +203,23 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 
 	/**
 	 * Creates an (unconnected) anchor (i.e. one anchored on the
-	 * {@link FXConnection}) for the given position (in scene coordinates).
+	 * {@link Connection}) for the given position (in scene coordinates).
 	 *
 	 * @param selectedPointCurrentPositionInLocal
 	 *            The location in local coordinates of the connection
-	 * @return An {@link IFXAnchor} that yields the given position.
+	 * @return An {@link IAnchor} that yields the given position.
 	 */
-	protected IFXAnchor createUnconnectedAnchor(
+	protected IAnchor createUnconnectedAnchor(
 			Point selectedPointCurrentPositionInLocal) {
-		return new FXStaticAnchor(getConnection(),
+		return new StaticAnchor(getConnection(),
 				selectedPointCurrentPositionInLocal);
 	}
 
 	/**
-	 * Determines the {@link IFXAnchor} that should replace the anchor of the
+	 * Determines the {@link IAnchor} that should replace the anchor of the
 	 * currently selected point. If the point can connect, the
 	 * {@link IVisualPart} at the mouse position is queried for an
-	 * {@link IFXAnchor} via a {@link Provider}&lt;{@link IFXAnchor}&gt;
+	 * {@link IAnchor} via a {@link Provider}&lt;{@link IAnchor}&gt;
 	 * adapter. Otherwise an (unconnected) anchor is create using
 	 * {@link #createUnconnectedAnchor(Point)} .
 	 *
@@ -228,19 +228,19 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 * @param canConnect
 	 *            <code>true</code> if the point can be attached to an
 	 *            underlying {@link IVisualPart}, otherwise <code>false</code>.
-	 * @return The {@link IFXAnchor} that replaces the anchor of the currently
+	 * @return The {@link IAnchor} that replaces the anchor of the currently
 	 *         modified point.
 	 */
 	@SuppressWarnings("serial")
-	protected IFXAnchor findOrCreateAnchor(Point positionInLocal,
+	protected IAnchor findOrCreateAnchor(Point positionInLocal,
 			boolean canConnect) {
-		IFXAnchor anchor = null;
+		IAnchor anchor = null;
 		// try to find an anchor that is provided from an underlying node
 		if (canConnect) {
 			Point selectedPointCurrentPositionInScene = JavaFX2Geometry
 					.toPoint(getConnection().localToScene(
 							Geometry2JavaFX.toFXPoint(positionInLocal)));
-			List<Node> pickedNodes = FXUtils.getNodesAt(
+			List<Node> pickedNodes = NodeUtils.getNodesAt(
 					getHost().getRoot().getVisual(),
 					selectedPointCurrentPositionInScene.x,
 					selectedPointCurrentPositionInScene.y);
@@ -249,7 +249,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 			if (anchorPart != null) {
 				// use anchor returned by part
 				anchor = anchorPart.getAdapter(
-						new TypeToken<Provider<? extends IFXAnchor>>() {
+						new TypeToken<Provider<? extends IAnchor>>() {
 						}).get();
 			}
 		}
@@ -264,8 +264,8 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 			List<IContentPart<Node, ? extends Node>> partsUnderMouse) {
 		for (IContentPart<Node, ? extends Node> cp : partsUnderMouse) {
 			IContentPart<Node, ? extends Node> part = cp;
-			Provider<? extends IFXAnchor> anchorProvider = part
-					.getAdapter(new TypeToken<Provider<? extends IFXAnchor>>() {
+			Provider<? extends IAnchor> anchorProvider = part
+					.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
 					});
 			if (anchorProvider != null && anchorProvider.get() != null) {
 				return part;
@@ -275,12 +275,12 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	}
 
 	/**
-	 * Returns the {@link FXConnection} that is manipulated by this policy.
+	 * Returns the {@link Connection} that is manipulated by this policy.
 	 *
-	 * @return The {@link FXConnection} that is manipulated by this policy.
+	 * @return The {@link Connection} that is manipulated by this policy.
 	 */
-	protected FXConnection getConnection() {
-		return (FXConnection) getHost().getVisual();
+	protected Connection getConnection() {
+		return (Connection) getHost().getVisual();
 	}
 
 	/**
@@ -321,15 +321,15 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 * @param mouseInScene
 	 *            The current mouse position in scene coordinates.
 	 *
-	 * @return The overlaid {@link IFXAnchor} to be used for the currently
+	 * @return The overlaid {@link IAnchor} to be used for the currently
 	 *         selected point
 	 */
-	protected IFXAnchor getOverlayAnchor(int candidateIndex,
+	protected IAnchor getOverlayAnchor(int candidateIndex,
 			Point mouseInScene) {
 		Point candidateLocation = null;
 
-		// TODO: provide getPoint(int index) in FXConnection
-		FXConnection connection = getConnection();
+		// TODO: provide getPoint(int index) in Connection
+		Connection connection = getConnection();
 		if (candidateIndex == 0) {
 			candidateLocation = connection.getStartPoint();
 		} else if (candidateIndex == connection.getWayAnchorsSize() + 1) {
@@ -347,7 +347,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 			return null;
 		}
 
-		IFXAnchor candidateAnchor = findOrCreateAnchor(
+		IAnchor candidateAnchor = findOrCreateAnchor(
 				selectedPointCurrentPositionInLocal, true);
 		if (connection.getAnchors().get(candidateIndex)
 				.getAnchorage() == candidateAnchor.getAnchorage()) {
@@ -394,10 +394,10 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 
 	/**
 	 * Returns the initial position of the currently selected point in the local
-	 * coordinate system of the {@link FXConnection}.
+	 * coordinate system of the {@link Connection}.
 	 *
 	 * @return The initial position in the local coordinate system of the
-	 *         {@link FXConnection}.
+	 *         {@link Connection}.
 	 *
 	 * @see #selectPoint(int, double, Point)
 	 */
@@ -412,7 +412,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 * <li>Restores a point that was previously removed because it was overlaid.
 	 * </li>
 	 * <li>Checks if the currently modified point overlays another point of the
-	 * {@link FXConnection}. The overlaid point is removed and saved so that it
+	 * {@link Connection}. The overlaid point is removed and saved so that it
 	 * can be restored later.</li>
 	 * </ol>
 	 *
@@ -436,7 +436,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 
 		removedOverlainAnchorIndex = -1;
 		selectedPointIndexBeforeOverlaidRemoval = selectedPointIndex;
-		IFXAnchor overlayAnchor = null;
+		IAnchor overlayAnchor = null;
 
 		// determine if left neighbor is overlain (and can be removed)
 		if (selectedPointIndex > 0) {

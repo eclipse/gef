@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.examples.logo.behaviors.FXClickableAreaBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
@@ -200,7 +200,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXDeleteSelectedOnTypePolicy.class);
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<IFXAnchor>>() {
+				AdapterKey.get(new TypeToken<Provider<IAnchor>>() {
 				})).to(ChopBoxAnchorProvider.class);
 		// cloning
 		adapterMapBinder

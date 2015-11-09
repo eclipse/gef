@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.examples.AbstractFXExample;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.examples.AbstractFxExample;
+import org.eclipse.gef4.fx.nodes.Connection;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,7 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class FXChopBoxConnectionSnippet extends AbstractFXExample {
+public class ChopBoxConnectionSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -36,12 +36,12 @@ public class FXChopBoxConnectionSnippet extends AbstractFXExample {
 
 	private Rectangle nodeB;
 	private Rectangle nodeC;
-	private FXChopBoxAnchor anchorA;
-	private FXChopBoxAnchor anchorB;
-	private FXChopBoxAnchor anchorC;
+	private ChopBoxAnchor anchorA;
+	private ChopBoxAnchor anchorB;
+	private ChopBoxAnchor anchorC;
 
-	public FXChopBoxConnectionSnippet() {
-		super("FXChopBoxConnectionSnippet");
+	public ChopBoxConnectionSnippet() {
+		super("ChopBoxConnectionSnippet");
 	}
 
 	private EventHandler<ActionEvent> createMoveHandler(final String label,
@@ -83,16 +83,16 @@ public class FXChopBoxConnectionSnippet extends AbstractFXExample {
 		btnC.setOnAction(createMoveHandler("C", nodeC, 200, 200, 300));
 		btnC.relocate(140, 0);
 
-		FXConnection connectionAB = new FXConnection();
-		FXConnection connectionBC = new FXConnection();
+		Connection connectionAB = new Connection();
+		Connection connectionBC = new Connection();
 
 		Group group = new Group(nodeA, nodeB, nodeC, connectionAB, connectionBC,
 				btnA, btnB, btnC);
 		root.getChildren().add(group);
 
-		anchorA = new FXChopBoxAnchor(nodeA);
-		anchorB = new FXChopBoxAnchor(nodeB);
-		anchorC = new FXChopBoxAnchor(nodeC);
+		anchorA = new ChopBoxAnchor(nodeA);
+		anchorB = new ChopBoxAnchor(nodeB);
+		anchorC = new ChopBoxAnchor(nodeC);
 		connectionAB.setStartAnchor(anchorA);
 		connectionAB.setEndAnchor(anchorB);
 		connectionBC.setStartAnchor(anchorB);

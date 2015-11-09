@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -27,8 +27,8 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
  * The {@link FXTransformConnectionPolicy} is an {@link FXTransformPolicy} that
- * is adjusted for the relocation of an {@link FXConnection}. It uses an
- * {@link FXBendOperation} to update the anchors of the {@link FXConnection}
+ * is adjusted for the relocation of an {@link Connection}. It uses an
+ * {@link FXBendOperation} to update the anchors of the {@link Connection}
  * according to the applied translation.
  *
  * @author mwienand
@@ -52,7 +52,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 					.getViewer().<GridModel> getAdapter(GridModel.class), nx,
 					ny, 0.5, 0.5);
 			op.getNewAnchors().set(i,
-					new FXStaticAnchor(getHost().getVisual(),
+					new StaticAnchor(getHost().getVisual(),
 							new Point(nx - snapToGridOffset.width,
 									ny - snapToGridOffset.height)));
 		}
@@ -99,7 +99,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		// super#init() so that the policy is properly initialized
 		super.init();
 		// create operation
-		op = new FXBendOperation((FXConnection) getHost().getVisual());
+		op = new FXBendOperation((Connection) getHost().getVisual());
 		// compute inverse transformation
 		AffineTransform inverse = null;
 		try {

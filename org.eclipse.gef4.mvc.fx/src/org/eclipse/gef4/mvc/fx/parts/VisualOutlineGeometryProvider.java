@@ -12,9 +12,9 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -58,14 +58,14 @@ public class VisualOutlineGeometryProvider
 	 * @return An {@link IGeometry} representing the tight bounds.
 	 */
 	protected IGeometry getGeometry(Node visual) {
-		if (visual instanceof FXConnection) {
-			Node curveNode = ((FXConnection) visual).getCurveNode();
-			if (curveNode instanceof FXGeometryNode) {
-				return FXUtils.localToParent(curveNode,
-						((FXGeometryNode<?>) curveNode).getGeometry());
+		if (visual instanceof Connection) {
+			Node curveNode = ((Connection) visual).getCurveNode();
+			if (curveNode instanceof GeometryNode) {
+				return NodeUtils.localToParent(curveNode,
+						((GeometryNode<?>) curveNode).getGeometry());
 			}
-		} else if (visual instanceof FXGeometryNode) {
-			return ((FXGeometryNode<?>) visual).getGeometry();
+		} else if (visual instanceof GeometryNode) {
+			return ((GeometryNode<?>) visual).getGeometry();
 		}
 		return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
 	}

@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -67,7 +67,7 @@ public class ZestFxFeedbackPartFactory extends FXDefaultFeedbackPartFactory {
 			public IGeometry get() {
 				// use the connection's middle point as the link source
 				// point
-				final FXGeometryNode<ICurve> curveNode = edgeContentPart.getVisual().getCurveNode();
+				final GeometryNode<ICurve> curveNode = edgeContentPart.getVisual().getCurveNode();
 				BezierCurve[] bezier = curveNode.getGeometry().toBezier();
 				final Point sourcePoint = bezier[bezier.length / 2].get(0.5);
 				Point2D sourcePoint2DInScene = curveNode.localToScene(sourcePoint.x, sourcePoint.y);

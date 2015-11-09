@@ -23,7 +23,7 @@ import javafx.scene.input.ZoomEvent;
  * @author mwienand
  *
  */
-public abstract class AbstractFXPinchSpreadGesture extends AbstractFXGesture {
+public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 
 	private boolean inZoom = false;
 

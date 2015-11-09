@@ -16,11 +16,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public abstract class AbstractFXExample extends Application {
+public abstract class AbstractFxExample extends Application {
 
 	private String title;
 
-	public AbstractFXExample(String title) {
+	public AbstractFxExample(String title) {
 		this.title = title;
 	}
 

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -193,7 +193,7 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 			visual.setVisible(true);
 
 			// get new position (in parent coordinate space)
-			BezierCurve segmentInParent = (BezierCurve) FXUtils
+			BezierCurve segmentInParent = (BezierCurve) NodeUtils
 					.sceneToLocal(visual.getParent(), segments[segmentIndex]);
 			Point positionInParent = getPosition(segmentInParent);
 

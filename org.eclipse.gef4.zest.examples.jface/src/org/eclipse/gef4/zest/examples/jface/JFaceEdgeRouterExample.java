@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
+import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
@@ -90,8 +90,8 @@ public class JFaceEdgeRouterExample {
 		}
 	}
 
-	protected static IFXConnectionRouter getManhattenRouter() {
-		return new IFXConnectionRouter() {
+	protected static IConnectionRouter getManhattenRouter() {
+		return new IConnectionRouter() {
 			@Override
 			public ICurve routeConnection(Point[] points) {
 				if (points == null || points.length < 2) {

@@ -17,11 +17,11 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Field;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.junit.Test;
 
-public class FXConnectionTests {
+public class ConnectionTests {
 
 	@Test
 	public void test_PointConversions() {
@@ -29,7 +29,7 @@ public class FXConnectionTests {
 		Point wayPoint = new Point(789, 123);
 		Point endPoint = new Point(456, 789);
 
-		FXConnection connection = new FXConnection();
+		Connection connection = new Connection();
 		// ensure the local coordinate system of the curve node differs from
 		// that of the connection
 		connection.getCurveNode().setTranslateX(5);
@@ -52,7 +52,7 @@ public class FXConnectionTests {
 
 	@Test
 	public void test_generateWayAnchorKey() throws IllegalArgumentException, IllegalAccessException {
-		FXConnection connection = new FXConnection();
+		Connection connection = new Connection();
 		Point startPoint = new Point(123, 456);
 		Point wayPoint = new Point(789, 123);
 		Point endPoint = new Point(456, 789);

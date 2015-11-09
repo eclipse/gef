@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -92,7 +92,7 @@ public class JFaceEdgeDecorationExample {
 		}
 	}
 
-	static class CircleHead extends Circle implements IFXDecoration {
+	static class CircleHead extends Circle implements IConnectionDecoration {
 		public CircleHead() {
 			super(5);
 		}
@@ -113,7 +113,7 @@ public class JFaceEdgeDecorationExample {
 		}
 	}
 
-	static class DiamondHead extends Polyline implements IFXDecoration {
+	static class DiamondHead extends Polyline implements IConnectionDecoration {
 		public DiamondHead() {
 			super(15.0, 0.0, 7.5, -7.5, 0.0, 0.0, 7.5, 7.5, 15.0, 0.0);
 		}

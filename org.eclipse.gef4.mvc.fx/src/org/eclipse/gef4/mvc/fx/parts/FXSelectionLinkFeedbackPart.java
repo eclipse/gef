@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import javafx.scene.paint.Color;
@@ -23,7 +23,7 @@ import javafx.scene.shape.StrokeType;
  * The {@link FXSelectionLinkFeedbackPart} is an {@link FXSelectionFeedbackPart}
  * that uses a dotted line as its visualization. It is used per default to show
  * anchored-anchorage relations where the anchored is not an
- * {@link FXConnection}.
+ * {@link Connection}.
  *
  * @author anyssen
  *
@@ -37,8 +37,8 @@ public class FXSelectionLinkFeedbackPart extends FXSelectionFeedbackPart {
 	}
 
 	@Override
-	protected FXGeometryNode<IGeometry> createVisual() {
-		FXGeometryNode<IGeometry> visual = super.createVisual();
+	protected GeometryNode<IGeometry> createVisual() {
+		GeometryNode<IGeometry> visual = super.createVisual();
 		visual.setStroke(Color.GREY);
 		visual.getStrokeDashArray().add(5.0);
 		visual.setStrokeLineJoin(StrokeLineJoin.BEVEL);

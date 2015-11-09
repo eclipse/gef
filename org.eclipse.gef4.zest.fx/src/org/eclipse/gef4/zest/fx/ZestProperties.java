@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.fx.nodes.IConnectionRouter;
+import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -154,7 +154,7 @@ public class ZestProperties {
 	 * attribute does not have a default value.
 	 *
 	 * @see #getTargetDecoration(Edge)
-	 * @see #setTargetDecoration(Edge, IFXDecoration)
+	 * @see #setTargetDecoration(Edge, IConnectionDecoration)
 	 */
 	public static final String EDGE_TARGET_DECORATION = "target-decoration";
 
@@ -163,16 +163,16 @@ public class ZestProperties {
 	 * attribute does not have a default value.
 	 *
 	 * @see #getSourceDecoration(Edge)
-	 * @see #setSourceDecoration(Edge, IFXDecoration)
+	 * @see #setSourceDecoration(Edge, IConnectionDecoration)
 	 */
 	public static final String EDGE_SOURCE_DECORATION = "source-decoration";
 
 	/**
-	 * This attribute determines the {@link IFXConnectionRouter} used to route
+	 * This attribute determines the {@link IConnectionRouter} used to route
 	 * an edge. This attribute does not have a default value.
 	 *
 	 * @see #getRouter(Edge)
-	 * @see #setRouter(Edge, IFXConnectionRouter)
+	 * @see #setRouter(Edge, IConnectionRouter)
 	 */
 	public static final String EDGE_ROUTER = "edge-router";
 
@@ -464,8 +464,8 @@ public class ZestProperties {
 	 * @return The router of the given {@link Edge}.
 	 */
 	// TODO: Return null if not present.
-	public static IFXConnectionRouter getRouter(Edge edge) {
-		return (IFXConnectionRouter) edge.getAttrs().get(EDGE_ROUTER);
+	public static IConnectionRouter getRouter(Edge edge) {
+		return (IConnectionRouter) edge.getAttrs().get(EDGE_ROUTER);
 	}
 
 	/**
@@ -477,8 +477,8 @@ public class ZestProperties {
 	 * @return The source decoration of the given {@link Edge}.
 	 */
 	// TODO: Return null if not present.
-	public static IFXDecoration getSourceDecoration(Edge edge) {
-		return (IFXDecoration) edge.getAttrs().get(EDGE_SOURCE_DECORATION);
+	public static IConnectionDecoration getSourceDecoration(Edge edge) {
+		return (IConnectionDecoration) edge.getAttrs().get(EDGE_SOURCE_DECORATION);
 	}
 
 	/**
@@ -490,8 +490,8 @@ public class ZestProperties {
 	 * @return The target decoration of the given {@link Edge}.
 	 */
 	// TODO: Return null if not present.
-	public static IFXDecoration getTargetDecoration(Edge edge) {
-		return (IFXDecoration) edge.getAttrs().get(EDGE_TARGET_DECORATION);
+	public static IConnectionDecoration getTargetDecoration(Edge edge) {
+		return (IConnectionDecoration) edge.getAttrs().get(EDGE_TARGET_DECORATION);
 	}
 
 	/**
@@ -740,10 +740,10 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the router is changed.
 	 * @param router
-	 *            The new {@link IFXConnectionRouter} for the given {@link Edge}
+	 *            The new {@link IConnectionRouter} for the given {@link Edge}
 	 *            .
 	 */
-	public static void setRouter(Edge edge, IFXConnectionRouter router) {
+	public static void setRouter(Edge edge, IConnectionRouter router) {
 		edge.getAttrs().put(EDGE_ROUTER, router);
 	}
 
@@ -754,10 +754,10 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is changed.
 	 * @param sourceDecoration
-	 *            The new source {@link IFXDecoration} for the given
+	 *            The new source {@link IConnectionDecoration} for the given
 	 *            {@link Edge}.
 	 */
-	public static void setSourceDecoration(Edge edge, IFXDecoration sourceDecoration) {
+	public static void setSourceDecoration(Edge edge, IConnectionDecoration sourceDecoration) {
 		edge.getAttrs().put(EDGE_SOURCE_DECORATION, sourceDecoration);
 	}
 
@@ -768,10 +768,10 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is changed.
 	 * @param targetDecoration
-	 *            The new target {@link IFXDecoration} for the given
+	 *            The new target {@link IConnectionDecoration} for the given
 	 *            {@link Edge}.
 	 */
-	public static void setTargetDecoration(Edge edge, IFXDecoration targetDecoration) {
+	public static void setTargetDecoration(Edge edge, IConnectionDecoration targetDecoration) {
 		edge.getAttrs().put(EDGE_TARGET_DECORATION, targetDecoration);
 	}
 

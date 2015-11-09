@@ -12,13 +12,13 @@
 /**
  * This package provides support classes to recognize entire interaction
  * gestures that may be comprised of several atomic JavaFX events (
- * {@link org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture} ,
- * {@link org.eclipse.gef4.fx.gestures.AbstractFXPinchSpreadGesture}, and
- * {@link org.eclipse.gef4.fx.gestures.AbstractFXRotateGesture}). A gesture is
+ * {@link org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture} ,
+ * {@link org.eclipse.gef4.fx.gestures.AbstractPinchSpreadGesture}, and
+ * {@link org.eclipse.gef4.fx.gestures.AbstractRotateGesture}). A gesture is
  * implemented as an abstract class, with different abstract methods for state
  * changes within the gesture, i.e. <code>press()</code>, <code>drag()</code>,
  * and <code>release()</code> in the case of an
- * {@link org.eclipse.gef4.fx.gestures.AbstractFXMouseDragGesture}. Besides,
+ * {@link org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture}. Besides,
  * every gesture provides a <code>setScene()</code> method to
  * register/unregister JavaFX event listeners.
  */

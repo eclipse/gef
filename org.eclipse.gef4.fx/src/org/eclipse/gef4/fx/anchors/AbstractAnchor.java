@@ -33,8 +33,8 @@ import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
- * {@link AbstractFXAnchor} is the abstract base implementation for
- * {@link IFXAnchor}s. It provides the facility to bind an anchor to an
+ * {@link AbstractAnchor} is the abstract base implementation for
+ * {@link IAnchor}s. It provides the facility to bind an anchor to an
  * anchorage {@link Node} ({@link #anchorageProperty()}), to attach and detach
  * {@link Node}s via {@link AnchorKey}s, and to provide positions (
  * {@link #positionProperty()}) for the attached {@link AnchorKey}s.
@@ -55,7 +55,7 @@ import org.eclipse.gef4.geometry.planar.Point;
  * @author mwienand
  *
  */
-public abstract class AbstractFXAnchor implements IFXAnchor {
+public abstract class AbstractAnchor implements IAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
@@ -102,13 +102,13 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	};
 
 	/**
-	 * Creates a new {@link AbstractFXAnchor} for the given <i>anchorage</i>
+	 * Creates a new {@link AbstractAnchor} for the given <i>anchorage</i>
 	 * {@link Node}.
 	 *
 	 * @param anchorage
-	 *            The anchorage {@link Node} for this {@link AbstractFXAnchor}.
+	 *            The anchorage {@link Node} for this {@link AbstractAnchor}.
 	 */
-	public AbstractFXAnchor(Node anchorage) {
+	public AbstractAnchor(Node anchorage) {
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorage(anchorage);
 	}
@@ -187,7 +187,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		Node anchored = key.getAnchored();
 		if (!isAttached(key)) {
 			throw new IllegalArgumentException(
-					"The given AnchorKey was not previously attached to this IFXAnchor.");
+					"The given AnchorKey was not previously attached to this IAnchor.");
 		}
 
 		// remove from positions map so that a change event is fired when it is
@@ -299,10 +299,10 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	/**
-	 * Sets the anchorage of this {@link AbstractFXAnchor} to the given value.
+	 * Sets the anchorage of this {@link AbstractAnchor} to the given value.
 	 *
 	 * @param anchorage
-	 *            The new anchorage for this {@link AbstractFXAnchor}.
+	 *            The new anchorage for this {@link AbstractAnchor}.
 	 */
 	protected void setAnchorage(Node anchorage) {
 		anchorageProperty.set(anchorage);

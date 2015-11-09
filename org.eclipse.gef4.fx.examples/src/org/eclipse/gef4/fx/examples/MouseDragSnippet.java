@@ -22,9 +22,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,7 +47,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class FXMouseDragSnippet extends AbstractFXExample {
+public class MouseDragSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -81,11 +81,11 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 	private Point2D startMousePosition;
 	private ObservableSet<Node> nodesUnderMouse = FXCollections
 			.observableSet(new HashSet<Node>());
-	private Map<Node, IFXAnchor> anchors = new HashMap<Node, IFXAnchor>();
+	private Map<Node, IAnchor> anchors = new HashMap<Node, IAnchor>();
 	private Pane feedbackLayer;
 	private StackPane stackPane;
 
-	public FXMouseDragSnippet() {
+	public MouseDragSnippet() {
 		super("FX MouseDrag Snippet");
 	}
 
@@ -148,7 +148,7 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 		if (type.equals(MouseEvent.MOUSE_RELEASED)) {
 			System.out.println("release " + pressed);
 			pressed.setEffect(null);
-			IFXAnchor ifxAnchor = anchors.get(pressed);
+			IAnchor ifxAnchor = anchors.get(pressed);
 			if (ifxAnchor != null) {
 				Set<AnchorKey> keys = ifxAnchor.positionProperty().keySet();
 				for (AnchorKey key : keys) {
@@ -180,7 +180,7 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 
 		// add effect
 		pressed.setEffect(new Bloom(0));
-		IFXAnchor ifxAnchor = anchors.get(pressed);
+		IAnchor ifxAnchor = anchors.get(pressed);
 		if (ifxAnchor != null) {
 			Set<AnchorKey> keys = ifxAnchor.positionProperty().keySet();
 			for (AnchorKey key : keys) {
@@ -211,20 +211,20 @@ public class FXMouseDragSnippet extends AbstractFXExample {
 						.get((int) (Math.random() * count / 2));
 			}
 
-			FXConnection connection = new FXConnection();
+			Connection connection = new Connection();
 
-			IFXAnchor an, am;
+			IAnchor an, am;
 			if (anchors.containsKey(n)) {
 				an = anchors.get(n);
 			} else {
-				an = new FXChopBoxAnchor(n);
+				an = new ChopBoxAnchor(n);
 				anchors.put(n, an);
 			}
 
 			if (anchors.containsKey(m)) {
 				am = anchors.get(m);
 			} else {
-				am = new FXChopBoxAnchor(n);
+				am = new ChopBoxAnchor(n);
 				anchors.put(m, am);
 			}
 

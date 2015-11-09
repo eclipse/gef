@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -27,7 +27,7 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 public class FXGeometricShapePart
-		extends AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
+		extends AbstractFXGeometricElementPart<GeometryNode<IShape>> {
 
 	@Override
 	protected void attachToAnchorageVisual(
@@ -47,8 +47,8 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	protected FXGeometryNode<IShape> createVisual() {
-		return new FXGeometryNode<IShape>();
+	protected GeometryNode<IShape> createVisual() {
+		return new GeometryNode<IShape>();
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public void doRefreshVisual(FXGeometryNode<IShape> visual) {
+	public void doRefreshVisual(GeometryNode<IShape> visual) {
 		FXGeometricShape content = getContent();
 
 		if (visual.getGeometry() != content.getGeometry()) {

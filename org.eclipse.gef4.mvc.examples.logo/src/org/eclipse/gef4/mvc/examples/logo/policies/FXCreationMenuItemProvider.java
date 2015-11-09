@@ -17,7 +17,7 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
@@ -49,7 +49,7 @@ public class FXCreationMenuItemProvider
 
 		@Override
 		public Node createVisual() {
-			FXGeometryNode<IShape> visual = new FXGeometryNode<IShape>(
+			GeometryNode<IShape> visual = new GeometryNode<IShape>(
 					template.getGeometry());
 			visual.setStroke(template.getStroke());
 			visual.setStrokeWidth(template.getStrokeWidth());

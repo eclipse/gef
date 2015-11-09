@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -97,14 +97,14 @@ public class FXBendAnchorTests {
 		}
 	}
 
-	private static class ConnectionPart extends AbstractFXContentPart<FXConnection> {
+	private static class ConnectionPart extends AbstractFXContentPart<Connection> {
 		public static final String START_ROLE = "start";
 		public static final String END_ROLE = "end";
 
 		@SuppressWarnings("serial")
 		@Override
 		protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-			IFXAnchor anchor = anchorage.getAdapter(new TypeToken<Provider<? extends IFXAnchor>>() {
+			IAnchor anchor = anchorage.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
 			}).get();
 			if (role.equals(START_ROLE)) {
 				getVisual().setStartAnchor(anchor);
@@ -116,8 +116,8 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		protected FXConnection createVisual() {
-			return new FXConnection();
+		protected Connection createVisual() {
+			return new Connection();
 		}
 
 		@Override
@@ -132,7 +132,7 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		protected void doRefreshVisual(FXConnection visual) {
+		protected void doRefreshVisual(Connection visual) {
 			if (visual.getWayPoints().size() == 0) {
 				visual.addWayPoint(0, ((ConnectionContent) getContent()).getWayPoint());
 			}
@@ -199,7 +199,7 @@ public class FXBendAnchorTests {
 			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "translateSelected"))
 					.to(FXTranslateSelectedOnDragPolicy.class);
 			// bind chopbox anchor provider
-			adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IFXAnchor>>() {
+			adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IAnchor>>() {
 			})).to(ChopBoxAnchorProvider.class);
 		}
 
@@ -285,7 +285,7 @@ public class FXBendAnchorTests {
 
 		// drag connection down by 10px
 		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
-		Point pointerLocation = FXUtils.getPointerLocation();
+		Point pointerLocation = CursorUtils.getPointerLocation();
 		ctx.mouseDrag(robot, (int) pointerLocation.x, (int) pointerLocation.y + 10);
 		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
 		robot.delay(1000);
@@ -300,7 +300,7 @@ public class FXBendAnchorTests {
 
 		// drag anchorage down by 10px
 		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
-		pointerLocation = FXUtils.getPointerLocation();
+		pointerLocation = CursorUtils.getPointerLocation();
 		ctx.mouseDrag(robot, (int) pointerLocation.x, (int) pointerLocation.y + 10);
 		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
 		robot.delay(1000);

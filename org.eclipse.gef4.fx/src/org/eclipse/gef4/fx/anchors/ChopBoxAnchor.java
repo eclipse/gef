@@ -16,9 +16,9 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ComputationStrategy.Impl;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -36,11 +36,11 @@ import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 
 /**
- * The {@link FXChopBoxAnchor} computes anchor positions based on a reference
+ * The {@link ChopBoxAnchor} computes anchor positions based on a reference
  * position per anchored and one reference position for the anchorage. The
  * anchoreds' reference positions are provided when
  * {@link #attach(AnchorKey, IAdaptable) attaching} an {@link AnchorKey}. The
- * computation is carried out by a {@link ComputationStrategy}. The default
+ * computation is carried out by a {@link IComputationStrategy}. The default
  * computation strategy ({@link Impl}) will connect anchored and anchorage
  * reference position and compute the intersection with the outline of the
  * anchorage.
@@ -52,18 +52,18 @@ import javafx.scene.Node;
 // TODO: Find an appropriate name for this (outline anchor or shape anchor or
 // perimeter anchor)
 // It has nothing to do with a ChopBox, so this does not seem to be intuitive.
-public class FXChopBoxAnchor extends AbstractFXAnchor {
+public class ChopBoxAnchor extends AbstractAnchor {
 
 	/**
-	 * The {@link ComputationStrategy} is responsible for computing anchor
+	 * The {@link IComputationStrategy} is responsible for computing anchor
 	 * positions based on an anchorage {@link Node}, an anchored {@link Node},
 	 * and an anchored reference position (
 	 * {@link #computePositionInScene(Node, Node, Point)}).
 	 */
-	public interface ComputationStrategy {
+	public interface IComputationStrategy {
 
 		/**
-		 * The default implementation of the {@link ComputationStrategy}
+		 * The default implementation of the {@link IComputationStrategy}
 		 * computes an anchor position as follows:
 		 * <ol>
 		 * <li>Compute the anchorage geometry based on its visual (
@@ -80,7 +80,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * anchorage geometry ({@link #getOutline(IGeometry)}).</li>
 		 * </ol>
 		 */
-		public class Impl implements ComputationStrategy {
+		public class Impl implements IComputationStrategy {
 
 			/**
 			 * Computes the anchorage reference position within the coordinate
@@ -150,7 +150,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			 */
 			protected Point computeAnchorageReferencePointInScene(Node node,
 					IGeometry geometryInLocal) {
-				return FXUtils.localToScene(node,
+				return NodeUtils.localToScene(node,
 						computeAnchorageReferencePointInLocal(node,
 								geometryInLocal));
 			}
@@ -170,7 +170,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(
 						anchorage);
 
-				Point anchoredReferencePointInScene = FXUtils
+				Point anchoredReferencePointInScene = NodeUtils
 						.localToScene(anchored, anchoredReferencePointInLocal);
 
 				Point anchorageReferencePointInScene = computeAnchorageReferencePointInScene(
@@ -180,7 +180,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 						anchorageReferencePointInScene,
 						anchoredReferencePointInScene);
 
-				IGeometry anchorageGeometryInScene = FXUtils.localToScene(
+				IGeometry anchorageGeometryInScene = NodeUtils.localToScene(
 						anchorage, anchorageReferenceGeometryInLocal);
 				ICurve anchorageOutlineInScene = getOutline(
 						anchorageGeometryInScene);
@@ -198,7 +198,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 			/**
 			 * Determines the anchorage geometry based on the given anchorage
-			 * visual. For an {@link FXGeometryNode}, the corresponding geometry
+			 * visual. For an {@link GeometryNode}, the corresponding geometry
 			 * is returned. Otherwise, a {@link Rectangle} representing the
 			 * layout-bounds of the visual is returned.
 			 *
@@ -210,8 +210,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			protected IGeometry getAnchorageReferenceGeometryInLocal(
 					Node anchorage) {
 				IGeometry geometry = null;
-				if (anchorage instanceof FXGeometryNode) {
-					geometry = ((FXGeometryNode<?>) anchorage).getGeometry();
+				if (anchorage instanceof GeometryNode) {
+					geometry = ((GeometryNode<?>) anchorage).getGeometry();
 				}
 				if (!(geometry instanceof IShape)) {
 					// TODO: ICurve, Path
@@ -297,26 +297,26 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	}
 
 	/**
-	 * A {@link ReferencePointProvider} needs to be provided as default adapter
+	 * A {@link IReferencePointProvider} needs to be provided as default adapter
 	 * (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable} info that
-	 * gets passed into {@link FXChopBoxAnchor#attach(AnchorKey, IAdaptable)}
-	 * and {@link FXChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
-	 * {@link ReferencePointProvider} has to provide a reference point for each
-	 * {@link AdapterKey} that is attached to the {@link FXChopBoxAnchor}. It
+	 * gets passed into {@link ChopBoxAnchor#attach(AnchorKey, IAdaptable)}
+	 * and {@link ChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
+	 * {@link IReferencePointProvider} has to provide a reference point for each
+	 * {@link AdapterKey} that is attached to the {@link ChopBoxAnchor}. It
 	 * will be used when computing anchor positions for the respective
 	 * {@link AnchorKey}.
 	 *
 	 * @author anyssen
 	 *
 	 */
-	public interface ReferencePointProvider {
+	public interface IReferencePointProvider {
 
 		/**
-		 * A simple {@link ReferencePointProvider} implementation that allows to
+		 * A simple {@link IReferencePointProvider} implementation that allows to
 		 * statically set reference points for {@link AnchorKey}s.
 		 *
 		 */
-		public class Impl implements ReferencePointProvider {
+		public class Impl implements IReferencePointProvider {
 
 			private ObservableMap<AnchorKey, Point> referencePoints = new ObservableMapWrapper<AnchorKey, Point>(
 					new HashMap<AnchorKey, Point>());
@@ -348,13 +348,13 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 *
 		 * @return A read-only (map) property storing reference positions for
 		 *         all {@link AnchorKey}s attached to the
-		 *         {@link FXChopBoxAnchor}s it is forwarded to.
+		 *         {@link ChopBoxAnchor}s it is forwarded to.
 		 */
 		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
 
 	}
 
-	private Map<AnchorKey, ReferencePointProvider> anchoredReferencePointProviders = new HashMap<>();
+	private Map<AnchorKey, IReferencePointProvider> anchoredReferencePointProviders = new HashMap<>();
 
 	private MapChangeListener<AnchorKey, Point> anchoredReferencePointsChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
@@ -363,7 +363,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			if (change.wasAdded()) {
 				// Do some defensive checks here. However, if we run into null
 				// key or value here, this will be an inconsistency of the
-				// FXChopBoxHelper#referencePointProperty()
+				// ChopBoxHelper#referencePointProperty()
 				if (change.getKey() == null) {
 					throw new IllegalStateException(
 							"Attempt to put <null> key into reference point map!");
@@ -375,7 +375,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				if (anchoredReferencePointProviders
 						.containsKey(change.getKey())) {
 					// only recompute position, if one of our own keys changed
-					// (FXChopBoxHelper#referencePointProperty() may contain
+					// (ChopBoxHelper#referencePointProperty() may contain
 					// AnchorKeys registered at other anchors as well)
 					updatePosition(change.getKey());
 				}
@@ -383,54 +383,54 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 	};
 
-	private ComputationStrategy computationStrategy;
+	private IComputationStrategy computationStrategy;
 
 	/**
-	 * Constructs a new {@link FXChopBoxAnchor} for the given anchorage visual.
+	 * Constructs a new {@link ChopBoxAnchor} for the given anchorage visual.
 	 * Uses the default computation strategy ({@link Impl}).
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
 	 */
-	public FXChopBoxAnchor(Node anchorage) {
-		this(anchorage, new ComputationStrategy.Impl());
+	public ChopBoxAnchor(Node anchorage) {
+		this(anchorage, new IComputationStrategy.Impl());
 	}
 
 	/**
-	 * Constructs a new {@link FXChopBoxAnchor} for the given anchorage visual
-	 * using the given {@link ComputationStrategy}.
+	 * Constructs a new {@link ChopBoxAnchor} for the given anchorage visual
+	 * using the given {@link IComputationStrategy}.
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
 	 * @param computationStrategy
-	 *            The {@link ComputationStrategy} to use.
+	 *            The {@link IComputationStrategy} to use.
 	 */
-	public FXChopBoxAnchor(Node anchorage,
-			ComputationStrategy computationStrategy) {
+	public ChopBoxAnchor(Node anchorage,
+			IComputationStrategy computationStrategy) {
 		super(anchorage);
 		this.computationStrategy = computationStrategy;
 	}
 
 	/**
-	 * Attaches the given {@link AnchorKey} to this {@link FXChopBoxAnchor}.
-	 * Requires that an {@link ReferencePointProvider} can be obtained from the
+	 * Attaches the given {@link AnchorKey} to this {@link ChopBoxAnchor}.
+	 * Requires that an {@link IReferencePointProvider} can be obtained from the
 	 * passed in {@link IAdaptable}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be attached.
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link ReferencePointProvider} that provides reference points
-	 *            for this {@link FXChopBoxAnchor}.
+	 *            {@link IReferencePointProvider} that provides reference points
+	 *            for this {@link ChopBoxAnchor}.
 	 *
 	 */
 	@Override
 	public void attach(AnchorKey key, IAdaptable info) {
-		ReferencePointProvider referencePointProvider = info
-				.getAdapter(ReferencePointProvider.class);
+		IReferencePointProvider referencePointProvider = info
+				.getAdapter(IReferencePointProvider.class);
 		if (referencePointProvider == null) {
 			throw new IllegalArgumentException(
-					"No ReferencePointProvider could be obtained via info.");
+					"No IReferencePointProvider could be obtained via info.");
 		}
 
 		// we need to keep track of it, otherwise we will not be able to access
@@ -448,7 +448,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	/**
 	 * Recomputes the position for the given attached {@link AnchorKey} by
-	 * retrieving a reference position via the {@link ReferencePointProvider}
+	 * retrieving a reference position via the {@link IReferencePointProvider}
 	 * that was obtained when attaching the {@link AnchorKey} (
 	 * {@link #attach(AnchorKey, IAdaptable)}).
 	 *
@@ -461,7 +461,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				.referencePointProperty().get(key);
 		if (referencePoint == null) {
 			throw new IllegalStateException(
-					"The ReferencePointProvider does not provide a reference point for this key: "
+					"The IReferencePointProvider does not provide a reference point for this key: "
 							+ key);
 		}
 		return computePosition(key.getAnchored(), referencePoint);
@@ -491,28 +491,28 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	}
 
 	/**
-	 * Detaches the given {@link AnchorKey} from this {@link FXChopBoxAnchor}.
-	 * Requires that an {@link ReferencePointProvider} can be obtained from the
+	 * Detaches the given {@link AnchorKey} from this {@link ChopBoxAnchor}.
+	 * Requires that an {@link IReferencePointProvider} can be obtained from the
 	 * passed in {@link IAdaptable}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be detached.
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link ReferencePointProvider} that provides reference points
-	 *            for this {@link FXChopBoxAnchor}.
+	 *            {@link IReferencePointProvider} that provides reference points
+	 *            for this {@link ChopBoxAnchor}.
 	 */
 	@Override
 	public void detach(AnchorKey key, IAdaptable info) {
-		ReferencePointProvider helper = info
-				.getAdapter(ReferencePointProvider.class);
+		IReferencePointProvider helper = info
+				.getAdapter(IReferencePointProvider.class);
 		if (helper == null) {
 			throw new IllegalArgumentException(
-					"No FXChopBoxHelper could be obtained via info.");
+					"No ChopBoxHelper could be obtained via info.");
 		}
 		if (anchoredReferencePointProviders.get(key) != helper) {
 			throw new IllegalStateException(
-					"The passed in FXChopBoxHelper had not been obtained for "
+					"The passed in ChopBoxHelper had not been obtained for "
 							+ key + " within attach() before.");
 		}
 

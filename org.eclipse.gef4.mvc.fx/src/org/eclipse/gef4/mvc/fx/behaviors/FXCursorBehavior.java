@@ -14,7 +14,7 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -162,7 +162,7 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 			initialCursor = scene.getCursor();
 		}
 		scene.setCursor(cursor);
-		FXUtils.forceCursorUpdate(scene);
+		CursorUtils.forceCursorUpdate(scene);
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 		inGesture = false;
 		Scene scene = getHost().getVisual().getScene();
 		scene.setCursor(initialCursor);
-		FXUtils.forceCursorUpdate(scene);
+		CursorUtils.forceCursorUpdate(scene);
 	}
 
 	private void setNewCursor(boolean isAltDown, boolean isControlDown,

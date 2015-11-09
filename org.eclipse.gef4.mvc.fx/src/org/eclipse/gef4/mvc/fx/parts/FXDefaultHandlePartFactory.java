@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -307,7 +307,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		final Provider<? extends IGeometry> hoverHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
-				return FXUtils.localToScene(target.getVisual(),
+				return NodeUtils.localToScene(target.getVisual(),
 						hoverHandlesGeometryInTargetLocalProvider.get());
 			}
 		};
@@ -549,7 +549,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		final Provider<IGeometry> selectionHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
-				return FXUtils.localToScene(target.getVisual(),
+				return NodeUtils.localToScene(target.getVisual(),
 						selectionHandlesGeometryInTargetLocalProvider.get());
 			}
 		};

@@ -18,7 +18,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
@@ -329,7 +329,7 @@ public class ZestFxModule extends MvcFxModule {
 		// resize policy to resize nesting nodes
 		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class)).to(FXResizePolicy.class);
 		// provider
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 		})).to(ChopBoxAnchorProvider.class);
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
 		}, FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);

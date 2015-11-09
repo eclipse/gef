@@ -17,12 +17,12 @@ import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.fx.nodes.IFXConnectionRouter;
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.nodes.IConnectionRouter;
+import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -45,18 +45,18 @@ import javafx.scene.shape.Polyline;
 
 /**
  * The {@link EdgeContentPart} is the controller for an {@link Edge} content
- * object. It uses {@link FXConnection} for the visualization.
+ * object. It uses {@link Connection} for the visualization.
  *
  * @author mwienand
  *
  */
-public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
+public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 
 	/**
-	 * The {@link ArrowHead} is an {@link IFXDecoration} implementation that can
-	 * be used to displays an arrow at either side of an {@link FXConnection}.
+	 * The {@link ArrowHead} is an {@link IConnectionDecoration} implementation that can
+	 * be used to displays an arrow at either side of an {@link Connection}.
 	 */
-	public static class ArrowHead extends Polyline implements IFXDecoration {
+	public static class ArrowHead extends Polyline implements IConnectionDecoration {
 		/**
 		 * Default constructor.
 		 */
@@ -81,14 +81,14 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	/**
-	 * The CSS class that is assigned to the {@link FXConnection} of this
+	 * The CSS class that is assigned to the {@link Connection} of this
 	 * {@link EdgeContentPart}.
 	 */
 	public static final String CSS_CLASS = "edge";
 
 	/**
-	 * The CSS class that is assigned to the {@link FXConnection#getCurveNode()
-	 * curve node} of the {@link FXConnection} of this {@link EdgeContentPart}.
+	 * The CSS class that is assigned to the {@link Connection#getCurveNode()
+	 * curve node} of the {@link Connection} of this {@link EdgeContentPart}.
 	 */
 	public static final String CSS_CLASS_CURVE = "curve";
 
@@ -111,10 +111,10 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		@SuppressWarnings("serial")
-		Provider<? extends IFXAnchor> anchorProvider = anchorage
-				.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+		Provider<? extends IAnchor> anchorProvider = anchorage
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 				}));
-		IFXAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
+		IAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
@@ -125,8 +125,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	@Override
-	protected FXConnection createVisual() {
-		FXConnection visual = new FXConnection();
+	protected Connection createVisual() {
+		Connection visual = new Connection();
 		visual.getStyleClass().add(CSS_CLASS);
 		visual.getCurveNode().getStyleClass().add(CSS_CLASS_CURVE);
 		return visual;
@@ -134,7 +134,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		FXConnection connection = getVisual();
+		Connection connection = getVisual();
 		if (role.equals("START")) {
 			Point startPoint = connection.getStartPoint();
 			connection.setStartPoint(startPoint == null ? new Point() : startPoint);
@@ -157,7 +157,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 	}
 
 	@Override
-	public void doRefreshVisual(FXConnection visual) {
+	public void doRefreshVisual(Connection visual) {
 		GraphLayoutContext glc = getGraphLayoutContext();
 		if (glc == null) {
 			return;
@@ -165,7 +165,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 
 		Edge edge = getContent();
 		Map<String, Object> attrs = edge.getAttrs();
-		FXGeometryNode<ICurve> curveNode = visual.getCurveNode();
+		GeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// css class
 		visual.getStyleClass().clear();
@@ -195,17 +195,17 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		}
 
 		// custom decoration
-		IFXDecoration sourceDecoration = ZestProperties.getSourceDecoration(edge);
+		IConnectionDecoration sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
 		}
-		IFXDecoration targetDecoration = ZestProperties.getTargetDecoration(edge);
+		IConnectionDecoration targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
 		}
 
 		// connection router
-		IFXConnectionRouter router = ZestProperties.getRouter(edge);
+		IConnectionRouter router = ZestProperties.getRouter(edge);
 		if (router != null) {
 			visual.setRouter(router);
 		}
@@ -256,21 +256,21 @@ public class EdgeContentPart extends AbstractFXContentPart<FXConnection> {
 		if (!(content instanceof Edge)) {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
-		final FXConnection visual = getVisual();
+		final Connection visual = getVisual();
 		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
-								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
+						return NodeUtils.localToParent(visual, NodeUtils.localToParent(visual.getCurveNode(),
+								((GeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
 		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
-								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
+						return NodeUtils.localToParent(visual, NodeUtils.localToParent(visual.getCurveNode(),
+								((GeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
 	}

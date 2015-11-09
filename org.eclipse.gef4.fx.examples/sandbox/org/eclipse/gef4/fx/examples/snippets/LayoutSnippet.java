@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.fx.examples.AbstractFXExample;
+import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
@@ -46,7 +46,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Shear;
 import javafx.scene.transform.Transform;
 
-public class FXLayoutSnippet extends AbstractFXExample {
+public class LayoutSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -61,8 +61,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 	private double initialHeight;
 	private Affine affine;
 
-	public FXLayoutSnippet() {
-		super("FXLayoutSnippet");
+	public LayoutSnippet() {
+		super("LayoutSnippet");
 	}
 
 	private void applyTransform(Affine dst, Transform transform) {

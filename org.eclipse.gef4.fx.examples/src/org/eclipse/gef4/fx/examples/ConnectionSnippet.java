@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples;
 
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
@@ -30,9 +30,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.StrokeLineJoin;
 
-public class FXConnectionSnippet extends AbstractFXExample {
+public class ConnectionSnippet extends AbstractFxExample {
 
-	public static class ArrowHead extends Polyline implements IFXDecoration {
+	public static class ArrowHead extends Polyline implements IConnectionDecoration {
 		public ArrowHead() {
 			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
 					0.0);
@@ -60,25 +60,25 @@ public class FXConnectionSnippet extends AbstractFXExample {
 		launch();
 	}
 
-	public FXConnectionSnippet() {
-		super("FXConnection Snippet");
+	public ConnectionSnippet() {
+		super("Connection Snippet");
 	}
 
 	@Override
 	public Scene createScene() {
-		FXGeometryNode<RoundedRectangle> end = new FXGeometryNode<RoundedRectangle>(
+		GeometryNode<RoundedRectangle> end = new GeometryNode<RoundedRectangle>(
 				new RoundedRectangle(0, 0, 30, 30, 10, 10));
 		end.setFill(Color.RED);
 		end.relocate(50, 50);
 		makeDraggable(end);
 
 		// create connection, provide decoration
-		FXConnection connection = new FXConnection();
+		Connection connection = new Connection();
 		connection.setEndDecoration(new ArrowHead());
 
 		// set start point and end anchor
 		connection.setStartPoint(new Point(150, 150));
-		connection.setEndAnchor(new FXChopBoxAnchor(end));
+		connection.setEndAnchor(new ChopBoxAnchor(end));
 
 		Group root = new Group();
 		root.getChildren().addAll(end, connection);

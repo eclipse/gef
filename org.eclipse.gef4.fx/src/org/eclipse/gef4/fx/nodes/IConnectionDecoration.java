@@ -17,13 +17,13 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
- * An {@link IFXDecoration} can be used to add a visual (an arrow, for example)
- * to the start or end point of an {@link FXConnection}.
+ * An {@link IConnectionDecoration} can be used to add a visual (an arrow, for example)
+ * to the start or end point of an {@link Connection}.
  *
  * @author mwienand
  *
  */
-public interface IFXDecoration {
+public interface IConnectionDecoration {
 
 	/**
 	 * Returns the end point of this decoration in the local coordinate space of

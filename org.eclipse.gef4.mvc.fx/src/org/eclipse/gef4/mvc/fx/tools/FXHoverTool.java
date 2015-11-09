@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -79,7 +79,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 				}
 
 				// pick target nodes
-				List<Node> targetNodes = FXUtils.getNodesAt(scene.getRoot(),
+				List<Node> targetNodes = NodeUtils.getNodesAt(scene.getRoot(),
 						event.getSceneX(), event.getSceneY());
 
 				IVisualPart<Node, ? extends Node> targetPart = null;

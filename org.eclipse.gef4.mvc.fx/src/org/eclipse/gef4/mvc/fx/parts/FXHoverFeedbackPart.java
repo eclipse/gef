@@ -12,8 +12,8 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -29,13 +29,13 @@ import javafx.scene.shape.StrokeType;
 
 /**
  * The {@link FXHoverFeedbackPart} is an {@link AbstractFXFeedbackPart} that is
- * parameterized by <code>FXGeometryNode&lt;IGeometry&gt;</code>.
+ * parameterized by <code>GeometryNode&lt;IGeometry&gt;</code>.
  *
  * @author mwienand
  *
  */
 public class FXHoverFeedbackPart
-		extends AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
+		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
 	/**
 	 * The default stroke color for this part's visualization.
@@ -57,8 +57,8 @@ public class FXHoverFeedbackPart
 	}
 
 	@Override
-	protected FXGeometryNode<IGeometry> createVisual() {
-		FXGeometryNode<IGeometry> visual = new FXGeometryNode<IGeometry>();
+	protected GeometryNode<IGeometry> createVisual() {
+		GeometryNode<IGeometry> visual = new GeometryNode<IGeometry>();
 		visual.setFill(Color.TRANSPARENT);
 		visual.setMouseTransparent(true);
 		visual.setManaged(false);
@@ -72,7 +72,7 @@ public class FXHoverFeedbackPart
 	}
 
 	@Override
-	public void doRefreshVisual(FXGeometryNode<IGeometry> visual) {
+	public void doRefreshVisual(GeometryNode<IGeometry> visual) {
 		if (getAnchorages().size() != 1) {
 			return;
 		}
@@ -101,7 +101,7 @@ public class FXHoverFeedbackPart
 	 *         provider.
 	 */
 	protected IGeometry getFeedbackGeometry() {
-		return FXUtils.sceneToLocal(getVisual(),
+		return NodeUtils.sceneToLocal(getVisual(),
 				feedbackGeometryProvider.get());
 	}
 

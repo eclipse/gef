@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.fx.examples.AbstractFXExample;
+import org.eclipse.gef4.fx.examples.AbstractFxExample;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -22,7 +22,7 @@ import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.VBox;
 
-public class GesturesSnippet extends AbstractFXExample {
+public class GesturesSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();

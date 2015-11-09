@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
- * An {@link FXBendOperation} can be used to manipulate an {@link FXConnection}
+ * An {@link FXBendOperation} can be used to manipulate an {@link Connection}
  * in an undo-context.
  *
  * @author mwienand
@@ -34,23 +34,23 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 public class FXBendOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
-	private final FXConnection connection;
-	private final List<IFXAnchor> oldAnchors;
-	private List<IFXAnchor> newAnchors;
+	private final Connection connection;
+	private final List<IAnchor> oldAnchors;
+	private List<IAnchor> newAnchors;
 
 	/**
 	 * Constructs a new operation from the given connection. The lists of old
-	 * and new {@link IFXAnchor}s are initialized based on the connection.
+	 * and new {@link IAnchor}s are initialized based on the connection.
 	 *
 	 * @param connection
-	 *            The {@link FXConnection} which will be modified by this
+	 *            The {@link Connection} which will be modified by this
 	 *            operation.
 	 */
-	public FXBendOperation(FXConnection connection) {
+	public FXBendOperation(Connection connection) {
 		super("Bend");
 		this.connection = connection;
-		this.oldAnchors = new ArrayList<IFXAnchor>(connection.getAnchors());
-		this.newAnchors = new ArrayList<IFXAnchor>(oldAnchors);
+		this.oldAnchors = new ArrayList<IAnchor>(connection.getAnchors());
+		this.newAnchors = new ArrayList<IAnchor>(oldAnchors);
 	}
 
 	@Override
@@ -63,33 +63,33 @@ public class FXBendOperation extends AbstractOperation
 	}
 
 	/**
-	 * Returns the {@link FXConnection} which is manipulated by this operation.
+	 * Returns the {@link Connection} which is manipulated by this operation.
 	 *
-	 * @return The {@link FXConnection} which is manipulated by this operation.
+	 * @return The {@link Connection} which is manipulated by this operation.
 	 */
-	public FXConnection getConnection() {
+	public Connection getConnection() {
 		return connection;
 	}
 
 	/**
-	 * Returns the list of {@link IFXAnchor}s which will replace the
+	 * Returns the list of {@link IAnchor}s which will replace the
 	 * connection's anchors upon execution.
 	 *
-	 * @return The list of {@link IFXAnchor}s which will replace the
+	 * @return The list of {@link IAnchor}s which will replace the
 	 *         connection's anchors upon execution.
 	 */
-	public List<IFXAnchor> getNewAnchors() {
+	public List<IAnchor> getNewAnchors() {
 		return newAnchors;
 	}
 
 	/**
-	 * Returns the list of {@link IFXAnchor}s which will replace the
+	 * Returns the list of {@link IAnchor}s which will replace the
 	 * connection's anchors upon undoing.
 	 *
-	 * @return The list of {@link IFXAnchor}s which will replace the
+	 * @return The list of {@link IAnchor}s which will replace the
 	 *         connection's anchors upon undoing.
 	 */
-	public List<IFXAnchor> getOldAnchors() {
+	public List<IAnchor> getOldAnchors() {
 		return oldAnchors;
 	}
 
@@ -105,14 +105,14 @@ public class FXBendOperation extends AbstractOperation
 	}
 
 	/**
-	 * Sets the list of {@link IFXAnchor}s which will replace the connection's
+	 * Sets the list of {@link IAnchor}s which will replace the connection's
 	 * anchors upon execution.
 	 *
 	 * @param newAnchors
-	 *            The list of {@link IFXAnchor}s which will replace the
+	 *            The list of {@link IAnchor}s which will replace the
 	 *            connection's anchors upon execution.
 	 */
-	public void setNewAnchors(List<IFXAnchor> newAnchors) {
+	public void setNewAnchors(List<IAnchor> newAnchors) {
 		this.newAnchors = newAnchors;
 	}
 

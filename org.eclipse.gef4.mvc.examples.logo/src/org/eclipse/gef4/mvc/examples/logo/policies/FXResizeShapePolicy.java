@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
@@ -78,7 +78,7 @@ public class FXResizeShapePolicy extends FXResizePolicy {
 		// determine old and new geometries
 		final FXGeometricShapePart host = getHost();
 		final FXGeometricShape hostContent = host.getContent();
-		FXGeometryNode<IShape> hostVisual = host.getVisual();
+		GeometryNode<IShape> hostVisual = host.getVisual();
 		final IShape oldGeometry = hostContent.getGeometry();
 		final IShape newGeometry = hostVisual.getGeometry();
 

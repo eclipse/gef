@@ -10,30 +10,24 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.nodes;
+package org.eclipse.gef4.fx.utils;
 
-import java.awt.MouseInfo;
-import java.awt.PointerInfo;
 import java.awt.geom.NoninvertibleTransformException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-
-import org.eclipse.gef4.fx.FxBundle;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
 /**
- * The {@link FXUtils} class contains utility methods for working with JavaFX:
+ * The {@link NodeUtils} class contains utility methods for working with JavaFX:
  * <ul>
  * <li>transforming {@link IGeometry}s from/to different JavaFX coordinate
  * systems ({@link #localToParent(Node, IGeometry)},
@@ -43,9 +37,6 @@ import org.eclipse.gef4.geometry.planar.Point;
  * <li>determining the actual local-to-scene or scene-to-local transform for a
  * JavaFX {@link Node} ({@link #getLocalToSceneTx(Node)},
  * {@link #getSceneToLocalTx(Node)})</li>
- * <li>determining the current pointer location ({@link #getPointerLocation()})
- * </li>
- * <li>forcing a mouse cursor update ({@link #forceCursorUpdate(Scene)})</li>
  * <li>perform picking of {@link Node}s at a specific position within the JavaFX
  * scene graph ({@link #getNodesAt(Node, double, double)})</li>
  * </ul>
@@ -54,35 +45,7 @@ import org.eclipse.gef4.geometry.planar.Point;
  * @author anyssen
  *
  */
-public class FXUtils {
-
-	/**
-	 * Forces the JavaFX runtime to update the mouse cursor. This is useful when
-	 * you want to change the mouse cursor independently of mouse movement.
-	 *
-	 * @param scene
-	 *            The {@link Scene} to update the cursor for.
-	 */
-	public static void forceCursorUpdate(Scene scene) {
-		try {
-			Field mouseHandlerField = scene.getClass()
-					.getDeclaredField("mouseHandler");
-			mouseHandlerField.setAccessible(true);
-			Object mouseHandler = mouseHandlerField.get(scene);
-			Class<?> mouseHandlerClass = Class
-					.forName("javafx.scene.Scene$MouseHandler");
-			Method updateCursorMethod = mouseHandlerClass
-					.getDeclaredMethod("updateCursor", Cursor.class);
-			updateCursorMethod.setAccessible(true);
-			updateCursorMethod.invoke(mouseHandler, scene.getCursor());
-			Method updateCursorFrameMethod = mouseHandlerClass
-					.getDeclaredMethod("updateCursorFrame");
-			updateCursorFrameMethod.setAccessible(true);
-			updateCursorFrameMethod.invoke(mouseHandler);
-		} catch (Exception x) {
-			throw new IllegalStateException(x);
-		}
-	}
+public class NodeUtils {
 
 	/**
 	 * Returns an {@link AffineTransform} which represents the transformation
@@ -162,46 +125,7 @@ public class FXUtils {
 				}
 			}
 		}
-
 		return picked;
-	}
-
-	/**
-	 * Returns the current pointer location.
-	 *
-	 * @return The current pointer location.
-	 */
-	public static Point getPointerLocation() {
-		// find pointer location (OS specific)
-		String os = System.getProperty("os.name");
-		if (os.startsWith("Mac OS X") && FxBundle.getContext() == null) {
-			// use special glass robot for MacOS
-			com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
-					.GetApplication().createRobot();
-			return new Point(robot.getMouseX(), robot.getMouseY());
-		} else {
-			// Ensure AWT is not considered to be in headless mode, as
-			// otherwise MouseInfo#getPointerInfo() will not work.
-
-			// adjust AWT headless property, if required
-			String awtHeadlessPropertyValue = System
-					.getProperty(JAVA_AWT_HEADLESS_PROPERTY);
-			if (awtHeadlessPropertyValue != null
-					&& awtHeadlessPropertyValue != Boolean.FALSE.toString()) {
-				System.setProperty(JAVA_AWT_HEADLESS_PROPERTY,
-						Boolean.FALSE.toString());
-			}
-			// retrieve mouse location
-			PointerInfo pi = MouseInfo.getPointerInfo();
-			java.awt.Point mp = pi.getLocation();
-
-			// restore AWT headless property
-			if (awtHeadlessPropertyValue != null) {
-				System.setProperty(JAVA_AWT_HEADLESS_PROPERTY,
-						awtHeadlessPropertyValue);
-			}
-			return new Point(mp.x, mp.y);
-		}
 	}
 
 	/**
@@ -312,7 +236,5 @@ public class FXUtils {
 		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
 		return g.getTransformed(sceneToLocalTx);
 	}
-
-	private static final String JAVA_AWT_HEADLESS_PROPERTY = "java.awt.headless";
 
 }

@@ -21,10 +21,10 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ReferencePointProvider;
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -51,25 +51,25 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 /**
- * The {@link FXConnection} provides a visualization for a binary connection
+ * The {@link Connection} provides a visualization for a binary connection
  * whose route can be influenced by a number of way points.
  *
  * @author mwienand
  *
  */
-public class FXConnection extends Group {
+public class Connection extends Group {
 
 	/**
-	 * The {@link FXChopBoxHelper} can be registered for an {@link FXConnection}
-	 * and serves as a {@link ReferencePointProvider} for all {@link AnchorKey}s
-	 * of that {@link FXConnection} which are registered at
-	 * {@link FXChopBoxAnchor}s.
+	 * The {@link ChopBoxHelper} can be registered for an {@link Connection}
+	 * and serves as a {@link IReferencePointProvider} for all {@link AnchorKey}s
+	 * of that {@link Connection} which are registered at
+	 * {@link ChopBoxAnchor}s.
 	 *
 	 * @author mwienand
 	 *
 	 */
-	public static class FXChopBoxHelper
-			implements FXChopBoxAnchor.ReferencePointProvider {
+	public static class ChopBoxHelper
+			implements ChopBoxAnchor.IReferencePointProvider {
 
 		/**
 		 * The {@link ReferencePointMap} is used to store the reference points
@@ -129,20 +129,20 @@ public class FXConnection extends Group {
 
 		/**
 		 * Manages the addition and removal of position-change-listeners for the
-		 * {@link AnchorKey}s of the {@link FXConnection}.
+		 * {@link AnchorKey}s of the {@link Connection}.
 		 */
-		private MapChangeListener<AnchorKey, IFXAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IFXAnchor>() {
+		private MapChangeListener<AnchorKey, IAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IAnchor>() {
 			@Override
 			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IFXAnchor> change) {
+					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IAnchor> change) {
 				AnchorKey key = change.getKey();
-				IFXAnchor oldAnchor = change.getValueRemoved();
+				IAnchor oldAnchor = change.getValueRemoved();
 				if (oldAnchor != null && pcls.containsKey(key)) {
 					oldAnchor.positionProperty()
 							.removeListener(pcls.remove(key));
 					updateReferencePoints(null);
 				}
-				IFXAnchor newAnchor = change.getValueAdded();
+				IAnchor newAnchor = change.getValueAdded();
 				if (newAnchor != null) {
 					MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
 							newAnchor, key);
@@ -153,9 +153,9 @@ public class FXConnection extends Group {
 		};
 
 		/**
-		 * {@link FXConnection} to work with.
+		 * {@link Connection} to work with.
 		 */
-		private FXConnection connection;
+		private Connection connection;
 
 		/**
 		 * Map to store/manage position change listeners for individual
@@ -164,26 +164,26 @@ public class FXConnection extends Group {
 		private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> pcls = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
 
 		/**
-		 * Constructs a new {@link FXChopBoxHelper} for the given
-		 * {@link FXConnection}.
+		 * Constructs a new {@link ChopBoxHelper} for the given
+		 * {@link Connection}.
 		 *
 		 * @param connection
-		 *            The {@link FXConnection} for which this
-		 *            {@link FXChopBoxHelper} provides the reference points.
+		 *            The {@link Connection} for which this
+		 *            {@link ChopBoxHelper} provides the reference points.
 		 */
-		public FXChopBoxHelper(FXConnection connection) {
+		public ChopBoxHelper(Connection connection) {
 			this.connection = connection;
 			/*
 			 * If the map behind the anchors-property is replaced, we have to
 			 * update our anchorsChangeListener accordingly.
 			 */
 			connection.anchorsProperty().addListener(
-					new ChangeListener<ObservableMap<AnchorKey, IFXAnchor>>() {
+					new ChangeListener<ObservableMap<AnchorKey, IAnchor>>() {
 						@Override
 						public void changed(
-								ObservableValue<? extends ObservableMap<AnchorKey, IFXAnchor>> observable,
-								ObservableMap<AnchorKey, IFXAnchor> oldValue,
-								ObservableMap<AnchorKey, IFXAnchor> newValue) {
+								ObservableValue<? extends ObservableMap<AnchorKey, IAnchor>> observable,
+								ObservableMap<AnchorKey, IAnchor> oldValue,
+								ObservableMap<AnchorKey, IAnchor> newValue) {
 							if (oldValue == newValue) {
 								return;
 							}
@@ -199,7 +199,7 @@ public class FXConnection extends Group {
 		}
 
 		private MapChangeListener<? super AnchorKey, ? super Point> createPCL(
-				final IFXAnchor anchor, final AnchorKey key) {
+				final IAnchor anchor, final AnchorKey key) {
 			return new MapChangeListener<AnchorKey, Point>() {
 				@Override
 				public void onChanged(
@@ -227,11 +227,11 @@ public class FXConnection extends Group {
 		}
 
 		private Point getNeighbor(int anchorIndex, int step) {
-			List<IFXAnchor> anchors = connection.getAnchors();
-			IFXAnchor anchor = anchors.get(anchorIndex);
-			if (!(anchor instanceof FXChopBoxAnchor)) {
+			List<IAnchor> anchors = connection.getAnchors();
+			IAnchor anchor = anchors.get(anchorIndex);
+			if (!(anchor instanceof ChopBoxAnchor)) {
 				throw new IllegalStateException(
-						"specified anchor is no FXChopBoxAnchor");
+						"specified anchor is no ChopBoxAnchor");
 			}
 			Node anchorage = anchor.getAnchorage();
 
@@ -239,7 +239,7 @@ public class FXConnection extends Group {
 			// or first anchorage center
 			for (int i = anchorIndex + step; i < anchors.size()
 					&& i >= 0; i += step) {
-				IFXAnchor predAnchor = anchors.get(i);
+				IAnchor predAnchor = anchors.get(i);
 				if (predAnchor == null) {
 					throw new IllegalStateException(
 							"connection inconsistent (null anchor)");
@@ -302,7 +302,7 @@ public class FXConnection extends Group {
 
 			// only compute reference points for chop box anchors
 			if (!(connection.getAnchors()
-					.get(anchorIndex) instanceof FXChopBoxAnchor)) {
+					.get(anchorIndex) instanceof ChopBoxAnchor)) {
 				return;
 			}
 
@@ -320,7 +320,7 @@ public class FXConnection extends Group {
 				 * position is inside the anchorage of the current anchor. This
 				 * means, the reference point that is returned now will be
 				 * discarded in a succeeding call (we have to come up with some
-				 * value here for the FXChopBoxAnchor to work with).
+				 * value here for the ChopBoxAnchor to work with).
 				 */
 				newRef = new Point();
 			} else if (pred != null) {
@@ -345,7 +345,7 @@ public class FXConnection extends Group {
 			}
 
 			int anchorIndex = key == null ? -1 : connection.getAnchorIndex(key);
-			List<IFXAnchor> anchors = connection.getAnchors();
+			List<IAnchor> anchors = connection.getAnchors();
 			for (int i = 0; i < anchors.size(); i++) {
 				// we do not have to update the reference point for the
 				// given key, because the corresponding position just
@@ -383,18 +383,18 @@ public class FXConnection extends Group {
 	private static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
 
 	// visuals
-	private FXGeometryNode<ICurve> curveNode = new FXGeometryNode<ICurve>();
+	private GeometryNode<ICurve> curveNode = new GeometryNode<ICurve>();
 
-	private IFXConnectionRouter router = new FXPolylineConnectionRouter();
+	private IConnectionRouter router = new PolylineConnectionRouter();
 
-	// used to pass as argument to IFXAnchor#attach() and #detach()
+	// used to pass as argument to IAnchor#attach() and #detach()
 	private AdapterStore as = new AdapterStore();
 
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
-	private IFXDecoration startDecoration = null;
-	private IFXDecoration endDecoration = null;
-	private ReadOnlyMapWrapper<AnchorKey, IFXAnchor> anchorsProperty = new ReadOnlyMapWrapper<AnchorKey, IFXAnchor>(
-			FXCollections.<AnchorKey, IFXAnchor> observableHashMap());
+	private IConnectionDecoration startDecoration = null;
+	private IConnectionDecoration endDecoration = null;
+	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapper<AnchorKey, IAnchor>(
+			FXCollections.<AnchorKey, IAnchor> observableHashMap());
 
 	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();
 	private int nextWayAnchorId = 0;
@@ -405,14 +405,14 @@ public class FXConnection extends Group {
 
 	// transparent 'fat' curve overlaying the actual curve (serving as mouse
 	// target)
-	private FXGeometryNode<ICurve> curveNodeClickableArea = new FXGeometryNode<ICurve>();
+	private GeometryNode<ICurve> curveNodeClickableArea = new GeometryNode<ICurve>();
 	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty(5);
 
 	/**
-	 * Constructs a new {@link FXConnection} whose start and end point are set
+	 * Constructs a new {@link Connection} whose start and end point are set
 	 * to <code>null</code>.
 	 */
-	public FXConnection() {
+	public Connection() {
 		// disable resizing children which would change their layout positions
 		// in some cases
 		setAutoSizeChildren(false);
@@ -434,17 +434,17 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Adds the given {@link IFXAnchor} as a way point anchor for the given
-	 * index into the {@link #anchorsProperty()} of this {@link FXConnection}.
+	 * Adds the given {@link IAnchor} as a way point anchor for the given
+	 * index into the {@link #anchorsProperty()} of this {@link Connection}.
 	 *
 	 * @param index
-	 *            The position where the {@link IFXAnchor} is inserted within
-	 *            the way point anchors of this {@link FXConnection}.
+	 *            The position where the {@link IAnchor} is inserted within
+	 *            the way point anchors of this {@link Connection}.
 	 * @param anchor
-	 *            The {@link IFXAnchor} which determines the position of the
+	 *            The {@link IAnchor} which determines the position of the
 	 *            corresponding way point.
 	 */
-	public void addWayAnchor(int index, IFXAnchor anchor) {
+	public void addWayAnchor(int index, IAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
@@ -455,13 +455,13 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Adds an {@link FXStaticAnchor} yielding the given {@link Point} as a way
+	 * Adds an {@link StaticAnchor} yielding the given {@link Point} as a way
 	 * point anchor for the given index into the {@link #anchorsProperty()} of
-	 * this {@link FXConnection}.
+	 * this {@link Connection}.
 	 *
 	 * @param index
-	 *            The position where the {@link IFXAnchor} is inserted within
-	 *            the way point anchors of this {@link FXConnection}.
+	 *            The position where the {@link IAnchor} is inserted within
+	 *            the way point anchors of this {@link Connection}.
 	 * @param wayPointInLocal
 	 *            The position for the specified way point.
 	 */
@@ -469,21 +469,21 @@ public class FXConnection extends Group {
 		if (wayPointInLocal == null) {
 			wayPointInLocal = new Point();
 		}
-		IFXAnchor anchor = new FXStaticAnchor(this, wayPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, wayPointInLocal);
 		addWayAnchor(index, anchor);
 	}
 
 	/**
 	 * Returns the {@link ReadOnlyMapProperty} which stores the
-	 * {@link AnchorKey}s and corresponding {@link IFXAnchor}s which determine
-	 * the start point, way points, and end point of this {@link FXConnection}.
+	 * {@link AnchorKey}s and corresponding {@link IAnchor}s which determine
+	 * the start point, way points, and end point of this {@link Connection}.
 	 *
 	 * @return The {@link ReadOnlyMapProperty} which stores the
-	 *         {@link AnchorKey}s and corresponding {@link IFXAnchor}s which
+	 *         {@link AnchorKey}s and corresponding {@link IAnchor}s which
 	 *         determine the start point, way points, and end point of this
-	 *         {@link FXConnection}
+	 *         {@link Connection}
 	 */
-	protected ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty() {
+	protected ReadOnlyMapProperty<AnchorKey, IAnchor> anchorsProperty() {
 		return anchorsProperty.getReadOnlyProperty();
 	}
 
@@ -492,11 +492,11 @@ public class FXConnection extends Group {
 	 * the transformed end point of the arranged decoration.
 	 *
 	 * @param decoration
-	 *            The {@link IFXDecoration} to arrange.
+	 *            The {@link IConnectionDecoration} to arrange.
 	 * @param start
 	 *            The offset for the decoration visual.
 	 * @param direction
-	 *            The direction of the {@link FXConnection} at the point where
+	 *            The direction of the {@link Connection} at the point where
 	 *            the decoration is arranged.
 	 * @param decoStart
 	 *            The start point of the decoration within the local coordinate
@@ -506,7 +506,7 @@ public class FXConnection extends Group {
 	 * @return The transformed end point of the arranged decoration.
 	 */
 	// TODO: Remove decoStart, which is unused.
-	protected Point arrangeDecoration(IFXDecoration decoration, Point start,
+	protected Point arrangeDecoration(IConnectionDecoration decoration, Point start,
 			Vector direction, Point decoStart, Vector decoDirection) {
 		Node visual = decoration.getVisual();
 
@@ -529,7 +529,7 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Updates the end decoration of this {@link FXConnection}.
+	 * Updates the end decoration of this {@link Connection}.
 	 */
 	protected void arrangeEndDecoration() {
 		if (endDecoration == null) {
@@ -570,7 +570,7 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Updates the start decoration of this {@link FXConnection}.
+	 * Updates the start decoration of this {@link Connection}.
 	 */
 	protected void arrangeStartDecoration() {
 		if (startDecoration == null) {
@@ -625,14 +625,14 @@ public class FXConnection extends Group {
 
 	/**
 	 * Creates a position change listener (PCL) which {@link #refresh()
-	 * refreshes} this {@link FXConnection} upon anchor position changes
+	 * refreshes} this {@link Connection} upon anchor position changes
 	 * corresponding to the given {@link AnchorKey}.
 	 *
 	 * @param anchorKey
 	 *            The {@link AnchorKey} for which a position change will trigger
 	 *            a {@link #refresh()} with the returned PCL.
 	 * @return A position change listener to {@link #refresh() refresh} this
-	 *         {@link FXConnection} when the position for the given
+	 *         {@link Connection} when the position for the given
 	 *         {@link AnchorKey} changes.
 	 */
 	protected MapChangeListener<? super AnchorKey, ? super Point> createPCL(
@@ -657,7 +657,7 @@ public class FXConnection extends Group {
 	 */
 	protected AnchorKey generateWayAnchorKey() {
 		if (nextWayAnchorId == Integer.MAX_VALUE) {
-			List<IFXAnchor> wayAnchors = getWayAnchors();
+			List<IAnchor> wayAnchors = getWayAnchors();
 			removeAllWayPoints();
 			nextWayAnchorId = 0;
 			setWayAnchors(wayAnchors);
@@ -716,19 +716,19 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns a {@link List} containing the {@link IFXAnchor}s which are
-	 * assigned to this {@link FXConnection} in the order: start anchor, way
+	 * Returns a {@link List} containing the {@link IAnchor}s which are
+	 * assigned to this {@link Connection} in the order: start anchor, way
 	 * point anchors, end anchor.
 	 *
-	 * @return A {@link List} containing the {@link IFXAnchor}s which are
-	 *         assigned to this {@link FXConnection}.
+	 * @return A {@link List} containing the {@link IAnchor}s which are
+	 *         assigned to this {@link Connection}.
 	 */
-	public List<IFXAnchor> getAnchors() {
+	public List<IAnchor> getAnchors() {
 		int wayPointCount = getWayAnchorsSize();
-		List<IFXAnchor> anchors = new ArrayList<>(wayPointCount + 2);
+		List<IAnchor> anchors = new ArrayList<>(wayPointCount + 2);
 
 		// start anchor
-		IFXAnchor startAnchor = getStartAnchor();
+		IAnchor startAnchor = getStartAnchor();
 		if (startAnchor == null) {
 			throw new IllegalStateException("Start anchor may never be null.");
 		}
@@ -738,7 +738,7 @@ public class FXConnection extends Group {
 		anchors.addAll(getWayAnchors());
 
 		// end anchor
-		IFXAnchor endAnchor = getEndAnchor();
+		IAnchor endAnchor = getEndAnchor();
 		if (endAnchor == null) {
 			throw new IllegalStateException("End anchor may never be null.");
 		}
@@ -758,58 +758,58 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns the {@link FXGeometryNode} which displays the curve geometry.
+	 * Returns the {@link GeometryNode} which displays the curve geometry.
 	 *
-	 * @return The {@link FXGeometryNode} which displays the curve geometry.
+	 * @return The {@link GeometryNode} which displays the curve geometry.
 	 */
-	public FXGeometryNode<ICurve> getCurveNode() {
+	public GeometryNode<ICurve> getCurveNode() {
 		return curveNode;
 	}
 
 	/**
-	 * Returns the currently assigned end {@link IFXAnchor anchor}, or
-	 * <code>null</code> if no end {@link IFXAnchor anchor} is assigned.
+	 * Returns the currently assigned end {@link IAnchor anchor}, or
+	 * <code>null</code> if no end {@link IAnchor anchor} is assigned.
 	 *
-	 * @return The currently assigned end {@link IFXAnchor anchor}, or
+	 * @return The currently assigned end {@link IAnchor anchor}, or
 	 *         <code>null</code>.
 	 */
-	public IFXAnchor getEndAnchor() {
+	public IAnchor getEndAnchor() {
 		return anchorsProperty.get(getEndAnchorKey());
 	}
 
 	/**
-	 * Returns the end {@link AnchorKey} for this {@link FXConnection}. An end
+	 * Returns the end {@link AnchorKey} for this {@link Connection}. An end
 	 * {@link AnchorKey} uses the {@link #getCurveNode() curve node} as its
 	 * anchored and <code>"end"</code> as its role.
 	 *
-	 * @return The end {@link AnchorKey} for this {@link FXConnection}.
+	 * @return The end {@link AnchorKey} for this {@link Connection}.
 	 */
 	protected AnchorKey getEndAnchorKey() {
 		return new AnchorKey(getCurveNode(), END_ROLE);
 	}
 
 	/**
-	 * Returns the end {@link IFXDecoration decoration} of this
-	 * {@link FXConnection}, or <code>null</code>.
+	 * Returns the end {@link IConnectionDecoration decoration} of this
+	 * {@link Connection}, or <code>null</code>.
 	 *
-	 * @return The end {@link IFXDecoration decoration} of this
-	 *         {@link FXConnection}, or <code>null</code>.
+	 * @return The end {@link IConnectionDecoration decoration} of this
+	 *         {@link Connection}, or <code>null</code>.
 	 */
-	public IFXDecoration getEndDecoration() {
+	public IConnectionDecoration getEndDecoration() {
 		return endDecoration;
 	}
 
 	/**
-	 * Returns the end {@link Point} of this {@link FXConnection} within its
+	 * Returns the end {@link Point} of this {@link Connection} within its
 	 * coordinate system which is determined by querying the anchor position for
 	 * the {@link #getEndAnchorKey() end anchor key}, or <code>null</code> when
 	 * no {@link #getEndAnchor() end anchor} is assigned.
 	 *
-	 * @return The end {@link Point} of this {@link FXConnection}, or
+	 * @return The end {@link Point} of this {@link Connection}, or
 	 *         <code>null</code>.
 	 */
 	public Point getEndPoint() {
-		IFXAnchor anchor = getEndAnchor();
+		IAnchor anchor = getEndAnchor();
 		if (anchor == null) {
 			return null;
 		}
@@ -822,12 +822,12 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns the {@link Point}s constituting this {@link FXConnection} within
+	 * Returns the {@link Point}s constituting this {@link Connection} within
 	 * its coordinate system in the order: start point, way points, end point.
 	 * They are determined by querying the corresponding anchor positions. In
 	 * case not all anchors are assigned, an empty array is returned.
 	 *
-	 * @return The {@link Point}s constituting this {@link FXConnection}.
+	 * @return The {@link Point}s constituting this {@link Connection}.
 	 */
 	public Point[] getPoints() {
 		int wayPointCount = getWayAnchorsSize();
@@ -854,58 +854,58 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns the {@link IFXConnectionRouter} of this {@link FXConnection}.
+	 * Returns the {@link IConnectionRouter} of this {@link Connection}.
 	 *
-	 * @return The {@link IFXConnectionRouter} of this {@link FXConnection}.
+	 * @return The {@link IConnectionRouter} of this {@link Connection}.
 	 */
-	public IFXConnectionRouter getRouter() {
+	public IConnectionRouter getRouter() {
 		return router;
 	}
 
 	/**
-	 * Returns the currently assigned start {@link IFXAnchor anchor}, or
-	 * <code>null</code> if no start {@link IFXAnchor anchor} is assigned.
+	 * Returns the currently assigned start {@link IAnchor anchor}, or
+	 * <code>null</code> if no start {@link IAnchor anchor} is assigned.
 	 *
-	 * @return The currently assigned start {@link IFXAnchor anchor}, or
+	 * @return The currently assigned start {@link IAnchor anchor}, or
 	 *         <code>null</code>.
 	 */
-	public IFXAnchor getStartAnchor() {
+	public IAnchor getStartAnchor() {
 		return anchorsProperty.get(getStartAnchorKey());
 	}
 
 	/**
-	 * Returns the start {@link AnchorKey} for this {@link FXConnection}. A
+	 * Returns the start {@link AnchorKey} for this {@link Connection}. A
 	 * start {@link AnchorKey} uses the {@link #getCurveNode() curve node} as
 	 * its anchored and <code>"start"</code> as its role.
 	 *
-	 * @return The start {@link AnchorKey} for this {@link FXConnection}.
+	 * @return The start {@link AnchorKey} for this {@link Connection}.
 	 */
 	protected AnchorKey getStartAnchorKey() {
 		return new AnchorKey(getCurveNode(), START_ROLE);
 	}
 
 	/**
-	 * Returns the start {@link IFXDecoration decoration} of this
-	 * {@link FXConnection}, or <code>null</code>.
+	 * Returns the start {@link IConnectionDecoration decoration} of this
+	 * {@link Connection}, or <code>null</code>.
 	 *
-	 * @return The start {@link IFXDecoration decoration} of this
-	 *         {@link FXConnection}, or <code>null</code>.
+	 * @return The start {@link IConnectionDecoration decoration} of this
+	 *         {@link Connection}, or <code>null</code>.
 	 */
-	public IFXDecoration getStartDecoration() {
+	public IConnectionDecoration getStartDecoration() {
 		return startDecoration;
 	}
 
 	/**
-	 * Returns the start {@link Point} of this {@link FXConnection} within its
+	 * Returns the start {@link Point} of this {@link Connection} within its
 	 * coordinate system which is determined by querying the anchor position for
 	 * the {@link #getStartAnchorKey() start anchor key}, or <code>null</code>
 	 * when no {@link #getStartAnchor() start anchor} is assigned.
 	 *
-	 * @return The start {@link Point} of this {@link FXConnection}, or
+	 * @return The start {@link Point} of this {@link Connection}, or
 	 *         <code>null</code>.
 	 */
 	public Point getStartPoint() {
-		IFXAnchor anchor = getStartAnchor();
+		IAnchor anchor = getStartAnchor();
 		if (anchor == null) {
 			return null;
 		}
@@ -918,23 +918,23 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns the way {@link IFXAnchor anchor} for the given way anchor index
+	 * Returns the way {@link IAnchor anchor} for the given way anchor index
 	 * which is currently assigned, or <code>null</code> if no way
-	 * {@link IFXAnchor anchor} is assigned for that index.
+	 * {@link IAnchor anchor} is assigned for that index.
 	 *
 	 * @param index
-	 *            The way anchor index determining which way {@link IFXAnchor
+	 *            The way anchor index determining which way {@link IAnchor
 	 *            anchor} to return.
-	 * @return The way {@link IFXAnchor anchor} for the given index, or
+	 * @return The way {@link IAnchor anchor} for the given index, or
 	 *         <code>null</code>.
 	 */
-	public IFXAnchor getWayAnchor(int index) {
+	public IAnchor getWayAnchor(int index) {
 		return anchorsProperty.get(getWayAnchorKey(index));
 	}
 
 	/**
 	 * Returns the {@link AnchorKey} for the given way anchor index, or
-	 * <code>null</code> if no {@link IFXAnchor anchor} is assigned for that
+	 * <code>null</code> if no {@link IAnchor anchor} is assigned for that
 	 * index.
 	 *
 	 * @param index
@@ -951,18 +951,18 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns a {@link List} containing the way {@link IFXAnchor anchors}
-	 * currently assigned to this {@link FXConnection}.
+	 * Returns a {@link List} containing the way {@link IAnchor anchors}
+	 * currently assigned to this {@link Connection}.
 	 *
-	 * @return A {@link List} containing the way {@link IFXAnchor anchors}
-	 *         currently assigned to this {@link FXConnection}.
+	 * @return A {@link List} containing the way {@link IAnchor anchors}
+	 *         currently assigned to this {@link Connection}.
 	 */
-	public List<IFXAnchor> getWayAnchors() {
+	public List<IAnchor> getWayAnchors() {
 		int wayPointsCount = getWayAnchorsSize();
-		List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>(
+		List<IAnchor> wayPointAnchors = new ArrayList<IAnchor>(
 				wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
-			IFXAnchor wayAnchor = getWayAnchor(i);
+			IAnchor wayAnchor = getWayAnchor(i);
 			if (wayAnchor == null) {
 				throw new IllegalStateException(
 						"Way anchor may never be null.");
@@ -973,11 +973,11 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Returns the number of way {@link IFXAnchor}s currently assigned to this
-	 * {@link FXConnection}.
+	 * Returns the number of way {@link IAnchor}s currently assigned to this
+	 * {@link Connection}.
 	 *
-	 * @return The number of way {@link IFXAnchor}s currently assigned to this
-	 *         {@link FXConnection}.
+	 * @return The number of way {@link IAnchor}s currently assigned to this
+	 *         {@link Connection}.
 	 */
 	public int getWayAnchorsSize() {
 		return wayAnchorKeys.size();
@@ -985,15 +985,15 @@ public class FXConnection extends Group {
 
 	/**
 	 * Returns the way anchor index for the given {@link AnchorKey}, i.e.
-	 * <code>0</code> for the first way {@link IFXAnchor anchor}, <code>1</code>
+	 * <code>0</code> for the first way {@link IAnchor anchor}, <code>1</code>
 	 * for the seconds, etc.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} whose way anchor index is returned.
 	 * @return The way anchor index for the given {@link AnchorKey}.
 	 * @throws IllegalArgumentException
-	 *             when there currently is no way {@link IFXAnchor anchor}
-	 *             assigned to this {@link FXConnection} for the given
+	 *             when there currently is no way {@link IAnchor anchor}
+	 *             assigned to this {@link Connection} for the given
 	 *             {@link AnchorKey}.
 	 */
 	protected int getWayIndex(AnchorKey key) {
@@ -1007,18 +1007,18 @@ public class FXConnection extends Group {
 
 	/**
 	 * Returns the way {@link Point} for the given way anchor index within the
-	 * coordinate system of this {@link FXConnection} which is determined by
+	 * coordinate system of this {@link Connection} which is determined by
 	 * querying the anchor position for the corresponding
 	 * {@link #getWayAnchor(int) way anchor}, or <code>null</code> if no
 	 * {@link #getWayAnchor(int) way anchor} is assigned for the given index.
 	 *
 	 * @param index
 	 *            The way anchor index for which to return the anchor position.
-	 * @return The start {@link Point} of this {@link FXConnection}, or
+	 * @return The start {@link Point} of this {@link Connection}, or
 	 *         <code>null</code>.
 	 */
 	public Point getWayPoint(int index) {
-		IFXAnchor anchor = getWayAnchor(index);
+		IAnchor anchor = getWayAnchor(index);
 		if (anchor == null) {
 			throw new IllegalArgumentException("No waypoint at index " + index);
 		}
@@ -1032,13 +1032,13 @@ public class FXConnection extends Group {
 
 	/**
 	 * Returns a {@link List} containing the way {@link Point}s of this
-	 * {@link FXConnection}.
+	 * {@link Connection}.
 	 *
 	 * @return A {@link List} containing the way {@link Point}s of this
-	 *         {@link FXConnection}.
+	 *         {@link Connection}.
 	 */
 	public List<Point> getWayPoints() {
-		List<IFXAnchor> wayPointAnchors = getWayAnchors();
+		List<IAnchor> wayPointAnchors = getWayAnchors();
 		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
 			wayPoints.add(
@@ -1057,7 +1057,7 @@ public class FXConnection extends Group {
 	 *         otherwise <code>false</code>.
 	 */
 	public boolean isEndConnected() {
-		IFXAnchor anchor = getEndAnchor();
+		IAnchor anchor = getEndAnchor();
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
 	}
@@ -1072,7 +1072,7 @@ public class FXConnection extends Group {
 	 *         otherwise <code>false</code>.
 	 */
 	public boolean isStartConnected() {
-		IFXAnchor anchor = getStartAnchor();
+		IAnchor anchor = getStartAnchor();
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
 	}
@@ -1090,29 +1090,29 @@ public class FXConnection extends Group {
 	 *         bound to an anchorage, otherwise <code>false</code>.
 	 */
 	public boolean isWayConnected(int index) {
-		IFXAnchor anchor = getWayAnchor(index);
+		IAnchor anchor = getWayAnchor(index);
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}
 
 	/**
-	 * Inserts the given {@link IFXAnchor} into the {@link #anchorsProperty()}
-	 * of this {@link FXConnection}. The given {@link AnchorKey} is attached to
-	 * the {@link IFXAnchor}, supplying it with the previously
+	 * Inserts the given {@link IAnchor} into the {@link #anchorsProperty()}
+	 * of this {@link Connection}. The given {@link AnchorKey} is attached to
+	 * the {@link IAnchor}, supplying it with the previously
 	 * {@link #registerAnchorInfos(IAdaptable) registered} anchor information.
 	 * Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
 	 * {@link AnchorKey} is registered on the position property of the
-	 * {@link IFXAnchor} and the visualization is {@link #refresh() refreshed}.
+	 * {@link IAnchor} and the visualization is {@link #refresh() refreshed}.
 	 *
 	 * @param anchor
-	 *            The {@link IFXAnchor} which is inserted.
+	 *            The {@link IAnchor} which is inserted.
 	 * @param anchorKey
-	 *            The {@link AnchorKey} under which the {@link IFXAnchor} is
+	 *            The {@link AnchorKey} under which the {@link IAnchor} is
 	 *            registered.
 	 * @param wayIndex
 	 *            The way anchor index (only for way point anchors, ignored for
 	 *            start and end anchors).
 	 */
-	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey,
+	protected void putAnchor(IAnchor anchor, AnchorKey anchorKey,
 			int wayIndex) {
 		/*
 		 * IMPORTANT: The anchor is put into the map before attaching it, so
@@ -1138,13 +1138,13 @@ public class FXConnection extends Group {
 	 * Refreshes the visualization, i.e.
 	 * <ol>
 	 * <li>determines the {@link #getPoints() points} constituting this
-	 * {@link FXConnection},</li>
+	 * {@link Connection},</li>
 	 * <li>computes an {@link ICurve} geometry through those {@link Point}s
-	 * using the {@link IFXConnectionRouter} of this {@link FXConnection},</li>
+	 * using the {@link IConnectionRouter} of this {@link Connection},</li>
 	 * <li>replaces the geometry of the {@link #getCurveNode() curve node} with
 	 * that {@link ICurve},</li>
 	 * <li>arranges the {@link #getStartDecoration() start decoration} and
-	 * {@link #getEndDecoration() end decoration} of this {@link FXConnection}.
+	 * {@link #getEndDecoration() end decoration} of this {@link Connection}.
 	 * </li>
 	 * </ol>
 	 */
@@ -1189,24 +1189,24 @@ public class FXConnection extends Group {
 
 	/**
 	 * Registers anchor information as adapters on the given {@link IAdaptable}
-	 * . These anchor information is supplied to all {@link IFXAnchor anchors}
-	 * which are assigned to this {@link FXConnection}. Per default, an
-	 * {@link FXChopBoxHelper} is registered as a {@link ReferencePointProvider}
-	 * , so that the {@link FXConnection} works in conjunction with
-	 * {@link FXChopBoxAnchor}.
+	 * . These anchor information is supplied to all {@link IAnchor anchors}
+	 * which are assigned to this {@link Connection}. Per default, an
+	 * {@link ChopBoxHelper} is registered as a {@link IReferencePointProvider}
+	 * , so that the {@link Connection} works in conjunction with
+	 * {@link ChopBoxAnchor}.
 	 *
 	 * @param adaptable
 	 *            The {@link IAdaptable} on which anchor information is
 	 *            registered via adapters.
 	 */
 	protected void registerAnchorInfos(IAdaptable adaptable) {
-		// register an FXChopBoxHelper, which is passed to the attached anchors.
-		adaptable.setAdapter(AdapterKey.get(ReferencePointProvider.class),
-				new FXChopBoxHelper(this));
+		// register an ChopBoxHelper, which is passed to the attached anchors.
+		adaptable.setAdapter(AdapterKey.get(IReferencePointProvider.class),
+				new ChopBoxHelper(this));
 	}
 
 	/**
-	 * Removes all way points of this {@link FXConnection}.
+	 * Removes all way points of this {@link Connection}.
 	 */
 	public void removeAllWayPoints() {
 		for (int i = getWayAnchorsSize() - 1; i >= 0; i--) {
@@ -1215,15 +1215,15 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Removes the given {@link AnchorKey} (and corresponding {@link IFXAnchor})
-	 * from this {@link FXConnection}.
+	 * Removes the given {@link AnchorKey} (and corresponding {@link IAnchor})
+	 * from this {@link Connection}.
 	 *
 	 * @param anchorKey
 	 *            The {@link AnchorKey} to remove.
 	 * @param oldAnchor
-	 *            The corresponding {@link IFXAnchor}.
+	 *            The corresponding {@link IAnchor}.
 	 */
-	protected void removeAnchor(AnchorKey anchorKey, IFXAnchor oldAnchor) {
+	protected void removeAnchor(AnchorKey anchorKey, IAnchor oldAnchor) {
 		if (anchorKeyPCL.containsKey(anchorKey)) {
 			oldAnchor.positionProperty()
 					.removeListener(anchorKeyPCL.remove(anchorKey));
@@ -1246,7 +1246,7 @@ public class FXConnection extends Group {
 
 	/**
 	 * Removes the way point specified by the given way anchor index from this
-	 * {@link FXConnection}.
+	 * {@link Connection}.
 	 *
 	 * @param index
 	 *            The way anchor index specifying which way point to remove.
@@ -1264,24 +1264,24 @@ public class FXConnection extends Group {
 					"Inconsistent state: way anchor not in map!");
 		}
 
-		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		removeAnchor(anchorKey, oldAnchor);
 	}
 
 	/**
-	 * Replaces all {@link #getAnchors() anchors} of this {@link FXConnection}
-	 * with the given {@link IFXAnchor}s, i.e. the first given {@link IFXAnchor}
+	 * Replaces all {@link #getAnchors() anchors} of this {@link Connection}
+	 * with the given {@link IAnchor}s, i.e. the first given {@link IAnchor}
 	 * replaces the currently assigned start anchor, the last given
-	 * {@link IFXAnchor} replaces the currently assigned end anchor, and the
-	 * intermediate {@link IFXAnchor}s replace the currently assigned way
+	 * {@link IAnchor} replaces the currently assigned end anchor, and the
+	 * intermediate {@link IAnchor}s replace the currently assigned way
 	 * anchors.
 	 *
 	 * @param anchors
-	 *            The new {@link IFXAnchor}s for this {@link FXConnection}.
+	 *            The new {@link IAnchor}s for this {@link Connection}.
 	 * @throws IllegalArgumentException
-	 *             when less than 2 {@link IFXAnchor}s are given.
+	 *             when less than 2 {@link IAnchor}s are given.
 	 */
-	public void setAnchors(java.util.List<IFXAnchor> anchors) {
+	public void setAnchors(java.util.List<IAnchor> anchors) {
 		if (anchors.size() < 2) {
 			throw new IllegalArgumentException(
 					"start end end anchors have to be provided.");
@@ -1307,19 +1307,19 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Sets the end {@link IFXAnchor} of this {@link FXConnection} to the given
+	 * Sets the end {@link IAnchor} of this {@link Connection} to the given
 	 * value.
 	 *
 	 * @param anchor
-	 *            The new end {@link IFXAnchor} for this {@link FXConnection}.
+	 *            The new end {@link IAnchor} for this {@link Connection}.
 	 */
-	public void setEndAnchor(IFXAnchor anchor) {
+	public void setEndAnchor(IAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
 		AnchorKey anchorKey = getEndAnchorKey();
-		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
 				removeAnchor(anchorKey, oldAnchor);
@@ -1329,14 +1329,14 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Sets the end {@link IFXDecoration} of this {@link FXConnection} to the
+	 * Sets the end {@link IConnectionDecoration} of this {@link Connection} to the
 	 * given value.
 	 *
 	 * @param endDeco
-	 *            The new end {@link IFXDecoration} for this
-	 *            {@link FXConnection}.
+	 *            The new end {@link IConnectionDecoration} for this
+	 *            {@link Connection}.
 	 */
-	public void setEndDecoration(IFXDecoration endDeco) {
+	public void setEndDecoration(IConnectionDecoration endDeco) {
 		endDecoration = endDeco;
 		if (endDecoration != null) {
 			ObservableList<String> styleClasses = endDecoration.getVisual()
@@ -1349,48 +1349,48 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Sets the {@link #setEndAnchor(IFXAnchor) end anchor} of this
-	 * {@link FXConnection} to an {@link FXStaticAnchor} yielding the given
+	 * Sets the {@link #setEndAnchor(IAnchor) end anchor} of this
+	 * {@link Connection} to an {@link StaticAnchor} yielding the given
 	 * {@link Point}.
 	 *
 	 * @param endPointInLocal
-	 *            The new end {@link Point} for this {@link FXConnection}.
+	 *            The new end {@link Point} for this {@link Connection}.
 	 */
 	public void setEndPoint(Point endPointInLocal) {
 		if (endPointInLocal == null) {
 			endPointInLocal = new Point();
 		}
-		IFXAnchor anchor = new FXStaticAnchor(this, endPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, endPointInLocal);
 		setEndAnchor(anchor);
 	}
 
 	/**
-	 * Sets the {@link IFXConnectionRouter} of this {@link FXConnection} to the
+	 * Sets the {@link IConnectionRouter} of this {@link Connection} to the
 	 * given value.
 	 *
 	 * @param router
-	 *            The new {@link IFXConnectionRouter} for this
-	 *            {@link FXConnection}.
+	 *            The new {@link IConnectionRouter} for this
+	 *            {@link Connection}.
 	 */
-	public void setRouter(IFXConnectionRouter router) {
+	public void setRouter(IConnectionRouter router) {
 		this.router = router;
 		refresh();
 	}
 
 	/**
-	 * Sets the start {@link IFXAnchor} of this {@link FXConnection} to the
+	 * Sets the start {@link IAnchor} of this {@link Connection} to the
 	 * given value.
 	 *
 	 * @param anchor
-	 *            The new start {@link IFXAnchor} for this {@link FXConnection}.
+	 *            The new start {@link IAnchor} for this {@link Connection}.
 	 */
-	public void setStartAnchor(IFXAnchor anchor) {
+	public void setStartAnchor(IAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
 		AnchorKey anchorKey = getStartAnchorKey();
-		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
 				removeAnchor(anchorKey, oldAnchor);
@@ -1400,14 +1400,14 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Sets the start {@link IFXDecoration} of this {@link FXConnection} to the
+	 * Sets the start {@link IConnectionDecoration} of this {@link Connection} to the
 	 * given value.
 	 *
 	 * @param startDeco
-	 *            The new start {@link IFXDecoration} for this
-	 *            {@link FXConnection}.
+	 *            The new start {@link IConnectionDecoration} for this
+	 *            {@link Connection}.
 	 */
-	public void setStartDecoration(IFXDecoration startDeco) {
+	public void setStartDecoration(IConnectionDecoration startDeco) {
 		startDecoration = startDeco;
 		if (startDecoration != null) {
 			ObservableList<String> styleClasses = startDecoration.getVisual()
@@ -1420,31 +1420,31 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Sets the {@link #setStartAnchor(IFXAnchor) start anchor} of this
-	 * {@link FXConnection} to an {@link FXStaticAnchor} yielding the given
+	 * Sets the {@link #setStartAnchor(IAnchor) start anchor} of this
+	 * {@link Connection} to an {@link StaticAnchor} yielding the given
 	 * {@link Point}.
 	 *
 	 * @param startPointInLocal
-	 *            The new start {@link Point} for this {@link FXConnection}.
+	 *            The new start {@link Point} for this {@link Connection}.
 	 */
 	public void setStartPoint(Point startPointInLocal) {
 		if (startPointInLocal == null) {
 			startPointInLocal = new Point();
 		}
-		IFXAnchor anchor = new FXStaticAnchor(this, startPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
 		setStartAnchor(anchor);
 	}
 
 	/**
 	 * Sets the way anchor for the given way anchor index to the given
-	 * {@link IFXAnchor}.
+	 * {@link IAnchor}.
 	 *
 	 * @param index
 	 *            The way anchor index of the way anchor to replace.
 	 * @param anchor
-	 *            The new way {@link IFXAnchor} for that index.
+	 *            The new way {@link IAnchor} for that index.
 	 */
-	public void setWayAnchor(int index, IFXAnchor anchor) {
+	public void setWayAnchor(int index, IAnchor anchor) {
 		if (index < 0 || index >= wayAnchorKeys.size()) {
 			throw new IllegalArgumentException("index out of range.");
 		}
@@ -1453,7 +1453,7 @@ public class FXConnection extends Group {
 		}
 
 		AnchorKey anchorKey = getWayAnchorKey(index);
-		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
 				removeAnchor(anchorKey, oldAnchor);
@@ -1463,13 +1463,13 @@ public class FXConnection extends Group {
 	}
 
 	/**
-	 * Replaces all way anchors of this {@link FXConnection} with the given
-	 * {@link List} of {@link IFXAnchor}s.
+	 * Replaces all way anchors of this {@link Connection} with the given
+	 * {@link List} of {@link IAnchor}s.
 	 *
 	 * @param anchors
-	 *            The new way {@link IFXAnchor}s for this {@link FXConnection}.
+	 *            The new way {@link IAnchor}s for this {@link Connection}.
 	 */
-	public void setWayAnchors(List<IFXAnchor> anchors) {
+	public void setWayAnchors(List<IAnchor> anchors) {
 		int wayPointsSize = getWayAnchorsSize();
 		// IMPORTANT: We have to do the removal of way anchors before
 		// changing/adding anchors.
@@ -1486,7 +1486,7 @@ public class FXConnection extends Group {
 
 	/**
 	 * Sets the way anchor for the given way anchor index to an
-	 * {@link FXStaticAnchor} which yields the given {@link Point}.
+	 * {@link StaticAnchor} which yields the given {@link Point}.
 	 *
 	 * @param index
 	 *            The way anchor index of the way anchor to replace.
@@ -1497,16 +1497,16 @@ public class FXConnection extends Group {
 		if (wayPointInLocal == null) {
 			wayPointInLocal = new Point();
 		}
-		IFXAnchor anchor = new FXStaticAnchor(this, wayPointInLocal);
+		IAnchor anchor = new StaticAnchor(this, wayPointInLocal);
 		setWayAnchor(index, anchor);
 	}
 
 	/**
-	 * Replaces all way anchors of this {@link FXConnection} with
-	 * {@link FXStaticAnchor}s yielding the given {@link Point}s.
+	 * Replaces all way anchors of this {@link Connection} with
+	 * {@link StaticAnchor}s yielding the given {@link Point}s.
 	 *
 	 * @param wayPoints
-	 *            The new way {@link Point}s for this {@link FXConnection}.
+	 *            The new way {@link Point}s for this {@link Connection}.
 	 */
 	public void setWayPoints(List<Point> wayPoints) {
 		int waySize = wayAnchorKeys.size();

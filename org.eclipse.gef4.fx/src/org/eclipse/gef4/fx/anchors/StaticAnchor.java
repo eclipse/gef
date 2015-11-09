@@ -17,22 +17,22 @@ import org.eclipse.gef4.geometry.planar.Point;
 import javafx.scene.Node;
 
 /**
- * An {@link FXStaticAnchor} provides a position for each {@link AnchorKey},
+ * An {@link StaticAnchor} provides a position for each {@link AnchorKey},
  * based on a reference position relative to the anchorage {@link Node}, to
- * which the {@link FXStaticAnchor} is bound, or based on a (global) static
- * reference position in case the {@link FXStaticAnchor} is unbound.
+ * which the {@link StaticAnchor} is bound, or based on a (global) static
+ * reference position in case the {@link StaticAnchor} is unbound.
  *
  * @author mwienand
  * @author anyssen
  */
-public class FXStaticAnchor extends AbstractFXAnchor {
+public class StaticAnchor extends AbstractAnchor {
 
 	// TODO: expose reference position as a property, and make sure positions
 	// are re-computed when anchorage or reference position changes.
 	private Point referencePosition;
 
 	/**
-	 * Creates an {@link FXStaticAnchor} that is bound to the provided
+	 * Creates an {@link StaticAnchor} that is bound to the provided
 	 * anchorage. It will used the passed in reference position (in the local
 	 * coordinate system of the anchorage {@link Node}) to compute positions
 	 * (see {@link #positionProperty()}) for all attached {@link AnchorKey}s (in
@@ -44,21 +44,21 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	 * be updated.
 	 *
 	 * @param anchorage
-	 *            The anchorage {@link Node} to bind this {@link FXStaticAnchor}
+	 *            The anchorage {@link Node} to bind this {@link StaticAnchor}
 	 *            to.
 	 * @param referencePositionInAnchorageLocal
 	 *            The position within the local coordinate space of the
 	 *            anchorage {@link Node}, which is used to compute the position
 	 *            (in scene coordinates) for all attached {@link AnchorKey}s.
 	 */
-	public FXStaticAnchor(Node anchorage,
+	public StaticAnchor(Node anchorage,
 			Point referencePositionInAnchorageLocal) {
 		super(anchorage);
 		this.referencePosition = referencePositionInAnchorageLocal;
 	}
 
 	/**
-	 * Creates an {@link FXStaticAnchor} that is not bound to an anchorage
+	 * Creates an {@link StaticAnchor} that is not bound to an anchorage
 	 * {@link Node} and will always provide the passed in position (in scene
 	 * coordinates) for all attached {@link AnchorKey}s (i.e. anchored
 	 * {@link Node}s).
@@ -67,7 +67,7 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	 *            The position in scene coordinates to be provided for all
 	 *            attached {@link AnchorKey}s.
 	 */
-	public FXStaticAnchor(Point referencePositionInScene) {
+	public StaticAnchor(Point referencePositionInScene) {
 		super(null);
 		this.referencePosition = referencePositionInScene;
 	}
@@ -88,7 +88,7 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 
 	@Override
 	public String toString() {
-		return "FXStaticAnchor[referencePosition = " + referencePosition + "]";
+		return "StaticAnchor[referencePosition = " + referencePosition + "]";
 	}
 
 }

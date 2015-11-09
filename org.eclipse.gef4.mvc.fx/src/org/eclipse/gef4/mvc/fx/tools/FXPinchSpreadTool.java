@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.gestures.AbstractFXPinchSpreadGesture;
+import org.eclipse.gef4.fx.gestures.AbstractPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnPinchSpreadPolicy;
@@ -58,7 +58,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_PINCH_SPREAD_POLICY_KEY
 	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
 
-	private final Map<IViewer<Node>, AbstractFXPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractFXPinchSpreadGesture>();
+	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractPinchSpreadGesture>();
 
 	/**
 	 * Returns a {@link Set} containing all
@@ -136,7 +136,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			AbstractFXPinchSpreadGesture gesture = new AbstractFXPinchSpreadGesture() {
+			AbstractPinchSpreadGesture gesture = new AbstractPinchSpreadGesture() {
 				@Override
 				protected void zoom(ZoomEvent e) {
 					// the start event might get lost, so we should open a
@@ -185,7 +185,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (AbstractFXPinchSpreadGesture gesture : gestures.values()) {
+		for (AbstractPinchSpreadGesture gesture : gestures.values()) {
 			gesture.setScene(null);
 		}
 		super.unregisterListeners();
