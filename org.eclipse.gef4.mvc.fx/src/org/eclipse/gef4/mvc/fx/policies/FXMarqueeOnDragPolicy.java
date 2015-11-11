@@ -192,7 +192,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		for (Node node : nodes) {
 			IVisualPart<Node, ? extends Node> part = getHost().getRoot()
 					.getViewer().getVisualPartMap().get(node);
-			if (part != null && part instanceof IContentPart) {
+			if (part != null && part instanceof IContentPart
+					&& !parts.contains(part)) {
 				parts.add((IContentPart<Node, ? extends Node>) part);
 			}
 		}
@@ -243,7 +244,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	 * Updates the feedback rectangle.
 	 */
 	protected void updateFeedback() {
-		feedback.refreshVisual();
+		if (feedback != null) {
+			feedback.refreshVisual();
+		}
 	}
 
 }
