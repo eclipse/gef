@@ -56,6 +56,10 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 			onHoverChange(hover, null);
 		}
 
+		// remove any pending feedback and handles
+		removeFeedback(Collections.singletonList(getHost()));
+		removeHandles(Collections.singletonList(getHost()));
+
 		// unregister
 		hoverModel.removePropertyChangeListener(this);
 		super.deactivate();
