@@ -46,7 +46,10 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 	 *            The editor to register undo and redo action handlers for.
 	 */
 	protected void registerUndoRedoActions(final IEditorPart targetEditor) {
-		final UndoRedoActionGroup undoRedoActionGroup = targetEditor
+		// IMPORTANT: IAdaptable.getAdapter() has been 'generified' with Mars.
+		// However, to maintain backwards compatibility with Luna, we need to
+		// explicitly cast here.
+		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) targetEditor
 				.getAdapter(UndoRedoActionGroup.class);
 		if (undoRedoActionGroup != null) {
 			undoRedoActionGroup.fillActionBars(getActionBars());
