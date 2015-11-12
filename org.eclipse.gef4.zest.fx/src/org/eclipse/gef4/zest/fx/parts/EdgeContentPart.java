@@ -154,21 +154,9 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
-	protected void doAddContentChild(Object contentChild, int index) {
-	}
-
-	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-	}
-
-	@Override
 	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(edgeAttributesPropertyChangeListener);
 		super.doDeactivate();
-	}
-
-	@Override
-	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
 	}
 
 	@Override
@@ -224,10 +212,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		if (router != null) {
 			visual.setRouter(router);
 		}
-	}
-
-	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
 	}
 
 	@Override

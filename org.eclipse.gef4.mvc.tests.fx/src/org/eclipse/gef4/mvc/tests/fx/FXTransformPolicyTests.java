@@ -58,25 +58,9 @@ public class FXTransformPolicyTests {
 		}
 
 		@Override
-		protected void doAddContentChild(Object contentChild, int index) {
-		}
-
-		@Override
-		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
-		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
 		protected void doRefreshVisual(Rectangle visual) {
 			visual.setX(getContent().x);
 			visual.setY(getContent().y);
-		}
-
-		@Override
-		protected void doRemoveContentChild(Object contentChild, int index) {
 		}
 
 		@Override

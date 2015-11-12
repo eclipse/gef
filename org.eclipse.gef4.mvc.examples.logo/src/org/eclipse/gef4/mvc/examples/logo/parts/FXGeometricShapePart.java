@@ -117,6 +117,10 @@ public class FXGeometricShapePart
 	}
 
 	@Override
+	protected void doReorderContentChild(Object contentChild, int newIndex) {
+	}
+
+	@Override
 	public FXGeometricShape getContent() {
 		return (FXGeometricShape) super.getContent();
 	}

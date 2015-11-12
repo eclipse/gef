@@ -72,28 +72,12 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		protected void doAddContentChild(Object contentChild, int index) {
-		}
-
-		@Override
-		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
-		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
 		protected void doRefreshVisual(Rectangle visual) {
 			org.eclipse.gef4.geometry.planar.Rectangle rect = (org.eclipse.gef4.geometry.planar.Rectangle) getContent();
 			visual.setX(rect.getX());
 			visual.setY(rect.getY());
 			visual.setWidth(rect.getWidth());
 			visual.setHeight(rect.getHeight());
-		}
-
-		@Override
-		protected void doRemoveContentChild(Object contentChild, int index) {
 		}
 
 		@Override
@@ -158,26 +142,10 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		protected void doAddContentChild(Object contentChild, int index) {
-		}
-
-		@Override
-		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
-		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
 		protected void doRefreshVisual(Connection visual) {
 			if (visual.getWayPoints().size() == 0) {
 				visual.addWayPoint(0, ((ConnectionContent) getContent()).getWayPoint());
 			}
-		}
-
-		@Override
-		protected void doRemoveContentChild(Object contentChild, int index) {
 		}
 
 		@Override

@@ -91,18 +91,6 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	}
 
 	@Override
-	protected void doAddContentChild(Object contentChild, int index) {
-	}
-
-	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-	}
-
-	@Override
-	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-	}
-
-	@Override
 	protected void doRefreshVisual(Text visual) {
 		Edge edge = getContent().getKey();
 		Map<String, Object> attrs = edge.getAttrs();
@@ -129,10 +117,6 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		// compute label position
 		visual.setTranslateX(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2);
 		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight());
-	}
-
-	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
 	}
 
 	@SuppressWarnings("unchecked")

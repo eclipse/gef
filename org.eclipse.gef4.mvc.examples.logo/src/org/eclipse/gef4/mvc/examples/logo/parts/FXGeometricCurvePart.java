@@ -250,11 +250,6 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	protected void doAddContentChild(Object contentChild, int index) {
-		// nothing to do
-	}
-
-	@Override
 	public void doAttachToContentAnchorage(Object contentAnchorage,
 			String role) {
 		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
@@ -385,11 +380,6 @@ public class FXGeometricCurvePart
 
 		// apply effect
 		super.doRefreshVisual(visual);
-	}
-
-	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
-		// nothing to do
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(

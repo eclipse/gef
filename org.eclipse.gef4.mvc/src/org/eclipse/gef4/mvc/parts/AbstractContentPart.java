@@ -22,6 +22,7 @@ import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
 /**
@@ -47,10 +48,8 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		List<Object> oldContentChildren = new ArrayList<Object>(
 				getContentChildren());
 		doAddContentChild(contentChild, index);
-		List<Object> newContentChildren = new ArrayList<Object>(
-				getContentChildren());
 		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
-				newContentChildren);
+				Collections.unmodifiableList(getContentChildren()));
 	}
 
 	@Override
@@ -59,10 +58,9 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
 				.create(getContentAnchorages());
 		doAttachToContentAnchorage(contentAnchorage, role);
-		SetMultimap<Object, String> newContentAnchorages = HashMultimap
-				.create(getContentAnchorages());
 		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
-				oldContentAnchorages, newContentAnchorages);
+				oldContentAnchorages,
+				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
 	}
 
 	@Override
@@ -71,10 +69,9 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
 				.create(getContentAnchorages());
 		doDetachFromContentAnchorage(contentAnchorage, role);
-		SetMultimap<Object, String> newContentAnchorages = HashMultimap
-				.create(getContentAnchorages());
 		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
-				oldContentAnchorages, newContentAnchorages);
+				oldContentAnchorages,
+				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
 	}
 
 	/**
@@ -88,7 +85,11 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 * @param index
 	 *            The index of the <i>contentChild</i> that is removed.
 	 */
-	protected abstract void doAddContentChild(Object contentChild, int index);
+	protected void doAddContentChild(Object contentChild, int index) {
+		throw new UnsupportedOperationException(
+				"Need to implement doAddContentChild(Object, int) for "
+						+ this.getClass());
+	}
 
 	/**
 	 * Attaches this part's content to the given <i>contentAnchorage</i> under
@@ -101,8 +102,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 * @param role
 	 *            The role under which the attachment is to be established.
 	 */
-	protected abstract void doAttachToContentAnchorage(Object contentAnchorage,
-			String role);
+	protected void doAttachToContentAnchorage(Object contentAnchorage,
+			String role) {
+		throw new UnsupportedOperationException(
+				"Need to implement doAttachContentChild(Object, String) for "
+						+ this.getClass());
+	}
 
 	/**
 	 * Detaches this part's content from the given <i>contentAnchorage</i> under
@@ -115,8 +120,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 * @param role
 	 *            The role under which the attachment is established.
 	 */
-	protected abstract void doDetachFromContentAnchorage(
-			Object contentAnchorage, String role);
+	protected void doDetachFromContentAnchorage(Object contentAnchorage,
+			String role) {
+		throw new UnsupportedOperationException(
+				"Need to implement doDetachContentChild(Object, String) for "
+						+ this.getClass());
+	}
 
 	/**
 	 * Removes the given <i>contentChild</i> from this part's content children,
@@ -129,8 +138,25 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 * @param index
 	 *            The index of the <i>contentChild</i> that is removed.
 	 */
-	protected abstract void doRemoveContentChild(Object contentChild,
-			int index);
+	protected void doRemoveContentChild(Object contentChild, int index) {
+		throw new UnsupportedOperationException(
+				"Need to implement doRemoveContentChild(Object, int) for "
+						+ this.getClass());
+	}
+
+	/**
+	 * Rearranges the given <i>contentChild</i> to the new index position.
+	 *
+	 * @param contentChild
+	 *            The {@link Object} which is to be reordered.
+	 * @param newIndex
+	 *            The index to which the content child is to be reordered.
+	 */
+	protected void doReorderContentChild(Object contentChild, int newIndex) {
+		throw new UnsupportedOperationException(
+				"Need to implement doReorderContentChild(Object, int) for "
+						+ this.getClass());
+	}
 
 	/**
 	 * @see IContentPart#getContent()
@@ -169,10 +195,17 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		List<Object> oldContentChildren = new ArrayList<Object>(
 				getContentChildren());
 		doRemoveContentChild(contentChild, index);
-		List<Object> newContentChildren = new ArrayList<Object>(
-				getContentChildren());
 		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
-				newContentChildren);
+				Collections.unmodifiableList(getContentChildren()));
+	}
+
+	@Override
+	public void reorderContentChild(Object contentChild, int newIndex) {
+		List<Object> oldContentChildren = new ArrayList<Object>(
+				getContentChildren());
+		doReorderContentChild(contentChild, newIndex);
+		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
+				Collections.unmodifiableList(getContentChildren()));
 	}
 
 	/**

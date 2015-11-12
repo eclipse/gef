@@ -71,24 +71,12 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage,
-			String role) {
-		// do nothing
-	}
-
-	@Override
-	protected void doDetachFromContentAnchorage(Object contentAnchorage,
-			String role) {
-		// do nothing
-	}
-
-	@Override
 	public void doRefreshVisual(Group visual) {
 		// nothing to do
 	}
 
 	@Override
-	public void doRemoveContentChild(Object contentChild, int index) {
+	protected void doRemoveContentChild(Object contentChild, int index) {
 		getContent().getShapeVisuals().remove(contentChild);
 	}
 

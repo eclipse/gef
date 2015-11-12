@@ -344,27 +344,9 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void doAddContentChild(Object contentChild, int index) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(nodeAttributesPropertyChangeListener);
 		super.doDeactivate();
-	}
-
-	@Override
-	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -412,12 +394,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON));
 		refreshNestedGraphArea(visual, isNesting());
 		refreshTooltip(visual, attrs.get(ZestProperties.NODE_TOOLTIP));
-	}
-
-	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -117,21 +117,9 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void doAddContentChild(Object contentChild, int index) {
-	}
-
-	@Override
-	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-	}
-
-	@Override
 	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(graphPropertyChangeListener);
 		super.doDeactivate();
-	}
-
-	@Override
-	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
 	}
 
 	@Override
@@ -139,10 +127,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		// set layout algorithm from Graph on the context
 		setGraphLayoutAlgorithm();
 		// TODO: setGraphStyleSheet();
-	}
-
-	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
 	}
 
 	@Override

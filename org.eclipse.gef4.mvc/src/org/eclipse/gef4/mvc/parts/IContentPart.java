@@ -150,6 +150,17 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	public void removeContentChild(Object contentChild, int index);
 
 	/**
+	 * Rearranges the given <i>contentChild</i> to the new index position. Fires
+	 * {@value #CONTENT_CHILDREN_PROPERTY} notifications.
+	 *
+	 * @param contentChild
+	 *            The {@link Object} which is to be reordered.
+	 * @param newIndex
+	 *            The index to which the content child is to be reordered.
+	 */
+	public void reorderContentChild(Object contentChild, int newIndex);
+
+	/**
 	 * Sets this part's content to the given {@link Object value}. Fires
 	 * {@link #CONTENT_PROPERTY} notifications.
 	 *

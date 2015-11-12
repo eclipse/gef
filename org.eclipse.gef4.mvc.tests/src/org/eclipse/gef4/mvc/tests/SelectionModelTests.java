@@ -44,23 +44,7 @@ public class SelectionModelTests {
 		}
 
 		@Override
-		protected void doAddContentChild(Object contentChild, int index) {
-		}
-
-		@Override
-		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
-		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
-		}
-
-		@Override
 		protected void doRefreshVisual(Object visual) {
-		}
-
-		@Override
-		protected void doRemoveContentChild(Object contentChild, int index) {
 		}
 
 		@Override
