@@ -50,7 +50,6 @@ public class FXViewer extends AbstractViewer<Node> {
 	 * @return The {@link InfiniteCanvas} that is managed by this
 	 *         {@link FXViewer} .
 	 */
-	// TODO: if (scrollPane == null) createVisuals();
 	public InfiniteCanvas getCanvas() {
 		if (infiniteCanvas == null) {
 			IRootPart<Node, ? extends Node> rootPart = getRootPart();
@@ -83,7 +82,7 @@ public class FXViewer extends AbstractViewer<Node> {
 
 	@Override
 	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
-		infiniteCanvas.reveal(visualPart.getVisual());
+		getCanvas().reveal(visualPart.getVisual());
 	}
 
 }
