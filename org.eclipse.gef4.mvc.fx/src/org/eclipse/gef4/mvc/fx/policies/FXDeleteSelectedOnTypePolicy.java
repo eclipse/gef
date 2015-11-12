@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -68,9 +69,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 
 		// get current selection
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<IContentPart<Node, ? extends Node>> selected = viewer
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelection();
+		List<IContentPart<Node, ? extends Node>> selected = new ArrayList<IContentPart<Node, ? extends Node>>(
+				viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class)
+						.getSelection());
 
 		// if no parts are selected, we do not delete anything
 		if (selected.isEmpty()) {
