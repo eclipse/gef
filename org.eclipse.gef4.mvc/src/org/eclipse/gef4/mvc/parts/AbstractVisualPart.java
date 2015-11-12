@@ -659,10 +659,13 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 */
 	@Override
 	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index) {
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+				getChildren());
 		removeChildVisual(child, children.indexOf(child));
 		removeChildWithoutNotify(child);
 		addChildWithoutNotify(child, index);
 		addChildVisual(child, index);
+		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
 	}
 
 	@Override

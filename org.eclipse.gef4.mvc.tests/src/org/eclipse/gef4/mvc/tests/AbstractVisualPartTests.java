@@ -105,4 +105,35 @@ public class AbstractVisualPartTests {
 		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1 }), events.get(1).getOldValue());
 		Assert.assertEquals(Collections.emptyList(), events.get(1).getNewValue());
 	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testReorderChild() {
+		final List<PropertyChangeEvent> events = new ArrayList<PropertyChangeEvent>();
+		AbstractVisualPartStub parent = new AbstractVisualPartStub();
+		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
+		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
+		AbstractVisualPartStub child3 = new AbstractVisualPartStub();
+		parent.addChild(child1);
+		parent.addChild(child2);
+		parent.addChild(child3);
+		parent.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				events.add(evt);
+			}
+		});
+		Assert.assertEquals(3, parent.getChildren().size());
+		Assert.assertEquals(0, events.size());
+		// check that second child is properly removed and a valid property
+		// change event is fired.
+		parent.reorderChild(child2, 2);
+		Assert.assertEquals(3, parent.getChildren().size());
+		Assert.assertEquals(1, events.size());
+		Assert.assertEquals(IVisualPart.CHILDREN_PROPERTY, events.get(0).getPropertyName());
+		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1, child2, child3 }),
+				events.get(0).getOldValue());
+		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1, child3, child2 }),
+				events.get(0).getNewValue());
+	}
 }
