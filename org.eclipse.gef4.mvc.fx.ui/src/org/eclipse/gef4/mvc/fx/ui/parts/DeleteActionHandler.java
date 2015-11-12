@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -97,8 +98,8 @@ public class DeleteActionHandler extends Action {
 					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");
 		}
 		deletionPolicy.init();
-		for (IContentPart<Node, ? extends Node> s : getSelectionModel()
-				.getSelection()) {
+		for (IContentPart<Node, ? extends Node> s : new ArrayList<IContentPart<Node, ? extends Node>>(
+				getSelectionModel().getSelection())) {
 			deletionPolicy.delete(s);
 		}
 		IUndoableOperation deleteOperation = deletionPolicy.commit();
