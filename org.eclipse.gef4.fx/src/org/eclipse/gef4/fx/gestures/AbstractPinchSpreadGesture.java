@@ -32,7 +32,7 @@ public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 		public void handle(ZoomEvent event) {
 			/*
 			 * Sometimes a zoom gesture will fire multiple ZOOM_STARTED events.
-			 * These should not be reported since zooming is still in progress.
+			 * In this case, we omit them.
 			 */
 			if (!inZoom) {
 				inZoom = true;
@@ -44,6 +44,14 @@ public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 	private EventHandler<? super ZoomEvent> zoomHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
+			if (!inZoom) {
+				/*
+				 * Sometimes a zoom gesture will not fire a ZOOM_STARTED event.
+				 * In this case, we emulate one.
+				 */
+				inZoom = true;
+				zoomStarted(event);
+			}
 			zoom(event);
 		}
 	};
