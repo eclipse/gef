@@ -54,6 +54,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -228,12 +230,33 @@ public class ContentSynchronizationTests {
 		}
 
 		@Override
+		protected void doAddContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
+		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
 		protected void doRefreshVisual(Object visual) {
+		}
+
+		@Override
+		protected void doRemoveContentChild(Object contentChild, int index) {
 		}
 
 		@Override
 		public Tree getContent() {
 			return (Tree) super.getContent();
+		}
+
+		@Override
+		public SetMultimap<? extends Object, String> getContentAnchorages() {
+			return HashMultimap.create();
 		}
 
 		@Override
@@ -262,6 +285,11 @@ public class ContentSynchronizationTests {
 		}
 	}
 
+	private static Injector injector;
+
+	private static Domain domain;
+	private static Viewer viewer;
+
 	@BeforeClass
 	public static void setUpMVC() {
 		injector = Guice.createInjector(new Module());
@@ -269,10 +297,6 @@ public class ContentSynchronizationTests {
 		injector.injectMembers(domain);
 		viewer = domain.getAdapter(IViewer.class);
 	}
-
-	private static Injector injector;
-	private static Domain domain;
-	private static Viewer viewer;
 
 	@Before
 	public void activate() {

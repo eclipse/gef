@@ -184,6 +184,16 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			synchronizeContentAnchorages(
 					((IContentPart<VR, ? extends VR>) getHost())
 							.getContentAnchorages());
+		} else if (IContentPart.CONTENT_CHILDREN_PROPERTY
+				.equals(event.getPropertyName())) {
+			synchronizeContentChildren(
+					((IContentPart<VR, ? extends VR>) getHost())
+							.getContentChildren());
+		} else if (IContentPart.CONTENT_ANCHORAGES_PROPERTY
+				.equals(event.getPropertyName())) {
+			synchronizeContentAnchorages(
+					((IContentPart<VR, ? extends VR>) getHost())
+							.getContentAnchorages());
 		}
 	}
 
@@ -202,6 +212,10 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	 */
 	public void synchronizeContentAnchorages(
 			SetMultimap<? extends Object, String> contentAnchorages) {
+		if (contentAnchorages == null) {
+			throw new IllegalArgumentException(
+					"contentAnchorages may not be null");
+		}
 		SetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = getHost()
 				.getAnchorages();
 
@@ -262,6 +276,10 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentChildren(
 			final List<? extends Object> contentChildren) {
+		if (contentChildren == null) {
+			throw new IllegalArgumentException(
+					"contentChildren may not be null");
+		}
 		// only synchronize IContentPart children
 		List<IContentPart<VR, ? extends VR>> childContentParts = PartUtils
 				.filterParts(getHost().getChildren(), IContentPart.class);

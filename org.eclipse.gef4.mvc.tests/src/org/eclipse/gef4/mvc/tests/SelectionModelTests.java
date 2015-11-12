@@ -25,6 +25,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 /**
  * Tests proper behavior of the {@link SelectionModel}.
  *
@@ -41,7 +44,33 @@ public class SelectionModelTests {
 		}
 
 		@Override
+		protected void doAddContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
+		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
 		protected void doRefreshVisual(Object visual) {
+		}
+
+		@Override
+		protected void doRemoveContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		public SetMultimap<? extends Object, String> getContentAnchorages() {
+			return HashMultimap.create();
+		}
+
+		@Override
+		public List<? extends Object> getContentChildren() {
+			return Collections.emptyList();
 		}
 	}
 

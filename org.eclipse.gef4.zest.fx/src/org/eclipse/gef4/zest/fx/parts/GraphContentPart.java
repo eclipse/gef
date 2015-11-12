@@ -17,21 +17,21 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
 import org.eclipse.gef4.mvc.models.HoverModel;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -64,6 +64,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public static final String SYNC_COMPLETE_PROPERTY = "synchronizationComplete";
 
 	private PropertyChangeListener graphPropertyChangeListener = new PropertyChangeListener() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (Graph.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
@@ -73,20 +74,9 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 					|| Graph.EDGES_PROPERTY.equals(evt.getPropertyName())) {
 				// construct new layout context
 				getAdapter(GraphLayoutContext.class).setGraph(getContent());
-				// start content synchronization
-				SynchronizeContentChildrenOperation<Node> syncChildrenOp = new SynchronizeContentChildrenOperation<Node>(
-						"SynchronizeContentChildren", GraphContentPart.this);
-				SynchronizeContentAnchoragesOperation<Node> syncAnchoragesOp = new SynchronizeContentAnchoragesOperation<Node>(
-						"SynchronizeContentAnchorage", GraphContentPart.this);
-				ForwardUndoCompositeOperation syncOp = new ForwardUndoCompositeOperation("SynchronizeContent");
-				syncOp.add(syncChildrenOp);
-				syncOp.add(syncAnchoragesOp);
-				try {
-					syncOp.execute(null, null);
-					pcs.firePropertyChange(SYNC_COMPLETE_PROPERTY, false, true);
-				} catch (ExecutionException e) {
-					throw new IllegalStateException("Cannot synchronize with contents.", e);
-				}
+				getAdapter(ContentBehavior.class).synchronizeContentChildren(getContentChildren());
+
+				pcs.firePropertyChange(SYNC_COMPLETE_PROPERTY, false, true);
 			}
 		}
 	};
@@ -127,9 +117,21 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected void doAddContentChild(Object contentChild, int index) {
+	}
+
+	@Override
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+	}
+
+	@Override
 	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(graphPropertyChangeListener);
 		super.doDeactivate();
+	}
+
+	@Override
+	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
 	}
 
 	@Override
@@ -140,8 +142,17 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected void doRemoveContentChild(Object contentChild, int index) {
+	}
+
+	@Override
 	public Graph getContent() {
 		return (Graph) super.getContent();
+	}
+
+	@Override
+	public SetMultimap<? extends Object, String> getContentAnchorages() {
+		return HashMultimap.create();
 	}
 
 	@Override

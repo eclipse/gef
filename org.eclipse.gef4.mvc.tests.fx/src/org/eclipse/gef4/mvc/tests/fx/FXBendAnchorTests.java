@@ -20,6 +20,7 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.shape.Rectangle;
 
 public class FXBendAnchorTests {
@@ -72,12 +72,38 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
+		protected void doAddContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
+		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
 		protected void doRefreshVisual(Rectangle visual) {
 			org.eclipse.gef4.geometry.planar.Rectangle rect = (org.eclipse.gef4.geometry.planar.Rectangle) getContent();
 			visual.setX(rect.getX());
 			visual.setY(rect.getY());
 			visual.setWidth(rect.getWidth());
 			visual.setHeight(rect.getHeight());
+		}
+
+		@Override
+		protected void doRemoveContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		public SetMultimap<? extends Object, String> getContentAnchorages() {
+			return HashMultimap.create();
+		}
+
+		@Override
+		public List<? extends Object> getContentChildren() {
+			return Collections.emptyList();
 		}
 	}
 
@@ -132,10 +158,26 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
+		protected void doAddContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
+		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
 		protected void doRefreshVisual(Connection visual) {
 			if (visual.getWayPoints().size() == 0) {
 				visual.addWayPoint(0, ((ConnectionContent) getContent()).getWayPoint());
 			}
+		}
+
+		@Override
+		protected void doRemoveContentChild(Object contentChild, int index) {
 		}
 
 		@Override
@@ -145,6 +187,11 @@ public class FXBendAnchorTests {
 			contentAnchorages.put(content.anchorageStart, START_ROLE);
 			contentAnchorages.put(content.anchorageEnd, END_ROLE);
 			return contentAnchorages;
+		}
+
+		@Override
+		public List<? extends Object> getContentChildren() {
+			return Collections.emptyList();
 		}
 	}
 
@@ -246,7 +293,7 @@ public class FXBendAnchorTests {
 		injector.injectMembers(this);
 
 		final FXViewer viewer = domain.<FXViewer> getAdapter(IViewer.class);
-		final Scene scene = ctx.createScene(viewer.getCanvas(), 400, 200);
+		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
 		ctx.runAndWait(new Runnable() {

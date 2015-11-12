@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -37,16 +40,6 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public void attachToContentAnchorage(Object contentAnchorage, String role) {
-		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
-			throw new IllegalArgumentException(
-					"Cannot attach to content anchorage: wrong type!");
-		}
-		getContent().getAnchorages()
-				.add((AbstractFXGeometricElement<?>) contentAnchorage);
-	}
-
-	@Override
 	protected GeometryNode<IShape> createVisual() {
 		return new GeometryNode<IShape>();
 	}
@@ -58,7 +51,23 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public void detachFromContentAnchorage(Object contentAnchorage,
+	protected void doAddContentChild(Object contentChild, int index) {
+		// nothing to do
+	}
+
+	@Override
+	public void doAttachToContentAnchorage(Object contentAnchorage,
+			String role) {
+		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
+			throw new IllegalArgumentException(
+					"Cannot attach to content anchorage: wrong type!");
+		}
+		getContent().getAnchorages()
+				.add((AbstractFXGeometricElement<?>) contentAnchorage);
+	}
+
+	@Override
+	public void doDetachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		getContent().getAnchorages().remove(contentAnchorage);
 	}
@@ -103,6 +112,11 @@ public class FXGeometricShapePart
 	}
 
 	@Override
+	protected void doRemoveContentChild(Object contentChild, int index) {
+		// nothing to do
+	}
+
+	@Override
 	public FXGeometricShape getContent() {
 		return (FXGeometricShape) super.getContent();
 	}
@@ -115,6 +129,11 @@ public class FXGeometricShapePart
 			anchorages.put(anchorage, "link");
 		}
 		return anchorages;
+	}
+
+	@Override
+	public List<? extends Object> getContentChildren() {
+		return Collections.emptyList();
 	}
 
 	@Override

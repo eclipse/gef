@@ -25,6 +25,9 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -341,9 +344,27 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected void doAddContentChild(Object contentChild, int index) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(nodeAttributesPropertyChangeListener);
 		super.doDeactivate();
+	}
+
+	@Override
+	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -394,8 +415,19 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected void doRemoveContentChild(Object contentChild, int index) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public org.eclipse.gef4.graph.Node getContent() {
 		return (org.eclipse.gef4.graph.Node) super.getContent();
+	}
+
+	@Override
+	public SetMultimap<? extends Object, String> getContentAnchorages() {
+		return HashMultimap.create();
 	}
 
 	@Override

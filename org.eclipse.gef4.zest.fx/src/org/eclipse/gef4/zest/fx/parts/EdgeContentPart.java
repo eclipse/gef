@@ -14,15 +14,17 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -53,8 +55,9 @@ import javafx.scene.shape.Polyline;
 public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 
 	/**
-	 * The {@link ArrowHead} is an {@link IConnectionDecoration} implementation that can
-	 * be used to displays an arrow at either side of an {@link Connection}.
+	 * The {@link ArrowHead} is an {@link IConnectionDecoration} implementation
+	 * that can be used to displays an arrow at either side of an
+	 * {@link Connection}.
 	 */
 	public static class ArrowHead extends Polyline implements IConnectionDecoration {
 		/**
@@ -151,9 +154,21 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
+	protected void doAddContentChild(Object contentChild, int index) {
+	}
+
+	@Override
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+	}
+
+	@Override
 	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(edgeAttributesPropertyChangeListener);
 		super.doDeactivate();
+	}
+
+	@Override
+	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
 	}
 
 	@Override
@@ -212,6 +227,10 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
+	protected void doRemoveContentChild(Object contentChild, int index) {
+	}
+
+	@Override
 	public Edge getContent() {
 		return (Edge) super.getContent();
 	}
@@ -222,6 +241,11 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		anchorages.put(getContent().getSource(), "START");
 		anchorages.put(getContent().getTarget(), "END");
 		return anchorages;
+	}
+
+	@Override
+	public List<? extends Object> getContentChildren() {
+		return Collections.emptyList();
 	}
 
 	/**

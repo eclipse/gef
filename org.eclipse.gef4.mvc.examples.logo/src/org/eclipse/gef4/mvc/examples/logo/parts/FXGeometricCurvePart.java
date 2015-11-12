@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.examples.logo.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +24,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.PolyBezierConnectionRouter;
 import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
+import org.eclipse.gef4.fx.nodes.PolyBezierConnectionRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -50,7 +51,8 @@ import javafx.scene.shape.Shape;
 public class FXGeometricCurvePart
 		extends AbstractFXGeometricElementPart<Connection> {
 
-	public static class ArrowHead extends Polyline implements IConnectionDecoration {
+	public static class ArrowHead extends Polyline
+			implements IConnectionDecoration {
 		public ArrowHead() {
 			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
 					0.0);
@@ -111,7 +113,8 @@ public class FXGeometricCurvePart
 		}
 	}
 
-	public static class CircleHead extends Circle implements IConnectionDecoration {
+	public static class CircleHead extends Circle
+			implements IConnectionDecoration {
 		public CircleHead() {
 			super(5);
 		}
@@ -152,20 +155,6 @@ public class FXGeometricCurvePart
 		} else {
 			throw new IllegalStateException(
 					"Cannot attach to anchor with role <" + role + ">.");
-		}
-	}
-
-	@Override
-	public void attachToContentAnchorage(Object contentAnchorage, String role) {
-		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
-			throw new IllegalArgumentException(
-					"Inappropriate content anchorage: wrong type.");
-		}
-		AbstractFXGeometricElement<?> geom = (AbstractFXGeometricElement<?>) contentAnchorage;
-		if ("START".equals(role)) {
-			getContent().getSourceAnchorages().add(geom);
-		} else if ("END".equals(role)) {
-			getContent().getTargetAnchorages().add(geom);
 		}
 	}
 
@@ -261,7 +250,27 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	public void detachFromContentAnchorage(Object contentAnchorage,
+	protected void doAddContentChild(Object contentChild, int index) {
+		// nothing to do
+	}
+
+	@Override
+	public void doAttachToContentAnchorage(Object contentAnchorage,
+			String role) {
+		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
+			throw new IllegalArgumentException(
+					"Inappropriate content anchorage: wrong type.");
+		}
+		AbstractFXGeometricElement<?> geom = (AbstractFXGeometricElement<?>) contentAnchorage;
+		if ("START".equals(role)) {
+			getContent().getSourceAnchorages().add(geom);
+		} else if ("END".equals(role)) {
+			getContent().getTargetAnchorages().add(geom);
+		}
+	}
+
+	@Override
+	public void doDetachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		if ("START".equals(role)) {
 			getContent().getSourceAnchorages().remove(contentAnchorage);
@@ -378,6 +387,11 @@ public class FXGeometricCurvePart
 		super.doRefreshVisual(visual);
 	}
 
+	@Override
+	protected void doRemoveContentChild(Object contentChild, int index) {
+		// nothing to do
+	}
+
 	protected AbstractFXGeometricElement<?> getAnchorageContent(
 			IAnchor anchor) {
 		Node anchorageNode = anchor.getAnchorage();
@@ -414,6 +428,11 @@ public class FXGeometricCurvePart
 			anchorages.put(dst, "END");
 		}
 		return anchorages;
+	}
+
+	@Override
+	public List<? extends Object> getContentChildren() {
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,26 +43,94 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	private Object content;
 
 	@Override
-	public void addContentChild(Object contentChild, int index) {
-		throw new UnsupportedOperationException(
-				"Need to implement addContentChild(Object, int) for "
-						+ this.getClass());
+	public final void addContentChild(Object contentChild, int index) {
+		List<Object> oldContentChildren = new ArrayList<Object>(
+				getContentChildren());
+		doAddContentChild(contentChild, index);
+		List<Object> newContentChildren = new ArrayList<Object>(
+				getContentChildren());
+		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
+				newContentChildren);
 	}
 
 	@Override
-	public void attachToContentAnchorage(Object contentAnchorage, String role) {
-		throw new UnsupportedOperationException(
-				"Need to implement attachToContentAnchorage(Object, String) for "
-						+ this.getClass());
-	}
-
-	@Override
-	public void detachFromContentAnchorage(Object contentAnchorage,
+	public final void attachToContentAnchorage(Object contentAnchorage,
 			String role) {
-		throw new UnsupportedOperationException(
-				"Need to implement detachFromContentAnchorage(Object, String) for "
-						+ this.getClass());
+		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
+				.create(getContentAnchorages());
+		doAttachToContentAnchorage(contentAnchorage, role);
+		SetMultimap<Object, String> newContentAnchorages = HashMultimap
+				.create(getContentAnchorages());
+		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
+				oldContentAnchorages, newContentAnchorages);
 	}
+
+	@Override
+	public final void detachFromContentAnchorage(Object contentAnchorage,
+			String role) {
+		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
+				.create(getContentAnchorages());
+		doDetachFromContentAnchorage(contentAnchorage, role);
+		SetMultimap<Object, String> newContentAnchorages = HashMultimap
+				.create(getContentAnchorages());
+		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
+				oldContentAnchorages, newContentAnchorages);
+	}
+
+	/**
+	 * Adds the given <i>contentChild</i> to this part's content children, so
+	 * that it will no longer be returned by subsequent calls to
+	 * {@link #getContentChildren()}.
+	 *
+	 * @param contentChild
+	 *            An {@link Object} which should be removed from this part's
+	 *            content children.
+	 * @param index
+	 *            The index of the <i>contentChild</i> that is removed.
+	 */
+	protected abstract void doAddContentChild(Object contentChild, int index);
+
+	/**
+	 * Attaches this part's content to the given <i>contentAnchorage</i> under
+	 * the specified <i>role</i>, so that it will be returned by subsequent
+	 * calls to {@link #getContentAnchorages()}.
+	 *
+	 * @param contentAnchorage
+	 *            An {@link Object} to which this part's content should be
+	 *            attached to.
+	 * @param role
+	 *            The role under which the attachment is to be established.
+	 */
+	protected abstract void doAttachToContentAnchorage(Object contentAnchorage,
+			String role);
+
+	/**
+	 * Detaches this part's content from the given <i>contentAnchorage</i> under
+	 * the specified <i>role</i>, so that it will no longer be returned by
+	 * subsequent calls to {@link #getContentAnchorages()}.
+	 *
+	 * @param contentAnchorage
+	 *            An {@link Object} from which this part's content should be
+	 *            detached from.
+	 * @param role
+	 *            The role under which the attachment is established.
+	 */
+	protected abstract void doDetachFromContentAnchorage(
+			Object contentAnchorage, String role);
+
+	/**
+	 * Removes the given <i>contentChild</i> from this part's content children,
+	 * so that it will no longer be returned by subsequent calls to
+	 * {@link #getContentChildren()}.
+	 *
+	 * @param contentChild
+	 *            An {@link Object} which should be removed from this part's
+	 *            content children.
+	 * @param index
+	 *            The index of the <i>contentChild</i> that is removed.
+	 */
+	protected abstract void doRemoveContentChild(Object contentChild,
+			int index);
 
 	/**
 	 * @see IContentPart#getContent()
@@ -69,16 +138,6 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	@Override
 	public Object getContent() {
 		return content;
-	}
-
-	@Override
-	public SetMultimap<? extends Object, String> getContentAnchorages() {
-		return HashMultimap.create();
-	}
-
-	@Override
-	public List<? extends Object> getContentChildren() {
-		return Collections.emptyList();
 	}
 
 	@Override
@@ -106,10 +165,14 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	}
 
 	@Override
-	public void removeContentChild(Object contentChild, int index) {
-		throw new UnsupportedOperationException(
-				"Need to implement removeContentChild(Object, int) for "
-						+ this.getClass());
+	public final void removeContentChild(Object contentChild, int index) {
+		List<Object> oldContentChildren = new ArrayList<Object>(
+				getContentChildren());
+		doRemoveContentChild(contentChild, index);
+		List<Object> newContentChildren = new ArrayList<Object>(
+				getContentChildren());
+		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
+				newContentChildren);
 	}
 
 	/**

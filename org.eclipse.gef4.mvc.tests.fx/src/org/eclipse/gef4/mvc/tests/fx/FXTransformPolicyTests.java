@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -35,6 +36,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -55,14 +58,40 @@ public class FXTransformPolicyTests {
 		}
 
 		@Override
+		protected void doAddContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
+		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
 		protected void doRefreshVisual(Rectangle visual) {
 			visual.setX(getContent().x);
 			visual.setY(getContent().y);
 		}
 
 		@Override
+		protected void doRemoveContentChild(Object contentChild, int index) {
+		}
+
+		@Override
 		public Point getContent() {
 			return (Point) super.getContent();
+		}
+
+		@Override
+		public SetMultimap<? extends Object, String> getContentAnchorages() {
+			return HashMultimap.create();
+		}
+
+		@Override
+		public List<? extends Object> getContentChildren() {
+			return Collections.emptyList();
 		}
 	}
 

@@ -39,14 +39,31 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 
 	/**
 	 * Property name used within {@link PropertyChangeEvent}s, which are fired
-	 * whenever the content changes ({@link #setContent(Object)}).
+	 * whenever the {@link #setContent(Object) content} changes.
 	 */
 	public static final String CONTENT_PROPERTY = "content";
 
 	/**
+	 * Property name used within {@link PropertyChangeEvent}s, which are fired
+	 * whenever the {@link #getContentChildren() content children} change (
+	 * {@link #addContentChild(Object, int)} and
+	 * {@link #removeContentChild(Object, int)}).
+	 */
+	public static final String CONTENT_CHILDREN_PROPERTY = "contentChildren";
+
+	/**
+	 * Property name used within {@link PropertyChangeEvent}s, which are fired
+	 * whenever the {@link #getContentAnchorages() content anchorages} change (
+	 * {@link #attachToContentAnchorage(Object, String)} and
+	 * {@link #detachFromContentAnchorage(Object, String)}).
+	 */
+	public static final String CONTENT_ANCHORAGES_PROPERTY = "contentAnchorages";
+
+	/**
 	 * Inserts the given <i>contentChild</i> as a child to this part's content,
 	 * so that it will be returned by subsequent calls to
-	 * {@link #getContentChildren()}.
+	 * {@link #getContentChildren()}. Fires {@value #CONTENT_CHILDREN_PROPERTY}
+	 * notifications.
 	 *
 	 * @param contentChild
 	 *            An {@link Object} which should be added as a child to this
@@ -59,7 +76,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Attaches this part's content to the given <i>contentAnchorage</i> under
 	 * the specified <i>role</i>, so that it will be returned by subsequent
-	 * calls to {@link #getContentAnchorages()}.
+	 * calls to {@link #getContentAnchorages()}. Fires
+	 * {@link #CONTENT_ANCHORAGES_PROPERTY} notifications.
 	 *
 	 * @param contentAnchorage
 	 *            An {@link Object} to which this part's content should be
@@ -72,7 +90,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Detaches this part's content from the given <i>contentAnchorage</i> under
 	 * the specified <i>role</i>, so that it will no longer be returned by
-	 * subsequent calls to {@link #getContentAnchorages()}.
+	 * subsequent calls to {@link #getContentAnchorages()}. Fires
+	 * {@link #CONTENT_ANCHORAGES_PROPERTY} notifications.
 	 *
 	 * @param contentAnchorage
 	 *            An {@link Object} from which this part's content should be
@@ -119,7 +138,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Removes the given <i>contentChild</i> from this part's content children,
 	 * so that it will no longer be returned by subsequent calls to
-	 * {@link #getContentChildren()}.
+	 * {@link #getContentChildren()}. Fires {@value #CONTENT_CHILDREN_PROPERTY}
+	 * notifications.
 	 *
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
@@ -130,7 +150,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	public void removeContentChild(Object contentChild, int index);
 
 	/**
-	 * Sets this part's content to the given {@link Object value}.
+	 * Sets this part's content to the given {@link Object value}. Fires
+	 * {@link #CONTENT_PROPERTY} notifications.
 	 *
 	 * @param content
 	 *            The new content for this part.

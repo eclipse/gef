@@ -15,13 +15,11 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import javafx.scene.Node;
@@ -75,15 +73,13 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 
 	/**
 	 * Called upon zoom level changes (reported by the {@link ViewportModel}).
-	 * When this behavior {@link #isActive()} a
-	 * {@link SynchronizeContentChildrenOperation} is executed for the
-	 * {@link #getHost()}.
 	 *
 	 * @param oldScale
 	 *            The old zoom level.
 	 * @param newScale
 	 *            The new zoom level.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void onZoomLevelChange(double oldScale, double newScale) {
 		/*
 		 * The PropertyChangeEvent could be processed already by another
@@ -96,14 +92,7 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 			// to not notify any more listeners.
 			return;
 		}
-		// execute synchronization locally (so it does not affect the undo
-		// history)
-		try {
-			new SynchronizeContentChildrenOperation<Node>("SyncOnZoom", getHost()).execute(new NullProgressMonitor(),
-					null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+		getHost().getAdapter(ContentBehavior.class).synchronizeContentChildren(getHost().getContentChildren());
 	}
 
 }

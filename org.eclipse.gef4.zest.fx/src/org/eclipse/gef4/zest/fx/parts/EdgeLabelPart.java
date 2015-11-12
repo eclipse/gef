@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
@@ -89,6 +91,18 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	}
 
 	@Override
+	protected void doAddContentChild(Object contentChild, int index) {
+	}
+
+	@Override
+	protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+	}
+
+	@Override
+	protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+	}
+
+	@Override
 	protected void doRefreshVisual(Text visual) {
 		Edge edge = getContent().getKey();
 		Map<String, Object> attrs = edge.getAttrs();
@@ -117,6 +131,10 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight());
 	}
 
+	@Override
+	protected void doRemoveContentChild(Object contentChild, int index) {
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<Edge, String> getContent() {
@@ -128,6 +146,11 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
 		contentAnchorages.put(getContent().getKey(), getContent().getValue());
 		return contentAnchorages;
+	}
+
+	@Override
+	public List<? extends Object> getContentChildren() {
+		return Collections.emptyList();
 	}
 
 	/**

@@ -15,6 +15,8 @@ package org.eclipse.gef4.mvc.tests.fx;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
@@ -27,6 +29,9 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -81,8 +86,34 @@ public class AbstractFXHandlePartTests {
 		}
 
 		@Override
+		protected void doAddContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		protected void doAttachToContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
+		protected void doDetachFromContentAnchorage(Object contentAnchorage, String role) {
+		}
+
+		@Override
 		protected void doRefreshVisual(Node visual) {
 			// nothing to do
+		}
+
+		@Override
+		protected void doRemoveContentChild(Object contentChild, int index) {
+		}
+
+		@Override
+		public SetMultimap<? extends Object, String> getContentAnchorages() {
+			return HashMultimap.create();
+		}
+
+		@Override
+		public List<? extends Object> getContentChildren() {
+			return Collections.emptyList();
 		}
 	};
 

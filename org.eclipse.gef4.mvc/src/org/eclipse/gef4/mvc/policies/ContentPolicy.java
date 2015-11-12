@@ -20,8 +20,6 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.RemoveContentChildOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -56,6 +54,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
+// TODO: unwrap composite operations no longer needed
 public class ContentPolicy<VR> extends AbstractPolicy<VR>
 		implements ITransactional {
 
@@ -91,8 +90,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 				"Add Content Child");
 		addOperation.add(new AddContentChildOperation<VR>(getHost(),
 				contentChild, index));
-		addOperation.add(new SynchronizeContentChildrenOperation<VR>(
-				"Synchronize Children", getHost()));
 		commitOperation.add(addOperation);
 	}
 
@@ -120,8 +117,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 				"Attach To Content Anchorage");
 		attachOperation.add(new AttachToContentAnchorageOperation<VR>(getHost(),
 				contentAnchorage, role));
-		attachOperation.add(new SynchronizeContentAnchoragesOperation<VR>(
-				"Synchronize Anchorages", getHost()));
 		commitOperation.add(attachOperation);
 	}
 
@@ -162,8 +157,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 				"Detach From Content Anchorage");
 		detachOperation.add(new DetachFromContentAnchorageOperation<VR>(
 				getHost(), contentAnchorage, role));
-		detachOperation.add(new SynchronizeContentAnchoragesOperation<VR>(
-				"Synchronize Anchorages", getHost()));
 		commitOperation.add(detachOperation);
 	}
 
@@ -200,8 +193,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 				"Remove Content Child");
 		removeOperation.add(
 				new RemoveContentChildOperation<VR>(getHost(), contentChild));
-		removeOperation.add(new SynchronizeContentChildrenOperation<VR>(
-				"Synchronize Children", getHost()));
 		commitOperation.add(removeOperation);
 	}
 
