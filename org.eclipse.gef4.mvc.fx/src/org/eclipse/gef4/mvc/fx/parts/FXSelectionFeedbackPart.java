@@ -185,6 +185,7 @@ public class FXSelectionFeedbackPart
 	 *            <code>false</code>.
 	 * @return The {@link Effect} that is applied to a primary selection.
 	 */
+	@SuppressWarnings("serial")
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
 		Provider<? extends Effect> effectProvider = null;
 		if (!getAnchorages().isEmpty()) {
@@ -218,6 +219,7 @@ public class FXSelectionFeedbackPart
 	 *            <code>false</code>.
 	 * @return The {@link Effect} that is applied to a primary selection.
 	 */
+	@SuppressWarnings("serial")
 	protected Effect getSecondarySelectionFeedbackEffect(boolean focused) {
 		Provider<? extends Effect> effectProvider = null;
 		if (!getAnchorages().isEmpty()) {

@@ -113,6 +113,7 @@ public class FXHoverFeedbackPart
 	 *         <code>Provider&lt;Effect&gt;</code> of this part's first
 	 *         anchorage.
 	 */
+	@SuppressWarnings("serial")
 	public Effect getHoverFeedbackEffect() {
 		Provider<? extends Effect> effectProvider = null;
 		if (!getAnchorages().isEmpty()) {
