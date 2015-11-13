@@ -648,15 +648,6 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	/**
-	 * Moves a child {@link IVisualPart} into a lower index than it currently
-	 * occupies.
-	 *
-	 * @param child
-	 *            the child {@link IVisualPart} being reordered
-	 * @param index
-	 *            new index for the child
-	 */
 	@Override
 	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index) {
 		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(

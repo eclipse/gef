@@ -62,8 +62,9 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Inserts the given <i>contentChild</i> as a child to this part's content,
 	 * so that it will be returned by subsequent calls to
-	 * {@link #getContentChildren()}. Fires {@value #CONTENT_CHILDREN_PROPERTY}
-	 * notifications.
+	 * {@link #getContentChildren()}. Fires property change events using
+	 * {@link #CONTENT_CHILDREN_PROPERTY} as
+	 * {@link PropertyChangeEvent#getPropertyName() property name}.
 	 *
 	 * @param contentChild
 	 *            An {@link Object} which should be added as a child to this
@@ -76,8 +77,9 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Attaches this part's content to the given <i>contentAnchorage</i> under
 	 * the specified <i>role</i>, so that it will be returned by subsequent
-	 * calls to {@link #getContentAnchorages()}. Fires
-	 * {@link #CONTENT_ANCHORAGES_PROPERTY} notifications.
+	 * calls to {@link #getContentAnchorages()}. Fires property change events
+	 * using {@link #CONTENT_ANCHORAGES_PROPERTY} as
+	 * {@link PropertyChangeEvent#getPropertyName() property name}.
 	 *
 	 * @param contentAnchorage
 	 *            An {@link Object} to which this part's content should be
@@ -90,8 +92,9 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Detaches this part's content from the given <i>contentAnchorage</i> under
 	 * the specified <i>role</i>, so that it will no longer be returned by
-	 * subsequent calls to {@link #getContentAnchorages()}. Fires
-	 * {@link #CONTENT_ANCHORAGES_PROPERTY} notifications.
+	 * subsequent calls to {@link #getContentAnchorages()}. Fires property
+	 * change events using {@link #CONTENT_ANCHORAGES_PROPERTY} as
+	 * {@link PropertyChangeEvent#getPropertyName() property name}.
 	 *
 	 * @param contentAnchorage
 	 *            An {@link Object} from which this part's content should be
@@ -138,8 +141,9 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	/**
 	 * Removes the given <i>contentChild</i> from this part's content children,
 	 * so that it will no longer be returned by subsequent calls to
-	 * {@link #getContentChildren()}. Fires {@value #CONTENT_CHILDREN_PROPERTY}
-	 * notifications.
+	 * {@link #getContentChildren()}. Fires property change events using
+	 * {@link #CONTENT_CHILDREN_PROPERTY} as
+	 * {@link PropertyChangeEvent#getPropertyName() property name}.
 	 *
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
@@ -151,7 +155,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 
 	/**
 	 * Rearranges the given <i>contentChild</i> to the new index position. Fires
-	 * {@value #CONTENT_CHILDREN_PROPERTY} notifications.
+	 * property change events using {@link #CONTENT_CHILDREN_PROPERTY} as
+	 * {@link PropertyChangeEvent#getPropertyName() property name}.
 	 *
 	 * @param contentChild
 	 *            The {@link Object} which is to be reordered.
@@ -162,7 +167,7 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 
 	/**
 	 * Sets this part's content to the given {@link Object value}. Fires
-	 * {@link #CONTENT_PROPERTY} notifications.
+	 * property change events using {@link #CONTENT_PROPERTY} as property name.
 	 *
 	 * @param content
 	 *            The new content for this part.

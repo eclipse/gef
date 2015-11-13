@@ -43,6 +43,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 
 	private Object content;
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Delegates to {@link #doAddContentChild(Object, int)}, which is to be
+	 * overwritten by subclasses.
+	 */
 	@Override
 	public final void addContentChild(Object contentChild, int index) {
 		List<Object> oldContentChildren = new ArrayList<Object>(
@@ -52,6 +58,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 				Collections.unmodifiableList(getContentChildren()));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Delegates to {@link #doAttachToContentAnchorage(Object, String)}, which
+	 * is to be overwritten by subclasses.
+	 */
 	@Override
 	public final void attachToContentAnchorage(Object contentAnchorage,
 			String role) {
@@ -63,6 +75,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Delegates to {@link #doDetachFromContentAnchorage(Object, String)}, which
+	 * is to be overwritten by subclasses.
+	 */
 	@Override
 	public final void detachFromContentAnchorage(Object contentAnchorage,
 			String role) {
@@ -190,6 +208,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		viewer.getContentPartMap().put(content, this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Delegates to {@link #doRemoveContentChild(Object, int)}, which is to be
+	 * overwritten by subclasses.
+	 */
 	@Override
 	public final void removeContentChild(Object contentChild, int index) {
 		List<Object> oldContentChildren = new ArrayList<Object>(
@@ -199,6 +223,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 				Collections.unmodifiableList(getContentChildren()));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Delegates to {@link #doReorderContentChild(Object, int)}, which is to be
+	 * overwritten by subclasses.
+	 */
 	@Override
 	public void reorderContentChild(Object contentChild, int newIndex) {
 		List<Object> oldContentChildren = new ArrayList<Object>(
