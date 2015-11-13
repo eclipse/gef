@@ -15,6 +15,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
@@ -23,7 +24,6 @@ import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -61,13 +61,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	private GraphLayoutContext layoutContext;
 	private Pane nestingVisual;
 
-	private PropertyChangeListener viewportModelPropertyChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			onViewportModelPropertyChange(evt);
-		}
-	};
-
 	private ChangeListener<? super Bounds> nestingVisualLayoutBoundsChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
@@ -80,6 +73,14 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			onHostPropertyChange(evt);
+		}
+	};
+
+	private ChangeListener<? super Bounds> viewportBoundsChangeListener = new ChangeListener<Bounds>() {
+		@Override
+		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
+				Bounds newLayoutBounds) {
+			onViewportModelPropertyChange(oldLayoutBounds, newLayoutBounds);
 		}
 	};
 
@@ -96,13 +97,11 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			 * Our graph is the root graph, therefore we listen to viewport
 			 * changes to update the layout bounds in the context accordingly.
 			 */
-			ViewportModel viewportModel = getViewportModel();
-			viewportModel.addPropertyChangeListener(viewportModelPropertyChangeListener);
+			getInfiniteCanvas().scrollableBoundsProperty().addListener(viewportBoundsChangeListener);
 			// read initial bounds
 			FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-			Bounds scrollableBounds = fxViewer.getCanvas().scrollableBoundsProperty().get();
-			initialBounds.setX(scrollableBounds.getMinX());
-			initialBounds.setY(scrollableBounds.getMinY());
+			initialBounds.setX(0);
+			initialBounds.setY(0);
 			initialBounds.setWidth(fxViewer.getCanvas().getWidth());
 			initialBounds.setHeight(fxViewer.getCanvas().getHeight());
 		} else if (getHost().getContent().getNestingNode() != null) {
@@ -176,8 +175,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			layoutContext.removePropertyChangeListener(layoutContextPropertyChangeListener);
 		}
 		if (nestingVisual == null) {
-			// remove change listener from viewport model
-			getViewportModel().removePropertyChangeListener(viewportModelPropertyChangeListener);
+			// remove change listener from viewport
+			getInfiniteCanvas().scrollableBoundsProperty().removeListener(viewportBoundsChangeListener);
 		} else {
 			nestingVisual.layoutBoundsProperty().removeListener(nestingVisualLayoutBoundsChangeListener);
 		}
@@ -204,6 +203,17 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
+	 * Returns the {@link InfiniteCanvas} of the {@link IViewer} of the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link InfiniteCanvas} of the {@link IViewer} of the
+	 *         {@link #getHost() host}.
+	 */
+	protected InfiniteCanvas getInfiniteCanvas() {
+		return ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
+	}
+
+	/**
 	 * Returns the {@link NodeContentPart} that contains the nested graph to
 	 * which the {@link #getGraphLayoutContext()} corresponds.
 	 *
@@ -215,17 +225,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(nestingNode);
 		return (NodeContentPart) nestingNodePart;
-	}
-
-	/**
-	 * Returns the {@link ViewportModel} that is installed on the
-	 * {@link IViewer} of the {@link #getHost() host}.
-	 *
-	 * @return The {@link ViewportModel} that is installed on the
-	 *         {@link IViewer} of the {@link #getHost() host}.
-	 */
-	protected ViewportModel getViewportModel() {
-		return getHost().getRoot().getViewer().<ViewportModel> getAdapter(ViewportModel.class);
 	}
 
 	/**
@@ -290,26 +289,16 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Called upon property change notifications fired by the
-	 * {@link ViewportModel} of the {@link IViewer} of the {@link #getHost()
-	 * host}. Updates the layout bounds in the {@link GraphLayoutContext}.
+	 * Called upon viewport bounds changes to update the layout bounds.
 	 *
-	 * @param evt
-	 *            The {@link PropertyChangeEvent} that was fired by the
-	 *            {@link ViewportModel}.
+	 * @param oldScrollableBounds
+	 *            The old {@link Bounds}.
+	 * @param newScrollableBounds
+	 *            The new {@link Bounds}.
 	 */
-	protected void onViewportModelPropertyChange(PropertyChangeEvent evt) {
-		if (!ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(evt.getPropertyName())
-				&& !ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(evt.getPropertyName())) {
-			// only width and height changes are of interest
-			return;
-		}
-		// update layout bounds to match the viewport bounds
-		FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-		Bounds scrollableBounds = fxViewer.getCanvas().scrollableBoundsProperty().get();
-		Rectangle newBounds = new Rectangle(scrollableBounds.getMinX(), scrollableBounds.getMinY(),
-				fxViewer.getCanvas().getWidth(), fxViewer.getCanvas().getHeight());
-
+	protected void onViewportModelPropertyChange(Bounds oldScrollableBounds, Bounds newScrollableBounds) {
+		InfiniteCanvas canvas = getInfiniteCanvas();
+		Rectangle newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
 		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
 			LayoutProperties.setBounds(layoutContext, newBounds);
 		}

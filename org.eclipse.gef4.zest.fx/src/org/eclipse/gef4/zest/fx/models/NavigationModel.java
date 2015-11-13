@@ -19,8 +19,8 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.models.ViewportModel.ViewportState;
 
 /**
  * The {@link NavigationModel} manages a {@link Set} of {@link Graph}s for which
@@ -34,6 +34,168 @@ import org.eclipse.gef4.mvc.models.ViewportModel.ViewportState;
  *
  */
 public class NavigationModel {
+
+	/*
+	 * TODO: Store translateX, translateY, width, and height relative to the
+	 * underlying contents.
+	 */
+	/**
+	 * Representation of a viewport's state, which manifests itself in x and y
+	 * translation, width and height, as well as a contents transform.
+	 *
+	 * @author anyssen
+	 *
+	 */
+	public static class ViewportState {
+
+		private double translateX = 0;
+		private double translateY = 0;
+		private double width = 0;
+		private double height = 0;
+		private AffineTransform contentsTransform = null;
+
+		/**
+		 * Creates a new {@link ViewportState} with
+		 * <code>tx = ty = width = height = 0</code> and an identity transform.
+		 */
+		public ViewportState() {
+			this(0, 0, 0, 0, new AffineTransform());
+		}
+
+		/**
+		 * Creates a new {@link ViewportState} for the given translation, size,
+		 * and transform.
+		 *
+		 * @param translateX
+		 *            The horizontal translation.
+		 * @param translateY
+		 *            The vertical translation.
+		 * @param width
+		 *            The viewport width.
+		 * @param height
+		 *            The viewport height.
+		 * @param contentsTransform
+		 *            The contents transform.
+		 */
+		public ViewportState(double translateX, double translateY, double width, double height,
+				AffineTransform contentsTransform) {
+			this.translateX = translateX;
+			this.translateY = translateY;
+			this.width = width;
+			this.height = height;
+			this.contentsTransform = contentsTransform;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			ViewportState other = (ViewportState) obj;
+			if (contentsTransform == null) {
+				if (other.contentsTransform != null) {
+					return false;
+				}
+			} else if (!contentsTransform.equals(other.contentsTransform)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(translateX) != Double.doubleToLongBits(other.translateX)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(translateY) != Double.doubleToLongBits(other.translateY)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width)) {
+				return false;
+			}
+			return true;
+		}
+
+		/**
+		 * Returns the contents transform associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The contents transform.
+		 */
+		public AffineTransform getContentsTransform() {
+			return contentsTransform;
+		}
+
+		/**
+		 * Returns a copy of this {@link ViewportState}.
+		 *
+		 * @return A copy of this {@link ViewportState}.
+		 */
+		public ViewportState getCopy() {
+			return new ViewportState(translateX, translateY, width, height, contentsTransform.getCopy());
+		}
+
+		/**
+		 * Returns the viewport height associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The viewport height.
+		 */
+		public double getHeight() {
+			return height;
+		}
+
+		/**
+		 * Returns the horizontal translation associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The horizontal translation.
+		 */
+		public double getTranslateX() {
+			return translateX;
+		}
+
+		/**
+		 * Returns the vertical translation associated with this
+		 * {@link ViewportState}.
+		 *
+		 * @return The vertical translation.
+		 */
+		public double getTranslateY() {
+			return translateY;
+		}
+
+		/**
+		 * Returns the viewport width associated with this {@link ViewportState}
+		 * .
+		 *
+		 * @return The viewport width.
+		 */
+		public double getWidth() {
+			return width;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((contentsTransform == null) ? 0 : contentsTransform.hashCode());
+			long temp;
+			temp = Double.doubleToLongBits(height);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(translateX);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(translateY);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(width);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+	}
 
 	private Set<Graph> skipNextLayout = Collections.newSetFromMap(new IdentityHashMap<Graph, Boolean>());
 	private Map<Graph, ViewportState> viewportStates = new HashMap<Graph, ViewportState>();

@@ -1,30 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) 2015 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.behaviors;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
-import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 
 	private static final double ABSOLUTE_CLICKABLE_WIDTH = 5;
-
-	private final PropertyChangeListener zoomListener = new PropertyChangeListener() {
-
+	private DoubleBinding clickableAreaBinding;
+	private final ChangeListener<? super Number> scaleXListener = new ChangeListener<Number>() {
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
-					.equals(evt.getPropertyName())) {
-				clickableAreaBinding.invalidate();
-			}
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			clickableAreaBinding.invalidate();
 		}
 	};
-	private DoubleBinding clickableAreaBinding;
 
 	@Override
 	public void activate() {
@@ -32,22 +38,23 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 			@Override
 			protected double computeValue() {
 				double localClickableWidth = ABSOLUTE_CLICKABLE_WIDTH
-						/ getHost().getRoot().getViewer()
-								.getAdapter(ViewportModel.class)
-								.getContentsTransform().getScaleX();
+						/ ((FXViewer) getHost().getRoot().getViewer())
+								.getCanvas().getContentTransform().getMxx();
 				return Math.min(localClickableWidth, ABSOLUTE_CLICKABLE_WIDTH);
 			}
 		};
 		getHost().getVisual().clickableAreaWidthProperty()
 				.bind(clickableAreaBinding);
-		getHost().getRoot().getViewer().getAdapter(ViewportModel.class)
-				.addPropertyChangeListener(zoomListener);
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas()
+				.getContentTransform().mxxProperty()
+				.addListener(scaleXListener);
 	}
 
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getAdapter(ViewportModel.class)
-				.removePropertyChangeListener(zoomListener);
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas()
+				.getContentTransform().mxxProperty()
+				.removeListener(scaleXListener);
 		clickableAreaBinding.dispose();
 		super.deactivate();
 	}
@@ -56,4 +63,5 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 	public FXGeometricCurvePart getHost() {
 		return (FXGeometricCurvePart) super.getHost();
 	}
+
 }

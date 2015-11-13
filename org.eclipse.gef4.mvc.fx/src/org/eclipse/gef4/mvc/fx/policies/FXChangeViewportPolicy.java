@@ -13,13 +13,13 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -29,9 +29,7 @@ import javafx.scene.Node;
 
 /**
  * A transactional {@link IPolicy} to change the viewport of an {@link IViewer}
- * via its attached {@link ViewportModel}. The {@link ViewportModel} is expected
- * to be registered as adapter on the {@link IViewer}, which is retrieved
- * through navigating via the {@link IRootPart} of this policy's host.
+ * via its {@link InfiniteCanvas}.
  *
  * @author anyssen
  * @author mwienand
@@ -65,14 +63,10 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 
 	@Override
 	public void init() {
-		ViewportModel viewportModel = getHost().getRoot().getViewer()
-				.getAdapter(ViewportModel.class);
-		if (viewportModel == null) {
-			throw new IllegalStateException(
-					"ViewportModel could not be obtained!");
-		}
-		operation = new FXChangeViewportOperation(viewportModel,
-				viewportModel.getContentsTransform().getCopy());
+		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+		operation = new FXChangeViewportOperation(viewer.getCanvas(),
+				JavaFX2Geometry.toAffineTransform(
+						viewer.getCanvas().getContentTransform()));
 		// we are properly initialized now
 		initialized = true;
 	}
@@ -90,6 +84,7 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
+		System.out.println("");
 		operation.setNewTx(operation.getOldTx() + deltaTranslateX);
 		operation.setNewTy(operation.getOldTy() + deltaTranslateY);
 		try {

@@ -12,20 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.List;
-
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
@@ -39,43 +36,24 @@ import javafx.scene.Node;
 // TODO: refactor into policy -> directly react on zoom level change
 public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 
-	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
+	private ChangeListener<? super Number> scaleXListener = new ChangeListener<Number>() {
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			ContentModel contentModel = getHost().getViewer().getAdapter(ContentModel.class);
-			List<? extends Object> contents = contentModel.getContents();
-			if (contents.size() != 1) {
-				return;
-			}
-			Graph graph = (Graph) contents.get(0);
-			if (graph.getNestingNode() == null) {
-				return;
-			}
-
-			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt.getPropertyName())) {
-				AffineTransform oldTransform = (AffineTransform) evt.getOldValue();
-				AffineTransform newTransform = (AffineTransform) evt.getNewValue();
-				double oldScale = oldTransform.getScaleX();
-				double newScale = newTransform.getScaleX();
-				if (oldScale != newScale) {
-					onZoomLevelChange(oldScale, newScale);
-				}
-			}
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+			onZoomLevelChange(oldValue.doubleValue(), newValue.doubleValue());
 		}
 	};
 
 	@Override
 	public void activate() {
 		super.activate();
-		// register viewport listener
-		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-		viewportModel.addPropertyChangeListener(viewportPropertyChangeListener);
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentTransform().mxxProperty()
+				.addListener(scaleXListener);
 	}
 
 	@Override
 	public void deactivate() {
-		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-		viewportModel.removePropertyChangeListener(viewportPropertyChangeListener);
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentTransform().mxxProperty()
+				.removeListener(scaleXListener);
 		super.deactivate();
 	}
 
@@ -96,10 +74,10 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Called upon zoom level changes (reported by the {@link ViewportModel}).
-	 * If the {@link #getHost() host} is nested inside a {@link Node} and the
-	 * zoom level is changed below <code>0.7</code>, then the {@link Graph} to
-	 * which the nesting {@link Node} belongs is opened.
+	 * Called upon zoom level changes. If the {@link #getHost() host} is nested
+	 * inside a {@link Node} and the zoom level is changed below
+	 * <code>0.7</code>, then the {@link Graph} to which the nesting
+	 * {@link Node} belongs is opened.
 	 *
 	 * @param oldScale
 	 *            The previous zoom level.

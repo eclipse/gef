@@ -12,16 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
@@ -37,32 +35,24 @@ import javafx.scene.Node;
 // only applicable for NodeContentPart (see #getHost())
 public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 
-	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
+	private ChangeListener<? super Number> scaleXListener = new ChangeListener<Number>() {
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt.getPropertyName())) {
-				AffineTransform oldTransform = (AffineTransform) evt.getOldValue();
-				AffineTransform newTransform = (AffineTransform) evt.getNewValue();
-				double oldScale = oldTransform.getScaleX();
-				double newScale = newTransform.getScaleX();
-				if (oldScale != newScale) {
-					onZoomLevelChange(oldScale, newScale);
-				}
-			}
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+			onZoomLevelChange(oldValue.doubleValue(), newValue.doubleValue());
 		}
 	};
 
 	@Override
 	public void activate() {
 		super.activate();
-		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-		viewportModel.addPropertyChangeListener(viewportPropertyChangeListener);
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentTransform().mxxProperty()
+				.addListener(scaleXListener);
 	}
 
 	@Override
 	public void deactivate() {
-		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-		viewportModel.removePropertyChangeListener(viewportPropertyChangeListener);
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentTransform().mxxProperty()
+				.removeListener(scaleXListener);
 		super.deactivate();
 	}
 
@@ -72,7 +62,8 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Called upon zoom level changes (reported by the {@link ViewportModel}).
+	 * Called upon zoom level changes and synchronizes content children for its
+	 * host.
 	 *
 	 * @param oldScale
 	 *            The old zoom level.
@@ -82,17 +73,12 @@ public class SynchronizeChildrenOnZoomBehavior extends AbstractBehavior<Node> {
 	@SuppressWarnings("unchecked")
 	protected void onZoomLevelChange(double oldScale, double newScale) {
 		/*
-		 * The PropertyChangeEvent could be processed already by another
-		 * SynchronizeChildrenOnZoomBehavior which could have deactivated our
-		 * host, in which case we should not do anything.
+		 * Another behavior could have deactivated our host in response to the
+		 * scale change, in which case we should not do anything.
 		 */
-		if (!isActive()) {
-			// TODO: Enhance property change mechanism to allow for easier
-			// decoupling of behaviors. For example, an event could be consumed
-			// to not notify any more listeners.
-			return;
+		if (isActive()) {
+			getHost().getAdapter(ContentBehavior.class).synchronizeContentChildren(getHost().getContentChildren());
 		}
-		getHost().getAdapter(ContentBehavior.class).synchronizeContentChildren(getHost().getContentChildren());
 	}
 
 }

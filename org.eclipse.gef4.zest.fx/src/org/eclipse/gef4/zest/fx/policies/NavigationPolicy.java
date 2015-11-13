@@ -20,18 +20,20 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.models.ViewportModel.ViewportState;
 import org.eclipse.gef4.mvc.operations.ChangeContentsOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
+import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
 import javafx.scene.Node;
 
@@ -88,11 +90,6 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 		if (navigationModel == null) {
 			throw new IllegalArgumentException("NavigationModel could not be obtained!");
 		}
-		// obtain ViewportModel
-		final ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-		if (viewportModel == null) {
-			throw new IllegalStateException("ViewportModel could not be obtained!");
-		}
 		// obtain FXChangeViewportPolicy
 		FXChangeViewportPolicy changeViewportPolicy = getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
 		if (changeViewportPolicy == null) {
@@ -122,8 +119,10 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 	protected void openGraph(final Graph currentGraph, final Graph newGraph, final boolean resetNewGraphViewport) {
 		if (newGraph != null) {
 			// persist the state of the current graph
-			final ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-			ViewportState currentViewportState = viewportModel.retrieveState(false, false, true, true, false);
+			InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
+			ViewportState currentViewportState = new ViewportState(canvas.getHorizontalScrollOffset(),
+					canvas.getVerticalScrollOffset(), canvas.getWidth(), canvas.getHeight(),
+					JavaFX2Geometry.toAffineTransform(canvas.getContentTransform()));
 			final NavigationModel navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
 			navigationModel.setViewportState(currentGraph, currentViewportState);
 

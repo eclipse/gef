@@ -12,25 +12,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.transform.Transform;
 
 /**
  * The {@link OpenNestedGraphOnZoomBehavior} handles the navigation to a nested
@@ -43,32 +39,10 @@ import javafx.scene.transform.Transform;
 // TODO: refactor into policy -> directly react on zoom level change
 public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 
-	/**
-	 * The current zoom level.
-	 */
-	protected double zoomLevel;
-
-	private PropertyChangeListener viewportPropertyChangeListener = new PropertyChangeListener() {
+	private ChangeListener<? super Number> scaleXListener = new ChangeListener<Number>() {
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			/*
-			 * The PropertyChangeEvent could have been processed already and
-			 * could have deactivated our host, in which case we should not do
-			 * anything.
-			 */
-			if (!isActive()) {
-				// TODO: Enhance property change mechanism to allow for easier
-				// decoupling of behaviors. For example, an event could be
-				// consumed to not notify any more listeners.
-				return;
-			}
-			if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY.equals(evt.getPropertyName())) {
-				Transform localToSceneTransform = getHost().getVisual().getLocalToSceneTransform();
-				AffineTransform transform = JavaFX2Geometry.toAffineTransform(localToSceneTransform);
-				double lastZoomLevel = zoomLevel;
-				zoomLevel = transform.getScaleX();
-				onZoomLevelChange(lastZoomLevel, zoomLevel);
-			}
+		public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+			onZoomLevelChange(oldValue.doubleValue(), newValue.doubleValue());
 		}
 	};
 
@@ -78,18 +52,17 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 		// only for nodes with nested graphs
 		Graph nestedGraph = getHost().getContent().getNestedGraph();
 		if (nestedGraph != null) {
-			// determine initial zoom level
-			zoomLevel = JavaFX2Geometry.toAffineTransform(getHost().getVisual().getLocalToSceneTransform()).getScaleX();
 			// register viewport listener
-			ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-			viewportModel.addPropertyChangeListener(viewportPropertyChangeListener);
+			((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentTransform().mxxProperty()
+					.addListener(scaleXListener);
 		}
 	}
 
 	@Override
 	public void deactivate() {
-		ViewportModel viewportModel = getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
-		viewportModel.removePropertyChangeListener(viewportPropertyChangeListener);
+		// unregister viewport listener
+		((FXViewer) getHost().getRoot().getViewer()).getCanvas().getContentTransform().mxxProperty()
+				.removeListener(scaleXListener);
 		super.deactivate();
 	}
 
@@ -110,11 +83,10 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Called upon zoom level changes (reported by the {@link ViewportModel}).
-	 * If the {@link #getHost() host} is nesting a {@link Graph}, the zoom level
-	 * is changed beyond <code>3</code>, and the {@link #getHost() host} claims
-	 * at least half of the viewport area, then the nested {@link Graph} is
-	 * opened.
+	 * Called upon zoom level changes. If the {@link #getHost() host} is nesting
+	 * a {@link Graph}, the zoom level is changed beyond <code>3</code>, and the
+	 * {@link #getHost() host} claims at least half of the viewport area, then
+	 * the nested {@link Graph} is opened.
 	 *
 	 * @param oldScale
 	 *            The previous zoom level.

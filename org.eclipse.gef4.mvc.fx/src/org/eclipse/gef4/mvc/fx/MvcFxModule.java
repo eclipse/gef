@@ -24,7 +24,6 @@ import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXViewportBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
@@ -606,7 +605,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsFXRootPartAdapter(adapterMapBinder);
-		bindViewportBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// creation and deletion policy
 		bindCreationPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindDeletionPolicyAsFXRootPartAdapter(adapterMapBinder);
@@ -1037,24 +1035,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class))
 				.to(new TypeLiteral<SelectionModel<Node>>() {
 				});
-	}
-
-	/**
-	 * Adds a binding for {@link FXViewportBehavior} to the {@link AdapterMap}
-	 * binder for {@link FXRootPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindViewportBehaviorAsFXRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXViewportBehavior.class))
-				.to(FXViewportBehavior.class);
 	}
 
 	@Override

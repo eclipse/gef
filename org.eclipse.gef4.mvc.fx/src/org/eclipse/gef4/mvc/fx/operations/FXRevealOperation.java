@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -38,8 +38,7 @@ public class FXRevealOperation extends AbstractOperation
 	private double tx = 0d;
 	private double ty = 0d;
 
-	private IViewer<Node> viewer;
-	private ViewportModel viewportModel;
+	private FXViewer viewer;
 	private IVisualPart<Node, ? extends Node> part = null;
 
 	/**
@@ -53,16 +52,15 @@ public class FXRevealOperation extends AbstractOperation
 	public FXRevealOperation(IVisualPart<Node, ? extends Node> part) {
 		super("Reveal");
 		this.part = part;
-		viewer = part.getRoot().getViewer();
-		viewportModel = viewer.getAdapter(ViewportModel.class);
+		viewer = (FXViewer) part.getRoot().getViewer();
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		// store the viewport translation
-		tx = viewportModel.getTranslateX();
-		ty = viewportModel.getTranslateY();
+		tx = viewer.getCanvas().getHorizontalScrollOffset();
+		ty = viewer.getCanvas().getVerticalScrollOffset();
 		viewer.reveal(part);
 		return Status.OK_STATUS;
 	}
@@ -82,8 +80,8 @@ public class FXRevealOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		// restore the viewport translation
-		viewportModel.setTranslateX(tx);
-		viewportModel.setTranslateY(ty);
+		viewer.getCanvas().setHorizontalScrollOffset(tx);
+		viewer.getCanvas().setVerticalScrollOffset(ty);
 		return Status.OK_STATUS;
 	}
 

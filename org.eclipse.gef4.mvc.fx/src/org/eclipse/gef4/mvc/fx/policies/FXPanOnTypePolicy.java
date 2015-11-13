@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.viewer.IViewer;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
@@ -66,17 +65,6 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 	 */
 	public double getScrollAmountPerSecond() {
 		return DEFAULT_SCROLL_AMOUNT_PER_SECOND;
-	}
-
-	/**
-	 * Returns the {@link ViewportModel} of the {@link IViewer} which the
-	 * {@link #getHost() host} belongs to.
-	 *
-	 * @return The {@link ViewportModel} of the {@link IViewer} which the
-	 *         {@link #getHost() host} belongs to.
-	 */
-	protected ViewportModel getViewportModel() {
-		return getHost().getRoot().getViewer().getAdapter(ViewportModel.class);
 	}
 
 	@Override
@@ -177,7 +165,8 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	/**
 	 * Computes the viewport translation and applies it to the
-	 * {@link #getViewportModel() viewport model}.
+	 * {@link InfiniteCanvas} of the host's viewer using the
+	 * {@link FXChangeViewportPolicy}.
 	 */
 	protected void updateScrollPosition() {
 		double scrollAmount = getScrollAmountPerSecond();
