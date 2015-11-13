@@ -47,13 +47,14 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 
 	private IVisualPart<Node, ? extends Node> hiddenNeighborsPart;
 	private boolean isHidden;
+	private HidingModel hidingModel;
 
 	@Override
 	public void activate() {
 		super.activate();
 
 		// register for change notifications regarding hidden nodes
-		HidingModel hidingModel = getHidingModel();
+		hidingModel = getHidingModel();
 		hidingModel.addPropertyChangeListener(this);
 
 		// register for change notifications regarding anchoreds (connections)
@@ -94,8 +95,6 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 
 	@Override
 	public void deactivate() {
-		HidingModel hidingModel = getHidingModel();
-
 		// remove pruned neighbors part if it is currently associated with our
 		// host
 		if (hasHiddenNeighbors(getHost().getContent(), hidingModel)) {
@@ -156,7 +155,7 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 		if (HidingModel.HIDDEN_PROPERTY.equals(event.getPropertyName())) {
 			// check if we have to prune/unprune the host
 			boolean wasHidden = isHidden;
-			isHidden = getHidingModel().isHidden(getHost().getContent());
+			isHidden = hidingModel.isHidden(getHost().getContent());
 
 			if (wasHidden && !isHidden) {
 				show();
@@ -183,7 +182,7 @@ public class HidingBehavior extends AbstractBehavior<Node>implements PropertyCha
 			}
 		} else if (IVisualPart.ANCHOREDS_PROPERTY.equals(event.getPropertyName())) {
 			if (hiddenNeighborsPart == null) {
-				Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = getHidingModel()
+				Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = hidingModel
 						.getHiddenNeighbors(getHost().getContent());
 				if (!hiddenNeighbors.isEmpty()) {
 					createHiddenNeighborPart();
