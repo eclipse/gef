@@ -16,6 +16,10 @@ package org.eclipse.gef4.fx.nodes;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
@@ -725,6 +729,50 @@ public class InfiniteCanvas extends Region {
 	protected List<? extends Node> createScrolledLayers() {
 		return Arrays.asList(getGridCanvas(), getScrolledUnderlayGroup(),
 				getContentGroup(), getScrolledOverlayGroup());
+	}
+
+	/**
+	 * Adjusts the {@link #horizontalScrollOffsetProperty()}, the
+	 * {@link #verticalScrollOffsetProperty()}, and the
+	 * {@link #contentTransformProperty()}, so that the
+	 * {@link #getContentGroup()} is fully visible within the bounds of this
+	 * {@link InfiniteCanvas}.
+	 * <p>
+	 * Note, that the {@link #contentTransformProperty()} is set to a pure scale
+	 * transformation by this method.
+	 */
+	public void fitToSize() {
+		// compute content center
+		Bounds contentBounds = getContentBounds();
+		double cx = contentBounds.getMinX() + contentBounds.getWidth() / 2;
+		double cy = contentBounds.getMinY() + contentBounds.getHeight() / 2;
+
+		// compute visible area center
+		double vx = getWidth() / 2;
+		double vy = getHeight() / 2;
+
+		// scroll to center position
+		setHorizontalScrollOffset(getHorizontalScrollOffset() + vx - cx);
+		setVerticalScrollOffset(getVerticalScrollOffset() + vy - cy);
+
+		// compute zoom factor
+		double zf = Math.min(getWidth() / contentBounds.getWidth(),
+				getHeight() / contentBounds.getHeight());
+
+		// compute pivot point for zoom within content coordinates
+		Point2D pivot = getContentGroup().sceneToLocal(vx, vy);
+
+		// compute scale transformation (around visible center)
+		AffineTransform scaleTransform = new AffineTransform()
+				.translate(pivot.getX(), pivot.getY()).scale(zf, zf)
+				.translate(-pivot.getX(), -pivot.getY());
+
+		// concatenate old transformation and scale transformation to yield the
+		// new transformation
+		AffineTransform newTransform = JavaFX2Geometry
+				.toAffineTransform(getContentTransform())
+				.concatenate(scaleTransform);
+		setContentTransform(Geometry2JavaFX.toFXAffine(newTransform));
 	}
 
 	/**
