@@ -825,6 +825,15 @@ public class InfiniteCanvas extends Region {
 	}
 
 	/**
+	 * Returns the value of the {@link #scrollableBoundsProperty()}.
+	 *
+	 * @return The value of the {@link #scrollableBoundsProperty()}.
+	 */
+	public Bounds getScrollableBounds() {
+		return scrollableBoundsProperty.get();
+	}
+
+	/**
 	 * Returns the {@link Group} designated for holding the {@link ScrollBar}s.
 	 *
 	 * @return The {@link Group} designated for holding the {@link ScrollBar}s.
@@ -1235,19 +1244,8 @@ public class InfiniteCanvas extends Region {
 	 *
 	 * @param scrollOffsetX
 	 *            The new horizontal scroll offset.
-	 * @throws IllegalArgumentException
-	 *             when the given horizontal scroll offset is outside of the
-	 *             value range of the horizontal scrollbar.
 	 */
 	public void setHorizontalScrollOffset(double scrollOffsetX) {
-		double hv = computeHv(scrollOffsetX);
-		if (hv < horizontalScrollBar.getMin()
-				|| hv > horizontalScrollBar.getMax()) {
-			throw new IllegalArgumentException(
-					"Horizontal scrolling offset outside range ["
-							+ horizontalScrollBar.getMin() + ";"
-							+ horizontalScrollBar.getMax() + "]");
-		}
 		getScrolledPane().setTranslateX(scrollOffsetX);
 	}
 
@@ -1279,20 +1277,8 @@ public class InfiniteCanvas extends Region {
 	 *
 	 * @param scrollOffsetY
 	 *            The new vertical scroll offset.
-	 * @throws IllegalArgumentException
-	 *             when the given vertical scroll offset is outside of the value
-	 *             range of the {@link #getVerticalScrollBar() vertical
-	 *             scrollbar}.
 	 */
 	public void setVerticalScrollOffset(double scrollOffsetY) {
-		double vv = computeVv(scrollOffsetY);
-		if (vv < verticalScrollBar.getMin()
-				|| vv > verticalScrollBar.getMax()) {
-			throw new IllegalArgumentException(
-					"Vertical scrolling offset outside range ["
-							+ verticalScrollBar.getMin() + ";"
-							+ verticalScrollBar.getMax() + "]");
-		}
 		getScrolledPane().setTranslateY(scrollOffsetY);
 	}
 
