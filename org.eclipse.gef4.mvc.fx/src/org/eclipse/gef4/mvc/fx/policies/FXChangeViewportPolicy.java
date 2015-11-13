@@ -84,7 +84,6 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 		if (!initialized) {
 			throw new IllegalStateException("Not yet initialized!");
 		}
-		System.out.println("");
 		operation.setNewTx(operation.getOldTx() + deltaTranslateX);
 		operation.setNewTy(operation.getOldTy() + deltaTranslateY);
 		try {
