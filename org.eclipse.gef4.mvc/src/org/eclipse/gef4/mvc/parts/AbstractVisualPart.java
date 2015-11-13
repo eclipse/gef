@@ -131,7 +131,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 		if (oldAnchorages.containsEntry(anchorage, role)) {
 			throw new IllegalArgumentException("Already attached to anchorage "
-					+ anchorage + " in role '" + role + "'.");
+					+ anchorage + " with role '" + role + "'.");
 		}
 
 		addAnchorageWithoutNotify(anchorage, role);
@@ -537,7 +537,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 		if (!oldAnchorages.containsEntry(anchorage, role)) {
 			throw new IllegalArgumentException("Not attached to anchorage "
-					+ anchorage + " in role '" + role + "'.");
+					+ anchorage + " with role '" + role + "'.");
 		}
 
 		removeAnchorageWithoutNotify(anchorage, role);

@@ -32,7 +32,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 
 	private final IContentPart<VR, ? extends VR> parent;
 	private final Object contentChild;
-	private int index;
+	private int initialIndex;
 
 	/**
 	 * Creates a new {@link RemoveContentChildOperation} for removing the given
@@ -48,10 +48,11 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 	 */
 	public RemoveContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild) {
-		// TODO: expect index as in AddContentChildOperation
+		// TODO: expect initialIndex as in AddContentChildOperation
 		super("Remove Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
+		initialIndex = parent.getContentChildren().indexOf(contentChild);
 	}
 
 	@Override
@@ -59,14 +60,13 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("EXEC remove content " + contentChild + " from "
 		// + parent + ".");
-		index = parent.getContentChildren().indexOf(contentChild);
-		parent.removeContentChild(contentChild, index);
+		parent.removeContentChild(contentChild);
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		// TODO: noop if child is not present (at that index)
+		// TODO: noop if child is not present (at that initialIndex)
 		return false;
 	}
 
@@ -81,7 +81,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("UNDO remove content " + contentChild + " from "
 		// + parent + ".");
-		parent.addContentChild(contentChild, index);
+		parent.addContentChild(contentChild, initialIndex);
 		return Status.OK_STATUS;
 	}
 

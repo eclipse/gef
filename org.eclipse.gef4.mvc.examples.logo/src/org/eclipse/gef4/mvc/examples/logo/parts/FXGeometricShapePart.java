@@ -112,7 +112,7 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
+	protected void doRemoveContentChild(Object contentChild) {
 		// nothing to do
 	}
 

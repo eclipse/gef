@@ -12,12 +12,9 @@
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -50,22 +47,6 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 					"Cannot add content child: wrong type!");
 		}
 
-		if (contentChild instanceof FXGeometricCurve) {
-			// insert before its anchorages
-			FXGeometricCurve curve = (FXGeometricCurve) contentChild;
-			HashSet<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
-			anchorages.addAll(curve.getSourceAnchorages());
-			anchorages.addAll(curve.getTargetAnchorages());
-			index = 0;
-			for (AbstractFXGeometricElement<? extends IGeometry> child : getContent()
-					.getShapeVisuals()) {
-				if (anchorages.contains(child)) {
-					break;
-				}
-				index++;
-			}
-		}
-
 		getContent().getShapeVisuals().add(index,
 				(AbstractFXGeometricElement<?>) contentChild);
 	}
@@ -76,7 +57,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	protected void doRemoveContentChild(Object contentChild, int index) {
+	protected void doRemoveContentChild(Object contentChild) {
 		getContent().getShapeVisuals().remove(contentChild);
 	}
 

@@ -87,7 +87,7 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		// System.out.println("UNDO add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		parent.removeContentChild(contentChild, index);
+		parent.removeContentChild(contentChild);
 		return Status.OK_STATUS;
 	}
 

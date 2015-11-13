@@ -47,7 +47,7 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	 * Property name used within {@link PropertyChangeEvent}s, which are fired
 	 * whenever the {@link #getContentChildren() content children} change (
 	 * {@link #addContentChild(Object, int)} and
-	 * {@link #removeContentChild(Object, int)}).
+	 * {@link #removeContentChild(Object)}).
 	 */
 	public static final String CONTENT_CHILDREN_PROPERTY = "contentChildren";
 
@@ -148,10 +148,8 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
 	 *            content children.
-	 * @param index
-	 *            The index of the <i>contentChild</i> that is removed.
 	 */
-	public void removeContentChild(Object contentChild, int index);
+	public void removeContentChild(Object contentChild);
 
 	/**
 	 * Rearranges the given <i>contentChild</i> to the new index position. Fires

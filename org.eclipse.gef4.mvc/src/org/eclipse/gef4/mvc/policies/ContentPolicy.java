@@ -37,7 +37,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * {@link IContentPart#addContentChild(Object, int)}</li>
  * <li>{@link #removeContentChild(Object)} will delegate through a
  * {@link RemoveContentChildOperation} to
- * {@link IContentPart#removeContentChild(Object, int)}</li>
+ * {@link IContentPart#removeContentChild(Object)}</li>
  * <li>{@link #attachToContentAnchorage(Object, String)} will delegate through a
  * {@link AttachToContentAnchorageOperation} to
  * {@link IContentPart#attachToContentAnchorage(Object, String)}</li>

@@ -53,7 +53,32 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	public final void addContentChild(Object contentChild, int index) {
 		List<Object> oldContentChildren = new ArrayList<Object>(
 				getContentChildren());
+		if (oldContentChildren.contains(contentChild)) {
+			int oldIndex = oldContentChildren.indexOf(contentChild);
+			if (oldIndex == index) {
+				throw new IllegalArgumentException("Cannot add " + contentChild
+						+ " because its already contained at given index "
+						+ index);
+			} else {
+				throw new IllegalArgumentException("Cannot add " + contentChild
+						+ " because its already a content child at index "
+						+ oldIndex);
+			}
+		}
 		doAddContentChild(contentChild, index);
+		// check doAddContentChild(Object, int) does not violate postconditions
+		if (!getContentChildren().contains(contentChild)) {
+			throw new IllegalStateException(
+					"doAddContentChild(Object, int) did not add content child "
+							+ contentChild + " .");
+		}
+		int newIndex = getContentChildren().indexOf(contentChild);
+		if (newIndex != index) {
+			throw new IllegalStateException(
+					"doAddContentChild(Object, int) did not add content child "
+							+ contentChild + " at index " + index
+							+ ", but at index " + newIndex + ".");
+		}
 		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
 				Collections.unmodifiableList(getContentChildren()));
 	}
@@ -69,7 +94,18 @@ public abstract class AbstractContentPart<VR, V extends VR>
 			String role) {
 		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
 				.create(getContentAnchorages());
+		if (oldContentAnchorages.containsEntry(contentAnchorage, role)) {
+			throw new IllegalArgumentException("Already attached to anchorage "
+					+ contentAnchorage + " in role '" + role + "'.");
+		}
 		doAttachToContentAnchorage(contentAnchorage, role);
+		// check doAttachToContentAnchorage(Object, String) does not violate
+		// postconditions
+		if (!getContentAnchorages().containsEntry(contentAnchorage, role)) {
+			throw new IllegalArgumentException(
+					"doAttachToContentAnchorage did not properly attach to "
+							+ contentAnchorage + " with role '" + role + "'.");
+		}
 		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
 				oldContentAnchorages,
 				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
@@ -86,7 +122,18 @@ public abstract class AbstractContentPart<VR, V extends VR>
 			String role) {
 		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
 				.create(getContentAnchorages());
+		if (!oldContentAnchorages.containsEntry(contentAnchorage, role)) {
+			throw new IllegalArgumentException(
+					"Not attached to content anchorage " + contentAnchorage
+							+ " with role '" + role + "'.");
+		}
 		doDetachFromContentAnchorage(contentAnchorage, role);
+		// check postconditions for doDetachFromContentAnchorage(Object, String)
+		if (getContentAnchorages().containsEntry(contentAnchorage, role)) {
+			throw new IllegalArgumentException(
+					"doDetachFromContentAnchorage did not properly detach from "
+							+ contentAnchorage + " with role '" + role + "'.");
+		}
 		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
 				oldContentAnchorages,
 				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
@@ -153,10 +200,8 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
 	 *            content children.
-	 * @param index
-	 *            The index of the <i>contentChild</i> that is removed.
 	 */
-	protected void doRemoveContentChild(Object contentChild, int index) {
+	protected void doRemoveContentChild(Object contentChild) {
 		throw new UnsupportedOperationException(
 				"Need to implement doRemoveContentChild(Object, int) for "
 						+ this.getClass());
@@ -211,14 +256,25 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * Delegates to {@link #doRemoveContentChild(Object, int)}, which is to be
+	 * Delegates to {@link #doRemoveContentChild(Object)}, which is to be
 	 * overwritten by subclasses.
 	 */
 	@Override
-	public final void removeContentChild(Object contentChild, int index) {
+	public final void removeContentChild(Object contentChild) {
 		List<Object> oldContentChildren = new ArrayList<Object>(
 				getContentChildren());
-		doRemoveContentChild(contentChild, index);
+		if (!oldContentChildren.contains(contentChild)) {
+			throw new IllegalArgumentException("Cannot remove " + contentChild
+					+ " because its not a content child.");
+		}
+		doRemoveContentChild(contentChild);
+		// check doRemoveContentChild(Object, int) does not violate
+		// postconditions
+		if (getContentChildren().contains(contentChild)) {
+			throw new IllegalStateException(
+					"doRemoveContentChild(Object, int) did not remove content child "
+							+ contentChild + " .");
+		}
 		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
 				Collections.unmodifiableList(getContentChildren()));
 	}
@@ -233,7 +289,23 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	public void reorderContentChild(Object contentChild, int newIndex) {
 		List<Object> oldContentChildren = new ArrayList<Object>(
 				getContentChildren());
+		if (oldContentChildren.contains(contentChild)) {
+			throw new IllegalArgumentException("Cannot reorder " + contentChild
+					+ " because its not a content child.");
+		}
+		if (oldContentChildren.indexOf(contentChild) == newIndex) {
+			throw new IllegalArgumentException(
+					"Cannot reorder " + contentChild + " to given index + "
+							+ newIndex + ", because its already there.");
+		}
 		doReorderContentChild(contentChild, newIndex);
+		// check doReorderContentChild(Object, int) does not violate
+		// postconditions
+		if (getContentChildren().indexOf(contentChild) != newIndex) {
+			throw new IllegalStateException(
+					"doReorderContentChild(Object, int) did not reorder content child "
+							+ contentChild + " to index " + newIndex + ".");
+		}
 		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
 				Collections.unmodifiableList(getContentChildren()));
 	}
