@@ -304,12 +304,12 @@ public class Straight implements Cloneable, Serializable {
 	 *         <code>null</code> if no intersection {@link Point} exists
 	 */
 	public Vector getIntersection(Straight other) {
-		Vector3D l1 = new Vector3D(this.position.toPoint()).getCrossProduct(
-				new Vector3D(this.position.getAdded(this.direction).toPoint()));
-		Vector3D l2 = new Vector3D(other.position.toPoint())
-				.getCrossProduct(new Vector3D(
-						other.position.getAdded(other.direction).toPoint()));
-
+		Vector p1 = this.position.getAdded(this.direction);
+		Vector p2 = other.position.getAdded(other.direction);
+		Vector3D l1 = new Vector3D(this.position.x, this.position.y, 1)
+				.getCrossProduct(new Vector3D(p1.toPoint()));
+		Vector3D l2 = new Vector3D(other.position.x, other.position.y, 1)
+				.getCrossProduct(new Vector3D(p2.toPoint()));
 		Point poi = l1.getCrossProduct(l2).toPoint();
 
 		return poi == null ? null : new Vector(poi);
@@ -390,8 +390,14 @@ public class Straight implements Cloneable, Serializable {
 		// calculate with a normalized direction vector to prevent rounding
 		// effects
 		Vector normalized = direction.getNormalized();
-		return new Straight(position, normalized).getIntersection(
-				new Straight(vector, normalized.getOrthogonalComplement()));
+
+		// to compensate rounding problems with large vectors, we shift
+		// straight and given vector by the straight's position vector before
+		// the computation and back before returning the computed projection.
+		Straight s1 = new Straight(Vector.NULL, normalized);
+		Straight s2 = new Straight(vector.getSubtracted(position),
+				normalized.getOrthogonalComplement());
+		return s1.getIntersection(s2).getAdded(position);
 	}
 
 	/**

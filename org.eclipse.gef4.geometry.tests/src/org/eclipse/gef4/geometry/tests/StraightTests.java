@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2014 Research Group Software Construction,
  *                          RWTH Aachen University and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (Research Group Software Construction, RWTH Aachen University) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -29,10 +29,10 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link Straight}.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class StraightTests {
 
@@ -153,6 +153,13 @@ public class StraightTests {
 			Vector v = new Vector(i + 1, i - 1);
 			assertTrue(PrecisionUtils.equal(s1.getDistance(v), i + 1));
 		}
+
+		// bug #482121 (NPE within getDistance())
+		Straight s2 = new Straight(
+				new Vector(57.36146803551614, 1.8866002881313908E16),
+				new Vector(0.0, 16.0));
+		Vector v = new Vector(51.15375383435782, 1.8866002881313916E16);
+		s2.getDistance(v);
 	}
 
 	@Test
@@ -238,6 +245,14 @@ public class StraightTests {
 			Vector v = new Vector(i + 1, i - 1);
 			assertTrue(s1.getProjection(v).equals(new Vector(0, i - 1)));
 		}
+
+		// bug #482121
+		Straight s3 = new Straight(
+				new Vector(57.36146803551614, 1.8866002881313908E16),
+				new Vector(0.0, 16.0));
+		Vector v2 = new Vector(51.15375383435782, 1.8866002881313908E16);
+		Vector projection = s3.getProjection(v2);
+		assertNotNull(projection);
 	}
 
 	@Test
