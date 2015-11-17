@@ -12,19 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map.Entry;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
-import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -34,8 +32,8 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 
 /**
- * The {@link CreationPolicy} is an {@link ITransactional}
- * {@link AbstractPolicy} that handles the creation of content.
+ * The {@link CreationPolicy} is an {@link AbstractTransactionPolicy} that
+ * handles the creation of content.
  * <p>
  * It handles the creation by initiating the adding of a content child to the
  * content parent via the {@link ContentPolicy} of the parent
@@ -53,37 +51,13 @@ import com.google.inject.Inject;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class CreationPolicy<VR> extends AbstractPolicy<VR>
-		implements ITransactional {
-
-	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
-	private ReverseUndoCompositeOperation createOperation;
+public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 	@Inject
 	private IContentPartFactory<VR> contentPartFactory;
 
 	@Inject
 	private ContentPartPool<VR> contentPartPool;
-
-	@Override
-	public ITransactionalOperation commit() {
-		if (!initialized) {
-			return null;
-		}
-
-		// after commit, we need to be re-initialized
-		initialized = false;
-		ITransactionalOperation commit = null;
-		if (createOperation != null && !createOperation.isNoOp()) {
-			commit = createOperation.unwrap(true);
-		}
-		return commit;
-	}
 
 	/**
 	 * Creates an {@link IContentPart} for the given content {@link Object} and
@@ -107,9 +81,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	public IContentPart<VR, ? extends VR> create(Object content,
 			IContentPart<VR, ? extends VR> parent, int index,
 			SetMultimap<IContentPart<VR, ? extends VR>, String> anchoreds) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		if (content == null) {
 			throw new IllegalArgumentException(
 					"The given content may not be null.");
@@ -148,8 +120,8 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 		parentContentPolicy.addContentChild(content, index);
 		ITransactionalOperation addToParentOperation = parentContentPolicy
 				.commit();
-		if (addToParentOperation != null && !addToParentOperation.isNoOp()) {
-			createOperation.add(addToParentOperation);
+		if (addToParentOperation != null) {
+			getOperation().add(addToParentOperation);
 		}
 
 		// add anchoreds via content policy
@@ -166,9 +138,8 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 			}
 			ITransactionalOperation attachToAnchorageOperation = anchoredPolicy
 					.commit();
-			if (attachToAnchorageOperation != null
-					&& !attachToAnchorageOperation.isNoOp()) {
-				createOperation.add(attachToAnchorageOperation);
+			if (attachToAnchorageOperation != null) {
+				getOperation().add(attachToAnchorageOperation);
 			}
 		}
 
@@ -176,26 +147,17 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 		ITransactionalOperation focusOperation = createFocusOperation(
 				contentPart);
 		if (focusOperation != null) {
-			createOperation.add(focusOperation);
-			try {
-				focusOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
+			getOperation().add(focusOperation);
 		}
 
 		// select the newly created part
 		ITransactionalOperation selectOperation = createSelectOperation(
 				contentPart);
 		if (selectOperation != null) {
-			createOperation.add(selectOperation);
-			try {
-				selectOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
+			getOperation().add(selectOperation);
 		}
 
+		locallyExecuteOperation();
 		return contentPart;
 	}
 
@@ -244,6 +206,11 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 		return null;
 	}
 
+	@Override
+	protected ITransactionalOperation createOperation() {
+		return new ReverseUndoCompositeOperation("Create Content");
+	}
+
 	/**
 	 * Returns an {@link ITransactionalOperation} that adds the given
 	 * {@link IContentPart} to the {@link SelectionModel} of the corresponding
@@ -257,26 +224,12 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR>
 	protected ITransactionalOperation createSelectOperation(
 			IContentPart<VR, ? extends VR> part) {
 		IViewer<VR> viewer = part.getRoot().getViewer();
-		// remove from selection model
-		SelectionModel<VR> selectionModel = viewer
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		if (selectionModel != null) {
-			List<IContentPart<VR, ? extends VR>> selected = selectionModel
-					.getSelection();
-			if (!selected.contains(part)) {
-				List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
-						selected);
-				newSelection.add(part);
-				return new ChangeSelectionOperation<VR>(viewer, newSelection);
-			}
-		}
-		return null;
+		return new SelectOperation<VR>(viewer, Collections.singletonList(part));
 	}
 
 	@Override
-	public void init() {
-		createOperation = new ReverseUndoCompositeOperation("Create Content");
-		initialized = true;
+	protected AbstractCompositeOperation getOperation() {
+		return (AbstractCompositeOperation) super.getOperation();
 	}
 
 }

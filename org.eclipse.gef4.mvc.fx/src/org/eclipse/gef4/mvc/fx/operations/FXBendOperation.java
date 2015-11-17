@@ -35,7 +35,7 @@ public class FXBendOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final Connection connection;
-	private final List<IAnchor> oldAnchors;
+	private final List<IAnchor> initialAnchors;
 	private List<IAnchor> newAnchors;
 
 	/**
@@ -49,8 +49,8 @@ public class FXBendOperation extends AbstractOperation
 	public FXBendOperation(Connection connection) {
 		super("Bend");
 		this.connection = connection;
-		this.oldAnchors = new ArrayList<IAnchor>(connection.getAnchors());
-		this.newAnchors = new ArrayList<IAnchor>(oldAnchors);
+		this.initialAnchors = new ArrayList<IAnchor>(connection.getAnchors());
+		this.newAnchors = new ArrayList<IAnchor>(initialAnchors);
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class FXBendOperation extends AbstractOperation
 	 * @return The list of {@link IAnchor}s which will replace the
 	 *         connection's anchors upon undoing.
 	 */
-	public List<IAnchor> getOldAnchors() {
-		return oldAnchors;
+	public List<IAnchor> getInitialAnchors() {
+		return initialAnchors;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		return oldAnchors.equals(newAnchors);
+		return initialAnchors.equals(newAnchors);
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class FXBendOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
-			connection.setAnchors(oldAnchors);
+			connection.setAnchors(initialAnchors);
 		}
 		return Status.OK_STATUS;
 	}

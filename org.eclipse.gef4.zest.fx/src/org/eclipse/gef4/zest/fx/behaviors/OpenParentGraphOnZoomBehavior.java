@@ -85,7 +85,7 @@ public class OpenParentGraphOnZoomBehavior extends AbstractBehavior<Node> {
 	 *            The new zoom level.
 	 */
 	protected void onZoomLevelChange(double oldScale, double newScale) {
-		if (oldScale > newScale && newScale < 0.7) {
+		if (isActive() && oldScale > newScale && newScale < 0.7) {
 			ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
 			if (contentModel == null) {
 				throw new IllegalArgumentException("ContentModel could not be obtained!");

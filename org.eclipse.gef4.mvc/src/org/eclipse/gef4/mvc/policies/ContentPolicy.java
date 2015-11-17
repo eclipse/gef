@@ -15,8 +15,6 @@ import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.AddContentChildOperation;
 import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.RemoveContentChildOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
@@ -54,18 +52,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-// TODO: unwrap composite operations no longer needed
-public class ContentPolicy<VR> extends AbstractPolicy<VR>
-		implements ITransactional {
-
-	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
-
-	private AbstractCompositeOperation commitOperation;
+public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 	/**
 	 * Creates and records operations to add the given <i>contentChild</i> to
@@ -79,18 +66,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 *            The index of the new content child.
 	 */
 	public void addContentChild(Object contentChild, int index) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		// IMPORTANT: Assemble content operations in a
-		// ForwardUndoCompositeOperation, so content synchronization is
-		// performed after having changed the content during undo as well.
-		ForwardUndoCompositeOperation addOperation = new ForwardUndoCompositeOperation(
-				"Add Content Child");
-		addOperation.add(new AddContentChildOperation<VR>(getHost(),
+		checkInitialized();
+		getOperation().add(new AddContentChildOperation<VR>(getHost(),
 				contentChild, index));
-		commitOperation.add(addOperation);
+		locallyExecuteOperation();
 	}
 
 	/**
@@ -106,31 +85,15 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 *
 	 */
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		// IMPORTANT: Assemble content operations in a
-		// ForwardUndoCompositeOperation, so content synchronization is
-		// performed after having changed the content during undo as well.
-		ForwardUndoCompositeOperation attachOperation = new ForwardUndoCompositeOperation(
-				"Attach To Content Anchorage");
-		attachOperation.add(new AttachToContentAnchorageOperation<VR>(getHost(),
+		checkInitialized();
+		getOperation().add(new AttachToContentAnchorageOperation<VR>(getHost(),
 				contentAnchorage, role));
-		commitOperation.add(attachOperation);
+		locallyExecuteOperation();
 	}
 
 	@Override
-	public ITransactionalOperation commit() {
-		// after commit, we need to be re-initialized
-		initialized = false;
-
-		if (commitOperation != null && !commitOperation.isNoOp()) {
-			ITransactionalOperation commit = commitOperation.unwrap(true);
-			commitOperation = null;
-			return commit;
-		}
-		return null;
+	protected ITransactionalOperation createOperation() {
+		return new ReverseUndoCompositeOperation("Content Change");
 	}
 
 	/**
@@ -146,18 +109,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 */
 	public void detachFromContentAnchorage(Object contentAnchorage,
 			String role) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		// IMPORTANT: Assemble content operations in a
-		// ForwardUndoCompositeOperation, so content synchronization is
-		// performed after having changed the content during undo as well.
-		ForwardUndoCompositeOperation detachOperation = new ForwardUndoCompositeOperation(
-				"Detach From Content Anchorage");
-		detachOperation.add(new DetachFromContentAnchorageOperation<VR>(
+		checkInitialized();
+		getOperation().add(new DetachFromContentAnchorageOperation<VR>(
 				getHost(), contentAnchorage, role));
-		commitOperation.add(detachOperation);
+		locallyExecuteOperation();
 	}
 
 	@Override
@@ -166,9 +121,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	}
 
 	@Override
-	public void init() {
-		commitOperation = new ReverseUndoCompositeOperation("Content Change");
-		initialized = true;
+	protected AbstractCompositeOperation getOperation() {
+		return (AbstractCompositeOperation) super.getOperation();
 	}
 
 	/**
@@ -182,18 +136,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR>
 	 *            {@link ContentPolicy}.
 	 */
 	public void removeContentChild(Object contentChild) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		// IMPORTANT: Assemble content operations in a
-		// ForwardUndoCompositeOperation, so content synchronization is
-		// performed after having changed the content during undo as well.
-		ForwardUndoCompositeOperation removeOperation = new ForwardUndoCompositeOperation(
-				"Remove Content Child");
-		removeOperation.add(
+		checkInitialized();
+		getOperation().add(
 				new RemoveContentChildOperation<VR>(getHost(), contentChild));
-		commitOperation.add(removeOperation);
+		locallyExecuteOperation();
 	}
 
 	@Override

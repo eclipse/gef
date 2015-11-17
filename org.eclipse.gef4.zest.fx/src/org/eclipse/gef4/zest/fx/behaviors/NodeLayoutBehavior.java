@@ -13,14 +13,14 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
+import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -43,76 +43,46 @@ import javafx.scene.transform.Affine;
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	/**
-	 * The class key that is used to retrieve the {@link FXResizePolicy} that is
-	 * installed on a {@link NodeContentPart}.
-	 */
-	public static Class<FXResizePolicy> RESIZE_POLICY_KEY = FXResizePolicy.class;
-
-	/**
-	 * The class key that is used to retrieve the {@link FXTransformPolicy} that
-	 * is installed on a {@link NodeContentPart}.
-	 */
-	public static Class<FXTransformPolicy> TRANSFORM_POLICY_KEY = FXTransformPolicy.class;
-
-	/**
-	 * Default constructor.
-	 */
-	public NodeLayoutBehavior() {
-	}
-
-	@Override
-	public void activate() {
-		super.activate();
-	}
-
-	/**
 	 * Reads the location and size of its host {@link NodeContentPart} from the
 	 * layout model and updates the visualization accordingly.
 	 */
 	public void adaptLayoutInformation() {
-		FXResizePolicy resizePolicy = getHost().getAdapter(RESIZE_POLICY_KEY);
-		FXTransformPolicy transformPolicy = getHost().getAdapter(TRANSFORM_POLICY_KEY);
-		if (resizePolicy != null && transformPolicy != null) {
-			Node visual = getHost().getVisual();
-			Bounds layoutBounds = visual.getLayoutBounds();
-			Affine transform = transformPolicy.getNodeTransform();
-			double x = transform.getTx();
-			double y = transform.getTy();
-			double w = layoutBounds.getWidth();
-			double h = layoutBounds.getHeight();
+		Node visual = getHost().getVisual();
+		Bounds layoutBounds = visual.getLayoutBounds();
+		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
+		double x = transform.getTx();
+		double y = transform.getTy();
+		double w = layoutBounds.getWidth();
+		double h = layoutBounds.getHeight();
 
-			GraphNodeLayout nodeLayout = getNodeLayout();
-			Point location = LayoutProperties.getLocation(nodeLayout);
-			Dimension size = LayoutProperties.getSize(nodeLayout);
+		GraphNodeLayout nodeLayout = getNodeLayout();
+		Point location = LayoutProperties.getLocation(nodeLayout);
+		Dimension size = LayoutProperties.getSize(nodeLayout);
 
-			// location is the center of the node, therefore we subtract half
-			// width/height from it
-			double dx = location.x - size.width / 2 - x;
-			double dy = location.y - size.height / 2 - y;
-			double dw = size.width - w;
-			double dh = size.height - h;
+		// location is the center of the node, therefore we subtract half
+		// width/height from it
+		double dx = location.x - size.width / 2 - x;
+		double dy = location.y - size.height / 2 - y;
+		double dw = size.width - w;
+		double dh = size.height - h;
 
-			resizePolicy.init();
-			transformPolicy.init();
-			resizePolicy.performResize(dw, dh);
-			transformPolicy.setPreTranslate(transformPolicy.createPreTransform(), dx, dy);
-			ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation("AdaptLayout");
-			ITransactionalOperation operation = resizePolicy.commit();
-			if (operation != null) {
-				fwd.add(operation);
-			}
-			operation = transformPolicy.commit();
-			if (operation != null) {
-				fwd.add(operation);
-			}
-			operation = fwd.unwrap(true);
-			if (operation != null) {
-				try {
-					operation.execute(new NullProgressMonitor(), null);
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				}
-			}
+		FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
+		resizeOperation.setDw(dw);
+		resizeOperation.setDh(dh);
+
+		try {
+			resizeOperation.execute(null, null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+
+		FXTransformOperation transformOperation = new FXTransformOperation(transform);
+		transformOperation.setNewTransform(Geometry2JavaFX
+				.toFXAffine(JavaFX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy)));
+		try {
+			transformOperation.execute(null, null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -182,8 +152,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
 		}
 
-		FXTransformPolicy txPolicy = getHost().getAdapter(FXTransformPolicy.class);
-		Affine transform = txPolicy.getNodeTransform();
+		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 
 		GraphNodeLayout nodeLayout = getNodeLayout();
 		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx, transform.getTy() + miny);

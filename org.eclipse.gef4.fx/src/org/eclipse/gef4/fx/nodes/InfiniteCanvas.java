@@ -1244,12 +1244,24 @@ public class InfiniteCanvas extends Region {
 	 */
 	public void setContentTransform(Affine tx) {
 		Affine viewportTransform = contentTransformProperty.get();
-		viewportTransform.setMxx(tx.getMxx());
-		viewportTransform.setMxy(tx.getMxy());
-		viewportTransform.setMyx(tx.getMyx());
-		viewportTransform.setMyy(tx.getMyy());
-		viewportTransform.setTx(tx.getTx());
-		viewportTransform.setTy(tx.getTy());
+		if (viewportTransform.getMxx() != tx.getMxx()) {
+			viewportTransform.setMxx(tx.getMxx());
+		}
+		if (viewportTransform.getMxy() != tx.getMxy()) {
+			viewportTransform.setMxy(tx.getMxy());
+		}
+		if (viewportTransform.getMyx() != tx.getMyx()) {
+			viewportTransform.setMyx(tx.getMyx());
+		}
+		if (viewportTransform.getMyy() != tx.getMyy()) {
+			viewportTransform.setMyy(tx.getMyy());
+		}
+		if (viewportTransform.getTx() != tx.getTx()) {
+			viewportTransform.setTx(tx.getTx());
+		}
+		if (viewportTransform.getTy() != tx.getTy()) {
+			viewportTransform.setTy(tx.getTy());
+		}
 		updateScrollBars();
 	}
 

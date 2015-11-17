@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,6 +34,9 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 
 	private final IContentPart<VR, ? extends VR> parent;
 	private final Object contentChild;
+
+	// capture initial content children (for no-op test)
+	private List<? extends Object> initialContentChildren;
 	private int initialIndex;
 
 	/**
@@ -48,11 +53,11 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 	 */
 	public RemoveContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild) {
-		// TODO: expect initialIndex as in AddContentChildOperation
 		super("Remove Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
 		initialIndex = parent.getContentChildren().indexOf(contentChild);
+		this.initialContentChildren = parent.getContentChildren();
 	}
 
 	@Override
@@ -60,14 +65,16 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("EXEC remove content " + contentChild + " from "
 		// + parent + ".");
-		parent.removeContentChild(contentChild);
+		if (parent.getContent() != null
+				&& parent.getContentChildren().contains(contentChild)) {
+			parent.removeContentChild(contentChild);
+		}
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		// TODO: noop if child is not present (at that initialIndex)
-		return false;
+		return !initialContentChildren.contains(contentChild);
 	}
 
 	@Override
@@ -81,7 +88,9 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("UNDO remove content " + contentChild + " from "
 		// + parent + ".");
-		parent.addContentChild(contentChild, initialIndex);
+		if (!parent.getContentChildren().contains(contentChild)) {
+			parent.addContentChild(contentChild, initialIndex);
+		}
 		return Status.OK_STATUS;
 	}
 

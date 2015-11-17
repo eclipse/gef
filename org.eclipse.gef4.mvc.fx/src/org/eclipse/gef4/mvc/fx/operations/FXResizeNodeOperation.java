@@ -35,7 +35,7 @@ public class FXResizeNodeOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final Node visual;
-	private final Dimension oldSize;
+	private final Dimension initialSize;
 	private double dw;
 	private double dh;
 
@@ -78,26 +78,26 @@ public class FXResizeNodeOperation extends AbstractOperation
 	 *            Descriptive title for the operation.
 	 * @param visual
 	 *            The visual that is resized/relocated.
-	 * @param oldSize
+	 * @param initialSize
 	 *            The old size of the visual.
 	 * @param dw
 	 *            The horizontal size difference.
 	 * @param dh
 	 *            The vertical size difference.
 	 */
-	public FXResizeNodeOperation(String label, Node visual, Dimension oldSize,
-			double dw, double dh) {
+	public FXResizeNodeOperation(String label, Node visual,
+			Dimension initialSize, double dw, double dh) {
 		super(label);
 		this.visual = visual;
 
-		if (oldSize.width + dw < 0) {
+		if (initialSize.width + dw < 0) {
 			throw new IllegalArgumentException("Cannot resize below zero.");
 		}
-		if (oldSize.height + dh < 0) {
+		if (initialSize.height + dh < 0) {
 			throw new IllegalArgumentException("Cannot resize below zero.");
 		}
 
-		this.oldSize = oldSize.getCopy();
+		this.initialSize = initialSize.getCopy();
 		this.dw = dw;
 		this.dh = dh;
 	}
@@ -105,7 +105,8 @@ public class FXResizeNodeOperation extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		visual.resize(oldSize.getWidth() + dw, oldSize.getHeight() + dh);
+		visual.resize(initialSize.getWidth() + dw,
+				initialSize.getHeight() + dh);
 		return Status.OK_STATUS;
 	}
 
@@ -132,8 +133,8 @@ public class FXResizeNodeOperation extends AbstractOperation
 	 *
 	 * @return The dimensions that are applied when undoing this operation.
 	 */
-	public Dimension getOldSize() {
-		return oldSize;
+	public Dimension getInitialSize() {
+		return initialSize;
 	}
 
 	/**
@@ -183,7 +184,7 @@ public class FXResizeNodeOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		visual.resize(oldSize.getWidth(), oldSize.getHeight());
+		visual.resize(initialSize.getWidth(), initialSize.getHeight());
 		return Status.OK_STATUS;
 	}
 

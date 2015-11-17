@@ -16,6 +16,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.planar.Point;
+
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -28,14 +32,10 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.transform.Transform;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.geometry.planar.Point;
-
 /**
  * {@link AbstractAnchor} is the abstract base implementation for
- * {@link IAnchor}s. It provides the facility to bind an anchor to an
- * anchorage {@link Node} ({@link #anchorageProperty()}), to attach and detach
+ * {@link IAnchor}s. It provides the facility to bind an anchor to an anchorage
+ * {@link Node} ({@link #anchorageProperty()}), to attach and detach
  * {@link Node}s via {@link AnchorKey}s, and to provide positions (
  * {@link #positionProperty()}) for the attached {@link AnchorKey}s.
  * <p>
@@ -337,7 +337,9 @@ public abstract class AbstractAnchor implements IAnchor {
 			// TODO: we could enforce that computePosition may never return
 			// null or an invalid position
 			if (newPosition != null && !Double.isNaN(newPosition.x)
-					&& !Double.isNaN(newPosition.y)) {
+					&& !Double.isInfinite(newPosition.x)
+					&& !Double.isNaN(newPosition.y)
+					&& !Double.isInfinite(newPosition.y)) {
 				positionProperty().put(key, newPosition);
 			}
 		}

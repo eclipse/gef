@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.operations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -25,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
- * The {@link ChangeSelectionOperation} can be used to change the
+ * The {@link DeselectOperation} can be used to change the
  * {@link SelectionModel} of an {@link IViewer}.
  *
  * @author mwienand
@@ -34,7 +35,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class ChangeSelectionOperation<VR> extends AbstractOperation
+public class DeselectOperation<VR> extends AbstractOperation
 		implements ITransactionalOperation {
 
 	/**
@@ -45,72 +46,50 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "Change Selection";
+	public static final String DEFAULT_LABEL = "Select";
 
 	private IViewer<VR> viewer;
-	private List<IContentPart<VR, ? extends VR>> oldSelection;
-	private List<IContentPart<VR, ? extends VR>> newSelection;
+
+	private List<IContentPart<VR, ? extends VR>> initialSelection;
+	private List<IContentPart<VR, ? extends VR>> toBeDeselected;
 
 	/**
-	 * Creates a new {@link ChangeSelectionOperation} to change the selection
-	 * within the given {@link IViewer} to the given list of
-	 * {@link IContentPart}s.
+	 * Creates a new {@link DeselectOperation} to change the selection within
+	 * the given {@link IViewer} by removing the given {@link IContentPart}s.
+	 * The {@link #DEFAULT_LABEL} is used.
 	 *
 	 * @param viewer
 	 *            The {@link IViewer} for which the selection is changed.
-	 * @param newSelection
-	 *            The new selection.
+	 * @param toBeDeselected
+	 *            The {@link IContentPart}s that are to be selected.
 	 */
-	public ChangeSelectionOperation(IViewer<VR> viewer,
-			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
-		this(DEFAULT_LABEL, viewer,
-				viewer.<SelectionModel<VR>> getAdapter(SelectionModel.class)
-						.getSelection(),
-				newSelection);
+	public DeselectOperation(IViewer<VR> viewer,
+			List<? extends IContentPart<VR, ? extends VR>> toBeDeselected) {
+		this(DEFAULT_LABEL, viewer, toBeDeselected);
 	}
 
 	/**
-	 * Creates a new {@link ChangeSelectionOperation} to change the selection
-	 * within the given {@link IViewer} to the given <i>newSelection</i>. When
-	 * undoing this operation, the given <i>oldSelection</i> is restored.
-	 *
-	 * @param viewer
-	 *            The {@link IViewer} for which the selection is changed.
-	 * @param oldSelection
-	 *            The old selection.
-	 * @param newSelection
-	 *            The new selection.
-	 */
-	public ChangeSelectionOperation(IViewer<VR> viewer,
-			List<? extends IContentPart<VR, ? extends VR>> oldSelection,
-			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
-		this(DEFAULT_LABEL, viewer, oldSelection, newSelection);
-	}
-
-	/**
-	 * Creates a new {@link ChangeSelectionOperation} to change the selection
-	 * within the given {@link IViewer} to the given <i>newSelection</i>. When
-	 * undoing this operation, the given <i>oldSelection</i> is restored. The
-	 * given label is used as the label for the operation.
+	 * Creates a new {@link DeselectOperation} to change the selection within
+	 * the given {@link IViewer} by removing the given {@link IContentPart}s.
+	 * The given label is used.
 	 *
 	 * @param label
 	 *            The operation's label.
 	 * @param viewer
 	 *            The {@link IViewer} for which the selection is changed.
-	 * @param oldSelection
-	 *            The old selection.
-	 * @param newSelection
-	 *            The new selection.
+	 * @param toBeDeselected
+	 *            The {@link IContentPart}s that are to be selected.
 	 */
-	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
-			List<? extends IContentPart<VR, ? extends VR>> oldSelection,
-			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
+	public DeselectOperation(String label, IViewer<VR> viewer,
+			List<? extends IContentPart<VR, ? extends VR>> toBeDeselected) {
 		super(label);
 		this.viewer = viewer;
-		this.oldSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
-				oldSelection);
-		this.newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
-				newSelection);
+		this.toBeDeselected = new ArrayList<IContentPart<VR, ? extends VR>>(
+				toBeDeselected);
+		SelectionModel<VR> selectionModel = viewer
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		initialSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
+				selectionModel.getSelection());
 	}
 
 	@Override
@@ -118,14 +97,22 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		selectionModel.setSelection(newSelection);
+		selectionModel.removeFromSelection(toBeDeselected);
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Returns the parts that are to be deleted.
+	 *
+	 * @return A reference to the to be deleted {@link IContentPart}s.
+	 */
+	public List<IContentPart<VR, ? extends VR>> getToBeDeselected() {
+		return toBeDeselected;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		return oldSelection == newSelection
-				|| (oldSelection != null && oldSelection.equals(newSelection));
+		return Collections.disjoint(initialSelection, toBeDeselected);
 	}
 
 	@Override
@@ -139,7 +126,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
-		selectionModel.setSelection(oldSelection);
+		selectionModel.removeFromSelection(toBeDeselected);
 		return Status.OK_STATUS;
 	}
 

@@ -16,6 +16,7 @@ import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -96,7 +97,7 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 	// TODO: make zoom threshold configurable
 	// TODO: loosen the viewport area rule and make it configurable
 	protected void onZoomLevelChange(double oldScale, double newScale) {
-		if (oldScale < newScale && newScale > 3) {
+		if (isActive() && oldScale < newScale && newScale > 3) {
 			// determine bounds of host visual
 			Group hostVisual = getHost().getVisual();
 			Bounds boundsInScene = hostVisual.localToScene(hostVisual.getLayoutBounds());
@@ -115,10 +116,16 @@ public class OpenNestedGraphOnZoomBehavior extends AbstractBehavior<Node> {
 				if (nestedGraph != null) {
 					NavigationPolicy semanticZoomPolicy = getSemanticZoomPolicy();
 					semanticZoomPolicy.init();
+					// our host will be disposed when the operation is
+					// committed. We
+					// need to obtain the reference to our domain before,
+					// otherwise we
+					// cannot execute the operation thereafter.
+					IDomain<Node> domain = getHost().getRoot().getViewer().getDomain();
 					semanticZoomPolicy.openNestedGraph(nestedGraph);
 					ITransactionalOperation commit = semanticZoomPolicy.commit();
 					if (commit != null) {
-						getHost().getRoot().getViewer().getDomain().execute(commit);
+						domain.execute(commit);
 					}
 				}
 			}

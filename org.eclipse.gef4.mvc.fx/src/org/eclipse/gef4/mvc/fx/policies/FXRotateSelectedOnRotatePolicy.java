@@ -84,8 +84,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
 				restoreRefreshVisuals(part);
-				getHost().getRoot().getViewer().getDomain()
-						.execute(transformPolicy.commit());
+				commit(transformPolicy);
 			}
 		}
 	}
@@ -104,7 +103,7 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
 				storeAndDisableRefreshVisuals(part);
-				transformPolicy.init();
+				init(transformPolicy);
 				// transform pivot to parent coordinates
 				Point pivotInLocal = JavaFX2Geometry
 						.toPoint(getHost().getVisual().getParent()

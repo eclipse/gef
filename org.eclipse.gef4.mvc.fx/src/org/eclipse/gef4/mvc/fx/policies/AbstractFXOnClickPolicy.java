@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -28,7 +28,8 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public abstract class AbstractFXOnClickPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXOnClickPolicy
+		extends AbstractInteractionPolicy<Node> {
 
 	/**
 	 * This callback method is invoked when the user performs a mouse click on

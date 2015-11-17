@@ -83,7 +83,7 @@ public class FXTransformOperation extends AbstractOperation
 
 	private final Affine nodeTransform;
 
-	private Affine oldTransform;
+	private Affine initialTransform;
 	private Affine newTransform;
 
 	/**
@@ -96,7 +96,7 @@ public class FXTransformOperation extends AbstractOperation
 	public FXTransformOperation(Affine nodeTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
-		this.oldTransform = setAffine(new Affine(), nodeTransform);
+		this.initialTransform = setAffine(new Affine(), nodeTransform);
 		this.newTransform = setAffine(new Affine(), nodeTransform);
 	}
 
@@ -114,31 +114,7 @@ public class FXTransformOperation extends AbstractOperation
 	public FXTransformOperation(Affine nodeTransform, Affine newTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
-		this.oldTransform = setAffine(new Affine(), nodeTransform);
-		this.newTransform = newTransform;
-	}
-
-	/**
-	 * Constructs a new {@link FXTransformOperation} to change the given
-	 * <i>nodeTransform</i>. The given <i>oldTransform</i> will be applied to
-	 * the <i>nodeTransform</i> upon undoing of this operation. The given
-	 * <i>newTransform</i> will be applied to the <i>nodeTransform</i> upon
-	 * execution of this operation.
-	 *
-	 * @param nodeTransform
-	 *            The {@link Affine} that will be changed by this operation.
-	 * @param oldTransform
-	 *            The {@link Affine} that will be applied to the
-	 *            <i>nodeTransform</i> upon undoing of this operation.
-	 * @param newTransform
-	 *            The {@link Affine} that will be applied to the
-	 *            <i>nodeTransform</i> upon execution of this operation.
-	 */
-	public FXTransformOperation(Affine nodeTransform, Affine oldTransform,
-			Affine newTransform) {
-		super("Transform");
-		this.nodeTransform = nodeTransform;
-		this.oldTransform = oldTransform;
+		this.initialTransform = setAffine(new Affine(), nodeTransform);
 		this.newTransform = newTransform;
 	}
 
@@ -167,13 +143,13 @@ public class FXTransformOperation extends AbstractOperation
 	 * @return The {@link Affine} that will be applied to the
 	 *         <i>nodeTransform</i> upon undoing of this operation.
 	 */
-	public Affine getOldTransform() {
-		return oldTransform;
+	public Affine getInitialTransform() {
+		return initialTransform;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		return equals(newTransform, oldTransform);
+		return equals(newTransform, initialTransform);
 	}
 
 	@Override
@@ -194,22 +170,10 @@ public class FXTransformOperation extends AbstractOperation
 		this.newTransform = newTransform;
 	}
 
-	/**
-	 * Sets the {@link Affine} that will be applied to the <i>nodeTransform</i>
-	 * upon undoing of this operation to the given value.
-	 *
-	 * @param oldTransform
-	 *            The {@link Affine} that will be applied upon undoing of this
-	 *            operation.
-	 */
-	public void setOldTransform(Affine oldTransform) {
-		this.oldTransform = oldTransform;
-	}
-
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		setAffine(nodeTransform, oldTransform);
+		setAffine(nodeTransform, initialTransform);
 		return Status.OK_STATUS;
 	}
 

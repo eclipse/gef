@@ -15,18 +15,18 @@ package org.eclipse.gef4.zest.tests.fx;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.parts.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
@@ -57,15 +57,7 @@ public class NodeLayoutBehaviorTests {
 				if (host == null) {
 					host = new NodeContentPart() {
 						{
-							setAdapter(AdapterKey.get(FXResizePolicy.class), new FXResizePolicy() {
-								@Override
-								public void init() {
-									resizeOperation = new FXResizeNodeOperation(getHost().getVisual());
-									resizeAndRevealOperation = new ForwardUndoCompositeOperation("Resize");
-									resizeAndRevealOperation.add(resizeOperation);
-									initialized = true;
-								}
-							});
+							setAdapter(AdapterKey.get(FXResizePolicy.class), new FXResizePolicy());
 							FXTransformProvider transformProvider = new FXTransformProvider();
 							setAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY, transformProvider);
 							setAdapter(AdapterKey.get(FXTransformPolicy.class), new FXTransformPolicy());
@@ -91,7 +83,8 @@ public class NodeLayoutBehaviorTests {
 						}
 					};
 					FXRootPart rootPart = new FXRootPart();
-					rootPart.setAdaptable(new FXViewer());
+					FXViewer viewer = new FXViewer();
+					viewer.setAdapter(IRootPart.class, rootPart);
 					host.setParent(rootPart);
 				}
 				return host;
@@ -122,7 +115,8 @@ public class NodeLayoutBehaviorTests {
 		 * corner, therefore we expect <code>translate-xy = location - size /
 		 * 2</code>.
 		 */
-		Affine affine = behavior.getHost().getAdapter(FXTransformPolicy.class).getNodeTransform();
+		Affine affine = Geometry2JavaFX
+				.toFXAffine(behavior.getHost().getAdapter(FXTransformPolicy.class).getCurrentNodeTransform());
 		// FIXME: as size is not set (in case there are no child nodes), this
 		// seems to be invalid
 		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(affine.getTx(), affine.getTy()));

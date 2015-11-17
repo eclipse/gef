@@ -36,7 +36,7 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractFXOnPinchSpreadPolicy {
 	@Override
 	public void zoomFinished(ZoomEvent e) {
 		ITransactionalOperation commit = getViewportPolicy().commit();
-		if (commit != null) {
+		if (commit != null && !commit.isNoOp()) {
 			getHost().getRoot().getViewer().getDomain().execute(commit);
 		}
 	}

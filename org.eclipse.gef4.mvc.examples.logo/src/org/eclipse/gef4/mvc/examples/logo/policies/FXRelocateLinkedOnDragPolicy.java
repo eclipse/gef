@@ -14,18 +14,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class FXRelocateLinkedOnDragPolicy extends FXTranslateSelectedOnDragPolicy {
+import javafx.scene.Node;
+
+public class FXRelocateLinkedOnDragPolicy
+		extends FXTranslateSelectedOnDragPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		List<IContentPart<Node, ? extends Node>> selected = super.getTargetParts();
+
 		List<IContentPart<Node, ? extends Node>> linked = new ArrayList<IContentPart<Node, ? extends Node>>();
 		for (IContentPart<Node, ? extends Node> cp : selected) {
 			// ensure that linked parts are moved with us during dragging
@@ -35,6 +38,13 @@ public class FXRelocateLinkedOnDragPolicy extends FXTranslateSelectedOnDragPolic
 									PartUtils.getAnchoreds(cp, "link"),
 									IContentPart.class)));
 		}
+
+		// remove all linked that are selected already (these will be translated
+		// via the FXTranslateSelectedOnDragPolicy) already
+		SelectionModel<?> selectionModel = getHost().getRoot().getViewer()
+				.getAdapter(SelectionModel.class);
+		linked.removeAll(selectionModel.getSelection());
+
 		return linked;
 	}
 

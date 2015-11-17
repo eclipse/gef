@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
@@ -158,8 +157,7 @@ public class FXTransformPolicyTests {
 		// test that the initial and current node transformation are identity
 		// transforms
 		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(),
-				JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
 		// create pre and post transforms
 		assertEquals(0, transformPolicy.createPreTransform());
 		assertEquals(1, transformPolicy.createPreTransform());
@@ -185,7 +183,7 @@ public class FXTransformPolicyTests {
 		// test the concatenation
 		AffineTransform concatenation = t0.getCopy().concatenate(t1).concatenate(t2).concatenate(t3).concatenate(t4)
 				.concatenate(t5);
-		assertEquals(concatenation, JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(concatenation, transformPolicy.getCurrentNodeTransform());
 	}
 
 	@Test
@@ -193,8 +191,7 @@ public class FXTransformPolicyTests {
 		// test that the initial and current node transformation are identity
 		// transforms
 		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(),
-				JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
 		// create a new transform that is applied before the node transformation
 		int firstPreIndex = transformPolicy.createPreTransform();
 		// test that the first created transform has index 0
@@ -216,8 +213,7 @@ public class FXTransformPolicyTests {
 		transformPolicy.setPreTranslate(firstPreIndex, 0, 0);
 		// test that the composite transformation equals the initial
 		// transformation since only identity transforms have been applied
-		assertEquals(transformPolicy.getInitialNodeTransform(),
-				JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
 		// set all transforms to translations
 		transformPolicy.setPreTranslate(firstPreIndex, 10, 10);
 		transformPolicy.setPreTranslate(secondPreIndex, 10, 10);
@@ -225,8 +221,7 @@ public class FXTransformPolicyTests {
 		transformPolicy.setPostTranslate(secondPostIndex, 10, 10);
 		// test that the composite transform equals a translation by 40, 40 (4
 		// individual translations by 10, 10 => 40, 40)
-		assertEquals(new AffineTransform().setToTranslation(40, 40),
-				JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(new AffineTransform().setToTranslation(40, 40), transformPolicy.getCurrentNodeTransform());
 	}
 
 	@Test
@@ -234,8 +229,7 @@ public class FXTransformPolicyTests {
 		// test that the initial and current node transformation are identity
 		// transforms
 		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(),
-				JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
 		// create a new transform that is applied before the node transformation
 		int firstIndex = transformPolicy.createPreTransform();
 		// test that the first created transform has index 0
@@ -244,15 +238,14 @@ public class FXTransformPolicyTests {
 		transformPolicy.setPreTranslate(firstIndex, 10, 10);
 		// test that the initial node transformation differs from the current
 		// node transformation (due to the translation)
-		assertFalse(transformPolicy.getInitialNodeTransform()
-				.equals(JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform())));
+		assertFalse(transformPolicy.getInitialNodeTransform().equals(transformPolicy.getCurrentNodeTransform()));
 		// call init() again to reset the policy
+		transformPolicy.rollback();
 		transformPolicy.init();
 		// test that the initial and current node transformation are identity
 		// transforms again
 		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(),
-				JavaFX2Geometry.toAffineTransform(transformPolicy.getNodeTransform()));
+		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
 		// create a new transform that is applied before the node transformation
 		firstIndex = transformPolicy.createPreTransform();
 		// test that the first created transform has index 0

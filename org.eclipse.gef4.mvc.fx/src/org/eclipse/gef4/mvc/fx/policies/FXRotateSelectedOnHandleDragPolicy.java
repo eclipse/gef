@@ -129,7 +129,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
 				storeAndDisableRefreshVisuals(part);
-				transformPolicy.init();
+				init(transformPolicy);
 				// transform pivot to parent coordinates
 				Point pivotInLocal = JavaFX2Geometry
 						.toPoint(getHost().getVisual().getParent()

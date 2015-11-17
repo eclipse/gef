@@ -178,10 +178,12 @@ public class FXGeometricCurvePart
 				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 		contentPolicy.init();
 
-		for (IVisualPart<Node, ? extends Node> anchorage : getAnchorages()
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = HashMultimap
+				.create(getAnchorages());
+		for (IVisualPart<Node, ? extends Node> anchorage : anchorages
 				.keySet()) {
 			if (anchorage instanceof IContentPart) {
-				for (String role : getAnchorages().get(anchorage)) {
+				for (String role : anchorages.get(anchorage)) {
 					contentPolicy.detachFromContentAnchorage(
 							((IContentPart<Node, ? extends Node>) anchorage)
 									.getContent(),
@@ -407,6 +409,7 @@ public class FXGeometricCurvePart
 	@Override
 	public SetMultimap<Object, String> getContentAnchorages() {
 		SetMultimap<Object, String> anchorages = HashMultimap.create();
+
 		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
 				.getSourceAnchorages();
 		for (Object src : sourceAnchorages) {

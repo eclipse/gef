@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -23,9 +22,8 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -35,9 +33,8 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 /**
- * The {@link FXTransformPolicy} is a {@link ITransactional transactional}
- * {@link AbstractPolicy policy} that handles the transformation of its
- * {@link #getHost() host}.
+ * The {@link FXTransformPolicy} is a {@link AbstractTransactionPolicy} that
+ * handles the transformation of its {@link #getHost() host}.
  * <p>
  * When working with transformations, the order in which the individual
  * transformations are concatenated is important. The transformation that is
@@ -91,9 +88,9 @@ import javafx.scene.transform.Affine;
  * @author mwienand
  *
  */
-public class FXTransformPolicy extends AbstractPolicy<Node>
-		implements ITransactional {
+public class FXTransformPolicy extends AbstractTransactionPolicy<Node> {
 
+	// TODO: define in IVisualPart
 	private static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
 
 	/**
@@ -152,38 +149,21 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	}
 
 	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
-
-	/**
-	 * The {@link FXTransformOperation} that is updated to reflect the
-	 * transformation changes that are performed by this policy. The operation
-	 * can later be executed on the operation history so that transformation
-	 * changes are undoable.
-	 */
-	protected FXTransformOperation transformOperation;
-
-	/**
 	 * The initial node transformation of the manipulated part.
 	 */
-	protected AffineTransform initialNodeTransform;
+	private AffineTransform initialNodeTransform;
 
 	/**
 	 * The {@link List} of transformations that are applied before the old
 	 * transformation.
 	 */
-	protected List<AffineTransform> preTransforms = new ArrayList<AffineTransform>();
+	private List<AffineTransform> preTransforms = new ArrayList<AffineTransform>();
 
 	/**
 	 * The {@link List} of transformations that are applied after the old
 	 * transformation.
 	 */
-	protected List<AffineTransform> postTransforms = new ArrayList<AffineTransform>();
-
-	private Affine currentNodeTransform;
+	private List<AffineTransform> postTransforms = new ArrayList<AffineTransform>();
 
 	/**
 	 * Applies the given {@link AffineTransform} as the new transformation
@@ -197,31 +177,24 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 */
 	protected void applyTransform(AffineTransform newTransform) {
 		// change new transform in operation
-		transformOperation
+		getOperation()
 				.setNewTransform(Geometry2JavaFX.toFXAffine(newTransform));
 		// locally execute operation
-		try {
-			transformOperation.execute(null, null);
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(
-					"Cannot execute FXTransformOperation.", e);
-		}
+		locallyExecuteOperation();
 	}
 
 	@Override
 	public ITransactionalOperation commit() {
-		if (!initialized) {
-			return null;
-		}
-		// after commit, we need to be re-initialized
-		initialized = false;
+		preTransforms.clear();
+		postTransforms.clear();
+		initialNodeTransform = null;
+		return super.commit();
+	}
 
-		ITransactionalOperation commit = null;
-		if (transformOperation != null && !transformOperation.isNoOp()) {
-			commit = transformOperation;
-		}
-		reset();
-		return commit;
+	@Override
+	protected FXTransformOperation createOperation() {
+		return new FXTransformOperation(
+				getHost().getAdapter(TRANSFORM_PROVIDER_KEY).get());
 	}
 
 	/**
@@ -246,9 +219,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *         postTransforms list.
 	 */
 	public int createPostTransform() {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		postTransforms.add(new AffineTransform());
 		return postTransforms.size() - 1;
 	}
@@ -275,22 +246,9 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *         preTransforms list.
 	 */
 	public int createPreTransform() {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		preTransforms.add(new AffineTransform());
 		return preTransforms.size() - 1;
-	}
-
-	/**
-	 * Returns a copy of the initial node transformation of the host (obtained
-	 * via {@link #getNodeTransform()}).
-	 *
-	 * @return A copy of the initial node transformation of the host (obtained
-	 *         via {@link #getNodeTransform()}).
-	 */
-	public AffineTransform getInitialNodeTransform() {
-		return initialNodeTransform.getCopy();
 	}
 
 	/**
@@ -303,41 +261,33 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *         {@link #getHost() host} under the {@link #TRANSFORM_PROVIDER_KEY}
 	 *         .
 	 */
-	public Affine getNodeTransform() {
-		if (currentNodeTransform == null) {
-			currentNodeTransform = getHost().getAdapter(TRANSFORM_PROVIDER_KEY)
-					.get();
-		}
-		return currentNodeTransform;
+	public AffineTransform getCurrentNodeTransform() {
+		return JavaFX2Geometry.toAffineTransform(
+				getHost().getAdapter(TRANSFORM_PROVIDER_KEY).get());
+	}
+
+	/**
+	 * Returns a copy of the initial node transformation of the host (obtained
+	 * via {@link #getCurrentNodeTransform()}).
+	 *
+	 * @return A copy of the initial node transformation of the host (obtained
+	 *         via {@link #getCurrentNodeTransform()}).
+	 */
+	public AffineTransform getInitialNodeTransform() {
+		return initialNodeTransform;
+	}
+
+	@Override
+	protected FXTransformOperation getOperation() {
+		return (FXTransformOperation) super.getOperation();
 	}
 
 	@Override
 	public void init() {
-		if (initialized) {
-			// If init() is called after manipulations have been performed using
-			// this policy, then the node transformation is not in its initial
-			// state anymore. That's why it is set to the initial node
-			// transformation here.
-			setTransform(initialNodeTransform);
-		}
-		reset();
-		transformOperation = new FXTransformOperation(getNodeTransform());
-		initialNodeTransform = JavaFX2Geometry
-				.toAffineTransform(transformOperation.getOldTransform());
-		initialized = true;
-	}
-
-	/**
-	 * Resets this {@link FXTransformPolicy}, i.e. clears the pre- and
-	 * post-transforms lists and sets the operation and the initial node
-	 * transform to <code>null</code>. This method is called by {@link #init()}
-	 * and {@link #commit()}.
-	 */
-	protected void reset() {
 		preTransforms.clear();
 		postTransforms.clear();
-		transformOperation = null;
-		initialNodeTransform = null;
+		initialNodeTransform = getCurrentNodeTransform();
+		super.init();
 	}
 
 	/**
@@ -349,9 +299,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            The counter clock-wise rotation {@link Angle}.
 	 */
 	public void setPostRotate(int index, Angle rotation) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		postTransforms.get(index).setToRotation(rotation.rad());
 		updateTransform();
 	}
@@ -367,9 +315,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            The vertical scale factor.
 	 */
 	public void setPostScale(int index, double sx, double sy) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		postTransforms.get(index).setToScale(sx, sy);
 		updateTransform();
 	}
@@ -385,9 +331,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 */
 	public void setPostTransform(int postTransformIndex,
 			AffineTransform transform) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		postTransforms.get(postTransformIndex).setTransform(transform);
 		updateTransform();
 	}
@@ -403,9 +347,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            The vertical translation offset (in local coordinates).
 	 */
 	public void setPostTranslate(int index, double tx, double ty) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		// TODO: snap to grid
 		postTransforms.get(index).setToTranslation(tx, ty);
 		updateTransform();
@@ -420,9 +362,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            The counter clock-wise rotation {@link Angle}.
 	 */
 	public void setPreRotate(int index, Angle rotation) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		preTransforms.get(index).setToRotation(rotation.rad());
 		updateTransform();
 	}
@@ -438,9 +378,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            The vertical scale factor.
 	 */
 	public void setPreScale(int index, double sx, double sy) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		preTransforms.get(index).setToScale(sx, sy);
 		updateTransform();
 	}
@@ -456,9 +394,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 */
 	public void setPreTransform(int preTransformIndex,
 			AffineTransform transform) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		preTransforms.get(preTransformIndex).setTransform(transform);
 		updateTransform();
 	}
@@ -474,9 +410,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            The vertical translation offset (in parent coordinates).
 	 */
 	public void setPreTranslate(int index, double tx, double ty) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		// TODO: snap to grid
 		preTransforms.get(index).setToTranslation(tx, ty);
 		updateTransform();
@@ -491,14 +425,11 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 *            host}.
 	 */
 	public void setTransform(AffineTransform newTransform) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		// clear pre- and post-transforms lists
 		preTransforms.clear();
 		postTransforms.clear();
-		// apply new transform to host
+		// apply new transform to host (and update the operation)
 		applyTransform(newTransform);
 	}
 
@@ -519,16 +450,13 @@ public class FXTransformPolicy extends AbstractPolicy<Node>
 	 * </pre>
 	 */
 	protected void updateTransform() {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		// compose transformations to one composite transformation
 		AffineTransform composite = new AffineTransform();
 		// concatenate pre transforms (in reverse order as the last pre
 		// transform should be applied first)
 		for (int i = postTransforms.size() - 1; i >= 0; i--) {
-			AffineTransform post = postTransforms.get(i);
-			composite.concatenate(post);
+			composite.concatenate(postTransforms.get(i));
 		}
 		// concatenate old transform
 		composite.concatenate(initialNodeTransform);

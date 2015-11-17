@@ -93,7 +93,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	}
 
 	@Override
-	public void performResize(double dw, double dh) {
+	public void resize(double dw, double dh) {
 		for (int i : getIndicesOfMovableAnchors()) {
 			Point p = initialPositions[i];
 			// scale dw and dh by relX and relY

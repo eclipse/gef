@@ -12,15 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -35,40 +33,18 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class FXChangeViewportPolicy extends AbstractPolicy<Node>
-		implements ITransactional {
-
-	private FXChangeViewportOperation operation = null;
-	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
+public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
-	public ITransactionalOperation commit() {
-		// after commit, we need to be re-initialized
-		initialized = false;
-
-		// clear operation and return current one (and formerly pushed
-		// operations)
-		if (operation != null && !operation.isNoOp()) {
-			ITransactionalOperation commit = operation;
-			operation = null;
-			return commit;
-		}
-		return null;
+	protected ITransactionalOperation createOperation() {
+		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+		return new FXChangeViewportOperation(viewer.getCanvas(), JavaFX2Geometry
+				.toAffineTransform(viewer.getCanvas().getContentTransform()));
 	}
 
 	@Override
-	public void init() {
-		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-		operation = new FXChangeViewportOperation(viewer.getCanvas(),
-				JavaFX2Geometry.toAffineTransform(
-						viewer.getCanvas().getContentTransform()));
-		// we are properly initialized now
-		initialized = true;
+	protected FXChangeViewportOperation getOperation() {
+		return (FXChangeViewportOperation) super.getOperation();
 	}
 
 	/**
@@ -81,16 +57,14 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 	 */
 	public void scrollRelative(double deltaTranslateX, double deltaTranslateY) {
 		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		operation.setNewTx(operation.getOldTx() + deltaTranslateX);
-		operation.setNewTy(operation.getOldTy() + deltaTranslateY);
-		try {
-			operation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+		checkInitialized();
+
+		FXChangeViewportOperation operation = getOperation();
+		operation.setNewHorizontalScrollOffset(
+				operation.getInitialHorizontalScrollOffset() + deltaTranslateX);
+		operation.setNewVerticalScrollOffset(
+				operation.getInitialVerticalScrollOffset() + deltaTranslateY);
+		locallyExecuteOperation();
 	}
 
 	/**
@@ -106,24 +80,17 @@ public class FXChangeViewportPolicy extends AbstractPolicy<Node>
 	 */
 	public void zoomRelative(double relativeZoom, double sceneX,
 			double sceneY) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
-		// System.out.println("RELATIVE ZOOM: " + relativeZoom);
+		checkInitialized();
+
 		// compute transformation
 		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
 				.getCanvas().getContentGroup().sceneToLocal(sceneX, sceneY);
-		operation.concatenateToNewTransform(new AffineTransform()
+		getOperation().concatenateToNewContentTransform(new AffineTransform()
 				.translate(contentGroupPivot.getX(), contentGroupPivot.getY())
 				.scale(relativeZoom, relativeZoom).translate(
 						-contentGroupPivot.getX(), -contentGroupPivot.getY()));
-		// locally execute operation
-		try {
-			operation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-	}
 
+		// locally execute operation
+		locallyExecuteOperation();
+	}
 }

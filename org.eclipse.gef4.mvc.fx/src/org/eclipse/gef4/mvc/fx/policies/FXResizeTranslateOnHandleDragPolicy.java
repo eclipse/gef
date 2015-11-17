@@ -91,7 +91,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 			ldh = -deltaY;
 		}
 		// apply translation and resize using underlying policies
-		getResizePolicy().performResize(ldw, ldh);
+		getResizePolicy().resize(ldw, ldh);
 		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
 	}
 

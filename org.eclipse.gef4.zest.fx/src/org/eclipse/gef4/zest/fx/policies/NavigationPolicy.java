@@ -19,63 +19,65 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
-import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ChangeContentsOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
 import javafx.scene.Node;
 
 /**
- * The {@link NavigationPolicy} is a {@link ITransactional transactional}
- * {@link AbstractPolicy policy} that can be used to navigate between
- * {@link Graph}s in a nested {@link Graph}s scenario. It saves the layout and
- * viewport of the current {@link Graph} when opening another {@link Graph} and
- * restores those values when navigating back to the {@link Graph}.
+ * The {@link NavigationPolicy} is an {@link AbstractTransactionPolicy} that can
+ * be used to navigate between {@link Graph}s in a nested {@link Graph}s
+ * scenario. It saves the layout and viewport of the current {@link Graph} when
+ * opening another {@link Graph} and restores those values when navigating back
+ * to the {@link Graph}.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactional {
+public class NavigationPolicy extends AbstractTransactionPolicy<Node> {
 
-	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
-	private ChangeContentsOperation changeContentsOperation = null;
+	private ChangeContentsOperation changeContentsOperation;
+	private FXChangeViewportOperation changeViewportOperation;
 
 	@Override
 	public ITransactionalOperation commit() {
-		if (!initialized) {
+		if (!isInitialized()) {
 			return null;
 		}
-		// after commit, we need to be re-initialized
-		initialized = false;
 
-		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation("Open Graph");
-		// add change viewport operation
-		FXChangeViewportPolicy changeViewportPolicy = getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
-		ITransactionalOperation operation = changeViewportPolicy.commit();
-		if (operation != null) {
-			commit.add(operation);
-		}
-		commit.add(changeContentsOperation);
+		// TODO: This violates the contract of AbstracTransactionalPolicy,
+		// because locallyExecuteOperation() may not be called at any time.
+		getOperation().add(changeContentsOperation);
+		getOperation().add(changeViewportOperation);
+
+		AbstractCompositeOperation commit = (AbstractCompositeOperation) super.commit();
+
+		changeViewportOperation = null;
 		changeContentsOperation = null;
-		return commit.unwrap(true);
+		return commit;
+	}
+
+	@Override
+	protected ITransactionalOperation createOperation() {
+		return new ReverseUndoCompositeOperation("Open Graph");
+	}
+
+	@Override
+	protected AbstractCompositeOperation getOperation() {
+		return (AbstractCompositeOperation) super.getOperation();
 	}
 
 	@Override
@@ -85,18 +87,14 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 		if (contentModel == null) {
 			throw new IllegalArgumentException("ContentModel could not be obtained!");
 		}
+
 		// obtain NavigationModel
 		final NavigationModel navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
 		if (navigationModel == null) {
 			throw new IllegalArgumentException("NavigationModel could not be obtained!");
 		}
-		// obtain FXChangeViewportPolicy
-		FXChangeViewportPolicy changeViewportPolicy = getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
-		if (changeViewportPolicy == null) {
-			throw new IllegalStateException("FXChangeViewportPolicy could not be obtained!");
-		}
-		changeViewportPolicy.init();
-		initialized = true;
+
+		super.init();
 	}
 
 	/**
@@ -117,6 +115,7 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 	 *            <code>false</code>.
 	 */
 	protected void openGraph(final Graph currentGraph, final Graph newGraph, final boolean resetNewGraphViewport) {
+		checkInitialized();
 		if (newGraph != null) {
 			// persist the state of the current graph
 			InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
@@ -129,17 +128,16 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 			// obtain the stored state (or an initial one) for the new graph
 			ViewportState newViewportState = navigationModel.getViewportState(newGraph);
 			if (newViewportState == null || resetNewGraphViewport) {
-				newViewportState = new ViewportState();
+				newViewportState = new ViewportState(0, 0, currentViewportState.getWidth(),
+						currentViewportState.getHeight(), new AffineTransform());
 			}
 
-			// apply viewport changes
-			// TODO: do not violate encapsulation of viewport change policy here
-			FXChangeViewportPolicy changeViewportPolicy = getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
-			FXChangeViewportOperation changeViewportOperation = ReflectionUtils
-					.getPrivateFieldValue(changeViewportPolicy, "operation");
-			changeViewportOperation.setNewTx(newViewportState.getTranslateX());
-			changeViewportOperation.setNewTy(newViewportState.getTranslateY());
-			changeViewportOperation.setNewTransform(newViewportState.getContentsTransform().getCopy());
+			changeViewportOperation = new FXChangeViewportOperation(canvas,
+					newViewportState.getContentsTransform().getCopy());
+			changeViewportOperation.setNewWidth(newViewportState.getWidth());
+			changeViewportOperation.setNewHeight(newViewportState.getHeight());
+			changeViewportOperation.setNewHorizontalScrollOffset(newViewportState.getTranslateX());
+			changeViewportOperation.setNewVerticalScrollOffset(newViewportState.getTranslateY());
 
 			// change contents and suppress next layout pass
 			changeContentsOperation = new ChangeContentsOperation(getHost().getRoot().getViewer(),
@@ -173,9 +171,8 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 	 */
 	public void openNestedGraph(Graph newGraph) {
 		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
+
 		ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
 		final Graph currentGraph = (Graph) contentModel.getContents().get(0);
 		openGraph(currentGraph, newGraph, true);
@@ -190,9 +187,8 @@ public class NavigationPolicy extends AbstractPolicy<Node>implements ITransactio
 	 */
 	public void openNestingGraph(Graph newGraph) {
 		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
+
 		ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
 		final Graph currentGraph = (Graph) contentModel.getContents().get(0);
 		openGraph(currentGraph, newGraph, false);

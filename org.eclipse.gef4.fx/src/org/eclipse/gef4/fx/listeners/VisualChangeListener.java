@@ -153,16 +153,16 @@ public abstract class VisualChangeListener {
 	 * @return
 	 */
 	private boolean isValidBounds(Bounds b) {
-		if (Double.isNaN(b.getMinX())) {
+		if (Double.isNaN(b.getMinX()) || Double.isInfinite(b.getMinX())) {
 			return false;
 		}
-		if (Double.isNaN(b.getMinY())) {
+		if (Double.isNaN(b.getMinY()) || Double.isInfinite(b.getMinY())) {
 			return false;
 		}
-		if (Double.isNaN(b.getMaxX())) {
+		if (Double.isNaN(b.getMaxX()) || Double.isInfinite(b.getMaxX())) {
 			return false;
 		}
-		if (Double.isNaN(b.getMaxY())) {
+		if (Double.isNaN(b.getMaxY()) || Double.isInfinite(b.getMaxY())) {
 			return false;
 		}
 		return true;
@@ -177,40 +177,40 @@ public abstract class VisualChangeListener {
 	 * @return
 	 */
 	private boolean isValidTransform(Transform t) {
-		if (Double.isNaN(t.getMxx())) {
+		if (Double.isNaN(t.getMxx()) || Double.isInfinite(t.getMxx())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMxy())) {
+		if (Double.isNaN(t.getMxy()) || Double.isInfinite(t.getMxy())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMxz())) {
+		if (Double.isNaN(t.getMxz()) || Double.isInfinite(t.getMxz())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMyx())) {
+		if (Double.isNaN(t.getMyx()) || Double.isInfinite(t.getMyx())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMyy())) {
+		if (Double.isNaN(t.getMyy()) || Double.isInfinite(t.getMyy())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMyz())) {
+		if (Double.isNaN(t.getMyz()) || Double.isInfinite(t.getMyz())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMzx())) {
+		if (Double.isNaN(t.getMzx()) || Double.isInfinite(t.getMzx())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMzy())) {
+		if (Double.isNaN(t.getMzy()) || Double.isInfinite(t.getMzy())) {
 			return false;
 		}
-		if (Double.isNaN(t.getMzz())) {
+		if (Double.isNaN(t.getMzz()) || Double.isInfinite(t.getMzz())) {
 			return false;
 		}
-		if (Double.isNaN(t.getTx())) {
+		if (Double.isNaN(t.getTx()) || Double.isInfinite(t.getTx())) {
 			return false;
 		}
-		if (Double.isNaN(t.getTy())) {
+		if (Double.isNaN(t.getTy()) || Double.isInfinite(t.getTy())) {
 			return false;
 		}
-		if (Double.isNaN(t.getTz())) {
+		if (Double.isNaN(t.getTz()) || Double.isInfinite(t.getTz())) {
 			return false;
 		}
 		return true;

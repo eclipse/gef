@@ -12,12 +12,13 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -26,16 +27,15 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
-import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.operations.SetRefreshVisualOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -63,21 +63,13 @@ import javafx.scene.Node;
  * @author mwienand
  * @author anyssen
  */
-public class FXBendPolicy extends AbstractPolicy<Node>
-		implements ITransactional {
+public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * The overlay threshold, i.e. the distance between two points so that they
 	 * are regarded as overlying.
 	 */
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
-
-	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
 
 	private IAnchor removedOverlainAnchor;
 	private int removedOverlainAnchorIndex;
@@ -89,15 +81,10 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	private Point initialMousePositionInScene;
 
 	/**
-	 * The bend operation that is currently used.
-	 */
-	protected FXBendOperation bendOperation;
-
-	/**
 	 * Returns <code>true</code> if the currently modified start, end, or way
 	 * point can be connected, i.e. realized by an anchor that is not anchored
-	 * to the {@link Connection} itself (see {@link IAnchor#getAnchorage()}
-	 * ), but provided through a {@link IVisualPart}'s anchor provider (i.e. a
+	 * to the {@link Connection} itself (see {@link IAnchor#getAnchorage()} ),
+	 * but provided through a {@link IVisualPart}'s anchor provider (i.e. a
 	 * {@link Provider}&lt;{@link IAnchor}&gt; adapted to the
 	 * {@link IVisualPart}). Otherwise returns <code>false</code>. Per default,
 	 * only the start and the end point can be attached.
@@ -106,8 +93,8 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 *            The index of the currently modified connection point.
 	 *
 	 * @return <code>true</code> if the currently modified point can be realized
-	 *         through an {@link IAnchor} not anchored on the
-	 *         {@link Connection}. Otherwise returns <code>false</code>.
+	 *         through an {@link IAnchor} not anchored on the {@link Connection}
+	 *         . Otherwise returns <code>false</code>.
 	 *
 	 * @see Connection#isStartConnected()
 	 * @see Connection#isWayConnected(int)
@@ -117,62 +104,36 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	protected boolean canConnect(int pointIndex) {
 		// up to now, only allow attaching start and end point.
 		return pointIndex == 0
-				|| pointIndex == bendOperation.getNewAnchors().size() - 1;
+				|| pointIndex == getOperation().getNewAnchors().size() - 1;
 	}
 
 	@Override
 	public ITransactionalOperation commit() {
-		if (!initialized) {
+		ITransactionalOperation bendOperation = super.commit();
+
+		if (bendOperation == null || bendOperation.isNoOp()) {
 			return null;
 		}
-		// after commit, we need to be re-initialized
-		initialized = false;
 
-		if (bendOperation != null && !bendOperation.isNoOp()) {
-			// get current selection
-			IViewer<Node> viewer = getHost().getRoot().getViewer();
-			SelectionModel<Node> selectionModel = viewer
-					.<SelectionModel<Node>> getAdapter(SelectionModel.class);
-			List<IContentPart<Node, ? extends Node>> selection = selectionModel
-					.getSelection();
+		// chain a reselect operation here, so handles are properly updated
+		// TODO: check if we cannot handle this otherwise
+		ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
+				bendOperation.getLabel());
+		updateOperation.add(bendOperation);
+		updateOperation.add(createReselectOperation());
 
-			// get selection without host
-			List<IContentPart<Node, ? extends Node>> selectionWithoutHost = new ArrayList<IContentPart<Node, ? extends Node>>(
-					selectionModel.getSelection());
-			selectionWithoutHost.remove(getHost());
+		// guard the update operation from refreshes
+		// TODO: check if this is needed (it should actually be performed by
+		// the interaction policy)
+		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation(
+				bendOperation.getLabel());
+		commit.add(new SetRefreshVisualOperation<Node>(getHost(),
+				getHost().isRefreshVisual(), false));
+		commit.add(updateOperation);
+		commit.add(new SetRefreshVisualOperation<Node>(getHost(), false,
+				getHost().isRefreshVisual()));
 
-			// build "deselect host" operation
-			ChangeSelectionOperation<Node> deselectOperation = new ChangeSelectionOperation<Node>(
-					viewer, selection, selectionWithoutHost);
-
-			// build "select host" operation
-			ChangeSelectionOperation<Node> selectOperation = new ChangeSelectionOperation<Node>(
-					viewer, selectionWithoutHost, selection);
-
-			// assemble deselect and select operations to form a reselect
-			ReverseUndoCompositeOperation reselectOperation = new ReverseUndoCompositeOperation(
-					"re-select");
-			reselectOperation.add(deselectOperation);
-			reselectOperation.add(selectOperation);
-
-			// assemble visual and reselect operations to form an update
-			ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
-					bendOperation.getLabel());
-			updateOperation.add(bendOperation);
-			updateOperation.add(reselectOperation);
-
-			// guard the update operation from model refreshes
-			ReverseUndoCompositeOperation guardedUpdateOperation = new ReverseUndoCompositeOperation(
-					bendOperation.getLabel());
-			guardedUpdateOperation.add(new SetRefreshVisualOperation<Node>(
-					getHost(), getHost().isRefreshVisual(), false));
-			guardedUpdateOperation.add(updateOperation);
-			guardedUpdateOperation.add(new SetRefreshVisualOperation<Node>(
-					getHost(), false, getHost().isRefreshVisual()));
-
-			return guardedUpdateOperation;
-		}
-		return null;
+		return commit;
 	}
 
 	/**
@@ -185,20 +146,55 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 *            The mouse position in scene coordinates.
 	 */
 	public void createAndSelectPoint(int segmentIndex, Point mouseInScene) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 
 		// create new way point
 		Point mouseInLocal = JavaFX2Geometry.toPoint(getConnection()
 				.sceneToLocal(Geometry2JavaFX.toFXPoint(mouseInScene)));
-		bendOperation.getNewAnchors().add(segmentIndex + 1,
+		getOperation().getNewAnchors().add(segmentIndex + 1,
 				createUnconnectedAnchor(mouseInLocal));
 
 		locallyExecuteOperation();
 
 		// select newly created way point
 		selectPoint(segmentIndex + 1, 0, mouseInScene);
+	}
+
+	@Override
+	protected FXBendOperation createOperation() {
+		return new FXBendOperation(getConnection());
+	}
+
+	/**
+	 * Create an {@link IUndoableOperation} to re-select the host part.
+	 *
+	 * @return An {@link IUndoableOperation} that deselects and selects the root
+	 *         part.
+	 */
+	protected ReverseUndoCompositeOperation createReselectOperation() {
+		if (!(getHost() instanceof IContentPart)) {
+			return null;
+		}
+
+		// assemble deselect and select operations to form a reselect
+		ReverseUndoCompositeOperation reselectOperation = new ReverseUndoCompositeOperation(
+				"re-select");
+
+		// build "deselect host" operation
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		DeselectOperation<Node> deselectOperation = new DeselectOperation<Node>(
+				viewer, Collections.singletonList(
+						(IContentPart<Node, Connection>) getHost()));
+
+		// build "select host" operation
+		SelectOperation<Node> selectOperation = new SelectOperation<Node>(
+				viewer, Collections.singletonList(
+						(IContentPart<Node, Connection>) getHost()));
+
+		reselectOperation.add(deselectOperation);
+		reselectOperation.add(selectOperation);
+		return reselectOperation;
+
 	}
 
 	/**
@@ -219,8 +215,8 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 * Determines the {@link IAnchor} that should replace the anchor of the
 	 * currently selected point. If the point can connect, the
 	 * {@link IVisualPart} at the mouse position is queried for an
-	 * {@link IAnchor} via a {@link Provider}&lt;{@link IAnchor}&gt;
-	 * adapter. Otherwise an (unconnected) anchor is create using
+	 * {@link IAnchor} via a {@link Provider}&lt;{@link IAnchor}&gt; adapter.
+	 * Otherwise an (unconnected) anchor is create using
 	 * {@link #createUnconnectedAnchor(Point)} .
 	 *
 	 * @param positionInLocal
@@ -280,7 +276,13 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 * @return The {@link Connection} that is manipulated by this policy.
 	 */
 	protected Connection getConnection() {
-		return (Connection) getHost().getVisual();
+		return getHost().getVisual();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public IVisualPart<Node, Connection> getHost() {
+		return (IVisualPart<Node, Connection>) super.getHost();
 	}
 
 	/**
@@ -309,6 +311,11 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		return deltaInLocal;
 	}
 
+	@Override
+	protected FXBendOperation getOperation() {
+		return (FXBendOperation) super.getOperation();
+	}
+
 	/**
 	 * If the point at the given index is overlain by the currently selected
 	 * point, i.e. their distance is smaller than the
@@ -324,8 +331,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 * @return The overlaid {@link IAnchor} to be used for the currently
 	 *         selected point
 	 */
-	protected IAnchor getOverlayAnchor(int candidateIndex,
-			Point mouseInScene) {
+	protected IAnchor getOverlayAnchor(int candidateIndex, Point mouseInScene) {
 		Point candidateLocation = null;
 
 		// TODO: provide getPoint(int index) in Connection
@@ -423,14 +429,14 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		// put removed back in (may be removed againg before returning)
 		if (removedOverlainAnchor != null) {
 			selectedPointIndex = selectedPointIndexBeforeOverlaidRemoval;
-			bendOperation.getNewAnchors().add(removedOverlainAnchorIndex,
+			getOperation().getNewAnchors().add(removedOverlainAnchorIndex,
 					removedOverlainAnchor);
 			locallyExecuteOperation();
 			removedOverlainAnchor = null;
 		}
 
 		// do not remove overlaid if there are no way points
-		if (bendOperation.getNewAnchors().size() <= 2) {
+		if (getOperation().getNewAnchors().size() <= 2) {
 			return;
 		}
 
@@ -453,7 +459,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		// if left neighbor is not overlain (and not removed), determine if
 		// right neighbor is overlain (and can be removed)
 		if (removedOverlainAnchorIndex == -1
-				&& selectedPointIndex < bendOperation.getNewAnchors().size()
+				&& selectedPointIndex < getOperation().getNewAnchors().size()
 						- 1) {
 			int candidateIndex = selectedPointIndex + 1;
 			overlayAnchor = getOverlayAnchor(candidateIndex, mouseInScene);
@@ -466,9 +472,9 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 
 		// remove neighbor if overlaid
 		if (removedOverlainAnchorIndex != -1) {
-			bendOperation.getNewAnchors().set(
+			getOperation().getNewAnchors().set(
 					selectedPointIndexBeforeOverlaidRemoval, overlayAnchor);
-			removedOverlainAnchor = bendOperation.getNewAnchors()
+			removedOverlainAnchor = getOperation().getNewAnchors()
 					.remove(removedOverlainAnchorIndex);
 			locallyExecuteOperation();
 		}
@@ -476,25 +482,12 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 
 	@Override
 	public void init() {
-		bendOperation = new FXBendOperation(getConnection());
 		removedOverlainAnchor = null;
 		removedOverlainAnchorIndex = -1;
 		selectedPointIndex = -1;
 		selectedPointIndexBeforeOverlaidRemoval = -1;
 		selectedPointInitialPositionInLocal = null;
-		initialized = true;
-	}
-
-	/**
-	 * Locally executes the {@link FXBendOperation} that is updated by this
-	 * policy, i.e. not on the operation history.
-	 */
-	protected void locallyExecuteOperation() {
-		try {
-			bendOperation.execute(null, null);
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
-		}
+		super.init();
 	}
 
 	/**
@@ -506,9 +499,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 *            The current mouse position in scene coordinates.
 	 */
 	public void moveSelectedPoint(Point mouseInScene) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 		if (selectedPointIndex < 0) {
 			throw new IllegalStateException("No point was selected.");
 		}
@@ -527,7 +518,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		selectedPointCurrentPositionInLocal
 				.translate(snapToGridOffset.getNegated());
 
-		bendOperation.getNewAnchors().set(selectedPointIndex,
+		getOperation().getNewAnchors().set(selectedPointIndex,
 				findOrCreateAnchor(selectedPointCurrentPositionInLocal,
 						canConnect(selectedPointIndex)));
 
@@ -551,9 +542,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 	 */
 	public void selectPoint(int segmentIndex, double segmentParameter,
 			Point mouseInScene) {
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+		checkInitialized();
 
 		// store handle part information
 		if (segmentParameter == 1) {
@@ -563,7 +552,7 @@ public class FXBendPolicy extends AbstractPolicy<Node>
 		}
 
 		initialMousePositionInScene = mouseInScene.getCopy();
-		selectedPointInitialPositionInLocal = bendOperation.getConnection()
+		selectedPointInitialPositionInLocal = getOperation().getConnection()
 				.getPoints()[selectedPointIndex];
 	}
 

@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
-import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -41,6 +40,7 @@ import javafx.scene.Node;
  *
  */
 // TODO: only applicable for NodeContentPart (override #getHost)
+// TODO: Migrate into transactional policy
 public class HideNodePolicy extends AbstractPolicy<Node> {
 
 	/**
@@ -57,17 +57,7 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 	protected ITransactionalOperation createDeselectOperation(IContentPart<Node, ? extends Node> part) {
 		IViewer<Node> viewer = part.getRoot().getViewer();
 
-		SelectionModel<Node> selectionModel = viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class);
-		if (selectionModel != null) {
-			List<IContentPart<Node, ? extends Node>> selected = selectionModel.getSelection();
-			if (selected.contains(part)) {
-				List<IContentPart<Node, ? extends Node>> newSelection = new ArrayList<IContentPart<Node, ? extends Node>>(
-						selected);
-				newSelection.remove(part);
-				return new ChangeSelectionOperation<Node>(viewer, newSelection);
-			}
-		}
-		return null;
+		return new DeselectOperation<Node>(viewer, Collections.singletonList(part));
 	}
 
 	/**

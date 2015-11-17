@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
@@ -140,9 +139,9 @@ public class FXCloneRelocateOnDragPolicy
 
 	@Override
 	public void press(MouseEvent e) {
-		originalTransform = JavaFX2Geometry.toAffineTransform(getHost()
+		originalTransform = getHost()
 				.<FXTransformPolicy> getAdapter(FXTransformPolicy.class)
-				.getNodeTransform());
+				.getCurrentNodeTransform();
 		isClone = false;
 		super.press(e);
 	}

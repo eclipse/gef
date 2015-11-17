@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,6 +38,9 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 	private final Object contentChild;
 	private int index;
 
+	// capture initial content children (for no-op test)
+	private List<? extends Object> initialContentChildren;
+
 	/**
 	 * Creates a new {@link AddContentChildOperation} for adding the given
 	 * <i>contentChild</i> {@link Object} to the content children of the given
@@ -57,6 +62,7 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		this.parent = parent;
 		this.contentChild = contentChild;
 		this.index = index;
+		this.initialContentChildren = parent.getContentChildren();
 	}
 
 	@Override
@@ -65,14 +71,17 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		// System.out.println("EXEC add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		parent.addContentChild(contentChild, index);
+		if (parent.getContent() != null
+				&& !parent.getContentChildren().contains(contentChild)) {
+			parent.addContentChild(contentChild, index);
+		}
+		// TODO: re-order in case the index does not match??
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		// TODO: noop if child already at that index
-		return false;
+		return initialContentChildren.contains(contentChild);
 	}
 
 	@Override
@@ -87,7 +96,10 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		// System.out.println("UNDO add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		parent.removeContentChild(contentChild);
+		if (parent.getContent() != null
+				&& parent.getContentChildren().contains(contentChild)) {
+			parent.removeContentChild(contentChild);
+		}
 		return Status.OK_STATUS;
 	}
 

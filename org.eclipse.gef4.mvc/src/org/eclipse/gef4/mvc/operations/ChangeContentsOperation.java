@@ -45,7 +45,7 @@ public class ChangeContentsOperation extends AbstractOperation
 
 	private IViewer<?> viewer;
 	private List<? extends Object> newContents;
-	private List<? extends Object> oldContents;
+	private List<? extends Object> initialContents;
 
 	/**
 	 * Creates a new {@link ChangeContentsOperation} for changing the contents
@@ -80,7 +80,7 @@ public class ChangeContentsOperation extends AbstractOperation
 		super(label);
 		this.viewer = viewer;
 		this.newContents = new ArrayList<Object>(contents);
-		oldContents = new ArrayList<Object>(
+		this.initialContents = new ArrayList<Object>(
 				viewer.getAdapter(ContentModel.class).getContents());
 	}
 
@@ -95,14 +95,16 @@ public class ChangeContentsOperation extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
-		contentModel.setContents(newContents);
+		if (!contentModel.getContents().equals(newContents)) {
+			contentModel.setContents(newContents);
+		}
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		return oldContents == newContents
-				|| (oldContents != null && oldContents.equals(newContents));
+		return initialContents == newContents || (initialContents != null
+				&& initialContents.equals(newContents));
 	}
 
 	/*
@@ -129,7 +131,7 @@ public class ChangeContentsOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
-		contentModel.setContents(oldContents);
+		contentModel.setContents(initialContents);
 		return Status.OK_STATUS;
 	}
 

@@ -11,77 +11,47 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 /**
- * The {@link FXResizePolicy} is a {@link ITransactional transactional}
- * {@link AbstractPolicy policy} that handles the resize of an
- * {@link IVisualPart}.
+ * The {@link FXResizePolicy} is an {@link AbstractTransactionPolicy} that
+ * handles the resize of an {@link IVisualPart}.
  *
  * @author mwienand
  *
  */
-public class FXResizePolicy extends AbstractPolicy<Node>
-		implements ITransactional {
-
-	/**
-	 * Stores the <i>initialized</i> flag for this policy, i.e.
-	 * <code>true</code> after {@link #init()} was called, and
-	 * <code>false</code> after {@link #commit()} was called, respectively.
-	 */
-	protected boolean initialized;
-	/**
-	 * The {@link FXResizeNodeOperation} that is used to resize the host's
-	 * visual.
-	 */
-	protected FXResizeNodeOperation resizeOperation;
-	/**
-	 * The {@link ForwardUndoCompositeOperation} that assembles the resize
-	 * operation and the reveal operation.
-	 */
-	protected ForwardUndoCompositeOperation resizeAndRevealOperation;
+public class FXResizePolicy extends AbstractTransactionPolicy<Node> {
 
 	// can be overridden by subclasses to add an operation for model changes
 	@Override
 	public ITransactionalOperation commit() {
-		if (!initialized) {
-			return null;
-		}
-		// after commit, we need to be re-initialized
-		initialized = false;
-
-		ITransactionalOperation commit = null;
-		if (resizeOperation != null && !resizeOperation.isNoOp()) {
-			commit = resizeAndRevealOperation;
-		}
-		resizeAndRevealOperation = null;
+		// FIXME: FXRevealOperation does not properly compute isNoop(); thus we
+		// have to evaluate the resize operation alone here.
+		FXResizeNodeOperation resizeOperation = getResizeOperation();
+		boolean commit = resizeOperation != null && !resizeOperation.isNoOp();
 		resizeOperation = null;
-		return commit;
+		return commit ? super.commit() : null;
 	}
 
-	/**
-	 * Returns the current size of the passed-in {@link Node}, i.e. the width
-	 * and height of its layout-bounds.
-	 *
-	 * @param visualToResize
-	 *            The {@link Node} for which to return the current size.
-	 * @return The current size of the passed-in {@link Node}.
-	 */
-	protected Dimension getInitialSize(Node visualToResize) {
-		Bounds layoutBounds = visualToResize.getLayoutBounds();
-		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
+	@Override
+	protected ITransactionalOperation createOperation() {
+		// create operation for commit and rollback
+		ForwardUndoCompositeOperation resizeAndRevealOperation = new ForwardUndoCompositeOperation(
+				"Resize and Reveal");
+		resizeAndRevealOperation.add(new FXResizeNodeOperation("Resize",
+				getVisualToResize(), getSize(getVisualToResize()), 0, 0));
+		resizeAndRevealOperation.add(new FXRevealOperation(getHost()));
+		return resizeAndRevealOperation;
 	}
 
 	/**
@@ -105,6 +75,32 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 	}
 
 	/**
+	 * Returns the {@link FXResizeNodeOperation} that is used by this
+	 * {@link FXResizePolicy}.
+	 *
+	 * @return The {@link FXResizeNodeOperation} nested within the
+	 *         {@link ITransactionalOperation} used by this
+	 *         {@link AbstractTransactionPolicy}.
+	 */
+	protected FXResizeNodeOperation getResizeOperation() {
+		return (FXResizeNodeOperation) ((ForwardUndoCompositeOperation) getOperation())
+				.getOperations().get(0);
+	}
+
+	/**
+	 * Returns the current size of the passed-in {@link Node}, i.e. the width
+	 * and height of its layout-bounds.
+	 *
+	 * @param visualToResize
+	 *            The {@link Node} for which to return the current size.
+	 * @return The current size of the passed-in {@link Node}.
+	 */
+	protected Dimension getSize(Node visualToResize) {
+		Bounds layoutBounds = visualToResize.getLayoutBounds();
+		return new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight());
+	}
+
+	/**
 	 * Returns the {@link Node} that should be resized. Per default, this is the
 	 * {@link #getHost() host's} visual.
 	 *
@@ -112,24 +108,6 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 	 */
 	protected Node getVisualToResize() {
 		return getHost().getVisual();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
-	 */
-	@Override
-	public void init() {
-		// create "empty" operation
-		Node visualToResize = getVisualToResize();
-		resizeOperation = new FXResizeNodeOperation("Resize", visualToResize,
-				getInitialSize(visualToResize), 0, 0);
-		resizeAndRevealOperation = new ForwardUndoCompositeOperation(
-				resizeOperation.getLabel());
-		resizeAndRevealOperation.add(resizeOperation);
-		resizeAndRevealOperation.add(new FXRevealOperation(getHost()));
-		initialized = true;
 	}
 
 	/**
@@ -141,11 +119,10 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 	 * @param dh
 	 *            The delta height.
 	 */
-	public void performResize(double dw, double dh) {
-		// ensure we have been properly initialized
-		if (!initialized) {
-			throw new IllegalStateException("Not yet initialized!");
-		}
+	public void resize(double dw, double dh) {
+		checkInitialized();
+
+		FXResizeNodeOperation resizeOperation = getResizeOperation();
 
 		Node visual = resizeOperation.getVisual();
 		boolean resizable = visual.isResizable();
@@ -156,40 +133,21 @@ public class FXResizePolicy extends AbstractPolicy<Node>
 
 		// ensure visual is not resized below threshold
 		if (resizable) {
-			if (resizeOperation.getOldSize().width
+			if (resizeOperation.getInitialSize().width
 					+ layoutDw < getMinimumWidth()) {
 				layoutDw = getMinimumWidth()
-						- resizeOperation.getOldSize().width;
+						- resizeOperation.getInitialSize().width;
 			}
-			if (resizeOperation.getOldSize().height
+			if (resizeOperation.getInitialSize().height
 					+ layoutDh < getMinimumHeight()) {
 				layoutDh = getMinimumHeight()
-						- resizeOperation.getOldSize().height;
+						- resizeOperation.getInitialSize().height;
 			}
 		}
 
-		updateOperation(layoutDw, layoutDh);
-
-		// locally execute operation
-		try {
-			resizeAndRevealOperation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Updates the resize operation to use the given delta width and delta
-	 * height.
-	 *
-	 * @param layoutDw
-	 *            The new delta width.
-	 * @param layoutDh
-	 *            The new delta height.
-	 */
-	protected void updateOperation(double layoutDw, double layoutDh) {
+		// update and locally execute operation
 		resizeOperation.setDw(layoutDw);
 		resizeOperation.setDh(layoutDh);
+		locallyExecuteOperation();
 	}
-
 }

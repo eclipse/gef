@@ -37,58 +37,58 @@ public class FXChangeViewportOperation extends AbstractOperation
 	/**
 	 * The {@link InfiniteCanvas} that is manipulated by this operation.
 	 */
-	protected InfiniteCanvas canvas;
+	private InfiniteCanvas canvas;
 
 	/**
 	 * The viewport width that is applied when undoing this operation.
 	 */
-	protected double oldWidth;
+	private double initialWidth;
 
 	/**
 	 * The viewport width that is applied when executing this operation.
 	 */
-	protected double newWidth;
+	private double newWidth;
 
 	/**
 	 * The viewport height that is applied when undoing this operation.
 	 */
-	protected double oldHeight;
+	private double initialHeight;
 
 	/**
 	 * The viewport height that is applied when executing this operation.
 	 */
-	protected double newHeight;
+	private double newHeight;
 
 	/**
 	 * The contents transformation that is applied when undoing this operation.
 	 */
-	protected AffineTransform oldTransform;
+	private AffineTransform initialContentTransform;
 
 	/**
 	 * The contents transformation that is applied when executing this
 	 * operation.
 	 */
-	protected AffineTransform newTransform;
+	private AffineTransform newContentTransform;
 
 	/**
 	 * The horizontal translation that is applied when undoing this operation.
 	 */
-	protected double oldTx;
+	private double initialHorizontalScrollOffset;
 
 	/**
 	 * The horizontal translation that is applied when executing this operation.
 	 */
-	protected double newTx;
+	private double horizontalScrollOffset;
 
 	/**
 	 * The vertical translation that is applied when undoing this operation.
 	 */
-	protected double oldTy;
+	private double initialVerticalScrollOffset;
 
 	/**
 	 * The vertical translation that is applied when executing this operation.
 	 */
-	protected double newTy;
+	private double verticalScrollOffset;
 
 	/**
 	 * Creates a new {@link FXChangeViewportOperation} to manipulate the given
@@ -99,7 +99,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *            The {@link InfiniteCanvas} which is manipulated by this
 	 *            operation.
 	 */
-	protected FXChangeViewportOperation(InfiniteCanvas canvas) {
+	public FXChangeViewportOperation(InfiniteCanvas canvas) {
 		super("Change Viewport");
 		readViewport(canvas);
 	}
@@ -113,14 +113,14 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *
 	 * @param canvas
 	 *            The {@link InfiniteCanvas} that is manipulated.
-	 * @param newTransform
+	 * @param newContentTransform
 	 *            The contents transformation which is applied when executing
 	 *            this operation.
 	 */
 	public FXChangeViewportOperation(InfiniteCanvas canvas,
-			AffineTransform newTransform) {
+			AffineTransform newContentTransform) {
 		this(canvas);
-		this.newTransform = newTransform;
+		this.newContentTransform = newContentTransform;
 	}
 
 	/**
@@ -131,18 +131,18 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *
 	 * @param canvas
 	 *            The {@link InfiniteCanvas} that is manipulated.
-	 * @param newTx
+	 * @param newHorizontalScrollOffset
 	 *            The horizontal translation that is applied when executing this
 	 *            operation.
-	 * @param newTy
+	 * @param newVerticalScrollOffset
 	 *            The vertical translation that is applied when executing this
 	 *            operation.
 	 */
-	public FXChangeViewportOperation(InfiniteCanvas canvas, double newTx,
-			double newTy) {
+	public FXChangeViewportOperation(InfiniteCanvas canvas,
+			double newHorizontalScrollOffset, double newVerticalScrollOffset) {
 		this(canvas);
-		this.newTx = newTx;
-		this.newTy = newTy;
+		this.horizontalScrollOffset = newHorizontalScrollOffset;
+		this.verticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**
@@ -153,22 +153,23 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *
 	 * @param canvas
 	 *            The {@link InfiniteCanvas} that is manipulated.
-	 * @param newTx
+	 * @param newHorizontalScrollOffset
 	 *            The horizontal translation that is applied when executing this
 	 *            operation.
-	 * @param newTy
+	 * @param newVerticalScrollOffset
 	 *            The vertical translation that is applied when executing this
 	 *            operation.
-	 * @param newTransform
+	 * @param newContentTransform
 	 *            The contents transformation which is applied when executing
 	 *            this operation.
 	 */
-	public FXChangeViewportOperation(InfiniteCanvas canvas, double newTx,
-			double newTy, AffineTransform newTransform) {
+	public FXChangeViewportOperation(InfiniteCanvas canvas,
+			double newHorizontalScrollOffset, double newVerticalScrollOffset,
+			AffineTransform newContentTransform) {
 		this(canvas);
-		this.newTransform = newTransform;
-		this.newTx = newTx;
-		this.newTy = newTy;
+		this.newContentTransform = newContentTransform;
+		this.horizontalScrollOffset = newHorizontalScrollOffset;
+		this.verticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**
@@ -180,10 +181,10 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *
 	 * @param canvas
 	 *            The {@link InfiniteCanvas} that is manipulated.
-	 * @param newTx
+	 * @param newHorizontalScrollOffset
 	 *            The horizontal translation that is applied when executing this
 	 *            operation.
-	 * @param newTy
+	 * @param newVerticalScrollOffset
 	 *            The vertical translation that is applied when executing this
 	 *            operation.
 	 * @param newWidth
@@ -192,19 +193,20 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 * @param newHeight
 	 *            The viewport height that is applied when executing this
 	 *            operation.
-	 * @param newTransform
+	 * @param newContentTransform
 	 *            The contents transformation which is applied when executing
 	 *            this operation.
 	 */
-	public FXChangeViewportOperation(InfiniteCanvas canvas, double newTx,
-			double newTy, double newWidth, double newHeight,
-			AffineTransform newTransform) {
+	public FXChangeViewportOperation(InfiniteCanvas canvas,
+			double newHorizontalScrollOffset, double newVerticalScrollOffset,
+			double newWidth, double newHeight,
+			AffineTransform newContentTransform) {
 		this(canvas);
 		this.newWidth = newWidth;
 		this.newHeight = newHeight;
-		this.newTransform = newTransform;
-		this.newTx = newTx;
-		this.newTy = newTy;
+		this.newContentTransform = newContentTransform;
+		this.horizontalScrollOffset = newHorizontalScrollOffset;
+		this.verticalScrollOffset = newVerticalScrollOffset;
 	}
 
 	/**
@@ -217,8 +219,8 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *            concatenated to the transformation that will be applied when
 	 *            executing this operation.
 	 */
-	public void concatenateToNewTransform(AffineTransform t) {
-		newTransform.concatenate(t);
+	public void concatenateToNewContentTransform(AffineTransform t) {
+		newContentTransform.concatenate(t);
 	}
 
 	@Override
@@ -226,9 +228,10 @@ public class FXChangeViewportOperation extends AbstractOperation
 			throws ExecutionException {
 		canvas.setPrefWidth(newWidth);
 		canvas.setPrefHeight(newHeight);
-		canvas.setContentTransform(Geometry2JavaFX.toFXAffine(newTransform));
-		canvas.setHorizontalScrollOffset(newTx);
-		canvas.setVerticalScrollOffset(newTy);
+		canvas.setContentTransform(
+				Geometry2JavaFX.toFXAffine(newContentTransform));
+		canvas.setHorizontalScrollOffset(horizontalScrollOffset);
+		canvas.setVerticalScrollOffset(verticalScrollOffset);
 		return Status.OK_STATUS;
 	}
 
@@ -239,6 +242,61 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 */
 	public InfiniteCanvas getInfiniteCanvas() {
 		return canvas;
+	}
+
+	/**
+	 * Returns the contents transformation that will be applied when undoing
+	 * this operation.
+	 *
+	 * @return The contents transformation that will be applied when undoing
+	 *         this operation.
+	 */
+	public AffineTransform getInitialContentTransform() {
+		return initialContentTransform;
+	}
+
+	/**
+	 * Returns the viewport height that will be applied when undoing this
+	 * operation.
+	 *
+	 * @return The viewport height that will be applied when undoing this
+	 *         operation.
+	 */
+	public double getInitialHeight() {
+		return initialHeight;
+	}
+
+	/**
+	 * Returns the horizontal translation that will be applied when undoing this
+	 * operation.
+	 *
+	 * @return The horizontal translation that will be applied when undoing this
+	 *         operation.
+	 */
+	public double getInitialHorizontalScrollOffset() {
+		return initialHorizontalScrollOffset;
+	}
+
+	/**
+	 * Returns the vertical translation that will be applied when undoing this
+	 * operation.
+	 *
+	 * @return The vertical translation that will be applied when undoing this
+	 *         operation.
+	 */
+	public double getInitialVerticalScrollOffset() {
+		return initialVerticalScrollOffset;
+	}
+
+	/**
+	 * Returns the viewport width that will be applied when undoing this
+	 * operation.
+	 *
+	 * @return The viewport width that will be applied when undoing this
+	 *         operation.
+	 */
+	public double getInitialWidth() {
+		return initialWidth;
 	}
 
 	/**
@@ -253,6 +311,17 @@ public class FXChangeViewportOperation extends AbstractOperation
 	}
 
 	/**
+	 * Returns the horizontal translation that will be applied when executing
+	 * this operation.
+	 *
+	 * @return The horizontal translation that will be applied when executing
+	 *         this operation.
+	 */
+	public double getNewHorizontalScrollOffset() {
+		return horizontalScrollOffset;
+	}
+
+	/**
 	 * Returns the contents transformation that will be applied when executing
 	 * this operation.
 	 *
@@ -260,18 +329,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 *         this operation.
 	 */
 	public AffineTransform getNewTransform() {
-		return newTransform;
-	}
-
-	/**
-	 * Returns the horizontal translation that will be applied when executing
-	 * this operation.
-	 *
-	 * @return The horizontal translation that will be applied when executing
-	 *         this operation.
-	 */
-	public double getNewTx() {
-		return newTx;
+		return newContentTransform;
 	}
 
 	/**
@@ -281,8 +339,8 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 * @return The vertical translation that will be applied when executing this
 	 *         operation.
 	 */
-	public double getNewTy() {
-		return newTy;
+	public double getNewVerticalScrollOffset() {
+		return verticalScrollOffset;
 	}
 
 	/**
@@ -296,68 +354,16 @@ public class FXChangeViewportOperation extends AbstractOperation
 		return newWidth;
 	}
 
-	/**
-	 * Returns the viewport height that will be applied when undoing this
-	 * operation.
-	 *
-	 * @return The viewport height that will be applied when undoing this
-	 *         operation.
-	 */
-	public double getOldHeight() {
-		return oldHeight;
-	}
-
-	/**
-	 * Returns the contents transformation that will be applied when undoing
-	 * this operation.
-	 *
-	 * @return The contents transformation that will be applied when undoing
-	 *         this operation.
-	 */
-	public AffineTransform getOldTransform() {
-		return oldTransform;
-	}
-
-	/**
-	 * Returns the horizontal translation that will be applied when undoing this
-	 * operation.
-	 *
-	 * @return The horizontal translation that will be applied when undoing this
-	 *         operation.
-	 */
-	public double getOldTx() {
-		return oldTx;
-	}
-
-	/**
-	 * Returns the vertical translation that will be applied when undoing this
-	 * operation.
-	 *
-	 * @return The vertical translation that will be applied when undoing this
-	 *         operation.
-	 */
-	public double getOldTy() {
-		return oldTy;
-	}
-
-	/**
-	 * Returns the viewport width that will be applied when undoing this
-	 * operation.
-	 *
-	 * @return The viewport width that will be applied when undoing this
-	 *         operation.
-	 */
-	public double getOldWidth() {
-		return oldWidth;
-	}
-
 	@Override
 	public boolean isNoOp() {
-		return getNewWidth() == getOldWidth()
-				&& getNewHeight() == getOldHeight()
-				&& (getNewTransform() == null ? getOldTransform() == null
-						: getNewTransform().equals(getOldTransform()))
-				&& getNewTx() == getOldTx() && getNewTy() == getOldTy();
+		return getNewWidth() == getInitialWidth()
+				&& getNewHeight() == getInitialHeight()
+				&& (getNewTransform() == null
+						? getInitialContentTransform() == null
+						: getNewTransform()
+								.equals(getInitialContentTransform()))
+				&& getNewHorizontalScrollOffset() == getInitialHorizontalScrollOffset()
+				&& getNewVerticalScrollOffset() == getInitialVerticalScrollOffset();
 	}
 
 	/**
@@ -369,24 +375,36 @@ public class FXChangeViewportOperation extends AbstractOperation
 	 */
 	protected void readViewport(InfiniteCanvas canvas) {
 		this.canvas = canvas;
-		oldWidth = canvas.getWidth();
-		oldHeight = canvas.getHeight();
-		oldTransform = JavaFX2Geometry
+		initialWidth = canvas.getWidth();
+		initialHeight = canvas.getHeight();
+		initialContentTransform = JavaFX2Geometry
 				.toAffineTransform(canvas.getContentTransform());
-		oldTx = canvas.getHorizontalScrollOffset();
-		oldTy = canvas.getVerticalScrollOffset();
+		initialHorizontalScrollOffset = canvas.getHorizontalScrollOffset();
+		initialVerticalScrollOffset = canvas.getVerticalScrollOffset();
 		// use old values for new values per default
-		newWidth = oldWidth;
-		newHeight = oldHeight;
-		newTransform = oldTransform.getCopy();
-		newTx = oldTx;
-		newTy = oldTy;
+		newWidth = initialWidth;
+		newHeight = initialHeight;
+		newContentTransform = initialContentTransform.getCopy();
+		horizontalScrollOffset = initialHorizontalScrollOffset;
+		verticalScrollOffset = initialVerticalScrollOffset;
 	}
 
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	/**
+	 * Sets the contents transformation that will be applied when executing this
+	 * operation to the given value.
+	 *
+	 * @param newContentTransform
+	 *            The contents transformation to apply when executing this
+	 *            operation.
+	 */
+	public void setNewContentTransform(AffineTransform newContentTransform) {
+		this.newContentTransform = newContentTransform;
 	}
 
 	/**
@@ -401,39 +419,27 @@ public class FXChangeViewportOperation extends AbstractOperation
 	}
 
 	/**
-	 * Sets the contents transformation that will be applied when executing this
-	 * operation to the given value.
-	 *
-	 * @param newTransform
-	 *            The contents transformation to apply when executing this
-	 *            operation.
-	 */
-	public void setNewTransform(AffineTransform newTransform) {
-		this.newTransform = newTransform;
-	}
-
-	/**
 	 * Sets the horizontal translation that will be applied when executing this
 	 * operation to the given value.
 	 *
-	 * @param newTx
+	 * @param horizontalScrollOffset
 	 *            The horizontal translation to apply when executing this
 	 *            operation.
 	 */
-	public void setNewTx(double newTx) {
-		this.newTx = newTx;
+	public void setNewHorizontalScrollOffset(double horizontalScrollOffset) {
+		this.horizontalScrollOffset = horizontalScrollOffset;
 	}
 
 	/**
 	 * Sets the vertical translation that will be applied when executing this
 	 * operation to the given value.
 	 *
-	 * @param newTy
+	 * @param verticalScrollOffset
 	 *            The vertical translation to apply when executing this
 	 *            operation.
 	 */
-	public void setNewTy(double newTy) {
-		this.newTy = newTy;
+	public void setNewVerticalScrollOffset(double verticalScrollOffset) {
+		this.verticalScrollOffset = verticalScrollOffset;
 	}
 
 	/**
@@ -450,11 +456,12 @@ public class FXChangeViewportOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		canvas.setPrefWidth(oldWidth);
-		canvas.setPrefHeight(oldHeight);
-		canvas.setContentTransform(Geometry2JavaFX.toFXAffine(oldTransform));
-		canvas.setHorizontalScrollOffset(oldTx);
-		canvas.setVerticalScrollOffset(oldTy);
+		canvas.setPrefWidth(initialWidth);
+		canvas.setPrefHeight(initialHeight);
+		canvas.setContentTransform(
+				Geometry2JavaFX.toFXAffine(initialContentTransform));
+		canvas.setHorizontalScrollOffset(initialHorizontalScrollOffset);
+		canvas.setVerticalScrollOffset(initialVerticalScrollOffset);
 		return Status.OK_STATUS;
 	}
 

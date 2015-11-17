@@ -117,8 +117,8 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 					.setPostTranslate(translateIndices.get(targetPart), dx, dy);
 
 			// check if we can resize the part
-			AffineTransform affineTransform = JavaFX2Geometry.toAffineTransform(
-					getTransformPolicy(targetPart).getNodeTransform());
+			AffineTransform affineTransform = getTransformPolicy(targetPart)
+					.getCurrentNodeTransform();
 			if (affineTransform.getRotation().equals(Angle.fromDeg(0))) {
 				// no rotation => resize possible
 				// TODO: special case 90 degree rotations
@@ -130,7 +130,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 						newBounds.getMinX() + dw, newBounds.getMinY() + dh);
 				dw = dstInLocal.getX() - originInLocal.getX();
 				dh = dstInLocal.getY() - originInLocal.getY();
-				getResizePolicy(targetPart).performResize(dw, dh);
+				getResizePolicy(targetPart).resize(dw, dh);
 			} else {
 				// compute scaling based on bounds change
 				double sx = newBounds.getWidth() / initialBounds.getWidth();

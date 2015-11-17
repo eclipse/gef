@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.collect.SetMultimap;
+
 /**
  * The {@link DetachFromContentAnchorageOperation} uses the {@link IContentPart}
  * API to detach an anchored from the given anchorage.
@@ -33,6 +35,9 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 	private final IContentPart<VR, ? extends VR> anchored;
 	private final Object contentAnchorage;
 	private final String role;
+
+	// initial content anchorages (for no-op test)
+	private SetMultimap<? extends Object, String> initialContentAnchorages;
 
 	/**
 	 * Creates a new {@link DetachFromContentAnchorageOperation} to detach the
@@ -56,6 +61,7 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 		super("Detach From Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;
+		this.initialContentAnchorages = anchored.getContentAnchorages();
 		this.role = role;
 	}
 
@@ -64,14 +70,16 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("EXEC detach " + anchored + " from content "
 		// + contentAnchorage + " with role " + role + ".");
-		anchored.detachFromContentAnchorage(contentAnchorage, role);
+		if (anchored.getContent() != null && anchored.getContentAnchorages()
+				.containsEntry(contentAnchorage, role)) {
+			anchored.detachFromContentAnchorage(contentAnchorage, role);
+		}
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		return !anchored.getContentAnchorages().containsEntry(contentAnchorage,
-				role);
+		return !initialContentAnchorages.containsEntry(contentAnchorage, role);
 	}
 
 	@Override
@@ -85,7 +93,10 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("UNDO detach " + anchored + " from content "
 		// + contentAnchorage + " with role " + role + ".");
-		anchored.attachToContentAnchorage(contentAnchorage, role);
+		if (anchored.getContent() != null && !anchored.getContentAnchorages()
+				.containsEntry(contentAnchorage, role)) {
+			anchored.attachToContentAnchorage(contentAnchorage, role);
+		}
 		return Status.OK_STATUS;
 	}
 

@@ -31,6 +31,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
+// TODO: split into focus and unfocus operations
 public class ChangeFocusOperation<VR> extends AbstractOperation
 		implements ITransactionalOperation {
 
@@ -130,6 +131,16 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	/**
+	 * Sets the new focussed part to the given one.
+	 *
+	 * @param newFocused
+	 *            The new focus part.
+	 */
+	public void setNewFocused(IContentPart<VR, ? extends VR> newFocused) {
+		this.newFocused = newFocused;
 	}
 
 	@Override

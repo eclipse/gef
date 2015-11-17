@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -28,7 +28,8 @@ import javafx.scene.input.KeyEvent;
  * @author anyssen
  *
  */
-public abstract class AbstractFXOnTypePolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXOnTypePolicy
+		extends AbstractInteractionPolicy<Node> {
 
 	/**
 	 * This callback method is invoked when the user presses a key while the

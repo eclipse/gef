@@ -27,57 +27,37 @@ public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 
 	private boolean inZoom = false;
 
-	private EventHandler<? super ZoomEvent> zoomStartedHandler = new EventHandler<ZoomEvent>() {
-		@Override
-		public void handle(ZoomEvent event) {
-			/*
-			 * Sometimes a zoom gesture will fire multiple ZOOM_STARTED events.
-			 * In this case, we omit them.
-			 */
-			if (!inZoom) {
-				inZoom = true;
-				zoomStarted(event);
-			}
-		}
-	};
-
 	private EventHandler<? super ZoomEvent> zoomHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			if (!inZoom) {
-				/*
-				 * Sometimes a zoom gesture will not fire a ZOOM_STARTED event.
-				 * In this case, we emulate one.
-				 */
-				inZoom = true;
-				zoomStarted(event);
+			if (!event.isInertia()) {
+				if (event.getEventType() == ZoomEvent.ZOOM_STARTED) {
+					// prevent that multiple start events occur.
+					if (!inZoom) {
+						inZoom = true;
+						zoomStarted(event);
+					}
+				} else if (event.getEventType() == ZoomEvent.ZOOM) {
+					zoom(event);
+				} else if (event.getEventType() == ZoomEvent.ZOOM_FINISHED) {
+					zoomFinished(event);
+					inZoom = false;
+				}
 			}
-			zoom(event);
-		}
-	};
-
-	private EventHandler<? super ZoomEvent> zoomFinishedHandler = new EventHandler<ZoomEvent>() {
-		@Override
-		public void handle(ZoomEvent event) {
-			zoomFinished(event);
-			inZoom = false;
 		}
 	};
 
 	@Override
 	protected void register() {
-		getScene().addEventHandler(ZoomEvent.ZOOM_FINISHED,
-				zoomFinishedHandler);
-		getScene().addEventHandler(ZoomEvent.ZOOM_STARTED, zoomStartedHandler);
+		getScene().addEventHandler(ZoomEvent.ZOOM_FINISHED, zoomHandler);
+		getScene().addEventHandler(ZoomEvent.ZOOM_STARTED, zoomHandler);
 		getScene().addEventHandler(ZoomEvent.ZOOM, zoomHandler);
 	}
 
 	@Override
 	protected void unregister() {
-		getScene().removeEventHandler(ZoomEvent.ZOOM_FINISHED,
-				zoomFinishedHandler);
-		getScene().removeEventHandler(ZoomEvent.ZOOM_STARTED,
-				zoomStartedHandler);
+		getScene().removeEventHandler(ZoomEvent.ZOOM_STARTED, zoomHandler);
+		getScene().removeEventHandler(ZoomEvent.ZOOM_FINISHED, zoomHandler);
 		getScene().removeEventHandler(ZoomEvent.ZOOM, zoomHandler);
 	}
 
