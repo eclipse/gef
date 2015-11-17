@@ -66,11 +66,14 @@ public class ContentModel implements IPropertyChangeNotifier {
 	 *            {@link ContentModel}.
 	 */
 	public void setContents(List<? extends Object> contents) {
-		List<Object> oldContents = Collections
-				.unmodifiableList(new ArrayList<Object>(this.contents));
-		this.contents.clear();
-		this.contents.addAll(contents);
-		pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents, getContents());
+		if (!this.contents.equals(contents)) {
+			List<Object> oldContents = Collections
+					.unmodifiableList(new ArrayList<Object>(this.contents));
+			this.contents.clear();
+			this.contents.addAll(contents);
+			pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents,
+					getContents());
+		}
 	}
 
 }
