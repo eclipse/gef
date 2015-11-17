@@ -93,49 +93,6 @@ public interface IVisualPart<VR, V extends VR>
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
 	/**
-	 * Adds the given {@link IVisualPart} to the anchorages of this
-	 * {@link IVisualPart} under the "default" role.
-	 *
-	 * @param anchorage
-	 *            The {@link IVisualPart} which is added to this part's
-	 *            anchorages.
-	 */
-	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage);
-
-	/**
-	 * Adds the given {@link IVisualPart} to the anchorages of this
-	 * {@link IVisualPart} under the given role.
-	 *
-	 * @param anchorage
-	 *            The {@link IVisualPart} which is added to this part's
-	 *            anchorages.
-	 * @param role
-	 *            The role under which the anchorage is added, or
-	 *            <code>null</code>.
-	 */
-	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage,
-			String role);
-
-	/**
-	 * Used by an anchored {@link IVisualPart} to establish an
-	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
-	 * <P>
-	 * Clients should never call this operation directly but instead add the
-	 * anchorage to its anchored via the {@link #addAnchorage(IVisualPart)} and
-	 * {@link #addAnchorage(IVisualPart, String)} operations, which will
-	 * indirectly lead to a call here.
-	 *
-	 * @param anchored
-	 *            An {@link IVisualPart} to attach to this anchorage
-	 *            {@link IVisualPart} as anchored.
-	 *
-	 * @noreference Clients should call {@link #addAnchorage(IVisualPart)},
-	 *              {@link #addAnchorage(IVisualPart, String)} instead to
-	 *              establish an anchored-anchorage relationship.
-	 */
-	public void addAnchored(IVisualPart<VR, ? extends VR> anchored);
-
-	/**
 	 * Adds the given child to the list of this part's children.
 	 *
 	 * @param child
@@ -180,6 +137,91 @@ public interface IVisualPart<VR, V extends VR>
 	 */
 	public void addChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children, int index);
+
+	/**
+	 * Used by an anchored {@link IVisualPart} to establish an
+	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
+	 * <P>
+	 * Clients should never call this operation directly but instead add the
+	 * anchorage to its anchored via the {@link #attachToAnchorage(IVisualPart)}
+	 * and {@link #attachToAnchorage(IVisualPart, String)} operations, which
+	 * will indirectly lead to a call here.
+	 *
+	 * @param anchored
+	 *            An {@link IVisualPart} to attach to this anchorage
+	 *            {@link IVisualPart} as anchored.
+	 *
+	 * @noreference Clients should call {@link #attachToAnchorage(IVisualPart)},
+	 *              {@link #attachToAnchorage(IVisualPart, String)} instead to
+	 *              establish an anchored-anchorage relationship.
+	 */
+	public void attachAnchored(IVisualPart<VR, ? extends VR> anchored);
+
+	/**
+	 * Attaches the given {@link IVisualPart} to the given anchorage under the
+	 * "default" role.
+	 *
+	 * @param anchorage
+	 *            The anchorage {@link IVisualPart} to attach this part to.
+	 */
+	public void attachToAnchorage(IVisualPart<VR, ? extends VR> anchorage);
+
+	/**
+	 * Attaches the given {@link IVisualPart} to the given anchorage under the
+	 * given role.
+	 *
+	 * @param anchorage
+	 *            The anchorage {@link IVisualPart} to attach this part to.
+	 * @param role
+	 *            The role under which this {@link IVisualPart} is attached to
+	 *            the given anchorage. <code>null</code>.
+	 */
+	public void attachToAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role);
+
+	/**
+	 * Used by an anchored {@link IVisualPart} to unestablish an
+	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
+	 * <P>
+	 * Clients should never call this operation directly but instead remove the
+	 * anchorage from its anchored via the
+	 * {@link #detachFromAnchorage(IVisualPart)} or
+	 * {@link #detachFromAnchorage(IVisualPart, String)} operations, which will
+	 * indirectly lead to a call here.
+	 *
+	 * @param anchored
+	 *            An {@link IVisualPart} (currently attached as anchored to this
+	 *            anchorage {@link IVisualPart}) to detach from this anchorage
+	 *            {@link IVisualPart} as anchored.
+	 *
+	 * @noreference Clients should call
+	 *              {@link #detachFromAnchorage(IVisualPart)} or
+	 *              {@link #detachFromAnchorage(IVisualPart, String)} instead to
+	 *              unestablish an anchored-anchorage relationship.
+	 */
+	public void detachAnchored(IVisualPart<VR, ? extends VR> anchored);
+
+	/**
+	 * Detaches this {@link IVisualPart} from the given anchorage
+	 * {@link IVisualPart} under the 'default' role.
+	 *
+	 * @param anchorage
+	 *            The anchorage {@link IVisualPart} to detach this part from.
+	 */
+	public void detachFromAnchorage(IVisualPart<VR, ? extends VR> anchorage);
+
+	/**
+	 * Detaches this {@link IVisualPart} from the given anchorage
+	 * {@link IVisualPart} under the given role.
+	 *
+	 * @param anchorage
+	 *            The anchorage {@link IVisualPart} to detach this part from.
+	 * @param role
+	 *            The role under which the {@link IVisualPart} can be found in
+	 *            this part's anchorages.
+	 */
+	public void detachFromAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role);
 
 	/**
 	 * Returns a {@link SetMultimap} of this part's anchorages and their
@@ -258,51 +300,6 @@ public interface IVisualPart<VR, V extends VR>
 	 * Refreshes this part's visualization based on this part's content.
 	 */
 	public void refreshVisual();
-
-	/**
-	 * Removes the given {@link IVisualPart} from the map of this part's
-	 * anchorages.
-	 *
-	 * @param anchorage
-	 *            The {@link IVisualPart} which is removed from this part's
-	 *            anchorages.
-	 */
-	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage);
-
-	/**
-	 * Removes the given {@link IVisualPart} and role from the map of this
-	 * part's anchorages.
-	 *
-	 * @param anchorage
-	 *            The {@link IVisualPart} which is removed from this part's
-	 *            anchorages.
-	 * @param role
-	 *            The role under which the {@link IVisualPart} can be found in
-	 *            this part's anchorages.
-	 */
-	// role may be null
-	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage,
-			String role);
-
-	/**
-	 * Used by an anchored {@link IVisualPart} to unestablish an
-	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
-	 * <P>
-	 * Clients should never call this operation directly but instead remove the
-	 * anchorage from its anchored via the {@link #removeAnchorage(IVisualPart)}
-	 * or {@link #removeAnchorage(IVisualPart, String)} operations, which will
-	 * indirectly lead to a call here.
-	 *
-	 * @param anchored
-	 *            An {@link IVisualPart} (currently attached as anchored to this
-	 *            anchorage {@link IVisualPart}) to detach from this anchorage
-	 *            {@link IVisualPart} as anchored.
-	 *
-	 * @noreference Clients should call {@link #removeAnchorage(IVisualPart)} or
-	 *              {@link #removeAnchorage(IVisualPart, String)} instead to
-	 *              unestablish an anchored-anchorage relationship.
-	 */
-	public void removeAnchored(IVisualPart<VR, ? extends VR> anchored);
 
 	/**
 	 * Removes the given {@link IVisualPart} from the list of this part's

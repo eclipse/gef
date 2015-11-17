@@ -57,6 +57,10 @@ import com.google.inject.Inject;
 public abstract class AbstractVisualPart<VR, V extends VR>
 		implements IVisualPart<VR, V> {
 
+	/**
+	 * The 'default' used for attaching/detaching to anchorages, in case no
+	 * explicit role is given.
+	 */
 	private static final String DEFAULT_ANCHORAGE_ROLE = "default";
 
 	/**
@@ -107,78 +111,6 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			acs.activate();
 			doActivate();
 		}
-	}
-
-	@Override
-	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
-		addAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
-	}
-
-	@Override
-	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage,
-			String role) {
-		if (anchorage == null) {
-			throw new IllegalArgumentException("Anchorage may not be null.");
-		}
-		if (role == null) {
-			throw new IllegalArgumentException("Role may not be null.");
-		}
-
-		// copy anchorages by role (required for the change notification)
-		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
-				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
-				: HashMultimap.create(anchorages);
-
-		if (oldAnchorages.containsEntry(anchorage, role)) {
-			throw new IllegalArgumentException("Already attached to anchorage "
-					+ anchorage + " with role '" + role + "'.");
-		}
-
-		addAnchorageWithoutNotify(anchorage, role);
-		anchorage.addAnchored(this);
-
-		anchorage.refreshVisual();
-		attachToAnchorageVisual(anchorage, role);
-		refreshVisual();
-
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				getAnchorages());
-	}
-
-	private void addAnchorageWithoutNotify(
-			IVisualPart<VR, ? extends VR> anchorage, String role) {
-		if (anchorage == null) {
-			throw new IllegalArgumentException("Anchorage may not be null.");
-		}
-		if (anchorages == null) {
-			anchorages = HashMultimap.create();
-		}
-		anchorages.put(anchorage, role);
-	}
-
-	@Override
-	public void addAnchored(IVisualPart<VR, ? extends VR> anchored) {
-		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
-				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
-				: HashMultiset.create(anchoreds);
-
-		// determine the viewer before adding the anchored
-		IViewer<VR> oldViewer = getViewer();
-
-		if (anchoreds == null) {
-			anchoreds = HashMultiset.create();
-		}
-		anchoreds.add(anchored);
-
-		// register if we obtain a link to the viewer
-		IViewer<VR> newViewer = getViewer();
-		if (oldViewer == null && newViewer != null) {
-			register(newViewer);
-		}
-
-		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
-				getAnchoreds());
 	}
 
 	@Override
@@ -257,6 +189,67 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	@Override
+	public void attachAnchored(IVisualPart<VR, ? extends VR> anchored) {
+		// copy anchoreds (required for the change notification)
+		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
+				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
+				: HashMultiset.create(anchoreds);
+
+		// determine the viewer before adding the anchored
+		IViewer<VR> oldViewer = getViewer();
+
+		if (anchoreds == null) {
+			anchoreds = HashMultiset.create();
+		}
+		anchoreds.add(anchored);
+
+		// register if we obtain a link to the viewer
+		IViewer<VR> newViewer = getViewer();
+		if (oldViewer == null && newViewer != null) {
+			register(newViewer);
+		}
+
+		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
+				getAnchoreds());
+	}
+
+	@Override
+	public void attachToAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
+		attachToAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
+	}
+
+	@Override
+	public void attachToAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role) {
+		if (anchorage == null) {
+			throw new IllegalArgumentException("Anchorage may not be null.");
+		}
+		if (role == null) {
+			throw new IllegalArgumentException("Role may not be null.");
+		}
+
+		// copy anchorages by role (required for the change notification)
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
+				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
+				: HashMultimap.create(anchorages);
+
+		if (oldAnchorages.containsEntry(anchorage, role)) {
+			throw new IllegalArgumentException("Already attached to anchorage "
+					+ anchorage + " with role '" + role + "'.");
+		}
+
+		attachToAnchorageWithoutNotify(anchorage, role);
+		anchorage.attachAnchored(this);
+
+		anchorage.refreshVisual();
+		attachToAnchorageVisual(anchorage, role);
+		refreshVisual();
+
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
+				getAnchorages());
+	}
+
 	/**
 	 * Attaches this part's visual to the visual of the given anchorage.
 	 *
@@ -270,6 +263,17 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		throw new UnsupportedOperationException(
 				"Need to implement attachToAnchorageVisual(IVisualPart, String) for "
 						+ this.getClass());
+	}
+
+	private void attachToAnchorageWithoutNotify(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
+		if (anchorage == null) {
+			throw new IllegalArgumentException("Anchorage may not be null.");
+		}
+		if (anchorages == null) {
+			anchorages = HashMultimap.create();
+		}
+		anchorages.put(anchorage, role);
 	}
 
 	/**
@@ -297,6 +301,70 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		}
 	}
 
+	@Override
+	public void detachAnchored(IVisualPart<VR, ? extends VR> anchored) {
+		// copy anchoreds (required for the change notification)
+		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
+				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
+				: HashMultiset.create(anchoreds);
+
+		// determine viewer before and after removing the anchored
+		IViewer<VR> oldViewer = getViewer();
+		anchoreds.remove(anchored);
+		IViewer<VR> newViewer = getViewer();
+		anchoreds.add(anchored);
+
+		// unregister if we lose the link to the viewer
+		if (oldViewer != null && newViewer == null) {
+			unregister(oldViewer);
+		}
+
+		anchoreds.remove(anchored);
+		if (anchoreds.size() == 0) {
+			anchoreds = null;
+		}
+
+		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
+				getAnchoreds());
+	}
+
+	@Override
+	public void detachFromAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
+		detachFromAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
+	}
+
+	// counterpart to setParent(null) in case of hierarchy
+	@Override
+	public void detachFromAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role) {
+		if (anchorage == null) {
+			throw new IllegalArgumentException("Anchorage may not be null.");
+		}
+		if (role == null) {
+			throw new IllegalArgumentException("Role may not be null.");
+		}
+
+		// copy anchorages (required for the change notification)
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
+				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
+				: HashMultimap.create(anchorages);
+
+		if (!oldAnchorages.containsEntry(anchorage, role)) {
+			throw new IllegalArgumentException("Not attached to anchorage "
+					+ anchorage + " with role '" + role + "'.");
+		}
+
+		detachFromAnchorageWithoutNotify(anchorage, role);
+
+		anchorage.detachAnchored(this);
+		detachFromAnchorageVisual(anchorage, role);
+
+		// TODO: send MapChangeNotification or otherwise identify changed
+		// anchorage and role
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
+				getAnchorages());
+	}
+
 	/**
 	 * Detaches this part's visual from the visual of the given anchorage.
 	 *
@@ -310,6 +378,21 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		throw new UnsupportedOperationException(
 				"Need to implement detachFromAnchorageVisual(IVisualPart, String) for "
 						+ this.getClass());
+	}
+
+	private void detachFromAnchorageWithoutNotify(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
+		if (anchorages == null) {
+			throw new IllegalStateException(
+					"Cannot detach from anchorage: not attached.");
+		}
+		if (!anchorages.remove(anchorage, role)) {
+			throw new IllegalStateException(
+					"Cannot detach from anchorage: not attached.");
+		}
+		if (anchorages.isEmpty()) {
+			anchorages = null;
+		}
 	}
 
 	@Override
@@ -512,85 +595,6 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 */
 	protected void registerAtVisualPartMap(IViewer<VR> viewer, V visual) {
 		viewer.getVisualPartMap().put(visual, this);
-	}
-
-	@Override
-	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
-		removeAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
-	}
-
-	// counterpart to setParent(null) in case of hierarchy
-	@Override
-	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage,
-			String role) {
-		if (anchorage == null) {
-			throw new IllegalArgumentException("Anchorage may not be null.");
-		}
-		if (role == null) {
-			throw new IllegalArgumentException("Role may not be null.");
-		}
-
-		// copy anchorages (required for the change notification)
-		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
-				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
-				: HashMultimap.create(anchorages);
-
-		if (!oldAnchorages.containsEntry(anchorage, role)) {
-			throw new IllegalArgumentException("Not attached to anchorage "
-					+ anchorage + " with role '" + role + "'.");
-		}
-
-		removeAnchorageWithoutNotify(anchorage, role);
-
-		anchorage.removeAnchored(this);
-		detachFromAnchorageVisual(anchorage, role);
-
-		// TODO: send MapChangeNotification or otherwise identify changed
-		// anchorage and role
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				getAnchorages());
-	}
-
-	private void removeAnchorageWithoutNotify(
-			IVisualPart<VR, ? extends VR> anchorage, String role) {
-		if (anchorages == null) {
-			throw new IllegalStateException(
-					"Cannot remove anchorage: not contained.");
-		}
-		if (!anchorages.remove(anchorage, role)) {
-			throw new IllegalStateException(
-					"Cannot remove anchorage: not contained.");
-		}
-		if (anchorages.isEmpty()) {
-			anchorages = null;
-		}
-	}
-
-	@Override
-	public void removeAnchored(IVisualPart<VR, ? extends VR> anchored) {
-		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
-				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
-				: HashMultiset.create(anchoreds);
-
-		// determine viewer before and after removing the anchored
-		IViewer<VR> oldViewer = getViewer();
-		anchoreds.remove(anchored);
-		IViewer<VR> newViewer = getViewer();
-		anchoreds.add(anchored);
-
-		// unregister if we lose the link to the viewer
-		if (oldViewer != null && newViewer == null) {
-			unregister(oldViewer);
-		}
-
-		anchoreds.remove(anchored);
-		if (anchoreds.size() == 0) {
-			anchoreds = null;
-		}
-
-		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
-				getAnchoreds());
 	}
 
 	@Override

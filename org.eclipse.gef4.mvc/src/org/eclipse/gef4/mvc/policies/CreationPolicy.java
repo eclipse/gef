@@ -103,7 +103,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		parent.addChild(contentPart, index);
 		for (Entry<IContentPart<VR, ? extends VR>, String> anchored : anchoreds
 				.entries()) {
-			anchored.getKey().addAnchorage(contentPart, anchored.getValue());
+			anchored.getKey().attachToAnchorage(contentPart, anchored.getValue());
 		}
 		// register the content part, so that the ContentBehavior
 		// synchronization reuses it (when committing the create operation)

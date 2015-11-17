@@ -56,7 +56,7 @@ public class BehaviorUtils {
 			root.addChildren(anchoreds);
 			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
 				for (IVisualPart<VR, ? extends VR> anchorage : anchorages) {
-					anchored.addAnchorage(anchorage);
+					anchored.attachToAnchorage(anchorage);
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public class BehaviorUtils {
 			root.removeChildren(anchoreds);
 			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
 				for (IVisualPart<VR, ? extends VR> anchorage : anchorages) {
-					anchored.removeAnchorage(anchorage);
+					anchored.detachFromAnchorage(anchorage);
 				}
 			}
 		}

@@ -237,7 +237,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		// Correspondingly remove the anchorages. This is done in a separate
 		// step to prevent ConcurrentModificationException.
 		for (Entry<IVisualPart<VR, ? extends VR>, String> e : toRemove) {
-			getHost().removeAnchorage(e.getKey(), e.getValue());
+			getHost().detachFromAnchorage(e.getKey(), e.getValue());
 			disposeIfObsolete((IContentPart<VR, ? extends VR>) e.getKey());
 		}
 
@@ -256,7 +256,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		// Correspondingly add the anchorages. This is done in a separate step
 		// to prevent ConcurrentModificationException.
 		for (Entry<IVisualPart<VR, ? extends VR>, String> e : toAdd) {
-			getHost().addAnchorage(e.getKey(), e.getValue());
+			getHost().attachToAnchorage(e.getKey(), e.getValue());
 		}
 	}
 

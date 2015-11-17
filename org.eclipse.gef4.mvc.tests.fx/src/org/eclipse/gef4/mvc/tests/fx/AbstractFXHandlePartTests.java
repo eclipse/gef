@@ -137,20 +137,20 @@ public class AbstractFXHandlePartTests {
 		// check we have a single visual change listener after anchoring
 		// the
 		// handle part
-		hp.addAnchorage(cp, "r1");
+		hp.attachToAnchorage(cp, "r1");
 		assertEquals(1, getVisualChangeListeners(hp).size());
 		// check we still have only a single change listener after
 		// anchoring the
 		// same handle part with a different role
-		hp.addAnchorage(cp, "r2");
+		hp.attachToAnchorage(cp, "r2");
 		assertEquals(1, getVisualChangeListeners(hp).size());
 		// check we still have a visual change listener, even if one
 		// anchorage
 		// is removed
-		hp.removeAnchorage(cp, "r2");
+		hp.detachFromAnchorage(cp, "r2");
 		assertEquals(1, getVisualChangeListeners(hp).size());
 		// ensure no visual change listener is registered any more
-		hp.removeAnchorage(cp, "r1");
+		hp.detachFromAnchorage(cp, "r1");
 		assertEquals(0, getVisualChangeListeners(hp).size());
 	}
 
