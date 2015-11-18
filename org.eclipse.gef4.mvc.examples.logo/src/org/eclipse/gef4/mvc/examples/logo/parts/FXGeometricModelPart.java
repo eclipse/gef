@@ -41,7 +41,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public void doAddContentChild(Object contentChild, int index) {
+	protected void doAddContentChild(Object contentChild, int index) {
 		if (!(contentChild instanceof AbstractFXGeometricElement)) {
 			throw new IllegalArgumentException(
 					"Cannot add content child: wrong type!");
@@ -52,7 +52,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public void doRefreshVisual(Group visual) {
+	protected void doRefreshVisual(Group visual) {
 		// nothing to do
 	}
 

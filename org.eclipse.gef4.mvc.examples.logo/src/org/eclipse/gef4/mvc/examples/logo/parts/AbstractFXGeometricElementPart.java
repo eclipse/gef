@@ -14,13 +14,13 @@ package org.eclipse.gef4.mvc.examples.logo.parts;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
+import javafx.scene.Node;
+
 public abstract class AbstractFXGeometricElementPart<N extends Node>
-		extends AbstractFXContentPart<N>implements PropertyChangeListener {
+		extends AbstractFXContentPart<N> implements PropertyChangeListener {
 
 	@Override
 	protected void doActivate() {
@@ -35,7 +35,7 @@ public abstract class AbstractFXGeometricElementPart<N extends Node>
 	}
 
 	@Override
-	public void doRefreshVisual(N visual) {
+	protected void doRefreshVisual(N visual) {
 		AbstractFXGeometricElement<?> content = getContent();
 		if (visual.getEffect() != content.getEffect()) {
 			visual.setEffect(content.getEffect());

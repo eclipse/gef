@@ -56,7 +56,7 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public void doAttachToContentAnchorage(Object contentAnchorage,
+	protected void doAttachToContentAnchorage(Object contentAnchorage,
 			String role) {
 		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
 			throw new IllegalArgumentException(
@@ -67,13 +67,13 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public void doDetachFromContentAnchorage(Object contentAnchorage,
+	protected void doDetachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		getContent().getAnchorages().remove(contentAnchorage);
 	}
 
 	@Override
-	public void doRefreshVisual(GeometryNode<IShape> visual) {
+	protected void doRefreshVisual(GeometryNode<IShape> visual) {
 		FXGeometricShape content = getContent();
 
 		if (visual.getGeometry() != content.getGeometry()) {

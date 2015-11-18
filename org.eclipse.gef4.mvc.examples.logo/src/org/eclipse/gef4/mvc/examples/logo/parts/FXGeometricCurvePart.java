@@ -252,7 +252,7 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	public void doAttachToContentAnchorage(Object contentAnchorage,
+	protected void doAttachToContentAnchorage(Object contentAnchorage,
 			String role) {
 		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
 			throw new IllegalArgumentException(
@@ -267,7 +267,7 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	public void doDetachFromContentAnchorage(Object contentAnchorage,
+	protected void doDetachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		if ("START".equals(role)) {
 			getContent().getSourceAnchorages().remove(contentAnchorage);
@@ -277,7 +277,7 @@ public class FXGeometricCurvePart
 	}
 
 	@Override
-	public void doRefreshVisual(Connection visual) {
+	protected void doRefreshVisual(Connection visual) {
 		FXGeometricCurve content = getContent();
 
 		List<Point> wayPoints = content.getWayPoints();
