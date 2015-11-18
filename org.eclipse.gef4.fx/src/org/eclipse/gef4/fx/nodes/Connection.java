@@ -23,8 +23,8 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
-import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -34,10 +34,8 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -47,23 +45,21 @@ import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 /**
- * The {@link Connection} provides a visualization for a binary connection
- * whose route can be influenced by a number of way points.
+ * The {@link Connection} provides a visualization for a binary connection whose
+ * route can be influenced by a number of way points.
  *
  * @author mwienand
  *
  */
-public class Connection extends Group {
+public class Connection extends Group /* or rather Parent?? */ {
 
 	/**
-	 * The {@link ChopBoxHelper} can be registered for an {@link Connection}
-	 * and serves as a {@link IReferencePointProvider} for all {@link AnchorKey}s
-	 * of that {@link Connection} which are registered at
-	 * {@link ChopBoxAnchor}s.
+	 * The {@link ChopBoxHelper} can be registered for an {@link Connection} and
+	 * serves as a {@link IReferencePointProvider} for all {@link AnchorKey}s of
+	 * that {@link Connection} which are registered at {@link ChopBoxAnchor}s.
 	 *
 	 * @author mwienand
 	 *
@@ -403,14 +399,9 @@ public class Connection extends Group {
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
 
-	// transparent 'fat' curve overlaying the actual curve (serving as mouse
-	// target)
-	private GeometryNode<ICurve> curveNodeClickableArea = new GeometryNode<ICurve>();
-	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty(5);
-
 	/**
-	 * Constructs a new {@link Connection} whose start and end point are set
-	 * to <code>null</code>.
+	 * Constructs a new {@link Connection} whose start and end point are set to
+	 * <code>null</code>.
 	 */
 	public Connection() {
 		// disable resizing children which would change their layout positions
@@ -420,26 +411,15 @@ public class Connection extends Group {
 		// register any adapters that will be needed during attach() and
 		// detach() at anchors
 		registerAnchorInfos(as);
-
-		// initialize clickable area
-		curveNodeClickableArea.setStroke(Color.TRANSPARENT);
-		curveNodeClickableArea.setMouseTransparent(false);
-
-		// bind geometry of clickable area to that of curve node
-		curveNodeClickableArea.geometryProperty()
-				.bind(curveNode.geometryProperty());
-
-		// bind stroke width of clickable area to the respective property
-		curveNodeClickableArea.strokeWidthProperty().bind(clickableAreaWidth);
 	}
 
 	/**
-	 * Adds the given {@link IAnchor} as a way point anchor for the given
-	 * index into the {@link #anchorsProperty()} of this {@link Connection}.
+	 * Adds the given {@link IAnchor} as a way point anchor for the given index
+	 * into the {@link #anchorsProperty()} of this {@link Connection}.
 	 *
 	 * @param index
-	 *            The position where the {@link IAnchor} is inserted within
-	 *            the way point anchors of this {@link Connection}.
+	 *            The position where the {@link IAnchor} is inserted within the
+	 *            way point anchors of this {@link Connection}.
 	 * @param anchor
 	 *            The {@link IAnchor} which determines the position of the
 	 *            corresponding way point.
@@ -460,8 +440,8 @@ public class Connection extends Group {
 	 * this {@link Connection}.
 	 *
 	 * @param index
-	 *            The position where the {@link IAnchor} is inserted within
-	 *            the way point anchors of this {@link Connection}.
+	 *            The position where the {@link IAnchor} is inserted within the
+	 *            way point anchors of this {@link Connection}.
 	 * @param wayPointInLocal
 	 *            The position for the specified way point.
 	 */
@@ -475,8 +455,8 @@ public class Connection extends Group {
 
 	/**
 	 * Returns the {@link ReadOnlyMapProperty} which stores the
-	 * {@link AnchorKey}s and corresponding {@link IAnchor}s which determine
-	 * the start point, way points, and end point of this {@link Connection}.
+	 * {@link AnchorKey}s and corresponding {@link IAnchor}s which determine the
+	 * start point, way points, and end point of this {@link Connection}.
 	 *
 	 * @return The {@link ReadOnlyMapProperty} which stores the
 	 *         {@link AnchorKey}s and corresponding {@link IAnchor}s which
@@ -496,8 +476,8 @@ public class Connection extends Group {
 	 * @param start
 	 *            The offset for the decoration visual.
 	 * @param direction
-	 *            The direction of the {@link Connection} at the point where
-	 *            the decoration is arranged.
+	 *            The direction of the {@link Connection} at the point where the
+	 *            decoration is arranged.
 	 * @param decoStart
 	 *            The start point of the decoration within the local coordinate
 	 *            system of the decoration visual.
@@ -506,8 +486,9 @@ public class Connection extends Group {
 	 * @return The transformed end point of the arranged decoration.
 	 */
 	// TODO: Remove decoStart, which is unused.
-	protected Point arrangeDecoration(IConnectionDecoration decoration, Point start,
-			Vector direction, Point decoStart, Vector decoDirection) {
+	protected Point arrangeDecoration(IConnectionDecoration decoration,
+			Point start, Vector direction, Point decoStart,
+			Vector decoDirection) {
 		Node visual = decoration.getVisual();
 
 		// position
@@ -611,19 +592,6 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns a (writable) property that controls the width of the clickable
-	 * area. The clickable area is a transparent 'fat' curve overlaying the
-	 * actual curve and serving as mouse target. It is only used if the value of
-	 * the property is greater than the stroke width of the underlying curve.
-	 *
-	 * @return A property to control the width of the clickable area of this
-	 *         connection.
-	 */
-	public DoubleProperty clickableAreaWidthProperty() {
-		return clickableAreaWidth;
-	}
-
-	/**
 	 * Creates a position change listener (PCL) which {@link #refresh()
 	 * refreshes} this {@link Connection} upon anchor position changes
 	 * corresponding to the given {@link AnchorKey}.
@@ -716,12 +684,12 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns a {@link List} containing the {@link IAnchor}s which are
-	 * assigned to this {@link Connection} in the order: start anchor, way
-	 * point anchors, end anchor.
+	 * Returns a {@link List} containing the {@link IAnchor}s which are assigned
+	 * to this {@link Connection} in the order: start anchor, way point anchors,
+	 * end anchor.
 	 *
-	 * @return A {@link List} containing the {@link IAnchor}s which are
-	 *         assigned to this {@link Connection}.
+	 * @return A {@link List} containing the {@link IAnchor}s which are assigned
+	 *         to this {@link Connection}.
 	 */
 	public List<IAnchor> getAnchors() {
 		int wayPointCount = getWayAnchorsSize();
@@ -745,16 +713,6 @@ public class Connection extends Group {
 		anchors.add(endAnchor);
 
 		return anchors;
-	}
-
-	/**
-	 * Returns the value of the clickable area width property (
-	 * {@link #clickableAreaWidthProperty()}).
-	 *
-	 * @return The current value of the {@link #clickableAreaWidthProperty()}.
-	 */
-	public double getClickableAreaWidth() {
-		return clickableAreaWidth.get();
 	}
 
 	/**
@@ -874,9 +832,9 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns the start {@link AnchorKey} for this {@link Connection}. A
-	 * start {@link AnchorKey} uses the {@link #getCurveNode() curve node} as
-	 * its anchored and <code>"start"</code> as its role.
+	 * Returns the start {@link AnchorKey} for this {@link Connection}. A start
+	 * {@link AnchorKey} uses the {@link #getCurveNode() curve node} as its
+	 * anchored and <code>"start"</code> as its role.
 	 *
 	 * @return The start {@link AnchorKey} for this {@link Connection}.
 	 */
@@ -959,8 +917,7 @@ public class Connection extends Group {
 	 */
 	public List<IAnchor> getWayAnchors() {
 		int wayPointsCount = getWayAnchorsSize();
-		List<IAnchor> wayPointAnchors = new ArrayList<IAnchor>(
-				wayPointsCount);
+		List<IAnchor> wayPointAnchors = new ArrayList<IAnchor>(wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
 			IAnchor wayAnchor = getWayAnchor(i);
 			if (wayAnchor == null) {
@@ -1095,9 +1052,9 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Inserts the given {@link IAnchor} into the {@link #anchorsProperty()}
-	 * of this {@link Connection}. The given {@link AnchorKey} is attached to
-	 * the {@link IAnchor}, supplying it with the previously
+	 * Inserts the given {@link IAnchor} into the {@link #anchorsProperty()} of
+	 * this {@link Connection}. The given {@link AnchorKey} is attached to the
+	 * {@link IAnchor}, supplying it with the previously
 	 * {@link #registerAnchorInfos(IAdaptable) registered} anchor information.
 	 * Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
 	 * {@link AnchorKey} is registered on the position property of the
@@ -1170,9 +1127,6 @@ public class Connection extends Group {
 
 		// add new curve visuals
 		getChildren().add(curveNode);
-
-		// add transparent clickable area on top
-		getChildren().add(curveNodeClickableArea);
 
 		// z-order decorations above curve
 		if (startDecoration != null) {
@@ -1273,8 +1227,7 @@ public class Connection extends Group {
 	 * with the given {@link IAnchor}s, i.e. the first given {@link IAnchor}
 	 * replaces the currently assigned start anchor, the last given
 	 * {@link IAnchor} replaces the currently assigned end anchor, and the
-	 * intermediate {@link IAnchor}s replace the currently assigned way
-	 * anchors.
+	 * intermediate {@link IAnchor}s replace the currently assigned way anchors.
 	 *
 	 * @param anchors
 	 *            The new {@link IAnchor}s for this {@link Connection}.
@@ -1293,17 +1246,6 @@ public class Connection extends Group {
 			removeAllWayPoints();
 		}
 		setEndAnchor(anchors.get(anchors.size() - 1));
-	}
-
-	/**
-	 * Sets the value of the clickable area width property (
-	 * {@link #clickableAreaWidthProperty()}).
-	 *
-	 * @param clickableAreaWidth
-	 *            The new value of the {@link #clickableAreaWidthProperty()}
-	 */
-	public void setClickableAreaWidth(double clickableAreaWidth) {
-		this.clickableAreaWidth.set(clickableAreaWidth);
 	}
 
 	/**
@@ -1329,8 +1271,8 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Sets the end {@link IConnectionDecoration} of this {@link Connection} to the
-	 * given value.
+	 * Sets the end {@link IConnectionDecoration} of this {@link Connection} to
+	 * the given value.
 	 *
 	 * @param endDeco
 	 *            The new end {@link IConnectionDecoration} for this
@@ -1369,8 +1311,7 @@ public class Connection extends Group {
 	 * given value.
 	 *
 	 * @param router
-	 *            The new {@link IConnectionRouter} for this
-	 *            {@link Connection}.
+	 *            The new {@link IConnectionRouter} for this {@link Connection}.
 	 */
 	public void setRouter(IConnectionRouter router) {
 		this.router = router;
@@ -1378,8 +1319,8 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Sets the start {@link IAnchor} of this {@link Connection} to the
-	 * given value.
+	 * Sets the start {@link IAnchor} of this {@link Connection} to the given
+	 * value.
 	 *
 	 * @param anchor
 	 *            The new start {@link IAnchor} for this {@link Connection}.
@@ -1400,8 +1341,8 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Sets the start {@link IConnectionDecoration} of this {@link Connection} to the
-	 * given value.
+	 * Sets the start {@link IConnectionDecoration} of this {@link Connection}
+	 * to the given value.
 	 *
 	 * @param startDeco
 	 *            The new start {@link IConnectionDecoration} for this

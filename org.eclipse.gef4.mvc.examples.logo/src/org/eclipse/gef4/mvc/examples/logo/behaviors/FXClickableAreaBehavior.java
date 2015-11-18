@@ -22,7 +22,7 @@ import javafx.scene.Node;
 
 public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 
-	private static final double ABSOLUTE_CLICKABLE_WIDTH = 5;
+	private static final double ABSOLUTE_CLICKABLE_WIDTH = 8;
 	private DoubleBinding clickableAreaBinding;
 	private final ChangeListener<? super Number> scaleXListener = new ChangeListener<Number>() {
 		@Override
@@ -43,7 +43,7 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 				return Math.min(localClickableWidth, ABSOLUTE_CLICKABLE_WIDTH);
 			}
 		};
-		getHost().getVisual().clickableAreaWidthProperty()
+		getHost().getVisual().getCurveNode().clickableAreaWidthProperty()
 				.bind(clickableAreaBinding);
 		((FXViewer) getHost().getRoot().getViewer()).getCanvas()
 				.getContentTransform().mxxProperty()
