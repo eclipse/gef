@@ -21,9 +21,8 @@
  * {@link org.eclipse.gef4.zest.fx.behaviors.HidingBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior}), as well
- * as navigation of nested graphs via semantic zooming (
- * {@link org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior},
- * {@link org.eclipse.gef4.zest.fx.behaviors.OpenNestedGraphOnZoomBehavior},
- * {@link org.eclipse.gef4.zest.fx.behaviors.OpenParentGraphOnZoomBehavior}).
+ * as hiding/showing of nested graphs via semantic zooming (
+ * {@link org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior}
+ * ).
  */
 package org.eclipse.gef4.zest.fx.behaviors;

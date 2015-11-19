@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
+import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
@@ -48,8 +49,6 @@ import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.OpenNestedGraphOnZoomBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.OpenParentGraphOnZoomBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
@@ -75,6 +74,7 @@ import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
+import org.eclipse.gef4.zest.fx.policies.SemanticZoomPolicy;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
@@ -211,13 +211,16 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	@Override
+	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(FXChangeViewportPolicy.class)).to(SemanticZoomPolicy.class);
+	}
+
+	@Override
 	protected void bindFXRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXRootPartAdapters(adapterMapBinder);
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "OpenParentGraphOnDoubleClick"))
 				.to(OpenParentGraphOnDoubleClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(OpenParentGraphOnZoomBehavior.class))
-				.to(OpenParentGraphOnZoomBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(NavigationPolicy.class)).to(NavigationPolicy.class);
 	}
 
@@ -321,9 +324,6 @@ public class ZestFxModule extends MvcFxModule {
 		// synchronize children on zoom
 		adapterMapBinder.addBinding(AdapterKey.get(SynchronizeChildrenOnZoomBehavior.class))
 				.to(SynchronizeChildrenOnZoomBehavior.class);
-		// replace contents with nested graph on zoom
-		adapterMapBinder.addBinding(AdapterKey.get(OpenNestedGraphOnZoomBehavior.class))
-				.to(OpenNestedGraphOnZoomBehavior.class);
 		// transform policy for relocation
 		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
 		// resize policy to resize nesting nodes
