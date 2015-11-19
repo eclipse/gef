@@ -67,7 +67,7 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	public void addContentChild(Object contentChild, int index) {
 		checkInitialized();
-		getOperation().add(new AddContentChildOperation<VR>(getHost(),
+		getCompositeOperation().add(new AddContentChildOperation<VR>(getHost(),
 				contentChild, index));
 		locallyExecuteOperation();
 	}
@@ -86,8 +86,8 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
 		checkInitialized();
-		getOperation().add(new AttachToContentAnchorageOperation<VR>(getHost(),
-				contentAnchorage, role));
+		getCompositeOperation().add(new AttachToContentAnchorageOperation<VR>(
+				getHost(), contentAnchorage, role));
 		locallyExecuteOperation();
 	}
 
@@ -110,19 +110,26 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	public void detachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		checkInitialized();
-		getOperation().add(new DetachFromContentAnchorageOperation<VR>(
+		getCompositeOperation().add(new DetachFromContentAnchorageOperation<VR>(
 				getHost(), contentAnchorage, role));
 		locallyExecuteOperation();
+	}
+
+	/**
+	 * Extracts a {@link AbstractCompositeOperation} from the operation created
+	 * by {@link #createOperation()}. The composite operation is used to combine
+	 * individual content change operations.
+	 *
+	 * @return The {@link AbstractCompositeOperation} that is used to combine
+	 *         the individual content change operations.
+	 */
+	protected AbstractCompositeOperation getCompositeOperation() {
+		return (AbstractCompositeOperation) getOperation();
 	}
 
 	@Override
 	public IContentPart<VR, ? extends VR> getHost() {
 		return (IContentPart<VR, ? extends VR>) super.getHost();
-	}
-
-	@Override
-	protected AbstractCompositeOperation getOperation() {
-		return (AbstractCompositeOperation) super.getOperation();
 	}
 
 	/**
@@ -137,7 +144,7 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	public void removeContentChild(Object contentChild) {
 		checkInitialized();
-		getOperation().add(
+		getCompositeOperation().add(
 				new RemoveContentChildOperation<VR>(getHost(), contentChild));
 		locallyExecuteOperation();
 	}

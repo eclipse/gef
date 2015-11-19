@@ -177,7 +177,7 @@ public class FXTransformPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	protected void applyTransform(AffineTransform newTransform) {
 		// change new transform in operation
-		getOperation()
+		getTransformOperation()
 				.setNewTransform(Geometry2JavaFX.toFXAffine(newTransform));
 		// locally execute operation
 		locallyExecuteOperation();
@@ -277,8 +277,14 @@ public class FXTransformPolicy extends AbstractTransactionPolicy<Node> {
 		return initialNodeTransform;
 	}
 
-	@Override
-	protected FXTransformOperation getOperation() {
+	/**
+	 * Returns an {@link FXTransformOperation} that is extracted from the
+	 * operation created by {@link #createOperation()}.
+	 *
+	 * @return An {@link FXTransformOperation} that is extracted from the
+	 *         operation created by {@link #createOperation()}.
+	 */
+	protected FXTransformOperation getTransformOperation() {
 		return (FXTransformOperation) super.getOperation();
 	}
 

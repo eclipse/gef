@@ -104,7 +104,7 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 	protected boolean canConnect(int pointIndex) {
 		// up to now, only allow attaching start and end point.
 		return pointIndex == 0
-				|| pointIndex == getOperation().getNewAnchors().size() - 1;
+				|| pointIndex == getBendOperation().getNewAnchors().size() - 1;
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		// create new way point
 		Point mouseInLocal = JavaFX2Geometry.toPoint(getConnection()
 				.sceneToLocal(Geometry2JavaFX.toFXPoint(mouseInScene)));
-		getOperation().getNewAnchors().add(segmentIndex + 1,
+		getBendOperation().getNewAnchors().add(segmentIndex + 1,
 				createUnconnectedAnchor(mouseInLocal));
 
 		locallyExecuteOperation();
@@ -271,6 +271,17 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	/**
+	 * Returns an {@link FXBendOperation} that is extracted from the operation
+	 * created by {@link #createOperation()}.
+	 *
+	 * @return an {@link FXBendOperation} that is extracted from the operation
+	 *         created by {@link #createOperation()}.
+	 */
+	protected FXBendOperation getBendOperation() {
+		return (FXBendOperation) super.getOperation();
+	}
+
+	/**
 	 * Returns the {@link Connection} that is manipulated by this policy.
 	 *
 	 * @return The {@link Connection} that is manipulated by this policy.
@@ -309,11 +320,6 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 								.toFXPoint(initialMousePositionInScene)))
 				.getNegated());
 		return deltaInLocal;
-	}
-
-	@Override
-	protected FXBendOperation getOperation() {
-		return (FXBendOperation) super.getOperation();
 	}
 
 	/**
@@ -429,14 +435,14 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		// put removed back in (may be removed againg before returning)
 		if (removedOverlainAnchor != null) {
 			selectedPointIndex = selectedPointIndexBeforeOverlaidRemoval;
-			getOperation().getNewAnchors().add(removedOverlainAnchorIndex,
+			getBendOperation().getNewAnchors().add(removedOverlainAnchorIndex,
 					removedOverlainAnchor);
 			locallyExecuteOperation();
 			removedOverlainAnchor = null;
 		}
 
 		// do not remove overlaid if there are no way points
-		if (getOperation().getNewAnchors().size() <= 2) {
+		if (getBendOperation().getNewAnchors().size() <= 2) {
 			return;
 		}
 
@@ -459,8 +465,8 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		// if left neighbor is not overlain (and not removed), determine if
 		// right neighbor is overlain (and can be removed)
 		if (removedOverlainAnchorIndex == -1
-				&& selectedPointIndex < getOperation().getNewAnchors().size()
-						- 1) {
+				&& selectedPointIndex < getBendOperation().getNewAnchors()
+						.size() - 1) {
 			int candidateIndex = selectedPointIndex + 1;
 			overlayAnchor = getOverlayAnchor(candidateIndex, mouseInScene);
 			if (overlayAnchor != null) {
@@ -472,9 +478,9 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 
 		// remove neighbor if overlaid
 		if (removedOverlainAnchorIndex != -1) {
-			getOperation().getNewAnchors().set(
+			getBendOperation().getNewAnchors().set(
 					selectedPointIndexBeforeOverlaidRemoval, overlayAnchor);
-			removedOverlainAnchor = getOperation().getNewAnchors()
+			removedOverlainAnchor = getBendOperation().getNewAnchors()
 					.remove(removedOverlainAnchorIndex);
 			locallyExecuteOperation();
 		}
@@ -518,7 +524,7 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		selectedPointCurrentPositionInLocal
 				.translate(snapToGridOffset.getNegated());
 
-		getOperation().getNewAnchors().set(selectedPointIndex,
+		getBendOperation().getNewAnchors().set(selectedPointIndex,
 				findOrCreateAnchor(selectedPointCurrentPositionInLocal,
 						canConnect(selectedPointIndex)));
 
@@ -552,7 +558,7 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		}
 
 		initialMousePositionInScene = mouseInScene.getCopy();
-		selectedPointInitialPositionInLocal = getOperation().getConnection()
+		selectedPointInitialPositionInLocal = getBendOperation().getConnection()
 				.getPoints()[selectedPointIndex];
 	}
 

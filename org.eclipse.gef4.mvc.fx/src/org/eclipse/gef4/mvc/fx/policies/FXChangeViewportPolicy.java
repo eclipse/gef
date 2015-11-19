@@ -42,8 +42,14 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 				.toAffineTransform(viewer.getCanvas().getContentTransform()));
 	}
 
-	@Override
-	protected FXChangeViewportOperation getOperation() {
+	/**
+	 * Returns an {@link FXChangeViewportOperation} that is extracted from the
+	 * operation created by {@link #createOperation()}.
+	 *
+	 * @return An {@link FXChangeViewportOperation} that is extracted from the
+	 *         operation created by {@link #createOperation()}.
+	 */
+	protected FXChangeViewportOperation getChangeViewportOperation() {
 		return (FXChangeViewportOperation) super.getOperation();
 	}
 
@@ -59,7 +65,7 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 		// ensure we have been properly initialized
 		checkInitialized();
 
-		FXChangeViewportOperation operation = getOperation();
+		FXChangeViewportOperation operation = getChangeViewportOperation();
 		operation.setNewHorizontalScrollOffset(
 				operation.getInitialHorizontalScrollOffset() + deltaTranslateX);
 		operation.setNewVerticalScrollOffset(
@@ -85,10 +91,13 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 		// compute transformation
 		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
 				.getCanvas().getContentGroup().sceneToLocal(sceneX, sceneY);
-		getOperation().concatenateToNewContentTransform(new AffineTransform()
-				.translate(contentGroupPivot.getX(), contentGroupPivot.getY())
-				.scale(relativeZoom, relativeZoom).translate(
-						-contentGroupPivot.getX(), -contentGroupPivot.getY()));
+		getChangeViewportOperation()
+				.concatenateToNewContentTransform(new AffineTransform()
+						.translate(contentGroupPivot.getX(),
+								contentGroupPivot.getY())
+						.scale(relativeZoom, relativeZoom)
+						.translate(-contentGroupPivot.getX(),
+								-contentGroupPivot.getY()));
 
 		// locally execute operation
 		locallyExecuteOperation();

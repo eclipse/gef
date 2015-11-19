@@ -48,6 +48,25 @@ public class ChangeContentsOperation extends AbstractOperation
 	private List<? extends Object> initialContents;
 
 	/**
+	 * Constructs a new {@link ChangeContentsOperation} that can be used to
+	 * change the contents of the given {@link IViewer}.
+	 * <p>
+	 * The operation is initialized as a no-op, i.e. the initial viewer contents
+	 * are also used as the final viewer contents.
+	 * <p>
+	 * The final contents can later be set using the
+	 * {@link #setNewContents(List)} method.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} of which the {@link ContentModel} is to be
+	 *            changed.
+	 */
+	public ChangeContentsOperation(IViewer<?> viewer) {
+		this(DEFAULT_LABEL, viewer, new ArrayList<Object>(
+				viewer.getAdapter(ContentModel.class).getContents()));
+	}
+
+	/**
 	 * Creates a new {@link ChangeContentsOperation} for changing the contents
 	 * of the given {@link IViewer} to the specified list of objects.
 	 *
@@ -118,6 +137,16 @@ public class ChangeContentsOperation extends AbstractOperation
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	/**
+	 * Sets the final contents to the given list.
+	 *
+	 * @param newContents
+	 *            The new final contents.
+	 */
+	public void setNewContents(List<? extends Object> newContents) {
+		this.newContents = new ArrayList<Object>(newContents);
 	}
 
 	/*

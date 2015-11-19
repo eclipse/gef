@@ -141,6 +141,18 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	}
 
 	/**
+	 * Extracts a {@link AbstractCompositeOperation} from the operation created
+	 * by {@link #createOperation()}. The composite operation is used to combine
+	 * individual content change operations.
+	 *
+	 * @return The {@link AbstractCompositeOperation} that is used to combine
+	 *         the individual content change operations.
+	 */
+	protected AbstractCompositeOperation getCompositeOperation() {
+		return (AbstractCompositeOperation) getOperation();
+	}
+
+	/**
 	 * Returns the {@link DeselectOperation} used by this {@link DeletionPolicy}
 	 * to deselect the to be deleted parts.
 	 *
@@ -148,7 +160,8 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	@SuppressWarnings("unchecked")
 	protected DeselectOperation<VR> getDeselectOperation() {
-		return (DeselectOperation<VR>) getOperation().getOperations().get(1);
+		return (DeselectOperation<VR>) getCompositeOperation().getOperations()
+				.get(1);
 	}
 
 	/**
@@ -160,13 +173,8 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *         anchorages.
 	 */
 	protected AbstractCompositeOperation getDetachAnchoragesOperation() {
-		return (AbstractCompositeOperation) getOperation().getOperations()
-				.get(2);
-	}
-
-	@Override
-	protected AbstractCompositeOperation getOperation() {
-		return (AbstractCompositeOperation) super.getOperation();
+		return (AbstractCompositeOperation) getCompositeOperation()
+				.getOperations().get(2);
 	}
 
 	/**
@@ -178,8 +186,8 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *         children.
 	 */
 	protected AbstractCompositeOperation getRemoveChildrenOperation() {
-		return (AbstractCompositeOperation) getOperation().getOperations()
-				.get(3);
+		return (AbstractCompositeOperation) getCompositeOperation()
+				.getOperations().get(3);
 	}
 
 	/**
@@ -190,6 +198,7 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	@SuppressWarnings("unchecked")
 	protected ChangeFocusOperation<VR> getUnfocusOperation() {
-		return (ChangeFocusOperation<VR>) getOperation().getOperations().get(0);
+		return (ChangeFocusOperation<VR>) getCompositeOperation()
+				.getOperations().get(0);
 	}
 }

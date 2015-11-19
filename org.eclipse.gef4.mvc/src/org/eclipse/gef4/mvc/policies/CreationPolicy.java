@@ -103,7 +103,8 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		parent.addChild(contentPart, index);
 		for (Entry<IContentPart<VR, ? extends VR>, String> anchored : anchoreds
 				.entries()) {
-			anchored.getKey().attachToAnchorage(contentPart, anchored.getValue());
+			anchored.getKey().attachToAnchorage(contentPart,
+					anchored.getValue());
 		}
 		// register the content part, so that the ContentBehavior
 		// synchronization reuses it (when committing the create operation)
@@ -121,7 +122,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		ITransactionalOperation addToParentOperation = parentContentPolicy
 				.commit();
 		if (addToParentOperation != null) {
-			getOperation().add(addToParentOperation);
+			getCompositeOperation().add(addToParentOperation);
 		}
 
 		// add anchoreds via content policy
@@ -139,7 +140,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 			ITransactionalOperation attachToAnchorageOperation = anchoredPolicy
 					.commit();
 			if (attachToAnchorageOperation != null) {
-				getOperation().add(attachToAnchorageOperation);
+				getCompositeOperation().add(attachToAnchorageOperation);
 			}
 		}
 
@@ -147,14 +148,14 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		ITransactionalOperation focusOperation = createFocusOperation(
 				contentPart);
 		if (focusOperation != null) {
-			getOperation().add(focusOperation);
+			getCompositeOperation().add(focusOperation);
 		}
 
 		// select the newly created part
 		ITransactionalOperation selectOperation = createSelectOperation(
 				contentPart);
 		if (selectOperation != null) {
-			getOperation().add(selectOperation);
+			getCompositeOperation().add(selectOperation);
 		}
 
 		locallyExecuteOperation();
@@ -227,9 +228,16 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		return new SelectOperation<VR>(viewer, Collections.singletonList(part));
 	}
 
-	@Override
-	protected AbstractCompositeOperation getOperation() {
-		return (AbstractCompositeOperation) super.getOperation();
+	/**
+	 * Extracts a {@link AbstractCompositeOperation} from the operation created
+	 * by {@link #createOperation()}. The composite operation is used to combine
+	 * individual content change operations.
+	 *
+	 * @return The {@link AbstractCompositeOperation} that is used to combine
+	 *         the individual content change operations.
+	 */
+	protected AbstractCompositeOperation getCompositeOperation() {
+		return (AbstractCompositeOperation) getOperation();
 	}
 
 }

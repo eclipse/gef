@@ -60,8 +60,8 @@ public class NavigationPolicy extends AbstractTransactionPolicy<Node> {
 
 		// TODO: This violates the contract of AbstracTransactionalPolicy,
 		// because locallyExecuteOperation() may not be called at any time.
-		getOperation().add(changeContentsOperation);
-		getOperation().add(changeViewportOperation);
+		getCompositeOperation().add(changeContentsOperation);
+		getCompositeOperation().add(changeViewportOperation);
 
 		AbstractCompositeOperation commit = (AbstractCompositeOperation) super.commit();
 
@@ -75,8 +75,14 @@ public class NavigationPolicy extends AbstractTransactionPolicy<Node> {
 		return new ReverseUndoCompositeOperation("Open Graph");
 	}
 
-	@Override
-	protected AbstractCompositeOperation getOperation() {
+	/**
+	 * Returns an {@link AbstractCompositeOperation} that is extracted from the
+	 * operation created by {@link #createOperation()}.
+	 *
+	 * @return An {@link AbstractCompositeOperation} that is extracted from the
+	 *         operation created by {@link #createOperation()}.
+	 */
+	protected AbstractCompositeOperation getCompositeOperation() {
 		return (AbstractCompositeOperation) super.getOperation();
 	}
 
@@ -142,7 +148,6 @@ public class NavigationPolicy extends AbstractTransactionPolicy<Node> {
 			// change contents and suppress next layout pass
 			changeContentsOperation = new ChangeContentsOperation(getHost().getRoot().getViewer(),
 					Collections.singletonList(newGraph)) {
-
 				@Override
 				public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 					if (navigationModel.getViewportState(newGraph) != null && !resetNewGraphViewport) {

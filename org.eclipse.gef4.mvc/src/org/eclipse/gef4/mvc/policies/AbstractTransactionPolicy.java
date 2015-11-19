@@ -97,7 +97,7 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	 * @return A new {@link ITransactionalOperation} to encapsulate all applied
 	 *         changes.
 	 */
-	protected ITransactionalOperation getOperation() {
+	protected final ITransactionalOperation getOperation() {
 		return operation;
 	}
 
