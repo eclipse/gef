@@ -34,7 +34,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.layout.Region;
+import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
@@ -52,7 +52,7 @@ import javafx.scene.shape.StrokeType;
  * bounds of a {@link GeometryNode} can be virtually extended for the purpose of
  * mouse hit-testing to realize a 'clickable area'.
  * <p>
- * Technically, a {@link GeometryNode} is a {@link Region} that internally holds
+ * Technically, a {@link GeometryNode} is a {@link Parent} that internally holds
  * a {@link Path geometric shape}, which is updated to reflect the given
  * {@link IGeometry}, and to which all visual properties are delegated. The
  * 'clickable' area is realized by a transparent, non-mouse transparent overlay
@@ -71,9 +71,7 @@ import javafx.scene.shape.StrokeType;
  * @param <T>
  *            An {@link IGeometry} used to define this {@link GeometryNode}
  */
-public class GeometryNode<T extends IGeometry> extends Region {
-
-	private static final double USE_GEOMETRY_BOUNDS = -1;
+public class GeometryNode<T extends IGeometry> extends Parent {
 
 	private Path geometricShape = new Path();
 	private Path clickableAreaShape = null;
@@ -85,7 +83,6 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	 */
 	public GeometryNode() {
 		// add geometric shape
-		geometricShape.setManaged(false);
 		getChildren().add(geometricShape);
 
 		// ensure clickable area is added/removed as needed
@@ -102,7 +99,6 @@ public class GeometryNode<T extends IGeometry> extends Region {
 					clickableAreaShape = new Path(
 							Geometry2JavaFX.toPathElements(
 									geometryProperty.getValue().toPath()));
-					clickableAreaShape.setManaged(false);
 					clickableAreaShape.setStroke(Color.TRANSPARENT);
 					clickableAreaShape.setMouseTransparent(false);
 					clickableAreaShape.strokeWidthProperty()
@@ -125,10 +121,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 			@Override
 			public void changed(ObservableValue<? extends T> observable,
 					T oldValue, T newValue) {
-				if (newValue != null) {
-					updateOnGeometryChange(USE_GEOMETRY_BOUNDS,
-							USE_GEOMETRY_BOUNDS);
-				}
+				updatePathElements();
 			}
 		});
 	}
@@ -320,6 +313,22 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	}
 
 	@Override
+	protected Bounds impl_computeLayoutBounds() {
+		/*
+		 * We have to ensure, that the size that gets passed in to #resize() is
+		 * reflected in the layout bounds of this node. As we cannot compensate
+		 * the offset between geometric bounds and layout bounds, we set the
+		 * geometric bounds to the resize width and height and tweak the layout
+		 * bounds here to match the geometric bounds.
+		 *
+		 * TODO: Re-implement this fix by only using public API, for example, a
+		 * Group can be used as the super class. (Bug #443954)
+		 */
+		return Geometry2JavaFX.toFXBounds(geometryProperty.getValue() == null
+				? new Rectangle() : geometryProperty.getValue().getBounds());
+	}
+
+	@Override
 	public boolean isResizable() {
 		return true;
 	}
@@ -332,6 +341,40 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	 */
 	public final boolean isSmooth() {
 		return geometricShape.isSmooth();
+	}
+
+	@Override
+	public double maxHeight(double width) {
+		return prefHeight(width);
+	}
+
+	@Override
+	public double maxWidth(double height) {
+		return prefWidth(height);
+	}
+
+	@Override
+	public double minHeight(double width) {
+		return prefHeight(width);
+	}
+
+	@Override
+	public double minWidth(double height) {
+		return prefWidth(height);
+	}
+
+	@Override
+	public double prefHeight(double width) {
+		// final double result = getLayoutBounds().getHeight();
+		// return Double.isNaN(result) || result < 0 ? 0 : result;
+		return geometryProperty.getValue().getBounds().getHeight();
+	}
+
+	@Override
+	public double prefWidth(double height) {
+		// final double result = getLayoutBounds().getWidth();
+		// return Double.isNaN(result) || result < 0 ? 0 : result;
+		return geometryProperty.getValue().getBounds().getWidth();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -386,12 +429,7 @@ public class GeometryNode<T extends IGeometry> extends Region {
 								boundsOrigin.x, boundsOrigin.y)));
 			}
 		}
-		// IMPORTANT: set our height and width explicitly to the given values
-		// (and not to the width and height of the geometry bounds), because the
-		// computed bounds of the geometry might involve rounding effects, so
-		// that the resize contract (layout bounds reflect given width and
-		// height) might be violated.
-		updateOnGeometryChange(width, height);
+		updatePathElements();
 	}
 
 	/**
@@ -636,35 +674,18 @@ public class GeometryNode<T extends IGeometry> extends Region {
 	}
 
 	/**
-	 * Updates height and width of this {@link GeometryNode} to reflect that of
-	 * the new {@link IGeometry} and ensures that the nested geometric shape
-	 * (and the clickable area) is resized accordingly. In case a width and
-	 * height is passed in, this takes precedence over the width and height of
-	 * the geometry bounds. If {@link #USE_GEOMETRY_BOUNDS} is passed in, the
-	 * width and height of the geometry bounds are used instead.
+	 * Updates the visual representation (Path) of this GeometryNode. This is
+	 * done automatically when setting the geometry. But in case you change
+	 * properties of a geometry, you have to call this method in order to update
+	 * its visual counter part.
 	 */
-	private void updateOnGeometryChange(double width, double height) {
-		T geometry = geometryProperty.getValue();
-
-		// update nested shapes
+	private void updatePathElements() {
 		PathElement[] pathElements = Geometry2JavaFX
-				.toPathElements(geometry.toPath());
+				.toPathElements(geometryProperty.getValue().toPath());
 		geometricShape.getElements().setAll(pathElements);
 		if (clickableAreaShape != null) {
 			clickableAreaShape.getElements().setAll(pathElements);
 		}
-
-		// update our height and width to reflect that of the
-		// contained geometry (or the one put in to resize)
-		if (width == USE_GEOMETRY_BOUNDS) {
-			setWidth(geometry.getBounds().getWidth());
-		} else {
-			setWidth(width);
-		}
-		if (height == USE_GEOMETRY_BOUNDS) {
-			setHeight(geometry.getBounds().getHeight());
-		} else {
-			setHeight(height);
-		}
 	}
+
 }
