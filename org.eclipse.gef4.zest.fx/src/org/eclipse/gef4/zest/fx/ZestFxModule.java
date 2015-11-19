@@ -40,7 +40,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior;
@@ -61,7 +60,6 @@ import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
 import org.eclipse.gef4.zest.fx.parts.ZestFxExpandingHandlePart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxFeedbackPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
 import org.eclipse.gef4.zest.fx.policies.ExpandFirstAnchorageOnClickPolicy;
@@ -155,7 +153,11 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class)).to(EdgeLayoutBehavior.class);
 		// hiding
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeHidingBehavior.class)).to(EdgeHidingBehavior.class);
-		// selection link feedback
+
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
@@ -274,12 +276,6 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).to(ContentPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
-	}
-
-	@Override
-	protected void bindIFeedbackPartFactory() {
-		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).to(ZestFxFeedbackPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override

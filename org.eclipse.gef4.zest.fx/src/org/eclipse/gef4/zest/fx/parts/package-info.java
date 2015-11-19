@@ -20,8 +20,6 @@
  * {@link org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart},
  * {@link org.eclipse.gef4.zest.fx.parts.ZestFxExpandingHandlePart}), as well as
  * feedback parts to indicate hidden nodes (
- * {@link org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart}) and edge label
- * anchor links (
- * {@link org.eclipse.gef4.zest.fx.parts.ZestFxEdgeLinkFeedbackPart}).
+ * {@link org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart}).
  */
 package org.eclipse.gef4.zest.fx.parts;

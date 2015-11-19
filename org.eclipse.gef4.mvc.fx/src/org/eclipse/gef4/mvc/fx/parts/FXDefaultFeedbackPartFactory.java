@@ -175,10 +175,6 @@ public class FXDefaultFeedbackPartFactory
 			// is not null
 			if (anchoredGeometryProvider != null
 					&& anchorageGeometryProvider != null) {
-				if (anchoredGeometryProvider == null
-						|| anchorageGeometryProvider == null) {
-					return null;
-				}
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
 					// TODO (#471628): inject; maybe extend IComputationStrategy
 					// interface

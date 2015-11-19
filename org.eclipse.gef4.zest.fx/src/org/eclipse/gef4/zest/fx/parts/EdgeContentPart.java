@@ -24,14 +24,11 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
-import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -253,34 +250,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
-	}
-
-	@Override
-	public void setContent(Object content) {
-		super.setContent(content);
-		if (content == null) {
-			return;
-		}
-		if (!(content instanceof Edge)) {
-			throw new IllegalArgumentException("Content of wrong type!");
-		}
-		final Connection visual = getVisual();
-		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
-				new Provider<IGeometry>() {
-					@Override
-					public IGeometry get() {
-						return NodeUtils.localToParent(visual, NodeUtils.localToParent(visual.getCurveNode(),
-								((GeometryNode<?>) visual.getCurveNode()).getGeometry()));
-					}
-				});
-		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
-				new Provider<IGeometry>() {
-					@Override
-					public IGeometry get() {
-						return NodeUtils.localToParent(visual, NodeUtils.localToParent(visual.getCurveNode(),
-								((GeometryNode<?>) visual.getCurveNode()).getGeometry()));
-					}
-				});
 	}
 
 }

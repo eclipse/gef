@@ -17,10 +17,12 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -103,6 +105,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 				// TODO: we cannot handle Path yet
 				if (!(geometryInLocal instanceof IShape)
 						&& !(geometryInLocal instanceof ICurve)) {
+					// TODO: Path
 					throw new IllegalArgumentException(
 							"The given IGeometry is neither an IShape nor an ICurve.");
 				}
@@ -128,9 +131,11 @@ public class ChopBoxAnchor extends AbstractAnchor {
 									"The given IShape does not provide any vertices.");
 						}
 					} else {
-						// TODO: Which point shall we use for curves?
-						return ((ICurve) geometryInLocal).getP1();
+						BezierCurve[] bezier = ((ICurve) geometryInLocal)
+								.toBezier();
+						return bezier[bezier.length / 2].get(0.5);
 					}
+					// TODO Path
 				} else {
 					return boundsCenterInLocal;
 				}
@@ -210,11 +215,15 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			protected IGeometry getAnchorageReferenceGeometryInLocal(
 					Node anchorage) {
 				IGeometry geometry = null;
-				if (anchorage instanceof GeometryNode) {
+				if (anchorage instanceof Connection) {
+					geometry = ((Connection) anchorage).getCurveNode()
+							.getGeometry();
+				} else if (anchorage instanceof GeometryNode) {
 					geometry = ((GeometryNode<?>) anchorage).getGeometry();
 				}
-				if (!(geometry instanceof IShape)) {
-					// TODO: ICurve, Path
+				// TODO: Path
+				if (!(geometry instanceof IShape)
+						&& !(geometry instanceof ICurve)) {
 					geometry = JavaFX2Geometry
 							.toRectangle(anchorage.getLayoutBounds());
 				}
@@ -299,11 +308,11 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	/**
 	 * A {@link IReferencePointProvider} needs to be provided as default adapter
 	 * (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable} info that
-	 * gets passed into {@link ChopBoxAnchor#attach(AnchorKey, IAdaptable)}
-	 * and {@link ChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
+	 * gets passed into {@link ChopBoxAnchor#attach(AnchorKey, IAdaptable)} and
+	 * {@link ChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
 	 * {@link IReferencePointProvider} has to provide a reference point for each
-	 * {@link AdapterKey} that is attached to the {@link ChopBoxAnchor}. It
-	 * will be used when computing anchor positions for the respective
+	 * {@link AdapterKey} that is attached to the {@link ChopBoxAnchor}. It will
+	 * be used when computing anchor positions for the respective
 	 * {@link AnchorKey}.
 	 *
 	 * @author anyssen
@@ -312,8 +321,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	public interface IReferencePointProvider {
 
 		/**
-		 * A simple {@link IReferencePointProvider} implementation that allows to
-		 * statically set reference points for {@link AnchorKey}s.
+		 * A simple {@link IReferencePointProvider} implementation that allows
+		 * to statically set reference points for {@link AnchorKey}s.
 		 *
 		 */
 		public class Impl implements IReferencePointProvider {
@@ -347,8 +356,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * {@link AnchorKey}s.
 		 *
 		 * @return A read-only (map) property storing reference positions for
-		 *         all {@link AnchorKey}s attached to the
-		 *         {@link ChopBoxAnchor}s it is forwarded to.
+		 *         all {@link AnchorKey}s attached to the {@link ChopBoxAnchor}s
+		 *         it is forwarded to.
 		 */
 		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
 

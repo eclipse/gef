@@ -22,8 +22,7 @@ import javafx.scene.shape.StrokeType;
 /**
  * The {@link FXSelectionLinkFeedbackPart} is an {@link FXSelectionFeedbackPart}
  * that uses a dotted line as its visualization. It is used per default to show
- * anchored-anchorage relations where the anchored is not an
- * {@link Connection}.
+ * anchored-anchorage relations where the anchored is not an {@link Connection}.
  *
  * @author anyssen
  *
