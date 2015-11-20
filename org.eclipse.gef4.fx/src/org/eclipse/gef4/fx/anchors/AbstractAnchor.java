@@ -20,6 +20,7 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -177,7 +178,16 @@ public abstract class AbstractAnchor implements IAnchor {
 				 * registration, so we have to recompute anchored's positions
 				 * now.
 				 */
-				updatePositions(anchored);
+				// The update has to be postponed because of a JavaFX Bug in
+				// Java7 that causes a ConcurrentModificationException when
+				// changing the scene graph in response to scene-property
+				// changes.
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						updatePositions(anchored);
+					}
+				});
 			}
 		};
 	}
