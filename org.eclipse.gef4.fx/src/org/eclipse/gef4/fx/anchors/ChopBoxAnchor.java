@@ -28,9 +28,9 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import com.sun.javafx.collections.ObservableMapWrapper;
-import com.sun.javafx.geom.Rectangle;
 
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.MapChangeListener;
