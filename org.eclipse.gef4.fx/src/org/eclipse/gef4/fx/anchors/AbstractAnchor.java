@@ -178,10 +178,12 @@ public abstract class AbstractAnchor implements IAnchor {
 				 * registration, so we have to recompute anchored's positions
 				 * now.
 				 */
-				// The update has to be postponed because of a JavaFX Bug in
-				// Java7 that causes a ConcurrentModificationException when
-				// changing the scene graph in response to scene-property
-				// changes.
+				// IMPORTANT: The update has to be postponed because of a JavaFX
+				// Bug in Java 7
+				// (https://bugs.openjdk.java.net/browse/JDK-8124231) that
+				// causes a ConcurrentModificationException when changing/ the
+				// scene graph in response to scene-property changes.
+				// With Java 8 this would not be necessary.
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
