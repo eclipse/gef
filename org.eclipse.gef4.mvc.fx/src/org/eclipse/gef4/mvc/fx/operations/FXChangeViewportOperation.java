@@ -23,6 +23,8 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
+import javafx.scene.transform.Affine;
+
 /**
  * The {@link FXChangeViewportOperation} can be used to alter the scroll offset
  * and the content transformation of an {@link InfiniteCanvas}. It is used by
@@ -226,12 +228,23 @@ public class FXChangeViewportOperation extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		canvas.setPrefWidth(newWidth);
-		canvas.setPrefHeight(newHeight);
-		canvas.setContentTransform(
-				Geometry2JavaFX.toFXAffine(newContentTransform));
-		canvas.setHorizontalScrollOffset(horizontalScrollOffset);
-		canvas.setVerticalScrollOffset(verticalScrollOffset);
+		if (canvas.getPrefWidth() != newWidth) {
+			canvas.setPrefWidth(newWidth);
+		}
+		if (canvas.getPrefHeight() != newHeight) {
+			canvas.setPrefHeight(newHeight);
+		}
+		Affine newContentAffine = Geometry2JavaFX
+				.toFXAffine(newContentTransform);
+		if (!canvas.getContentTransform().equals(newContentAffine)) {
+			canvas.setContentTransform(newContentAffine);
+		}
+		if (canvas.getHorizontalScrollOffset() != horizontalScrollOffset) {
+			canvas.setHorizontalScrollOffset(horizontalScrollOffset);
+		}
+		if (canvas.getVerticalScrollOffset() != verticalScrollOffset) {
+			canvas.setVerticalScrollOffset(verticalScrollOffset);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -456,12 +469,24 @@ public class FXChangeViewportOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		canvas.setPrefWidth(initialWidth);
-		canvas.setPrefHeight(initialHeight);
-		canvas.setContentTransform(
-				Geometry2JavaFX.toFXAffine(initialContentTransform));
-		canvas.setHorizontalScrollOffset(initialHorizontalScrollOffset);
-		canvas.setVerticalScrollOffset(initialVerticalScrollOffset);
+		if (canvas.getPrefWidth() != initialWidth) {
+			canvas.setPrefWidth(initialWidth);
+		}
+		if (canvas.getPrefHeight() != initialHeight) {
+			canvas.setPrefHeight(initialHeight);
+		}
+		Affine initialContentAffine = Geometry2JavaFX
+				.toFXAffine(initialContentTransform);
+		if (!canvas.getContentTransform().equals(initialContentAffine)) {
+			canvas.setContentTransform(initialContentAffine);
+		}
+		if (canvas
+				.getHorizontalScrollOffset() != initialHorizontalScrollOffset) {
+			canvas.setHorizontalScrollOffset(initialHorizontalScrollOffset);
+		}
+		if (canvas.getVerticalScrollOffset() != initialVerticalScrollOffset) {
+			canvas.setVerticalScrollOffset(initialVerticalScrollOffset);
+		}
 		return Status.OK_STATUS;
 	}
 
