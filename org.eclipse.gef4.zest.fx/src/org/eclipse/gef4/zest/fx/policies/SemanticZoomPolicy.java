@@ -340,15 +340,18 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		}
 
 		if (openGraph) {
+			// execute the semantic zoom operations
 			locallyExecuteOperation();
 		} else {
-			// when no graph is opened, the viewport is regularly updated
+			// when no graph is opened, the viewport is regularly updated (the
+			// super call executes the operation)
 			super.zoomRelative(relativeZoom, sceneX, sceneY);
-			// synchronize content children of nesting node parts
-			for (NodeContentPart nestingNodePart : findNestingNodes()) {
-				nestingNodePart.<ContentBehavior<Node>> getAdapter(ContentBehavior.class)
-						.synchronizeContentChildren(nestingNodePart.getContentChildren());
-			}
+		}
+
+		// synchronize content children of nesting node parts
+		for (NodeContentPart nestingNodePart : findNestingNodes()) {
+			nestingNodePart.<ContentBehavior<Node>> getAdapter(ContentBehavior.class)
+					.synchronizeContentChildren(nestingNodePart.getContentChildren());
 		}
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /
 		// 1000 / 1000 + "ms");
