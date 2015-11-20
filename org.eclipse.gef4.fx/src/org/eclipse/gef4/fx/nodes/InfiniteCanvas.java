@@ -226,8 +226,10 @@ public class InfiniteCanvas extends Region {
 			final GraphicsContext gc = getGraphicsContext2D();
 			gc.clearRect(0, 0, width, height);
 
-			final double xScale = gridTransformProperty.get().getMxx();
-			final double yScale = gridTransformProperty.get().getMyy();
+			final double xScale = Math
+					.abs(gridTransformProperty.get().getMxx());
+			final double yScale = Math
+					.abs(gridTransformProperty.get().getMyy());
 			// don't paint grid points if size is to large
 			if (((width / xScale) * (height / yScale) > GRID_THRESHOLD)) {
 				return;
