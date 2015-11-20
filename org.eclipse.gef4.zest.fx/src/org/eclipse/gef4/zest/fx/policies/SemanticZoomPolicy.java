@@ -125,18 +125,10 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	@Override
 	protected ITransactionalOperation createOperation() {
 		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation("SemanticZoom()");
-		// add original change viewport operation
-		rev.add(super.createOperation());
 		// add change contents operation
 		rev.add(new ChangeGraphContentsOperation(getHost().getRoot().getViewer()));
-		// add a change viewport operation that will only be used if the
-		// contents change
-		rev.add(new FXChangeViewportOperation(((FXViewer) getHost().getRoot().getViewer()).getCanvas()) {
-			{
-				setLabel("EXTRACTED");
-			}
-		});
-		// TODO: combine both change viewport operations
+		// add original change viewport operation
+		rev.add(super.createOperation());
 		return rev;
 	}
 
@@ -177,12 +169,12 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	 *         operation created by {@link #createOperation()}.
 	 */
 	protected ChangeGraphContentsOperation getChangeGraphContentsOperation() {
-		return (ChangeGraphContentsOperation) getCompositeOperation().getOperations().get(1);
+		return (ChangeGraphContentsOperation) getCompositeOperation().getOperations().get(0);
 	}
 
 	@Override
 	protected FXChangeViewportOperation getChangeViewportOperation() {
-		return (FXChangeViewportOperation) getCompositeOperation().getOperations().get(0);
+		return (FXChangeViewportOperation) getCompositeOperation().getOperations().get(1);
 	}
 
 	/**
@@ -194,17 +186,6 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	 */
 	protected AbstractCompositeOperation getCompositeOperation() {
 		return (AbstractCompositeOperation) super.getOperation();
-	}
-
-	/**
-	 * Returns a {@link ChangeContentsOperation} that is extracted from the
-	 * operation created by {@link #createOperation()}.
-	 *
-	 * @return A {@link ChangeContentsOperation} that is extracted from the
-	 *         operation created by {@link #createOperation()}.
-	 */
-	protected FXChangeViewportOperation getUpdateViewportOperation() {
-		return (FXChangeViewportOperation) getCompositeOperation().getOperations().get(2);
 	}
 
 	@Override
@@ -257,11 +238,11 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 						currentViewportState.getHeight(), new AffineTransform());
 			}
 
-			getUpdateViewportOperation().setNewWidth(newViewportState.getWidth());
-			getUpdateViewportOperation().setNewHeight(newViewportState.getHeight());
-			getUpdateViewportOperation().setNewHorizontalScrollOffset(newViewportState.getTranslateX());
-			getUpdateViewportOperation().setNewVerticalScrollOffset(newViewportState.getTranslateY());
-			getUpdateViewportOperation().setNewContentTransform(newViewportState.getContentsTransform());
+			getChangeViewportOperation().setNewWidth(newViewportState.getWidth());
+			getChangeViewportOperation().setNewHeight(newViewportState.getHeight());
+			getChangeViewportOperation().setNewHorizontalScrollOffset(newViewportState.getTranslateX());
+			getChangeViewportOperation().setNewVerticalScrollOffset(newViewportState.getTranslateY());
+			getChangeViewportOperation().setNewContentTransform(newViewportState.getContentsTransform());
 
 			// change contents and suppress next layout pass
 			getChangeGraphContentsOperation().setNewContents(Collections.singletonList(newGraph));
@@ -312,6 +293,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		double finalZoomLevel = initialZoomLevel * relativeZoom;
 
 		if (initialZoomLevel < finalZoomLevel && finalZoomLevel > 3) {
+			// zooming in => open nested graph (if any)
 			// find all NodeContentParts with nested graphs
 			List<NodeContentPart> nestingNodeContentParts = findNestingNodes();
 
@@ -343,6 +325,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 				openNestedGraph(pivotPart.getContent().getNestedGraph());
 			}
 		} else if (initialZoomLevel > finalZoomLevel && finalZoomLevel < 0.7) {
+			// zooming out => open nesting graph (if any)
 			final Graph currentGraph = (Graph) contentModel.getContents().get(0);
 			final Graph nestingGraph = currentGraph.getNestingNode() != null ? currentGraph.getNestingNode().getGraph()
 					: null;
@@ -350,15 +333,20 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 				openNestingGraph(nestingGraph);
 			}
 		} else {
+			// normally update viewport
+			super.zoomRelative(relativeZoom, sceneX, sceneY);
 			// synchronize content children of nesting node parts
 			for (NodeContentPart nestingNodePart : findNestingNodes()) {
 				nestingNodePart.<ContentBehavior<Node>> getAdapter(ContentBehavior.class)
 						.synchronizeContentChildren(nestingNodePart.getContentChildren());
 			}
+			// the super call already executed the operation, therefore, we can
+			// return here
+			return;
 		}
 
-		// update change viewport operation
-		super.zoomRelative(relativeZoom, sceneX, sceneY);
+		locallyExecuteOperation();
+
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /
 		// 1000 / 1000 + "ms");
 	}
