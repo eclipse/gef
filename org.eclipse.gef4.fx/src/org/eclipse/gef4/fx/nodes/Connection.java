@@ -25,6 +25,7 @@ import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.internal.properties.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -120,7 +121,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// need to hold a reference to the ReferencePointMap in order to be able
 		// to call #getRaw().
 		private ReferencePointMap referencePoints = new ReferencePointMap();
-		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
+		private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
 				FXCollections.observableMap(referencePoints));
 
 		/**
@@ -389,7 +390,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IConnectionDecoration startDecoration = null;
 	private IConnectionDecoration endDecoration = null;
-	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapper<AnchorKey, IAnchor>(
+	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<AnchorKey, IAnchor>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
 
 	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();

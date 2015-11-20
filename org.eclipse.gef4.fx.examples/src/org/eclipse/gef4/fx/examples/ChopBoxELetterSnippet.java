@@ -22,6 +22,7 @@ import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
+import org.eclipse.gef4.fx.internal.properties.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -172,7 +173,8 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
 	private ChopBoxAnchor chopBoxAnchor;
-	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty;
+	private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+			FXCollections.<AnchorKey, Point> observableHashMap());
 	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<AnchorKey, Circle>();
 	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<AnchorKey, Line>();
 	private Map<AnchorKey, Line> chopBoxLinesImaginary = new HashMap<AnchorKey, Line>();
@@ -344,8 +346,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		referencePointNode.setStroke(REFERENCE_POINT_STROKE);
 		referencePointNode.setCenterX(x);
 		referencePointNode.setCenterY(y);
-		referencePointNode
-				.setEffect(GeometryNodeSnippet.createShadowEffect());
+		referencePointNode.setEffect(GeometryNodeSnippet.createShadowEffect());
 		return referencePointNode;
 	}
 
@@ -394,8 +395,6 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		// the reference points easily)
 		chopBoxAnchor = new ChopBoxAnchor(eLetterShape);
 		chopBoxAnchor.positionProperty().addListener(anchorPositionListener);
-		referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
-				FXCollections.observableMap(new HashMap<AnchorKey, Point>()));
 
 		// compute bounds center
 		Point boundsCenterInLocal = JavaFX2Geometry
@@ -574,8 +573,8 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private void styleELetterShape(boolean fillVisible) {
 		eLetterShape.setFill(
 				fillVisible ? Color.rgb(135, 150, 220) : Color.TRANSPARENT);
-		eLetterShape.setEffect(fillVisible
-				? GeometryNodeSnippet.createShadowEffect() : null);
+		eLetterShape.setEffect(
+				fillVisible ? GeometryNodeSnippet.createShadowEffect() : null);
 		for (Line l : chopBoxLinesImaginary.values()) {
 			if (fillVisible) {
 				l.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL);

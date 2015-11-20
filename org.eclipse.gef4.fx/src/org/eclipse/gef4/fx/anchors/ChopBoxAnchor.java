@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
+import org.eclipse.gef4.fx.internal.properties.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -30,11 +31,9 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
-import com.sun.javafx.collections.ObservableMapWrapper;
-
-import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 
 /**
@@ -327,8 +326,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 */
 		public class Impl implements IReferencePointProvider {
 
-			private ObservableMap<AnchorKey, Point> referencePoints = new ObservableMapWrapper<AnchorKey, Point>(
-					new HashMap<AnchorKey, Point>());
+			private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+					FXCollections.<AnchorKey, Point> observableHashMap());
 
 			/**
 			 * Sets or updates the reference point for the given
@@ -341,25 +340,25 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			 *            The new reference point to set.
 			 */
 			public void put(AnchorKey anchorKey, Point referencePoint) {
-				referencePoints.put(anchorKey, referencePoint);
+				referencePointProperty.put(anchorKey, referencePoint);
 			}
 
 			@Override
-			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
-				return new ReadOnlyMapWrapper<>(referencePoints);
+			public ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty() {
+				return referencePointProperty.getReadOnlyProperty();
 			}
 		}
 
 		/**
-		 * Provides a read-only (map) property with positions (in local
-		 * coordinates of the anchored {@link Node}) for all attached
-		 * {@link AnchorKey}s.
+		 * Provides a {@link ReadOnlyMapProperty} that stores positions (in the
+		 * local coordinate system of the anchored {@link Node}) for all
+		 * attached {@link AnchorKey}s.
 		 *
-		 * @return A read-only (map) property storing reference positions for
-		 *         all {@link AnchorKey}s attached to the {@link ChopBoxAnchor}s
-		 *         it is forwarded to.
+		 * @return A {@link ReadOnlyMapProperty} that stores positions (in the
+		 *         local coordinate system of the anchored {@link Node}) for all
+		 *         attached {@link AnchorKey}s.
 		 */
-		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
+		public abstract ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty();
 
 	}
 
