@@ -23,6 +23,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -59,7 +60,7 @@ import javafx.scene.transform.Transform;
 public abstract class AbstractAnchor implements IAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
-	private ReadOnlyMapWrapperEx<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	private Map<Node, Set<AnchorKey>> keys = new HashMap<Node, Set<AnchorKey>>();

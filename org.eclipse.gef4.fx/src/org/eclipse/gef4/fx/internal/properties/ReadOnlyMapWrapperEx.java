@@ -15,10 +15,16 @@ package org.eclipse.gef4.fx.internal.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.javafx.binding.MapExpressionHelper;
+
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.MapChangeListener;
+import javafx.collections.MapChangeListener.Change;
 import javafx.collections.ObservableMap;
 
 /**
@@ -36,100 +42,262 @@ import javafx.collections.ObservableMap;
  */
 public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 
-	private List<ChangeListener<? super ObservableMap<K, V>>> changeListeners = new ArrayList<ChangeListener<? super ObservableMap<K, V>>>();
-	private List<MapChangeListener<? super K, ? super V>> mapChangeListeners = new ArrayList<MapChangeListener<? super K, ? super V>>();
-	private List<InvalidationListener> invalidationListeners = new ArrayList<InvalidationListener>();
+	private class ReadOnlyPropertyImplEx extends ReadOnlyMapProperty<K, V> {
 
-	/**
-	 * Constructs a new {@link ReadOnlyMapWrapperEx} that wraps the given
-	 * {@link ObservableMap}.
-	 *
-	 * @param observableHashMap
-	 *            The {@link ObservableMap} that is wrapped by this
-	 *            {@link ReadOnlyMapWrapperEx}.
-	 */
-	public ReadOnlyMapWrapperEx(ObservableMap<K, V> observableHashMap) {
-		super(observableHashMap);
+		private List<ChangeListener<? super ObservableMap<K, V>>> changeListeners = new ArrayList<ChangeListener<? super ObservableMap<K, V>>>();
+		private List<MapChangeListener<? super K, ? super V>> mapChangeListeners = new ArrayList<MapChangeListener<? super K, ? super V>>();
+		private List<InvalidationListener> invalidationListeners = new ArrayList<InvalidationListener>();
+
+		private MapExpressionHelper<K, V> helper = null;
+
+		@Override
+		public void addListener(
+				ChangeListener<? super ObservableMap<K, V>> listener) {
+			// keep track of all registered change listeners
+			changeListeners.add(listener);
+			helper = MapExpressionHelper.addListener(helper, this, listener);
+		}
+
+		@Override
+		public void addListener(InvalidationListener listener) {
+			// keep track of all registered change listeners
+			invalidationListeners.add(listener);
+			helper = MapExpressionHelper.addListener(helper, this, listener);
+		}
+
+		@Override
+		public void addListener(
+				MapChangeListener<? super K, ? super V> listener) {
+			// keep track of all registered change listeners
+			mapChangeListeners.add(listener);
+			helper = MapExpressionHelper.addListener(helper, this, listener);
+		}
+
+		@Override
+		public ReadOnlyBooleanProperty emptyProperty() {
+			return ReadOnlyMapWrapperEx.this.emptyProperty();
+		}
+
+		private void fireValueChangedEvent() {
+			MapExpressionHelper.fireValueChangedEvent(helper);
+		}
+
+		private void fireValueChangedEvent(
+				Change<? extends K, ? extends V> change) {
+			MapExpressionHelper.fireValueChangedEvent(helper, change);
+		}
+
+		@Override
+		public ObservableMap<K, V> get() {
+			return ReadOnlyMapWrapperEx.this.get();
+		}
+
+		@Override
+		public Object getBean() {
+			return ReadOnlyMapWrapperEx.this.getBean();
+		}
+
+		@Override
+		public String getName() {
+			return ReadOnlyMapWrapperEx.this.getName();
+		}
+
+		@Override
+		public void removeListener(
+				ChangeListener<? super ObservableMap<K, V>> listener) {
+			// IMPORTANT: Due to the JavaFX bug
+			// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to
+			// a removal of all listeners when a single listener is removed, we
+			// have to re-add all remaining listeners. However, since the
+			// current JavaFX version might not contain the bug, we have to
+			// remove all remaining listeners first, so that they are not
+			// notified twice.
+			for (ChangeListener<? super ObservableMap<K, V>> l : changeListeners) {
+				helper = MapExpressionHelper.removeListener(helper, l);
+			}
+			changeListeners.remove(listener);
+			for (ChangeListener<? super ObservableMap<K, V>> l : changeListeners) {
+				helper = MapExpressionHelper.addListener(helper, this, l);
+			}
+		}
+
+		@Override
+		public void removeListener(InvalidationListener listener) {
+			// IMPORTANT: Due to the JavaFX bug
+			// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to
+			// a removal of all listeners when a single listener is removed, we
+			// have to re-add all remaining listeners. However, since the
+			// current JavaFX version might not contain the bug, we have to
+			// remove all remaining listeners first, so that they are not
+			// notified twice.
+			for (InvalidationListener l : invalidationListeners) {
+				helper = MapExpressionHelper.removeListener(helper, l);
+			}
+			invalidationListeners.remove(listener);
+			for (InvalidationListener l : invalidationListeners) {
+				helper = MapExpressionHelper.addListener(helper, this, l);
+			}
+		}
+
+		@Override
+		public void removeListener(
+				MapChangeListener<? super K, ? super V> listener) {
+			// IMPORTANT: Due to the JavaFX bug
+			// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to
+			// a removal of all listeners when a single listener is removed, we
+			// have to re-add all remaining listeners. However, since the
+			// current JavaFX version might not contain the bug, we have to
+			// remove all remaining listeners first, so that they are not
+			// notified twice.
+			for (MapChangeListener<? super K, ? super V> l : mapChangeListeners) {
+				helper = MapExpressionHelper.removeListener(helper, l);
+			}
+			mapChangeListeners.remove(listener);
+			for (MapChangeListener<? super K, ? super V> l : mapChangeListeners) {
+				helper = MapExpressionHelper.addListener(helper, this, l);
+			}
+		}
+
+		@Override
+		public ReadOnlyIntegerProperty sizeProperty() {
+			return ReadOnlyMapWrapperEx.this.sizeProperty();
+		}
 	}
 
+	private ReadOnlyPropertyImplEx readOnlyProperty;
+
+	/**
+	 * The constructor of {@code ReadOnlyMapWrapperEx}
+	 */
+	public ReadOnlyMapWrapperEx() {
+	}
+
+	/**
+	 * The constructor of {@code ReadOnlyMapWrapperEx}
+	 *
+	 * @param bean
+	 *            the bean of this {@code ReadOnlyMapWrapperEx}
+	 * @param name
+	 *            the name of this {@code ReadOnlyMapWrapperEx}
+	 */
+	public ReadOnlyMapWrapperEx(Object bean, String name) {
+		super(bean, name);
+	}
+
+	/**
+	 * The constructor of {@code ReadOnlyMapWrapperEx}
+	 *
+	 * @param bean
+	 *            the bean of this {@code ReadOnlyMapWrapperEx}
+	 * @param name
+	 *            the name of this {@code ReadOnlyMapWrapperEx}
+	 * @param initialValue
+	 *            the initial value of the wrapped value
+	 */
+	public ReadOnlyMapWrapperEx(Object bean, String name,
+			ObservableMap<K, V> initialValue) {
+		super(bean, name, initialValue);
+	}
+
+	/**
+	 * The constructor of {@code ReadOnlyMapWrapperEx}
+	 *
+	 * @param initialValue
+	 *            the initial value of the wrapped value
+	 */
+	public ReadOnlyMapWrapperEx(ObservableMap<K, V> initialValue) {
+		super(initialValue);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addListener(
 			ChangeListener<? super ObservableMap<K, V>> listener) {
-		// keep track of all registered change listeners
-		changeListeners.add(listener);
-		super.addListener(listener);
+		getReadOnlyProperty().addListener(listener);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addListener(InvalidationListener listener) {
-		// keep track of all registered invalidation listeners
-		invalidationListeners.add(listener);
-		super.addListener(listener);
+		getReadOnlyProperty().addListener(listener);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addListener(MapChangeListener<? super K, ? super V> listener) {
-		// keep track of all registered map change listeners
-		mapChangeListeners.add(listener);
-		super.addListener(listener);
+		getReadOnlyProperty().addListener(listener);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void fireValueChangedEvent() {
+		if (readOnlyProperty != null) {
+			readOnlyProperty.fireValueChangedEvent();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void fireValueChangedEvent(
+			Change<? extends K, ? extends V> change) {
+		if (readOnlyProperty != null) {
+			readOnlyProperty.fireValueChangedEvent(change);
+		}
+	}
+
+	/**
+	 * Returns the readonly property, that is synchronized with this
+	 * {@code ReadOnlyMapWrapper}.
+	 *
+	 * @return the readonly property
+	 */
+	@Override
+	public ReadOnlyMapProperty<K, V> getReadOnlyProperty() {
+		if (readOnlyProperty == null) {
+			readOnlyProperty = new ReadOnlyPropertyImplEx();
+		}
+		return readOnlyProperty;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeListener(
 			ChangeListener<? super ObservableMap<K, V>> listener) {
-		super.removeListener(listener);
-		changeListeners.remove(listener);
-
-		// IMPORTANT: Due to the JavaFX bug
-		// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to a
-		// removal of all listeners when a single listener is removed, we have
-		// to re-add all remaining listeners. However, since the current JavaFX
-		// version might not contain the bug, we have to remove all remaining
-		// listeners first, so that they are not notified twice.
-		for (ChangeListener<? super ObservableMap<K, V>> l : changeListeners) {
-			super.removeListener(l);
-		}
-		for (ChangeListener<? super ObservableMap<K, V>> l : changeListeners) {
-			super.addListener(l);
+		if (readOnlyProperty != null) {
+			readOnlyProperty.removeListener(listener);
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeListener(InvalidationListener listener) {
-		super.removeListener(listener);
-		invalidationListeners.remove(listener);
-
-		// IMPORTANT: Due to the JavaFX bug
-		// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to a
-		// removal of all listeners when a single listener is removed, we have
-		// to re-add all remaining listeners. However, since the current JavaFX
-		// version might not contain the bug, we have to remove all remaining
-		// listeners first, so that they are not notified twice.
-		for (InvalidationListener l : invalidationListeners) {
-			super.removeListener(l);
-		}
-		for (InvalidationListener l : invalidationListeners) {
-			super.addListener(l);
+		if (readOnlyProperty != null) {
+			readOnlyProperty.removeListener(listener);
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeListener(
 			MapChangeListener<? super K, ? super V> listener) {
-		super.removeListener(listener);
-		mapChangeListeners.remove(listener);
-
-		// IMPORTANT: Due to the JavaFX bug
-		// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to a
-		// removal of all listeners when a single listener is removed, we have
-		// to re-add all remaining listeners. However, since the current JavaFX
-		// version might not contain the bug, we have to remove all remaining
-		// listeners first, so that they are not notified twice.
-		for (MapChangeListener<? super K, ? super V> l : mapChangeListeners) {
-			super.removeListener(l);
-		}
-		for (MapChangeListener<? super K, ? super V> l : mapChangeListeners) {
-			super.addListener(l);
+		if (readOnlyProperty != null) {
+			readOnlyProperty.removeListener(listener);
 		}
 	}
 

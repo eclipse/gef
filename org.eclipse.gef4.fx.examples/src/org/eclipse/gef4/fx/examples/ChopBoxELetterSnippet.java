@@ -173,7 +173,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
 	private ChopBoxAnchor chopBoxAnchor;
-	private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<AnchorKey, Circle>();
 	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<AnchorKey, Line>();

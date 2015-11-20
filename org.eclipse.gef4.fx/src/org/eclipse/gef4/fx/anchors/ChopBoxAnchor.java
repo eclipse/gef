@@ -32,6 +32,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
@@ -326,7 +327,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 */
 		public class Impl implements IReferencePointProvider {
 
-			private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+			private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
 					FXCollections.<AnchorKey, Point> observableHashMap());
 
 			/**

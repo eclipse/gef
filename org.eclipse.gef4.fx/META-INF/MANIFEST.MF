@@ -7,6 +7,7 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.gef4.fx.anchors;x-internal:=true,
  org.eclipse.gef4.fx.gestures;x-internal:=true,
+ org.eclipse.gef4.fx.internal.properties;x-friends:="org.eclipse.gef4.fx.examples",
  org.eclipse.gef4.fx.listeners;x-internal:=true,
  org.eclipse.gef4.fx.nodes;x-internal:=true,
  org.eclipse.gef4.fx.utils;x-internal:=true

@@ -121,7 +121,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// need to hold a reference to the ReferencePointMap in order to be able
 		// to call #getRaw().
 		private ReferencePointMap referencePoints = new ReferencePointMap();
-		private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
 				FXCollections.observableMap(referencePoints));
 
 		/**
