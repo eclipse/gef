@@ -146,18 +146,6 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		return layer;
 	}
 
-	/**
-	 * Creates a {@link Group} which contains the given {@link Node}s.
-	 *
-	 * @param layers
-	 *            The {@link Node}s which are put into the new {@link Group}.
-	 * @return The created {@link Group}.
-	 */
-	// TODO: Remove this method.
-	protected Group createCanvasContent(Node... layers) {
-		return new Group(layers);
-	}
-
 	@Override
 	protected Group createVisual() {
 		contentLayer = createContentLayer();
@@ -196,8 +184,7 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 
 		handleLayer = createHandleLayer();
 
-		return createCanvasContent(
-				new Node[] { contentLayer, feedbackLayer, handleLayer });
+		return new Group(contentLayer, feedbackLayer, handleLayer);
 	}
 
 	@Override
