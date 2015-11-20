@@ -25,21 +25,21 @@ import javafx.scene.input.RotateEvent;
  */
 public abstract class AbstractRotateGesture extends AbstractGesture {
 
-	private EventHandler<? super RotateEvent> rotateStartedHandler = new EventHandler<RotateEvent>() {
+	private EventHandler<? super RotateEvent> rotateStartedFilter = new EventHandler<RotateEvent>() {
 		@Override
 		public void handle(RotateEvent event) {
 			rotationStarted(event);
 		}
 	};
 
-	private EventHandler<? super RotateEvent> rotateHandler = new EventHandler<RotateEvent>() {
+	private EventHandler<? super RotateEvent> rotateFilter = new EventHandler<RotateEvent>() {
 		@Override
 		public void handle(RotateEvent event) {
 			rotate(event);
 		}
 	};
 
-	private EventHandler<? super RotateEvent> rotateFinishedHandler = new EventHandler<RotateEvent>() {
+	private EventHandler<? super RotateEvent> rotateFinishedFilter = new EventHandler<RotateEvent>() {
 		@Override
 		public void handle(RotateEvent event) {
 			rotationFinished(event);
@@ -48,11 +48,11 @@ public abstract class AbstractRotateGesture extends AbstractGesture {
 
 	@Override
 	protected void register() {
-		getScene().addEventHandler(RotateEvent.ROTATION_FINISHED,
-				rotateFinishedHandler);
-		getScene().addEventHandler(RotateEvent.ROTATION_STARTED,
-				rotateStartedHandler);
-		getScene().addEventHandler(RotateEvent.ROTATE, rotateHandler);
+		getScene().addEventFilter(RotateEvent.ROTATION_FINISHED,
+				rotateFinishedFilter);
+		getScene().addEventFilter(RotateEvent.ROTATION_STARTED,
+				rotateStartedFilter);
+		getScene().addEventFilter(RotateEvent.ROTATE, rotateFilter);
 	}
 
 	/**
@@ -81,11 +81,11 @@ public abstract class AbstractRotateGesture extends AbstractGesture {
 
 	@Override
 	protected void unregister() {
-		getScene().removeEventHandler(RotateEvent.ROTATION_FINISHED,
-				rotateFinishedHandler);
-		getScene().removeEventHandler(RotateEvent.ROTATION_STARTED,
-				rotateStartedHandler);
-		getScene().removeEventHandler(RotateEvent.ROTATE, rotateHandler);
+		getScene().removeEventFilter(RotateEvent.ROTATION_FINISHED,
+				rotateFinishedFilter);
+		getScene().removeEventFilter(RotateEvent.ROTATION_STARTED,
+				rotateStartedFilter);
+		getScene().removeEventFilter(RotateEvent.ROTATE, rotateFilter);
 	}
 
 }

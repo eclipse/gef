@@ -36,17 +36,6 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 	private Point2D startMousePosition;
 
 	/**
-	 * This {@link EventHandler} is registered as a event handler on the target
-	 * node to initiate a press-drag-release gesture.
-	 */
-	private EventHandler<? super MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent event) {
-			onMousePress(event);
-		}
-	};
-
-	/**
 	 * This {@link EventHandler} is registered as an event filter on the
 	 * {@link Scene} to handle drag and release events.
 	 */
@@ -89,16 +78,26 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 	 *
 	 * @param event
 	 *            The {@link MouseEvent} to process.
-	 * @see #onMousePress(MouseEvent)
 	 */
 	protected void onMouseEvent(MouseEvent event) {
-		if (pressed == null) {
-			// gesture not initiated
+		// determine pressed/dragged/released state
+		EventType<? extends Event> type = event.getEventType();
+		if (pressed == null && type.equals(MouseEvent.MOUSE_PRESSED)) {
+			EventTarget target = event.getTarget();
+			if (target instanceof Node) {
+				// initialize the gesture
+				pressed = (Node) target;
+				pressed.addEventHandler(MouseEvent.ANY, mouseFilter);
+				startMousePosition = new Point2D(event.getSceneX(),
+						event.getSceneY());
+				press(pressed, event);
+			}
+			return;
+		} else if (pressed == null) {
+			// not initialized yet
 			return;
 		}
 
-		// determine dragged/released state
-		EventType<? extends Event> type = event.getEventType();
 		if (type.equals(MouseEvent.MOUSE_EXITED_TARGET)) {
 			// ignore mouse exited target events here (they may result from
 			// visual changes that are caused by a preceding press)
@@ -138,27 +137,6 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 	}
 
 	/**
-	 * This method is called when a {@link MouseEvent#MOUSE_PRESSED} event
-	 * occurs in the {@link Scene} where this gesture is currently registered.
-	 * This initiates the gesture and activates processing of drag and release
-	 * events.
-	 *
-	 * @param event
-	 *            The {@link MouseEvent} to process.
-	 * @see #onMouseEvent(MouseEvent)
-	 */
-	protected void onMousePress(MouseEvent event) {
-		EventTarget target = event.getTarget();
-		if (target instanceof Node) {
-			pressed = (Node) target;
-			pressed.addEventHandler(MouseEvent.ANY, mouseFilter);
-			startMousePosition = new Point2D(event.getSceneX(),
-					event.getSceneY());
-			press(pressed, event);
-		}
-	}
-
-	/**
 	 * This method is called upon {@link MouseEvent#MOUSE_PRESSED} events.
 	 *
 	 * @param target
@@ -171,7 +149,6 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 	@Override
 	protected void register() {
 		getScene().addEventFilter(MouseEvent.ANY, mouseFilter);
-		getScene().addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 	}
 
 	/**
@@ -194,7 +171,6 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 
 	@Override
 	protected void unregister() {
-		getScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		getScene().removeEventFilter(MouseEvent.ANY, mouseFilter);
 	}
 

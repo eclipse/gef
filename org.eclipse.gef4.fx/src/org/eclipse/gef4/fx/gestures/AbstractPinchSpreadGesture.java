@@ -27,7 +27,7 @@ public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 
 	private boolean inZoom = false;
 
-	private EventHandler<? super ZoomEvent> zoomHandler = new EventHandler<ZoomEvent>() {
+	private EventHandler<? super ZoomEvent> zoomFilter = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
 			if (!event.isInertia()) {
@@ -49,16 +49,16 @@ public abstract class AbstractPinchSpreadGesture extends AbstractGesture {
 
 	@Override
 	protected void register() {
-		getScene().addEventHandler(ZoomEvent.ZOOM_FINISHED, zoomHandler);
-		getScene().addEventHandler(ZoomEvent.ZOOM_STARTED, zoomHandler);
-		getScene().addEventHandler(ZoomEvent.ZOOM, zoomHandler);
+		getScene().addEventFilter(ZoomEvent.ZOOM_FINISHED, zoomFilter);
+		getScene().addEventFilter(ZoomEvent.ZOOM_STARTED, zoomFilter);
+		getScene().addEventFilter(ZoomEvent.ZOOM, zoomFilter);
 	}
 
 	@Override
 	protected void unregister() {
-		getScene().removeEventHandler(ZoomEvent.ZOOM_STARTED, zoomHandler);
-		getScene().removeEventHandler(ZoomEvent.ZOOM_FINISHED, zoomHandler);
-		getScene().removeEventHandler(ZoomEvent.ZOOM, zoomHandler);
+		getScene().removeEventFilter(ZoomEvent.ZOOM_STARTED, zoomFilter);
+		getScene().removeEventFilter(ZoomEvent.ZOOM_FINISHED, zoomFilter);
+		getScene().removeEventFilter(ZoomEvent.ZOOM, zoomFilter);
 	}
 
 	/**
