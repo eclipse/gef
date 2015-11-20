@@ -15,14 +15,11 @@
  * {@link org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.AbstractLayoutBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior},
- * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior}),
+ * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior}), as well as
  * hiding/unhiding of nodes and related edges (
  * {@link org.eclipse.gef4.zest.fx.behaviors.AbstractHidingBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.HidingBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior},
- * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior}), as well
- * as hiding/showing of nested graphs via semantic zooming (
- * {@link org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior}
- * ).
+ * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior}).
  */
 package org.eclipse.gef4.zest.fx.behaviors;

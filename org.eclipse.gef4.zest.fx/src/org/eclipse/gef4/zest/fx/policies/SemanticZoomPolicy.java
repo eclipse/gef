@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -32,6 +34,7 @@ import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ChangeContentsOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
@@ -40,6 +43,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 
 /**
  * The {@link SemanticZoomPolicy} extends the {@link FXChangeViewportPolicy} for
@@ -134,6 +138,35 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		});
 		// TODO: combine both change viewport operations
 		return rev;
+	}
+
+	/**
+	 * Returns a {@link List} containing all {@link NodeContentPart}s (within
+	 * the currently rendered graph) that have a nested graph assigned to them.
+	 *
+	 * @return A {@link List} containing all {@link NodeContentPart}s (within
+	 *         the currently rendered graph) that have a nested graph assigned
+	 *         to them.
+	 */
+	protected List<NodeContentPart> findNestingNodes() {
+		// find the first level visual parts (not considering nested graphs)
+		List<IVisualPart<Node, ? extends Node>> rootChildren = getHost().getRoot().getChildren();
+		// rootChildren.get(0) should be the GraphContentPart containing the
+		// NodeContentParts
+		List<IVisualPart<Node, ? extends Node>> graphChildren = rootChildren.size() > 0
+				? rootChildren.get(0).getChildren() : Collections.<IVisualPart<Node, ? extends Node>> emptyList();
+
+		// filter for NodeContentPart
+		List<NodeContentPart> nestingNodeContentParts = PartUtils.filterParts(graphChildren, NodeContentPart.class);
+
+		// filter out all non-nesting nodes
+		for (int i = nestingNodeContentParts.size() - 1; i >= 0; i--) {
+			NodeContentPart nodePart = nestingNodeContentParts.get(i);
+			if (nodePart.getContent().getNestedGraph() == null) {
+				nestingNodeContentParts.remove(i);
+			}
+		}
+		return nestingNodeContentParts;
 	}
 
 	/**
@@ -272,29 +305,25 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 
 	@Override
 	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
+		// long startTimeNanos = System.nanoTime();
 		checkInitialized();
 
 		double initialZoomLevel = getChangeViewportOperation().getInitialContentTransform().getScaleX();
 		double finalZoomLevel = initialZoomLevel * relativeZoom;
 
 		if (initialZoomLevel < finalZoomLevel && finalZoomLevel > 3) {
-			// filter the current content parts for nesting nodes
-			List<NodeContentPart> nestingNodeContentParts = PartUtils
-					.filterParts(getHost().getRoot().getViewer().getContentPartMap().values(), NodeContentPart.class);
-			for (NodeContentPart nodePart : new ArrayList<NodeContentPart>(nestingNodeContentParts)) {
-				if (nodePart.getContent().getNestedGraph() == null) {
-					nestingNodeContentParts.remove(nodePart);
-				}
-			}
+			// find all NodeContentParts with nested graphs
+			List<NodeContentPart> nestingNodeContentParts = findNestingNodes();
 
 			// determine the nesting node that is at least partially visible and
-			// nearest to the center of the viewport
-			double centerDistance = Double.MAX_VALUE;
-			NodeContentPart centerPart = null;
+			// nearest to the pivot point
+			double pivotDistance = Double.MAX_VALUE;
+			NodeContentPart pivotPart = null;
 
 			InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 			org.eclipse.gef4.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef4.geometry.planar.Rectangle(
 					0, 0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
+			Point pivotPoint = JavaFX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
 
 			for (NodeContentPart nodePart : new ArrayList<NodeContentPart>(nestingNodeContentParts)) {
 				Group visual = nodePart.getVisual();
@@ -302,29 +331,36 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 				org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = JavaFX2Geometry
 						.toRectangle(infiniteCanvas.sceneToLocal(boundsInScene));
 				if (boundsInViewport.touches(viewportBounds)) {
-					double distance = boundsInViewport.getCenter().getDistance(viewportBounds.getCenter());
-					if (distance < centerDistance) {
-						centerPart = nodePart;
+					double distance = boundsInViewport.getCenter().getDistance(pivotPoint);
+					if (distance < pivotDistance) {
+						pivotPart = nodePart;
 					}
 				}
 			}
 
 			// open nested graph
-			if (centerPart != null) {
-				openNestedGraph(centerPart.getContent().getNestedGraph());
+			if (pivotPart != null) {
+				openNestedGraph(pivotPart.getContent().getNestedGraph());
 			}
 		} else if (initialZoomLevel > finalZoomLevel && finalZoomLevel < 0.7) {
-			// TODO open nesting (i.e. parent) graph
 			final Graph currentGraph = (Graph) contentModel.getContents().get(0);
 			final Graph nestingGraph = currentGraph.getNestingNode() != null ? currentGraph.getNestingNode().getGraph()
 					: null;
 			if (nestingGraph != null) {
 				openNestingGraph(nestingGraph);
 			}
+		} else {
+			// synchronize content children of nesting node parts
+			for (NodeContentPart nestingNodePart : findNestingNodes()) {
+				nestingNodePart.<ContentBehavior<Node>> getAdapter(ContentBehavior.class)
+						.synchronizeContentChildren(nestingNodePart.getContentChildren());
+			}
 		}
 
 		// update change viewport operation
 		super.zoomRelative(relativeZoom, sceneX, sceneY);
+		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /
+		// 1000 / 1000 + "ms");
 	}
 
 }

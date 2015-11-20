@@ -48,7 +48,6 @@ import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.SynchronizeChildrenOnZoomBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
@@ -317,9 +316,6 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "OpenNestedGraphOnDoubleClick"))
 				.to(OpenNestedGraphOnDoubleClickPolicy.class);
-		// synchronize children on zoom
-		adapterMapBinder.addBinding(AdapterKey.get(SynchronizeChildrenOnZoomBehavior.class))
-				.to(SynchronizeChildrenOnZoomBehavior.class);
 		// transform policy for relocation
 		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
 		// resize policy to resize nesting nodes
