@@ -9,6 +9,7 @@
  * Contributors:
  *     Fabian Steeg - initial API & implementation (bug #277380)
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
+ *     							  - Refactoring of DOT Graph view live update/live export (bug #337644)
  *
  *******************************************************************************/
 
@@ -27,7 +28,6 @@ public class DotUiMessages extends NLS {
 	public static String DotGraphView_1;
 	public static String DotGraphView_2;
 	public static String DotGraphView_3;
-	public static String DotGraphView_4;
 
 	static {
 		// initialize resource bundle

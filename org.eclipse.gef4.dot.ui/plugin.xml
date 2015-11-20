@@ -33,6 +33,10 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+          class="org.eclipse.gef4.dot.internal.ui.handlers.SyncGraphvizExportHandler"
+          commandId="org.eclipse.gef4.dot.ui.export">
+      </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="org.eclipse.gef4.dot.internal.parser.Dot.Editor.opened">
@@ -88,6 +92,10 @@
             id="org.eclipse.gef4.dot.internal.parser.Dot.validate"
             name="Validate">
       </command>
+      <command
+            id="org.eclipse.gef4.dot.ui.export"
+            name="Sync Graphviz Export (PDF)">
+      </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
         <menuContribution
@@ -103,6 +111,24 @@
             </visibleWhen>
          </command>  
          </menuContribution>
+        <menuContribution
+              allPopups="false"
+              locationURI=" toolbar:org.eclipse.ui.main.toolbar?after=additions">
+           <toolbar
+                 id="org.eclipse.gef4.dot.ui.toolbar">
+              <command
+                    commandId="org.eclipse.gef4.dot.ui.export"
+                    icon="IMG_ETOOL_PRINT_EDIT"
+                    style="toggle">
+                 <visibleWhen
+                       checkEnabled="false">
+                    <reference
+                          definitionId="org.eclipse.gef4.dot.internal.parser.Dot.Editor.opened">
+                    </reference>
+                 </visibleWhen>
+              </command>
+           </toolbar>
+        </menuContribution>
     </extension>
     <extension point="org.eclipse.ui.menus">
         <menuContribution locationURI="popup:#TextEditorContext?endof=group.find">

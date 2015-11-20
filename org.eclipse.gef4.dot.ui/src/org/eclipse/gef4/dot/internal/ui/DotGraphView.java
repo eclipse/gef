@@ -18,8 +18,6 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -30,14 +28,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.dot.internal.DotExtractor;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
-import org.eclipse.gef4.dot.internal.DotNativeDrawer;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
@@ -54,15 +49,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
@@ -83,16 +74,12 @@ public class DotGraphView extends ZestFxUiView {
 			.toExternalForm();
 	private static final String EXTENSION = "dot"; //$NON-NLS-1$
 	private static final String LOAD_DOT_FILE = DotUiMessages.DotGraphView_0;
-	private static final String SYNC_EXPORT_PDF = DotUiMessages.DotGraphView_1;
-	private static final String SYNC_IMPORT_DOT = DotUiMessages.DotGraphView_2;
-	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_3;
-	private static final String GRAPH_RESOURCE = DotUiMessages.DotGraphView_4;
-	private static final String FORMAT_PDF = "pdf"; //$NON-NLS-1$
+	private static final String SYNC_IMPORT_DOT = DotUiMessages.DotGraphView_1;
+	private static final String GRAPH_NONE = DotUiMessages.DotGraphView_2;
+	private static final String GRAPH_RESOURCE = DotUiMessages.DotGraphView_3;
 	private boolean listenToDotContent = false;
-	private boolean linkImage = false;
 	private String currentDot = "digraph{}"; //$NON-NLS-1$
 	private File currentFile = null;
-	private ExportToggle exportAction;
 	private Link resourceLabel = null;
 
 	public DotGraphView() {
@@ -101,12 +88,10 @@ public class DotGraphView extends ZestFxUiView {
 
 	@Override
 	public void createPartControl(final Composite parent) {
-		exportAction = new ExportToggle();
 		Action updateToggleAction = new UpdateToggle().action(this);
 		Action loadFileAction = new LoadFile().action(this);
 		add(updateToggleAction, ISharedImages.IMG_ELCL_SYNCED);
 		add(loadFileAction, ISharedImages.IMG_OBJ_FILE);
-		add(exportAction.action(this), ISharedImages.IMG_ETOOL_PRINT_EDIT);
 		parent.setLayout(new GridLayout(1, true));
 		initResourceLabel(parent, loadFileAction, updateToggleAction);
 		super.createPartControl(parent);
@@ -160,7 +145,6 @@ public class DotGraphView extends ZestFxUiView {
 	}
 
 	private void setGraphAsync(final String dot, final File file) {
-		final DotGraphView view = this;
 		getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -178,7 +162,6 @@ public class DotGraphView extends ZestFxUiView {
 						return;
 					}
 					setGraph(dotImport.newGraphInstance());
-					exportAction.linkCorrespondingImage(view);
 					resourceLabel.setText(
 							String.format(GRAPH_RESOURCE, file.getName()));
 					resourceLabel.setToolTipText(file.getAbsolutePath());
@@ -239,106 +222,6 @@ public class DotGraphView extends ZestFxUiView {
 		return workspaceRunnable;
 	}
 
-	private class ExportToggle {
-
-		private File generateImageFromGraph(final boolean refresh,
-				final String format, DotGraphView view) {
-			File dotFile = DotFileUtils.write(view.currentDot);
-			File image = DotNativeDrawer.renderImage(
-					new File(GraphvizPreferencePage.getDotExecutablePath()),
-					dotFile, format, null);
-			if (view.currentFile == null) {
-				return image;
-			}
-			File copy = DotFileUtils.copySingleFile(
-					view.currentFile.getParentFile(),
-					view.currentFile.getName() + "." + format, image); //$NON-NLS-1$
-			if (refresh) {
-				refreshParent(view.currentFile);
-			}
-			return copy;
-		}
-
-		private void openFile(File file, DotGraphView view) {
-			if (view.currentFile == null) { // no workspace file for cur. graph
-				IFileStore fileStore = EFS.getLocalFileSystem()
-						.getStore(new Path("")); //$NON-NLS-1$
-				fileStore = fileStore.getChild(file.getAbsolutePath());
-				if (!fileStore.fetchInfo().isDirectory()
-						&& fileStore.fetchInfo().exists()) {
-					IWorkbenchPage page = view.getSite().getPage();
-					try {
-						IDE.openEditorOnFileStore(page, fileStore);
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IPath location = Path.fromOSString(file.getAbsolutePath());
-				IFile copy = workspace.getRoot().getFileForLocation(location);
-				IEditorRegistry registry = PlatformUI.getWorkbench()
-						.getEditorRegistry();
-				if (registry.isSystemExternalEditorAvailable(copy.getName())) {
-					try {
-						view.getViewSite().getPage()
-								.openEditor(new FileEditorInput(
-										copy),
-								IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-		private void refreshParent(final File file) {
-			try {
-				ResourcesPlugin.getWorkspace().getRoot()
-						.getFileForLocation(
-								Path.fromOSString(file.getAbsolutePath()))
-						.getParent().refreshLocal(IResource.DEPTH_ONE, null);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-
-		Action action(final DotGraphView view) {
-			return new Action(DotGraphView.SYNC_EXPORT_PDF, SWT.TOGGLE) {
-				@Override
-				public void run() {
-					// check if Graphviz is configured properly
-					if (!GraphvizPreferencePage.isGraphvizConfigured()) {
-						GraphvizPreferencePage
-								.showGraphvizConfigurationDialog();
-					}
-
-					if (!GraphvizPreferencePage.isGraphvizConfigured()) {
-						linkImage = false;
-						setChecked(false);
-						return;
-					}
-
-					linkImage = toggle(this, linkImage);
-					if (view.currentFile != null) {
-						linkCorrespondingImage(view);
-					}
-				}
-			};
-		}
-
-		void linkCorrespondingImage(DotGraphView view) {
-			if (view.linkImage) {
-				File image = generateImageFromGraph(true,
-						DotGraphView.FORMAT_PDF, view);
-				if (image != null) {
-					openFile(image, view);
-				}
-			}
-		}
-
-	}
-
 	private class LoadFile {
 
 		private String lastSelection = null;
@@ -396,6 +279,10 @@ public class DotGraphView extends ZestFxUiView {
 					ISelectionService service = getSite().getWorkbenchWindow()
 							.getSelectionService();
 					if (view.listenToDotContent) {
+						IWorkbenchPart activeEditor = PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage()
+								.getActiveEditor();
+						checkActiveEditorAndUpdateGraph(activeEditor);
 						workspace.addResourceChangeListener(
 								resourceChangeListener,
 								IResourceChangeEvent.POST_BUILD
@@ -415,27 +302,7 @@ public class DotGraphView extends ZestFxUiView {
 				@Override
 				public void selectionChanged(IWorkbenchPart part,
 						ISelection selection) {
-					if (part instanceof XtextEditor) {
-						XtextEditor editor = (XtextEditor) part;
-						if ("org.eclipse.gef4.dot.internal.parser.Dot" //$NON-NLS-1$
-								.equals(editor.getLanguageName())
-								&& editor
-										.getEditorInput() instanceof FileEditorInput) {
-							try {
-								File resolvedFile = DotFileUtils
-										.resolve(((FileEditorInput) editor
-												.getEditorInput()).getFile()
-														.getLocationURI()
-														.toURL());
-								if (!resolvedFile.equals(view.currentFile)) {
-									view.updateGraph(resolvedFile);
-								}
-							} catch (MalformedURLException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-
+					checkActiveEditorAndUpdateGraph(part);
 				}
 			};
 
@@ -481,6 +348,30 @@ public class DotGraphView extends ZestFxUiView {
 
 			};
 			return toggleUpdateModeAction;
+		}
+
+		/**
+		 * if the active editor is the DOT Editor, update the graph, otherwise
+		 * do nothing
+		 */
+		private void checkActiveEditorAndUpdateGraph(IWorkbenchPart part) {
+			if (part instanceof XtextEditor) {
+				XtextEditor editor = (XtextEditor) part;
+				if ("org.eclipse.gef4.dot.internal.parser.Dot" //$NON-NLS-1$
+						.equals(editor.getLanguageName())
+						&& editor.getEditorInput() instanceof FileEditorInput) {
+					try {
+						File resolvedFile = DotFileUtils.resolve(
+								((FileEditorInput) editor.getEditorInput())
+										.getFile().getLocationURI().toURL());
+						if (!resolvedFile.equals(currentFile)) {
+							updateGraph(resolvedFile);
+						}
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 }
