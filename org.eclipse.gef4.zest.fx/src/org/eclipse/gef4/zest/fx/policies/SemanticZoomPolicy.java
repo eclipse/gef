@@ -289,9 +289,12 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		// long startTimeNanos = System.nanoTime();
 		checkInitialized();
 
+		// determine initial and final zoom level
 		double initialZoomLevel = getChangeViewportOperation().getInitialContentTransform().getScaleX();
 		double finalZoomLevel = initialZoomLevel * relativeZoom;
 
+		// open nested/nesting graph depending on zoom level
+		boolean openGraph = false;
 		if (initialZoomLevel < finalZoomLevel && finalZoomLevel > 3) {
 			// zooming in => open nested graph (if any)
 			// find all NodeContentParts with nested graphs
@@ -322,6 +325,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 
 			// open nested graph
 			if (pivotPart != null) {
+				openGraph = true;
 				openNestedGraph(pivotPart.getContent().getNestedGraph());
 			}
 		} else if (initialZoomLevel > finalZoomLevel && finalZoomLevel < 0.7) {
@@ -330,23 +334,22 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 			final Graph nestingGraph = currentGraph.getNestingNode() != null ? currentGraph.getNestingNode().getGraph()
 					: null;
 			if (nestingGraph != null) {
+				openGraph = true;
 				openNestingGraph(nestingGraph);
 			}
+		}
+
+		if (openGraph) {
+			locallyExecuteOperation();
 		} else {
-			// normally update viewport
+			// when no graph is opened, the viewport is regularly updated
 			super.zoomRelative(relativeZoom, sceneX, sceneY);
 			// synchronize content children of nesting node parts
 			for (NodeContentPart nestingNodePart : findNestingNodes()) {
 				nestingNodePart.<ContentBehavior<Node>> getAdapter(ContentBehavior.class)
 						.synchronizeContentChildren(nestingNodePart.getContentChildren());
 			}
-			// the super call already executed the operation, therefore, we can
-			// return here
-			return;
 		}
-
-		locallyExecuteOperation();
-
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /
 		// 1000 / 1000 + "ms");
 	}
