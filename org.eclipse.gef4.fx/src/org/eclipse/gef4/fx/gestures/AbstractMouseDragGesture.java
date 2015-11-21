@@ -32,6 +32,8 @@ import javafx.scene.input.MouseEvent;
  */
 public abstract class AbstractMouseDragGesture extends AbstractGesture {
 
+	// private int state = 0; // 0 = before press, 1 = after press
+
 	private Node pressed;
 	private Point2D startMousePosition;
 
@@ -85,11 +87,17 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 		if (pressed == null && type.equals(MouseEvent.MOUSE_PRESSED)) {
 			EventTarget target = event.getTarget();
 			if (target instanceof Node) {
+				// if (state != 0) {
+				// System.err.println("(press) wrong state " + state);
+				// }
 				// initialize the gesture
 				pressed = (Node) target;
-				pressed.addEventHandler(MouseEvent.ANY, mouseFilter);
 				startMousePosition = new Point2D(event.getSceneX(),
 						event.getSceneY());
+				// state++;
+				// System.out.println("press " +
+				// System.identityHashCode(pressed)
+				// + " : " + System.currentTimeMillis());
 				press(pressed, event);
 			}
 			return;
@@ -117,6 +125,7 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 						&& !event.isMiddleButtonDown()) {
 					// no button down?
 					released = true;
+					// System.err.println("synth release for " + type);
 				}
 			}
 		}
@@ -127,10 +136,19 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 			double y = event.getSceneY();
 			double dy = y - startMousePosition.getY();
 			if (dragged) {
+				// if (state != 1) {
+				// System.err.println("(drag) wrong state " + state);
+				// }
 				drag(pressed, event, dx, dy);
 			} else {
+				// if (state != 1) {
+				// System.err.println("(release) wrong state " + state);
+				// }
+				// state = 0;
+				// System.out.println("release " +
+				// System.identityHashCode(pressed)
+				// + " : " + System.currentTimeMillis());
 				release(pressed, event, dx, dy);
-				pressed.removeEventHandler(MouseEvent.ANY, mouseFilter);
 				pressed = null;
 			}
 		}
