@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - contribution for Bugzilla 478408
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.internal.properties;
@@ -34,6 +35,7 @@ import javafx.collections.ObservableMap;
  * re-added when a listener is removed.
  *
  * @author mwienand
+ * @author anyssen
  *
  * @param <K>
  *            Type parameter specifying the key type.
