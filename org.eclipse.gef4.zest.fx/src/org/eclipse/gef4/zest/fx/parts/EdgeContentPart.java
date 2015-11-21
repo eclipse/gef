@@ -157,7 +157,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
-	public void doRefreshVisual(Connection visual) {
+	protected void doRefreshVisual(Connection visual) {
 		GraphLayoutContext glc = getGraphLayoutContext();
 		if (glc == null) {
 			return;
@@ -168,11 +168,15 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		GeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// css class
-		visual.getStyleClass().clear();
-		visual.getStyleClass().add(CSS_CLASS);
+		curveNode.getStyleClass().clear();
+		if (!visual.getStyleClass().contains(CSS_CLASS)) {
+			visual.getStyleClass().add(CSS_CLASS);
+		}
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			String cssClass = ZestProperties.getCssClass(edge);
-			visual.getStyleClass().add(cssClass);
+			if (!visual.getStyleClass().contains(cssClass)) {
+				visual.getStyleClass().add(cssClass);
+			}
 		}
 
 		// css id

@@ -31,6 +31,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -84,6 +85,38 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	public GeometryNode() {
 		// add geometric shape
 		getChildren().add(geometricShape);
+
+		// Unfortunately those methods in Node that are responsible for handling
+		// CSS style (getStyleClass(), getStyle()) are final, thus cannot be
+		// delegated to the geometric shape. As Parent does not support CSS
+		// styling itself, we can at least 'forward' them.
+		getStyleClass().addListener(new ListChangeListener<String>() {
+
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends String> c) {
+				// delegate style classes to geometric shape
+				while (c.next()) {
+					if (c.wasPermutated() || c.wasUpdated()) {
+						geometricShape.getStyleClass().clear();
+						geometricShape.getStyleClass().addAll(getStyleClass());
+					} else {
+						geometricShape.getStyleClass()
+								.removeAll(c.getRemoved());
+						geometricShape.getStyleClass()
+								.addAll(c.getAddedSubList());
+					}
+				}
+			}
+		});
+		styleProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable,
+					String oldValue, String newValue) {
+				geometricShape.setStyle(newValue);
+			}
+		});
 
 		// ensure clickable area is added/removed as needed
 		clickableAreaWidth.addListener(new ChangeListener<Number>() {
