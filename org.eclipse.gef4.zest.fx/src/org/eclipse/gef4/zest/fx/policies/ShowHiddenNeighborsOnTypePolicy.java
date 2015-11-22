@@ -20,14 +20,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link ShowHiddenNeighboursOnTypePolicy} is an
+ * The {@link ShowHiddenNeighborsOnTypePolicy} is an
  * {@link AbstractFXOnClickPolicy} that shows all hidden neighbors of its host
  * upon {@link KeyCode#E} key press.
  *
  * @author mwienand
  *
  */
-public class ShowHiddenNeighboursOnTypePolicy extends AbstractFXOnTypePolicy {
+public class ShowHiddenNeighborsOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	@Override
 	public NodeContentPart getHost() {
@@ -38,10 +38,10 @@ public class ShowHiddenNeighboursOnTypePolicy extends AbstractFXOnTypePolicy {
 	public void pressed(KeyEvent event) {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.E.equals(keyCode)) {
-			ShowHiddenNeighboursPolicy hiddenNeighboursPolicy = getHost().getAdapter(ShowHiddenNeighboursPolicy.class);
-			hiddenNeighboursPolicy.init();
-			hiddenNeighboursPolicy.showHiddenNeighbours();
-			hiddenNeighboursPolicy.commit();
+			ShowHiddenNeighborsPolicy hiddenNeighborsPolicy = getHost().getAdapter(ShowHiddenNeighborsPolicy.class);
+			hiddenNeighborsPolicy.init();
+			hiddenNeighborsPolicy.showHiddenNeighbors();
+			hiddenNeighborsPolicy.commit();
 		}
 	}
 

@@ -21,7 +21,7 @@ import javafx.scene.input.KeyEvent;
 /**
  * The {@link HideOnType} is an {@link AbstractFXOnTypePolicy} that hides its
  * {@link #getHost() host} {@link NodeContentPart} upon the press of a
- * {@link KeyCode#P} type.
+ * {@link KeyCode#P} key.
  *
  * @author mwienand
  *

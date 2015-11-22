@@ -31,9 +31,9 @@ import javafx.scene.Node;
  * {@link HidingModel} changes, the hidden status of the {@link NodeContentPart}
  * is determined. If the hidden status of the part changed, either
  * {@link #hide()} or {@link #show()} will be called, respectively, to hide/show
- * the part. Additionally, a {@link HiddenNeighborsFeedbackPart} is managed by this
- * {@link NodeHidingBehavior}. The {@link HiddenNeighborsFeedbackPart} shows the number
- * of hidden neighbors of the {@link NodeContentPart}.
+ * the part. Additionally, a {@link HiddenNeighborsFeedbackPart} is managed by
+ * this {@link NodeHidingBehavior}. The {@link HiddenNeighborsFeedbackPart}
+ * shows the number of hidden neighbors of the {@link NodeContentPart}.
  *
  * @author mwienand
  *
@@ -41,7 +41,7 @@ import javafx.scene.Node;
 // Only applicable for NodeContentPart (see #getHost())
 public class NodeHidingBehavior extends AbstractHidingBehavior implements PropertyChangeListener {
 
-	private IVisualPart<Node, ? extends Node> hiddenNeighborsPart;
+	private IVisualPart<Node, ? extends Node> hiddenNeighborsFeedbackPart;
 
 	@Override
 	public void activate() {
@@ -53,7 +53,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 		// create hidden neighbors part if it is already associated with our
 		// host
 		if (hasHiddenNeighbors(getHost().getContent(), getHidingModel())) {
-			createHiddenNeighborPart();
+			createHiddenNeighborsFeedbackPart();
 		}
 	}
 
@@ -69,23 +69,23 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 	}
 
 	/**
-	 * Creates the {@link HiddenNeighborsFeedbackPart} that shows the hidden neighbors
-	 * of the {@link NodeContentPart} on which this {@link NodeHidingBehavior}
-	 * is installed.
+	 * Creates the {@link HiddenNeighborsFeedbackPart} that shows the hidden
+	 * neighbors of the {@link NodeContentPart} on which this
+	 * {@link NodeHidingBehavior} is installed.
 	 */
-	protected void createHiddenNeighborPart() {
+	protected void createHiddenNeighborsFeedbackPart() {
 		// TODO: delegate to factory
-		hiddenNeighborsPart = new HiddenNeighborsFeedbackPart();
+		hiddenNeighborsFeedbackPart = new HiddenNeighborsFeedbackPart();
 		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
-				Collections.singletonList(hiddenNeighborsPart));
+				Collections.singletonList(hiddenNeighborsFeedbackPart));
 	}
 
 	@Override
 	public void deactivate() {
-		// remove pruned neighbors part if it is currently associated with our
+		// remove hidden neighbors part if it is currently associated with our
 		// host
 		if (hasHiddenNeighbors(getHost().getContent(), getHidingModel())) {
-			removeHiddenNeighborPart();
+			removeHiddenNeighborsFeedbackPart();
 		}
 
 		super.deactivate();
@@ -96,11 +96,6 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 		return getHidingModel().isHidden(getHost().getContent());
 	}
 
-	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
-	}
-
 	/**
 	 * Returns the {@link HiddenNeighborsFeedbackPart} that is managed by this
 	 * {@link NodeHidingBehavior}.
@@ -108,15 +103,20 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 	 * @return The {@link HiddenNeighborsFeedbackPart} that is managed by this
 	 *         {@link NodeHidingBehavior}.
 	 */
-	// TODO: Rename to getHiddenNeighborsPart
-	protected IVisualPart<Node, ? extends Node> getPrunedNeighborsPart() {
-		return hiddenNeighborsPart;
+	protected IVisualPart<Node, ? extends Node> getHiddenNeighborsFeedbackPart() {
+		return hiddenNeighborsFeedbackPart;
+	}
+
+	@Override
+	public NodeContentPart getHost() {
+		return (NodeContentPart) super.getHost();
 	}
 
 	private boolean hasHiddenNeighbors(org.eclipse.gef4.graph.Node node, HidingModel hidingModel) {
 		return !hidingModel.getHiddenNeighbors(node).isEmpty();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onHidingModelChange(PropertyChangeEvent event) {
 		super.onHidingModelChange(event);
@@ -129,13 +129,13 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 		Set<org.eclipse.gef4.graph.Node> neighbors = content.getLocalNeighbors();
 
 		if (!containsAny(oldHidden, neighbors) && containsAny(newHidden, neighbors)) {
-			createHiddenNeighborPart();
+			createHiddenNeighborsFeedbackPart();
 		} else if (containsAny(oldHidden, neighbors) && !containsAny(newHidden, neighbors)) {
-			removeHiddenNeighborPart();
+			removeHiddenNeighborsFeedbackPart();
 		} else {
 			// TODO: only necessary when neighbors change
-			if (hiddenNeighborsPart != null) {
-				updateHiddenNeighborPart();
+			if (hiddenNeighborsFeedbackPart != null) {
+				updateHiddenNeighborsFeedbackPart();
 			}
 		}
 	}
@@ -143,14 +143,14 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (IVisualPart.ANCHOREDS_PROPERTY.equals(event.getPropertyName())) {
-			if (hiddenNeighborsPart == null) {
+			if (hiddenNeighborsFeedbackPart == null) {
 				Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = getHidingModel()
 						.getHiddenNeighbors(getHost().getContent());
 				if (!hiddenNeighbors.isEmpty()) {
-					createHiddenNeighborPart();
+					createHiddenNeighborsFeedbackPart();
 				}
 			} else {
-				updateHiddenNeighborPart();
+				updateHiddenNeighborsFeedbackPart();
 			}
 		}
 	}
@@ -159,18 +159,18 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 	 * Removes the {@link HiddenNeighborsFeedbackPart} that is managed by this
 	 * {@link NodeHidingBehavior}.
 	 */
-	protected void removeHiddenNeighborPart() {
+	protected void removeHiddenNeighborsFeedbackPart() {
 		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
-				Collections.singletonList(hiddenNeighborsPart));
-		hiddenNeighborsPart = null;
+				Collections.singletonList(hiddenNeighborsFeedbackPart));
+		hiddenNeighborsFeedbackPart = null;
 	}
 
 	/**
 	 * Refreshes the {@link HiddenNeighborsFeedbackPart} that is managed by this
 	 * {@link NodeHidingBehavior}.
 	 */
-	protected void updateHiddenNeighborPart() {
-		hiddenNeighborsPart.refreshVisual();
+	protected void updateHiddenNeighborsFeedbackPart() {
+		hiddenNeighborsFeedbackPart.refreshVisual();
 	}
 
 }

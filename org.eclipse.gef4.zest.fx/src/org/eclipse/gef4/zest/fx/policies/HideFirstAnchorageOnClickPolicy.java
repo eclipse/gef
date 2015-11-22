@@ -22,7 +22,7 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link HideFirstAnchorageOnClickPolicy} is an
- * {@link AbstractFXOnClickPolicy} that hides the anchorage of its host.
+ * {@link AbstractFXOnClickPolicy} that hides the first anchorage of its host.
  *
  * @author mwienand
  *

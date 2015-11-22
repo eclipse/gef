@@ -26,13 +26,13 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import javafx.scene.Node;
 
 /**
- * The {@link ShowHiddenNeighboursPolicy} can be installed on
+ * The {@link ShowHiddenNeighborsPolicy} can be installed on
  * {@link NodeContentPart} to show its hidden neighbours
  *
  * @author mwienand
  *
  */
-public class ShowHiddenNeighboursPolicy extends AbstractTransactionPolicy<Node> {
+public class ShowHiddenNeighborsPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
@@ -48,7 +48,7 @@ public class ShowHiddenNeighboursPolicy extends AbstractTransactionPolicy<Node> 
 	 * Executes an operation on the history that shows the {@link #getHost()
 	 * host} {@link NodeContentPart}.
 	 */
-	public void showHiddenNeighbours() {
+	public void showHiddenNeighbors() {
 		checkInitialized();
 		IViewer<javafx.scene.Node> viewer = getHost().getRoot().getViewer();
 		HidingModel hidingModel = viewer.getAdapter(HidingModel.class);

@@ -22,14 +22,14 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link ShowHiddenNeighboursOfFirstAnchorageOnClickPolicy} is an
+ * The {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} is an
  * {@link AbstractFXOnClickPolicy} that shows all hidden neighbors of its host
  * upon mouse click by removing them from the {@link HidingModel}.
  *
  * @author mwienand
  *
  */
-public class ShowHiddenNeighboursOfFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
+public class ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
@@ -38,10 +38,10 @@ public class ShowHiddenNeighboursOfFirstAnchorageOnClickPolicy extends AbstractF
 			return;
 		}
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
-		ShowHiddenNeighboursPolicy hiddenNeighboursPolicy = anchorage.getAdapter(ShowHiddenNeighboursPolicy.class);
-		hiddenNeighboursPolicy.init();
-		hiddenNeighboursPolicy.showHiddenNeighbours();
-		hiddenNeighboursPolicy.commit();
+		ShowHiddenNeighborsPolicy hiddenNeighborsPolicy = anchorage.getAdapter(ShowHiddenNeighborsPolicy.class);
+		hiddenNeighborsPolicy.init();
+		hiddenNeighborsPolicy.showHiddenNeighbors();
+		hiddenNeighborsPolicy.commit();
 	}
 
 }
