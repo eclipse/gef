@@ -59,6 +59,14 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 	@Override
 	public void setActiveEditor(final IEditorPart activeEditor) {
 		registerUndoRedoActions(activeEditor);
-		deleteActionHandler.init(((AbstractFXEditor) activeEditor).getViewer());
+		// IMPORTANT: We need to perform instance-of check here, even if
+		// FXEditorActionBarContributor is bound to AbstractFXEditor alone.
+		// This is because activeEditor may for instance also be of type
+		// org.eclipse.ui.internal.ErrorEditorPart when the opened resource is
+		// out of sync with the file system.
+		if (activeEditor instanceof AbstractFXEditor) {
+			deleteActionHandler
+					.init(((AbstractFXEditor) activeEditor).getViewer());
+		}
 	}
 }
