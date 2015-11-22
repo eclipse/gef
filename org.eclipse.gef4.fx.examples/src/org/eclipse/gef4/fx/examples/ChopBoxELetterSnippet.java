@@ -146,7 +146,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private static final double CHOP_BOX_LINE_STROKE_WIDTH_REAL = 2;
 	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY = Color.DARKRED;
 	private static final double CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY = 2;
-	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL = Color.WHITE;
+	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL = Color.LIGHTGREY;
 
 	private static final double PAD = 100;
 	private static final double HEIGHT = 480;
