@@ -16,12 +16,13 @@ import java.util.Collections;
 
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.operations.HideOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -29,19 +30,14 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import javafx.scene.Node;
 
 /**
- * The {@link HideNodePolicy} can be installed on {@link NodeContentPart}. It
- * provides two methods:
- * <ul>
- * <li>{@link #hide()} to hide its host {@link NodeContentPart}
- * <li>{@link #show()} to show its host {@link NodeContentPart}
- * </ul>
+ * The {@link HidePolicy} can be installed on {@link NodeContentPart} to hide
+ * the contents.
  *
  * @author mwienand
  *
  */
 // TODO: only applicable for NodeContentPart (override #getHost)
-// TODO: Migrate into transactional policy
-public class HideNodePolicy extends AbstractPolicy<Node> {
+public class HidePolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that removes the given
@@ -58,6 +54,11 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 		IViewer<Node> viewer = part.getRoot().getViewer();
 
 		return new DeselectOperation<Node>(viewer, Collections.singletonList(part));
+	}
+
+	@Override
+	protected ITransactionalOperation createOperation() {
+		return new ReverseUndoCompositeOperation("Hide");
 	}
 
 	/**
@@ -95,7 +96,8 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 	 * and from the {@link SelectionModel}).
 	 */
 	public void hide() {
-		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation("Hide()");
+		checkInitialized();
+		AbstractCompositeOperation revOp = (AbstractCompositeOperation) getOperation();
 		ITransactionalOperation unfocusOperation = createUnfocusOperation(getHost());
 		if (unfocusOperation != null) {
 			revOp.add(unfocusOperation);
@@ -104,24 +106,11 @@ public class HideNodePolicy extends AbstractPolicy<Node> {
 		if (deselectOperation != null) {
 			revOp.add(deselectOperation);
 		}
-		HideOperation hideOperation = HideOperation.hide(getHost());
+		HideOperation hideOperation = new HideOperation(getHost().getRoot().getViewer(), getHost(), false);
 		if (hideOperation != null) {
 			revOp.add(hideOperation);
 		}
-		// TODO: re-layout
-		getHost().getRoot().getViewer().getDomain().execute(revOp);
-	}
-
-	/**
-	 * Executes an operation on the history that shows the {@link #getHost()
-	 * host} {@link NodeContentPart}.
-	 */
-	public void show() {
-		HideOperation showOperation = HideOperation.show(getHost());
-		// TODO: re-layout
-		if (showOperation != null) {
-			getHost().getRoot().getViewer().getDomain().execute(showOperation);
-		}
+		locallyExecuteOperation();
 	}
 
 }

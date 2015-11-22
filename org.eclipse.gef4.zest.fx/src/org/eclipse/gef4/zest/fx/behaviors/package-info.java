@@ -18,7 +18,7 @@
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior}), as well as
  * hiding/unhiding of nodes and related edges (
  * {@link org.eclipse.gef4.zest.fx.behaviors.AbstractHidingBehavior},
- * {@link org.eclipse.gef4.zest.fx.behaviors.HidingBehavior},
+ * {@link org.eclipse.gef4.zest.fx.behaviors.NodeHidingBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior}).
  */

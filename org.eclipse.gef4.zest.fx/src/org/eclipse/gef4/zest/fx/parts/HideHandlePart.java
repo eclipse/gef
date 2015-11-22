@@ -17,16 +17,16 @@ import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import javafx.scene.image.Image;
 
 /**
- * The {@link ZestFxHidingHandlePart} is an {@link AbstractHidingHandlePart}
+ * The {@link HideHandlePart} is an {@link AbstractHidingHandlePart}
  * that displays a "collapse" image. By default, the
  * {@link HideFirstAnchorageOnClickPolicy} is installed for
- * {@link ZestFxHidingHandlePart}, so that the corresponding
+ * {@link HideHandlePart}, so that the corresponding
  * {@link NodeContentPart} can be hidden by a click on this part.
  *
  * @author mwienand
  *
  */
-public class ZestFxHidingHandlePart extends AbstractHidingHandlePart {
+public class HideHandlePart extends AbstractHidingHandlePart {
 
 	/**
 	 * The url to the image that is displayed when hovered this part.

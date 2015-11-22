@@ -38,9 +38,9 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 
 	private PropertyChangeListener hidingModelListener = new PropertyChangeListener() {
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (HidingModel.HIDDEN_PROPERTY.equals(evt.getPropertyName())) {
-				onHidingModelChange();
+		public void propertyChange(PropertyChangeEvent event) {
+			if (HidingModel.HIDDEN_PROPERTY.equals(event.getPropertyName())) {
+				onHidingModelChange(event);
 			}
 		}
 	};
@@ -111,8 +111,11 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 	 * previous hidden status. If the {@link #getHost() host} was previously
 	 * hidden and is not hidden anymore, {@link #show()} is called. Otherwise,
 	 * {@link #hide()} is called.
+	 *
+	 * @param event
+	 *            The property change event of the {@link HidingModel}.
 	 */
-	protected void onHidingModelChange() {
+	protected void onHidingModelChange(PropertyChangeEvent event) {
 		// check if we have to prune/unprune the host
 		boolean wasHidden = isHidden;
 		isHidden = determineHiddenStatus();

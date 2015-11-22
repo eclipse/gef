@@ -26,7 +26,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 /**
- * The {@link HiddenNeighborsPart} is an {@link AbstractFXFeedbackPart} that
+ * The {@link HiddenNeighborsFeedbackPart} is an {@link AbstractFXFeedbackPart} that
  * displays the number of hidden neighbors (see
  * {@link HidingModel#getHiddenNeighbors(org.eclipse.gef4.graph.Node)}) of its
  * first anchorage.
@@ -35,7 +35,7 @@ import javafx.scene.text.Text;
  *
  */
 // TODO: only applicable for NodeContentPart (anchorage)
-public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
+public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 
 	private Circle circle;
 	private Text text;

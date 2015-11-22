@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -33,59 +34,39 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  * @author mwienand
  *
  */
+// TODO: split into hide and show operation
 public class HideOperation extends AbstractOperation implements ITransactionalOperation {
 
-	/**
-	 * Constructs a new {@link HideOperation} that will hide the given
-	 * {@link NodeContentPart} upon execution.
-	 *
-	 * @param toHide
-	 *            The {@link NodeContentPart} to hide.
-	 * @return The new {@link HideOperation} that will hide the given
-	 *         {@link NodeContentPart} upon execution.
-	 */
-	public static HideOperation hide(NodeContentPart toHide) {
-		return new HideOperation(toHide, false);
-	}
-
-	/**
-	 * Constructs a new {@link HideOperation} that will show the given
-	 * {@link NodeContentPart} upon execution.
-	 *
-	 * @param toShow
-	 *            The {@link NodeContentPart} to show.
-	 * @return The new {@link HideOperation} that will show the given
-	 *         {@link NodeContentPart} upon execution.
-	 */
-	public static HideOperation show(NodeContentPart toShow) {
-		return new HideOperation(toShow, true);
-	}
-
-	private NodeContentPart node;
-	private boolean isHidden;
+	private NodeContentPart nodePart;
+	private boolean show;
+	private boolean initiallyHidden;
 
 	/**
 	 * Constructs a new {@link HideOperation} that will show or hide the given
-	 * {@link NodeContentPart} depending on the <i>isHidden</i> flag. If the
-	 * node is currently hidden (as indicated by the flag being set to
-	 * <code>true</code>), then the node will be shown, otherwise it will be
-	 * hidden upon execution.
+	 * {@link NodeContentPart} depending on the <i>show</i> flag. If the
+	 * nodePart is currently hidden (as indicated by the flag being set to
+	 * <code>true</code> ), then the nodePart will be shown, otherwise it will
+	 * be hidden upon execution.
 	 *
-	 * @param node
+	 * @param viewer
+	 *            The viewer from which to retrieve the {@link HidingModel}.
+	 *
+	 * @param nodePart
 	 *            The {@link NodeContentPart} to show/hide.
-	 * @param isHidden
+	 * @param show
 	 *            <code>true</code> if the {@link NodeContentPart} should be
 	 *            shown, otherwise <code>false</code>.
 	 */
-	public HideOperation(NodeContentPart node, boolean isHidden) {
+	public HideOperation(IViewer<javafx.scene.Node> viewer, NodeContentPart nodePart, boolean show) {
 		super("hide/show");
-		this.node = node;
-		this.isHidden = isHidden;
+		this.nodePart = nodePart;
+		this.show = show;
+		initiallyHidden = viewer.getAdapter(HidingModel.class).isHidden(nodePart.getContent());
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		if (isHidden) {
+		if (show) {
 			show();
 		} else {
 			hide();
@@ -114,16 +95,12 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	 * this {@link HideOperation} will be hidden.
 	 */
 	protected void hide() {
-		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).hide(node.getContent());
+		nodePart.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).hide(nodePart.getContent());
 	}
 
 	@Override
 	public boolean isNoOp() {
-		if (isHidden) {
-			return !node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).isHidden(node.getContent());
-		} else {
-			return node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).isHidden(node.getContent());
-		}
+		return show ? !initiallyHidden : initiallyHidden;
 	}
 
 	@Override
@@ -136,12 +113,12 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	 * this {@link HideOperation} will be shown.
 	 */
 	protected void show() {
-		node.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).show(node.getContent());
+		nodePart.getRoot().getViewer().<HidingModel> getAdapter(HidingModel.class).show(nodePart.getContent());
 	}
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		if (isHidden) {
+		if (show) {
 			hide();
 		} else {
 			show();

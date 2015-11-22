@@ -14,7 +14,6 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.HidingModel;
 
 import com.google.common.collect.SetMultimap;
 
@@ -23,8 +22,7 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link HideFirstAnchorageOnClickPolicy} is an
- * {@link AbstractFXOnClickPolicy} that hides all neighbors of its host upon
- * mouse click by adding them from the {@link HidingModel}.
+ * {@link AbstractFXOnClickPolicy} that hides the anchorage of its host.
  *
  * @author mwienand
  *
@@ -38,8 +36,10 @@ public class HideFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
 			return;
 		}
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
-		HideNodePolicy hideNodePolicy = anchorage.getAdapter(HideNodePolicy.class);
+		HidePolicy hideNodePolicy = anchorage.getAdapter(HidePolicy.class);
+		hideNodePolicy.init();
 		hideNodePolicy.hide();
+		hideNodePolicy.commit();
 	}
 
 }

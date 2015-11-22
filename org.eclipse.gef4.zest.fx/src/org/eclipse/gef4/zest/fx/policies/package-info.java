@@ -12,8 +12,8 @@
 /**
  * This package provides policy implementations to support hiding/unhiding of
  * nodes and related edges (
- * {@link org.eclipse.gef4.zest.fx.policies.HideNodePolicy},
- * {@link org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy}), selection and
+ * {@link org.eclipse.gef4.zest.fx.policies.HidePolicy},
+ * {@link org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighboursOnTypePolicy}), selection and
  * hovering (
  * {@link org.eclipse.gef4.zest.fx.policies.FocusAndSelectFirstAnchorageOnClickPolicy}
  * , {@link org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy}
