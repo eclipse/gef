@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.internal.properties.ReadOnlyMapWrapperEx;
+import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Point;
 

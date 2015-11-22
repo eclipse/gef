@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
-import org.eclipse.gef4.fx.internal.properties.ReadOnlyMapWrapperEx;
+import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;

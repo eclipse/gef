@@ -22,7 +22,6 @@ import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
-import org.eclipse.gef4.fx.internal.properties.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -173,7 +172,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
 	private ChopBoxAnchor chopBoxAnchor;
-	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<AnchorKey, Circle>();
 	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<AnchorKey, Line>();
@@ -504,6 +503,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		intersectionLayer.setVisible(INITIAL_INTERSECTIONS_VISIBLE);
 
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
 			private boolean verticesVisible = INITIAL_VERTICES_VISIBLE;
 			private boolean distanceLinesVisible = INITIAL_LINES_VISIBLE;
 			private boolean fillVisible = INITIAL_FILL_VISIBLE;
@@ -534,6 +534,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 							.setVisible(!eLetterReferenceNode.isVisible());
 				}
 			}
+
 		});
 
 		return scene;

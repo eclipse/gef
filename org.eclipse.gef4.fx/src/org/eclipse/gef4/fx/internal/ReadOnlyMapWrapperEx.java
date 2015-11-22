@@ -8,10 +8,10 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Alexander Nyßen (itemis AG) - contribution for Bugzilla 478408
+ *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.internal.properties;
+package org.eclipse.gef4.fx.internal;
 
 import java.util.ArrayList;
 import java.util.List;
