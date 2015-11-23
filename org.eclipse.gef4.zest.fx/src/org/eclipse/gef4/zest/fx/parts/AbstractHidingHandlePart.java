@@ -96,19 +96,19 @@ public abstract class AbstractHidingHandlePart extends AbstractFXSegmentHandlePa
 	protected abstract Image getImage();
 
 	@Override
-	protected void register(IViewer<Node> viewer) {
-		// IMPORTANT: The following getVisual() call creates the visual of this
-		// part so that the viewer registration works correctly.
-		getVisual();
-		super.register(viewer);
-	}
-
-	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, HoverOverlayImageView visual) {
 		super.registerAtVisualPartMap(viewer, visual);
 		// put base ImageView and overlay ImageView into visual->part map
 		viewer.getVisualPartMap().put(visual.getBaseImageView(), this);
 		viewer.getVisualPartMap().put(visual.getOverlayImageView(), this);
+	}
+
+	@Override
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, HoverOverlayImageView visual) {
+		// remove base ImageView and overlay ImageView into visual->part map
+		viewer.getVisualPartMap().remove(visual.getBaseImageView());
+		viewer.getVisualPartMap().remove(visual.getOverlayImageView());
+		super.unregisterFromVisualPartMap(viewer, visual);
 	}
 
 }

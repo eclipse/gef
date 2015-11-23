@@ -31,21 +31,21 @@ public class ShowHiddenNeighborsHandlePart extends AbstractHidingHandlePart {
 	/**
 	 * The url to the image that is displayed when hovering this part.
 	 */
-	public static final String IMG_EXPAND = "/expandall.gif";
+	public static final String IMG_SHOW_HIDDEN_NEIGHBORS = "/expandall.gif";
 
 	/**
 	 * The url to the image that is displayed when not hovering this part.
 	 */
-	public static final String IMG_EXPAND_DISABLED = "/expandall_disabled.gif";
+	public static final String IMG_SHOW_HIDDEN_NEIGHBORS_DISABLED = "/expandall_disabled.gif";
 
 	@Override
 	protected Image getHoverImage() {
-		return new Image(IMG_EXPAND);
+		return new Image(IMG_SHOW_HIDDEN_NEIGHBORS);
 	}
 
 	@Override
 	protected Image getImage() {
-		return new Image(IMG_EXPAND_DISABLED);
+		return new Image(IMG_SHOW_HIDDEN_NEIGHBORS_DISABLED);
 	}
 
 }

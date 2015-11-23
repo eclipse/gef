@@ -56,15 +56,15 @@ import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
-import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHandlePart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.HideHandlePart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHandlePart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
+import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.policies.FocusAndSelectFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
+import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
-import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
 import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
@@ -192,26 +192,6 @@ public class ZestFxModule extends MvcFxModule {
 				.to(VisualOutlineGeometryProvider.class);
 	}
 
-	/**
-	 * Adds (default) {@link AdapterMap} bindings for
-	 * {@link ShowHiddenNeighborsHandlePart} and all sub-classes. May be overwritten
-	 * by sub-classes to change the default bindings.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link ShowHiddenNeighborsHandlePart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindExpandingHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY, "hoverFirstAnchorage"))
-				.to(HoverFirstAnchorageOnHoverPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "expandOnClick"))
-				.to(ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy.class);
-	}
-
 	@Override
 	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXChangeViewportPolicy.class)).to(SemanticZoomPolicy.class);
@@ -251,9 +231,9 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for
-	 * {@link HideHandlePart} and all sub-classes. May be overwritten by
-	 * sub-classes to change the default bindings.
+	 * Adds (default) {@link AdapterMap} bindings for {@link HideHandlePart} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -264,9 +244,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindHidingHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY, "hoverFirstAnchorage"))
-				.to(HoverFirstAnchorageOnHoverPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "hideOnClick"))
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "hide"))
 				.to(HideFirstAnchorageOnClickPolicy.class);
 	}
 
@@ -315,8 +293,9 @@ public class ZestFxModule extends MvcFxModule {
 		// interaction
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
 				.to(FXTranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY, "showHiddenNeighbors"))
 				.to(ShowHiddenNeighborsOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY, "hide")).to(HideOnTypePolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "OpenNestedGraphOnDoubleClick"))
 				.to(OpenNestedGraphOnDoubleClickPolicy.class);
@@ -331,6 +310,24 @@ public class ZestFxModule extends MvcFxModule {
 		}, FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link ShowHiddenNeighborsHandlePart} and all sub-classes. May be
+	 * overwritten by sub-classes to change the default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link ShowHiddenNeighborsHandlePart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindShowHiddenNeighborsHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "showHiddenNeighbors"))
+				.to(ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy.class);
+	}
+
 	@Override
 	protected void configure() {
 		super.configure();
@@ -340,7 +337,8 @@ public class ZestFxModule extends MvcFxModule {
 		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodeContentPart.class));
 		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeContentPart.class));
 		bindHidingHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), HideHandlePart.class));
-		bindExpandingHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), ShowHiddenNeighborsHandlePart.class));
+		bindShowHiddenNeighborsHandlePartAdapters(
+				AdapterMaps.getAdapterMapBinder(binder(), ShowHiddenNeighborsHandlePart.class));
 		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeLabelPart.class));
 	}
 

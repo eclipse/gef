@@ -13,7 +13,6 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Set;
 
@@ -39,16 +38,13 @@ import javafx.scene.Node;
  *
  */
 // Only applicable for NodeContentPart (see #getHost())
-public class NodeHidingBehavior extends AbstractHidingBehavior implements PropertyChangeListener {
+public class NodeHidingBehavior extends AbstractHidingBehavior {
 
 	private IVisualPart<Node, ? extends Node> hiddenNeighborsFeedbackPart;
 
 	@Override
 	public void activate() {
 		super.activate();
-
-		// register for change notifications regarding anchoreds (connections)
-		getHost().addPropertyChangeListener(this);
 
 		// create hidden neighbors part if it is already associated with our
 		// host
@@ -74,8 +70,11 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 	 * {@link NodeHidingBehavior} is installed.
 	 */
 	protected void createHiddenNeighborsFeedbackPart() {
-		// TODO: delegate to factory
-		hiddenNeighborsFeedbackPart = new HiddenNeighborsFeedbackPart();
+		if (hiddenNeighborsFeedbackPart == null) {
+			// TODO: delegate to factory, ensure adaptable context is updated
+			// before
+			hiddenNeighborsFeedbackPart = new HiddenNeighborsFeedbackPart();
+		}
 		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsFeedbackPart));
 	}
@@ -140,21 +139,6 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 		}
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (IVisualPart.ANCHOREDS_PROPERTY.equals(event.getPropertyName())) {
-			if (hiddenNeighborsFeedbackPart == null) {
-				Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = getHidingModel()
-						.getHiddenNeighbors(getHost().getContent());
-				if (!hiddenNeighbors.isEmpty()) {
-					createHiddenNeighborsFeedbackPart();
-				}
-			} else {
-				updateHiddenNeighborsFeedbackPart();
-			}
-		}
-	}
-
 	/**
 	 * Removes the {@link HiddenNeighborsFeedbackPart} that is managed by this
 	 * {@link NodeHidingBehavior}.
@@ -162,7 +146,6 @@ public class NodeHidingBehavior extends AbstractHidingBehavior implements Proper
 	protected void removeHiddenNeighborsFeedbackPart() {
 		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsFeedbackPart));
-		hiddenNeighborsFeedbackPart = null;
 	}
 
 	/**

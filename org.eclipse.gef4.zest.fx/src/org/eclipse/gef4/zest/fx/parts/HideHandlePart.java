@@ -31,21 +31,21 @@ public class HideHandlePart extends AbstractHidingHandlePart {
 	/**
 	 * The url to the image that is displayed when hovered this part.
 	 */
-	public static final String IMG_PRUNE = "/collapseall.png";
+	public static final String IMG_HIDE = "/collapseall.png";
 
 	/**
 	 * The url to the image that is displayed when not hovering this part.
 	 */
-	public static final String IMG_PRUNE_DISABLED = "/collapseall_disabled.png";
+	public static final String IMG_HIDE_DISABLED = "/collapseall_disabled.png";
 
 	@Override
 	protected Image getHoverImage() {
-		return new Image(IMG_PRUNE);
+		return new Image(IMG_HIDE);
 	}
 
 	@Override
 	protected Image getImage() {
-		return new Image(IMG_PRUNE_DISABLED);
+		return new Image(IMG_HIDE_DISABLED);
 	}
 
 }

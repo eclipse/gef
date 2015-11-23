@@ -19,14 +19,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link HideOnType} is an {@link AbstractFXOnTypePolicy} that hides its
+ * The {@link HideOnTypePolicy} is an {@link AbstractFXOnTypePolicy} that hides its
  * {@link #getHost() host} {@link NodeContentPart} upon the press of a
  * {@link KeyCode#P} key.
  *
  * @author mwienand
  *
  */
-public class HideOnType extends AbstractFXOnTypePolicy {
+public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 
 	@Override
 	public NodeContentPart getHost() {
