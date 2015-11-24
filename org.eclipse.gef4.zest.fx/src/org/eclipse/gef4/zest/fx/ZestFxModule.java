@@ -25,6 +25,7 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
@@ -113,21 +114,6 @@ public class ZestFxModule extends MvcFxModule {
 		}, FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 	}
 
-	@SuppressWarnings("serial")
-	@Override
-	protected void bindAbstractFXHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindAbstractFXHandlePartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "ResizeRelocateOnHandleDrag"))
-				.to(FXResizeTranslateOnHandleDragPolicy.class);
-		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
-				.to(FXRotateSelectedOnHandleDragPolicy.class);
-		// change cursor for rotation
-		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class)).to(FXCursorBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<Map<KeyCode, Cursor>>>() {
-		}, FXCursorBehavior.CURSOR_PROVIDER_ROLE)).to(ZestFxCursorProvider.class);
-	}
-
 	@Override
 	protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractViewerAdapters(adapterMapBinder);
@@ -195,6 +181,28 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXChangeViewportPolicy.class)).to(SemanticZoomPolicy.class);
+	}
+
+	/**
+	 * Bind resize and rotate behavior to {@link FXRectangleSegmentHandlePart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRectangleSegmentHandlePart} as a key.
+	 */
+	@SuppressWarnings("serial")
+	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "ResizeRelocateOnHandleDrag"))
+				.to(FXResizeTranslateOnHandleDragPolicy.class);
+		// rotate on drag + control
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
+				.to(FXRotateSelectedOnHandleDragPolicy.class);
+		// change cursor for rotation
+		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class)).to(FXCursorBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<Map<KeyCode, Cursor>>>() {
+		}, FXCursorBehavior.CURSOR_PROVIDER_ROLE)).to(ZestFxCursorProvider.class);
 	}
 
 	@Override
@@ -340,6 +348,8 @@ public class ZestFxModule extends MvcFxModule {
 		bindShowHiddenNeighborsHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), ShowHiddenNeighborsHandlePart.class));
 		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeLabelPart.class));
+		bindFXRectangleSegmentHandlePartAdapters(
+				AdapterMaps.getAdapterMapBinder(binder(), FXRectangleSegmentHandlePart.class));
 	}
 
 }
