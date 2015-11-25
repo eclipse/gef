@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Map;
-
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -239,13 +237,11 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 
 	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
-		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
-				.getVisualPartMap();
-		registry.put(getVisual(), this);
-		for (Node child : getVisual().getChildren()) {
-			// register root edit part also for the layers
-			registry.put(child, this);
-		}
+		// register "main" visual for this part
+		super.registerAtVisualPartMap(viewer, visual);
+		// register nested visuals that are not controlled by other parts
+		FXPartUtils.registerNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
 	}
 
 	@Override
@@ -263,13 +259,11 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	@Override
 	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
 			Group visual) {
-		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
-				.getVisualPartMap();
-		registry.remove(getVisual());
-		for (Node child : getVisual().getChildren()) {
-			// register root edit part also for the layers
-			registry.remove(child);
-		}
+		// unregister "main" visual for this part
+		super.unregisterFromVisualPartMap(viewer, visual);
+		// unregister nested visuals that are not controlled by other parts
+		FXPartUtils.unregisterNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
 	}
 
 }
