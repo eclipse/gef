@@ -11,26 +11,27 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-import javafx.scene.transform.Transform;
-
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.transform.Transform;
 
 /**
  * Abstract base implementation for a JavaFX-specific {@link IFeedbackPart}.
  *
  * @author anyssen
  *
- * @param <N>
+ * @param <V>
  *            The visual {@link Node} used by this
  *            {@link AbstractFXFeedbackPart}.
  */
-abstract public class AbstractFXFeedbackPart<N extends Node>
-		extends AbstractFeedbackPart<Node, N> {
+abstract public class AbstractFXFeedbackPart<V extends Node>
+		extends AbstractFeedbackPart<Node, V> {
 
 	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
@@ -58,4 +59,21 @@ abstract public class AbstractFXFeedbackPart<N extends Node>
 		visualListener.unregister();
 	}
 
+	@Override
+	protected void registerAtVisualPartMap(IViewer<Node> viewer, V visual) {
+		// register "main" visual for this part
+		super.registerAtVisualPartMap(viewer, visual);
+		// register nested visuals that are not controlled by other parts
+		FXPartUtils.registerNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
+	}
+
+	@Override
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, V visual) {
+		// unregister "main" visual for this part
+		super.unregisterFromVisualPartMap(viewer, visual);
+		// unregister nested visuals that are not controlled by other parts
+		FXPartUtils.unregisterNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
+	}
 }

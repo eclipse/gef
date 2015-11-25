@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -20,6 +21,7 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 /**
@@ -129,4 +131,66 @@ public class FXPartUtils {
 		return bounds;
 	}
 
+	/**
+	 * Registers this {@link AbstractFXContentPart} for all visuals in the
+	 * visual hierarchy of the given {@link Node} at the given
+	 * <i>visualPartMap</i>. Does nothing if the given visual is no
+	 * {@link Parent}.
+	 *
+	 * @param visualPart
+	 *            The {@link IVisualPart} that controls the given parent visual.
+	 * @param visualPartMap
+	 *            The map where the visuals are registered.
+	 * @param visual
+	 *            The {@link Node} whose visual hierarchy is registered.
+	 */
+	protected static void registerNestedVisuals(
+			IVisualPart<Node, ? extends Node> visualPart,
+			Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap,
+			Node visual) {
+		if (visual instanceof Parent) {
+			for (Node nestedVisual : ((Parent) visual)
+					.getChildrenUnmodifiable()) {
+				if (!visualPartMap.containsKey(nestedVisual)) {
+					visualPartMap.put(nestedVisual, visualPart);
+					if (nestedVisual instanceof Parent) {
+						registerNestedVisuals(visualPart, visualPartMap,
+								nestedVisual);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Removes all visuals in the visual hierarchy of the given {@link Node}
+	 * from the given <i>visualPartMap</i> where this
+	 * {@link AbstractFXContentPart} is registered. Does nothing if the given
+	 * visual is no {@link Parent}.
+	 *
+	 * @param visualPart
+	 *            The {@link IVisualPart} that controls the given parent visual.
+	 * @param visualPartMap
+	 *            The map from which the visuals are removed.
+	 * @param visual
+	 *            The {@link Parent} whose visual hierarchy is unregistered.
+	 */
+	protected static void unregisterNestedVisuals(
+			IVisualPart<Node, ? extends Node> visualPart,
+			Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap,
+			Node visual) {
+		if (visual instanceof Parent) {
+			for (Node nestedVisual : ((Parent) visual)
+					.getChildrenUnmodifiable()) {
+				if (visualPartMap.containsKey(nestedVisual)
+						&& visualPartMap.get(nestedVisual) == visualPart) {
+					visualPartMap.remove(nestedVisual);
+					if (nestedVisual instanceof Parent) {
+						unregisterNestedVisuals(visualPart, visualPartMap,
+								nestedVisual);
+					}
+				}
+			}
+		}
+	}
 }

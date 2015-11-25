@@ -14,25 +14,26 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-import javafx.scene.transform.Transform;
-
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.transform.Transform;
 
 /**
  * Abstract base implementation for a JavaFX-specific {@link IHandlePart}.
  *
  * @author anyssen
  *
- * @param <N>
+ * @param <V>
  *            The visual {@link Node} used by this {@link AbstractFXHandlePart}.
  */
-abstract public class AbstractFXHandlePart<N extends Node>
-		extends AbstractHandlePart<Node, N> {
+abstract public class AbstractFXHandlePart<V extends Node>
+		extends AbstractHandlePart<Node, V> {
 
 	private final Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 	private final Map<IVisualPart<Node, ? extends Node>, Integer> anchorageLinkCount = new HashMap<>();
@@ -88,4 +89,21 @@ abstract public class AbstractFXHandlePart<N extends Node>
 		}
 	}
 
+	@Override
+	protected void registerAtVisualPartMap(IViewer<Node> viewer, V visual) {
+		// register "main" visual for this part
+		super.registerAtVisualPartMap(viewer, visual);
+		// register nested visuals that are not controlled by other parts
+		FXPartUtils.registerNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
+	}
+
+	@Override
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, V visual) {
+		// unregister "main" visual for this part
+		super.unregisterFromVisualPartMap(viewer, visual);
+		// unregister nested visuals that are not controlled by other parts
+		FXPartUtils.unregisterNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
+	}
 }

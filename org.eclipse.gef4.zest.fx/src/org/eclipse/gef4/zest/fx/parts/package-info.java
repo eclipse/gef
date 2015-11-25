@@ -17,8 +17,8 @@
  * {@link org.eclipse.gef4.zest.fx.parts.NodeContentPart},
  * {@link org.eclipse.gef4.zest.fx.parts.EdgeContentPart}), (hover) handle parts
  * to realize hiding/unhiding of nodes (
- * {@link org.eclipse.gef4.zest.fx.parts.HideHandlePart},
- * {@link org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHandlePart}), as well as
+ * {@link org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart},
+ * {@link org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart}), as well as
  * feedback parts to indicate hidden nodes (
  * {@link org.eclipse.gef4.zest.fx.parts.HiddenNeighborsFeedbackPart}).
  */

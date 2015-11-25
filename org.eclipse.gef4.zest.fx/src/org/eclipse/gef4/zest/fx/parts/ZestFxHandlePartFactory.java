@@ -31,7 +31,7 @@ import javafx.scene.Node;
 /**
  * The {@link ZestFxHandlePartFactory} is an extension to
  * {@link FXDefaultHandlePartFactory} that creates
- * {@link HideHandlePart}s and {@link ShowHiddenNeighborsHandlePart}s for
+ * {@link HideHoverHandlePart}s and {@link ShowHiddenNeighborsHoverHandlePart}s for
  * hovered {@link NodeContentPart}s. Moreover, it disables the creation of
  * handle parts for a multi selection.
  *
@@ -50,7 +50,7 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (target instanceof NodeContentPart) {
 			if (segmentIndex == 0) {
 				// create prune handle at first vertex
-				HideHandlePart part = injector.getInstance(HideHandlePart.class);
+				HideHoverHandlePart part = injector.getInstance(HideHoverHandlePart.class);
 				part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
 				part.setSegmentIndex(segmentIndex);
 				part.setSegmentParameter(0);
@@ -60,7 +60,7 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 				// but check if we have pruned neighbors, first
 				HidingModel hidingModel = target.getRoot().getViewer().getAdapter(HidingModel.class);
 				if (!hidingModel.getHiddenNeighbors(((NodeContentPart) target).getContent()).isEmpty()) {
-					ShowHiddenNeighborsHandlePart part = injector.getInstance(ShowHiddenNeighborsHandlePart.class);
+					ShowHiddenNeighborsHoverHandlePart part = injector.getInstance(ShowHiddenNeighborsHoverHandlePart.class);
 					part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
 					part.setSegmentIndex(segmentIndex);
 					part.setSegmentParameter(0);
