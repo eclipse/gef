@@ -39,7 +39,7 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 			final Graph nestedGraph = getHost().getContent().getNestedGraph();
 			if (nestedGraph != null) {
 				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-				viewer.getDomain().execute(NavigateOperation.openNestedGraph(viewer, nestedGraph));
+				viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true));
 			}
 		}
 	}

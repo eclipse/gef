@@ -48,7 +48,7 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 
 			if (nestingGraph != null) {
 				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-				viewer.getDomain().execute(NavigateOperation.openNestingGraph(viewer, nestingGraph));
+				viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false));
 			}
 		}
 	}
