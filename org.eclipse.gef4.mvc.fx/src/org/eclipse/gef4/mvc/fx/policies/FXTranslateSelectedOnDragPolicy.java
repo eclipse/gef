@@ -72,6 +72,7 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	 * @return A {@link List} containing all {@link IContentPart}s that should
 	 *         be relocated by this policy.
 	 */
+	// TODO: change visibility to protected
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)

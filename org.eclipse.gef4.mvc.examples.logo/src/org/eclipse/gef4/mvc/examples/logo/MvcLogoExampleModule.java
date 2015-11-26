@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.AbstractCloneContentPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXBendCurvePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneRelocateOnDragPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
@@ -59,6 +59,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXRotateTool;
@@ -157,8 +158,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to relocate on drag
 		adapterMapBinder
 				.addBinding(
-						AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
-				.to(FXCloneRelocateOnDragPolicy.class);
+						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
+				.to(FXCloneOnClickPolicy.class);
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
@@ -185,27 +186,34 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXTransformShapePolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class))
 				.to(FXResizeShapePolicy.class);
-		// interaction policies to relocate on drag (including anchored
-		// elements, which are linked)
+
+		// relocate on drag (including anchored elements, which are linked)
 		adapterMapBinder
 				.addBinding(
 						AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
-				.to(FXCloneRelocateOnDragPolicy.class);
+				.to(FXTranslateSelectedOnDragPolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
 						"relocateLinked"))
 				.to(FXRelocateLinkedOnDragPolicy.class);
-		// interaction policy to delete on key type
+
+		// clone on click
+		adapterMapBinder
+				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
+				.to(CloneShapePolicy.class);
+		adapterMapBinder
+				.addBinding(
+						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
+				.to(FXCloneOnClickPolicy.class);
+
+		// delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
+
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 				})).to(ChopBoxAnchorProvider.class);
-		// cloning
-		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
-				.to(CloneShapePolicy.class);
 	}
 
 	@SuppressWarnings("serial")
