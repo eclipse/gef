@@ -39,9 +39,9 @@ public class ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy extends AbstractFX
 		}
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
 		ShowHiddenNeighborsPolicy hiddenNeighborsPolicy = anchorage.getAdapter(ShowHiddenNeighborsPolicy.class);
-		hiddenNeighborsPolicy.init();
+		init(hiddenNeighborsPolicy);
 		hiddenNeighborsPolicy.showHiddenNeighbors();
-		hiddenNeighborsPolicy.commit();
+		commit(hiddenNeighborsPolicy);
 	}
 
 }

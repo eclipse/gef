@@ -19,8 +19,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link HideOnTypePolicy} is an {@link AbstractFXOnTypePolicy} that hides its
- * {@link #getHost() host} {@link NodeContentPart} upon the press of a
+ * The {@link HideOnTypePolicy} is an {@link AbstractFXOnTypePolicy} that hides
+ * its {@link #getHost() host} {@link NodeContentPart} upon the press of a
  * {@link KeyCode#P} key.
  *
  * @author mwienand
@@ -38,9 +38,9 @@ public class HideOnTypePolicy extends AbstractFXOnTypePolicy {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.P.equals(keyCode)) {
 			HidePolicy hidePolicy = getHost().<HidePolicy> getAdapter(HidePolicy.class);
-			hidePolicy.init();
+			init(hidePolicy);
 			hidePolicy.hide();
-			hidePolicy.commit();
+			commit(hidePolicy);
 		}
 	}
 

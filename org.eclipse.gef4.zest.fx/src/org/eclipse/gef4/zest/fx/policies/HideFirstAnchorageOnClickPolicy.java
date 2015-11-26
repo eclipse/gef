@@ -37,9 +37,9 @@ public class HideFirstAnchorageOnClickPolicy extends AbstractFXOnClickPolicy {
 		}
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
 		HidePolicy hideNodePolicy = anchorage.getAdapter(HidePolicy.class);
-		hideNodePolicy.init();
+		init(hideNodePolicy);
 		hideNodePolicy.hide();
-		hideNodePolicy.commit();
+		commit(hideNodePolicy);
 	}
 
 }

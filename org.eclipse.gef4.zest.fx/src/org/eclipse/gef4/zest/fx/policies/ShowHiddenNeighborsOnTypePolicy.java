@@ -39,9 +39,9 @@ public class ShowHiddenNeighborsOnTypePolicy extends AbstractFXOnTypePolicy {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.E.equals(keyCode)) {
 			ShowHiddenNeighborsPolicy hiddenNeighborsPolicy = getHost().getAdapter(ShowHiddenNeighborsPolicy.class);
-			hiddenNeighborsPolicy.init();
+			init(hiddenNeighborsPolicy);
 			hiddenNeighborsPolicy.showHiddenNeighbors();
-			hiddenNeighborsPolicy.commit();
+			commit(hiddenNeighborsPolicy);
 		}
 	}
 
