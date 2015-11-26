@@ -66,7 +66,6 @@ import org.eclipse.gef4.zest.fx.policies.FocusAndSelectFirstAnchorageOnClickPoli
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
-import org.eclipse.gef4.zest.fx.policies.NavigationPolicy;
 import org.eclipse.gef4.zest.fx.policies.OffsetEdgeLabelOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
@@ -211,7 +210,6 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "OpenParentGraphOnDoubleClick"))
 				.to(OpenParentGraphOnDoubleClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(NavigationPolicy.class)).to(NavigationPolicy.class);
 	}
 
 	@Override

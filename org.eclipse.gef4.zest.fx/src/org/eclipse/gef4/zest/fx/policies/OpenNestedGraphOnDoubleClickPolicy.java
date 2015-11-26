@@ -13,11 +13,11 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -38,11 +38,8 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 			// double click, so open nested graph, if it exists
 			final Graph nestedGraph = getHost().getContent().getNestedGraph();
 			if (nestedGraph != null) {
-				IDomain<Node> domain = getHost().getRoot().getViewer().getDomain();
-				NavigationPolicy navigationPolicy = getHost().getRoot().getAdapter(NavigationPolicy.class);
-				navigationPolicy.init();
-				navigationPolicy.openNestedGraph(nestedGraph);
-				domain.execute(navigationPolicy.commit());
+				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+				viewer.getDomain().execute(NavigateOperation.openNestedGraph(viewer, nestedGraph));
 			}
 		}
 	}

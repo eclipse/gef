@@ -13,12 +13,12 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -47,11 +47,8 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 					: null;
 
 			if (nestingGraph != null) {
-				IDomain<Node> domain = getHost().getRoot().getViewer().getDomain();
-				NavigationPolicy navigationPolicy = getHost().getRoot().getAdapter(NavigationPolicy.class);
-				navigationPolicy.init();
-				navigationPolicy.openNestingGraph(nestingGraph);
-				domain.execute(navigationPolicy.commit());
+				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
+				viewer.getDomain().execute(NavigateOperation.openNestingGraph(viewer, nestingGraph));
 			}
 		}
 	}
@@ -60,4 +57,5 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 	public GraphRootPart getHost() {
 		return (GraphRootPart) super.getHost();
 	}
+
 }
