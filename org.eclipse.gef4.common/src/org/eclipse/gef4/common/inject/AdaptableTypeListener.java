@@ -16,8 +16,10 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.MembersInjector;
@@ -92,21 +94,21 @@ public class AdaptableTypeListener implements TypeListener {
 			for (final Method method : type.getRawType().getMethods()) {
 				for (int i = 0; i < method
 						.getParameterAnnotations().length; i++) {
-					AdapterMap methodAnnotation = getAnnotation(
+					AdapterMap adapterMapAnnotation = getAnnotation(
 							method.getParameterAnnotations()[i],
 							AdapterMap.class);
 					// we have a method annotated with AdapterBinding
-					if (methodAnnotation != null) {
-						if (method.getParameterTypes().length != 1) {
+					if (adapterMapAnnotation != null) {
+						if (hasCompatibleAdapterMapInjectionSignature(method)) {
 							encounter.addError(
-									"AdapterBinding annotation is only valid on one-parameter operations.",
+									"AdapterBinding annotation may only be applied to operation with operand types (AdapterKey, TypeToken, Object).",
 									method);
 						}
-						// TODO: check parameter type is appropriate
+						// TODO: check parameter types are appropriate
 						// System.out.println("Registering member injector to "
 						// + type);
 						AdapterMapInjector membersInjector = new AdapterMapInjector(
-								method, methodAnnotation);
+								method, adapterMapAnnotation);
 						if (injector != null) {
 							injector.injectMembers(membersInjector);
 						} else {
@@ -118,6 +120,29 @@ public class AdaptableTypeListener implements TypeListener {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Checks that the given method complies to the signature of
+	 * {@link IAdaptable#setAdapter(AdapterKey, TypeToken, Object)}.
+	 * 
+	 * @param method
+	 *            The {@link Method} to test.
+	 * @return <code>true<code> if the method has a compatible signature, <code>false</code>
+	 *         otherwise.
+	 */
+	protected boolean hasCompatibleAdapterMapInjectionSignature(final Method method) {
+		try {
+			Method adaptableMethod = IAdaptable.class
+					.getDeclaredMethod("setAdapter", new Class[] {
+							AdapterKey.class, TypeToken.class, Object.class });
+			return method.toString().equals(adaptableMethod);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")

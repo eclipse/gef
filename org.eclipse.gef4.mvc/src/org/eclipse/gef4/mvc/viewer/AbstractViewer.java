@@ -26,7 +26,6 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
-import org.eclipse.gef4.common.inject.AdapterMapInjector;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -188,45 +187,31 @@ public abstract class AbstractViewer<VR>
 	}
 
 	@Override
-	public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
-		ads.setAdapter(key, adapter);
-	}
-
-	@Override
-	public <T> void setAdapter(Class<? super T> key, T adapter) {
-		ads.setAdapter(key, adapter);
-	}
-
-	@Override
-	public <T> void setAdapter(TypeToken<? super T> key, T adapter) {
-		ads.setAdapter(key, adapter);
-	}
-
-	/**
-	 * Adds the set of adapters to this {@link IAdaptable}. This method should
-	 * not be used by clients but is intended for injection of adapters by means
-	 * of an {@link AdapterMapInjector}.
-	 * <p>
-	 * <b>IMPORTANT: If sub-classes override this method, they will have to
-	 * transfer the inject annotation to the overwritten method to ensure that
-	 * adapter map injection is still functional.</b>
-	 *
-	 * @param adaptersWithKeys
-	 *            The adapters to add to this {@link IAdaptable} (by means of
-	 *            injection)
-	 * @see AdapterMap
-	 */
 	@Inject(optional = true)
-	public void setAdapters(
-			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
-		// do not override locally registered adapters (e.g. within constructor
-		// of respective AbstractViewer) with those injected by Guice
-		ads.setAdapters(adaptersWithKeys, false);
+	public <T> void setAdapter(@AdapterMap AdapterKey<? super T> key,
+			TypeToken<T> adapterType, T adapter) {
+		ads.setAdapter(key, adapterType, adapter);
 	}
 
 	@Override
-	public <T> T unsetAdapter(AdapterKey<? super T> key) {
-		return ads.unsetAdapter(key);
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(Class<T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(TypeToken<? super T> key,
+			TypeToken<T> adapterType, T adapter) {
+		ads.setAdapter(key, adapterType, adapter);
+	}
+
+	@Override
+	public <T> void unsetAdapter(T adapter) {
+		ads.unsetAdapter(adapter);
 	}
 
 }

@@ -97,16 +97,16 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for selection handles
 		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+				AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 				}, FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
 		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+				AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 				}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
 		// geometry provider for hover feedback
 		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+				AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 				}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
 	}
@@ -200,7 +200,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXDeleteSelectedOnTypePolicy.class);
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<IAnchor>>() {
+				AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 				})).to(ChopBoxAnchorProvider.class);
 		// cloning
 		adapterMapBinder

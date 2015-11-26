@@ -17,7 +17,6 @@ import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -195,7 +194,7 @@ public abstract class AbstractFXView extends ViewPart {
 	 *         injected.
 	 */
 	protected FXViewer getViewer() {
-		return domain.getAdapter(IViewer.class);
+		return domain.getAdapter(FXViewer.class);
 	}
 
 	/**

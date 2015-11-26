@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.tests;
 
-import java.util.Map;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.junit.Assert;
@@ -78,15 +75,6 @@ public class AdaptableScopeTests {
 		@Override
 		public void setAdaptable(AdapterStore adaptable) {
 			this.adaptable = adaptable;
-		}
-
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		@Inject(optional = true)
-		public void setAdapters(
-				@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
-			for (AdapterKey<?> key : adaptersWithKeys.keySet()) {
-				setAdapter((AdapterKey) key, adaptersWithKeys.get(key));
-			}
 		}
 	}
 

@@ -20,27 +20,23 @@ import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import com.google.common.reflect.TypeToken;
 
 /**
- * An {@link IAdaptable} allows to register (as well as unregister) and retrieve
- * (registered) adapters under a given {@link AdapterKey}, which combines a
- * {@link TypeToken}-based type key and a {@link String}-based role.
+ * An {@link IAdaptable} allows to register and retrieve adapters under a given
+ * {@link AdapterKey}, which combines a {@link TypeToken}-based type key and a
+ * {@link String}-based role.
  * <p>
  * The combination of a type key with a role (by means of an {@link AdapterKey})
  * allows to register multiple adapters with the same type under different
  * roles. If there is only one adapter for specific type, it can easily be
- * registered and retrieved without specifying a role, using
- * {@link #setAdapter(TypeToken, Object)}, {@link #setAdapter(Class, Object)},
- * {@link #getAdapter(TypeToken)}, and {@link #getAdapter(Class)}. This is
- * identical to using {@link #setAdapter(AdapterKey, Object)} and
- * {@link #getAdapter(AdapterKey)} with an {@link AdapterKey} that uses the
- * 'default' role ({@link AdapterKey#DEFAULT_ROLE}).
+ * registered and retrieved without specifying a role, or by using the 'default'
+ * role ({@link AdapterKey#DEFAULT_ROLE}).
  * <p>
  * Using a {@link TypeToken}-based type key instead of a simple {@link Class}
  * -based type key, an {@link IAdaptable} allows to register and retrieve
- * adapters also for parameterized types (e.g. by using
+ * adapters also via parameterized types (e.g. by using
  * <code>new TypeToken&lt;Provider&lt;IGeometry&gt;&gt;(){}</code> as a type
  * key). For convenience, non-parameterized types can also be registered and
- * retrieved via a simple {@link Class} key (a {@link TypeToken} will internally
- * be computed for it using {@link TypeToken#of(Class)}).
+ * retrieved via a raw {@link Class} type key (a {@link TypeToken} will
+ * internally be computed for it using {@link TypeToken#of(Class)}).
  * <p>
  * If a to be registered adapter implements the {@link Bound} interface, it is
  * expected that the {@link IAdaptable}, on which the adapter is registered,
@@ -49,8 +45,7 @@ import com.google.common.reflect.TypeToken;
  * (setAdaptable(null)) during un-registration.
  * <p>
  * Any client implementing this interface may internally use an
- * {@link AdaptableSupport} as a delegate to easily realize the required
- * functionality.
+ * {@link AdaptableSupport} as a delegate to realize the required functionality.
  * 
  * @author anyssen
  */
@@ -227,7 +222,10 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * Registers the given adapter under the given {@link AdapterKey}. The
 	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
 	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
-	 * {@link AdapterKey#getKey()}).
+	 * {@link AdapterKey#getKey()}). The adapter may afterwards be retrieved by
+	 * any type key 'in between' the given key type and actual raw type. If the
+	 * actual type of the parameter is not a raw type but a parameterized type,
+	 * it is not legitimate to use this method.
 	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
@@ -241,13 +239,13 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * @param adapter
 	 *            The adapter to register under the given {@link AdapterKey}.
 	 */
-	public <T> void setAdapter(AdapterKey<? super T> key, T adapter);
+	public <T> void setAdapter(AdapterKey<T> key, T adapter);
 
 	/**
-	 * Registers the given adapter under an {@link AdapterKey}, which will use a
-	 * {@link TypeToken} representing the given {@link Class} key, i.e. using
-	 * {@link TypeToken#of(Class)}, as well as the default role (see
-	 * {@link AdapterKey#DEFAULT_ROLE}.
+	 * Registers the given adapter under the given {@link AdapterKey}. The
+	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
+	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
+	 * {@link AdapterKey#getKey()}).
 	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
@@ -256,18 +254,48 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
-	 *            The {@link Class} under which to register the given adapter.
+	 *            The {@link AdapterKey} under which to register the given
+	 *            adapter.
+	 * @param adapterType
+	 *            The runtime type of the adapter to register.
+	 * @param adapter
+	 *            The adapter to register under the given {@link AdapterKey}.
+	 */
+	public <T> void setAdapter(AdapterKey<? super T> key,
+			TypeToken<T> adapterType, T adapter);
+
+	/**
+	 * Registers the given adapter under an {@link AdapterKey}, which takes the
+	 * given raw type key as well as the 'default' role (see
+	 * {@link AdapterKey#DEFAULT_ROLE}. The adapter may afterwards be retrieved
+	 * by any type key 'in between' the given key type and actual raw type. If
+	 * the actual type of the parameter is not a raw type but a parameterized
+	 * type, it is not legitimate to use this method.
+	 * <p>
+	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
+	 * will obtain a back-reference to this {@link IAdaptable} via its
+	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param rawTypeKey
+	 *            The {@link Class} raw type key under which to register the
+	 *            given adapter.
 	 * @param adapter
 	 *            The adapter to register under the given {@link Class} key.
 	 * 
 	 * @see #setAdapter(AdapterKey, Object)
 	 */
-	public <T> void setAdapter(Class<? super T> key, T adapter);
+	public <T> void setAdapter(Class<T> rawTypeKey, T adapter);
 
 	/**
-	 * Registers the given adapter under an {@link AdapterKey}, which will use
-	 * the given {@link TypeToken} key as well as the default role (see
-	 * {@link AdapterKey#DEFAULT_ROLE}.
+	 * Registers the given adapter under an {@link AdapterKey}, which takes the
+	 * given type key as well as the 'default' role (see
+	 * {@link AdapterKey#DEFAULT_ROLE}. Internally also stores the actual type
+	 * of the adapter that is given, so that the adapter may afterwards be
+	 * retrieved by any type key 'in between' the given key type and actual
+	 * type. The actual type has to be provided for parameterized types, where
+	 * it cannot be inferred from the instance due to type erasure.
 	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
@@ -275,19 +303,21 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
+	 * @param typeKey
 	 *            The {@link TypeToken} under which to register the given
 	 *            adapter.
+	 * @param adapterType
+	 *            The actual type of the adapter to register.
 	 * @param adapter
 	 *            The adapter to register under the given {@link TypeToken} key.
 	 * 
-	 * @see #setAdapter(AdapterKey, Object)
+	 * @see #setAdapter(AdapterKey, TypeToken, Object)
 	 */
-	public <T> void setAdapter(TypeToken<? super T> key, T adapter);
+	public <T> void setAdapter(TypeToken<? super T> typeKey,
+			TypeToken<T> adapterType, T adapter);
 
 	/**
-	 * Unregisters the adapter registered under the exact {@link AdapterKey}
-	 * given, returning it for convenience.
+	 * Unregisters the given adapter under all keys it was registered for.
 	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the
 	 * back-reference to this {@link IAdaptable} will be removed via its
@@ -296,10 +326,8 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
-	 *            The {@link AdapterKey} for which to remove a registered
-	 *            adapter.
-	 * @return The adapter, which has been removed.
+	 * @param adapter
+	 *            The adapter which should be removed.
 	 */
-	public <T> T unsetAdapter(AdapterKey<? super T> key);
+	public <T> void unsetAdapter(T adapter);
 }

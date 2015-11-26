@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -33,6 +34,7 @@ import com.google.inject.MembersInjector;
 import com.google.inject.multibindings.MapBinderBinding;
 import com.google.inject.multibindings.MultibinderBinding;
 import com.google.inject.multibindings.MultibindingsTargetVisitor;
+import com.google.inject.spi.BindingTargetVisitor;
 import com.google.inject.spi.ConstructorBinding;
 import com.google.inject.spi.ConvertedConstantBinding;
 import com.google.inject.spi.ExposedBinding;
@@ -72,88 +74,133 @@ import com.google.inject.spi.UntargettedBinding;
  */
 public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 
-	private class AdapterBindingsTargetVisitor implements
-			MultibindingsTargetVisitor<Object, Map<AdapterKey<?>, Object>> {
+	private class AdapterTypeBindingsTargetVisitor
+			implements BindingTargetVisitor<Object, TypeToken<?>> {
+
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public TypeToken<?> visit(InstanceBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ProviderInstanceBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ProviderKeyBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(LinkedKeyBinding<? extends Object> binding) {
+			Binding<?> linkedKeyBinding = injector
+					.getBinding(binding.getLinkedKey());
+			return linkedKeyBinding.acceptTargetVisitor(this);
+		}
+
+		@Override
+		public TypeToken<?> visit(ExposedBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				UntargettedBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ConstructorBinding<? extends Object> binding) {
+			return TypeToken.of(binding.getKey().getTypeLiteral().getType());
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ConvertedConstantBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(ProviderBinding<? extends Object> binding) {
+			return null;
+		}
+
+	}
+
+	private class AdapterMapBindingsTargetVisitor implements
+			MultibindingsTargetVisitor<Object, Map<AdapterKey<?>, Binding<?>>> {
+		@Override
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final ConstructorBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final ConvertedConstantBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final ExposedBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final InstanceBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final LinkedKeyBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final MapBinderBinding<? extends Object> mapbinding) {
 
-			final Map<AdapterKey<?>, Object> bindings = new HashMap<AdapterKey<?>, Object>();
+			final Map<AdapterKey<?>, Binding<?>> bindings = new HashMap<AdapterKey<?>, Binding<?>>();
 			for (final Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
-				final AdapterKey<?> key = (AdapterKey<?>) entry.getKey();
-				final Object value = entry.getValue().getProvider().get();
-				bindings.put(key, value);
+				bindings.put((AdapterKey<?>) entry.getKey(), entry.getValue());
 			}
 			return bindings;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final MultibinderBinding<? extends Object> multibinding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final ProviderBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final ProviderInstanceBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final ProviderKeyBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public Map<AdapterKey<?>, Object> visit(
+		public Map<AdapterKey<?>, Binding<?>> visit(
 				final UntargettedBinding<? extends Object> binding) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}
@@ -284,16 +331,30 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 		// System.out.println("--");
 		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 				.entrySet()) {
-			// System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
 			try {
-				final Map<AdapterKey<?>, Object> target = entry.getValue()
-						.acceptTargetVisitor(
-								new AdapterBindingsTargetVisitor());
-				if ((target != null) && !target.isEmpty()) {
-					// System.out.println("Injecting " + method.getName()
-					// + " of " + instance + " with " + target
-					// + " based on " + entry.getValue());
-					method.invoke(adaptable, target);
+				final Map<AdapterKey<?>, Binding<?>> adapterMapBindings = entry
+						.getValue().acceptTargetVisitor(
+								new AdapterMapBindingsTargetVisitor());
+				if ((adapterMapBindings != null)
+						&& !adapterMapBindings.isEmpty()) {
+					for (AdapterKey<?> key : adapterMapBindings.keySet()) {
+						Binding<?> binding = adapterMapBindings.get(key);
+						Object adapter = binding.getProvider().get();
+						TypeToken<?> adapterType = binding.acceptTargetVisitor(
+								new AdapterTypeBindingsTargetVisitor());
+						if (adapterType == null) {
+							// fall back to registration key in case no adapter
+							// type could be inferred.
+							adapterType = key.getKey();
+						}
+						// System.out.println("Inject adapter " + adapter + "
+						// with type " + adapterType + " for key " + key);
+						// System.out.println("Injecting " + method.getName()
+						// + " of " + instance + " with " + target
+						// + " based on " + entry.getValue());
+						method.invoke(adaptable,
+								new Object[] { key, adapterType, adapter });
+					}
 				}
 			} catch (final IllegalArgumentException e) {
 				e.printStackTrace();

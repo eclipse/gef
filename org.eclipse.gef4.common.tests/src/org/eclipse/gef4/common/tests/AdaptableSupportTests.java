@@ -75,47 +75,46 @@ public class AdaptableSupportTests {
 		}
 
 		@Override
-		public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
+		public <T> void setAdapter(AdapterKey<? super T> key,
+				TypeToken<T> adapterType, T adapter) {
+			ads.setAdapter(key, adapterType, adapter);
+		}
+
+		@Override
+		public <T> void setAdapter(AdapterKey<T> key, T adapter) {
 			ads.setAdapter(key, adapter);
 		}
 
 		@Override
-		public <T> void setAdapter(Class<? super T> key, T adapter) {
+		public <T> void setAdapter(Class<T> key, T adapter) {
 			ads.setAdapter(key, adapter);
 		}
 
 		@Override
-		public <T> void setAdapter(TypeToken<? super T> key, T adapter) {
-			ads.setAdapter(key, adapter);
+		public <T> void setAdapter(TypeToken<? super T> key,
+				TypeToken<T> adapterType, T adapter) {
+			ads.setAdapter(key, adapterType, adapter);
 		}
 
 		@Override
-		public <T> T unsetAdapter(AdapterKey<? super T> key) {
-			return ads.unsetAdapter(key);
+		public <T> void unsetAdapter(T adapter) {
+			ads.unsetAdapter(adapter);
 		}
 	}
 
 	private class ParameterizedSubType<T> extends ParameterizedType<T> {
-
 	}
 
 	private class ParameterizedSuperType<T> extends Object {
-
 	}
 
 	private class ParameterizedType<T> extends ParameterizedSuperType<T> {
 	}
 
-	private class ParameterSubType1 extends ParameterType1 {
-
-	}
-
 	private class ParameterType1 extends Object {
-
 	}
 
 	private class ParameterType2 extends Object {
-
 	}
 
 	/**
@@ -128,106 +127,101 @@ public class AdaptableSupportTests {
 	public void adapterInstanceRegisteredUnderDifferentKeys() {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
 
-		ParameterizedType<ParameterType1> parameterizedType1 = new ParameterizedType<ParameterType1>();
-
-		ParameterizedType<ParameterType2> parameterizedType2 = new ParameterizedType<ParameterType2>();
-
+		ParameterizedType<ParameterType1> adapter1 = new ParameterizedType<ParameterType1>();
+		// register adapter (without adapter type)
 		td.setAdapter(AdapterKey
 				.get(new TypeToken<ParameterizedType<ParameterType1>>() {
-				}), parameterizedType1);
+				}), new TypeToken<ParameterizedType<ParameterType1>>() {
+				}, adapter1);
 		td.setAdapter(AdapterKey
 				.get(new TypeToken<ParameterizedSuperType<ParameterType1>>() {
-				}), parameterizedType1);
-
-		assertEquals(parameterizedType1, td.getAdapter(AdapterKey
+				}), new TypeToken<ParameterizedType<ParameterType1>>() {
+				}, adapter1);
+		// retrieve adapter
+		assertEquals(adapter1, td.getAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedType<ParameterType1>>() {
+				})));
+		assertEquals(adapter1, td.getAdapter(AdapterKey
 				.get(new TypeToken<ParameterizedSuperType<ParameterType1>>() {
 				})));
 
+		// register adapter
+		ParameterizedType<ParameterType2> adapter2 = new ParameterizedType<ParameterType2>();
 		td.setAdapter(AdapterKey
 				.get(new TypeToken<ParameterizedType<ParameterType2>>() {
-				}, "role"), parameterizedType2);
+				}, "role"), new TypeToken<ParameterizedType<ParameterType2>>() {
+				}, adapter2);
 		td.setAdapter(AdapterKey
 				.get(new TypeToken<ParameterizedSuperType<ParameterType2>>() {
-				}, "role"), parameterizedType2);
-
-		assertEquals(parameterizedType2, td.getAdapter(AdapterKey
-				.get(new TypeToken<ParameterizedSuperType<ParameterType2>>() {
-				}, "role")));
-	}
-
-	@SuppressWarnings("serial")
-	@Test
-	public void polymorphicRegistrationAndRetrieval() {
-		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
-
-		// register adapter via type key for 'ParameterizedSuperType'
-		ParameterizedSubType<ParameterType1> parameterType1 = new ParameterizedSubType<ParameterType1>();
-		td.setAdapter(new TypeToken<ParameterizedSuperType<ParameterType1>>() {
-		}, parameterType1);
-
-		// retrieve adapter via 'ParameterizedSuperType' key (used for
-		// registration)
-		assertEquals(parameterType1, td.getAdapter(
-				new TypeToken<ParameterizedSuperType<ParameterType1>>() {
-				}));
-
-		// cannot retrieve with a subtype key
-		assertNull(td
-				.getAdapter(new TypeToken<ParameterizedType<ParameterType1>>() {
-				}));
-
-		// cannot retrieve with a key that is not assignable from the adapter
-		assertNull(td.getAdapter(
-				new TypeToken<ParameterizedSubType<ParameterType1>>() {
-				}));
-	}
-
-	@SuppressWarnings("serial")
-	@Test
-	public void polymorphicRetrievalOfParameterizedTypes() {
-		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
-
-		// register adapter
-		ParameterizedSubType<ParameterType1> parameterType1 = new ParameterizedSubType<ParameterType1>();
-		td.setAdapter(new TypeToken<ParameterizedSubType<ParameterType1>>() {
-		}, parameterType1);
+				}, "role"),
+				new TypeToken<ParameterizedSuperType<ParameterType2>>() {
+				}, adapter2);
 
 		// retrieve adapter
-		assertEquals(parameterType1, td.getAdapter(
-				new TypeToken<ParameterizedSuperType<ParameterType1>>() {
-				}));
-		assertEquals(parameterType1, td
-				.getAdapter(new TypeToken<ParameterizedType<ParameterType1>>() {
-				}));
-		assertEquals(parameterType1, td.getAdapter(
-				new TypeToken<ParameterizedSubType<ParameterType1>>() {
-				}));
-		assertEquals(parameterType1, td.getAdapter(
-				new TypeToken<ParameterizedSuperType<? extends ParameterType1>>() {
-				}));
-		assertEquals(parameterType1, td.getAdapter(
-				new TypeToken<ParameterizedType<? extends ParameterType1>>() {
-				}));
-		assertEquals(parameterType1, td.getAdapter(
-				new TypeToken<ParameterizedSubType<? extends ParameterType1>>() {
-				}));
+		assertEquals(adapter2, td.getAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedSuperType<ParameterType2>>() {
+				}, "role")));
 	}
 
 	@SuppressWarnings("serial")
 	@Test
-	public void registrationAndRetrievalOfParameterizedSubTypeWithRoles() {
+	public void polymorphicRegistrationAndRetrievalWithoutRole() {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
 
-		// register adapters
-		ParameterizedType<ParameterSubType1> parameterSubType1 = new ParameterizedType<ParameterSubType1>();
+		// register adapter via super type key
+		ParameterizedSubType<ParameterType1> adapter = new ParameterizedSubType<ParameterType1>();
+		TypeToken<ParameterizedSuperType<ParameterType1>> keyTypeToken = new TypeToken<ParameterizedSuperType<ParameterType1>>() {
+		};
+		td.setAdapter(keyTypeToken,
+				new TypeToken<ParameterizedSubType<ParameterType1>>() {
+				}, adapter);
 
-		td.setAdapter(AdapterKey
-				.get(new TypeToken<ParameterizedType<ParameterSubType1>>() {
-				}, "role"), parameterSubType1);
+		// retrieve via key type token
+		assertEquals(adapter, td.getAdapter(keyTypeToken));
 
-		assertEquals(parameterSubType1, td.getAdapter(AdapterKey.get(
-				new TypeToken<ParameterizedType<? extends ParameterType1>>() {
+		// retrieve via intermediate type token
+		assertEquals(adapter, td
+				.getAdapter(new TypeToken<ParameterizedType<ParameterType1>>() {
+				}));
+
+		// retrieve via runtime type token
+		assertEquals(adapter, td.getAdapter(
+				new TypeToken<ParameterizedSubType<ParameterType1>>() {
+				}));
+
+		// cannot retrieve with a super type key
+		assertNull(td.getAdapter(Object.class));
+	}
+
+	@SuppressWarnings("serial")
+	@Test
+	public void polymorphicRegistrationAndRetrievalWithRole() {
+		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+
+		// register adapter via super type key
+		ParameterizedSubType<ParameterType1> adapter = new ParameterizedSubType<ParameterType1>();
+		TypeToken<ParameterizedSuperType<ParameterType1>> keyTypeToken = new TypeToken<ParameterizedSuperType<ParameterType1>>() {
+		};
+		td.setAdapter(AdapterKey.get(keyTypeToken, "role"),
+				new TypeToken<ParameterizedSubType<ParameterType1>>() {
+				}, adapter);
+
+		// retrieve via key type token
+		assertEquals(adapter,
+				td.getAdapter(AdapterKey.get(keyTypeToken, "role")));
+
+		// retrieve via intermediate type token
+		assertEquals(adapter, td.getAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedType<ParameterType1>>() {
 				}, "role")));
+
+		// retrieve via runtime type token
+		assertEquals(adapter, td.getAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedSubType<ParameterType1>>() {
+				}, "role")));
+
+		// cannot retrieve with a super type key
+		assertNull(td.getAdapter(Object.class));
 	}
 
 	@SuppressWarnings({ "serial", "rawtypes" })
@@ -240,8 +234,10 @@ public class AdaptableSupportTests {
 		ParameterizedType<ParameterType2> parameterType2 = new ParameterizedType<ParameterType2>();
 
 		td.setAdapter(new TypeToken<ParameterizedType<ParameterType1>>() {
+		}, new TypeToken<ParameterizedType<ParameterType1>>() {
 		}, parameterType1);
 		td.setAdapter(new TypeToken<ParameterizedType<ParameterType2>>() {
+		}, new TypeToken<ParameterizedType<ParameterType2>>() {
 		}, parameterType2);
 
 		// check retrieval
@@ -286,14 +282,15 @@ public class AdaptableSupportTests {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
 
 		// register adapters
-		ParameterizedType<ParameterType1> parameterType1 = new ParameterizedType<ParameterType1>();
+		ParameterizedType<ParameterType1> adapter = new ParameterizedType<ParameterType1>();
 
-		td.setAdapter(AdapterKey
-				.get(new TypeToken<ParameterizedType<ParameterType1>>() {
-				}, "role"), parameterType1);
-
-		assertEquals(parameterType1, td.getAdapter(AdapterKey.get(
+		td.setAdapter(AdapterKey.get(
 				new TypeToken<ParameterizedType<? extends ParameterType1>>() {
+				}, "role"), new TypeToken<ParameterizedType<ParameterType1>>() {
+				}, adapter);
+
+		assertEquals(adapter, td.getAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedType<ParameterType1>>() {
 				}, "role")));
 	}
 }

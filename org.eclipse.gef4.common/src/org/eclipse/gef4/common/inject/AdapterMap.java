@@ -18,8 +18,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -28,12 +30,13 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.MapBinderBinding;
 
 /**
- * A {@link BindingAnnotation} that can be used to annotate the single parameter
- * (of type <code>Map&lt;AdapterKey&lt;?&gt;, Object&gt;</code>) of an
- * {@link IAdaptable}'s method (annotated with an {@link Inject} annotation) to
- * make it eligible for adapter map injection. The annotation is also used to
- * qualify related {@link AdapterMap} bindings (i.e. specific
- * {@link MapBinderBinding}s) within a {@link Module}.
+ * A Guice {@link BindingAnnotation} that can be used to annotate the first
+ * parameter (of type <code>AdapterKey</code>) of an {@link IAdaptable}
+ * implementer's {@link IAdaptable#setAdapter(AdapterKey, TypeToken, Object)}'s
+ * method (which is in addition annotated with {@link Inject}) to make it
+ * eligible for adapter map injection. The annotation is also used to qualify
+ * related {@link AdapterMap} bindings (i.e. specific {@link MapBinderBinding}s)
+ * within a Guice {@link Module}.
  * <p>
  * In order to enable the adapter map injection mechanism, one of the
  * {@link Module} s being used to create the {@link Injector} has to bind an
@@ -88,5 +91,5 @@ public @interface AdapterMap {
 	 * @return The {@link Class} used as type of this {@link AdapterMap}.
 	 *         {@link IAdaptable} by default.
 	 */
-	Class<?>adaptableType() default IAdaptable.class;
+	Class<?> adaptableType() default IAdaptable.class;
 }
