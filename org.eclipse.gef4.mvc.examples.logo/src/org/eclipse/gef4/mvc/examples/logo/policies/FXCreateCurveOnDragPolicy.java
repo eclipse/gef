@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -25,6 +27,8 @@ import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -107,6 +111,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 					"Cannot find FXGeometricModelPart.");
 		}
 
+		// build create operation
 		creationPolicy.create(curve, (FXGeometricModelPart) modelPart,
 				HashMultimap
 						.<IContentPart<Node, ? extends Node>, String> create());
@@ -120,6 +125,18 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(e));
+
+		// build operation to deselect all but the new curve part
+		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<IContentPart<Node, ? extends Node>>(
+				getHost().getRoot().getViewer()
+						.<SelectionModel<Node>> getAdapter(SelectionModel.class)
+						.getSelection());
+		toBeDeselected.remove(curvePart);
+		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(
+				getHost().getRoot().getViewer(), toBeDeselected);
+
+		// execute on stack
+		getHost().getRoot().getViewer().getDomain().execute(deselectOperation);
 
 		// find bend target part
 		bendTargetPart = findBendTargetPart(curvePart, e.getTarget());
