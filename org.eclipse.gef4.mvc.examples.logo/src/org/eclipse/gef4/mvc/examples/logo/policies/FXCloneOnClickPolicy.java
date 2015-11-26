@@ -11,12 +11,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
 
@@ -24,8 +31,6 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 public class FXCloneOnClickPolicy extends AbstractFXOnClickPolicy {
-
-	private AffineTransform originalTransform;
 
 	@Override
 	public void click(MouseEvent e) {
@@ -37,7 +42,7 @@ public class FXCloneOnClickPolicy extends AbstractFXOnClickPolicy {
 		Object cloneContent = getHost()
 				.getAdapter(AbstractCloneContentPolicy.class).cloneContent();
 
-		// create the clone
+		// create the clone content part
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		CreationPolicy<Node> creationPolicy = root
 				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
@@ -50,7 +55,18 @@ public class FXCloneOnClickPolicy extends AbstractFXOnClickPolicy {
 								.<IContentPart<Node, ? extends Node>, String> create());
 		commit(creationPolicy);
 
+		// deselect all but the clone
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
+		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
+				viewer.getAdapter(SelectionModel.class).getSelection());
+		toBeDeselected.remove(clonedContentPart);
+		viewer.getDomain().execute(new DeselectOperation<Node>(
+				getHost().getRoot().getViewer(), toBeDeselected));
+
 		// copy the transformation
+		AffineTransform originalTransform = JavaFX2Geometry.toAffineTransform(
+				getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY)
+						.get());
 		FXTransformPolicy transformPolicy = clonedContentPart
 				.getAdapter(FXTransformPolicy.class);
 		init(transformPolicy);

@@ -173,21 +173,43 @@ public class FXGeometricCurvePart
 		final ITransactionalOperation updateModelOperation = new ChangeWayPointsOperation(
 				"Update Model", curve, oldWayPoints, newWayPoints);
 
+		// determine current content anchorages
+		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(
+				getVisual().getStartAnchor());
+		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(
+				getVisual().getEndAnchor());
+
 		// create anchorage operations, start with detaching all anchorages
 		ContentPolicy<Node> contentPolicy = this
 				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 		contentPolicy.init();
-
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = HashMultimap
 				.create(getAnchorages());
 		for (IVisualPart<Node, ? extends Node> anchorage : anchorages
 				.keySet()) {
 			if (anchorage instanceof IContentPart) {
 				for (String role : anchorages.get(anchorage)) {
-					contentPolicy.detachFromContentAnchorage(
-							((IContentPart<Node, ? extends Node>) anchorage)
-									.getContent(),
-							role);
+					Object contentAnchorage = ((IContentPart<Node, ? extends Node>) anchorage)
+							.getContent();
+					if (role.equals("START")) {
+						if (contentAnchorage != sourceContentAnchorage) {
+							// it changed => detach
+							contentPolicy.detachFromContentAnchorage(
+									contentAnchorage, role);
+						} else {
+							// no change => keep it
+							sourceContentAnchorage = null;
+						}
+					} else if (role.equals("END")) {
+						if (contentAnchorage != targetContentAnchorage) {
+							// it changed => detach
+							contentPolicy.detachFromContentAnchorage(
+									contentAnchorage, role);
+						} else {
+							// no change => keep it
+							targetContentAnchorage = null;
+						}
+					}
 				}
 			}
 		}
@@ -195,14 +217,10 @@ public class FXGeometricCurvePart
 
 		// then attach source and target (if available)
 		contentPolicy.init();
-		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(
-				getVisual().getStartAnchor());
 		if (sourceContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(sourceContentAnchorage,
 					"START");
 		}
-		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(
-				getVisual().getEndAnchor());
 		if (targetContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(targetContentAnchorage,
 					"END");

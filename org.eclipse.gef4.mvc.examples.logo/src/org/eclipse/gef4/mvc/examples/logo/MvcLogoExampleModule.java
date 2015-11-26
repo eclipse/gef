@@ -157,9 +157,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// interaction policy to relocate on drag
 		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
-				.to(FXCloneOnClickPolicy.class);
+				.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+						"translateSelectedOnDrag"))
+				.to(FXTranslateSelectedOnDragPolicy.class);
+
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
@@ -171,6 +172,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
 				.to(CloneCurvePolicy.class);
+		adapterMapBinder
+				.addBinding(AdapterKey.get(
+						FXClickDragTool.CLICK_TOOL_POLICY_KEY, "cloneOnClick"))
+				.to(FXCloneOnClickPolicy.class);
+
 		// clickable area resizing
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickableAreaBehavior.class))
@@ -189,8 +195,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// relocate on drag (including anchored elements, which are linked)
 		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
+				.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+						"translateSelectedOnDrag"))
 				.to(FXTranslateSelectedOnDragPolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
@@ -202,8 +208,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
 				.to(CloneShapePolicy.class);
 		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
+				.addBinding(AdapterKey.get(
+						FXClickDragTool.CLICK_TOOL_POLICY_KEY, "cloneOnClick"))
 				.to(FXCloneOnClickPolicy.class);
 
 		// delete on key type
