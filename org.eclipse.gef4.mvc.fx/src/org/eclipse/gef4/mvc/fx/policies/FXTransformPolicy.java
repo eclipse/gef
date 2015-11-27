@@ -98,8 +98,8 @@ public class FXTransformPolicy extends AbstractTransactionPolicy<Node> {
 	 * used to obtain the host's {@link Affine} transformation.
 	 */
 	@SuppressWarnings("serial")
-	public static final AdapterKey<Provider<Affine>> TRANSFORM_PROVIDER_KEY = AdapterKey
-			.get(new TypeToken<Provider<Affine>>() {
+	public static final AdapterKey<Provider<? extends Affine>> TRANSFORM_PROVIDER_KEY = AdapterKey
+			.get(new TypeToken<Provider<? extends Affine>>() {
 			}, TRANSFORMATION_PROVIDER_ROLE);
 
 	/**

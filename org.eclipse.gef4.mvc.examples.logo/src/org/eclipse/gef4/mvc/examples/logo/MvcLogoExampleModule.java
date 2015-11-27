@@ -92,7 +92,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXHoverOnHoverPolicy.class);
 		// geometry provider for selection feedback
 		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+				AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 				}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for selection handles
@@ -121,8 +121,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 								"FXCreationMenuOnClick"))
 				.to(FXCreationMenuOnClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey
-				.get(new TypeToken<Provider<List<IFXCreationMenuItem>>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(
+				new TypeToken<Provider<? extends List<IFXCreationMenuItem>>>() {
 				}, FXCreationMenuOnClickPolicy.MENU_ITEM_PROVIDER_ROLE))
 				.to(FXCreationMenuItemProvider.class);
 		// interaction policy to delete on key type
@@ -238,8 +238,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// change cursor for rotation
 		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class))
 				.to(FXCursorBehavior.class);
-		adapterMapBinder.addBinding(
-				AdapterKey.get(new TypeToken<Provider<Map<KeyCode, Cursor>>>() {
+		adapterMapBinder.addBinding(AdapterKey
+				.get(new TypeToken<Provider<? extends Map<KeyCode, Cursor>>>() {
 				}, FXCursorBehavior.CURSOR_PROVIDER_ROLE))
 				.to(FXLogoCursorProvider.class);
 	}

@@ -103,13 +103,13 @@ public class ZestFxModule extends MvcFxModule {
 				.to(FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 		// geometry provider for selection feedback
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 		// geometry provider for hover handles
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 	}
 
@@ -139,11 +139,11 @@ public class ZestFxModule extends MvcFxModule {
 		// hiding
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeHidingBehavior.class)).to(EdgeHidingBehavior.class);
 
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
 	}
@@ -172,7 +172,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
 				.to(FocusAndSelectFirstAnchorageOnClickPolicy.class);
 		// selection link feedback
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
 	}
@@ -200,7 +200,7 @@ public class ZestFxModule extends MvcFxModule {
 				.to(FXRotateSelectedOnHandleDragPolicy.class);
 		// change cursor for rotation
 		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class)).to(FXCursorBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<Map<KeyCode, Cursor>>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends Map<KeyCode, Cursor>>>() {
 		}, FXCursorBehavior.CURSOR_PROVIDER_ROLE)).to(ZestFxCursorProvider.class);
 	}
 
@@ -312,7 +312,7 @@ public class ZestFxModule extends MvcFxModule {
 		// provider
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 		})).to(ChopBoxAnchorProvider.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 	}
 
