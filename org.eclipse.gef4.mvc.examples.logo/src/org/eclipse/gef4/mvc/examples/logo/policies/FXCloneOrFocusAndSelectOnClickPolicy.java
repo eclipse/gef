@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
@@ -30,11 +30,14 @@ import com.google.common.collect.HashMultimap;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXCloneOnClickPolicy extends AbstractFXOnClickPolicy {
+public class FXCloneOrFocusAndSelectOnClickPolicy
+		extends FXFocusAndSelectOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
+		// delegate to super policy in case the clone modifier is not pressed
 		if (!isCloneModifierDown(e)) {
+			super.click(e);
 			return;
 		}
 
@@ -57,8 +60,9 @@ public class FXCloneOnClickPolicy extends AbstractFXOnClickPolicy {
 
 		// deselect all but the clone
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
-				viewer.getAdapter(SelectionModel.class).getSelection());
+		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<IContentPart<Node, ? extends Node>>(
+				viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class)
+						.getSelection());
 		toBeDeselected.remove(clonedContentPart);
 		viewer.getDomain().execute(new DeselectOperation<Node>(
 				getHost().getRoot().getViewer(), toBeDeselected));

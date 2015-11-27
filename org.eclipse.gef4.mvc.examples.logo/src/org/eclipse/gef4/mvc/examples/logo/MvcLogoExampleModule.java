@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.AbstractCloneContentPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXBendCurvePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOrFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
@@ -50,7 +50,6 @@ import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
@@ -88,7 +87,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(
 						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
-				.to(FXFocusAndSelectOnClickPolicy.class);
+				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY))
 				.to(FXHoverOnHoverPolicy.class);
 		// geometry provider for selection feedback
@@ -172,10 +171,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
 				.to(CloneCurvePolicy.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(
-						FXClickDragTool.CLICK_TOOL_POLICY_KEY, "cloneOnClick"))
-				.to(FXCloneOnClickPolicy.class);
 
 		// clickable area resizing
 		adapterMapBinder
@@ -203,14 +198,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 						"relocateLinked"))
 				.to(FXRelocateLinkedOnDragPolicy.class);
 
-		// clone on click
+		// clone
 		adapterMapBinder
 				.addBinding(AdapterKey.get(AbstractCloneContentPolicy.class))
 				.to(CloneShapePolicy.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(
-						FXClickDragTool.CLICK_TOOL_POLICY_KEY, "cloneOnClick"))
-				.to(FXCloneOnClickPolicy.class);
 
 		// delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
