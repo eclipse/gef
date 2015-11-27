@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2015 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,6 +11,10 @@
  *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.operations;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -24,45 +28,54 @@ import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
- * The {@link HideOperation} can be used to add a {@link NodeContentPart} to the
- * {@link HidingModel}.
+ * The {@link ShowHiddenNeighborsOperation} can be used to remove the neighbors
+ * of a given {@link NodeContentPart} from the {@link HidingModel} of a given
+ * {@link IViewer}.
  *
  * @author mwienand
  *
  */
-public class HideOperation extends AbstractOperation implements ITransactionalOperation {
+public class ShowHiddenNeighborsOperation extends AbstractOperation implements ITransactionalOperation {
 
 	private NodeContentPart nodePart;
-	private IViewer<javafx.scene.Node> viewer;
 	private HidingModel hidingModel;
+	private List<NodeContentPart> shownNeighbors = new ArrayList<NodeContentPart>();
 
 	/**
-	 * Constructs a new {@link HideOperation} that will hide the given
-	 * {@link NodeContentPart} upon execution.
+	 * Constructs a new {@link ShowHiddenNeighborsOperation} that will show all
+	 * hidden neighbors of the given {@link NodeContentPart} by removing them
+	 * from the {@link HidingModel} of the given {@link IViewer} upon execution.
 	 *
 	 * @param viewer
 	 *            The viewer from which to retrieve the {@link HidingModel}.
 	 * @param nodePart
-	 *            The {@link NodeContentPart} to show/hide.
+	 *            The {@link NodeContentPart} of which the hidden neighbors are
+	 *            to be shown.
 	 */
-	public HideOperation(IViewer<javafx.scene.Node> viewer, NodeContentPart nodePart) {
-		super("Hide");
-		this.viewer = viewer;
+	public ShowHiddenNeighborsOperation(IViewer<javafx.scene.Node> viewer, NodeContentPart nodePart) {
+		super("ShowHiddenNeighbors");
 		this.nodePart = nodePart;
-		hidingModel = viewer.<HidingModel> getAdapter(HidingModel.class);
+		hidingModel = viewer.getAdapter(HidingModel.class);
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		if (!viewer.getAdapter(HidingModel.class).isHidden(nodePart)) {
-			hidingModel.hide(nodePart);
+		// save the graph nodes that are removed from the hiding model
+		shownNeighbors.clear();
+		Set<NodeContentPart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
+		if (hiddenNeighbors != null && !hiddenNeighbors.isEmpty()) {
+			for (NodeContentPart neighborPart : hiddenNeighbors) {
+				hidingModel.show(neighborPart);
+				shownNeighbors.add(neighborPart);
+			}
 		}
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public boolean isNoOp() {
-		return viewer.getAdapter(HidingModel.class).isHidden(nodePart);
+		Set<NodeContentPart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
+		return hiddenNeighbors != null && !hiddenNeighbors.isEmpty();
 	}
 
 	@Override
@@ -72,8 +85,8 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		if (viewer.getAdapter(HidingModel.class).isHidden(nodePart)) {
-			hidingModel.show(nodePart);
+		for (NodeContentPart neighborPart : shownNeighbors) {
+			hidingModel.hide(neighborPart);
 		}
 		return Status.OK_STATUS;
 	}

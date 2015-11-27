@@ -114,6 +114,7 @@ public class SelectOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// TODO: only remove the parts that were really added
 		SelectionModel<VR> selectionModel = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 		selectionModel.removeFromSelection(toBeSelected);

@@ -48,7 +48,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 
 		// create hidden neighbors part if it is already associated with our
 		// host
-		if (hasHiddenNeighbors(getHost().getContent(), getHidingModel())) {
+		if (getHidingModel().hasHiddenNeighbors(getHost())) {
 			createHiddenNeighborsFeedbackPart();
 		}
 	}
@@ -83,7 +83,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 	public void deactivate() {
 		// remove hidden neighbors part if it is currently associated with our
 		// host
-		if (hasHiddenNeighbors(getHost().getContent(), getHidingModel())) {
+		if (getHidingModel().hasHiddenNeighbors(getHost())) {
 			removeHiddenNeighborsFeedbackPart();
 		}
 
@@ -109,10 +109,6 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 	@Override
 	public NodeContentPart getHost() {
 		return (NodeContentPart) super.getHost();
-	}
-
-	private boolean hasHiddenNeighbors(org.eclipse.gef4.graph.Node node, HidingModel hidingModel) {
-		return !hidingModel.getHiddenNeighbors(node).isEmpty();
 	}
 
 	@SuppressWarnings("unchecked")

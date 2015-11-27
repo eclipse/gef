@@ -12,15 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
-import java.util.Set;
-
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
-import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.operations.HideOperation;
+import org.eclipse.gef4.zest.fx.operations.ShowHiddenNeighborsOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import javafx.scene.Node;
@@ -36,7 +32,7 @@ public class ShowHiddenNeighborsPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new ReverseUndoCompositeOperation("Show Hidden Neighbours");
+		return new ReverseUndoCompositeOperation("ShowHiddenNeighbours");
 	}
 
 	@Override
@@ -50,15 +46,8 @@ public class ShowHiddenNeighborsPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	public void showHiddenNeighbors() {
 		checkInitialized();
-		IViewer<javafx.scene.Node> viewer = getHost().getRoot().getViewer();
-		HidingModel hidingModel = viewer.getAdapter(HidingModel.class);
-		Set<org.eclipse.gef4.graph.Node> hiddenNeighbors = hidingModel.getHiddenNeighbors(getHost().getContent());
-		if (hiddenNeighbors != null && !hiddenNeighbors.isEmpty()) {
-			for (org.eclipse.gef4.graph.Node node : hiddenNeighbors) {
-				((AbstractCompositeOperation) getOperation())
-						.add(new HideOperation(viewer, (NodeContentPart) viewer.getContentPartMap().get(node), true));
-			}
-		}
+		((AbstractCompositeOperation) getOperation())
+				.add(new ShowHiddenNeighborsOperation(getHost().getRoot().getViewer(), getHost()));
 		locallyExecuteOperation();
 	}
 
