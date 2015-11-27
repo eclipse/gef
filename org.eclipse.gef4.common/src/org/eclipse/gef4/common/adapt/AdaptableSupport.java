@@ -442,7 +442,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 *            The adapter type.
 	 * @param adapter
 	 *            The adapter to unregister.
-	 * @see IAdaptable#unsetAdapter(AdapterKey)
+	 * @see IAdaptable#unsetAdapter(Object)
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void unsetAdapter(T adapter) {

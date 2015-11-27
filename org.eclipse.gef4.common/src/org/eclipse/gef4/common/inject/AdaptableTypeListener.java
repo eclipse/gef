@@ -128,7 +128,7 @@ public class AdaptableTypeListener implements TypeListener {
 	 * 
 	 * @param method
 	 *            The {@link Method} to test.
-	 * @return <code>true<code> if the method has a compatible signature, <code>false</code>
+	 * @return <code>true</code> if the method has a compatible signature, <code>false</code>
 	 *         otherwise.
 	 */
 	protected boolean hasCompatibleAdapterMapInjectionSignature(final Method method) {
