@@ -59,7 +59,7 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 				// create expand handle at second vertex
 				// but check if we have pruned neighbors, first
 				HidingModel hidingModel = target.getRoot().getViewer().getAdapter(HidingModel.class);
-				if (!hidingModel.hasHiddenNeighbors((NodeContentPart) target)) {
+				if (hidingModel.hasHiddenNeighbors((NodeContentPart) target)) {
 					ShowHiddenNeighborsHoverHandlePart part = injector
 							.getInstance(ShowHiddenNeighborsHoverHandlePart.class);
 					part.setSegmentsProvider(hoverHandlesSegmentsInSceneProvider);
