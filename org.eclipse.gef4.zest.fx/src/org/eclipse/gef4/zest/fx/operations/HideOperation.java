@@ -56,6 +56,7 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (!viewer.getAdapter(HidingModel.class).isHidden(nodePart)) {
 			hidingModel.hide(nodePart);
+			nodePart.deactivate();
 		}
 		return Status.OK_STATUS;
 	}
@@ -73,6 +74,7 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (viewer.getAdapter(HidingModel.class).isHidden(nodePart)) {
+			nodePart.activate();
 			hidingModel.show(nodePart);
 		}
 		return Status.OK_STATUS;

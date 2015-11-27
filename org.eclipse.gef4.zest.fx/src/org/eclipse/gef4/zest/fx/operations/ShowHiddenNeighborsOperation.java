@@ -65,6 +65,7 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 		Set<NodeContentPart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
 		if (hiddenNeighbors != null && !hiddenNeighbors.isEmpty()) {
 			for (NodeContentPart neighborPart : hiddenNeighbors) {
+				neighborPart.activate();
 				hidingModel.show(neighborPart);
 				shownNeighbors.add(neighborPart);
 			}
@@ -87,6 +88,7 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		for (NodeContentPart neighborPart : shownNeighbors) {
 			hidingModel.hide(neighborPart);
+			neighborPart.deactivate();
 		}
 		return Status.OK_STATUS;
 	}

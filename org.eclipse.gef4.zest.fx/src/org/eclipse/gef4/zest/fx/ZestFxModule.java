@@ -62,7 +62,6 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
-import org.eclipse.gef4.zest.fx.policies.FocusAndSelectFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
@@ -101,7 +100,6 @@ public class ZestFxModule extends MvcFxModule {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
 				.to(FXFocusAndSelectOnClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 		// geometry provider for selection feedback
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
@@ -139,6 +137,8 @@ public class ZestFxModule extends MvcFxModule {
 		// hiding
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeHidingBehavior.class)).to(EdgeHidingBehavior.class);
 
+		// feedback and handles
+		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
@@ -168,9 +168,8 @@ public class ZestFxModule extends MvcFxModule {
 		// offset on drag
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "OffsetOnDrag"))
 				.to(OffsetEdgeLabelOnDragPolicy.class);
-		// select anchorage on click
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
-				.to(FocusAndSelectFirstAnchorageOnClickPolicy.class);
+		// hover feedback
+		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 		// selection link feedback
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
@@ -309,9 +308,11 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
 		// resize policy to resize nesting nodes
 		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class)).to(FXResizePolicy.class);
-		// provider
+		// cursor provider
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 		})).to(ChopBoxAnchorProvider.class);
+		// feedback and handles
+		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
 		}, FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 	}
