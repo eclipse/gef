@@ -22,10 +22,10 @@ import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.reflect.TypeToken;
@@ -192,24 +192,6 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 				.remove(hbox);
 	}
 
-	private void create(IContentPart<Node, ? extends Node> contentParent,
-			Object content) {
-		IRootPart<Node, ? extends Node> root = getHost().getRoot();
-		IViewer<Node> viewer = root.getViewer();
-
-		// build create operation
-		CreationPolicy<Node> creationPolicy = root
-				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
-		creationPolicy.init();
-		creationPolicy.create(content, contentParent, HashMultimap
-				.<IContentPart<Node, ? extends Node>, String> create());
-
-		// execute on stack
-		viewer.getDomain().execute(creationPolicy.commit());
-
-		closeMenu();
-	}
-
 	private Node createArrow(final boolean left) {
 		// shape
 		final Polygon arrow = new Polygon();
@@ -320,17 +302,35 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 		double y = boundsInContent.getMinY()
 				- bounds.getMinY() / contentsTransform.getMyy() - dy / 2;
 
+		// close the creation menu
+		closeMenu();
+
 		// create the new semantic element
 		IFXCreationMenuItem item = items.get(currentItemIndex);
 		Object toCreate = item.createContent();
-		create(item.findContentParent(getHost().getRoot()), toCreate);
+
+		// build create operation
+		IRootPart<Node, ? extends Node> root = getHost().getRoot();
+		CreationPolicy<Node> creationPolicy = root
+				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
+		creationPolicy.init();
+		IContentPart<Node, ? extends Node> contentPart = creationPolicy
+				.create(toCreate, item.findContentParent(root), HashMultimap
+						.<IContentPart<Node, ? extends Node>, String> create());
 
 		// relocate to final position
-		FXTransformPolicy txPolicy = getViewer().getContentPartMap()
-				.get(toCreate).getAdapter(FXTransformPolicy.class);
+		FXTransformPolicy txPolicy = contentPart
+				.getAdapter(FXTransformPolicy.class);
 		txPolicy.init();
 		txPolicy.setTransform(new AffineTransform(1, 0, 0, 1, x, y));
-		getViewer().getDomain().execute(txPolicy.commit());
+
+		// assemble operations
+		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
+				"CreateOnClick");
+		rev.add(creationPolicy.commit());
+		rev.add(txPolicy.commit());
+
+		getViewer().getDomain().execute(rev);
 	}
 
 	private void openMenu(final MouseEvent e) {
