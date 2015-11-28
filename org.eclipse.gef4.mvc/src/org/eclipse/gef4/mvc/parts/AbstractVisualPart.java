@@ -38,7 +38,6 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 
 /**
  * The {@link AbstractVisualPart} is an abstract implementation of the
@@ -432,17 +431,17 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	protected abstract void doRefreshVisual(V visual);
 
 	@Override
-	public <T> T getAdapter(AdapterKey<? super T> key) {
+	public <T> T getAdapter(AdapterKey<T> key) {
 		return ads.getAdapter(key);
 	}
 
 	@Override
-	public <T> T getAdapter(Class<? super T> classKey) {
+	public <T> T getAdapter(Class<T> classKey) {
 		return ads.getAdapter(classKey);
 	}
 
 	@Override
-	public <T> T getAdapter(TypeToken<? super T> key) {
+	public <T> T getAdapter(TypeToken<T> key) {
 		return ads.getAdapter(key);
 	}
 
@@ -663,26 +662,24 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	@Override
-	@Inject(optional = true)
-	public <T> void setAdapter(@AdapterMap AdapterKey<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		ads.setAdapter(key, adapterType, adapter);
+	public <T> void setAdapter(T adapter) {
+		ads.setAdapter(adapter);
 	}
 
 	@Override
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
-		ads.setAdapter(key, adapter);
+	public <T> void setAdapter(T adapter, String role) {
+		ads.setAdapter(adapter, role);
 	}
 
 	@Override
-	public <T> void setAdapter(Class<T> key, T adapter) {
-		ads.setAdapter(key, adapter);
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
+		ads.setAdapter(adapterType, adapter);
 	}
 
 	@Override
-	public <T> void setAdapter(TypeToken<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		ads.setAdapter(key, adapterType, adapter);
+	public <T> void setAdapter(@AdapterMap TypeToken<T> adapterType, T adapter,
+			String role) {
+		ads.setAdapter(adapterType, adapter, role);
 	}
 
 	/**
@@ -694,7 +691,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			return;
 		}
 
-		// save old parent for the change notifictaion
+		// save old parent for the change notification
 		IVisualPart<VR, ? extends VR> oldParent = this.parent;
 
 		// determine viewer before and after setting the parent

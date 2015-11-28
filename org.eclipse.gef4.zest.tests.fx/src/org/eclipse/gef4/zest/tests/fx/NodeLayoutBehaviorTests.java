@@ -14,7 +14,6 @@ package org.eclipse.gef4.zest.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -26,7 +25,6 @@ import org.eclipse.gef4.mvc.fx.parts.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
@@ -57,10 +55,10 @@ public class NodeLayoutBehaviorTests {
 				if (host == null) {
 					host = new NodeContentPart() {
 						{
-							setAdapter(AdapterKey.get(FXResizePolicy.class), new FXResizePolicy());
+							setAdapter(new FXResizePolicy());
 							FXTransformProvider transformProvider = new FXTransformProvider();
-							setAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY, transformProvider);
-							setAdapter(AdapterKey.get(FXTransformPolicy.class), new FXTransformPolicy());
+							setAdapter(transformProvider, FXTransformPolicy.TRANSFORM_PROVIDER_KEY.getRole());
+							setAdapter(new FXTransformPolicy());
 							Affine affine = transformProvider.get();
 							affine.setTx(location.x);
 							affine.setTy(location.y);
@@ -84,7 +82,7 @@ public class NodeLayoutBehaviorTests {
 					};
 					FXRootPart rootPart = new FXRootPart();
 					FXViewer viewer = new FXViewer();
-					viewer.setAdapter(IRootPart.class, rootPart);
+					viewer.setAdapter(rootPart);
 					host.setParent(rootPart);
 				}
 				return host;

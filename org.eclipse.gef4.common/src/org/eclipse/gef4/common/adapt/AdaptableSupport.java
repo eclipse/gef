@@ -13,7 +13,9 @@ package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,8 +35,7 @@ import com.google.common.reflect.TypeToken;
  * <p>
  * In addition to the source {@link IAdaptable} a {@link PropertyChangeSupport}
  * is expected to be passe in during construction. It will be used to fire
- * {@link PropertyChangeEvent}s whenever an adapter is set (
- * {@link #setAdapter(AdapterKey, TypeToken, Object)}) or unset (
+ * {@link PropertyChangeEvent}s whenever an adapter is set or unset (
  * {@link #unsetAdapter(Object)}). {@link IAdaptable#ADAPTERS_PROPERTY} will be
  * used as the property name within all change events.
  * <p>
@@ -60,7 +61,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	private A source;
 	private PropertyChangeSupport pcs;
 	private Map<AdapterKey<?>, Object> adapters;
-	private Map<Object, TypeToken<?>> adapterTypes;
 
 	/**
 	 * Creates a new {@link AdaptableSupport} for the given source
@@ -115,7 +115,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * 
 	 * @see IAdaptable#getAdapter(AdapterKey)
 	 */
-	public <T> T getAdapter(AdapterKey<? super T> key) {
+	public <T> T getAdapter(AdapterKey<T> key) {
 		if (adapters == null) {
 			return null;
 		}
@@ -149,7 +149,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * 
 	 * @see IAdaptable#getAdapter(Class)
 	 */
-	public <T> T getAdapter(Class<? super T> key) {
+	public <T> T getAdapter(Class<T> key) {
 		return this.<T> getAdapter(TypeToken.of(key));
 	}
 
@@ -171,7 +171,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * 
 	 * @see IAdaptable#getAdapter(TypeToken)
 	 */
-	public <T> T getAdapter(TypeToken<? super T> key) {
+	public <T> T getAdapter(TypeToken<T> key) {
 		// if we have only one adapter (instance) for the given type key
 		// (disregarding the
 		// role), return this one
@@ -200,7 +200,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * @return A map containing the registered adapters under their
 	 *         {@link AdapterKey}s as a copy.
 	 */
-	protected Map<AdapterKey<?>, Object> getAdapters() {
+	public Map<AdapterKey<?>, Object> getAdapters() {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
@@ -277,44 +277,76 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
+
 		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
 		if (adapters != null) {
 			for (AdapterKey<?> k : adapters.keySet()) {
-				if (k.getKey().isAssignableFrom(typeKey)
-						&& typeKey.isAssignableFrom(
-								adapterTypes.get(adapters.get(k)))
-						&& (role == null || k.getRole().equals(role))) {
-					// check type compliance...
-					typeSafeAdapters.put((AdapterKey<? extends T>) k,
-							(T) adapters.get(k));
+				if (role == null || k.getRole().equals(role)) {
+					// return all adapters assignable to the given type key
+					if (typeKey.isAssignableFrom(k.getKey())) {
+						typeSafeAdapters.put((AdapterKey<? extends T>) k,
+								(T) adapters.get(k));
+
+					}
 				}
 			}
 		}
 		return typeSafeAdapters;
 	}
 
+	private <T> boolean isRawType(TypeToken<? super T> typeKey) {
+		return !(typeKey.getType() instanceof ParameterizedType);
+	}
+
 	/**
-	 * Registers the given adapter under an {@link AdapterKey}, which will use a
-	 * {@link TypeToken} representing the given {@link Class} key, i.e. using
-	 * {@link TypeToken#of(Class)}, as well as the default role (see
+	 * Registers the given adapter under the default role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}.
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
-	 *            The {@link Class} under which to register the given adapter.
 	 * @param adapter
 	 *            The adapter to register under the given {@link Class} key.
 	 * 
-	 * @see IAdaptable#setAdapter(Class, Object)
+	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> void setAdapter(Class<T> key, T adapter) {
-		if (adapter.getClass().getTypeParameters().length > 0) {
+	public <T> void setAdapter(T adapter) {
+		TypeToken<T> actualType = TypeToken.of((Class<T>) adapter.getClass());
+		if (!isRawType(actualType)) {
 			throw new IllegalArgumentException("Adapter " + adapter
-					+ " needs to be registered with runtime type information, because its not a raw type and its parameter type cannot be inferred.");
+					+ " has no raw type, thus needs to be registered with a type key reflecting its actual type");
 		}
-		setAdapter(TypeToken.of(key), TypeToken.of((Class<T>) adapter.getClass()), adapter);
+		setAdapter(actualType, adapter);
+	}
+
+	/**
+	 * Registers the given adapter under the given role .
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param adapter
+	 *            The adapter to register.
+	 * @param role
+	 *            The role to register this adapter with.
+	 * 
+	 * @see IAdaptable#setAdapter(TypeToken, Object)
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> void setAdapter(T adapter, String role) {
+		// TODO: these checks do not seem to be valid...
+		TypeToken<T> actualType = TypeToken.of((Class<T>) adapter.getClass());
+		if (!isRawType(actualType)) {
+			// check that all parameters are bound to actual types
+			for (Type argument : ((ParameterizedType) actualType.getType())
+					.getActualTypeArguments()) {
+				if (argument instanceof TypeVariable) {
+					throw new IllegalArgumentException("Adapter " + adapter
+							+ " has no raw type, thus needs to be registered with a type key reflecting its actual type");
+				}
+			}
+		}
+
+		setAdapter(actualType, adapter, role);
 	}
 
 	/**
@@ -324,55 +356,60 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
-	 *            The {@link TypeToken} under which to register the given
-	 *            adapter.
 	 * @param adapterType
-	 *            The runtime type of the given adapter.
+	 *            The {@link TypeToken} reflecting the actual type of the
+	 *            adapter.
 	 * @param adapter
-	 *            The adapter to register under the given {@link TypeToken} key.
+	 *            The adapter to register.
 	 * 
-	 * @see IAdaptable#setAdapter(TypeToken, TypeToken, Object)
 	 */
-	public <T> void setAdapter(TypeToken<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		setAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE), adapterType,
-				adapter);
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
+		setAdapter(adapterType, adapter, AdapterKey.DEFAULT_ROLE);
 	}
 
 	/**
 	 * Registers the given adapter under the given {@link AdapterKey}. The
-	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
-	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
-	 * {@link AdapterKey#getKey()}).
+	 * {@link AdapterKey} should provide the actual type of the adapter plus a
+	 * role.
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
-	 *            The {@link AdapterKey} under which to register the given
-	 *            adapter.
 	 * @param adapterType
-	 *            The runtime type of the to be registered adapter.
+	 *            A {@link TypeToken} representing the actual type of the given
+	 *            adapter.
 	 * @param adapter
-	 *            The adapter to register under the given {@link AdapterKey}.
+	 *            The adapter to register.
+	 * @param role
+	 *            The role under which to register the adapter.
 	 * 
-	 * @see IAdaptable#setAdapter(AdapterKey, TypeToken, Object)
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> void setAdapter(AdapterKey<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		if (!key.getKey().isAssignableFrom(adapterType)) {
-			throw new IllegalArgumentException("Key type "
-					+ key.getKey().getType().getClass().getSimpleName()
-					+ " is not assignable from adapter type "
-					+ adapterType.getType().getClass().getSimpleName());
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
+			String role) {
+		// TODO: check if we can make that even better (now we restrict the
+		// check to raw types)
+		if (!adapterType.getRawType().isAssignableFrom(adapter.getClass())
+				|| !adapter.getClass()
+						.isAssignableFrom(adapterType.getRawType())) {
+			throw new IllegalArgumentException("The given adapter type "
+					+ adapterType.getType().getClass().getSimpleName()
+					+ " does not match the passed in adapter's type "
+					+ adapter.getClass().getSimpleName());
 		}
 
 		if (adapters == null) {
 			adapters = new HashMap<AdapterKey<?>, Object>();
 		}
-		if (adapterTypes == null) {
-			adapterTypes = new HashMap<Object, TypeToken<?>>();
+
+		AdapterKey<T> key = AdapterKey.get(adapterType, role);
+		if (adapters.containsKey(key)) {
+			if (adapters.get(key) != adapter) {
+				throw new IllegalArgumentException("A different adapter ("
+						+ adapter + ") is already registered with key " + key + " at adaptable " + source);
+			} else {
+				System.err.println("The adapter " + adapter
+						+ " was already registered with key " + key);
+			}
 		}
 
 		// deactivate already registered adapters, if adaptable is IActivatable
@@ -386,15 +423,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 				adapters);
 
 		adapters.put(key, adapter);
-		if (adapterTypes.containsKey(adapter)) {
-			TypeToken<?> registeredAdapterType = adapterTypes.get(adapter);
-			if (registeredAdapterType.isAssignableFrom(adapterType)) {
-				adapterTypes.put(adapter, adapterType);
-			}
-		} else {
-			adapterTypes.put(adapter, adapterType);
-		}
-
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
 		}
@@ -411,31 +439,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	}
 
 	/**
-	 * Registers the given adapter under the given {@link AdapterKey}. The
-	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
-	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
-	 * {@link AdapterKey#getKey()}).
-	 * 
-	 * @param <T>
-	 *            The adapter type.
-	 * @param key
-	 *            The {@link AdapterKey} under which to register the given
-	 *            adapter.
-	 * @param adapter
-	 *            The adapter to register under the given {@link AdapterKey}.
-	 * 
-	 * @see IAdaptable#setAdapter(AdapterKey, Object)
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
-		if (adapter.getClass().getTypeParameters().length > 0) {
-			throw new IllegalArgumentException("Adapter " + adapter
-					+ " needs to be registered with runtime type information, because its not a raw type and its parameter type cannot be inferred.");
-		}
-		setAdapter(key, TypeToken.of((Class<T>) adapter.getClass()), adapter);
-	}
-
-	/**
 	 * Unregisters the adapter, returning it for convenience.
 	 * 
 	 * @param <T>
@@ -447,7 +450,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	@SuppressWarnings("unchecked")
 	public <T> void unsetAdapter(T adapter) {
 		if (adapters == null || !adapters.containsValue(adapter)) {
-			throw new IllegalArgumentException("Given key is not registered.");
+			throw new IllegalArgumentException(
+					"Given adapter is not registered.");
 		}
 
 		// deactivate already registered adapters, if adaptable is IActivatable
@@ -466,7 +470,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 				adapters.remove(key);
 			}
 		}
-		adapterTypes.remove(adapter);
 
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(null);

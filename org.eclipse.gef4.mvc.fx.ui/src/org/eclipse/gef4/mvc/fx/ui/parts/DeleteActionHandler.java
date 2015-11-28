@@ -24,6 +24,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.ActionFactory;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 
 /**
@@ -54,11 +56,13 @@ public class DeleteActionHandler extends Action {
 		setEnabled(false);
 	}
 
+	@SuppressWarnings("serial")
 	private SelectionModel<Node> getSelectionModel() {
 		if (viewer == null) {
 			return null;
 		}
-		return viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+		return viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
+		});
 	}
 
 	/**
@@ -68,13 +72,15 @@ public class DeleteActionHandler extends Action {
 	 *            The {@link FXViewer} to bind this {@link Action} to. May be
 	 *            <code>null</code> to unbind this action.
 	 */
+	@SuppressWarnings("serial")
 	public void init(FXViewer viewer) {
 		SelectionModel<Node> oldSelectionModel = getSelectionModel();
 		SelectionModel<Node> newSelectionModel = null;
 		this.viewer = viewer;
 		if (viewer != null) {
 			newSelectionModel = viewer
-					.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+					.getAdapter(new TypeToken<SelectionModel<Node>>() {
+					});
 		}
 		// register listeners to update enabled state
 		if (oldSelectionModel != null
@@ -88,11 +94,13 @@ public class DeleteActionHandler extends Action {
 		updateEnabledState(newSelectionModel);
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void runWithEvent(Event event) {
 		// delete selected parts
 		DeletionPolicy<Node> deletionPolicy = viewer.getRootPart()
-				.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
+				.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
+				});
 		if (deletionPolicy == null) {
 			throw new IllegalStateException(
 					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");

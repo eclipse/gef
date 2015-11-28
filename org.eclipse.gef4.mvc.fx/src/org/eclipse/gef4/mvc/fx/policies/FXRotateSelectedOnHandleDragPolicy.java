@@ -26,6 +26,8 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -81,10 +83,11 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	 * @return A {@link List} containing the whole {@link SelectionModel
 	 *         selection}.
 	 */
+	@SuppressWarnings("serial")
 	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelection();
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection();
 	}
 
 	/**

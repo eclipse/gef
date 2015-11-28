@@ -20,9 +20,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The {@link SelectOperation} can be used to change the {@link SelectionModel}
@@ -85,8 +89,7 @@ public class SelectOperation<VR> extends AbstractOperation
 		this.viewer = viewer;
 		this.toBeSelected = new ArrayList<IContentPart<VR, ? extends VR>>(
 				toBeSelected);
-		SelectionModel<VR> selectionModel = viewer
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = getSelectionModel();
 		initialSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
 				selectionModel.getSelection());
 	}
@@ -94,10 +97,23 @@ public class SelectOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		SelectionModel<VR> selectionModel = viewer
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = getSelectionModel();
 		selectionModel.prependToSelection(toBeSelected);
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Returns the {@link SelectionModel} adapted to the viewer.
+	 *
+	 * @return The {@link SelectionModel} adapter.
+	 */
+	@SuppressWarnings("serial")
+	protected SelectionModel<VR> getSelectionModel() {
+		SelectionModel<VR> selectionModel = viewer
+				.getAdapter(new TypeToken<SelectionModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return selectionModel;
 	}
 
 	@Override
@@ -115,8 +131,7 @@ public class SelectOperation<VR> extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		// TODO: only remove the parts that were really added
-		SelectionModel<VR> selectionModel = viewer
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = getSelectionModel();
 		selectionModel.removeFromSelection(toBeSelected);
 		return Status.OK_STATUS;
 	}

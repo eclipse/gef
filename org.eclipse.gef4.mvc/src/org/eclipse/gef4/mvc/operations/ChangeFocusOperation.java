@@ -17,9 +17,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The {@link ChangeFocusOperation} can be used to change the {@link FocusModel}
@@ -52,39 +56,18 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 	/**
 	 * Creates a new {@link ChangeFocusOperation} to assign focus to the given
 	 * <i>newFocused</i> {@link IContentPart} within the given {@link IViewer}.
-	 *
-	 * @param viewer
-	 *            The {@link IViewer} for which the {@link FocusModel} is to be
-	 *            changed.
-	 * @param newFocused
-	 *            The {@link IContentPart} to which focus will be assigned.
-	 */
-	public ChangeFocusOperation(IViewer<VR> viewer,
-			IContentPart<VR, ? extends VR> newFocused) {
-		this(DEFAULT_LABEL, viewer, viewer
-				.<FocusModel<VR>> getAdapter(FocusModel.class).getFocused(),
-				newFocused);
-	}
-
-	/**
-	 * Creates a new {@link ChangeFocusOperation} to assign focus to the given
-	 * <i>newFocused</i> {@link IContentPart} within the given {@link IViewer}.
 	 * When the operation is undone, focus is assigned to the given
 	 * <i>oldFocused</i> {@link IContentPart}.
 	 *
 	 * @param viewer
 	 *            The {@link IViewer} for which the {@link FocusModel} is to be
 	 *            changed.
-	 * @param oldFocused
-	 *            The {@link IContentPart} to which focus will be assigned when
-	 *            undoing this operation.
 	 * @param newFocused
 	 *            The {@link IContentPart} to which focus will be assigned.
 	 */
 	public ChangeFocusOperation(IViewer<VR> viewer,
-			IContentPart<VR, ? extends VR> oldFocused,
 			IContentPart<VR, ? extends VR> newFocused) {
-		this(DEFAULT_LABEL, viewer, oldFocused, newFocused);
+		this(DEFAULT_LABEL, viewer, newFocused);
 	}
 
 	/**
@@ -99,27 +82,36 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 	 * @param viewer
 	 *            The {@link IViewer} for which the {@link FocusModel} is to be
 	 *            changed.
-	 * @param oldFocused
-	 *            The {@link IContentPart} to which focus will be assigned when
-	 *            undoing this operation.
 	 * @param newFocused
 	 *            The {@link IContentPart} to which focus will be assigned.
 	 */
 	public ChangeFocusOperation(String label, IViewer<VR> viewer,
-			IContentPart<VR, ? extends VR> oldFocused,
 			IContentPart<VR, ? extends VR> newFocused) {
 		super(label);
 		this.viewer = viewer;
-		this.oldFocused = oldFocused;
+		this.oldFocused = getFocusModel().getFocused();
 		this.newFocused = newFocused;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.<FocusModel<VR>> getAdapter(FocusModel.class)
-				.setFocused(newFocused);
+		getFocusModel().setFocused(newFocused);
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Returns the {@link FocusModel} adapted to the viewer.
+	 *
+	 * @return The {@link FocusModel} adapter.
+	 */
+	@SuppressWarnings("serial")
+	protected FocusModel<VR> getFocusModel() {
+		FocusModel<VR> focusModel = viewer
+				.getAdapter(new TypeToken<FocusModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return focusModel;
 	}
 
 	@Override
@@ -146,8 +138,7 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.<FocusModel<VR>> getAdapter(FocusModel.class)
-				.setFocused(oldFocused);
+		getFocusModel().setFocused(oldFocused);
 		return Status.OK_STATUS;
 	}
 

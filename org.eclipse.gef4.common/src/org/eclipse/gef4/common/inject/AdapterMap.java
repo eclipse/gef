@@ -18,7 +18,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
 import com.google.common.reflect.TypeToken;
@@ -32,7 +31,7 @@ import com.google.inject.multibindings.MapBinderBinding;
 /**
  * A Guice {@link BindingAnnotation} that can be used to annotate the first
  * parameter (of type <code>AdapterKey</code>) of an {@link IAdaptable}
- * implementer's {@link IAdaptable#setAdapter(AdapterKey, TypeToken, Object)}'s
+ * implementer's {@link IAdaptable#setAdapter(TypeToken, Object, String)}'s
  * method (which is in addition annotated with {@link Inject}) to make it
  * eligible for adapter map injection. The annotation is also used to qualify
  * related {@link AdapterMap} bindings (i.e. specific {@link MapBinderBinding}s)

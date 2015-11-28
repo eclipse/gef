@@ -118,7 +118,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 *         {@link AdapterKey} or <code>null</code> if none could be
 	 *         retrieved.
 	 */
-	public <T> T getAdapter(AdapterKey<? super T> key);
+	public <T> T getAdapter(AdapterKey<T> key);
 
 	/**
 	 * Returns an adapter for the given {@link Class} key if one can
@@ -144,7 +144,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * @return The unambiguously retrievable adapter for the given {@link Class}
 	 *         key or <code>null</code> if none could be retrieved.
 	 */
-	public <T> T getAdapter(Class<? super T> key);
+	public <T> T getAdapter(Class<T> key);
 
 	/**
 	 * Returns an adapter for the given {@link TypeToken} key if one can
@@ -173,7 +173,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 *         {@link TypeToken} key or <code>null</code> if none could be
 	 *         retrieved.
 	 */
-	public <T> T getAdapter(TypeToken<? super T> key);
+	public <T> T getAdapter(TypeToken<T> key);
 
 	/**
 	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
@@ -219,52 +219,6 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 			TypeToken<? super T> key);
 
 	/**
-	 * Registers the given adapter under the given {@link AdapterKey}. The
-	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
-	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
-	 * {@link AdapterKey#getKey()}). The adapter may afterwards be retrieved by
-	 * any type key 'in between' the given key type and actual raw type. If the
-	 * actual type of the parameter is not a raw type but a parameterized type,
-	 * it is not legitimate to use this method.
-	 * <p>
-	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
-	 * will obtain a back-reference to this {@link IAdaptable} via its
-	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
-	 * 
-	 * @param <T>
-	 *            The adapter type.
-	 * @param key
-	 *            The {@link AdapterKey} under which to register the given
-	 *            adapter.
-	 * @param adapter
-	 *            The adapter to register under the given {@link AdapterKey}.
-	 */
-	public <T> void setAdapter(AdapterKey<T> key, T adapter);
-
-	/**
-	 * Registers the given adapter under the given {@link AdapterKey}. The
-	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
-	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
-	 * {@link AdapterKey#getKey()}).
-	 * <p>
-	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
-	 * will obtain a back-reference to this {@link IAdaptable} via its
-	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
-	 * 
-	 * @param <T>
-	 *            The adapter type.
-	 * @param key
-	 *            The {@link AdapterKey} under which to register the given
-	 *            adapter.
-	 * @param adapterType
-	 *            The runtime type of the adapter to register.
-	 * @param adapter
-	 *            The adapter to register under the given {@link AdapterKey}.
-	 */
-	public <T> void setAdapter(AdapterKey<? super T> key,
-			TypeToken<T> adapterType, T adapter);
-
-	/**
 	 * Registers the given adapter under an {@link AdapterKey}, which takes the
 	 * given raw type key as well as the 'default' role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}. The adapter may afterwards be retrieved
@@ -278,24 +232,30 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param rawTypeKey
-	 *            The {@link Class} raw type key under which to register the
-	 *            given adapter.
 	 * @param adapter
 	 *            The adapter to register under the given {@link Class} key.
-	 * 
-	 * @see #setAdapter(AdapterKey, Object)
+	 *            
+	 * @see IAdaptable#setAdapter(Object, String)
 	 */
-	public <T> void setAdapter(Class<T> rawTypeKey, T adapter);
+	public <T> void setAdapter(T adapter);
 
 	/**
-	 * Registers the given adapter under an {@link AdapterKey}, which takes the
-	 * given type key as well as the 'default' role (see
-	 * {@link AdapterKey#DEFAULT_ROLE}. Internally also stores the actual type
-	 * of the adapter that is given, so that the adapter may afterwards be
-	 * retrieved by any type key 'in between' the given key type and actual
-	 * type. The actual type has to be provided for parameterized types, where
-	 * it cannot be inferred from the instance due to type erasure.
+	 * Registers the given adapter under the given role .
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param adapter
+	 *            The adapter to register.
+	 * @param role
+	 *            The role to register this adapter with.
+	 * 
+	 * @see IAdaptable#setAdapter(TypeToken, Object)
+	 */
+	public <T> void setAdapter(T adapter, String role);
+	
+	/**
+	 * Registers the given adapter under the 'default' role (see
+	 * {@link AdapterKey#DEFAULT_ROLE}.
 	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
@@ -303,18 +263,36 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param typeKey
-	 *            The {@link TypeToken} under which to register the given
-	 *            adapter.
 	 * @param adapterType
-	 *            The actual type of the adapter to register.
+	 *            The {@link TypeToken} under which to register the given
+	 *            adapter, which should reflect the actual adapter type.
 	 * @param adapter
 	 *            The adapter to register under the given {@link TypeToken} key.
 	 * 
-	 * @see #setAdapter(AdapterKey, TypeToken, Object)
+	 * @see #setAdapter(TypeToken, Object, String)
 	 */
-	public <T> void setAdapter(TypeToken<? super T> typeKey,
-			TypeToken<T> adapterType, T adapter);
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter);
+
+	/**
+	 * Registers the given adapter under the given role.
+	 * <p>
+	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
+	 * will obtain a back-reference to this {@link IAdaptable} via its
+	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param adapterType
+	 *            A {@link TypeToken} representing the actual type of the given
+	 *            adapter.
+	 * @param adapter
+	 *            The adapter to register.
+	 * @param role
+	 *            The role under which to register the adapter.
+	 * 
+	 */
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
+			String role);
 
 	/**
 	 * Unregisters the given adapter under all keys it was registered for.

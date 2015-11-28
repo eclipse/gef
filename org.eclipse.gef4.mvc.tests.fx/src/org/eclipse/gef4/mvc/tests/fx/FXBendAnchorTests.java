@@ -46,7 +46,6 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -260,7 +259,7 @@ public class FXBendAnchorTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.<FXViewer> getAdapter(IViewer.class);
+		final FXViewer viewer = domain.getAdapter(FXViewer.class);
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners

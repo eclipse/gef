@@ -15,14 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.Node;
-
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -30,6 +26,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
+
+import javafx.scene.Node;
 
 public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 
@@ -50,13 +48,11 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 				&& segmentIndex + segmentParameter < segmentCount) {
 			// make way points (middle segment vertices) draggable
 			// TODO: binding the following policy requires dynamic binding
-			part.setAdapter(AdapterKey.get(AbstractFXOnDragPolicy.class),
-					new FXBendOnSegmentHandleDragPolicy());
+			part.setAdapter(new FXBendOnSegmentHandleDragPolicy());
 		} else {
 			// make end points reconnectable
 			// TODO: binding the following policy requires dynamic binding
-			part.setAdapter(AdapterKey.get(AbstractFXOnDragPolicy.class),
-					new FXBendOnSegmentHandleDragPolicy());
+			part.setAdapter(new FXBendOnSegmentHandleDragPolicy());
 		}
 
 		return part;

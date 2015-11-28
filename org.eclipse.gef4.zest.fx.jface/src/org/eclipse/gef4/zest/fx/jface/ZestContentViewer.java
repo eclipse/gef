@@ -36,7 +36,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -168,7 +167,7 @@ public class ZestContentViewer extends ContentViewer {
 		domain = injector.getInstance(FXDomain.class);
 
 		// hook viewer
-		viewer = domain.getAdapter(IViewer.class);
+		viewer = domain.getAdapter(FXViewer.class);
 		canvas.setScene(new Scene(viewer.getCanvas()));
 
 		getSelectionModel().addPropertyChangeListener(selectionNotifier);
@@ -484,7 +483,8 @@ public class ZestContentViewer extends ContentViewer {
 		// construct a new selection by using the selection model contents
 		List<Object> selectedContents = new ArrayList<Object>();
 		SelectionModel<javafx.scene.Node> selectionModel = getSelectionModel();
-		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel.getSelection()) {
+		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel
+				.getSelection()) {
 			selectedContents.add(selectedPart.getContent());
 		}
 		return new StructuredSelection(selectedContents);

@@ -32,7 +32,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 
 /**
  *
@@ -113,17 +112,17 @@ public abstract class AbstractViewer<VR>
 	}
 
 	@Override
-	public <T> T getAdapter(AdapterKey<? super T> key) {
+	public <T> T getAdapter(AdapterKey<T> key) {
 		return ads.getAdapter(key);
 	}
 
 	@Override
-	public <T> T getAdapter(Class<? super T> classKey) {
+	public <T> T getAdapter(Class<T> classKey) {
 		return ads.getAdapter(classKey);
 	}
 
 	@Override
-	public <T> T getAdapter(TypeToken<? super T> key) {
+	public <T> T getAdapter(TypeToken<T> key) {
 		return ads.getAdapter(key);
 	}
 
@@ -155,9 +154,12 @@ public abstract class AbstractViewer<VR>
 		return domain;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public IRootPart<VR, ? extends VR> getRootPart() {
-		return ads.<IRootPart<VR, ? extends VR>> getAdapter(IRootPart.class);
+		return ads.getAdapter(
+				new TypeToken<IRootPart<VR, ? extends VR>>(getClass()) {
+				});
 	}
 
 	/**
@@ -187,26 +189,24 @@ public abstract class AbstractViewer<VR>
 	}
 
 	@Override
-	@Inject(optional = true)
-	public <T> void setAdapter(@AdapterMap AdapterKey<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		ads.setAdapter(key, adapterType, adapter);
+	public <T> void setAdapter(T adapter) {
+		ads.setAdapter(adapter);
 	}
 
 	@Override
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
-		ads.setAdapter(key, adapter);
+	public <T> void setAdapter(T adapter, String role) {
+		ads.setAdapter(adapter, role);
 	}
 
 	@Override
-	public <T> void setAdapter(Class<T> key, T adapter) {
-		ads.setAdapter(key, adapter);
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
+		ads.setAdapter(adapterType, adapter);
 	}
 
 	@Override
-	public <T> void setAdapter(TypeToken<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		ads.setAdapter(key, adapterType, adapter);
+	public <T> void setAdapter(@AdapterMap TypeToken<T> adapterType, T adapter,
+			String role) {
+		ads.setAdapter(adapterType, adapter, role);
 	}
 
 	@Override

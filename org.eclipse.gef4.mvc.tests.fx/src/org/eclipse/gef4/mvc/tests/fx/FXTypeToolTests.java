@@ -27,7 +27,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -104,7 +103,7 @@ public class FXTypeToolTests {
 		});
 		injector.injectMembers(this);
 
-		InfiniteCanvas infiniteCanvas = domain.<FXViewer> getAdapter(IViewer.class).getCanvas();
+		InfiniteCanvas infiniteCanvas = domain.getAdapter(FXViewer.class).getCanvas();
 		ctx.createScene(infiniteCanvas, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners

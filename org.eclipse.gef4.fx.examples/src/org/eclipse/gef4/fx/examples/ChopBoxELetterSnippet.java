@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
@@ -203,14 +202,12 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private void attachToChopBoxAnchor(final AnchorKey ak,
 			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
 		AdapterStore as = new AdapterStore();
-		as.setAdapter(
-				AdapterKey.get(ChopBoxAnchor.IReferencePointProvider.class),
-				new ChopBoxAnchor.IReferencePointProvider() {
-					@Override
-					public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
-						return referencePointProperty;
-					}
-				});
+		as.setAdapter(new ChopBoxAnchor.IReferencePointProvider() {
+			@Override
+			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
+				return referencePointProperty;
+			}
+		});
 		chopBoxAnchor.attach(ak, as);
 		updateChopBoxLines(ak);
 	}

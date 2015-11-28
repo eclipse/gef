@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
 import com.google.common.reflect.TypeToken;
@@ -100,10 +99,39 @@ public class AdaptableTypeListener implements TypeListener {
 					// we have a method annotated with AdapterBinding
 					if (adapterMapAnnotation != null) {
 						if (hasCompatibleAdapterMapInjectionSignature(method)) {
+							// XXX: The AdapterMapInjector is only capable of
+							// injecting into a method with a specific
+							// signature. We have to ensure that it is valid
+							// here.
 							encounter.addError(
-									"AdapterBinding annotation may only be applied to operation with operand types (AdapterKey, TypeToken, Object).",
+									"@AdapterMap annotation may only be applied to operation with signature 'setAdapter(TypeToken, Object, String)'.",
 									method);
 						}
+						if (!IAdaptable.class.equals(
+								adapterMapAnnotation.adaptableType())) {
+							// XXX: As the adaptable type in the @AdapterMap
+							// method annotation is never evaluated (but the
+							// actual adaptable type is used instead),
+							// specifying a type is not appropriate.
+							encounter.addError(
+									"Except when being used in bindings, @AdapterMap annotation may never specify an adaptable type. Please remove the specified type so that the default is used.",
+									method);
+						}
+
+						// XXX: If the method specifying an @AdapterMap
+						// annotation (on its first parameter) also specifies an
+						// @Inject annotation, the default injector will already
+						// inject all injection points, where the adaptableType
+						// in the method parameter annotation is the same as the
+						// one used in the key annotation. We thus guard this
+						// here to prevent any interference.
+						Inject injectAnnotation = method
+								.getAnnotation(Inject.class);
+						if (injectAnnotation != null) {
+							encounter.addError(
+									"To prevent that Guice member injection interferes with adapter injection, no @Inject annotation may be used on a method that provides an @AdapterMap annotation.");
+						}
+
 						// TODO: check parameter types are appropriate
 						// System.out.println("Registering member injector to "
 						// + type);
@@ -124,18 +152,19 @@ public class AdaptableTypeListener implements TypeListener {
 
 	/**
 	 * Checks that the given method complies to the signature of
-	 * {@link IAdaptable#setAdapter(AdapterKey, TypeToken, Object)}.
+	 * {@link IAdaptable#setAdapter(TypeToken, Object, String)}.
 	 * 
 	 * @param method
 	 *            The {@link Method} to test.
-	 * @return <code>true</code> if the method has a compatible signature, <code>false</code>
-	 *         otherwise.
+	 * @return <code>true</code> if the method has a compatible signature,
+	 *         <code>false</code> otherwise.
 	 */
-	protected boolean hasCompatibleAdapterMapInjectionSignature(final Method method) {
+	protected boolean hasCompatibleAdapterMapInjectionSignature(
+			final Method method) {
 		try {
 			Method adaptableMethod = IAdaptable.class
 					.getDeclaredMethod("setAdapter", new Class[] {
-							AdapterKey.class, TypeToken.class, Object.class });
+							TypeToken.class, Object.class, String.class });
 			return method.toString().equals(adaptableMethod);
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();

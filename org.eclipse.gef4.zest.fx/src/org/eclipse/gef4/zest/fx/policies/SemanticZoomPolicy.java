@@ -32,6 +32,8 @@ import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -115,6 +117,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		super.init();
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
 		// long startTimeNanos = System.nanoTime();
@@ -181,8 +184,8 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 
 		// synchronize content children of nesting node parts
 		for (NodeContentPart nestingNodePart : findNestingNodes()) {
-			nestingNodePart.<ContentBehavior<Node>> getAdapter(ContentBehavior.class)
-					.synchronizeContentChildren(nestingNodePart.getContentChildren());
+			nestingNodePart.getAdapter(new TypeToken<ContentBehavior<Node>>() {
+			}).synchronizeContentChildren(nestingNodePart.getContentChildren());
 		}
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /
 		// 1000 / 1000 + "ms");

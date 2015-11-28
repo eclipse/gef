@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.gef4.common.inject.AdapterMap;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 
 /**
  * An {@link AdapterStore} is a basic {@link IAdaptable} implementation that can
@@ -28,7 +27,7 @@ import com.google.inject.Inject;
 public class AdapterStore implements IAdaptable {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private AdaptableSupport<AdapterStore> as = new AdaptableSupport<AdapterStore>(
+	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<AdapterStore>(
 			this, pcs);
 
 	/**
@@ -38,18 +37,33 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	/**
-	 * Creates a new AdapterStore with the single given initial adapter.
+	 * Creates a new AdapterStore with the single given initial adapter, using
+	 * the 'default' role.
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
-	 *            The key under which to register the adapter.
 	 * @param adapter
 	 *            The adapter to be registered.
+	 * 
 	 */
-	public <T> AdapterStore(AdapterKey<? super T> key, 
-			T adapter) {
-		setAdapter(key, adapter);
+	public <T> AdapterStore(T adapter) {
+		setAdapter(adapter, AdapterKey.DEFAULT_ROLE);
+	}
+
+	/**
+	 * Creates a new AdapterStore with the single given initial adapter, using
+	 * the 'default' role.
+	 * 
+	 * @param <T>
+	 *            The adapter type.
+	 * @param adapterType
+	 *            The runtime type of the adapter to be registered.
+	 * @param adapter
+	 *            The adapter to be registered.
+	 * 
+	 */
+	public <T> AdapterStore(TypeToken<T> adapterType, T adapter) {
+		setAdapter(adapterType, adapter, AdapterKey.DEFAULT_ROLE);
 	}
 
 	/**
@@ -57,16 +71,15 @@ public class AdapterStore implements IAdaptable {
 	 * 
 	 * @param <T>
 	 *            The adapter type.
-	 * @param key
-	 *            The key under which to register the adapter.
 	 * @param adapterType
 	 *            The runtime type of the adapter to be registered.
 	 * @param adapter
 	 *            The adapter to be registered.
+	 * @param role
+	 *            The role under which the adapter is to be registered.
 	 */
-	public <T> AdapterStore(AdapterKey<? super T> key, TypeToken<T> adapterType,
-			T adapter) {
-		setAdapter(key, adapterType, adapter);
+	public <T> AdapterStore(TypeToken<T> adapterType, T adapter, String role) {
+		setAdapter(adapterType, adapter, role);
 	}
 
 	@Override
@@ -75,30 +88,30 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public <T> T getAdapter(AdapterKey<? super T> key) {
-		return as.getAdapter(key);
+	public <T> T getAdapter(AdapterKey<T> key) {
+		return ads.getAdapter(key);
 	}
 
 	@Override
-	public <T> T getAdapter(Class<? super T> key) {
-		return as.getAdapter(key);
+	public <T> T getAdapter(Class<T> key) {
+		return ads.getAdapter(key);
 	}
 
 	@Override
-	public <T> T getAdapter(TypeToken<? super T> key) {
-		return as.getAdapter(key);
+	public <T> T getAdapter(TypeToken<T> key) {
+		return ads.getAdapter(key);
 	}
 
 	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> key) {
-		return as.getAdapters(key);
+		return ads.getAdapters(key);
 	}
 
 	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			TypeToken<? super T> key) {
-		return as.getAdapters(key);
+		return ads.getAdapters(key);
 	}
 
 	@Override
@@ -106,31 +119,30 @@ public class AdapterStore implements IAdaptable {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	@Inject(optional = true)
-	public <T> void setAdapter(@AdapterMap AdapterKey<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		as.setAdapter(key, adapterType, adapter);
-	}
-
-	@Override
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
-		as.setAdapter(key, adapter);
-	}
-
-	@Override
-	public <T> void setAdapter(TypeToken<? super T> key,
-			TypeToken<T> adapterType, T adapter) {
-		as.setAdapter(key, adapterType, adapter);
-	}
-
 	@Override
 	public <T> void unsetAdapter(T adapter) {
-		as.unsetAdapter(adapter);
+		ads.unsetAdapter(adapter);
 	}
 
 	@Override
-	public <T> void setAdapter(Class<T> key, T adapter) {
-		as.setAdapter(key, adapter);
-		
+	public <T> void setAdapter(T adapter) {
+		ads.setAdapter(adapter);
 	}
+
+	@Override
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
+		ads.setAdapter(adapterType, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(T adapter, String role) {
+		ads.setAdapter(adapter, role);
+	}
+
+	@Override
+	public <T> void setAdapter(@AdapterMap TypeToken<T> adapterType, T adapter,
+			String role) {
+		ads.setAdapter(adapterType, adapter, role);
+	}
+
 }

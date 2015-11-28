@@ -19,6 +19,8 @@ import java.util.List;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.reflect.TypeToken;
+
 /**
  * The abstract base implementation of {@link IRootPart}, intended to be
  * sub-classed by clients to create their own custom {@link IRootPart}.
@@ -33,7 +35,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual node used by this {@link AbstractRootPart}.
  */
 public abstract class AbstractRootPart<VR, V extends VR>
-		extends AbstractVisualPart<VR, V>implements IRootPart<VR, V> {
+		extends AbstractVisualPart<VR, V> implements IRootPart<VR, V> {
 
 	private IViewer<VR> viewer;
 
@@ -126,11 +128,13 @@ public abstract class AbstractRootPart<VR, V extends VR>
 		}
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void unregister(IViewer<VR> viewer) {
 		// synchronize content children
 		ContentBehavior<VR> contentBehavior = this
-				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
+				.getAdapter(new TypeToken<ContentBehavior<VR>>(getClass()) {
+				});
 		if (contentBehavior != null) {
 			contentBehavior.synchronizeContentChildren(Collections.emptyList());
 		}

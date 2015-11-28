@@ -65,8 +65,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	public void activate() {
 		super.activate();
 		if (getHost() == getHost().getRoot()) {
-			ContentModel contentModel = getHost().getRoot().getViewer()
-					.getAdapter(ContentModel.class);
+			ContentModel contentModel = getContentModel();
 			synchronizeContentChildren(contentModel.getContents());
 			contentModel.addPropertyChangeListener(this);
 		} else {
@@ -165,6 +164,19 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
+	/**
+	 * Returns the {@link ContentModel} in the context of the {@link #getHost()
+	 * host}.
+	 *
+	 * @return The {@link ContentModel} in the context of the {@link #getHost()
+	 *         host}.
+	 */
+	protected ContentModel getContentModel() {
+		ContentModel contentModel = getHost().getRoot().getViewer()
+				.getAdapter(ContentModel.class);
+		return contentModel;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
@@ -176,8 +188,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 					.clearSelection();
 			getHost().getRoot().getViewer().getAdapter(HoverModel.class)
 					.clearHover();
-		} else
-			if (IContentPart.CONTENT_PROPERTY.equals(event.getPropertyName())) {
+		} else if (IContentPart.CONTENT_PROPERTY
+				.equals(event.getPropertyName())) {
 			synchronizeContentChildren(
 					((IContentPart<VR, ? extends VR>) getHost())
 							.getContentChildren());

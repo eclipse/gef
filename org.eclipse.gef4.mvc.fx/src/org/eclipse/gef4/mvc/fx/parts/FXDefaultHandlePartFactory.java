@@ -531,8 +531,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<IHandlePart<Node, ? extends Node>>();
 
 		// handle geometry is in target visual local coordinate space.
-		final Provider<IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
-				.<Provider<IGeometry>> getAdapter(AdapterKey
+		final Provider<? extends IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
+				.getAdapter(AdapterKey
 						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, SELECTION_HANDLES_GEOMETRY_PROVIDER));
 

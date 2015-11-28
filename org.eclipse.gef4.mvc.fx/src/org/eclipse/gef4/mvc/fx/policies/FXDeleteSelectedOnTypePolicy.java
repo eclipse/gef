@@ -20,6 +20,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -61,6 +63,7 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 		return true;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void pressed(KeyEvent event) {
 		if (!isDelete(event)) {
@@ -70,8 +73,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 		// get current selection
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		List<IContentPart<Node, ? extends Node>> selected = new ArrayList<IContentPart<Node, ? extends Node>>(
-				viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-						.getSelection());
+				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection());
 
 		// if no parts are selected, we do not delete anything
 		if (selected.isEmpty()) {
@@ -80,7 +83,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
 
 		// delete selected parts
 		DeletionPolicy<Node> deletionPolicy = getHost().getRoot()
-				.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
+				.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
+				});
 		init(deletionPolicy);
 		for (IContentPart<Node, ? extends Node> s : selected) {
 			deletionPolicy.delete(s);

@@ -17,6 +17,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -32,6 +34,7 @@ import javafx.scene.input.MouseEvent;
  */
 public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 
+	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent e) {
 		// focus and select are only done on single click
@@ -41,9 +44,11 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
 
 		IVisualPart<Node, ? extends Node> host = getHost();
 		FocusModel<Node> focusModel = host.getRoot().getViewer()
-				.<FocusModel<Node>> getAdapter(FocusModel.class);
+				.getAdapter(new TypeToken<FocusModel<Node>>() {
+				});
 		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				});
 
 		if (host instanceof IContentPart) {
 			focusModel.setFocused((IContentPart<Node, ? extends Node>) host);

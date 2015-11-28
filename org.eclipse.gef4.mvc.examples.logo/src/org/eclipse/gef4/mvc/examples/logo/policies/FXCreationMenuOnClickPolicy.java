@@ -284,6 +284,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 		refreshMenuItem();
 	}
 
+	@SuppressWarnings("serial")
 	private void onItemClick() {
 		// compute width and height deltas to the content layer
 		Node itemVisual = templateGroup.getChildren().get(0);
@@ -312,7 +313,8 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 		// build create operation
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		CreationPolicy<Node> creationPolicy = root
-				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
+				.getAdapter(new TypeToken<CreationPolicy<Node>>() {
+				});
 		creationPolicy.init();
 		IContentPart<Node, ? extends Node> contentPart = creationPolicy
 				.create(toCreate, item.findContentParent(root), HashMultimap

@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -33,6 +34,7 @@ import javafx.scene.input.MouseEvent;
 public class FXCloneOrFocusAndSelectOnClickPolicy
 		extends FXFocusAndSelectOnClickPolicy {
 
+	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent e) {
 		// delegate to super policy in case the clone modifier is not pressed
@@ -48,7 +50,8 @@ public class FXCloneOrFocusAndSelectOnClickPolicy
 		// create the clone content part
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		CreationPolicy<Node> creationPolicy = root
-				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
+				.getAdapter(new TypeToken<CreationPolicy<Node>>() {
+				});
 		init(creationPolicy);
 		IContentPart<Node, ? extends Node> clonedContentPart = creationPolicy
 				.create(cloneContent,
@@ -61,8 +64,8 @@ public class FXCloneOrFocusAndSelectOnClickPolicy
 		// deselect all but the clone
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<IContentPart<Node, ? extends Node>>(
-				viewer.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-						.getSelection());
+				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection());
 		toBeDeselected.remove(clonedContentPart);
 		viewer.getDomain().execute(new DeselectOperation<Node>(
 				getHost().getRoot().getViewer(), toBeDeselected));

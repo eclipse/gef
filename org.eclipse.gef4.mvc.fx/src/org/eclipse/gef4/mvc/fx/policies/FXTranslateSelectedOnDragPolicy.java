@@ -20,6 +20,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -73,10 +75,11 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	 *         be relocated by this policy.
 	 */
 	// TODO: change visibility to protected
+	@SuppressWarnings("serial")
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelection();
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection();
 	}
 
 	/**

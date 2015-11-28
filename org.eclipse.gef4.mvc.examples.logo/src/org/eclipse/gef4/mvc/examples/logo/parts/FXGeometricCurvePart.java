@@ -158,6 +158,7 @@ public class FXGeometricCurvePart
 		}
 	}
 
+	@SuppressWarnings("serial")
 	public ITransactionalOperation chainModelChanges(
 			final ITransactionalOperation updateVisualOperation) {
 		if (updateVisualOperation == null) {
@@ -181,7 +182,8 @@ public class FXGeometricCurvePart
 
 		// create anchorage operations, start with detaching all anchorages
 		ContentPolicy<Node> contentPolicy = this
-				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
+				.getAdapter(new TypeToken<ContentPolicy<Node>>() {
+				});
 		contentPolicy.init();
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = HashMultimap
 				.create(getAnchorages());

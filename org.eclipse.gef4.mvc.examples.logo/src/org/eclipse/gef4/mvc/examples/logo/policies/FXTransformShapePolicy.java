@@ -83,7 +83,7 @@ public class FXTransformShapePolicy extends FXTransformPolicy {
 		final FXGeometricShape hostContent = host.getContent();
 
 		// determine transformation
-		Provider<Affine> affineProvider = host
+		Provider<? extends Affine> affineProvider = host
 				.getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY);
 		AffineTransform tx = JavaFX2Geometry
 				.toAffineTransform(affineProvider.get());

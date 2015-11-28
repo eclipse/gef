@@ -26,6 +26,8 @@ import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -209,6 +211,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		addFeedback();
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
@@ -224,7 +227,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 
 		// change selection within selection model
 		SelectionModel<Node> selectionModel = root.getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				});
 		selectionModel.prependToSelection(parts);
 
 		removeFeedback();

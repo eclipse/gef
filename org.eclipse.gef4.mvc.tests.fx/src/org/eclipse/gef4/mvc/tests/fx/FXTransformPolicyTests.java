@@ -30,7 +30,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -127,7 +126,7 @@ public class FXTransformPolicyTests {
 		});
 		injector.injectMembers(this);
 		// get viewer
-		FXViewer viewer = domain.<FXViewer> getAdapter(IViewer.class);
+		FXViewer viewer = domain.getAdapter(FXViewer.class);
 		// hook viewer to scene
 		Scene scene = new Scene(viewer.getCanvas(), 100, 100);
 		JFXPanel panel = new JFXPanel();

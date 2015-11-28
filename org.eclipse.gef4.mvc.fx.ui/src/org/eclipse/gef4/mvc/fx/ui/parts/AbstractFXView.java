@@ -133,7 +133,7 @@ public abstract class AbstractFXView extends ViewPart {
 		super.dispose();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class key) {
 		// Provide a default selection provider (subclasses may overwrite by

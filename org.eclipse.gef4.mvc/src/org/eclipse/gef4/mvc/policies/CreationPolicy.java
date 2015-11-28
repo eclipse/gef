@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.policies;
 import java.util.Collections;
 import java.util.Map.Entry;
 
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -29,6 +30,8 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 
 /**
@@ -78,6 +81,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *            the new content under the given roles.
 	 * @return The {@link IContentPart} controlling the newly created content.
 	 */
+	@SuppressWarnings("serial")
 	public IContentPart<VR, ? extends VR> create(Object content,
 			IContentPart<VR, ? extends VR> parent, int index,
 			SetMultimap<IContentPart<VR, ? extends VR>, String> anchoreds) {
@@ -112,7 +116,10 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 		// add to parent via content policy
 		ContentPolicy<VR> parentContentPolicy = parent
-				.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
+				.getAdapter(new TypeToken<ContentPolicy<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(
+						getHost().getRoot().getViewer().getClass())));
 		if (parentContentPolicy == null) {
 			throw new IllegalStateException(
 					"No ContentPolicy registered for <" + parent + ">.");
@@ -128,7 +135,10 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		// add anchoreds via content policy
 		for (IContentPart<VR, ? extends VR> anchored : anchoreds.keys()) {
 			ContentPolicy<VR> anchoredPolicy = anchored
-					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
+					.getAdapter(new TypeToken<ContentPolicy<VR>>() {
+					}.where(new TypeParameter<VR>() {
+					}, Types.<VR> argumentOf(
+							getHost().getRoot().getViewer().getClass())));
 			if (anchoredPolicy == null) {
 				throw new IllegalStateException(
 						"No ContentPolicy registered for <" + anchored + ">.");
@@ -197,14 +207,8 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	protected ITransactionalOperation createFocusOperation(
 			IContentPart<VR, ? extends VR> part) {
-		IViewer<VR> viewer = part.getRoot().getViewer();
 		// remove from focus model
-		FocusModel<VR> focusModel = viewer
-				.<FocusModel<VR>> getAdapter(FocusModel.class);
-		if (focusModel != null) {
-			return new ChangeFocusOperation<VR>(viewer, part);
-		}
-		return null;
+		return new ChangeFocusOperation<VR>(part.getRoot().getViewer(), part);
 	}
 
 	@Override
@@ -224,8 +228,8 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	protected ITransactionalOperation createSelectOperation(
 			IContentPart<VR, ? extends VR> part) {
-		IViewer<VR> viewer = part.getRoot().getViewer();
-		return new SelectOperation<VR>(viewer, Collections.singletonList(part));
+		return new SelectOperation<VR>(part.getRoot().getViewer(),
+				Collections.singletonList(part));
 	}
 
 	/**

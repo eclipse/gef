@@ -58,6 +58,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 
 public class ZestContentViewerTests {
@@ -461,6 +463,7 @@ public class ZestContentViewerTests {
 		assertFalse(thrown);
 	}
 
+	@SuppressWarnings("serial")
 	@Test
 	public void test_selectionModel() {
 		final List<Object> expectation = new ArrayList<Object>();
@@ -482,7 +485,8 @@ public class ZestContentViewerTests {
 		// select "First" node
 		expectation.add(firstNode);
 		IContentPart<Node, ? extends Node> firstPart = fxViewer.getContentPartMap().get(firstNode);
-		fxViewer.<SelectionModel<Node>> getAdapter(SelectionModel.class).prependToSelection(Collections.singletonList(firstPart));
+		fxViewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
+		}).prependToSelection(Collections.singletonList(firstPart));
 	}
 
 	@Test
@@ -496,13 +500,15 @@ public class ZestContentViewerTests {
 		assertEquals(layoutAlgorithm, ZestProperties.getLayout(rootGraph));
 	}
 
+	@SuppressWarnings("serial")
 	@Test
 	public void test_setSelection() {
 		viewer.setInput(new Object());
 		org.eclipse.gef4.graph.Node firstNode = viewer.getContentNodeMap().get(MyContentProvider.first());
 		viewer.setSelection(new StructuredSelection(Arrays.asList(firstNode)));
 		List<IContentPart<Node, ? extends Node>> selected = viewer.getFXViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class).getSelection();
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection();
 		assertEquals(1, selected.size());
 		IContentPart<Node, ? extends Node> selectedPart = selected.get(0);
 		assertEquals(firstNode, selectedPart.getContent());

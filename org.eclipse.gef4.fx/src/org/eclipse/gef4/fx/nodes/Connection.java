@@ -17,15 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
-import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
+import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -1156,8 +1155,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	protected void registerAnchorInfos(IAdaptable adaptable) {
 		// register an ChopBoxHelper, which is passed to the attached anchors.
-		adaptable.setAdapter(AdapterKey.get(IReferencePointProvider.class),
-				new ChopBoxHelper(this));
+		adaptable.setAdapter(new ChopBoxHelper(this));
 	}
 
 	/**

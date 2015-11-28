@@ -27,6 +27,8 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.reflect.TypeToken;
+
 /**
  * A domain represents the collective state of a MVC application. It brings
  * together a set of {@link IViewer}s and related {@link ITool}s to interact
@@ -87,13 +89,13 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 
 	/**
 	 * Returns the {@link ITool}s registered at this {@link IDomain} (via
-	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link AdapterKey}s
-	 * used for registration.
+	 * {@link #setAdapter(TypeToken, Object)}) with the {@link AdapterKey}s used
+	 * for registration.
 	 *
 	 * @return A {@link Map} containing the registered {@link ITool}s mapped to
 	 *         their respective {@link AdapterKey}s.
 	 *
-	 * @see IAdaptable#setAdapter(AdapterKey, Object)
+	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
 	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools();
 
@@ -106,13 +108,13 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 
 	/**
 	 * Returns the {@link IViewer}s registered at this {@link IDomain} (via
-	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link AdapterKey}s
-	 * used for registration.
+	 * {@link #setAdapter(TypeToken, Object)}) with the {@link AdapterKey}s used
+	 * for registration.
 	 *
 	 * @return A {@link Map} containing the registered {@link IViewer}s mapped
 	 *         to their respective {@link AdapterKey}s.
 	 *
-	 * @see IAdaptable#setAdapter(AdapterKey, Object)
+	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers();
 

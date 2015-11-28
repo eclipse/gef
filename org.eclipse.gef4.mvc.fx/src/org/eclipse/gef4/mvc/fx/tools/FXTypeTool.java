@@ -23,6 +23,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -149,6 +151,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 	 *         are installed on the target {@link IVisualPart} for the given
 	 *         {@link Scene}.
 	 */
+	@SuppressWarnings("serial")
 	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
 			Scene scene) {
 		IVisualPart<Node, ? extends Node> targetPart = null;
@@ -156,8 +159,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 			if (viewer instanceof FXViewer) {
 				if (((FXViewer) viewer).getScene() == scene) {
 					IVisualPart<Node, ? extends Node> part = viewer
-							.<FocusModel<Node>> getAdapter(FocusModel.class)
-							.getFocused();
+							.getAdapter(new TypeToken<FocusModel<Node>>() {
+							}).getFocused();
 					if (part == null) {
 						targetPart = viewer.getRootPart();
 					} else {

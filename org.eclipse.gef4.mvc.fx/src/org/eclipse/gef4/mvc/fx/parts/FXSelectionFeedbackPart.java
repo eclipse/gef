@@ -78,8 +78,8 @@ public class FXSelectionFeedbackPart
 			if (FocusModel.VIEWER_FOCUS_PROPERTY
 					.equals(evt.getPropertyName())) {
 				refreshVisual();
-			} else
-				if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			} else if (FocusModel.FOCUS_PROPERTY
+					.equals(evt.getPropertyName())) {
 				refreshVisual();
 			}
 		}
@@ -116,6 +116,7 @@ public class FXSelectionFeedbackPart
 		super.doDeactivate();
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void doRefreshVisual(GeometryNode<IGeometry> visual) {
 		Set<IVisualPart<Node, ? extends Node>> anchorages = getAnchorages()
@@ -148,8 +149,8 @@ public class FXSelectionFeedbackPart
 				&& viewer.getAdapter(FocusModel.class)
 						.getFocused() == anchorage;
 		List<IContentPart<Node, ? extends Node>> selected = viewer
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelection();
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection();
 		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
 			visual.setEffect(getPrimarySelectionFeedbackEffect(focused));

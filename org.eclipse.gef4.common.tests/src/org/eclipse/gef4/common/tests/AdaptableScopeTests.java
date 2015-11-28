@@ -88,6 +88,7 @@ public class AdaptableScopeTests {
 				MapBinder<AdapterKey<?>, Object> s1Binder = AdapterMaps
 						.getAdapterMapBinder(binder(),
 								ScopingAdapterStore.class);
+				// bind adapter under different roles (which is valid)
 				s1Binder.addBinding(
 						AdapterKey.get(AdapterStoreAdapter.class, "a1"))
 						.to(AdapterStoreAdapter.class);

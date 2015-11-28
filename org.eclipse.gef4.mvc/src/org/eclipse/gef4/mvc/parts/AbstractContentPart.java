@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The abstract base implementation of {@link IContentPart}, intended to be
@@ -39,7 +40,7 @@ import com.google.common.collect.SetMultimap;
  *            The visual node used by this {@link AbstractContentPart}.
  */
 public abstract class AbstractContentPart<VR, V extends VR>
-		extends AbstractVisualPart<VR, V>implements IContentPart<VR, V> {
+		extends AbstractVisualPart<VR, V> implements IContentPart<VR, V> {
 
 	private Object content;
 
@@ -335,11 +336,13 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		pcs.firePropertyChange(CONTENT_PROPERTY, oldContent, content);
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void unregister(IViewer<VR> viewer) {
 		// remove content children and anchorages
 		ContentBehavior<VR> contentBehavior = this
-				.<ContentBehavior<VR>> getAdapter(ContentBehavior.class);
+				.getAdapter(new TypeToken<ContentBehavior<VR>>(getClass()) {
+				});
 		if (contentBehavior != null) {
 			contentBehavior.synchronizeContentChildren(Collections.emptyList());
 			contentBehavior.synchronizeContentAnchorages(

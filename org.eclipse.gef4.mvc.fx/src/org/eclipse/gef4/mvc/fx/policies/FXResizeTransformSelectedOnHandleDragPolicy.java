@@ -26,6 +26,8 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -207,10 +209,11 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	 * @return A {@link List} containing all {@link IContentPart}s that should
 	 *         be scaled/relocated by this policy.
 	 */
+	@SuppressWarnings("serial")
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelection();
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection();
 	}
 
 	/**

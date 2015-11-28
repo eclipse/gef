@@ -36,6 +36,7 @@ import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multiset;
+import com.google.common.reflect.TypeToken;
 
 import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
@@ -89,6 +90,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 				.iterator().next();
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void press(MouseEvent e) {
 		// create new curve
@@ -100,7 +102,8 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 
 		// create using CreationPolicy from root part
 		CreationPolicy<Node> creationPolicy = getHost().getRoot()
-				.<CreationPolicy<Node>> getAdapter(CreationPolicy.class);
+				.getAdapter(new TypeToken<CreationPolicy<Node>>() {
+				});
 		creationPolicy.init();
 
 		// find model part
@@ -129,8 +132,8 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 		// build operation to deselect all but the new curve part
 		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<IContentPart<Node, ? extends Node>>(
 				getHost().getRoot().getViewer()
-						.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-						.getSelection());
+						.getAdapter(new TypeToken<SelectionModel<Node>>() {
+						}).getSelection());
 		toBeDeselected.remove(curvePart);
 		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(
 				getHost().getRoot().getViewer(), toBeDeselected);

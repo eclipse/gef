@@ -163,12 +163,12 @@ public class FXDefaultFeedbackPartFactory
 			String anchorageRole) {
 		// only show link feedback when anchored is no connection
 		if (!(anchored.getVisual() instanceof Connection)) {
-			final Provider<IGeometry> anchorageGeometryProvider = anchorage
-					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
+			final Provider<? extends IGeometry> anchorageGeometryProvider = anchorage
+					.getAdapter(AdapterKey.get(
 							new TypeToken<Provider<? extends IGeometry>>() {
 							}, SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
-			final Provider<IGeometry> anchoredGeometryProvider = anchored
-					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
+			final Provider<? extends IGeometry> anchoredGeometryProvider = anchored
+					.getAdapter(AdapterKey.get(
 							new TypeToken<Provider<? extends IGeometry>>() {
 							}, SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
 			// only show anchor link feedback if anchorage and anchored provider
@@ -263,8 +263,8 @@ public class FXDefaultFeedbackPartFactory
 		// selection outline feedback
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
-		final Provider<IGeometry> selectionFeedbackGeometryProvider = target
-				.<Provider<IGeometry>> getAdapter(AdapterKey
+		final Provider<? extends IGeometry> selectionFeedbackGeometryProvider = target
+				.getAdapter(AdapterKey
 						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {

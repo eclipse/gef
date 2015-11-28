@@ -17,18 +17,22 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 public class FXDeleteFirstAnchorageOnClickPolicy
 		extends AbstractFXOnClickPolicy {
 
+	@SuppressWarnings("serial")
 	@Override
 	public void click(MouseEvent e) {
 		IVisualPart<Node, ? extends Node> targetPart = getTargetPart();
 		if (targetPart instanceof IContentPart) {
 			DeletionPolicy<Node> policy = getHost().getRoot()
-					.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
+					.getAdapter(new TypeToken<DeletionPolicy<Node>>() {
+					});
 			if (policy != null) {
 				init(policy);
 				// unestablish anchor relations

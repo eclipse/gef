@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
@@ -98,12 +97,8 @@ public class ChopBoxAnchorSnippet extends AbstractFxExample {
 		referencePointProvider.put(startKey, r2Center);
 		referencePointProvider.put(endKey, r1Center);
 
-		startAnchor.attach(startKey,
-				new AdapterStore(AdapterKey.get(IReferencePointProvider.class),
-						referencePointProvider));
-		endAnchor.attach(endKey,
-				new AdapterStore(AdapterKey.get(IReferencePointProvider.class),
-						referencePointProvider));
+		startAnchor.attach(startKey, new AdapterStore(referencePointProvider));
+		endAnchor.attach(endKey, new AdapterStore(referencePointProvider));
 
 		Group g = new Group(r1, r2, l);
 		root.getChildren().add(g);

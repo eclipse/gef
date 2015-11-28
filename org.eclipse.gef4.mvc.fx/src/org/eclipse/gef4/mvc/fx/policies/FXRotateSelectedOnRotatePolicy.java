@@ -24,6 +24,8 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 import javafx.scene.input.RotateEvent;
 
@@ -49,10 +51,11 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 	 * @return A {@link List} containing all {@link IContentPart}s that should
 	 *         be rotated by this policy.
 	 */
+	@SuppressWarnings("serial")
 	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelection();
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelection();
 	}
 
 	/**

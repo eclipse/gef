@@ -26,6 +26,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
+import com.google.common.reflect.TypeToken;
+
 /**
  * The {@link SelectionForwarder} can be used to propagate selections from the
  * Eclipse workbench to the MVC application and vice versa.
@@ -55,6 +57,7 @@ public class SelectionForwarder<VR>
 	 *            The {@link IViewer} of which the {@link SelectionModel} should
 	 *            be held in sync with the Eclipse workbench selection.
 	 */
+	@SuppressWarnings("serial")
 	public SelectionForwarder(final ISelectionProvider selectionProvider,
 			IViewer<VR> viewer) {
 		if (viewer == null) {
@@ -64,7 +67,8 @@ public class SelectionForwarder<VR>
 		this.selectionProvider = selectionProvider;
 		this.viewer = viewer;
 		this.selectionModel = viewer
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+				.getAdapter(new TypeToken<SelectionModel<VR>>(getClass()) {
+				});
 
 		// register listeners
 		if (selectionProvider != null) {

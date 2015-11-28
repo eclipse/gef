@@ -13,6 +13,8 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.models.HoverModel;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -26,11 +28,12 @@ import javafx.scene.input.MouseEvent;
  */
 public class FXHoverOnHoverPolicy extends AbstractFXOnHoverPolicy {
 
+	@SuppressWarnings("serial")
 	@Override
 	public void hover(MouseEvent e) {
 		getHost().getRoot().getViewer()
-				.<HoverModel<Node>> getAdapter(HoverModel.class)
-				.setHover(getHost());
+				.getAdapter(new TypeToken<HoverModel<Node>>() {
+				}).setHover(getHost());
 	}
 
 }

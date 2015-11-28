@@ -27,6 +27,8 @@ import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.operations.HideOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import com.google.common.reflect.TypeToken;
+
 import javafx.scene.Node;
 
 /**
@@ -84,10 +86,12 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 	 * @return An {@link ITransactionalOperation} that removes the given
 	 *         {@link NodeContentPart} from the {@link FocusModel}.
 	 */
+	@SuppressWarnings("serial")
 	protected ITransactionalOperation createUnfocusOperation(NodeContentPart part) {
 		IViewer<Node> viewer = part.getRoot().getViewer();
 
-		FocusModel<Node> focusModel = viewer.<FocusModel<Node>> getAdapter(FocusModel.class);
+		FocusModel<Node> focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
+		});
 		if (focusModel != null) {
 			if (focusModel.getFocused() == part) {
 				return new ChangeFocusOperation<Node>(viewer, null);

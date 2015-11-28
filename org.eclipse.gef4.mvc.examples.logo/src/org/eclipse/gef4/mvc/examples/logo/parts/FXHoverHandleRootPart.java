@@ -13,10 +13,8 @@ package org.eclipse.gef4.mvc.examples.logo.parts;
 
 import java.util.Map.Entry;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
@@ -31,13 +29,12 @@ import javafx.scene.layout.VBox;
 public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 
 	public FXHoverHandleRootPart() {
-		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY),
-				new FXHoverOnHoverPolicy() {
-					@Override
-					public void hover(MouseEvent e) {
-						// XXX: deactivate hover for this part
-					}
-				});
+		setAdapter(new FXHoverOnHoverPolicy() {
+			@Override
+			public void hover(MouseEvent e) {
+				// XXX: deactivate hover for this part
+			}
+		});
 	}
 
 	@Override

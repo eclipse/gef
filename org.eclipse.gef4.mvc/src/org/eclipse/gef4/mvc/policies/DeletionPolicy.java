@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.policies;
 
 import java.util.Collections;
 
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
@@ -28,6 +29,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultiset;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The {@link DeletionPolicy} is an {@link AbstractTransactionPolicy} that
@@ -52,7 +55,7 @@ import com.google.common.collect.HashMultiset;
  */
 public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("serial")
 	@Override
 	protected ITransactionalOperation createOperation() {
 		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation(
@@ -62,7 +65,11 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		// TODO: this should be different-> use unfocus and initialize with null
 		// or empty list
 		commit.add(new ChangeFocusOperation<VR>(viewer,
-				viewer.getAdapter(FocusModel.class).getFocused()));
+				viewer.getAdapter(new TypeToken<FocusModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(
+						getHost().getRoot().getViewer().getClass())))
+						.getFocused()));
 		// deselect
 		commit.add(new DeselectOperation<VR>(viewer,
 				Collections.<IContentPart<VR, ? extends VR>> emptyList()));
@@ -85,6 +92,7 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	// TODO: offer a bulk operation to improve deselect (can remove all in one
 	// operation pass)
 	// this will break if being called one after anothe without commit
+	@SuppressWarnings("serial")
 	public void delete(IContentPart<VR, ? extends VR> contentPartToDelete) {
 		checkInitialized();
 
@@ -92,7 +100,10 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 		// TODO: use unfocus for this
 		FocusModel<VR> focusModel = getHost().getRoot().getViewer()
-				.<FocusModel<VR>> getAdapter(FocusModel.class);
+				.getAdapter(new TypeToken<FocusModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(
+						getHost().getRoot().getViewer().getClass())));
 		if (focusModel != null) {
 			if (focusModel.getFocused() == contentPartToDelete) {
 				getUnfocusOperation().setNewFocused(null);
@@ -104,7 +115,10 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				.create(contentPartToDelete.getAnchoreds())) {
 			if (anchored instanceof IContentPart) {
 				ContentPolicy<VR> anchoredContentPolicy = anchored
-						.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
+						.getAdapter(new TypeToken<ContentPolicy<VR>>() {
+						}.where(new TypeParameter<VR>() {
+						}, Types.<VR> argumentOf(
+								getHost().getRoot().getViewer().getClass())));
 				if (anchoredContentPolicy != null) {
 					anchoredContentPolicy.init();
 					for (String role : anchored.getAnchorages()
@@ -125,7 +139,10 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 
 		// remove from content parent
 		ContentPolicy<VR> parentContentPolicy = contentPartToDelete.getParent()
-				.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
+				.getAdapter(new TypeToken<ContentPolicy<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(
+						getHost().getRoot().getViewer().getClass())));
 		if (parentContentPolicy != null) {
 			parentContentPolicy.init();
 			parentContentPolicy

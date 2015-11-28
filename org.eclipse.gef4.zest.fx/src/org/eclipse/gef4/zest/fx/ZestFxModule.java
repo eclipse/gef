@@ -12,14 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.util.Map;
-
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.IAnchor;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
@@ -28,7 +24,6 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
-import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
@@ -36,9 +31,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
-import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
-import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -73,15 +65,11 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOfFirstAnchorageOnCl
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
-import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
 
 /**
  * The {@link ZestFxModule} defines Zest.FX specific bindings additional to the
@@ -92,29 +80,27 @@ import javafx.scene.input.KeyCode;
  */
 public class ZestFxModule extends MvcFxModule {
 
-	@SuppressWarnings("serial")
 	@Override
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
-				.to(FXFocusAndSelectOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
 		// geometry provider for selection feedback
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for hover handles
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 	}
 
 	@Override
 	protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractViewerAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(NavigationModel.class)).to(NavigationModel.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NavigationModel.class);
 	}
 
 	/**
@@ -130,21 +116,16 @@ public class ZestFxModule extends MvcFxModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindEdgeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout
-		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class)).to(EdgeLayoutBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLayoutBehavior.class);
 		// hiding
-		adapterMapBinder.addBinding(AdapterKey.get(EdgeHidingBehavior.class)).to(EdgeHidingBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeHidingBehavior.class);
 
 		// feedback and handles
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
 	}
 
@@ -161,24 +142,22 @@ public class ZestFxModule extends MvcFxModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindEdgeLabelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hiding
-		adapterMapBinder.addBinding(AdapterKey.get(EdgeLabelHidingBehavior.class)).to(EdgeLabelHidingBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLabelHidingBehavior.class);
 		// offset on drag
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "OffsetOnDrag"))
-				.to(OffsetEdgeLabelOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("OffsetOnDrag")).to(OffsetEdgeLabelOnDragPolicy.class);
 		// hover feedback
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 		// selection link feedback
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
 	}
 
 	@Override
 	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXChangeViewportPolicy.class)).to(SemanticZoomPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SemanticZoomPolicy.class);
 	}
 
 	/**
@@ -190,31 +169,28 @@ public class ZestFxModule extends MvcFxModule {
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link FXRectangleSegmentHandlePart} as a key.
 	 */
-	@SuppressWarnings("serial")
 	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "ResizeRelocateOnHandleDrag"))
+		adapterMapBinder.addBinding(AdapterKey.role("ResizeRelocateOnHandleDrag"))
 				.to(FXResizeTranslateOnHandleDragPolicy.class);
 		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
-				.to(FXRotateSelectedOnHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
 		// change cursor for rotation
-		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class)).to(FXCursorBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends Map<KeyCode, Cursor>>>() {
-		}, FXCursorBehavior.CURSOR_PROVIDER_ROLE)).to(ZestFxCursorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCursorBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXCursorBehavior.CURSOR_PROVIDER_ROLE))
+				.to(ZestFxCursorProvider.class);
 	}
 
 	@Override
 	protected void bindFXRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXRootPartAdapters(adapterMapBinder);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "OpenParentGraphOnDoubleClick"))
+		adapterMapBinder.addBinding(AdapterKey.role("OpenParentGraphOnDoubleClick"))
 				.to(OpenParentGraphOnDoubleClickPolicy.class);
 	}
 
 	@Override
 	protected void bindFXViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXViewerAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(HidingModel.class)).to(HidingModel.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
 	}
 
 	/**
@@ -231,8 +207,8 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindGraphContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(GraphLayoutContext.class)).to(GraphLayoutContext.class);
-		adapterMapBinder.addBinding(AdapterKey.get(LayoutContextBehavior.class)).to(LayoutContextBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GraphLayoutContext.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LayoutContextBehavior.class);
 	}
 
 	/**
@@ -249,8 +225,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindHidingHoverHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "hide"))
-				.to(HideFirstAnchorageOnClickPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideFirstAnchorageOnClickPolicy.class);
 	}
 
 	/**
@@ -286,35 +261,29 @@ public class ZestFxModule extends MvcFxModule {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindNodeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout
-		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class)).to(NodeLayoutBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeLayoutBehavior.class);
 		// pruning
-		adapterMapBinder.addBinding(AdapterKey.get(HidePolicy.class)).to(HidePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(ShowHiddenNeighborsPolicy.class))
-				.to(ShowHiddenNeighborsPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(NodeHidingBehavior.class)).to(NodeHidingBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ShowHiddenNeighborsPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeHidingBehavior.class);
 		// interaction
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
-				.to(FXTranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY, "showHiddenNeighbors"))
-				.to(ShowHiddenNeighborsOnTypePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY, "hide")).to(HideOnTypePolicy.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "OpenNestedGraphOnDoubleClick"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("showHiddenNeighbors")).to(ShowHiddenNeighborsOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role("OpenNestedGraphOnDoubleClick"))
 				.to(OpenNestedGraphOnDoubleClickPolicy.class);
 		// transform policy for relocation
-		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
 		// resize policy to resize nesting nodes
-		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class)).to(FXResizePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
 		// cursor provider
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
-		})).to(ChopBoxAnchorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ChopBoxAnchorProvider.class);
 		// feedback and handles
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IGeometry>>() {
-		}, FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 	}
 
 	/**
@@ -331,7 +300,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindShowHiddenNeighborsHoverHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY, "showHiddenNeighbors"))
+		adapterMapBinder.addBinding(AdapterKey.role("showHiddenNeighbors"))
 				.to(ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy.class);
 	}
 

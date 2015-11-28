@@ -56,8 +56,10 @@ public class AdapterMaps {
 	 */
 	public static MapBinder<AdapterKey<?>, Object> getAdapterMapBinder(
 			Binder binder, Class<? extends IAdaptable> type) {
-		return MapBinder.newMapBinder(binder, new TypeLiteral<AdapterKey<?>>() {
-		}, new TypeLiteral<Object>() {
-		}, AdapterMaps.typed(type));
+		MapBinder<AdapterKey<?>, Object> adapterMapBinder = MapBinder
+				.newMapBinder(binder, new TypeLiteral<AdapterKey<?>>() {
+				}, new TypeLiteral<Object>() {
+				}, AdapterMaps.typed(type));
+		return adapterMapBinder;
 	}
 }

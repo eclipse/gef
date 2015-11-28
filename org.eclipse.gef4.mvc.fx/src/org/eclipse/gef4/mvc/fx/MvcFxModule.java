@@ -176,7 +176,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindContentBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<ContentBehavior<Node>>() {
 				});
 	}
@@ -193,9 +193,10 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindContentBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<ContentBehavior<Node>>() {
 				});
 	}
@@ -221,9 +222,10 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindContentPolicyAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(ContentPolicy.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<ContentPolicy<Node>>() {
 				});
 	}
@@ -242,7 +244,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindCreationPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(CreationPolicy.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<CreationPolicy<Node>>() {
 				});
 	}
@@ -259,9 +261,10 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
+	@SuppressWarnings("serial")
 	protected void bindDeletionPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<DeletionPolicy<Node>>() {
 				});
 	}
@@ -280,9 +283,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
@@ -309,7 +310,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFocusModelAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<FocusModel<Node>>() {
 				});
 	}
@@ -328,8 +329,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXChangeViewportPolicy.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXChangeViewportPolicy.class);
 	}
 
@@ -355,7 +355,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXClickDragToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXClickDragTool.class);
 	}
 
@@ -399,7 +399,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXFocusBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXFocusBehavior.class);
 	}
 
@@ -425,7 +425,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXFocusToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXFocusTool.class);
 	}
 
@@ -443,7 +443,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXHoverOnHoverPolicyAsAbstractFXHandlePartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXHoverOnHoverPolicy.class);
 	}
 
@@ -461,7 +461,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXHoverOnHoverPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXHoverOnHoverPolicy.class);
 	}
 
@@ -487,7 +487,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXHoverToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXHoverTool.class);
 	}
 
@@ -505,9 +505,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXMarqueeOnDragPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(
-						AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXMarqueeOnDragPolicy.class);
 	}
 
@@ -525,8 +523,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXPanOnScrollPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(
-				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY, "panOnScroll"))
+		adapterMapBinder.addBinding(AdapterKey.role("panOnScroll"))
 				.to(FXPanOnScrollPolicy.class);
 	}
 
@@ -544,7 +541,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXPanOnTypePolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXPanOnTypePolicy.class);
 	}
 
@@ -570,7 +567,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXPinchSpreadToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXPinchSpreadTool.class);
 	}
 
@@ -624,8 +621,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXRotateSelectedOnRotatePolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXRotateTool.TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXRotateSelectedOnRotatePolicy.class);
 	}
 
@@ -651,7 +647,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXRotateToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXRotateTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXRotateTool.class);
 	}
 
@@ -677,7 +673,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXScrollToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXScrollTool.class);
 	}
 
@@ -696,7 +692,9 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXTransformProviderAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(FXTransformPolicy.TRANSFORM_PROVIDER_KEY)
+		adapterMapBinder
+				.addBinding(AdapterKey.role(
+						FXTransformPolicy.TRANSFORM_PROVIDER_KEY.getRole()))
 				.to(FXTransformProvider.class);
 	}
 
@@ -722,7 +720,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXTypeToolAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTypeTool.class);
 	}
 
@@ -764,8 +762,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXZoomOnPinchSpreadPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXZoomOnPinchSpreadPolicy.class);
 	}
 
@@ -783,8 +780,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXZoomOnScrollPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(
-				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY, "zoomOnScroll"))
+		adapterMapBinder.addBinding(AdapterKey.role("zoomOnScroll"))
 				.to(FXZoomOnScrollPolicy.class);
 	}
 
@@ -802,7 +798,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindGridBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXGridBehavior.class);
 	}
 
@@ -829,7 +825,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindHoverBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<HoverBehavior<Node>>() {
 				});
 	}
@@ -848,7 +844,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindHoverBehaviorAsAbstractFXHandlePartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<HoverBehavior<Node>>() {
 				});
 	}
@@ -876,7 +872,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindHoverModelAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(HoverModel.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<HoverModel<Node>>() {
 				});
 	}
@@ -895,8 +891,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * scope of {@link FXViewer}.
 	 */
 	protected void bindIFeedbackPartFactory() {
-		// TODO: bind to viewer scope, otherwise stateful factories might not
-		// work properly
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
 		}).to(FXDefaultFeedbackPartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
@@ -907,8 +901,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * parameterized by {@link Node}, in adaptable scope of {@link FXViewer}.
 	 */
 	protected void bindIHandlePartFactory() {
-		// TODO: bind to viewer scope, otherwise stateful factories might not
-		// work properly
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).to(FXDefaultHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
@@ -937,7 +929,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindIRootPartAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 				});
 	}
@@ -965,7 +957,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindIViewerAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<IViewer<Node>>() {
 				});
 	}
@@ -985,7 +977,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindSelectionBehaviorAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
 	}
@@ -1004,7 +996,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindSelectionBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
 	}
@@ -1032,7 +1024,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindSelectionModelAsFXViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<SelectionModel<Node>>() {
 				});
 	}

@@ -17,7 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -89,7 +88,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy
-		setAdapter(AdapterKey.get(AbstractFXOnHoverPolicy.class), new AbstractFXOnHoverPolicy() {
+		setAdapter(new AbstractFXOnHoverPolicy() {
 			@Override
 			public void hover(MouseEvent e) {
 			}

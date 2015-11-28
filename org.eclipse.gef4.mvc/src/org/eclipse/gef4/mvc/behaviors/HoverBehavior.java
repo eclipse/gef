@@ -15,8 +15,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The {@link HoverBehavior} is responsible for creating and removing selection
@@ -72,9 +77,14 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 	 * @return The {@link HoverModel} in the context of the {@link #getHost()
 	 *         host}.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("serial")
 	protected HoverModel<VR> getHoverModel() {
-		return getHost().getRoot().getViewer().getAdapter(HoverModel.class);
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		HoverModel<VR> hoverModel = viewer
+				.getAdapter(new TypeToken<HoverModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return hoverModel;
 	}
 
 	/**

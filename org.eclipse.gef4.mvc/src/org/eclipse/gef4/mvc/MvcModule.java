@@ -232,7 +232,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindContentModelAsAbstractViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(ContentModel.class);
 	}
 
@@ -257,8 +257,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindGridModelAsAbstractViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(GridModel.class))
-				.to(GridModel.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GridModel.class);
 	}
 
 	/**

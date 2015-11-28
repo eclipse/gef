@@ -17,9 +17,14 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The default selection behavior is responsible for creating and removing
@@ -37,10 +42,9 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 	@Override
 	public void activate() {
 		super.activate();
-		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 
 		// register
+		SelectionModel<VR> selectionModel = getSelectionModel();
 		selectionModel.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already selected
@@ -77,12 +81,29 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 	@Override
 	public void deactivate() {
 		// remove any pending feedback
-		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
-				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = getSelectionModel();
 		removeFeedbackAndHandles(selectionModel.getSelection());
 
+		// unregister
 		selectionModel.removePropertyChangeListener(this);
 		super.deactivate();
+	}
+
+	/**
+	 * Returns the {@link SelectionModel} in the context of the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link SelectionModel} in the context of the
+	 *         {@link #getHost() host}.
+	 */
+	@SuppressWarnings("serial")
+	protected SelectionModel<VR> getSelectionModel() {
+		IViewer<VR> viewer = getHost().getRoot().getViewer();
+		SelectionModel<VR> selectionModel = viewer
+				.getAdapter(new TypeToken<SelectionModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return selectionModel;
 	}
 
 	@SuppressWarnings("unchecked")

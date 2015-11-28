@@ -279,7 +279,7 @@ public class ContentSynchronizationTests {
 		injector = Guice.createInjector(new Module());
 		domain = new Domain();
 		injector.injectMembers(domain);
-		viewer = domain.getAdapter(IViewer.class);
+		viewer = domain.getAdapter(Viewer.class);
 	}
 
 	@Before

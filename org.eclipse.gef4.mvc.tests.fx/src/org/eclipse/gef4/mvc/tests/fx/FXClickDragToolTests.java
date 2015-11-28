@@ -29,7 +29,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -109,7 +108,7 @@ public class FXClickDragToolTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final Scene scene = ctx.createScene(domain.<FXViewer> getAdapter(IViewer.class).getCanvas(), 100, 100);
+		final Scene scene = ctx.createScene(domain.getAdapter(FXViewer.class).getCanvas(), 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners
 		domain.activate();
