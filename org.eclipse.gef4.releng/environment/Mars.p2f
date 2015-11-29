@@ -17,11 +17,6 @@
         <repository location='http://download.eclipse.org/releases/mars/201506241002/'/>
       </repositories>
     </iu>
-    <iu id='org.eclipse.oomph.version.headless.feature.group' name='Oomph Version Management (Headless)' version='1.1.0'>
-      <repositories size='1'>
-        <repository location='http://download.eclipse.org/oomph/updates/release/latest/'/>
-      </repositories>
-    </iu>
     <iu id='org.eclipse.m2e.feature.feature.group' name='m2e - Maven Integration for Eclipse (includes Incubating components)' version='1.6.0'>
       <repositories size='1'>
         <repository location='http://download.eclipse.org/releases/mars/201506241002/'/>

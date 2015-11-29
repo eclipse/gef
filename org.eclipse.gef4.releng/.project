@@ -7,7 +7,5 @@
 	<buildSpec>
 	</buildSpec>
 	<natures>
-		<!-- PluginNature is required because of Oomph Version Management -->
-		<nature>org.eclipse.pde.PluginNature</nature>
 	</natures>
 </projectDescription>
