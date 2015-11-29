@@ -124,7 +124,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		}
 
 		// store old children list (for notifying property change listeners)
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<>(
 				getChildren());
 		addChildWithoutNotify(child, index);
 
@@ -177,7 +177,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	private void addChildWithoutNotify(IVisualPart<VR, ? extends VR> child,
 			int index) {
 		if (children == null) {
-			children = new ArrayList<IVisualPart<VR, ? extends VR>>(2);
+			children = new ArrayList<>(2);
 		}
 		children.add(index, child);
 	}
@@ -602,7 +602,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 					"Cannot remove " + child + " because its not a child.");
 		}
 		// store old children list (for notifying property change listeners)
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<>(
 				getChildren());
 
 		if (isActive()) {
@@ -652,7 +652,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index) {
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<IVisualPart<VR, ? extends VR>>(
+		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<>(
 				getChildren());
 		removeChildVisual(child, children.indexOf(child));
 		removeChildWithoutNotify(child);

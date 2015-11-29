@@ -64,7 +64,7 @@ public class AboutDialog extends Dialog {
 		tc.setMaxFontSize(50);
 		tc.setMinFontSize(15);
 		tc.setLayouter(new DefaultLayouter(5, 0));
-		List<Word> values = new ArrayList<Word>();
+		List<Word> values = new ArrayList<>();
 		String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		Color[] colors = new Color[5];
 		colors[0] = Display.getDefault().getSystemColor(SWT.COLOR_DARK_CYAN);

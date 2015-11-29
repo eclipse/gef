@@ -38,8 +38,8 @@ import javafx.util.Duration;
 // TODO: extract magic numbers to properties
 public class HoverOverlayImageView extends Group {
 
-	private SimpleObjectProperty<Image> baseImageProperty = new SimpleObjectProperty<Image>();
-	private SimpleObjectProperty<Image> overlayImageProperty = new SimpleObjectProperty<Image>();
+	private SimpleObjectProperty<Image> baseImageProperty = new SimpleObjectProperty<>();
+	private SimpleObjectProperty<Image> overlayImageProperty = new SimpleObjectProperty<>();
 	private ImageView baseImageView;
 	private ImageView overlayImageView;
 

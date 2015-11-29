@@ -43,7 +43,7 @@ public class ObservableMapTests {
 	}
 
 	private Map<String, Integer> map(Object... pairs) {
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		HashMap<String, Integer> map = new HashMap<>();
 		for (int i = 0; i < pairs.length; i += 2) {
 			String key = (String) pairs[i];
 			Integer value = (Integer) pairs[i + 1];
@@ -54,8 +54,8 @@ public class ObservableMapTests {
 
 	@Test
 	public void test_putRemove_multi() {
-		ObservableMap<String, Integer> map = new ObservableMap<String, Integer>();
-		ExpectingMapObserver<String, Integer> obs = new ExpectingMapObserver<String, Integer>();
+		ObservableMap<String, Integer> map = new ObservableMap<>();
+		ExpectingMapObserver<String, Integer> obs = new ExpectingMapObserver<>();
 		map.addMapObserver(obs);
 
 		assertTrue(map.isEmpty());
@@ -77,8 +77,8 @@ public class ObservableMapTests {
 
 	@Test
 	public void test_putRemove_single() {
-		ObservableMap<String, Integer> map = new ObservableMap<String, Integer>();
-		ExpectingMapObserver<String, Integer> obs = new ExpectingMapObserver<String, Integer>();
+		ObservableMap<String, Integer> map = new ObservableMap<>();
+		ExpectingMapObserver<String, Integer> obs = new ExpectingMapObserver<>();
 		map.addMapObserver(obs);
 
 		assertTrue(map.isEmpty());

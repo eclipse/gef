@@ -40,14 +40,14 @@ public class GraphLayoutContextTests {
 	 * structures.
 	 */
 
-	public static Map<String, Object> ATTR_EMPTY = new HashMap<String, Object>();
+	public static Map<String, Object> ATTR_EMPTY = new HashMap<>();
 
 	public static Edge e(Node n, Node m) {
 		return new Edge.Builder(n, m).buildEdge();
 	}
 
 	public static List<Edge> edges(List<Node> nodes, int... indices) {
-		List<Edge> edges = new ArrayList<Edge>();
+		List<Edge> edges = new ArrayList<>();
 		for (int i = 0; i < indices.length; i += 2) {
 			edges.add(e(nodes.get(indices[i]), nodes.get(indices[i + 1])));
 		}

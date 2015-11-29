@@ -32,7 +32,7 @@ import org.eclipse.gef4.layout.ISubgraphLayout;
  */
 public class GraphSubgraphLayout implements ISubgraphLayout {
 
-	private List<INodeLayout> nodes = new ArrayList<INodeLayout>();
+	private List<INodeLayout> nodes = new ArrayList<>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 
@@ -56,7 +56,7 @@ public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	@Override
 	public Object[] getItems() {
-		List<Object> items = new ArrayList<Object>();
+		List<Object> items = new ArrayList<>();
 		for (INodeLayout node : nodes) {
 			items.addAll(Arrays.asList(node.getItems()));
 		}
@@ -70,7 +70,7 @@ public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	@Override
 	public IEntityLayout[] getPredecessingEntities() {
-		List<IEntityLayout> predecessors = new ArrayList<IEntityLayout>();
+		List<IEntityLayout> predecessors = new ArrayList<>();
 		for (INodeLayout node : nodes) {
 			predecessors.addAll(Arrays.asList(node.getPredecessingEntities()));
 		}
@@ -84,7 +84,7 @@ public class GraphSubgraphLayout implements ISubgraphLayout {
 
 	@Override
 	public IEntityLayout[] getSuccessingEntities() {
-		List<IEntityLayout> successors = new ArrayList<IEntityLayout>();
+		List<IEntityLayout> successors = new ArrayList<>();
 		for (INodeLayout node : nodes) {
 			successors.addAll(Arrays.asList(node.getSuccessingEntities()));
 		}

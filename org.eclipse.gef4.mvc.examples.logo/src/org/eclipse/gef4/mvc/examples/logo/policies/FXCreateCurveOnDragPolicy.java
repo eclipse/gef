@@ -130,7 +130,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 		curvePart.getVisual().setEndPoint(getLocation(e));
 
 		// build operation to deselect all but the new curve part
-		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<IContentPart<Node, ? extends Node>>(
+		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
 				getHost().getRoot().getViewer()
 						.getAdapter(new TypeToken<SelectionModel<Node>>() {
 						}).getSelection());

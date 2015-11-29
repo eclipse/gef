@@ -39,7 +39,7 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 
 	private NodeContentPart nodePart;
 	private HidingModel hidingModel;
-	private List<NodeContentPart> shownNeighbors = new ArrayList<NodeContentPart>();
+	private List<NodeContentPart> shownNeighbors = new ArrayList<>();
 
 	/**
 	 * Constructs a new {@link ShowHiddenNeighborsOperation} that will show all

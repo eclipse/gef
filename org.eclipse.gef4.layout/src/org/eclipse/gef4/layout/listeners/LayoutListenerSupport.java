@@ -34,10 +34,10 @@ import org.eclipse.gef4.layout.LayoutProperties;
 public class LayoutListenerSupport {
 
 	private final ILayoutContext context;
-	private final List<IContextListener> contextListeners = new ArrayList<IContextListener>();
-	private final List<IGraphStructureListener> graphStructureListeners = new ArrayList<IGraphStructureListener>();
-	private final List<ILayoutListener> layoutListeners = new ArrayList<ILayoutListener>();
-	private final List<IPruningListener> pruningListeners = new ArrayList<IPruningListener>();
+	private final List<IContextListener> contextListeners = new ArrayList<>();
+	private final List<IGraphStructureListener> graphStructureListeners = new ArrayList<>();
+	private final List<ILayoutListener> layoutListeners = new ArrayList<>();
+	private final List<IPruningListener> pruningListeners = new ArrayList<>();
 
 	/**
 	 * Constructs a new {@link LayoutListenerSupport} for the given

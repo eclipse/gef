@@ -390,7 +390,7 @@ public class FXGeometricCurvePart
 		}
 
 		// dashes
-		List<Double> dashList = new ArrayList<Double>(content.dashes.length);
+		List<Double> dashList = new ArrayList<>(content.dashes.length);
 		for (double d : content.dashes) {
 			dashList.add(d);
 		}

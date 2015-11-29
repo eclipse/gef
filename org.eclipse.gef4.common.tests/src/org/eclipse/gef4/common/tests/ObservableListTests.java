@@ -43,8 +43,8 @@ public class ObservableListTests {
 
 	@Test
 	public void test_addRemove_multi() {
-		ObservableList<Integer> list = new ObservableList<Integer>();
-		ExpectingListObserver<Integer> obs = new ExpectingListObserver<Integer>();
+		ObservableList<Integer> list = new ObservableList<>();
+		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
 		list.addListObserver(obs);
 
 		assertTrue(list.isEmpty());
@@ -66,8 +66,8 @@ public class ObservableListTests {
 
 	@Test
 	public void test_addRemove_single() {
-		ObservableList<Integer> list = new ObservableList<Integer>();
-		ExpectingListObserver<Integer> obs = new ExpectingListObserver<Integer>();
+		ObservableList<Integer> list = new ObservableList<>();
+		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
 		list.addListObserver(obs);
 
 		assertTrue(list.isEmpty());
@@ -113,8 +113,8 @@ public class ObservableListTests {
 
 	@Test
 	public void test_set() {
-		ObservableList<Integer> list = new ObservableList<Integer>();
-		ExpectingListObserver<Integer> obs = new ExpectingListObserver<Integer>();
+		ObservableList<Integer> list = new ObservableList<>();
+		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
 		list.addListObserver(obs);
 
 		assertTrue(list.isEmpty());
@@ -133,8 +133,8 @@ public class ObservableListTests {
 
 	@Test
 	public void test_subList() {
-		ObservableList<Integer> list = new ObservableList<Integer>();
-		ExpectingListObserver<Integer> obs = new ExpectingListObserver<Integer>();
+		ObservableList<Integer> list = new ObservableList<>();
+		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
 		list.addListObserver(obs);
 
 		assertTrue(list.isEmpty());

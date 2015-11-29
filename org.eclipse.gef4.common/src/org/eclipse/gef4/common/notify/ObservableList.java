@@ -29,8 +29,8 @@ import com.google.common.collect.ForwardingList;
  */
 public class ObservableList<T> extends ForwardingList<T> {
 
-	private List<IListObserver<T>> observers = new ArrayList<IListObserver<T>>();
-	private List<T> backingList = new ArrayList<T>();
+	private List<IListObserver<T>> observers = new ArrayList<>();
+	private List<T> backingList = new ArrayList<>();
 
 	@Override
 	public void add(int index, T element) {
@@ -100,7 +100,7 @@ public class ObservableList<T> extends ForwardingList<T> {
 	 * @return A copy of the backing list.
 	 */
 	protected List<T> getBackingListCopy() {
-		return new ArrayList<T>(backingList);
+		return new ArrayList<>(backingList);
 	}
 
 	/**

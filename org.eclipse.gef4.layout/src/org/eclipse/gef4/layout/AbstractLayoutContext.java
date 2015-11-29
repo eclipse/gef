@@ -41,15 +41,15 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
 	private ILayoutAlgorithm dynamicLayoutAlgorithm = null;
 	private ILayoutAlgorithm staticLayoutAlgorithm = null;
-	private final List<INodeLayout> layoutNodes = new ArrayList<INodeLayout>();
-	private final List<IConnectionLayout> layoutEdges = new ArrayList<IConnectionLayout>();
-	private final List<ISubgraphLayout> subgraphs = new ArrayList<ISubgraphLayout>();
+	private final List<INodeLayout> layoutNodes = new ArrayList<>();
+	private final List<IConnectionLayout> layoutEdges = new ArrayList<>();
+	private final List<ISubgraphLayout> subgraphs = new ArrayList<>();
 
 	private boolean flushChangesInvocation = false;
 
-	private final List<Runnable> postLayoutPass = new ArrayList<Runnable>();
-	private final List<Runnable> preLayoutPass = new ArrayList<Runnable>();
-	private final List<ILayoutFilter> layoutFilters = new ArrayList<ILayoutFilter>();
+	private final List<Runnable> postLayoutPass = new ArrayList<>();
+	private final List<Runnable> preLayoutPass = new ArrayList<>();
+	private final List<ILayoutFilter> layoutFilters = new ArrayList<>();
 
 	/**
 	 * Support object for the (un-)registration of
@@ -134,7 +134,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * {@link #removeEdge(IConnectionLayout)} calls.
 	 */
 	protected void clearEdges() {
-		for (IConnectionLayout edge : new ArrayList<IConnectionLayout>(
+		for (IConnectionLayout edge : new ArrayList<>(
 				layoutEdges)) {
 			removeEdge(edge);
 		}
@@ -145,7 +145,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * {@link #removeNode(INodeLayout)} calls.
 	 */
 	protected void clearNodes() {
-		for (INodeLayout node : new ArrayList<INodeLayout>(layoutNodes)) {
+		for (INodeLayout node : new ArrayList<>(layoutNodes)) {
 			removeNode(node);
 		}
 	}
@@ -160,7 +160,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 */
 	protected void doFlushChanges(boolean animationHint) {
 		// TODO: use specific flush-changes-listener to pass animationHint along
-		for (Runnable r : new ArrayList<Runnable>(postLayoutPass)) {
+		for (Runnable r : new ArrayList<>(postLayoutPass)) {
 			r.run();
 		}
 	}
@@ -239,7 +239,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	public IConnectionLayout[] getConnections(IEntityLayout layoutEntity1,
 			IEntityLayout layoutEntity2) {
-		List<IConnectionLayout> connections = new ArrayList<IConnectionLayout>();
+		List<IConnectionLayout> connections = new ArrayList<>();
 
 		for (IConnectionLayout c : ((INodeLayout) layoutEntity1)
 				.getOutgoingConnections()) {

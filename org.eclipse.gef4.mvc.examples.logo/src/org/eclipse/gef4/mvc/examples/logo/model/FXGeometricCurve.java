@@ -49,8 +49,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	private Decoration sourceDecoration = Decoration.NONE;
 	private Decoration targetDecoration = Decoration.NONE;
 	public double[] dashes = new double[0];
-	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
-	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
+	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
+	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
 
 	public FXGeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth,
 			double[] dashes, Effect effect) {
@@ -102,7 +102,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public List<Point> getWayPointsCopy() {
-		return new ArrayList<Point>(waypoints);
+		return new ArrayList<>(waypoints);
 	}
 
 	public void removeWayPoint(int i) {

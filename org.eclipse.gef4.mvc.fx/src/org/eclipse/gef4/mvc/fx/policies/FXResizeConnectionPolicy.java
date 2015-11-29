@@ -25,8 +25,8 @@ import javafx.geometry.Bounds;
 
 /**
  * The {@link FXResizeConnectionPolicy} is a specialization of the
- * {@link FXResizePolicy} that performs a resize of an {@link Connection}
- * visual by proportionally relocating its bend points.
+ * {@link FXResizePolicy} that performs a resize of an {@link Connection} visual
+ * by proportionally relocating its bend points.
  *
  * @author mwienand
  *
@@ -57,7 +57,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	 *         relocate.
 	 */
 	protected List<Integer> getIndicesOfMovableAnchors() {
-		List<Integer> indices = new ArrayList<Integer>();
+		List<Integer> indices = new ArrayList<>();
 		if (!op.getConnection().isStartConnected()) {
 			indices.add(0);
 		}

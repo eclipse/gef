@@ -125,7 +125,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 				key.getKey(), key.getRole());
 
 		// an adapter instance may be registered under different keys
-		int adapterCount = new HashSet<T>(adaptersForTypeKey.values()).size();
+		int adapterCount = new HashSet<>(adaptersForTypeKey.values()).size();
 		if (adapterCount == 1) {
 			return adaptersForTypeKey.values().iterator().next();
 		}
@@ -179,7 +179,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 				null);
 
 		// an adapter instance may be registered under different keys
-		int adapterCount = new HashSet<T>(adaptersForTypeKey.values()).size();
+		int adapterCount = new HashSet<>(adaptersForTypeKey.values()).size();
 		if (adapterCount == 1) {
 			return adaptersForTypeKey.values().iterator().next();
 		}
@@ -204,7 +204,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
-		return new HashMap<AdapterKey<?>, Object>(adapters);
+		return new HashMap<>(adapters);
 	}
 
 	/**
@@ -255,7 +255,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
-		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<>();
 		if (adapters != null) {
 			for (AdapterKey<?> k : adapters.keySet()) {
 				if (key.isAssignableFrom(k.getKey())) {
@@ -278,7 +278,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			return Collections.emptyMap();
 		}
 
-		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<>();
 		if (adapters != null) {
 			for (AdapterKey<?> k : adapters.keySet()) {
 				if (role == null || k.getRole().equals(role)) {
@@ -398,7 +398,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		if (adapters == null) {
-			adapters = new HashMap<AdapterKey<?>, Object>();
+			adapters = new HashMap<>();
 		}
 
 		AdapterKey<T> key = AdapterKey.get(adapterType, role);
@@ -419,7 +419,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			deactivateAdapters();
 		}
 
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(
 				adapters);
 
 		adapters.put(key, adapter);
@@ -435,7 +435,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
-				new HashMap<AdapterKey<?>, Object>(adapters));
+				new HashMap<>(adapters));
 	}
 
 	/**
@@ -461,7 +461,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			deactivateAdapters();
 		}
 
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(
 				adapters);
 
 		// process all keys and remove those pointing to the given adapter
@@ -483,7 +483,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
-				new HashMap<AdapterKey<?>, Object>(adapters));
+				new HashMap<>(adapters));
 
 		if (adapters.size() == 0) {
 			adapters = null;
@@ -510,7 +510,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 					"source needs to be deactivated before disposing this AdaptableSupport.");
 		}
 
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(
 				adapters);
 
 		for (AdapterKey<?> key : oldAdapters.keySet()) {

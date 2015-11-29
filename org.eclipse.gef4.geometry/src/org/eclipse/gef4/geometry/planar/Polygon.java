@@ -58,7 +58,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon>
 		public ArrayList<SegmentCounter> segmentCounterList;
 
 		public SegmentList() {
-			segmentCounterList = new ArrayList<SegmentCounter>();
+			segmentCounterList = new ArrayList<>();
 		}
 
 		public SegmentCounter find(Line segment) {
@@ -267,7 +267,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon>
 			return false;
 		}
 
-		Set<Double> intersectionParams = new HashSet<Double>();
+		Set<Double> intersectionParams = new HashSet<>();
 
 		for (Line seg : getOutlineSegments()) {
 			Point poi = seg.getIntersection(line);
@@ -591,7 +591,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon>
 	 */
 	public Polygon[] getTriangulation() {
 		assureSimplicity();
-		ArrayList<Polygon> ears = new ArrayList<Polygon>(points.length - 2);
+		ArrayList<Polygon> ears = new ArrayList<>(points.length - 2);
 		triangulate(this, ears);
 		return ears.toArray(new Polygon[] {});
 	}

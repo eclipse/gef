@@ -38,7 +38,7 @@ public class AbstractVisualPartTests {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAddChild() {
-		final List<PropertyChangeEvent> events = new ArrayList<PropertyChangeEvent>();
+		final List<PropertyChangeEvent> events = new ArrayList<>();
 		AbstractVisualPart<?, ?> parent = new AbstractVisualPartStub();
 		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
 		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
@@ -73,7 +73,7 @@ public class AbstractVisualPartTests {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testRemoveChild() {
-		final List<PropertyChangeEvent> events = new ArrayList<PropertyChangeEvent>();
+		final List<PropertyChangeEvent> events = new ArrayList<>();
 		AbstractVisualPartStub parent = new AbstractVisualPartStub();
 		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
 		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
@@ -109,7 +109,7 @@ public class AbstractVisualPartTests {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReorderChild() {
-		final List<PropertyChangeEvent> events = new ArrayList<PropertyChangeEvent>();
+		final List<PropertyChangeEvent> events = new ArrayList<>();
 		AbstractVisualPartStub parent = new AbstractVisualPartStub();
 		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
 		AbstractVisualPartStub child2 = new AbstractVisualPartStub();

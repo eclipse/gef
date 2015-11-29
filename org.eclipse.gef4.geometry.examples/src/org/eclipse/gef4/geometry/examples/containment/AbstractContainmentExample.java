@@ -44,7 +44,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 
 		public AbstractControllableShape(Canvas canvas) {
 			this.canvas = canvas;
-			points = new ArrayList<ControlPoint>();
+			points = new ArrayList<>();
 			createControlPoints();
 		}
 
@@ -139,8 +139,8 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			oldShellWidth = canvas.getClientArea().width;
 			oldShellHeight = canvas.getClientArea().height;
 			p = new Point(0, 0);
-			updateLinks = new ArrayList<ControlPoint>();
-			forbidden = new ArrayList<ControlPoint>();
+			updateLinks = new ArrayList<>();
+			forbidden = new ArrayList<>();
 			update();
 		}
 

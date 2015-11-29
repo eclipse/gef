@@ -27,7 +27,7 @@ import com.google.common.reflect.TypeToken;
 public class AdapterStore implements IAdaptable {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<AdapterStore>(
+	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<>(
 			this, pcs);
 
 	/**

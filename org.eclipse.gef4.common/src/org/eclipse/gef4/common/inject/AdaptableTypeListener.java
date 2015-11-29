@@ -65,7 +65,7 @@ public class AdaptableTypeListener implements TypeListener {
 
 	// used to keep track of members that are to be injected before we have
 	// obtained the injector (bug #439949)
-	private Set<AdapterMapInjector> nonInjectedMemberInjectors = new HashSet<AdapterMapInjector>();
+	private Set<AdapterMapInjector> nonInjectedMemberInjectors = new HashSet<>();
 
 	/**
 	 * In order to work, the {@link AdaptableTypeListener} needs to obtain a

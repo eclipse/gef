@@ -46,9 +46,9 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 
 	private class ReadOnlyPropertyImplEx extends ReadOnlyMapProperty<K, V> {
 
-		private List<ChangeListener<? super ObservableMap<K, V>>> changeListeners = new ArrayList<ChangeListener<? super ObservableMap<K, V>>>();
-		private List<MapChangeListener<? super K, ? super V>> mapChangeListeners = new ArrayList<MapChangeListener<? super K, ? super V>>();
-		private List<InvalidationListener> invalidationListeners = new ArrayList<InvalidationListener>();
+		private List<ChangeListener<? super ObservableMap<K, V>>> changeListeners = new ArrayList<>();
+		private List<MapChangeListener<? super K, ? super V>> mapChangeListeners = new ArrayList<>();
+		private List<InvalidationListener> invalidationListeners = new ArrayList<>();
 
 		private MapExpressionHelper<K, V> helper = null;
 

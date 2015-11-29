@@ -109,7 +109,7 @@ abstract class AbstractMultiShape extends AbstractGeometry
 	 * @param seen
 	 */
 	private void filterOutInnerSegments(HashMap<Line, Integer> seen) {
-		for (Line seg : new HashSet<Line>(seen.keySet())) {
+		for (Line seg : new HashSet<>(seen.keySet())) {
 			if (seen.get(seg) == 2) {
 				seen.remove(seg);
 			}
@@ -120,7 +120,7 @@ abstract class AbstractMultiShape extends AbstractGeometry
 			Map<Point, List<Line>> segsAt) {
 		// System.out.println("findOutline");
 
-		Set<Point> visited = new HashSet<Point>();
+		Set<Point> visited = new HashSet<>();
 		Line initial = outlineSegments.iterator().next();
 		List<Point> way = findWay(segsAt, visited, initial.getP1(),
 				initial.getP2(), 1);
@@ -155,7 +155,7 @@ abstract class AbstractMultiShape extends AbstractGeometry
 		if (segmentsByEndPoints.get(end) == segmentsByEndPoints.get(start)) {
 			// System.out.printf("%" + indent + "s", " ");
 			// System.out.println("#closed");
-			return new ArrayList<Point>(0);
+			return new ArrayList<>(0);
 		}
 
 		visited.add(start);
@@ -242,9 +242,9 @@ abstract class AbstractMultiShape extends AbstractGeometry
 
 	@Override
 	public Polyline[] getOutlines() {
-		List<Polyline> outlines = new ArrayList<Polyline>();
-		Map<Point, List<Line>> segmentsByEndPoints = new HashMap<Point, List<Line>>();
-		Set<Line> outlineSegments = new HashSet<Line>();
+		List<Polyline> outlines = new ArrayList<>();
+		Map<Point, List<Line>> segmentsByEndPoints = new HashMap<>();
+		Set<Line> outlineSegments = new HashSet<>();
 
 		for (Line seg : getOutlineSegments()) {
 			// if (comparePoints(seg.getP1(), seg.getP2()) == 1) {
@@ -256,11 +256,11 @@ abstract class AbstractMultiShape extends AbstractGeometry
 		// constructs segments tree
 		for (Line seg : outlineSegments) {
 			if (!segmentsByEndPoints.containsKey(seg.getP1())) {
-				ArrayList<Line> segList = new ArrayList<Line>();
+				ArrayList<Line> segList = new ArrayList<>();
 				segmentsByEndPoints.put(seg.getP1(), segList);
 			}
 			if (!segmentsByEndPoints.containsKey(seg.getP2())) {
-				ArrayList<Line> segList = new ArrayList<Line>();
+				ArrayList<Line> segList = new ArrayList<>();
 				segmentsByEndPoints.put(seg.getP2(), segList);
 			}
 			segmentsByEndPoints.get(seg.getP1()).add(seg);
@@ -325,15 +325,15 @@ abstract class AbstractMultiShape extends AbstractGeometry
 	 */
 	@Override
 	public Line[] getOutlineSegments() {
-		HashMap<Line, Integer> seen = new HashMap<Line, Integer>();
-		Stack<Line> elementsToAdd = new Stack<Line>();
+		HashMap<Line, Integer> seen = new HashMap<>();
+		Stack<Line> elementsToAdd = new Stack<>();
 		for (Line e : getAllEdges()) {
 			elementsToAdd.push(e);
 		}
 
 		addingElements: while (!elementsToAdd.empty()) {
 			Line toAdd = elementsToAdd.pop();
-			for (Line seg : new HashSet<Line>(seen.keySet())) {
+			for (Line seg : new HashSet<>(seen.keySet())) {
 				if (seg.overlaps(toAdd)) {
 					Point[] p = getSortedEndpoints(toAdd, seg);
 					seen.remove(seg);

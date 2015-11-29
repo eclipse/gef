@@ -171,15 +171,15 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
 	private ChopBoxAnchor chopBoxAnchor;
-	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
+	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
-	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<AnchorKey, Circle>();
-	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<AnchorKey, Line>();
-	private Map<AnchorKey, Line> chopBoxLinesImaginary = new HashMap<AnchorKey, Line>();
-	private Map<AnchorKey, List<Node>> intersections = new HashMap<AnchorKey, List<Node>>();
-	private List<Node> vertices = new ArrayList<Node>();
-	private List<Node> distanceLines = new ArrayList<Node>();
-	private List<Node> minDistanceNodes = new ArrayList<Node>();
+	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<>();
+	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<>();
+	private Map<AnchorKey, Line> chopBoxLinesImaginary = new HashMap<>();
+	private Map<AnchorKey, List<Node>> intersections = new HashMap<>();
+	private List<Node> vertices = new ArrayList<>();
+	private List<Node> distanceLines = new ArrayList<>();
+	private List<Node> minDistanceNodes = new ArrayList<>();
 	private Circle boundsCenterNode;
 	private Node eLetterReferenceNode;
 
@@ -278,7 +278,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	}
 
 	private GeometryNode<CurvedPolygon> createELetterShape() {
-		GeometryNode<CurvedPolygon> eLetterShape = new GeometryNode<CurvedPolygon>(
+		GeometryNode<CurvedPolygon> eLetterShape = new GeometryNode<>(
 				GeometryNodeSnippet.createEShapeGeometry());
 		eLetterShape.relocate(PAD, PAD);
 		eLetterShape.resize(WIDTH - PAD - PAD, HEIGHT - PAD - PAD);
@@ -612,7 +612,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 			List<Node> toRemove = intersections.remove(ak);
 			intersectionLayer.getChildren().removeAll(toRemove);
 		}
-		List<Node> intersectionNodes = new ArrayList<Node>();
+		List<Node> intersectionNodes = new ArrayList<>();
 		ICurve eLetterOutline = (ICurve) NodeUtils.localToScene(eLetterShape,
 				computationStrategy.getOutline(eLetterShape.getGeometry()));
 		org.eclipse.gef4.geometry.planar.Line referenceLine = new org.eclipse.gef4.geometry.planar.Line(

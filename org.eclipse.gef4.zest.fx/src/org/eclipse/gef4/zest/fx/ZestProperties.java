@@ -205,7 +205,7 @@ public class ZestProperties {
 	 * <li>{@link #GRAPH_TYPE_UNDIRECTED} (default)
 	 * </ul>
 	 */
-	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<String>(
+	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<>(
 			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
 
 	/**

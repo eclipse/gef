@@ -58,7 +58,7 @@ public class Point implements Cloneable, Serializable {
 		});
 
 		// filter points
-		List<Point> uniquePoints = new ArrayList<Point>(points.length);
+		List<Point> uniquePoints = new ArrayList<>(points.length);
 		for (int i = 0; i < points.length - 1; i++) {
 			if (!points[i].equals(points[i + 1])) {
 				uniquePoints.add(points[i]);
@@ -183,7 +183,7 @@ public class Point implements Cloneable, Serializable {
 		});
 
 		// initialize stack with first three points
-		ArrayList<Point> convexHull = new ArrayList<Point>();
+		ArrayList<Point> convexHull = new ArrayList<>();
 		convexHull.add(points[2]);
 		convexHull.add(points[1]);
 		convexHull.add(points[0]);

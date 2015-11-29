@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 public class DefaultSelectionProvider implements ISelectionProvider {
 
 	private ISelection selection;
-	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<>();
 
 	@Override
 	public void addSelectionChangedListener(

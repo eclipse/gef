@@ -30,7 +30,7 @@ abstract public class ControllableShape {
 	public List<ControlPoint> controlPoints;
 
 	public ControllableShape() {
-		controlPoints = new ArrayList<ControlPoint>();
+		controlPoints = new ArrayList<>();
 		shapeColor = SWT.COLOR_BLACK;
 		controlColor = SWT.COLOR_BLUE;
 		controlRadius = 5;

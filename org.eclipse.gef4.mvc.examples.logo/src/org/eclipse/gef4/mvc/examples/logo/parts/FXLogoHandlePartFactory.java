@@ -63,7 +63,7 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 			IVisualPart<Node, ? extends Node> target,
 			HoverBehavior<Node> contextBehavior,
 			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
+		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<>();
 		if (target instanceof FXGeometricShapePart) {
 			// create root handle part
 			FXHoverHandleRootPart parentHp = new FXHoverHandleRootPart();

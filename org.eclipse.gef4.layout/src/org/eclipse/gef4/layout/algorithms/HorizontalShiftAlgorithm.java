@@ -43,7 +43,7 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		ArrayList<List<IEntityLayout>> rowsList = new ArrayList<List<IEntityLayout>>();
+		ArrayList<List<IEntityLayout>> rowsList = new ArrayList<>();
 		IEntityLayout[] entities = context.getEntities();
 
 		for (int i = 0; i < entities.length; i++) {
@@ -114,7 +114,7 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 				return;
 			}
 		}
-		List<IEntityLayout> newRow = new ArrayList<IEntityLayout>();
+		List<IEntityLayout> newRow = new ArrayList<>();
 		newRow.add(entity);
 		rowsList.add(newRow);
 	}

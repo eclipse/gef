@@ -58,10 +58,10 @@ public class CloudOptionsComposite extends Composite {
 
 	protected TagCloudViewer viewer;
 
-	protected List<RGB> colors = new ArrayList<RGB>();
-	protected List<FontData> fonts = new ArrayList<FontData>();
+	protected List<RGB> colors = new ArrayList<>();
+	protected List<FontData> fonts = new ArrayList<>();
 
-	protected List<List<RGB>> colorSchemes = new ArrayList<List<RGB>>();
+	protected List<List<RGB>> colorSchemes = new ArrayList<>();
 
 	protected int currentScheme;
 
@@ -113,7 +113,7 @@ public class CloudOptionsComposite extends Composite {
 	}
 
 	protected void addScheme(RGB... rgbs) {
-		List<RGB> colors = new ArrayList<RGB>();
+		List<RGB> colors = new ArrayList<>();
 		for (RGB rgb : rgbs) {
 			colors.add(rgb);
 		}
@@ -256,7 +256,7 @@ public class CloudOptionsComposite extends Composite {
 		tv.setContentProvider(cp);
 		tv.setLabelProvider(new ColumnLabelProvider() {
 
-			private Map<Object, Image> images = new HashMap<Object, Image>();
+			private Map<Object, Image> images = new HashMap<>();
 
 			@Override
 			public Image getImage(Object element) {
@@ -508,13 +508,13 @@ public class CloudOptionsComposite extends Composite {
 		angles.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		angles.setItems(new String[] { "Horizontal only", "Vertical only", "Horizontal & Vertical",
 				"45 Degrees, mostly horizontal", "45 Degrees", "Random" });
-		final List<List<Float>> anglesLists = new ArrayList<List<Float>>();
+		final List<List<Float>> anglesLists = new ArrayList<>();
 		anglesLists.add(Arrays.asList(0F));
 		anglesLists.add(Arrays.asList(-90F, 90F));
 		anglesLists.add(Arrays.asList(0F, -90F, 0F, 90F));
 		anglesLists.add(Arrays.asList(0F, -90F, -45F, 0F, 45F, 90F, 0F, 0F, 0F, 0F));
 		anglesLists.add(Arrays.asList(-90F, -45F, 0F, 45F, 90F));
-		List<Float> tmp = new ArrayList<Float>();
+		List<Float> tmp = new ArrayList<>();
 		for (int i = -90; i <= 90; i++) {
 			tmp.add((float) i);
 		}

@@ -138,11 +138,11 @@ class ShapeUtils {
 			return false;
 		}
 
-		Set<Double> intersectionParams = new HashSet<Double>();
+		Set<Double> intersectionParams = new HashSet<>();
 
 		for (ICurve segC : multiShape.getOutlineSegments()) {
 			for (BezierCurve seg : segC.toBezier()) {
-				Set<Point> inters = new HashSet<Point>();
+				Set<Point> inters = new HashSet<>();
 				Set<IntervalPair> ips = c.getIntersectionIntervalPairs(seg,
 						inters);
 				for (IntervalPair ip : ips) {
@@ -326,11 +326,11 @@ class ShapeUtils {
 			return false;
 		}
 
-		Set<Double> intersectionParams = new HashSet<Double>();
+		Set<Double> intersectionParams = new HashSet<>();
 
 		for (ICurve segC : shape.getOutlineSegments()) {
 			for (BezierCurve seg : segC.toBezier()) {
-				Set<Point> inters = new HashSet<Point>();
+				Set<Point> inters = new HashSet<>();
 				c.getIntersectionIntervalPairs(seg, inters);
 				for (Point poi : inters) {
 					intersectionParams.add(c.getParameterAt(poi));
@@ -493,7 +493,7 @@ class ShapeUtils {
 	public static PolyBezier getOutline(IShape shape) {
 		ICurve[] curves = shape.getOutlineSegments();
 
-		ArrayList<BezierCurve> beziers = new ArrayList<BezierCurve>(
+		ArrayList<BezierCurve> beziers = new ArrayList<>(
 				curves.length);
 
 		for (ICurve c : curves) {

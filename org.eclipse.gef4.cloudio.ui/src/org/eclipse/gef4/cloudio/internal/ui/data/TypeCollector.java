@@ -48,7 +48,7 @@ public class TypeCollector {
 			text.append(s + "\n");
 		}
 		br.close();
-		Set<String> stops = new HashSet<String>();
+		Set<String> stops = new HashSet<>();
 		if (stopWords != null) {
 			bis = new BufferedInputStream(new FileInputStream(stopWords));
 			br = new BufferedReader(new InputStreamReader(bis, encoding));
@@ -60,7 +60,7 @@ public class TypeCollector {
 		BreakIterator iterator = BreakIterator.getWordInstance(Locale.getDefault());
 		String txt = text.toString();
 		iterator.setText(txt);
-		final Map<String, Integer> strings = new HashMap<String, Integer>();
+		final Map<String, Integer> strings = new HashMap<>();
 		int boundary = iterator.first();
 		int lastBoundary = iterator.first();
 		while (boundary != BreakIterator.DONE) {
@@ -90,14 +90,14 @@ public class TypeCollector {
 	}
 
 	private static List<Type> getMostImportantTypes(final Map<String, Integer> strings) {
-		List<Type> types = new ArrayList<Type>();
+		List<Type> types = new ArrayList<>();
 		Iterator<Entry<String, Integer>> iterator = strings.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<String, Integer> entry = iterator.next();
 			Type type = new Type(entry.getKey(), entry.getValue());
 			types.add(type);
 		}
-		List<Type> sorted = new ArrayList<Type>(types);
+		List<Type> sorted = new ArrayList<>(types);
 		Collections.sort(sorted, new Comparator<Type>() {
 
 			@Override

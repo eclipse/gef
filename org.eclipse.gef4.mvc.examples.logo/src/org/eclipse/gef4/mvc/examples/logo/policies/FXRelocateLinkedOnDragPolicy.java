@@ -29,7 +29,7 @@ public class FXRelocateLinkedOnDragPolicy
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		List<IContentPart<Node, ? extends Node>> selected = super.getTargetParts();
 
-		List<IContentPart<Node, ? extends Node>> linked = new ArrayList<IContentPart<Node, ? extends Node>>();
+		List<IContentPart<Node, ? extends Node>> linked = new ArrayList<>();
 		for (IContentPart<Node, ? extends Node> cp : selected) {
 			// ensure that linked parts are moved with us during dragging
 			linked.addAll(

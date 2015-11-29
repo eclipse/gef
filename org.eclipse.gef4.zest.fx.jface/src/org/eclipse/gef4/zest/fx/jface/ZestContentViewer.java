@@ -116,7 +116,7 @@ public class ZestContentViewer extends ContentViewer {
 	private FXDomain domain;
 	private FXViewer viewer;
 	private ILayoutAlgorithm layoutAlgorithm;
-	private Map<Object, Node> contentNodeMap = new IdentityHashMap<Object, Node>();
+	private Map<Object, Node> contentNodeMap = new IdentityHashMap<>();
 
 	/**
 	 * Constructs a new {@link ZestContentViewer}. The given {@link Module} is
@@ -481,7 +481,7 @@ public class ZestContentViewer extends ContentViewer {
 	@Override
 	public ISelection getSelection() {
 		// construct a new selection by using the selection model contents
-		List<Object> selectedContents = new ArrayList<Object>();
+		List<Object> selectedContents = new ArrayList<>();
 		SelectionModel<javafx.scene.Node> selectionModel = getSelectionModel();
 		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel
 				.getSelection()) {
@@ -548,7 +548,7 @@ public class ZestContentViewer extends ContentViewer {
 		} else if (selection instanceof StructuredSelection) {
 			StructuredSelection structuredSelection = (StructuredSelection) selection;
 			if (!structuredSelection.isEmpty()) {
-				List<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> toBeSelectedParts = new ArrayList<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>>();
+				List<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> toBeSelectedParts = new ArrayList<>();
 				for (Object toBeSelectedContent : structuredSelection.toArray()) {
 					IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> toBeSelectedPart = viewer
 							.getContentPartMap().get(toBeSelectedContent);

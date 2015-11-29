@@ -219,7 +219,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<Node>(selectionProvider,
+			selectionForwarder = new SelectionForwarder<>(selectionProvider,
 					contentViewer);
 		}
 	}

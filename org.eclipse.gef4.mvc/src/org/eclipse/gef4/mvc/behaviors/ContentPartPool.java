@@ -36,7 +36,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  */
 public class ContentPartPool<VR> {
 
-	private Map<Object, IContentPart<VR, ? extends VR>> pool = new HashMap<Object, IContentPart<VR, ? extends VR>>();
+	private Map<Object, IContentPart<VR, ? extends VR>> pool = new HashMap<>();
 
 	/**
 	 * Adds an {@link IContentPart} to this pool. The {@link IContentPart} will

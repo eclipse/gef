@@ -188,7 +188,7 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 				final MapBinderBinding<? extends Object> mapbinding) {
 			// XXX: This is only used in case the MapBinder does not permit
 			// duplicates
-			final Map<AdapterKey<?>, Object> adapters = new HashMap<AdapterKey<?>, Object>();
+			final Map<AdapterKey<?>, Object> adapters = new HashMap<>();
 			for (final Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
 				AdapterKey<?> key = (AdapterKey<?>) entry.getKey();
 
@@ -261,7 +261,7 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final ProviderInstanceBinding<? extends Object> binding) {
-			Map<AdapterKey<?>, Object> adapters = new HashMap<AdapterKey<?>, Object>();
+			Map<AdapterKey<?>, Object> adapters = new HashMap<>();
 			// XXX: This is only used in case the MapBinder permits duplicates
 			Map<AdapterKey<?>, ?> adaptersByKeys = (Map<AdapterKey<?>, ?>) binding
 					.getProviderInstance().get();
@@ -297,7 +297,7 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 		}
 	}
 
-	private final List<Object> deferredInstances = new ArrayList<Object>();
+	private final List<Object> deferredInstances = new ArrayList<>();
 
 	private Injector injector;
 
@@ -357,7 +357,7 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// XXX: use a sorted map, where keys are sorted according to
 		// hierarchy of annotation types (so we have polymorphic injection)
-		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = new TreeMap<Key<?>, Binding<?>>(
+		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = new TreeMap<>(
 				new Comparator<Key<?>>() {
 
 					@Override

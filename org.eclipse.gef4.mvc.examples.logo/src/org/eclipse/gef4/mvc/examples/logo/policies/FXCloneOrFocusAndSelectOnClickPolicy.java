@@ -63,11 +63,11 @@ public class FXCloneOrFocusAndSelectOnClickPolicy
 
 		// deselect all but the clone
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<IContentPart<Node, ? extends Node>>(
+		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
 				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelection());
 		toBeDeselected.remove(clonedContentPart);
-		viewer.getDomain().execute(new DeselectOperation<Node>(
+		viewer.getDomain().execute(new DeselectOperation<>(
 				getHost().getRoot().getViewer(), toBeDeselected));
 
 		// copy the transformation

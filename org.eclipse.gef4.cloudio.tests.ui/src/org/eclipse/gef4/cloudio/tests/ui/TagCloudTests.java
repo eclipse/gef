@@ -170,7 +170,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords2() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		words.add(null);
 		cloud.setWords(words, null);
 	}
@@ -178,7 +178,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords3() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word w = new Word("Word");
 		w.setFontData(composite.getFont().getFontData());
 		w.weight = Math.random();
@@ -189,7 +189,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords4() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word w = new Word("Word");
 		w.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 		w.weight = Math.random();
@@ -200,7 +200,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords5() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		word.angle = -180;
 		words.add(word);
@@ -210,7 +210,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords6() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		word.angle = 180;
 		words.add(word);
@@ -220,7 +220,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords7() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		word.weight = -1;
 		words.add(word);
@@ -230,7 +230,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords8() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		word.weight = 2;
 		words.add(word);
@@ -240,7 +240,7 @@ public class TagCloudTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetIllegalWords9() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = new Word(null);
 		words.add(word);
 		cloud.setWords(words, null);
@@ -257,7 +257,7 @@ public class TagCloudTests {
 	@Test
 	public void testSetEmptyWordList() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		int placed = cloud.setWords(words, null);
 		Assert.assertEquals(0, placed);
 	}
@@ -265,7 +265,7 @@ public class TagCloudTests {
 	@Test
 	public void testSetWordList() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			words.add(getWord());
 		}
@@ -356,11 +356,11 @@ public class TagCloudTests {
 	@Test
 	public void testSetSelection() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		words.add(getWord());
 		words.add(getWord());
 		cloud.setWords(words, null);
-		Set<Word> sel = new HashSet<Word>();
+		Set<Word> sel = new HashSet<>();
 		sel.add(words.get(0));
 		cloud.setSelection(sel);
 		Set<Word> selection = cloud.getSelection();
@@ -373,11 +373,11 @@ public class TagCloudTests {
 	@Test
 	public void testSetNotExistingSelection1() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		words.add(getWord());
 		words.add(getWord());
 		cloud.setWords(words, null);
-		Set<Word> sel = new HashSet<Word>();
+		Set<Word> sel = new HashSet<>();
 		sel.add(getWord());
 		cloud.setSelection(sel);
 		Set<Word> selection = cloud.getSelection();
@@ -387,7 +387,7 @@ public class TagCloudTests {
 	@Test
 	public void testSetNotExistingSelection2() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		Set<Word> sel = new HashSet<Word>();
+		Set<Word> sel = new HashSet<>();
 		sel.add(getWord());
 		cloud.setSelection(sel);
 		Set<Word> selection = cloud.getSelection();
@@ -428,7 +428,7 @@ public class TagCloudTests {
 	@Test
 	public void testLayout() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			words.add(getWord());
 		}
@@ -438,7 +438,7 @@ public class TagCloudTests {
 			Assert.assertTrue(word.y == 0);
 		}
 		cloud.setWords(words, null);
-		List<Rectangle> rects = new ArrayList<Rectangle>();
+		List<Rectangle> rects = new ArrayList<>();
 		// Elements must have been placed
 		for (Word word : words) {
 			Assert.assertTrue(word.x != 0);
@@ -553,7 +553,7 @@ public class TagCloudTests {
 	public void testMouseListener() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
 		UniversalListener ml = new UniversalListener();
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		words.add(word);
 		cloud.setWords(words, null);
@@ -577,7 +577,7 @@ public class TagCloudTests {
 	@Test
 	public void testMouseMoveListener() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		words.add(word);
 		cloud.setWords(words, null);
@@ -613,18 +613,18 @@ public class TagCloudTests {
 	@Test
 	public void testSelectionListener() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word word = getWord();
 		words.add(word);
 		cloud.setWords(words, null);
 		UniversalListener sl = new UniversalListener();
 		cloud.addSelectionListener(sl);
-		cloud.setSelection(new HashSet<Word>(words));
+		cloud.setSelection(new HashSet<>(words));
 		Assert.assertEquals(1, sl.selection.size());
 		cloud.setSelection(new HashSet<Word>());
 		Assert.assertEquals(0, sl.selection.size());
 		cloud.removeSelectionListener(sl);
-		cloud.setSelection(new HashSet<Word>(words));
+		cloud.setSelection(new HashSet<>(words));
 		Assert.assertEquals(0, sl.selection.size());
 
 	}

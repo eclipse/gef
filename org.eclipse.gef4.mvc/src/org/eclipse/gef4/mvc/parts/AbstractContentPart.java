@@ -52,8 +52,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public final void addContentChild(Object contentChild, int index) {
-		List<Object> oldContentChildren = new ArrayList<Object>(
-				getContentChildren());
+		List<Object> oldContentChildren = new ArrayList<>(getContentChildren());
 		if (oldContentChildren.contains(contentChild)) {
 			int oldIndex = oldContentChildren.indexOf(contentChild);
 			if (oldIndex == index) {
@@ -262,8 +261,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public final void removeContentChild(Object contentChild) {
-		List<Object> oldContentChildren = new ArrayList<Object>(
-				getContentChildren());
+		List<Object> oldContentChildren = new ArrayList<>(getContentChildren());
 		if (!oldContentChildren.contains(contentChild)) {
 			throw new IllegalArgumentException("Cannot remove " + contentChild
 					+ " because its not a content child.");
@@ -288,8 +286,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public void reorderContentChild(Object contentChild, int newIndex) {
-		List<Object> oldContentChildren = new ArrayList<Object>(
-				getContentChildren());
+		List<Object> oldContentChildren = new ArrayList<>(getContentChildren());
 		if (oldContentChildren.contains(contentChild)) {
 			throw new IllegalArgumentException("Cannot reorder " + contentChild
 					+ " because its not a content child.");

@@ -259,7 +259,7 @@ public class InfiniteCanvas extends Region {
 			10);
 	private final DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
 			10);
-	private final ReadOnlyObjectWrapper<Affine> gridTransformProperty = new ReadOnlyObjectWrapper<Affine>(
+	private final ReadOnlyObjectWrapper<Affine> gridTransformProperty = new ReadOnlyObjectWrapper<>(
 			new Affine());
 	private final BooleanProperty showGridProperty = new SimpleBooleanProperty(
 			true);
@@ -275,14 +275,14 @@ public class InfiniteCanvas extends Region {
 	private Group scrollBarGroup;
 	private ScrollBar horizontalScrollBar;
 	private ScrollBar verticalScrollBar;
-	private final ObjectProperty<ScrollBarPolicy> horizontalScrollBarPolicyProperty = new SimpleObjectProperty<ScrollBarPolicy>(
+	private final ObjectProperty<ScrollBarPolicy> horizontalScrollBarPolicyProperty = new SimpleObjectProperty<>(
 			ScrollBarPolicy.AS_NEEDED);
-	private final ObjectProperty<ScrollBarPolicy> verticalScrollBarPolicyProperty = new SimpleObjectProperty<ScrollBarPolicy>(
+	private final ObjectProperty<ScrollBarPolicy> verticalScrollBarPolicyProperty = new SimpleObjectProperty<>(
 			ScrollBarPolicy.AS_NEEDED);
 
 	// contents
 	private Group contentGroup = new Group();
-	private ReadOnlyObjectWrapper<Affine> contentTransformProperty = new ReadOnlyObjectWrapper<Affine>(
+	private ReadOnlyObjectWrapper<Affine> contentTransformProperty = new ReadOnlyObjectWrapper<>(
 			new Affine());
 
 	// content and scrollable bounds
@@ -304,8 +304,8 @@ public class InfiniteCanvas extends Region {
 					scrollableBounds[3] - scrollableBounds[1]);
 		}
 	};
-	private ReadOnlyObjectWrapper<Bounds> contentBoundsProperty = new ReadOnlyObjectWrapper<Bounds>();
-	private ReadOnlyObjectWrapper<Bounds> scrollableBoundsProperty = new ReadOnlyObjectWrapper<Bounds>();
+	private ReadOnlyObjectWrapper<Bounds> contentBoundsProperty = new ReadOnlyObjectWrapper<>();
+	private ReadOnlyObjectWrapper<Bounds> scrollableBoundsProperty = new ReadOnlyObjectWrapper<>();
 
 	// layers within the visualization
 	private Pane scrolledPane = new Pane();

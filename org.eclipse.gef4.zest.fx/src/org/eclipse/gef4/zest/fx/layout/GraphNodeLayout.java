@@ -69,7 +69,7 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public IConnectionLayout[] getIncomingConnections() {
-		List<IConnectionLayout> incoming = new ArrayList<IConnectionLayout>();
+		List<IConnectionLayout> incoming = new ArrayList<>();
 
 		IConnectionLayout[] connections = context.getConnections();
 		for (IConnectionLayout c : connections) {
@@ -88,7 +88,7 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public IConnectionLayout[] getOutgoingConnections() {
-		List<IConnectionLayout> outgoing = new ArrayList<IConnectionLayout>();
+		List<IConnectionLayout> outgoing = new ArrayList<>();
 
 		IConnectionLayout[] connections = context.getConnections();
 		for (IConnectionLayout c : connections) {

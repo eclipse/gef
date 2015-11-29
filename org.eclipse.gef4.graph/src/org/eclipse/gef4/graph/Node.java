@@ -41,7 +41,7 @@ public class Node implements IPropertyChangeNotifier {
 	 * little.
 	 */
 	public static class Builder {
-		private Map<String, Object> attrs = new HashMap<String, Object>();
+		private Map<String, Object> attrs = new HashMap<>();
 
 		private Graph.Builder.Context context;
 		private Object key;
@@ -201,7 +201,7 @@ public class Node implements IPropertyChangeNotifier {
 	 */
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private final ObservableMap<String, Object> attrs = new ObservableMap<String, Object>();
+	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
 	/**
 	 * The {@link Graph} which this {@link Node} belongs to.
 	 */
@@ -493,7 +493,7 @@ public class Node implements IPropertyChangeNotifier {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Node {");
 		boolean separator = false;
-		TreeMap<String, Object> sortedAttrs = new TreeMap<String, Object>();
+		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
 		sortedAttrs.putAll(attrs);
 		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {

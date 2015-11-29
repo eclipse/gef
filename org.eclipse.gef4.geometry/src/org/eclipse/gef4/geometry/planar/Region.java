@@ -52,7 +52,7 @@ public class Region extends AbstractMultiShape
 	 *            the {@link Rectangle}s to cut along that line
 	 */
 	private static void cutH(double y, ArrayList<Rectangle> parts) {
-		for (Rectangle r : new ArrayList<Rectangle>(parts)) {
+		for (Rectangle r : new ArrayList<>(parts)) {
 			if (r.y < y && y < r.y + r.height) {
 				parts.remove(r);
 				parts.add(new Rectangle(r.x, r.y, r.width, y - r.y));
@@ -70,7 +70,7 @@ public class Region extends AbstractMultiShape
 	 *            the {@link Rectangle}s to cut along that line
 	 */
 	private static void cutV(double x, ArrayList<Rectangle> parts) {
-		for (Rectangle r : new ArrayList<Rectangle>(parts)) {
+		for (Rectangle r : new ArrayList<>(parts)) {
 			if (r.x < x && x < r.x + r.width) {
 				parts.remove(r);
 				parts.add(new Rectangle(r.x, r.y, x - r.x, r.height));
@@ -87,7 +87,7 @@ public class Region extends AbstractMultiShape
 	 * Constructs a new {@link Region} not covering any area.
 	 */
 	public Region() {
-		rects = new ArrayList<Rectangle>();
+		rects = new ArrayList<>();
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class Region extends AbstractMultiShape
 	 *            constructed.
 	 */
 	public Region(Region other) {
-		rects = new ArrayList<Rectangle>(other.rects.size());
+		rects = new ArrayList<>(other.rects.size());
 
 		for (Rectangle or : other.rects) {
 			rects.add(or.getCopy());
@@ -138,13 +138,13 @@ public class Region extends AbstractMultiShape
 	 * @return <code>this</code> for convenience
 	 */
 	public Region add(Rectangle rectangle) {
-		ArrayList<Rectangle> toAdd = new ArrayList<Rectangle>(1);
+		ArrayList<Rectangle> toAdd = new ArrayList<>(1);
 
 		toAdd.add(rectangle.getCopy());
 
 		for (Rectangle retain : rects) {
-			for (Rectangle addend : new ArrayList<Rectangle>(toAdd)) {
-				ArrayList<Rectangle> parts = new ArrayList<Rectangle>(8);
+			for (Rectangle addend : new ArrayList<>(toAdd)) {
+				ArrayList<Rectangle> parts = new ArrayList<>(8);
 				parts.add(addend);
 
 				if (addend.x <= retain.x && retain.x <= addend.x + addend.width
@@ -200,7 +200,7 @@ public class Region extends AbstractMultiShape
 	 */
 	@Override
 	protected Line[] getAllEdges() {
-		Stack<Line> edges = new Stack<Line>();
+		Stack<Line> edges = new Stack<>();
 
 		for (Rectangle r : rects) {
 			for (Line e : r.getOutlineSegments()) {
@@ -239,7 +239,7 @@ public class Region extends AbstractMultiShape
 	 * @return the intersection {@link Point}s
 	 */
 	public Point[] getOutlineIntersections(ICurve c) {
-		Set<Point> intersections = new HashSet<Point>(0);
+		Set<Point> intersections = new HashSet<>(0);
 
 		for (Line seg : getOutlineSegments()) {
 			intersections.addAll(Arrays.asList(seg.getIntersections(c)));
@@ -325,7 +325,7 @@ public class Region extends AbstractMultiShape
 
 	@Override
 	public Ring getTransformed(AffineTransform t) {
-		List<Polygon> transformedRectangles = new ArrayList<Polygon>();
+		List<Polygon> transformedRectangles = new ArrayList<>();
 		for (Rectangle r : rects) {
 			transformedRectangles.add(r.getTransformed(t));
 		}

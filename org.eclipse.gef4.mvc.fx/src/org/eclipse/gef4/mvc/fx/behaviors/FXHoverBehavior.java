@@ -100,7 +100,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return false;
 	}
 
-	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<IVisualPart<Node, ? extends Node>, Effect>();
+	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
 	private boolean isFeedback;
 	private boolean isHandles;
 	private PauseTransition creationDelayTransition;

@@ -53,7 +53,7 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 	 *         {@link NodeContentPart} from the {@link SelectionModel}.
 	 */
 	protected ITransactionalOperation createDeselectOperation(NodeContentPart part) {
-		return new DeselectOperation<Node>(part.getRoot().getViewer(), Collections.singletonList(part));
+		return new DeselectOperation<>(part.getRoot().getViewer(), Collections.singletonList(part));
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 		});
 		if (focusModel != null) {
 			if (focusModel.getFocused() == part) {
-				return new ChangeFocusOperation<Node>(viewer, null);
+				return new ChangeFocusOperation<>(viewer, null);
 
 			}
 		}

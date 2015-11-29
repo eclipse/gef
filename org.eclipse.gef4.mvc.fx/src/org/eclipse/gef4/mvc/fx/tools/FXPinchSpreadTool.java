@@ -58,7 +58,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_PINCH_SPREAD_POLICY_KEY
 	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
 
-	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<IViewer<Node>, AbstractPinchSpreadGesture>();
+	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<>();
 
 	/**
 	 * Returns a {@link Set} containing all

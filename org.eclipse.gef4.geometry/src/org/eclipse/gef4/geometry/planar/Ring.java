@@ -227,7 +227,7 @@ public class Ring extends AbstractMultiShape
 	 * Constructs a new empty {@link Ring}.
 	 */
 	public Ring() {
-		triangles = new ArrayList<Polygon>();
+		triangles = new ArrayList<>();
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class Ring extends AbstractMultiShape
 	 * @return <code>this</code> for convenience
 	 */
 	public Ring add(Polygon p) {
-		Stack<Polygon> toAdd = new Stack<Polygon>();
+		Stack<Polygon> toAdd = new Stack<>();
 		for (Polygon triangleToAdd : p.getTriangulation()) {
 			// do not add "empty" triangles
 			if (triangleToAdd.getArea() != 0) {
@@ -277,11 +277,11 @@ public class Ring extends AbstractMultiShape
 
 		while (!toAdd.empty()) {
 			Polygon triangleToAdd = toAdd.pop();
-			Stack<Polygon> localAddends = new Stack<Polygon>();
+			Stack<Polygon> localAddends = new Stack<>();
 			localAddends.push(triangleToAdd);
 			for (Polygon triangleAlreadyThere : triangles) {
 				for (Line e : triangleAlreadyThere.getOutlineSegments()) {
-					Stack<Polygon> nextAddends = new Stack<Polygon>();
+					Stack<Polygon> nextAddends = new Stack<>();
 					for (Iterator<Polygon> i = localAddends.iterator(); i
 							.hasNext();) {
 						Polygon addend = i.next();
@@ -362,7 +362,7 @@ public class Ring extends AbstractMultiShape
 
 	@Override
 	protected Line[] getAllEdges() {
-		Stack<Line> edges = new Stack<Line>();
+		Stack<Line> edges = new Stack<>();
 
 		for (Polygon t : triangles) {
 			for (Line e : t.getOutlineSegments()) {
@@ -458,7 +458,7 @@ public class Ring extends AbstractMultiShape
 
 	@Override
 	public Ring getTransformed(AffineTransform t) {
-		List<Polygon> transformedTriangles = new ArrayList<Polygon>();
+		List<Polygon> transformedTriangles = new ArrayList<>();
 		for (Polygon p : triangles) {
 			transformedTriangles.add(p.getTransformed(t));
 		}

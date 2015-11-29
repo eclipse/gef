@@ -49,7 +49,7 @@ public class FXCreationMenuItemProvider
 
 		@Override
 		public Node createVisual() {
-			GeometryNode<IShape> visual = new GeometryNode<IShape>(
+			GeometryNode<IShape> visual = new GeometryNode<>(
 					template.getGeometry());
 			visual.setStroke(template.getStroke());
 			visual.setStrokeWidth(template.getStrokeWidth());
@@ -67,7 +67,7 @@ public class FXCreationMenuItemProvider
 
 	@Override
 	public List<IFXCreationMenuItem> get() {
-		List<IFXCreationMenuItem> items = new ArrayList<IFXCreationMenuItem>();
+		List<IFXCreationMenuItem> items = new ArrayList<>();
 		// handle shape
 		items.add(new GeometricShapeItem(new FXGeometricShape(
 				FXGeometricModel.createHandleShapeGeometry(),

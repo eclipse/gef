@@ -144,7 +144,7 @@ public class FxNonApplicationThreadRule implements TestRule {
 	private static boolean initializedJavaFxToolkit = false;
 
 	private Scene scene;
-	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<EventType<?>, EventSynchronizer<?>>();
+	private Map<EventType<?>, EventSynchronizer<?>> eventSynchronizers = new HashMap<>();
 	private JFXPanel panel;
 
 	@Override
@@ -241,7 +241,7 @@ public class FxNonApplicationThreadRule implements TestRule {
 	@SuppressWarnings("unchecked")
 	public <T extends Event> EventSynchronizer<T> getEventSynchronizer(EventType<T> type) {
 		if (!eventSynchronizers.containsKey(type)) {
-			eventSynchronizers.put(type, new EventSynchronizer<T>(scene, type));
+			eventSynchronizers.put(type, new EventSynchronizer<>(scene, type));
 		}
 		EventSynchronizer<T> eventSynchronizer = (EventSynchronizer<T>) eventSynchronizers.get(type);
 		eventSynchronizer.register();
@@ -317,7 +317,7 @@ public class FxNonApplicationThreadRule implements TestRule {
 		Point2D localToScene = visual.localToScene(localX, localY);
 		double x = scene.getWindow().getX() + localToScene.getX();
 		double y = scene.getWindow().getY() + localToScene.getY();
-		EventSynchronizer<MouseEvent> synchronizer = new EventSynchronizer<MouseEvent>(visual,
+		EventSynchronizer<MouseEvent> synchronizer = new EventSynchronizer<>(visual,
 				MouseEvent.MOUSE_ENTERED);
 		synchronizer.register();
 		robot.mouseMove((int) x, (int) y);

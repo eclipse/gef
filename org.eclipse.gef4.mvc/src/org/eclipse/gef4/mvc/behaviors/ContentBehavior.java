@@ -232,7 +232,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 				.getAnchorages();
 
 		// find anchorages whose content vanished
-		List<Entry<IVisualPart<VR, ? extends VR>, String>> toRemove = new ArrayList<Map.Entry<IVisualPart<VR, ? extends VR>, String>>();
+		List<Entry<IVisualPart<VR, ? extends VR>, String>> toRemove = new ArrayList<>();
 		Set<Entry<IVisualPart<VR, ? extends VR>, String>> entries = anchorages
 				.entries();
 		for (Entry<IVisualPart<VR, ? extends VR>, String> e : entries) {
@@ -254,7 +254,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		}
 
 		// find content for which no anchorages exist
-		List<Entry<IVisualPart<VR, ? extends VR>, String>> toAdd = new ArrayList<Map.Entry<IVisualPart<VR, ? extends VR>, String>>();
+		List<Entry<IVisualPart<VR, ? extends VR>, String>> toAdd = new ArrayList<>();
 		for (Entry<? extends Object, String> e : contentAnchorages.entries()) {
 			IContentPart<VR, ? extends VR> anchorage = findOrCreatePartFor(
 					e.getKey());
@@ -296,12 +296,11 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		List<IContentPart<VR, ? extends VR>> childContentParts = PartUtils
 				.filterParts(getHost().getChildren(), IContentPart.class);
 		// store the existing content parts in a map using the contents as keys
-		Map<Object, IContentPart<VR, ? extends VR>> contentPartMap = new HashMap<Object, IContentPart<VR, ? extends VR>>();
+		Map<Object, IContentPart<VR, ? extends VR>> contentPartMap = new HashMap<>();
 		// find all content parts for which no content element exists in
 		// contentChildren, and therefore have to be removed
-		Set<? extends Object> newContents = new HashSet<Object>(
-				contentChildren);
-		List<IContentPart<VR, ? extends VR>> toRemove = new ArrayList<IContentPart<VR, ? extends VR>>();
+		Set<? extends Object> newContents = new HashSet<>(contentChildren);
+		List<IContentPart<VR, ? extends VR>> toRemove = new ArrayList<>();
 		for (IContentPart<VR, ? extends VR> cp : childContentParts) {
 			// store content part in map
 			contentPartMap.put(cp.getContent(), cp);

@@ -150,7 +150,7 @@ public class JFaceEdgeDecorationExample {
 		@Override
 		public Map<String, Object> getEdgeAttributes(Object sourceNode,
 				Object targetNode) {
-			Map<String, Object> edgeAttributes = new HashMap<String, Object>();
+			Map<String, Object> edgeAttributes = new HashMap<>();
 			edgeAttributes.put(ZestProperties.EDGE_SOURCE_DECORATION,
 					new CircleHead());
 			edgeAttributes.put(ZestProperties.EDGE_TARGET_DECORATION,

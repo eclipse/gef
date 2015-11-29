@@ -37,8 +37,8 @@ import org.eclipse.gef4.layout.ISubgraphLayout;
 public class GraphLayoutContext extends AbstractLayoutContext {
 
 	private Graph g;
-	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<Node, GraphNodeLayout>();
-	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<Edge, GraphEdgeLayout>();
+	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<>();
+	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<>();
 
 	// TODO: subgraphs
 
@@ -69,7 +69,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 
 	@Override
 	public IConnectionLayout[] getConnections() {
-		List<IConnectionLayout> connections = new ArrayList<IConnectionLayout>();
+		List<IConnectionLayout> connections = new ArrayList<>();
 		IConnectionLayout[] all = super.getConnections();
 		// filter out any hidden nodes
 		for (IConnectionLayout c : all) {
@@ -125,7 +125,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 
 	@Override
 	public INodeLayout[] getNodes() {
-		List<INodeLayout> nodes = new ArrayList<INodeLayout>();
+		List<INodeLayout> nodes = new ArrayList<>();
 		INodeLayout[] allNodes = super.getNodes();
 		// filter out any hidden nodes
 		for (INodeLayout n : allNodes) {

@@ -67,7 +67,7 @@ public final class DotAst {
 	 * @return The errors reported by the parser when parsing the given file
 	 */
 	public List<String> errors() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		EList<Diagnostic> errors = resource.getErrors();
 		Iterator<Diagnostic> i = errors.iterator();
 		while (i.hasNext()) {

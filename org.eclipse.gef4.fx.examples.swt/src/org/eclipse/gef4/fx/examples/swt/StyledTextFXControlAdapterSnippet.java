@@ -92,7 +92,7 @@ public class StyledTextFXControlAdapterSnippet extends AbstractFxSwtExample {
 		Button clearStyleButton = new Button("Clear style");
 
 		// create styled text
-		final FXControlAdapter<StyledText> stNode = new FXControlAdapter<StyledText>(
+		final FXControlAdapter<StyledText> stNode = new FXControlAdapter<>(
 				new IControlFactory<StyledText>() {
 					@Override
 					public StyledText createControl(Composite canvas) {

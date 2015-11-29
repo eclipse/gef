@@ -41,7 +41,7 @@ public class FXGeometricShapePart
 
 	@Override
 	protected GeometryNode<IShape> createVisual() {
-		return new GeometryNode<IShape>();
+		return new GeometryNode<>();
 	}
 
 	@Override

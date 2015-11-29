@@ -78,7 +78,7 @@ public class ZestFxUiView extends AbstractFXView {
 			throw new IllegalStateException("Invalid configuration: Content model could not be retrieved.");
 		}
 		// set contents (will wrap graph into contents list)
-		List<Object> contents = new ArrayList<Object>(1);
+		List<Object> contents = new ArrayList<>(1);
 		if (graph != null) {
 			contents.add(graph);
 		}

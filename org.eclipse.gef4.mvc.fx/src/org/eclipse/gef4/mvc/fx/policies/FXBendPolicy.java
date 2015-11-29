@@ -127,10 +127,10 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		// the interaction policy)
 		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation(
 				bendOperation.getLabel());
-		commit.add(new SetRefreshVisualOperation<Node>(getHost(),
+		commit.add(new SetRefreshVisualOperation<>(getHost(),
 				getHost().isRefreshVisual(), false));
 		commit.add(updateOperation);
-		commit.add(new SetRefreshVisualOperation<Node>(getHost(), false,
+		commit.add(new SetRefreshVisualOperation<>(getHost(), false,
 				getHost().isRefreshVisual()));
 
 		return commit;
@@ -182,13 +182,13 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 
 		// build "deselect host" operation
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		DeselectOperation<Node> deselectOperation = new DeselectOperation<Node>(
+		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(
 				viewer, Collections.singletonList(
 						(IContentPart<Node, Connection>) getHost()));
 
 		// build "select host" operation
-		SelectOperation<Node> selectOperation = new SelectOperation<Node>(
-				viewer, Collections.singletonList(
+		SelectOperation<Node> selectOperation = new SelectOperation<>(viewer,
+				Collections.singletonList(
 						(IContentPart<Node, Connection>) getHost()));
 
 		reselectOperation.add(deselectOperation);
@@ -389,7 +389,7 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 
 	private List<IContentPart<Node, ? extends Node>> getParts(
 			List<Node> nodesUnderMouse) {
-		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<IContentPart<Node, ? extends Node>>();
+		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<>();
 
 		Map<Node, IVisualPart<Node, ? extends Node>> partMap = getHost()
 				.getRoot().getViewer().getVisualPartMap();

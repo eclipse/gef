@@ -51,7 +51,7 @@ public class CurvedPolygonExample extends AbstractExample {
 			@Override
 			public CurvedPolygon getShape() {
 				Point[] points = getPoints();
-				List<QuadraticCurve> segs = new ArrayList<QuadraticCurve>();
+				List<QuadraticCurve> segs = new ArrayList<>();
 				segs.add(new QuadraticCurve(points[0], points[1], points[2]));
 				for (int i = 2; i < points.length; i += 2) {
 					if (i == points.length - 2) {

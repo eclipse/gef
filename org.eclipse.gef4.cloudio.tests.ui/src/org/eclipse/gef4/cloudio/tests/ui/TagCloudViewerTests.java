@@ -161,7 +161,7 @@ public class TagCloudViewerTests {
 		viewer.setContentProvider(provider);
 		TestLabelProvider labelProvider = new TestLabelProvider();
 		viewer.setLabelProvider(labelProvider);
-		List<String> data = new ArrayList<String>();
+		List<String> data = new ArrayList<>();
 		data.add("Hello");
 		data.add("World");
 		viewer.setInput(data);

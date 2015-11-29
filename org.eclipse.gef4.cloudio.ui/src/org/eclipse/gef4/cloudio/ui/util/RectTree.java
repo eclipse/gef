@@ -97,7 +97,7 @@ public class RectTree {
 			}
 			boolean filledChild = children[i].insert(r, id);
 			if (filledChild) {
-				Set<Short> ids = new HashSet<Short>();
+				Set<Short> ids = new HashSet<>();
 				boolean filled = true;
 				for (int j = 0; j < children.length; j++) {
 					if (i == j)
@@ -185,7 +185,7 @@ public class RectTree {
 
 	LinkedList<RectNode> getLeaves() {
 		if (leaves == null) {
-			leaves = new LinkedList<RectNode>();
+			leaves = new LinkedList<>();
 			addLeaves(leaves, root);
 		}
 		return leaves;

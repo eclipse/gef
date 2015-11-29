@@ -120,7 +120,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// need to hold a reference to the ReferencePointMap in order to be able
 		// to call #getRaw().
 		private ReferencePointMap referencePoints = new ReferencePointMap();
-		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
 				FXCollections.observableMap(referencePoints));
 
 		/**
@@ -157,7 +157,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		 * Map to store/manage position change listeners for individual
 		 * {@link AnchorKey}s.
 		 */
-		private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> pcls = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
+		private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> pcls = new HashMap<>();
 
 		/**
 		 * Constructs a new {@link ChopBoxHelper} for the given
@@ -379,7 +379,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	private static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
 
 	// visuals
-	private GeometryNode<ICurve> curveNode = new GeometryNode<ICurve>();
+	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 
 	private IConnectionRouter router = new PolylineConnectionRouter();
 
@@ -389,15 +389,15 @@ public class Connection extends Group /* or rather Parent?? */ {
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IConnectionDecoration startDecoration = null;
 	private IConnectionDecoration endDecoration = null;
-	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<AnchorKey, IAnchor>(
+	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
 
-	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();
+	private List<AnchorKey> wayAnchorKeys = new ArrayList<>();
 	private int nextWayAnchorId = 0;
 
 	// refresh geometry on position changes
 	private boolean inRefresh = false;
-	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
+	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<>();
 
 	/**
 	 * Constructs a new {@link Connection} whose start and end point are set to
@@ -917,7 +917,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	public List<IAnchor> getWayAnchors() {
 		int wayPointsCount = getWayAnchorsSize();
-		List<IAnchor> wayPointAnchors = new ArrayList<IAnchor>(wayPointsCount);
+		List<IAnchor> wayPointAnchors = new ArrayList<>(wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
 			IAnchor wayAnchor = getWayAnchor(i);
 			if (wayAnchor == null) {
@@ -996,7 +996,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	public List<Point> getWayPoints() {
 		List<IAnchor> wayPointAnchors = getWayAnchors();
-		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
+		List<Point> wayPoints = new ArrayList<>(wayPointAnchors.size());
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
 			wayPoints.add(
 					wayPointAnchors.get(i).getPosition(getWayAnchorKey(i)));

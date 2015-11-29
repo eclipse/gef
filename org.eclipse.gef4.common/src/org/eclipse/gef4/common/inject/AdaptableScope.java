@@ -52,7 +52,7 @@ import com.google.inject.Scope;
 public class AdaptableScope<A extends IAdaptable> implements Scope {
 
 	// hold a set of scoped instances per adaptable instance
-	private Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new HashMap<IAdaptable, Map<Key<?>, Object>>();
+	private Map<IAdaptable, Map<Key<?>, Object>> scopedInstances = new HashMap<>();
 
 	private A adaptable = null;
 	private Class<? extends A> type;

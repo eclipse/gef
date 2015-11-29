@@ -34,7 +34,7 @@ import javafx.scene.Scene;
 // The viewer should rather react to focus.
 public class FXFocusTool extends AbstractTool<Node> {
 
-	private final Map<IViewer<Node>, ChangeListener<? super Boolean>> viewerFocusListenerMap = new HashMap<IViewer<Node>, ChangeListener<? super Boolean>>();
+	private final Map<IViewer<Node>, ChangeListener<? super Boolean>> viewerFocusListenerMap = new HashMap<>();
 
 	private ChangeListener<? super Boolean> createWindowFocusedChangeListener(
 			final IViewer<Node> viewer) {

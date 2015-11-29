@@ -98,7 +98,7 @@ public class JFaceEdgeRouterExample {
 					return new org.eclipse.gef4.geometry.planar.Polyline(0, 0,
 							0, 0);
 				}
-				List<Point> manhattenPoints = new ArrayList<Point>();
+				List<Point> manhattenPoints = new ArrayList<>();
 				Point start = points[0];
 				Point end = points[points.length - 1];
 				Point mid = start.getTranslated(end).getScaled(0.5);

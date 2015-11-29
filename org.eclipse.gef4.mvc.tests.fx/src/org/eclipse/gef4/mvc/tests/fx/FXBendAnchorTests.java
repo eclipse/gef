@@ -181,7 +181,7 @@ public class FXBendAnchorTests {
 
 	private static class TestModels {
 		public static List<Object> getABC_AB_BC() {
-			List<Object> contents = new ArrayList<Object>();
+			List<Object> contents = new ArrayList<>();
 			org.eclipse.gef4.geometry.planar.Rectangle A = new org.eclipse.gef4.geometry.planar.Rectangle(0, 0, 50, 50);
 			org.eclipse.gef4.geometry.planar.Rectangle B = new org.eclipse.gef4.geometry.planar.Rectangle(100, 0, 50,
 					50);

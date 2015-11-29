@@ -48,7 +48,7 @@ public abstract class AbstractIntersectionExample implements PaintListener {
 
 		public AbstractControllableShape(Canvas canvas) {
 			this.canvas = canvas;
-			points = new ArrayList<ControlPoint>();
+			points = new ArrayList<>();
 			createControlPoints();
 			canvas.redraw();
 		}
@@ -140,8 +140,8 @@ public abstract class AbstractIntersectionExample implements PaintListener {
 			oldShellWidth = canvas.getClientArea().width;
 			oldShellHeight = canvas.getClientArea().height;
 			p = new Point(0, 0);
-			updateLinks = new ArrayList<ControlPoint>();
-			forbidden = new ArrayList<ControlPoint>();
+			updateLinks = new ArrayList<>();
+			forbidden = new ArrayList<>();
 			update();
 		}
 

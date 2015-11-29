@@ -88,11 +88,9 @@ public class DeselectOperation<VR> extends AbstractOperation
 			List<? extends IContentPart<VR, ? extends VR>> toBeDeselected) {
 		super(label);
 		this.viewer = viewer;
-		this.toBeDeselected = new ArrayList<IContentPart<VR, ? extends VR>>(
-				toBeDeselected);
+		this.toBeDeselected = new ArrayList<>(toBeDeselected);
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		initialSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
-				selectionModel.getSelection());
+		initialSelection = new ArrayList<>(selectionModel.getSelection());
 	}
 
 	@Override

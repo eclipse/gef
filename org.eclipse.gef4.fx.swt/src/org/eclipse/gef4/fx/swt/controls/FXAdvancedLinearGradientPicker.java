@@ -67,7 +67,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 
 		private int index = 0;
 		private DoubleProperty offsetProperty = new SimpleDoubleProperty();
-		private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(
+		private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(
 				Color.WHITE);
 		private Polygon tip;
 		private Rectangle picker;
@@ -366,7 +366,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 					directionY = 0;
 				}
 				updateDirectionLine();
-				List<Stop> newStops = new ArrayList<Stop>(getStops());
+				List<Stop> newStops = new ArrayList<>(getStops());
 				updateGradient(newStops);
 			}
 		});
@@ -395,7 +395,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 	 *            The offset for the new spot.
 	 */
 	protected void createStop(double offset) {
-		List<Stop> newStops = new ArrayList<Stop>(getStops());
+		List<Stop> newStops = new ArrayList<>(getStops());
 		int addIndex = newStops.size();
 		for (int i = 0; i < newStops.size(); i++) {
 			if (newStops.get(i).getOffset() > offset) {
@@ -468,7 +468,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 	 *            The spot index.
 	 */
 	protected void removeStop(int index) {
-		List<Stop> newStops = new ArrayList<Stop>(getStops());
+		List<Stop> newStops = new ArrayList<>(getStops());
 		newStops.remove(index);
 		updateGradient(newStops);
 	}
@@ -560,7 +560,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 	 *            The new color for that spot.
 	 */
 	protected void updateStop(int index, double offset, Color color) {
-		List<Stop> newStops = new ArrayList<Stop>(getStops());
+		List<Stop> newStops = new ArrayList<>(getStops());
 		newStops.set(index, new Stop(offset, color));
 		updateGradient(newStops);
 	}

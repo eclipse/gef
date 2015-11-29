@@ -198,7 +198,7 @@ public class NavigationModel {
 	}
 
 	private Set<Graph> skipNextLayout = Collections.newSetFromMap(new IdentityHashMap<Graph, Boolean>());
-	private Map<Graph, ViewportState> viewportStates = new HashMap<Graph, ViewportState>();
+	private Map<Graph, ViewportState> viewportStates = new HashMap<>();
 
 	/**
 	 * Default constructor.

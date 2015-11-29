@@ -36,7 +36,7 @@ public class TagCloudSnippet {
 
 		// Generate some dummy words - color, weight and fontdata must
 		// always be defined.
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		Word w = new Word("Hello");
 		w.setColor(display.getSystemColor(SWT.COLOR_DARK_CYAN));
 		w.weight = 1;

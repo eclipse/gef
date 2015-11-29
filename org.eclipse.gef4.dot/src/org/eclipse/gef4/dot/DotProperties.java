@@ -100,7 +100,7 @@ public class DotProperties {
 	/**
 	 * Defines all possible values for the {@link #EDGE_STYLE} property.
 	 */
-	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<String>(
+	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<>(
 			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
 					EDGE_STYLE_SOLID, EDGE_STYLE_INVIS, EDGE_STYLE_BOLD,
 					EDGE_STYLE_TAPERED, EDGE_STYLE_VOID));
@@ -133,7 +133,7 @@ public class DotProperties {
 	/**
 	 * Defines all possible values for the {@link #GRAPH_TYPE} property.
 	 */
-	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<String>(
+	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<>(
 			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
 
 	/**
@@ -200,7 +200,7 @@ public class DotProperties {
 	/**
 	 * Defines all possible values for the {@link #GRAPH_LAYOUT} property.
 	 */
-	public static final Set<String> GRAPH_LAYOUT_VALUES = new HashSet<String>(
+	public static final Set<String> GRAPH_LAYOUT_VALUES = new HashSet<>(
 			Arrays.asList(GRAPH_LAYOUT_DOT, GRAPH_LAYOUT_OSAGE,
 					GRAPH_LAYOUT_GRID, GRAPH_LAYOUT_TWOPI, GRAPH_LAYOUT_CIRCO,
 					GRAPH_LAYOUT_NEATO, GRAPH_LAYOUT_FDP, GRAPH_LAYOUT_SFDP));
@@ -234,7 +234,7 @@ public class DotProperties {
 	/**
 	 * Defines all possible values for the {@link #GRAPH_RANKDIR} property.
 	 */
-	public static final Set<String> GRAPH_RANKDIR_VALUES = new HashSet<String>(
+	public static final Set<String> GRAPH_RANKDIR_VALUES = new HashSet<>(
 			Arrays.asList(GRAPH_RANKDIR_LR, GRAPH_RANKDIR_TD));
 
 	/**

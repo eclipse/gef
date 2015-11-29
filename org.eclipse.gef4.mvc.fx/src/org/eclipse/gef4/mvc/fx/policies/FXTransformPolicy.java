@@ -157,13 +157,13 @@ public class FXTransformPolicy extends AbstractTransactionPolicy<Node> {
 	 * The {@link List} of transformations that are applied before the old
 	 * transformation.
 	 */
-	private List<AffineTransform> preTransforms = new ArrayList<AffineTransform>();
+	private List<AffineTransform> preTransforms = new ArrayList<>();
 
 	/**
 	 * The {@link List} of transformations that are applied after the old
 	 * transformation.
 	 */
-	private List<AffineTransform> postTransforms = new ArrayList<AffineTransform>();
+	private List<AffineTransform> postTransforms = new ArrayList<>();
 
 	/**
 	 * Applies the given {@link AffineTransform} as the new transformation

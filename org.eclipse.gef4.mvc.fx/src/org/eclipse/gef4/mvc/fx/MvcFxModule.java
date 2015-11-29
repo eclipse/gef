@@ -193,7 +193,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindContentBehaviorAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -222,7 +221,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindContentPolicyAsAbstractFXContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -261,7 +259,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	@SuppressWarnings("serial")
 	protected void bindDeletionPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())

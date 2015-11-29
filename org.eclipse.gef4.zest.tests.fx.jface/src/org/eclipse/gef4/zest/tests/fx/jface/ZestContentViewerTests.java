@@ -466,7 +466,7 @@ public class ZestContentViewerTests {
 	@SuppressWarnings("serial")
 	@Test
 	public void test_selectionModel() {
-		final List<Object> expectation = new ArrayList<Object>();
+		final List<Object> expectation = new ArrayList<>();
 		ISelectionChangedListener expectingSelectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

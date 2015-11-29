@@ -90,7 +90,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 
 		// approximation is for arcs with angle < 90 degrees, so we may have to
 		// split the arc into up to 4 cubic curves
-		List<CubicCurve> segments = new ArrayList<CubicCurve>();
+		List<CubicCurve> segments = new ArrayList<>();
 		if (angularExtent.deg() <= 90.0) {
 			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
 					width, height, Angle.fromRad(start), Angle.fromRad(end)));

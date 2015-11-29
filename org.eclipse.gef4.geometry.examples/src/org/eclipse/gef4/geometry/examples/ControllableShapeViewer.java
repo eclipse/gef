@@ -30,7 +30,7 @@ public class ControllableShapeViewer
 		implements PaintListener, MouseListener, MouseMoveListener, Listener {
 
 	public Canvas canvas;
-	private ArrayList<ControllableShape> shapes = new ArrayList<ControllableShape>();
+	private ArrayList<ControllableShape> shapes = new ArrayList<>();
 	private boolean isDragging = false;
 	private ControllableShape draggedShape;
 	private int dragPointIndex;

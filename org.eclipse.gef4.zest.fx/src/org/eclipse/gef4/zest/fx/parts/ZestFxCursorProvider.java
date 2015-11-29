@@ -36,7 +36,7 @@ public class ZestFxCursorProvider implements Provider<Map<KeyCode, Cursor>> {
 
 	@Override
 	public Map<KeyCode, Cursor> get() {
-		HashMap<KeyCode, Cursor> key2cursor = new HashMap<KeyCode, Cursor>();
+		HashMap<KeyCode, Cursor> key2cursor = new HashMap<>();
 		key2cursor.put(KeyCode.CONTROL,
 				new ImageCursor(new Image(ZestFxCursorProvider.class.getResource("/rotate_obj.gif").toExternalForm())));
 		return key2cursor;

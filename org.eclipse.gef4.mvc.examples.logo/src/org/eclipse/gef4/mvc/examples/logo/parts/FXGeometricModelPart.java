@@ -73,7 +73,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	public List<Object> getContentChildren() {
-		List<Object> objs = new ArrayList<Object>();
+		List<Object> objs = new ArrayList<>();
 		objs.addAll(getContent().getShapeVisuals());
 		return objs;
 	}

@@ -24,7 +24,7 @@ import org.eclipse.gef4.geometry.planar.IShape;
 
 public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 
-	private final Set<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
+	private final Set<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<>();
 
 	public static final String FILL_PROPERTY = "fill";
 

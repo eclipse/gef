@@ -145,7 +145,7 @@ public class FXCanvasEx extends FXCanvas {
 				}
 			}
 		});
-		focusListeners = new ArrayList<FocusListener>();
+		focusListeners = new ArrayList<>();
 	}
 
 	@Override

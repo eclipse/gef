@@ -75,9 +75,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_DRAG_POLICY_KEY
 	public static final Class<AbstractFXOnDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXOnDragPolicy.class;
 
-	private final Map<IViewer<Node>, AbstractMouseDragGesture> gestures = new HashMap<IViewer<Node>, AbstractMouseDragGesture>();
+	private final Map<IViewer<Node>, AbstractMouseDragGesture> gestures = new HashMap<>();
 	private boolean dragInProgress;
-	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXOnDragPolicy, MouseEvent>();
+	private final Map<AbstractFXOnDragPolicy, MouseEvent> pressEvents = new HashMap<>();
 
 	/**
 	 * Returns a {@link Set} containing all {@link AbstractFXOnClickPolicy}s of
@@ -92,7 +92,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	// TODO: Rename to getOnClickPolicies()
 	protected Set<? extends AbstractFXOnClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<AbstractFXOnClickPolicy>(targetPart
+		return new HashSet<>(targetPart
 				.<AbstractFXOnClickPolicy> getAdapters(CLICK_TOOL_POLICY_KEY)
 				.values());
 	}
@@ -110,7 +110,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	// TODO: Rename to getOnDragPolicies()
 	protected Set<? extends AbstractFXOnDragPolicy> getDragPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<AbstractFXOnDragPolicy>(targetPart
+		return new HashSet<>(targetPart
 				.<AbstractFXOnDragPolicy> getAdapters(DRAG_TOOL_POLICY_KEY)
 				.values());
 	}

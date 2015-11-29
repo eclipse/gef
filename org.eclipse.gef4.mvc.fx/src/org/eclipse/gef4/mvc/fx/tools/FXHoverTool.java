@@ -47,7 +47,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_HOVER_POLICY_KEY
 	public static final Class<AbstractFXOnHoverPolicy> TOOL_POLICY_KEY = AbstractFXOnHoverPolicy.class;
 
-	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<FXViewer, EventHandler<MouseEvent>>();
+	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<>();
 
 	/**
 	 * Creates an {@link EventHandler} for hover {@link MouseEvent}s. The

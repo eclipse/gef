@@ -42,7 +42,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	 * The list containing the {@link ITransactionalOperation}s which are
 	 * combined in this composite operation.
 	 */
-	List<ITransactionalOperation> operations = new ArrayList<ITransactionalOperation>();
+	List<ITransactionalOperation> operations = new ArrayList<>();
 
 	/**
 	 * Creates a new {@link AbstractCompositeOperation} with the given label.

@@ -104,12 +104,12 @@ final public class GraphCopier {
 		// find all existing node IDs in the target graph
 		Graph targetGraphBuilt = targetGraph.build();
 		List<Node> nodes = targetGraphBuilt.getNodes();
-		Map<Object, Node> ids = new HashMap<Object, Node>();
+		Map<Object, Node> ids = new HashMap<>();
 		for (Node n : nodes) {
 			find(ids, n);
 		}
 		// copy non-existing nodes over
-		Map<Node, Node> copiedNodes = new HashMap<Node, Node>();
+		Map<Node, Node> copiedNodes = new HashMap<>();
 		for (Node node : sourceGraph.getNodes()) {
 			if (find(ids, node) == null) {
 				copiedNodes.put(node, copy(node, targetGraph));

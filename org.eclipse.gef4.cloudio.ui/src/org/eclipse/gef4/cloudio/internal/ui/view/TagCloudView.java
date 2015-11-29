@@ -113,7 +113,7 @@ public class TagCloudView extends ViewPart {
 			public void controlMoved(ControlEvent e) {
 			}
 		});
-		ArrayList<Type> types = new ArrayList<Type>();
+		ArrayList<Type> types = new ArrayList<>();
 		types.add(new Type("Cloudio", 220));
 		types.add(new Type("Cloudio", 150));
 		types.add(new Type("Cloudio", 100));

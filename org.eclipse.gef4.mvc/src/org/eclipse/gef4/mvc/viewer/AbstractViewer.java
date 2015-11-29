@@ -54,8 +54,8 @@ public abstract class AbstractViewer<VR>
 	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
 			this, pcs);
 
-	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<Object, IContentPart<VR, ? extends VR>>();
-	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR, ? extends VR>>();
+	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<>();
+	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<>();
 
 	private IDomain<VR> domain;
 

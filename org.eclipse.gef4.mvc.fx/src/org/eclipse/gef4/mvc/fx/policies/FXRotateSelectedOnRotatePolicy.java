@@ -41,7 +41,7 @@ import javafx.scene.input.RotateEvent;
 public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 
 	private Point pivotInScene;
-	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
+	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
 
 	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should

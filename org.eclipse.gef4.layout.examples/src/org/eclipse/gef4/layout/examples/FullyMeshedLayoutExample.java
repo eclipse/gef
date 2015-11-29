@@ -55,7 +55,7 @@ public class FullyMeshedLayoutExample extends AbstractZestExample {
 		overlay.getChildren().add(addNodeButton);
 		addNodeButton.setOnAction(new EventHandler<ActionEvent>() {
 			private int id = 0;
-			private List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
+			private List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<>();
 
 			@Override
 			public void handle(ActionEvent event) {

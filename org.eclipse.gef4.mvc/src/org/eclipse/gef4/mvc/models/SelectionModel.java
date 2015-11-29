@@ -57,7 +57,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
 
-	private List<IContentPart<VR, ? extends VR>> selection = new ArrayList<IContentPart<VR, ? extends VR>>();
+	private List<IContentPart<VR, ? extends VR>> selection = new ArrayList<>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -142,7 +142,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *         s.
 	 */
 	private List<IContentPart<VR, ? extends VR>> getSelectionCopy() {
-		return new ArrayList<IContentPart<VR, ? extends VR>>(selection);
+		return new ArrayList<>(selection);
 	}
 
 	/**

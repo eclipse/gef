@@ -299,7 +299,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	private int windingRule = WIND_NON_ZERO;
 
-	private List<Segment> segments = new ArrayList<Segment>();
+	private List<Segment> segments = new ArrayList<>();
 
 	/**
 	 * Creates a new empty path with a default winding rule of

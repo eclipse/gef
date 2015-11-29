@@ -424,7 +424,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		loadLocations();
 
 		srcDestToSumOfWeights = new double[entities.length][entities.length];
-		HashMap<IEntityLayout, Integer> entityToPosition = new HashMap<IEntityLayout, Integer>();
+		HashMap<IEntityLayout, Integer> entityToPosition = new HashMap<>();
 		for (int i = 0; i < entities.length; i++) {
 			entityToPosition.put(entities[i], new Integer(i));
 		}

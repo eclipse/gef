@@ -13,12 +13,9 @@ package org.eclipse.gef4.mvc.examples;
 
 import java.util.List;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.common.inject.AdapterMapInjector;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -26,7 +23,6 @@ import com.google.inject.Module;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 
 public abstract class AbstractMvcExample extends Application {

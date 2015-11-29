@@ -44,7 +44,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	private boolean invalidGesture = false;
 	private Point initialPointerLocationInScene;
 	private Point pivotInScene;
-	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
+	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
 
 	/**
 	 * Computes the clock-wise rotation angle based on the initial mouse

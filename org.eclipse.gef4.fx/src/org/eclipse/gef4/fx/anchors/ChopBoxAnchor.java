@@ -327,7 +327,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 */
 		public class Impl implements IReferencePointProvider {
 
-			private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+			private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
 					FXCollections.<AnchorKey, Point> observableHashMap());
 
 			/**

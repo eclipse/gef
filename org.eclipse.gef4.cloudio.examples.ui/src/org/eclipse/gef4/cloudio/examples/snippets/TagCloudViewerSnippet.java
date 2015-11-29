@@ -121,7 +121,7 @@ public class TagCloudViewerSnippet {
 		});
 
 		// Demo data
-		List<String> data = new ArrayList<String>();
+		List<String> data = new ArrayList<>();
 		data.add("Hello");
 		data.add("World");
 		data.add("Hello Cloudio");

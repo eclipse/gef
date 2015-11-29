@@ -29,12 +29,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public abstract class AbstractInteractionPolicy<VR> extends AbstractPolicy<VR> {
 
-	private final Map<IVisualPart<VR, ? extends VR>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<VR, ? extends VR>, Boolean>();
+	private final Map<IVisualPart<VR, ? extends VR>, Boolean> initialRefreshVisual = new HashMap<>();
 
 	// If using e.g. a hover handle, it may be that this policy looses its
 	// viewer link between init() and commit(). In order to being able to safely
 	// commit(), we need to keep track of the domains.
-	private Map<IPolicy<VR>, IDomain<VR>> domains = new HashMap<IPolicy<VR>, IDomain<VR>>();
+	private Map<IPolicy<VR>, IDomain<VR>> domains = new HashMap<>();
 
 	// TODO: add lifecycle of start, end, and abort interaction -> disable
 	// visuals, etc.

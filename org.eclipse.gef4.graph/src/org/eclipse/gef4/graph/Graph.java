@@ -61,19 +61,19 @@ public final class Graph implements IPropertyChangeNotifier {
 			 * {@link Node.Builder}s, which are part of the builder chain,
 			 * mapped to their keys.
 			 */
-			protected Map<Object, Node.Builder> nodeBuilders = new HashMap<Object, Node.Builder>();
+			protected Map<Object, Node.Builder> nodeBuilders = new HashMap<>();
 			/**
 			 * {@link Edge.Builder}s, which are part of the builder chain.
 			 */
-			protected List<Edge.Builder> edgeBuilders = new ArrayList<Edge.Builder>();
+			protected List<Edge.Builder> edgeBuilders = new ArrayList<>();
 		}
 
 		// use linked hash map to preserve ordering
-		private LinkedHashMap<Object, Node> nodes = new LinkedHashMap<Object, Node>();
-		private List<Edge> edges = new ArrayList<Edge>();
+		private LinkedHashMap<Object, Node> nodes = new LinkedHashMap<>();
+		private List<Edge> edges = new ArrayList<>();
 		private Context context;
 
-		private Map<String, Object> attrs = new HashMap<String, Object>();
+		private Map<String, Object> attrs = new HashMap<>();
 
 		/**
 		 * Constructs a new {@link Builder} without {@link Node}s and
@@ -270,18 +270,18 @@ public final class Graph implements IPropertyChangeNotifier {
 	/**
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
-	private final ObservableList<Node> nodes = new ObservableList<Node>();
+	private final ObservableList<Node> nodes = new ObservableList<>();
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
-	private final ObservableList<Edge> edges = new ObservableList<Edge>();
+	private final ObservableList<Edge> edges = new ObservableList<>();
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
-	private final ObservableMap<String, Object> attrs = new ObservableMap<String, Object>();
+	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
@@ -416,7 +416,7 @@ public final class Graph implements IPropertyChangeNotifier {
 		sb.append(" attr {");
 		boolean separator = false;
 
-		TreeMap<String, Object> sortedAttrs = new TreeMap<String, Object>();
+		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
 		sortedAttrs.putAll(attrs);
 		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {

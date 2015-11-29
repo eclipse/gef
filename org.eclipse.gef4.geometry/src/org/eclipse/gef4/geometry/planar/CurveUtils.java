@@ -86,7 +86,7 @@ class CurveUtils {
 	 * @return An array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve1, ICurve curve2) {
-		Set<Point> intersections = new HashSet<Point>();
+		Set<Point> intersections = new HashSet<>();
 
 		for (BezierCurve bezier : curve1.toBezier()) {
 			intersections
@@ -132,7 +132,7 @@ class CurveUtils {
 	 */
 	public static Point[] getIntersections(ICurve curve,
 			IMultiShape multiShape) {
-		Set<Point> intersections = new HashSet<Point>();
+		Set<Point> intersections = new HashSet<>();
 
 		for (IShape shape : multiShape.getShapes()) {
 			intersections.addAll(Arrays.asList(getIntersections(curve, shape)));
@@ -151,7 +151,7 @@ class CurveUtils {
 	 * @return an array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve, IShape shape) {
-		Set<Point> intersections = new HashSet<Point>();
+		Set<Point> intersections = new HashSet<>();
 
 		for (ICurve curve2 : shape.getOutlineSegments()) {
 			intersections
@@ -174,7 +174,7 @@ class CurveUtils {
 		if (geom1 instanceof ICurve) {
 			return getIntersections((ICurve) geom1, geom2);
 		} else {
-			Set<Point> intersections = new HashSet<Point>();
+			Set<Point> intersections = new HashSet<>();
 
 			if (geom1 instanceof IShape) {
 				for (ICurve curve : ((IShape) geom1).getOutlineSegments()) {

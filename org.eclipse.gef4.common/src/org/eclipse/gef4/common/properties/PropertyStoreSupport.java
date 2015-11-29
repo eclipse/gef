@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class PropertyStoreSupport {
 
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	private Map<String, Object> properties = new HashMap<>();
 	private PropertyChangeSupport pcs;
 
 	/**

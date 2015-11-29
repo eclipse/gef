@@ -101,7 +101,7 @@ public class TreeLayoutObserver {
 		/**
 		 * The children of this node.
 		 */
-		protected final List<TreeNode> children = new ArrayList<TreeNode>();
+		protected final List<TreeNode> children = new ArrayList<>();
 		/**
 		 * The parent of this node.
 		 */
@@ -472,11 +472,11 @@ public class TreeLayoutObserver {
 		}
 	};
 
-	private final HashMap<Object, TreeNode> layoutToTree = new HashMap<Object, TreeNode>();
+	private final HashMap<Object, TreeNode> layoutToTree = new HashMap<>();
 	private final TreeNodeFactory factory;
 	private final ILayoutContext context;
 	private TreeNode superRoot;
-	private ArrayList<TreeListener> treeListeners = new ArrayList<TreeListener>();
+	private ArrayList<TreeListener> treeListeners = new ArrayList<>();
 
 	/**
 	 * Constructs a new {@link TreeLayoutObserver} for observing the given
@@ -577,8 +577,8 @@ public class TreeLayoutObserver {
 	 * @param nodes
 	 */
 	private void createTrees(INodeLayout[] nodes) {
-		HashSet<INodeLayout> alreadyVisited = new HashSet<INodeLayout>();
-		LinkedList<Object[]> nodesToAdd = new LinkedList<Object[]>();
+		HashSet<INodeLayout> alreadyVisited = new HashSet<>();
+		LinkedList<Object[]> nodesToAdd = new LinkedList<>();
 		for (int i = 0; i < nodes.length; i++) {
 			INodeLayout root = findRoot(nodes[i], alreadyVisited);
 			if (root != null) {
@@ -622,7 +622,7 @@ public class TreeLayoutObserver {
 	 */
 	private INodeLayout findRoot(INodeLayout nodeLayout,
 			Set<INodeLayout> alreadyVisited) {
-		HashSet<INodeLayout> alreadyVisitedRoot = new HashSet<INodeLayout>();
+		HashSet<INodeLayout> alreadyVisitedRoot = new HashSet<>();
 		while (true) {
 			if (alreadyVisited.contains(nodeLayout))
 				return null;

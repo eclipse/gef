@@ -118,7 +118,7 @@ public class FXDefaultFeedbackPartFactory
 		if (targets.size() == 0 || targets.size() > 1) {
 			return Collections.emptyList();
 		}
-		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<IFeedbackPart<Node, ? extends Node>>();
+		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<>();
 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
@@ -258,7 +258,7 @@ public class FXDefaultFeedbackPartFactory
 		}
 
 		// single selection, create selection feedback based on geometry
-		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<IFeedbackPart<Node, ? extends Node>>();
+		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<>();
 
 		// selection outline feedback
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()

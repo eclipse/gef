@@ -64,14 +64,14 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		// unfocus
 		// TODO: this should be different-> use unfocus and initialize with null
 		// or empty list
-		commit.add(new ChangeFocusOperation<VR>(viewer,
+		commit.add(new ChangeFocusOperation<>(viewer,
 				viewer.getAdapter(new TypeToken<FocusModel<VR>>() {
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(
 						getHost().getRoot().getViewer().getClass())))
 						.getFocused()));
 		// deselect
-		commit.add(new DeselectOperation<VR>(viewer,
+		commit.add(new DeselectOperation<>(viewer,
 				Collections.<IContentPart<VR, ? extends VR>> emptyList()));
 		// detach anchorages
 		commit.add(new ReverseUndoCompositeOperation("Detach anchorages"));

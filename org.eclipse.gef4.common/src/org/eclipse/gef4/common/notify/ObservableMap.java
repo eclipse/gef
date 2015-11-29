@@ -32,8 +32,8 @@ import com.google.common.collect.ForwardingMap;
  */
 public class ObservableMap<K, V> extends ForwardingMap<K, V> {
 
-	private List<IMapObserver<K, V>> observers = new ArrayList<IMapObserver<K, V>>();
-	private Map<K, V> backingMap = new HashMap<K, V>();
+	private List<IMapObserver<K, V>> observers = new ArrayList<>();
+	private Map<K, V> backingMap = new HashMap<>();
 
 	/**
 	 * Adds the given {@link IMapObserver} to the list of observers, which are
@@ -66,7 +66,7 @@ public class ObservableMap<K, V> extends ForwardingMap<K, V> {
 	 * @return A copy of the backing map.
 	 */
 	protected Map<K, V> getBackingMapCopy() {
-		return new HashMap<K, V>(backingMap);
+		return new HashMap<>(backingMap);
 	}
 
 	/**

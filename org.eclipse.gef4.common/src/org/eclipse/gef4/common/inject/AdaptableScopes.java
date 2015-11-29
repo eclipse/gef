@@ -32,7 +32,7 @@ public class AdaptableScopes {
 	}
 
 	// one adaptable scope for each type of adaptable
-	private static final Map<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>> scopes = new HashMap<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>>();
+	private static final Map<Class<? extends IAdaptable>, AdaptableScope<? extends IAdaptable>> scopes = new HashMap<>();
 
 	private AdaptableScopes() {
 		// should not be invoked by clients
@@ -56,7 +56,7 @@ public class AdaptableScopes {
 		AdaptableScope<? extends IAdaptable> scope = scopes.get(type);
 		if (scope == null) {
 			// create singleton scope and register it
-			scope = new AdaptableScope<A>(type);
+			scope = new AdaptableScope<>(type);
 			scopes.put(type, scope);
 		}
 		return (AdaptableScope<A>) scope;

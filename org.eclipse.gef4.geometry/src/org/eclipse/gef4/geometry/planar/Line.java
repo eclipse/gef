@@ -291,7 +291,7 @@ public class Line extends BezierCurve {
 	 */
 	public Set<IntervalPair> getIntersectionIntervalPairs(Line other,
 			Set<Point> intersections) {
-		HashSet<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
+		HashSet<IntervalPair> intervalPairs = new HashSet<>();
 		Straight s1 = new Straight(this);
 		Straight s2 = new Straight(other);
 		Vector vi = s1.getIntersection(s2);

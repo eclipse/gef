@@ -58,7 +58,7 @@ public class FXHoverFeedbackPart
 
 	@Override
 	protected GeometryNode<IGeometry> createVisual() {
-		GeometryNode<IGeometry> visual = new GeometryNode<IGeometry>();
+		GeometryNode<IGeometry> visual = new GeometryNode<>();
 		visual.setFill(Color.TRANSPARENT);
 		visual.setMouseTransparent(true);
 		visual.setManaged(false);

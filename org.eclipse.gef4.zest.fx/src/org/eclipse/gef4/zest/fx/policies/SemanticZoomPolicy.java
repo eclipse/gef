@@ -144,7 +144,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 					0, 0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			Point pivotPoint = JavaFX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
 
-			for (NodeContentPart nodePart : new ArrayList<NodeContentPart>(nestingNodeContentParts)) {
+			for (NodeContentPart nodePart : new ArrayList<>(nestingNodeContentParts)) {
 				Group visual = nodePart.getVisual();
 				Bounds boundsInScene = visual.localToScene(visual.getLayoutBounds());
 				org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = JavaFX2Geometry

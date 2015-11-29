@@ -40,8 +40,8 @@ public class TypeLabelProvider extends BaseLabelProvider implements IEditableClo
 		LINEAR, LOGARITHMIC;
 	}
 
-	private Map<Object, Color> colors = new HashMap<Object, Color>();
-	private Map<Object, FontData[]> fonts = new HashMap<Object, FontData[]>();
+	private Map<Object, Color> colors = new HashMap<>();
+	private Map<Object, FontData[]> fonts = new HashMap<>();
 	private Random random = new Random();
 	protected List<Color> colorList;
 	protected List<Font> fontList;
@@ -49,9 +49,9 @@ public class TypeLabelProvider extends BaseLabelProvider implements IEditableClo
 	private Scaling scaling = Scaling.LOGARITHMIC;
 
 	public TypeLabelProvider() {
-		colorList = new ArrayList<Color>();
-		fontList = new ArrayList<Font>();
-		angles = new ArrayList<Float>();
+		colorList = new ArrayList<>();
+		fontList = new ArrayList<>();
+		angles = new ArrayList<>();
 		angles.add(0F);
 	}
 

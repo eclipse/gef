@@ -73,7 +73,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 							.errors().toString()));
 		}
 		this.graph = graph;
-		nodes = new HashMap<String, Node>();
+		nodes = new HashMap<>();
 		TreeIterator<Object> contents = EcoreUtil
 				.getAllProperContents(dotAst.resource(), false);
 		while (contents.hasNext()) {

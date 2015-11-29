@@ -145,7 +145,7 @@ public class TagCloud extends Canvas {
 	/**
 	 * Set of selected words
 	 */
-	private Set<Word> selection = new HashSet<Word>();
+	private Set<Word> selection = new HashSet<>();
 
 	private CloudMatrix cloudMatrix;
 
@@ -193,15 +193,15 @@ public class TagCloud extends Canvas {
 
 	private Listener vBarListener;
 
-	private Set<EventListener> mouseWheelListeners = new HashSet<EventListener>();
+	private Set<EventListener> mouseWheelListeners = new HashSet<>();
 
-	private Set<EventListener> mouseTrackListeners = new HashSet<EventListener>();
+	private Set<EventListener> mouseTrackListeners = new HashSet<>();
 
-	private Set<EventListener> mouseMoveListeners = new HashSet<EventListener>();
+	private Set<EventListener> mouseMoveListeners = new HashSet<>();
 
-	private Set<EventListener> mouseListeners = new HashSet<EventListener>();
+	private Set<EventListener> mouseListeners = new HashSet<>();
 
-	private Set<SelectionListener> selectionListeners = new HashSet<SelectionListener>();
+	private Set<SelectionListener> selectionListeners = new HashSet<>();
 
 	private ImageData mask;
 
@@ -553,7 +553,7 @@ public class TagCloud extends Canvas {
 	private void calcWordExtents(final Word word, final ImageData id) {
 		final int[] pixels = new int[id.width];
 		final PaletteData palette = id.palette;
-		Set<SmallRect> inserted = new HashSet<SmallRect>();
+		Set<SmallRect> inserted = new HashSet<>();
 		for (int y = 0; y < id.height; y++) {
 			id.getPixels(0, y, id.width, pixels, 0);
 			for (int i = 0; i < pixels.length; i++) {
@@ -701,7 +701,7 @@ public class TagCloud extends Canvas {
 			Assert.isLegal(word.angle >= -90, "Angle must be between -90 and +90 (inclusive), but was " + word.angle);
 			Assert.isLegal(word.angle <= 90, "Angle must be between -90 and +90 (inclusive), but was " + word.angle);
 		}
-		this.wordsToUse = new ArrayList<Word>(values);
+		this.wordsToUse = new ArrayList<>(values);
 		if (boost > 0) {
 			double factor = boostFactor;
 			int i = boost;
@@ -1078,7 +1078,7 @@ public class TagCloud extends Canvas {
 		Assert.isNotNull(words, "Selection must not be null!");
 		if (wordsToUse == null)
 			return;
-		Set<Word> selection = new HashSet<Word>(words);
+		Set<Word> selection = new HashSet<>(words);
 		selection.retainAll(wordsToUse);
 		int w = textLayerImage.getBounds().width;
 		int h = textLayerImage.getBounds().height;
@@ -1132,7 +1132,7 @@ public class TagCloud extends Canvas {
 	 */
 	public Set<Word> getSelection() {
 		checkWidget();
-		Set<Word> copy = new HashSet<Word>(selection);
+		Set<Word> copy = new HashSet<>(selection);
 		return copy;
 	}
 

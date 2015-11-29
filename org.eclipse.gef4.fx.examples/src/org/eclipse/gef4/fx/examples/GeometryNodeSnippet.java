@@ -40,7 +40,7 @@ public class GeometryNodeSnippet extends AbstractFxExample {
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
 	protected static CurvedPolygon createEShapeGeometry() {
-		final List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		final List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(1, 10, 6, 10));
 		segments.addAll(Arrays.asList(
 				PolyBezier.interpolateCubic(6, 10, 5, 25, 7, 52, 6, 70, 6, 81)
@@ -104,7 +104,7 @@ public class GeometryNodeSnippet extends AbstractFxExample {
 
 	@Override
 	public Scene createScene() {
-		final GeometryNode<CurvedPolygon> eLetterShape = new GeometryNode<CurvedPolygon>(
+		final GeometryNode<CurvedPolygon> eLetterShape = new GeometryNode<>(
 				createEShapeGeometry());
 		eLetterShape.relocate(25, 25);
 		eLetterShape.resize(250, 250);

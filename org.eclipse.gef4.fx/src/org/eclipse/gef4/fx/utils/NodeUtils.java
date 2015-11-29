@@ -100,10 +100,10 @@ public class NodeUtils {
 	 */
 	public static List<Node> getNodesAt(Node root, double sceneX,
 			double sceneY) {
-		List<Node> picked = new ArrayList<Node>();
+		List<Node> picked = new ArrayList<>();
 
 		// start with given root node
-		List<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<>();
 		nodes.add(root);
 
 		while (!nodes.isEmpty()) {

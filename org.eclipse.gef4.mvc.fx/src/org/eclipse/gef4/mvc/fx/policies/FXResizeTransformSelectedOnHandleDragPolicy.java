@@ -54,8 +54,8 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	private Map<IContentPart<Node, ? extends Node>, Double> relX2 = null;
 	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
 	private boolean invalidGesture = false;
-	private Map<IContentPart<Node, ? extends Node>, Integer> scaleIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
-	private Map<IContentPart<Node, ? extends Node>, Integer> translateIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
+	private Map<IContentPart<Node, ? extends Node>, Integer> scaleIndices = new HashMap<>();
+	private Map<IContentPart<Node, ? extends Node>, Integer> translateIndices = new HashMap<>();
 
 	/**
 	 * Default constructor.
@@ -262,10 +262,10 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
 		selectionBounds = getSelectionBounds(targetParts);
-		relX1 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
-		relY1 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
-		relX2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
-		relY2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
+		relX1 = new HashMap<>();
+		relY1 = new HashMap<>();
+		relX2 = new HashMap<>();
+		relY2 = new HashMap<>();
 		// init scale relocate policies
 		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
 			FXTransformPolicy transformPolicy = getTransformPolicy(targetPart);

@@ -46,7 +46,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_SCROLL_POLICY_KEY
 	public static final Class<AbstractFXOnScrollPolicy> TOOL_POLICY_KEY = AbstractFXOnScrollPolicy.class;
 
-	private final Map<FXViewer, EventHandler<ScrollEvent>> scrollListeners = new HashMap<FXViewer, EventHandler<ScrollEvent>>();
+	private final Map<FXViewer, EventHandler<ScrollEvent>> scrollListeners = new HashMap<>();
 
 	private EventHandler<ScrollEvent> createScrollListener(
 			final IViewer<Node> viewer) {

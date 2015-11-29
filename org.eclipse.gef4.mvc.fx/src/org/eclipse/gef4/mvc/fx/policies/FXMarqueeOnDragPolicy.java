@@ -90,8 +90,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		Bounds bounds;
 		double bx1, bx0, by1, by0;
 
-		List<Node> containedNodes = new ArrayList<Node>();
-		Queue<Node> nodes = new LinkedList<Node>();
+		List<Node> containedNodes = new ArrayList<>();
+		Queue<Node> nodes = new LinkedList<>();
 		nodes.add(root);
 
 		while (!nodes.isEmpty()) {
@@ -190,7 +190,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	 */
 	protected List<IContentPart<Node, ? extends Node>> getParts(
 			List<Node> nodes) {
-		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<IContentPart<Node, ? extends Node>>();
+		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<>();
 		for (Node node : nodes) {
 			IVisualPart<Node, ? extends Node> part = getHost().getRoot()
 					.getViewer().getVisualPartMap().get(node);

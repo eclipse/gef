@@ -208,7 +208,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	protected ITransactionalOperation createFocusOperation(
 			IContentPart<VR, ? extends VR> part) {
 		// remove from focus model
-		return new ChangeFocusOperation<VR>(part.getRoot().getViewer(), part);
+		return new ChangeFocusOperation<>(part.getRoot().getViewer(), part);
 	}
 
 	@Override
@@ -228,7 +228,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	protected ITransactionalOperation createSelectOperation(
 			IContentPart<VR, ? extends VR> part) {
-		return new SelectOperation<VR>(part.getRoot().getViewer(),
+		return new SelectOperation<>(part.getRoot().getViewer(),
 				Collections.singletonList(part));
 	}
 

@@ -55,7 +55,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 	// TODO: Rename to ON_ROTATE_POLICY_KEY
 	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
 
-	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<IViewer<Node>, AbstractRotateGesture>();
+	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<>();
 
 	/**
 	 * Returns a {@link Set} containing all {@link AbstractFXOnRotatePolicy}s

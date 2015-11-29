@@ -25,8 +25,8 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
- * An {@link FXBendOperation} can be used to manipulate an {@link Connection}
- * in an undo-context.
+ * An {@link FXBendOperation} can be used to manipulate an {@link Connection} in
+ * an undo-context.
  *
  * @author mwienand
  *
@@ -49,8 +49,8 @@ public class FXBendOperation extends AbstractOperation
 	public FXBendOperation(Connection connection) {
 		super("Bend");
 		this.connection = connection;
-		this.initialAnchors = new ArrayList<IAnchor>(connection.getAnchors());
-		this.newAnchors = new ArrayList<IAnchor>(initialAnchors);
+		this.initialAnchors = new ArrayList<>(connection.getAnchors());
+		this.newAnchors = new ArrayList<>(initialAnchors);
 	}
 
 	@Override
@@ -72,25 +72,25 @@ public class FXBendOperation extends AbstractOperation
 	}
 
 	/**
-	 * Returns the list of {@link IAnchor}s which will replace the
-	 * connection's anchors upon execution.
+	 * Returns the list of {@link IAnchor}s which will replace the connection's
+	 * anchors upon undoing.
 	 *
-	 * @return The list of {@link IAnchor}s which will replace the
-	 *         connection's anchors upon execution.
-	 */
-	public List<IAnchor> getNewAnchors() {
-		return newAnchors;
-	}
-
-	/**
-	 * Returns the list of {@link IAnchor}s which will replace the
-	 * connection's anchors upon undoing.
-	 *
-	 * @return The list of {@link IAnchor}s which will replace the
-	 *         connection's anchors upon undoing.
+	 * @return The list of {@link IAnchor}s which will replace the connection's
+	 *         anchors upon undoing.
 	 */
 	public List<IAnchor> getInitialAnchors() {
 		return initialAnchors;
+	}
+
+	/**
+	 * Returns the list of {@link IAnchor}s which will replace the connection's
+	 * anchors upon execution.
+	 *
+	 * @return The list of {@link IAnchor}s which will replace the connection's
+	 *         anchors upon execution.
+	 */
+	public List<IAnchor> getNewAnchors() {
+		return newAnchors;
 	}
 
 	@Override

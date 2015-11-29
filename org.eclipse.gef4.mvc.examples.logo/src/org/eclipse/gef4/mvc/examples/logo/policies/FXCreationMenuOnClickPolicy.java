@@ -118,7 +118,7 @@ public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
 	/**
 	 * List of {@link IFXCreationMenuItem}s which can be constructed.
 	 */
-	private final List<IFXCreationMenuItem> items = new ArrayList<IFXCreationMenuItem>();
+	private final List<IFXCreationMenuItem> items = new ArrayList<>();
 
 	/**
 	 * Stores the maximum element width.

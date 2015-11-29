@@ -104,7 +104,7 @@ public class SelectionForwarder<VR>
 				@SuppressWarnings("unchecked")
 				List<IContentPart<VR, ? extends VR>> selectedParts = (List<IContentPart<VR, ? extends VR>>) event
 						.getNewValue();
-				List<Object> selectedContentElements = new ArrayList<Object>(
+				List<Object> selectedContentElements = new ArrayList<>(
 						selectedParts.size());
 				for (IContentPart<VR, ? extends VR> cp : selectedParts) {
 					selectedContentElements.add(cp.getContent());
@@ -130,7 +130,7 @@ public class SelectionForwarder<VR>
 			} else {
 				// find the content parts associated with the selection
 				Object[] selected = sel.toArray();
-				List<IContentPart<VR, ? extends VR>> parts = new ArrayList<IContentPart<VR, ? extends VR>>(
+				List<IContentPart<VR, ? extends VR>> parts = new ArrayList<>(
 						selected.length);
 				for (Object content : selected) {
 					IContentPart<VR, ? extends VR> part = viewer

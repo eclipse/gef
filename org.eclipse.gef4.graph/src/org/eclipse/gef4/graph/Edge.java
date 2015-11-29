@@ -46,7 +46,7 @@ public class Edge implements IPropertyChangeNotifier {
 	public static class Builder {
 
 		private Graph.Builder.Context context;
-		private Map<String, Object> attrs = new HashMap<String, Object>();
+		private Map<String, Object> attrs = new HashMap<>();
 		private Object sourceNodeOrKey;
 		private Object targetNodeOrKey;
 
@@ -208,7 +208,7 @@ public class Edge implements IPropertyChangeNotifier {
 		}
 	};
 
-	private final ObservableMap<String, Object> attrs = new ObservableMap<String, Object>();
+	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
 	private Node source;
 	private Node target;
 	private Graph graph; // associated graph
@@ -355,7 +355,7 @@ public class Edge implements IPropertyChangeNotifier {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Edge {");
 		boolean separator = false;
-		TreeMap<String, Object> sortedAttrs = new TreeMap<String, Object>();
+		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
 		sortedAttrs.putAll(attrs);
 		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {

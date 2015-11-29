@@ -66,7 +66,7 @@ public class ConnectionSnippet extends AbstractFxExample {
 
 	@Override
 	public Scene createScene() {
-		GeometryNode<RoundedRectangle> end = new GeometryNode<RoundedRectangle>(
+		GeometryNode<RoundedRectangle> end = new GeometryNode<>(
 				new RoundedRectangle(0, 0, 30, 30, 10, 10));
 		end.setFill(Color.RED);
 		end.relocate(50, 50);

@@ -37,7 +37,7 @@ import javafx.scene.input.MouseEvent;
 public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
-	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<IContentPart<Node, ? extends Node>, Integer>();
+	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {

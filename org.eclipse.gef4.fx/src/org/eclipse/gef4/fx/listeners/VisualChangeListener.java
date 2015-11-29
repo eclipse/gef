@@ -104,7 +104,7 @@ public abstract class VisualChangeListener {
 			return source;
 		}
 
-		Set<Node> parents = new HashSet<Node>();
+		Set<Node> parents = new HashSet<>();
 		Node m = source;
 		Node n = target;
 		while (m != null || n != null) {

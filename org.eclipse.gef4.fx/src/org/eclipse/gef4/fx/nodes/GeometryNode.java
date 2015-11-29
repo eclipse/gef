@@ -77,7 +77,7 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	private Path geometricShape = new Path();
 	private Path clickableAreaShape = null;
 	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty();
-	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<T>();
+	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<>();
 
 	/**
 	 * Constructs a new {@link GeometryNode} without an {@link IGeometry}.

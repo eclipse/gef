@@ -81,7 +81,7 @@ public class MouseDragSnippet extends AbstractFxExample {
 	private Point2D startMousePosition;
 	private ObservableSet<Node> nodesUnderMouse = FXCollections
 			.observableSet(new HashSet<Node>());
-	private Map<Node, IAnchor> anchors = new HashMap<Node, IAnchor>();
+	private Map<Node, IAnchor> anchors = new HashMap<>();
 	private Pane feedbackLayer;
 	private StackPane stackPane;
 
@@ -238,10 +238,10 @@ public class MouseDragSnippet extends AbstractFxExample {
 	}
 
 	public Set<Node> pickNodes(double sceneX, double sceneY, Node root) {
-		Set<Node> picked = new HashSet<Node>();
+		Set<Node> picked = new HashSet<>();
 
 		// start with given root node
-		Queue<Node> nodes = new LinkedList<Node>();
+		Queue<Node> nodes = new LinkedList<>();
 		nodes.add(root);
 
 		while (!nodes.isEmpty()) {
@@ -271,7 +271,7 @@ public class MouseDragSnippet extends AbstractFxExample {
 		}
 
 		// update exited nodes
-		List<Node> toRemove = new LinkedList<Node>();
+		List<Node> toRemove = new LinkedList<>();
 		for (Node n : nodesUnderMouse) {
 			if (!picked.contains(n)) {
 				toRemove.add(n);

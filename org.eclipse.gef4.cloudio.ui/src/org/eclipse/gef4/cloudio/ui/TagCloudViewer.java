@@ -47,9 +47,9 @@ public class TagCloudViewer extends ContentViewer {
 
 	private TagCloud cloud;
 
-	private Set<Word> selection = new HashSet<Word>();
+	private Set<Word> selection = new HashSet<>();
 
-	private Map<Object, Word> objectMap = new HashMap<Object, Word>();
+	private Map<Object, Word> objectMap = new HashMap<>();
 
 	private int maxWords = 300;
 
@@ -151,7 +151,7 @@ public class TagCloudViewer extends ContentViewer {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				List<Object> data = new ArrayList<Object>();
+				List<Object> data = new ArrayList<>();
 				@SuppressWarnings("unchecked")
 				Set<Word> selected = (Set<Word>) e.data;
 				for (Word word : selected) {
@@ -186,7 +186,7 @@ public class TagCloudViewer extends ContentViewer {
 	 */
 	@Override
 	public ISelection getSelection() {
-		List<Object> elements = new ArrayList<Object>();
+		List<Object> elements = new ArrayList<>();
 		for (Word word : selection) {
 			elements.add(word.data);
 		}
@@ -276,7 +276,7 @@ public class TagCloudViewer extends ContentViewer {
 		objectMap.clear();
 		IStructuredContentProvider contentProvider = (IStructuredContentProvider) getContentProvider();
 		Object[] elements = contentProvider.getElements(input);
-		List<Word> words = new ArrayList<Word>();
+		List<Word> words = new ArrayList<>();
 		ICloudLabelProvider labelProvider = (ICloudLabelProvider) getLabelProvider();
 		short i = 0;
 		for (Object element : elements) {

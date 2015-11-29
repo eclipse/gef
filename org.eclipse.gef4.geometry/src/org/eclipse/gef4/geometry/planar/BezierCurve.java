@@ -505,7 +505,7 @@ public class BezierCurve extends AbstractGeometry
 	 */
 	private static IntervalPair[] clusterChunks(IntervalPair[] intervalPairs,
 			int shift) {
-		ArrayList<IntervalPair> ips = new ArrayList<IntervalPair>();
+		ArrayList<IntervalPair> ips = new ArrayList<>();
 
 		ips.addAll(Arrays.asList(intervalPairs));
 
@@ -521,7 +521,7 @@ public class BezierCurve extends AbstractGeometry
 			}
 		});
 
-		ArrayList<IntervalPair> clusters = new ArrayList<IntervalPair>();
+		ArrayList<IntervalPair> clusters = new ArrayList<>();
 		IntervalPair current = null;
 		boolean couldMerge;
 
@@ -577,7 +577,7 @@ public class BezierCurve extends AbstractGeometry
 	 */
 	private static boolean containmentParameter(BezierCurve c,
 			double[] interval, Point p) {
-		Stack<Interval> parts = new Stack<Interval>();
+		Stack<Interval> parts = new Stack<>();
 		parts.push(new Interval(interval));
 		while (!parts.empty()) {
 			Interval i = parts.pop();
@@ -1306,7 +1306,7 @@ public class BezierCurve extends AbstractGeometry
 	 * @return the extreme {@link Point} that could be found
 	 */
 	private Point findExtreme(IPointCmp cmp, Interval iStart) {
-		Stack<Interval> parts = new Stack<Interval>();
+		Stack<Interval> parts = new Stack<>();
 		parts.push(iStart);
 
 		Point xtreme = getHC(iStart.a).toPoint();
@@ -1433,7 +1433,7 @@ public class BezierCurve extends AbstractGeometry
 	 *            of intersection on two {@link BezierCurve}s
 	 */
 	private Point findSinglePreciseIntersection(IntervalPair ipIO) {
-		Stack<IntervalPair> partStack = new Stack<IntervalPair>();
+		Stack<IntervalPair> partStack = new Stack<>();
 		partStack.push(ipIO);
 
 		while (!partStack.isEmpty()) {
@@ -1710,8 +1710,8 @@ public class BezierCurve extends AbstractGeometry
 	 */
 	public Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
 			Set<Point> intersections) {
-		Set<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
-		Set<IntervalPair> endPointIntervalPairs = new HashSet<IntervalPair>();
+		Set<IntervalPair> intervalPairs = new HashSet<>();
+		Set<IntervalPair> endPointIntervalPairs = new HashSet<>();
 
 		IntervalPair ip = new IntervalPair(this, Interval.getFull(), other,
 				Interval.getFull());
@@ -1727,7 +1727,7 @@ public class BezierCurve extends AbstractGeometry
 		BezierCurve overlap = overlapIntervalPair == null ? null
 				: overlapIntervalPair.getPClipped();
 
-		Set<IntervalPair> results = new HashSet<IntervalPair>();
+		Set<IntervalPair> results = new HashSet<>();
 
 		for (IntervalPair epip : endPointIntervalPairs) {
 			if (overlapIntervalPair == null
@@ -1781,14 +1781,14 @@ public class BezierCurve extends AbstractGeometry
 	 *         and the given other {@link BezierCurve}
 	 */
 	public Point[] getIntersections(BezierCurve other) {
-		Set<Point> intersections = new HashSet<Point>();
+		Set<Point> intersections = new HashSet<>();
 		getIntersectionIntervalPairs(other, intersections);
 		return intersections.toArray(new Point[] {});
 	}
 
 	@Override
 	public final Point[] getIntersections(ICurve curve) {
-		Set<Point> intersections = new HashSet<Point>();
+		Set<Point> intersections = new HashSet<>();
 
 		for (BezierCurve c : curve.toBezier()) {
 			intersections.addAll(Arrays.asList(getIntersections(c)));
@@ -1817,9 +1817,9 @@ public class BezierCurve extends AbstractGeometry
 	 *         <code>null</code>
 	 */
 	public BezierCurve getOverlap(BezierCurve other) {
-		Set<Point> intersections = new HashSet<Point>();
-		Set<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
-		Set<IntervalPair> endPointIntervalPairs = new HashSet<IntervalPair>();
+		Set<Point> intersections = new HashSet<>();
+		Set<IntervalPair> intervalPairs = new HashSet<>();
+		Set<IntervalPair> endPointIntervalPairs = new HashSet<>();
 
 		IntervalPair ip = new IntervalPair(this, Interval.getFull(), other,
 				Interval.getFull());
@@ -2388,11 +2388,11 @@ public class BezierCurve extends AbstractGeometry
 	 * @return {@link Line} segments approximating this {@link BezierCurve}
 	 */
 	public Line[] toLineStrip(double lineSimilarity, Interval startInterval) {
-		ArrayList<Line> lines = new ArrayList<Line>();
+		ArrayList<Line> lines = new ArrayList<>();
 
 		Point startPoint = getHC(startInterval.a).toPoint();
 
-		Stack<Interval> parts = new Stack<Interval>();
+		Stack<Interval> parts = new Stack<>();
 		parts.push(startInterval);
 
 		while (!parts.isEmpty()) {
@@ -2447,10 +2447,10 @@ public class BezierCurve extends AbstractGeometry
 	 *         {@link Point#equals(Object) equal} to each other
 	 */
 	public Point[] toPoints(Interval startInterval) {
-		ArrayList<Point> points = new ArrayList<Point>();
+		ArrayList<Point> points = new ArrayList<>();
 		points.add(getHC(startInterval.a).toPoint());
 
-		Stack<Interval> parts = new Stack<Interval>();
+		Stack<Interval> parts = new Stack<>();
 		parts.push(startInterval);
 
 		while (!parts.isEmpty()) {

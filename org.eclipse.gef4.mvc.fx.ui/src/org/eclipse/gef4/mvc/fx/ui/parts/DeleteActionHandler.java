@@ -106,7 +106,7 @@ public class DeleteActionHandler extends Action {
 					"DeleteActionHandler requires a DeletionPolicy to be registered at the viewer's root part.");
 		}
 		deletionPolicy.init();
-		for (IContentPart<Node, ? extends Node> s : new ArrayList<IContentPart<Node, ? extends Node>>(
+		for (IContentPart<Node, ? extends Node> s : new ArrayList<>(
 				getSelectionModel().getSelection())) {
 			deletionPolicy.delete(s);
 		}

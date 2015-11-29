@@ -33,7 +33,7 @@ public class ButtonFXControlAdapterSnippet extends AbstractFxSwtExample {
 
 	protected static FXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
 			final String text) {
-		return new FXControlAdapter<org.eclipse.swt.widgets.Button>(
+		return new FXControlAdapter<>(
 				new IControlFactory<org.eclipse.swt.widgets.Button>() {
 
 					@Override

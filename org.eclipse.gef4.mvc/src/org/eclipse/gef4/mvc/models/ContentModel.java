@@ -36,7 +36,7 @@ public class ContentModel implements IPropertyChangeNotifier {
 	public static final String CONTENTS_PROPERTY = "contents";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private List<Object> contents = new ArrayList<Object>();
+	private List<Object> contents = new ArrayList<>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -68,7 +68,7 @@ public class ContentModel implements IPropertyChangeNotifier {
 	public void setContents(List<? extends Object> contents) {
 		if (!this.contents.equals(contents)) {
 			List<Object> oldContents = Collections
-					.unmodifiableList(new ArrayList<Object>(this.contents));
+					.unmodifiableList(new ArrayList<>(this.contents));
 			this.contents.clear();
 			this.contents.addAll(contents);
 			pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents,

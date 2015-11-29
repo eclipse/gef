@@ -79,7 +79,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	 *         relocate.
 	 */
 	protected List<Integer> getIndicesOfMovableAnchors() {
-		List<Integer> indices = new ArrayList<Integer>();
+		List<Integer> indices = new ArrayList<>();
 		if (!op.getConnection().isStartConnected()) {
 			indices.add(0);
 		}

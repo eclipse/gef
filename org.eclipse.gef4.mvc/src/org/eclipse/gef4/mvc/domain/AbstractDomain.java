@@ -64,7 +64,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
 	private AbstractCompositeOperation transaction;
-	private Set<ITool<VR>> transactionContext = new HashSet<ITool<VR>>();
+	private Set<ITool<VR>> transactionContext = new HashSet<>();
 	private IOperationHistoryListener operationHistoryListener = new IOperationHistoryListener() {
 		@Override
 		public void historyNotification(OperationHistoryEvent event) {

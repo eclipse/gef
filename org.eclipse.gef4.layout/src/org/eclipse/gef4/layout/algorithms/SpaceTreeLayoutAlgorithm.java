@@ -183,8 +183,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		public ISubgraphLayout collapseAllChildrenIntoSubgraph(
 				ISubgraphLayout subgraph, boolean includeYourself) {
 			expanded = false;
-			ArrayList<INodeLayout> allChildren = new ArrayList<INodeLayout>();
-			LinkedList<SpaceTreeNode> nodesToVisit = new LinkedList<SpaceTreeNode>();
+			ArrayList<INodeLayout> allChildren = new ArrayList<>();
+			LinkedList<SpaceTreeNode> nodesToVisit = new LinkedList<>();
 			nodesToVisit.addLast(this);
 			while (!nodesToVisit.isEmpty()) {
 				SpaceTreeNode currentNode = nodesToVisit.removeFirst();
@@ -519,7 +519,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	};
 
 	private class SpaceTreeLayer {
-		public ArrayList<SpaceTreeNode> nodes = new ArrayList<SpaceTreeNode>();
+		public ArrayList<SpaceTreeNode> nodes = new ArrayList<>();
 		private final int depth;
 		public double thickness = 0;
 
@@ -1017,7 +1017,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					.removeNodes(nodeToExpand.children);
 
 			ArrayList<TreeNode> nodesInThisLayer = null;
-			ArrayList<TreeNode> nodesInNextLayer = new ArrayList<TreeNode>();
+			ArrayList<TreeNode> nodesInNextLayer = new ArrayList<>();
 			nodesInNextLayer.add(nodeToExpand);
 			double spaceRequiredInNextLayer = nodeToExpand
 					.spaceRequiredForNode();
@@ -1028,7 +1028,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				spaceRequiredInNextLayer = 0;
 
 				nodesInThisLayer = nodesInNextLayer;
-				nodesInNextLayer = new ArrayList<TreeNode>();
+				nodesInNextLayer = new ArrayList<>();
 
 				int numOfNodesWithChildren = 0;
 				for (Iterator<TreeNode> iterator = nodesInThisLayer
@@ -1258,7 +1258,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private double availableSpace;
 
-	private ArrayList<SpaceTreeLayer> spaceTreeLayers = new ArrayList<SpaceTreeLayer>();
+	private ArrayList<SpaceTreeLayer> spaceTreeLayers = new ArrayList<>();
 
 	/**
 	 * If not null, this node and all of its children shall not be collapsed

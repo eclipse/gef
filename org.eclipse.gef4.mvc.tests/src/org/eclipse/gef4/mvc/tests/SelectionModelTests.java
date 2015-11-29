@@ -60,7 +60,7 @@ public class SelectionModelTests {
 
 	@Test
 	public void testAppend() {
-		SelectionModel<Object> selectionModel = new SelectionModel<Object>();
+		SelectionModel<Object> selectionModel = new SelectionModel<>();
 		IContentPart<Object, Object> c1 = new ContentPartStub();
 		IContentPart<Object, Object> c2 = new ContentPartStub();
 		IContentPart<Object, Object> c3 = new ContentPartStub();
@@ -87,7 +87,7 @@ public class SelectionModelTests {
 
 	@Test
 	public void testDeselect() {
-		SelectionModel<Object> selectionModel = new SelectionModel<Object>();
+		SelectionModel<Object> selectionModel = new SelectionModel<>();
 		IContentPart<Object, Object> c1 = new ContentPartStub();
 		IContentPart<Object, Object> c2 = new ContentPartStub();
 		IContentPart<Object, Object> c3 = new ContentPartStub();
@@ -109,7 +109,7 @@ public class SelectionModelTests {
 
 	@Test
 	public void testDeselectAll() {
-		SelectionModel<Object> selectionModel = new SelectionModel<Object>();
+		SelectionModel<Object> selectionModel = new SelectionModel<>();
 		IContentPart<Object, Object> c1 = new ContentPartStub();
 		IContentPart<Object, Object> c2 = new ContentPartStub();
 		IContentPart<Object, Object> c3 = new ContentPartStub();
@@ -120,7 +120,7 @@ public class SelectionModelTests {
 
 	@Test
 	public void testPrepend() {
-		SelectionModel<Object> selectionModel = new SelectionModel<Object>();
+		SelectionModel<Object> selectionModel = new SelectionModel<>();
 		IContentPart<Object, Object> c1 = new ContentPartStub();
 		IContentPart<Object, Object> c2 = new ContentPartStub();
 		IContentPart<Object, Object> c3 = new ContentPartStub();
@@ -147,11 +147,11 @@ public class SelectionModelTests {
 
 	@Test
 	public void testPropertyChangeEvents() {
-		SelectionModel<Object> selectionModel = new SelectionModel<Object>();
+		SelectionModel<Object> selectionModel = new SelectionModel<>();
 		IContentPart<Object, Object> c1 = new ContentPartStub();
 		IContentPart<Object, Object> c2 = new ContentPartStub();
 		IContentPart<Object, Object> c3 = new ContentPartStub();
-		final List<PropertyChangeEvent> events = new ArrayList<PropertyChangeEvent>();
+		final List<PropertyChangeEvent> events = new ArrayList<>();
 		PropertyChangeListener listener = new PropertyChangeListener() {
 
 			@Override
@@ -210,7 +210,7 @@ public class SelectionModelTests {
 
 	@Test
 	public void testSelect() {
-		SelectionModel<Object> selectionModel = new SelectionModel<Object>();
+		SelectionModel<Object> selectionModel = new SelectionModel<>();
 		IContentPart<Object, Object> c1 = new ContentPartStub();
 		IContentPart<Object, Object> c2 = new ContentPartStub();
 		IContentPart<Object, Object> c3 = new ContentPartStub();

@@ -87,11 +87,9 @@ public class SelectOperation<VR> extends AbstractOperation
 			List<? extends IContentPart<VR, ? extends VR>> toBeSelected) {
 		super(label);
 		this.viewer = viewer;
-		this.toBeSelected = new ArrayList<IContentPart<VR, ? extends VR>>(
-				toBeSelected);
+		this.toBeSelected = new ArrayList<>(toBeSelected);
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		initialSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
-				selectionModel.getSelection());
+		initialSelection = new ArrayList<>(selectionModel.getSelection());
 	}
 
 	@Override

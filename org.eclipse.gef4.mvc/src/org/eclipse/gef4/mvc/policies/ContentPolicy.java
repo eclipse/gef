@@ -67,8 +67,8 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	public void addContentChild(Object contentChild, int index) {
 		checkInitialized();
-		getCompositeOperation().add(new AddContentChildOperation<VR>(getHost(),
-				contentChild, index));
+		getCompositeOperation().add(
+				new AddContentChildOperation<>(getHost(), contentChild, index));
 		locallyExecuteOperation();
 	}
 
@@ -86,7 +86,7 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
 		checkInitialized();
-		getCompositeOperation().add(new AttachToContentAnchorageOperation<VR>(
+		getCompositeOperation().add(new AttachToContentAnchorageOperation<>(
 				getHost(), contentAnchorage, role));
 		locallyExecuteOperation();
 	}
@@ -110,7 +110,7 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	public void detachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		checkInitialized();
-		getCompositeOperation().add(new DetachFromContentAnchorageOperation<VR>(
+		getCompositeOperation().add(new DetachFromContentAnchorageOperation<>(
 				getHost(), contentAnchorage, role));
 		locallyExecuteOperation();
 	}
@@ -145,7 +145,7 @@ public class ContentPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	public void removeContentChild(Object contentChild) {
 		checkInitialized();
 		getCompositeOperation().add(
-				new RemoveContentChildOperation<VR>(getHost(), contentChild));
+				new RemoveContentChildOperation<>(getHost(), contentChild));
 		locallyExecuteOperation();
 	}
 

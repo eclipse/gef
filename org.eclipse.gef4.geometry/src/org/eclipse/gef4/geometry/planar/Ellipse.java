@@ -191,7 +191,7 @@ public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse, PolyBezier>
 			return new Point[] {};
 		}
 
-		HashSet<Point> intersections = new HashSet<Point>();
+		HashSet<Point> intersections = new HashSet<>();
 
 		for (CubicCurve seg : getOutlineSegments()) {
 			intersections.addAll(Arrays.asList(e2.getIntersections(seg)));
@@ -226,7 +226,7 @@ public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse, PolyBezier>
 	 *         such intersection points exist, an empty array otherwise
 	 */
 	public Point[] getIntersections(Line line) {
-		List<Point> intersections = new ArrayList<Point>(2);
+		List<Point> intersections = new ArrayList<>(2);
 
 		// ellipse equation x^2/(width/2)^2 + y^2/(height/2)^2 = 1 may be
 		// written as x^2/aSq + y^2/bSq = 1 with:

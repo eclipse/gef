@@ -59,13 +59,13 @@ import javafx.scene.transform.Transform;
  */
 public abstract class AbstractAnchor implements IAnchor {
 
-	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
-	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapperEx<AnchorKey, Point>(
+	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<>();
+	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 
-	private Map<Node, Set<AnchorKey>> keys = new HashMap<Node, Set<AnchorKey>>();
-	private Map<Node, VisualChangeListener> vcls = new HashMap<Node, VisualChangeListener>();
-	private Set<Node> registerLater = new HashSet<Node>();
+	private Map<Node, Set<AnchorKey>> keys = new HashMap<>();
+	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
+	private Set<Node> registerLater = new HashSet<>();
 
 	private ChangeListener<Scene> anchorageVisualSceneChangeListener = new ChangeListener<Scene>() {
 		@Override

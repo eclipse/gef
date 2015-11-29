@@ -320,7 +320,7 @@ public class PolyBezier extends AbstractGeometry
 
 	@Override
 	public PolyBezier getTransformed(AffineTransform t) {
-		List<BezierCurve> transformedCurves = new ArrayList<BezierCurve>();
+		List<BezierCurve> transformedCurves = new ArrayList<>();
 		for (BezierCurve c : beziers) {
 			transformedCurves.add(c.getTransformed(t));
 		}
@@ -377,7 +377,7 @@ public class PolyBezier extends AbstractGeometry
 	 * @return <code>this</code> for convenience
 	 */
 	public PolyBezier rotateCCW(Angle angle) {
-		ArrayList<Point> points = new ArrayList<Point>();
+		ArrayList<Point> points = new ArrayList<>();
 		for (BezierCurve c : beziers) {
 			points.addAll(Arrays.asList(c.getPoints()));
 		}
@@ -431,7 +431,7 @@ public class PolyBezier extends AbstractGeometry
 	 * @return <code>this</code> for convenience
 	 */
 	public PolyBezier rotateCW(Angle angle) {
-		ArrayList<Point> points = new ArrayList<Point>();
+		ArrayList<Point> points = new ArrayList<>();
 		for (BezierCurve c : beziers) {
 			points.addAll(Arrays.asList(c.getPoints()));
 		}
@@ -482,7 +482,7 @@ public class PolyBezier extends AbstractGeometry
 
 	@Override
 	public PolyBezier scale(double fx, double fy) {
-		ArrayList<Point> points = new ArrayList<Point>();
+		ArrayList<Point> points = new ArrayList<>();
 		for (BezierCurve c : beziers) {
 			points.addAll(Arrays.asList(c.getPoints()));
 		}

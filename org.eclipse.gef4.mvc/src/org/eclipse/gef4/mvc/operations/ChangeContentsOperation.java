@@ -62,7 +62,7 @@ public class ChangeContentsOperation extends AbstractOperation
 	 *            changed.
 	 */
 	public ChangeContentsOperation(IViewer<?> viewer) {
-		this(DEFAULT_LABEL, viewer, new ArrayList<Object>(
+		this(DEFAULT_LABEL, viewer, new ArrayList<>(
 				viewer.getAdapter(ContentModel.class).getContents()));
 	}
 
@@ -98,8 +98,8 @@ public class ChangeContentsOperation extends AbstractOperation
 			List<? extends Object> contents) {
 		super(label);
 		this.viewer = viewer;
-		this.newContents = new ArrayList<Object>(contents);
-		this.initialContents = new ArrayList<Object>(
+		this.newContents = new ArrayList<>(contents);
+		this.initialContents = new ArrayList<>(
 				viewer.getAdapter(ContentModel.class).getContents());
 	}
 
@@ -146,7 +146,7 @@ public class ChangeContentsOperation extends AbstractOperation
 	 *            The new final contents.
 	 */
 	public void setNewContents(List<? extends Object> newContents) {
-		this.newContents = new ArrayList<Object>(newContents);
+		this.newContents = new ArrayList<>(newContents);
 	}
 
 	/*

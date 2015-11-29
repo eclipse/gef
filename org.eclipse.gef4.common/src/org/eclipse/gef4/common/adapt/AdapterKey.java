@@ -88,7 +88,7 @@ public class AdapterKey<T> {
 		if (role == null) {
 			throw new NullPointerException("Role may not be null.");
 		}
-		return new AdapterKey<T>(key == null ? null : TypeToken.of(key), role);
+		return new AdapterKey<>(key == null ? null : TypeToken.of(key), role);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class AdapterKey<T> {
 		if (role == null) {
 			throw new NullPointerException("Role may not be null.");
 		}
-		return new AdapterKey<T>(key, role);
+		return new AdapterKey<>(key, role);
 	}
 
 	/**

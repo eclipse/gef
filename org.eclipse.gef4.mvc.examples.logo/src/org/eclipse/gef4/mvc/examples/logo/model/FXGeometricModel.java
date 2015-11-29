@@ -45,7 +45,7 @@ public class FXGeometricModel {
 	public static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
 
 	public static IShape createCursorShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(0, 31, 12, 41));
 		segments.add(new Line(12, 41, 12, 32));
 		segments.add(new Line(12, 32, 26, 32));
@@ -74,7 +74,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createDotShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(3, 0, 0, 4));
 		segments.add(new Line(0, 4, 4, 9));
 		segments.addAll(Arrays.asList(
@@ -83,7 +83,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createEShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(1, 10, 6, 10));
 		segments.addAll(Arrays.asList(
 				PolyBezier.interpolateCubic(6, 10, 5, 25, 7, 52, 6, 70, 6, 81)
@@ -116,7 +116,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createFShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(3, 13, 3, 23));
 		segments.addAll(Arrays.asList(
 				PolyBezier.interpolateCubic(3, 23, 10, 25, 17, 27).toBezier()));
@@ -156,7 +156,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createGBaseShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(0, 55, 10, 54));
 		segments.add(new Line(10, 54, 13, 42));
 		segments.add(new Line(13, 42, 23, 42));
@@ -190,7 +190,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createGMiddleShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(37, 48, 38, 56));
 		segments.add(new Line(38, 56, 45, 52));
 		segments.add(new Line(45, 52, 54, 57));
@@ -204,7 +204,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createGTopShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.add(new Line(0, 51, 8, 49));
 		segments.add(new Line(8, 49, 9, 38));
 		segments.add(new Line(9, 38, 20, 38));
@@ -221,7 +221,7 @@ public class FXGeometricModel {
 	}
 
 	public static IShape createHandleShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		List<BezierCurve> segments = new ArrayList<>();
 		segments.addAll(Arrays.asList(
 				PolyBezier.interpolateCubic(1, 1, 9, 0, 17, 1).toBezier()));
 		segments.addAll(Arrays.asList(
@@ -371,7 +371,7 @@ public class FXGeometricModel {
 	}
 
 	private void initVisualShapes() {
-		visualShapes = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+		visualShapes = new ArrayList<>();
 
 		// add all shapes in z-order
 		visualShapes.add(selectionBoundsTopLine);
