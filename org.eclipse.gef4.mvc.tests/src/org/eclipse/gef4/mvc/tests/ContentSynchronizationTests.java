@@ -142,31 +142,29 @@ public class ContentSynchronizationTests {
 			binder().bind(new TypeLiteral<IRootPart<Object, ? extends Object>>() {
 			}).to(RootPart.class);
 			// bind Viewer as adapter for Domain
-			AdapterMaps.getAdapterMapBinder(binder(), Domain.class).addBinding(AdapterKey.get(IViewer.class))
+			AdapterMaps.getAdapterMapBinder(binder(), Domain.class).addBinding(AdapterKey.defaultRole())
 					.to(new TypeLiteral<IViewer<Object>>() {
 					});
 			// bind RootPart as viewer adapter
 			MapBinder<AdapterKey<?>, Object> viewerAdapterMapBinder = AdapterMaps.getAdapterMapBinder(binder(),
 					Viewer.class);
-			viewerAdapterMapBinder.addBinding(AdapterKey.get(IRootPart.class))
+			viewerAdapterMapBinder.addBinding(AdapterKey.defaultRole())
 					.to(new TypeLiteral<IRootPart<Object, ? extends Object>>() {
 					});
-			viewerAdapterMapBinder.addBinding(AdapterKey.get(ContentModel.class)).to(ContentModel.class);
-			viewerAdapterMapBinder.addBinding(AdapterKey.get(HoverModel.class))
-					.to(new TypeLiteral<HoverModel<Object>>() {
-					});
-			viewerAdapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class))
-					.to(new TypeLiteral<SelectionModel<Object>>() {
-					});
+			viewerAdapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ContentModel.class);
+			viewerAdapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<HoverModel<Object>>() {
+			});
+			viewerAdapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<SelectionModel<Object>>() {
+			});
 			// bind ContentBehavior for RootPart
 			MapBinder<AdapterKey<?>, Object> rootPartAdapterMapBinder = AdapterMaps.getAdapterMapBinder(binder(),
 					RootPart.class);
-			rootPartAdapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class))
+			rootPartAdapterMapBinder.addBinding(AdapterKey.defaultRole())
 					.to(new TypeLiteral<ContentBehavior<Object>>() {
 					});
 			// bind ContentBehavior for the TreeContentPart
-			AdapterMaps.getAdapterMapBinder(binder(), TreeContentPart.class)
-					.addBinding(AdapterKey.get(ContentBehavior.class)).to(new TypeLiteral<ContentBehavior<Object>>() {
+			AdapterMaps.getAdapterMapBinder(binder(), TreeContentPart.class).addBinding(AdapterKey.defaultRole())
+					.to(new TypeLiteral<ContentBehavior<Object>>() {
 					});
 		}
 	}
