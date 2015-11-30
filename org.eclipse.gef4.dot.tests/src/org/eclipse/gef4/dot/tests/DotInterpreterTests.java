@@ -313,7 +313,7 @@ public final class DotInterpreterTests {
 	}
 
 	private List<Edge> getSourceConnections(Node node, Graph graph) {
-		List<Edge> result = new ArrayList<Edge>();
+		List<Edge> result = new ArrayList<>();
 		List<Edge> edges = graph.getEdges();
 		for (Edge edge : edges)
 			if (edge.getTarget().equals(node))
