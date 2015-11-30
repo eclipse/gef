@@ -408,7 +408,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 						+ adapter + ") is already registered with key " + key + " at adaptable " + source);
 			} else {
 				System.err.println("The adapter " + adapter
-						+ " was already registered with key " + key);
+						+ " was already registered with key " + key + " at adaptable " + source);
 			}
 		}
 
