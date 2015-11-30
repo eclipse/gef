@@ -22,8 +22,8 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
+import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.common.inject.InjectAdapters;
 import org.eclipse.gef4.common.tests.AdaptableScopeTests.AdapterStoreAdapter;
@@ -147,7 +147,7 @@ public class AdaptableTypeListenerTests {
 			assertTrue(e.getMessage().contains(
 					"@AdapterMap annotation may only be used in adapter map bindings, not to mark an injection point. Annotate method with @InjectAdapters instead."));
 			assertTrue(e.getMessage().contains(
-					"To prevent that Guice member injection interferes with adapter injection, no @Inject annotation may be used on a method that provides an @AdapterMap annotation."));
+					"To prevent that Guice member injection interferes with adapter injection, no @Inject annotation may be used on a method that provides an @InjectAdapters annotation."));
 
 		}
 	}
