@@ -42,7 +42,6 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super.createCurveSelectionHandlePart(
 				targetPart, segmentsProvider, segmentCount, segmentIndex,
 				segmentParameter);
-		injector.injectMembers(part);
 
 		if (segmentIndex + segmentParameter > 0
 				&& segmentIndex + segmentParameter < segmentCount) {
