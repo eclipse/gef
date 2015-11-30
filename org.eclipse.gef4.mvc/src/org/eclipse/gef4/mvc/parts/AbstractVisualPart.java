@@ -26,7 +26,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.inject.AdapterMap;
+import org.eclipse.gef4.common.inject.InjectAdapters;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -676,8 +676,9 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		ads.setAdapter(adapterType, adapter);
 	}
 
+	@InjectAdapters
 	@Override
-	public <T> void setAdapter(@AdapterMap TypeToken<T> adapterType, T adapter,
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
 			String role) {
 		ads.setAdapter(adapterType, adapter, role);
 	}

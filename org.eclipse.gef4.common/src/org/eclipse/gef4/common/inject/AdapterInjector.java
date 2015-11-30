@@ -47,38 +47,38 @@ import com.google.inject.spi.ProviderKeyBinding;
 import com.google.inject.spi.UntargettedBinding;
 
 /**
- * A specific {@link MembersInjector} to support adapter map injection, i.e.
- * injection of adapters into {@link IAdaptable} instances. Will be able to
- * perform adapter map injection if being registered (by an
- * {@link AdaptableTypeListener}) on an {@link IAdaptable} encounter, which:
- * <ul>
- * <li>is annotated with {@link Inject}, and</li>
- * <li>contains a single parameter of type
- * <code>Map&lt;AdapterKey&lt;?&gt;, Object&gt;</code>, which is annotated with
- * an {@link AdapterMap} annotation.</li>
- * </ul>
- * Being registered for a specific {@link IAdaptable} an
- * {@link AdapterMapInjector} will inject all instances of that type or any
- * sub-type, evaluating all {@link AdapterMap} bindings that can be obtained
- * from the {@link Injector} which was forwarded by the
- * {@link AdaptableTypeListener} via {@link #setInjector(Injector)}. This means,
- * that it will inject via the respective method all adapters, for which
- * bindings with a matching {@link AdapterMap} annotation exist. Here, matching
- * means, that the type provided in the {@link AdapterMap} annotation of the
- * {@link IAdaptable}#s method ({@link AdapterMap#adaptableType()}) is either
- * the same or a sub-type of the type used with the {@link AdapterMap}
- * annotation of the related binding.
+ * A specific {@link MembersInjector} that supports injection of adapters into
+ * an {@link IAdaptable} implementation class'
+ * {@link IAdaptable#setAdapter(TypeToken, Object, String)} method, that is
+ * marked as being eligible for adapter injection (see {@link InjectAdapters}).
+ * <p>
+ * Being registered for a specific {@link IAdaptable} an {@link AdapterInjector}
+ * will inject all instances of that type or any sub-type, evaluating all
+ * {@link AdapterMap} bindings that can be obtained from the {@link Injector},
+ * which was forwarded to it via {@link #setInjector(Injector)}. It will inject
+ * all adapters, for which adapter (map) bindings with a matching
+ * {@link AdapterMap} annotation exist. Here, matching means, that the type
+ * provided in the {@link AdapterMap} annotation of the {@link IAdaptable}#s
+ * method ( {@link AdapterMap#adaptableType()}) is either the same or a sub-type
+ * of the type used with the {@link AdapterMap} annotation of the related
+ * binding.
+ * <p>
+ * The {@link AdapterInjector} supports that type information about the actual
+ * adapter type may be omitted from the adapter map binding (i.e. the used
+ * {@link AdapterKey} only provides a role but no type key). It will try to
+ * infer the actual adapter type from respective bindings, or fall back to the
+ * type inferred from the adapter instance (which will not be adequate for
+ * generic types because of type erasure) in such a case.
  *
  * @see AdapterMap
  * @see AdaptableTypeListener
  * @author anyssen
  */
-public class AdapterMapInjector implements MembersInjector<IAdaptable> {
+public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
 	 * Tries to infer the actual type of an adapter from bindings that are
-	 * applied, which can only be supported in case linked bindings point to
-	 * constructor bindings.
+	 * applied (in case linked bindings point to constructor bindings).
 	 * 
 	 * @author anyssen
 	 *
@@ -144,9 +144,7 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	 * Provides the to be injected adapters mapped to {@link AdapterKey}s,
 	 * ensuring that the key type of the {@link AdapterKey} either corresponds
 	 * to the one provided in the binding, or to the actual type (as far as this
-	 * can be inferred). Supports {@link MapBinderBinding}s (in case map binder
-	 * does not permit duplicates) and {@link ProviderInstanceBinding}s (in case
-	 * map binder permits duplicates).
+	 * can be inferred).
 	 * 
 	 * @author anyssen
 	 *
@@ -302,23 +300,16 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	private Injector injector;
 
 	private final Method method;
-	private final AdapterMap methodAnnotation;
 
 	/**
-	 * Creates a new {@link AdapterMapInjector} to inject the given
-	 * {@link Method}, annotated with the given {@link AdapterMap} method
-	 * annotation.
+	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
+	 * annotated with the given {@link AdapterMap} method annotation.
 	 * 
 	 * @param method
 	 *            The {@link Method} to be injected.
-	 * @param methodAnnotation
-	 *            The {@link AdapterMap} annotation specified at the single
-	 *            parameter of the to be injected method.
 	 */
-	public AdapterMapInjector(final Method method,
-			final AdapterMap methodAnnotation) {
+	public AdapterInjector(final Method method) {
 		this.method = method;
-		this.methodAnnotation = methodAnnotation;
 	}
 
 	/**
@@ -336,28 +327,21 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	 * given concrete adaptable type.
 	 * 
 	 * @param adaptableType
-	 *            The concrete (runtime) adaptable type of the adaptable, whose
-	 *            method is to be injected.
-	 * @param method
-	 *            The to be injected method of the adaptable type.
-	 * @param methodAnnotation
-	 *            The {@link AdapterMap} method annotation of the to be injected
-	 *            adaptable's method.
+	 *            The actual type of the adaptable, whose method is to be
+	 *            injected.
 	 * @return All adapter map bindings (mapped to their binding keys), sorted
 	 *         along the type hierarchy of the bindings adaptable types, where
 	 *         the adaptable type of the binding is a true super type or true
 	 *         interface of the adaptable type given in the method annotation,
 	 *         and is furthermore assignable from the given adaptable type.
 	 */
-	// TODO: Remove method parameter, which is unused
-	protected SortedMap<Key<?>, Binding<?>> getPolymorphicAdapterMapBindings(
-			final Class<?> adaptableType, final Method method,
-			final AdapterMap methodAnnotation) {
+	protected SortedMap<Key<?>, Binding<?>> getApplicableAdapterMapBindings(
+			final Class<?> adaptableType) {
 		// find available keys
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// XXX: use a sorted map, where keys are sorted according to
-		// hierarchy of annotation types (so we have polymorphic injection)
-		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = new TreeMap<>(
+		// hierarchy of annotation types
+		final SortedMap<Key<?>, Binding<?>> applicableBindings = new TreeMap<>(
 				new Comparator<Key<?>>() {
 
 					@Override
@@ -381,43 +365,26 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 					}
 				});
 		for (final Key<?> key : allBindings.keySet()) {
+			// only consider bindings that are qualified by an AdapterMap
+			// binding annotation.
 			if ((key.getAnnotationType() != null)
 					&& AdapterMap.class.equals(key.getAnnotationType())) {
 				final AdapterMap keyAnnotation = (AdapterMap) key
 						.getAnnotation();
-				// If the method specifying an @AdapterMap annotation (on its
-				// first parameter) would also specify an @Inject annotation,
-				// the default injector would already inject all injection
-				// points, where the adaptableType of the method parameter
-				// annotation is the same as the one used in the key annotation.
-				// In this case we would have to guard ourselves in the form:
-				//
-				// if(!methodAnnotation.adaptableType().equals(keyAnnotation.adaptableType()
-				// &&
-				// keyAnnotation.adaptableType().isAssignableFrom(adaptableType))
-				// {
-				// ...
-				// }
-				//
-				// As the AdaptableTypeListener prevents that an @Inject
-				// annotation is used on a method with @AdapterMap annotation,
-				// we have to take care of this case ourselves.
 				if (keyAnnotation.adaptableType()
 						.isAssignableFrom(adaptableType)) {
-					// XXX: we use 'keyAnnotation.adaptableType'
-					// instead of 'methodAnnotation.adaptableType()' to
-					// detect whether injection is to be performed, because
-					// the runtime type of the to be injected IAdaptable is
-					// relevant (not the one used in the method annotation).
+					// XXX: All adapter (map) bindings that are bound to the
+					// adaptable type, or to a super type or super interface
+					// will be considered.
 
 					// System.out.println("Applying binding for " +
 					// keyAnnotation.value() + " to " + type +
 					// " as subtype of " + methodAnnotation.value());
-					polymorphicBindings.put(key, allBindings.get(key));
+					applicableBindings.put(key, allBindings.get(key));
 				}
 			}
 		}
-		return polymorphicBindings;
+		return applicableBindings;
 	}
 
 	/**
@@ -427,8 +394,8 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	 *            The adaptable to inject adapters into.
 	 */
 	protected void injectAdapters(final Object adaptable) {
-		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterMapBindings(
-				adaptable.getClass(), method, methodAnnotation);
+		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getApplicableAdapterMapBindings(
+				adaptable.getClass());
 		// System.out.println("--");
 		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 				.entrySet()) {

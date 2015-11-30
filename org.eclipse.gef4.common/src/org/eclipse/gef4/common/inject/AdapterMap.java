@@ -22,40 +22,52 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.BindingAnnotation;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.MembersInjector;
 import com.google.inject.Module;
-import com.google.inject.multibindings.MapBinderBinding;
 
 /**
- * A Guice {@link BindingAnnotation} that can be used to annotate the first
- * parameter (of type <code>AdapterKey</code>) of an {@link IAdaptable}
- * implementer's {@link IAdaptable#setAdapter(TypeToken, Object, String)}'s
- * method (which is in addition annotated with {@link Inject}) to make it
- * eligible for adapter map injection. The annotation is also used to qualify
- * related {@link AdapterMap} bindings (i.e. specific {@link MapBinderBinding}s)
- * within a Guice {@link Module}.
+ * A {@link BindingAnnotation} that can be used to qualify adapter (map)
+ * bindings, i.e. provide type information related to valid {@link IAdaptable}
+ * injection points.
  * <p>
- * In order to enable the adapter map injection mechanism, one of the
- * {@link Module} s being used to create the {@link Injector} has to bind an
- * {@link AdaptableTypeListener}. This {@link AdaptableTypeListener} will
- * register a specific {@link MembersInjector}, the {@link AdapterMapInjector},
- * whenever it encounters an {@link IAdaptable} type that is eligible for
- * adapter map injection. The {@link AdapterMapInjector} will in turn inject all
- * {@link IAdaptable} instances of that type, evaluating all {@link AdapterMap}
- * bindings that can be obtained from the {@link Injector} with which the
- * {@link AdaptableTypeListener} was injected. In detail, it will inject into an
- * {@link IAdaptable} all adapters, which are bound to an {@link AdapterMap}
- * annotation of a type ( {@link AdapterMap#adaptableType()}), which is either
- * the same or a super-type or super-interface of the {@link IAdaptable} to be
- * injected.
+ * Clients should not use it directly, but rather query
+ * {@link AdapterMaps#getAdapterMapBinder(com.google.inject.Binder, Class)} to
+ * obtain a map binder that already qualifies its bindings with the respective
+ * {@link AdapterMap} annotation for a given type. Adapter (map) bindings can
+ * then be specified as follows:
+ * 
+ * <pre>
+ * // Obtain a map binder bound to MyAdaptable.
+ * MapBinder&lt;AdapterKey&lt;?&gt;, Object&gt; adapterMapBinder = AdapterMaps.getAdapterMapBinder(binder(), MyAdaptable.class);
+ * 
+ * // Bind instance of raw type 'A' as adapter with 'default' role to each MyAdaptable instance.
+ * // The AdapterKey does not have to specify the adapter type, as it can be inferred from the binding and/or the adapter instance.
+ * adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(A.class);
+ * 
+ * // Bind instance of parameterized type 'B&lt;A&gt;' as adapter with 'r' role to each MyAdaptable instance. 
+ * // The AdapterKey does not have to specify the adapter type, as it can be inferred from the binding.
+ * adapterMapBinder.addBinding(AdapterKey.role("r").to(new TypeLiteral&lt;B&lt;A&gt;&gt;(){});
+ * 
+ * // Bind instance 'c' of parameterized type 'C&lt;A&gt;' as adapter with 'r' role to each MyAdaptable instance. 
+ * // The AdapterKey has to specify the adapter type, as it cannot be inferred from the binding or adapter instance.
+ * adapterMapBinder.addBinding(AdapterKey.get(new TypeToken&lt;C&lt;A&gt;&gt;(){}, "r").toInstance(c);
+ * </pre>
+ * 
+ * If an {@link IAdaptable} marks itself as eligible for adapter injection (see
+ * {@link InjectAdapters}), all adapter (map bindings) that are bound to a
+ * {@link AdapterMap#adaptableType() type} (by being qualified with a respective
+ * {@link AdapterMap} annotation), which is either the same or a super-type or
+ * super-interface of the {@link IAdaptable} will be evaluated, and respective
+ * adapters will be injected.
+ * <p>
+ * In order to enable adapter injection, {@link AdapterInjectionSupport} has to
+ * be installed by one of the {@link Module}s used by the {@link Injector}.
  * 
  * @author anyssen
  *
  * @see IAdaptable
  * @see AdaptableTypeListener
- * @see AdapterMapInjector
+ * @see AdapterInjector
  */
 @Documented
 @Target({ PARAMETER })
@@ -66,26 +78,14 @@ public @interface AdapterMap {
 	/**
 	 * The type used to qualify the {@link AdapterMap} annotation. It is used to
 	 * infer which bindings are taken into consideration when performing adapter
-	 * map injection on an {@link IAdaptable}'s method.
+	 * injection on an {@link IAdaptable}'s method.
 	 * <p>
-	 * That is, when injecting a method with an adapter map only those bindings
-	 * that are annotated with an {@link AdapterMap} annotation, whose
+	 * That is, when injecting adapters into
+	 * {@link IAdaptable#setAdapter(TypeToken, Object, String)} only those
+	 * bindings that are annotated with an {@link AdapterMap} annotation, whose
 	 * {@link IAdaptable} type ( {@link #adaptableType()} ) is either the same
 	 * or a super-type or super-interface of the to be injected
 	 * {@link IAdaptable} instance's runtime type will be considered.
-	 * <p>
-	 * If a type is specified at an injection point (i.e. when annotating a
-	 * method parameter within an {@link IAdaptable} annotation), it is simply
-	 * ignored by the {@link AdapterMapInjector}. The runtime type of the to be
-	 * injected {@link IAdaptable} instance is instead considered.
-	 * <p>
-	 * Please note that while the {@link AdapterMapInjector} ignores the type
-	 * specified at the injection point (i.e. at the {@link AdapterMap}
-	 * -annotated method parameter), Guice will still evaluate it and will
-	 * require an {@link AdapterMap} binding for the type (i.e.
-	 * {@link IAdaptable} if no type is specified and the default is used),
-	 * unless the injection point is explicitly marked to be optional (
-	 * <code>@Inject(optional = true)</code>), which is thus highly recommended.
 	 * 
 	 * @return The {@link Class} used as type of this {@link AdapterMap}.
 	 *         {@link IAdaptable} by default.

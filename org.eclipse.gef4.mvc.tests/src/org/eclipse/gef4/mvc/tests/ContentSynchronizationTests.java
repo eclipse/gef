@@ -28,7 +28,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
+import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
@@ -119,7 +119,7 @@ public class ContentSynchronizationTests {
 	public static class Module extends AbstractModule {
 		@Override
 		protected void configure() {
-			install(new AdapterMapInjectionSupport());
+			install(new AdapterInjectionSupport());
 			// undo context and operation history (required because of field
 			// injections)
 			binder().bind(IUndoContext.class).to(UndoContext.class).in(AdaptableScopes.typed(IDomain.class));

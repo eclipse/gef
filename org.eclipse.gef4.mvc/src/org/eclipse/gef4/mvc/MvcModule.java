@@ -20,7 +20,7 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdaptableTypeListener;
 import org.eclipse.gef4.common.inject.AdapterMap;
-import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
+import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -313,10 +313,10 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
-	 * Installs an {@link AdapterMapInjectionSupport} module, which binds an
+	 * Installs an {@link AdapterInjectionSupport} module, which binds an
 	 * {@link AdaptableTypeListener} and ensures it gets properly injected.
 	 */
 	protected void enableAdapterMapInjection() {
-		install(new AdapterMapInjectionSupport());
+		install(new AdapterInjectionSupport());
 	}
 }

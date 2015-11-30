@@ -23,12 +23,16 @@ import com.google.inject.spi.TypeListener;
 
 /**
  * A configuration module that can be installed (via
- * {@link Binder#install(Module)}) to enable support for adapter map injections.
+ * {@link Binder#install(Module)}) to enable support for injection of adapters
+ * into {@link IAdaptable}s. The adapters that are to be injected can be
+ * configured through respective adapter (map) bindings (see {@link AdapterMap}
+ * ). Injection is performed on all {@link IAdaptable}s that are eligible for
+ * adapter injection (see {@link InjectAdapters}).
  * 
  * @author anyssen
  *
  */
-public class AdapterMapInjectionSupport extends AbstractModule {
+public class AdapterInjectionSupport extends AbstractModule {
 
 	/**
 	 * Binds an {@link AdaptableTypeListener} (via

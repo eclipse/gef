@@ -23,8 +23,9 @@ import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdapterMap;
-import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
+import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.common.inject.InjectAdapters;
 import org.eclipse.gef4.common.tests.AdaptableScopeTests.AdapterStoreAdapter;
 import org.junit.Test;
 
@@ -105,6 +106,7 @@ public class AdaptableTypeListenerTests {
 			ads.setAdapter(adapterType, adapter);
 		}
 
+		@InjectAdapters
 		@Inject(optional = true)
 		@Override
 		public <T> void setAdapter(
@@ -124,7 +126,7 @@ public class AdaptableTypeListenerTests {
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
-				install(new AdapterMapInjectionSupport());
+				install(new AdapterInjectionSupport());
 
 				MapBinder<AdapterKey<?>, Object> mapBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
@@ -140,10 +142,10 @@ public class AdaptableTypeListenerTests {
 					AdaptableSpecifyingAdaptableTypeInAdapterMapAnnotation.class);
 			fail("Configuration should have failed, because adapter map annotation is not properly used (adaptable type is specified).");
 		} catch (ConfigurationException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			// we expect the configuration to fail
 			assertTrue(e.getMessage().contains(
-					"Except when being used in bindings, @AdapterMap annotation may never specify an adaptable type. Please remove the specified type so that the default is used."));
+					"@AdapterMap annotation may only be used in adapter map bindings, not to mark an injection point. Annotate method with @InjectAdapters instead."));
 			assertTrue(e.getMessage().contains(
 					"To prevent that Guice member injection interferes with adapter injection, no @Inject annotation may be used on a method that provides an @AdapterMap annotation."));
 

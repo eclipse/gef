@@ -23,8 +23,7 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
  *
  */
 @SuppressWarnings("all")
-// TODO: change visibility to package
-public class AdapterMapImpl implements AdapterMap, Serializable {
+class AdapterMapImpl implements AdapterMap, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Class<? extends IAdaptable> value;

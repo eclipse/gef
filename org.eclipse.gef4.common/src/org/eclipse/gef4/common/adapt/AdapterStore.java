@@ -14,7 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
-import org.eclipse.gef4.common.inject.AdapterMap;
+import org.eclipse.gef4.common.inject.InjectAdapters;
 
 import com.google.common.reflect.TypeToken;
 
@@ -27,8 +27,8 @@ import com.google.common.reflect.TypeToken;
 public class AdapterStore implements IAdaptable {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<>(
-			this, pcs);
+	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<>(this,
+			pcs);
 
 	/**
 	 * Creates a new {@link AdapterStore} with no initial adapters.
@@ -139,8 +139,9 @@ public class AdapterStore implements IAdaptable {
 		ads.setAdapter(adapter, role);
 	}
 
+	@InjectAdapters
 	@Override
-	public <T> void setAdapter(@AdapterMap TypeToken<T> adapterType, T adapter,
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
 			String role) {
 		ads.setAdapter(adapterType, adapter, role);
 	}

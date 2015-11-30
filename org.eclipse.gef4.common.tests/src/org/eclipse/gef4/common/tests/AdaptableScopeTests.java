@@ -14,7 +14,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
+import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class AdaptableScopeTests {
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
-				install(new AdapterMapInjectionSupport());
+				install(new AdapterInjectionSupport());
 
 				MapBinder<AdapterKey<?>, Object> s1Binder = AdapterMaps
 						.getAdapterMapBinder(binder(),
@@ -130,7 +130,7 @@ public class AdaptableScopeTests {
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
-				install(new AdapterMapInjectionSupport());
+				install(new AdapterInjectionSupport());
 
 				MapBinder<AdapterKey<?>, Object> s1Binder = AdapterMaps
 						.getAdapterMapBinder(binder(),

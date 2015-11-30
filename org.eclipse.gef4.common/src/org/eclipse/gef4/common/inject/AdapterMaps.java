@@ -15,13 +15,13 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
 import com.google.inject.Binder;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 /**
- * A utility class to support working with {@link AdapterMap} annotations.
- * 
- * @see AdapterMap
+ * A utility class to obtain a {@link MapBinder}, via which adapter (map)
+ * bindings can be specified in a {@link Module}.
  * 
  * @author anyssen
  *
@@ -39,13 +39,14 @@ public class AdapterMaps {
 	 *            The type of the {@link AdapterMap} to be created.
 	 * @return A new {@link AdapterMapImpl} for the given type.
 	 */
-	public static AdapterMap typed(Class<? extends IAdaptable> type) {
+	private static AdapterMap typed(Class<? extends IAdaptable> type) {
 		return new AdapterMapImpl(type);
 	}
 
 	/**
 	 * Returns a {@link MapBinder}, which is bound to an {@link AdapterMap}
-	 * annotation of the given type.
+	 * annotation of the given type, and can thus be used to specify adapter
+	 * that are to injected into {@link IAdaptable}s of the respective type.
 	 * 
 	 * @param binder
 	 *            The {@link Binder} used to create a new {@link MapBinder}.
