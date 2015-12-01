@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 itemis AG and others.
+ * Copyright (c) 2015 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.common.tests;
@@ -41,11 +41,11 @@ import com.google.inject.spi.Message;
 
 public class AdaptableTypeListenerTests {
 
-	public static class AdaptableSpecifyingAdaptableTypeInAdapterMapAnnotation
+	public static class AdaptableSpecifyingAdapterMapAndInjectAnnotation
 			implements IAdaptable {
 
 		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-		private AdaptableSupport<AdaptableSpecifyingAdaptableTypeInAdapterMapAnnotation> ads = new AdaptableSupport<>(
+		private AdaptableSupport<AdaptableSpecifyingAdapterMapAndInjectAnnotation> ads = new AdaptableSupport<>(
 				this, pcs);
 
 		@Override
@@ -111,7 +111,7 @@ public class AdaptableTypeListenerTests {
 		@Inject(optional = true)
 		@Override
 		public <T> void setAdapter(
-				@AdapterMap(adaptableType = AdaptableSpecifyingAdaptableTypeInAdapterMapAnnotation.class) TypeToken<T> adapterType,
+				@AdapterMap(adaptableType = AdaptableSpecifyingAdapterMapAndInjectAnnotation.class) TypeToken<T> adapterType,
 				T adapter, String role) {
 			ads.setAdapter(adapterType, adapter, role);
 		}
@@ -123,7 +123,7 @@ public class AdaptableTypeListenerTests {
 	}
 
 	@Test
-	public void ensureMisuseOfAdapterMapAnnotationDetected() {
+	public void ensureInvalidAnnotationsDetected() {
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -131,7 +131,7 @@ public class AdaptableTypeListenerTests {
 
 				MapBinder<AdapterKey<?>, Object> mapBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
-								AdaptableSpecifyingAdaptableTypeInAdapterMapAnnotation.class);
+								AdaptableSpecifyingAdapterMapAndInjectAnnotation.class);
 				// bind adapter under different roles (which is valid)
 				mapBinder.addBinding(AdapterKey.role("a1"))
 						.to(AdapterStoreAdapter.class);
@@ -140,7 +140,7 @@ public class AdaptableTypeListenerTests {
 		try {
 			Injector injector = Guice.createInjector(module);
 			injector.getInstance(
-					AdaptableSpecifyingAdaptableTypeInAdapterMapAnnotation.class);
+					AdaptableSpecifyingAdapterMapAndInjectAnnotation.class);
 			fail("Configuration should have failed, because adapter map annotation is not properly used (adaptable type is specified).");
 		} catch (ConfigurationException e) {
 			System.out.println(

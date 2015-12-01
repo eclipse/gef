@@ -28,13 +28,12 @@ import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
 
-// TODO: re-write getAdapter() tests systematically, testing all possible combinations of registering and retrieving adapters
 public class AdaptableSupportTests {
 
-	private class AdaptableSupportTestDriver implements IAdaptable {
+	private class AdaptableSupportWrapper implements IAdaptable {
 
 		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-		private AdaptableSupport<AdaptableSupportTestDriver> ads = new AdaptableSupport<>(
+		private AdaptableSupport<AdaptableSupportWrapper> ads = new AdaptableSupport<>(
 				this, pcs);
 
 		@Override
@@ -42,7 +41,7 @@ public class AdaptableSupportTests {
 			pcs.addPropertyChangeListener(listener);
 		}
 
-		public void clear() {
+		protected void clear() {
 			for (Object adapter : ads.getAdapters().values()) {
 				ads.unsetAdapter(adapter);
 			}
@@ -130,7 +129,7 @@ public class AdaptableSupportTests {
 	@SuppressWarnings({ "serial", "rawtypes" })
 	@Test
 	public void registrationWithAdapterTypeOnly() {
-		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+		AdaptableSupportWrapper td = new AdaptableSupportWrapper();
 
 		ParameterizedSubType<ParameterType1> adapter1 = new ParameterizedSubType<>();
 
@@ -228,7 +227,7 @@ public class AdaptableSupportTests {
 	@SuppressWarnings({ "serial", "rawtypes" })
 	@Test
 	public void retrievalOfMultipleAdapters() {
-		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+		AdaptableSupportWrapper td = new AdaptableSupportWrapper();
 
 		// register adapters
 		ParameterizedType<ParameterType1> parameterType1 = new ParameterizedType<>();
@@ -278,7 +277,7 @@ public class AdaptableSupportTests {
 	@SuppressWarnings("serial")
 	@Test
 	public void retrievalOfParameterizedType() {
-		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+		AdaptableSupportWrapper td = new AdaptableSupportWrapper();
 
 		ParameterizedSubType<ParameterType1> adapter = new ParameterizedSubType<>();
 
