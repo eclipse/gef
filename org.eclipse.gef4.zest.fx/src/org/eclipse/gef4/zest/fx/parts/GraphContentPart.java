@@ -23,8 +23,6 @@ import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnHoverPolicy;
-import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -34,7 +32,6 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Pair;
 
 /**
@@ -79,21 +76,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			}
 		}
 	};
-
-	/**
-	 * Constructs a new {@link GraphContentPart}. Installs a "NoHoverPolicy" for
-	 * the {@link GraphContentPart}, so that it will not be put into the
-	 * {@link HoverModel} when hovered.
-	 */
-	public GraphContentPart() {
-		// we set the hover policy adapter here to disable hovering this part
-		// TODO: move to NoHoverPolicy
-		setAdapter(new AbstractFXOnHoverPolicy() {
-			@Override
-			public void hover(MouseEvent e) {
-			}
-		});
-	}
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
