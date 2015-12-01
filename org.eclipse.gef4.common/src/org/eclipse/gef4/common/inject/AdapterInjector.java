@@ -13,6 +13,7 @@ package org.eclipse.gef4.common.inject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -83,7 +84,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 * @author anyssen
 	 *
 	 */
-	private class AdapterTypeBindingsTargetVisitor
+	private class AdapterTypeInferrer
 			implements BindingTargetVisitor<Object, TypeToken<?>> {
 
 		@Override
@@ -149,8 +150,22 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 * @author anyssen
 	 *
 	 */
-	private class AdaptersTargetVisitor implements
+	private class AdapterMapInferrer implements
 			MultibindingsTargetVisitor<Object, Map<AdapterKey<?>, Object>> {
+
+		private List<String> issues;
+
+		/**
+		 * Constructs a new AdapterMapInferrer.
+		 * 
+		 * @param issues
+		 *            A {@link String} list, to which the
+		 *            {@link AdapterMapInferrer} may add its issues.
+		 */
+		public AdapterMapInferrer(List<String> issues) {
+			this.issues = issues;
+		}
+
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final ConstructorBinding<? extends Object> binding) {
@@ -193,44 +208,74 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				Object adapter = entry.getValue().getProvider().get();
 				// in case of a constructor binding, we may compute a better
 				// type than the runtime type of the adapter.
-				TypeToken<?> adapterType = entry.getValue().acceptTargetVisitor(
-						new AdapterTypeBindingsTargetVisitor());
+				TypeToken<?> adapterType = entry.getValue()
+						.acceptTargetVisitor(new AdapterTypeInferrer());
+
 				if (adapterType != null) {
-					// perform some checks in case a key is also given
+					// perform some sanity checks
 					if (key.getKey() != null) {
 						if (key.getKey().equals(adapterType)) {
-							System.err.println(
+							// a key type is given and equals the inferred type;
+							// issue a warning because of the superfluous
+							// information
+							issues.add(
 									"*** WARNING: The actual type of adapter "
 											+ adapter
 											+ " could already be inferred as "
 											+ adapterType
 											+ " from the binding at "
 											+ entry.getValue().getSource()
-											+ ".");
-							System.err.println(
-									"             The redundant type key "
+											+ ".\n"
+											+ "             The redundant type key "
 											+ key.getKey()
-											+ " may thus be omitted in the adapter key of the binding, using AdapterKey.defaultRole() or AdapterKey.role(String) instead.");
-						} else if (!adapterType.getRawType()
-								.equals(key.getKey().getRawType())) {
-							System.err
-									.println("*** WARNING: The given key type "
-											+ key.getKey()
-											+ " does not seem to match the actual type of adapter "
-											+ adapter
-											+ " which was inferred as "
-											+ adapterType
-											+ " from the binding at "
-											+ entry.getValue().getSource()
-											+ ".");
-							System.err.println(
-									"             The adapter will only be retrievable via types assignable to "
-											+ key.getKey() + ".");
+											+ " may be omitted in the adapter key of the binding, using AdapterKey.defaultRole() or AdapterKey.role(String) instead.");
+						} else {
+							if (adapterType
+									.getType() instanceof ParameterizedType) {
+								// we know (from a binding) that the actual type
+								// is a parameterized type and the key type
+								// is not equal, so this is a problem
+								issues.add("*** WARNING: The given key type "
+										+ key.getKey()
+										+ " does not seem to match the actual (parameterized) type of adapter "
+										+ adapter + " which was inferred as "
+										+ adapterType + " from the binding at "
+										+ entry.getValue().getSource() + ".\n"
+										+ "             The adapter will only be retrievable via key types assignable to "
+										+ key.getKey()
+										+ ". You should probably adjust your binding.");
+							} else {
+								// the actual type (inferred from the
+								// binding) is a raw type; the key raw type
+								// should at least match this raw type
+								if (!adapterType.getRawType()
+										.equals(key.getKey().getRawType())) {
+									issues.add(
+											"*** WARNING: The given key (raw) type "
+													+ key.getKey().getRawType().getName()
+													+ " does not seem to match the actual type of adapter "
+													+ adapter
+													+ " which was inferred as "
+													+ adapterType
+													+ " from the binding at "
+													+ entry.getValue()
+															.getSource()
+													+ ".\n"
+													+ "             The adapter will only be retrievable via key types assignable to "
+													+ key.getKey()
+													+ ". You should probably adjust your binding.");
+								}
+							}
 						}
 					}
 				} else {
+					// if no (better) adapter type was inferred from the
+					// binding,
+					// fall back to use the type inferred from the adapter
+					// instance
 					adapterType = TypeToken.of(adapter.getClass());
 				}
+
 				// in case a key type is given, that takes precedence over the
 				// inferred actual type.
 				if (key.getKey() != null) {
@@ -314,26 +359,16 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
 	 * Retrieves all adapter map bindings where the adaptable type of the map
-	 * binding is a true super type or true super interface of the one referred
-	 * to in the given method annotation, and assignable from the given
+	 * binding is the same or a super type or super interface of the one
+	 * referred to in the given method annotation, and assignable from the given
 	 * adaptable type. The bindings are returned mapped to their keys, sorted
 	 * following the inheritance hierarchy of their respective adaptable types.
-	 * <p>
-	 * As Guice will already inject those map bindings, where the adaptable type
-	 * of the map binding is the same as the one given in the method annotation,
-	 * these are ignored here. Instead, only those bindings are computed where
-	 * the type in the method annotation is not equal to the one of the map
-	 * binding, and where the type of the map binding is assignable from the
-	 * given concrete adaptable type.
 	 * 
 	 * @param adaptableType
-	 *            The actual type of the adaptable, whose method is to be
-	 *            injected.
-	 * @return All adapter map bindings (mapped to their binding keys), sorted
-	 *         along the type hierarchy of the bindings adaptable types, where
-	 *         the adaptable type of the binding is a true super type or true
-	 *         interface of the adaptable type given in the method annotation,
-	 *         and is furthermore assignable from the given adaptable type.
+	 *            The type of the adaptable, whose method is to be injected.
+	 * @return All applicable adapter map bindings (mapped to their binding
+	 *         keys), sorted along the type hierarchy of the bindings adaptable
+	 *         types.
 	 */
 	protected SortedMap<Key<?>, Binding<?>> getApplicableAdapterMapBindings(
 			final Class<?> adaptableType) {
@@ -394,19 +429,37 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 *            The adaptable to inject adapters into.
 	 */
 	protected void injectAdapters(final Object adaptable) {
+		List<String> issues = new ArrayList<>();
+		injectAdapters(adaptable, issues);
+		for (String issue : issues) {
+			System.err.println(issue);
+		}
+	}
+
+	/**
+	 * Performs the adapter map injection for the given adaptable instance.
+	 * 
+	 * @param adaptable
+	 *            The adaptable to inject adapters into.
+	 * @param issues
+	 *            A {@link String} list, to which issues may be added that arise
+	 *            during injection.
+	 */
+	protected void injectAdapters(final Object adaptable, List<String> issues) {
 		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getApplicableAdapterMapBindings(
 				adaptable.getClass());
 		// System.out.println("--");
 		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 				.entrySet()) {
 			try {
-				final Map<AdapterKey<?>, Object> adaptersPerKey = entry
-						.getValue()
-						.acceptTargetVisitor(new AdaptersTargetVisitor());
-				if ((adaptersPerKey != null) && !adaptersPerKey.isEmpty()) {
-					for (AdapterKey<?> key : adaptersPerKey.keySet()) {
-						// process all bindings
-						Object adapter = adaptersPerKey.get(key);
+				// retrieve the to be injected adapters, mapped to adapter keys.
+				final Map<AdapterKey<?>, Object> adapterMap = entry.getValue()
+						.acceptTargetVisitor(new AdapterMapInferrer(issues));
+
+				if ((adapterMap != null) && !adapterMap.isEmpty()) {
+					for (AdapterKey<?> key : adapterMap.keySet()) {
+						// inject the adapter
+						Object adapter = adapterMap.get(key);
 						TypeToken<?> adapterType = key.getKey();
 						String role = key.getRole();
 
