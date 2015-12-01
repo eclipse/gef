@@ -146,4 +146,13 @@ public class AdapterStore implements IAdaptable {
 		ads.setAdapter(adapterType, adapter, role);
 	}
 
+	/**
+	 * Removes all registered adapters from this {@link AdapterStore}.
+	 */
+	public void clear() {
+		for (Object adapter : ads.getAdapters().values()) {
+			ads.unsetAdapter(adapter);
+		}
+	}
+
 }
