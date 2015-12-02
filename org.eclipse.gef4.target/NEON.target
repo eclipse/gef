@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="NEON" sequenceNumber="5">
+<?pde version="3.8"?><target name="NEON" sequenceNumber="6">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.guava" version="15.0.0.v201403281430"/>
@@ -8,7 +8,7 @@
 <unit id="com.google.inject" version="3.0.0.v201312141243"/>
 <unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
 <unit id="com.google.guava.source" version="15.0.0.v201403281430"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/I20150910053315/repository/"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20151016170251/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
