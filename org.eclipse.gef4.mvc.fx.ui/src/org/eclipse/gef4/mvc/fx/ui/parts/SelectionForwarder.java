@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
+import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -57,7 +59,6 @@ public class SelectionForwarder<VR>
 	 *            The {@link IViewer} of which the {@link SelectionModel} should
 	 *            be held in sync with the Eclipse workbench selection.
 	 */
-	@SuppressWarnings("serial")
 	public SelectionForwarder(final ISelectionProvider selectionProvider,
 			IViewer<VR> viewer) {
 		if (viewer == null) {
@@ -66,17 +67,13 @@ public class SelectionForwarder<VR>
 		}
 		this.selectionProvider = selectionProvider;
 		this.viewer = viewer;
-		this.selectionModel = viewer
-				.getAdapter(new TypeToken<SelectionModel<VR>>(getClass()) {
-				});
+		this.selectionModel = getSelectionModel();
 
 		// register listeners
 		if (selectionProvider != null) {
 			selectionProvider.addSelectionChangedListener(this);
 		}
-		if (selectionModel != null) {
-			selectionModel.addPropertyChangeListener(this);
-		}
+		selectionModel.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -90,6 +87,20 @@ public class SelectionForwarder<VR>
 		if (selectionModel != null) {
 			selectionModel.removePropertyChangeListener(this);
 		}
+	}
+
+	/**
+	 * Returns the {@link SelectionModel} attached to the viewer.
+	 *
+	 * @return The {@link SelectionModel} that should be used.
+	 */
+	@SuppressWarnings("serial")
+	protected SelectionModel<VR> getSelectionModel() {
+		SelectionModel<VR> selectionModel = viewer
+				.getAdapter(new TypeToken<SelectionModel<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
+		return selectionModel;
 	}
 
 	@Override
