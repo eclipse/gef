@@ -86,7 +86,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey
 						.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+				.to(VisualOutlineGeometryProvider.class);
 	}
 
 	@Override

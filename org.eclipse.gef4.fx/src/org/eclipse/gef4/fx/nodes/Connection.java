@@ -42,14 +42,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 
 /**
  * The {@link Connection} provides a visualization for a binary connection whose
- * route can be influenced by a number of way points.
+ * route can be influenced by a number of way points and which supports to add
+ * start and end decorations.
  *
  * @author mwienand
  *
@@ -386,9 +389,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 	// used to pass as argument to IAnchor#attach() and #detach()
 	private AdapterStore as = new AdapterStore();
 
-	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
-	private IConnectionDecoration startDecoration = null;
-	private IConnectionDecoration endDecoration = null;
+	// TODO: use properties (JavaFX Property) for decorations
+	private Node startDecoration = null;
+	private Node endDecoration = null;
 	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
 
@@ -398,6 +401,15 @@ public class Connection extends Group /* or rather Parent?? */ {
 	// refresh geometry on position changes
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<>();
+
+	// refresh on decoration bounds changes (stroke width)
+	private ChangeListener<Bounds> decorationRefreshListener = new ChangeListener<Bounds>() {
+		@Override
+		public void changed(ObservableValue<? extends Bounds> observable,
+				Bounds oldValue, Bounds newValue) {
+			refresh();
+		}
+	};
 
 	/**
 	 * Constructs a new {@link Connection} whose start and end point are set to
@@ -468,45 +480,33 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Arranges the given decoration according to the passed-in values. Returns
-	 * the transformed end point of the arranged decoration.
+	 * Arranges the given decoration according to the passed-in values.
 	 *
 	 * @param decoration
-	 *            The {@link IConnectionDecoration} to arrange.
+	 *            The decoration {@link Node} to arrange.
 	 * @param start
 	 *            The offset for the decoration visual.
 	 * @param direction
 	 *            The direction of the {@link Connection} at the point where the
 	 *            decoration is arranged.
-	 * @param decoStart
-	 *            The start point of the decoration within the local coordinate
-	 *            system of the decoration visual.
-	 * @param decoDirection
-	 *            The direction of the decoration.
-	 * @return The transformed end point of the arranged decoration.
 	 */
-	// TODO: Remove decoStart, which is unused.
-	protected Point arrangeDecoration(IConnectionDecoration decoration,
-			Point start, Vector direction, Point decoStart,
-			Vector decoDirection) {
-		Node visual = decoration.getVisual();
+	protected void arrangeDecoration(Node decoration, Point start,
+			Vector direction) {
 
-		// position
-		visual.setLayoutX(start.x);
-		visual.setLayoutY(start.y);
+		decoration.getTransforms().clear();
 
-		// rotation
-		Angle angleCW = null;
-		if (!direction.isNull() && !decoDirection.isNull()) {
-			angleCW = decoDirection.getAngleCW(direction);
-			visual.getTransforms().clear();
-			visual.getTransforms().add(new Rotate(angleCW.deg(), 0, 0));
+		// arrange on start of curve.
+		decoration.getTransforms().add(new Translate(start.x, start.y));
+
+		// arrange on curve direction
+		if (!direction.isNull()) {
+			Angle angleCW = new Vector(1, 0).getAngleCW(direction);
+			decoration.getTransforms().add(new Rotate(angleCW.deg(), 0, 0));
 		}
 
-		// return corresponding curve point
-		return angleCW == null ? start
-				: start.getTranslated(
-						decoDirection.getRotatedCW(angleCW).toPoint());
+		// compensate stroke (ensure decoration 'ends' at curve end).
+		decoration.getTransforms()
+				.add(new Translate(-decoration.getLayoutBounds().getMinX(), 0));
 	}
 
 	/**
@@ -541,13 +541,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		}
 		Vector endDirection = new Vector(slope.getNegated());
 
-		// determine decoration start point and decoration direction
-		Point decoStartPoint = endDecoration.getLocalStartPoint();
-		Point decoEndPoint = endDecoration.getLocalEndPoint();
-		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
-
-		arrangeDecoration(endDecoration, endPoint, endDirection, decoStartPoint,
-				decoDirection);
+		arrangeDecoration(endDecoration, endPoint, endDirection);
 	}
 
 	/**
@@ -582,13 +576,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		}
 		Vector curveStartDirection = new Vector(slope);
 
-		// determine decoration start point and decoration start direction
-		Point decoStartPoint = startDecoration.getLocalStartPoint();
-		Point decoEndPoint = startDecoration.getLocalEndPoint();
-		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
-
-		arrangeDecoration(startDecoration, startPoint, curveStartDirection,
-				decoStartPoint, decoDirection);
+		arrangeDecoration(startDecoration, startPoint, curveStartDirection);
 	}
 
 	/**
@@ -747,13 +735,13 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Returns the end {@link IConnectionDecoration decoration} of this
-	 * {@link Connection}, or <code>null</code>.
+	 * Returns the end decoration {@link Node} of this {@link Connection}, or
+	 * <code>null</code>.
 	 *
-	 * @return The end {@link IConnectionDecoration decoration} of this
-	 *         {@link Connection}, or <code>null</code>.
+	 * @return The end decoration {@link Node} of this {@link Connection}, or
+	 *         <code>null</code>.
 	 */
-	public IConnectionDecoration getEndDecoration() {
+	public Node getEndDecoration() {
 		return endDecoration;
 	}
 
@@ -843,13 +831,13 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Returns the start {@link IConnectionDecoration decoration} of this
-	 * {@link Connection}, or <code>null</code>.
+	 * Returns the start decoration {@link Node} of this {@link Connection}, or
+	 * <code>null</code>.
 	 *
-	 * @return The start {@link IConnectionDecoration decoration} of this
-	 *         {@link Connection}, or <code>null</code>.
+	 * @return The start decoration {@link Node } of this {@link Connection}, or
+	 *         <code>null</code>.
 	 */
-	public IConnectionDecoration getStartDecoration() {
+	public Node getStartDecoration() {
 		return startDecoration;
 	}
 
@@ -1122,6 +1110,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
 		if (!newGeometry.equals(curveNode.getGeometry())) {
+			// TODO: respect decorations
 			curveNode.setGeometry(newGeometry);
 		}
 
@@ -1130,11 +1119,11 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 		// z-order decorations above curve
 		if (startDecoration != null) {
-			getChildren().add(startDecoration.getVisual());
+			getChildren().add(startDecoration);
 			arrangeStartDecoration();
 		}
 		if (endDecoration != null) {
-			getChildren().add(endDecoration.getVisual());
+			getChildren().add(endDecoration);
 			arrangeEndDecoration();
 		}
 
@@ -1270,18 +1259,24 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Sets the end {@link IConnectionDecoration} of this {@link Connection} to
-	 * the given value.
+	 * Sets the end decoration {@link Node} of this {@link Connection} to the
+	 * given value.
 	 *
 	 * @param endDeco
-	 *            The new end {@link IConnectionDecoration} for this
+	 *            The new end decoration {@link Node} for this
 	 *            {@link Connection}.
 	 */
-	public void setEndDecoration(IConnectionDecoration endDeco) {
+	public void setEndDecoration(Node endDeco) {
+		if (endDecoration != null) {
+			endDecoration.layoutBoundsProperty()
+					.removeListener(decorationRefreshListener);
+		}
 		endDecoration = endDeco;
 		if (endDecoration != null) {
-			ObservableList<String> styleClasses = endDecoration.getVisual()
-					.getStyleClass();
+			endDecoration.layoutBoundsProperty()
+					.addListener(decorationRefreshListener);
+
+			ObservableList<String> styleClasses = endDecoration.getStyleClass();
 			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
 				styleClasses.add(CSS_CLASS_DECORATION);
 			}
@@ -1340,17 +1335,24 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Sets the start {@link IConnectionDecoration} of this {@link Connection}
-	 * to the given value.
+	 * Sets the start decoration {@link Node} of this {@link Connection} to the
+	 * given value.
 	 *
 	 * @param startDeco
-	 *            The new start {@link IConnectionDecoration} for this
+	 *            The new start decoration {@link Node} for this
 	 *            {@link Connection}.
 	 */
-	public void setStartDecoration(IConnectionDecoration startDeco) {
+	public void setStartDecoration(Node startDeco) {
+		if (startDecoration != null) {
+			startDecoration.layoutBoundsProperty()
+					.removeListener(decorationRefreshListener);
+		}
 		startDecoration = startDeco;
 		if (startDecoration != null) {
-			ObservableList<String> styleClasses = startDecoration.getVisual()
+			startDecoration.layoutBoundsProperty()
+					.addListener(decorationRefreshListener);
+
+			ObservableList<String> styleClasses = startDecoration
 					.getStyleClass();
 			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
 				styleClasses.add(CSS_CLASS_DECORATION);

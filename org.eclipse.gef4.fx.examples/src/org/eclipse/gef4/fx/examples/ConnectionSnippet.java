@@ -16,7 +16,6 @@ package org.eclipse.gef4.fx.examples;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
@@ -27,32 +26,16 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineJoin;
 
 public class ConnectionSnippet extends AbstractFxExample {
 
-	public static class ArrowHead extends Polyline implements IConnectionDecoration {
+	public static class ArrowHead extends Polygon {
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
-					0.0);
+			super(0, 0, 10, 3, 10, -3);
 			setFill(Color.WHITE);
 			setStrokeLineJoin(StrokeLineJoin.ROUND);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
 		}
 	}
 

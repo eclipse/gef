@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
@@ -39,9 +37,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import javafx.scene.Node;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Polygon;
 
 public class JFaceEdgeDecorationExample {
 
@@ -92,45 +89,15 @@ public class JFaceEdgeDecorationExample {
 		}
 	}
 
-	static class CircleHead extends Circle implements IConnectionDecoration {
+	static class CircleHead extends Circle {
 		public CircleHead() {
 			super(5);
 		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
-		}
 	}
 
-	static class DiamondHead extends Polyline implements IConnectionDecoration {
+	static class DiamondHead extends Polygon {
 		public DiamondHead() {
 			super(15.0, 0.0, 7.5, -7.5, 0.0, 0.0, 7.5, 7.5, 15.0, 0.0);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
 		}
 	}
 

@@ -22,7 +22,6 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -40,7 +39,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Polygon;
 
 /**
  * The {@link EdgeContentPart} is the controller for an {@link Edge} content
@@ -52,31 +51,15 @@ import javafx.scene.shape.Polyline;
 public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 
 	/**
-	 * The {@link ArrowHead} is an {@link IConnectionDecoration} implementation
-	 * that can be used to displays an arrow at either side of an
+	 * The {@link ArrowHead} is used as a decoration for a connection
 	 * {@link Connection}.
 	 */
-	public static class ArrowHead extends Polyline implements IConnectionDecoration {
+	public static class ArrowHead extends Polygon {
 		/**
 		 * Default constructor.
 		 */
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0, 0.0);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
+			super(0, 0, 10, 3, 10, -3);
 		}
 	}
 
@@ -199,11 +182,11 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		}
 
 		// custom decoration
-		IConnectionDecoration sourceDecoration = ZestProperties.getSourceDecoration(edge);
+		Node sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
 		}
-		IConnectionDecoration targetDecoration = ZestProperties.getTargetDecoration(edge);
+		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
 		}

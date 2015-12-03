@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.IConnectionDecoration;
 import org.eclipse.gef4.fx.nodes.PolyBezierConnectionRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -45,32 +44,16 @@ import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
 
 public class FXGeometricCurvePart
 		extends AbstractFXGeometricElementPart<Connection> {
 
-	public static class ArrowHead extends Polyline
-			implements IConnectionDecoration {
+	public static class ArrowHead extends Polygon {
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
-					0.0);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
+			super(0, 0, 10, 3, 10, -3);
 		}
 	}
 
@@ -113,25 +96,9 @@ public class FXGeometricCurvePart
 		}
 	}
 
-	public static class CircleHead extends Circle
-			implements IConnectionDecoration {
+	public static class CircleHead extends Circle {
 		public CircleHead() {
 			super(5);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
 		}
 	}
 
@@ -255,6 +222,7 @@ public class FXGeometricCurvePart
 	protected Connection createVisual() {
 		Connection visual = new Connection();
 		visual.setRouter(new PolyBezierConnectionRouter());
+		visual.getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
 		return visual;
 	}
 
@@ -357,10 +325,8 @@ public class FXGeometricCurvePart
 			}
 			break;
 		}
-		Shape startDecorationVisual = visual.getStartDecoration() != null
-				? ((Shape) visual.getStartDecoration().getVisual()) : null;
-		Shape endDecorationVisual = visual.getEndDecoration() != null
-				? ((Shape) visual.getEndDecoration().getVisual()) : null;
+		Shape startDecorationVisual = (Shape) visual.getStartDecoration();
+		Shape endDecorationVisual = (Shape) visual.getEndDecoration();
 
 		// stroke paint
 		if (visual.getCurveNode().getStroke() != content.getStroke()) {
