@@ -43,6 +43,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
@@ -54,6 +55,7 @@ public class FXGeometricCurvePart
 	public static class ArrowHead extends Polygon {
 		public ArrowHead() {
 			super(0, 0, 10, 3, 10, -3);
+			setFill(Color.TRANSPARENT);
 		}
 	}
 
@@ -99,6 +101,7 @@ public class FXGeometricCurvePart
 	public static class CircleHead extends Circle {
 		public CircleHead() {
 			super(5);
+			setFill(Color.TRANSPARENT);
 		}
 	}
 
