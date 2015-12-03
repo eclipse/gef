@@ -403,7 +403,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<>();
 
 	// refresh on decoration bounds changes (stroke width)
-	private ChangeListener<Bounds> decorationRefreshListener = new ChangeListener<Bounds>() {
+	private ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
@@ -1110,7 +1110,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
 		if (!newGeometry.equals(curveNode.getGeometry())) {
-			// TODO: respect decorations
 			curveNode.setGeometry(newGeometry);
 		}
 
@@ -1126,6 +1125,40 @@ public class Connection extends Group /* or rather Parent?? */ {
 			getChildren().add(endDecoration);
 			arrangeEndDecoration();
 		}
+
+		// if (startDecoration != null || endDecoration != null) {
+		// Bounds layoutBounds = curveNode.getLayoutBounds();
+		// org.eclipse.gef4.geometry.planar.Path clip = new
+		// org.eclipse.gef4.geometry.planar.Rectangle(
+		// layoutBounds.getMinX(), layoutBounds.getMinY(),
+		// layoutBounds.getWidth(), layoutBounds.getHeight()).toPath();
+		// if (startDecoration != null) {
+		// clip = org.eclipse.gef4.geometry.planar.Path.subtract(clip,
+		// NodeUtils
+		// .parentToLocal(curveNode,
+		// NodeUtils.localToParent(startDecoration,
+		// JavaFX2Geometry.toRectangle(
+		// startDecoration
+		// .getLayoutBounds())))
+		// .toPath());
+		// }
+		// if (endDecoration != null) {
+		// clip = org.eclipse.gef4.geometry.planar.Path.subtract(clip,
+		// NodeUtils
+		// .parentToLocal(curveNode,
+		// NodeUtils.localToParent(endDecoration,
+		// JavaFX2Geometry.toRectangle(
+		// endDecoration
+		// .getLayoutBounds())))
+		// .toPath());
+		// }
+		//
+		// Shape clipPath = Geometry2JavaFX.toPath(clip);
+		// clipPath.setFill(Color.RED);
+		// curveNode.setClip(clipPath);
+		// } else {
+		// curveNode.setClip(null);
+		// }
 
 		inRefresh = false;
 	}
@@ -1269,12 +1302,12 @@ public class Connection extends Group /* or rather Parent?? */ {
 	public void setEndDecoration(Node endDeco) {
 		if (endDecoration != null) {
 			endDecoration.layoutBoundsProperty()
-					.removeListener(decorationRefreshListener);
+					.removeListener(decorationLayoutBoundsListener);
 		}
 		endDecoration = endDeco;
 		if (endDecoration != null) {
 			endDecoration.layoutBoundsProperty()
-					.addListener(decorationRefreshListener);
+					.addListener(decorationLayoutBoundsListener);
 
 			ObservableList<String> styleClasses = endDecoration.getStyleClass();
 			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
@@ -1345,12 +1378,12 @@ public class Connection extends Group /* or rather Parent?? */ {
 	public void setStartDecoration(Node startDeco) {
 		if (startDecoration != null) {
 			startDecoration.layoutBoundsProperty()
-					.removeListener(decorationRefreshListener);
+					.removeListener(decorationLayoutBoundsListener);
 		}
 		startDecoration = startDeco;
 		if (startDecoration != null) {
 			startDecoration.layoutBoundsProperty()
-					.addListener(decorationRefreshListener);
+					.addListener(decorationLayoutBoundsListener);
 
 			ObservableList<String> styleClasses = startDecoration
 					.getStyleClass();
