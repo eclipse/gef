@@ -29,7 +29,8 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<!-- add JavaFX to classpath (jfxrt for Java 7, jfxswt.jar for Java 8) -->
+					<!-- add JavaFX to classpath (jfxrt for Java 7, jfxswt.jar for Java 
+						8) -->
 					<extraClasspathElements>
 						<extraClasspathElement>
 							<groupId>com.oracle</groupId>
@@ -65,6 +66,9 @@
 				<artifactId>tycho-packaging-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
 					<sourceReferences>
 						<generate>true</generate>
 					</sourceReferences>
@@ -218,7 +222,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!-- This is needed for source feature generation, as outlined in bug #398250 -->
+				<!-- This is needed for source feature generation, as outlined in bug 
+					#398250 -->
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
 				<version>${tycho.version}</version>
@@ -235,7 +240,7 @@
 		</plugins>
 	</build>
 	<profiles>
-	  <profile>
+		<profile>
 			<id>NEON.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
