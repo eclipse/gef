@@ -408,7 +408,7 @@ public class InfiniteCanvas extends Region {
 			clipContent();
 		}
 		// register for "clipContent" changes to enable/disable content clipping
-		zoomGridProperty.addListener(new ChangeListener<Boolean>() {
+		clipContentProperty.addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) {
