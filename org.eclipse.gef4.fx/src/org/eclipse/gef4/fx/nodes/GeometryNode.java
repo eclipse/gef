@@ -75,9 +75,27 @@ import javafx.scene.shape.StrokeType;
 public class GeometryNode<T extends IGeometry> extends Parent {
 
 	private Path geometricShape = new Path();
+	private Path layoutBoundsComputationShape = new Path();
 	private Path clickableAreaShape = null;
 	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty();
 	private ObjectProperty<T> geometryProperty = new SimpleObjectProperty<>();
+
+	private double resizeWidth = Double.NaN;
+	private double resizeHeight = Double.NaN;
+
+	private ChangeListener<T> geometryChangeListener = new ChangeListener<T>() {
+
+		@Override
+		public void changed(ObservableValue<? extends T> observable, T oldValue,
+				T newValue) {
+			resizeWidth = Double.NaN;
+			resizeHeight = Double.NaN;
+			// FIXME: Re-implement this fix by only using public API (bug
+			// #443954)
+			impl_layoutBoundsChanged();
+			updateVisuals();
+		}
+	};
 
 	/**
 	 * Constructs a new {@link GeometryNode} without an {@link IGeometry}.
@@ -148,15 +166,33 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 			}
 		});
 
-		// update path elements whenever the geometry property is changed
-		geometryProperty.addListener(new ChangeListener<T>() {
+		// XXX: We cannot directly resize the underlying geometricShape so that
+		// its layout bounds reflect a specific width and height. Instead, we
+		// have to iterate until the desired layout bounds are obtained. As this
+		// would otherwise cause updates, we use a specific shape just for these
+		// calculations.
+		layoutBoundsComputationShape.strokeProperty()
+				.bind(geometricShape.strokeProperty());
+		layoutBoundsComputationShape.strokeLineCapProperty()
+				.bind(geometricShape.strokeLineCapProperty());
+		layoutBoundsComputationShape.strokeLineJoinProperty()
+				.bind(geometricShape.strokeLineJoinProperty());
+		layoutBoundsComputationShape.strokeMiterLimitProperty()
+				.bind(geometricShape.strokeMiterLimitProperty());
+		layoutBoundsComputationShape.strokeTypeProperty()
+				.bind(geometricShape.strokeTypeProperty());
+		layoutBoundsComputationShape.strokeWidthProperty()
+				.bind(geometricShape.strokeWidthProperty());
+		layoutBoundsComputationShape.fillProperty()
+				.bind(geometricShape.fillProperty());
+		layoutBoundsComputationShape.smoothProperty()
+				.bind(geometricShape.smoothProperty());
+		layoutBoundsComputationShape.fillRuleProperty()
+				.bind(geometricShape.fillRuleProperty());
+				// TODO: bind dash and CSS styling!!
 
-			@Override
-			public void changed(ObservableValue<? extends T> observable,
-					T oldValue, T newValue) {
-				updatePathElements();
-			}
-		});
+		// update path elements whenever the geometry property is changed
+		geometryProperty.addListener(geometryChangeListener);
 	}
 
 	/**
@@ -257,6 +293,11 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		return geometryProperty.getValue();
 	}
 
+	private PathElement[] getPathElements() {
+		return Geometry2JavaFX
+				.toPathElements(geometryProperty.getValue().toPath());
+	}
+
 	/**
 	 * Retrieves the value of the stroke property.
 	 *
@@ -350,15 +391,19 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		/*
 		 * We have to ensure, that the size that gets passed in to #resize() is
 		 * reflected in the layout bounds of this node. As we cannot compensate
-		 * the offset between geometric bounds and layout bounds, we set the
-		 * geometric bounds to the resize width and height and tweak the layout
-		 * bounds here to match the geometric bounds.
+		 * the offset between geometric bounds and layout bounds in all cases,
+		 * we fall back to the values given in resize() in case they differ from
+		 * the computed bounds.
 		 *
-		 * TODO: Re-implement this fix by only using public API, for example, a
-		 * Group can be used as the super class. (Bug #443954)
+		 * FIXME: Re-implement this fix by only using public API (bug #443954)
 		 */
-		return Geometry2JavaFX.toFXBounds(geometryProperty.getValue() == null
-				? new Rectangle() : geometryProperty.getValue().getBounds());
+		Bounds layoutBounds = super.impl_computeLayoutBounds();
+		double width = Double.isNaN(resizeWidth) ? layoutBounds.getWidth()
+				: resizeWidth;
+		double height = Double.isNaN(resizeHeight) ? layoutBounds.getHeight()
+				: resizeHeight;
+		return Geometry2JavaFX.toFXBounds(new Rectangle(layoutBounds.getMinX(),
+				layoutBounds.getMinY(), width, height));
 	}
 
 	@Override
@@ -377,42 +422,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	@Override
-	public double maxHeight(double width) {
-		return prefHeight(width);
-	}
-
-	@Override
-	public double maxWidth(double height) {
-		return prefWidth(height);
-	}
-
-	@Override
-	public double minHeight(double width) {
-		return prefHeight(width);
-	}
-
-	@Override
-	public double minWidth(double height) {
-		return prefWidth(height);
-	}
-
-	@Override
-	public double prefHeight(double width) {
-		// final double result = getLayoutBounds().getHeight();
-		// return Double.isNaN(result) || result < 0 ? 0 : result;
-		return geometryProperty.getValue().getBounds().getHeight();
-	}
-
-	@Override
-	public double prefWidth(double height) {
-		// final double result = getLayoutBounds().getWidth();
-		// return Double.isNaN(result) || result < 0 ? 0 : result;
-		return geometryProperty.getValue().getBounds().getWidth();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public void resize(double width, double height) {
+		// System.out.println("resize (" + width + ", " + height + ")");
 		if (width < 0) {
 			throw new IllegalArgumentException("Cannot resize: width < 0.");
 		}
@@ -424,11 +435,122 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		Bounds layoutBounds = getLayoutBounds();
 		if (layoutBounds.getWidth() == width
 				&& layoutBounds.getHeight() == height) {
+			// do nothing if layout bounds already match desired width and
+			// height
 			return;
 		}
 
-		// set the new size, either by resizing or scaling the underlying
-		// geometry
+		// Disable listening to geometry changes while determine new geometry
+		// size (to match given visual bounds size)
+		geometryProperty.removeListener(geometryChangeListener);
+
+		// determine initial values for geometric size that are as close as
+		// possible to what we need for reaching the desired layout bounds.
+		double offset = 0;
+		if (geometricShape.getStroke() != null
+				&& geometricShape.getStrokeType() != StrokeType.INSIDE) {
+			// Path reserves 0.5 pixels around, so we substract 1 at the end
+			// (Rectangle does not do this)
+			offset = -(geometricShape.getStrokeType() == StrokeType.CENTERED ? 1
+					: 2) * geometricShape.getStrokeWidth() - 1;
+		}
+		double geometryWidth = width + offset;
+		double geometryHeight = height + offset;
+		if (geometryWidth < 0) {
+			geometryWidth = 0.00001;
+		}
+		if (geometryHeight < 0) {
+			geometryHeight = 0.00001;
+		}
+		resizeGeometry(geometryWidth, geometryHeight);
+		updateVisuals(layoutBoundsComputationShape);
+		layoutBounds = layoutBoundsComputationShape.getLayoutBounds();
+		double dw = layoutBounds.getWidth() - width;
+		double dh = layoutBounds.getHeight() - height;
+		double previousDw = Double.MAX_VALUE;
+		double previousDh = Double.MAX_VALUE;
+		// System.out
+		// .println("Layout bounds difference: (" + dw + ", " + dh + ")");
+		while (dw != 0 || dh != 0) {
+			if (Math.abs(previousDw) > Math.abs(dw) && Math.abs(dw) > 0.00001) {
+				geometryWidth -= dw;
+				if (geometryWidth < 0) {
+					geometryWidth = 0;
+				}
+			} else {
+				dw = 0;
+			}
+			if (Math.abs(previousDh) > Math.abs(dh) && Math.abs(dh) > 0.00001) {
+				geometryHeight -= dh;
+				if (geometryHeight < 0) {
+					geometryHeight = 0;
+				}
+			} else {
+				dh = 0;
+			}
+
+			resizeGeometry(geometryWidth, geometryHeight);
+			updateVisuals(layoutBoundsComputationShape);
+			layoutBounds = layoutBoundsComputationShape.getLayoutBounds();
+
+			previousDw = dw;
+			if (dw != 0) {
+				dw = layoutBounds.getWidth() - width;
+			}
+			previousDh = dh;
+			if (dh != 0) {
+				dh = layoutBounds.getHeight() - height;
+			}
+			// System.out.println(
+			// "Layout bounds difference: (" + dw + ", " + dh + ")");
+		}
+
+		// cache precise values, so they can be used as layout bounds within
+		// impl_computeLayoutBounds(); we will try to compute the geometry
+		// as close as possible, but we might not be able to resize it so
+		// that the computed layout bounds do precisely match the specified
+		// width and height; to not violate the resize contract (that the
+		// layout bounds match the specified width and height), we need the
+		// precise values.
+		if (layoutBounds.getWidth() != width) {
+			this.resizeWidth = width;
+			// System.err.println(
+			// "*** WARNING: Computed layout bounds width of GeometryNode "
+			// + this + "(" + layoutBounds.getWidth()
+			// + ") do not exactly match specified resize width ("
+			// + width
+			// + "). Layout bounds will use the specified resize width.");
+		} else {
+			resizeWidth = Double.NaN;
+		}
+		if (layoutBounds.getHeight() != height) {
+			this.resizeHeight = height;
+			// System.err.println(
+			// "*** WARNING: Computed layout bounds height of GeometryNode "
+			// + this + "(" + layoutBounds.getHeight()
+			// + ") do not exactly match specified resize height ("
+			// + height
+			// + "). Layout bounds will use the specified resize height.");
+		} else {
+			resizeHeight = Double.NaN;
+		}
+
+		// update geometry of underlying path (which should invalidate the
+		// layout bounds)
+		geometryProperty.addListener(geometryChangeListener);
+		updateVisuals(); // will trigger re-computation of layout bounds
+	}
+
+	/**
+	 * Resizes the {@link #geometryProperty()} to the given width and height.
+	 *
+	 * @param width
+	 *            The new width.
+	 * @param height
+	 *            The new height.
+	 */
+	@SuppressWarnings("unchecked")
+	protected void resizeGeometry(double width, double height) {
 		T geometry = geometryProperty.getValue();
 		if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
@@ -462,7 +584,6 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 								boundsOrigin.x, boundsOrigin.y)));
 			}
 		}
-		updatePathElements();
 	}
 
 	/**
@@ -712,12 +833,19 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 * properties of a geometry, you have to call this method in order to update
 	 * its visual counter part.
 	 */
-	private void updatePathElements() {
-		PathElement[] pathElements = Geometry2JavaFX
-				.toPathElements(geometryProperty.getValue().toPath());
-		geometricShape.getElements().setAll(pathElements);
+	// TODO: this needs to get called whenever the computed layout bounds change
+	private void updateVisuals() {
 		if (clickableAreaShape != null) {
-			clickableAreaShape.getElements().setAll(pathElements);
+			updateVisuals(geometricShape, clickableAreaShape);
+		} else {
+			updateVisuals(geometricShape);
+		}
+	}
+
+	private void updateVisuals(Path... paths) {
+		PathElement[] pathElements = getPathElements();
+		for (Path p : paths) {
+			p.getElements().setAll(pathElements);
 		}
 	}
 
