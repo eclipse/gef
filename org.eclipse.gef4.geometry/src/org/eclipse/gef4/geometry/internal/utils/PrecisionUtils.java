@@ -24,6 +24,13 @@ package org.eclipse.gef4.geometry.internal.utils;
  */
 public class PrecisionUtils {
 
+	/*
+	 * Precise calculations on doubles are performed based on BigDecimals,
+	 * converting to 8 digits scale, so there are no undesired rounding effects
+	 * beyond this precision.
+	 */
+	private static final int DEFAULT_SCALE = 6;
+
 	/**
 	 * Computes the smallest double that is yet recognizable (by comparison)
 	 * when shifting the default scale up by the given amount.
@@ -69,7 +76,8 @@ public class PrecisionUtils {
 		// Check for undefined values
 		if (Double.isNaN(d1) || Double.isNaN(d2)) {
 			throw new IllegalArgumentException(
-					"Cannot compare undefined values.");
+					"Cannot compare undefined values d1 = " + d1 + ", d2 = "
+							+ d2);
 		}
 		return Math.abs(d1 - d2) <= calculateFraction(shift);
 	}
@@ -104,7 +112,8 @@ public class PrecisionUtils {
 		// Check for undefined values
 		if (Double.isNaN(d1) || Double.isNaN(d2)) {
 			throw new IllegalArgumentException(
-					"Cannot compare undefined values.");
+					"Cannot compare undefined values d1 = " + d1 + ", d2 = "
+							+ d2);
 		}
 		return d1 + calculateFraction(shift) > d2;
 	}
@@ -140,7 +149,8 @@ public class PrecisionUtils {
 		// Check for undefined values
 		if (Double.isNaN(d1) || Double.isNaN(d2)) {
 			throw new IllegalArgumentException(
-					"Cannot compare undefined values.");
+					"Cannot compare undefined values d1 = " + d1 + ", d2 = "
+							+ d2);
 		}
 		return d1 + calculateFraction(shift) >= d2;
 	}
@@ -175,7 +185,8 @@ public class PrecisionUtils {
 		// Check for undefined values
 		if (Double.isNaN(d1) || Double.isNaN(d2)) {
 			throw new IllegalArgumentException(
-					"Cannot compare undefined values.");
+					"Cannot compare undefined values d1 = " + d1 + ", d2 = "
+							+ d2);
 		}
 		return d1 < d2 + calculateFraction(shift);
 	}
@@ -211,17 +222,11 @@ public class PrecisionUtils {
 		// Check for undefined values
 		if (Double.isNaN(d1) || Double.isNaN(d2)) {
 			throw new IllegalArgumentException(
-					"Cannot compare undefined values.");
+					"Cannot compare undefined values d1 = " + d1 + ", d2 = "
+							+ d2);
 		}
 		return d1 <= d2 + calculateFraction(shift);
 	}
-
-	/*
-	 * Precise calculations on doubles are performed based on BigDecimals,
-	 * converting to 8 digits scale, so there are no undesired rounding effects
-	 * beyond this precision.
-	 */
-	private static final int DEFAULT_SCALE = 6;
 
 	private PrecisionUtils() {
 		// this class should not be instantiated by clients
