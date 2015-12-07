@@ -28,6 +28,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.shape.StrokeType;
 
 public class ConnectionSnippet extends AbstractFxExample {
 
@@ -35,6 +36,7 @@ public class ConnectionSnippet extends AbstractFxExample {
 		public ArrowHead() {
 			super(0, 0, 10, 3, 10, -3);
 			setFill(Color.WHITE);
+			setStroke(Color.BLACK);
 			setStrokeLineJoin(StrokeLineJoin.ROUND);
 		}
 	}
@@ -53,6 +55,8 @@ public class ConnectionSnippet extends AbstractFxExample {
 				new RoundedRectangle(0, 0, 30, 30, 10, 10));
 		end.setFill(Color.RED);
 		end.relocate(50, 50);
+		end.setStrokeWidth(3);
+		end.setStrokeType(StrokeType.OUTSIDE);
 		makeDraggable(end);
 
 		// create connection, provide decoration
