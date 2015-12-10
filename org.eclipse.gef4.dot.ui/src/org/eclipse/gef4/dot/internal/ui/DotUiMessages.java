@@ -24,6 +24,8 @@ public class DotUiMessages extends NLS {
 	public static String GraphvizPreference_2;
 	public static String GraphvizPreference_3;
 	public static String GraphvizPreference_4;
+	public static String GraphvizPreference_5;
+	public static String GraphvizPreference_6;
 	public static String DotGraphView_0;
 	public static String DotGraphView_1;
 	public static String DotGraphView_2;

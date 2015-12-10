@@ -1,4 +1,4 @@
-/*******************************************************************************
+/********************************************************************************************
  * Copyright (c) 2014 Fabian Steeg (hbz), and others.
  *
  * All rights reserved. This program and the accompanying materials
@@ -9,13 +9,16 @@
  * Contributors:
  *     Fabian Steeg (hbz) - initial API & implementation
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
+ *                                - Exporting *.dot files in different formats (bug #446647)
  *
- *******************************************************************************/
+ *********************************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.gef4.dot.internal.DotNativeDrawer;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -24,6 +27,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -52,8 +57,20 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private static final String INVALID_DOT_EXECUTABLE = DotUiMessages.GraphvizPreference_2;
 	private static final String INVALID_GRAPHVIZ_CONF = DotUiMessages.GraphvizPreference_3;
 	private static final String GRAPHVIZ_CONF_HINT = DotUiMessages.GraphvizPreference_4;
+	private static final String DOT_EXPORT_FORMAT = DotUiMessages.GraphvizPreference_5;
+	private static final String DOT_EXPORT_FORMAT_HINT = DotUiMessages.GraphvizPreference_6;
 
 	public static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
+	public static final String DOT_EXPORTFORMAT_PREF_KEY = "dotexportformat"; //$NON-NLS-1$
+
+	private static final String DOT_EXPORTFORMAT_DEFAULT = "pdf"; //$NON-NLS-1$
+
+	private DotExportRadioGroupFieldEditor radioGroupFieldEditor;
+	private IPreferenceStore preferenceStore;
+
+	public GraphvizPreferencePage() {
+		super(GRID);
+	}
 
 	public static boolean isGraphvizConfigured() {
 		return getDotExecutablePath().length() != 0;
@@ -70,7 +87,14 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		return dotExecutablePath;
 	}
 
+	public static String getDotExportFormat() {
+		return dotUiPrefs().get(DOT_EXPORTFORMAT_PREF_KEY, ""); //$NON-NLS-1$
+	}
+
 	private static boolean isValidDotExecutable(String path) {
+		if (path == null || path.isEmpty()) {
+			return false;
+		}
 		File file = new File(path);
 		return file.getName().equals("dot") || file.getName().equals("dot.exe"); //$NON-NLS-1$//$NON-NLS-2$
 	}
@@ -87,8 +111,8 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	public void init(IWorkbench workbench) {
 		String qualifier = DotActivator.getInstance().getBundle()
 				.getSymbolicName();
-		IPreferenceStore preferenceStore = new ScopedPreferenceStore(
-				ConfigurationScope.INSTANCE, qualifier);
+		preferenceStore = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+				qualifier);
 		setPreferenceStore(preferenceStore);
 
 		setDescription(DOT_SELECT_LONG);
@@ -97,6 +121,9 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	protected void createFieldEditors() {
+		// this method will be invoked if the user clicks on the Graphviz
+		// Preference Page for the first time
+
 		FileFieldEditor fileFieldEditor = new FileFieldEditor(DOT_PATH_PREF_KEY,
 				DOT_SELECT_SHORT, true, FileFieldEditor.VALIDATE_ON_KEY_STROKE,
 				getFieldEditorParent()) {
@@ -133,8 +160,133 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 				return super.doCheckState();
 			}
 
+			@Override
+			public String changePressed() {
+				// this method will be invoked if the user clicks on the
+				// "Browse" button of the fileFieldEditor of the DOT Executable
+				// path
+				String dotExecutablePath = super.changePressed();
+				if (dotExecutablePath == null) {
+					// If the returned value is null, the currently displayed
+					// value remains.
+					return null;
+				}
+				adaptDotExportUI(dotExecutablePath);
+				return dotExecutablePath;
+			}
 		};
 		addField(fileFieldEditor);
+
+		preferenceStore
+				.addPropertyChangeListener(new IPropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent event) {
+						// this method will be invoked if the user clicks on the
+						// Apply/OK button of the Preference Page
+						if (event.getProperty().equals(DOT_PATH_PREF_KEY)) {
+							String dotExecutablePath = (String) event
+									.getNewValue();
+							adaptDotExportUI(dotExecutablePath);
+						}
+					}
+				});
+
+		String dotExecutablePath = getDotExecutablePath();
+		addDotExportUI(dotExecutablePath);
+	}
+
+	private String[] getSupportedExportFormats(String dotExecutablePath) {
+		String[] supportedExportFormats = null;
+
+		supportedExportFormats = DotNativeDrawer
+				.getSupportedExportFormats(dotExecutablePath);
+		return supportedExportFormats;
+	}
+
+	private String getDefaultExportFormat(String[] supportedExportFormats) {
+		if (supportedExportFormats == null) {
+			return null;
+		}
+		return Arrays.asList(supportedExportFormats)
+				.contains(DOT_EXPORTFORMAT_DEFAULT) ? DOT_EXPORTFORMAT_DEFAULT
+						: supportedExportFormats[0];
+	}
+
+	private String[][] getLabelsAndValues(String[] supportedExportFormats) {
+		String[][] labelsAndValues = null;
+
+		if (supportedExportFormats != null) {
+			labelsAndValues = new String[supportedExportFormats.length][2];
+			for (int i = 0; i < supportedExportFormats.length; i++) {
+				labelsAndValues[i] = new String[] { supportedExportFormats[i],
+						supportedExportFormats[i] };
+			}
+		}
+		return labelsAndValues;
+	}
+
+	private void adaptDotExportUI(String dotExecutablePath) {
+		if (isValidDotExecutable(dotExecutablePath)) {
+			if (radioGroupFieldEditor == null) {
+				addDotExportUI(dotExecutablePath);
+			} else {
+				updateDotExportUI(dotExecutablePath);
+			}
+		} else {
+			removeDotExportUI();
+		}
+	}
+
+	private void addDotExportUI(String dotExecutablePath) {
+		String[] supportedExportFormats = null;
+		if (!dotExecutablePath.isEmpty()) {
+			supportedExportFormats = getSupportedExportFormats(
+					dotExecutablePath);
+		}
+		String[][] labelsAndValues = getLabelsAndValues(supportedExportFormats);
+
+		radioGroupFieldEditor = new DotExportRadioGroupFieldEditor(
+				DOT_EXPORTFORMAT_PREF_KEY, DOT_EXPORT_FORMAT,
+				DOT_EXPORT_FORMAT_HINT, 5, labelsAndValues,
+				getFieldEditorParent());
+
+		if (getDotExportFormat().isEmpty()) {
+			String defaultExportFormat = getDefaultExportFormat(
+					supportedExportFormats);
+			if (defaultExportFormat != null) {
+				dotUiPrefs().put(DOT_EXPORTFORMAT_PREF_KEY,
+						defaultExportFormat);
+			}
+		}
+		addField(radioGroupFieldEditor);
+	}
+
+	private void updateDotExportUI(String dotExecutablePath) {
+		String[] supportedExportFormats = getSupportedExportFormats(
+				dotExecutablePath);
+		String defaultExportFormat = getDefaultExportFormat(
+				supportedExportFormats);
+		String[][] labelsAndValues = getLabelsAndValues(supportedExportFormats);
+
+		dotUiPrefs().put(DOT_EXPORTFORMAT_PREF_KEY, defaultExportFormat);
+
+		radioGroupFieldEditor.update(labelsAndValues);
+	}
+
+	private void removeDotExportUI() {
+		if (radioGroupFieldEditor != null) {
+			radioGroupFieldEditor.clear();
+			dotUiPrefs().remove(DOT_EXPORTFORMAT_PREF_KEY);
+		}
+	}
+
+	@Override
+	protected void performDefaults() {
+		// this method will be invoked if the user clicks on the "Restore
+		// Defaults" button
+		super.performDefaults();
+		removeDotExportUI();
 	}
 
 	public static class GraphvizConfigurationDialog extends MessageDialog {

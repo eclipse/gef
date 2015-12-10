@@ -51,7 +51,6 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 public class SyncGraphvizExportHandler extends AbstractHandler {
 
 	private static final String EXTENSION = "dot"; //$NON-NLS-1$
-	private static final String FORMAT_PDF = "pdf"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent executionEvent)
@@ -224,9 +223,13 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 			return;
 		}
 
+		String dotExportFormat = GraphvizPreferencePage.getDotExportFormat();
+		if (dotExportFormat.isEmpty()) {
+			return;
+		}
 		File outputFile = DotNativeDrawer.renderImage(
 				new File(GraphvizPreferencePage.getDotExecutablePath()),
-				resolvedInputFile, FORMAT_PDF, null);
+				resolvedInputFile, dotExportFormat, null);
 
 		// refresh the parent folder and open the output file if the export
 		// was successful

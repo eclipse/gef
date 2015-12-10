@@ -94,7 +94,7 @@
       </command>
       <command
             id="org.eclipse.gef4.dot.ui.export"
-            name="Sync Graphviz Export (PDF)">
+            name="Sync Graphviz Export">
       </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
