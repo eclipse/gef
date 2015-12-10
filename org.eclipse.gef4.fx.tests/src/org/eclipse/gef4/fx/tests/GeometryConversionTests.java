@@ -13,8 +13,8 @@ package org.eclipse.gef4.fx.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.fx.utils.Geometry2JavaFX;
-import org.eclipse.gef4.fx.utils.JavaFX2Geometry;
+import org.eclipse.gef4.fx.utils.Geometry2FX;
+import org.eclipse.gef4.fx.utils.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class GeometryConversionTests {
 		// again!
 		Path p = new Path().moveTo(50, 50).lineTo(100, 100).quadTo(100, 150, 50, 150).cubicTo(20, 120, 20, 80, 50, 50)
 				.close();
-		assertEquals(p, JavaFX2Geometry.toPath(Geometry2JavaFX.toPath(p)));
+		assertEquals(p, FX2Geometry.toPath(Geometry2FX.toPath(p)));
 	}
 	
 }

@@ -41,13 +41,13 @@ import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.shape.Rectangle;
 
 /**
- * The utility class {@link JavaFX2Geometry} provides methods for the conversion
+ * The utility class {@link FX2Geometry} provides methods for the conversion
  * of JavaFX {@link Node} implementations to {@link IGeometry} implementations.
  *
  * @author mwienand
  *
  */
-public class JavaFX2Geometry {
+public class FX2Geometry {
 
 	/**
 	 * Converts the given JavaFX {@link Arc} to a

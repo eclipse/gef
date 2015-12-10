@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.fx.utils.Geometry2JavaFX;
+import org.eclipse.gef4.fx.utils.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
@@ -143,9 +144,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 								.getStrokeWidth()
 						&& clickableAreaShape == null) {
 					// create and configure clickable area shape
-					clickableAreaShape = new Path(
-							Geometry2JavaFX.toPathElements(
-									geometryProperty.getValue().toPath()));
+					clickableAreaShape = new Path(Geometry2FX.toPathElements(
+							geometryProperty.getValue().toPath()));
 					clickableAreaShape.setStroke(Color.TRANSPARENT);
 					clickableAreaShape.setMouseTransparent(false);
 					clickableAreaShape.strokeWidthProperty()
@@ -290,8 +290,7 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	private PathElement[] getPathElements() {
-		return Geometry2JavaFX
-				.toPathElements(geometryProperty.getValue().toPath());
+		return Geometry2FX.toPathElements(geometryProperty.getValue().toPath());
 	}
 
 	/**
@@ -408,9 +407,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 				: resizeWidth;
 		double height = Double.isNaN(resizeHeight) ? layoutBounds.getHeight()
 				: resizeHeight;
-		return org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX
-				.toFXBounds(new Rectangle(layoutBounds.getMinX(),
-						layoutBounds.getMinY(), width, height));
+		return Geometry2JavaFX.toFXBounds(new Rectangle(layoutBounds.getMinX(),
+				layoutBounds.getMinY(), width, height));
 	}
 
 	@Override

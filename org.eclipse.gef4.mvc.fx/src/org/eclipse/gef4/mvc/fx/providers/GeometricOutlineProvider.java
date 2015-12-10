@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.fx.providers;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -89,7 +90,7 @@ public class GeometricOutlineProvider
 	 *             {@link Node}.
 	 */
 	protected IGeometry getGeometry(Node visual) {
-		return org.eclipse.gef4.fx.utils.JavaFX2Geometry.toGeometry(visual);
+		return FX2Geometry.toGeometry(visual);
 	}
 
 	@Override

@@ -68,7 +68,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXHoverOnHoverPolicy.class);
-
 	}
 
 	@Override

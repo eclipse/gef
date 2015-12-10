@@ -37,13 +37,13 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
 /**
- * The utility class {@link Geometry2JavaFX} provides methods for the conversion
+ * The utility class {@link Geometry2FX} provides methods for the conversion
  * of {@link IGeometry} implementations to JavaFX {@link Node} implementations.
  *
  * @author mwienand
  *
  */
-public class Geometry2JavaFX {
+public class Geometry2FX {
 
 	/**
 	 * Determines a {@link Node} that visualizes the passed-in {@link IGeometry}
@@ -53,7 +53,7 @@ public class Geometry2JavaFX {
 	 *            The {@link IGeometry} for which a {@link Node} is created.
 	 * @return The {@link Node} that visualizes the given {@link IGeometry}.
 	 */
-	public static Node getNode(IGeometry geometry) {
+	public static Node toNode(IGeometry geometry) {
 		if (geometry instanceof Arc) {
 			return toArc((Arc) geometry);
 		} else if (geometry instanceof CubicCurve) {
