@@ -152,10 +152,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		GeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// css class
-		curveNode.getStyleClass().clear();
-		if (!visual.getStyleClass().contains(CSS_CLASS)) {
-			visual.getStyleClass().add(CSS_CLASS);
-		}
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			String cssClass = ZestProperties.getCssClass(edge);
 			if (!visual.getStyleClass().contains(cssClass)) {
