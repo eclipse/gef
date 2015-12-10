@@ -40,7 +40,9 @@ public class FXResizePolicy extends AbstractTransactionPolicy<Node> {
 		FXResizeNodeOperation resizeOperation = getResizeOperation();
 		boolean commit = resizeOperation != null && !resizeOperation.isNoOp();
 		resizeOperation = null;
-		return commit ? super.commit() : null;
+		// execute super.commit()
+		ITransactionalOperation op = super.commit();
+		return commit ? op : null;
 	}
 
 	@Override
