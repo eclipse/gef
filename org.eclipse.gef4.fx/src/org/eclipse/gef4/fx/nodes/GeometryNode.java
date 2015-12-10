@@ -90,10 +90,10 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 				T newValue) {
 			resizeWidth = Double.NaN;
 			resizeHeight = Double.NaN;
+			updateVisuals();
 			// FIXME: Re-implement this fix by only using public API (bug
 			// #443954)
 			impl_layoutBoundsChanged();
-			updateVisuals();
 		}
 	};
 
@@ -299,6 +299,16 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	/**
+	 * Returns the {@link Shape} that is used as a delegate to render the
+	 * geometry of this {@link GeometryNode}.
+	 *
+	 * @return The geometric shape used by this {@link GeometryNode}.
+	 */
+	protected Shape getShape() {
+		return geometricShape;
+	}
+
+	/**
 	 * Retrieves the value of the stroke property.
 	 *
 	 * @return The value of the stroke property.
@@ -419,6 +429,38 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 */
 	public final boolean isSmooth() {
 		return geometricShape.isSmooth();
+	}
+
+	@Override
+	public double maxHeight(double width) {
+		return prefHeight(width);
+	}
+
+	@Override
+	public double maxWidth(double height) {
+		return prefWidth(height);
+	}
+
+	@Override
+	public double minHeight(double width) {
+		return prefHeight(width);
+	}
+
+	@Override
+	public double minWidth(double height) {
+		return prefWidth(height);
+	}
+
+	@Override
+	public double prefHeight(double width) {
+		final double result = getLayoutBounds().getHeight();
+		return Double.isNaN(result) || result < 0 ? 0 : result;
+	}
+
+	@Override
+	public double prefWidth(double height) {
+		final double result = getLayoutBounds().getWidth();
+		return Double.isNaN(result) || result < 0 ? 0 : result;
 	}
 
 	@Override
