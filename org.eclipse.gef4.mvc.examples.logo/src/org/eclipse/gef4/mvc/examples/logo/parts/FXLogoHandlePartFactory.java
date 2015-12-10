@@ -69,7 +69,7 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 			injector.injectMembers(parentHp);
 			handles.add(parentHp);
 
-			// XXX: addChild() should be called automatically?
+			// FIXME: addChild() should be called automatically?
 			FXDeleteHoverHandlePart deleteHp = new FXDeleteHoverHandlePart();
 			injector.injectMembers(deleteHp);
 			parentHp.addChild(deleteHp);

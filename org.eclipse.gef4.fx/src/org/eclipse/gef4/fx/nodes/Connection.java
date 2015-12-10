@@ -1119,9 +1119,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 	protected void putAnchor(IAnchor anchor, AnchorKey anchorKey,
 			int wayIndex) {
 		/*
-		 * IMPORTANT: The anchor is put into the map before attaching it, so
-		 * that listeners on the map can register position change listeners on
-		 * the anchor (but cannot query its position, yet).
+		 * XXX: The anchor is put into the map before attaching it, so that
+		 * listeners on the map can register position change listeners on the
+		 * anchor (but cannot query its position, yet).
 		 */
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
@@ -1247,8 +1247,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 					.removeListener(anchorKeyPCL.remove(anchorKey));
 		}
 		/*
-		 * Important: detach() after removing from the anchors-map, so that
-		 * listeners on the anchors-map can retrieve the anchor position.
+		 * XXX: detach() after removing from the anchors-map, so that listeners
+		 * on the anchors-map can retrieve the anchor position.
 		 */
 		if (wayAnchorKeys.contains(anchorKey)) {
 			// remove from way anchor keys so that the anchors.size is
@@ -1489,7 +1489,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	public void setWayAnchors(List<IAnchor> anchors) {
 		int wayPointsSize = getWayAnchorsSize();
-		// IMPORTANT: We have to do the removal of way anchors before
+		// XXX: We have to do the removal of way anchors before
 		// changing/adding anchors.
 		for (int i = wayPointsSize - 1; i >= anchors.size(); i--) {
 			removeWayPoint(i);

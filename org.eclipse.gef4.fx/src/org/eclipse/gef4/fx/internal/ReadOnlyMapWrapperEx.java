@@ -107,13 +107,12 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 		@Override
 		public void removeListener(
 				ChangeListener<? super ObservableMap<K, V>> listener) {
-			// IMPORTANT: Due to the JavaFX bug
-			// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to
-			// a removal of all listeners when a single listener is removed, we
-			// have to re-add all remaining listeners. However, since the
-			// current JavaFX version might not contain the bug, we have to
-			// remove all remaining listeners first, so that they are not
-			// notified twice.
+			// XXX: Due to https://bugs.openjdk.java.net/browse/JDK-8136465,
+			// which leads to a removal of all listeners when a single listener
+			// is removed, we have to re-add all remaining listeners. However,
+			// since the current JavaFX version might not contain the bug, we
+			// have to remove all remaining listeners first, so that they are
+			// not notified twice.
 			for (ChangeListener<? super ObservableMap<K, V>> l : changeListeners) {
 				helper = MapExpressionHelper.removeListener(helper, l);
 			}
@@ -125,13 +124,12 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 
 		@Override
 		public void removeListener(InvalidationListener listener) {
-			// IMPORTANT: Due to the JavaFX bug
-			// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to
-			// a removal of all listeners when a single listener is removed, we
-			// have to re-add all remaining listeners. However, since the
-			// current JavaFX version might not contain the bug, we have to
-			// remove all remaining listeners first, so that they are not
-			// notified twice.
+			// XXX: Due to https://bugs.openjdk.java.net/browse/JDK-8136465,
+			// which leads to a removal of all listeners when a single listener
+			// is removed, we have to re-add all remaining listeners. However,
+			// since the current JavaFX version might not contain the bug, we
+			// have to remove all remaining listeners first, so that they are
+			// not notified twice.
 			for (InvalidationListener l : invalidationListeners) {
 				helper = MapExpressionHelper.removeListener(helper, l);
 			}
@@ -144,13 +142,12 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 		@Override
 		public void removeListener(
 				MapChangeListener<? super K, ? super V> listener) {
-			// IMPORTANT: Due to the JavaFX bug
-			// https://bugs.openjdk.java.net/browse/JDK-8136465, which leads to
-			// a removal of all listeners when a single listener is removed, we
-			// have to re-add all remaining listeners. However, since the
-			// current JavaFX version might not contain the bug, we have to
-			// remove all remaining listeners first, so that they are not
-			// notified twice.
+			// XXX: Due to https://bugs.openjdk.java.net/browse/JDK-8136465,
+			// which leads to a removal of all listeners when a single listener
+			// is removed, we have to re-add all remaining listeners. However,
+			// since the current JavaFX version might not contain the bug, we
+			// have to remove all remaining listeners first, so that they are
+			// not notified twice.
 			for (MapChangeListener<? super K, ? super V> l : mapChangeListeners) {
 				helper = MapExpressionHelper.removeListener(helper, l);
 			}

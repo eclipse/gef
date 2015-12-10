@@ -148,8 +148,8 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	protected Group createVisual() {
 		contentLayer = createContentLayer();
 		/*
-		 * IMPORTANT: The following is a workaround to ensure that visuals do
-		 * not disappear when the content layer is scaled (zooming). This is,
+		 * XXX: The following is a workaround to ensure that visuals do not
+		 * disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
 		 *

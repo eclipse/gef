@@ -57,7 +57,7 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	public ITransactionalOperation commit() {
 		checkInitialized();
 
-		// IMPORTANT: We need to locally execute the operation first to ensure
+		// XXX: We need to locally execute the operation first to ensure
 		// the visuals and content reflect the target state of the operation.
 		// After this, we may safely omit the operation as commit operation in
 		// case its a no-op.
@@ -132,7 +132,7 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	 */
 	protected void locallyExecuteOperation() {
 		try {
-			// IMPORTANT: We may not skip the local execution of the operation
+			// XXX: We may not skip the local execution of the operation
 			// if it is a no-op, because the visual or content
 			// might already be in a state that is diverse from the initial
 			// state of the operation (so execute might have an actual affect).
@@ -150,7 +150,7 @@ public abstract class AbstractTransactionPolicy<VR> extends AbstractPolicy<VR> {
 	 */
 	private void locallyUndoOperation() {
 		try {
-			// IMPORTANT: We may not skip undo in case the operation is a
+			// XXX: We may not skip undo in case the operation is a
 			// no-op when executing it locally, because the visual or content
 			// might already be in a state that is diverse from the initial
 			// state (so undo might have an actual affect).

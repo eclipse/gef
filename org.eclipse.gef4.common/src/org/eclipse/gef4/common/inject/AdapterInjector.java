@@ -374,7 +374,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			final Class<?> adaptableType) {
 		// find available keys
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
-		// XXX: use a sorted map, where keys are sorted according to
+		// XXX: Use a sorted map, where keys are sorted according to
 		// hierarchy of annotation types
 		final SortedMap<Key<?>, Binding<?>> applicableBindings = new TreeMap<>(
 				new Comparator<Key<?>>() {
@@ -485,7 +485,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		// inject all adapters bound by polymorphic AdapterBinding
 		// annotations
 		if (injector == null) {
-			// IMPORTANT: it may happen that this member injector is
+			// XXX: It may happen that this member injector is
 			// exercised before the type listener is injected. In such a
 			// case we need to defer the injections until the injector is
 			// available (bug #439949).

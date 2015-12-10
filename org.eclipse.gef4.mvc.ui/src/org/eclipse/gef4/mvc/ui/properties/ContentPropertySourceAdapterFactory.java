@@ -30,9 +30,9 @@ public class ContentPropertySourceAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		// Check model of content part for adaptability
-		// IMPORTANT: as all IVisualParts are adaptable, this
-		// here is only called in case IPropertySource is not handled inside
-		// getAdapter() of the content part)
+		// XXX: As all IVisualParts are adaptable, this here is only called in
+		// case IPropertySource is not handled inside getAdapter() of the
+		// content part)
 		IContentPart<?, ?> part = (IContentPart<?, ?>) adaptableObject;
 		Object model = part.getContent();
 		// check if model is already of the desired adapter type
@@ -49,7 +49,7 @@ public class ContentPropertySourceAdapterFactory implements IAdapterFactory {
 		}
 		/*
 		 * TODO: Verify if this is the correct approach.
-		 * 
+		 *
 		 * Return null when the model is null (no adapter available).
 		 */
 		if (model == null) {

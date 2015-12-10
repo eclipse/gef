@@ -183,7 +183,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		}
 		// execute on history
 		IOperationHistory operationHistory = getOperationHistory();
-		// IMPORTANT: if we have an open transaction in the domain, we should
+		// XXX: If we have an open transaction in the domain, we should
 		// not add an undo context, because our operation will be added to the
 		// transaction (which has the undo context).
 		if (!isExecutionTransactionOpen()) {

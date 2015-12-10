@@ -138,7 +138,7 @@ public class NodeUtils {
 	 */
 	public static AffineTransform getSceneToLocalTx(Node node) {
 		try {
-			// IMPORTANT: we make use of getLocalToSceneTx(Node) here to
+			// XXX: We make use of getLocalToSceneTx(Node) here to
 			// compensate that the Transform provided by FX is updated lazily.
 			// See getLocalToSceneTx(Node) for details.
 			return getLocalToSceneTx(node).invert();

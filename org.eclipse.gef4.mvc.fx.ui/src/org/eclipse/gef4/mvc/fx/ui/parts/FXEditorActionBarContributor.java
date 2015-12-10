@@ -46,7 +46,7 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 	 *            The editor to register undo and redo action handlers for.
 	 */
 	protected void registerUndoRedoActions(final IEditorPart targetEditor) {
-		// IMPORTANT: IAdaptable.getAdapter() has been 'generified' with Mars.
+		// XXX: IAdaptable.getAdapter() has been 'generified' with Mars.
 		// However, to maintain backwards compatibility with Luna, we need to
 		// explicitly cast here.
 		final UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) targetEditor
@@ -59,7 +59,7 @@ public class FXEditorActionBarContributor extends EditorActionBarContributor {
 	@Override
 	public void setActiveEditor(final IEditorPart activeEditor) {
 		registerUndoRedoActions(activeEditor);
-		// IMPORTANT: We need to perform instance-of check here, even if
+		// XXX: We need to perform instance-of check here, even if
 		// FXEditorActionBarContributor is bound to AbstractFXEditor alone.
 		// This is because activeEditor may for instance also be of type
 		// org.eclipse.ui.internal.ErrorEditorPart when the opened resource is

@@ -94,8 +94,8 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 			init(viewportPolicy);
 			if (timer == null) {
 				/*
-				 * IMPORTANT: the animation timer cannot be constructed atop,
-				 * because it will then only be called once; reason unknown.
+				 * XXX: The animation timer cannot be constructed atop, because
+				 * it will then only be called once; reason unknown.
 				 */
 				timer = new AnimationTimer() {
 					@Override
