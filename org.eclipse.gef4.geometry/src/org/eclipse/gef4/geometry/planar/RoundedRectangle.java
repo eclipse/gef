@@ -28,13 +28,13 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
  *                +----+-----+-----+----+
  *            / / |    ^           ^    |
  *    arc-   | |  |    |           |    |
- *   height  | |  + <- arc end point -> +
+ *   height  | |  + &lt;- arc end point -&gt; +
  *           | |  |                     |
  *           |  \ |                     |
  *    height |    +                     +
  *           |    |                     |
  *           |    |                     |
- *           |    + <- arc end point -> +
+ *           |    + &lt;- arc end point -&gt; +
  *           |    |    |           |    |
  *            \   |    v           v    |
  *                +----+-----+-----+----+
