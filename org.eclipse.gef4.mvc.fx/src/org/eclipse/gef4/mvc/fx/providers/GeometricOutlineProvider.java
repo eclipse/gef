@@ -42,6 +42,22 @@ import javafx.scene.shape.Rectangle;
  * the visual or other visual properties (e.g. clip or effect). The
  * {@link IGeometry} is specified within the local coordinate system of the host
  * visual.
+ * <p>
+ * A {@link GeometricOutlineProvider} can be used to determine an
+ * {@link IGeometry} for a {@link GeometryNode}, a {@link Connection}, as well
+ * as the following JavaFX {@link Node} implementations:
+ * <ul>
+ * <li>{@link Arc}
+ * <li>{@link Circle}
+ * <li>{@link CubicCurve}
+ * <li>{@link Ellipse}
+ * <li>{@link Line}
+ * <li>{@link Path}
+ * <li>{@link Polygon}
+ * <li>{@link Polyline}
+ * <li>{@link QuadCurve}
+ * <li>{@link Rectangle}
+ * </ul>
  *
  * @author anyssen
  *
@@ -71,6 +87,9 @@ public class GeometricOutlineProvider
 	 * @param visual
 	 *            The {@link Node} for which to retrieve the outline geometry.
 	 * @return An {@link IGeometry} representing the outline geometry.
+	 * @throws IllegalStateException
+	 *             if no {@link IGeometry} can be determined for the given
+	 *             {@link Node}.
 	 */
 	protected IGeometry getGeometry(Node visual) {
 		if (visual instanceof Connection) {
@@ -152,6 +171,7 @@ public class GeometricOutlineProvider
 						rect.getHeight());
 			}
 		} else {
+			// Text and SVGPath shapes are currently not supported
 			throw new IllegalStateException(
 					"Cannot compute geometric outline for visual of type <"
 							+ visual.getClass() + ">.");
