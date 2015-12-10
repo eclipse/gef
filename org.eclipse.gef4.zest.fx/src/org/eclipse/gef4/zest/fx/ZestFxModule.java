@@ -22,8 +22,6 @@ import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
-import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
@@ -31,6 +29,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
+import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -88,13 +88,13 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
 		// geometry provider for selection feedback
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+				.to(ShapeBoundsProvider.class);
 		// geometry provider for hover feedback
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+				.to(ShapeBoundsProvider.class);
 		// geometry provider for hover handles
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+				.to(ShapeBoundsProvider.class);
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualOutlineGeometryProvider.class);
+				.to(GeometricOutlineProvider.class);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class ZestFxModule extends MvcFxModule {
 		// selection link feedback
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualOutlineGeometryProvider.class);
+				.to(GeometricOutlineProvider.class);
 	}
 
 	@Override
@@ -283,7 +283,7 @@ public class ZestFxModule extends MvcFxModule {
 		// feedback and handles
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+				.to(ShapeBoundsProvider.class);
 	}
 
 	/**

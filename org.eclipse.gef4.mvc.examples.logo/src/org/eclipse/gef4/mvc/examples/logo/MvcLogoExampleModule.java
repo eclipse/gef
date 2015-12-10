@@ -39,8 +39,6 @@ import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
-import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
@@ -48,6 +46,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPol
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
+import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
@@ -68,25 +68,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXHoverOnHoverPolicy.class);
-		// geometry provider for selection feedback
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
-		// geometry provider for selection handles
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualOutlineGeometryProvider.class);
-		// geometry provider for hover feedback
-		adapterMapBinder
-				.addBinding(AdapterKey
-						.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualOutlineGeometryProvider.class);
+
 	}
 
 	@Override
@@ -118,6 +100,26 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXGeometricCurvePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// geometry provider for selection feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+		// geometry provider for selection handles
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+		// geometry provider for hover feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+
 		// transaction policy for resize + transform
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXResizeConnectionPolicy.class);
@@ -147,6 +149,26 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXGeometricShapePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// geometry provider for selection feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+		// geometry provider for selection handles
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+		// geometry provider for hover feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+
 		// register resize/transform policies (writing changes also to model)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTransformShapePolicy.class);
