@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -68,6 +68,7 @@ public class RoundedRectangleTests {
 
 	private void check_values_with_getters(RoundedRectangle r, double px,
 			double py, double pw, double ph, double paw, double pah) {
+		// verify attributes
 		assertTrue(PrecisionUtils.equal(px, r.getX()));
 		assertTrue(PrecisionUtils.equal(py, r.getY()));
 		assertTrue(PrecisionUtils.equal(pw, r.getWidth()));
@@ -77,28 +78,29 @@ public class RoundedRectangleTests {
 		assertEquals(new Point(px, py), r.getLocation());
 		assertEquals(new Rectangle(px, py, pw, ph), r.getBounds());
 
-		// generated arcs have double width and height as specified so that the
-		// underlying ellipse fits into the respective rectangle
+		// check arcs
+		assertEquals(new Arc(px + pw - paw, py, paw, pah, Angle.fromDeg(0),
+				Angle.fromDeg(90)), r.getTopRightArc());
 		assertEquals(
-				new Arc(px + pw - 2 * paw, py, 2 * paw, 2 * pah,
-						Angle.fromDeg(0), Angle.fromDeg(90)),
-				r.getTopRightArc());
-		assertEquals(new Arc(px, py, 2 * paw, 2 * pah, Angle.fromDeg(90),
-				Angle.fromDeg(90)), r.getTopLeftArc());
+				new Arc(px, py, paw, pah, Angle.fromDeg(90), Angle.fromDeg(90)),
+				r.getTopLeftArc());
+		assertEquals(new Arc(px, py + ph - pah, paw, pah, Angle.fromDeg(180),
+				Angle.fromDeg(90)), r.getBottomLeftArc());
 		assertEquals(
-				new Arc(px, py + ph - 2 * pah, 2 * paw, 2 * pah,
-						Angle.fromDeg(180), Angle.fromDeg(90)),
-				r.getBottomLeftArc());
-		assertEquals(
-				new Arc(px + pw - 2 * paw, py + ph - 2 * pah, 2 * paw, 2 * pah,
+				new Arc(px + pw - paw, py + ph - pah, paw, pah,
 						Angle.fromDeg(270), Angle.fromDeg(90)),
 				r.getBottomRightArc());
 
-		assertEquals(new Line(px + paw, py, px + pw - paw, py), r.getTop());
-		assertEquals(new Line(px + paw, py + ph, px + pw - paw, py + ph),
+		// check sides
+		assertEquals(new Line(px + paw / 2, py, px + pw - paw / 2, py),
+				r.getTop());
+		assertEquals(
+				new Line(px + paw / 2, py + ph, px + pw - paw / 2, py + ph),
 				r.getBottom());
-		assertEquals(new Line(px, py + pah, px, py + ph - pah), r.getLeft());
-		assertEquals(new Line(px + pw, py + pah, px + pw, py + ph - pah),
+		assertEquals(new Line(px, py + pah / 2, px, py + ph - pah / 2),
+				r.getLeft());
+		assertEquals(
+				new Line(px + pw, py + pah / 2, px + pw, py + ph - pah / 2),
 				r.getRight());
 	}
 
@@ -175,14 +177,16 @@ public class RoundedRectangleTests {
 		assertEquals(outlineSegments[7].getP2(), outlineSegments[0].getP1());
 
 		// position
-		assertEquals(new Point(x + w, y + ah), outlineSegments[0].getP1());
-		assertEquals(new Point(x + w - aw, y), outlineSegments[1].getP1());
-		assertEquals(new Point(x + aw, y), outlineSegments[2].getP1());
-		assertEquals(new Point(x, y + ah), outlineSegments[3].getP1());
-		assertEquals(new Point(x, y + h - ah), outlineSegments[4].getP1());
-		assertEquals(new Point(x + aw, y + h), outlineSegments[5].getP1());
-		assertEquals(new Point(x + w - aw, y + h), outlineSegments[6].getP1());
-		assertEquals(new Point(x + w, y + h - ah), outlineSegments[7].getP1());
+		assertEquals(new Point(x + w, y + ah / 2), outlineSegments[0].getP1());
+		assertEquals(new Point(x + w - aw / 2, y), outlineSegments[1].getP1());
+		assertEquals(new Point(x + aw / 2, y), outlineSegments[2].getP1());
+		assertEquals(new Point(x, y + ah / 2), outlineSegments[3].getP1());
+		assertEquals(new Point(x, y + h - ah / 2), outlineSegments[4].getP1());
+		assertEquals(new Point(x + aw / 2, y + h), outlineSegments[5].getP1());
+		assertEquals(new Point(x + w - aw / 2, y + h),
+				outlineSegments[6].getP1());
+		assertEquals(new Point(x + w, y + h - ah / 2),
+				outlineSegments[7].getP1());
 	}
 
 	@Test

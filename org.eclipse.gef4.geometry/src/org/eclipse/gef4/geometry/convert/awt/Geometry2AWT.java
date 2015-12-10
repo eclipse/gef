@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - javadoc comment enhancements
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.convert.awt;
 
@@ -32,17 +32,17 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 /**
  * Utility class to support conversions between GEF4's geometry API and AWT
  * Java2D's geometry API.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Geometry2AWT {
 
 	/**
 	 * Converts a GEF {@link AffineTransform} into an AWT
 	 * {@link java.awt.geom.AffineTransform}.
-	 * 
+	 *
 	 * @param t
 	 *            the {@link AffineTransform} to transform
 	 * @return a new {@link java.awt.geom.AffineTransform} representing an
@@ -57,7 +57,7 @@ public class Geometry2AWT {
 
 	/**
 	 * Converts a GEF4 {@link Line} into an AWT {@link Line2D}.
-	 * 
+	 *
 	 * @param l
 	 *            the {@link Line} to transform
 	 * @return a new {@link Line2D}, which is constructed by using the start (
@@ -70,7 +70,7 @@ public class Geometry2AWT {
 
 	/**
 	 * Converts a {@link Path} into an equivalent AWT {@link Path2D}.
-	 * 
+	 *
 	 * @param p
 	 *            the {@link Path} to convert
 	 * @return a new {@link PathIterator} representing the same path
@@ -108,7 +108,7 @@ public class Geometry2AWT {
 	/**
 	 * Converts a GEF4 {@link Point} into an AWT {@link Point2D} with double
 	 * precision ({@link java.awt.geom.Point2D.Double}).
-	 * 
+	 *
 	 * @param p
 	 *            the {@link Point} to convert
 	 * @return a new {@link Point2D} with double precision (
@@ -123,7 +123,7 @@ public class Geometry2AWT {
 	 * Converts a given array of GEF4 {@link Point}s into an array of AWT
 	 * {@link Point2D}s with double precision (
 	 * {@link java.awt.geom.Point2D.Double}).
-	 * 
+	 *
 	 * @param pts
 	 *            the array of {@link Point}s to convert
 	 * @return an array of new {@link Point2D}s with double precision (
@@ -158,7 +158,7 @@ public class Geometry2AWT {
 	 * <br>
 	 * (see also {@link Rectangle#getExpanded(double, double, double, double)})
 	 * </p>
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle} to convert
 	 * @return a new {@link Rectangle2D}, which is constructed using the x, y,
@@ -190,7 +190,7 @@ public class Geometry2AWT {
 	 * (see also
 	 * {@link RoundedRectangle#getExpanded(double, double, double, double)})
 	 * </p>
-	 * 
+	 *
 	 * @param r
 	 *            the {@link RoundedRectangle} to convert
 	 * @return a new {@link RoundRectangle2D}, which is constructed using the x,
@@ -200,7 +200,7 @@ public class Geometry2AWT {
 	public static RoundRectangle2D.Double toAWTRoundRectangle(
 			RoundedRectangle r) {
 		return new RoundRectangle2D.Double(r.getX(), r.getY(), r.getWidth(),
-				r.getHeight(), r.getArcWidth(), r.getArcHeight());
+				r.getHeight(), r.getArcWidth() / 2, r.getArcHeight() / 2);
 	}
 
 	private Geometry2AWT() {

@@ -20,6 +20,31 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
  * Represents the geometric shape of a rounded rectangle, i.e. a rectangle with
  * rounded corners.
  *
+ * <pre>
+ *                  arc-width
+ *                         width
+ *                 .-------------------.
+ *                 .--------.
+ *                +----+-----+-----+----+
+ *            / / |    ^           ^    |
+ *    arc-   | |  |    |           |    |
+ *   height  | |  + <- arc end point -> +
+ *           | |  |                     |
+ *           |  \ |                     |
+ *    height |    +                     +
+ *           |    |                     |
+ *           |    |                     |
+ *           |    + <- arc end point -> +
+ *           |    |    |           |    |
+ *            \   |    v           v    |
+ *                +----+-----+-----+----+
+ * </pre>
+ *
+ * The maximum value for the arc-width is the width of the rectangle and the
+ * maximum value for the arc-height is the height of the rectangle. For the
+ * maximal values, the end points of the arcs are at the centers of the sides of
+ * the rectangle.
+ * <p>
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
@@ -100,31 +125,34 @@ public final class RoundedRectangle
 			return false;
 		}
 
+		// limit arc width and arc height
+		double aw = getEffectiveArcWidth() / 2;
+		double ah = getEffectiveArcHeight() / 2;
+
 		// check for containment within the inner rectangles
-		testRect.setBounds(x, y + arcHeight, width, height - 2 * arcHeight);
+		testRect.setBounds(x, y + ah, width, height - 2 * ah);
 		if (testRect.contains(p)) {
 			return true;
 		}
-		testRect.setBounds(x + arcWidth, y, width - 2 * arcWidth, height);
+		testRect.setBounds(x + aw, y, width - 2 * aw, height);
 		if (testRect.contains(p)) {
 			return true;
 		}
 
 		// check the arcs
-		final Ellipse e = new Ellipse(x, y, 2 * arcWidth, 2 * arcHeight);
+		final Ellipse e = new Ellipse(x, y, 2 * aw, 2 * ah);
 		if (e.contains(p)) {
 			return true;
 		}
-		e.setBounds(x, y + height - 2 * arcHeight, 2 * arcWidth, 2 * arcHeight);
+		e.setBounds(x, y + height - 2 * ah, 2 * aw, 2 * ah);
 		if (e.contains(p)) {
 			return true;
 		}
-		e.setBounds(x + width - 2 * arcWidth, y, 2 * arcWidth, 2 * arcHeight);
+		e.setBounds(x + width - 2 * aw, y, 2 * aw, 2 * ah);
 		if (e.contains(p)) {
 			return true;
 		}
-		e.setBounds(x + width - 2 * arcWidth, y + height - 2 * arcHeight,
-				2 * arcWidth, 2 * arcHeight);
+		e.setBounds(x + width - 2 * aw, y + height - 2 * ah, 2 * aw, 2 * ah);
 		if (e.contains(p)) {
 			return true;
 		}
@@ -170,8 +198,8 @@ public final class RoundedRectangle
 	 * @return the bottom edge of this {@link RoundedRectangle}.
 	 */
 	public Line getBottom() {
-		return new Line(x + arcWidth, y + height, x + width - arcWidth,
-				y + height);
+		double aw = getEffectiveArcWidth() / 2;
+		return new Line(x + aw, y + height, x + width - aw, y + height);
 	}
 
 	/**
@@ -180,8 +208,10 @@ public final class RoundedRectangle
 	 * @return the bottom left {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getBottomLeftArc() {
-		return new Arc(x, y + height - 2 * arcHeight, 2 * arcWidth,
-				2 * arcHeight, Angle.fromDeg(180), Angle.fromDeg(90));
+		double aw = getEffectiveArcWidth() / 2;
+		double ah = getEffectiveArcHeight() / 2;
+		return new Arc(x, y + height - 2 * ah, 2 * aw, 2 * ah,
+				Angle.fromDeg(180), Angle.fromDeg(90));
 	}
 
 	/**
@@ -190,9 +220,10 @@ public final class RoundedRectangle
 	 * @return the bottom right {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getBottomRightArc() {
-		return new Arc(x + width - 2 * arcWidth, y + height - 2 * arcHeight,
-				2 * arcWidth, 2 * arcHeight, Angle.fromDeg(270),
-				Angle.fromDeg(90));
+		double aw = getEffectiveArcWidth() / 2;
+		double ah = getEffectiveArcHeight() / 2;
+		return new Arc(x + width - 2 * aw, y + height - 2 * ah, 2 * aw, 2 * ah,
+				Angle.fromDeg(270), Angle.fromDeg(90));
 	}
 
 	/**
@@ -204,12 +235,37 @@ public final class RoundedRectangle
 	}
 
 	/**
+	 * Returns the effective arc height, i.e. clamped to the range
+	 * <code>[0;height]</code>.
+	 *
+	 * @return the effective arc height, i.e. clamped to the range
+	 *         <code>[0;height]</code>.
+	 */
+	protected double getEffectiveArcHeight() {
+		double ah = arcHeight < 0 ? 0 : arcHeight;
+		return ah > height ? height : ah;
+	}
+
+	/**
+	 * Returns the effective arc width, i.e. clamped to the range
+	 * <code>[0;width]</code>.
+	 *
+	 * @return the effective arc width, i.e. clamped to the range
+	 *         <code>[0;width]</code>.
+	 */
+	protected double getEffectiveArcWidth() {
+		double aw = arcWidth < 0 ? 0 : arcWidth;
+		return aw > width ? width : aw;
+	}
+
+	/**
 	 * Returns the left edge of this {@link RoundedRectangle}.
 	 *
 	 * @return the left edge of this {@link RoundedRectangle}.
 	 */
 	public Line getLeft() {
-		return new Line(x, y + arcHeight, x, y + height - arcHeight);
+		double ah = getEffectiveArcHeight() / 2;
+		return new Line(x, y + ah, x, y + height - ah);
 	}
 
 	@Override
@@ -222,25 +278,23 @@ public final class RoundedRectangle
 	 */
 	@Override
 	public BezierCurve[] getOutlineSegments() {
+		double aw = getEffectiveArcWidth() / 2;
+		double ah = getEffectiveArcHeight() / 2;
 		return new BezierCurve[] {
-				ShapeUtils.computeEllipticalArcApproximation(
-						x + width - 2 * arcWidth, y, 2 * arcWidth,
-						2 * arcHeight, Angle.fromDeg(0), Angle.fromDeg(90)),
-				new Line(x + width - arcWidth, y, x + arcWidth, y),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, 2 * arcWidth,
-						2 * arcHeight, Angle.fromDeg(90), Angle.fromDeg(180)),
-				new Line(x, y + arcHeight, x, y + height - arcHeight),
+				ShapeUtils.computeEllipticalArcApproximation(x + width - 2 * aw,
+						y, 2 * aw, 2 * ah, Angle.fromDeg(0), Angle.fromDeg(90)),
+				new Line(x + width - aw, y, x + aw, y),
+				ShapeUtils.computeEllipticalArcApproximation(x, y, 2 * aw,
+						2 * ah, Angle.fromDeg(90), Angle.fromDeg(180)),
+				new Line(x, y + ah, x, y + height - ah),
 				ShapeUtils.computeEllipticalArcApproximation(x,
-						y + height - 2 * arcHeight, 2 * arcWidth, 2 * arcHeight,
-						Angle.fromDeg(180), Angle.fromDeg(270)),
-				new Line(x + arcWidth, y + height, x + width - arcWidth,
-						y + height),
-				ShapeUtils.computeEllipticalArcApproximation(
-						x + width - 2 * arcWidth, y + height - 2 * arcHeight,
-						2 * arcWidth, 2 * arcHeight, Angle.fromDeg(270),
+						y + height - 2 * ah, 2 * aw, 2 * ah, Angle.fromDeg(180),
+						Angle.fromDeg(270)),
+				new Line(x + aw, y + height, x + width - aw, y + height),
+				ShapeUtils.computeEllipticalArcApproximation(x + width - 2 * aw,
+						y + height - 2 * ah, 2 * aw, 2 * ah, Angle.fromDeg(270),
 						Angle.fromDeg(360)),
-				new Line(x + width, y + height - arcHeight, x + width,
-						y + arcHeight) };
+				new Line(x + width, y + height - ah, x + width, y + ah) };
 	}
 
 	/**
@@ -249,8 +303,8 @@ public final class RoundedRectangle
 	 * @return the right edge of this {@link RoundedRectangle}.
 	 */
 	public Line getRight() {
-		return new Line(x + width, y + arcHeight, x + width,
-				y + height - arcHeight);
+		double ah = getEffectiveArcHeight() / 2;
+		return new Line(x + width, y + ah, x + width, y + height - ah);
 	}
 
 	@Override
@@ -289,7 +343,8 @@ public final class RoundedRectangle
 	 * @return the top edge of this {@link RoundedRectangle}.
 	 */
 	public Line getTop() {
-		return new Line(x + arcWidth, y, x + width - arcWidth, y);
+		double aw = getEffectiveArcWidth() / 2;
+		return new Line(x + aw, y, x + width - aw, y);
 	}
 
 	/**
@@ -298,8 +353,8 @@ public final class RoundedRectangle
 	 * @return the top left {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getTopLeftArc() {
-		return new Arc(x, y, 2 * arcWidth, 2 * arcHeight, Angle.fromDeg(90),
-				Angle.fromDeg(90));
+		return new Arc(x, y, getEffectiveArcWidth(), getEffectiveArcHeight(),
+				Angle.fromDeg(90), Angle.fromDeg(90));
 	}
 
 	/**
@@ -308,8 +363,10 @@ public final class RoundedRectangle
 	 * @return the top right {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getTopRightArc() {
-		return new Arc(x + width - 2 * arcWidth, y, 2 * arcWidth, 2 * arcHeight,
-				Angle.fromDeg(0), Angle.fromDeg(90));
+		double aw = getEffectiveArcWidth() / 2;
+		double ah = getEffectiveArcHeight() / 2;
+		return new Arc(x + width - 2 * aw, y, 2 * aw, 2 * ah, Angle.fromDeg(0),
+				Angle.fromDeg(90));
 	}
 
 	/**
@@ -352,15 +409,17 @@ public final class RoundedRectangle
 		// TODO: use cubic curves instead of quadratic curves here!
 		// overwritten to optimize w.r.t. object creation (could otherwise use
 		// the segments)
+		double aw = getEffectiveArcWidth() / 2;
+		double ah = getEffectiveArcWidth() / 2;
 		Path path = new Path();
-		path.moveTo(x, y + arcHeight);
-		path.quadTo(x, y, x + arcWidth, y);
-		path.lineTo(x + width - arcWidth, y);
-		path.quadTo(x + width, y, x + width, y + arcHeight);
-		path.lineTo(x + width, y + height - arcHeight);
-		path.quadTo(x + width, y + height, x + width - arcWidth, y + height);
-		path.lineTo(x + arcWidth, y + height);
-		path.quadTo(x, y + height, x, y + height - arcHeight);
+		path.moveTo(x, y + ah);
+		path.quadTo(x, y, x + aw, y);
+		path.lineTo(x + width - aw, y);
+		path.quadTo(x + width, y, x + width, y + ah);
+		path.lineTo(x + width, y + height - ah);
+		path.quadTo(x + width, y + height, x + width - aw, y + height);
+		path.lineTo(x + aw, y + height);
+		path.quadTo(x, y + height, x, y + height - ah);
 		path.close();
 		return path;
 	}

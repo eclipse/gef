@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -83,7 +83,8 @@ public class AWTConversionTests {
 
 	@Test
 	public void test_RoundedRectangle() {
-		RoundedRectangle roundRect = new RoundedRectangle(-1, 1, 50, 100, 5, 5);
+		RoundedRectangle roundRect = new RoundedRectangle(-1, 1, 50, 100, 10,
+				10);
 		java.awt.geom.RoundRectangle2D.Double roundRectAWT = Geometry2AWT
 				.toAWTRoundRectangle(roundRect);
 		assertEquals(roundRect, AWT2Geometry.toRoundedRectangle(roundRectAWT));

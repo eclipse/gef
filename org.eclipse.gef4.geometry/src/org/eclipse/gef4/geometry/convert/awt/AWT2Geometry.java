@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - javadoc comment enhancements
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.convert.awt;
 
@@ -30,17 +30,17 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 /**
  * Utility class to support conversions from AWT's geometry API to GEF4's
  * geometry API.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class AWT2Geometry {
 
 	/**
 	 * Converts an AWT {@link java.awt.geom.AffineTransform} into a GEF4
 	 * {@link AffineTransform}
-	 * 
+	 *
 	 * @param t
 	 *            the {@link java.awt.geom.AffineTransform} to transform
 	 * @return a new {@link AffineTransform} representing an identical
@@ -55,7 +55,7 @@ public class AWT2Geometry {
 
 	/**
 	 * Converts an AWT {@link Line2D} into a GEF4 {@link Line}.
-	 * 
+	 *
 	 * @param l
 	 *            the {@link Line2D} to convert
 	 * @return a new {@link Line}, which is constructed by using the start (
@@ -69,7 +69,7 @@ public class AWT2Geometry {
 
 	/**
 	 * Converts an AWT {@link Path2D} into a GEF4 {@link Path}.
-	 * 
+	 *
 	 * @param p
 	 *            the {@link Path2D} to convert
 	 * @return a new {@link Path}, which is constructed with the same winding
@@ -107,7 +107,7 @@ public class AWT2Geometry {
 
 	/**
 	 * Converts an AWT {@link Point2D} into a GEF4 {@link Point}.
-	 * 
+	 *
 	 * @param p
 	 *            the {@link Point2D} to transform
 	 * @return a new {@link Point}, which is constructed using the x and y
@@ -120,7 +120,7 @@ public class AWT2Geometry {
 	/**
 	 * Converts a given array of AWT {@link Point2D}s into a an array of GEF4
 	 * {@link Point}s.
-	 * 
+	 *
 	 * @param pts
 	 *            the array of {@link Point2D}s to transform
 	 * @return an array containing new {@link Point}s, which are constructed by
@@ -154,13 +154,13 @@ public class AWT2Geometry {
 	 * (see also {@link Rectangle#shrink(double, double, double, double)},
 	 * {@link Rectangle#getShrinked(double, double, double, double)})
 	 * </p>
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle2D} to convert
 	 * @return a new {@link Rectangle}, which is constructed using the x, y,
 	 *         width, and height values of the passed-in {@link Rectangle2D}.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public static final Rectangle toRectangle(Rectangle2D r) {
 		return new Rectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
@@ -186,7 +186,7 @@ public class AWT2Geometry {
 	 * (see also {@link RoundedRectangle#shrink(double, double, double, double)}
 	 * , {@link RoundedRectangle#getShrinked(double, double, double, double)})
 	 * </p>
-	 * 
+	 *
 	 * @param r
 	 *            the {@link RoundRectangle2D} to convert
 	 * @return a new {@link RoundedRectangle}, which is constructed using the x,
@@ -195,7 +195,7 @@ public class AWT2Geometry {
 	 */
 	public static RoundedRectangle toRoundedRectangle(RoundRectangle2D r) {
 		return new RoundedRectangle(r.getX(), r.getY(), r.getWidth(),
-				r.getHeight(), r.getArcWidth(), r.getArcHeight());
+				r.getHeight(), r.getArcWidth() * 2, r.getArcHeight() * 2);
 	}
 
 	private AWT2Geometry() {
