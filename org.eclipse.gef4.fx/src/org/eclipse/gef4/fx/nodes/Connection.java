@@ -48,6 +48,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -858,8 +859,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 			Shape shape) {
 		Bounds layoutBounds = shape.getLayoutBounds();
 		// Polygons don't paint exactly to their layout bounds but remain 0.5
-		// pixels short. We compensate that there.
-		double offset = shape instanceof Polygon ? 0.5 : 0;
+		// pixels short in case they have a stroke and stroke type is CENTERED
+		// or OUTSIDE. We compensate this there.
+		double offset = shape instanceof Polygon && shape.getStroke() != null
+				&& shape.getStrokeType() != StrokeType.INSIDE ? 0.5 : 0;
 		return JavaFX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
 				offset, offset);
 	}
