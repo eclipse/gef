@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.parts;
+package org.eclipse.gef4.mvc.fx.providers;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;

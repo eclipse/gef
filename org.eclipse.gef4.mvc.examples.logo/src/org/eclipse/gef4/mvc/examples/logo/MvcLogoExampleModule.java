@@ -35,7 +35,6 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
-import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
@@ -46,6 +45,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPol
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
