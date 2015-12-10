@@ -405,23 +405,7 @@ public final class RoundedRectangle
 
 	@Override
 	public Path toPath() {
-		// return CurveUtils.toPath(getOutlineSegments());
-		// TODO: use cubic curves instead of quadratic curves here!
-		// overwritten to optimize w.r.t. object creation (could otherwise use
-		// the segments)
-		double aw = getEffectiveArcWidth() / 2;
-		double ah = getEffectiveArcWidth() / 2;
-		Path path = new Path();
-		path.moveTo(x, y + ah);
-		path.quadTo(x, y, x + aw, y);
-		path.lineTo(x + width - aw, y);
-		path.quadTo(x + width, y, x + width, y + ah);
-		path.lineTo(x + width, y + height - ah);
-		path.quadTo(x + width, y + height, x + width - aw, y + height);
-		path.lineTo(x + aw, y + height);
-		path.quadTo(x, y + height, x, y + height - ah);
-		path.close();
-		return path;
+		return CurveUtils.toPath(getOutlineSegments());
 	}
 
 	@Override

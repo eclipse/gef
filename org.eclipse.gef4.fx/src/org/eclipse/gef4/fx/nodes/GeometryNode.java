@@ -84,16 +84,12 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	private double resizeHeight = Double.NaN;
 
 	private ChangeListener<T> geometryChangeListener = new ChangeListener<T>() {
-
 		@Override
 		public void changed(ObservableValue<? extends T> observable, T oldValue,
 				T newValue) {
 			resizeWidth = Double.NaN;
 			resizeHeight = Double.NaN;
 			updateVisuals();
-			// FIXME: Re-implement this fix by only using public API (bug
-			// #443954)
-			impl_layoutBoundsChanged();
 		}
 	};
 
@@ -465,7 +461,6 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 
 	@Override
 	public void resize(double width, double height) {
-		// System.out.println("resize (" + width + ", " + height + ")");
 		if (width < 0) {
 			throw new IllegalArgumentException("Cannot resize: width < 0.");
 		}
