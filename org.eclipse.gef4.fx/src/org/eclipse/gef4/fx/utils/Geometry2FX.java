@@ -37,48 +37,13 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
 /**
- * The utility class {@link Geometry2FX} provides methods for the conversion
- * of {@link IGeometry} implementations to JavaFX {@link Node} implementations.
+ * The utility class {@link Geometry2FX} provides methods for the conversion of
+ * {@link IGeometry} implementations to JavaFX {@link Node} implementations.
  *
  * @author mwienand
  *
  */
 public class Geometry2FX {
-
-	/**
-	 * Determines a {@link Node} that visualizes the passed-in {@link IGeometry}
-	 * .
-	 *
-	 * @param geometry
-	 *            The {@link IGeometry} for which a {@link Node} is created.
-	 * @return The {@link Node} that visualizes the given {@link IGeometry}.
-	 */
-	public static Node toNode(IGeometry geometry) {
-		if (geometry instanceof Arc) {
-			return toArc((Arc) geometry);
-		} else if (geometry instanceof CubicCurve) {
-			return toCubicCurve((CubicCurve) geometry);
-		} else if (geometry instanceof Ellipse) {
-			return toEllipse((Ellipse) geometry);
-		} else if (geometry instanceof Line) {
-			return toLine((Line) geometry);
-		} else if (geometry instanceof Path) {
-			return toPath((Path) geometry);
-		} else if (geometry instanceof Polygon) {
-			return toPolygon((Polygon) geometry);
-		} else if (geometry instanceof Polyline) {
-			return toPolyline((Polyline) geometry);
-		} else if (geometry instanceof QuadraticCurve) {
-			QuadraticCurve quad = (QuadraticCurve) geometry;
-			return toQuadCurve(quad);
-		} else if (geometry instanceof Rectangle) {
-			return toRectangle((Rectangle) geometry);
-		} else if (geometry instanceof RoundedRectangle) {
-			return toRectangle((RoundedRectangle) geometry);
-		} else {
-			return new GeometryNode<IGeometry>(geometry);
-		}
-	}
 
 	/**
 	 * Returns a {@link javafx.scene.shape.Arc} that visualizes the given
@@ -143,6 +108,41 @@ public class Geometry2FX {
 	public static javafx.scene.shape.Line toLine(Line line) {
 		return new javafx.scene.shape.Line(line.getX1(), line.getY1(),
 				line.getX2(), line.getY2());
+	}
+
+	/**
+	 * Determines a {@link Node} that visualizes the passed-in {@link IGeometry}
+	 * .
+	 *
+	 * @param geometry
+	 *            The {@link IGeometry} for which a {@link Node} is created.
+	 * @return The {@link Node} that visualizes the given {@link IGeometry}.
+	 */
+	public static Node toNode(IGeometry geometry) {
+		if (geometry instanceof Arc) {
+			return toArc((Arc) geometry);
+		} else if (geometry instanceof CubicCurve) {
+			return toCubicCurve((CubicCurve) geometry);
+		} else if (geometry instanceof Ellipse) {
+			return toEllipse((Ellipse) geometry);
+		} else if (geometry instanceof Line) {
+			return toLine((Line) geometry);
+		} else if (geometry instanceof Path) {
+			return toPath((Path) geometry);
+		} else if (geometry instanceof Polygon) {
+			return toPolygon((Polygon) geometry);
+		} else if (geometry instanceof Polyline) {
+			return toPolyline((Polyline) geometry);
+		} else if (geometry instanceof QuadraticCurve) {
+			QuadraticCurve quad = (QuadraticCurve) geometry;
+			return toQuadCurve(quad);
+		} else if (geometry instanceof Rectangle) {
+			return toRectangle((Rectangle) geometry);
+		} else if (geometry instanceof RoundedRectangle) {
+			return toRectangle((RoundedRectangle) geometry);
+		} else {
+			return new GeometryNode<>(geometry);
+		}
 	}
 
 	/**

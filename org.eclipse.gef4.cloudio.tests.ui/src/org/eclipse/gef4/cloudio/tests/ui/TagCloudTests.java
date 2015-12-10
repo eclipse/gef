@@ -500,9 +500,6 @@ public class TagCloudTests {
 		private int mouseDC;
 		private int mouseMove;
 		private int mouseScrolled;
-		private int mouseExit;
-		private int mouseEnter;
-		private int mouseHover;
 		private Set<Word> selection;
 
 		public void mouseUp(MouseEvent e) {
@@ -527,15 +524,12 @@ public class TagCloudTests {
 		}
 
 		public void mouseEnter(MouseEvent e) {
-			mouseEnter++;
 		}
 
 		public void mouseExit(MouseEvent e) {
-			mouseExit++;
 		}
 
 		public void mouseHover(MouseEvent e) {
-			mouseHover++;
 		}
 
 		@SuppressWarnings("unchecked")

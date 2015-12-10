@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.GeometryNode;
@@ -54,20 +54,12 @@ public class RoundedRectangleSnippet extends Application {
 	}
 
 	private List<RectData> getRectData() {
-		return new ArrayList<RectData>() {
-			{
-				add(new RectData(0, 0));
-				add(new RectData(0.125, 0));
-				add(new RectData(0, 0.125));
-				add(new RectData(0.125, 0.125));
-				add(new RectData(0.25, 0.25));
-				add(new RectData(0.5, 0.5));
-				add(new RectData(0.75, 0.75));
-				add(new RectData(1, 1));
-				add(new RectData(1.5, 1.5));
-				add(new RectData(2, 2));
-			}
-		};
+		return Arrays.asList(
+				new RectData[] { new RectData(0, 0), new RectData(0.125, 0),
+						new RectData(0, 0.125), new RectData(0.125, 0.125),
+						new RectData(0.25, 0.25), new RectData(0.5, 0.5),
+						new RectData(0.75, 0.75), new RectData(1, 1),
+						new RectData(1.5, 1.5), new RectData(2, 2) });
 	}
 
 	@Override
@@ -151,7 +143,7 @@ public class RoundedRectangleSnippet extends Application {
 					rect.getX() + rect.getWidth() + PAD * 2, rect.getY(),
 					rect.getWidth(), rect.getHeight(), rect.getArcWidth(),
 					rect.getArcHeight());
-			final GeometryNode<RoundedRectangle> geometryNode = new GeometryNode<RoundedRectangle>(
+			final GeometryNode<RoundedRectangle> geometryNode = new GeometryNode<>(
 					rr);
 			geometryNode.setStrokeType(StrokeType.INSIDE);
 			geometryNode.setStroke(Color.BLACK);
