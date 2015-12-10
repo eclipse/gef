@@ -40,6 +40,7 @@ import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 /**
  * The {@link EdgeContentPart} is the controller for an {@link Edge} content
@@ -178,15 +179,15 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(glc.getGraph(), true))) {
 			visual.setEndDecoration(new ArrowHead());
 		} else {
-			visual.setEndDecoration(null);
+			visual.setEndDecoration(new ArrowHead());
 		}
 
 		// custom decoration
-		Node sourceDecoration = ZestProperties.getSourceDecoration(edge);
+		Shape sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
 		}
-		Node targetDecoration = ZestProperties.getTargetDecoration(edge);
+		Shape targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
 		}

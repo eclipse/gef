@@ -153,7 +153,7 @@ public class ZestProperties {
 	 * attribute does not have a default value.
 	 *
 	 * @see #getTargetDecoration(Edge)
-	 * @see #setTargetDecoration(Edge, javafx.scene.Node)
+	 * @see #setTargetDecoration(Edge, javafx.scene.shape.Shape)
 	 */
 	public static final String EDGE_TARGET_DECORATION = "target-decoration";
 
@@ -162,7 +162,7 @@ public class ZestProperties {
 	 * attribute does not have a default value.
 	 *
 	 * @see #getSourceDecoration(Edge)
-	 * @see #setSourceDecoration(Edge, javafx.scene.Node)
+	 * @see #setSourceDecoration(Edge, javafx.scene.shape.Shape)
 	 */
 	public static final String EDGE_SOURCE_DECORATION = "source-decoration";
 
@@ -475,8 +475,8 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the source decoration is determined.
 	 * @return The source decoration of the given {@link Edge}.
 	 */
-	public static javafx.scene.Node getSourceDecoration(Edge edge) {
-		return (javafx.scene.Node) edge.getAttrs().get(EDGE_SOURCE_DECORATION);
+	public static javafx.scene.shape.Shape getSourceDecoration(Edge edge) {
+		return (javafx.scene.shape.Shape) edge.getAttrs().get(EDGE_SOURCE_DECORATION);
 	}
 
 	/**
@@ -488,8 +488,8 @@ public class ZestProperties {
 	 * @return The target decoration of the given {@link Edge}.
 	 */
 	// TODO: Return null if not present.
-	public static javafx.scene.Node getTargetDecoration(Edge edge) {
-		return (javafx.scene.Node) edge.getAttrs().get(EDGE_TARGET_DECORATION);
+	public static javafx.scene.shape.Shape getTargetDecoration(Edge edge) {
+		return (javafx.scene.shape.Shape) edge.getAttrs().get(EDGE_TARGET_DECORATION);
 	}
 
 	/**
@@ -751,10 +751,10 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is changed.
 	 * @param sourceDecoration
-	 *            The new source decoration {@link javafx.scene.Node} for the
-	 *            given {@link Edge}.
+	 *            The new source decoration {@link javafx.scene.shape.Shape} for
+	 *            the given {@link Edge}.
 	 */
-	public static void setSourceDecoration(Edge edge, javafx.scene.Node sourceDecoration) {
+	public static void setSourceDecoration(Edge edge, javafx.scene.shape.Shape sourceDecoration) {
 		edge.getAttrs().put(EDGE_SOURCE_DECORATION, sourceDecoration);
 	}
 
@@ -765,10 +765,10 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is changed.
 	 * @param targetDecoration
-	 *            The new target decoration {@link javafx.scene.Node} for the
-	 *            given {@link Edge}.
+	 *            The new target decoration {@link javafx.scene.shape.Shape} for
+	 *            the given {@link Edge}.
 	 */
-	public static void setTargetDecoration(Edge edge, javafx.scene.Node targetDecoration) {
+	public static void setTargetDecoration(Edge edge, javafx.scene.shape.Shape targetDecoration) {
 		edge.getAttrs().put(EDGE_TARGET_DECORATION, targetDecoration);
 	}
 
