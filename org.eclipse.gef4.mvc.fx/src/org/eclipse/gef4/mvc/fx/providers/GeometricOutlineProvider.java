@@ -15,9 +15,6 @@ package org.eclipse.gef4.mvc.fx.providers;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -92,90 +89,7 @@ public class GeometricOutlineProvider
 	 *             {@link Node}.
 	 */
 	protected IGeometry getGeometry(Node visual) {
-		if (visual instanceof Connection) {
-			Node curveNode = ((Connection) visual).getCurveNode();
-			if (curveNode instanceof GeometryNode) {
-				return NodeUtils.localToParent(curveNode,
-						((GeometryNode<?>) curveNode).getGeometry());
-			} else {
-				throw new IllegalStateException(
-						"The curve-node of a Connection is expected to be a GeometryNode.");
-			}
-		} else if (visual instanceof GeometryNode) {
-			return ((GeometryNode<?>) visual).getGeometry();
-		} else if (visual instanceof Arc) {
-			Arc arc = (Arc) visual;
-			return new org.eclipse.gef4.geometry.planar.Arc(
-					arc.getCenterX() - arc.getRadiusX(),
-					arc.getCenterY() - arc.getRadiusY(),
-					arc.getRadiusX() + arc.getRadiusX(),
-					arc.getRadiusY() + arc.getRadiusY(),
-					Angle.fromDeg(arc.getStartAngle()),
-					Angle.fromDeg(arc.getLength()));
-		} else if (visual instanceof Circle) {
-			Circle circle = (Circle) visual;
-			return new org.eclipse.gef4.geometry.planar.Ellipse(
-					circle.getCenterX() - circle.getRadius(),
-					circle.getCenterY() - circle.getRadius(),
-					circle.getRadius() + circle.getRadius(),
-					circle.getRadius() + circle.getRadius());
-		} else if (visual instanceof CubicCurve) {
-			CubicCurve cubic = (CubicCurve) visual;
-			return new org.eclipse.gef4.geometry.planar.CubicCurve(
-					cubic.getStartX(), cubic.getStartY(), cubic.getControlX1(),
-					cubic.getControlY1(), cubic.getControlX2(),
-					cubic.getControlY2(), cubic.getEndX(), cubic.getEndY());
-		} else if (visual instanceof Ellipse) {
-			Ellipse ellipse = (Ellipse) visual;
-			return new org.eclipse.gef4.geometry.planar.Ellipse(
-					ellipse.getCenterX() - ellipse.getRadiusX(),
-					ellipse.getCenterY() - ellipse.getRadiusY(),
-					ellipse.getRadiusX() + ellipse.getRadiusX(),
-					ellipse.getRadiusY() + ellipse.getRadiusY());
-		} else if (visual instanceof Line) {
-			Line line = (Line) visual;
-			return new org.eclipse.gef4.geometry.planar.Line(line.getStartX(),
-					line.getStartY(), line.getEndX(), line.getEndY());
-		} else if (visual instanceof Path) {
-			Path path = (Path) visual;
-			return JavaFX2Geometry.toPath(path);
-		} else if (visual instanceof Polygon) {
-			Polygon polygon = (Polygon) visual;
-			double[] coords = new double[polygon.getPoints().size()];
-			for (int i = 0; i < coords.length; i++) {
-				coords[i] = polygon.getPoints().get(i).doubleValue();
-			}
-			return new org.eclipse.gef4.geometry.planar.Polygon(coords);
-		} else if (visual instanceof Polyline) {
-			Polyline polyline = (Polyline) visual;
-			double[] coords = new double[polyline.getPoints().size()];
-			for (int i = 0; i < coords.length; i++) {
-				coords[i] = polyline.getPoints().get(i).doubleValue();
-			}
-			return new org.eclipse.gef4.geometry.planar.Polyline(coords);
-		} else if (visual instanceof QuadCurve) {
-			QuadCurve quad = (QuadCurve) visual;
-			return new org.eclipse.gef4.geometry.planar.QuadraticCurve(
-					quad.getStartX(), quad.getStartY(), quad.getControlX(),
-					quad.getControlY(), quad.getEndX(), quad.getEndY());
-		} else if (visual instanceof Rectangle) {
-			Rectangle rect = (Rectangle) visual;
-			if (rect.getArcWidth() > 0 && rect.getArcHeight() > 0) {
-				return new org.eclipse.gef4.geometry.planar.RoundedRectangle(
-						rect.getX(), rect.getY(), rect.getWidth(),
-						rect.getHeight(), rect.getArcWidth(),
-						rect.getArcHeight());
-			} else {
-				return new org.eclipse.gef4.geometry.planar.Rectangle(
-						rect.getX(), rect.getY(), rect.getWidth(),
-						rect.getHeight());
-			}
-		} else {
-			// Text and SVGPath shapes are currently not supported
-			throw new IllegalStateException(
-					"Cannot compute geometric outline for visual of type <"
-							+ visual.getClass() + ">.");
-		}
+		return org.eclipse.gef4.fx.utils.JavaFX2Geometry.toGeometry(visual);
 	}
 
 	@Override

@@ -77,45 +77,4 @@ public class JavaFX2Geometry {
 		return new Point(point.getX(), point.getY());
 	}
 
-	/**
-	 * Converts the given JavaFX {@link Path} to a
-	 * {@link org.eclipse.gef4.geometry.planar.Path}.
-	 * 
-	 * @param path
-	 *            The JavaFX {@link Path} to convert.
-	 * @return The new {@link org.eclipse.gef4.geometry.planar.Path}.
-	 */
-	public static final org.eclipse.gef4.geometry.planar.Path toPath(Path path) {
-		ObservableList<PathElement> elements = path.getElements();
-		org.eclipse.gef4.geometry.planar.Path.Segment[] segments = new org.eclipse.gef4.geometry.planar.Path.Segment[elements
-				.size()];
-
-		for (int i = 0; i < segments.length; i++) {
-			PathElement element = elements.get(i);
-			if (element instanceof MoveTo) {
-				MoveTo moveTo = (MoveTo) element;
-				segments[i] = new Segment(Segment.MOVE_TO, new Point(moveTo.getX(), moveTo.getY()));
-			} else if (element instanceof LineTo) {
-				LineTo lineTo = (LineTo) element;
-				segments[i] = new Segment(Segment.LINE_TO, new Point(lineTo.getX(), lineTo.getY()));
-			} else if (element instanceof QuadCurveTo) {
-				QuadCurveTo quadTo = (QuadCurveTo) element;
-				segments[i] = new Segment(Segment.QUAD_TO, new Point(quadTo.getControlX(), quadTo.getControlY()),
-						new Point(quadTo.getX(), quadTo.getY()));
-			} else if (element instanceof CubicCurveTo) {
-				CubicCurveTo cubicTo = (CubicCurveTo) element;
-				segments[i] = new Segment(Segment.CUBIC_TO, new Point(cubicTo.getControlX1(), cubicTo.getControlY1()),
-						new Point(cubicTo.getControlX2(), cubicTo.getControlY2()),
-						new Point(cubicTo.getX(), cubicTo.getY()));
-			} else if (element instanceof ClosePath) {
-				segments[i] = new Segment(Segment.CLOSE);
-			}
-		}
-
-		int windingRule = path.getFillRule() == FillRule.EVEN_ODD ? org.eclipse.gef4.geometry.planar.Path.WIND_EVEN_ODD
-				: org.eclipse.gef4.geometry.planar.Path.WIND_NON_ZERO;
-
-		return new org.eclipse.gef4.geometry.planar.Path(windingRule, segments);
-	}
-
 }
