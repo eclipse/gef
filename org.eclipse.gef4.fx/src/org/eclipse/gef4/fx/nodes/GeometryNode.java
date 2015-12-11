@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.fx.utils.Geometry2FX;
+import org.eclipse.gef4.fx.utils.Geometry2Shape;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
@@ -144,7 +144,7 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 								.getStrokeWidth()
 						&& clickableAreaShape == null) {
 					// create and configure clickable area shape
-					clickableAreaShape = new Path(Geometry2FX.toPathElements(
+					clickableAreaShape = new Path(Geometry2Shape.toPathElements(
 							geometryProperty.getValue().toPath()));
 					clickableAreaShape.setStroke(Color.TRANSPARENT);
 					clickableAreaShape.setMouseTransparent(false);
@@ -290,7 +290,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	private PathElement[] getPathElements() {
-		return Geometry2FX.toPathElements(geometryProperty.getValue().toPath());
+		return Geometry2Shape
+				.toPathElements(geometryProperty.getValue().toPath());
 	}
 
 	/**

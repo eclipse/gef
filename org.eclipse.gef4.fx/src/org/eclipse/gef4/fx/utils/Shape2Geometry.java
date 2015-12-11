@@ -12,16 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.utils;
 
-import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.ClosePath;
@@ -39,15 +35,18 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 
 /**
- * The utility class {@link FX2Geometry} provides methods for the conversion of
- * JavaFX {@link Node} implementations to {@link IGeometry} implementations.
+ * The utility class {@link Shape2Geometry} provides methods for the conversion
+ * of JavaFX {@link Shape} implementations to {@link IGeometry} implementations.
  *
  * @author mwienand
  *
  */
-public class FX2Geometry {
+public class Shape2Geometry {
 
 	/**
 	 * Converts the given JavaFX {@link Arc} to a
@@ -55,7 +54,8 @@ public class FX2Geometry {
 	 *
 	 * @param arc
 	 *            The JavaFX {@link Arc} to convert.
-	 * @return The corresponding {@link org.eclipse.gef4.geometry.planar.Arc}.
+	 * @return The newly created {@link org.eclipse.gef4.geometry.planar.Arc}
+	 *         that describes the given {@link Arc}.
 	 */
 	public static org.eclipse.gef4.geometry.planar.Arc toArc(Arc arc) {
 		return new org.eclipse.gef4.geometry.planar.Arc(
@@ -73,8 +73,9 @@ public class FX2Geometry {
 	 *
 	 * @param cubic
 	 *            The JavaFX {@link CubicCurve} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.CubicCurve}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.CubicCurve} that
+	 *         describes the given {@link CubicCurve}.
 	 */
 	public static org.eclipse.gef4.geometry.planar.CubicCurve toCubicCurve(
 			CubicCurve cubic) {
@@ -85,26 +86,14 @@ public class FX2Geometry {
 	}
 
 	/**
-	 * Converts the given GEF4 FX {@link Connection} to an {@link ICurve}.
-	 *
-	 * @param connection
-	 *            The {@link Connection} to convert.
-	 * @return The corresponding {@link ICurve}.
-	 */
-	public static ICurve toCurve(Connection connection) {
-		GeometryNode<ICurve> curveNode = connection.getCurveNode();
-		return (ICurve) NodeUtils.localToParent(curveNode,
-				curveNode.getGeometry());
-	}
-
-	/**
 	 * Converts the given JavaFX {@link Circle} to a
 	 * {@link org.eclipse.gef4.geometry.planar.Ellipse}.
 	 *
 	 * @param circle
 	 *            The JavaFX {@link Circle} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.Ellipse}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.Ellipse} that describes
+	 *         the given {@link Circle}.
 	 */
 	public static org.eclipse.gef4.geometry.planar.Ellipse toEllipse(
 			Circle circle) {
@@ -121,8 +110,9 @@ public class FX2Geometry {
 	 *
 	 * @param ellipse
 	 *            The JavaFX {@link Ellipse} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.Ellipse}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.Ellipse} that describes
+	 *         the given {@link Ellipse}.
 	 */
 	public static org.eclipse.gef4.geometry.planar.Ellipse toEllipse(
 			Ellipse ellipse) {
@@ -135,9 +125,8 @@ public class FX2Geometry {
 
 	/**
 	 * Returns an {@link IGeometry} that describes the geometric outline of the
-	 * passed-in {@link Node}. The conversion is supported for
-	 * {@link Connection} and {@link GeometryNode}, as well as the following
-	 * JavaFX {@link Node}s:
+	 * passed-in {@link Shape}. The conversion is supported for the following
+	 * {@link Shape}s:
 	 * <ul>
 	 * <li>{@link Arc}
 	 * <li>{@link Circle}
@@ -150,20 +139,22 @@ public class FX2Geometry {
 	 * <li>{@link QuadCurve}
 	 * <li>{@link Rectangle}
 	 * </ul>
+	 * The following {@link Shape}s cannot be converted, yet:
+	 * <ul>
+	 * <li>{@link Text}
+	 * <li>{@link SVGPath}
+	 * </ul>
 	 *
 	 * @param visual
-	 *            The {@link Node} for which an {@link IGeometry} is determined.
-	 * @return The {@link IGeometry} that best describes the geometric outline
-	 *         of the given {@link Node}.
+	 *            The {@link Shape} for which an {@link IGeometry} is
+	 *            determined.
+	 * @return The newly created {@link IGeometry} that best describes the
+	 *         geometric outline of the given {@link Shape}.
 	 * @throws IllegalStateException
-	 *             if the given {@link Node} is not supported.
+	 *             if the given {@link Shape} is not supported.
 	 */
-	public static IGeometry toGeometry(Node visual) {
-		if (visual instanceof Connection) {
-			return toCurve((Connection) visual);
-		} else if (visual instanceof GeometryNode) {
-			return ((GeometryNode<?>) visual).getGeometry();
-		} else if (visual instanceof Arc) {
+	public static IGeometry toGeometry(Shape visual) {
+		if (visual instanceof Arc) {
 			return toArc((Arc) visual);
 		} else if (visual instanceof Circle) {
 			return toEllipse((Circle) visual);
@@ -187,7 +178,7 @@ public class FX2Geometry {
 		} else {
 			// Text and SVGPath shapes are currently not supported
 			throw new IllegalStateException(
-					"Cannot compute geometric outline for visual of type <"
+					"Cannot compute geometric outline for Shape of type <"
 							+ visual.getClass() + ">.");
 		}
 	}
@@ -198,7 +189,8 @@ public class FX2Geometry {
 	 *
 	 * @param line
 	 *            The JavaFX {@link Line} to convert.
-	 * @return The corresponding {@link org.eclipse.gef4.geometry.planar.Line}.
+	 * @return The newly created {@link org.eclipse.gef4.geometry.planar.Line}
+	 *         that describes the given {@link Line}.
 	 */
 	public static org.eclipse.gef4.geometry.planar.Line toLine(Line line) {
 		return new org.eclipse.gef4.geometry.planar.Line(line.getStartX(),
@@ -211,7 +203,8 @@ public class FX2Geometry {
 	 *
 	 * @param path
 	 *            The JavaFX {@link Path} to convert.
-	 * @return The corresponding {@link org.eclipse.gef4.geometry.planar.Path}.
+	 * @return The newly created {@link org.eclipse.gef4.geometry.planar.Path}
+	 *         that describes the given {@link Path}.
 	 */
 	public static final org.eclipse.gef4.geometry.planar.Path toPath(
 			Path path) {
@@ -260,8 +253,9 @@ public class FX2Geometry {
 	 *
 	 * @param polygon
 	 *            The JavaFX {@link Polygon} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.Polygon}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.Polygon} that describes
+	 *         the given {@link Polygon}.
 	 */
 	public static IGeometry toPolygon(Polygon polygon) {
 		double[] coords = new double[polygon.getPoints().size()];
@@ -277,8 +271,9 @@ public class FX2Geometry {
 	 *
 	 * @param polyline
 	 *            The JavaFX {@link Polyline} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.Polyline}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.Polyline} that describes
+	 *         the given {@link Polyline}.
 	 */
 	public static IGeometry toPolyline(Polyline polyline) {
 		double[] coords = new double[polyline.getPoints().size()];
@@ -294,8 +289,9 @@ public class FX2Geometry {
 	 *
 	 * @param quad
 	 *            The JavaFX {@link QuadCurve} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.QuadraticCurve}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.QuadraticCurve} that
+	 *         describes the given {@link QuadCurve}.
 	 */
 	public static IGeometry toQuadraticCurve(QuadCurve quad) {
 		return new org.eclipse.gef4.geometry.planar.QuadraticCurve(
@@ -309,8 +305,9 @@ public class FX2Geometry {
 	 *
 	 * @param rect
 	 *            The JavaFX {@link Rectangle} to convert.
-	 * @return The corresponding
-	 *         {@link org.eclipse.gef4.geometry.planar.RoundedRectangle}.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.RoundedRectangle} that
+	 *         describes the given {@link Rectangle}.
 	 */
 	public static IGeometry toRoundedRectangle(Rectangle rect) {
 		return new org.eclipse.gef4.geometry.planar.RoundedRectangle(

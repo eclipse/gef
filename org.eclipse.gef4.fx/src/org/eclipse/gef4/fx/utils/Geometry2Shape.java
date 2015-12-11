@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.utils;
 
-import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.Ellipse;
@@ -27,7 +26,6 @@ import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
-import javafx.scene.Node;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.FillRule;
@@ -35,15 +33,16 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
+import javafx.scene.shape.Shape;
 
 /**
- * The utility class {@link Geometry2FX} provides methods for the conversion of
- * {@link IGeometry} implementations to JavaFX {@link Node} implementations.
+ * The utility class {@link Geometry2Shape} provides methods for the conversion
+ * of {@link IGeometry} implementations to JavaFX {@link Shape} implementations.
  *
  * @author mwienand
  *
  */
-public class Geometry2FX {
+public class Geometry2Shape {
 
 	/**
 	 * Returns a {@link javafx.scene.shape.Arc} that visualizes the given
@@ -52,8 +51,8 @@ public class Geometry2FX {
 	 * @param arc
 	 *            The {@link Arc} from which a {@link javafx.scene.shape.Arc} is
 	 *            constructed.
-	 * @return The {@link javafx.scene.shape.Arc} that visualizes the given
-	 *         {@link Arc}.
+	 * @return A newly created {@link javafx.scene.shape.Arc} that visualizes
+	 *         the given {@link Arc}.
 	 */
 	public static javafx.scene.shape.Arc toArc(Arc arc) {
 		return new javafx.scene.shape.Arc(arc.getX() + arc.getWidth() / 2,
@@ -69,8 +68,8 @@ public class Geometry2FX {
 	 * @param cubic
 	 *            The {@link CubicCurve} from which a
 	 *            {@link javafx.scene.shape.CubicCurve} is constructed.
-	 * @return The {@link javafx.scene.shape.CubicCurve} that visualizes the
-	 *         given {@link CubicCurve}.
+	 * @return A newly created {@link javafx.scene.shape.CubicCurve} that
+	 *         visualizes the given {@link CubicCurve}.
 	 */
 	public static javafx.scene.shape.CubicCurve toCubicCurve(CubicCurve cubic) {
 		return new javafx.scene.shape.CubicCurve(cubic.getX1(), cubic.getY1(),
@@ -85,8 +84,8 @@ public class Geometry2FX {
 	 * @param ellipse
 	 *            The {@link Ellipse} from which a
 	 *            {@link javafx.scene.shape.Ellipse} is constructed.
-	 * @return The {@link javafx.scene.shape.Ellipse} that visualizes the given
-	 *         {@link Ellipse}.
+	 * @return A newly created {@link javafx.scene.shape.Ellipse} that
+	 *         visualizes the given {@link Ellipse}.
 	 */
 	public static javafx.scene.shape.Ellipse toEllipse(Ellipse ellipse) {
 		return new javafx.scene.shape.Ellipse(
@@ -102,47 +101,12 @@ public class Geometry2FX {
 	 * @param line
 	 *            The {@link Line} from which a {@link javafx.scene.shape.Line}
 	 *            is constructed.
-	 * @return The {@link javafx.scene.shape.Line} that visualizes the given
-	 *         {@link Line}.
+	 * @return A newly created {@link javafx.scene.shape.Line} that visualizes
+	 *         the given {@link Line}.
 	 */
 	public static javafx.scene.shape.Line toLine(Line line) {
 		return new javafx.scene.shape.Line(line.getX1(), line.getY1(),
 				line.getX2(), line.getY2());
-	}
-
-	/**
-	 * Determines a {@link Node} that visualizes the passed-in {@link IGeometry}
-	 * .
-	 *
-	 * @param geometry
-	 *            The {@link IGeometry} for which a {@link Node} is created.
-	 * @return The {@link Node} that visualizes the given {@link IGeometry}.
-	 */
-	public static Node toNode(IGeometry geometry) {
-		if (geometry instanceof Arc) {
-			return toArc((Arc) geometry);
-		} else if (geometry instanceof CubicCurve) {
-			return toCubicCurve((CubicCurve) geometry);
-		} else if (geometry instanceof Ellipse) {
-			return toEllipse((Ellipse) geometry);
-		} else if (geometry instanceof Line) {
-			return toLine((Line) geometry);
-		} else if (geometry instanceof Path) {
-			return toPath((Path) geometry);
-		} else if (geometry instanceof Polygon) {
-			return toPolygon((Polygon) geometry);
-		} else if (geometry instanceof Polyline) {
-			return toPolyline((Polyline) geometry);
-		} else if (geometry instanceof QuadraticCurve) {
-			QuadraticCurve quad = (QuadraticCurve) geometry;
-			return toQuadCurve(quad);
-		} else if (geometry instanceof Rectangle) {
-			return toRectangle((Rectangle) geometry);
-		} else if (geometry instanceof RoundedRectangle) {
-			return toRectangle((RoundedRectangle) geometry);
-		} else {
-			return new GeometryNode<>(geometry);
-		}
 	}
 
 	/**
@@ -210,8 +174,8 @@ public class Geometry2FX {
 	 * @param polygon
 	 *            The {@link Polygon} from which a
 	 *            {@link javafx.scene.shape.Polygon} is constructed.
-	 * @return The {@link javafx.scene.shape.Polygon} that visualizes the given
-	 *         {@link Polygon}.
+	 * @return A newly created {@link javafx.scene.shape.Polygon} that
+	 *         visualizes the given {@link Polygon}.
 	 */
 	public static javafx.scene.shape.Polygon toPolygon(Polygon polygon) {
 		return new javafx.scene.shape.Polygon(polygon.getCoordinates());
@@ -224,8 +188,8 @@ public class Geometry2FX {
 	 * @param polyline
 	 *            The {@link Polyline} from which a
 	 *            {@link javafx.scene.shape.Polyline} is constructed.
-	 * @return The {@link javafx.scene.shape.Polyline} that visualizes the given
-	 *         {@link Polyline}.
+	 * @return A newly created {@link javafx.scene.shape.Polyline} that
+	 *         visualizes the given {@link Polyline}.
 	 */
 	public static javafx.scene.shape.Polyline toPolyline(Polyline polyline) {
 		return new javafx.scene.shape.Polyline(polyline.getCoordinates());
@@ -238,8 +202,8 @@ public class Geometry2FX {
 	 * @param quadCurve
 	 *            The {@link QuadraticCurve} from which a
 	 *            {@link javafx.scene.shape.QuadCurve} is constructed.
-	 * @return The {@link javafx.scene.shape.QuadCurve} that visualizes the
-	 *         given {@link QuadraticCurve}.
+	 * @return A newly created {@link javafx.scene.shape.QuadCurve} that
+	 *         visualizes the given {@link QuadraticCurve}.
 	 */
 	public static javafx.scene.shape.QuadCurve toQuadCurve(
 			QuadraticCurve quadCurve) {
@@ -255,8 +219,8 @@ public class Geometry2FX {
 	 * @param rect
 	 *            The {@link Rectangle} from which a
 	 *            {@link javafx.scene.shape.Rectangle} is constructed.
-	 * @return The {@link javafx.scene.shape.Rectangle} that visualizes the
-	 *         given {@link Rectangle}.
+	 * @return A newly created {@link javafx.scene.shape.Rectangle} that
+	 *         visualizes the given {@link Rectangle}.
 	 */
 	public static javafx.scene.shape.Rectangle toRectangle(Rectangle rect) {
 		return new javafx.scene.shape.Rectangle(rect.getX(), rect.getY(),
@@ -270,8 +234,8 @@ public class Geometry2FX {
 	 * @param roundedRect
 	 *            The {@link RoundedRectangle} from which a
 	 *            {@link javafx.scene.shape.Rectangle} is constructed.
-	 * @return The {@link javafx.scene.shape.Rectangle} that visualizes the
-	 *         given {@link RoundedRectangle}.
+	 * @return A newly created {@link javafx.scene.shape.Rectangle} that
+	 *         visualizes the given {@link RoundedRectangle}.
 	 */
 	public static javafx.scene.shape.Rectangle toRectangle(
 			RoundedRectangle roundedRect) {
@@ -281,6 +245,41 @@ public class Geometry2FX {
 		rectangle.setArcWidth(roundedRect.getArcWidth());
 		rectangle.setArcHeight(roundedRect.getArcHeight());
 		return rectangle;
+	}
+
+	/**
+	 * Creates a {@link Shape} that visualizes the passed-in {@link IGeometry} .
+	 *
+	 * @param geometry
+	 *            The {@link IGeometry} for which a {@link Shape} is created.
+	 * @return A newly created {@link Shape} that visualizes the given
+	 *         {@link IGeometry}.
+	 */
+	public static Shape toShape(IGeometry geometry) {
+		if (geometry instanceof Arc) {
+			return toArc((Arc) geometry);
+		} else if (geometry instanceof CubicCurve) {
+			return toCubicCurve((CubicCurve) geometry);
+		} else if (geometry instanceof Ellipse) {
+			return toEllipse((Ellipse) geometry);
+		} else if (geometry instanceof Line) {
+			return toLine((Line) geometry);
+		} else if (geometry instanceof Path) {
+			return toPath((Path) geometry);
+		} else if (geometry instanceof Polygon) {
+			return toPolygon((Polygon) geometry);
+		} else if (geometry instanceof Polyline) {
+			return toPolyline((Polyline) geometry);
+		} else if (geometry instanceof QuadraticCurve) {
+			QuadraticCurve quad = (QuadraticCurve) geometry;
+			return toQuadCurve(quad);
+		} else if (geometry instanceof Rectangle) {
+			return toRectangle((Rectangle) geometry);
+		} else if (geometry instanceof RoundedRectangle) {
+			return toRectangle((RoundedRectangle) geometry);
+		} else {
+			return toPath(geometry.toPath());
+		}
 	}
 
 }

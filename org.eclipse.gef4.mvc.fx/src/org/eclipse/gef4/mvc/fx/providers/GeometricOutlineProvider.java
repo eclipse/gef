@@ -15,7 +15,10 @@ package org.eclipse.gef4.mvc.fx.providers;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.fx.utils.FX2Geometry;
+import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.fx.utils.Shape2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -32,6 +35,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 /**
  * The {@link GeometricOutlineProvider} is a {@link Provider Provider
@@ -90,7 +94,17 @@ public class GeometricOutlineProvider
 	 *             {@link Node}.
 	 */
 	protected IGeometry getGeometry(Node visual) {
-		return FX2Geometry.toGeometry(visual);
+		if (visual instanceof Connection) {
+			GeometryNode<ICurve> curveNode = ((Connection) visual).getCurveNode();
+			return NodeUtils.localToParent(curveNode, curveNode.getGeometry());
+		} else if (visual instanceof GeometryNode) {
+			return ((GeometryNode<?>) visual).getGeometry();
+		} else if (visual instanceof Shape) {
+			return Shape2Geometry.toGeometry((Shape) visual);
+		} else {
+			System.err.println("fallback to layout bounds");
+			return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
+		}
 	}
 
 	@Override
