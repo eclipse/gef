@@ -476,6 +476,9 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 			return;
 		}
 
+		// TODO: resize a dummy geometry and update the real one after we are
+		// finished, so listeners are not notified
+
 		// Disable listening to geometry changes while determine new geometry
 		// size (to match given visual bounds size)
 		geometryProperty.removeListener(geometryChangeListener);
