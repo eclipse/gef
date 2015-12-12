@@ -51,44 +51,35 @@ public class ConnectionTests {
 	}
 
 	@Test
-	public void test_generateWayAnchorKey() throws IllegalArgumentException, IllegalAccessException {
+	public void test_waypoints() throws IllegalArgumentException, IllegalAccessException {
 		Connection connection = new Connection();
 		Point startPoint = new Point(123, 456);
-		Point wayPoint = new Point(789, 123);
 		Point endPoint = new Point(456, 789);
 		connection.setStartPoint(startPoint);
 		connection.setEndPoint(endPoint);
 
-		Field nextWayAnchorId = ReflectionUtils.getPrivateField(connection, "nextWayAnchorId");
-		/*
-		 * The first way anchor ID should be 0.
-		 */
-		assertEquals(0, nextWayAnchorId.get(connection));
+		connection.addWayPoint(0, new Point(50,50));
+		assertEquals(new Point(50,50), connection.getWayPoint(0));
 
-		/*
-		 * The ID increases with every added way point.
-		 */
-		connection.addWayPoint(0, wayPoint);
-		connection.removeWayPoint(0);
-		assertEquals(1, nextWayAnchorId.get(connection));
-
-		/*
-		 * Setting the ID to Integer.MAX_VALUE - 1 to verify that it is
-		 * increased to Integer.MAX_VALUE.
-		 */
-		nextWayAnchorId.set(connection, Integer.MAX_VALUE - 1);
-		connection.addWayPoint(0, wayPoint);
-		connection.removeWayPoint(0);
-		assertEquals(Integer.MAX_VALUE, nextWayAnchorId.get(connection));
-
-		/*
-		 * If the ID reaches Integer.MAX_VALUE, then all way points are
-		 * re-assigned to IDs 0, 1, 2, ... N-1, N. As we did not have any way
-		 * points here, the next ID will be 1 after adding a way point.
-		 */
-		connection.addWayPoint(0, wayPoint);
-		connection.removeWayPoint(0);
-		assertEquals(1, nextWayAnchorId.get(connection));
+		connection.addWayPoint(0,  new Point(100, 100));
+		assertEquals(new Point(100,100), connection.getWayPoint(0));
+		assertEquals(new Point(50,50), connection.getWayPoint(1));
+		
+		connection.addWayPoint(1,  new Point(150, 150));
+		assertEquals(new Point(100,100), connection.getWayPoint(0));
+		assertEquals(new Point(150,150), connection.getWayPoint(1));
+		assertEquals(new Point(50,50), connection.getWayPoint(2));
+		
+		connection.addWayPoint(1,  new Point(200, 200));
+		assertEquals(new Point(100,100), connection.getWayPoint(0));
+		assertEquals(new Point(200,200), connection.getWayPoint(1));
+		assertEquals(new Point(150,150), connection.getWayPoint(2));
+		assertEquals(new Point(50,50), connection.getWayPoint(3));
+		
+		connection.removeWayPoint(1);
+		assertEquals(new Point(100,100), connection.getWayPoint(0));
+		assertEquals(new Point(150,150), connection.getWayPoint(1));
+		assertEquals(new Point(50,50), connection.getWayPoint(2));
 	}
 
 }

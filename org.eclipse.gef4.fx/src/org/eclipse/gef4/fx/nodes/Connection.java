@@ -13,9 +13,12 @@
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
@@ -25,6 +28,8 @@ import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
+import org.eclipse.gef4.fx.utils.Geometry2FX;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -46,7 +51,10 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Rotate;
@@ -397,12 +405,22 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
-	private List<AnchorKey> wayAnchorKeys = new ArrayList<>();
-	private int nextWayAnchorId = 0;
+	// waypoint anchors are kept in an ordered set (sorted by their indices)
+	// TODO: actually, we just need the waypoint count
+	private SortedSet<AnchorKey> wayAnchorKeys = new TreeSet<>(
+			new Comparator<AnchorKey>() {
+
+				@Override
+				public int compare(AnchorKey o1, AnchorKey o2) {
+					int o1Index = getWayIndex(o1);
+					int o2Index = getWayIndex(o2);
+					return o1Index - o2Index;
+				}
+			});
 
 	// refresh geometry on position changes
 	private boolean inRefresh = false;
-	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<>();
+	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
 
 	// refresh on decoration bounds changes (stroke width)
 	private ChangeListener<Bounds> decorationLayoutBoundsListener = new ChangeListener<Bounds>() {
@@ -435,6 +453,73 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Inserts the given {@link IAnchor} into the {@link #anchorsProperty()} of
+	 * this {@link Connection}. The given {@link AnchorKey} is attached to the
+	 * {@link IAnchor}, supplying it with the previously
+	 * {@link #registerAnchorInfos(IAdaptable) registered} anchor information.
+	 * Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
+	 * {@link AnchorKey} is registered on the position property of the
+	 * {@link IAnchor} and the visualization is {@link #refresh() refreshed}.
+	 *
+	 * @param anchor
+	 *            The {@link IAnchor} which is inserted.
+	 * @param anchorKey
+	 *            The {@link AnchorKey} under which the {@link IAnchor} is
+	 *            registered.
+	 * @param wayIndex
+	 *            The way anchor index (only for way point anchors, ignored for
+	 *            start and end anchors).
+	 */
+	// TODO: differentiate between set and add instead of put
+	protected void addAnchor(IAnchor anchor, AnchorKey anchorKey,
+			int wayIndex) {
+		/*
+		 * XXX: The anchor is put into the map before attaching it, so that
+		 * listeners on the map can register position change listeners on the
+		 * anchor (but cannot query its position, yet).
+		 */
+		// waypoints to move are kept in reverse order
+		List<IAnchor> wayAnchorsToMove = new ArrayList<>();
+		if (!anchorKey.equals(getStartAnchorKey())
+				&& !anchorKey.equals(getEndAnchorKey())) {
+			// remove all waypoints at a larger index
+			int wayPointCount = wayAnchorKeys.size();
+			for (int i = wayPointCount - 1; i >= wayIndex; i--) {
+				// (temporarily) remove all anchors that are to be moved up
+				AnchorKey ak = getWayAnchorKey(i);
+				IAnchor a = getWayAnchor(i);
+				wayAnchorsToMove.add(0, a);
+				wayAnchorKeys.remove(ak);
+				anchorsProperty.remove(ak);
+				a.detach(ak, as);
+			}
+			wayAnchorKeys.add(anchorKey);
+		}
+		anchorsProperty.put(anchorKey, anchor);
+		anchor.attach(anchorKey, as);
+
+		if (!anchorKey.equals(getStartAnchorKey())
+				&& !anchorKey.equals(getEndAnchorKey())) {
+			// re-add all waypoints at a larger index
+			for (int i = 0; i < wayAnchorsToMove.size(); i++) {
+				AnchorKey ak = getWayAnchorKey(wayIndex + i + 1);
+				IAnchor a = wayAnchorsToMove.get(i);
+				wayAnchorKeys.add(ak);
+				anchorsProperty.put(ak, a);
+				a.attach(ak, as);
+			}
+		}
+
+		if (!anchorPCL.containsKey(anchorKey)) {
+			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
+					anchorKey);
+			anchorPCL.put(anchorKey, pcl);
+			anchor.positionProperty().addListener(pcl);
+		}
+		refresh();
+	}
+
+	/**
 	 * Adds the given {@link IAnchor} as a way point anchor for the given index
 	 * into the {@link #anchorsProperty()} of this {@link Connection}.
 	 *
@@ -450,9 +535,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		AnchorKey anchorKey = generateWayAnchorKey();
-		// assert(!anchorKeyPCL.containsKey(anchorKey));
-		putAnchor(anchor, anchorKey, index);
+		addAnchor(anchor, getWayAnchorKey(index), index);
 	}
 
 	/**
@@ -587,36 +670,32 @@ public class Connection extends Group /* or rather Parent?? */ {
 		arrangeDecoration(startDecoration, startPoint, curveStartDirection);
 	}
 
-	// /**
-	// * Adjusts the curveClip so that the curve node does not paint through the
-	// * given decoration.
-	// *
-	// * @param curveClip
-	// * A shape that represents the clip of the curve node.
-	// * @param decoration
-	// * The decoration to clip the curve node from.
-	// * @return A shape representing the resulting clip.
-	// */
-	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
-	// // first intersect curve shape with decoration layout bounds,
-	// // then subtract the curve shape from the result, and the decoration
-	// // from that
-	// Path decorationVisualBoundsPath = new Path(
-	// Geometry2JavaFX
-	// .toPathElements(
-	// NodeUtils
-	// .parentToLocal(curveNode,
-	// NodeUtils.localToParent(
-	// decoration,
-	// getShapeBounds(
-	// decoration)))
-	// .toPath()));
-	// decorationVisualBoundsPath.setFill(Color.RED);
-	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
-	// curveNode.getShape());
-	// decorationClip = Shape.subtract(decorationClip, decoration);
-	// return Shape.subtract(curveClip, decorationClip);
-	// }
+	/**
+	 * Adjusts the curveClip so that the curve node does not paint through the
+	 * given decoration.
+	 *
+	 * @param curveClip
+	 *            A shape that represents the clip of the curve node,
+	 *            interpreted in scene coordinates.
+	 * @param decoration
+	 *            The decoration to clip the curve node from.
+	 * @return A shape representing the resulting clip, interpreted in scene
+	 *         coordinates.
+	 */
+	protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
+		// first intersect curve shape with decoration layout bounds,
+		// then subtract the curve shape from the result, and the decoration
+		// from that
+		Path decorationShapeBounds = new Path(Geometry2FX.toPathElements(
+				NodeUtils.localToScene(decoration, getShapeBounds(decoration))
+						.toPath()));
+		decorationShapeBounds.setFill(Color.RED);
+		Shape clip = Shape.intersect(decorationShapeBounds,
+				curveNode.getShape());
+		clip = Shape.subtract(clip, decoration);
+		clip = Shape.subtract(curveClip, clip);
+		return clip;
+	}
 
 	/**
 	 * Creates a position change listener (PCL) which {@link #refresh()
@@ -641,24 +720,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 				}
 			}
 		};
-	}
-
-	/**
-	 * Generates a new, unique way point anchor key. Way point anchor keys use
-	 * the {@link #getCurveNode() curve node} as the anchored and a
-	 * <code>"waypoint-"</code> prefix for the role.
-	 *
-	 * @return A new, unique way anchor key.
-	 */
-	protected AnchorKey generateWayAnchorKey() {
-		if (nextWayAnchorId == Integer.MAX_VALUE) {
-			List<IAnchor> wayAnchors = getWayAnchors();
-			removeAllWayPoints();
-			nextWayAnchorId = 0;
-			setWayAnchors(wayAnchors);
-		}
-		return new AnchorKey(getCurveNode(),
-				WAY_POINT_ROLE_PREFIX + nextWayAnchorId++);
 	}
 
 	/**
@@ -938,21 +999,15 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Returns the {@link AnchorKey} for the given way anchor index, or
-	 * <code>null</code> if no {@link IAnchor anchor} is assigned for that
-	 * index.
+	 * Returns the {@link AnchorKey} for the given way anchor index.
 	 *
 	 * @param index
 	 *            The way anchor index for which the {@link AnchorKey} is
 	 *            returned.
-	 * @return The {@link AnchorKey} for the given way anchor index, or
-	 *         <code>null</code>.
+	 * @return The {@link AnchorKey} for the given way anchor index.
 	 */
 	protected AnchorKey getWayAnchorKey(int index) {
-		if (0 <= index && index < wayAnchorKeys.size()) {
-			return wayAnchorKeys.get(index);
-		}
-		return null;
+		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX + index);
 	}
 
 	/**
@@ -1001,11 +1056,12 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *             {@link AnchorKey}.
 	 */
 	protected int getWayIndex(AnchorKey key) {
-		int index = wayAnchorKeys.indexOf(key);
-		if (index == -1) {
-			throw new IllegalArgumentException("The given AnchorKey (" + key
-					+ ") is not registered as a way point anchor for this connection.");
+		if (!key.getId().startsWith(WAY_POINT_ROLE_PREFIX)) {
+			throw new IllegalArgumentException(
+					"Given AnchorKey " + key + " is no waypoint anchor key.");
 		}
+		int index = Integer.parseInt(
+				key.getId().substring(WAY_POINT_ROLE_PREFIX.length()));
 		return index;
 	}
 
@@ -1042,6 +1098,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *         {@link Connection}.
 	 */
 	public List<Point> getWayPoints() {
+		// TODO: use set...
 		List<IAnchor> wayPointAnchors = getWayAnchors();
 		List<Point> wayPoints = new ArrayList<>(wayPointAnchors.size());
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
@@ -1099,46 +1156,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Inserts the given {@link IAnchor} into the {@link #anchorsProperty()} of
-	 * this {@link Connection}. The given {@link AnchorKey} is attached to the
-	 * {@link IAnchor}, supplying it with the previously
-	 * {@link #registerAnchorInfos(IAdaptable) registered} anchor information.
-	 * Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
-	 * {@link AnchorKey} is registered on the position property of the
-	 * {@link IAnchor} and the visualization is {@link #refresh() refreshed}.
-	 *
-	 * @param anchor
-	 *            The {@link IAnchor} which is inserted.
-	 * @param anchorKey
-	 *            The {@link AnchorKey} under which the {@link IAnchor} is
-	 *            registered.
-	 * @param wayIndex
-	 *            The way anchor index (only for way point anchors, ignored for
-	 *            start and end anchors).
-	 */
-	protected void putAnchor(IAnchor anchor, AnchorKey anchorKey,
-			int wayIndex) {
-		/*
-		 * XXX: The anchor is put into the map before attaching it, so that
-		 * listeners on the map can register position change listeners on the
-		 * anchor (but cannot query its position, yet).
-		 */
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())) {
-			wayAnchorKeys.add(wayIndex, anchorKey);
-		}
-		anchorsProperty.put(anchorKey, anchor);
-		anchor.attach(anchorKey, as);
-		if (!anchorKeyPCL.containsKey(anchorKey)) {
-			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
-					anchorKey);
-			anchorKeyPCL.put(anchorKey, pcl);
-			anchor.positionProperty().addListener(pcl);
-		}
-		refresh();
-	}
-
-	/**
 	 * Refreshes the visualization, i.e.
 	 * <ol>
 	 * <li>determines the {@link #getPoints() points} constituting this
@@ -1159,9 +1176,11 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (inRefresh) {
 			return;
 		}
+		// System.out.println(this + "refresh()");
 
 		inRefresh = true;
 
+		// TODO: children don't have to be cleared and re-added.
 		ICurve newGeometry = router.routeConnection(getPoints());
 
 		// clear current visuals
@@ -1170,6 +1189,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
 		if (!newGeometry.equals(curveNode.getGeometry())) {
+			// TODO: we need to prevent positions are re-calculated as a result
+			// of the changed geometry. -> the static anchors should not update
+			// their positions because of layout bounds changes.
+			// System.out.println("New geometry: " + newGeometry);
 			curveNode.setGeometry(newGeometry);
 		}
 
@@ -1186,24 +1209,38 @@ public class Connection extends Group /* or rather Parent?? */ {
 			arrangeEndDecoration();
 		}
 
-		// if (startDecoration != null || endDecoration != null) {
-		// Bounds layoutBounds = curveNode.getLayoutBounds();
-		// Shape clip = new Rectangle(layoutBounds.getMinX(),
-		// layoutBounds.getMinY(), layoutBounds.getWidth(),
-		// layoutBounds.getHeight());
-		// clip.setFill(Color.RED);
-		// if (startDecoration != null) {
-		// clip = clipAtDecoration(clip, startDecoration);
-		// }
-		// if (endDecoration != null) {
-		// clip = clipAtDecoration(clip, endDecoration);
-		// }
-		// curveNode.setClip(clip);
-		// } else {
-		// curveNode.setClip(null);
-		// }
+		if (newGeometry.getBounds().isEmpty()) {
+			// System.out.println("Skipping refresh because of empty bounds.");
+			inRefresh = false;
+			return;
+		}
+
+		if (startDecoration != null || endDecoration != null) {
+			// XXX Use scene coordinates, as the clip node does not provide a
+			// parent
+			Bounds layoutBounds = curveNode
+					.localToScene(curveNode.getLayoutBounds());
+			Shape clip = new Rectangle(layoutBounds.getMinX(),
+					layoutBounds.getMinY(), layoutBounds.getWidth(),
+					layoutBounds.getHeight());
+			clip.setFill(Color.RED);
+			if (startDecoration != null) {
+				clip = clipAtDecoration(clip, startDecoration);
+			}
+			if (endDecoration != null) {
+				clip = clipAtDecoration(clip, endDecoration);
+			}
+			// XXX: All CAG operations deliver result shapes that reflect areas
+			// in scene coordinates.
+			clip.getTransforms().add(Geometry2JavaFX
+					.toFXAffine(NodeUtils.getSceneToLocalTx(curveNode)));
+			curveNode.setClip(clip);
+		} else {
+			curveNode.setClip(null);
+		}
 
 		inRefresh = false;
+
 	}
 
 	/**
@@ -1238,27 +1275,51 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *
 	 * @param anchorKey
 	 *            The {@link AnchorKey} to remove.
-	 * @param oldAnchor
+	 * @param anchor
 	 *            The corresponding {@link IAnchor}.
 	 */
-	protected void removeAnchor(AnchorKey anchorKey, IAnchor oldAnchor) {
-		if (anchorKeyPCL.containsKey(anchorKey)) {
-			oldAnchor.positionProperty()
-					.removeListener(anchorKeyPCL.remove(anchorKey));
+	protected void removeAnchor(AnchorKey anchorKey, IAnchor anchor) {
+		if (anchorPCL.containsKey(anchorKey)) {
+			anchor.positionProperty()
+					.removeListener(anchorPCL.remove(anchorKey));
 		}
 		/*
 		 * XXX: detach() after removing from the anchors-map, so that listeners
 		 * on the anchors-map can retrieve the anchor position.
 		 */
-		if (wayAnchorKeys.contains(anchorKey)) {
-			// remove from way anchor keys so that the anchors.size is
-			// consistent with the way anchor size + (start present) + (end
-			// present)
+		List<IAnchor> wayAnchorsToMove = new ArrayList<>();
+		int wayIndex = -1;
+		if (!anchorKey.equals(getStartAnchorKey())
+				&& !anchorKey.equals(getEndAnchorKey())
+				&& wayAnchorKeys.contains(anchorKey)) {
+			// remove all way anchors at a larger index
+			wayIndex = getWayIndex(anchorKey);
+			int wayPointCount = wayAnchorKeys.size();
+			for (int i = wayPointCount - 1; i > wayIndex; i--) {
+				// (temporarily) remove all anchors that are to be moved down
+				AnchorKey ak = getWayAnchorKey(i);
+				IAnchor a = getWayAnchor(i);
+				wayAnchorsToMove.add(0, a);
+				wayAnchorKeys.remove(ak);
+				anchorsProperty.remove(ak);
+				a.detach(ak, as);
+			}
 			wayAnchorKeys.remove(anchorKey);
 		}
 		anchorsProperty.remove(anchorKey);
-		oldAnchor.detach(anchorKey, as);
+		anchor.detach(anchorKey, as);
 
+		if (!anchorKey.equals(getStartAnchorKey())
+				&& !anchorKey.equals(getEndAnchorKey())) {
+			// re-add all waypoints at a larger index
+			for (int i = 0; i < wayAnchorsToMove.size(); i++) {
+				AnchorKey ak = getWayAnchorKey(wayIndex + i);
+				IAnchor a = wayAnchorsToMove.get(i);
+				wayAnchorKeys.add(ak);
+				anchorsProperty.put(ak, a);
+				a.attach(ak, as);
+			}
+		}
 		refresh();
 	}
 
@@ -1298,11 +1359,16 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 * @throws IllegalArgumentException
 	 *             when less than 2 {@link IAnchor}s are given.
 	 */
-	public void setAnchors(java.util.List<IAnchor> anchors) {
+	public void setAnchors(List<IAnchor> anchors) {
 		if (anchors.size() < 2) {
 			throw new IllegalArgumentException(
 					"start end end anchors have to be provided.");
 		}
+
+		// prevent refresh before all points are properly set
+		boolean oldInRefresh = inRefresh;
+		inRefresh = true;
+		;
 		setStartAnchor(anchors.get(0));
 		if (anchors.size() > 2) {
 			setWayAnchors(anchors.subList(1, anchors.size() - 1));
@@ -1310,6 +1376,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 			removeAllWayPoints();
 		}
 		setEndAnchor(anchors.get(anchors.size() - 1));
+		inRefresh = oldInRefresh;
+		refresh();
 	}
 
 	/**
@@ -1328,9 +1396,13 @@ public class Connection extends Group /* or rather Parent?? */ {
 		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
+				// suppress refresh, as addAnchor() will cause a refresh as well
+				boolean oldInRefresh = inRefresh;
+				inRefresh = true;
 				removeAnchor(anchorKey, oldAnchor);
+				inRefresh = oldInRefresh;
 			}
-			putAnchor(anchor, anchorKey, -1);
+			addAnchor(anchor, anchorKey, -1);
 		}
 	}
 
@@ -1372,7 +1444,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (endPointInLocal == null) {
 			endPointInLocal = new Point();
 		}
-		IAnchor anchor = new StaticAnchor(this, endPointInLocal);
+		IAnchor anchor = new StaticAnchor(getCurveNode(),
+				JavaFX2Geometry.toPoint(getCurveNode()
+						.parentToLocal(endPointInLocal.x, endPointInLocal.y)));
 		setEndAnchor(anchor);
 	}
 
@@ -1404,9 +1478,13 @@ public class Connection extends Group /* or rather Parent?? */ {
 		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
+				// suppress refresh, as addAnchor() will cause a refresh as well
+				boolean oldInRefresh = inRefresh;
+				inRefresh = true;
 				removeAnchor(anchorKey, oldAnchor);
+				inRefresh = oldInRefresh;
 			}
-			putAnchor(anchor, anchorKey, -1);
+			addAnchor(anchor, anchorKey, -1);
 		}
 	}
 
@@ -1449,7 +1527,11 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (startPointInLocal == null) {
 			startPointInLocal = new Point();
 		}
-		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
+		// TODO: reuse static anchor, just update reference position -> need to
+		// make that changeable in StaticAnchor
+		IAnchor anchor = new StaticAnchor(getCurveNode(),
+				JavaFX2Geometry.toPoint(getCurveNode().parentToLocal(
+						startPointInLocal.x, startPointInLocal.y)));
 		setStartAnchor(anchor);
 	}
 
@@ -1474,9 +1556,13 @@ public class Connection extends Group /* or rather Parent?? */ {
 		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
+				// suppress refresh, as addAnchor() will cause a refresh as well
+				boolean oldInRefresh = inRefresh;
+				inRefresh = true;
 				removeAnchor(anchorKey, oldAnchor);
+				inRefresh = oldInRefresh;
 			}
-			putAnchor(anchor, anchorKey, index);
+			addAnchor(anchor, anchorKey, index);
 		}
 	}
 
@@ -1515,7 +1601,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (wayPointInLocal == null) {
 			wayPointInLocal = new Point();
 		}
-		IAnchor anchor = new StaticAnchor(this, wayPointInLocal);
+		IAnchor anchor = new StaticAnchor(getCurveNode(),
+				JavaFX2Geometry.toPoint(getCurveNode()
+						.parentToLocal(wayPointInLocal.x, wayPointInLocal.y)));
 		setWayAnchor(index, anchor);
 	}
 
@@ -1528,6 +1616,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	public void setWayPoints(List<Point> wayPoints) {
 		int waySize = wayAnchorKeys.size();
+		boolean oldInRefresh = inRefresh;
+		inRefresh = true;
 		int i = 0;
 		for (; i < waySize && i < wayPoints.size(); i++) {
 			setWayPoint(i, wayPoints.get(i));
@@ -1538,6 +1628,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		for (; i < waySize; i++) {
 			removeWayPoint(i);
 		}
+		inRefresh = oldInRefresh;
 	}
 
 }
