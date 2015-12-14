@@ -117,12 +117,15 @@ public class CubicCurve extends BezierCurve {
 
 	@Override
 	public boolean equals(Object other) {
-		CubicCurve o = (CubicCurve) other;
+		if (other instanceof CubicCurve) {
+			CubicCurve o = (CubicCurve) other;
 
-		Polygon myPoly = getControlPolygon();
-		Polygon otherPoly = o.getControlPolygon();
+			Polygon myPoly = getControlPolygon();
+			Polygon otherPoly = o.getControlPolygon();
 
-		return myPoly.equals(otherPoly);
+			return myPoly.equals(otherPoly);
+		}
+		return false;
 	}
 
 	/*
