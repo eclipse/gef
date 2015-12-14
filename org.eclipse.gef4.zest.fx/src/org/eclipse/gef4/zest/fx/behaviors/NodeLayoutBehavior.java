@@ -22,8 +22,6 @@ import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IFeedbackPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -138,19 +136,6 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double miny = hostBounds.getMinY();
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
-		// union node bounds with bounds of feedback visuals
-		for (IVisualPart<Node, ? extends Node> anchored : getHost().getAnchoreds()) {
-			if (!(anchored instanceof IFeedbackPart)) {
-				continue;
-			}
-			Node anchoredVisual = anchored.getVisual();
-			Bounds anchoredBounds = anchoredVisual.getLayoutBounds();
-			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual.localToScene(anchoredBounds));
-			minx = Math.min(minx, anchoredBoundsInHost.getMinX());
-			miny = Math.min(miny, anchoredBoundsInHost.getMinY());
-			maxx = Math.max(maxx, anchoredBoundsInHost.getMaxX());
-			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
-		}
 
 		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 
