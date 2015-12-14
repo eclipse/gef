@@ -465,7 +465,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *         given {@link Path}.
 	 */
 	public List<ICurve> getOutlines() {
-		List<ICurve> curves = new ArrayList<ICurve>();
+		List<ICurve> curves = new ArrayList<>();
 		Segment[] segments = getSegments();
 		// save the segment start point as it is not contained within individual
 		// path segments
