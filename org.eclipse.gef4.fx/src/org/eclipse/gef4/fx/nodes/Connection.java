@@ -1503,9 +1503,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (endPointInLocal == null) {
 			endPointInLocal = new Point();
 		}
-		IAnchor anchor = new StaticAnchor(getCurveNode(),
-				JavaFX2Geometry.toPoint(getCurveNode()
-						.parentToLocal(endPointInLocal.x, endPointInLocal.y)));
+		IAnchor anchor = new StaticAnchor(this, endPointInLocal);
 		setEndAnchor(anchor);
 	}
 
@@ -1588,9 +1586,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		}
 		// TODO: reuse static anchor, just update reference position -> need to
 		// make that changeable in StaticAnchor
-		IAnchor anchor = new StaticAnchor(getCurveNode(),
-				JavaFX2Geometry.toPoint(getCurveNode().parentToLocal(
-						startPointInLocal.x, startPointInLocal.y)));
+		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
 		setStartAnchor(anchor);
 	}
 
@@ -1660,9 +1656,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (wayPointInLocal == null) {
 			wayPointInLocal = new Point();
 		}
-		IAnchor anchor = new StaticAnchor(getCurveNode(),
-				JavaFX2Geometry.toPoint(getCurveNode()
-						.parentToLocal(wayPointInLocal.x, wayPointInLocal.y)));
+		IAnchor anchor = new StaticAnchor(this, wayPointInLocal);
 		setWayAnchor(index, anchor);
 	}
 
