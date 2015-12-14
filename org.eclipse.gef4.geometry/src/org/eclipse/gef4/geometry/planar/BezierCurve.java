@@ -486,6 +486,65 @@ public class BezierCurve extends AbstractGeometry
 		public boolean pIsBetterThanQ(Point p, Point q);
 	}
 
+	private static final long serialVersionUID = 1L;
+
+	private static final int CHUNK_SHIFT = -3;
+
+	// TODO: use constants that limit the number of iterations for the
+	// different iterative/recursive algorithms:
+	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
+
+	private static final boolean ORTHOGONAL = true;
+
+	private static final boolean PARALLEL = false;
+
+	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
+			.calculateFraction(0) / 10;
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * minimal x coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp xminCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.smallerEqual(p.x, q.x);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * maximal x coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp xmaxCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.greaterEqual(p.x, q.x);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * minimal y coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp yminCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.smallerEqual(p.y, q.y);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * maximal y coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp ymaxCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.greaterEqual(p.y, q.y);
+		}
+	};
+
 	/**
 	 * <p>
 	 * Clusters consecutive {@link IntervalPair}s into a new array of
@@ -608,10 +667,6 @@ public class BezierCurve extends AbstractGeometry
 		}
 		return PrecisionUtils.equal(interval[0], interval[1], 1);
 	}
-
-	// TODO: use constants that limit the number of iterations for the
-	// different iterative/recursive algorithms:
-	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
 
 	/**
 	 * Overwrites the attribute values of {@link IntervalPair} <i>dst</i> with
@@ -941,61 +996,6 @@ public class BezierCurve extends AbstractGeometry
 
 		return i;
 	}
-
-	private static final long serialVersionUID = 1L;
-
-	private static final int CHUNK_SHIFT = -3;
-
-	private static final boolean ORTHOGONAL = true;
-
-	private static final boolean PARALLEL = false;
-
-	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
-			.calculateFraction(0) / 10;
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal x coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp xminCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.x, q.x);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal x coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp xmaxCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.x, q.x);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal y coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp yminCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.y, q.y);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal y coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp ymaxCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.y, q.y);
-		}
-	};
 
 	/**
 	 * An array of {@link Vector3D}s which represent the control points of this
@@ -2504,15 +2504,17 @@ public class BezierCurve extends AbstractGeometry
 
 	@Override
 	public String toString() {
-		String str = "BezierCurve(";
+		StringBuffer str = new StringBuffer();
+		str.append("BezierCurve(");
 		for (int i = 0; i < points.length; i++) {
 			Vector3D v = points[i];
-			str = str + v;
+			str.append(v);
 			if (i < points.length - 1) {
-				str = str + ", ";
+				str.append(", ");
 			}
 		}
-		return str + ")";
+		str.append(")");
+		return str.toString();
 	}
 
 	@Override

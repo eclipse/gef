@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -17,10 +17,10 @@ package org.eclipse.gef4.geometry.planar;
  * An instance of the {@link CubicCurve} class represents a {@link BezierCurve}
  * of degree 3, having a start and an end {@link Point} and two handle
  * {@link Point}s.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class CubicCurve extends BezierCurve {
 
@@ -30,7 +30,7 @@ public class CubicCurve extends BezierCurve {
 	 * Constructs a new {@link CubicCurve} object with the given sequence of x
 	 * and y coordinates of the start {@link Point}, the two handle
 	 * {@link Point}s, and the end {@link Point}.
-	 * 
+	 *
 	 * @param coordinates
 	 *            the sequence of x and y coordinates specifying this
 	 *            {@link CubicCurve}'s control {@link Point}s
@@ -50,7 +50,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Constructs a new {@link CubicCurve} object from the given control
 	 * {@link Point} coordinates.
-	 * 
+	 *
 	 * @param x1
 	 *            the x coordinate of the start {@link Point}
 	 * @param y1
@@ -77,7 +77,7 @@ public class CubicCurve extends BezierCurve {
 	 * Constructs a new {@link CubicCurve} from the given sequence of
 	 * {@link Point}s, which is expected to be in the order: start {@link Point}
 	 * , first and second handle {@link Point}s, and end {@link Point}.
-	 * 
+	 *
 	 * @param points
 	 *            the sequence of {@link Point}s from which this
 	 *            {@link CubicCurve} is constructed
@@ -98,7 +98,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Constructs a new {@link CubicCurve} object from the given control
 	 * {@link Point}s.
-	 * 
+	 *
 	 * @param start
 	 *            the start {@link Point}
 	 * @param ctrl1
@@ -135,7 +135,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Returns a new {@link CubicCurve}, which has the same control
 	 * {@link Point}s as this one.
-	 * 
+	 *
 	 * @return a new {@link CubicCurve} with the same control {@link Point}s as
 	 *         this one
 	 */
@@ -146,7 +146,7 @@ public class CubicCurve extends BezierCurve {
 
 	/**
 	 * Returns the first handle {@link Point}.
-	 * 
+	 *
 	 * @return the first handle {@link Point}
 	 */
 	public Point getCtrl1() {
@@ -155,7 +155,7 @@ public class CubicCurve extends BezierCurve {
 
 	/**
 	 * Returns the second handle {@link Point}.
-	 * 
+	 *
 	 * @return the second handle {@link Point}
 	 */
 	public Point getCtrl2() {
@@ -164,7 +164,7 @@ public class CubicCurve extends BezierCurve {
 
 	/**
 	 * Returns the first handle {@link Point}'s x coordinate.
-	 * 
+	 *
 	 * @return the first handle {@link Point}'s x coordinate
 	 */
 	public double getCtrlX1() {
@@ -173,7 +173,7 @@ public class CubicCurve extends BezierCurve {
 
 	/**
 	 * Returns the second handle {@link Point}'s x coordinate.
-	 * 
+	 *
 	 * @return the second handle {@link Point}'s x coordinate
 	 */
 	public double getCtrlX2() {
@@ -182,7 +182,7 @@ public class CubicCurve extends BezierCurve {
 
 	/**
 	 * Returns the first handle {@link Point}'s y coordinate.
-	 * 
+	 *
 	 * @return the first handle {@link Point}'s y coordinate
 	 */
 	public double getCtrlY1() {
@@ -191,7 +191,7 @@ public class CubicCurve extends BezierCurve {
 
 	/**
 	 * Returns the second handle {@link Point}'s y coordinate.
-	 * 
+	 *
 	 * @return the second handle {@link Point}'s y coordinate
 	 */
 	public double getCtrlY2() {
@@ -206,7 +206,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets the first handle {@link Point} of this {@link CubicCurve} to the
 	 * given {@link Point}.
-	 * 
+	 *
 	 * @param ctrl1
 	 *            the new first handle {@link Point}
 	 * @return <code>this</code> for convenience
@@ -220,7 +220,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets the x coordinate of the first handle {@link Point} of this
 	 * {@link CubicCurve} to the given value.
-	 * 
+	 *
 	 * @param ctrl1x
 	 *            the new x coordinate of the first handle {@link Point} of this
 	 *            {@link CubicCurve}
@@ -234,7 +234,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets the y coordinate of the first handle {@link Point} of this
 	 * {@link CubicCurve} to the given value.
-	 * 
+	 *
 	 * @param ctrl1y
 	 *            the new y coordinate of the first handle {@link Point} of this
 	 *            {@link CubicCurve}
@@ -248,7 +248,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets the second handle {@link Point} of this {@link CubicCurve} to the
 	 * given {@link Point}.
-	 * 
+	 *
 	 * @param ctrl2
 	 *            the new second handle {@link Point} of this {@link CubicCurve}
 	 * @return <code>this</code> for convenience
@@ -262,7 +262,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets the x coordinate of the second handle {@link Point} of this
 	 * {@link CubicCurve} to the given value.
-	 * 
+	 *
 	 * @param ctrl2x
 	 *            the new x coordinate of the second handle {@link Point} of
 	 *            this {@link CubicCurve}
@@ -276,7 +276,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets the y coordinate of the second handle {@link Point} of this
 	 * {@link CubicCurve} to the given value.
-	 * 
+	 *
 	 * @param ctrl2y
 	 *            the new y coordinate of the second handle {@link Point} of
 	 *            this {@link CubicCurve}
@@ -290,7 +290,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * Sets all control {@link Point}s of this {@link CubicCurve} to the given
 	 * {@link Point}s.
-	 * 
+	 *
 	 * @param p1
 	 *            the new start {@link Point}
 	 * @param ctrl1
@@ -329,7 +329,7 @@ public class CubicCurve extends BezierCurve {
 		return "CubicCurve(x1 = " + getX1() + ", y1 = " + getY1()
 				+ ", ctrl1X = " + getCtrlX1() + ", ctrl1Y = " + getCtrlY1()
 				+ ", ctrl2X = " + getCtrlX2() + ", ctrl2Y = " + getCtrlY2()
-				+ ", x2 = " + getX2() + ", y2 = " + getY2();
+				+ ", x2 = " + getX2() + ", y2 = " + getY2() + ")";
 	}
 
 }

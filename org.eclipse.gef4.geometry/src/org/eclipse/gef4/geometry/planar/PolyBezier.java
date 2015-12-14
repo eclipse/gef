@@ -30,6 +30,14 @@ public class PolyBezier extends AbstractGeometry
 		implements ICurve, ITranslatable<PolyBezier>, IScalable<PolyBezier>,
 		IRotatable<PolyBezier> {
 
+	/**
+	 * The default curve width coefficient used in interpolateCubic(...)
+	 * methods.
+	 */
+	public static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
+
+	private static final long serialVersionUID = 1L;
+
 	private static BezierCurve[] copy(BezierCurve... beziers) {
 		BezierCurve[] copy = new BezierCurve[beziers.length];
 
@@ -185,14 +193,6 @@ public class PolyBezier extends AbstractGeometry
 				INTERPOLATION_CURVE_WIDTH_COEFFICIENT, points);
 		return interp;
 	}
-
-	/**
-	 * The default curve width coefficient used in interpolateCubic(...)
-	 * methods.
-	 */
-	public static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
-
-	private static final long serialVersionUID = 1L;
 
 	private BezierCurve[] beziers;
 
@@ -524,6 +524,19 @@ public class PolyBezier extends AbstractGeometry
 	}
 
 	@Override
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		str.append("PolyBezier(");
+		for (int i = 0; i < beziers.length; i++) {
+			str.append(beziers[i].toString());
+			if (i < beziers.length - 1) {
+				str.append(", ");
+			}
+		}
+		return str + ")";
+	}
+
+	@Override
 	public PolyBezier translate(double dx, double dy) {
 		for (BezierCurve c : beziers) {
 			c.translate(dx, dy);
@@ -535,5 +548,4 @@ public class PolyBezier extends AbstractGeometry
 	public PolyBezier translate(Point d) {
 		return translate(d.x, d.y);
 	}
-
 }

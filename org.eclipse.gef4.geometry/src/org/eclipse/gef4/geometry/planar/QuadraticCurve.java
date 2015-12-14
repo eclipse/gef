@@ -257,4 +257,11 @@ public class QuadraticCurve extends BezierCurve {
 		return p;
 	}
 
+	@Override
+	public String toString() {
+		return "QuadraticCurve(x1 = " + getX1() + ", y1 = " + getY1()
+				+ ", ctrlX = " + getCtrlX() + ", ctrlY = " + getCtrlY()
+				+ ", x2 = " + getX2() + ", y2 = " + getY2() + ")";
+	}
+
 }
