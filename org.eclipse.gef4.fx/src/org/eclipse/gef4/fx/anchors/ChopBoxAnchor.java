@@ -232,12 +232,14 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					Point nearestIntersection = anchorageOutlineInScene
 							.getNearestIntersection(referenceLineInScene,
 									anchoredReferencePointInScene);
-					double distance = anchoredReferencePointInScene
-							.getDistance(nearestIntersection);
-					if (nearestIntersectionInScene == null
-							|| distance < nearestDistance) {
-						nearestIntersectionInScene = nearestIntersection;
-						nearestDistance = distance;
+					if (nearestIntersection != null) {
+						double distance = anchoredReferencePointInScene
+								.getDistance(nearestIntersection);
+						if (nearestIntersectionInScene == null
+								|| distance < nearestDistance) {
+							nearestIntersectionInScene = nearestIntersection;
+							nearestDistance = distance;
+						}
 					}
 				}
 
@@ -293,6 +295,12 @@ public class ChopBoxAnchor extends AbstractAnchor {
 
 					IGeometry newGeometry = geometryNode.getGeometry();
 					return newGeometry;
+				}
+				
+				// fallback
+				if (geometry == null) {
+					geometry = JavaFX2Geometry
+							.toRectangle(anchorage.getLayoutBounds());
 				}
 
 				return geometry;

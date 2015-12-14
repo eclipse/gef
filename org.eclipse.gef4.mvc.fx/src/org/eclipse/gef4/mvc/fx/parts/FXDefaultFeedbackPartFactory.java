@@ -189,7 +189,12 @@ public class FXDefaultFeedbackPartFactory
 								computationStrategy
 										.computeAnchorageReferencePointInLocal(
 												anchoredVisual,
-												anchoredGeometryInLocal));
+												anchoredGeometryInLocal,
+												NodeUtils.localToScene(
+														anchoredVisual,
+														anchoredGeometryInLocal
+																.getBounds()
+																.getCenter())));
 					}
 
 					@Override
