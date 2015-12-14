@@ -11,6 +11,7 @@
  *     Alexander Nyßen (alexander.nyssen@itemis.de) - fixed NPE (see bug #473011)
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
  *                                - Exporting *.dot files in different formats (bug #446647)
+ *                                - Naming of output file (bug #484198)
  *
  *********************************************************************************************/
 package org.eclipse.gef4.dot.internal;
@@ -48,9 +49,10 @@ final public class DotNativeDrawer {
 			final File dotInputFile, final String format,
 			final String imageResultFile) {
 		String outputFormat = "-T" + format; //$NON-NLS-1$
-		String resultFile = imageResultFile == null
-				? dotInputFile.getName() + "." + format : imageResultFile; //$NON-NLS-1$
 		String dotFile = dotInputFile.getName();
+		String resultFile = imageResultFile == null
+				? dotFile.substring(0, dotFile.lastIndexOf('.') + 1) + format
+				: imageResultFile; // $NON-NLS-1$
 		String inputFolder = new File(dotInputFile.getParent())
 				.getAbsolutePath() + File.separator;
 		String outputFolder = imageResultFile == null ? inputFolder
