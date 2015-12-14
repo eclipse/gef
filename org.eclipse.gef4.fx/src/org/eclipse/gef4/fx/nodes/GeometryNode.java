@@ -590,7 +590,7 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	 *            The new height.
 	 */
 	@SuppressWarnings("unchecked")
-	protected void resizeGeometry(double width, double height) {
+	public void resizeGeometry(double width, double height) {
 		T geometry = geometryProperty.getValue();
 		if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
