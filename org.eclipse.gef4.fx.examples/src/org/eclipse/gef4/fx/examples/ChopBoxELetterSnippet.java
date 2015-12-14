@@ -59,15 +59,15 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 
 		@Override
 		protected Point computeAnchorageReferencePointInScene(Node node,
-				IGeometry geometryInLocal) {
+				IGeometry geometryInLocal, Point anchoredRefPointInLocal) {
 			return super.computeAnchorageReferencePointInScene(node,
-					geometryInLocal);
+					geometryInLocal,
+					anchoredRefPointInLocal == null
+							? NodeUtils.localToScene(node,
+									geometryInLocal.getBounds().getCenter())
+							: anchoredRefPointInLocal);
 		}
 
-		@Override
-		protected ICurve getOutline(IGeometry geometry) {
-			return super.getOutline(geometry);
-		}
 	}
 
 	private abstract static class OnDrag extends AbstractMouseDragGesture {
@@ -271,7 +271,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		node.setStroke(ELETTER_REFERENCE_POINT_STROKE);
 		node.setFill(ELETTER_REFERENCE_POINT_FILL);
 		Point p = computationStrategy.computeAnchorageReferencePointInScene(
-				eLetterShape, eLetterShape.getGeometry());
+				eLetterShape, eLetterShape.getGeometry(), null);
 		node.setCenterX(p.x);
 		node.setCenterY(p.y);
 		return node;
@@ -402,7 +402,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 
 		Point eLetterShapeReferencePoint = computationStrategy
 				.computeAnchorageReferencePointInScene(eLetterShape,
-						eLetterShape.getGeometry());
+						eLetterShape.getGeometry(), null);
 
 		// show outline vertices and distance to the bounds center
 		for (BezierCurve seg : eLetterShape.getGeometry()
@@ -600,7 +600,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		// update imaginary line
 		Point eLetterReferencePoint = computationStrategy
 				.computeAnchorageReferencePointInScene(eLetterShape,
-						eLetterShape.getGeometry());
+						eLetterShape.getGeometry(), null);
 		Line lineImaginary = chopBoxLinesImaginary.get(ak);
 		lineImaginary.setStartX(anchorPosition.x);
 		lineImaginary.setStartY(anchorPosition.y);
@@ -614,7 +614,8 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		}
 		List<Node> intersectionNodes = new ArrayList<>();
 		ICurve eLetterOutline = (ICurve) NodeUtils.localToScene(eLetterShape,
-				computationStrategy.getOutline(eLetterShape.getGeometry()));
+				computationStrategy.getOutlines(eLetterShape.getGeometry())
+						.get(0));
 		org.eclipse.gef4.geometry.planar.Line referenceLine = new org.eclipse.gef4.geometry.planar.Line(
 				referencePosition, eLetterReferencePoint);
 		Point[] intersectionPoints = eLetterOutline
