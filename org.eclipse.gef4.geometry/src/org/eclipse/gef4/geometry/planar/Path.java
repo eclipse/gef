@@ -213,6 +213,25 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
+	 * Winding rule for determining the interior of the {@link Path}. Indicates
+	 * that a {@link Point} is regarded to lie inside the {@link Path}, if any
+	 * ray starting in that {@link Point} and pointing to infinity crosses the
+	 * {@link Segment}s of the {@link Path} an odd number of times.
+	 */
+	public static final int WIND_EVEN_ODD = 0;
+
+	/**
+	 * Winding rule for determining the interior of the {@link Path}. Indicates
+	 * that a {@link Point} is regarded to lie inside the {@link Path}, if any
+	 * ray starting from that {@link Point} and pointing to infinity is crossed
+	 * by {@link Path} {@link Segment}s a different number of times in the
+	 * counter-clockwise direction than in the clockwise direction.
+	 */
+	public static final int WIND_NON_ZERO = 1;
+
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * Unions the two specified {@link Path}s
 	 *
 	 * @param pa
@@ -277,25 +296,6 @@ public class Path extends AbstractGeometry implements IGeometry {
 		a.subtract(b);
 		return AWT2Geometry.toPath(new Path2D.Double(a));
 	}
-
-	/**
-	 * Winding rule for determining the interior of the {@link Path}. Indicates
-	 * that a {@link Point} is regarded to lie inside the {@link Path}, if any
-	 * ray starting in that {@link Point} and pointing to infinity crosses the
-	 * {@link Segment}s of the {@link Path} an odd number of times.
-	 */
-	public static final int WIND_EVEN_ODD = 0;
-
-	/**
-	 * Winding rule for determining the interior of the {@link Path}. Indicates
-	 * that a {@link Point} is regarded to lie inside the {@link Path}, if any
-	 * ray starting from that {@link Point} and pointing to infinity is crossed
-	 * by {@link Path} {@link Segment}s a different number of times in the
-	 * counter-clockwise direction than in the clockwise direction.
-	 */
-	public static final int WIND_NON_ZERO = 1;
-
-	private static final long serialVersionUID = 1L;
 
 	private int windingRule = WIND_NON_ZERO;
 
@@ -452,6 +452,64 @@ public class Path extends AbstractGeometry implements IGeometry {
 	@Override
 	public Path getCopy() {
 		return new Path(getWindingRule(), getSegments());
+	}
+
+	/**
+	 * Returns a {@link List} of {@link ICurve}s, representing the outline of
+	 * <code>this</code> {@link Path}. For every {@link Segment#LINE_TO},
+	 * {@link Segment#QUAD_TO}, {@link Segment#CUBIC_TO}, and
+	 * {@link Segment#CLOSE}, one {@link BezierCurve} is created that resembles
+	 * that segment.
+	 *
+	 * @return A {@link List} of {@link ICurve}s representing the outline of the
+	 *         given {@link Path}.
+	 */
+	public List<ICurve> getOutlines() {
+		List<ICurve> curves = new ArrayList<ICurve>();
+		Segment[] segments = getSegments();
+		// save the segment start point as it is not contained within individual
+		// path segments
+		Point segmentStart = null;
+		// save the last move_to position which is later needed for a close
+		// segment
+		Point moveTo = null;
+		for (Segment s : segments) {
+			if (s.getType() == Segment.MOVE_TO) {
+				// save MOVE_TO position
+				moveTo = s.getPoints()[0];
+				// set segment start position to the move_to position
+				segmentStart = moveTo;
+			} else {
+				// for all other segments a curve is created
+				if (segmentStart == null) {
+					throw new IllegalStateException(
+							"This Path does not start with a MOVE_TO, therefore, no start position could be determined.");
+				} else {
+					if (s.getType() == Segment.LINE_TO) {
+						curves.add(new Line(segmentStart, s.getPoints()[0]));
+						segmentStart = s.getPoints()[0];
+					} else if (s.getType() == Segment.QUAD_TO) {
+						curves.add(new QuadraticCurve(segmentStart,
+								s.getPoints()[0], s.getPoints()[1]));
+						segmentStart = s.getPoints()[1];
+					} else if (s.getType() == Segment.CUBIC_TO) {
+						curves.add(
+								new org.eclipse.gef4.geometry.planar.CubicCurve(
+										segmentStart, s.getPoints()[0],
+										s.getPoints()[1], s.getPoints()[2]));
+						segmentStart = s.getPoints()[2];
+					} else if (s.getType() == Segment.CLOSE) {
+						curves.add(new Line(segmentStart, moveTo));
+						segmentStart = moveTo;
+					} else {
+						throw new IllegalStateException(
+								"This Path contains an unsupported Segment: <"
+										+ s + ">.");
+					}
+				}
+			}
+		}
+		return curves;
 	}
 
 	/**
