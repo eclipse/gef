@@ -41,8 +41,8 @@ import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.shape.Rectangle;
 
 /**
- * The utility class {@link FX2Geometry} provides methods for the conversion
- * of JavaFX {@link Node} implementations to {@link IGeometry} implementations.
+ * The utility class {@link FX2Geometry} provides methods for the conversion of
+ * JavaFX {@link Node} implementations to {@link IGeometry} implementations.
  *
  * @author mwienand
  *
@@ -57,7 +57,7 @@ public class FX2Geometry {
 	 *            The JavaFX {@link Arc} to convert.
 	 * @return The corresponding {@link org.eclipse.gef4.geometry.planar.Arc}.
 	 */
-	protected static org.eclipse.gef4.geometry.planar.Arc toArc(Arc arc) {
+	public static org.eclipse.gef4.geometry.planar.Arc toArc(Arc arc) {
 		return new org.eclipse.gef4.geometry.planar.Arc(
 				arc.getCenterX() - arc.getRadiusX(),
 				arc.getCenterY() - arc.getRadiusY(),
@@ -76,7 +76,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.CubicCurve}.
 	 */
-	protected static org.eclipse.gef4.geometry.planar.CubicCurve toCubicCurve(
+	public static org.eclipse.gef4.geometry.planar.CubicCurve toCubicCurve(
 			CubicCurve cubic) {
 		return new org.eclipse.gef4.geometry.planar.CubicCurve(
 				cubic.getStartX(), cubic.getStartY(), cubic.getControlX1(),
@@ -91,7 +91,7 @@ public class FX2Geometry {
 	 *            The {@link Connection} to convert.
 	 * @return The corresponding {@link ICurve}.
 	 */
-	protected static ICurve toCurve(Connection connection) {
+	public static ICurve toCurve(Connection connection) {
 		GeometryNode<ICurve> curveNode = connection.getCurveNode();
 		return (ICurve) NodeUtils.localToParent(curveNode,
 				curveNode.getGeometry());
@@ -106,7 +106,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.Ellipse}.
 	 */
-	protected static org.eclipse.gef4.geometry.planar.Ellipse toEllipse(
+	public static org.eclipse.gef4.geometry.planar.Ellipse toEllipse(
 			Circle circle) {
 		return new org.eclipse.gef4.geometry.planar.Ellipse(
 				circle.getCenterX() - circle.getRadius(),
@@ -124,7 +124,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.Ellipse}.
 	 */
-	protected static org.eclipse.gef4.geometry.planar.Ellipse toEllipse(
+	public static org.eclipse.gef4.geometry.planar.Ellipse toEllipse(
 			Ellipse ellipse) {
 		return new org.eclipse.gef4.geometry.planar.Ellipse(
 				ellipse.getCenterX() - ellipse.getRadiusX(),
@@ -200,7 +200,7 @@ public class FX2Geometry {
 	 *            The JavaFX {@link Line} to convert.
 	 * @return The corresponding {@link org.eclipse.gef4.geometry.planar.Line}.
 	 */
-	protected static org.eclipse.gef4.geometry.planar.Line toLine(Line line) {
+	public static org.eclipse.gef4.geometry.planar.Line toLine(Line line) {
 		return new org.eclipse.gef4.geometry.planar.Line(line.getStartX(),
 				line.getStartY(), line.getEndX(), line.getEndY());
 	}
@@ -263,7 +263,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.Polygon}.
 	 */
-	protected static IGeometry toPolygon(Polygon polygon) {
+	public static IGeometry toPolygon(Polygon polygon) {
 		double[] coords = new double[polygon.getPoints().size()];
 		for (int i = 0; i < coords.length; i++) {
 			coords[i] = polygon.getPoints().get(i).doubleValue();
@@ -280,7 +280,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.Polyline}.
 	 */
-	protected static IGeometry toPolyline(Polyline polyline) {
+	public static IGeometry toPolyline(Polyline polyline) {
 		double[] coords = new double[polyline.getPoints().size()];
 		for (int i = 0; i < coords.length; i++) {
 			coords[i] = polyline.getPoints().get(i).doubleValue();
@@ -297,7 +297,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.QuadraticCurve}.
 	 */
-	protected static IGeometry toQuadraticCurve(QuadCurve quad) {
+	public static IGeometry toQuadraticCurve(QuadCurve quad) {
 		return new org.eclipse.gef4.geometry.planar.QuadraticCurve(
 				quad.getStartX(), quad.getStartY(), quad.getControlX(),
 				quad.getControlY(), quad.getEndX(), quad.getEndY());
@@ -312,7 +312,7 @@ public class FX2Geometry {
 	 * @return The corresponding
 	 *         {@link org.eclipse.gef4.geometry.planar.RoundedRectangle}.
 	 */
-	protected static IGeometry toRoundedRectangle(Rectangle rect) {
+	public static IGeometry toRoundedRectangle(Rectangle rect) {
 		return new org.eclipse.gef4.geometry.planar.RoundedRectangle(
 				rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(),
 				rect.getArcWidth(), rect.getArcHeight());
