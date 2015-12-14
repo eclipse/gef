@@ -338,17 +338,8 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 	 *         selected point
 	 */
 	protected IAnchor getOverlayAnchor(int candidateIndex, Point mouseInScene) {
-		Point candidateLocation = null;
-
-		// TODO: provide getPoint(int index) in Connection
 		Connection connection = getConnection();
-		if (candidateIndex == 0) {
-			candidateLocation = connection.getStartPoint();
-		} else if (candidateIndex == connection.getWayAnchorsSize() + 1) {
-			candidateLocation = connection.getEndPoint();
-		} else {
-			candidateLocation = connection.getWayPoint(candidateIndex - 1);
-		}
+		Point candidateLocation = connection.getPoint(candidateIndex);
 
 		// overlay if distance is small enough and we do not change the
 		// anchorage

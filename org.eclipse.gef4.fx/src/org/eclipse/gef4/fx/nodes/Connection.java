@@ -412,8 +412,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 				@Override
 				public int compare(AnchorKey o1, AnchorKey o2) {
-					int o1Index = getWayIndex(o1);
-					int o2Index = getWayIndex(o2);
+					int o1Index = getWayAnchorIndex(o1);
+					int o2Index = getWayAnchorIndex(o2);
 					return o1Index - o2Index;
 				}
 			});
@@ -723,14 +723,33 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Returns the anchor at the given index. The start anchor will be provided
+	 * for <code>index == 0</code>, the end anchor for the last defined index.
+	 * Way anchors will be returned for all indices in between.
+	 *
+	 * @param index
+	 *            The index of the anchor to retrieve.
+	 * @return The anchor at the given index.
+	 */
+	public IAnchor getAnchor(int index) {
+		if (index == 0) {
+			return getStartAnchor();
+		} else if (index == wayAnchorKeys.size() + 1) {
+			return getEndAnchor();
+		} else {
+			return getWayAnchor(index - 1);
+		}
+	}
+
+	/**
 	 * Returns the anchor index for the given {@link AnchorKey} which is:
 	 * <ul>
 	 * <li><code>0</code> for the {@link #getStartAnchorKey() start anchor key}
 	 * </li>
 	 * <li>{@link #getAnchors()}<code>.size() - 1</code> for the
 	 * {@link #getEndAnchorKey() end anchor key}</li>
-	 * <li>{@link #getWayIndex(AnchorKey)}<code> + 1</code> for way point anchor
-	 * keys</li>
+	 * <li>{@link #getWayAnchorIndex(AnchorKey)}<code> + 1</code> for way point
+	 * anchor keys</li>
 	 * </ul>
 	 *
 	 * @param anchorKey
@@ -744,7 +763,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		} else if (anchorKey.equals(getEndAnchorKey())) {
 			return getAnchors().size() - 1;
 		} else {
-			return getWayIndex(anchorKey) + 1;
+			return getWayAnchorIndex(anchorKey) + 1;
 		}
 	}
 
@@ -780,7 +799,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *         to this {@link Connection}.
 	 */
 	public List<IAnchor> getAnchors() {
-		int wayPointCount = getWayAnchorsSize();
+		int wayPointCount = wayAnchorKeys.size();
 		List<IAnchor> anchors = new ArrayList<>(wayPointCount + 2);
 
 		// start anchor
@@ -868,6 +887,27 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Returns the point at the given index. The start point will be provided
+	 * for <code>index == 0</code>, the end point for the last defined index.
+	 * Way points will be returned for all indices in between.
+	 *
+	 * @param index
+	 *            The index of the point to retrieve.
+	 * @return The point at the given index.
+	 *
+	 * @see #getPoints()
+	 */
+	public Point getPoint(int index) {
+		if (index == 0) {
+			return getStartPoint();
+		} else if (index == wayAnchorKeys.size() + 1) {
+			return getEndPoint();
+		} else {
+			return getWayPoint(index - 1);
+		}
+	}
+
+	/**
 	 * Returns the {@link Point}s constituting this {@link Connection} within
 	 * its coordinate system in the order: start point, way points, end point.
 	 * They are determined by querying the corresponding anchor positions. In
@@ -876,7 +916,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 * @return The {@link Point}s constituting this {@link Connection}.
 	 */
 	public Point[] getPoints() {
-		int wayPointCount = getWayAnchorsSize();
+		int wayPointCount = wayAnchorKeys.size();
 		Point[] points = new Point[wayPointCount + 2];
 
 		points[0] = getStartPoint();
@@ -999,6 +1039,29 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Returns the way anchor index for the given {@link AnchorKey}, i.e.
+	 * <code>0</code> for the first way {@link IAnchor anchor}, <code>1</code>
+	 * for the seconds, etc.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} whose way anchor index is returned.
+	 * @return The way anchor index for the given {@link AnchorKey}.
+	 * @throws IllegalArgumentException
+	 *             when there currently is no way {@link IAnchor anchor}
+	 *             assigned to this {@link Connection} for the given
+	 *             {@link AnchorKey}.
+	 */
+	protected int getWayAnchorIndex(AnchorKey key) {
+		if (!key.getId().startsWith(WAY_POINT_ROLE_PREFIX)) {
+			throw new IllegalArgumentException(
+					"Given AnchorKey " + key + " is no waypoint anchor key.");
+		}
+		int index = Integer.parseInt(
+				key.getId().substring(WAY_POINT_ROLE_PREFIX.length()));
+		return index;
+	}
+
+	/**
 	 * Returns the {@link AnchorKey} for the given way anchor index.
 	 *
 	 * @param index
@@ -1018,7 +1081,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *         currently assigned to this {@link Connection}.
 	 */
 	public List<IAnchor> getWayAnchors() {
-		int wayPointsCount = getWayAnchorsSize();
+		int wayPointsCount = wayAnchorKeys.size();
 		List<IAnchor> wayPointAnchors = new ArrayList<>(wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
 			IAnchor wayAnchor = getWayAnchor(i);
@@ -1029,40 +1092,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 			wayPointAnchors.add(wayAnchor);
 		}
 		return wayPointAnchors;
-	}
-
-	/**
-	 * Returns the number of way {@link IAnchor}s currently assigned to this
-	 * {@link Connection}.
-	 *
-	 * @return The number of way {@link IAnchor}s currently assigned to this
-	 *         {@link Connection}.
-	 */
-	public int getWayAnchorsSize() {
-		return wayAnchorKeys.size();
-	}
-
-	/**
-	 * Returns the way anchor index for the given {@link AnchorKey}, i.e.
-	 * <code>0</code> for the first way {@link IAnchor anchor}, <code>1</code>
-	 * for the seconds, etc.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} whose way anchor index is returned.
-	 * @return The way anchor index for the given {@link AnchorKey}.
-	 * @throws IllegalArgumentException
-	 *             when there currently is no way {@link IAnchor anchor}
-	 *             assigned to this {@link Connection} for the given
-	 *             {@link AnchorKey}.
-	 */
-	protected int getWayIndex(AnchorKey key) {
-		if (!key.getId().startsWith(WAY_POINT_ROLE_PREFIX)) {
-			throw new IllegalArgumentException(
-					"Given AnchorKey " + key + " is no waypoint anchor key.");
-		}
-		int index = Integer.parseInt(
-				key.getId().substring(WAY_POINT_ROLE_PREFIX.length()));
-		return index;
 	}
 
 	/**
@@ -1263,8 +1292,15 @@ public class Connection extends Group /* or rather Parent?? */ {
 	/**
 	 * Removes all way points of this {@link Connection}.
 	 */
+	public void removeAllWayAnchors() {
+		removeAllWayPoints();
+	}
+
+	/**
+	 * Removes all way points of this {@link Connection}.
+	 */
 	public void removeAllWayPoints() {
-		for (int i = getWayAnchorsSize() - 1; i >= 0; i--) {
+		for (int i = wayAnchorKeys.size() - 1; i >= 0; i--) {
 			removeWayPoint(i);
 		}
 	}
@@ -1293,7 +1329,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 				&& !anchorKey.equals(getEndAnchorKey())
 				&& wayAnchorKeys.contains(anchorKey)) {
 			// remove all way anchors at a larger index
-			wayIndex = getWayIndex(anchorKey);
+			wayIndex = getWayAnchorIndex(anchorKey);
 			int wayPointCount = wayAnchorKeys.size();
 			for (int i = wayPointCount - 1; i > wayIndex; i--) {
 				// (temporarily) remove all anchors that are to be moved down
@@ -1324,6 +1360,17 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Removes the way anchor specified by the given index from this
+	 * {@link Connection}.
+	 *
+	 * @param index
+	 *            The index specifying which way anchor to remove.
+	 */
+	public void removeWayAnchor(int index) {
+		removeWayPoint(index);
+	}
+
+	/**
 	 * Removes the way point specified by the given way anchor index from this
 	 * {@link Connection}.
 	 *
@@ -1332,9 +1379,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	public void removeWayPoint(int index) {
 		// check index out of range
-		if (index < 0 || index >= getWayAnchorsSize()) {
+		if (index < 0 || index >= wayAnchorKeys.size()) {
 			throw new IllegalArgumentException("Index out of range (index: "
-					+ index + ", size: " + getWayAnchorsSize() + ").");
+					+ index + ", size: " + wayAnchorKeys.size() + ").");
 		}
 
 		AnchorKey anchorKey = getWayAnchorKey(index);
@@ -1574,7 +1621,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *            The new way {@link IAnchor}s for this {@link Connection}.
 	 */
 	public void setWayAnchors(List<IAnchor> anchors) {
-		int wayPointsSize = getWayAnchorsSize();
+		int wayPointsSize = wayAnchorKeys.size();
 		// XXX: We have to do the removal of way anchors before
 		// changing/adding anchors.
 		for (int i = wayPointsSize - 1; i >= anchors.size(); i--) {
