@@ -20,11 +20,15 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.StrokeType;
 
 /**
  * The {@link NodeUtils} class contains utility methods for working with JavaFX:
@@ -145,6 +149,27 @@ public class NodeUtils {
 		} catch (NoninvertibleTransformException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * Returns the layout-bounds of the given {@link Node}, which might be
+	 * adjusted to ensure that it exactly fits the visualization.
+	 *
+	 * @param node
+	 *            The {@link Node} to retrieve the (corrected) layout-bounds of.
+	 * @return A {@link Rectangle} representing the (corrected) layout-bounds.
+	 */
+	public static Rectangle getShapeBounds(Node node) {
+		Bounds layoutBounds = node.getLayoutBounds();
+		// Polygons don't paint exactly to their layout bounds but remain 0.5
+		// pixels short in case they have a stroke and stroke type is CENTERED
+		// or OUTSIDE. We compensate this there.
+		double offset = node instanceof Polygon
+				&& ((Polygon) node).getStroke() != null
+				&& ((Polygon) node).getStrokeType() != StrokeType.INSIDE ? 0.5
+						: 0;
+		return JavaFX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
+				offset, offset);
 	}
 
 	/**

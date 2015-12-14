@@ -28,7 +28,7 @@ import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
-import org.eclipse.gef4.fx.utils.Geometry2FX;
+import org.eclipse.gef4.fx.utils.Geometry2Shape;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -53,10 +53,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -396,13 +394,13 @@ public class Connection extends Group /* or rather Parent?? */ {
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 	// TODO: use properties (JavaFX Property) for decorations
 	private Shape startDecoration = null;
+
 	private Shape endDecoration = null;
 
 	private IConnectionRouter router = new PolylineConnectionRouter();
 
 	// used to pass as argument to IAnchor#attach() and #detach()
 	private AdapterStore as = new AdapterStore();
-
 	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
 	// waypoint anchors are kept in an ordered set (sorted by their indices)
@@ -418,6 +416,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 				}
 			});
 
+	private int nextWayAnchorId = 0;
 	// refresh geometry on position changes
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
@@ -597,8 +596,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		}
 
 		// compensate stroke (ensure decoration 'ends' at curve end).
-		decoration.getTransforms()
-				.add(new Translate(-getShapeBounds(decoration).getX(), 0));
+		decoration.getTransforms().add(
+				new Translate(-NodeUtils.getShapeBounds(decoration).getX(), 0));
 	}
 
 	/**
@@ -635,6 +634,37 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 		arrangeDecoration(endDecoration, endPoint, endDirection);
 	}
+
+	// /**
+	// * Adjusts the curveClip so that the curve node does not paint through the
+	// * given decoration.
+	// *
+	// * @param curveClip
+	// * A shape that represents the clip of the curve node.
+	// * @param decoration
+	// * The decoration to clip the curve node from.
+	// * @return A shape representing the resulting clip.
+	// */
+	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
+	// // first intersect curve shape with decoration layout bounds,
+	// // then subtract the curve shape from the result, and the decoration
+	// // from that
+	// Path decorationVisualBoundsPath = new Path(
+	// Geometry2JavaFX
+	// .toPathElements(
+	// NodeUtils
+	// .parentToLocal(curveNode,
+	// NodeUtils.localToParent(
+	// decoration,
+	// getShapeBounds(
+	// decoration)))
+	// .toPath()));
+	// decorationVisualBoundsPath.setFill(Color.RED);
+	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
+	// curveNode.getShape());
+	// decorationClip = Shape.subtract(decorationClip, decoration);
+	// return Shape.subtract(curveClip, decorationClip);
+	// }
 
 	/**
 	 * Updates the start decoration of this {@link Connection}.
@@ -686,8 +716,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// first intersect curve shape with decoration layout bounds,
 		// then subtract the curve shape from the result, and the decoration
 		// from that
-		Path decorationShapeBounds = new Path(Geometry2FX.toPathElements(
-				NodeUtils.localToScene(decoration, getShapeBounds(decoration))
+		Path decorationShapeBounds = new Path(
+				Geometry2Shape.toPathElements(NodeUtils
+						.localToScene(decoration,
+								NodeUtils.getShapeBounds(decoration))
 						.toPath()));
 		decorationShapeBounds.setFill(Color.RED);
 		Shape clip = Shape.intersect(decorationShapeBounds,
@@ -946,26 +978,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	public IConnectionRouter getRouter() {
 		return router;
-	}
-
-	/**
-	 * Returns the layout bounds of the given shape, which might be adjusted to
-	 * compensate some offset.
-	 *
-	 * @param shape
-	 *            The shape to retrieve the bounds of
-	 * @return A rectangle representing the bounds
-	 */
-	protected org.eclipse.gef4.geometry.planar.Rectangle getShapeBounds(
-			Shape shape) {
-		Bounds layoutBounds = shape.getLayoutBounds();
-		// Polygons don't paint exactly to their layout bounds but remain 0.5
-		// pixels short in case they have a stroke and stroke type is CENTERED
-		// or OUTSIDE. We compensate this there.
-		double offset = shape instanceof Polygon && shape.getStroke() != null
-				&& shape.getStrokeType() != StrokeType.INSIDE ? 0.5 : 0;
-		return JavaFX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
-				offset, offset);
 	}
 
 	/**
