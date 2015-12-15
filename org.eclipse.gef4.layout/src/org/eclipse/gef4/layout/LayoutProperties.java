@@ -18,9 +18,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 
 /**
  * {@link LayoutProperties} contains all properties which can be accessed on
- * {@link ILayoutContext}, {@link IConnectionLayout}, {@link INodeLayout}, and
- * {@link ISubgraphLayout}, their default values, as well as static accessor
- * methods for those properties.
+ * {@link ILayoutContext}, {@link IConnectionLayout}, {@link INodeLayout}, their
+ * default values, as well as static accessor methods for those properties.
  */
 public class LayoutProperties {
 
@@ -290,7 +289,7 @@ public class LayoutProperties {
 	 * @return The value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
 	 *         given {@link ILayoutContext}.
 	 */
-	public static Boolean isDynamicLayoutEnables(ILayoutContext graph) {
+	public static Boolean isDynamicLayoutEnabled(ILayoutContext graph) {
 		Object dynamicLayoutEnabled = graph
 				.getProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY);
 		if (dynamicLayoutEnabled instanceof Boolean) {
@@ -318,15 +317,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #LOCATION_PROPERTY} of the given
-	 * {@link IEntityLayout}.
+	 * {@link INodeLayout}.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #LOCATION_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #LOCATION_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #LOCATION_PROPERTY} of the given
-	 *         {@link IEntityLayout}.
+	 *         {@link INodeLayout}.
 	 */
-	public static Point getLocation(IEntityLayout entity) {
+	public static Point getLocation(INodeLayout entity) {
 		Object location = entity.getProperty(LOCATION_PROPERTY);
 		if (location instanceof Point) {
 			return ((Point) location).getCopy();
@@ -336,15 +335,14 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #SIZE_PROPERTY} of the given
-	 * {@link IEntityLayout}.
+	 * {@link INodeLayout}.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #SIZE_PROPERTY} is
-	 *            read.
+	 *            The {@link INodeLayout} whose {@link #SIZE_PROPERTY} is read.
 	 * @return The value of the {@link #SIZE_PROPERTY} of the given
-	 *         {@link IEntityLayout}.
+	 *         {@link INodeLayout}.
 	 */
-	public static Dimension getSize(IEntityLayout entity) {
+	public static Dimension getSize(INodeLayout entity) {
 		Object size = entity.getProperty(SIZE_PROPERTY);
 		if (size instanceof Dimension) {
 			return ((Dimension) size).getCopy();
@@ -354,15 +352,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #ASPECT_RATIO_PROPERTY} of the given
-	 * {@link IEntityLayout}.
+	 * {@link INodeLayout}.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #ASPECT_RATIO_PROPERTY}
+	 *            The {@link INodeLayout} whose {@link #ASPECT_RATIO_PROPERTY}
 	 *            is read.
 	 * @return The value of the {@link #ASPECT_RATIO_PROPERTY} of the given
-	 *         {@link IEntityLayout}.
+	 *         {@link INodeLayout}.
 	 */
-	public static Double getPreferredAspectRatio(IEntityLayout entity) {
+	public static Double getPreferredAspectRatio(INodeLayout entity) {
 		Object ar = entity.getProperty(ASPECT_RATIO_PROPERTY);
 		if (ar instanceof Double) {
 			return (Double) ar;
@@ -372,15 +370,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #RESIZABLE_PROPERTY} of the given
-	 * {@link IEntityLayout}.
+	 * {@link INodeLayout}.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #RESIZABLE_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #RESIZABLE_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #RESIZABLE_PROPERTY} of the given
-	 *         {@link IEntityLayout}.
+	 *         {@link INodeLayout}.
 	 */
-	public static Boolean isResizable(IEntityLayout entity) {
+	public static Boolean isResizable(INodeLayout entity) {
 		Object resizable = entity.getProperty(RESIZABLE_PROPERTY);
 		if (resizable instanceof Boolean) {
 			return (Boolean) resizable;
@@ -390,15 +388,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #MOVABLE_PROPERTY} of the given
-	 * {@link IEntityLayout}.
+	 * {@link INodeLayout}.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #MOVABLE_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #MOVABLE_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #MOVABLE_PROPERTY} of the given
-	 *         {@link IEntityLayout}.
+	 *         {@link INodeLayout}.
 	 */
-	public static Boolean isMovable(IEntityLayout entity) {
+	public static Boolean isMovable(INodeLayout entity) {
 		Object movable = entity.getProperty(MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
 			return (Boolean) movable;
@@ -408,19 +406,19 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #LOCATION_PROPERTY} of the given
-	 * {@link IEntityLayout} to the given value.
+	 * {@link INodeLayout} to the given value.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #LOCATION_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #LOCATION_PROPERTY} is
 	 *            changed.
 	 * @param x
 	 *            The new x coordinate for the {@link #LOCATION_PROPERTY} of the
-	 *            given {@link IEntityLayout}.
+	 *            given {@link INodeLayout}.
 	 * @param y
 	 *            The new y coordinate for the {@link #LOCATION_PROPERTY} of the
-	 *            given {@link IEntityLayout}.
+	 *            given {@link INodeLayout}.
 	 */
-	public static void setLocation(IEntityLayout entity, double x, double y) {
+	public static void setLocation(INodeLayout entity, double x, double y) {
 		if (Double.isNaN(x)) {
 			x = 0;
 		}
@@ -432,19 +430,19 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #SIZE_PROPERTY} of the given
-	 * {@link IEntityLayout} to the given value.
+	 * {@link INodeLayout} to the given value.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #SIZE_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #SIZE_PROPERTY} is
 	 *            changed.
 	 * @param w
 	 *            The new width for the {@link #SIZE_PROPERTY} of the given
-	 *            {@link IEntityLayout}.
+	 *            {@link INodeLayout}.
 	 * @param h
 	 *            The new height for the {@link #SIZE_PROPERTY} of the given
-	 *            {@link IEntityLayout}.
+	 *            {@link INodeLayout}.
 	 */
-	public static void setSize(IEntityLayout entity, double w, double h) {
+	public static void setSize(INodeLayout entity, double w, double h) {
 		if (Double.isNaN(w)) {
 			w = 0;
 		}
@@ -456,16 +454,16 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #RESIZABLE_PROPERTY} of the given
-	 * {@link IEntityLayout} to the given value.
+	 * {@link INodeLayout} to the given value.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #RESIZABLE_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #RESIZABLE_PROPERTY} is
 	 *            changed.
 	 * @param resizable
 	 *            The new value for the {@link #RESIZABLE_PROPERTY} of the given
-	 *            {@link IEntityLayout}.
+	 *            {@link INodeLayout}.
 	 */
-	public static void setResizable(IEntityLayout entity, boolean resizable) {
+	public static void setResizable(INodeLayout entity, boolean resizable) {
 		entity.setProperty(RESIZABLE_PROPERTY, resizable);
 	}
 
@@ -521,22 +519,6 @@ public class LayoutProperties {
 	}
 
 	/**
-	 * Returns <code>true</code> if the given {@link INodeLayout} is pruned to
-	 * an {@link ISubgraphLayout}, i.e. its {@link INodeLayout#getSubgraph()}
-	 * method does not return <code>null</code>. Otherwise returns
-	 * <code>false</code>.
-	 * 
-	 * @param node
-	 *            The {@link INodeLayout} whose
-	 *            {@link INodeLayout#getSubgraph()} is evaluated.
-	 * @return <code>true</code> if the given {@link INodeLayout} is pruned to
-	 *         an {@link ISubgraphLayout}, otherwise <code>false</code>.
-	 */
-	public static Boolean isPruned(INodeLayout node) {
-		return node.getSubgraph() != null;
-	}
-
-	/**
 	 * Sets the value of the {@link #PRUNABLE_PROPERTY} of the given
 	 * {@link INodeLayout} to the given value.
 	 * 
@@ -589,15 +571,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
-	 * {@link IEntityLayout}.
+	 * {@link INodeLayout}.
 	 * 
 	 * @param entity
-	 *            The {@link IEntityLayout} whose {@link #VISIBLE_PROPERTY} is
+	 *            The {@link INodeLayout} whose {@link #VISIBLE_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
-	 *         {@link IEntityLayout}.
+	 *         {@link INodeLayout}.
 	 */
-	public static Boolean isVisible(IEntityLayout entity) {
+	public static Boolean isVisible(INodeLayout entity) {
 		Object visible = entity.getProperty(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
@@ -666,76 +648,6 @@ public class LayoutProperties {
 	 */
 	public static void setWeight(IConnectionLayout edge, double weight) {
 		edge.setProperty(WEIGHT_PROPERTY, weight);
-	}
-
-	/**
-	 * Sets the value of the {@link #DIRECTION_DEPENDANT_PROPERTY} of the given
-	 * {@link ISubgraphLayout} to the given value.
-	 * 
-	 * @param subgraph
-	 *            The {@link ISubgraphLayout} whose
-	 *            {@link #DIRECTION_DEPENDANT_PROPERTY} is changed.
-	 * @param isDirectionDependant
-	 *            The new value for the {@link #DIRECTION_DEPENDANT_PROPERTY} of
-	 *            the given {@link ISubgraphLayout}.
-	 */
-	public static void setDirectionDependant(ISubgraphLayout subgraph,
-			boolean isDirectionDependant) {
-		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY,
-				isDirectionDependant);
-	}
-
-	/**
-	 * Sets the value of the {@link #DIRECTION_PROPERTY} of the given
-	 * {@link ISubgraphLayout} to the given value.
-	 * 
-	 * @param subgraph
-	 *            The {@link ISubgraphLayout} whose {@link #DIRECTION_PROPERTY}
-	 *            is changed.
-	 * @param direction
-	 *            The new value for the {@link #DIRECTION_PROPERTY} of the given
-	 *            {@link ISubgraphLayout}.
-	 */
-	// TODO: ensure valid direction by using an enum
-	public static void setDirection(ISubgraphLayout subgraph, int direction) {
-		subgraph.setProperty(DIRECTION_PROPERTY, direction);
-	}
-
-	/**
-	 * Returns the value of the {@link #DIRECTION_DEPENDANT_PROPERTY} of the
-	 * given {@link ISubgraphLayout}.
-	 * 
-	 * @param subgraph
-	 *            The {@link ISubgraphLayout} whose
-	 *            {@link #DIRECTION_DEPENDANT_PROPERTY} is read.
-	 * @return The value of the {@link #DIRECTION_DEPENDANT_PROPERTY} of the
-	 *         given {@link ISubgraphLayout}.
-	 */
-	public static Boolean isDirectionDependant(ISubgraphLayout subgraph) {
-		Object directionDependant = subgraph
-				.getProperty(DIRECTION_DEPENDANT_PROPERTY);
-		if (directionDependant instanceof Boolean) {
-			return (Boolean) directionDependant;
-		}
-		return DEFAULT_DIRECTION_DEPENDANT;
-	}
-
-	/**
-	 * Returns the value of the {@link #DIRECTION_PROPERTY} of the given
-	 * {@link ISubgraphLayout}.
-	 * 
-	 * @param subgraph
-	 *            The {@link ISubgraphLayout} whose {@link #DIRECTION_PROPERTY}
-	 *            is read.
-	 * @return The value of the {@link #DIRECTION_PROPERTY} of the given
-	 *         {@link ISubgraphLayout}.
-	 */
-	public static Integer getDirection(ISubgraphLayout subgraph) {
-		Object direction = subgraph.getProperty(DIRECTION_PROPERTY);
-		if (direction instanceof Integer) {
-			return (Integer) direction;
-		}
-		return DEFAULT_DIRECTION;
 	}
 
 }

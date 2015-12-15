@@ -14,15 +14,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.layout.examples;
 
-import javafx.application.Application;
-
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.IEntityLayout;
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import javafx.application.Application;
 
 /**
  * This snippet shows how to create a custom layout. All the work is done in the
@@ -63,19 +63,18 @@ public class CustomLayoutExample extends AbstractZestExample {
 
 			@Override
 			public void applyLayout(boolean clean) {
-				IEntityLayout[] entitiesToLayout = context.getEntities();
+				INodeLayout[] entitiesToLayout = context.getNodes();
 				int totalSteps = entitiesToLayout.length;
 				double distance = LayoutProperties.getBounds(context).getWidth()
 						/ totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
-					IEntityLayout layoutEntity = entitiesToLayout[currentStep];
-					LayoutProperties.setLocation(layoutEntity,
-							xLocation, /*
-										 * LayoutProperties.getLocation(
-										 * layoutEntity).y
-										 */0);
+					INodeLayout layoutEntity = entitiesToLayout[currentStep];
+					LayoutProperties.setLocation(layoutEntity, xLocation,
+							/*
+							 * LayoutProperties.getLocation( layoutEntity).y
+							 */0);
 					xLocation += distance;
 				}
 			}

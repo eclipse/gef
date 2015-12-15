@@ -15,7 +15,7 @@ package org.eclipse.gef4.layout.algorithms;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEntityLayout;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -47,14 +47,14 @@ public class AlgorithmHelper {
 	 * change, i.e. <code>scale_factor = dst_bounds / start_bounds</code>.
 	 * 
 	 * @param entities
-	 *            The {@link IEntityLayout}s to fit.
+	 *            The {@link INodeLayout}s to fit.
 	 * @param destinationBounds
 	 *            The {@link Rectangle} representing the layout bounds.
 	 * @param resize
 	 *            <code>true</code> to indicate that the entities can be
 	 *            resized, otherwise <code>false</code>.
 	 */
-	public static void fitWithinBounds(IEntityLayout[] entities,
+	public static void fitWithinBounds(INodeLayout[] entities,
 			Rectangle destinationBounds, boolean resize) {
 		Rectangle startingBounds = getLayoutBounds(entities, false);
 		double sizeScale = Math.min(
@@ -65,7 +65,7 @@ public class AlgorithmHelper {
 			return;
 		}
 		for (int i = 0; i < entities.length; i++) {
-			IEntityLayout entity = entities[i];
+			INodeLayout entity = entities[i];
 			Dimension size = LayoutProperties.getSize(entity);
 			if (LayoutProperties.isMovable(entity)) {
 				Point location = LayoutProperties.getLocation(entity);
@@ -94,7 +94,7 @@ public class AlgorithmHelper {
 		}
 	}
 
-	private static void fitSingleEntity(IEntityLayout entity,
+	private static void fitSingleEntity(INodeLayout entity,
 			Rectangle destinationBounds, boolean resize) {
 		if (LayoutProperties.isMovable(entity)) {
 			LayoutProperties.setLocation(entity,
@@ -124,9 +124,9 @@ public class AlgorithmHelper {
 	 * height, if bigger). It does nothing if there's less than two nodes.
 	 * 
 	 * @param entities
-	 *            The {@link IEntityLayout}s of which the sizes are maximized.
+	 *            The {@link INodeLayout}s of which the sizes are maximized.
 	 */
-	public static void maximizeSizes(IEntityLayout[] entities) {
+	public static void maximizeSizes(INodeLayout[] entities) {
 		if (entities.length > 1) {
 			Dimension minDistance = getMinimumDistance(entities);
 			double nodeSize = Math.max(minDistance.width, minDistance.height)
@@ -134,7 +134,7 @@ public class AlgorithmHelper {
 			double width = nodeSize;
 			double height = nodeSize;
 			for (int i = 0; i < entities.length; i++) {
-				IEntityLayout entity = entities[i];
+				INodeLayout entity = entities[i];
 				if (LayoutProperties.isResizable(entity)) {
 					double preferredRatio = LayoutProperties
 							.getPreferredAspectRatio(entity);
@@ -179,22 +179,22 @@ public class AlgorithmHelper {
 	 * only be guaranteed to include the center of each node.
 	 * 
 	 * @param entities
-	 *            The {@link IEntityLayout}s for which the layout bounds are
+	 *            The {@link INodeLayout}s for which the layout bounds are
 	 *            computed.
 	 * @param includeNodeSize
 	 *            <code>true</code> to indicate that the entities' sizes should
 	 *            be taken into consideration, otherwise <code>false</code>.
 	 * @return A {@link Rectangle} representing the layout bounds of the given
-	 *         {@link IEntityLayout}s.
+	 *         {@link INodeLayout}s.
 	 */
-	public static Rectangle getLayoutBounds(IEntityLayout[] entities,
+	public static Rectangle getLayoutBounds(INodeLayout[] entities,
 			boolean includeNodeSize) {
 		double rightSide = Double.NEGATIVE_INFINITY;
 		double bottomSide = Double.NEGATIVE_INFINITY;
 		double leftSide = Double.POSITIVE_INFINITY;
 		double topSide = Double.POSITIVE_INFINITY;
 		for (int i = 0; i < entities.length; i++) {
-			IEntityLayout entity = entities[i];
+			INodeLayout entity = entities[i];
 			Point location = LayoutProperties.getLocation(entity);
 			Dimension size = LayoutProperties.getSize(entity);
 			if (includeNodeSize) {
@@ -236,12 +236,12 @@ public class AlgorithmHelper {
 	 * </pre>
 	 * 
 	 * @param entities
-	 *            The {@link IEntityLayout}s for which the minimum distance is
+	 *            The {@link INodeLayout}s for which the minimum distance is
 	 *            computed.
 	 * @return A {@link Dimension} representing the minimum distance (in x- and
 	 *         y-direction).
 	 */
-	public static Dimension getMinimumDistance(IEntityLayout[] entities) {
+	public static Dimension getMinimumDistance(INodeLayout[] entities) {
 		Dimension horAndVertdistance = new Dimension(Double.MAX_VALUE,
 				Double.MAX_VALUE);
 		double minDistance = Double.MAX_VALUE;

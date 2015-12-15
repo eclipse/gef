@@ -19,14 +19,13 @@ import org.eclipse.gef4.layout.AbstractLayoutContext;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
  * The {@link LayoutListenerSupport} can handle the (un-)registration of layout
  * event listeners ({@link IContextListener}, {@link IGraphStructureListener},
- * {@link ILayoutListener}, and {@link IPruningListener}) and firing of events.
- * It is used by the {@link AbstractLayoutContext}.
+ * {@link ILayoutListener}, and firing of events. It is used by the
+ * {@link AbstractLayoutContext}.
  * 
  * @author mwienand
  *
@@ -37,7 +36,6 @@ public class LayoutListenerSupport {
 	private final List<IContextListener> contextListeners = new ArrayList<>();
 	private final List<IGraphStructureListener> graphStructureListeners = new ArrayList<>();
 	private final List<ILayoutListener> layoutListeners = new ArrayList<>();
-	private final List<IPruningListener> pruningListeners = new ArrayList<>();
 
 	/**
 	 * Constructs a new {@link LayoutListenerSupport} for the given
@@ -86,18 +84,6 @@ public class LayoutListenerSupport {
 	 */
 	public void addLayoutListener(ILayoutListener listener) {
 		layoutListeners.add(listener);
-	}
-
-	/**
-	 * Adds the given {@link IPruningListener} to the list of listeners which
-	 * are notified about pruning changes.
-	 * 
-	 * @param listener
-	 *            The {@link IPruningListener} which is added to the listeners
-	 *            list.
-	 */
-	public void addPruningListener(IPruningListener listener) {
-		pruningListeners.add(listener);
 	}
 
 	/**
@@ -288,55 +274,6 @@ public class LayoutListenerSupport {
 	}
 
 	/**
-	 * Notifies all {@link ILayoutListener}s via
-	 * {@link ILayoutListener#subgraphMoved(ILayoutContext, ISubgraphLayout)} .
-	 * <p>
-	 * A dynamic layout is applied afterwards unless all listeners return
-	 * <code>true</code>.
-	 * 
-	 * @param subgraph
-	 *            The {@link ISubgraphLayout} whose
-	 *            {@link LayoutProperties#LOCATION_PROPERTY} changed.
-	 */
-	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph) {
-		boolean intercepted = false;
-		for (ILayoutListener listener : layoutListeners) {
-			boolean intercept = listener.subgraphMoved(context, subgraph);
-			if (!intercepted) {
-				intercepted = intercept;
-			}
-		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
-	}
-
-	/**
-	 * Notifies all {@link ILayoutListener}s via
-	 * {@link ILayoutListener#subgraphResized(ILayoutContext, ISubgraphLayout)}
-	 * .
-	 * <p>
-	 * A dynamic layout is applied afterwards unless all listeners return
-	 * <code>true</code>.
-	 * 
-	 * @param subgraph
-	 *            The {@link ISubgraphLayout} whose
-	 *            {@link LayoutProperties#SIZE_PROPERTY} changed.
-	 */
-	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph) {
-		boolean intercepted = false;
-		for (ILayoutListener listener : layoutListeners) {
-			boolean intercept = listener.subgraphResized(context, subgraph);
-			if (!intercepted) {
-				intercepted = intercept;
-			}
-		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
-	}
-
-	/**
 	 * Removes the given {@link IContextListener} from the list of listeners
 	 * which are notified about context changes.
 	 * 
@@ -370,18 +307,6 @@ public class LayoutListenerSupport {
 	 */
 	public void removeLayoutListener(ILayoutListener listener) {
 		layoutListeners.remove(listener);
-	}
-
-	/**
-	 * Removes the given {@link IPruningListener} from the list of listeners
-	 * which are notified about pruning changes.
-	 * 
-	 * @param listener
-	 *            The {@link IPruningListener} which is removed from the
-	 *            listeners list.
-	 */
-	public void removePruningListener(IPruningListener listener) {
-		pruningListeners.remove(listener);
 	}
 
 }

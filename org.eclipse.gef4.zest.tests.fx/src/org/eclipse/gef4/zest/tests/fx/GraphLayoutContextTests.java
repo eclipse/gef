@@ -25,10 +25,10 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.IConnectionLayout;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.junit.Test;
 
 public class GraphLayoutContextTests {
@@ -97,8 +97,8 @@ public class GraphLayoutContextTests {
 		IConnectionLayout layout = glc.getConnections()[x];
 		INodeLayout source = layout.getSource();
 		INodeLayout target = layout.getTarget();
-		assertSame(edges.get(x).getSource(), source.getItems()[0]);
-		assertSame(edges.get(x).getTarget(), target.getItems()[0]);
+		assertSame(edges.get(x).getSource(), ((GraphNodeLayout) source).getNode());
+		assertSame(edges.get(x).getTarget(), ((GraphNodeLayout) target).getNode());
 
 		IConnectionLayout[] connections = glc.getConnections(source, target);
 		assertEquals(1, connections.length);
@@ -142,9 +142,7 @@ public class GraphLayoutContextTests {
 	 *            node index
 	 */
 	private void checkNodeIdentity(List<Node> nodes, GraphLayoutContext glc, int x) {
-		Object[] items = glc.getNodes()[x].getItems();
-		assertEquals(1, items.length);
-		assertSame(nodes.get(x), items[0]);
+		assertSame(nodes.get(x), ((GraphNodeLayout) glc.getNodes()[x]).getNode());
 	}
 
 	/**
@@ -180,7 +178,6 @@ public class GraphLayoutContextTests {
 	private void checkSizes(List<Node> nodes, List<Edge> edges, GraphLayoutContext glc) {
 		assertEquals(nodes.size(), glc.getNodes().length);
 		assertEquals(edges.size(), glc.getConnections().length);
-		assertEquals(nodes.size(), glc.getEntities().length);
 	}
 
 	@Test

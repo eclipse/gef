@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -43,24 +43,24 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		ArrayList<List<IEntityLayout>> rowsList = new ArrayList<>();
-		IEntityLayout[] entities = context.getEntities();
+		ArrayList<List<INodeLayout>> rowsList = new ArrayList<>();
+		INodeLayout[] entities = context.getNodes();
 
 		for (int i = 0; i < entities.length; i++) {
 			addToRowList(entities[i], rowsList);
 		}
 
-		Collections.sort(rowsList, new Comparator<List<IEntityLayout>>() {
-			public int compare(List<IEntityLayout> o1, List<IEntityLayout> o2) {
-				IEntityLayout entity0 = o1.get(0);
-				IEntityLayout entity1 = o2.get(0);
+		Collections.sort(rowsList, new Comparator<List<INodeLayout>>() {
+			public int compare(List<INodeLayout> o1, List<INodeLayout> o2) {
+				INodeLayout entity0 = o1.get(0);
+				INodeLayout entity1 = o2.get(0);
 				return (int) (LayoutProperties.getLocation(entity0).y
 						- LayoutProperties.getLocation(entity1).y);
 			}
 		});
 
-		Comparator<IEntityLayout> entityComparator = new Comparator<IEntityLayout>() {
-			public int compare(IEntityLayout o1, IEntityLayout o2) {
+		Comparator<INodeLayout> entityComparator = new Comparator<INodeLayout>() {
+			public int compare(INodeLayout o1, INodeLayout o2) {
 				return (int) (LayoutProperties.getLocation(o1).y
 						- LayoutProperties.getLocation(o2).y);
 			}
@@ -68,9 +68,9 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		int heightSoFar = 0;
 
-		for (Iterator<List<IEntityLayout>> iterator = rowsList
+		for (Iterator<List<INodeLayout>> iterator = rowsList
 				.iterator(); iterator.hasNext();) {
-			List<IEntityLayout> currentRow = iterator.next();
+			List<INodeLayout> currentRow = iterator.next();
 			Collections.sort(currentRow, entityComparator);
 
 			int i = 0;
@@ -78,9 +78,9 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 
 			heightSoFar += LayoutProperties.getSize(currentRow.get(0)).height
 					+ VSPACING;
-			for (Iterator<IEntityLayout> iterator2 = currentRow
+			for (Iterator<INodeLayout> iterator2 = currentRow
 					.iterator(); iterator2.hasNext();) {
-				IEntityLayout entity = (IEntityLayout) iterator2.next();
+				INodeLayout entity = (INodeLayout) iterator2.next();
 				Dimension size = LayoutProperties.getSize(entity);
 				LayoutProperties.setLocation(entity,
 						width + 10 * ++i + size.width / 2,
@@ -98,14 +98,14 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 		return context;
 	}
 
-	private void addToRowList(IEntityLayout entity,
-			ArrayList<List<IEntityLayout>> rowsList) {
+	private void addToRowList(INodeLayout entity,
+			ArrayList<List<INodeLayout>> rowsList) {
 		double layoutY = LayoutProperties.getLocation(entity).y;
 
-		for (Iterator<List<IEntityLayout>> iterator = rowsList
+		for (Iterator<List<INodeLayout>> iterator = rowsList
 				.iterator(); iterator.hasNext();) {
-			List<IEntityLayout> currentRow = iterator.next();
-			IEntityLayout currentRowEntity = currentRow.get(0);
+			List<INodeLayout> currentRow = iterator.next();
+			INodeLayout currentRowEntity = currentRow.get(0);
 			double currentRowY = LayoutProperties
 					.getLocation(currentRowEntity).y;
 			if (layoutY >= currentRowY - DELTA
@@ -114,7 +114,7 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 				return;
 			}
 		}
-		List<IEntityLayout> newRow = new ArrayList<>();
+		List<INodeLayout> newRow = new ArrayList<>();
 		newRow.add(entity);
 		rowsList.add(newRow);
 	}

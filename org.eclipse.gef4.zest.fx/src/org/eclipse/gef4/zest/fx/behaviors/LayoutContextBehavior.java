@@ -29,6 +29,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
@@ -134,7 +135,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 
 			@Override
 			public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
-				org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) nodeLayout.getItems()[0];
+				org.eclipse.gef4.graph.Node node = ((GraphNodeLayout) nodeLayout).getNode();
 				return ZestProperties.getLayoutIrrelevant(node, true) || hidingModel.isHidden(node);
 			}
 		});

@@ -18,9 +18,9 @@ import java.util.Iterator;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 
@@ -186,14 +186,14 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 		internalApplyLayout();
 
-		IEntityLayout[] entities = context.getEntities();
+		INodeLayout[] entities = context.getNodes();
 
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
 		scaleEntities(entities);
 	}
 
-	private void scaleEntities(IEntityLayout[] entities) {
+	private void scaleEntities(INodeLayout[] entities) {
 		if (nodeSpace == null) {
 			Rectangle bounds2 = new Rectangle(bounds);
 			int insets = 4;

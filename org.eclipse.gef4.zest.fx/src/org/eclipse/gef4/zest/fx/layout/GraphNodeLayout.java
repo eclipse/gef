@@ -22,9 +22,7 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.IConnectionLayout;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.ISubgraphLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -41,7 +39,6 @@ public class GraphNodeLayout implements INodeLayout {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 	private Node node;
-	private ISubgraphLayout subgraph;
 
 	/**
 	 * Constructs a new {@link GraphNodeLayout} for the given {@link Node} in
@@ -81,9 +78,13 @@ public class GraphNodeLayout implements INodeLayout {
 		return incoming.toArray(new IConnectionLayout[0]);
 	}
 
-	@Override
-	public Object[] getItems() {
-		return new Object[] { node };
+	/**
+	 * Returns the corresponding {@link Node}.
+	 *
+	 * @return The corresponding {@link Node}.
+	 */
+	public Node getNode() {
+		return node;
 	}
 
 	@Override
@@ -98,11 +99,6 @@ public class GraphNodeLayout implements INodeLayout {
 		}
 
 		return outgoing.toArray(new IConnectionLayout[0]);
-	}
-
-	@Override
-	public IEntityLayout[] getPredecessingEntities() {
-		return getPredecessingNodes();
 	}
 
 	@Override
@@ -122,16 +118,6 @@ public class GraphNodeLayout implements INodeLayout {
 	}
 
 	@Override
-	public ISubgraphLayout getSubgraph() {
-		return subgraph;
-	}
-
-	@Override
-	public IEntityLayout[] getSuccessingEntities() {
-		return getSuccessingNodes();
-	}
-
-	@Override
 	public INodeLayout[] getSuccessingNodes() {
 		IConnectionLayout[] outgoingConnections = getOutgoingConnections();
 		INodeLayout[] successors = new INodeLayout[outgoingConnections.length];
@@ -140,16 +126,6 @@ public class GraphNodeLayout implements INodeLayout {
 			successors[i++] = outgoingConnection.getTarget();
 		}
 		return successors;
-	}
-
-	@Override
-	public void prune(ISubgraphLayout subgraph) {
-		// TODO: fire events
-		if (this.subgraph != null) {
-			this.subgraph.removeNodes(new INodeLayout[] { this });
-		}
-		this.subgraph = subgraph;
-		subgraph.addNodes(new INodeLayout[] { this });
 	}
 
 	@Override

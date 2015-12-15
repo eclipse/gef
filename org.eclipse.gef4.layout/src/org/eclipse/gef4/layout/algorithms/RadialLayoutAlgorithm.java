@@ -14,9 +14,9 @@ package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -50,7 +50,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		if (!clean)
 			return;
 		treeLayout.internalApplyLayout();
-		IEntityLayout[] entities = context.getEntities();
+		INodeLayout[] entities = context.getNodes();
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		computeRadialPositions(entities, bounds);
 		if (resize)
@@ -63,7 +63,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		AlgorithmHelper.fitWithinBounds(entities, bounds, resize);
 	}
 
-	private void computeRadialPositions(IEntityLayout[] entities,
+	private void computeRadialPositions(INodeLayout[] entities,
 			Rectangle bounds) {
 		Rectangle layoutBounds = AlgorithmHelper.getLayoutBounds(entities,
 				false);

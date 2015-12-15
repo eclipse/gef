@@ -21,7 +21,6 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.layout.listeners.IContextListener;
 import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
 import org.eclipse.gef4.layout.listeners.ILayoutListener;
-import org.eclipse.gef4.layout.listeners.IPruningListener;
 import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
 
 /**
@@ -43,7 +42,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	private ILayoutAlgorithm staticLayoutAlgorithm = null;
 	private final List<INodeLayout> layoutNodes = new ArrayList<>();
 	private final List<IConnectionLayout> layoutEdges = new ArrayList<>();
-	private final List<ISubgraphLayout> subgraphs = new ArrayList<>();
 
 	private boolean flushChangesInvocation = false;
 
@@ -106,10 +104,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public void addPruningListener(IPruningListener listener) {
-		lls.addPruningListener(listener);
-	}
-
 	public void applyDynamicLayout(boolean clear) {
 		if (dynamicLayoutAlgorithm != null) {
 			for (Runnable r : preLayoutPass) {
@@ -134,8 +128,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * {@link #removeEdge(IConnectionLayout)} calls.
 	 */
 	protected void clearEdges() {
-		for (IConnectionLayout edge : new ArrayList<>(
-				layoutEdges)) {
+		for (IConnectionLayout edge : new ArrayList<>(layoutEdges)) {
 			removeEdge(edge);
 		}
 	}
@@ -215,18 +208,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		lls.firePruningEnableChangedEvent();
 	}
 
-	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph) {
-		if (!flushChangesInvocation) {
-			lls.fireSubgraphMovedEvent(subgraph);
-		}
-	}
-
-	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph) {
-		if (!flushChangesInvocation) {
-			lls.fireSubgraphResizedEvent(subgraph);
-		}
-	}
-
 	public void flushChanges(boolean animationHint) {
 		flushChangesInvocation = true;
 		doFlushChanges(animationHint);
@@ -237,19 +218,17 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		return layoutEdges.toArray(new IConnectionLayout[0]);
 	}
 
-	public IConnectionLayout[] getConnections(IEntityLayout layoutEntity1,
-			IEntityLayout layoutEntity2) {
+	public IConnectionLayout[] getConnections(INodeLayout layoutEntity1,
+			INodeLayout layoutEntity2) {
 		List<IConnectionLayout> connections = new ArrayList<>();
 
-		for (IConnectionLayout c : ((INodeLayout) layoutEntity1)
-				.getOutgoingConnections()) {
+		for (IConnectionLayout c : layoutEntity1.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity2) {
 				connections.add(c);
 			}
 		}
 
-		for (IConnectionLayout c : ((INodeLayout) layoutEntity2)
-				.getOutgoingConnections()) {
+		for (IConnectionLayout c : layoutEntity2.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity1) {
 				connections.add(c);
 			}
@@ -272,10 +251,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	public ILayoutAlgorithm getStaticLayoutAlgorithm() {
 		return staticLayoutAlgorithm;
-	}
-
-	public ISubgraphLayout[] getSubgraphs() {
-		return subgraphs.toArray(new ISubgraphLayout[0]);
 	}
 
 	public boolean isLayoutIrrelevant(IConnectionLayout connLayout) {
@@ -338,10 +313,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
-	}
-
-	public void removePruningListener(IPruningListener listener) {
-		lls.removePruningListener(listener);
 	}
 
 	public void schedulePostLayoutPass(Runnable runnable) {

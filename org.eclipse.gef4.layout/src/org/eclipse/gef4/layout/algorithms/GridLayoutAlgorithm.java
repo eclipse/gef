@@ -14,9 +14,9 @@ package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -97,7 +97,7 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 			return;
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		calculateGrid(bounds);
-		applyLayoutInternal(context.getEntities(), bounds);
+		applyLayoutInternal(context.getNodes(), bounds);
 	}
 
 	/**
@@ -139,13 +139,13 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	 *            the bounds in which the layout can place the entities.
 	 */
 	protected synchronized void applyLayoutInternal(
-			IEntityLayout[] entitiesToLayout, Rectangle bounds) {
+			INodeLayout[] entitiesToLayout, Rectangle bounds) {
 
 		int index = 0;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				if ((i * cols + j) < numChildren) {
-					IEntityLayout node = entitiesToLayout[index++];
+					INodeLayout node = entitiesToLayout[index++];
 					if (resize && LayoutProperties.isResizable(node))
 						LayoutProperties.setSize(node,
 								Math.max(childrenWidth, MIN_ENTITY_SIZE),

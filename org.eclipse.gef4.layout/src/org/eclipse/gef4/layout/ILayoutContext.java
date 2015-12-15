@@ -15,7 +15,6 @@ import org.eclipse.gef4.common.properties.IPropertyStore;
 import org.eclipse.gef4.layout.listeners.IContextListener;
 import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
 import org.eclipse.gef4.layout.listeners.ILayoutListener;
-import org.eclipse.gef4.layout.listeners.IPruningListener;
 
 /**
  * Objects implementing {@link ILayoutContext} interface are used for exchanging
@@ -76,15 +75,6 @@ public interface ILayoutContext extends IPropertyStore {
 	public IConnectionLayout[] getConnections();
 
 	/**
-	 * Returns all entities that are currently placed on the graph, that is
-	 * subgraphs and unpruned nodes. Replacing elements in the returned array
-	 * does not affect this context.
-	 * 
-	 * @return array of entities to layout
-	 */
-	public IEntityLayout[] getEntities();
-
-	/**
 	 * Returns all the connections between given source and target entities. If
 	 * given entity is a subgraph, connections adjacent to each of its nodes
 	 * will be included in the result. All the undirected nodes connecting the
@@ -97,27 +87,8 @@ public interface ILayoutContext extends IPropertyStore {
 	 *            The target entity.
 	 * @return The connections between the source and target entities.
 	 */
-	public IConnectionLayout[] getConnections(IEntityLayout layoutEntity1,
-			IEntityLayout layoutEntity2);
-
-	/**
-	 * Returns all the subgraphs this context's nodes were pruned to. Replacing
-	 * elements in the returned array does not affect this context.
-	 * 
-	 * @return array of subgraphs (may be empty)
-	 */
-	public ISubgraphLayout[] getSubgraphs();
-
-	/**
-	 * Creates a subgraph containing given nodes and adds it to this context. If
-	 * given nodes already belong to another subgraphs, they are removed from
-	 * them prior to adding to the new subgraph.
-	 * 
-	 * @param nodes
-	 *            nodes to add to the new subgraph
-	 * @return The newly created {@link ISubgraphLayout}.
-	 */
-	public ISubgraphLayout createSubgraph(INodeLayout[] nodes);
+	public IConnectionLayout[] getConnections(INodeLayout layoutEntity1,
+			INodeLayout layoutEntity2);
 
 	/**
 	 * Sets the dynamic layout algorithm for this context. This algorithm will
@@ -284,26 +255,6 @@ public interface ILayoutContext extends IPropertyStore {
 	public void removeContextListener(IContextListener listener);
 
 	/**
-	 * Adds a listener to the context that will be notified about changes in
-	 * graph pruning, that is hiding and showing of nodes. The notifications
-	 * will not include changes made with API included in layout related
-	 * interfaces, so that layout algorithms won't be notified about changes
-	 * they invoke. Only internal changes of the system will fire events.
-	 * 
-	 * @param listener
-	 *            listener to add
-	 */
-	public void addPruningListener(IPruningListener listener);
-
-	/**
-	 * Removes a pruning structure listener from this context.
-	 * 
-	 * @param listener
-	 *            listener to remove
-	 */
-	public void removePruningListener(IPruningListener listener);
-
-	/**
 	 * Causes all the changes made to elements in this context to affect the
 	 * display. Called from layout algorithms on finish of layout.
 	 * 
@@ -378,24 +329,6 @@ public interface ILayoutContext extends IPropertyStore {
 	 *            NodeLayout of resized node
 	 */
 	public void fireNodeResizedEvent(INodeLayout node);
-
-	/**
-	 * Notifies all previously registered {@link ILayoutListener}s about the
-	 * moved subgraph.
-	 * 
-	 * @param subgraph
-	 *            SubgraphLayout of moved subgraph
-	 */
-	public void fireSubgraphMovedEvent(ISubgraphLayout subgraph);
-
-	/**
-	 * Notifies all previously registered {@link ILayoutListener}s about the
-	 * resized subgraph.
-	 * 
-	 * @param subgraph
-	 *            SubgraphLayout of resized subgraph
-	 */
-	public void fireSubgraphResizedEvent(ISubgraphLayout subgraph);
 
 	/**
 	 * Notifies all previously registered {@link IContextListener}s about the

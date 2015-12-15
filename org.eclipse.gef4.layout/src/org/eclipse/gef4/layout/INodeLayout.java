@@ -11,26 +11,12 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
+import org.eclipse.gef4.common.properties.IPropertyStore;
+
 /**
  * An {@link INodeLayout} represents a node of a graph within the layout model.
  */
-public interface INodeLayout extends IEntityLayout {
-
-	/**
-	 * @return a subgraph this node belongs to or null if this node is not
-	 *         pruned
-	 */
-	public ISubgraphLayout getSubgraph();
-
-	/**
-	 * Assigns this NodeLayout to the given SubgraphLayout. Sets the pruned
-	 * property of this NodeLayout.
-	 * 
-	 * @param subgraph
-	 *            a subgraph this node should belong to or null if this node
-	 *            should not be pruned
-	 */
-	public void prune(ISubgraphLayout subgraph);
+public interface INodeLayout extends IPropertyStore {
 
 	/**
 	 * Returns all nodes that are direct successors of this node. Nodes

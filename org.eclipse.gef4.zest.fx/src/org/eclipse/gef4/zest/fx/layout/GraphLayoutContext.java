@@ -22,10 +22,8 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.AbstractLayoutContext;
 import org.eclipse.gef4.layout.IConnectionLayout;
-import org.eclipse.gef4.layout.IEntityLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.ISubgraphLayout;
 
 /**
  * The {@link GraphLayoutContext} is a {@link Graph}-specific
@@ -39,8 +37,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	private Graph g;
 	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<>();
 	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<>();
-
-	// TODO: subgraphs
 
 	/**
 	 * Constructs a new {@link GraphLayoutContext} without nodes and edges.
@@ -59,12 +55,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	 */
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
-	}
-
-	@Override
-	public ISubgraphLayout createSubgraph(INodeLayout[] nodes) {
-		// TODO: subgraphs
-		throw new UnsupportedOperationException("not yet implemented");
 	}
 
 	@Override
@@ -93,11 +83,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	 */
 	public GraphEdgeLayout getEdgeLayout(Edge edge) {
 		return edgeMap.get(edge);
-	}
-
-	@Override
-	public IEntityLayout[] getEntities() {
-		return getNodes();
 	}
 
 	/**
