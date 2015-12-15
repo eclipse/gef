@@ -18,7 +18,7 @@ Export-Package: org.eclipse.gef4.mvc.fx;x-internal:=true,
  org.eclipse.gef4.mvc.fx.operations;x-internal:=true,
  org.eclipse.gef4.mvc.fx.parts;x-internal:=true,
  org.eclipse.gef4.mvc.fx.policies;x-internal:=true,
- org.eclipse.gef4.mvc.fx.providers,
+ org.eclipse.gef4.mvc.fx.providers;x-internal:=true,
  org.eclipse.gef4.mvc.fx.tools;x-internal:=true,
  org.eclipse.gef4.mvc.fx.viewer;x-internal:=true
 Bundle-Vendor: Eclipse GEF
