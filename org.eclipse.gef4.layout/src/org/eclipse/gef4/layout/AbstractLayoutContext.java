@@ -199,10 +199,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		}
 	}
 
-	public void firePruningEnableChangedEvent() {
-		lls.firePruningEnableChangedEvent();
-	}
-
 	public void flushChanges() {
 		flushChangesInvocation = true;
 		doFlushChanges();
@@ -345,8 +341,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
 					.equals(name)) {
 				fireBackgroundEnableChangedEvent();
-			} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
-				firePruningEnableChangedEvent();
 			}
 		}
 		// TODO: check if this is really needed, as the property store already

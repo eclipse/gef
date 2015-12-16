@@ -45,16 +45,6 @@ public class LayoutProperties {
 	public static final Boolean DEFAULT_BOUNDS_EXPANDABLE = false;
 
 	/**
-	 * Indicates whether an algorithm is allowed to prune nodes to subgraphs.
-	 */
-	public static final String PRUNING_ENABLED_PROPERTY = "pruning-enabled";
-
-	/**
-	 * Defines the default value for the {@link #PRUNING_ENABLED_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_PRUNING_ENABLED = true;
-
-	/**
 	 * Indicates if layout algorithms can work in the background, reacting to
 	 * events/animation.
 	 */
@@ -139,17 +129,6 @@ public class LayoutProperties {
 	 * Defines the default value for the {@link #MINIMIZED_PROPERTY}.
 	 */
 	public static final Boolean DEFAULT_MINIMIZED = false;
-
-	/**
-	 * Stores the prunable state of this NodeLayout. A prunable NodeLayout may
-	 * be pruned to a subgraph.
-	 */
-	public static final String PRUNABLE_PROPERTY = "prunable";
-
-	/**
-	 * Defines the default value for the {@link #PRUNABLE_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_PRUNABLE = true;
 
 	/**
 	 * Stores a weight for this connection.
@@ -498,39 +477,6 @@ public class LayoutProperties {
 	 */
 	public static void setMinimized(INodeLayout node, boolean minimized) {
 		node.setProperty(MINIMIZED_PROPERTY, minimized);
-	}
-
-	/**
-	 * Returns the value of the {@link #PRUNABLE_PROPERTY} of the given
-	 * {@link INodeLayout}.
-	 * 
-	 * @param node
-	 *            The {@link INodeLayout} whose {@link #PRUNABLE_PROPERTY} is
-	 *            read.
-	 * @return The value of the {@link #PRUNABLE_PROPERTY} of the given
-	 *         {@link INodeLayout}.
-	 */
-	public static Boolean isPrunable(INodeLayout node) {
-		Object prunable = node.getProperty(PRUNABLE_PROPERTY);
-		if (prunable instanceof Boolean) {
-			return (Boolean) prunable;
-		}
-		return DEFAULT_PRUNABLE;
-	}
-
-	/**
-	 * Sets the value of the {@link #PRUNABLE_PROPERTY} of the given
-	 * {@link INodeLayout} to the given value.
-	 * 
-	 * @param node
-	 *            The {@link INodeLayout} whose {@link #PRUNABLE_PROPERTY} is
-	 *            changed.
-	 * @param prunable
-	 *            The new value for the {@link #PRUNABLE_PROPERTY} of the given
-	 *            {@link INodeLayout}.
-	 */
-	public static void setPrunable(INodeLayout node, boolean prunable) {
-		node.setProperty(PRUNABLE_PROPERTY, prunable);
 	}
 
 	/**

@@ -107,11 +107,6 @@ public class LayoutListenerSupportTests {
 		}
 
 		@Override
-		public void firePruningEnableChangedEvent() {
-			lls.firePruningEnableChangedEvent();
-		}
-
-		@Override
 		public void flushChanges() {
 		}
 
@@ -220,10 +215,6 @@ public class LayoutListenerSupportTests {
 			return false;
 		}
 
-		@Override
-		public boolean pruningEnablementChanged(ILayoutContext context) {
-			return false;
-		}
 	};
 	private static IContextListener interceptingContextListener = new IContextListener() {
 		@Override
@@ -235,10 +226,6 @@ public class LayoutListenerSupportTests {
 			return true;
 		}
 
-		@Override
-		public boolean pruningEnablementChanged(ILayoutContext context) {
-			return true;
-		}
 	};
 
 	private static IGraphStructureListener nonInterceptingGraphStructureListener = new IGraphStructureListener() {
@@ -423,19 +410,6 @@ public class LayoutListenerSupportTests {
 		// verify that one intercepting listener prevents dynamic layout
 		context.addLayoutListener(nonInterceptingLayoutListener);
 		context.fireNodeResizedEvent(null);
-	}
-
-	@Test
-	public void test_dynamic_onPruningEnableChange() {
-		context.addContextListener(nonInterceptingContextListener);
-		context.firePruningEnableChangedEvent();
-		expectedDynamicLayout = false;
-		context.addContextListener(interceptingContextListener);
-		context.firePruningEnableChangedEvent();
-		// add another non-intercepting listener and change again to
-		// verify that one intercepting listener prevents dynamic layout
-		context.addContextListener(nonInterceptingContextListener);
-		context.firePruningEnableChangedEvent();
 	}
 
 	@Test

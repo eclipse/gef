@@ -17,9 +17,7 @@ import org.eclipse.gef4.layout.LayoutProperties;
 /**
  * An {@link IContextListener} is notified about changes to context attributes
  * such as the {@link LayoutProperties#BOUNDS_PROPERTY} which limits the area
- * where nodes can be placed by layout algorithms, the
- * {@link LayoutProperties#PRUNING_ENABLED_PROPERTY} which defines whether nodes
- * can be pruned, and the
+ * where nodes can be placed by layout algorithms, and the
  * {@link LayoutProperties#DYNAMIC_LAYOUT_ENABLED_PROPERTY} which defines
  * whether layout algorithms are allowed to perform a layout pass in reaction to
  * layout context events.
@@ -40,10 +38,6 @@ public interface IContextListener {
 			// do nothing
 		}
 
-		public boolean pruningEnablementChanged(ILayoutContext context) {
-			return false;
-		}
-
 	}
 
 	/**
@@ -59,20 +53,6 @@ public interface IContextListener {
 	 *         afterwards.
 	 */
 	public boolean boundsChanged(ILayoutContext context);
-
-	/**
-	 * This method is called whenever graph pruning is enabled or disabled in a
-	 * layout context. If <code>true</code> is returned, no dynamic layout will
-	 * be applied after notifying all listeners, i.e. a dynamic layout pass will
-	 * only be applied when all registered {@link IContextListener}s return
-	 * <code>false</code>.
-	 * 
-	 * @param context
-	 *            the layout context that fired the event
-	 * @return <code>true</code> if no dynamic layout should be applied
-	 *         afterwards.
-	 */
-	public boolean pruningEnablementChanged(ILayoutContext context);
 
 	/**
 	 * This method is called whenever background layout is enabled or disabled

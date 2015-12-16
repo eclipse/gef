@@ -264,16 +264,6 @@ public class LayoutListenerSupport {
 	}
 
 	/**
-	 * Notifies all {@link IContextListener}s via
-	 * {@link IContextListener#pruningEnablementChanged(ILayoutContext)}.
-	 */
-	public void firePruningEnableChangedEvent() {
-		for (IContextListener listener : contextListeners) {
-			listener.pruningEnablementChanged(context);
-		}
-	}
-
-	/**
 	 * Removes the given {@link IContextListener} from the list of listeners
 	 * which are notified about context changes.
 	 * 

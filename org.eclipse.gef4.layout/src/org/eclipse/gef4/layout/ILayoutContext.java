@@ -326,12 +326,6 @@ public interface ILayoutContext extends IPropertyStore {
 	public void fireNodeResizedEvent(INodeLayout node);
 
 	/**
-	 * Notifies all previously registered {@link IContextListener}s about the
-	 * state of the pruning flag.
-	 */
-	public void firePruningEnableChangedEvent();
-
-	/**
 	 * Removes the given {@link Runnable} from the list of {@link Runnable}s
 	 * which are executed before applying a layout, i.e. before
 	 * {@link #applyDynamicLayout(boolean)} or
