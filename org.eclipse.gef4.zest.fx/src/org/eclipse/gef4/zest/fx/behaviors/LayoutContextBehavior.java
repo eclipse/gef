@@ -152,8 +152,11 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	/**
 	 * Performs one layout pass using the static layout algorithm that is
 	 * configured for the layout context.
+	 *
+	 * @param clean
+	 *            Whether to fully re-compute the layout or not.
 	 */
-	protected void applyStaticLayout() {
+	protected void applyStaticLayout(boolean clean) {
 		if (!isHostActive) {
 			return;
 		}
@@ -243,11 +246,11 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			// visited graph.
 			if ((Boolean) evt.getNewValue()) {
 				isHostActive = true;
-				applyStaticLayout();
+				applyStaticLayout(true);
 			}
 		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt.getPropertyName()) && isHostActive) {
 			if ((Boolean) evt.getNewValue()) {
-				applyStaticLayout();
+				applyStaticLayout(true);
 			}
 		}
 	}
@@ -265,9 +268,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
 		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
-			applyStaticLayout();
+			applyStaticLayout(true);
 		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt.getPropertyName())) {
-			applyStaticLayout();
+			applyStaticLayout(true);
 		}
 	}
 
