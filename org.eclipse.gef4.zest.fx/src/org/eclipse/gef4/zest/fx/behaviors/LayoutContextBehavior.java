@@ -163,7 +163,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 			return;
 		}
 		layoutContext.applyStaticLayout(true);
-		layoutContext.flushChanges(false);
+		layoutContext.flushChanges();
 	}
 
 	@Override

@@ -119,7 +119,7 @@ public interface ILayoutContext extends IPropertyStore {
 	/**
 	 * Adds the given {@link Runnable} to the list of runnables which are called
 	 * when this {@link ILayoutContext} is asked to apply all changes made to
-	 * its elements to the display, i.e. within {@link #flushChanges(boolean)}.
+	 * its elements to the display, i.e. within {@link #flushChanges()}.
 	 * 
 	 * @param runnable
 	 *            A {@link Runnable} called whenever this context is asked to
@@ -130,8 +130,7 @@ public interface ILayoutContext extends IPropertyStore {
 	/**
 	 * Removes the given {@link Runnable} from the list of runnables which are
 	 * called when this {@link ILayoutContext} is asked to apply all changes
-	 * made to its elements to the display, i.e. within
-	 * {@link #flushChanges(boolean)}.
+	 * made to its elements to the display, i.e. within {@link #flushChanges()}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} that should no longer get called when
@@ -257,12 +256,8 @@ public interface ILayoutContext extends IPropertyStore {
 	/**
 	 * Causes all the changes made to elements in this context to affect the
 	 * display. Called from layout algorithms on finish of layout.
-	 * 
-	 * @param animationHint
-	 *            a hint for display mechanism indicating whether changes are
-	 *            major and should be animated (if true) or not.
 	 */
-	public void flushChanges(boolean animationHint);
+	public void flushChanges();
 
 	/**
 	 * Notifies all previously registered {@link IGraphStructureListener}s about

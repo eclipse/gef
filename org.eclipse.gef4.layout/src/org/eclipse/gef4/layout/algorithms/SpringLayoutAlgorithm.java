@@ -226,7 +226,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			computeOneIteration();
 			saveLocations();
 		}
-		context.flushChanges(false);
+		context.flushChanges();
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		bounds = LayoutProperties.getBounds(context);
 		computeOneIteration();
 		saveLocations();
-		context.flushChanges(false);
+		context.flushChanges();
 	}
 
 	/**

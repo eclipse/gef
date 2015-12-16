@@ -146,13 +146,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	/**
 	 * Executes all scheduled post-layout {@link Runnable}s (previously added by
 	 * {@link #schedulePostLayoutPass(Runnable)}.
-	 * 
-	 * @param animationHint
-	 *            <code>true</code> to indicate that the changes should be
-	 *            applied with an animation, otherwise <code>false</code>.
 	 */
-	protected void doFlushChanges(boolean animationHint) {
-		// TODO: use specific flush-changes-listener to pass animationHint along
+	protected void doFlushChanges() {
 		for (Runnable r : new ArrayList<>(postLayoutPass)) {
 			r.run();
 		}
@@ -208,9 +203,9 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		lls.firePruningEnableChangedEvent();
 	}
 
-	public void flushChanges(boolean animationHint) {
+	public void flushChanges() {
 		flushChangesInvocation = true;
-		doFlushChanges(animationHint);
+		doFlushChanges();
 		flushChangesInvocation = false;
 	}
 

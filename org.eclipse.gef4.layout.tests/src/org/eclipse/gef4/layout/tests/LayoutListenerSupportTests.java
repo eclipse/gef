@@ -112,7 +112,7 @@ public class LayoutListenerSupportTests {
 		}
 
 		@Override
-		public void flushChanges(boolean animationHint) {
+		public void flushChanges() {
 		}
 
 		@Override

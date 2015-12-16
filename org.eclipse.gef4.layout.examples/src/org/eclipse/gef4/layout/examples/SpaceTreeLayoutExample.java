@@ -57,9 +57,8 @@ public class SpaceTreeLayoutExample extends AbstractZestExample {
 		}
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
 				.edges(edges.toArray(new Edge[] {}))
-				.attr(ZestProperties.GRAPH_LAYOUT,
-						new SpaceTreeLayoutAlgorithm(
-								SpaceTreeLayoutAlgorithm.LEFT_RIGHT, false))
+				.attr(ZestProperties.GRAPH_LAYOUT, new SpaceTreeLayoutAlgorithm(
+						SpaceTreeLayoutAlgorithm.LEFT_RIGHT))
 				.build();
 
 	}

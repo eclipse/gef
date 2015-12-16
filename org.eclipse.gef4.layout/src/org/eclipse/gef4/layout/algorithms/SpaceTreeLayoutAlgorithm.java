@@ -115,7 +115,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 							.add(new SpaceTreeLayer(spaceTreeLayers.size()));
 
 				if (treeObserver != null)
-					refreshLayout(animate);
+					refreshLayout();
 			}
 		}
 
@@ -275,19 +275,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 					((SpaceTreeNode) iterator.next()).flushExpansionChanges();
 				}
 			}
-		}
-
-		public boolean flushCollapseChanges() {
-			if (expanded) {
-				boolean madeChagnes = false;
-				for (Iterator<TreeNode> iterator = children.iterator(); iterator
-						.hasNext();) {
-					madeChagnes = ((SpaceTreeNode) iterator.next())
-							.flushCollapseChanges() || madeChagnes;
-				}
-				return madeChagnes;
-			}
-			return false;
 		}
 
 		/**
@@ -818,7 +805,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			bounds = LayoutProperties.getBounds(context);
 			if (bounds.getWidth() * bounds.getHeight() > 0
 					&& previousBoundsWrong) {
-				refreshLayout(false);
+				refreshLayout();
 			}
 			return false;
 		}
@@ -850,7 +837,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				((SpaceTreeNode) treeObserver.getSuperRoot())
 						.flushLocationChanges(0);
 				spaceTreeNode.refreshSubgraphLocation();
-				context.flushChanges(false);
+				context.flushChanges();
 			}
 			return false;
 		}
@@ -940,8 +927,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 */
 	private SpaceTreeNode protectedNode = null;
 
-	private boolean animate = false;
-
 	/**
 	 * Constructs an instance of <code>SpaceTreeLayoutAlgorithm</code> that
 	 * places the root of a tree at the top of the graph.
@@ -957,13 +942,9 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 *            direction of the tree, sould be one of the following:
 	 *            {@link #TOP_DOWN}, {@link #BOTTOM_UP}, {@link #LEFT_RIGHT},
 	 *            {@link #RIGHT_LEFT}.
-	 * @param animate
-	 *            if true, implicit animations are enabled (e.g. on layout
-	 *            changes)
 	 */
-	public SpaceTreeLayoutAlgorithm(int direction, boolean animate) {
+	public SpaceTreeLayoutAlgorithm(int direction) {
 		setDirection(direction);
-		this.animate = animate;
 	}
 
 	/**
@@ -1111,21 +1092,14 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 * Called in response to layout context changes. Dynamically refreshes the
 	 * layout to accommodate the changes.
 	 * 
-	 * @param animation
-	 *            <code>true</code> to indicate that layout changes are
-	 *            animated, otherwise <code>false</code>.
 	 */
-	protected void refreshLayout(boolean animation) {
+	protected void refreshLayout() {
 		if (!LayoutProperties.isDynamicLayoutEnabled(context))
 			return;
 		SpaceTreeNode superRoot = (SpaceTreeNode) treeObserver.getSuperRoot();
-		if (animation && superRoot.flushCollapseChanges())
-			context.flushChanges(animation);
-		if (superRoot.flushLocationChanges(0) && animation)
-			context.flushChanges(animation);
 		superRoot.flushExpansionChanges();
 		superRoot.flushLocationChanges(0);
-		context.flushChanges(animation);
+		context.flushChanges();
 	}
 
 	/**
