@@ -86,6 +86,12 @@ public class LayoutListenerSupport {
 		layoutListeners.add(listener);
 	}
 
+	private void applyDynamicLayout(boolean intercepted) {
+		if (!intercepted && LayoutProperties.isDynamicLayoutEnabled(context)) {
+			context.applyLayout(true);
+		}
+	}
+
 	/**
 	 * Notifies all {@link IContextListener}s via
 	 * {@link IContextListener#backgroundEnableChanged(ILayoutContext)}.
@@ -111,9 +117,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**
@@ -136,9 +140,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**
@@ -161,9 +163,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**
@@ -185,9 +185,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**
@@ -209,9 +207,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**
@@ -234,9 +230,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**
@@ -258,9 +252,7 @@ public class LayoutListenerSupport {
 				intercepted = intercept;
 			}
 		}
-		if (!intercepted) {
-			context.applyDynamicLayout(true);
-		}
+		applyDynamicLayout(intercepted);
 	}
 
 	/**

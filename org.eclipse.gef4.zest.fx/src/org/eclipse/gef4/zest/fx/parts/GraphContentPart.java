@@ -147,8 +147,8 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
 			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
-			if (layoutContext != null && layoutContext.getStaticLayoutAlgorithm() != algo) {
-				layoutContext.setStaticLayoutAlgorithm(layoutAlgorithm);
+			if (layoutContext != null && layoutContext.getLayoutAlgorithm() != algo) {
+				layoutContext.setLayoutAlgorithm(layoutAlgorithm);
 			}
 		}
 	}

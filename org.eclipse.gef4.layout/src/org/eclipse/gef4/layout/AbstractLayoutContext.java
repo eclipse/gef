@@ -38,8 +38,7 @@ import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
 public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
-	private ILayoutAlgorithm dynamicLayoutAlgorithm = null;
-	private ILayoutAlgorithm staticLayoutAlgorithm = null;
+	private ILayoutAlgorithm layoutAlgorithm = null;
 	private final List<INodeLayout> layoutNodes = new ArrayList<>();
 	private final List<IConnectionLayout> layoutEdges = new ArrayList<>();
 
@@ -104,22 +103,13 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public void applyDynamicLayout(boolean clear) {
-		if (dynamicLayoutAlgorithm != null) {
+	public void applyLayout(boolean clear) {
+		if (layoutAlgorithm != null) {
 			for (Runnable r : preLayoutPass) {
 				r.run();
 			}
-			dynamicLayoutAlgorithm.applyLayout(clear);
-		}
-	}
-
-	public void applyStaticLayout(boolean clear) {
-		if (staticLayoutAlgorithm != null) {
-			for (Runnable r : preLayoutPass) {
-				r.run();
-			}
-			staticLayoutAlgorithm.setLayoutContext(this);
-			staticLayoutAlgorithm.applyLayout(clear);
+			layoutAlgorithm.setLayoutContext(this);
+			layoutAlgorithm.applyLayout(clear);
 		}
 	}
 
@@ -228,10 +218,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		return connections.toArray(new IConnectionLayout[0]);
 	}
 
-	public ILayoutAlgorithm getDynamicLayoutAlgorithm() {
-		return dynamicLayoutAlgorithm;
-	}
-
 	public INodeLayout[] getNodes() {
 		return layoutNodes.toArray(new INodeLayout[0]);
 	}
@@ -240,8 +226,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		return pss.getProperty(name);
 	}
 
-	public ILayoutAlgorithm getStaticLayoutAlgorithm() {
-		return staticLayoutAlgorithm;
+	public ILayoutAlgorithm getLayoutAlgorithm() {
+		return layoutAlgorithm;
 	}
 
 	public boolean isLayoutIrrelevant(IConnectionLayout connLayout) {
@@ -320,17 +306,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		preLayoutPass.add(runnable);
 	}
 
-	public void setDynamicLayoutAlgorithm(
-			ILayoutAlgorithm dynamicLayoutAlgorithm) {
-		ILayoutAlgorithm oldDynamicLayoutAlgorithm = this.dynamicLayoutAlgorithm;
-		if (oldDynamicLayoutAlgorithm != dynamicLayoutAlgorithm) {
-			this.dynamicLayoutAlgorithm = dynamicLayoutAlgorithm;
-			dynamicLayoutAlgorithm.setLayoutContext(this);
-			pcs.firePropertyChange(DYNAMIC_LAYOUT_ALGORITHM_PROPERTY,
-					oldDynamicLayoutAlgorithm, dynamicLayoutAlgorithm);
-		}
-	}
-
 	public void setProperty(String name, Object value) {
 		Object oldValue = pss.getProperty(name);
 		pss.setProperty(name, value);
@@ -348,14 +323,13 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		pcs.firePropertyChange(name, oldValue, value);
 	}
 
-	public void setStaticLayoutAlgorithm(
-			ILayoutAlgorithm staticLayoutAlgorithm) {
-		ILayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
-		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
-			this.staticLayoutAlgorithm = staticLayoutAlgorithm;
-			staticLayoutAlgorithm.setLayoutContext(this);
-			pcs.firePropertyChange(STATIC_LAYOUT_ALGORITHM_PROPERTY,
-					oldStaticLayoutAlgorithm, staticLayoutAlgorithm);
+	public void setLayoutAlgorithm(ILayoutAlgorithm newLayoutAlgorithm) {
+		ILayoutAlgorithm oldLayoutAlgorithm = this.layoutAlgorithm;
+		if (oldLayoutAlgorithm != newLayoutAlgorithm) {
+			this.layoutAlgorithm = newLayoutAlgorithm;
+			newLayoutAlgorithm.setLayoutContext(this);
+			pcs.firePropertyChange(LAYOUT_ALGORITHM_PROPERTY,
+					oldLayoutAlgorithm, newLayoutAlgorithm);
 		}
 	}
 

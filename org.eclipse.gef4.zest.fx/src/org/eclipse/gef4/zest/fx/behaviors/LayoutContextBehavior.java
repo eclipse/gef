@@ -165,7 +165,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		if (viewportStackModel.removeSkipNextLayout(getHost().getContent())) {
 			return;
 		}
-		layoutContext.applyStaticLayout(true);
+		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
 	}
 
@@ -267,7 +267,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 *            context.
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
-		if (ILayoutContext.STATIC_LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
+		if (ILayoutContext.LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
 			applyStaticLayout(true);
 		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt.getPropertyName())) {
 			applyStaticLayout(true);

@@ -26,37 +26,20 @@ public interface ILayoutContext extends IPropertyStore {
 
 	/**
 	 * An {@link ILayoutContext} notifies registered listeners about changes to
-	 * the static layout algorithm using this property name.
+	 * the layout algorithm using this property name.
 	 */
-	public static final String STATIC_LAYOUT_ALGORITHM_PROPERTY = "staticLayoutAlgorithm";
+	public static final String LAYOUT_ALGORITHM_PROPERTY = "layoutAlgorithm";
 
 	/**
-	 * An {@link ILayoutContext} notifies registered listeners about changes to
-	 * the dynamic layout algorithm using this property name.
-	 */
-	public static final String DYNAMIC_LAYOUT_ALGORITHM_PROPERTY = "dynamicLayoutAlgorithm";
-
-	/**
-	 * Applies the background layout algorithm of this LayoutContext. The clean
-	 * flag is passed-in to the background layout algorithm to indicate whether
-	 * the context changed significantly since the last layout pass.
+	 * Applies the layout algorithm of this LayoutContext. The clean flag is
+	 * passed-in to the layout algorithm to indicate whether the context changed
+	 * significantly since the last layout pass.
 	 * 
 	 * @param clean
 	 *            <code>true</code> to indicate that the algorithm has to fully
 	 *            re-compute the layout, otherwise <code>false</code>.
 	 */
-	public void applyDynamicLayout(boolean clean);
-
-	/**
-	 * Applies the static layout algorithm of this LayoutContext. The clean flag
-	 * is passed-in to the static layout algorithm to indicate whether the
-	 * context changed significantly since the last layout pass.
-	 * 
-	 * @param clean
-	 *            <code>true</code> to indicate that the algorithm has to fully
-	 *            re-compute the layout, otherwise <code>false</code>.
-	 */
-	public void applyStaticLayout(boolean clean);
+	public void applyLayout(boolean clean);
 
 	/**
 	 * Returns all the nodes that should be laid out. Replacing elements in the
@@ -91,21 +74,6 @@ public interface ILayoutContext extends IPropertyStore {
 			INodeLayout layoutEntity2);
 
 	/**
-	 * Sets the dynamic layout algorithm for this context. This algorithm will
-	 * be used to relayout graph items using
-	 * {@link ILayoutAlgorithm#applyLayout(boolean)} after every event that is
-	 * not intercepted by any listener when currently changes are not being
-	 * flushed and background layout is enabled. The clean flag for the
-	 * background layout algorithm can be set to <code>false</code> by the
-	 * context when reacting to events.
-	 * 
-	 * @param algorithm
-	 *            The new dynamic {@link ILayoutAlgorithm} for this
-	 *            {@link ILayoutContext}.
-	 */
-	public void setDynamicLayoutAlgorithm(ILayoutAlgorithm algorithm);
-
-	/**
 	 * Sets the static layout algorithm for this context. The static algorithm
 	 * has to be manually invoked, for example, after significant changes to the
 	 * context.
@@ -114,7 +82,7 @@ public interface ILayoutContext extends IPropertyStore {
 	 *            The new static {@link ILayoutAlgorithm} for this
 	 *            {@link ILayoutContext}.
 	 */
-	public void setStaticLayoutAlgorithm(ILayoutAlgorithm algorithm);
+	public void setLayoutAlgorithm(ILayoutAlgorithm algorithm);
 
 	/**
 	 * Adds the given {@link Runnable} to the list of runnables which are called
@@ -184,15 +152,9 @@ public interface ILayoutContext extends IPropertyStore {
 	 * Returns the static layout algorithm used to layout a newly initialized
 	 * graph or after heavy changes to it.
 	 * 
-	 * @return the static layout algorithm
+	 * @return The layout algorithm that is used by this {@link ILayoutContext}.
 	 */
-	public ILayoutAlgorithm getStaticLayoutAlgorithm();
-
-	/**
-	 * @return the background algorithm of this context (see
-	 *         {@link #setDynamicLayoutAlgorithm(ILayoutAlgorithm)} for details)
-	 */
-	public ILayoutAlgorithm getDynamicLayoutAlgorithm();
+	public ILayoutAlgorithm getLayoutAlgorithm();
 
 	/**
 	 * Adds a listener to the context that will be notified about changes in
@@ -328,8 +290,7 @@ public interface ILayoutContext extends IPropertyStore {
 	/**
 	 * Removes the given {@link Runnable} from the list of {@link Runnable}s
 	 * which are executed before applying a layout, i.e. before
-	 * {@link #applyDynamicLayout(boolean)} or
-	 * {@link #applyStaticLayout(boolean)}.
+	 * {@link #applyLayout(boolean)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} to remove from the list of
@@ -340,8 +301,7 @@ public interface ILayoutContext extends IPropertyStore {
 	/**
 	 * Adds the given {@link Runnable} to the list of {@link Runnable}s which
 	 * are executed before applying a layout, i.e. before
-	 * {@link #applyDynamicLayout(boolean)} or
-	 * {@link #applyStaticLayout(boolean)}.
+	 * {@link #applyLayout(boolean)}.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} to add to the list of {@link Runnable}s

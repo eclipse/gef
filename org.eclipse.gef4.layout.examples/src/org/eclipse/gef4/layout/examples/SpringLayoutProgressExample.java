@@ -132,7 +132,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 				} else {
 					viewer.getContentPartMap().get(graph)
 							.getAdapter(GraphLayoutContext.class)
-							.applyStaticLayout(true);
+							.applyLayout(true);
 				}
 			}
 		});

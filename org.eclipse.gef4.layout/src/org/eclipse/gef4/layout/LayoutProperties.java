@@ -54,7 +54,7 @@ public class LayoutProperties {
 	 * Defines the default value for the
 	 * {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY}.
 	 */
-	public static final Boolean DEFAULT_DYNAMIC_LAYOUT_ENABLED = true;
+	public static final Boolean DEFAULT_DYNAMIC_LAYOUT_ENABLED = false;
 
 	/**
 	 * Stores the location of this EntityLayout.

@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.layout.tests;
 
-import static org.junit.Assert.assertTrue;
-
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.layout.IConnectionLayout;
@@ -58,12 +56,8 @@ public class LayoutListenerSupportTests {
 		}
 
 		@Override
-		public void applyDynamicLayout(boolean clean) {
-			assertTrue(expectedDynamicLayout);
-		}
-
-		@Override
-		public void applyStaticLayout(boolean clean) {
+		public void applyLayout(boolean clean) {
+			expectedLayout = false;
 		}
 
 		@Override
@@ -122,7 +116,7 @@ public class LayoutListenerSupportTests {
 		}
 
 		@Override
-		public ILayoutAlgorithm getDynamicLayoutAlgorithm() {
+		public ILayoutAlgorithm getLayoutAlgorithm() {
 			return null;
 		}
 
@@ -133,11 +127,6 @@ public class LayoutListenerSupportTests {
 
 		@Override
 		public Object getProperty(String name) {
-			return null;
-		}
-
-		@Override
-		public ILayoutAlgorithm getStaticLayoutAlgorithm() {
 			return null;
 		}
 
@@ -185,15 +174,11 @@ public class LayoutListenerSupportTests {
 		}
 
 		@Override
-		public void setDynamicLayoutAlgorithm(ILayoutAlgorithm algorithm) {
+		public void setLayoutAlgorithm(ILayoutAlgorithm algorithm) {
 		}
 
 		@Override
 		public void setProperty(String name, Object value) {
-		}
-
-		@Override
-		public void setStaticLayoutAlgorithm(ILayoutAlgorithm algorithm) {
 		}
 
 		@Override
@@ -304,12 +289,12 @@ public class LayoutListenerSupportTests {
 	 * When the {@link StubContext#applyDynamicLayout(boolean)} method is
 	 * called, this variable is tested for being <code>true</code>.
 	 */
-	protected boolean expectedDynamicLayout;
+	protected boolean expectedLayout;
 	protected ILayoutContext context;
 
 	@Before
 	public void setUpLayoutContext() {
-		expectedDynamicLayout = true;
+		expectedLayout = true;
 		context = new StubContext();
 	}
 
@@ -317,7 +302,7 @@ public class LayoutListenerSupportTests {
 	public void test_dynamic_onBoundsChange() {
 		context.addContextListener(nonInterceptingContextListener);
 		context.fireBoundsChangedEvent();
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addContextListener(interceptingContextListener);
 		context.fireBoundsChangedEvent();
 		// add another non-intercepting listener and change bounds again to
@@ -331,7 +316,7 @@ public class LayoutListenerSupportTests {
 		context.addGraphStructureListener(
 				nonInterceptingGraphStructureListener);
 		context.fireConnectionAddedEvent(null);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireConnectionAddedEvent(null);
 		// add another non-intercepting listener and change again to
@@ -346,7 +331,7 @@ public class LayoutListenerSupportTests {
 		context.addGraphStructureListener(
 				nonInterceptingGraphStructureListener);
 		context.fireConnectionRemovedEvent(null);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireConnectionRemovedEvent(null);
 		// add another non-intercepting listener and change again to
@@ -361,7 +346,7 @@ public class LayoutListenerSupportTests {
 		context.addGraphStructureListener(
 				nonInterceptingGraphStructureListener);
 		context.fireNodeAddedEvent(null);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireNodeAddedEvent(null);
 		// add another non-intercepting listener and change again to
@@ -375,7 +360,7 @@ public class LayoutListenerSupportTests {
 	public void test_dynamic_onNodeMoved() {
 		context.addLayoutListener(nonInterceptingLayoutListener);
 		context.fireNodeMovedEvent(null);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addLayoutListener(interceptingLayoutListener);
 		context.fireNodeMovedEvent(null);
 		// add another non-intercepting listener and change again to
@@ -389,7 +374,7 @@ public class LayoutListenerSupportTests {
 		context.addGraphStructureListener(
 				nonInterceptingGraphStructureListener);
 		context.fireNodeRemovedEvent(null);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addGraphStructureListener(interceptingGraphStructureListener);
 		context.fireNodeRemovedEvent(null);
 		// add another non-intercepting listener and change again to
@@ -403,7 +388,7 @@ public class LayoutListenerSupportTests {
 	public void test_dynamic_onNodeResized() {
 		context.addLayoutListener(nonInterceptingLayoutListener);
 		context.fireNodeResizedEvent(null);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addLayoutListener(interceptingLayoutListener);
 		context.fireNodeResizedEvent(null);
 		// add another non-intercepting listener and change again to
@@ -415,7 +400,7 @@ public class LayoutListenerSupportTests {
 	@Test
 	public void test_dynamic_onSubgraphMoved() {
 		context.addLayoutListener(nonInterceptingLayoutListener);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addLayoutListener(interceptingLayoutListener);
 		// add another non-intercepting listener and change again to
 		// verify that one intercepting listener prevents dynamic layout
@@ -425,7 +410,7 @@ public class LayoutListenerSupportTests {
 	@Test
 	public void test_dynamic_onSubgraphResized() {
 		context.addLayoutListener(nonInterceptingLayoutListener);
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addLayoutListener(interceptingLayoutListener);
 		// add another non-intercepting listener and change again to
 		// verify that one intercepting listener prevents dynamic layout
@@ -434,7 +419,7 @@ public class LayoutListenerSupportTests {
 
 	@Test
 	public void test_noDynamic_onBackgroundEnableChange() {
-		expectedDynamicLayout = false;
+		expectedLayout = false;
 		context.addContextListener(interceptingContextListener);
 		context.fireBackgroundEnableChangedEvent();
 	}
