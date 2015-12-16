@@ -13,11 +13,11 @@
 package org.eclipse.gef4.zest.fx.layout;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
@@ -36,7 +36,7 @@ public class GraphNodeLayout implements INodeLayout {
 
 	// initialization context
 	private GraphLayoutContext context;
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
 	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 	private Node node;
 

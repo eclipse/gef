@@ -11,10 +11,10 @@
 package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
 import org.eclipse.gef4.common.inject.InjectAdapters;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 
 import com.google.common.reflect.TypeToken;
 
@@ -26,7 +26,8 @@ import com.google.common.reflect.TypeToken;
  */
 public class AdapterStore implements IAdaptable {
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<>(this,
 			pcs);
 

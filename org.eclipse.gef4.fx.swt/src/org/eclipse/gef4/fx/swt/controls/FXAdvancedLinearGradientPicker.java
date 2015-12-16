@@ -13,11 +13,11 @@
 package org.eclipse.gef4.fx.swt.controls;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -236,7 +236,8 @@ public class FXAdvancedLinearGradientPicker extends Composite
 		return false;
 	}
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 	private LinearGradient advancedLinearGradient;
 	private double directionX = 1;
 	private double directionY = 0;

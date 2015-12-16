@@ -281,16 +281,16 @@ public class LayoutProperties {
 	 * Sets the value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
 	 * given {@link ILayoutContext} to the given value.
 	 * 
-	 * @param graph
+	 * @param layoutContext
 	 *            The {@link ILayoutContext} whose
 	 *            {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} is changed.
 	 * @param dynamicLayoutEnabled
 	 *            The new value for the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY}
 	 *            of the given {@link ILayoutContext}.
 	 */
-	public static void setDynamicLayoutEnabled(ILayoutContext graph,
+	public static void setDynamicLayoutEnabled(ILayoutContext layoutContext,
 			boolean dynamicLayoutEnabled) {
-		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY,
+		layoutContext.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY,
 				dynamicLayoutEnabled);
 	}
 

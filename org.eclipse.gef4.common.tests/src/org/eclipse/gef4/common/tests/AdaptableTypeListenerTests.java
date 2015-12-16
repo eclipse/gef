@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
@@ -26,6 +25,7 @@ import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.common.inject.InjectAdapters;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.tests.AdaptableScopeTests.AdapterStoreAdapter;
 import org.junit.Test;
 
@@ -44,7 +44,8 @@ public class AdaptableTypeListenerTests {
 	public static class AdaptableSpecifyingAdapterMapAndInjectAnnotation
 			implements IAdaptable {
 
-		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+		private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+				this);
 		private AdaptableSupport<AdaptableSpecifyingAdapterMapAndInjectAnnotation> ads = new AdaptableSupport<>(
 				this, pcs);
 

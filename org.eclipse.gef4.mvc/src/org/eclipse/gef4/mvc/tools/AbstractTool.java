@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 
 /**
@@ -33,7 +34,8 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	 * listeners about changes to this object. May be used by subclasses to
 	 * trigger the notification of listeners.
 	 */
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	private boolean active = false;
 	private IDomain<VR> domain;

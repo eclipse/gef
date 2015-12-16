@@ -12,9 +12,9 @@
 package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 
 /**
  * The {@link GridModel} stores information about a background grid, i.e. cell
@@ -52,7 +52,8 @@ public class GridModel implements IPropertyChangeNotifier {
 	 */
 	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	private double gridCellWidth = 10;
 	private double gridCellHeight = 10;

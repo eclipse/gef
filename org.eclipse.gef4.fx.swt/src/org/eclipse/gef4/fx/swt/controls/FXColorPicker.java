@@ -12,9 +12,9 @@
 package org.eclipse.gef4.fx.swt.controls;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -75,7 +75,8 @@ public class FXColorPicker extends Composite
 	/**
 	 * Supporter for property change notifications/listener registration.
 	 */
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	private Color color;
 	private Rectangle colorRectangle;

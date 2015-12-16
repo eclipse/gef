@@ -18,12 +18,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -32,7 +32,8 @@ public class AdaptableSupportTests {
 
 	private class AdaptableSupportWrapper implements IAdaptable {
 
-		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+		private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+				this);
 		private AdaptableSupport<AdaptableSupportWrapper> ads = new AdaptableSupport<>(
 				this, pcs);
 

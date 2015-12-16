@@ -13,9 +13,9 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -36,7 +36,8 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 */
 	final public static String HOVER_PROPERTY = "hover";
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 	private IVisualPart<VR, ? extends VR> hovered = null;
 
 	@Override

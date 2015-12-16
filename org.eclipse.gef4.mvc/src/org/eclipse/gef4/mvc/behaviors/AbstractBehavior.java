@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -46,7 +47,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 * listeners about changes to this object. May be used by subclasses to
 	 * trigger the notification of listeners.
 	 */
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	@Inject
 	// scoped to single instance within viewer

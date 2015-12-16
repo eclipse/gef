@@ -13,13 +13,13 @@
 package org.eclipse.gef4.zest.fx.models;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -41,7 +41,7 @@ public class HidingModel implements IPropertyChangeNotifier {
 	 */
 	public static final String HIDDEN_PROPERTY = "hidden";
 
-	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private final PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
 	private final Set<org.eclipse.gef4.graph.Node> hidden = Collections
 			.newSetFromMap(new IdentityHashMap<org.eclipse.gef4.graph.Node, Boolean>());
 

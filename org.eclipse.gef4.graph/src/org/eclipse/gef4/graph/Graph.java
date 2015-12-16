@@ -14,7 +14,6 @@
 package org.eclipse.gef4.graph;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +28,7 @@ import org.eclipse.gef4.common.notify.IMapObserver;
 import org.eclipse.gef4.common.notify.ObservableList;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 
 /**
  * A {@link Graph} is a container for {@link Node}s and {@link Edge}s between
@@ -265,7 +265,7 @@ public final class Graph implements IPropertyChangeNotifier {
 		}
 	};
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
 
 	/**
 	 * {@link Node}s directly contained by this {@link Graph}.

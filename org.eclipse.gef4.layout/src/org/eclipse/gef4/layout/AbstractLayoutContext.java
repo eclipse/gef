@@ -13,10 +13,10 @@
 package org.eclipse.gef4.layout;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.layout.listeners.IContextListener;
 import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
@@ -52,7 +52,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * Support object for the (un-)registration of
 	 * {@link PropertyChangeListener}s and firing of events.
 	 */
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	/**
 	 * Support object for reading/writing general properties.

@@ -12,9 +12,9 @@
 package org.eclipse.gef4.mvc.examples.logo.model;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
@@ -29,7 +29,8 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	public static final String TRANSFORM_PROPERTY = "transform";
 	public static final String STROKE_WIDTH_PROPERTY = "strokeWidth";
 
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	private G geometry;
 	private AffineTransform transform;

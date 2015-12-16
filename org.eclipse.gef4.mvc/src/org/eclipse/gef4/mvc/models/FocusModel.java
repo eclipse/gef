@@ -13,9 +13,9 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**
@@ -51,7 +51,8 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 */
 	final public static String VIEWER_FOCUS_PROPERTY = "ViewerFocus";
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 	private IContentPart<VR, ? extends VR> focused = null;
 	private boolean isViewerFocused = false;
 

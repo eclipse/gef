@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import org.eclipse.gef4.common.notify.IMapObserver;
 import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
 
 /**
@@ -199,7 +200,7 @@ public class Node implements IPropertyChangeNotifier {
 	 * {@link PropertyChangeListener}s and firing of {@link PropertyChangeEvent}
 	 * s.
 	 */
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
 
 	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
 	/**

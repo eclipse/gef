@@ -16,13 +16,13 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**
@@ -54,14 +54,14 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public static final String SELECTION_PROPERTY = "selection";
 
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
 			this);
 
 	private List<IContentPart<VR, ? extends VR>> selection = new ArrayList<>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	/**
@@ -109,8 +109,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 			}
 			selection.add(p);
 		}
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelection());
+		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
+				getSelection());
 	}
 
 	/**
@@ -119,8 +119,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	public void clearSelection() {
 		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selection.clear();
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelection());
+		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
+				getSelection());
 	}
 
 	/**
@@ -205,8 +205,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 			}
 			selection.add(i++, p);
 		}
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelection());
+		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
+				getSelection());
 	}
 
 	/**
@@ -222,8 +222,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 			Collection<? extends IContentPart<VR, ? extends VR>> contentParts) {
 		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selection.removeAll(contentParts);
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelection());
+		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
+				getSelection());
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	/**
@@ -274,8 +274,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 			}
 			selection.add(i++, p);
 		}
-		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
-				oldSelection, getSelection());
+		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
+				getSelection());
 	}
 
 }

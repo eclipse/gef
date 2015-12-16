@@ -26,6 +26,7 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.InjectAdapters;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -49,7 +50,8 @@ public abstract class AbstractViewer<VR>
 	 * listeners about changes to this object. May be used by subclasses to
 	 * trigger the notification of listeners.
 	 */
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
 	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
 			this, pcs);

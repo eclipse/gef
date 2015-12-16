@@ -12,12 +12,12 @@
 package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 
 /**
  * The {@link ContentModel} stores the content {@link Object}s that are
@@ -35,7 +35,8 @@ public class ContentModel implements IPropertyChangeNotifier {
 	 */
 	public static final String CONTENTS_PROPERTY = "contents";
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 	private List<Object> contents = new ArrayList<>();
 
 	@Override

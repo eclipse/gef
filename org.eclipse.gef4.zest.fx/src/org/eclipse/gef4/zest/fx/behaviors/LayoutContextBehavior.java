@@ -156,7 +156,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * @param clean
 	 *            Whether to fully re-compute the layout or not.
 	 */
-	protected void applyStaticLayout(boolean clean) {
+	protected void applyLayout(boolean clean) {
 		if (!isHostActive) {
 			return;
 		}
@@ -241,16 +241,17 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 *            {@link #getHost() host}.
 	 */
 	protected void onHostPropertyChange(PropertyChangeEvent evt) {
+		// TODO: not needed in case of dynamic layout
 		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt.getPropertyName())) {
 			// TODO: Suppress Re-Layout when navigating back to a previously
 			// visited graph.
 			if ((Boolean) evt.getNewValue()) {
 				isHostActive = true;
-				applyStaticLayout(true);
+				applyLayout(true);
 			}
 		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt.getPropertyName()) && isHostActive) {
 			if ((Boolean) evt.getNewValue()) {
-				applyStaticLayout(true);
+				applyLayout(true);
 			}
 		}
 	}
@@ -268,9 +269,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 */
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
 		if (ILayoutContext.LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
-			applyStaticLayout(true);
+			applyLayout(true);
 		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt.getPropertyName())) {
-			applyStaticLayout(true);
+			applyLayout(true);
 		}
 	}
 

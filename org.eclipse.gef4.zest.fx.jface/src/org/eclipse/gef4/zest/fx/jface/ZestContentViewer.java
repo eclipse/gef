@@ -17,7 +17,6 @@ package org.eclipse.gef4.zest.fx.jface;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -26,6 +25,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -74,7 +74,7 @@ public class ZestContentViewer extends ContentViewer {
 
 	private final class SelectionNotifier implements PropertyChangeListener, IActivatable {
 
-		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+		private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
 		private ActivatableSupport as = new ActivatableSupport(this, pcs);
 
 		@Override
