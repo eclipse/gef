@@ -43,7 +43,7 @@ public class FisheyeExample extends AbstractZestExample {
 			e(g, n1, n2, LABEL, "");
 			e(g, n2, n3, LABEL, "");
 		}
-		g.getAttrs().put(ZestProperties.GRAPH_LAYOUT,
+		g.getAttrs().put(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
 				new GridLayoutAlgorithm());
 		return g;
 	}

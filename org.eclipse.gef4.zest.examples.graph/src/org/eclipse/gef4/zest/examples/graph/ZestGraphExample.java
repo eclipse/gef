@@ -46,7 +46,7 @@ public class ZestGraphExample extends AbstractZestExample {
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
 		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
-		attrs.put(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm());
+		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 	}
 
@@ -76,7 +76,7 @@ public class ZestGraphExample extends AbstractZestExample {
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
 		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
-		attrs.put(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm());
+		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 	}
 
@@ -108,7 +108,7 @@ public class ZestGraphExample extends AbstractZestExample {
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
 		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
-		attrs.put(ZestProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm());
+		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 
 	}

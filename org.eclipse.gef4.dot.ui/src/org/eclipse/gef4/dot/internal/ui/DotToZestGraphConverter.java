@@ -135,7 +135,7 @@ public class DotToZestGraphConverter {
 			algo = new TreeLayoutAlgorithm(lr ? TreeLayoutAlgorithm.LEFT_RIGHT
 					: TreeLayoutAlgorithm.TOP_DOWN);
 		}
-		zest.put(ZestProperties.GRAPH_LAYOUT, algo);
+		zest.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, algo);
 
 		// convert graph type
 		Object dotType = dot.get(DotProperties.GRAPH_TYPE);

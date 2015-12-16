@@ -59,7 +59,7 @@ public class RadialLayoutExample extends AbstractZestExample {
 		}
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
 				.edges(edges.toArray(new Edge[] {}))
-				.attr(ZestProperties.GRAPH_LAYOUT, new RadialLayoutAlgorithm())
+				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new RadialLayoutAlgorithm())
 				.build();
 	}
 

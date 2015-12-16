@@ -54,7 +54,7 @@ public class SugiyamaLayoutExample extends AbstractZestExample {
 		return new Graph.Builder()
 				.attr(ZestProperties.GRAPH_TYPE,
 						ZestProperties.GRAPH_TYPE_DIRECTED)
-				.nodes(nodes).edges(edges).attr(ZestProperties.GRAPH_LAYOUT,
+				.nodes(nodes).edges(edges).attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
 						new SugiyamaLayoutAlgorithm())
 				.build();
 	}

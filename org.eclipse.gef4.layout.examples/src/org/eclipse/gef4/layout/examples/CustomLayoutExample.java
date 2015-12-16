@@ -53,7 +53,7 @@ public class CustomLayoutExample extends AbstractZestExample {
 				e(nodes[0], nodes[1]), e(nodes[1], nodes[2]) };
 
 		return new Graph.Builder().nodes(nodes).edges(edges)
-				.attr(ZestProperties.GRAPH_LAYOUT, createLayoutAlgorithm())
+				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM, createLayoutAlgorithm())
 				.build();
 	}
 

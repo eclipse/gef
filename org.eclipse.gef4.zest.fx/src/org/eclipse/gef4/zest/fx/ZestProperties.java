@@ -219,7 +219,7 @@ public class ZestProperties {
 	 * @see #getLayout(Graph)
 	 * @see #setLayout(Graph, ILayoutAlgorithm)
 	 */
-	public static final String GRAPH_LAYOUT = "layout";
+	public static final String GRAPH_LAYOUT_ALGORITHM = "layout";
 
 	/**
 	 * The default value of the {@link #NODE_FISHEYE} attribute.
@@ -366,7 +366,7 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #GRAPH_LAYOUT} attribute of the given
+	 * Returns the value of the {@link #GRAPH_LAYOUT_ALGORITHM} attribute of the given
 	 * {@link Graph}.
 	 *
 	 * @param graph
@@ -374,7 +374,7 @@ public class ZestProperties {
 	 * @return The layout algorithm of the given {@link Graph}.
 	 */
 	public static ILayoutAlgorithm getLayout(Graph graph) {
-		Object layout = graph.getAttrs().get(GRAPH_LAYOUT);
+		Object layout = graph.getAttrs().get(GRAPH_LAYOUT_ALGORITHM);
 		if (layout instanceof ILayoutAlgorithm) {
 			return (ILayoutAlgorithm) layout;
 		}
@@ -672,7 +672,7 @@ public class ZestProperties {
 	 *            The new {@link ILayoutAlgorithm} for the given {@link Graph}.
 	 */
 	public static void setLayout(Graph graph, ILayoutAlgorithm algorithm) {
-		graph.getAttrs().put(GRAPH_LAYOUT, algorithm);
+		graph.getAttrs().put(GRAPH_LAYOUT_ALGORITHM, algorithm);
 	}
 
 	/**

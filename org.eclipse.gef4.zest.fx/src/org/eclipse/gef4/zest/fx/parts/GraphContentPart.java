@@ -143,7 +143,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	private void setGraphLayoutAlgorithm() {
-		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT);
+		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
 			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
