@@ -141,7 +141,6 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private Rectangle bounds;
 
-	// private double boundsScale = 0.2;
 	private double boundsScaleX = 0.2;
 	private double boundsScaleY = 0.2;
 
@@ -274,7 +273,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * Returns the move-control value of this SpringLayoutAlgorithm in double
-	 * presion.
+	 * precision.
 	 * 
 	 * @return The move-control value.
 	 */
@@ -294,7 +293,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * Returns the strain-control value of this SpringLayoutAlgorithm in double
-	 * presion.
+	 * precision.
 	 * 
 	 * @return The strain-control value.
 	 */
@@ -535,6 +534,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		if (locationsX.length == 0) {
 			return;
 		}
+
 		// If only one node in the data repository, put it in the middle
 		if (locationsX.length == 1) {
 			// If only one node in the data repository, put it in the middle
@@ -553,10 +553,6 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			}
 		}
 	}
-
-	// /////////////////////////////////////////////////////////////////
-	// /// Protected Methods /////
-	// /////////////////////////////////////////////////////////////////
 
 	/**
 	 * Computes the force for each node in this SpringLayoutAlgorithm. The
@@ -646,22 +642,12 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		for (int i = 0; i < this.entities.length; i++) {
 			if (forcesX[0][i] * forcesX[1][i] < 0) {
 				this.forcesX[i] = 0;
-				// } else if ( this.locationsX[i] < 0 ) {
-				// this.forcesX[i] = forcesX[1][i] / 10;
-				// } else if ( this.locationsX[i] > boundsScale * bounds.width)
-				// {
-				// this.forcesX[i] = forcesX[1][i] / 10;
 			} else {
 				this.forcesX[i] = forcesX[1][i];
 			}
 
 			if (forcesY[0][i] * forcesY[1][i] < 0) {
 				this.forcesY[i] = 0;
-				// } else if ( this.locationsY[i] < 0 ) {
-				// this.forcesY[i] = forcesY[1][i] / 10;
-				// } else if ( this.locationsY[i] > boundsScale * bounds.height)
-				// {
-				// this.forcesY[i] = forcesY[1][i] / 10;
 			} else {
 				this.forcesY[i] = forcesY[1][i];
 			}
@@ -713,23 +699,8 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private void improveBoundScaleX(Rectangle currentBounds) {
 		double boundaryProportionX = currentBounds.getWidth()
 				/ bounds.getWidth();
-				// double boundaryProportion = Math.max(currentBounds.width /
-				// bounds.width, currentBounds.height / bounds.height);
-
-		// if (boundaryProportionX < 0.1)
-		// boundsScaleX *= 2;
-		// else if (boundaryProportionX < 0.5)
-		// boundsScaleX *= 1.4;
-		// else if (boundaryProportionX < 0.8)
-		// boundsScaleX *= 1.1;
 		if (boundaryProportionX < 0.9) {
 			boundsScaleX *= 1.01;
-
-			//
-			// else if (boundaryProportionX > 1.8) {
-			// if (boundsScaleX < 0.01)
-			// return;
-			// boundsScaleX /= 1.05;
 		} else if (boundaryProportionX > 1) {
 			if (boundsScaleX < 0.01)
 				return;
@@ -740,57 +711,14 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private void improveBoundScaleY(Rectangle currentBounds) {
 		double boundaryProportionY = currentBounds.getHeight()
 				/ bounds.getHeight();
-				// double boundaryProportion = Math.max(currentBounds.width /
-				// bounds.width, currentBounds.height / bounds.height);
-
-		// if (boundaryProportionY < 0.1)
-		// boundsScaleY *= 2;
-		// else if (boundaryProportionY < 0.5)
-		// boundsScaleY *= 1.4;
-		// else if (boundaryProportionY < 0.8)
-		// boundsScaleY *= 1.1;
 		if (boundaryProportionY < 0.9) {
 			boundsScaleY *= 1.01;
-
-			// else if (boundaryProportionY > 1.8) {
-			// if (boundsScaleY < 0.01)
-			// return;
-			// boundsScaleY /= 1.05;
 		} else if (boundaryProportionY > 1) {
 			if (boundsScaleY < 0.01)
 				return;
 			boundsScaleY /= 1.01;
 		}
 	}
-
-	// private void improveBoundsScale(DisplayIndependentRectangle
-	// currentBounds) {
-	// double boundaryProportionX = currentBounds.width / bounds.width;
-	// double boundaryProportionY = currentBounds.height / bounds.height;
-	// // double boundaryProportion = Math.max(currentBounds.width /
-	// // bounds.width, currentBounds.height / bounds.height);
-	//
-	// if (boundaryProportion < 0.1)
-	// boundsScale *= 2;
-	// else if (boundaryProportion < 0.5)
-	// boundsScale *= 1.4;
-	// else if (boundaryProportion < 0.8)
-	// boundsScale *= 1.1;
-	// else if (boundaryProportion < 0.99)
-	// boundsScale *= 1.05;
-	//
-	// else if (boundaryProportion > 1.8) {
-	// if (boundsScale < 0.01)
-	// return;
-	// boundsScale /= 1.05;
-	// }
-	// else if (boundaryProportion > 1) {
-	// if (boundsScale < 0.01)
-	// return;
-	// boundsScale /= 1.01;
-	// }
-	//
-	// }
 
 	private void moveToCenter(Rectangle currentBounds) {
 		double moveX = (currentBounds.getX() + currentBounds.getWidth() / 2)
