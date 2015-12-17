@@ -36,49 +36,50 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	/**
 	 * The width/height ratio.
 	 */
-	protected double aspectRatio = 1.0;
+	private double aspectRatio = 1.0;
 
 	/**
 	 * The padding around rows.
 	 */
-	protected int rowPadding = 0;
+	private int rowPadding = 0;
+
 	private boolean resize = false;
 	/**
 	 * The number of rows.
 	 */
-	protected int rows;
+	private int rows;
 	/**
 	 * The number of columns.
 	 */
-	protected int cols;
+	private int cols;
 	/**
 	 * The number of nodes.
 	 */
-	protected int numChildren;
+	private int numChildren;
 	/**
 	 * The column width.
 	 */
-	protected double colWidth;
+	private double colWidth;
 	/**
 	 * The row height.
 	 */
-	protected double rowHeight;
+	private double rowHeight;
 	/**
 	 * The horizontal offset.
 	 */
-	protected double offsetX;
+	private double offsetX;
 	/**
 	 * The vertical offset.
 	 */
-	protected double offsetY;
+	private double offsetY;
 	/**
 	 * The height of a single node.
 	 */
-	protected double childrenHeight;
+	private double childrenHeight;
 	/**
 	 * The width of a single node.
 	 */
-	protected double childrenWidth;
+	private double childrenWidth;
 
 	private ILayoutContext context;
 
@@ -97,18 +98,38 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 			return;
 		Rectangle bounds = LayoutProperties.getBounds(context);
 		calculateGrid(bounds);
-		applyLayoutInternal(context.getNodes(), bounds);
+
+		int index = 0;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if ((i * cols + j) < numChildren) {
+					INodeLayout node = context.getNodes()[index++];
+					if (resize && LayoutProperties.isResizable(node))
+						LayoutProperties.setSize(node,
+								Math.max(childrenWidth, MIN_ENTITY_SIZE),
+								Math.max(childrenHeight, MIN_ENTITY_SIZE));
+					Dimension size = LayoutProperties.getSize(node);
+					double xmove = bounds.getX() + j * colWidth + offsetX
+							+ size.width / 2;
+					double ymove = bounds.getY() + i * rowHeight + offsetY
+							+ size.height / 2;
+					if (LayoutProperties.isMovable(node))
+						LayoutProperties.setLocation(node, xmove, ymove);
+				}
+			}
+		}
 	}
 
 	/**
 	 * Calculates all the dimensions of grid that layout entities will be fit
-	 * in. The following fields are set by this method: {@link #numChildren},
-	 * {@link #rows}, {@link #cols}, {@link #colWidth}, {@link #rowHeight},
-	 * {@link #offsetX}, {@link #offsetY}
+	 * in.
 	 * 
 	 * @param bounds
 	 *            A {@link Rectangle} representing the layout bounds.
 	 */
+	// The following fields are set by this method: {@link #numChildren},
+	// {@link #rows}, {@link #cols}, {@link #colWidth}, {@link #rowHeight},
+	// {@link #offsetX}, {@link #offsetY}
 	protected void calculateGrid(Rectangle bounds) {
 		numChildren = context.getNodes().length;
 		int[] result = calculateNumberOfRowsAndCols(numChildren, bounds.getX(),
@@ -129,43 +150,9 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/**
-	 * Use this algorithm to layout the given entities and bounds. The entities
-	 * will be placed in the same order as they are passed in, unless a
-	 * comparator is supplied.
-	 * 
-	 * @param entitiesToLayout
-	 *            apply the algorithm to these entities
-	 * @param bounds
-	 *            the bounds in which the layout can place the entities.
-	 */
-	protected synchronized void applyLayoutInternal(
-			INodeLayout[] entitiesToLayout, Rectangle bounds) {
-
-		int index = 0;
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				if ((i * cols + j) < numChildren) {
-					INodeLayout node = entitiesToLayout[index++];
-					if (resize && LayoutProperties.isResizable(node))
-						LayoutProperties.setSize(node,
-								Math.max(childrenWidth, MIN_ENTITY_SIZE),
-								Math.max(childrenHeight, MIN_ENTITY_SIZE));
-					Dimension size = LayoutProperties.getSize(node);
-					double xmove = bounds.getX() + j * colWidth + offsetX
-							+ size.width / 2;
-					double ymove = bounds.getY() + i * rowHeight + offsetY
-							+ size.height / 2;
-					if (LayoutProperties.isMovable(node))
-						LayoutProperties.setLocation(node, xmove, ymove);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Calculates and returns an array containing the number of columns and the
-	 * number of rows. If the {@link #aspectRatio} is set to <code>1</code>,
-	 * then the
+	 * number of rows. If the {@link #setAspectRatio(double) aspect ratio} is
+	 * set to <code>1</code>, then the
 	 * {@link #calculateNumberOfRowsAndCols_square(int, double, double, double, double)}
 	 * method is used for the computation. Otherwise, the
 	 * {@link #calculateNumberOfRowsAndCols_rectangular(int)} is used for the
@@ -273,8 +260,8 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
 	 * Calculates and returns the width and height of a single node depending on
-	 * the padding (20%), <i>colWidth</i>, <i>rowHeight</i>, and
-	 * {@link #aspectRatio}.
+	 * the {@link #setRowPadding(int) padding} (20%), <i>colWidth</i>,
+	 * <i>rowHeight</i>, and {@link #setAspectRatio(double) aspect ratio}.
 	 * 
 	 * @param colWidth
 	 *            The width of a column.

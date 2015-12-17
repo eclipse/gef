@@ -279,6 +279,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		 * @return true if location of at least one node has changed
 		 */
 		public boolean flushLocationChanges(double thicknessSoFar) {
+			Rectangle bounds = LayoutProperties.getBounds(context);
 			boolean madeChanges = false;
 			if (node != null) {
 				Dimension nodeSize = LayoutProperties.getSize(node);
@@ -864,8 +865,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private ILayoutContext context;
 
-	private Rectangle bounds;
-
 	private TreeLayoutObserver treeObserver;
 
 	private double availableSpace;
@@ -926,10 +925,10 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	public void applyLayout(boolean clean) {
-		bounds = LayoutProperties.getBounds(context);
-
-		if (bounds.getWidth() * bounds.getHeight() == 0)
+		Rectangle bounds = LayoutProperties.getBounds(context);
+		if (bounds.isEmpty()) {
 			return;
+		}
 
 		if (clean) {
 			treeObserver.recomputeTree();
@@ -1027,8 +1026,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 		this.context = context;
 		treeObserver = new TreeLayoutObserver(context, spaceTreeNodeFactory);
-
-		bounds = LayoutProperties.getBounds(context);
 	}
 
 	public ILayoutContext getLayoutContext() {
@@ -1046,6 +1043,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 * @return
 	 */
 	private double getAvailableSpace() {
+		Rectangle bounds = LayoutProperties.getBounds(context);
 		double result = (direction == TOP_DOWN || direction == BOTTOM_UP)
 				? bounds.getWidth() : bounds.getHeight();
 		result = Math.max(result, this.availableSpace);

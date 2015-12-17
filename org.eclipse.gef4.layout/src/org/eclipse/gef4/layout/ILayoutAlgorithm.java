@@ -33,7 +33,6 @@ public interface ILayoutAlgorithm {
 	 */
 	public void setLayoutContext(ILayoutContext context);
 
-	// TODO: API change => really do this?
 	/**
 	 * Returns the previously set {@link ILayoutContext}.
 	 * 

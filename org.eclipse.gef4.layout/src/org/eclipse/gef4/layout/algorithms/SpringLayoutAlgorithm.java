@@ -42,42 +42,42 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	/**
 	 * The default value for the spring layout number of iterations.
 	 */
-	public static final int DEFAULT_SPRING_ITERATIONS = 1000;
+	private static final int DEFAULT_SPRING_ITERATIONS = 1000;
 
 	/**
 	 * the default value for the time algorithm runs.
 	 */
-	public static final long MAX_SPRING_TIME = 10000;
+	private static final long MAX_SPRING_TIME = 10000;
 
 	/**
 	 * The default value for positioning nodes randomly.
 	 */
-	public static final boolean DEFAULT_SPRING_RANDOM = true;
+	private static final boolean DEFAULT_SPRING_RANDOM = true;
 
 	/**
 	 * The default value for the spring layout move-control.
 	 */
-	public static final double DEFAULT_SPRING_MOVE = 1.0f;
+	private static final double DEFAULT_SPRING_MOVE = 1.0f;
 
 	/**
 	 * The default value for the spring layout strain-control.
 	 */
-	public static final double DEFAULT_SPRING_STRAIN = 1.0f;
+	private static final double DEFAULT_SPRING_STRAIN = 1.0f;
 
 	/**
 	 * The default value for the spring layout length-control.
 	 */
-	public static final double DEFAULT_SPRING_LENGTH = 3.0f;
+	private static final double DEFAULT_SPRING_LENGTH = 3.0f;
 
 	/**
 	 * The default value for the spring layout gravitation-control.
 	 */
-	public static final double DEFAULT_SPRING_GRAVITATION = 2.0f;
+	private static final double DEFAULT_SPRING_GRAVITATION = 2.0f;
 
 	/**
 	 * Minimum distance considered between nodes
 	 */
-	protected static final double MIN_DISTANCE = 1.0d;
+	private static final double MIN_DISTANCE = 1.0d;
 
 	/**
 	 * The variable can be customized to set the number of iterations used.
@@ -502,7 +502,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	/**
 	 * Puts vertices in random places, all between (0,0) and (1,1).
 	 */
-	public void placeRandomly() {
+	protected void placeRandomly() {
 		if (locationsX.length == 0) {
 			return;
 		}

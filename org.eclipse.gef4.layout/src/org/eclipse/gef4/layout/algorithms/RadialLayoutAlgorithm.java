@@ -101,6 +101,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 	 * @param endDegree
 	 *            The end angle for this algorithm (in degree).
 	 */
+	// TODO: Could use GEF4 Geometry Angle instead
 	public void setRangeToLayout(double startDegree, double endDegree) {
 		this.startDegree = startDegree;
 		this.endDegree = endDegree;

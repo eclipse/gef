@@ -35,7 +35,7 @@ import org.eclipse.gef4.layout.INodeLayout;
  * @author Mateusz Matela
  * @author mwienand
  */
-public class TreeLayoutObserver {
+class TreeLayoutObserver {
 
 	/**
 	 * <code>TreeLayoutObserver</code> uses instance of this class to create
@@ -43,7 +43,7 @@ public class TreeLayoutObserver {
 	 * <code>TreeLayoutObserver</code>'s constructor in order to build a tree
 	 * structure made of <code>TreeNode</code>'s subclasses.
 	 */
-	public static class TreeNodeFactory {
+	static class TreeNodeFactory {
 		/**
 		 * Creates a new {@link TreeNode} for the given {@link INodeLayout} and
 		 * {@link TreeLayoutObserver}.
@@ -65,7 +65,7 @@ public class TreeLayoutObserver {
 	 * Represents a node in a tree structure and stores all information related
 	 * to it. May be subclassed if additional data and behavior is necessary.
 	 */
-	public static class TreeNode {
+	static class TreeNode {
 		/**
 		 * The wrapped {@link INodeLayout}.
 		 */
@@ -340,7 +340,7 @@ public class TreeLayoutObserver {
 	 * A superclass for listeners that can be added to this observer to get
 	 * notification whenever the tree structure changes.
 	 */
-	public static class TreeListener {
+	static class TreeListener {
 		/**
 		 * Called when new node is added to the tree structure. The new node
 		 * will not have any connections, so it will be a child of

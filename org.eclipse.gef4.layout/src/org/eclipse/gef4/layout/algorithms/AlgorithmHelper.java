@@ -26,19 +26,19 @@ import org.eclipse.gef4.layout.LayoutProperties;
  * @author Mateusz Matela
  * @author mwienand
  */
-public class AlgorithmHelper {
+class AlgorithmHelper {
 
 	/**
 	 * The minimum size of a node.
 	 */
-	public static int MIN_NODE_SIZE = 8;
+	private static int MIN_NODE_SIZE = 8;
 
 	/**
 	 * This percent of a node's maximum size is reserved for the node, the rest
 	 * is used as padding, i.e.
 	 * <code>node_size = max_size * PADDING_PERCENT</code>.
 	 */
-	public static double PADDING_PERCENT = 0.8;
+	private static double PADDING_PERCENT = 0.8;
 
 	/**
 	 * Fits given entities within given bounds, preserving their relative
