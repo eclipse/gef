@@ -8,71 +8,36 @@
  * Contributors:
  *     Fabian Steeg - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef4.dot.tests;
+package org.eclipse.gef4.layout.tests;
 
-import junit.framework.TestCase;
-
-import org.eclipse.gef4.dot.DotProperties;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests involving the {@link ILayoutAlgorithm} interface.
- * 
+ *
  * @author Fabian Steeg (fsteeg)
- * 
+ *
  */
-public class LayoutAlgorithmTests extends TestCase {
+public class LayoutAlgorithmTests {
 
-	// TODO: Verify the removal of the following test case:
-	// /**
-	// * Access items laid out in a custom layout algorithm (see
-	// * https://bugs.eclipse.org/bugs/show_bug.cgi?id=337144)
-	// */
-	// public void testCustomLayoutSimpleItemAccess() {
-	// Node node = new Node.Builder().build();
-	// Graph.Builder graph = new Graph.Builder().nodes(node);
-	// graph.attr(DotProperties.GRAPH_LAYOUT, new LayoutAlgorithm() {
-	// private LayoutContext context;
-	//
-	// public void setLayoutContext(LayoutContext context) {
-	// this.context = context;
-	// Object[] all = context.getEntities()[0].getItems();
-	// Object[] nodes = context.getNodes()[0].getItems();
-	// Assert.assertEquals(1, all.length);
-	// Assert.assertEquals(1, nodes.length);
-	// Assert.assertTrue(
-	// "All entity items should be wrapped in a Node[]",
-	// all instanceof Node[]);
-	// Assert.assertTrue(
-	// "Node entity items should be wrapped in a Node[]",
-	// nodes instanceof Node[]);
-	// Assert.assertTrue("All entity items should be Node instances",
-	// all[0] instanceof Node);
-	// Assert.assertTrue("Node entity items should be Node instances",
-	// nodes[0] instanceof Node);
-	// }
-	//
-	// public void applyLayout(boolean clean) {
-	// }
-	//
-	// public LayoutContext getLayoutContext() {
-	// return context;
-	// }
-	// });
-	// }
+	/* Use a private subclass to access protected members: */
+	private static class TestNode extends TreeLayoutObserver.TreeNode {
+		protected TestNode() {
+			super(null, null);
+		}
 
-	/**
-	 * Attempt to reproduce an infinite loop with GridLayoutAlgorithm on an
-	 * empty graph (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=382791)
-	 */
-	public void testGridLayoutAlgorithmEmptyGraph() {
-		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_GRID);
-		Assert.assertEquals(DotProperties.GRAPH_LAYOUT_GRID,
-				DotProperties.getLayout(graph.build()));
+		void addDescendant(TestNode descendant) {
+			addChild(descendant);
+			precomputeTree();
+		}
+
+		public void linkDescendant(TestNode descendant) {
+			descendant.parent = this;
+			descendant.depth = this.depth + 1;
+		}
 	}
 
 	/**
@@ -80,6 +45,7 @@ public class LayoutAlgorithmTests extends TestCase {
 	 * that are their own descendants, using the protected addChild() method
 	 * (see http://bugs.eclipse.org/412446)
 	 */
+	@Test
 	public void testTreeLayoutObserverTreeNodeIsAncestorOfAdded() {
 		TestNode node1 = new TestNode();
 		Assert.assertTrue(node1.isAncestorOf(node1));
@@ -101,6 +67,7 @@ public class LayoutAlgorithmTests extends TestCase {
 	 * that are their own descendants, linking protected members directly (see
 	 * http://bugs.eclipse.org/412446)
 	 */
+	@Test
 	public void testTreeLayoutObserverTreeNodeIsAncestorOfLinked() {
 		TestNode node1 = new TestNode();
 		Assert.assertTrue(node1.isAncestorOf(node1));
@@ -115,22 +82,5 @@ public class LayoutAlgorithmTests extends TestCase {
 		node4.linkDescendant(node4);
 		Assert.assertFalse(node3.isAncestorOf(node4));
 		Assert.assertFalse(node4.isAncestorOf(node3));
-	}
-
-	/* Use a private subclass to access protected members: */
-	private static class TestNode extends TreeLayoutObserver.TreeNode {
-		protected TestNode() {
-			super(null, null);
-		}
-
-		void addDescendant(TestNode descendant) {
-			addChild(descendant);
-			precomputeTree();
-		}
-
-		public void linkDescendant(TestNode descendant) {
-			descendant.parent = this;
-			descendant.depth = this.depth + 1;
-		}
 	}
 }

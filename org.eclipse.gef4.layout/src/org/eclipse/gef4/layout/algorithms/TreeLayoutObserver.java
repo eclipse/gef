@@ -43,7 +43,7 @@ public class TreeLayoutObserver {
 	 * <code>TreeLayoutObserver</code>'s constructor in order to build a tree
 	 * structure made of <code>TreeNode</code>'s subclasses.
 	 */
-	static class TreeNodeFactory {
+	public static class TreeNodeFactory {
 		/**
 		 * Creates a new {@link TreeNode} for the given {@link INodeLayout} and
 		 * {@link TreeLayoutObserver}.
@@ -340,7 +340,7 @@ public class TreeLayoutObserver {
 	 * A superclass for listeners that can be added to this observer to get
 	 * notification whenever the tree structure changes.
 	 */
-	static class TreeListener {
+	public static class TreeListener {
 		/**
 		 * Called when new node is added to the tree structure. The new node
 		 * will not have any connections, so it will be a child of
