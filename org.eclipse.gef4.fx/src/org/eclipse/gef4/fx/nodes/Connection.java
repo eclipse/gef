@@ -1250,13 +1250,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 			arrangeEndDecoration();
 		}
 
-		if (newGeometry.getBounds().isEmpty()) {
-			// System.out.println("Skipping refresh because of empty bounds.");
-			inRefresh = false;
-			return;
-		}
-
-		if (startDecoration != null || endDecoration != null) {
+		if (!newGeometry.getBounds().isEmpty()
+				&& (startDecoration != null || endDecoration != null)) {
 			// XXX Use scene coordinates, as the clip node does not provide a
 			// parent
 			Bounds layoutBounds = curveNode
@@ -1279,7 +1274,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 		} else {
 			curveNode.setClip(null);
 		}
-
 		inRefresh = false;
 
 	}
@@ -1427,7 +1421,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// prevent refresh before all points are properly set
 		boolean oldInRefresh = inRefresh;
 		inRefresh = true;
-		;
 		setStartAnchor(anchors.get(0));
 		if (anchors.size() > 2) {
 			setWayAnchors(anchors.subList(1, anchors.size() - 1));
@@ -1682,6 +1675,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 			removeWayPoint(i);
 		}
 		inRefresh = oldInRefresh;
+		refresh();
 	}
 
 }
