@@ -13,9 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
-import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
 /**
@@ -30,7 +28,7 @@ import javafx.scene.input.ZoomEvent;
  *
  */
 public abstract class AbstractFXOnPinchSpreadPolicy
-		extends AbstractInteractionPolicy<Node> {
+		extends AbstractFXInteractionPolicy {
 
 	/**
 	 * Continuous reaction to pinch (close fingers) gestures. Called

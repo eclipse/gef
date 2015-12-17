@@ -19,7 +19,6 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoCursorProvider;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
@@ -34,7 +33,6 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
@@ -205,13 +203,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// multi selection: scale relocate on handle drag without modifier
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXResizeTransformSelectedOnHandleDragPolicy.class);
-		// change cursor for rotation
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXCursorBehavior.class);
-		adapterMapBinder
-				.addBinding(
-						AdapterKey.role(FXCursorBehavior.CURSOR_PROVIDER_ROLE))
-				.to(FXLogoCursorProvider.class);
 	}
 
 	protected void bindIContentPartFactory() {

@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -160,6 +161,41 @@ public class FXPartUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns the first {@link IVisualPart} in the visual hierarchy of the
+	 * given {@link Node}. If no {@link IVisualPart} can be found within the
+	 * visual hierarchy of the {@link Node}, the {@link IRootPart} of the given
+	 * {@link IViewer} is returned.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} in which the {@link IVisualPart} is
+	 *            searched.
+	 * @param target
+	 *            The {@link Node} for which the corresponding
+	 *            {@link IVisualPart} is to be returned.
+	 * @return The first {@link IVisualPart} in the visual hierarchy of the
+	 *         given {@link Node}, or the {@link IRootPart} of the given
+	 *         {@link IViewer}.
+	 */
+	public static IVisualPart<Node, ? extends Node> retrieveVisualPart(
+			IViewer<Node> viewer, Node target) {
+		// search for the first visual part in the visual hierarchy
+		IVisualPart<Node, ? extends Node> targetPart = null;
+		// TODO for all visuals, a visualpart should be available
+		while (targetPart == null && target != null) {
+			targetPart = viewer.getVisualPartMap().get(target);
+			target = target.getParent();
+		}
+
+		// fallback to the root part if no target part was found
+		IRootPart<Node, ? extends Node> rootPart = viewer.getRootPart();
+		if (targetPart == null) {
+			targetPart = rootPart;
+		}
+
+		return targetPart;
 	}
 
 	/**

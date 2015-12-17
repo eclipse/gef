@@ -23,5 +23,4 @@ import javafx.scene.Node;
  *
  */
 public class FXDomain extends AbstractDomain<Node> {
-
 }

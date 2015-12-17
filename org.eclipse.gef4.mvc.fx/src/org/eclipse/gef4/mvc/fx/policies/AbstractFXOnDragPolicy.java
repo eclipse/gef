@@ -14,9 +14,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -30,7 +28,7 @@ import javafx.scene.input.MouseEvent;
  *
  */
 public abstract class AbstractFXOnDragPolicy
-		extends AbstractInteractionPolicy<Node> {
+		extends AbstractFXInteractionPolicy {
 
 	/**
 	 * This callback method is invoked when the mouse is moved while a button is

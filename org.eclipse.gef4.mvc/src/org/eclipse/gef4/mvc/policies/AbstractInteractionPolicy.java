@@ -109,4 +109,5 @@ public abstract class AbstractInteractionPolicy<VR> extends AbstractPolicy<VR> {
 		initialRefreshVisual.put(part, part.isRefreshVisual());
 		part.setRefreshVisual(false);
 	}
+
 }

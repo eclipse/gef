@@ -17,7 +17,6 @@ import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
@@ -52,7 +51,6 @@ import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxCursorProvider;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
@@ -174,10 +172,6 @@ public class ZestFxModule extends MvcFxModule {
 				.to(FXResizeTranslateOnHandleDragPolicy.class);
 		// rotate on drag + control
 		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
-		// change cursor for rotation
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXCursorBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.role(FXCursorBehavior.CURSOR_PROVIDER_ROLE))
-				.to(ZestFxCursorProvider.class);
 	}
 
 	@Override
