@@ -35,7 +35,7 @@ import org.eclipse.gef4.layout.INodeLayout;
  * @author Mateusz Matela
  * @author mwienand
  */
-class TreeLayoutObserver {
+public class TreeLayoutObserver {
 
 	/**
 	 * <code>TreeLayoutObserver</code> uses instance of this class to create
@@ -65,7 +65,7 @@ class TreeLayoutObserver {
 	 * Represents a node in a tree structure and stores all information related
 	 * to it. May be subclassed if additional data and behavior is necessary.
 	 */
-	static class TreeNode {
+	public static class TreeNode {
 		/**
 		 * The wrapped {@link INodeLayout}.
 		 */
