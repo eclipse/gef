@@ -20,6 +20,7 @@ import java.util.Queue;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -122,6 +123,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		return containedNodes;
 	}
 
+	// stores upon press() if the press-drag-release gesture is invalid
+	private boolean invalidGesture = false;
+
 	// mouse coordinates
 	private Point2D startPosInRoot;
 	private Point2D endPosInRoot;
@@ -173,6 +177,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		if (invalidGesture) {
+			return;
+		}
+
 		endPosInRoot = getHost().getRoot().getVisual()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		updateFeedback();
@@ -204,6 +212,16 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
+		if (e.getTarget() instanceof Node) {
+			Node node = (Node) e.getTarget();
+			IVisualPart<Node, ? extends Node> nodePart = FXPartUtils
+					.retrieveVisualPart(getHost().getRoot().getViewer(), node);
+			invalidGesture = nodePart != getHost().getRoot();
+		}
+		if (invalidGesture) {
+			return;
+		}
+
 		startPosInRoot = getHost().getRoot().getVisual()
 				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		endPosInRoot = new Point2D(startPosInRoot.getX(),
@@ -214,6 +232,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	@SuppressWarnings("serial")
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
+		if (invalidGesture) {
+			return;
+		}
+
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		Node rootVisual = root.getVisual();
 		endPosInRoot = rootVisual.sceneToLocal(e.getSceneX(), e.getSceneY());

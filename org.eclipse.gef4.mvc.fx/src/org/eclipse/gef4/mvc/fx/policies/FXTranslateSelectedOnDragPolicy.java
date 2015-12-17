@@ -97,6 +97,11 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 		return part.getAdapter(FXTransformPolicy.class);
 	}
 
+	// @Override
+	// public boolean isExclusive() {
+	// return true;
+	// }
+
 	@Override
 	public void press(MouseEvent e) {
 		translationIndices.clear();

@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
 
@@ -100,9 +101,18 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	}
 
 	@Override
+	protected void registerAtVisualPartMap(IViewer<Node> viewer, VBox visual) {
+	}
+
+	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().remove(index);
+	}
+
+	@Override
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
+			VBox visual) {
 	}
 
 }

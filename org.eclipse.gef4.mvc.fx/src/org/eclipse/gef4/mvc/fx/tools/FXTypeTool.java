@@ -121,6 +121,14 @@ public class FXTypeTool extends AbstractTool<Node> {
 	 */
 	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
 			KeyEvent event) {
+		// if (getDomain().getExclusiveInteractionPolicy() != null) {
+		// if (getDomain().getExclusiveInteractionPolicy() implements
+		// IOnTypePolicy) {
+		// // send to policy
+		// } else {
+		// // discard
+		// }
+		// }
 		EventTarget target = event.getTarget();
 		if (target instanceof Scene) {
 			return getTargetPolicies((Scene) target);

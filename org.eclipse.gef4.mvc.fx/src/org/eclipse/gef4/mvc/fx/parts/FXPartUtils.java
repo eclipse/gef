@@ -182,8 +182,8 @@ public class FXPartUtils {
 	public static IVisualPart<Node, ? extends Node> retrieveVisualPart(
 			IViewer<Node> viewer, Node target) {
 		// search for the first visual part in the visual hierarchy
-		IVisualPart<Node, ? extends Node> targetPart = null;
 		// TODO for all visuals, a visualpart should be available
+		IVisualPart<Node, ? extends Node> targetPart = null;
 		while (targetPart == null && target != null) {
 			targetPart = viewer.getVisualPartMap().get(target);
 			target = target.getParent();

@@ -280,7 +280,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
@@ -502,7 +502,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXMarqueeOnDragPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXMarqueeOnDragPolicy.class);
 	}
 

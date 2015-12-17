@@ -63,8 +63,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXHoverOnHoverPolicy.class);
 	}
 
@@ -72,7 +70,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractRootPartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.role("FXCreationMenuOnClick"))
+		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXCreationMenuOnClickPolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey
@@ -85,13 +83,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXCreateCurveHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("create"))
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXCreateCurveOnDragPolicy.class);
 	}
 
 	protected void bindFXDeleteHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("delete"))
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXDeleteFirstAnchorageOnClickPolicy.class);
 	}
 
@@ -125,7 +123,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXBendCurvePolicy.class);
 
 		// interaction policy to relocate on drag
-		adapterMapBinder.addBinding(AdapterKey.role("translateSelectedOnDrag"))
+		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXTranslateSelectedOnDragPolicy.class);
 
 		// interaction policy to delete on key type
@@ -142,6 +140,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// clickable area resizing
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXClickableAreaBehavior.class);
+
+		// clone on shift+click
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
+				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
 	}
 
 	protected void bindFXGeometricShapePartAdapters(
@@ -173,9 +175,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXResizeShapePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
-		adapterMapBinder.addBinding(AdapterKey.role("translateSelectedOnDrag"))
+		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXTranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role("relocateLinked"))
+		adapterMapBinder.addBinding(AdapterKey.role("2"))
 				.to(FXRelocateLinkedOnDragPolicy.class);
 
 		// clone
@@ -189,19 +191,23 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(ChopBoxAnchorProvider.class);
+
+		// clone on shift+click
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
+				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXResizeTranslateOnHandleDragPolicy.class);
 		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.role("rotate"))
+		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXRotateSelectedOnHandleDragPolicy.class);
 
 		// multi selection: scale relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder.addBinding(AdapterKey.role("2"))
 				.to(FXResizeTransformSelectedOnHandleDragPolicy.class);
 	}
 
