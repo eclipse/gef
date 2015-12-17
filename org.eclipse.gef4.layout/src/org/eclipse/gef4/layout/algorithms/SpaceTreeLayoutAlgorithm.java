@@ -29,8 +29,6 @@ import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
-import org.eclipse.gef4.layout.listeners.IContextListener;
-import org.eclipse.gef4.layout.listeners.ILayoutListener;
 
 /**
  * Layout algorithm implementing SpaceTree. It assumes that nodes in the layout
@@ -83,6 +81,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 			super.addChild(child);
 
 			SpaceTreeNode child2 = (SpaceTreeNode) child;
+			child2.expanded = false;
 
 			if (child.depth >= 0)
 				spaceTreeLayers.get(child.depth).removeNode(child2);
@@ -113,9 +112,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				while (spaceTreeLayers.size() <= this.height)
 					spaceTreeLayers
 							.add(new SpaceTreeLayer(spaceTreeLayers.size()));
-
-				if (treeObserver != null)
-					refreshLayout();
 			}
 		}
 
@@ -136,10 +132,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				spaceTreeLayers.get(depth).moveNode(this, newPositionInLayer);
 				centerParentsTopDown();
 			}
-		}
-
-		public void refreshSubgraphLocation() {
-			spaceTreeLayers.get(depth).refreshThickness();
 		}
 
 		public double spaceRequiredForNode() {
@@ -314,7 +306,11 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				Point currentLocation = LayoutProperties.getLocation(node);
 				if (currentLocation.x != x || currentLocation.y != y) {
 					LayoutProperties.setLocation(node, x, y);
-					refreshSubgraphLocation();
+					SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
+							.getTreeNode(node);
+					spaceTreeNode
+							.adjustPosition(LayoutProperties.getLocation(node));
+					spaceTreeLayers.get(depth).refreshThickness();
 					madeChanges = true;
 				}
 			}
@@ -798,51 +794,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	private IContextListener contextListener = new IContextListener.Stub() {
-		public boolean boundsChanged(ILayoutContext context) {
-			boolean previousBoundsWrong = (bounds == null
-					|| bounds.getWidth() * bounds.getHeight() <= 0);
-			bounds = LayoutProperties.getBounds(context);
-			if (bounds.getWidth() * bounds.getHeight() > 0
-					&& previousBoundsWrong) {
-				refreshLayout();
-			}
-			return false;
-		}
-	};
-
-	private ILayoutListener layoutListener = new ILayoutListener() {
-
-		public boolean nodeResized(ILayoutContext context, INodeLayout node) {
-			setAvailableSpace(getAvailableSpace()
-					+ ((SpaceTreeNode) treeObserver.getTreeNode(node))
-							.spaceRequiredForNode());
-			boolean result = defaultNodeHandle(context, node);
-			setAvailableSpace(0);
-			return result;
-		}
-
-		public boolean nodeMoved(ILayoutContext context, INodeLayout node) {
-			return defaultNodeHandle(context, node);
-		}
-
-		private boolean defaultNodeHandle(ILayoutContext context,
-				INodeLayout node) {
-			if (bounds.getWidth() * bounds.getHeight() <= 0)
-				return false;
-			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
-					.getTreeNode(node);
-			spaceTreeNode.adjustPosition(LayoutProperties.getLocation(node));
-			if (LayoutProperties.isDynamicLayoutEnabled(context)) {
-				((SpaceTreeNode) treeObserver.getSuperRoot())
-						.flushLocationChanges(0);
-				spaceTreeNode.refreshSubgraphLocation();
-				context.flushChanges();
-			}
-			return false;
-		}
-	};
-
 	private int direction = TOP_DOWN;
 
 	private double leafGap = 15;
@@ -1072,13 +1023,9 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	public void setLayoutContext(ILayoutContext context) {
 		if (this.context != null) {
-			this.context.removeContextListener(contextListener);
-			this.context.removeLayoutListener(layoutListener);
 			treeObserver.stop();
 		}
 		this.context = context;
-		context.addContextListener(contextListener);
-		context.addLayoutListener(layoutListener);
 		treeObserver = new TreeLayoutObserver(context, spaceTreeNodeFactory);
 
 		bounds = LayoutProperties.getBounds(context);
@@ -1086,20 +1033,6 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	public ILayoutContext getLayoutContext() {
 		return context;
-	}
-
-	/**
-	 * Called in response to layout context changes. Dynamically refreshes the
-	 * layout to accommodate the changes.
-	 * 
-	 */
-	protected void refreshLayout() {
-		if (!LayoutProperties.isDynamicLayoutEnabled(context))
-			return;
-		SpaceTreeNode superRoot = (SpaceTreeNode) treeObserver.getSuperRoot();
-		superRoot.flushExpansionChanges();
-		superRoot.flushLocationChanges(0);
-		context.flushChanges();
 	}
 
 	/**

@@ -9,6 +9,7 @@
  * Contributors: Jingwei Wu, Rob Lintern, Casey Best, Ian Bull (The Chisel Group) - initial API and implementation
  *               Mateusz Matela - "Tree Views for Zest" contribution, Google Summer of Code 2009
  *               Matthias Wienand (itemis AG) - refactorings
+ *               Alexander Nyßen (itemis AG) - refactorings
  * 
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
@@ -23,7 +24,6 @@ import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.listeners.ILayoutListener;
 
 /**
  * The SpringLayoutAlgorithm has its own data repository and relation
@@ -40,7 +40,7 @@ import org.eclipse.gef4.layout.listeners.ILayoutListener;
 public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	/**
-	 * The default value for the spring layout number of interations.
+	 * The default value for the spring layout number of iterations.
 	 */
 	public static final int DEFAULT_SPRING_ITERATIONS = 1000;
 
@@ -78,11 +78,6 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	 * Minimum distance considered between nodes
 	 */
 	protected static final double MIN_DISTANCE = 1.0d;
-
-	/**
-	 * An arbitrarily small value in mathematics.
-	 */
-	protected static final double EPSILON = 0.001d;
 
 	/**
 	 * The variable can be customized to set the number of iterations used.
@@ -144,44 +139,21 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	private double boundsScaleX = 0.2;
 	private double boundsScaleY = 0.2;
 
-	/**
-	 * 
-	 */
-	public boolean fitWithinBounds = true;
+	// TODO: expose field
+	private boolean fitWithinBounds = true;
 
 	private ILayoutContext context;
 
-	/**
-	 * The {@link SpringLayoutListener} is an implementation of
-	 * {@link ILayoutListener} that updates the locations of nodes when they are
-	 * moved.
-	 */
-	class SpringLayoutListener implements ILayoutListener {
-
-		public boolean nodeMoved(ILayoutContext context, INodeLayout node) {
-			// TODO Auto-generated method stub
-			for (int i = 0; i < entities.length; i++) {
-				if (entities[i] == node) {
-					locationsX[i] = LayoutProperties.getLocation(entities[i]).x;
-					locationsY[i] = LayoutProperties.getLocation(entities[i]).y;
-				}
-			}
-			return false;
-		}
-
-		public boolean nodeResized(ILayoutContext context, INodeLayout node) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-	}
-
 	public void applyLayout(boolean clean) {
 		initLayout();
-		if (!clean)
+		if (!clean) {
 			return;
+		}
+
 		while (performAnotherNonContinuousIteration()) {
 			computeOneIteration();
 		}
+
 		saveLocations();
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
@@ -195,12 +167,10 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			bounds2.setHeight(bounds2.getHeight() - 2 * insets);
 			AlgorithmHelper.fitWithinBounds(entities, bounds2, resize);
 		}
-
 	}
 
 	public void setLayoutContext(ILayoutContext context) {
 		this.context = context;
-		this.context.addLayoutListener(new SpringLayoutListener());
 		initLayout();
 	}
 
@@ -461,6 +431,8 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		if (entities == null)
 			return;
 		for (int i = 0; i < entities.length; i++) {
+			// TODO ensure no dynamic layout passes are triggered as a result of
+			// storing the positions
 			LayoutProperties.setLocation(entities[i], locationsX[i],
 					locationsY[i]);
 		}

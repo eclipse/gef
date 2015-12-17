@@ -12,9 +12,6 @@
 package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.common.properties.IPropertyStore;
-import org.eclipse.gef4.layout.listeners.IContextListener;
-import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
-import org.eclipse.gef4.layout.listeners.ILayoutListener;
 
 /**
  * Objects implementing {@link ILayoutContext} interface are used for exchanging
@@ -157,135 +154,10 @@ public interface ILayoutContext extends IPropertyStore {
 	public ILayoutAlgorithm getLayoutAlgorithm();
 
 	/**
-	 * Adds a listener to the context that will be notified about changes in
-	 * this context's layout, that is movement and resizing of nodes /
-	 * subgraphs. The notifications will not include changes made with API
-	 * included in layout related interfaces, so that layout algorithms won't be
-	 * notified about changes they invoke. Only internal changes of the system
-	 * will fire events.
-	 * 
-	 * @param listener
-	 *            listener to add
-	 */
-	public void addLayoutListener(ILayoutListener listener);
-
-	/**
-	 * Removes a layout listener from this context.
-	 * 
-	 * @param listener
-	 *            listener to remove
-	 */
-	public void removeLayoutListener(ILayoutListener listener);
-
-	/**
-	 * Adds a listener to the context that will be notified about changes in
-	 * graph structure, that is addition and removal of nodes and connections.
-	 * The notifications will not include changes made with API included in
-	 * layout related interfaces, so that layout algorithms won't be notified
-	 * about changes they invoke. Only internal changes of the system will fire
-	 * events.
-	 * 
-	 * @param listener
-	 *            listener to add
-	 */
-	public void addGraphStructureListener(IGraphStructureListener listener);
-
-	/**
-	 * Removes a graph structure listener from this context.
-	 * 
-	 * @param listener
-	 *            listener to remove
-	 */
-	public void removeGraphStructureListener(IGraphStructureListener listener);
-
-	/**
-	 * Adds a listener to the context that will be notified about changes
-	 * related to its configuration.
-	 * 
-	 * @param listener
-	 *            listener to add
-	 */
-	public void addContextListener(IContextListener listener);
-
-	/**
-	 * Removes a context listener from this context.
-	 * 
-	 * @param listener
-	 *            listener to remove
-	 */
-	public void removeContextListener(IContextListener listener);
-
-	/**
 	 * Causes all the changes made to elements in this context to affect the
 	 * display. Called from layout algorithms on finish of layout.
 	 */
 	public void flushChanges();
-
-	/**
-	 * Notifies all previously registered {@link IGraphStructureListener}s about
-	 * the newly added node.
-	 * 
-	 * @param node
-	 *            NodeLayout of newly added node
-	 */
-	public void fireNodeAddedEvent(INodeLayout node);
-
-	/**
-	 * Notifies all previously registered {@link IGraphStructureListener}s about
-	 * the removed node.
-	 * 
-	 * @param node
-	 *            NodeLayout of removed node
-	 */
-	public void fireNodeRemovedEvent(INodeLayout node);
-
-	/**
-	 * Notifies all previously registered {@link IGraphStructureListener}s about
-	 * the newly added connection.
-	 * 
-	 * @param connection
-	 *            ConnectionLayout of newly added connection
-	 */
-	public void fireConnectionAddedEvent(IConnectionLayout connection);
-
-	/**
-	 * Notifies all previously registered {@link IGraphStructureListener}s about
-	 * the removed connection.
-	 * 
-	 * @param connection
-	 *            ConnectionLayout of removed connection
-	 */
-	public void fireConnectionRemovedEvent(IConnectionLayout connection);
-
-	/**
-	 * Notifies all previously registered {@link IContextListener}s about the
-	 * bounds change.
-	 */
-	public void fireBoundsChangedEvent();
-
-	/**
-	 * Notifies all previously registered {@link IContextListener}s about the
-	 * state of the background layout flag.
-	 */
-	public void fireBackgroundEnableChangedEvent();
-
-	/**
-	 * Notifies all previously registered {@link ILayoutListener}s about the
-	 * moved node.
-	 * 
-	 * @param node
-	 *            NodeLayout of moved node
-	 */
-	public void fireNodeMovedEvent(INodeLayout node);
-
-	/**
-	 * Notifies all previously registered {@link ILayoutListener}s about the
-	 * resized node.
-	 * 
-	 * @param node
-	 *            NodeLayout of resized node
-	 */
-	public void fireNodeResizedEvent(INodeLayout node);
 
 	/**
 	 * Removes the given {@link Runnable} from the list of {@link Runnable}s

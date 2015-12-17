@@ -99,7 +99,7 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	 * {@link Node}.
 	 *
 	 * @param node
-	 *            The {@link Node} for which to return the corrsponding
+	 *            The {@link Node} for which to return the corresponding
 	 *            {@link GraphNodeLayout}.
 	 * @return The {@link GraphNodeLayout} corresponding to the given
 	 *         {@link Node}.

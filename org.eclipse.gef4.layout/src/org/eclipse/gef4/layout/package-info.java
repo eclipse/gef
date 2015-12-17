@@ -13,7 +13,6 @@
  * This package provides an interface-based facade to exchange layout
  * information with layout algorithms (within this package), concrete
  * implementations of layout algorithms (
- * {@link org.eclipse.gef4.layout.algorithms}), as well as listeners to hook
- * into the layout computation ({@link org.eclipse.gef4.layout.listeners}).
+ * {@link org.eclipse.gef4.layout.algorithms}).
  */
 package org.eclipse.gef4.layout;

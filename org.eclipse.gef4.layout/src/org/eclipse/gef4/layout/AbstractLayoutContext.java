@@ -18,10 +18,6 @@ import java.util.List;
 
 import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
-import org.eclipse.gef4.layout.listeners.IContextListener;
-import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
-import org.eclipse.gef4.layout.listeners.ILayoutListener;
-import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
 
 /**
  * The {@link AbstractLayoutContext} is an abstract {@link ILayoutContext}
@@ -34,15 +30,13 @@ import org.eclipse.gef4.layout.listeners.LayoutListenerSupport;
  * @author mwienand
  *
  */
-// TODO: replace fire* methods with property change mechanism
+// TODO: replace fire* methods with property change mechanism -> layout
+// interfaces all extend IPropertyStore, thus are IPropertyChangeNotifier
 public abstract class AbstractLayoutContext implements ILayoutContext {
 
-	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
 	private ILayoutAlgorithm layoutAlgorithm = null;
 	private final List<INodeLayout> layoutNodes = new ArrayList<>();
 	private final List<IConnectionLayout> layoutEdges = new ArrayList<>();
-
-	private boolean flushChangesInvocation = false;
 
 	private final List<Runnable> postLayoutPass = new ArrayList<>();
 	private final List<Runnable> preLayoutPass = new ArrayList<>();
@@ -60,10 +54,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 */
 	protected PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
 
-	public void addContextListener(IContextListener listener) {
-		lls.addContextListener(listener);
-	}
-
 	/**
 	 * Adds the given {@link IConnectionLayout} to the list of edges and fires a
 	 * corresponding connection-added-event.
@@ -73,19 +63,10 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 */
 	protected void addEdge(IConnectionLayout edge) {
 		layoutEdges.add(edge);
-		fireConnectionAddedEvent(edge);
-	}
-
-	public void addGraphStructureListener(IGraphStructureListener listener) {
-		lls.addGraphStructureListener(listener);
 	}
 
 	public void addLayoutFilter(ILayoutFilter layoutFilter) {
 		layoutFilters.add(layoutFilter);
-	}
-
-	public void addLayoutListener(ILayoutListener listener) {
-		lls.addLayoutListener(listener);
 	}
 
 	/**
@@ -97,7 +78,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 */
 	protected void addNode(INodeLayout node) {
 		layoutNodes.add(node);
-		fireNodeAddedEvent(node);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -144,56 +124,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		}
 	}
 
-	public void fireBackgroundEnableChangedEvent() {
-		lls.fireBackgroundEnableChangedEvent();
-	}
-
-	public void fireBoundsChangedEvent() {
-		if (!flushChangesInvocation) {
-			lls.fireBoundsChangedEvent();
-		}
-	}
-
-	public void fireConnectionAddedEvent(IConnectionLayout connection) {
-		if (!flushChangesInvocation) {
-			lls.fireConnectionAddedEvent(connection);
-		}
-	}
-
-	public void fireConnectionRemovedEvent(IConnectionLayout connection) {
-		if (!flushChangesInvocation) {
-			lls.fireConnectionRemovedEvent(connection);
-		}
-	}
-
-	public void fireNodeAddedEvent(INodeLayout node) {
-		if (!flushChangesInvocation) {
-			lls.fireNodeAddedEvent(node);
-		}
-	}
-
-	public void fireNodeMovedEvent(INodeLayout node) {
-		if (!flushChangesInvocation) {
-			lls.fireNodeMovedEvent(node);
-		}
-	}
-
-	public void fireNodeRemovedEvent(INodeLayout node) {
-		if (!flushChangesInvocation) {
-			lls.fireNodeRemovedEvent(node);
-		}
-	}
-
-	public void fireNodeResizedEvent(INodeLayout node) {
-		if (!flushChangesInvocation) {
-			lls.fireNodeResizedEvent(node);
-		}
-	}
-
 	public void flushChanges() {
-		flushChangesInvocation = true;
 		doFlushChanges();
-		flushChangesInvocation = false;
 	}
 
 	public IConnectionLayout[] getConnections() {
@@ -249,10 +181,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		return false;
 	}
 
-	public void removeContextListener(IContextListener listener) {
-		lls.removeContextListener(listener);
-	}
-
 	/**
 	 * Removes the given {@link IConnectionLayout} from the list of edges and
 	 * fires a corresponding connection-removed-event.
@@ -262,19 +190,10 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 */
 	protected void removeEdge(IConnectionLayout edge) {
 		layoutEdges.remove(edge);
-		fireConnectionRemovedEvent(edge);
-	}
-
-	public void removeGraphStructureListener(IGraphStructureListener listener) {
-		lls.removeGraphStructureListener(listener);
 	}
 
 	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
 		layoutFilters.remove(layoutFilter);
-	}
-
-	public void removeLayoutListener(ILayoutListener listener) {
-		lls.removeLayoutListener(listener);
 	}
 
 	/**
@@ -286,7 +205,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 */
 	protected void removeNode(INodeLayout node) {
 		layoutNodes.remove(node);
-		fireNodeRemovedEvent(node);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -308,20 +226,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	public void setProperty(String name, Object value) {
-		Object oldValue = pss.getProperty(name);
+		// will set property value and fire notification (if value changed).
 		pss.setProperty(name, value);
-		if (oldValue != value && (value == null || !value.equals(oldValue))) {
-			// send notification
-			if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
-				fireBoundsChangedEvent();
-			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
-					.equals(name)) {
-				fireBackgroundEnableChangedEvent();
-			}
-		}
-		// TODO: check if this is really needed, as the property store already
-		// fires the respective event
-		pcs.firePropertyChange(name, oldValue, value);
 	}
 
 	public void setLayoutAlgorithm(ILayoutAlgorithm newLayoutAlgorithm) {

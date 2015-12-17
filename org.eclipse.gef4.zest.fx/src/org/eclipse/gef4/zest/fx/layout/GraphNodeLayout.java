@@ -135,7 +135,6 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public void setProperty(String name, Object value) {
-		Object oldValue = pss.getProperty(name);
 		// TODO: remove NaN check here and ensure NaN is not passed in
 		if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			if (value instanceof Point) {
@@ -149,14 +148,5 @@ public class GraphNodeLayout implements INodeLayout {
 			}
 		}
 		pss.setProperty(name, value);
-		// send notification
-		if (value != oldValue && (value == null || !value.equals(oldValue))) {
-			if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
-				context.fireNodeMovedEvent(this);
-			} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
-				context.fireNodeResizedEvent(this);
-			}
-		}
 	}
-
 }

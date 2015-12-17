@@ -288,9 +288,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		double width = newLayoutBounds.getWidth() / NodeContentPart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 		double height = newLayoutBounds.getHeight() / NodeContentPart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 		Rectangle newBounds = new Rectangle(0, 0, width, height);
-		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
-			LayoutProperties.setBounds(layoutContext, newBounds);
-		}
+		LayoutProperties.setBounds(layoutContext, newBounds);
 	}
 
 	/**
@@ -304,9 +302,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	protected void onViewportModelPropertyChange(Bounds oldScrollableBounds, Bounds newScrollableBounds) {
 		InfiniteCanvas canvas = getInfiniteCanvas();
 		Rectangle newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
-		if (!LayoutProperties.getBounds(layoutContext).equals(newBounds)) {
-			LayoutProperties.setBounds(layoutContext, newBounds);
-		}
+		LayoutProperties.setBounds(layoutContext, newBounds);
 	}
 
 }

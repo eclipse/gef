@@ -17,17 +17,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.listeners.IGraphStructureListener;
 
 /**
  * A helper class for layout algorithms that are based on tree structure. It
@@ -392,86 +388,6 @@ public class TreeLayoutObserver {
 		}
 	}
 
-	private IGraphStructureListener structureListener = new IGraphStructureListener() {
-
-		public boolean nodeRemoved(ILayoutContext context, INodeLayout node) {
-			TreeNode treeNode = layoutToTree.get(node);
-			treeNode.parent.children.remove(treeNode);
-			superRoot.precomputeTree();
-			for (Iterator<TreeListener> iterator = treeListeners
-					.iterator(); iterator.hasNext();) {
-				TreeListener listener = iterator.next();
-				listener.nodeRemoved(treeNode);
-			}
-			return false;
-		}
-
-		public boolean nodeAdded(ILayoutContext context, INodeLayout node) {
-			TreeNode treeNode = getTreeNode(node);
-			superRoot.addChild(treeNode);
-			superRoot.precomputeTree();
-			for (Iterator<TreeListener> iterator = treeListeners
-					.iterator(); iterator.hasNext();) {
-				TreeListener listener = iterator.next();
-				listener.nodeAdded(treeNode);
-			}
-			return false;
-		}
-
-		public boolean connectionRemoved(ILayoutContext context,
-				IConnectionLayout connection) {
-			TreeNode node1 = layoutToTree.get(connection.getSource());
-			TreeNode node2 = layoutToTree.get(connection.getTarget());
-			if (node1.parent == node2) {
-				node1.findNewParent();
-				if (node1.parent != node2) {
-					superRoot.precomputeTree();
-					fireParentChanged(node1, node2);
-				}
-			}
-			if (node2.parent == node1) {
-				node2.findNewParent();
-				if (node2.parent != node1) {
-					superRoot.precomputeTree();
-					fireParentChanged(node2, node1);
-				}
-			}
-			return false;
-		}
-
-		public boolean connectionAdded(ILayoutContext context,
-				IConnectionLayout connection) {
-			TreeNode source = layoutToTree.get(connection.getSource());
-			TreeNode target = layoutToTree.get(connection.getTarget());
-			if (source == target)
-				return false;
-			if (target.isBetterParent(source)) {
-				TreeNode previousParent = target.parent;
-				previousParent.children.remove(target);
-				source.addChild(target);
-				superRoot.precomputeTree();
-				fireParentChanged(target, previousParent);
-			}
-			if (!LayoutProperties.isDirected(connection)
-					&& source.isBetterParent(target)) {
-				TreeNode previousParent = source.parent;
-				previousParent.children.remove(source);
-				target.addChild(source);
-				superRoot.precomputeTree();
-				fireParentChanged(source, previousParent);
-			}
-			return false;
-		}
-
-		private void fireParentChanged(TreeNode node, TreeNode previousParent) {
-			for (Iterator<TreeListener> iterator = treeListeners
-					.iterator(); iterator.hasNext();) {
-				TreeListener listener = iterator.next();
-				listener.parentChanged(node, previousParent);
-			}
-		}
-	};
-
 	private final HashMap<Object, TreeNode> layoutToTree = new HashMap<>();
 	private final TreeNodeFactory factory;
 	private final ILayoutContext context;
@@ -496,7 +412,6 @@ public class TreeLayoutObserver {
 		else
 			this.factory = nodeFactory;
 		this.context = context;
-		context.addGraphStructureListener(structureListener);
 		recomputeTree();
 	}
 
@@ -516,7 +431,6 @@ public class TreeLayoutObserver {
 	 * updated only when {@link #recomputeTree()} is called.
 	 */
 	public void stop() {
-		context.removeGraphStructureListener(structureListener);
 	}
 
 	/**

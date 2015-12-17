@@ -45,18 +45,6 @@ public class LayoutProperties {
 	public static final Boolean DEFAULT_BOUNDS_EXPANDABLE = false;
 
 	/**
-	 * Indicates if layout algorithms can work in the background, reacting to
-	 * events/animation.
-	 */
-	public static final String DYNAMIC_LAYOUT_ENABLED_PROPERTY = "dynamic-layout-enabled";
-
-	/**
-	 * Defines the default value for the
-	 * {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_DYNAMIC_LAYOUT_ENABLED = false;
-
-	/**
 	 * Stores the location of this EntityLayout.
 	 */
 	public static final String LOCATION_PROPERTY = "location";
@@ -256,42 +244,6 @@ public class LayoutProperties {
 	public static void setBoundsExpandable(ILayoutContext graph,
 			boolean boundsExpandable) {
 		graph.setProperty(BOUNDS_EXPANDABLE_PROPERTY, boundsExpandable);
-	}
-
-	/**
-	 * Returns the value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
-	 * given {@link ILayoutContext}.
-	 * 
-	 * @param graph
-	 *            The {@link ILayoutContext} whose
-	 *            {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} is read.
-	 * @return The value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
-	 *         given {@link ILayoutContext}.
-	 */
-	public static Boolean isDynamicLayoutEnabled(ILayoutContext graph) {
-		Object dynamicLayoutEnabled = graph
-				.getProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY);
-		if (dynamicLayoutEnabled instanceof Boolean) {
-			return (Boolean) dynamicLayoutEnabled;
-		}
-		return DEFAULT_DYNAMIC_LAYOUT_ENABLED;
-	}
-
-	/**
-	 * Sets the value of the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} of the
-	 * given {@link ILayoutContext} to the given value.
-	 * 
-	 * @param layoutContext
-	 *            The {@link ILayoutContext} whose
-	 *            {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY} is changed.
-	 * @param dynamicLayoutEnabled
-	 *            The new value for the {@link #DYNAMIC_LAYOUT_ENABLED_PROPERTY}
-	 *            of the given {@link ILayoutContext}.
-	 */
-	public static void setDynamicLayoutEnabled(ILayoutContext layoutContext,
-			boolean dynamicLayoutEnabled) {
-		layoutContext.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY,
-				dynamicLayoutEnabled);
 	}
 
 	/**
