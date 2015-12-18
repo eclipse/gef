@@ -749,6 +749,15 @@ public class InfiniteCanvas extends Region {
 		double cx = contentBounds.getMinX() + contentBounds.getWidth() / 2;
 		double cy = contentBounds.getMinY() + contentBounds.getHeight() / 2;
 
+		// compute zoom factor
+		double zf = Math.min(getWidth() / contentBounds.getWidth(),
+				getHeight() / contentBounds.getHeight());
+
+		// do not scroll or zoom if the scale factor is invalid
+		if (Double.isInfinite(zf) || Double.isNaN(zf) || zf == 0) {
+			return;
+		}
+
 		// compute visible area center
 		double vx = getWidth() / 2;
 		double vy = getHeight() / 2;
@@ -756,10 +765,6 @@ public class InfiniteCanvas extends Region {
 		// scroll to center position
 		setHorizontalScrollOffset(getHorizontalScrollOffset() + vx - cx);
 		setVerticalScrollOffset(getVerticalScrollOffset() + vy - cy);
-
-		// compute zoom factor
-		double zf = Math.min(getWidth() / contentBounds.getWidth(),
-				getHeight() / contentBounds.getHeight());
 
 		// compute pivot point for zoom within content coordinates
 		Point2D pivot = getContentGroup().sceneToLocal(vx, vy);
