@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXBendCurvePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOrFocusAndSelectOnClickPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
@@ -37,6 +37,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
@@ -139,7 +140,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
-				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
+				.to(FXCloneOnClickPolicy.class);
+		// select on click
+		adapterMapBinder.addBinding(AdapterKey.role("1"))
+				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
 	protected void bindFXGeometricShapePartAdapters(
@@ -185,8 +189,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(ChopBoxAnchorProvider.class);
 
 		// clone on shift+click
+		adapterMapBinder.addBinding(AdapterKey.role("1"))
+				.to(FXCloneOnClickPolicy.class);
+		// select on click
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
-				.to(FXCloneOrFocusAndSelectOnClickPolicy.class);
+				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(
