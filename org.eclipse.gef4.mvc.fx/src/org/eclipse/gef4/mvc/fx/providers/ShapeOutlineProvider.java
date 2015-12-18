@@ -30,7 +30,7 @@ public class ShapeOutlineProvider extends GeometricOutlineProvider {
 
 	@Override
 	public IGeometry get() {
-		return NodeUtils.getShapeOutline(getAdaptable().getVisual(),
+		return NodeUtils.getResizedToShapeBounds(getAdaptable().getVisual(),
 				super.get());
 	}
 

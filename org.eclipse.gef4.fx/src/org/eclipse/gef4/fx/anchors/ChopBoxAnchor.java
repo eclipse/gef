@@ -267,8 +267,10 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					Node anchorage) {
 				IGeometry geometry = null;
 				if (anchorage instanceof Connection) {
-					geometry = ((Connection) anchorage).getCurveNode()
-							.getGeometry();
+					GeometryNode<ICurve> curveNode = ((Connection) anchorage)
+							.getCurveNode();
+					geometry = NodeUtils.localToParent(curveNode,
+							curveNode.getGeometry());
 				} else if (anchorage instanceof GeometryNode) {
 					geometry = ((GeometryNode<?>) anchorage).getGeometry();
 				} else if (anchorage instanceof Shape
@@ -279,7 +281,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 
 				// resize to layout-bounds to include stroke if not a curve
 				if (geometry instanceof IShape) {
-					return NodeUtils.getShapeOutline(anchorage, geometry);
+					return NodeUtils.getResizedToShapeBounds(anchorage,
+							geometry);
 				}
 
 				// fallback to layout-bounds

@@ -134,6 +134,39 @@ public class NodeUtils {
 	}
 
 	/**
+	 * Creates a copy of the given {@link IGeometry} and resizes it to fit the
+	 * (corrected) layout-bounds (see {@link #getShapeBounds(Node)}) of the
+	 * given {@link Node}. The new, resized {@link IGeometry} is returned.
+	 *
+	 * @param visual
+	 *            The visual of which the layout-bounds are used as the basis
+	 *            for resizing the given {@link IGeometry}.
+	 * @param geometry
+	 *            The {@link IGeometry} that is resized to fit the layout-bounds
+	 *            of the given {@link Node}.
+	 * @return The new, resized {@link IGeometry}.
+	 */
+	public static IGeometry getResizedToShapeBounds(Node visual,
+			IGeometry geometry) {
+		Rectangle geomBounds = geometry.getBounds();
+		Rectangle shapeBounds = NodeUtils.getShapeBounds(visual);
+		double dw = shapeBounds.getWidth() - geomBounds.getWidth();
+		double dh = shapeBounds.getHeight() - geomBounds.getHeight();
+
+		// translate
+		double dx = -dw / 2;
+		double dy = -dh / 2;
+		GeometryNode<IGeometry> geometryNode = new GeometryNode<>(geometry
+				.getTransformed(new AffineTransform().translate(dx, dy)));
+
+		// resize
+		geometryNode.resizeGeometry(geomBounds.getWidth() + dw,
+				geomBounds.getHeight() + dh);
+
+		return geometryNode.getGeometry();
+	}
+
+	/**
 	 * Returns the scene-to-local transform for the given {@link Node}.
 	 *
 	 * @param node
@@ -171,38 +204,6 @@ public class NodeUtils {
 						: 0;
 		return JavaFX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
 				offset, offset);
-	}
-
-	/**
-	 * Creates a copy of the given {@link IGeometry} and resizes it to fit the
-	 * layout-bounds of the given {@link Node}. The new, resized
-	 * {@link IGeometry} is returned.
-	 *
-	 * @param visual
-	 *            The visual of which the layout-bounds are used as the basis
-	 *            for resizing the given {@link IGeometry}.
-	 * @param geometry
-	 *            The {@link IGeometry} that is resized to fit the layout-bounds
-	 *            of the given {@link Node}.
-	 * @return The new, resized {@link IGeometry}.
-	 */
-	public static IGeometry getShapeOutline(Node visual, IGeometry geometry) {
-		Rectangle geomBounds = geometry.getBounds();
-		Rectangle shapeBounds = NodeUtils.getShapeBounds(visual);
-		double dw = shapeBounds.getWidth() - geomBounds.getWidth();
-		double dh = shapeBounds.getHeight() - geomBounds.getHeight();
-
-		// translate
-		double dx = -dw / 2;
-		double dy = -dh / 2;
-		GeometryNode<IGeometry> geometryNode = new GeometryNode<>(geometry
-				.getTransformed(new AffineTransform().translate(dx, dy)));
-
-		// resize
-		geometryNode.resizeGeometry(geomBounds.getWidth() + dw,
-				geomBounds.getHeight() + dh);
-
-		return geometryNode.getGeometry();
 	}
 
 	/**
