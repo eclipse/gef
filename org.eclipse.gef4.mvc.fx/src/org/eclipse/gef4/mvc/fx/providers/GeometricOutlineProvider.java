@@ -16,9 +16,6 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.fx.utils.Shape2Geometry;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -35,9 +32,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Text;
 
 /**
  * The {@link GeometricOutlineProvider} is a {@link Provider Provider
@@ -74,40 +68,12 @@ public class GeometricOutlineProvider
 
 	@Override
 	public IGeometry get() {
-		// return host visual's geometry in local coordinates
-		return getGeometry(host.getVisual());
+		return NodeUtils.getGeometricOutline(host.getVisual());
 	}
 
 	@Override
 	public IVisualPart<Node, ? extends Node> getAdaptable() {
 		return host;
-	}
-
-	/**
-	 * Returns an {@link IGeometry} representing the outline of the passed in
-	 * visual {@link Node}, within the local coordinate space of that
-	 * {@link Node}.
-	 *
-	 * @param visual
-	 *            The {@link Node} for which to retrieve the outline geometry.
-	 * @return An {@link IGeometry} representing the outline geometry.
-	 * @throws IllegalStateException
-	 *             if no {@link IGeometry} can be determined for the given
-	 *             {@link Node}.
-	 */
-	protected IGeometry getGeometry(Node visual) {
-		if (visual instanceof Connection) {
-			GeometryNode<ICurve> curveNode = ((Connection) visual)
-					.getCurveNode();
-			return NodeUtils.localToParent(curveNode, curveNode.getGeometry());
-		} else if (visual instanceof GeometryNode) {
-			return ((GeometryNode<?>) visual).getGeometry();
-		} else if (visual instanceof Shape && !(visual instanceof Text)
-				&& !(visual instanceof SVGPath)) {
-			return Shape2Geometry.toGeometry((Shape) visual);
-		} else {
-			return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
-		}
 	}
 
 	@Override

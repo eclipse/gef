@@ -16,9 +16,11 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -28,8 +30,19 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.QuadCurve;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
 
 /**
  * The {@link NodeUtils} class contains utility methods for working with JavaFX:
@@ -294,6 +307,51 @@ public class NodeUtils {
 		// parent to scene
 		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
 		return g.getTransformed(sceneToLocalTx);
+	}
+
+	/**
+	 * Returns an {@link IGeometry} that corresponds to the geometric outline of
+	 * the given {@link Node}. The {@link IGeometry} is specified within the
+	 * local coordinate system of the given {@link Node}.
+	 * <p>
+	 * The following {@link Node}s are supported:
+	 * <ul>
+	 * <li>{@link Connection}
+	 * <li>{@link GeometryNode}
+	 * <li>{@link Arc}
+	 * <li>{@link Circle}
+	 * <li>{@link CubicCurve}
+	 * <li>{@link Ellipse}
+	 * <li>{@link Line}
+	 * <li>{@link Path}
+	 * <li>{@link Polygon}
+	 * <li>{@link Polyline}
+	 * <li>{@link QuadCurve}
+	 * <li>{@link Rectangle}
+	 * </ul>
+	 *
+	 * @param visual
+	 *            The {@link Node} of which the geometric outline is returned.
+	 * @return An {@link IGeometry} that corresponds to the geometric outline of
+	 *         the given {@link Node}.
+	 * @throws IllegalArgumentException
+	 *             if the given {@link Node} is not supported.
+	 */
+	public static IGeometry getGeometricOutline(Node visual) {
+		if (visual instanceof Connection) {
+			GeometryNode<ICurve> curveNode = ((Connection) visual)
+					.getCurveNode();
+			return localToParent(curveNode, curveNode.getGeometry());
+		} else if (visual instanceof GeometryNode) {
+			return ((GeometryNode<?>) visual).getGeometry();
+		} else if (visual instanceof Shape && !(visual instanceof Text)
+				&& !(visual instanceof SVGPath)) {
+			return Shape2Geometry.toGeometry((Shape) visual);
+		} else {
+			throw new IllegalArgumentException(
+					"Cannot determine geometric outline for the given visual <"
+							+ visual + ">.");
+		}
 	}
 
 }

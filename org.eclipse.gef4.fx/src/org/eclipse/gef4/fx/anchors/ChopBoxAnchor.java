@@ -22,10 +22,8 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
 import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
-import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.fx.utils.Shape2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -44,9 +42,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Text;
 
 /**
  * The {@link ChopBoxAnchor} computes anchor positions based on a reference
@@ -266,17 +261,9 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			protected IGeometry getAnchorageReferenceGeometryInLocal(
 					Node anchorage) {
 				IGeometry geometry = null;
-				if (anchorage instanceof Connection) {
-					GeometryNode<ICurve> curveNode = ((Connection) anchorage)
-							.getCurveNode();
-					geometry = NodeUtils.localToParent(curveNode,
-							curveNode.getGeometry());
-				} else if (anchorage instanceof GeometryNode) {
-					geometry = ((GeometryNode<?>) anchorage).getGeometry();
-				} else if (anchorage instanceof Shape
-						&& !(anchorage instanceof Text)
-						&& !(anchorage instanceof SVGPath)) {
-					geometry = Shape2Geometry.toGeometry((Shape) anchorage);
+				try {
+					geometry = NodeUtils.getGeometricOutline(anchorage);
+				} catch (IllegalArgumentException e) {
 				}
 
 				// resize to layout-bounds to include stroke if not a curve

@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.providers;
 
 import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
@@ -30,8 +31,13 @@ public class ShapeOutlineProvider extends GeometricOutlineProvider {
 
 	@Override
 	public IGeometry get() {
-		return NodeUtils.getResizedToShapeBounds(getAdaptable().getVisual(),
-				super.get());
+		try {
+			return NodeUtils.getResizedToShapeBounds(getAdaptable().getVisual(),
+					super.get());
+		} catch (IllegalArgumentException x) {
+			return JavaFX2Geometry
+					.toRectangle(getAdaptable().getVisual().getLayoutBounds());
+		}
 	}
 
 }
