@@ -38,10 +38,17 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
+	private List<IContentPart<Node, ? extends Node>> targetParts;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
+		// abort this policy if no target parts could be found
+		if (targetParts == null) {
+			return;
+		}
+
+		// apply changes to the target parts
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
 				Point2D startInParent = getHost().getVisual().getParent()
@@ -104,34 +111,50 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		translationIndices.clear();
+		// save initial pointer location
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
-		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
-			storeAndDisableRefreshVisuals(part);
+
+		// determine target parts
+		targetParts = getTargetParts();
+		if (targetParts.isEmpty()) {
+			// abort this policy if no target parts could be found
+			targetParts = null;
+			return;
+		}
+
+		// initialize this policy for all determined target parts
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			// init transaction policy
-			FXTransformPolicy transformPolicy = getTransformPolicy(part);
-			if (transformPolicy != null) {
-				init(transformPolicy);
-				translationIndices.put(part,
-						getTransformPolicy(part).createPostTransform());
+			FXTransformPolicy policy = getTransformPolicy(part);
+			if (policy != null) {
+				storeAndDisableRefreshVisuals(part);
+				init(policy);
+				translationIndices.put(part, policy.createPostTransform());
 			}
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
+		// abort this policy if no target parts could be found
+		if (targetParts == null) {
+			return;
+		}
+
+		// commit changes for all target parts
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			FXTransformPolicy policy = getTransformPolicy(part);
 			if (policy != null) {
-				restoreRefreshVisuals(part);
-				// TODO: we need to ensure this can be done before
-				// enableRefreshVisuals(), because visuals should already be up
-				// to date
-				// (and we thus save a potential refresh)
 				commit(policy);
+				restoreRefreshVisuals(part);
 			}
 		}
+
+		// reset target parts
+		targetParts = null;
+		// reset initial pointer location
 		setInitialMouseLocationInScene(null);
+		// reset translation indices
 		translationIndices.clear();
 	}
 
