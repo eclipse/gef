@@ -31,10 +31,11 @@ import java.util.Map;
  * value being set, unset, or changed. The name of the property will be used as
  * the property name within all those events.
  */
-public class PropertyStoreSupport {
+public class PropertyStoreSupport extends PropertyChangeNotifierSupport {
 
+	private static final long serialVersionUID = -4988334536270723944L;
+	
 	private Map<String, Object> properties = new HashMap<>();
-	private PropertyChangeSupport pcs;
 
 	/**
 	 * Creates a new {@link PropertyStoreSupport} for the given source
@@ -44,20 +45,9 @@ public class PropertyStoreSupport {
 	 *            The {@link IPropertyStore} that encloses the to be created
 	 *            {@link PropertyStoreSupport}, delegating calls to it. May not
 	 *            be <code>null</code>
-	 * @param pcs
-	 *            An {@link PropertyChangeSupport}, which will be used to fire
-	 *            {@link PropertyChangeEvent}'s whenever properties are set or
-	 *            unset. May not be <code>null</code>.
 	 */
-	public PropertyStoreSupport(IPropertyStore source,
-			PropertyChangeSupport pcs) {
-		if (source == null) {
-			throw new IllegalArgumentException("source may not be null.");
-		}
-		if (pcs == null) {
-			throw new IllegalArgumentException("pcs may not be null.");
-		}
-		this.pcs = pcs;
+	public PropertyStoreSupport(IPropertyStore source) {
+		super(source);
 	}
 
 	/**
@@ -94,7 +84,7 @@ public class PropertyStoreSupport {
 		// actually changes
 		if (oldValue != value
 				&& (oldValue == null || !oldValue.equals(value))) {
-			pcs.firePropertyChange(name, oldValue, value);
+			firePropertyChange(name, oldValue, value);
 		}
 	}
 

@@ -16,7 +16,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 
 /**
@@ -43,16 +42,9 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<>();
 
 	/**
-	 * Support object for the (un-)registration of
-	 * {@link PropertyChangeListener}s and firing of events.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
-	/**
 	 * Support object for reading/writing general properties.
 	 */
-	protected PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
+	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
 
 	/**
 	 * Adds the given {@link IConnectionLayout} to the list of edges and fires a
@@ -81,7 +73,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+		pss.addPropertyChangeListener(listener);
 	}
 
 	public void applyLayout(boolean clear) {
@@ -208,7 +200,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		pss.removePropertyChangeListener(listener);
 	}
 
 	public void schedulePostLayoutPass(Runnable runnable) {
@@ -235,7 +227,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		if (oldLayoutAlgorithm != newLayoutAlgorithm) {
 			this.layoutAlgorithm = newLayoutAlgorithm;
 			newLayoutAlgorithm.setLayoutContext(this);
-			pcs.firePropertyChange(LAYOUT_ALGORITHM_PROPERTY,
+			pss.firePropertyChange(LAYOUT_ALGORITHM_PROPERTY,
 					oldLayoutAlgorithm, newLayoutAlgorithm);
 		}
 	}

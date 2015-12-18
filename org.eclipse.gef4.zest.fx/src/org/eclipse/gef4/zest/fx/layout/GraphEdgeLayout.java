@@ -15,7 +15,6 @@ package org.eclipse.gef4.zest.fx.layout;
 import java.beans.PropertyChangeListener;
 import java.util.Map.Entry;
 
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.layout.IConnectionLayout;
@@ -34,8 +33,7 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	private GraphLayoutContext context;
 	private Edge edge;
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-	private PropertyStoreSupport pss = new PropertyStoreSupport(this, pcs);
+	private PropertyStoreSupport pss = new PropertyStoreSupport(this);
 
 	/**
 	 * Constructs a new {@link GraphEdgeLayout} for the given {@link Edge} in
@@ -65,7 +63,7 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+		pss.addPropertyChangeListener(listener);
 	}
 
 	/**
@@ -94,7 +92,7 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		pss.removePropertyChangeListener(listener);
 	}
 
 	@Override
