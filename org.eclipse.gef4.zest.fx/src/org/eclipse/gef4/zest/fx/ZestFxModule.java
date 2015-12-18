@@ -84,12 +84,6 @@ public class ZestFxModule extends MvcFxModule {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
-		// geometry provider for selection feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
-		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
 		// geometry provider for hover handles
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
@@ -125,6 +119,12 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
+		// geometry provider for selection feedback
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+		// geometry provider for hover feedback
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
 	}
 
 	/**
@@ -151,6 +151,12 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
+		// geometry provider for selection feedback
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+		// geometry provider for hover feedback
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
 	}
 
 	@Override
@@ -277,6 +283,12 @@ public class ZestFxModule extends MvcFxModule {
 		// feedback and handles
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+		// geometry provider for selection feedback
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+		// geometry provider for hover feedback
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
