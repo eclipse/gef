@@ -126,10 +126,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXTranslateSelectedOnDragPolicy.class);
 
-		// interaction policy to delete on key type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXDeleteSelectedOnTypePolicy.class);
-
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTransformCurvePolicy.class);
 
@@ -183,10 +179,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// clone
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(CloneShapePolicy.class);
-
-		// delete on key type
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXDeleteSelectedOnTypePolicy.class);
 
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
