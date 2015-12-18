@@ -20,7 +20,6 @@ import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -32,13 +31,13 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXTypeTool} is an {@link AbstractTool} that handles keyboard
+ * The {@link FXTypeTool} is an {@link AbstractFXTool} that handles keyboard
  * input.
  *
  * @author mwienand
  *
  */
-public class FXTypeTool extends AbstractTool<Node> {
+public class FXTypeTool extends AbstractFXTool {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.

@@ -12,17 +12,14 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.event.EventHandler;
@@ -32,13 +29,13 @@ import javafx.scene.Scene;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * The {@link FXScrollTool} is an {@link AbstractTool} that handles mouse scroll
- * events.
+ * The {@link FXScrollTool} is an {@link AbstractFXTool} that handles mouse
+ * scroll events.
  *
  * @author mwienand
  *
  */
-public class FXScrollTool extends AbstractTool<Node> {
+public class FXScrollTool extends AbstractFXTool {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
@@ -51,33 +48,14 @@ public class FXScrollTool extends AbstractTool<Node> {
 	private EventHandler<ScrollEvent> createScrollListener(
 			final IViewer<Node> viewer) {
 		return new EventHandler<ScrollEvent>() {
-			protected Collection<? extends AbstractFXOnScrollPolicy> getTargetPolicies(
-					ScrollEvent event) {
-				EventTarget target = event.getTarget();
-				if (!(target instanceof Node)) {
-					return Collections.emptyList();
-				}
-
-				Node targetNode = (Node) target;
-				IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
-						.getTargetPart(Collections.singleton(viewer),
-								targetNode, TOOL_POLICY_KEY, true);
-
-				// send event to root part if no target part is found
-				if (targetPart == null) {
-					targetPart = viewer.getRootPart();
-				}
-
-				Collection<? extends AbstractFXOnScrollPolicy> policies = getScrollPolicies(
-						targetPart);
-				return policies;
-			}
-
 			@Override
 			public void handle(ScrollEvent event) {
+				EventTarget eventTarget = event.getTarget();
 				getDomain().openExecutionTransaction(FXScrollTool.this);
 				Collection<? extends AbstractFXOnScrollPolicy> policies = getTargetPolicies(
-						event);
+						viewer,
+						eventTarget instanceof Node ? (Node) eventTarget : null,
+						TOOL_POLICY_KEY);
 				for (AbstractFXOnScrollPolicy policy : policies) {
 					policy.scroll(event);
 				}
