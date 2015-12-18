@@ -28,7 +28,6 @@ import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.fx.utils.Shape2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -274,30 +273,12 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					geometry = Shape2Geometry.toGeometry((Shape) anchorage);
 				}
 
-				// resize to layout bounds to include stroke if not a curve
+				// resize to layout-bounds to include stroke if not a curve
 				if (geometry instanceof IShape) {
-					Rectangle geomBounds = geometry.getBounds();
-					Rectangle shapeBounds = NodeUtils.getShapeBounds(anchorage);
-					double dw = shapeBounds.getWidth() - geomBounds.getWidth();
-					double dh = shapeBounds.getHeight()
-							- geomBounds.getHeight();
-
-					// translate
-					double dx = -dw / 2;
-					double dy = -dh / 2;
-					GeometryNode<IGeometry> geometryNode = new GeometryNode<>(
-							geometry.getTransformed(
-									new AffineTransform().translate(dx, dy)));
-
-					// expand
-					geometryNode.resizeGeometry(geomBounds.getWidth() + dw,
-							geomBounds.getHeight() + dh);
-
-					IGeometry newGeometry = geometryNode.getGeometry();
-					return newGeometry;
+					return NodeUtils.getShapeOutline(anchorage, geometry);
 				}
-				
-				// fallback
+
+				// fallback to layout-bounds
 				if (geometry == null) {
 					geometry = JavaFX2Geometry
 							.toRectangle(anchorage.getLayoutBounds());

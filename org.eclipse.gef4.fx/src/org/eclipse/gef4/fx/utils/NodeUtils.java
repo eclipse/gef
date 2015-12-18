@@ -16,6 +16,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -170,6 +171,38 @@ public class NodeUtils {
 						: 0;
 		return JavaFX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
 				offset, offset);
+	}
+
+	/**
+	 * Creates a copy of the given {@link IGeometry} and resizes it to fit the
+	 * layout-bounds of the given {@link Node}. The new, resized
+	 * {@link IGeometry} is returned.
+	 *
+	 * @param visual
+	 *            The visual of which the layout-bounds are used as the basis
+	 *            for resizing the given {@link IGeometry}.
+	 * @param geometry
+	 *            The {@link IGeometry} that is resized to fit the layout-bounds
+	 *            of the given {@link Node}.
+	 * @return The new, resized {@link IGeometry}.
+	 */
+	public static IGeometry getShapeOutline(Node visual, IGeometry geometry) {
+		Rectangle geomBounds = geometry.getBounds();
+		Rectangle shapeBounds = NodeUtils.getShapeBounds(visual);
+		double dw = shapeBounds.getWidth() - geomBounds.getWidth();
+		double dh = shapeBounds.getHeight() - geomBounds.getHeight();
+
+		// translate
+		double dx = -dw / 2;
+		double dy = -dh / 2;
+		GeometryNode<IGeometry> geometryNode = new GeometryNode<>(geometry
+				.getTransformed(new AffineTransform().translate(dx, dy)));
+
+		// resize
+		geometryNode.resizeGeometry(geomBounds.getWidth() + dw,
+				geomBounds.getHeight() + dh);
+
+		return geometryNode.getGeometry();
 	}
 
 	/**
