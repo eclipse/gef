@@ -35,7 +35,9 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 
 /**
  * The {@link GeometricOutlineProvider} is a {@link Provider Provider
@@ -95,14 +97,15 @@ public class GeometricOutlineProvider
 	 */
 	protected IGeometry getGeometry(Node visual) {
 		if (visual instanceof Connection) {
-			GeometryNode<ICurve> curveNode = ((Connection) visual).getCurveNode();
+			GeometryNode<ICurve> curveNode = ((Connection) visual)
+					.getCurveNode();
 			return NodeUtils.localToParent(curveNode, curveNode.getGeometry());
 		} else if (visual instanceof GeometryNode) {
 			return ((GeometryNode<?>) visual).getGeometry();
-		} else if (visual instanceof Shape) {
+		} else if (visual instanceof Shape && !(visual instanceof Text)
+				&& !(visual instanceof SVGPath)) {
 			return Shape2Geometry.toGeometry((Shape) visual);
 		} else {
-			System.err.println("fallback to layout bounds");
 			return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
 		}
 	}

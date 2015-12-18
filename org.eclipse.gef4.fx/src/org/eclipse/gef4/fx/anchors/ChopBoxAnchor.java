@@ -44,7 +44,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 
 /**
  * The {@link ChopBoxAnchor} computes anchor positions based on a reference
@@ -269,7 +271,9 @@ public class ChopBoxAnchor extends AbstractAnchor {
 							.getGeometry();
 				} else if (anchorage instanceof GeometryNode) {
 					geometry = ((GeometryNode<?>) anchorage).getGeometry();
-				} else if (anchorage instanceof Shape) {
+				} else if (anchorage instanceof Shape
+						&& !(anchorage instanceof Text)
+						&& !(anchorage instanceof SVGPath)) {
 					geometry = Shape2Geometry.toGeometry((Shape) anchorage);
 				}
 
