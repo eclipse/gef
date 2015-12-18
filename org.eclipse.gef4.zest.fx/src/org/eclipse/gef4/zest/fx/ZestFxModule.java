@@ -51,7 +51,7 @@ import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
+import org.eclipse.gef4.zest.fx.parts.HandlePartFactory;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
@@ -239,7 +239,7 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).to(ZestFxHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
+		}).to(HandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override

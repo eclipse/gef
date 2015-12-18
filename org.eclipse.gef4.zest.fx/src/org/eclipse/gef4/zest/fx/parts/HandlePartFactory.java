@@ -29,7 +29,7 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link ZestFxHandlePartFactory} is an extension to
+ * The {@link HandlePartFactory} is an extension to
  * {@link FXDefaultHandlePartFactory} that creates {@link HideHoverHandlePart}s
  * and {@link ShowHiddenNeighborsHoverHandlePart}s for hovered
  * {@link NodeContentPart}s. Moreover, it disables the creation of handle parts
@@ -38,7 +38,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
+public class HandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Inject
 	private Injector injector;
