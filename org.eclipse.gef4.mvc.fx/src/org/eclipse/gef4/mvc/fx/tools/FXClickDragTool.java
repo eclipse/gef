@@ -97,9 +97,11 @@ public class FXClickDragTool extends AbstractFXTool {
 				@Override
 				protected void press(Node target, MouseEvent e) {
 					// process click first
+					boolean opened = false;
 					List<? extends AbstractFXOnClickPolicy> clickPolicies = getTargetPolicies(
 							viewer, target, CLICK_TOOL_POLICY_KEY);
 					if (clickPolicies != null && !clickPolicies.isEmpty()) {
+						opened = true;
 						getDomain()
 								.openExecutionTransaction(FXClickDragTool.this);
 						for (AbstractFXOnClickPolicy clickPolicy : clickPolicies) {
@@ -114,12 +116,19 @@ public class FXClickDragTool extends AbstractFXTool {
 					// abort processing of this gesture if no policies could be
 					// found
 					if (policies.isEmpty()) {
+						// remove this tool from the domain's execution
+						// transaction
+						getDomain().closeExecutionTransaction(
+								FXClickDragTool.this);
 						policies = null;
 						return;
 					}
 
 					// add this tool to the execution transaction of the domain
-					getDomain().openExecutionTransaction(FXClickDragTool.this);
+					if (!opened) {
+						getDomain()
+								.openExecutionTransaction(FXClickDragTool.this);
+					}
 
 					// send press() to all drag policies
 					for (AbstractFXOnDragPolicy policy : policies) {
