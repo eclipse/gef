@@ -150,7 +150,7 @@ public class ZestFxModule extends MvcFxModule {
 		// selection link feedback
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
+				.to(ShapeBoundsProvider.class);
 		// geometry provider for selection feedback
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);

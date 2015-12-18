@@ -34,7 +34,7 @@ public class ShapeOutlineProvider extends GeometricOutlineProvider {
 		try {
 			return NodeUtils.getResizedToShapeBounds(getAdaptable().getVisual(),
 					super.get());
-		} catch (IllegalArgumentException x) {
+		} catch (IllegalArgumentException e) {
 			return JavaFX2Geometry
 					.toRectangle(getAdaptable().getVisual().getLayoutBounds());
 		}
