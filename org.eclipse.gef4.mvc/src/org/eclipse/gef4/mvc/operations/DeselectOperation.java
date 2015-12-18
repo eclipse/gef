@@ -57,6 +57,8 @@ public class DeselectOperation<VR> extends AbstractOperation
 	private List<IContentPart<VR, ? extends VR>> initialSelection;
 	private List<IContentPart<VR, ? extends VR>> toBeDeselected;
 
+	private ArrayList<IContentPart<VR, ? extends VR>> deselected;
+
 	/**
 	 * Creates a new {@link DeselectOperation} to change the selection within
 	 * the given {@link IViewer} by removing the given {@link IContentPart}s.
@@ -97,7 +99,9 @@ public class DeselectOperation<VR> extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.removeFromSelection(toBeDeselected);
+		deselected = new ArrayList<>(toBeDeselected);
+		deselected.retainAll(new ArrayList<>(selectionModel.getSelection()));
+		selectionModel.removeFromSelection(deselected);
 		return Status.OK_STATUS;
 	}
 
@@ -139,7 +143,7 @@ public class DeselectOperation<VR> extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.removeFromSelection(toBeDeselected);
+		selectionModel.removeFromSelection(deselected);
 		return Status.OK_STATUS;
 	}
 

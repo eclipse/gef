@@ -56,6 +56,8 @@ public class SelectOperation<VR> extends AbstractOperation
 	private List<IContentPart<VR, ? extends VR>> initialSelection;
 	private List<IContentPart<VR, ? extends VR>> toBeSelected;
 
+	private List<IContentPart<VR, ? extends VR>> selected;
+
 	/**
 	 * Creates a new {@link SelectOperation} to change the selection within the
 	 * given {@link IViewer} to prepend the given content parts. It uses the
@@ -96,7 +98,9 @@ public class SelectOperation<VR> extends AbstractOperation
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.prependToSelection(toBeSelected);
+		selected = new ArrayList<>(toBeSelected);
+		selected.removeAll(new ArrayList<>(selectionModel.getSelection()));
+		selectionModel.prependToSelection(selected);
 		return Status.OK_STATUS;
 	}
 
@@ -130,7 +134,7 @@ public class SelectOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// TODO: only remove the parts that were really added
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.removeFromSelection(toBeSelected);
+		selectionModel.removeFromSelection(selected);
 		return Status.OK_STATUS;
 	}
 
