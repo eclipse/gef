@@ -9,13 +9,12 @@
  * Contributors:
  *     Fabian Steeg                 - initial API and implementation (bug #372365)
  *     Matthias Wienand (itemis AG) - contribution for bugs #438734, #461296
- *     Alexander Nyßen              - refactoring of builder API (bug #480293)
+ *     Alexander Nyßen (itemis AG)  - refactoring of builder API (bug #480293)
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -23,16 +22,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.common.notify.IMapObserver;
-import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.properties.MapProperty;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
 
 /**
  * A {@link Node} represents a vertex within a {@link Graph}.
  *
  * @author Fabian Steeg
+ * @author Alexander Nyßen
  *
  */
 public class Node implements IPropertyChangeNotifier {
@@ -188,21 +186,8 @@ public class Node implements IPropertyChangeNotifier {
 	 */
 	public static final String ATTRIBUTES_PROPERTY = "attributes";
 
-	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
-		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
-		}
-	};
+	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
 
-	/**
-	 * The {@link PropertyChangeSupport} which handles (un-)registration of
-	 * {@link PropertyChangeListener}s and firing of {@link PropertyChangeEvent}
-	 * s.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-
-	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
 	/**
 	 * The {@link Graph} which this {@link Node} belongs to.
 	 */
@@ -229,12 +214,11 @@ public class Node implements IPropertyChangeNotifier {
 	 */
 	public Node(Map<String, Object> attrs) {
 		this.attrs.putAll(attrs);
-		this.attrs.addMapObserver(attributesObserver);
 	}
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+		attrs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -461,7 +445,7 @@ public class Node implements IPropertyChangeNotifier {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		attrs.removePropertyChangeListener(listener);
 	}
 
 	/**

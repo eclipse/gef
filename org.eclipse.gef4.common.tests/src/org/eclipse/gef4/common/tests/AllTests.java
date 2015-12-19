@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ AdaptableSupportTests.class, AdaptableTypeListenerTests.class,
 		AdapterInjectorTests.class, AdaptableScopeTests.class,
-		ObservableListTests.class, ObservableMapTests.class })
+		ListPropertyTests.class, MapPropertyTests.class })
 
 public class AllTests {
 

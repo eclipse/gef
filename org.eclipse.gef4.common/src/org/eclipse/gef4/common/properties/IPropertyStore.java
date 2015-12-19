@@ -29,6 +29,7 @@ import org.eclipse.gef4.common.adapt.AdaptableSupport;
  * @author mwienand
  * @author anyssen
  */
+// TODO: check if we still need this concept 
 public interface IPropertyStore extends IPropertyChangeNotifier {
 
 	/**

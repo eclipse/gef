@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg    - initial API and implementation (bug #372365)
- *     Alexander Nyßen - refactoring of builder API (bug #480293)
+ *     Fabian Steeg                - initial API and implementation (bug #372365)
+ *     Alexander Nyßen (itemis AG) - refactoring of builder API (bug #480293)
  *
  *******************************************************************************/
 package org.eclipse.gef4.graph;
@@ -19,10 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.common.notify.IMapObserver;
-import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.properties.MapProperty;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
 
 /**
@@ -30,6 +28,7 @@ import org.eclipse.gef4.graph.Graph.Builder.Context;
  * in a {@link Graph}.
  *
  * @author Fabian Steeg
+ * @author anyssen
  *
  */
 public class Edge implements IPropertyChangeNotifier {
@@ -199,16 +198,7 @@ public class Edge implements IPropertyChangeNotifier {
 	 */
 	public static final String ATTRIBUTES_PROPERTY = "attributes";
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-
-	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
-		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
-		}
-	};
-
-	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
+	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
 	private Node source;
 	private Node target;
 	private Graph graph; // associated graph
@@ -229,7 +219,6 @@ public class Edge implements IPropertyChangeNotifier {
 	 */
 	public Edge(Map<String, Object> attrs, Node source, Node target) {
 		this.attrs.putAll(attrs);
-		this.attrs.addMapObserver(attributesObserver);
 		this.source = source;
 		this.target = target;
 	}
@@ -249,7 +238,7 @@ public class Edge implements IPropertyChangeNotifier {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+		attrs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -316,7 +305,7 @@ public class Edge implements IPropertyChangeNotifier {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		attrs.removePropertyChangeListener(listener);
 	}
 
 	/**

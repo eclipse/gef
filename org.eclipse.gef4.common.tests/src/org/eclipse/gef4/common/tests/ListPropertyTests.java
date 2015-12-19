@@ -14,25 +14,26 @@ package org.eclipse.gef4.common.tests;
 
 import static org.junit.Assert.assertTrue;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.common.notify.IListObserver;
-import org.eclipse.gef4.common.notify.ObservableList;
+import org.eclipse.gef4.common.properties.ListProperty;
 import org.junit.Test;
 
-public class ObservableListTests {
+public class ListPropertyTests {
 
-	private static class ExpectingListObserver<T> implements IListObserver<T> {
+	private static class ExpectingListObserver<T>
+			implements PropertyChangeListener {
 		private List<T> expectationNew = Collections.emptyList();
 		private List<T> expectationOld = Collections.emptyList();
 
 		@Override
-		public void afterChange(ObservableList<T> observableList,
-				List<T> previousList) {
-			assertTrue(expectationOld.equals(previousList));
-			assertTrue(expectationNew.equals(observableList));
+		public void propertyChange(PropertyChangeEvent evt) {
+			assertTrue(expectationOld.equals(evt.getOldValue()));
+			assertTrue(expectationNew.equals(evt.getNewValue()));
 		}
 
 		public void setExpectation(List<T> elements) {
@@ -41,11 +42,26 @@ public class ObservableListTests {
 		}
 	}
 
+	private static class ExpectingObjectObserver<T>
+			implements PropertyChangeListener {
+		private Object expectationNew = null;
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			assertTrue(expectationNew == null ? evt.getNewValue() == null
+					: expectationNew.equals(evt.getNewValue()));
+		}
+
+		public void setExpectation(Object expectation) {
+			expectationNew = expectation;
+		}
+	}
+
 	@Test
 	public void test_addRemove_multi() {
-		ObservableList<Integer> list = new ObservableList<>();
+		ListProperty<Integer> list = new ListProperty<>(new Object(), "test");
 		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
-		list.addListObserver(obs);
+		list.addPropertyChangeListener(obs);
 
 		assertTrue(list.isEmpty());
 
@@ -66,46 +82,46 @@ public class ObservableListTests {
 
 	@Test
 	public void test_addRemove_single() {
-		ObservableList<Integer> list = new ObservableList<>();
-		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
-		list.addListObserver(obs);
+		ListProperty<Integer> list = new ListProperty<>(new Object(), "test");
+		ExpectingObjectObserver<Integer> obs = new ExpectingObjectObserver<>();
+		list.addPropertyChangeListener(obs);
 
 		assertTrue(list.isEmpty());
 
-		obs.setExpectation(Arrays.asList(1));
+		obs.setExpectation(1);
 		list.add(1);
 
-		obs.setExpectation(Collections.<Integer> emptyList());
+		obs.setExpectation(null);
 		list.remove(new Integer(1));
 
-		obs.setExpectation(Arrays.asList(2));
+		obs.setExpectation(2);
 		list.add(2);
 
-		obs.setExpectation(Arrays.asList(2, 3));
+		obs.setExpectation(3);
 		list.add(3);
 
-		obs.setExpectation(Arrays.asList(3));
+		obs.setExpectation(null);
 		list.remove(0);
 
-		obs.setExpectation(Collections.<Integer> emptyList());
+		obs.setExpectation(null);
 		list.remove(0);
 
-		obs.setExpectation(Arrays.asList(4));
+		obs.setExpectation(4);
 		list.add(0, 4);
 
-		obs.setExpectation(Arrays.asList(5, 4));
+		obs.setExpectation(5);
 		list.add(0, 5);
 
-		obs.setExpectation(Arrays.asList(5, 4, 6));
+		obs.setExpectation(6);
 		list.add(2, 6);
 
-		obs.setExpectation(Arrays.asList(5, 6));
+		obs.setExpectation(null);
 		list.remove(1);
 
-		obs.setExpectation(Arrays.asList(5));
+		obs.setExpectation(null);
 		list.remove(new Integer(6));
 
-		obs.setExpectation(Collections.<Integer> emptyList());
+		obs.setExpectation(null);
 		list.remove(new Integer(5));
 
 		assertTrue(list.isEmpty());
@@ -113,19 +129,19 @@ public class ObservableListTests {
 
 	@Test
 	public void test_set() {
-		ObservableList<Integer> list = new ObservableList<>();
-		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
-		list.addListObserver(obs);
+		ListProperty<Integer> list = new ListProperty<>(new Object(), "test");
+		ExpectingObjectObserver<Integer> obs = new ExpectingObjectObserver<>();
+		list.addPropertyChangeListener(obs);
 
 		assertTrue(list.isEmpty());
 
-		obs.setExpectation(Arrays.asList(10));
+		obs.setExpectation(new Integer(10));
 		list.add(10);
 
-		obs.setExpectation(Arrays.asList(20));
+		obs.setExpectation(new Integer(20));
 		list.set(0, 20);
 
-		obs.setExpectation(Collections.<Integer> emptyList());
+		obs.setExpectation(null);
 		list.remove(0);
 
 		assertTrue(list.isEmpty());
@@ -133,9 +149,9 @@ public class ObservableListTests {
 
 	@Test
 	public void test_subList() {
-		ObservableList<Integer> list = new ObservableList<>();
+		ListProperty<Integer> list = new ListProperty<>(new Object(), "test");
 		ExpectingListObserver<Integer> obs = new ExpectingListObserver<>();
-		list.addListObserver(obs);
+		list.addPropertyChangeListener(obs);
 
 		assertTrue(list.isEmpty());
 

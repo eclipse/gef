@@ -23,12 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.common.notify.IListObserver;
-import org.eclipse.gef4.common.notify.IMapObserver;
-import org.eclipse.gef4.common.notify.ObservableList;
-import org.eclipse.gef4.common.notify.ObservableMap;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.properties.ListProperty;
+import org.eclipse.gef4.common.properties.MapProperty;
 
 /**
  * A {@link Graph} is a container for {@link Node}s and {@link Edge}s between
@@ -244,44 +241,21 @@ public final class Graph implements IPropertyChangeNotifier {
 	 */
 	public static final String EDGES_PROPERTY = "edges";
 
-	private IMapObserver<String, Object> attributesObserver = new IMapObserver<String, Object>() {
-		@Override
-		public void afterChange(ObservableMap<String, Object> observableMap, Map<String, Object> previousMap) {
-			pcs.firePropertyChange(ATTRIBUTES_PROPERTY, previousMap, observableMap);
-		}
-	};
-
-	private IListObserver<Node> nodesObserver = new IListObserver<Node>() {
-		@Override
-		public void afterChange(ObservableList<Node> observableList, List<Node> previousList) {
-			pcs.firePropertyChange(NODES_PROPERTY, previousList, observableList);
-		}
-	};
-
-	private IListObserver<Edge> edgesObserver = new IListObserver<Edge>() {
-		@Override
-		public void afterChange(ObservableList<Edge> observableList, List<Edge> previousList) {
-			pcs.firePropertyChange(EDGES_PROPERTY, previousList, observableList);
-		}
-	};
-
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-
 	/**
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
-	private final ObservableList<Node> nodes = new ObservableList<>();
+	private final ListProperty<Node> nodes = new ListProperty<>(this, NODES_PROPERTY);
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
-	private final ObservableList<Edge> edges = new ObservableList<>();
+	private final ListProperty<Edge> edges = new ListProperty<>(this, EDGES_PROPERTY);
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
-	private final ObservableMap<String, Object> attrs = new ObservableMap<>();
+	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
@@ -310,11 +284,8 @@ public final class Graph implements IPropertyChangeNotifier {
 	 */
 	public Graph(Map<String, Object> attrs, Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
 		this.attrs.putAll(attrs);
-		this.attrs.addMapObserver(attributesObserver);
 		this.nodes.addAll(nodes);
-		this.nodes.addListObserver(nodesObserver);
 		this.edges.addAll(edges);
-		this.edges.addListObserver(edgesObserver);
 		// set graph on nodes and edges
 		for (Node n : nodes) {
 			n.setGraph(this);
@@ -326,7 +297,9 @@ public final class Graph implements IPropertyChangeNotifier {
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+		nodes.addPropertyChangeListener(listener);
+		edges.addPropertyChangeListener(listener);
+		attrs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -378,6 +351,7 @@ public final class Graph implements IPropertyChangeNotifier {
 	 *
 	 * @return The list of {@link Node}s of this {@link Graph} by reference.
 	 */
+	// TOOD: expose list property??
 	public List<Node> getNodes() {
 		return nodes;
 	}
@@ -393,7 +367,9 @@ public final class Graph implements IPropertyChangeNotifier {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		nodes.removePropertyChangeListener(listener);
+		edges.removePropertyChangeListener(listener);
+		attrs.removePropertyChangeListener(listener);
 	}
 
 	/**

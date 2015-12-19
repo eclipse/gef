@@ -14,31 +14,47 @@ package org.eclipse.gef4.common.tests;
 
 import static org.junit.Assert.assertTrue;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.common.notify.IMapObserver;
-import org.eclipse.gef4.common.notify.ObservableMap;
+import org.eclipse.gef4.common.properties.MapProperty;
 import org.junit.Test;
 
-public class ObservableMapTests {
+public class MapPropertyTests {
 
 	private static class ExpectingMapObserver<K, V>
-			implements IMapObserver<K, V> {
+			implements PropertyChangeListener {
+
 		private Map<K, V> expectationNew = Collections.emptyMap();
 		private Map<K, V> expectationOld = Collections.emptyMap();
 
 		@Override
-		public void afterChange(ObservableMap<K, V> observableMap,
-				Map<K, V> previousMap) {
-			assertTrue(expectationOld.equals(previousMap));
-			assertTrue(expectationNew.equals(observableMap));
+		public void propertyChange(PropertyChangeEvent evt) {
+			assertTrue(expectationOld.equals(evt.getOldValue()));
+			assertTrue(expectationNew.equals(evt.getNewValue()));
 		}
 
 		public void setExpectation(Map<K, V> elements) {
 			expectationOld = expectationNew;
 			expectationNew = elements;
+		}
+	}
+
+	private static class ExpectingObjectObserver<T>
+			implements PropertyChangeListener {
+		private Object expectationNew = null;
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			assertTrue(expectationNew == null ? evt.getNewValue() == null
+					: expectationNew.equals(evt.getNewValue()));
+		}
+
+		public void setExpectation(Object expectation) {
+			expectationNew = expectation;
 		}
 	}
 
@@ -54,9 +70,10 @@ public class ObservableMapTests {
 
 	@Test
 	public void test_putRemove_multi() {
-		ObservableMap<String, Integer> map = new ObservableMap<>();
+		MapProperty<String, Integer> map = new MapProperty<>(new Object(),
+				"test");
 		ExpectingMapObserver<String, Integer> obs = new ExpectingMapObserver<>();
-		map.addMapObserver(obs);
+		map.addPropertyChangeListener(obs);
 
 		assertTrue(map.isEmpty());
 
@@ -77,28 +94,29 @@ public class ObservableMapTests {
 
 	@Test
 	public void test_putRemove_single() {
-		ObservableMap<String, Integer> map = new ObservableMap<>();
-		ExpectingMapObserver<String, Integer> obs = new ExpectingMapObserver<>();
-		map.addMapObserver(obs);
+		MapProperty<String, Integer> map = new MapProperty<>(new Object(),
+				"test");
+		ExpectingObjectObserver<Integer> obs = new ExpectingObjectObserver<>();
+		map.addPropertyChangeListener(obs);
 
 		assertTrue(map.isEmpty());
 
 		// put
-		obs.setExpectation(map("a", 1));
+		obs.setExpectation(1);
 		map.put("a", 1);
 
-		obs.setExpectation(map("a", 1, "b", 2));
+		obs.setExpectation(2);
 		map.put("b", 2);
 
 		// replace
-		obs.setExpectation(map("a", 0, "b", 2));
+		obs.setExpectation(0);
 		map.put("a", 0);
 
 		// remove
-		obs.setExpectation(map("b", 2));
+		obs.setExpectation(null);
 		map.remove("a");
 
-		obs.setExpectation(Collections.<String, Integer> emptyMap());
+		obs.setExpectation(null);
 		map.remove("b");
 
 		assertTrue(map.isEmpty());
