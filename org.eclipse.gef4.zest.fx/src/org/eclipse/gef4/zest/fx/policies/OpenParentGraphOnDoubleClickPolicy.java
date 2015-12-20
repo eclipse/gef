@@ -36,6 +36,12 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy 
 	@Override
 	public void click(MouseEvent e) {
 		if (e.getClickCount() == 2) {
+
+			// do nothing in case there is an explicit event target
+			if (getHost().getViewer().getVisualPartMap().get(e.getTarget()) != getHost()) {
+				return;
+			}
+
 			// double click, so open nesting graph, if it exists
 			ContentModel contentModel = getHost().getRoot().getViewer().getAdapter(ContentModel.class);
 			if (contentModel == null) {
