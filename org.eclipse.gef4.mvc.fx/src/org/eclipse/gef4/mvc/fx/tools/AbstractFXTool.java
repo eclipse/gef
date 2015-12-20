@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -97,8 +98,8 @@ public class AbstractFXTool extends AbstractTool<Node> {
 	 * @return All matching policies within the hierarchy from the root part to
 	 *         the target part.
 	 */
-	protected <T> List<? extends T> getTargetPolicies(IViewer<Node> viewer,
-			Node target, Class<T> policyClass) {
+	protected <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
+			IViewer<Node> viewer, Node target, Class<T> policyClass) {
 		// System.out.println("\n=== determine drag targets ===");
 		// System.out.println("viewer = " + viewer);
 		// System.out.println("raw target node = " + target);
@@ -150,7 +151,10 @@ public class AbstractFXTool extends AbstractTool<Node> {
 		// are called before child policies
 		Collections.reverse(policies);
 
-		// System.out.println("RETURN in reverse order\n");
+		// System.out.println("\nRETURN in reverse order:");
+		// for (T p : policies) {
+		// System.out.println(p.getHost() + " -> " + p);
+		// }
 
 		return policies;
 	}
