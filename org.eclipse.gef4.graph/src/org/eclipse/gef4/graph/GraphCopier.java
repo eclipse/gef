@@ -62,7 +62,7 @@ final public class GraphCopier {
 		Edge.Builder copy = new Edge.Builder(source, target);
 
 		// copy attributes
-		for (Entry<String, Object> attr : edge.getAttrs().entrySet()) {
+		for (Entry<String, Object> attr : edge.getAttributes().entrySet()) {
 			copy.attr(attr.getKey(), attr.getValue());
 		}
 
@@ -75,7 +75,7 @@ final public class GraphCopier {
 	private Node copy(Node node, Graph.Builder targetGraph) {
 		Node.Builder copy = new Node.Builder();
 		// copy attributes
-		for (Entry<String, Object> attr : node.getAttrs().entrySet()) {
+		for (Entry<String, Object> attr : node.getAttributes().entrySet()) {
 			copy.attr(attr.getKey(), attr.getValue());
 		}
 		Node copiedNode = copy.buildNode();
@@ -84,7 +84,7 @@ final public class GraphCopier {
 	}
 
 	private Node find(Map<Object, Node> ids, Node n) {
-		Object id = n.getAttrs().get(attributeNameForId);
+		Object id = n.getAttributes().get(attributeNameForId);
 		if (id != null && !ids.containsKey(id)) {
 			ids.put(id, n);
 			return null;
@@ -98,7 +98,7 @@ final public class GraphCopier {
 	 */
 	public void into(Graph.Builder targetGraph) {
 		// copy attributes
-		for (Entry<String, Object> attr : sourceGraph.getAttrs().entrySet()) {
+		for (Entry<String, Object> attr : sourceGraph.getAttributes().entrySet()) {
 			targetGraph.attr(attr.getKey(), attr.getValue());
 		}
 		// find all existing node IDs in the target graph

@@ -236,7 +236,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getCssClass(Edge edge) {
-		return (String) edge.getAttrs().get(ELEMENT_CSS_CLASS);
+		return (String) edge.getAttributes().get(ELEMENT_CSS_CLASS);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getCssClass(Node node) {
-		return (String) node.getAttrs().get(ELEMENT_CSS_CLASS);
+		return (String) node.getAttributes().get(ELEMENT_CSS_CLASS);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getCssId(Edge edge) {
-		return (String) edge.getAttrs().get(ELEMENT_CSS_ID);
+		return (String) edge.getAttributes().get(ELEMENT_CSS_ID);
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getCssId(Node node) {
-		return (String) node.getAttrs().get(ELEMENT_CSS_ID);
+		return (String) node.getAttributes().get(ELEMENT_CSS_ID);
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getEdgeCurveCssStyle(Edge edge) {
-		return (String) edge.getAttrs().get(EDGE_CURVE_CSS_STYLE);
+		return (String) edge.getAttributes().get(EDGE_CURVE_CSS_STYLE);
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getEdgeLabelCssStyle(Edge edge) {
-		return (String) edge.getAttrs().get(EDGE_LABEL_CSS_STYLE);
+		return (String) edge.getAttributes().get(EDGE_LABEL_CSS_STYLE);
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class ZestProperties {
 	 * @return The fisheye state of the given {@link Node}.
 	 */
 	public static Boolean getFisheye(Node node, boolean returnDefaultIfMissing) {
-		Object fisheye = node.getAttrs().get(NODE_FISHEYE);
+		Object fisheye = node.getAttributes().get(NODE_FISHEYE);
 		if (fisheye instanceof Boolean) {
 			return (Boolean) fisheye;
 		}
@@ -336,7 +336,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static Image getIcon(Node node) {
-		return (Image) node.getAttrs().get(NODE_ICON);
+		return (Image) node.getAttributes().get(NODE_ICON);
 	}
 
 	/**
@@ -349,7 +349,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getLabel(Edge edge) {
-		return (String) edge.getAttrs().get(ELEMENT_LABEL);
+		return (String) edge.getAttributes().get(ELEMENT_LABEL);
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getLabel(Node node) {
-		return (String) node.getAttrs().get(ELEMENT_LABEL);
+		return (String) node.getAttributes().get(ELEMENT_LABEL);
 	}
 
 	/**
@@ -374,7 +374,7 @@ public class ZestProperties {
 	 * @return The layout algorithm of the given {@link Graph}.
 	 */
 	public static ILayoutAlgorithm getLayout(Graph graph) {
-		Object layout = graph.getAttrs().get(GRAPH_LAYOUT_ALGORITHM);
+		Object layout = graph.getAttributes().get(GRAPH_LAYOUT_ALGORITHM);
 		if (layout instanceof ILayoutAlgorithm) {
 			return (ILayoutAlgorithm) layout;
 		}
@@ -397,7 +397,7 @@ public class ZestProperties {
 	 * @return The layout irrelevant flag of the given {@link Edge}.
 	 */
 	public static Boolean getLayoutIrrelevant(Edge edge, boolean returnDefaultIfMissing) {
-		Map<String, Object> attrs = edge.getAttrs();
+		Map<String, Object> attrs = edge.getAttributes();
 		if (attrs.containsKey(ELEMENT_LAYOUT_IRRELEVANT)) {
 			return (Boolean) attrs.get(ELEMENT_LAYOUT_IRRELEVANT);
 		}
@@ -420,7 +420,7 @@ public class ZestProperties {
 	 * @return The layout irrelevant flag of the given {@link Node}.
 	 */
 	public static Boolean getLayoutIrrelevant(Node node, boolean returnDefaultIfMissing) {
-		Map<String, Object> attrs = node.getAttrs();
+		Map<String, Object> attrs = node.getAttributes();
 		if (attrs.containsKey(ELEMENT_LAYOUT_IRRELEVANT)) {
 			return (Boolean) attrs.get(ELEMENT_LAYOUT_IRRELEVANT);
 		}
@@ -437,7 +437,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getNodeLabelCssStyle(Node node) {
-		return (String) node.getAttrs().get(NODE_LABEL_CSS_STYLE);
+		return (String) node.getAttributes().get(NODE_LABEL_CSS_STYLE);
 	}
 
 	/**
@@ -451,7 +451,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getNodeRectCssStyle(Node node) {
-		return (String) node.getAttrs().get(NODE_RECT_CSS_STYLE);
+		return (String) node.getAttributes().get(NODE_RECT_CSS_STYLE);
 	}
 
 	/**
@@ -464,7 +464,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static IConnectionRouter getRouter(Edge edge) {
-		return (IConnectionRouter) edge.getAttrs().get(EDGE_ROUTER);
+		return (IConnectionRouter) edge.getAttributes().get(EDGE_ROUTER);
 	}
 
 	/**
@@ -476,7 +476,7 @@ public class ZestProperties {
 	 * @return The source decoration of the given {@link Edge}.
 	 */
 	public static javafx.scene.shape.Shape getSourceDecoration(Edge edge) {
-		return (javafx.scene.shape.Shape) edge.getAttrs().get(EDGE_SOURCE_DECORATION);
+		return (javafx.scene.shape.Shape) edge.getAttributes().get(EDGE_SOURCE_DECORATION);
 	}
 
 	/**
@@ -489,7 +489,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static javafx.scene.shape.Shape getTargetDecoration(Edge edge) {
-		return (javafx.scene.shape.Shape) edge.getAttrs().get(EDGE_TARGET_DECORATION);
+		return (javafx.scene.shape.Shape) edge.getAttributes().get(EDGE_TARGET_DECORATION);
 	}
 
 	/**
@@ -502,7 +502,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getTooltip(Node node) {
-		return (String) node.getAttrs().get(NODE_TOOLTIP);
+		return (String) node.getAttributes().get(NODE_TOOLTIP);
 	}
 
 	/**
@@ -520,7 +520,7 @@ public class ZestProperties {
 	 * @return The graph type of the given {@link Graph}.
 	 */
 	public static String getType(Graph graph, boolean returnDefaultIfMissing) {
-		Object type = graph.getAttrs().get(GRAPH_TYPE);
+		Object type = graph.getAttributes().get(GRAPH_TYPE);
 		if (type instanceof String) {
 			String stype = (String) type;
 			if (GRAPH_TYPE_VALUES.contains(stype)) {
@@ -540,7 +540,7 @@ public class ZestProperties {
 	 *            The new CSS class for the given {@link Edge}.
 	 */
 	public static void setCssClass(Edge edge, String cssClass) {
-		edge.getAttrs().put(ELEMENT_CSS_CLASS, cssClass);
+		edge.getAttributes().put(ELEMENT_CSS_CLASS, cssClass);
 	}
 
 	/**
@@ -553,7 +553,7 @@ public class ZestProperties {
 	 *            The new CSS class for the given {@link Node}.
 	 */
 	public static void setCssClass(Node node, String cssClass) {
-		node.getAttrs().put(ELEMENT_CSS_CLASS, cssClass);
+		node.getAttributes().put(ELEMENT_CSS_CLASS, cssClass);
 	}
 
 	/**
@@ -566,7 +566,7 @@ public class ZestProperties {
 	 *            The new CSS id for the given {@link Edge}.
 	 */
 	public static void setCssId(Edge edge, String cssId) {
-		edge.getAttrs().put(ELEMENT_CSS_ID, cssId);
+		edge.getAttributes().put(ELEMENT_CSS_ID, cssId);
 	}
 
 	/**
@@ -579,7 +579,7 @@ public class ZestProperties {
 	 *            The new CSS id for the given {@link Node}.
 	 */
 	public static void setCssId(Node node, String cssId) {
-		node.getAttrs().put(ELEMENT_CSS_ID, cssId);
+		node.getAttributes().put(ELEMENT_CSS_ID, cssId);
 	}
 
 	/**
@@ -593,7 +593,7 @@ public class ZestProperties {
 	 */
 	// TODO: Rename to setEdgeCurveCssStyle
 	public static void setEdgeConnCssStyle(Edge edge, String connCssStyle) {
-		edge.getAttrs().put(EDGE_CURVE_CSS_STYLE, connCssStyle);
+		edge.getAttributes().put(EDGE_CURVE_CSS_STYLE, connCssStyle);
 	}
 
 	/**
@@ -607,7 +607,7 @@ public class ZestProperties {
 	 */
 	// TODO: Rename to setEdgeLabelCssStyle
 	public static void setEdgeTextCssStyle(Edge edge, String textCssStyle) {
-		edge.getAttrs().put(EDGE_LABEL_CSS_STYLE, textCssStyle);
+		edge.getAttributes().put(EDGE_LABEL_CSS_STYLE, textCssStyle);
 	}
 
 	/**
@@ -620,7 +620,7 @@ public class ZestProperties {
 	 *            The new fisheye state for the given {@link Node}.
 	 */
 	public static void setFisheye(Node node, Boolean fisheye) {
-		node.getAttrs().put(NODE_FISHEYE, fisheye);
+		node.getAttributes().put(NODE_FISHEYE, fisheye);
 	}
 
 	/**
@@ -633,7 +633,7 @@ public class ZestProperties {
 	 *            The new {@link Image} for the given {@link Node}.
 	 */
 	public static void setIcon(Node node, Image icon) {
-		node.getAttrs().put(NODE_ICON, icon);
+		node.getAttributes().put(NODE_ICON, icon);
 	}
 
 	/**
@@ -646,7 +646,7 @@ public class ZestProperties {
 	 *            The new label for the given {@link Edge}.
 	 */
 	public static void setLabel(Edge edge, String label) {
-		edge.getAttrs().put(ELEMENT_LABEL, label);
+		edge.getAttributes().put(ELEMENT_LABEL, label);
 	}
 
 	/**
@@ -659,7 +659,7 @@ public class ZestProperties {
 	 *            The new label for the given {@link Node}.
 	 */
 	public static void setLabel(Node node, String label) {
-		node.getAttrs().put(ELEMENT_LABEL, label);
+		node.getAttributes().put(ELEMENT_LABEL, label);
 	}
 
 	/**
@@ -672,7 +672,7 @@ public class ZestProperties {
 	 *            The new {@link ILayoutAlgorithm} for the given {@link Graph}.
 	 */
 	public static void setLayout(Graph graph, ILayoutAlgorithm algorithm) {
-		graph.getAttrs().put(GRAPH_LAYOUT_ALGORITHM, algorithm);
+		graph.getAttributes().put(GRAPH_LAYOUT_ALGORITHM, algorithm);
 	}
 
 	/**
@@ -686,7 +686,7 @@ public class ZestProperties {
 	 *            The new layout irrelevant flag for the given {@link Edge}.
 	 */
 	public static void setLayoutIrrelevant(Edge edge, Boolean layoutIrrelevant) {
-		edge.getAttrs().put(ELEMENT_LAYOUT_IRRELEVANT, layoutIrrelevant);
+		edge.getAttributes().put(ELEMENT_LAYOUT_IRRELEVANT, layoutIrrelevant);
 	}
 
 	/**
@@ -700,7 +700,7 @@ public class ZestProperties {
 	 *            The new layout irrelevant flag for the given {@link Node}.
 	 */
 	public static void setLayoutIrrelevant(Node node, Boolean layoutIrrelevant) {
-		node.getAttrs().put(ELEMENT_LAYOUT_IRRELEVANT, layoutIrrelevant);
+		node.getAttributes().put(ELEMENT_LAYOUT_IRRELEVANT, layoutIrrelevant);
 	}
 
 	/**
@@ -714,7 +714,7 @@ public class ZestProperties {
 	 *            The new node rectangle CSS style for the given {@link Node}.
 	 */
 	public static void setNodeRectCssStyle(Node node, String rectCssStyle) {
-		node.getAttrs().put(NODE_RECT_CSS_STYLE, rectCssStyle);
+		node.getAttributes().put(NODE_RECT_CSS_STYLE, rectCssStyle);
 	}
 
 	/**
@@ -728,7 +728,7 @@ public class ZestProperties {
 	 */
 	// TODO: Rename to setNodeLabelCssStyle
 	public static void setNodeTextCssStyle(Node node, String textCssStyle) {
-		node.getAttrs().put(NODE_LABEL_CSS_STYLE, textCssStyle);
+		node.getAttributes().put(NODE_LABEL_CSS_STYLE, textCssStyle);
 	}
 
 	/**
@@ -741,7 +741,7 @@ public class ZestProperties {
 	 *            The new {@link IConnectionRouter} for the given {@link Edge} .
 	 */
 	public static void setRouter(Edge edge, IConnectionRouter router) {
-		edge.getAttrs().put(EDGE_ROUTER, router);
+		edge.getAttributes().put(EDGE_ROUTER, router);
 	}
 
 	/**
@@ -755,7 +755,7 @@ public class ZestProperties {
 	 *            the given {@link Edge}.
 	 */
 	public static void setSourceDecoration(Edge edge, javafx.scene.shape.Shape sourceDecoration) {
-		edge.getAttrs().put(EDGE_SOURCE_DECORATION, sourceDecoration);
+		edge.getAttributes().put(EDGE_SOURCE_DECORATION, sourceDecoration);
 	}
 
 	/**
@@ -769,7 +769,7 @@ public class ZestProperties {
 	 *            the given {@link Edge}.
 	 */
 	public static void setTargetDecoration(Edge edge, javafx.scene.shape.Shape targetDecoration) {
-		edge.getAttrs().put(EDGE_TARGET_DECORATION, targetDecoration);
+		edge.getAttributes().put(EDGE_TARGET_DECORATION, targetDecoration);
 	}
 
 	/**
@@ -782,7 +782,7 @@ public class ZestProperties {
 	 *            The new tooltip for the given {@link Node}.
 	 */
 	public static void setTooltip(Node node, String tooltip) {
-		node.getAttrs().put(NODE_TOOLTIP, tooltip);
+		node.getAttributes().put(NODE_TOOLTIP, tooltip);
 	}
 
 	/**
@@ -802,7 +802,7 @@ public class ZestProperties {
 			throw new IllegalArgumentException("Cannot set graph attribute \"" + GRAPH_TYPE + "\" to \"" + type
 					+ "\"; supported values: " + GRAPH_TYPE_VALUES);
 		}
-		graph.getAttrs().put(GRAPH_TYPE, type);
+		graph.getAttributes().put(GRAPH_TYPE, type);
 	}
 
 }

@@ -47,8 +47,8 @@ public abstract class AbstractZestExample extends Application {
 
 	protected static Edge e(org.eclipse.gef4.graph.Node n,
 			org.eclipse.gef4.graph.Node m, Object... attr) {
-		String label = (String) n.getAttrs().get(LABEL)
-				+ (String) m.getAttrs().get(LABEL);
+		String label = (String) n.getAttributes().get(LABEL)
+				+ (String) m.getAttributes().get(LABEL);
 		Builder builder = new Edge.Builder(n, m).attr(LABEL, label).attr(ID,
 				genId());
 		for (int i = 0; i < attr.length; i += 2) {

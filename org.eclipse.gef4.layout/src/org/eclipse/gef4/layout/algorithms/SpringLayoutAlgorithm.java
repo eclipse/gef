@@ -384,7 +384,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			entityToPosition.put(entities[i], new Integer(i));
 		}
 
-		IConnectionLayout[] connections = context.getConnections();
+		IConnectionLayout[] connections = context.getEdges();
 		for (int i = 0; i < connections.length; i++) {
 			IConnectionLayout connection = connections[i];
 			Integer source = entityToPosition.get(connection.getSource());

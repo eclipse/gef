@@ -41,7 +41,7 @@ public class DotToZestGraphConverter {
 
 	private Graph convertGraph(Graph dot) {
 		Graph zest = new Graph();
-		convertGraphAttributes(dot.getAttrs(), zest.getAttrs());
+		convertGraphAttributes(dot.getAttributes(), zest.getAttributes());
 		// convert nodes and store dot to zest mapping, so that source and
 		// destination of edges can be found easily later
 		for (Node dotNode : dot.getNodes()) {
@@ -65,7 +65,7 @@ public class DotToZestGraphConverter {
 		Node zestTarget = dotToZestNodes.get(dotEdge.getTarget());
 		// create edge
 		Edge zestEdge = new Edge(zestSource, zestTarget);
-		convertEdgeAttributes(dotEdge.getAttrs(), zestEdge.getAttrs());
+		convertEdgeAttributes(dotEdge.getAttributes(), zestEdge.getAttributes());
 		return zestEdge;
 	}
 
@@ -96,7 +96,7 @@ public class DotToZestGraphConverter {
 
 	private Node convertNode(Node dotNode) {
 		Node zestNode = new Node();
-		convertNodeAttributes(dotNode.getAttrs(), zestNode.getAttrs());
+		convertNodeAttributes(dotNode.getAttributes(), zestNode.getAttributes());
 		// convert nested graph
 		if (dotNode.getNestedGraph() != null) {
 			Graph nested = convertGraph(dotNode.getNestedGraph());

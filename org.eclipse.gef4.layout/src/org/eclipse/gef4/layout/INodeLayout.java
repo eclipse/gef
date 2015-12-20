@@ -11,12 +11,12 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
-import org.eclipse.gef4.common.properties.IPropertyStore;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 
 /**
  * An {@link INodeLayout} represents a node of a graph within the layout model.
  */
-public interface INodeLayout extends IPropertyStore {
+public interface INodeLayout extends IAttributeStore {
 
 	/**
 	 * Returns all nodes that are direct successors of this node. Nodes

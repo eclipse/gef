@@ -93,7 +93,7 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	@Override
 	protected void doRefreshVisual(Text visual) {
 		Edge edge = getContent().getKey();
-		Map<String, Object> attrs = edge.getAttrs();
+		Map<String, Object> attrs = edge.getAttributes();
 
 		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
 			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);

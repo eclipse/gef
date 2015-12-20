@@ -205,7 +205,7 @@ public class ZestContentViewer extends ContentViewer {
 			Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,
 					contentTargetNode);
 			if (edgeAttributes != null) {
-				edge.getAttrs().putAll(edgeAttributes);
+				edge.getAttributes().putAll(edgeAttributes);
 			}
 		}
 		return edge;
@@ -249,7 +249,7 @@ public class ZestContentViewer extends ContentViewer {
 			Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
 					.getNestedGraphAttributes(contentNestingNode);
 			if (nestedGraphAttributes != null) {
-				graph.getAttrs().putAll(nestedGraphAttributes);
+				graph.getAttributes().putAll(nestedGraphAttributes);
 			}
 		}
 		Object[] contentNodes = nestedGraphContentProvider.getChildren(contentNestingNode);
@@ -355,7 +355,7 @@ public class ZestContentViewer extends ContentViewer {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
 			Map<String, Object> nodeAttributes = graphNodeLabelProvider.getNodeAttributes(contentNode);
 			if (nodeAttributes != null) {
-				node.getAttrs().putAll(nodeAttributes);
+				node.getAttributes().putAll(nodeAttributes);
 			}
 		}
 
@@ -426,7 +426,7 @@ public class ZestContentViewer extends ContentViewer {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
 			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getRootGraphAttributes();
 			if (rootGraphAttributes != null) {
-				graph.getAttrs().putAll(rootGraphAttributes);
+				graph.getAttributes().putAll(rootGraphAttributes);
 			}
 		}
 		if (contentProvider instanceof IGraphNodeContentProvider) {

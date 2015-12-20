@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.properties.ListProperty;
 import org.eclipse.gef4.common.properties.MapProperty;
 
@@ -35,7 +35,7 @@ import org.eclipse.gef4.common.properties.MapProperty;
  * @author anyssen
  *
  */
-public final class Graph implements IPropertyChangeNotifier {
+public final class Graph implements IAttributeStore {
 
 	/**
 	 * The {@link Builder} can be used to construct a new {@link Graph} little
@@ -83,8 +83,8 @@ public final class Graph implements IPropertyChangeNotifier {
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
-		 * {@link Graph#getAttrs() attributes map} of the {@link Graph} which is
-		 * constructed by this {@link Builder}.
+		 * {@link Graph#getAttributes() attributes map} of the {@link Graph}
+		 * which is constructed by this {@link Builder}.
 		 *
 		 * @param key
 		 *            The attribute name which is inserted.
@@ -214,16 +214,6 @@ public final class Graph implements IPropertyChangeNotifier {
 	}
 
 	/**
-	 * The property name that is used to notify change listeners about changes
-	 * made to the attributes of this Graph. A property change event for this
-	 * property will have its old value set to a
-	 * <code>Map&lt;String, Object&gt;</code> holding the old attributes and its
-	 * new value set to a <code>Map&lt;String, Object&gt;</code> holding the new
-	 * attributes.
-	 */
-	public static final String ATTRIBUTES_PROPERTY = "attributes";
-
-	/**
 	 * The property name that is used to notify change listeners about
 	 * added/removed nodes. A property change event for this property will have
 	 * its old value set to a <code>List&lt;Node&gt;</code> holding the old
@@ -311,18 +301,14 @@ public final class Graph implements IPropertyChangeNotifier {
 			return false;
 		}
 		Graph thatGraph = (Graph) other;
-		boolean attrsEqual = this.getAttrs().equals(thatGraph.getAttrs());
+		boolean attrsEqual = this.getAttributes().equals(thatGraph.getAttributes());
 		boolean nodesEqual = this.getNodes().equals(thatGraph.getNodes());
 		boolean edgesEqual = this.getEdges().equals(thatGraph.getEdges());
 		return attrsEqual && nodesEqual && edgesEqual;
 	}
 
-	/**
-	 * Returns the map of attributes of this {@link Graph} by reference.
-	 *
-	 * @return The map of attributes of this {@link Graph} by reference.
-	 */
-	public Map<String, Object> getAttrs() {
+	@Override
+	public Map<String, Object> getAttributes() {
 		return attrs;
 	}
 
@@ -359,7 +345,7 @@ public final class Graph implements IPropertyChangeNotifier {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = 31 * result + getAttrs().hashCode();
+		result = 31 * result + getAttributes().hashCode();
 		result = 31 * result + getNodes().hashCode();
 		result = 31 * result + getEdges().hashCode();
 		return result;

@@ -88,13 +88,13 @@ public class GraphLayoutContextTests {
 	 *            layout context
 	 * @param x
 	 *            edge index
-	 * @see GraphLayoutContext#getConnections()
+	 * @see GraphLayoutContext#getEdges()
 	 * @see GraphLayoutContext#getConnections(IEntityLayout, IEntityLayout)
 	 * @see IConnectionLayout#getSource()
 	 * @see IConnectionLayout#getTarget()
 	 */
 	private void checkEdgeIdentity(List<Edge> edges, GraphLayoutContext glc, int x) {
-		IConnectionLayout layout = glc.getConnections()[x];
+		IConnectionLayout layout = glc.getEdges()[x];
 		INodeLayout source = layout.getSource();
 		INodeLayout target = layout.getTarget();
 		assertSame(edges.get(x).getSource(), ((GraphNodeLayout) source).getNode());
@@ -177,7 +177,7 @@ public class GraphLayoutContextTests {
 	 */
 	private void checkSizes(List<Node> nodes, List<Edge> edges, GraphLayoutContext glc) {
 		assertEquals(nodes.size(), glc.getNodes().length);
-		assertEquals(edges.size(), glc.getConnections().length);
+		assertEquals(edges.size(), glc.getEdges().length);
 	}
 
 	@Test

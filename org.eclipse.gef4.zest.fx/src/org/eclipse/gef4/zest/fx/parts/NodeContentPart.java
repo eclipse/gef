@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -189,7 +190,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	private PropertyChangeListener nodeAttributesPropertyChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (org.eclipse.gef4.graph.Node.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
+			if (IAttributeStore.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
 				refreshVisual();
 			}
 		}
@@ -359,7 +360,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
 		org.eclipse.gef4.graph.Node node = getContent();
-		Map<String, Object> attrs = node.getAttrs();
+		Map<String, Object> attrs = node.getAttributes();
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			refreshCssClass(visual, ZestProperties.getCssClass(node));
 		}

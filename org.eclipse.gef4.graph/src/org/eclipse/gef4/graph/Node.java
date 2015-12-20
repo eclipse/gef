@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.properties.MapProperty;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
 
@@ -33,7 +32,7 @@ import org.eclipse.gef4.graph.Graph.Builder.Context;
  * @author Alexander Nyßen
  *
  */
-public class Node implements IPropertyChangeNotifier {
+public class Node implements IAttributeStore {
 
 	/**
 	 * The {@link Builder} can be used to construct a {@link Node} little by
@@ -88,8 +87,8 @@ public class Node implements IPropertyChangeNotifier {
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
-		 * {@link Node#getAttrs() attributes map} of the {@link Node} which is
-		 * constructed by this {@link Builder}.
+		 * {@link Node#getAttributes() attributes map} of the {@link Node} which
+		 * is constructed by this {@link Builder}.
 		 *
 		 * @param key
 		 *            The attribute name which is inserted.
@@ -176,16 +175,6 @@ public class Node implements IPropertyChangeNotifier {
 
 	}
 
-	/**
-	 * The property name that is used to notify change listeners about changes
-	 * made to the attributes of this Node. A property change event for this
-	 * property will have its old value set to a
-	 * <code>Map&lt;String, Object&gt;</code> holding the old attributes and its
-	 * new value set to a <code>Map&lt;String, Object&gt;</code> holding the new
-	 * attributes.
-	 */
-	public static final String ATTRIBUTES_PROPERTY = "attributes";
-
 	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
 
 	/**
@@ -206,11 +195,12 @@ public class Node implements IPropertyChangeNotifier {
 
 	/**
 	 * Constructs a new {@link Node} and copies the given <i>attributes</i> into
-	 * the {@link #getAttrs() attributes map} of this {@link Node}.
+	 * the {@link #getAttributes() attributes map} of this {@link Node}.
 	 *
 	 * @param attrs
 	 *            A {@link Map} containing the attributes which are copied into
-	 *            the {@link #getAttrs() attributes map} of this {@link Node}.
+	 *            the {@link #getAttributes() attributes map} of this
+	 *            {@link Node}.
 	 */
 	public Node(Map<String, Object> attrs) {
 		this.attrs.putAll(attrs);
@@ -229,7 +219,7 @@ public class Node implements IPropertyChangeNotifier {
 		if (!(that instanceof Node)) {
 			return false;
 		}
-		boolean attrsEqual = this.getAttrs().equals(((Node) that).getAttrs());
+		boolean attrsEqual = this.getAttributes().equals(((Node) that).getAttributes());
 		return attrsEqual;
 	}
 
@@ -323,14 +313,8 @@ public class Node implements IPropertyChangeNotifier {
 		return successors;
 	}
 
-	/**
-	 * Returns the attributes map of this {@link Node} by reference. When this
-	 * map is changed, a {@link PropertyChangeEvent} is fired for the
-	 * {@link #ATTRIBUTES_PROPERTY}.
-	 *
-	 * @return The attributes map of this {@link Node} by reference.
-	 */
-	public Map<String, Object> getAttrs() {
+	@Override
+	public Map<String, Object> getAttributes() {
 		return attrs;
 	}
 
@@ -440,7 +424,7 @@ public class Node implements IPropertyChangeNotifier {
 
 	@Override
 	public int hashCode() {
-		return getAttrs().hashCode();
+		return getAttributes().hashCode();
 	}
 
 	@Override

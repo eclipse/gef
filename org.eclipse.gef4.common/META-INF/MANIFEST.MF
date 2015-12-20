@@ -7,6 +7,7 @@ Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.gef4.common.activate;x-internal:=true,
  org.eclipse.gef4.common.adapt;x-internal:=true,
+ org.eclipse.gef4.common.attributes;x-internal:=true,
  org.eclipse.gef4.common.dispose;x-internal:=true,
  org.eclipse.gef4.common.inject;x-internal:=true,
  org.eclipse.gef4.common.properties;x-internal:=true,

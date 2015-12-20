@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.properties.MapProperty;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
 
@@ -31,7 +30,7 @@ import org.eclipse.gef4.graph.Graph.Builder.Context;
  * @author anyssen
  *
  */
-public class Edge implements IPropertyChangeNotifier {
+public class Edge implements IAttributeStore {
 
 	/*
 	 * TODO: How to check consistency? The associated graph has to be an
@@ -89,8 +88,8 @@ public class Edge implements IPropertyChangeNotifier {
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
-		 * {@link Edge#getAttrs() attributes map} of the {@link Edge} which is
-		 * constructed by this {@link Builder}.
+		 * {@link Edge#getAttributes() attributes map} of the {@link Edge} which
+		 * is constructed by this {@link Builder}.
 		 *
 		 * @param key
 		 *            The attribute name which is inserted.
@@ -188,16 +187,6 @@ public class Edge implements IPropertyChangeNotifier {
 		}
 	}
 
-	/**
-	 * The property name that is used to notify change listeners about changes
-	 * made to the attributes of this Edge. A property change event for this
-	 * property will have its old value set to a
-	 * <code>Map&lt;String, Object&gt;</code> holding the old attributes and its
-	 * new value set to a <code>Map&lt;String, Object&gt;</code> holding the new
-	 * attributes.
-	 */
-	public static final String ATTRIBUTES_PROPERTY = "attributes";
-
 	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
 	private Node source;
 	private Node target;
@@ -206,12 +195,13 @@ public class Edge implements IPropertyChangeNotifier {
 	/**
 	 * Constructs a new {@link Edge} which connects the given <i>source</i>
 	 * {@link Node} with the given <i>target</i> {@link Node}. The given
-	 * <i>attributes</i> are copied into the {@link #getAttrs() attributes map}
-	 * of this {@link Edge}.
+	 * <i>attributes</i> are copied into the {@link #getAttributes() attributes
+	 * map} of this {@link Edge}.
 	 *
 	 * @param attrs
 	 *            A {@link Map} containing the attributes which are copied into
-	 *            the {@link #getAttrs() attributes map} of this {@link Edge}.
+	 *            the {@link #getAttributes() attributes map} of this
+	 *            {@link Edge}.
 	 * @param source
 	 *            The source {@link Node} for this {@link Edge}.
 	 * @param target
@@ -250,20 +240,14 @@ public class Edge implements IPropertyChangeNotifier {
 			return false;
 		}
 		Edge thatEdge = (Edge) that;
-		boolean attrsEqual = this.getAttrs().equals(thatEdge.getAttrs());
+		boolean attrsEqual = this.getAttributes().equals(thatEdge.getAttributes());
 		boolean sourceEqual = this.getSource().equals(thatEdge.getSource());
 		boolean targetEqual = this.getTarget().equals(thatEdge.getTarget());
 		return attrsEqual && sourceEqual && targetEqual;
 	}
 
-	/**
-	 * Returns the attributes map of this {@link Edge} by reference. When this
-	 * map is changed, a {@link PropertyChangeEvent} is fired for the
-	 * {@link #ATTRIBUTES_PROPERTY}.
-	 *
-	 * @return The attributes map of this {@link Edge} by reference.
-	 */
-	public Map<String, Object> getAttrs() {
+	@Override
+	public Map<String, Object> getAttributes() {
 		return attrs;
 	}
 
@@ -297,7 +281,7 @@ public class Edge implements IPropertyChangeNotifier {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = 31 * result + getAttrs().hashCode();
+		result = 31 * result + getAttributes().hashCode();
 		result = 31 * result + getSource().hashCode();
 		result = 31 * result + getTarget().hashCode();
 		return result;

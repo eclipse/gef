@@ -148,7 +148,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		}
 
 		Edge edge = getContent();
-		Map<String, Object> attrs = edge.getAttrs();
+		Map<String, Object> attrs = edge.getAttributes();
 		GeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// css class

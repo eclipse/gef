@@ -15,6 +15,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
@@ -270,7 +271,8 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
 		if (ILayoutContext.LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
 			applyLayout(true);
-		} else if (LayoutProperties.BOUNDS_PROPERTY.equals(evt.getPropertyName())) {
+		} else if (evt instanceof KeyedPropertyChangeEvent
+				&& LayoutProperties.BOUNDS_PROPERTY.equals(((KeyedPropertyChangeEvent) evt).getKey())) {
 			applyLayout(true);
 		}
 	}

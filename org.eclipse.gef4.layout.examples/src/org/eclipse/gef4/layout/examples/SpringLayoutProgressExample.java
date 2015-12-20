@@ -106,7 +106,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 		}
 
 		for (Node n : nodes) {
-			n.getAttrs().put(LayoutProperties.LOCATION_PROPERTY,
+			n.getAttributes().put(LayoutProperties.LOCATION_PROPERTY,
 					new Point(200, 200));
 		}
 

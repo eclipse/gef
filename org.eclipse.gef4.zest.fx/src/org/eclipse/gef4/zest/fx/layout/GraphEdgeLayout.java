@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Map.Entry;
+import java.util.Map;
 
-import org.eclipse.gef4.common.properties.PropertyStoreSupport;
+import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.INodeLayout;
@@ -31,9 +33,23 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
  */
 public class GraphEdgeLayout implements IConnectionLayout {
 
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
+	private PropertyChangeListener edgeAttributesListener = new PropertyChangeListener() {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			// forward any property change events with us as source
+			if (evt instanceof KeyedPropertyChangeEvent) {
+				pcs.fireKeyedPropertyChange(evt.getPropertyName(), ((KeyedPropertyChangeEvent) evt).getKey(),
+						evt.getOldValue(), evt.getNewValue());
+			} else {
+				pcs.firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+			}
+		}
+	};
+
 	private GraphLayoutContext context;
 	private Edge edge;
-	private PropertyStoreSupport pss = new PropertyStoreSupport(this);
 
 	/**
 	 * Constructs a new {@link GraphEdgeLayout} for the given {@link Edge} in
@@ -48,22 +64,23 @@ public class GraphEdgeLayout implements IConnectionLayout {
 	public GraphEdgeLayout(GraphLayoutContext context, Edge edge) {
 		this.context = context;
 		this.edge = edge;
+		this.edge.addPropertyChangeListener(edgeAttributesListener);
 
 		// graph directed?
-		Object type = context.getGraph().getAttrs().get(ZestProperties.GRAPH_TYPE);
+		Object type = context.getGraph().getAttributes().get(ZestProperties.GRAPH_TYPE);
 		if (type == ZestProperties.GRAPH_TYPE_DIRECTED) {
-			setProperty(LayoutProperties.DIRECTED_PROPERTY, true);
-		}
-
-		// copy properties
-		for (Entry<String, Object> e : edge.getAttrs().entrySet()) {
-			setProperty(e.getKey(), e.getValue());
+			getAttributes().put(LayoutProperties.DIRECTED_PROPERTY, true);
 		}
 	}
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pss.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return edge.getAttributes();
 	}
 
 	/**
@@ -73,11 +90,6 @@ public class GraphEdgeLayout implements IConnectionLayout {
 	 */
 	public Edge getEdge() {
 		return edge;
-	}
-
-	@Override
-	public Object getProperty(String name) {
-		return pss.getProperty(name);
 	}
 
 	@Override
@@ -92,12 +104,6 @@ public class GraphEdgeLayout implements IConnectionLayout {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pss.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
-
-	@Override
-	public void setProperty(String name, Object value) {
-		pss.setProperty(name, value);
-	}
-
 }

@@ -16,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.properties.PropertyStoreSupport;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 
 /**
  * The {@link AbstractLayoutContext} is an abstract {@link ILayoutContext}
@@ -29,8 +29,6 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
  * @author mwienand
  *
  */
-// TODO: replace fire* methods with property change mechanism -> layout
-// interfaces all extend IPropertyStore, thus are IPropertyChangeNotifier
 public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	private ILayoutAlgorithm layoutAlgorithm = null;
@@ -42,9 +40,10 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<>();
 
 	/**
-	 * Support object for reading/writing general properties.
+	 * Support object for notifying about property changes
 	 */
-	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
+	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
+			this);
 
 	/**
 	 * Adds the given {@link IConnectionLayout} to the list of edges and fires a
@@ -73,7 +72,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pss.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	public void applyLayout(boolean clear) {
@@ -120,7 +119,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		doFlushChanges();
 	}
 
-	public IConnectionLayout[] getConnections() {
+	public IConnectionLayout[] getEdges() {
 		return layoutEdges.toArray(new IConnectionLayout[0]);
 	}
 
@@ -145,10 +144,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	public INodeLayout[] getNodes() {
 		return layoutNodes.toArray(new INodeLayout[0]);
-	}
-
-	public Object getProperty(String name) {
-		return pss.getProperty(name);
 	}
 
 	public ILayoutAlgorithm getLayoutAlgorithm() {
@@ -200,7 +195,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pss.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	public void schedulePostLayoutPass(Runnable runnable) {
@@ -217,17 +212,12 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		preLayoutPass.add(runnable);
 	}
 
-	public void setProperty(String name, Object value) {
-		// will set property value and fire notification (if value changed).
-		pss.setProperty(name, value);
-	}
-
 	public void setLayoutAlgorithm(ILayoutAlgorithm newLayoutAlgorithm) {
 		ILayoutAlgorithm oldLayoutAlgorithm = this.layoutAlgorithm;
 		if (oldLayoutAlgorithm != newLayoutAlgorithm) {
 			this.layoutAlgorithm = newLayoutAlgorithm;
 			newLayoutAlgorithm.setLayoutContext(this);
-			pss.firePropertyChange(LAYOUT_ALGORITHM_PROPERTY,
+			pcs.firePropertyChange(LAYOUT_ALGORITHM_PROPERTY,
 					oldLayoutAlgorithm, newLayoutAlgorithm);
 		}
 	}

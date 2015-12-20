@@ -26,7 +26,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the bounds in which the graph elements can be placed.
 	 */
-	public static final String BOUNDS_PROPERTY = "bounds";
+	public static final String BOUNDS_PROPERTY = "layout_bounds";
 
 	/**
 	 * Defines the default value for the {@link #BOUNDS_PROPERTY}.
@@ -37,7 +37,7 @@ public class LayoutProperties {
 	 * Indicates whether an algorithm is allowed to place graph elements outside
 	 * of the bounds.
 	 */
-	public static final String BOUNDS_EXPANDABLE_PROPERTY = "bounds-expandable";
+	public static final String BOUNDS_EXPANDABLE_PROPERTY = "layout_bounds-expandable";
 
 	/**
 	 * Defines the default value for the {@link #BOUNDS_EXPANDABLE_PROPERTY}.
@@ -47,7 +47,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the location of this EntityLayout.
 	 */
-	public static final String LOCATION_PROPERTY = "location";
+	public static final String LOCATION_PROPERTY = "layout_location";
 
 	/**
 	 * Defines the default value for the {@link #LOCATION_PROPERTY}.
@@ -57,7 +57,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the size of this EntityLayout.
 	 */
-	public static final String SIZE_PROPERTY = "size";
+	public static final String SIZE_PROPERTY = "layout_size";
 
 	/**
 	 * Defines the default value for the {@link #SIZE_PROPERTY}.
@@ -67,7 +67,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the movable state of this EntityLayout.
 	 */
-	public static final String MOVABLE_PROPERTY = "movable";
+	public static final String MOVABLE_PROPERTY = "layout_movable";
 
 	/**
 	 * Defines the default value for the {@link #MOVABLE_PROPERTY}.
@@ -78,7 +78,7 @@ public class LayoutProperties {
 	 * Stores the resizable state of this EntityLayout. A resizable EntityLayout
 	 * may be resized by a layout algorithm.
 	 */
-	public static final String RESIZABLE_PROPERTY = "resizable";
+	public static final String RESIZABLE_PROPERTY = "layout_resizable";
 
 	/**
 	 * Defines the default value for the {@link #RESIZABLE_PROPERTY}.
@@ -88,7 +88,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the preferred aspect ratio (width / height) for this EntityLayout.
 	 */
-	public static final String ASPECT_RATIO_PROPERTY = "aspect-ratio";
+	public static final String ASPECT_RATIO_PROPERTY = "layout_aspect-ratio";
 
 	/**
 	 * Defines the default value for the {@link #ASPECT_RATIO_PROPERTY}.
@@ -98,7 +98,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the visibility state of the entity.
 	 */
-	public static final String VISIBLE_PROPERTY = "visible";
+	public static final String VISIBLE_PROPERTY = "layout_visible";
 
 	/**
 	 * Defines the default value for the {@link #VISIBLE_PROPERTY}.
@@ -111,7 +111,7 @@ public class LayoutProperties {
 	 * to its previous dimension. Note that a NodeLayout can be minimized even
 	 * if it is not resizable.
 	 */
-	public static final String MINIMIZED_PROPERTY = "minimized";
+	public static final String MINIMIZED_PROPERTY = "layout_minimized";
 
 	/**
 	 * Defines the default value for the {@link #MINIMIZED_PROPERTY}.
@@ -121,7 +121,7 @@ public class LayoutProperties {
 	/**
 	 * Stores a weight for this connection.
 	 */
-	public static final String WEIGHT_PROPERTY = "weight";
+	public static final String WEIGHT_PROPERTY = "layout_weight";
 
 	/**
 	 * Defines the default value for the {@link #WEIGHT_PROPERTY}.
@@ -131,7 +131,7 @@ public class LayoutProperties {
 	/**
 	 * Stores a weight for this connection.
 	 */
-	public static final String DIRECTED_PROPERTY = "directed";
+	public static final String DIRECTED_PROPERTY = "layout_directed";
 
 	/**
 	 * Defines the default value for the {@link #DIRECTED_PROPERTY}.
@@ -161,7 +161,7 @@ public class LayoutProperties {
 	/**
 	 * Stores the direction of this subgraph.
 	 */
-	public static final String DIRECTION_PROPERTY = "direction";
+	public static final String DIRECTION_PROPERTY = "layout_direction";
 
 	/**
 	 * Defines the default value for the {@link #DIRECTION_PROPERTY}.
@@ -172,7 +172,7 @@ public class LayoutProperties {
 	 * Indicates whether this subgraph is visualized differently depending on
 	 * its .
 	 */
-	public static final String DIRECTION_DEPENDANT_PROPERTY = "direction-dependant";
+	public static final String DIRECTION_DEPENDANT_PROPERTY = "layout_direction-dependant";
 
 	/**
 	 * Defines the default value for the {@link #DIRECTION_DEPENDANT_PROPERTY}.
@@ -183,14 +183,14 @@ public class LayoutProperties {
 	 * Returns the value of the {@link #BOUNDS_PROPERTY} of the given
 	 * {@link ILayoutContext}.
 	 * 
-	 * @param graph
+	 * @param context
 	 *            The {@link ILayoutContext} whose {@link #BOUNDS_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #BOUNDS_PROPERTY} of the given
 	 *         {@link ILayoutContext}.
 	 */
-	public static Rectangle getBounds(ILayoutContext graph) {
-		Object bounds = graph.getProperty(BOUNDS_PROPERTY);
+	public static Rectangle getBounds(ILayoutContext context) {
+		Object bounds = context.getAttributes().get(BOUNDS_PROPERTY);
 		if (bounds instanceof Rectangle) {
 			return ((Rectangle) bounds).getCopy();
 		}
@@ -201,29 +201,30 @@ public class LayoutProperties {
 	 * Sets the value of the {@link #BOUNDS_PROPERTY} of the given
 	 * {@link ILayoutContext} to the given value.
 	 * 
-	 * @param graph
+	 * @param context
 	 *            The {@link ILayoutContext} whose {@link #BOUNDS_PROPERTY} is
 	 *            changed.
 	 * @param bounds
 	 *            The new value for the {@link #BOUNDS_PROPERTY} of the given
 	 *            {@link ILayoutContext}.
 	 */
-	public static void setBounds(ILayoutContext graph, Rectangle bounds) {
-		graph.setProperty(BOUNDS_PROPERTY, bounds);
+	public static void setBounds(ILayoutContext context, Rectangle bounds) {
+		context.getAttributes().put(BOUNDS_PROPERTY, bounds);
 	}
 
 	/**
 	 * Returns the value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
 	 * {@link ILayoutContext}.
 	 * 
-	 * @param graph
+	 * @param context
 	 *            The {@link ILayoutContext} whose
 	 *            {@link #BOUNDS_EXPANDABLE_PROPERTY} is read.
 	 * @return The value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
 	 *         {@link ILayoutContext}.
 	 */
-	public static Boolean isBoundsExpandable(ILayoutContext graph) {
-		Object boundsExpandable = graph.getProperty(BOUNDS_EXPANDABLE_PROPERTY);
+	public static Boolean isBoundsExpandable(ILayoutContext context) {
+		Object boundsExpandable = context.getAttributes()
+				.get(BOUNDS_EXPANDABLE_PROPERTY);
 		if (boundsExpandable instanceof Boolean) {
 			return (Boolean) boundsExpandable;
 		}
@@ -234,30 +235,31 @@ public class LayoutProperties {
 	 * Sets the value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
 	 * {@link ILayoutContext} to the given value.
 	 * 
-	 * @param graph
+	 * @param context
 	 *            The {@link ILayoutContext} whose
 	 *            {@link #BOUNDS_EXPANDABLE_PROPERTY} is changed.
 	 * @param boundsExpandable
 	 *            The new value for the {@link #BOUNDS_EXPANDABLE_PROPERTY} of
 	 *            the given {@link ILayoutContext}.
 	 */
-	public static void setBoundsExpandable(ILayoutContext graph,
+	public static void setBoundsExpandable(ILayoutContext context,
 			boolean boundsExpandable) {
-		graph.setProperty(BOUNDS_EXPANDABLE_PROPERTY, boundsExpandable);
+		context.getAttributes().put(BOUNDS_EXPANDABLE_PROPERTY,
+				boundsExpandable);
 	}
 
 	/**
 	 * Returns the value of the {@link #LOCATION_PROPERTY} of the given
 	 * {@link INodeLayout}.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #LOCATION_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #LOCATION_PROPERTY} of the given
 	 *         {@link INodeLayout}.
 	 */
-	public static Point getLocation(INodeLayout entity) {
-		Object location = entity.getProperty(LOCATION_PROPERTY);
+	public static Point getLocation(INodeLayout node) {
+		Object location = node.getAttributes().get(LOCATION_PROPERTY);
 		if (location instanceof Point) {
 			return ((Point) location).getCopy();
 		}
@@ -268,13 +270,13 @@ public class LayoutProperties {
 	 * Returns the value of the {@link #SIZE_PROPERTY} of the given
 	 * {@link INodeLayout}.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #SIZE_PROPERTY} is read.
 	 * @return The value of the {@link #SIZE_PROPERTY} of the given
 	 *         {@link INodeLayout}.
 	 */
-	public static Dimension getSize(INodeLayout entity) {
-		Object size = entity.getProperty(SIZE_PROPERTY);
+	public static Dimension getSize(INodeLayout node) {
+		Object size = node.getAttributes().get(SIZE_PROPERTY);
 		if (size instanceof Dimension) {
 			return ((Dimension) size).getCopy();
 		}
@@ -285,14 +287,14 @@ public class LayoutProperties {
 	 * Returns the value of the {@link #ASPECT_RATIO_PROPERTY} of the given
 	 * {@link INodeLayout}.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #ASPECT_RATIO_PROPERTY}
 	 *            is read.
 	 * @return The value of the {@link #ASPECT_RATIO_PROPERTY} of the given
 	 *         {@link INodeLayout}.
 	 */
-	public static Double getPreferredAspectRatio(INodeLayout entity) {
-		Object ar = entity.getProperty(ASPECT_RATIO_PROPERTY);
+	public static Double getPreferredAspectRatio(INodeLayout node) {
+		Object ar = node.getAttributes().get(ASPECT_RATIO_PROPERTY);
 		if (ar instanceof Double) {
 			return (Double) ar;
 		}
@@ -303,14 +305,14 @@ public class LayoutProperties {
 	 * Returns the value of the {@link #RESIZABLE_PROPERTY} of the given
 	 * {@link INodeLayout}.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #RESIZABLE_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #RESIZABLE_PROPERTY} of the given
 	 *         {@link INodeLayout}.
 	 */
-	public static Boolean isResizable(INodeLayout entity) {
-		Object resizable = entity.getProperty(RESIZABLE_PROPERTY);
+	public static Boolean isResizable(INodeLayout node) {
+		Object resizable = node.getAttributes().get(RESIZABLE_PROPERTY);
 		if (resizable instanceof Boolean) {
 			return (Boolean) resizable;
 		}
@@ -321,14 +323,14 @@ public class LayoutProperties {
 	 * Returns the value of the {@link #MOVABLE_PROPERTY} of the given
 	 * {@link INodeLayout}.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #MOVABLE_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #MOVABLE_PROPERTY} of the given
 	 *         {@link INodeLayout}.
 	 */
-	public static Boolean isMovable(INodeLayout entity) {
-		Object movable = entity.getProperty(MOVABLE_PROPERTY);
+	public static Boolean isMovable(INodeLayout node) {
+		Object movable = node.getAttributes().get(MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
 			return (Boolean) movable;
 		}
@@ -339,7 +341,7 @@ public class LayoutProperties {
 	 * Sets the value of the {@link #LOCATION_PROPERTY} of the given
 	 * {@link INodeLayout} to the given value.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #LOCATION_PROPERTY} is
 	 *            changed.
 	 * @param x
@@ -349,21 +351,21 @@ public class LayoutProperties {
 	 *            The new y coordinate for the {@link #LOCATION_PROPERTY} of the
 	 *            given {@link INodeLayout}.
 	 */
-	public static void setLocation(INodeLayout entity, double x, double y) {
+	public static void setLocation(INodeLayout node, double x, double y) {
 		if (Double.isNaN(x)) {
 			x = 0;
 		}
 		if (Double.isNaN(y)) {
 			y = 0;
 		}
-		entity.setProperty(LOCATION_PROPERTY, new Point(x, y));
+		node.getAttributes().put(LOCATION_PROPERTY, new Point(x, y));
 	}
 
 	/**
 	 * Sets the value of the {@link #SIZE_PROPERTY} of the given
 	 * {@link INodeLayout} to the given value.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #SIZE_PROPERTY} is
 	 *            changed.
 	 * @param w
@@ -373,29 +375,29 @@ public class LayoutProperties {
 	 *            The new height for the {@link #SIZE_PROPERTY} of the given
 	 *            {@link INodeLayout}.
 	 */
-	public static void setSize(INodeLayout entity, double w, double h) {
+	public static void setSize(INodeLayout node, double w, double h) {
 		if (Double.isNaN(w)) {
 			w = 0;
 		}
 		if (Double.isNaN(h)) {
 			h = 0;
 		}
-		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
+		node.getAttributes().put(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
 	/**
 	 * Sets the value of the {@link #RESIZABLE_PROPERTY} of the given
 	 * {@link INodeLayout} to the given value.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #RESIZABLE_PROPERTY} is
 	 *            changed.
 	 * @param resizable
 	 *            The new value for the {@link #RESIZABLE_PROPERTY} of the given
 	 *            {@link INodeLayout}.
 	 */
-	public static void setResizable(INodeLayout entity, boolean resizable) {
-		entity.setProperty(RESIZABLE_PROPERTY, resizable);
+	public static void setResizable(INodeLayout node, boolean resizable) {
+		node.getAttributes().put(RESIZABLE_PROPERTY, resizable);
 	}
 
 	/**
@@ -409,7 +411,7 @@ public class LayoutProperties {
 	 *         {@link INodeLayout}.
 	 */
 	public static Boolean isMinimized(INodeLayout node) {
-		Object minimized = node.getProperty(MINIMIZED_PROPERTY);
+		Object minimized = node.getAttributes().get(MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
 			return (Boolean) minimized;
 		}
@@ -428,7 +430,7 @@ public class LayoutProperties {
 	 *            {@link INodeLayout}.
 	 */
 	public static void setMinimized(INodeLayout node, boolean minimized) {
-		node.setProperty(MINIMIZED_PROPERTY, minimized);
+		node.getAttributes().put(MINIMIZED_PROPERTY, minimized);
 	}
 
 	/**
@@ -442,7 +444,7 @@ public class LayoutProperties {
 	 *         {@link IConnectionLayout}.
 	 */
 	public static Boolean isDirected(IConnectionLayout edge) {
-		Object directed = edge.getProperty(DIRECTED_PROPERTY);
+		Object directed = edge.getAttributes().get(DIRECTED_PROPERTY);
 		if (directed instanceof Boolean) {
 			return (Boolean) directed;
 		}
@@ -460,7 +462,7 @@ public class LayoutProperties {
 	 *         {@link IConnectionLayout}.
 	 */
 	public static Boolean isVisible(IConnectionLayout edge) {
-		Object visible = edge.getProperty(VISIBLE_PROPERTY);
+		Object visible = edge.getAttributes().get(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
 		}
@@ -471,14 +473,14 @@ public class LayoutProperties {
 	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
 	 * {@link INodeLayout}.
 	 * 
-	 * @param entity
+	 * @param node
 	 *            The {@link INodeLayout} whose {@link #VISIBLE_PROPERTY} is
 	 *            read.
 	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
 	 *         {@link INodeLayout}.
 	 */
-	public static Boolean isVisible(INodeLayout entity) {
-		Object visible = entity.getProperty(VISIBLE_PROPERTY);
+	public static Boolean isVisible(INodeLayout node) {
+		Object visible = node.getAttributes().get(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
 		}
@@ -496,7 +498,7 @@ public class LayoutProperties {
 	 *         {@link IConnectionLayout}.
 	 */
 	public static Double getWeight(IConnectionLayout edge) {
-		Object weight = edge.getProperty(WEIGHT_PROPERTY);
+		Object weight = edge.getAttributes().get(WEIGHT_PROPERTY);
 		if (weight instanceof Double) {
 			return (Double) weight;
 		}
@@ -515,7 +517,7 @@ public class LayoutProperties {
 	 *            {@link IConnectionLayout}.
 	 */
 	public static void setDirected(IConnectionLayout edge, boolean directed) {
-		edge.setProperty(DIRECTED_PROPERTY, directed);
+		edge.getAttributes().put(DIRECTED_PROPERTY, directed);
 	}
 
 	/**
@@ -530,7 +532,7 @@ public class LayoutProperties {
 	 *            {@link IConnectionLayout}.
 	 */
 	public static void setVisible(IConnectionLayout edge, boolean visible) {
-		edge.setProperty(VISIBLE_PROPERTY, visible);
+		edge.getAttributes().put(VISIBLE_PROPERTY, visible);
 	}
 
 	/**
@@ -545,7 +547,7 @@ public class LayoutProperties {
 	 *            {@link IConnectionLayout}.
 	 */
 	public static void setWeight(IConnectionLayout edge, double weight) {
-		edge.setProperty(WEIGHT_PROPERTY, weight);
+		edge.getAttributes().put(WEIGHT_PROPERTY, weight);
 	}
 
 }

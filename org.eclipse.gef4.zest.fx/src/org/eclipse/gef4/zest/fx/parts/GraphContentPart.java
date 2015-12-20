@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -63,7 +64,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (Graph.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
+			if (IAttributeStore.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
 				// the layout algorithm might have changed
 				refreshVisual();
 			} else if (Graph.NODES_PROPERTY.equals(evt.getPropertyName())
@@ -143,7 +144,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	private void setGraphLayoutAlgorithm() {
-		Object algo = getContent().getAttrs().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
+		Object algo = getContent().getAttributes().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
 			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);

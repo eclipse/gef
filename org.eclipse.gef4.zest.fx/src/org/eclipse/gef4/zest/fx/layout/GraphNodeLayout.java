@@ -12,17 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
-import org.eclipse.gef4.common.properties.PropertyStoreSupport;
-import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
+import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
  * The {@link GraphNodeLayout} is a {@link Node}-specific {@link INodeLayout}
@@ -33,9 +33,22 @@ import org.eclipse.gef4.layout.LayoutProperties;
  */
 public class GraphNodeLayout implements INodeLayout {
 
-	// initialization context
+	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
+	private PropertyChangeListener nodeAttributesListener = new PropertyChangeListener() {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			// forward any property change events with us as source
+			if (evt instanceof KeyedPropertyChangeEvent) {
+				pcs.fireKeyedPropertyChange(evt.getPropertyName(), ((KeyedPropertyChangeEvent) evt).getKey(),
+						evt.getOldValue(), evt.getNewValue());
+			} else {
+				pcs.firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+			}
+		}
+	};
+
 	private GraphLayoutContext context;
-	private PropertyStoreSupport pss = new PropertyStoreSupport(this);
 	private Node node;
 
 	/**
@@ -51,22 +64,24 @@ public class GraphNodeLayout implements INodeLayout {
 	public GraphNodeLayout(GraphLayoutContext context, Node node) {
 		this.context = context;
 		this.node = node;
-		// copy properties
-		for (Entry<String, Object> e : node.getAttrs().entrySet()) {
-			setProperty(e.getKey(), e.getValue());
-		}
+		node.addPropertyChangeListener(nodeAttributesListener);
 	}
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pss.addPropertyChangeListener(listener);
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return node.getAttributes();
 	}
 
 	@Override
 	public IConnectionLayout[] getIncomingConnections() {
 		List<IConnectionLayout> incoming = new ArrayList<>();
 
-		IConnectionLayout[] connections = context.getConnections();
+		IConnectionLayout[] connections = context.getEdges();
 		for (IConnectionLayout c : connections) {
 			if (c.getTarget() == this) {
 				incoming.add(c);
@@ -89,7 +104,7 @@ public class GraphNodeLayout implements INodeLayout {
 	public IConnectionLayout[] getOutgoingConnections() {
 		List<IConnectionLayout> outgoing = new ArrayList<>();
 
-		IConnectionLayout[] connections = context.getConnections();
+		IConnectionLayout[] connections = context.getEdges();
 		for (IConnectionLayout c : connections) {
 			if (c.getSource() == this) {
 				outgoing.add(c);
@@ -111,11 +126,6 @@ public class GraphNodeLayout implements INodeLayout {
 	}
 
 	@Override
-	public Object getProperty(String name) {
-		return pss.getProperty(name);
-	}
-
-	@Override
 	public INodeLayout[] getSuccessingNodes() {
 		IConnectionLayout[] outgoingConnections = getOutgoingConnections();
 		INodeLayout[] successors = new INodeLayout[outgoingConnections.length];
@@ -128,23 +138,7 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pss.removePropertyChangeListener(listener);
+		pcs.removePropertyChangeListener(listener);
 	}
 
-	@Override
-	public void setProperty(String name, Object value) {
-		// TODO: remove NaN check here and ensure NaN is not passed in
-		if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
-			if (value instanceof Point) {
-				Point p = (Point) value;
-				if (Double.isNaN(p.x)) {
-					p.x = 0;
-				}
-				if (Double.isNaN(p.y)) {
-					p.y = 0;
-				}
-			}
-		}
-		pss.setProperty(name, value);
-	}
 }

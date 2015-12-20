@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout;
 
-import org.eclipse.gef4.common.properties.IPropertyStore;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 
 /**
  * Objects implementing {@link ILayoutContext} interface are used for exchanging
@@ -19,7 +19,7 @@ import org.eclipse.gef4.common.properties.IPropertyStore;
  * graphs, i.e. an {@link ILayoutContext} represents a graph within the layout
  * model.
  */
-public interface ILayoutContext extends IPropertyStore {
+public interface ILayoutContext extends IAttributeStore {
 
 	/**
 	 * An {@link ILayoutContext} notifies registered listeners about changes to
@@ -52,7 +52,7 @@ public interface ILayoutContext extends IPropertyStore {
 	 * 
 	 * @return array of connections between nodes
 	 */
-	public IConnectionLayout[] getConnections();
+	public IConnectionLayout[] getEdges();
 
 	/**
 	 * Returns all the connections between given source and target entities. If

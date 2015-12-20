@@ -253,7 +253,7 @@ public class DotProperties {
 	 *         {@link Graph}.
 	 */
 	public static String getLayout(Graph graph) {
-		return (String) graph.getAttrs().get(GRAPH_LAYOUT);
+		return (String) graph.getAttributes().get(GRAPH_LAYOUT);
 	}
 
 	/**
@@ -275,7 +275,7 @@ public class DotProperties {
 					"Cannot set graph attribute \"layout\" to \"" + layout
 							+ "\"; supported values: " + GRAPH_LAYOUT_VALUES);
 		}
-		graph.getAttrs().put(GRAPH_LAYOUT, layout);
+		graph.getAttributes().put(GRAPH_LAYOUT, layout);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class DotProperties {
 	 *         {@link Graph}.
 	 */
 	public static String getType(Graph graph) {
-		return (String) graph.getAttrs().get(GRAPH_TYPE);
+		return (String) graph.getAttributes().get(GRAPH_TYPE);
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class DotProperties {
 					"Cannot set graph attribute \"type\" to \"" + type
 							+ "\"; supported values: " + GRAPH_TYPE_VALUES);
 		}
-		graph.getAttrs().put(GRAPH_TYPE, type);
+		graph.getAttributes().put(GRAPH_TYPE, type);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class DotProperties {
 	 *         {@link Graph}.
 	 */
 	public static String getRankdir(Graph graph) {
-		return (String) graph.getAttrs().get(GRAPH_RANKDIR);
+		return (String) graph.getAttributes().get(GRAPH_RANKDIR);
 	}
 
 	/**
@@ -347,7 +347,7 @@ public class DotProperties {
 					"Cannot set graph attribute \"rankdir\" to \"" + rankdir
 							+ "\"; supported values: " + GRAPH_RANKDIR_VALUES);
 		}
-		graph.getAttrs().put(GRAPH_RANKDIR, rankdir);
+		graph.getAttributes().put(GRAPH_RANKDIR, rankdir);
 	}
 
 	/**
@@ -361,7 +361,7 @@ public class DotProperties {
 	 *         {@link Node}.
 	 */
 	public static String getLabel(Node node) {
-		return (String) node.getAttrs().get(NODE_LABEL);
+		return (String) node.getAttributes().get(NODE_LABEL);
 	}
 
 	/**
@@ -375,7 +375,7 @@ public class DotProperties {
 	 *            The new value for the {@link #NODE_LABEL} property.
 	 */
 	public static void setLabel(Node node, String label) {
-		node.getAttrs().put(NODE_LABEL, label);
+		node.getAttributes().put(NODE_LABEL, label);
 	}
 
 	/**
@@ -389,7 +389,7 @@ public class DotProperties {
 	 *         {@link Node}.
 	 */
 	public static String getId(Node node) {
-		return (String) node.getAttrs().get(NODE_ID);
+		return (String) node.getAttributes().get(NODE_ID);
 	}
 
 	/**
@@ -403,7 +403,7 @@ public class DotProperties {
 	 *            The new value for the {@link #NODE_ID} property.
 	 */
 	public static void setId(Node node, String id) {
-		node.getAttrs().put(NODE_ID, id);
+		node.getAttributes().put(NODE_ID, id);
 	}
 
 	/**
@@ -417,7 +417,7 @@ public class DotProperties {
 	 *         {@link Edge}.
 	 */
 	public static String getLabel(Edge edge) {
-		return (String) edge.getAttrs().get(EDGE_LABEL);
+		return (String) edge.getAttributes().get(EDGE_LABEL);
 	}
 
 	/**
@@ -431,7 +431,7 @@ public class DotProperties {
 	 *            The new value for the {@link #EDGE_LABEL} property.
 	 */
 	public static void setLabel(Edge edge, String label) {
-		edge.getAttrs().put(EDGE_LABEL, label);
+		edge.getAttributes().put(EDGE_LABEL, label);
 	}
 
 	/**
@@ -445,7 +445,7 @@ public class DotProperties {
 	 *         {@link Edge}.
 	 */
 	public static String getStyle(Edge edge) {
-		return (String) edge.getAttrs().get(EDGE_STYLE);
+		return (String) edge.getAttributes().get(EDGE_STYLE);
 	}
 
 	/**
@@ -467,7 +467,7 @@ public class DotProperties {
 					"Cannot set edge attribute \"style\" to \"" + style
 							+ "\"; supported values: " + EDGE_STYLE_VALUES);
 		}
-		edge.getAttrs().put(EDGE_STYLE, style);
+		edge.getAttributes().put(EDGE_STYLE, style);
 	}
 
 	/**
@@ -481,7 +481,7 @@ public class DotProperties {
 	 *         {@link Edge}.
 	 */
 	public static String getId(Edge edge) {
-		return (String) edge.getAttrs().get(EDGE_ID);
+		return (String) edge.getAttributes().get(EDGE_ID);
 	}
 
 	/**
@@ -495,7 +495,7 @@ public class DotProperties {
 	 *            The new value for the {@link #EDGE_ID} property.
 	 */
 	public static void setId(Edge edge, String id) {
-		edge.getAttrs().put(EDGE_ID, id);
+		edge.getAttributes().put(EDGE_ID, id);
 	}
 
 }
