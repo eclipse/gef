@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.controls;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +192,12 @@ public class FXAdvancedLinearGradientPicker extends Composite
 		}
 
 	}
+
+	/**
+	 * Property name used in {@link PropertyChangeEvent}s related to changes of
+	 * advanced linear gradient.
+	 */
+	public static final String ADVANCED_LINEAR_GRADIENT_PROPERTY = "advancedLinearGradient";
 
 	private static final int DIRECTION_RADIUS = 16;
 
@@ -523,8 +530,8 @@ public class FXAdvancedLinearGradientPicker extends Composite
 		}
 
 		// send notification
-		pcs.firePropertyChange("advancedLinearGradient", oldAdvancedGradient,
-				advancedLinearGradient);
+		pcs.firePropertyChange(ADVANCED_LINEAR_GRADIENT_PROPERTY,
+				oldAdvancedGradient, advancedLinearGradient);
 	}
 
 	/**

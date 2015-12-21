@@ -43,6 +43,12 @@ public class FXSimpleLinearGradientPicker extends Composite
 		implements IPropertyChangeNotifier {
 
 	/**
+	 * Property name used {@link PropertyChangeEvent}s related to changes of
+	 * simple linear gradient.
+	 */
+	public static final String SIMPLE_LINEAR_GRADIENT_PROPERTY = "simpleLinearGradient";
+
+	/**
 	 * Creates a simple color gradient from the given start color to the given
 	 * end color.
 	 *
@@ -114,7 +120,7 @@ public class FXSimpleLinearGradientPicker extends Composite
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				setSimpleGradient(createSimpleLinearGradient(
+				setSimpleLinearGradient(createSimpleLinearGradient(
 						color1Picker.getColor(), color2Picker.getColor()));
 			}
 		});
@@ -126,7 +132,7 @@ public class FXSimpleLinearGradientPicker extends Composite
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				setSimpleGradient(createSimpleLinearGradient(
+				setSimpleLinearGradient(createSimpleLinearGradient(
 						color1Picker.getColor(), color2Picker.getColor()));
 			}
 		});
@@ -139,7 +145,7 @@ public class FXSimpleLinearGradientPicker extends Composite
 		canvas.setScene(scene);
 
 		// initialize simple gradient
-		setSimpleGradient(createSimpleLinearGradient(color1, color2));
+		setSimpleLinearGradient(createSimpleLinearGradient(color1, color2));
 	}
 
 	@Override
@@ -167,7 +173,7 @@ public class FXSimpleLinearGradientPicker extends Composite
 	 * @param simpleLinearGradient
 	 *            The new simple {@link LinearGradient} to select.
 	 */
-	public void setSimpleGradient(LinearGradient simpleLinearGradient) {
+	public void setSimpleLinearGradient(LinearGradient simpleLinearGradient) {
 		if (!isSimpleLinearGradient(simpleLinearGradient)) {
 			throw new IllegalArgumentException("Given value '"
 					+ simpleLinearGradient + "' is no simple linear gradient");
@@ -183,8 +189,8 @@ public class FXSimpleLinearGradientPicker extends Composite
 		if (!color2Picker.getColor().equals(stops.get(1).getColor())) {
 			color2Picker.setColor(stops.get(1).getColor());
 		}
-		pcs.firePropertyChange("simpleLinearGradient", oldSimpleGradient,
-				simpleLinearGradient);
+		pcs.firePropertyChange(SIMPLE_LINEAR_GRADIENT_PROPERTY,
+				oldSimpleGradient, simpleLinearGradient);
 	}
 
 }

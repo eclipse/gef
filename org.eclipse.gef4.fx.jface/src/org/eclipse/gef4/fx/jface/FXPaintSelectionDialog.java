@@ -248,7 +248,7 @@ public class FXPaintSelectionDialog extends Dialog {
 				case 2:
 					sl.topControl = simpleGradientFillControl;
 					setPaint(lastSimpleGradient);
-					simpleGradientPicker.setSimpleGradient((LinearGradient) paint);
+					simpleGradientPicker.setSimpleLinearGradient((LinearGradient) paint);
 					break;
 				case 3:
 					sl.topControl = advancedGradientFillControl;

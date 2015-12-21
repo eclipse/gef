@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.controls;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
@@ -46,6 +47,12 @@ import javafx.scene.shape.Rectangle;
  */
 public class FXColorPicker extends Composite
 		implements IPropertyChangeNotifier {
+
+	/**
+	 * Property name used in {@link PropertyChangeEvent}s related to changes of
+	 * color.
+	 */
+	public static final String COLOR_PROPERTY = "color";
 
 	/**
 	 * Opens a {@link ColorDialog} to let the user pick a {@link Color}. Returns
@@ -232,7 +239,7 @@ public class FXColorPicker extends Composite
 			Color oldColor = this.color;
 			this.color = color;
 			colorRectangle.fillProperty().set(color);
-			pcs.firePropertyChange("color", oldColor, color);
+			pcs.firePropertyChange(COLOR_PROPERTY, oldColor, color);
 		}
 	}
 }
