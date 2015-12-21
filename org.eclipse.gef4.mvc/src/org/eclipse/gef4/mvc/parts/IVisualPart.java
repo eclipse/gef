@@ -79,18 +79,26 @@ public interface IVisualPart<VR, V extends VR>
 	 * Name of the property storing this part's parent.
 	 */
 	public static final String PARENT_PROPERTY = "parent";
+
 	/**
 	 * Name of the property storing this part's children.
 	 */
 	public static final String CHILDREN_PROPERTY = "children";
+
 	/**
 	 * Name of the property storing this part's anchorages.
 	 */
 	public static final String ANCHORAGES_PROPERTY = "anchorages";
+
 	/**
 	 * Name of the property storing this part's anchoreds.
 	 */
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
+
+	/**
+	 * Name of the property storing the refresh visual boolean property.
+	 */
+	public static final String REFRESH_VISUAL_PROPERTY = "refreshVisual";
 
 	/**
 	 * Adds the given child to the list of this part's children.

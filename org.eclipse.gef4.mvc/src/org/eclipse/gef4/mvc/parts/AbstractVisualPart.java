@@ -721,7 +721,10 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void setRefreshVisual(boolean isRefreshVisual) {
+		boolean oldValue = this.refreshVisual;
 		this.refreshVisual = isRefreshVisual;
+		pcs.firePropertyChange(REFRESH_VISUAL_PROPERTY, oldValue,
+				refreshVisual);
 	}
 
 	/**
