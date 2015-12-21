@@ -12,13 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.controls;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -28,6 +24,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swt.FXCanvas;
@@ -59,8 +56,7 @@ import javafx.util.Duration;
  * @author mwienand
  *
  */
-public class FXAdvancedLinearGradientPicker extends Composite
-		implements IPropertyChangeNotifier {
+public class FXAdvancedLinearGradientPicker extends Composite {
 
 	private class StopPicker extends Group {
 
@@ -194,8 +190,8 @@ public class FXAdvancedLinearGradientPicker extends Composite
 	}
 
 	/**
-	 * Property name used in {@link PropertyChangeEvent}s related to changes of
-	 * advanced linear gradient.
+	 * Property name used in change events related to
+	 * {@link #advancedLinearGradientProperty()}
 	 */
 	public static final String ADVANCED_LINEAR_GRADIENT_PROPERTY = "advancedLinearGradient";
 
@@ -243,9 +239,8 @@ public class FXAdvancedLinearGradientPicker extends Composite
 		return false;
 	}
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private LinearGradient advancedLinearGradient;
+	private Property<LinearGradient> advancedLinearGradient = new SimpleObjectProperty<>(
+			this, ADVANCED_LINEAR_GRADIENT_PROPERTY);
 	private double directionX = 1;
 	private double directionY = 0;
 	private AnchorPane root;
@@ -312,7 +307,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 		preview.yProperty().bind(previewPane.layoutYProperty());
 		preview.widthProperty().bind(previewPane.widthProperty());
 		preview.heightProperty().bind(previewPane.heightProperty());
-		preview.setFill(advancedLinearGradient);
+		preview.setFill(advancedLinearGradient.getValue());
 
 		// create highlight line for showing where new spots are created
 		final Rectangle highlightSpotCreation = new Rectangle();
@@ -391,9 +386,13 @@ public class FXAdvancedLinearGradientPicker extends Composite
 				createAdvancedLinearGradient(color1, color2, color3));
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	/**
+	 * Returns a writable {@link Property} for the advanced gradient.
+	 *
+	 * @return A writable {@link Property}.
+	 */
+	public Property<LinearGradient> advancedLinearGradientProperty() {
+		return advancedLinearGradient;
 	}
 
 	/**
@@ -421,7 +420,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 	 * @return The currently selected advanced gradient.
 	 */
 	public LinearGradient getAdvancedLinearGradient() {
-		return advancedLinearGradient;
+		return advancedLinearGradient.getValue();
 	}
 
 	/**
@@ -461,12 +460,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 	 *         gradient.
 	 */
 	protected List<Stop> getStops() {
-		return advancedLinearGradient.getStops();
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return advancedLinearGradient.getValue().getStops();
 	}
 
 	/**
@@ -495,8 +489,7 @@ public class FXAdvancedLinearGradientPicker extends Composite
 							+ "' is no advanced linear gradient");
 		}
 
-		Paint oldAdvancedGradient = this.advancedLinearGradient;
-		this.advancedLinearGradient = advancedLinearGradient;
+		this.advancedLinearGradient.setValue(advancedLinearGradient);
 		preview.setFill(advancedLinearGradient);
 
 		// adapt direction
@@ -528,10 +521,6 @@ public class FXAdvancedLinearGradientPicker extends Composite
 				.size(); i--) {
 			pickerGroup.getChildren().remove(i);
 		}
-
-		// send notification
-		pcs.firePropertyChange(ADVANCED_LINEAR_GRADIENT_PROPERTY,
-				oldAdvancedGradient, advancedLinearGradient);
 	}
 
 	/**

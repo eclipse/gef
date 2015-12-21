@@ -11,11 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.controls;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -23,6 +18,9 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swt.FXCanvas;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -45,12 +43,10 @@ import javafx.scene.shape.Rectangle;
  * @author anyssen
  *
  */
-public class FXColorPicker extends Composite
-		implements IPropertyChangeNotifier {
+public class FXColorPicker extends Composite {
 
 	/**
-	 * Property name used in {@link PropertyChangeEvent}s related to changes of
-	 * color.
+	 * Property name used in change events related to {@link #colorProperty()}.
 	 */
 	public static final String COLOR_PROPERTY = "color";
 
@@ -79,13 +75,8 @@ public class FXColorPicker extends Composite
 		return null;
 	}
 
-	/**
-	 * Supporter for property change notifications/listener registration.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
-	private Color color;
+	private ObjectProperty<Color> color = new SimpleObjectProperty<>(this,
+			COLOR_PROPERTY);
 	private Rectangle colorRectangle;
 
 	/**
@@ -163,11 +154,18 @@ public class FXColorPicker extends Composite
 
 		// initialize some color
 		setColor(color);
+
+		colorRectangle.fillProperty().bind(this.color);
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	/**
+	 * A writable property for the color controlled by this
+	 * {@link FXColorPicker}.
+	 *
+	 * @return A writable {@link Property}.
+	 */
+	public Property<Color> colorProperty() {
+		return color;
 	}
 
 	private String computeRgbString(Color color) {
@@ -182,12 +180,7 @@ public class FXColorPicker extends Composite
 	 * @return The currently selected {@link Color}.
 	 */
 	public Color getColor() {
-		return color;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return color.get();
 	}
 
 	/**
@@ -235,11 +228,6 @@ public class FXColorPicker extends Composite
 	 *            The newly selected {@link Color}.
 	 */
 	public void setColor(Color color) {
-		if (this.color == null ? color != null : !this.color.equals(color)) {
-			Color oldColor = this.color;
-			this.color = color;
-			colorRectangle.fillProperty().set(color);
-			pcs.firePropertyChange(COLOR_PROPERTY, oldColor, color);
-		}
+		this.color.set(color);
 	}
 }

@@ -11,17 +11,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.controls;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
@@ -39,12 +40,11 @@ import javafx.scene.paint.Stop;
  * @author anyssen
  *
  */
-public class FXSimpleLinearGradientPicker extends Composite
-		implements IPropertyChangeNotifier {
+public class FXSimpleLinearGradientPicker extends Composite {
 
 	/**
-	 * Property name used {@link PropertyChangeEvent}s related to changes of
-	 * simple linear gradient.
+	 * Property name used in change events related to
+	 * {@link #simpleLinearGradientProperty()}.
 	 */
 	public static final String SIMPLE_LINEAR_GRADIENT_PROPERTY = "simpleLinearGradient";
 
@@ -83,10 +83,8 @@ public class FXSimpleLinearGradientPicker extends Composite
 		return false;
 	}
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private LinearGradient simpleLinearGradient;
-
+	private ObjectProperty<LinearGradient> simpleLinearGradient = new SimpleObjectProperty<>(
+			this, SIMPLE_LINEAR_GRADIENT_PROPERTY);
 	private FXColorPicker color1Picker;
 	private FXColorPicker color2Picker;
 
@@ -116,24 +114,27 @@ public class FXSimpleLinearGradientPicker extends Composite
 		color1Picker = new FXColorPicker(canvas, color1);
 		colorEditorsBox.getChildren()
 				.add(new FXControlAdapter<Control>(color1Picker));
-		color1Picker.addPropertyChangeListener(new PropertyChangeListener() {
+		color1Picker.colorProperty().addListener(new ChangeListener<Color>() {
 
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				setSimpleLinearGradient(createSimpleLinearGradient(
-						color1Picker.getColor(), color2Picker.getColor()));
+			public void changed(ObservableValue<? extends Color> observable,
+					Color oldValue, Color newValue) {
+				setSimpleLinearGradient(createSimpleLinearGradient(newValue,
+						color2Picker.getColor()));
 			}
 		});
 
 		color2Picker = new FXColorPicker(canvas, color2);
 		colorEditorsBox.getChildren()
 				.add(new FXControlAdapter<Control>(color2Picker));
-		color2Picker.addPropertyChangeListener(new PropertyChangeListener() {
+		color2Picker.colorProperty().addListener(new ChangeListener<Color>() {
 
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
+			public void changed(ObservableValue<? extends Color> observable,
+					Color oldValue, Color newValue) {
 				setSimpleLinearGradient(createSimpleLinearGradient(
-						color1Picker.getColor(), color2Picker.getColor()));
+						color1Picker.getColor(), newValue));
+
 			}
 		});
 
@@ -148,23 +149,13 @@ public class FXSimpleLinearGradientPicker extends Composite
 		setSimpleLinearGradient(createSimpleLinearGradient(color1, color2));
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
 	/**
 	 * Returns the currently selected simple gradient.
 	 *
 	 * @return The currently selected simple gradient.
 	 */
 	public LinearGradient getSimpleLinearGradient() {
-		return simpleLinearGradient;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return simpleLinearGradient.get();
 	}
 
 	/**
@@ -179,8 +170,7 @@ public class FXSimpleLinearGradientPicker extends Composite
 					+ simpleLinearGradient + "' is no simple linear gradient");
 		}
 
-		LinearGradient oldSimpleGradient = this.simpleLinearGradient;
-		this.simpleLinearGradient = simpleLinearGradient;
+		this.simpleLinearGradient.set(simpleLinearGradient);
 		// a simple linear gradient contains two stops
 		List<Stop> stops = simpleLinearGradient.getStops();
 		if (!color1Picker.getColor().equals(stops.get(0).getColor())) {
@@ -189,8 +179,15 @@ public class FXSimpleLinearGradientPicker extends Composite
 		if (!color2Picker.getColor().equals(stops.get(1).getColor())) {
 			color2Picker.setColor(stops.get(1).getColor());
 		}
-		pcs.firePropertyChange(SIMPLE_LINEAR_GRADIENT_PROPERTY,
-				oldSimpleGradient, simpleLinearGradient);
+	}
+
+	/**
+	 * Returns a writable property for the simple linear gradient.
+	 *
+	 * @return A writable property.
+	 */
+	public Property<LinearGradient> simpleLinearGradientProperty() {
+		return simpleLinearGradient;
 	}
 
 }

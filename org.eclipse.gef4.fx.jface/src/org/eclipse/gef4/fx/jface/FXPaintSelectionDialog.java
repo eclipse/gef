@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.jface;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.gef4.fx.swt.controls.FXAdvancedLinearGradientPicker;
@@ -34,6 +32,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.SWTFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -139,11 +139,12 @@ public class FXPaintSelectionDialog extends Dialog {
 	protected Control createAdvancedGradientFillControl(Composite parent) {
 		advancedGradientPicker = new FXAdvancedLinearGradientPicker(parent, Color.WHITE, Color.GREY, Color.BLACK);
 		advancedGradientPicker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		advancedGradientPicker.addPropertyChangeListener(new PropertyChangeListener() {
+		advancedGradientPicker.advancedLinearGradientProperty().addListener(new ChangeListener<LinearGradient>() {
 
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				setPaint(advancedGradientPicker.getAdvancedLinearGradient());
+			public void changed(ObservableValue<? extends LinearGradient> observable, LinearGradient oldValue,
+					LinearGradient newValue) {
+				setPaint(newValue);
 			}
 		});
 		return advancedGradientPicker;
@@ -158,11 +159,11 @@ public class FXPaintSelectionDialog extends Dialog {
 	 */
 	protected Control createColorFillControl(Composite parent) {
 		colorPicker = new FXColorPicker(parent, Color.WHITE);
-		colorPicker.addPropertyChangeListener(new PropertyChangeListener() {
+		colorPicker.colorProperty().addListener(new ChangeListener<Color>() {
 
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				setPaint(colorPicker.getColor());
+			public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
+				setPaint(newValue);
 			}
 		});
 		return colorPicker;
@@ -287,11 +288,12 @@ public class FXPaintSelectionDialog extends Dialog {
 	 */
 	protected Control createSimpleGradientFillControl(Composite parent) {
 		simpleGradientPicker = new FXSimpleLinearGradientPicker(parent, Color.WHITE, Color.BLACK);
-		simpleGradientPicker.addPropertyChangeListener(new PropertyChangeListener() {
+		simpleGradientPicker.simpleLinearGradientProperty().addListener(new ChangeListener<LinearGradient>() {
 
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				setPaint(simpleGradientPicker.getSimpleLinearGradient());
+			public void changed(ObservableValue<? extends LinearGradient> observable, LinearGradient oldValue,
+					LinearGradient newValue) {
+				setPaint(newValue);
 			}
 		});
 		return simpleGradientPicker;
