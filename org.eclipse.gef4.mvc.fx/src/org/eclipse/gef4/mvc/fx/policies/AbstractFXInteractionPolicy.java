@@ -17,6 +17,7 @@ import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link AbstractFXInteractionPolicy} is a JavaFX-specific extension to the
@@ -39,33 +40,17 @@ public abstract class AbstractFXInteractionPolicy
 	private Cursor originalCursor;
 
 	/**
-	 * The indication {@link Cursor}.
-	 */
-	private Cursor indicationCursor;
-
-	/**
-	 * Returns a newly created {@link Cursor} that should be shown to indicate
-	 * that this policy is going to handle a following interaction.
-	 *
-	 * @return a newly created {@link Cursor} that should be shown to indicate
-	 *         that this policy is going to handle a following interaction.
-	 */
-	protected Cursor createIndicationCursor() {
-		return null;
-	}
-
-	/**
 	 * Returns the {@link Cursor} that should be shown to indicate that this
 	 * policy is going to handle a following interaction.
 	 *
+	 * @param event
+	 *            The {@link MouseEvent} that initiated the determination of an
+	 *            indication cursor.
 	 * @return Returns the {@link Cursor} that should be shown to indicate that
 	 *         this policy is going to handle a following interaction.
 	 */
-	public Cursor getIndicationCursor() {
-		if (indicationCursor == null) {
-			indicationCursor = createIndicationCursor();
-		}
-		return indicationCursor;
+	public Cursor getIndicationCursor(MouseEvent event) {
+		return null;
 	}
 
 	/**

@@ -48,6 +48,7 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	private Point initialPointerLocationInScene;
 	private Point pivotInScene;
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
+	private ImageCursor rotateCursor;
 
 	/**
 	 * Computes the clock-wise rotation angle based on the initial mouse
@@ -68,8 +69,14 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return angle;
 	}
 
-	@Override
-	protected Cursor createIndicationCursor() {
+	/**
+	 * Returns the {@link Cursor} that is shown to indicate that this policy
+	 * will perform a rotation.
+	 *
+	 * @return The {@link Cursor} that is shown to indicate that this policy
+	 *         will perform a rotation.
+	 */
+	protected ImageCursor createRotateCursor() {
 		return new ImageCursor(
 				new Image(FXRotateSelectedOnHandleDragPolicy.class
 						.getResource("/rotate_obj.gif").toExternalForm()));
@@ -84,6 +91,17 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
 		}
+	}
+
+	@Override
+	public Cursor getIndicationCursor(MouseEvent event) {
+		if (event.isControlDown()) {
+			if (rotateCursor == null) {
+				rotateCursor = createRotateCursor();
+			}
+			return rotateCursor;
+		}
+		return null;
 	}
 
 	/**
@@ -135,9 +153,6 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 		pivotInScene = bounds.getCenter();
 
-		// show rotate cursor
-		storeAndReplaceCursor(getIndicationCursor());
-
 		// initialize for all target parts
 		rotationIndices.clear();
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
@@ -172,9 +187,6 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			invalidGesture = false;
 			return;
 		}
-
-		// restore original cursor
-		restoreCursor();
 
 		// commit transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {

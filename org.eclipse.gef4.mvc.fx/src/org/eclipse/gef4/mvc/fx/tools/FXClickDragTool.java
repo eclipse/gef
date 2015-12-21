@@ -15,11 +15,13 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXInteractionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -27,6 +29,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import javafx.event.EventTarget;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -75,10 +79,10 @@ public class FXClickDragTool extends AbstractFXTool {
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
 				private Collection<? extends AbstractFXOnDragPolicy> policies;
+				private AbstractFXInteractionPolicy indicationCursorPolicy;
 
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
@@ -91,6 +95,71 @@ public class FXClickDragTool extends AbstractFXTool {
 
 					for (AbstractFXOnDragPolicy policy : policies) {
 						policy.drag(e, new Dimension(dx, dy));
+					}
+				}
+
+				@Override
+				protected void move(MouseEvent event) {
+					EventTarget eventTarget = event.getTarget();
+					if (eventTarget instanceof Node) {
+						// determine all policies that can be notified about
+						// events
+						Node target = (Node) eventTarget;
+						List<? extends AbstractFXOnClickPolicy> clickPolicies = getTargetPolicies(
+								viewer, target, CLICK_TOOL_POLICY_KEY);
+						List<? extends AbstractFXOnDragPolicy> dragPolicies = getTargetPolicies(
+								viewer, target, DRAG_TOOL_POLICY_KEY);
+
+						// determine indication cursor and corresponding policy
+						Cursor cursor = null;
+						AbstractFXInteractionPolicy cursorPolicy = null;
+
+						// search drag policies in reverse order first, so that
+						// the policy closest to the target part is the first
+						// policy to provide an indication cursor
+						ListIterator<? extends AbstractFXOnDragPolicy> dragIterator = dragPolicies
+								.listIterator(dragPolicies.size());
+						while (cursor == null && dragIterator.hasPrevious()) {
+							AbstractFXOnDragPolicy policy = dragIterator
+									.previous();
+							Cursor indicationCursor = policy
+									.getIndicationCursor(event);
+							if (indicationCursor != null) {
+								cursor = indicationCursor;
+								cursorPolicy = policy;
+							}
+						}
+
+						if (cursor == null) {
+							// search click policies for an indication cursor
+							ListIterator<? extends AbstractFXOnClickPolicy> clickIterator = clickPolicies
+									.listIterator(clickPolicies.size());
+							while (cursor == null
+									&& clickIterator.hasPrevious()) {
+								AbstractFXOnClickPolicy policy = clickIterator
+										.previous();
+								Cursor indicationCursor = policy
+										.getIndicationCursor(event);
+								if (indicationCursor != null) {
+									cursor = indicationCursor;
+									cursorPolicy = policy;
+								}
+							}
+						}
+
+						// restore a previously changed cursor
+						if (indicationCursorPolicy != null) {
+							indicationCursorPolicy.restoreCursor();
+							indicationCursorPolicy = null;
+						}
+
+						if (cursor != null) {
+							// use the policy to set the indication cursor
+							cursorPolicy.storeAndReplaceCursor(cursor);
+							// save the policy so that we can restore the
+							// original cursor later on
+							indicationCursorPolicy = cursorPolicy;
+						}
 					}
 				}
 
@@ -155,6 +224,12 @@ public class FXClickDragTool extends AbstractFXTool {
 
 					// reset drag policies
 					policies = null;
+
+					// restore original cursor (if it was changed)
+					if (indicationCursorPolicy != null) {
+						indicationCursorPolicy.restoreCursor();
+						indicationCursorPolicy = null;
+					}
 				}
 			};
 

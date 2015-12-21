@@ -26,10 +26,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
 
-import javafx.scene.Cursor;
-import javafx.scene.ImageCursor;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.input.RotateEvent;
 
 /**
@@ -44,15 +41,7 @@ import javafx.scene.input.RotateEvent;
 public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 
 	private Point pivotInScene;
-
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
-
-	@Override
-	protected Cursor createIndicationCursor() {
-		return new ImageCursor(
-				new Image(FXRotateSelectedOnHandleDragPolicy.class
-						.getResource("/rotate_obj.gif").toExternalForm()));
-	}
 
 	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should
@@ -93,9 +82,6 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 
 	@Override
 	public void rotationFinished(RotateEvent e) {
-		// restore original cursor
-		restoreCursor();
-
 		// commit transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
@@ -117,9 +103,6 @@ public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
 					"Cannot determine visual bounds (null).");
 		}
 		pivotInScene = bounds.getCenter();
-
-		// show rotate cursor
-		storeAndReplaceCursor(getIndicationCursor());
 
 		// initialize for all target parts
 		rotationIndices.clear();
