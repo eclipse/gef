@@ -18,8 +18,11 @@
 
 org.eclipse.gef4.common.activate
 org.eclipse.gef4.common.adapt
+org.eclipse.gef4.common.beans.binding
+org.eclipse.gef4.common.beans.property
+org.eclipse.gef4.common.beans.value
+org.eclipse.gef4.common.collections
 org.eclipse.gef4.common.dispose
 org.eclipse.gef4.common.inject
 org.eclipse.gef4.common.notify
-org.eclipse.gef4.common.properties
 org.eclipse.gef4.common.reflect
