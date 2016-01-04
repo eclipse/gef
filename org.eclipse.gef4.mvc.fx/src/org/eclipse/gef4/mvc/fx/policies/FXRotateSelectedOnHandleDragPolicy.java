@@ -32,6 +32,7 @@ import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -91,6 +92,20 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
 		}
+	}
+
+	/**
+	 * Returns the {@link Cursor} that indicates rotation. Delegates to
+	 * {@link #createRotateCursor()} to create that cursor if it was not created
+	 * yet.
+	 *
+	 * @return The {@link Cursor} that indicates rotation.
+	 */
+	protected Cursor getRotateCursor() {
+		if (rotateCursor == null) {
+			rotateCursor = createRotateCursor();
+		}
+		return rotateCursor;
 	}
 
 	/**
@@ -192,13 +207,18 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		if (event.isControlDown()) {
+			storeAndReplaceCursor(getRotateCursor());
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public boolean showIndicationCursor(MouseEvent event) {
 		if (event.isControlDown()) {
-			if (rotateCursor == null) {
-				rotateCursor = createRotateCursor();
-			}
-			// show rotate cursor
-			storeAndReplaceCursor(rotateCursor);
+			storeAndReplaceCursor(getRotateCursor());
 			return true;
 		}
 		return false;

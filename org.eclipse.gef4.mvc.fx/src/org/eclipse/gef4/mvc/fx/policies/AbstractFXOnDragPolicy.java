@@ -68,6 +68,15 @@ public abstract class AbstractFXOnDragPolicy
 	}
 
 	/**
+	 * Restores the original mouse cursor when it was previously changed by a
+	 * call to {@link #showIndicationCursor(KeyEvent)} or
+	 * {@link #showIndicationCursor(MouseEvent)}.
+	 */
+	public void hideIndicationCursor() {
+		restoreCursor();
+	}
+
+	/**
 	 * Returns <code>true</code> if the mouse cursor was changed by this policy.
 	 * Otherwise returns <code>false</code>.
 	 *

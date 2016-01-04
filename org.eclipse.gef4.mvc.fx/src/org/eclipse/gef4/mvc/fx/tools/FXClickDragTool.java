@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -79,37 +82,85 @@ public class FXClickDragTool extends AbstractFXTool {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			final AbstractFXOnDragPolicy indicationCursorPolicy[] = new AbstractFXOnDragPolicy[] {
+					null };
+			@SuppressWarnings("unchecked")
+			final List<? extends AbstractFXOnDragPolicy> possibleDragPolicies[] = new ArrayList[] {
+					null };
+
 			// register mouse move filter for forwarding events to drag policies
 			// that can show a mouse cursor to indicate their action
-			viewer.getRootPart().getVisual().getScene().addEventFilter(
-					MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
-						@Override
-						public void handle(MouseEvent event) {
-							EventTarget eventTarget = event.getTarget();
-							if (eventTarget instanceof Node) {
-								// determine all drag policies that can be
-								// notified about events
-								Node target = (Node) eventTarget;
-								List<? extends AbstractFXOnDragPolicy> dragPolicies = getTargetPolicies(
-										viewer, target, DRAG_TOOL_POLICY_KEY);
+			final EventHandler<MouseEvent> indicationCursorMouseMoveFilter = new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (indicationCursorPolicy[0] != null) {
+						indicationCursorPolicy[0].hideIndicationCursor();
+						indicationCursorPolicy[0] = null;
+					}
 
-								// search drag policies in reverse order first,
-								// so that the policy closest to the target part
-								// is the first policy to provide an indication
-								// cursor
-								boolean changedCursor = false;
-								ListIterator<? extends AbstractFXOnDragPolicy> dragIterator = dragPolicies
-										.listIterator(dragPolicies.size());
-								while (!changedCursor
-										&& dragIterator.hasPrevious()) {
-									changedCursor = dragIterator.previous()
-											.showIndicationCursor(event);
-								}
+					EventTarget eventTarget = event.getTarget();
+					if (eventTarget instanceof Node) {
+						// determine all drag policies that can be
+						// notified about events
+						Node target = (Node) eventTarget;
+						possibleDragPolicies[0] = getTargetPolicies(viewer,
+								target, DRAG_TOOL_POLICY_KEY);
+
+						// search drag policies in reverse order first,
+						// so that the policy closest to the target part
+						// is the first policy to provide an indication
+						// cursor
+						ListIterator<? extends AbstractFXOnDragPolicy> dragIterator = possibleDragPolicies[0]
+								.listIterator(possibleDragPolicies[0].size());
+						while (dragIterator.hasPrevious()) {
+							AbstractFXOnDragPolicy policy = dragIterator
+									.previous();
+							if (policy.showIndicationCursor(event)) {
+								indicationCursorPolicy[0] = policy;
+								break;
 							}
 						}
-					});
+					}
+				}
+			};
+			viewer.getRootPart().getVisual().getScene().addEventFilter(
+					MouseEvent.MOUSE_MOVED, indicationCursorMouseMoveFilter);
+
+			// register key event filter for forwarding events to drag policies
+			// that can show a mouse cursor to indicate their action
+			final EventHandler<KeyEvent> indicationCursorKeyFilter = new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					if (indicationCursorPolicy[0] != null) {
+						indicationCursorPolicy[0].hideIndicationCursor();
+						indicationCursorPolicy[0] = null;
+					}
+
+					if (possibleDragPolicies[0] == null
+							|| possibleDragPolicies[0].isEmpty()) {
+						return;
+					}
+
+					// search drag policies in reverse order first,
+					// so that the policy closest to the target part
+					// is the first policy to provide an indication
+					// cursor
+					ListIterator<? extends AbstractFXOnDragPolicy> dragIterator = possibleDragPolicies[0]
+							.listIterator(possibleDragPolicies[0].size());
+					while (dragIterator.hasPrevious()) {
+						AbstractFXOnDragPolicy policy = dragIterator.previous();
+						if (policy.showIndicationCursor(event)) {
+							indicationCursorPolicy[0] = policy;
+							break;
+						}
+					}
+				}
+			};
+			viewer.getRootPart().getVisual().getScene()
+					.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
 
 			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
+
 				private Collection<? extends AbstractFXOnDragPolicy> policies;
 
 				@Override
@@ -128,6 +179,19 @@ public class FXClickDragTool extends AbstractFXTool {
 
 				@Override
 				protected void press(Node target, MouseEvent e) {
+					// show indication cursor on press so that the indication
+					// cursor is shown even when no mouse move event was
+					// previously fired
+					indicationCursorMouseMoveFilter.handle(e);
+
+					// disable indication cursor event filters within
+					// press-drag-release gesture
+					Scene scene = viewer.getRootPart().getVisual().getScene();
+					scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
+							indicationCursorMouseMoveFilter);
+					scene.removeEventFilter(KeyEvent.ANY,
+							indicationCursorKeyFilter);
+
 					// process click first
 					boolean opened = false;
 					List<? extends AbstractFXOnClickPolicy> clickPolicies = getTargetPolicies(
@@ -171,6 +235,14 @@ public class FXClickDragTool extends AbstractFXTool {
 				@Override
 				protected void release(Node target, MouseEvent e, double dx,
 						double dy) {
+					// enable indication cursor event filters outside of
+					// press-drag-release gesture
+					Scene scene = viewer.getRootPart().getVisual().getScene();
+					scene.addEventFilter(MouseEvent.MOUSE_MOVED,
+							indicationCursorMouseMoveFilter);
+					scene.addEventFilter(KeyEvent.ANY,
+							indicationCursorKeyFilter);
+
 					// abort processing of this gesture if no policies could be
 					// found that can process it
 					if (policies == null) {
@@ -187,7 +259,14 @@ public class FXClickDragTool extends AbstractFXTool {
 
 					// reset drag policies
 					policies = null;
+
+					// hide indication cursor
+					if (indicationCursorPolicy[0] != null) {
+						indicationCursorPolicy[0].hideIndicationCursor();
+						indicationCursorPolicy[0] = null;
+					}
 				}
+
 			};
 
 			gesture.setScene(((FXViewer) viewer).getScene());
