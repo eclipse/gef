@@ -93,17 +93,6 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		}
 	}
 
-	@Override
-	public Cursor getIndicationCursor(MouseEvent event) {
-		if (event.isControlDown()) {
-			if (rotateCursor == null) {
-				rotateCursor = createRotateCursor();
-			}
-			return rotateCursor;
-		}
-		return null;
-	}
-
 	/**
 	 * Returns a {@link List} containing the whole {@link SelectionModel
 	 * selection}.
@@ -188,6 +177,9 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 			return;
 		}
 
+		// restore mouse cursor
+		restoreCursor();
+
 		// commit transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
@@ -197,6 +189,19 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 				commit(transformPolicy);
 			}
 		}
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		if (event.isControlDown()) {
+			if (rotateCursor == null) {
+				rotateCursor = createRotateCursor();
+			}
+			// show rotate cursor
+			storeAndReplaceCursor(rotateCursor);
+			return true;
+		}
+		return false;
 	}
 
 	private void updateOperation(MouseEvent e,

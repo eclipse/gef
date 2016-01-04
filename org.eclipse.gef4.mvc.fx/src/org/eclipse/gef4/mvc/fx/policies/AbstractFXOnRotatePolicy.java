@@ -13,7 +13,9 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.tools.FXRotateTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
+import javafx.scene.Node;
 import javafx.scene.input.RotateEvent;
 
 /**
@@ -27,7 +29,7 @@ import javafx.scene.input.RotateEvent;
  *
  */
 public abstract class AbstractFXOnRotatePolicy
-		extends AbstractFXInteractionPolicy {
+		extends AbstractInteractionPolicy<Node> {
 
 	/**
 	 * Continuous reaction to rotation gestures. Called continuously on finger

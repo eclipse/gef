@@ -73,16 +73,6 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 	}
 
 	/**
-	 * Called upon {@link MouseEvent#MOUSE_MOVED} events when no
-	 * press-drag-release gesture is currently running.
-	 *
-	 * @param event
-	 *            The underlying {@link MouseEvent}.
-	 */
-	protected void move(MouseEvent event) {
-	}
-
-	/**
 	 * This method is called for *any* {@link MouseEvent} that occurs in the
 	 * {@link Scene} where this gesture is currently registered. It processes
 	 * {@link MouseEvent#MOUSE_DRAGGED} and {@link MouseEvent#MOUSE_RELEASED}
@@ -94,10 +84,7 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 	protected void onMouseEvent(MouseEvent event) {
 		// determine pressed/dragged/released state
 		EventType<? extends Event> type = event.getEventType();
-		if (pressed == null && type.equals(MouseEvent.MOUSE_MOVED)) {
-			move(event);
-			return;
-		} else if (pressed == null && type.equals(MouseEvent.MOUSE_PRESSED)) {
+		if (pressed == null && type.equals(MouseEvent.MOUSE_PRESSED)) {
 			EventTarget target = event.getTarget();
 			if (target instanceof Node) {
 				// if (state != 0) {
