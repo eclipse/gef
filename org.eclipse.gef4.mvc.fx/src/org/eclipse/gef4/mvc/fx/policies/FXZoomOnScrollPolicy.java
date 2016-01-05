@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-
 import javafx.scene.input.ScrollEvent;
 
 /**
@@ -25,8 +23,33 @@ import javafx.scene.input.ScrollEvent;
  */
 public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
-	private FXChangeViewportPolicy getViewportPolicy() {
+	private FXChangeViewportPolicy viewportPolicy;
+
+	/**
+	 * Returns the {@link FXChangeViewportPolicy} that is to be used for
+	 * changing the viewport. This method is called within
+	 * {@link #scrollStarted(ScrollEvent)} where the resulting policy is cached
+	 * ({@link #setViewportPolicy(FXChangeViewportPolicy)}) for the scroll
+	 * gesture.
+	 *
+	 * @return The {@link FXChangeViewportPolicy} that is to be used for
+	 *         changing the viewport.
+	 */
+	protected FXChangeViewportPolicy determineViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
+	}
+
+	/**
+	 * Returns the {@link FXChangeViewportPolicy} that is used for changing the
+	 * viewport within the current scroll gesture. This policy is set within
+	 * {@link #scrollStarted(ScrollEvent)} to the value determined by
+	 * {@link #determineViewportPolicy()}.
+	 *
+	 * @return The {@link FXChangeViewportPolicy} that is used for changing the
+	 *         viewport within the current scroll gesture.
+	 */
+	protected FXChangeViewportPolicy getViewportPolicy() {
+		return viewportPolicy;
 	}
 
 	/**
@@ -47,31 +70,35 @@ public class FXZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	@Override
 	public void scroll(ScrollEvent event) {
 		if (isZoom(event)) {
-			zoomRelative(event.getDeltaY() > 0 ? 1.05 : 1 / 1.05,
-					event.getSceneX(), event.getSceneY());
+			getViewportPolicy().zoomRelative(
+					event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
+					event.getSceneY());
 		}
 	}
 
+	@Override
+	public void scrollFinished() {
+		commit(getViewportPolicy());
+	}
+
+	@Override
+	public void scrollStarted(ScrollEvent event) {
+		setViewportPolicy(determineViewportPolicy());
+		init(getViewportPolicy());
+		// delegate to scroll() to perform zooming
+		scroll(event);
+	}
+
 	/**
-	 * Scales the viewport by the given <i>relativeZoom</i> factor around the
-	 * given pivot point in scene coordinates.
+	 * Sets the {@link FXChangeViewportPolicy} that is used to manipulate the
+	 * viewport for the current scroll gesture to the given value.
 	 *
-	 * @param relativeZoom
-	 *            The scale factor.
-	 * @param sceneX
-	 *            The pivot x-coordinate.
-	 * @param sceneY
-	 *            The pivot y-coordinate.
+	 * @param viewportPolicy
+	 *            The new {@link FXChangeViewportPolicy} that is to be used to
+	 *            manipulate the viewport for the current scroll gesture.
 	 */
-	public void zoomRelative(double relativeZoom, double sceneX,
-			double sceneY) {
-		FXChangeViewportPolicy viewportPolicy = getViewportPolicy();
-		viewportPolicy.init();
-		viewportPolicy.zoomRelative(relativeZoom, sceneX, sceneY);
-		ITransactionalOperation commit = viewportPolicy.commit();
-		if (commit != null) {
-			getHost().getRoot().getViewer().getDomain().execute(commit);
-		}
+	protected void setViewportPolicy(FXChangeViewportPolicy viewportPolicy) {
+		this.viewportPolicy = viewportPolicy;
 	}
 
 }

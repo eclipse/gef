@@ -39,4 +39,20 @@ public abstract class AbstractFXOnScrollPolicy
 	 *            The original {@link ScrollEvent}.
 	 */
 	public abstract void scroll(ScrollEvent event);
+
+	/**
+	 * This callback method is invoked when the user stopped to perform mouse
+	 * scrolling over the {@link #getHost() host}.
+	 */
+	public abstract void scrollFinished();
+
+	/**
+	 * This callback method is invoked when the user starts to perform mouse
+	 * scrolling over the {@link #getHost() host}.
+	 *
+	 * @param event
+	 *            The original {@link ScrollEvent}.
+	 */
+	public abstract void scrollStarted(ScrollEvent event);
+
 }

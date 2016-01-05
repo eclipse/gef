@@ -29,29 +29,8 @@ import javafx.scene.input.ScrollEvent;
  */
 public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
-	private static final int SAME_SCROLL_MILLIS = 100;
-	private long lastMillis = 0;
 	private boolean stopped = false;
-
-	/*
-	 * TODO: stoppedHorizontal, stoppedVertical (as context)
-	 */
-
-	/**
-	 * Applies the given translation to the viewport.
-	 *
-	 * @param dx
-	 *            The horizontal translation.
-	 * @param dy
-	 *            The vertical translation.
-	 */
-	protected void applyPanning(double dx, double dy) {
-		FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
-				.getAdapter(FXChangeViewportPolicy.class);
-		init(viewportPolicy);
-		viewportPolicy.scrollRelative(dx, dy);
-		commit(viewportPolicy);
-	}
+	private FXChangeViewportPolicy viewportPolicy;
 
 	/**
 	 * Computes the translation for the given {@link ScrollEvent}. The
@@ -72,6 +51,45 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 			dy = t;
 		}
 		return new Dimension(dx, dy);
+	}
+
+	/**
+	 * Returns the {@link FXChangeViewportPolicy} that is to be used for
+	 * changing the viewport. This method is called within
+	 * {@link #scrollStarted(ScrollEvent)} where the resulting policy is cached
+	 * ({@link #setViewportPolicy(FXChangeViewportPolicy)}) for the scroll
+	 * gesture.
+	 *
+	 * @return The {@link FXChangeViewportPolicy} that is to be used for
+	 *         changing the viewport.
+	 */
+	protected FXChangeViewportPolicy determineViewportPolicy() {
+		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
+	}
+
+	/**
+	 * Returns the {@link FXChangeViewportPolicy} that is used for changing the
+	 * viewport within the current scroll gesture. This policy is set within
+	 * {@link #scrollStarted(ScrollEvent)} to the value determined by
+	 * {@link #determineViewportPolicy()}.
+	 *
+	 * @return The {@link FXChangeViewportPolicy} that is used for changing the
+	 *         viewport within the current scroll gesture.
+	 */
+	protected FXChangeViewportPolicy getViewportPolicy() {
+		return viewportPolicy;
+	}
+
+	/**
+	 * Returns <code>true</code> if panning was stopped for the current scroll
+	 * gesture, because further panning would move past the content bounds.
+	 * Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if panning was stopped for the current scroll
+	 *         gesture, otherwise <code>false</code>.
+	 */
+	protected boolean isStopped() {
+		return stopped;
 	}
 
 	/**
@@ -106,39 +124,71 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
 	@Override
 	public void scroll(ScrollEvent event) {
-		if (!isSuitable(event)) {
+		// each event is tested for suitability so that you can switch between
+		// multiple scroll actions instantly when pressing/releasing modifiers
+		if (isStopped() || !isSuitable(event)) {
 			return;
-		}
-
-		// Determine if this ScrollEvent belongs to the same gesture as the last
-		// event by checking the system time. When events arise in rapid
-		// succession, they are associated with the same gesture.
-		long millis = System.currentTimeMillis();
-		long deltaMillis = millis - lastMillis;
-		lastMillis = millis;
-		if (deltaMillis < SAME_SCROLL_MILLIS) {
-			// Cancel processing if the gesture was stopped at the
-			// content-bounds already. The next event that does not belong to
-			// this same scroll gesture will advance the viewport beyond the
-			// content-bounds.
-			if (stopped) {
-				return;
-			}
-		} else {
-			stopped = false;
 		}
 
 		// Determine horizontal and vertical translation.
 		Dimension delta = computeDelta(event);
-
 		// Stop scrolling at the content-bounds.
-		stopped = stopAtContentBounds(delta);
-
+		setStopped(stopAtContentBounds(delta));
 		// change viewport via operation
-		applyPanning(delta.width, delta.height);
+		getViewportPolicy().scrollRelative(delta.width, delta.height);
 	}
 
-	private boolean stopAtContentBounds(Dimension delta) {
+	@Override
+	public void scrollFinished() {
+		commit(getViewportPolicy());
+		setViewportPolicy(null);
+		setStopped(false);
+	}
+
+	@Override
+	public void scrollStarted(ScrollEvent event) {
+		setViewportPolicy(determineViewportPolicy());
+		init(getViewportPolicy());
+		// delegate to scroll() to perform panning
+		scroll(event);
+	}
+
+	/**
+	 * Sets the stopped flag to the given value. If stopped, this policy will
+	 * not perform panning.
+	 *
+	 * @param stopped
+	 *            The new value for the stopped flag.
+	 */
+	protected void setStopped(boolean stopped) {
+		this.stopped = stopped;
+	}
+
+	/**
+	 * Sets the {@link FXChangeViewportPolicy} that is used to manipulate the
+	 * viewport for the current scroll gesture to the given value.
+	 *
+	 * @param viewportPolicy
+	 *            The new {@link FXChangeViewportPolicy} that is to be used to
+	 *            manipulate the viewport for the current scroll gesture.
+	 */
+	protected void setViewportPolicy(FXChangeViewportPolicy viewportPolicy) {
+		this.viewportPolicy = viewportPolicy;
+	}
+
+	/**
+	 * Determines if the given panning {@link Dimension} would result in panning
+	 * past the contents. In this case, the panning {@link Dimension} is
+	 * adjusted so that it pans exactly to the border of the contents. Returns
+	 * <code>true</code> if the panning {@link Dimension} was adjusted.
+	 * Otherwise returns <code>false</code>.
+	 *
+	 * @param delta
+	 *            The panning {@link Dimension}.
+	 * @return <code>true</code> if the given panning {@link Dimension} was
+	 *         adjusted, otherwise <code>false</code>.
+	 */
+	protected boolean stopAtContentBounds(Dimension delta) {
 		InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot()
 				.getViewer()).getCanvas();
 		Bounds contentBounds = infiniteCanvas.getContentBounds();

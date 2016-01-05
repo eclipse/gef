@@ -13,16 +13,13 @@ package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
+import org.eclipse.gef4.fx.gestures.AbstractScrollGesture;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -43,63 +40,53 @@ public class FXScrollTool extends AbstractFXTool {
 	// TODO: Rename to ON_SCROLL_POLICY_KEY
 	public static final Class<AbstractFXOnScrollPolicy> TOOL_POLICY_KEY = AbstractFXOnScrollPolicy.class;
 
-	private final Map<FXViewer, EventHandler<ScrollEvent>> scrollListeners = new HashMap<>();
-
-	private EventHandler<ScrollEvent> createScrollListener(
-			final IViewer<Node> viewer) {
-		return new EventHandler<ScrollEvent>() {
-			@Override
-			public void handle(ScrollEvent event) {
-				EventTarget eventTarget = event.getTarget();
-				getDomain().openExecutionTransaction(FXScrollTool.this);
-				Collection<? extends AbstractFXOnScrollPolicy> policies = getTargetPolicies(
-						viewer,
-						eventTarget instanceof Node ? (Node) eventTarget : null,
-						TOOL_POLICY_KEY);
-				for (AbstractFXOnScrollPolicy policy : policies) {
-					policy.scroll(event);
-				}
-				getDomain().closeExecutionTransaction(FXScrollTool.this);
-			}
-		};
-	}
-
-	/**
-	 * Returns a {@link Set} containing all {@link AbstractFXOnScrollPolicy}s
-	 * that are installed on the given target {@link IVisualPart}.
-	 *
-	 * @param targetPart
-	 *            The target {@link IVisualPart} of which the
-	 *            {@link AbstractFXOnScrollPolicy}s are returned.
-	 * @return A {@link Set} containing all {@link AbstractFXOnScrollPolicy}s
-	 *         that are installed on the given target {@link IVisualPart}.
-	 */
-	// TODO: Rename to getOnScrollPolicies
-	protected Set<? extends AbstractFXOnScrollPolicy> getScrollPolicies(
-			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart
-				.<AbstractFXOnScrollPolicy> getAdapters(TOOL_POLICY_KEY)
-				.values());
-	}
+	private final Map<IViewer<Node>, AbstractScrollGesture> gestures = new HashMap<>();
 
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
+		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = ((FXViewer) viewer).getScene();
-			EventHandler<ScrollEvent> scrollListener = createScrollListener(
-					viewer);
-			scrollListeners.put((FXViewer) viewer, scrollListener);
-			scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
+			AbstractScrollGesture scrollGesture = new AbstractScrollGesture() {
+				private Collection<? extends AbstractFXOnScrollPolicy> policies;
+
+				@Override
+				protected void scroll(ScrollEvent event) {
+					for (AbstractFXOnScrollPolicy policy : policies) {
+						policy.scroll(event);
+					}
+				}
+
+				@Override
+				protected void scrollFinished() {
+					for (AbstractFXOnScrollPolicy policy : policies) {
+						policy.scrollFinished();
+					}
+					getDomain().closeExecutionTransaction(FXScrollTool.this);
+				}
+
+				@Override
+				protected void scrollStarted(ScrollEvent event) {
+					EventTarget eventTarget = event.getTarget();
+					getDomain().openExecutionTransaction(FXScrollTool.this);
+					policies = getTargetPolicies(
+							viewer, eventTarget instanceof Node
+									? (Node) eventTarget : null,
+							TOOL_POLICY_KEY);
+					for (AbstractFXOnScrollPolicy policy : policies) {
+						policy.scrollStarted(event);
+					}
+				}
+			};
+			scrollGesture.setScene(scene);
+			gestures.put(viewer, scrollGesture);
 		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (Map.Entry<FXViewer, EventHandler<ScrollEvent>> e : scrollListeners
-				.entrySet()) {
-			Scene scene = e.getKey().getScene();
-			scene.removeEventFilter(ScrollEvent.SCROLL, e.getValue());
+		for (AbstractScrollGesture gesture : gestures.values()) {
+			gesture.setScene(null);
 		}
 		super.unregisterListeners();
 	}
