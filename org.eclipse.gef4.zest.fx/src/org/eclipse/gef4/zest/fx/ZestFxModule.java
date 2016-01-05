@@ -20,6 +20,7 @@ import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
@@ -31,9 +32,11 @@ import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
@@ -48,10 +51,10 @@ import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
+import org.eclipse.gef4.zest.fx.parts.HandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
-import org.eclipse.gef4.zest.fx.parts.HandlePartFactory;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
@@ -81,18 +84,26 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
-		// register (default) interaction policies (which are based on viewer
-		// models and do not depend on transaction policies)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
-		// geometry provider for hover handles
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+		bindFXFocusAndSelectOnClickPolicyAsAbstractContentPartAdapter(adapterMapBinder);
+		bindHoverHandlesGeometryProviderAsAbstractContentPartAdapter(adapterMapBinder);
 	}
 
 	@Override
 	protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractViewerAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NavigationModel.class);
+		bindNavigationModelAsAbstractViewerAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link ChopBoxAnchorProvider} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindChopBoxAnchorProviderAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ChopBoxAnchorProvider.class);
 	}
 
 	/**
@@ -109,22 +120,38 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindEdgeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// layout
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLayoutBehavior.class);
-		// hiding
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeHidingBehavior.class);
+		// layout and hidinig
+		bindEdgeLayoutBehaviorAsEdgeContentPartAdapter(adapterMapBinder);
+		bindEdgeHidingBehaviorAsEdgeContentPartAdapter(adapterMapBinder);
 
 		// feedback and handles
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
-		// geometry provider for selection feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
-		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
+		bindFXHoverOnHoverPolicyAsEdgeContentPartAdapter(adapterMapBinder);
+		bindSelectionLinkFeedbackGeometryProviderAsEdgeContentPartAdapter(adapterMapBinder);
+		bindSelectionFeedbackGeometryProviderAsEdgeContentPartAdapter(adapterMapBinder);
+		bindHoverFeedbackGeometryProviderAsEdgeContentPartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link EdgeHidingBehavior} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindEdgeHidingBehaviorAsEdgeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeHidingBehavior.class);
+	}
+
+	/**
+	 * Adds a binding for {@link EdgeLabelHidingBehavior} to the given adapter
+	 * map binder that will insert the bindings into {@link EdgeLabelPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindEdgeLabelHidingBehaviorAsEdgeLabelPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLabelHidingBehavior.class);
 	}
 
 	/**
@@ -142,26 +169,67 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindEdgeLabelPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hiding
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLabelHidingBehavior.class);
+		bindEdgeLabelHidingBehaviorAsEdgeLabelPartAdapter(adapterMapBinder);
 		// offset on drag
-		adapterMapBinder.addBinding(AdapterKey.role("OffsetOnDrag")).to(OffsetEdgeLabelOnDragPolicy.class);
-		// hover feedback
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
-		// selection link feedback
-		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
-		// geometry provider for selection feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
-		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+		bindOffsetEdgeLabelOnDragPolicyAsEdgeLabelPartAdapter(adapterMapBinder);
+		bindFXHoverOnHoverPolicyAsEdgeLabelPartAdapter(adapterMapBinder);
+		// feedback
+		bindSelectionLinkFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
+		bindSelectionFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
+		bindHoverFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link EdgeLayoutBehavior} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindEdgeLayoutBehaviorAsEdgeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLayoutBehavior.class);
 	}
 
 	@Override
 	protected void bindFXChangeViewportPolicyAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// overwrite default zoom policy to perform semantic zooming (navigating
+		// nested graphs on zoom level changes)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SemanticZoomPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXFocusAndSelectOnClickPolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link AbstractContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXFocusAndSelectOnClickPolicyAsAbstractContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXFocusAndSelectOnClickPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXHoverOnHoverPolicy} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXHoverOnHoverPolicyAsEdgeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXHoverOnHoverPolicy} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXHoverOnHoverPolicyAsEdgeLabelPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 	}
 
 	/**
@@ -174,23 +242,82 @@ public class ZestFxModule extends MvcFxModule {
 	 *            {@link FXRectangleSegmentHandlePart} as a key.
 	 */
 	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		bindFXResizeTranslateOnHandleDragPolicyAsFXRectangleSegmentHandlePartAdapter(adapterMapBinder);
+		bindFXRotateSelectedOnHandleDragPolicyAsFXRectangleSegmentHandlePartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link FXResizePolicy} to the given adapter map binder
+	 * that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXResizePolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXResizeTranslateOnHandleDragPolicy} to the
+	 * given adapter map binder that will insert the bindings into
+	 * {@link FXRectangleSegmentHandlePart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXResizeTranslateOnHandleDragPolicyAsFXRectangleSegmentHandlePartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("ResizeRelocateOnHandleDrag"))
 				.to(FXResizeTranslateOnHandleDragPolicy.class);
-		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
 	}
 
 	@Override
 	protected void bindFXRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXRootPartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.role("OpenParentGraphOnDoubleClick"))
-				.to(OpenParentGraphOnDoubleClickPolicy.class);
+		bindOpenParentGraphOnDoubleClickPolicyAsFXRootPartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link FXRotateSelectedOnHandleDragPolicy} to the
+	 * given adapter map binder that will insert the bindings into
+	 * {@link FXRectangleSegmentHandlePart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXRotateSelectedOnHandleDragPolicyAsFXRectangleSegmentHandlePartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXTransformPolicy} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXTransformPolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXTranslateSelectedOnDragPolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXTranslateSelectedOnDragPolicyAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
 	}
 
 	@Override
 	protected void bindFXViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXViewerAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
+		bindHidingModelAsFXViewerAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -207,8 +334,41 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindGraphContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		bindGraphLayoutContextAsGraphContentPartAdapter(adapterMapBinder);
+		bindLayoutContextBehaviorAsGraphContentPartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link GraphLayoutContext} to the given adapter map
+	 * binder that will insert the bindings into {@link GraphContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindGraphLayoutContextAsGraphContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GraphLayoutContext.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LayoutContextBehavior.class);
+	}
+
+	/**
+	 * Adds a binding for {@link HideOnTypePolicy} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindHideOnTypePolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideOnTypePolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link HidePolicy} to the given adapter map binder
+	 * that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindHidePolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidePolicy.class);
 	}
 
 	/**
@@ -226,6 +386,62 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindHidingHoverHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideFirstAnchorageOnClickPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link HidingModel} to the given adapter map binder
+	 * that will insert the bindings into {@link FXViewer}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindHidingModelAsFXViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link GeometricOutlineProvider} to the given adapter
+	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindHoverFeedbackGeometryProviderAsEdgeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindHoverFeedbackGeometryProviderAsEdgeLabelPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultHandlePartFactory#HOVER_HANDLES_GEOMETRY_PROVIDER} with
+	 * implementation {@link ShapeBoundsProvider} to the given adapter map
+	 * binder that will insert the bindings into {@link AbstractContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindHoverHandlesGeometryProviderAsAbstractContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
 	}
 
 	/**
@@ -249,6 +465,29 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
+	 * Adds a binding for {@link LayoutContextBehavior} to the given adapter map
+	 * binder that will insert the bindings into {@link GraphContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindLayoutContextBehaviorAsGraphContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LayoutContextBehavior.class);
+	}
+
+	/**
+	 * Adds a binding for {@link NavigationModel} to the given adapter map
+	 * binder that will insert the bindings into {@link AbstractViewer}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindNavigationModelAsAbstractViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NavigationModel.class);
+	}
+
+	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link NodeContentPart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
@@ -263,32 +502,166 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindNodeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// layout
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeLayoutBehavior.class);
+		bindNodeLayoutBehaviorAsNodeContentPartAdapter(adapterMapBinder);
 		// pruning
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ShowHiddenNeighborsPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeHidingBehavior.class);
+		bindHidePolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindShowHiddenNeighborsPolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindNodeHidingBehaviorAsNodeContentPartAdapter(adapterMapBinder);
 		// interaction
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role("showHiddenNeighbors")).to(ShowHiddenNeighborsOnTypePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role("hide")).to(HideOnTypePolicy.class);
+		bindFXTranslateSelectedOnDragPolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindShowHiddenNeighborsOnTypePolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindHideOnTypePolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindOpenNestedGraphOnDoubleClickPolicyAsNodeContentPartAdapter(adapterMapBinder);
+		// transform policy for relocation
+		bindFXTransformPolicyAsNodeContentPartAdapter(adapterMapBinder);
+		// resize policy to resize nesting nodes
+		bindFXResizePolicyAsNodeContentPartAdapter(adapterMapBinder);
+		// anchor provider
+		bindChopBoxAnchorProviderAsNodeContentPartAdapter(adapterMapBinder);
+		// feedback and handles
+		bindFXHoverOnHoverPolicyAsEdgeContentPartAdapter(adapterMapBinder);
+		bindSelectionHandlesGeometryProviderAsNodeContentPartAdapter(adapterMapBinder);
+		bindSelectionFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
+		bindHoverFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link NodeHidingBehavior} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindNodeHidingBehaviorAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeHidingBehavior.class);
+	}
+
+	/**
+	 * Adds a binding for {@link NodeLayoutBehavior} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindNodeLayoutBehaviorAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeLayoutBehavior.class);
+	}
+
+	/**
+	 * Adds a binding for {@link OffsetEdgeLabelOnDragPolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link EdgeLabelPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindOffsetEdgeLabelOnDragPolicyAsEdgeLabelPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role("OffsetOnDrag")).to(OffsetEdgeLabelOnDragPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link OpenNestedGraphOnDoubleClickPolicy} to the
+	 * given adapter map binder that will insert the bindings into
+	 * {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindOpenNestedGraphOnDoubleClickPolicyAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("OpenNestedGraphOnDoubleClick"))
 				.to(OpenNestedGraphOnDoubleClickPolicy.class);
-		// transform policy for relocation
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
-		// resize policy to resize nesting nodes
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
-		// cursor provider
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ChopBoxAnchorProvider.class);
-		// feedback and handles
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
-		// geometry provider for selection feedback
+	}
+
+	/**
+	 * Adds a binding for {@link OpenParentGraphOnDoubleClickPolicy} to the
+	 * given adapter map binder that will insert the bindings into
+	 * {@link FXRootPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindOpenParentGraphOnDoubleClickPolicyAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role("OpenParentGraphOnDoubleClick"))
+				.to(OpenParentGraphOnDoubleClickPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link GeometricOutlineProvider} to the given adapter
+	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindSelectionFeedbackGeometryProviderAsEdgeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindSelectionFeedbackGeometryProviderAsEdgeLabelPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
-		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultHandlePartFactory#SELECTION_HANDLES_GEOMETRY_PROVIDER}
+	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindSelectionHandlesGeometryProviderAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link GeometricOutlineProvider} to the given adapter
+	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindSelectionLinkFeedbackGeometryProviderAsEdgeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link FXDefaultFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindSelectionLinkFeedbackGeometryProviderAsEdgeLabelPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
@@ -306,8 +679,48 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindShowHiddenNeighborsHoverHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		bindShowHiddenNeighborsOfFirstAnchorageOnClickPolicyAsShowHiddenNeighborsHoverHandlePartAdapter(
+				adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for
+	 * {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link ShowHiddenNeighborsHoverHandlePart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindShowHiddenNeighborsOfFirstAnchorageOnClickPolicyAsShowHiddenNeighborsHoverHandlePartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("showHiddenNeighbors"))
 				.to(ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link ShowHiddenNeighborsOnTypePolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindShowHiddenNeighborsOnTypePolicyAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role("showHiddenNeighbors")).to(ShowHiddenNeighborsOnTypePolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link ShowHiddenNeighborsPolicy} to the given adapter
+	 * map binder that will insert the bindings into {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindShowHiddenNeighborsPolicyAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ShowHiddenNeighborsPolicy.class);
 	}
 
 	@Override
