@@ -1440,8 +1440,13 @@ public class InfiniteCanvas extends Region {
 	 * @see #zoomGridProperty()
 	 */
 	protected void unzoomGrid() {
-		gridTransformProperty.unbind();
-		gridTransformProperty.set(new Affine());
+		Affine gridTransform = gridTransformProperty.get();
+		gridTransform.mxxProperty().unbind();
+		gridTransform.mxyProperty().unbind();
+		gridTransform.myxProperty().unbind();
+		gridTransform.myyProperty().unbind();
+		gridTransform.txProperty().unbind();
+		gridTransform.tyProperty().unbind();
 	}
 
 	/**
@@ -1543,7 +1548,14 @@ public class InfiniteCanvas extends Region {
 	 * Enables zooming of the background grid when the contents are zoomed.
 	 */
 	protected void zoomGrid() {
-		gridTransformProperty.bind(contentTransformProperty);
+		Affine gridTransform = gridTransformProperty.get();
+		Affine contentTransform = getContentTransform();
+		gridTransform.mxxProperty().bind(contentTransform.mxxProperty());
+		gridTransform.mxyProperty().bind(contentTransform.mxyProperty());
+		gridTransform.myxProperty().bind(contentTransform.myxProperty());
+		gridTransform.myyProperty().bind(contentTransform.myyProperty());
+		gridTransform.txProperty().bind(contentTransform.txProperty());
+		gridTransform.tyProperty().bind(contentTransform.tyProperty());
 	}
 
 	/**
