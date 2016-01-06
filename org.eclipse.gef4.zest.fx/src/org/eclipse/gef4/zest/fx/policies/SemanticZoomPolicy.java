@@ -68,6 +68,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	protected List<NodeContentPart> findNestingNodes() {
 		// find the first level visual parts (not considering nested graphs)
 		List<IVisualPart<Node, ? extends Node>> rootChildren = getHost().getRoot().getChildren();
+
 		// rootChildren.get(0) should be the GraphContentPart containing the
 		// NodeContentParts
 		List<IVisualPart<Node, ? extends Node>> graphChildren = rootChildren.size() > 0
@@ -124,7 +125,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		checkInitialized();
 
 		// determine initial and final zoom level
-		double initialZoomLevel = getChangeViewportOperation().getInitialContentTransform().getScaleX();
+		double initialZoomLevel = getChangeViewportOperation().getNewTransform().getScaleX();
 		double finalZoomLevel = initialZoomLevel * relativeZoom;
 
 		// open nested/nesting graph depending on zoom level

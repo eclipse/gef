@@ -106,8 +106,8 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 		changeContentsOperation = new ChangeContentsAndSkipLayoutOperation(viewer, navigationModel, initialGraph);
 
 		// arrange sub-operations
-		add(changeContentsOperation);
 		add(changeViewportOperation);
+		add(changeContentsOperation);
 
 		// persist the state of the initial graph
 		InfiniteCanvas canvas = viewer.getCanvas();
@@ -142,7 +142,7 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 	/**
 	 * Returns the {@link FXChangeViewportOperation} that is used by this
 	 * {@link NavigateOperation} to update the viewport.
-	 * 
+	 *
 	 * @return The {@link FXChangeViewportOperation} that is used by this
 	 *         {@link NavigateOperation} to update the viewport.
 	 */
