@@ -35,12 +35,11 @@ import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXPanOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXPanOrZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.providers.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXFocusTool;
@@ -507,8 +506,8 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Adds a binding for {@link FXPanOnScrollPolicy} to the {@link AdapterMap}
-	 * binder for {@link FXRootPart}.
+	 * Adds a binding for {@link FXPanOrZoomOnScrollPolicy} to the
+	 * {@link AdapterMap} binder for {@link FXRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -518,10 +517,10 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindFXPanOnScrollPolicyAsFXRootPartAdapter(
+	protected void bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("panOnScroll"))
-				.to(FXPanOnScrollPolicy.class);
+				.to(FXPanOrZoomOnScrollPolicy.class);
 	}
 
 	/**
@@ -588,8 +587,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFocusAndSelectOnClickPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXMarqueeOnDragPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXHoverOnHoverPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXPanOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
+		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXZoomOnPinchSpreadPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXRotateSelectedOnRotatePolicyAsFXRootPartAdapter(adapterMapBinder);
@@ -761,24 +759,6 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXZoomOnPinchSpreadPolicy.class);
-	}
-
-	/**
-	 * Adds a binding for {@link FXZoomOnScrollPolicy} to the {@link AdapterMap}
-	 * binder for {@link FXRootPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindFXZoomOnScrollPolicyAsFXRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("zoomOnScroll"))
-				.to(FXZoomOnScrollPolicy.class);
 	}
 
 	/**

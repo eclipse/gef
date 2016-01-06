@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2014, 2016 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,14 @@ import javafx.geometry.Bounds;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * The {@link FXPanOnScrollPolicy} is an {@link AbstractFXOnScrollPolicy} that
- * pans (i.e. moves/scrolls) the viewport upon scrolling the mouse wheel.
+ * The {@link FXPanOrZoomOnScrollPolicy} is an {@link AbstractFXOnScrollPolicy}
+ * that pans (i.e. moves/scrolls) the viewport upon scrolling the mouse wheel.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
+public class FXPanOrZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
 
 	private boolean stopped = false;
 	private FXChangeViewportPolicy viewportPolicy;
@@ -81,6 +81,22 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	}
 
 	/**
+	 * Returns <code>true</code> if the given {@link ScrollEvent} should trigger
+	 * panning. Otherwise returns <code>false</code>.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} in question.
+	 * @return <code>true</code> to indicate that the given {@link ScrollEvent}
+	 *         should trigger panning, otherwise <code>false</code>.
+	 */
+	protected boolean isPanning(ScrollEvent event) {
+		// Do not scroll when a modifier key (<Alt>, <Control>, <Meta>) is
+		// pressed.
+		return !(event.isAltDown() || event.isControlDown()
+				|| event.isMetaDown());
+	}
+
+	/**
 	 * Returns <code>true</code> if panning was stopped for the current scroll
 	 * gesture, because further panning would move past the content bounds.
 	 * Otherwise returns <code>false</code>.
@@ -90,22 +106,6 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	 */
 	protected boolean isStopped() {
 		return stopped;
-	}
-
-	/**
-	 * Returns <code>true</code> if the given {@link ScrollEvent} should trigger
-	 * panning. Otherwise returns <code>false</code>.
-	 *
-	 * @param event
-	 *            The {@link ScrollEvent} in question.
-	 * @return <code>true</code> to indicate that the given {@link ScrollEvent}
-	 *         should trigger panning, otherwise <code>false</code>.
-	 */
-	protected boolean isSuitable(ScrollEvent event) {
-		// Do not scroll when a modifier key (<Alt>, <Control>, <Meta>) is
-		// pressed.
-		return !(event.isAltDown() || event.isControlDown()
-				|| event.isMetaDown());
 	}
 
 	/**
@@ -122,20 +122,37 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 		return event.isShiftDown();
 	}
 
+	/**
+	 * Returns <code>true</code> if the given {@link ScrollEvent} should trigger
+	 * zooming. Otherwise returns <code>false</code>. Per default, either
+	 * <code>&lt;Control&gt;</code> or <code>&lt;Alt&gt;</code> has to be
+	 * pressed so that <code>true</code> is returned.
+	 *
+	 * @param event
+	 *            The {@link ScrollEvent} in question.
+	 * @return <code>true</code> if the given {@link ScrollEvent} should trigger
+	 *         zooming, otherwise <code>false</code>.
+	 */
+	protected boolean isZooming(ScrollEvent event) {
+		return event.isControlDown() || event.isAltDown();
+	}
+
 	@Override
 	public void scroll(ScrollEvent event) {
 		// each event is tested for suitability so that you can switch between
 		// multiple scroll actions instantly when pressing/releasing modifiers
-		if (isStopped() || !isSuitable(event)) {
-			return;
+		if (isPanning(event) && !isStopped()) {
+			// Determine horizontal and vertical translation.
+			Dimension delta = computeDelta(event);
+			// Stop scrolling at the content-bounds.
+			setStopped(stopAtContentBounds(delta));
+			// change viewport via operation
+			getViewportPolicy().scrollRelative(delta.width, delta.height);
+		} else if (isZooming(event)) {
+			getViewportPolicy().zoomRelative(
+					event.getDeltaY() > 0 ? 1.05 : 1 / 1.05, event.getSceneX(),
+					event.getSceneY());
 		}
-
-		// Determine horizontal and vertical translation.
-		Dimension delta = computeDelta(event);
-		// Stop scrolling at the content-bounds.
-		setStopped(stopAtContentBounds(delta));
-		// change viewport via operation
-		getViewportPolicy().scrollRelative(delta.width, delta.height);
 	}
 
 	@Override
@@ -149,7 +166,7 @@ public class FXPanOnScrollPolicy extends AbstractFXOnScrollPolicy {
 	public void scrollStarted(ScrollEvent event) {
 		setViewportPolicy(determineViewportPolicy());
 		init(getViewportPolicy());
-		// delegate to scroll() to perform panning
+		// delegate to scroll() to perform panning/zooming
 		scroll(event);
 	}
 
