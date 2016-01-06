@@ -179,7 +179,7 @@ public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
 						* scrollAmount;
 		FXChangeViewportPolicy viewportPolicy = getHost().getRoot()
 				.getAdapter(FXChangeViewportPolicy.class);
-		viewportPolicy.scrollRelative(dx, dy);
+		viewportPolicy.scrollAbsolute(dx, dy);
 	}
 
 }
