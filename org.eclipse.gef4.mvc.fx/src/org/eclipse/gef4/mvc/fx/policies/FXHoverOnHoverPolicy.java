@@ -34,6 +34,12 @@ public class FXHoverOnHoverPolicy extends AbstractInteractionPolicy<Node>
 	@SuppressWarnings("serial")
 	@Override
 	public void hover(MouseEvent e) {
+		// do nothing in case there is an explicit event target
+		if (getHost().getRoot().getViewer().getVisualPartMap()
+				.get(e.getTarget()) != getHost()) {
+			return;
+		}
+
 		getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<HoverModel<Node>>() {
 				}).setHover(getHost());
