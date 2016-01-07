@@ -47,11 +47,17 @@ import javafx.scene.input.MouseEvent;
 public class FXRotateSelectedOnHandleDragPolicy
 		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
 
+	// indication cursor
+	private CursorSupport cursorSupport = new CursorSupport(this);
+	private ImageCursor rotateCursor;
+
+	// gesture validity
 	private boolean invalidGesture = false;
+
+	// initial state
 	private Point initialPointerLocationInScene;
 	private Point pivotInScene;
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
-	private ImageCursor rotateCursor;
 
 	/**
 	 * Computes the clock-wise rotation angle based on the initial mouse
@@ -97,6 +103,15 @@ public class FXRotateSelectedOnHandleDragPolicy
 	}
 
 	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
+	}
+
+	/**
 	 * Returns the {@link Cursor} that indicates rotation. Delegates to
 	 * {@link #createRotateCursor()} to create that cursor if it was not created
 	 * yet.
@@ -137,6 +152,11 @@ public class FXRotateSelectedOnHandleDragPolicy
 	protected FXTransformPolicy getTransformPolicy(
 			IVisualPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXTransformPolicy.class);
+	}
+
+	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
 	}
 
 	@Override
@@ -194,9 +214,6 @@ public class FXRotateSelectedOnHandleDragPolicy
 			return;
 		}
 
-		// restore mouse cursor
-		restoreCursor();
-
 		// commit transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
@@ -208,22 +225,33 @@ public class FXRotateSelectedOnHandleDragPolicy
 		}
 	}
 
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		if (event.isControlDown()) {
-			storeAndReplaceCursor(getRotateCursor());
+	/**
+	 * If the given flag <i>isControlDown</i> is <code>true</code>, then the
+	 * mouse cursor is changed to a rotate cursor. Otherwise, the mouse cursor
+	 * is not changed. Returns <code>true</code> if the mouse cursor was
+	 * changed. Otherwise returns <code>false</code>.
+	 *
+	 * @param isControlDown
+	 *            Flag to indicate if the control modifier key is pressed.
+	 * @return <code>true</code> if the mouse cursor was changed, otherwise
+	 *         <code>false</code>.
+	 */
+	protected boolean showIndicationCursor(boolean isControlDown) {
+		if (isControlDown) {
+			getCursorSupport().storeAndReplaceCursor(getRotateCursor());
 			return true;
 		}
 		return false;
 	}
 
 	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return showIndicationCursor(event.isControlDown());
+	}
+
+	@Override
 	public boolean showIndicationCursor(MouseEvent event) {
-		if (event.isControlDown()) {
-			storeAndReplaceCursor(getRotateCursor());
-			return true;
-		}
-		return false;
+		return showIndicationCursor(event.isControlDown());
 	}
 
 	private void updateOperation(MouseEvent e,
