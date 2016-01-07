@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.fx.gestures.AbstractRotateGesture;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnRotatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -42,8 +42,7 @@ public class FXRotateTool extends AbstractFXTool {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	// TODO: Rename to ON_ROTATE_POLICY_KEY
-	public static final Class<AbstractFXOnRotatePolicy> TOOL_POLICY_KEY = AbstractFXOnRotatePolicy.class;
+	public static final Class<IFXOnRotatePolicy> ON_ROTATE_POLICY_KEY = IFXOnRotatePolicy.class;
 
 	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<>();
 
@@ -53,18 +52,18 @@ public class FXRotateTool extends AbstractFXTool {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			AbstractRotateGesture gesture = new AbstractRotateGesture() {
 
-				private List<? extends AbstractFXOnRotatePolicy> policies;
+				private List<? extends IFXOnRotatePolicy> policies;
 
 				@Override
 				protected void rotate(RotateEvent event) {
-					for (AbstractFXOnRotatePolicy policy : policies) {
+					for (IFXOnRotatePolicy policy : policies) {
 						policy.rotate(event);
 					}
 				}
 
 				@Override
 				protected void rotationFinished(RotateEvent event) {
-					for (AbstractFXOnRotatePolicy policy : policies) {
+					for (IFXOnRotatePolicy policy : policies) {
 						policy.rotationFinished(event);
 					}
 					getDomain().closeExecutionTransaction(FXRotateTool.this);
@@ -76,9 +75,9 @@ public class FXRotateTool extends AbstractFXTool {
 					policies = getTargetPolicies(
 							viewer, eventTarget instanceof Node
 									? (Node) eventTarget : null,
-							TOOL_POLICY_KEY);
+							ON_ROTATE_POLICY_KEY);
 					getDomain().openExecutionTransaction(FXRotateTool.this);
-					for (AbstractFXOnRotatePolicy policy : policies) {
+					for (IFXOnRotatePolicy policy : policies) {
 						policy.rotationStarted(event);
 					}
 				}

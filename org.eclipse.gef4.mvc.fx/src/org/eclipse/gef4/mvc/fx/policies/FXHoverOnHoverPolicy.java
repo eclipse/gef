@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contributions for Bugzilla #481810
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.models.HoverModel;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -19,14 +21,15 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXHoverOnHoverPolicy} is an {@link AbstractFXOnHoverPolicy} that
- * hovers its {@link #getHost() host} by altering the {@link HoverModel} when
- * the {@link #getHost() host} is hovered by the mouse.
+ * The {@link FXHoverOnHoverPolicy} is an {@link IFXOnHoverPolicy} that hovers
+ * its {@link #getHost() host} by altering the {@link HoverModel} when the
+ * {@link #getHost() host} is hovered by the mouse.
  *
  * @author anyssen
  *
  */
-public class FXHoverOnHoverPolicy extends AbstractFXOnHoverPolicy {
+public class FXHoverOnHoverPolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnHoverPolicy {
 
 	@SuppressWarnings("serial")
 	@Override

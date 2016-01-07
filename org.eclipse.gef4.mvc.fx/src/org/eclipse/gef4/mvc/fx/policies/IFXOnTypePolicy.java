@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2016 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,50 +12,45 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 
 /**
- * An {@link AbstractFXOnTypePolicy} is called upon keyboard events by the
- * {@link FXTypeTool}. You can use it as an adapter on any {@link IVisualPart}
- * for which keyboard interaction is desired, and you can also register multiple
- * instances of {@link AbstractFXOnTypePolicy} on the same {@link IVisualPart}
- * (with different adapter roles).
+ * An interaction policy that implements the {@link IFXOnTypePolicy} interface
+ * will be notified about keyboard events by the {@link FXTypeTool}.
  *
- * @author anyssen
+ * @author mwienand
  *
  */
-public abstract class AbstractFXOnTypePolicy
-		extends AbstractInteractionPolicy<Node> {
+public interface IFXOnTypePolicy extends IPolicy<Node> {
 
 	/**
 	 * This callback method is invoked when the user presses a key while the
-	 * {@link #getHost() host} has keyboard focus.
+	 * host has keyboard focus.
 	 *
 	 * @param event
 	 *            The original {@link KeyEvent}.
 	 */
-	public abstract void pressed(KeyEvent event);
+	void pressed(KeyEvent event);
 
 	/**
 	 * This callback method is invoked when the user releases a key while the
-	 * {@link #getHost() host} has keyboard focus.
+	 * host has keyboard focus.
 	 *
 	 * @param event
 	 *            The original {@link KeyEvent}.
 	 */
-	public abstract void released(KeyEvent event);
+	void released(KeyEvent event);
 
 	/**
 	 * This callback method is invoked when the user types a unicode key while
-	 * the {@link #getHost() host} has keyboard focus.
+	 * the host has keyboard focus.
 	 *
 	 * @param event
 	 *            The original {@link KeyEvent}.
 	 */
-	public abstract void typed(KeyEvent event);
+	void typed(KeyEvent event);
 
 }

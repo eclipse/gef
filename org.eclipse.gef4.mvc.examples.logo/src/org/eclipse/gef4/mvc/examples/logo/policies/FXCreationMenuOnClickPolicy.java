@@ -19,12 +19,13 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXHoverFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
 import com.google.common.collect.HashMultimap;
@@ -55,7 +56,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 
 // TODO: only applicable for FXRootPart and FXViewer
-public class FXCreationMenuOnClickPolicy extends AbstractFXOnClickPolicy {
+public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnClickPolicy {
 
 	/**
 	 * The adapter role for the

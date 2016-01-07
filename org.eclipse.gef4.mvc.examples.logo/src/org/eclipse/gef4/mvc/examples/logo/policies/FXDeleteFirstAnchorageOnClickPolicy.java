@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
 import com.google.common.reflect.TypeToken;
@@ -23,7 +24,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 public class FXDeleteFirstAnchorageOnClickPolicy
-		extends AbstractFXOnClickPolicy {
+		extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override

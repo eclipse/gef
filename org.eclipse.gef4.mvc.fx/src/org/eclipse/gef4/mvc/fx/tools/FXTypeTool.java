@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -42,16 +42,15 @@ public class FXTypeTool extends AbstractFXTool {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	// TODO: Rename to ON_TYPE_POLICY_KEY
-	public static final Class<AbstractFXOnTypePolicy> TOOL_POLICY_KEY = AbstractFXOnTypePolicy.class;
+	public static final Class<IFXOnTypePolicy> ON_TYPE_POLICY_KEY = IFXOnTypePolicy.class;
 
 	private final EventHandler<? super KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
 			getDomain().openExecutionTransaction(FXTypeTool.this);
-			Collection<? extends AbstractFXOnTypePolicy> policies = getTargetPolicies(
+			Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
 					event);
-			for (AbstractFXOnTypePolicy policy : policies) {
+			for (IFXOnTypePolicy policy : policies) {
 				policy.pressed(event);
 			}
 		}
@@ -60,9 +59,9 @@ public class FXTypeTool extends AbstractFXTool {
 	private final EventHandler<? super KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
-			Collection<? extends AbstractFXOnTypePolicy> policies = getTargetPolicies(
+			Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
 					event);
-			for (AbstractFXOnTypePolicy policy : policies) {
+			for (IFXOnTypePolicy policy : policies) {
 				policy.released(event);
 			}
 			getDomain().closeExecutionTransaction(FXTypeTool.this);
@@ -77,9 +76,11 @@ public class FXTypeTool extends AbstractFXTool {
 			if (!wasOpen) {
 				getDomain().openExecutionTransaction(FXTypeTool.this);
 			}
-			Collection<? extends AbstractFXOnTypePolicy> policies = getTargetPolicies(
+			Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
 					event);
-			for (AbstractFXOnTypePolicy policy : policies) {
+			// active policies are unnecessary because TYPED is not a
+			// gesture, just one event at one point in time
+			for (IFXOnTypePolicy policy : policies) {
 				policy.typed(event);
 			}
 			if (!wasOpen) {
@@ -89,45 +90,35 @@ public class FXTypeTool extends AbstractFXTool {
 	};
 
 	/**
-	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
-	 * are installed on the given target {@link IVisualPart}.
+	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 * installed on the given target {@link IVisualPart}.
 	 *
 	 * @param targetPart
 	 *            The target {@link IVisualPart} of which the
-	 *            {@link AbstractFXOnTypePolicy}s are returned.
-	 * @return A {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
-	 *         are installed on the given target {@link IVisualPart}.
+	 *            {@link IFXOnTypePolicy}s are returned.
+	 * @return A {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 *         installed on the given target {@link IVisualPart}.
 	 */
 	// TODO: Rename to getOnTypePolicies()
-	protected Set<? extends AbstractFXOnTypePolicy> getKeyPolicies(
+	protected Set<? extends IFXOnTypePolicy> getKeyPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(
-				targetPart.<AbstractFXOnTypePolicy> getAdapters(TOOL_POLICY_KEY)
-						.values());
+		return new HashSet<>(targetPart
+				.<IFXOnTypePolicy> getAdapters(ON_TYPE_POLICY_KEY).values());
 	}
 
 	/**
-	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
-	 * are installed on the target {@link IVisualPart} for the given
+	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 * installed on the target {@link IVisualPart} for the given
 	 * {@link KeyEvent}. The target {@link IVisualPart} is determined by using
 	 * {@link #getTargetPolicies(Scene)}.
 	 *
 	 * @param event
 	 *            The {@link KeyEvent} to transfer.
-	 * @return A {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
-	 *         are installed on the target {@link IVisualPart} for the given
+	 * @return A {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 *         installed on the target {@link IVisualPart} for the given
 	 *         {@link KeyEvent}.
 	 */
-	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
-			KeyEvent event) {
-		// if (getDomain().getExclusiveInteractionPolicy() != null) {
-		// if (getDomain().getExclusiveInteractionPolicy() implements
-		// IOnTypePolicy) {
-		// // send to policy
-		// } else {
-		// // discard
-		// }
-		// }
+	protected Set<? extends IFXOnTypePolicy> getTargetPolicies(KeyEvent event) {
 		EventTarget target = event.getTarget();
 		if (target instanceof Scene) {
 			return getTargetPolicies((Scene) target);
@@ -143,24 +134,23 @@ public class FXTypeTool extends AbstractFXTool {
 	}
 
 	/**
-	 * Returns a {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
-	 * are installed on the target {@link IVisualPart} for the given
-	 * {@link Scene}. If an {@link IVisualPart} within the given {@link Scene}
-	 * has keyboard focus, that part is used as the target part. Otherwise, the
-	 * root part of the {@link IViewer} that is rendered in the given
-	 * {@link Scene} is used as the target part.
+	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 * installed on the target {@link IVisualPart} for the given {@link Scene}.
+	 * If an {@link IVisualPart} within the given {@link Scene} has keyboard
+	 * focus, that part is used as the target part. Otherwise, the root part of
+	 * the {@link IViewer} that is rendered in the given {@link Scene} is used
+	 * as the target part.
 	 *
 	 * @param scene
 	 *            The {@link Scene} for which to determine the
-	 *            {@link AbstractFXOnTypePolicy}s that are installed on the
-	 *            target {@link IVisualPart}.
-	 * @return A {@link Set} containing all {@link AbstractFXOnTypePolicy}s that
-	 *         are installed on the target {@link IVisualPart} for the given
+	 *            {@link IFXOnTypePolicy}s that are installed on the target
+	 *            {@link IVisualPart}.
+	 * @return A {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 *         installed on the target {@link IVisualPart} for the given
 	 *         {@link Scene}.
 	 */
 	@SuppressWarnings("serial")
-	protected Set<? extends AbstractFXOnTypePolicy> getTargetPolicies(
-			Scene scene) {
+	protected Set<? extends IFXOnTypePolicy> getTargetPolicies(Scene scene) {
 		IVisualPart<Node, ? extends Node> targetPart = null;
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {

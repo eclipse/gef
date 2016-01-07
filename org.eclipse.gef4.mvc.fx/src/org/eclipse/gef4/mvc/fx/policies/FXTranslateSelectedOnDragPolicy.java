@@ -19,22 +19,24 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXTranslateSelectedOnDragPolicy} is an
- * {@link AbstractFXOnDragPolicy} that relocates its {@link #getHost() host}
- * when it is dragged with the mouse.
+ * The {@link FXTranslateSelectedOnDragPolicy} is an {@link IFXOnDragPolicy}
+ * that relocates its {@link #getHost() host} when it is dragged with the mouse.
  *
  * @author anyssen
  *
  */
-public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
+public class FXTranslateSelectedOnDragPolicy
+		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
@@ -110,6 +112,10 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	// }
 
 	@Override
+	public void hideIndicationCursor() {
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		// save initial pointer location
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
@@ -166,6 +172,16 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	 */
 	protected void setInitialMouseLocationInScene(Point point) {
 		initialMouseLocationInScene = point;
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }

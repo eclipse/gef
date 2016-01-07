@@ -12,19 +12,22 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXPanOnTypePolicy} is an {@link AbstractFXOnTypePolicy} that
- * performs viewport panning via the keyboard.
+ * The {@link FXPanOnTypePolicy} is an {@link IFXOnTypePolicy} that performs
+ * viewport panning via the keyboard.
  *
  * @author mwienand
  *
  */
-public class FXPanOnTypePolicy extends AbstractFXOnTypePolicy {
+public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnTypePolicy {
 
 	/**
 	 * The default scroll amount per second, i.e. how many pixels the viewport

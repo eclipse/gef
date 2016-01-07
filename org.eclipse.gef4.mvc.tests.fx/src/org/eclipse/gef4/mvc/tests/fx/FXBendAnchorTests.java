@@ -201,7 +201,7 @@ public class FXBendAnchorTests {
 		protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 			super.bindAbstractContentPartAdapters(adapterMapBinder);
 			// focus and select on click
-			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY))
+			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.ON_CLICK_POLICY_KEY))
 					.to(FXFocusAndSelectOnClickPolicy.class);
 		}
 
@@ -210,7 +210,7 @@ public class FXBendAnchorTests {
 			// transform policy
 			adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformPolicy.class);
 			// relocate on drag
-			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "translateSelected"))
+			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.ON_DRAG_POLICY_KEY, "translateSelected"))
 					.to(FXTranslateSelectedOnDragPolicy.class);
 			// bind chopbox anchor provider
 			adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IAnchor>>() {
@@ -221,7 +221,7 @@ public class FXBendAnchorTests {
 			// transform policy
 			adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class)).to(FXTransformConnectionPolicy.class);
 			// relocate on drag
-			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "translateSelected"))
+			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.ON_DRAG_POLICY_KEY, "translateSelected"))
 					.to(FXTranslateSelectedOnDragPolicy.class);
 		}
 

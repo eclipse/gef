@@ -25,6 +25,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -36,14 +37,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXRotateSelectedOnHandleDragPolicy} is an
- * {@link AbstractFXOnDragPolicy} that rotates the whole {@link SelectionModel
- * selection} when a selection handle is dragged.
+ * The {@link FXRotateSelectedOnHandleDragPolicy} is an {@link IFXOnDragPolicy}
+ * that rotates the whole {@link SelectionModel selection} when a selection
+ * handle is dragged.
  *
  * @author mwienand
  *
  */
-public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
+public class FXRotateSelectedOnHandleDragPolicy
+		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
 
 	private boolean invalidGesture = false;
 	private Point initialPointerLocationInScene;

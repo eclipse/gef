@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -33,22 +34,23 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
 /**
- * The {@link FXMarqueeOnDragPolicy} is an {@link AbstractFXOnDragPolicy} that
- * performs marquee selection when the mouse is dragged. The start and end
- * position of the mouse span a marquee area. Everything within that area will
- * be selected.
+ * The {@link FXMarqueeOnDragPolicy} is an {@link IFXOnDragPolicy} that performs
+ * marquee selection when the mouse is dragged. The start and end position of
+ * the mouse span a marquee area. Everything within that area will be selected.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
+public class FXMarqueeOnDragPolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnDragPolicy {
 
 	private static double[] bbox(Point2D start, Point2D end) {
 		double bbox[] = { start.getX(), start.getY(), end.getX(), end.getY() };
@@ -211,6 +213,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	@Override
+	public void hideIndicationCursor() {
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		if (e.getTarget() instanceof Node) {
 			Node node = (Node) e.getTarget();
@@ -264,6 +270,16 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 			getHost().getRoot().removeChild(feedback);
 			feedback = null;
 		}
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 	/**

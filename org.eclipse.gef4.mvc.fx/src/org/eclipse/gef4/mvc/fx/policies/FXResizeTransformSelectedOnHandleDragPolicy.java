@@ -25,6 +25,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -33,11 +34,12 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link FXResizeTransformSelectedOnHandleDragPolicy} is an
- * {@link AbstractFXOnDragPolicy} that relocates and scales the whole
+ * {@link IFXOnDragPolicy} that relocates and scales the whole
  * {@link SelectionModel selection} when its host (a box selection handle,
  * {@link AbstractFXSegmentHandlePart}) is dragged.
  *
@@ -45,7 +47,7 @@ import javafx.scene.input.MouseEvent;
  *
  */
 public class FXResizeTransformSelectedOnHandleDragPolicy
-		extends AbstractFXOnDragPolicy {
+		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
 
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
@@ -252,6 +254,10 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
+	public void hideIndicationCursor() {
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		// only applicable for multiple targets
 		List<IContentPart<Node, ? extends Node>> targetParts = getTargetParts();
@@ -327,6 +333,16 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		selectionBounds = null;
 		initialMouseLocation = null;
 		relX1 = relY1 = relX2 = relY2 = null;
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 	/**

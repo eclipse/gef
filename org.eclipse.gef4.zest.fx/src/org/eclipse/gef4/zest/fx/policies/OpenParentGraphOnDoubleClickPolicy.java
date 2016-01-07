@@ -13,30 +13,30 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link OpenParentGraphOnDoubleClickPolicy} is an
- * {@link AbstractFXOnClickPolicy} that can be installed on
- * {@link GraphRootPart}s (see {@link #getHost()}). It opens the {@link Graph}
- * that contains the node that contains the {@link Graph} that is currently open
- * when the background is double clicked.
+ * The {@link OpenParentGraphOnDoubleClickPolicy} is an {@link IFXOnClickPolicy}
+ * that can be installed on {@link GraphRootPart}s (see {@link #getHost()}). It
+ * opens the {@link Graph} that contains the node that contains the
+ * {@link Graph} that is currently open when the background is double clicked.
  *
  * @author mwienand
  *
  */
-public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXOnClickPolicy {
+public class OpenParentGraphOnDoubleClickPolicy extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
 		if (e.getClickCount() == 2) {
-
 			// do nothing in case there is an explicit event target
 			if (getHost().getViewer().getVisualPartMap().get(e.getTarget()) != getHost()) {
 				return;

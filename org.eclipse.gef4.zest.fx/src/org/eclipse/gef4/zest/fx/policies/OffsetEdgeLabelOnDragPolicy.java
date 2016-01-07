@@ -13,22 +13,24 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link OffsetEdgeLabelOnDragPolicy} is an {@link AbstractFXOnDragPolicy}
- * that can be installed on {@link EdgeLabelPart}s (see {@link #getHost()}). It
- * moves its {@link #getHost() host} when the {@link #getHost() host} is
- * dragged.
+ * The {@link OffsetEdgeLabelOnDragPolicy} is an {@link IFXOnDragPolicy} that
+ * can be installed on {@link EdgeLabelPart}s (see {@link #getHost()}). It moves
+ * its {@link #getHost() host} when the {@link #getHost() host} is dragged.
  *
  * @author mwienand
  *
  */
-public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
+public class OffsetEdgeLabelOnDragPolicy extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
 
 	private double initialOffsetX;
 	private double initialOffsetY;
@@ -49,6 +51,10 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	@Override
+	public void hideIndicationCursor() {
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		initialOffsetX = getHost().getOffset().getX();
 		initialOffsetY = getHost().getOffset().getY();
@@ -62,6 +68,16 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 		double dy = q.getY() - p.getY();
 		getHost().getOffset().setX(initialOffsetX + dx);
 		getHost().getOffset().setY(initialOffsetY + dy);
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }

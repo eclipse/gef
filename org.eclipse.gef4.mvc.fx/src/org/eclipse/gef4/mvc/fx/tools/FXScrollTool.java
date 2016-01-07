@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.gestures.AbstractScrollGesture;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnScrollPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -37,8 +37,7 @@ public class FXScrollTool extends AbstractFXTool {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	// TODO: Rename to ON_SCROLL_POLICY_KEY
-	public static final Class<AbstractFXOnScrollPolicy> TOOL_POLICY_KEY = AbstractFXOnScrollPolicy.class;
+	public static final Class<IFXOnScrollPolicy> ON_SCROLL_POLICY_KEY = IFXOnScrollPolicy.class;
 
 	private final Map<IViewer<Node>, AbstractScrollGesture> gestures = new HashMap<>();
 
@@ -48,18 +47,18 @@ public class FXScrollTool extends AbstractFXTool {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = ((FXViewer) viewer).getScene();
 			AbstractScrollGesture scrollGesture = new AbstractScrollGesture() {
-				private Collection<? extends AbstractFXOnScrollPolicy> policies;
+				private Collection<? extends IFXOnScrollPolicy> policies;
 
 				@Override
 				protected void scroll(ScrollEvent event) {
-					for (AbstractFXOnScrollPolicy policy : policies) {
+					for (IFXOnScrollPolicy policy : policies) {
 						policy.scroll(event);
 					}
 				}
 
 				@Override
 				protected void scrollFinished() {
-					for (AbstractFXOnScrollPolicy policy : policies) {
+					for (IFXOnScrollPolicy policy : policies) {
 						policy.scrollFinished();
 					}
 					getDomain().closeExecutionTransaction(FXScrollTool.this);
@@ -72,8 +71,8 @@ public class FXScrollTool extends AbstractFXTool {
 					policies = getTargetPolicies(
 							viewer, eventTarget instanceof Node
 									? (Node) eventTarget : null,
-							TOOL_POLICY_KEY);
-					for (AbstractFXOnScrollPolicy policy : policies) {
+							ON_SCROLL_POLICY_KEY);
+					for (IFXOnScrollPolicy policy : policies) {
 						policy.scrollStarted(event);
 					}
 				}

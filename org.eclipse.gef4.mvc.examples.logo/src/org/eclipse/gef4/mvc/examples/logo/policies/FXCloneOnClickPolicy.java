@@ -16,12 +16,13 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -31,7 +32,8 @@ import com.google.common.reflect.TypeToken;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-public class FXCloneOnClickPolicy extends AbstractFXOnClickPolicy {
+public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override

@@ -23,25 +23,28 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXBendOnSegmentHandleDragPolicy} is an
- * {@link AbstractFXOnDragPolicy} that can be installed on the handle parts of
- * an {@link Connection}, so that the user is able to manipulate that
- * connection by dragging its handles. This policy expects that a handle is
- * created for each anchor point of the connection (start, way, end), as well as
- * for each middle point of a segment. Moreover, this policy expects that the
- * respective handles are of type {@link FXCircleSegmentHandlePart}.
+ * The {@link FXBendOnSegmentHandleDragPolicy} is an {@link IFXOnDragPolicy}
+ * that can be installed on the handle parts of an {@link Connection}, so that
+ * the user is able to manipulate that connection by dragging its handles. This
+ * policy expects that a handle is created for each anchor point of the
+ * connection (start, way, end), as well as for each middle point of a segment.
+ * Moreover, this policy expects that the respective handles are of type
+ * {@link FXCircleSegmentHandlePart}.
  *
  * @author mwienand
  * @author anyssen
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
+public class FXBendOnSegmentHandleDragPolicy
+		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
 
 	private int createdSegmentIndex;
 
@@ -163,6 +166,10 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	@Override
+	public void hideIndicationCursor() {
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hostPart = getHost();
@@ -235,6 +242,16 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		if (part.getSegmentParameter() != value) {
 			part.setSegmentParameter(value);
 		}
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }

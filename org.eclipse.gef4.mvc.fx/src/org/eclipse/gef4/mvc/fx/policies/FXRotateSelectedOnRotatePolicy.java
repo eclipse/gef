@@ -23,6 +23,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -30,15 +31,15 @@ import javafx.scene.Node;
 import javafx.scene.input.RotateEvent;
 
 /**
- * The {@link FXRotateSelectedOnRotatePolicy} is an
- * {@link AbstractFXOnRotatePolicy} that rotates the whole {@link SelectionModel
- * selection} when its {@link #getHost() host} experiences a touch rotate
- * gesture.
+ * The {@link FXRotateSelectedOnRotatePolicy} is an {@link IFXOnRotatePolicy}
+ * that rotates the whole {@link SelectionModel selection} when its
+ * {@link #getHost() host} experiences a touch rotate gesture.
  *
  * @author anyssen
  *
  */
-public class FXRotateSelectedOnRotatePolicy extends AbstractFXOnRotatePolicy {
+public class FXRotateSelectedOnRotatePolicy
+		extends AbstractInteractionPolicy<Node>implements IFXOnRotatePolicy {
 
 	private Point pivotInScene;
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();

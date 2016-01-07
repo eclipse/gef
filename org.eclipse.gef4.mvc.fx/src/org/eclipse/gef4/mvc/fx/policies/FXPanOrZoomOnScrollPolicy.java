@@ -15,19 +15,22 @@ package org.eclipse.gef4.mvc.fx.policies;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * The {@link FXPanOrZoomOnScrollPolicy} is an {@link AbstractFXOnScrollPolicy}
- * that pans (i.e. moves/scrolls) the viewport upon scrolling the mouse wheel.
+ * The {@link FXPanOrZoomOnScrollPolicy} is an {@link IFXOnScrollPolicy} that
+ * pans (i.e. moves/scrolls) the viewport upon scrolling the mouse wheel.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public class FXPanOrZoomOnScrollPolicy extends AbstractFXOnScrollPolicy {
+public class FXPanOrZoomOnScrollPolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnScrollPolicy {
 
 	private boolean stopped = false;
 	private FXChangeViewportPolicy viewportPolicy;

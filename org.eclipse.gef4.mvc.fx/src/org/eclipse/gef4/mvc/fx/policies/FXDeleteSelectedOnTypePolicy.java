@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -27,13 +28,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXDeleteSelectedOnTypePolicy} is an {@link AbstractFXOnTypePolicy}
- * that performs content deletion upon the press of a key.
+ * The {@link FXDeleteSelectedOnTypePolicy} is an {@link IFXOnTypePolicy} that
+ * performs content deletion upon the press of a key.
  *
  * @author mwienand
  *
  */
-public class FXDeleteSelectedOnTypePolicy extends AbstractFXOnTypePolicy {
+public class FXDeleteSelectedOnTypePolicy
+		extends AbstractInteractionPolicy<Node>implements IFXOnTypePolicy {
 
 	/**
 	 * Returns <code>true</code> if the given {@link KeyEvent} is a "delete"

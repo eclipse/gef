@@ -12,16 +12,19 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
+import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
 /**
- * An {@link AbstractFXOnPinchSpreadPolicy} that performs zooming.
+ * An {@link IFXOnPinchSpreadPolicy} that performs zooming.
  *
  * @author anyssen
  *
  */
-public class FXZoomOnPinchSpreadPolicy extends AbstractFXOnPinchSpreadPolicy {
+public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
+		implements IFXOnPinchSpreadPolicy {
 
 	private FXChangeViewportPolicy getViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);

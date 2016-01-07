@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.fx.gestures.AbstractPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IFXOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -44,8 +44,7 @@ public class FXPinchSpreadTool extends AbstractFXTool {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
-	// TODO: Rename to ON_PINCH_SPREAD_POLICY_KEY
-	public static final Class<AbstractFXOnPinchSpreadPolicy> TOOL_POLICY_KEY = AbstractFXOnPinchSpreadPolicy.class;
+	public static final Class<IFXOnPinchSpreadPolicy> ON_PINCH_SPREAD_POLICY_KEY = IFXOnPinchSpreadPolicy.class;
 
 	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<>();
 
@@ -54,20 +53,20 @@ public class FXPinchSpreadTool extends AbstractFXTool {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			AbstractPinchSpreadGesture gesture = new AbstractPinchSpreadGesture() {
-				private List<? extends AbstractFXOnPinchSpreadPolicy> policies;
+				private List<? extends IFXOnPinchSpreadPolicy> policies;
 
 				@Override
 				protected void zoom(ZoomEvent e) {
 					// the start event might get lost, so we should open a
 					// transaction if one is not already open
-					for (AbstractFXOnPinchSpreadPolicy policy : policies) {
+					for (IFXOnPinchSpreadPolicy policy : policies) {
 						policy.zoom(e);
 					}
 				}
 
 				@Override
 				protected void zoomFinished(ZoomEvent e) {
-					for (AbstractFXOnPinchSpreadPolicy policy : policies) {
+					for (IFXOnPinchSpreadPolicy policy : policies) {
 						policy.zoomFinished(e);
 					}
 					getDomain()
@@ -91,8 +90,8 @@ public class FXPinchSpreadTool extends AbstractFXTool {
 					policies = getTargetPolicies(
 							viewer, eventTarget instanceof Node
 									? (Node) eventTarget : null,
-							TOOL_POLICY_KEY);
-					for (AbstractFXOnPinchSpreadPolicy policy : policies) {
+							ON_PINCH_SPREAD_POLICY_KEY);
+					for (IFXOnPinchSpreadPolicy policy : policies) {
 						policy.zoomStarted(e);
 					}
 				}

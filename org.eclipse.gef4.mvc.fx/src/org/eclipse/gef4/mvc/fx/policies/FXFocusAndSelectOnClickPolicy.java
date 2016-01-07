@@ -16,6 +16,7 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -23,16 +24,16 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXFocusAndSelectOnClickPolicy} is an
- * {@link AbstractFXOnClickPolicy} that focuses and selects its
- * {@link #getHost() host} by altering the {@link FocusModel} and the
- * {@link SelectionModel} when the {@link #getHost() host} is clicked by the
- * mouse.
+ * The {@link FXFocusAndSelectOnClickPolicy} is an {@link IFXOnClickPolicy} that
+ * focuses and selects its {@link #getHost() host} by altering the
+ * {@link FocusModel} and the {@link SelectionModel} when the {@link #getHost()
+ * host} is clicked by the mouse.
  *
  * @author anyssen
  *
  */
-public class FXFocusAndSelectOnClickPolicy extends AbstractFXOnClickPolicy {
+public class FXFocusAndSelectOnClickPolicy
+		extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
