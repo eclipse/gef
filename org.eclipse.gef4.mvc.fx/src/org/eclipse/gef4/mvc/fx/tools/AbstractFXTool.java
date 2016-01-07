@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +23,10 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 
@@ -100,12 +104,43 @@ public class AbstractFXTool extends AbstractTool<Node> {
 	 */
 	protected <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
 			IViewer<Node> viewer, Node target, Class<T> policyClass) {
-		// System.out.println("\n=== determine drag targets ===");
+		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);
 		// System.out.println("raw target node = " + target);
+		// System.out.println("policy class = " + policyClass);
+
+		// determine outer targets, i.e. already running/active policies of
+		// other tools
+		// System.out.println("Outer target policies:");
+		List<T> outerTargetPolicies = new ArrayList<>();
+		Collection<ITool<Node>> tools = viewer.getDomain()
+				.getAdapters(new TypeToken<ITool<Node>>() {
+				}).values();
+		for (ITool<Node> tool : tools) {
+			// System.out.println("[find active policies of " + tool + "]");
+			if (tool != this) {
+				for (IPolicy<Node> policy : tool.getActivePolicies(viewer)) {
+					if (policy.getClass().isAssignableFrom(policyClass)) {
+						// System.out.println("add active policy " + policy);
+						outerTargetPolicies.add((T) policy);
+					}
+				}
+			}
+		}
+
+		// already active policies that can process the events take precedence
+		// over scene graph related target policies
+		if (!outerTargetPolicies.isEmpty()) {
+			// System.out.println("RETURN outer target policies:");
+			// for (T p : outerTargetPolicies) {
+			// System.out.println(p.getHost() + " -> " + p);
+			// }
+			return outerTargetPolicies;
+		}
 
 		// determine target part as the part that controls the first node in the
 		// scene graph hierarchy of the given target node
+		// System.out.println("Inner target policies:");
 		IVisualPart<Node, ? extends Node> targetPart = null;
 		while (targetPart == null && target != null) {
 			targetPart = viewer.getVisualPartMap().get(target);
@@ -151,7 +186,7 @@ public class AbstractFXTool extends AbstractTool<Node> {
 		// are called before child policies
 		Collections.reverse(policies);
 
-		// System.out.println("\nRETURN in reverse order:");
+		// System.out.println("RETURN in reverse order:");
 		// for (T p : policies) {
 		// System.out.println(p.getHost() + " -> " + p);
 		// }

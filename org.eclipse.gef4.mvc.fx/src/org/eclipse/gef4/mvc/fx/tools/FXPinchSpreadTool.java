@@ -48,27 +48,35 @@ public class FXPinchSpreadTool extends AbstractFXTool {
 
 	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<>();
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IFXOnPinchSpreadPolicy> getActivePolicies(
+			IViewer<Node> viewer) {
+		return (List<IFXOnPinchSpreadPolicy>) super.getActivePolicies(viewer);
+	}
+
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			AbstractPinchSpreadGesture gesture = new AbstractPinchSpreadGesture() {
-				private List<? extends IFXOnPinchSpreadPolicy> policies;
-
 				@Override
 				protected void zoom(ZoomEvent e) {
 					// the start event might get lost, so we should open a
 					// transaction if one is not already open
-					for (IFXOnPinchSpreadPolicy policy : policies) {
+					for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
+							viewer)) {
 						policy.zoom(e);
 					}
 				}
 
 				@Override
 				protected void zoomFinished(ZoomEvent e) {
-					for (IFXOnPinchSpreadPolicy policy : policies) {
+					for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
+							viewer)) {
 						policy.zoomFinished(e);
 					}
+					clearActivePolicies(viewer);
 					getDomain()
 							.closeExecutionTransaction(FXPinchSpreadTool.this);
 				}
@@ -86,12 +94,18 @@ public class FXPinchSpreadTool extends AbstractFXTool {
 						getDomain().openExecutionTransaction(
 								FXPinchSpreadTool.this);
 					}
+
+					// determine target policies
 					EventTarget eventTarget = e.getTarget();
-					policies = getTargetPolicies(
-							viewer, eventTarget instanceof Node
-									? (Node) eventTarget : null,
-							ON_PINCH_SPREAD_POLICY_KEY);
-					for (IFXOnPinchSpreadPolicy policy : policies) {
+					setActivePolicies(viewer,
+							getTargetPolicies(viewer,
+									eventTarget instanceof Node
+											? (Node) eventTarget : null,
+									ON_PINCH_SPREAD_POLICY_KEY));
+
+					// send event to the policies
+					for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
+							viewer)) {
 						policy.zoomStarted(e);
 					}
 				}

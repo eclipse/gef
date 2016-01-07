@@ -157,7 +157,6 @@ public class FXClickDragTool extends AbstractFXTool {
 					.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
 
 			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
-
 				private Collection<? extends IFXOnDragPolicy> policies;
 
 				@Override
@@ -223,6 +222,9 @@ public class FXClickDragTool extends AbstractFXTool {
 								.openExecutionTransaction(FXClickDragTool.this);
 					}
 
+					// mark the drag policies as active
+					setActivePolicies(viewer, policies);
+
 					// send press() to all drag policies
 					for (IFXOnDragPolicy policy : policies) {
 						policy.press(e);
@@ -246,6 +248,9 @@ public class FXClickDragTool extends AbstractFXTool {
 						return;
 					}
 
+					// clear active policies before processing release
+					clearActivePolicies(viewer);
+
 					// send release() to all drag policies
 					for (IFXOnDragPolicy policy : policies) {
 						policy.release(e, new Dimension(dx, dy));
@@ -263,7 +268,6 @@ public class FXClickDragTool extends AbstractFXTool {
 						indicationCursorPolicy[0] = null;
 					}
 				}
-
 			};
 
 			gesture.setScene(((FXViewer) viewer).getScene());

@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.gestures.AbstractScrollGesture;
@@ -41,26 +41,32 @@ public class FXScrollTool extends AbstractFXTool {
 
 	private final Map<IViewer<Node>, AbstractScrollGesture> gestures = new HashMap<>();
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IFXOnScrollPolicy> getActivePolicies(
+			IViewer<Node> viewer) {
+		return (List<IFXOnScrollPolicy>) super.getActivePolicies(viewer);
+	}
+
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = ((FXViewer) viewer).getScene();
 			AbstractScrollGesture scrollGesture = new AbstractScrollGesture() {
-				private Collection<? extends IFXOnScrollPolicy> policies;
-
 				@Override
 				protected void scroll(ScrollEvent event) {
-					for (IFXOnScrollPolicy policy : policies) {
+					for (IFXOnScrollPolicy policy : getActivePolicies(viewer)) {
 						policy.scroll(event);
 					}
 				}
 
 				@Override
 				protected void scrollFinished() {
-					for (IFXOnScrollPolicy policy : policies) {
+					for (IFXOnScrollPolicy policy : getActivePolicies(viewer)) {
 						policy.scrollFinished();
 					}
+					clearActivePolicies(viewer);
 					getDomain().closeExecutionTransaction(FXScrollTool.this);
 				}
 
@@ -68,11 +74,12 @@ public class FXScrollTool extends AbstractFXTool {
 				protected void scrollStarted(ScrollEvent event) {
 					EventTarget eventTarget = event.getTarget();
 					getDomain().openExecutionTransaction(FXScrollTool.this);
-					policies = getTargetPolicies(
-							viewer, eventTarget instanceof Node
-									? (Node) eventTarget : null,
-							ON_SCROLL_POLICY_KEY);
-					for (IFXOnScrollPolicy policy : policies) {
+					setActivePolicies(viewer,
+							getTargetPolicies(viewer,
+									eventTarget instanceof Node
+											? (Node) eventTarget : null,
+									ON_SCROLL_POLICY_KEY));
+					for (IFXOnScrollPolicy policy : getActivePolicies(viewer)) {
 						policy.scrollStarted(event);
 					}
 				}

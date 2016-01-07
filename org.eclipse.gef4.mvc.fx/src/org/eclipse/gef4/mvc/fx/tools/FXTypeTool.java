@@ -14,6 +14,9 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.mvc.fx.policies.IFXOnTypePolicy;
@@ -44,50 +47,16 @@ public class FXTypeTool extends AbstractFXTool {
 	 */
 	public static final Class<IFXOnTypePolicy> ON_TYPE_POLICY_KEY = IFXOnTypePolicy.class;
 
-	private final EventHandler<? super KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
-		@Override
-		public void handle(KeyEvent event) {
-			getDomain().openExecutionTransaction(FXTypeTool.this);
-			Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
-					event);
-			for (IFXOnTypePolicy policy : policies) {
-				policy.pressed(event);
-			}
-		}
-	};
+	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
+	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
+	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
 
-	private final EventHandler<? super KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
-		@Override
-		public void handle(KeyEvent event) {
-			Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
-					event);
-			for (IFXOnTypePolicy policy : policies) {
-				policy.released(event);
-			}
-			getDomain().closeExecutionTransaction(FXTypeTool.this);
-		}
-	};
-
-	private final EventHandler<? super KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
-		@Override
-		public void handle(KeyEvent event) {
-			boolean wasOpen = getDomain()
-					.isExecutionTransactionOpen(FXTypeTool.this);
-			if (!wasOpen) {
-				getDomain().openExecutionTransaction(FXTypeTool.this);
-			}
-			Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
-					event);
-			// active policies are unnecessary because TYPED is not a
-			// gesture, just one event at one point in time
-			for (IFXOnTypePolicy policy : policies) {
-				policy.typed(event);
-			}
-			if (!wasOpen) {
-				getDomain().closeExecutionTransaction(FXTypeTool.this);
-			}
-		}
-	};
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IFXOnTypePolicy> getActivePolicies(
+			IViewer<Node> viewer) {
+		return (List<IFXOnTypePolicy>) super.getActivePolicies(viewer);
+	}
 
 	/**
 	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
@@ -175,7 +144,54 @@ public class FXTypeTool extends AbstractFXTool {
 
 	@Override
 	protected void registerListeners() {
-		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
+		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			// generate event handlers
+			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					getDomain().openExecutionTransaction(FXTypeTool.this);
+					setActivePolicies(viewer, getTargetPolicies(event));
+					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
+						policy.pressed(event);
+					}
+				}
+			};
+			pressedFilterMap.put(viewer, pressedFilter);
+
+			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
+						policy.released(event);
+					}
+					clearActivePolicies(viewer);
+					getDomain().closeExecutionTransaction(FXTypeTool.this);
+				}
+			};
+			releasedFilterMap.put(viewer, releasedFilter);
+
+			EventHandler<KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					boolean wasOpen = getDomain()
+							.isExecutionTransactionOpen(FXTypeTool.this);
+					if (!wasOpen) {
+						getDomain().openExecutionTransaction(FXTypeTool.this);
+					}
+					Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
+							event);
+					// active policies are unnecessary because TYPED is not a
+					// gesture, just one event at one point in time
+					for (IFXOnTypePolicy policy : policies) {
+						policy.typed(event);
+					}
+					if (!wasOpen) {
+						getDomain().closeExecutionTransaction(FXTypeTool.this);
+					}
+				}
+			};
+			typedFilterMap.put(viewer, typedFilter);
+
 			Scene scene = viewer.getRootPart().getVisual().getScene();
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
 			scene.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
@@ -187,9 +203,12 @@ public class FXTypeTool extends AbstractFXTool {
 	protected void unregisterListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = viewer.getRootPart().getVisual().getScene();
-			scene.removeEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
-			scene.removeEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
-			scene.removeEventFilter(KeyEvent.KEY_TYPED, typedFilter);
+			scene.removeEventFilter(KeyEvent.KEY_PRESSED,
+					pressedFilterMap.remove(viewer));
+			scene.removeEventFilter(KeyEvent.KEY_RELEASED,
+					releasedFilterMap.remove(viewer));
+			scene.removeEventFilter(KeyEvent.KEY_TYPED,
+					typedFilterMap.remove(viewer));
 		}
 	}
 

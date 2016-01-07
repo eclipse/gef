@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
+import java.util.List;
+
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -39,6 +41,19 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 public interface ITool<VR> extends IActivatable, IAdaptable.Bound<IDomain<VR>> {
 
 	/**
+	 * Returns an (unmodifiable) list containing the {@link IPolicy interaction
+	 * policies} that are currently active within this tool for the given
+	 * {@link IViewer}, i.e. the target policies of this tool that get notified
+	 * about events within the given {@link IViewer}.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which to return the active policies.
+	 * @return An (unmodifiable) list containing the {@link IPolicy interaction
+	 *         policies} that are currently active within this tool.
+	 */
+	public List<? extends IPolicy<VR>> getActivePolicies(IViewer<VR> viewer);
+
+	/**
 	 * The {@link IDomain}, this {@link ITool} is adapted to.
 	 *
 	 * @return The {@link IDomain}, this {@link ITool} is adapted to, or
@@ -46,4 +61,5 @@ public interface ITool<VR> extends IActivatable, IAdaptable.Bound<IDomain<VR>> {
 	 *         {@link IDomain}.
 	 */
 	public IDomain<VR> getDomain();
+
 }

@@ -46,38 +46,44 @@ public class FXRotateTool extends AbstractFXTool {
 
 	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<>();
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends IFXOnRotatePolicy> getActivePolicies(
+			IViewer<Node> viewer) {
+		return (List<IFXOnRotatePolicy>) super.getActivePolicies(viewer);
+	}
+
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			AbstractRotateGesture gesture = new AbstractRotateGesture() {
-
-				private List<? extends IFXOnRotatePolicy> policies;
-
 				@Override
 				protected void rotate(RotateEvent event) {
-					for (IFXOnRotatePolicy policy : policies) {
+					for (IFXOnRotatePolicy policy : getActivePolicies(viewer)) {
 						policy.rotate(event);
 					}
 				}
 
 				@Override
 				protected void rotationFinished(RotateEvent event) {
-					for (IFXOnRotatePolicy policy : policies) {
+					for (IFXOnRotatePolicy policy : getActivePolicies(viewer)) {
 						policy.rotationFinished(event);
 					}
+					clearActivePolicies(viewer);
 					getDomain().closeExecutionTransaction(FXRotateTool.this);
 				}
 
 				@Override
 				protected void rotationStarted(RotateEvent event) {
 					EventTarget eventTarget = event.getTarget();
-					policies = getTargetPolicies(
-							viewer, eventTarget instanceof Node
-									? (Node) eventTarget : null,
-							ON_ROTATE_POLICY_KEY);
+					setActivePolicies(viewer,
+							getTargetPolicies(viewer,
+									eventTarget instanceof Node
+											? (Node) eventTarget : null,
+									ON_ROTATE_POLICY_KEY));
 					getDomain().openExecutionTransaction(FXRotateTool.this);
-					for (IFXOnRotatePolicy policy : policies) {
+					for (IFXOnRotatePolicy policy : getActivePolicies(viewer)) {
 						policy.rotationStarted(event);
 					}
 				}

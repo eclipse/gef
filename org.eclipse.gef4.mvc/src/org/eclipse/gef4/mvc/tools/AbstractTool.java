@@ -13,10 +13,18 @@ package org.eclipse.gef4.mvc.tools;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.policies.IPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  *
@@ -39,6 +47,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 
 	private boolean active = false;
 	private IDomain<VR> domain;
+	private Map<IViewer<VR>, List<IPolicy<VR>>> activePolicies = new IdentityHashMap<>();
 
 	@Override
 	public void activate() {
@@ -62,6 +71,23 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * Clears the list of active policies of this tool for the given viewer.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which to clear the active policies of
+	 *            this tool.
+	 * @see #getActivePolicies(IViewer)
+	 * @see #setActivePolicies(IViewer, Collection)
+	 */
+	protected void clearActivePolicies(IViewer<VR> viewer) {
+		if (viewer == null) {
+			throw new IllegalArgumentException(
+					"The given viewer may not be null.");
+		}
+		activePolicies.remove(viewer);
+	}
+
 	@Override
 	public void deactivate() {
 		unregisterListeners();
@@ -71,6 +97,15 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 		if (oldActive != active) {
 			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
 					active);
+		}
+	}
+
+	@Override
+	public List<? extends IPolicy<VR>> getActivePolicies(IViewer<VR> viewer) {
+		if (activePolicies.containsKey(viewer)) {
+			return Collections.unmodifiableList(activePolicies.get(viewer));
+		} else {
+			return Collections.emptyList();
 		}
 	}
 
@@ -102,6 +137,31 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * Set the active policies of this tool to the given policies.
+	 *
+	 * @param viewer
+	 *            The {@link IViewer} for which to store the active policies of
+	 *            this tool.
+	 * @param activePolicies
+	 *            The active policies of this tool.
+	 * @see #clearActivePolicies(IViewer)
+	 * @see #getActivePolicies(IViewer)
+	 */
+	protected void setActivePolicies(IViewer<VR> viewer,
+			Collection<? extends IPolicy<VR>> activePolicies) {
+		if (viewer == null) {
+			throw new IllegalArgumentException(
+					"The given viewer may not be null.");
+		}
+		if (activePolicies == null) {
+			throw new IllegalArgumentException(
+					"The given activePolicies may not be null.");
+		}
+		clearActivePolicies(viewer);
+		this.activePolicies.put(viewer, new ArrayList<>(activePolicies));
+	}
+
 	@Override
 	public void setAdaptable(IDomain<VR> adaptable) {
 		if (active) {
@@ -118,4 +178,5 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	 */
 	protected void unregisterListeners() {
 	}
+
 }
