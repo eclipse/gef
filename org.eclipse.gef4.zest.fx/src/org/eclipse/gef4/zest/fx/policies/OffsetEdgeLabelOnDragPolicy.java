@@ -13,13 +13,11 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -30,7 +28,7 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class OffsetEdgeLabelOnDragPolicy extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
+public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private double initialOffsetX;
 	private double initialOffsetY;
@@ -51,10 +49,6 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	@Override
-	public void hideIndicationCursor() {
-	}
-
-	@Override
 	public void press(MouseEvent e) {
 		initialOffsetX = getHost().getOffset().getX();
 		initialOffsetY = getHost().getOffset().getY();
@@ -68,16 +62,6 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractInteractionPolicy<Node>
 		double dy = q.getY() - p.getY();
 		getHost().getOffset().setX(initialOffsetX + dx);
 		getHost().getOffset().setY(initialOffsetY + dy);
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 }

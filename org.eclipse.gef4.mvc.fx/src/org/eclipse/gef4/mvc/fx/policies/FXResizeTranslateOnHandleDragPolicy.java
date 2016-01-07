@@ -16,11 +16,9 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
@@ -35,7 +33,7 @@ import javafx.scene.transform.Affine;
  */
 // Only applicable for AbstractFXSegmentHandlePart, see #getHost().
 public class FXResizeTranslateOnHandleDragPolicy
-		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
+		extends AbstractFXOnDragPolicy {
 
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
@@ -139,10 +137,6 @@ public class FXResizeTranslateOnHandleDragPolicy
 		return getTargetPart().getAdapter(FXTransformPolicy.class);
 	}
 
-	@Override
-	public void hideIndicationCursor() {
-	}
-
 	private boolean isMultiSelection() {
 		return getTargetPart().getRoot().getViewer()
 				.getAdapter(SelectionModel.class).getSelection().size() > 1;
@@ -173,16 +167,6 @@ public class FXResizeTranslateOnHandleDragPolicy
 		restoreRefreshVisuals(getTargetPart());
 		commit(getResizePolicy());
 		commit(getTransformPolicy());
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 }

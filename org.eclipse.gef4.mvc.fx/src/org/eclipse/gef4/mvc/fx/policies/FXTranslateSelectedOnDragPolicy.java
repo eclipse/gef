@@ -19,13 +19,11 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -35,8 +33,7 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class FXTranslateSelectedOnDragPolicy
-		extends AbstractInteractionPolicy<Node>implements IFXOnDragPolicy {
+public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
@@ -106,15 +103,6 @@ public class FXTranslateSelectedOnDragPolicy
 		return part.getAdapter(FXTransformPolicy.class);
 	}
 
-	// @Override
-	// public boolean isExclusive() {
-	// return true;
-	// }
-
-	@Override
-	public void hideIndicationCursor() {
-	}
-
 	@Override
 	public void press(MouseEvent e) {
 		// save initial pointer location
@@ -172,16 +160,6 @@ public class FXTranslateSelectedOnDragPolicy
 	 */
 	protected void setInitialMouseLocationInScene(Point point) {
 		initialMouseLocationInScene = point;
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 }

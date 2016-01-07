@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -32,7 +33,6 @@ import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 
 import com.google.common.collect.HashMultimap;
@@ -42,11 +42,9 @@ import com.google.common.reflect.TypeToken;
 import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy<Node>
-		implements IFXOnDragPolicy {
+public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 
 	private FXCircleSegmentHandlePart bendTargetPart;
 
@@ -91,10 +89,6 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy<Node>
 	protected FXGeometricShapePart getShapePart() {
 		return (FXGeometricShapePart) getHost().getAnchorages().keySet()
 				.iterator().next();
-	}
-
-	@Override
-	public void hideIndicationCursor() {
 	}
 
 	@SuppressWarnings("serial")
@@ -171,16 +165,6 @@ public class FXCreateCurveOnDragPolicy extends AbstractInteractionPolicy<Node>
 		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
 			dragPolicy.release(e, delta);
 		}
-	}
-
-	@Override
-	public boolean showIndicationCursor(KeyEvent event) {
-		return false;
-	}
-
-	@Override
-	public boolean showIndicationCursor(MouseEvent event) {
-		return false;
 	}
 
 }
