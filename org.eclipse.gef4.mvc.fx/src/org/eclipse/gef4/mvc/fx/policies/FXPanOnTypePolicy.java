@@ -166,6 +166,12 @@ public class FXPanOnTypePolicy extends AbstractInteractionPolicy<Node>
 	public void typed(KeyEvent event) {
 	}
 
+	@Override
+	public void unfocus() {
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * Computes the viewport translation and applies it to the
 	 * {@link InfiniteCanvas} of the host's viewer using the

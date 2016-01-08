@@ -102,4 +102,10 @@ public class FXDeleteSelectedOnTypePolicy
 	public void typed(KeyEvent event) {
 	}
 
+	@Override
+	public void unfocus() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

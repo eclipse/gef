@@ -54,4 +54,10 @@ public class HideOnTypePolicy extends AbstractInteractionPolicy<Node>implements 
 	public void typed(KeyEvent event) {
 	}
 
+	@Override
+	public void unfocus() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

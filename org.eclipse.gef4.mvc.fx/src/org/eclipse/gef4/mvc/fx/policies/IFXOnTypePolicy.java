@@ -53,4 +53,10 @@ public interface IFXOnTypePolicy extends IPolicy<Node> {
 	 */
 	void typed(KeyEvent event);
 
+	/**
+	 * This callback method is invoked when the viewer loses its focus while a
+	 * key press/release gesture is running.
+	 */
+	void unfocus();
+
 }

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -146,7 +148,40 @@ public class FXTypeTool extends AbstractFXTool {
 	@Override
 	protected void registerListeners() {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			// store the key that is initially pressed so that we can wait for
+			// it to be released
 			final KeyCode firstKey[] = new KeyCode[] { null };
+
+			// register a viewer focus change listener to release the initially
+			// pressed key when the window loses focus
+			PropertyChangeListener viewerFocusChangeListener = new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					if (FocusModel.VIEWER_FOCUS_PROPERTY
+							.equals(evt.getPropertyName())) {
+						if (!(Boolean) evt.getNewValue()) {
+							if (firstKey[0] == null) {
+								return;
+							}
+
+							// cancel target policies
+							for (IFXOnTypePolicy policy : getActivePolicies(
+									viewer)) {
+								policy.unfocus();
+								// clear active policies and close execution
+								// transaction
+								clearActivePolicies(viewer);
+								getDomain().closeExecutionTransaction(
+										FXTypeTool.this);
+								// unset first key
+								firstKey[0] = null;
+							}
+						}
+					}
+				}
+			};
+			viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
+			}).addPropertyChangeListener(viewerFocusChangeListener);
 
 			// generate event handlers
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
@@ -172,11 +207,16 @@ public class FXTypeTool extends AbstractFXTool {
 			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
+					if (firstKey[0] == null) {
+						return;
+					}
+
 					// notify target policies
 					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
 						policy.released(event);
 					}
 
+					// check if the initially pressed key is released now
 					if (firstKey[0].equals(event.getCode())) {
 						firstKey[0] = null;
 						// clear active policies and close execution transaction
@@ -191,9 +231,7 @@ public class FXTypeTool extends AbstractFXTool {
 			EventHandler<KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
-					boolean wasOpen = getDomain()
-							.isExecutionTransactionOpen(FXTypeTool.this);
-					if (!wasOpen) {
+					if (firstKey[0] == null) {
 						getDomain().openExecutionTransaction(FXTypeTool.this);
 					}
 					Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
@@ -203,7 +241,7 @@ public class FXTypeTool extends AbstractFXTool {
 					for (IFXOnTypePolicy policy : policies) {
 						policy.typed(event);
 					}
-					if (!wasOpen) {
+					if (firstKey[0] == null) {
 						getDomain().closeExecutionTransaction(FXTypeTool.this);
 					}
 				}
