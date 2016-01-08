@@ -25,6 +25,7 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -48,14 +49,18 @@ public class FXClickDragToolTests {
 
 		@Override
 		public void closeExecutionTransaction(ITool<Node> tool) {
-			closedExecutionTransactions++;
+			if (tool instanceof FXClickDragTool) {
+				closedExecutionTransactions++;
+			}
 			super.closeExecutionTransaction(tool);
 		}
 
 		@Override
 		public void openExecutionTransaction(ITool<Node> tool) {
 			super.openExecutionTransaction(tool);
-			openedExecutionTransactions++;
+			if (tool instanceof FXClickDragTool) {
+				openedExecutionTransactions++;
+			}
 		}
 	}
 
