@@ -31,6 +31,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
@@ -145,12 +146,22 @@ public class FXTypeTool extends AbstractFXTool {
 	@Override
 	protected void registerListeners() {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			final KeyCode firstKey[] = new KeyCode[] { null };
+
 			// generate event handlers
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
-					getDomain().openExecutionTransaction(FXTypeTool.this);
-					setActivePolicies(viewer, getTargetPolicies(event));
+					// store initially pressed key
+					if (firstKey[0] == null) {
+						firstKey[0] = event.getCode();
+						// open exec tx on first key press
+						getDomain().openExecutionTransaction(FXTypeTool.this);
+						// determine target policies on first key press
+						setActivePolicies(viewer, getTargetPolicies(event));
+					}
+
+					// notify target policies
 					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
 						policy.pressed(event);
 					}
@@ -161,11 +172,18 @@ public class FXTypeTool extends AbstractFXTool {
 			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
+					// notify target policies
 					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
 						policy.released(event);
 					}
-					clearActivePolicies(viewer);
-					getDomain().closeExecutionTransaction(FXTypeTool.this);
+
+					if (firstKey[0].equals(event.getCode())) {
+						firstKey[0] = null;
+						// clear active policies and close execution transaction
+						// only when the initially pressed key is released
+						clearActivePolicies(viewer);
+						getDomain().closeExecutionTransaction(FXTypeTool.this);
+					}
 				}
 			};
 			releasedFilterMap.put(viewer, releasedFilter);
