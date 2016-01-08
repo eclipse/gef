@@ -35,6 +35,7 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	private NodeContentPart nodePart;
 	private IViewer<javafx.scene.Node> viewer;
 	private HidingModel hidingModel;
+	private boolean initialHiddenStatus;
 
 	/**
 	 * Constructs a new {@link HideOperation} that will hide the given
@@ -50,6 +51,7 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 		this.viewer = viewer;
 		this.nodePart = nodePart;
 		hidingModel = viewer.<HidingModel> getAdapter(HidingModel.class);
+		initialHiddenStatus = hidingModel.isHidden(nodePart);
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 
 	@Override
 	public boolean isNoOp() {
-		return viewer.getAdapter(HidingModel.class).isHidden(nodePart);
+		return initialHiddenStatus;
 	}
 
 	@Override
