@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.models;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -197,27 +195,12 @@ public class NavigationModel {
 		}
 	}
 
-	private Set<Graph> skipNextLayout = Collections.newSetFromMap(new IdentityHashMap<Graph, Boolean>());
 	private Map<Graph, ViewportState> viewportStates = new HashMap<>();
 
 	/**
 	 * Default constructor.
 	 */
 	public NavigationModel() {
-	}
-
-	/**
-	 * Adds the given {@link Graph} to the {@link Set} of {@link Graph}s for
-	 * which the next layout pass is skipped.
-	 *
-	 * @param graph
-	 *            The {@link Graph} that is added to the {@link Set} of
-	 *            {@link Graph}s for which the next layout pass is skipped.
-	 */
-	// TODO: find a more robust way here -> layout should only occur, if size
-	// of viewport/node changes
-	public void addSkipNextLayout(Graph graph) {
-		skipNextLayout.add(graph);
 	}
 
 	/**
@@ -235,17 +218,14 @@ public class NavigationModel {
 	}
 
 	/**
-	 * Removes the the given {@link Graph} from the {@link Set} of {@link Graph}
-	 * s for which the next layout pass is skipped.
+	 * Removes the {@link ViewportState} for the given {@link Graph}.
 	 *
 	 * @param graph
-	 *            The {@link Graph} that is removed from the {@link Set} of
-	 *            {@link Graph}s for which the next layout pass is skipped.
-	 * @return <code>true</code> if the the given {@link Graph} was contained in
-	 *         the {@link Set}, otherwise <code>false</code>.
+	 *            The {@link Graph} for which to remove the
+	 *            {@link ViewportState}.
 	 */
-	public boolean removeSkipNextLayout(Graph graph) {
-		return skipNextLayout.remove(graph);
+	public void removeViewportState(Graph graph) {
+		viewportStates.remove(graph);
 	}
 
 	/**

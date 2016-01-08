@@ -14,10 +14,6 @@ package org.eclipse.gef4.zest.fx.operations;
 
 import java.util.Collections;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -27,7 +23,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.operations.ChangeContentsOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
@@ -42,45 +37,7 @@ import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
  */
 public class NavigateOperation extends ReverseUndoCompositeOperation {
 
-	private final class ChangeContentsAndSkipLayoutOperation extends ChangeContentsOperation {
-		private final NavigationModel navigationModel;
-		private final Graph currentGraph;
-		private Graph newGraph;
-		private boolean resetNewGraphViewport;
-
-		private ChangeContentsAndSkipLayoutOperation(IViewer<?> viewer, NavigationModel navigationModel,
-				Graph currentGraph) {
-			super(viewer);
-			this.navigationModel = navigationModel;
-			this.currentGraph = currentGraph;
-		}
-
-		@Override
-		public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-			if (navigationModel.getViewportState(newGraph) != null && !resetNewGraphViewport) {
-				navigationModel.addSkipNextLayout(newGraph);
-			}
-			return super.execute(monitor, info);
-		}
-
-		public void setNewGraph(Graph newGraph) {
-			this.newGraph = newGraph;
-		}
-
-		public void setResetNewGraphViewport(boolean resetNewGraphViewport) {
-			this.resetNewGraphViewport = resetNewGraphViewport;
-		}
-
-		@Override
-		public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-			if (navigationModel.getViewportState(currentGraph) != null) {
-				navigationModel.addSkipNextLayout(currentGraph);
-			}
-			return super.undo(monitor, info);
-		}
-	}
-
-	private ChangeContentsAndSkipLayoutOperation changeContentsOperation;
+	private ChangeContentsOperation changeContentsOperation;
 	private FXChangeViewportOperation changeViewportOperation;
 	private NavigationModel navigationModel;
 	private Graph initialGraph;
@@ -103,7 +60,7 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 
 		// create sub-operations
 		changeViewportOperation = new FXChangeViewportOperation(viewer.getCanvas());
-		changeContentsOperation = new ChangeContentsAndSkipLayoutOperation(viewer, navigationModel, initialGraph);
+		changeContentsOperation = new ChangeContentsOperation(viewer, Collections.singletonList(initialGraph));
 
 		// arrange sub-operations
 		add(changeViewportOperation);
@@ -179,8 +136,6 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 
 		// update the change contents operation
 		changeContentsOperation.setNewContents(Collections.singletonList(finalGraph));
-		changeContentsOperation.setNewGraph(finalGraph);
-		changeContentsOperation.setResetNewGraphViewport(isNestedGraph);
 	}
 
 }

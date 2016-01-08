@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
@@ -33,6 +34,7 @@ import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
+import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -59,7 +61,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		}
 	};
 
-	private boolean isHostActive;
 	private GraphLayoutContext layoutContext;
 	private Pane nestingVisual;
 
@@ -68,13 +69,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
 				Bounds newLayoutBounds) {
 			onNestingVisualLayoutBoundsChange(oldLayoutBounds, newLayoutBounds);
-		}
-	};
-
-	private PropertyChangeListener hostPropertyChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			onHostPropertyChange(evt);
 		}
 	};
 
@@ -89,8 +83,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
-		// register listener for host property changes
-		getHost().addPropertyChangeListener(hostPropertyChangeListener);
 
 		// register listener for bounds changes
 		Rectangle initialBounds = new Rectangle();
@@ -157,15 +149,12 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * @param clean
 	 *            Whether to fully re-compute the layout or not.
 	 */
-	protected void applyLayout(boolean clean) {
-		if (!isHostActive) {
-			return;
-		}
-		// check if this layout pass should be skipped
-		NavigationModel viewportStackModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
-		if (viewportStackModel.removeSkipNextLayout(getHost().getContent())) {
-			return;
-		}
+	public void applyLayout(boolean clean) {
+		InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
+		Rectangle bounds = LayoutProperties.getBounds(layoutContext);
+		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
+				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
+						JavaFX2Geometry.toAffineTransform(canvas.getContentTransform())));
 		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
 	}
@@ -173,8 +162,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void deactivate() {
 		super.deactivate();
-		// remove host property change listener
-		getHost().removePropertyChangeListener(hostPropertyChangeListener);
 		// remove property change listener from context
 		if (layoutContext != null) {
 			layoutContext.removePropertyChangeListener(layoutContextPropertyChangeListener);
@@ -188,7 +175,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		// nullify variables
 		layoutContext = null;
 		nestingVisual = null;
-		isHostActive = false;
 	}
 
 	/**
@@ -230,31 +216,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(nestingNode);
 		return (NodeContentPart) nestingNodePart;
-	}
-
-	/**
-	 * Called upon property change notifications fired by the {@link #getHost()
-	 * host}. Performs a layout pass when either the activation of the host has
-	 * finished, or the content synchronization for the host has finished.
-	 *
-	 * @param evt
-	 *            The {@link PropertyChangeEvent} that was fired by the
-	 *            {@link #getHost() host}.
-	 */
-	protected void onHostPropertyChange(PropertyChangeEvent evt) {
-		// TODO: not needed in case of dynamic layout
-		if (GraphContentPart.ACTIVATION_COMPLETE_PROPERTY.equals(evt.getPropertyName())) {
-			// TODO: Suppress Re-Layout when navigating back to a previously
-			// visited graph.
-			if ((Boolean) evt.getNewValue()) {
-				isHostActive = true;
-				applyLayout(true);
-			}
-		} else if (GraphContentPart.SYNC_COMPLETE_PROPERTY.equals(evt.getPropertyName()) && isHostActive) {
-			if ((Boolean) evt.getNewValue()) {
-				applyLayout(true);
-			}
-		}
 	}
 
 	/**

@@ -18,15 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.models.NavigationModel;
+import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -37,28 +42,13 @@ import javafx.util.Pair;
 
 /**
  * The {@link GraphContentPart} is the controller for a {@link Graph} content
- * object. It fires two special property changes:
- * <ul>
- * <li>{@link #ACTIVATION_COMPLETE_PROPERTY}
- * <li>{@link #SYNC_COMPLETE_PROPERTY}
- * </ul>
+ * object. It starts a layout pass after activation and when its content
+ * children change.
  *
  * @author mwienand
  *
  */
 public class GraphContentPart extends AbstractFXContentPart<Group> {
-
-	/**
-	 * A property change event is fired as soon as {@link #activate()
-	 * activation} has finished.
-	 */
-	public static final String ACTIVATION_COMPLETE_PROPERTY = "activationComplete";
-
-	/**
-	 * A property change event for this property name is fired when a content
-	 * synchronization, based on a Graph property change, has finished.
-	 */
-	public static final String SYNC_COMPLETE_PROPERTY = "synchronizationComplete";
 
 	private PropertyChangeListener graphPropertyChangeListener = new PropertyChangeListener() {
 		@SuppressWarnings("unchecked")
@@ -69,11 +59,11 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 				refreshVisual();
 			} else if (Graph.NODES_PROPERTY.equals(evt.getPropertyName())
 					|| Graph.EDGES_PROPERTY.equals(evt.getPropertyName())) {
-				// construct new layout context
+				// update layout context
 				getAdapter(GraphLayoutContext.class).setGraph(getContent());
 				getAdapter(ContentBehavior.class).synchronizeContentChildren(getContentChildren());
-
-				pcs.firePropertyChange(SYNC_COMPLETE_PROPERTY, false, true);
+				// apply layout
+				getAdapter(LayoutContextBehavior.class).applyLayout(true);
 			}
 		}
 	};
@@ -94,7 +84,17 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	protected void doActivate() {
 		super.doActivate();
 		getContent().addPropertyChangeListener(graphPropertyChangeListener);
-		pcs.firePropertyChange(ACTIVATION_COMPLETE_PROPERTY, false, true);
+		// apply layout if no viewport state is saved for this graph, or we are
+		// nested inside a node, or the saved viewport is outdated
+		ViewportState savedViewport = getViewer().getAdapter(NavigationModel.class).getViewportState(getContent());
+		InfiniteCanvas canvas = ((FXViewer) getViewer()).getCanvas();
+		boolean isNotSavedViewport = savedViewport == null;
+		boolean isNested = getParent() instanceof NodeContentPart;
+		boolean isViewportChanged = !isNotSavedViewport
+				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
+		if (isNotSavedViewport || isNested || isViewportChanged) {
+			getAdapter(LayoutContextBehavior.class).applyLayout(true);
+		}
 		refreshVisual();
 	}
 
