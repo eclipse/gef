@@ -17,14 +17,6 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import javafx.application.Platform;
-import javafx.embed.swt.FXCanvas;
-import javafx.event.EventType;
-import javafx.scene.input.RotateEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.SwipeEvent;
-import javafx.scene.input.ZoomEvent;
-
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
@@ -35,6 +27,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import com.sun.javafx.tk.TKSceneListener;
+
+import javafx.application.Platform;
+import javafx.embed.swt.FXCanvas;
+import javafx.event.EventType;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.SwipeEvent;
+import javafx.scene.input.ZoomEvent;
 
 /**
  * A gesture listener that converts and transfers SWT {@link GestureEvent}s to
@@ -397,11 +397,19 @@ public class SwtToFXGestureConverter implements GestureListener {
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
 		// System.out.println(fxEventType + " " + screenPosition);
 
-		// only forward scroll events that are not also emulated
+		// XXX: Due to bug #481331, up to SWT 4.6 M4, the scroll directions were
+		// inverted on the Mac. To achieve backwards compatibility when using
+		// earlier SWT versions, we compensate this here if an earlier SWT
+		// version is used.
+		double multiplierCorrection = 1;
+		if ("cocoa".equals(SWT.getPlatform()) && SWT.getVersion() < 4600) {
+			multiplierCorrection = -1;
+		}
 		sceneListener.scrollEvent(fxEventType, event.xDirection,
 				event.yDirection, // scrollX, scrollY
 				0, 0, // totalScrollX, totalScrollY
-				-5.0, -5.0, // xMultiplier, yMultiplier
+				multiplierCorrection * 5.0, multiplierCorrection * 5.0, // xMultiplier,
+																		// yMultiplier
 				0, // touchCount
 				0, 0, // scrollTextX, scrollTextY
 				0, 0, // defaultTextX, defaultTextY
@@ -409,8 +417,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
-				false); // inertia
-	}
+				false);
+	} // inertia
 
 	private void sendSwipeEvent(final GestureEvent event,
 			TKSceneListener sceneListener) {
