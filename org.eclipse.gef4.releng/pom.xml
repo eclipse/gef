@@ -575,7 +575,7 @@
 
 		<module>../org.eclipse.gef4.graph</module>
 		<module>../org.eclipse.gef4.graph-feature</module>
-		<!-- <module>../org.eclipse.gef4.graph.tests</module> -->
+		<module>../org.eclipse.gef4.graph.tests</module>
 		<module>../org.eclipse.gef4.graph.doc</module>
 		<module>../org.eclipse.gef4.graph.doc-feature</module>
 		<module>../org.eclipse.gef4.graph.sdk-feature</module>

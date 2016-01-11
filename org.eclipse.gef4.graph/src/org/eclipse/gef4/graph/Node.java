@@ -20,6 +20,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.properties.MapProperty;
@@ -76,12 +77,8 @@ public class Node implements IAttributeStore {
 		public Builder(Graph.Builder.Context context, Object key) {
 			this.context = context;
 			if (context != null) {
-				if (key == null) {
-					this.key = new Integer(System.identityHashCode(this)).toString();
-				} else {
-					this.key = key;
-				}
-				this.context.nodeBuilders.put(key, this);
+				this.key = (key == null) ? UUID.randomUUID() : key;
+				this.context.nodeBuilders.put(this.key, this);
 			}
 		}
 

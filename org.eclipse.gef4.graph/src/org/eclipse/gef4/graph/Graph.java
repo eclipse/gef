@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.properties.ListProperty;
@@ -207,7 +208,10 @@ public final class Graph implements IAttributeStore {
 		 */
 		public Graph.Builder nodes(Node... nodes) {
 			for (Node n : nodes) {
-				this.nodes.put(System.identityHashCode(n), n);
+				// use a unique id for each given node (they are not
+				// identifiable from outside, so we just have to ensure the key
+				// is not already used)
+				this.nodes.put(UUID.randomUUID(), n);
 			}
 			return this;
 		}
