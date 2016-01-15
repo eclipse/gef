@@ -264,7 +264,268 @@ public class BezierCurveTests {
 
 	@Test
 	public void test_intersection_performance() {
+		// test performance of intersection computation
+		// fast cases
+		Point referencePoint = new Point(15.0, 10000.0);
+		Line line = new Line(new Point(15.084666766666667, -10000.0),
+				new Point(15.084666766666667, 10000.0));
+		BezierCurve curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		long startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		long endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
 
+		referencePoint = new Point(15.0, 10000.0);
+		line = new Line(new Point(15.254000199999998, -10000.0),
+				new Point(15.254000199999998, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, -10000.0);
+		line = new Line(new Point(26.0428, -10000.0),
+				new Point(26.0428, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.100000000000104, -2.2746851555884886),
+				new Point(26.062501730606815, -2.277152214709952),
+				new Point(26.0375016726132, -2.2787790557391063),
+				new Point(26.000000000000103, -2.2811938345444247));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, -10000.0);
+		line = new Line(new Point(26.3476, -10000.0),
+				new Point(26.3476, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.40000000000011, -2.2543064982196563),
+				new Point(26.362501913756493, -2.256935096991749),
+				new Point(26.337501851265586, -2.258668963768477),
+				new Point(26.300000000000107, -2.2612432934299416));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, -10000.0);
+		line = new Line(new Point(26.6524, -10000.0),
+				new Point(26.6524, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.700000000000113, -2.2326108778904623),
+				new Point(26.66250211105171, -2.235407157058545),
+				new Point(26.63750204398072, -2.2372521371959477),
+				new Point(26.60000000000011, -2.2399921315224565));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, -10000.0);
+		line = new Line(new Point(26.9572, -10000.0),
+				new Point(26.9572, 10000.0));
+		curve = new BezierCurve(
+				new Point(27.000000000000117, -2.2095485650966684),
+				new Point(26.96250232596202, -2.212518843259614),
+				new Point(26.937502252321718, -2.214479096795463),
+				new Point(26.900000000000116, -2.217391003791821));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, 10000.0);
+		line = new Line(new Point(26.0428, -10000.0),
+				new Point(26.0428, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.000000000000103, 2.2811938345444247),
+				new Point(26.037501672613196, 2.2787790557391063),
+				new Point(26.062501730606815, 2.2771522147099525),
+				new Point(26.100000000000104, 2.2746851555884886));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, 10000.0);
+		line = new Line(new Point(26.3476, -10000.0),
+				new Point(26.3476, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.300000000000107, 2.2612432934299416),
+				new Point(26.337501851265582, 2.258668963768477),
+				new Point(26.362501913756493, 2.256935096991749),
+				new Point(26.40000000000011, 2.2543064982196563));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, 10000.0);
+		line = new Line(new Point(26.6524, -10000.0),
+				new Point(26.6524, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.60000000000011, 2.2399921315224565),
+				new Point(26.63750204398072, 2.2372521371959477),
+				new Point(26.66250211105171, 2.235407157058545),
+				new Point(26.700000000000113, 2.2326108778904623));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, 10000.0);
+		line = new Line(new Point(26.9572, -10000.0),
+				new Point(26.9572, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.900000000000116, 2.217391003791821),
+				new Point(26.93750225232172, 2.214479096795463),
+				new Point(26.96250232596202, 2.212518843259614),
+				new Point(27.000000000000117, 2.2095485650966684));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		// 10 slow ones
+
+		referencePoint = new Point(15.0, -10000.0);
+		line = new Line(new Point(15.152400199999999, -10000.0),
+				new Point(15.152400199999999, 10000.0));
+		curve = new BezierCurve(
+				new Point(24.200000000000077, -2.3727936609778726),
+				new Point(17.56250052131255, -2.372947931952322),
+				new Point(13.137498435758783, -2.3730630604781013),
+				new Point(6.499999999999994, -2.372678596158668));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(12.999999999999984, 10000.0);
+		line = new Line(new Point(12.544999999999984, -10000.0),
+				new Point(12.544999999999984, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(15.0, 10000.0);
+		line = new Line(new Point(14.915333333333333, -10000.0),
+				new Point(14.915333333333333, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(15.0, 10000.0);
+		line = new Line(new Point(15.254000199999998, -10000.0),
+				new Point(15.254000199999998, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(9.2, -10000.0);
+		line = new Line(new Point(9.655000199999996, -10000.0),
+				new Point(9.655000199999996, 10000.0));
+		curve = new BezierCurve(
+				new Point(24.200000000000077, -2.3727936609778726),
+				new Point(17.56250052131255, -2.372947931952322),
+				new Point(13.137498435758783, -2.3730630604781013),
+				new Point(6.499999999999994, -2.372678596158668));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(15.0, -10000.0);
+		line = new Line(new Point(14.542800199999999, -10000.0),
+				new Point(14.542800199999999, 10000.0));
+		curve = new BezierCurve(
+				new Point(24.200000000000077, -2.3727936609778726),
+				new Point(17.56250052131255, -2.372947931952322),
+				new Point(13.137498435758783, -2.3730630604781013),
+				new Point(6.499999999999994, -2.372678596158668));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(9.2, 10000.0);
+		line = new Line(new Point(8.745, -10000.0), new Point(8.745, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(15.0, 10000.0);
+		line = new Line(new Point(15.084666766666667, -10000.0),
+				new Point(15.084666766666667, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(26.5, 10000.0);
+		line = new Line(new Point(26.3476, -10000.0),
+				new Point(26.3476, 10000.0));
+		curve = new BezierCurve(
+				new Point(26.300000000000107, 2.2612432934299416),
+				new Point(26.337501851265582, 2.258668963768477),
+				new Point(26.362501913756493, 2.256935096991749),
+				new Point(26.40000000000011, 2.2543064982196563));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
+
+		referencePoint = new Point(15.0, 10000.0);
+		line = new Line(new Point(14.915333333333333, -10000.0),
+				new Point(14.915333333333333, 10000.0));
+		curve = new BezierCurve(
+				new Point(6.599999999999993, 2.3727936609778726),
+				new Point(13.237499975331303, 2.37263938999188),
+				new Point(17.662536995636934, 2.374123516379587),
+				new Point(24.30000000000008, 2.37226488262784));
+		startMillis = System.currentTimeMillis();
+		line.getNearestIntersection(curve, referencePoint);
+		endMillis = System.currentTimeMillis();
+		assertTrue(endMillis - startMillis < 200);
 	}
 
 	@Test
