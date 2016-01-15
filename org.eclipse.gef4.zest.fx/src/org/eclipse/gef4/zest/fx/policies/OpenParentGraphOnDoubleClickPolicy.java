@@ -16,6 +16,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
@@ -38,7 +39,8 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractInteractionPolic
 	public void click(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			// do nothing in case there is an explicit event target
-			if (getHost().getViewer().getVisualPartMap().get(e.getTarget()) != getHost()) {
+			IVisualPart<Node, ? extends Node> targetPart = getHost().getViewer().getVisualPartMap().get(e.getTarget());
+			if (targetPart != null && targetPart != getHost()) {
 				return;
 			}
 
