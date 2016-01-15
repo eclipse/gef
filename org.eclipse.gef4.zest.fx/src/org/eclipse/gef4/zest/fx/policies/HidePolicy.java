@@ -93,7 +93,7 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 		FocusModel<Node> focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
 		});
 		if (focusModel != null) {
-			if (focusModel.getFocused() == part) {
+			if (focusModel.getFocus() == part) {
 				return new ChangeFocusOperation<>(viewer, null);
 
 			}

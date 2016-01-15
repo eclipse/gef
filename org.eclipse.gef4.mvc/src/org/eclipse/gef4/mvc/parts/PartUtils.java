@@ -69,7 +69,7 @@ public class PartUtils {
 			Collection<? extends IVisualPart<VR, ? extends VR>> anchorages) {
 		List<IVisualPart<VR, ? extends VR>> anchoreds = new ArrayList<>();
 		for (IVisualPart<VR, ? extends VR> a : anchorages) {
-			anchoreds.addAll(a.getAnchoreds());
+			anchoreds.addAll(a.getAnchoredsUnmodifiable());
 		}
 		return anchoreds;
 	}
@@ -92,9 +92,9 @@ public class PartUtils {
 			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		HashSet<IVisualPart<VR, ? extends VR>> result = new HashSet<>();
 		Multiset<IVisualPart<VR, ? extends VR>> anchoreds = anchorage
-				.getAnchoreds();
+				.getAnchoredsUnmodifiable();
 		for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
-			if (anchored.getAnchorages().containsEntry(anchorage, role)) {
+			if (anchored.getAnchoragesUnmodifiable().containsEntry(anchorage, role)) {
 				result.add(anchored);
 			}
 		}

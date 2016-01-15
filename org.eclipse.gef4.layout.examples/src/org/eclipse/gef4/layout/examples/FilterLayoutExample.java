@@ -71,7 +71,7 @@ public class FilterLayoutExample extends AbstractZestExample {
 		e(graph, h, e, LABEL, "", LAYOUT_IRRELEVANT, Boolean.TRUE, CSS_CLASS,
 				"red");
 
-		graph.getAttributes().put(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+		graph.attributesProperty().put(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
 				new TreeLayoutAlgorithm(TreeLayoutAlgorithm.TOP_DOWN));
 
 		return graph;

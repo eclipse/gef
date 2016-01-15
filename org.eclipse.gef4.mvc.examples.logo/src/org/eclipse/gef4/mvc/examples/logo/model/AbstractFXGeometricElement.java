@@ -11,32 +11,31 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.model;
 
-import java.beans.PropertyChangeListener;
-
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-abstract public class AbstractFXGeometricElement<G extends IGeometry>
-		implements IPropertyChangeNotifier {
+abstract public class AbstractFXGeometricElement<G extends IGeometry> {
 
 	public static final String GEOMETRY_PROPERTY = "geometry";
 	public static final String TRANSFORM_PROPERTY = "transform";
 	public static final String STROKE_WIDTH_PROPERTY = "strokeWidth";
 
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
-	private G geometry;
-	private AffineTransform transform;
+	private final ObjectProperty<G> geometryProperty = new SimpleObjectProperty<>(
+			this, GEOMETRY_PROPERTY);
+	private final ObjectProperty<AffineTransform> transformProperty = new SimpleObjectProperty<>(
+			this, TRANSFORM_PROPERTY);
 	private Paint stroke = new Color(0, 0, 0, 1);
 	private Effect effect;
-	private double strokeWidth = 0.5;
+	private final DoubleProperty strokeWidthProperty = new SimpleDoubleProperty(
+			this, STROKE_WIDTH_PROPERTY, 0.5);
 
 	public AbstractFXGeometricElement(G geometry) {
 		setGeometry(geometry);
@@ -59,17 +58,12 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 		setStrokeWidth(strokeWidth);
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
 	public Effect getEffect() {
 		return effect;
 	}
 
 	public G getGeometry() {
-		return geometry;
+		return geometryProperty.get();
 	}
 
 	public Paint getStroke() {
@@ -77,16 +71,11 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	}
 
 	public double getStrokeWidth() {
-		return strokeWidth;
+		return strokeWidthProperty.get();
 	}
 
 	public AffineTransform getTransform() {
-		return transform;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return transformProperty.get();
 	}
 
 	public void setEffect(Effect effect) {
@@ -94,9 +83,7 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	}
 
 	public void setGeometry(G geometry) {
-		G old = this.geometry;
-		this.geometry = geometry;
-		pcs.firePropertyChange(GEOMETRY_PROPERTY, old, geometry);
+		geometryProperty.set(geometry);
 	}
 
 	public void setStroke(Paint stroke) {
@@ -104,16 +91,11 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	}
 
 	public void setStrokeWidth(double strokeWidth) {
-		double oldStrokeWidth = this.strokeWidth;
-		this.strokeWidth = strokeWidth;
-		pcs.firePropertyChange(STROKE_WIDTH_PROPERTY, oldStrokeWidth,
-				strokeWidth);
+		strokeWidthProperty.set(strokeWidth);
 	}
 
 	public void setTransform(AffineTransform transform) {
-		AffineTransform old = this.transform;
-		this.transform = transform;
-		pcs.firePropertyChange(TRANSFORM_PROPERTY, old, transform);
+		transformProperty.set(transform);
 	}
 
 }

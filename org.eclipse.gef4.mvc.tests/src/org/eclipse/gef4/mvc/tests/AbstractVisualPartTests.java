@@ -1,10 +1,10 @@
 package org.eclipse.gef4.mvc.tests;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
@@ -12,13 +12,15 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 public class AbstractVisualPartTests {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public class AbstractVisualPartStub extends AbstractVisualPart {
+	public class AbstractVisualPartStub extends AbstractVisualPart<Object, Object> {
 
 		@Override
-		protected void addChildVisual(IVisualPart child, int index) {
+		protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 
 		@Override
@@ -31,85 +33,102 @@ public class AbstractVisualPartTests {
 		}
 
 		@Override
-		protected void removeChildVisual(IVisualPart child, int index) {
+		protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testAddChild() {
-		final List<PropertyChangeEvent> events = new ArrayList<>();
-		AbstractVisualPart<?, ?> parent = new AbstractVisualPartStub();
-		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
-		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
-		parent.addPropertyChangeListener(new PropertyChangeListener() {
+	private class ListChangeExpector<E> implements ListChangeListener<E> {
 
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				events.add(evt);
+		private ObservableList<? extends E> source;
+		private LinkedList<List<E>> removedValuesQueue = new LinkedList<>();
+		private LinkedList<List<E>> addedValuesQueue = new LinkedList<>();
+
+		public ListChangeExpector(ObservableList<? extends E> source) {
+			this.source = source;
+		}
+
+		public void addExpectation(List<E> removedValues, List<E> addedValues) {
+			// We check that the reference to the observable value is correct,
+			// thus do not copy the passed in values.
+			removedValuesQueue.addFirst(removedValues);
+			addedValuesQueue.addFirst(addedValues);
+		}
+
+		public void check() {
+			if (removedValuesQueue.size() > 0) {
+				fail("Did not receive " + removedValuesQueue.size() + " expected changes.");
 			}
-		});
-		Assert.assertEquals(0, parent.getChildren().size());
-		Assert.assertEquals(0, events.size());
-		// check that first child is properly added and that a valid
-		// property change event is fired.
-		parent.addChild(child1);
-		Assert.assertEquals(1, parent.getChildren().size());
-		Assert.assertEquals(1, events.size());
-		Assert.assertEquals(IVisualPart.CHILDREN_PROPERTY, events.get(0).getPropertyName());
-		Assert.assertEquals(Collections.emptyList(), events.get(0).getOldValue());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1 }), events.get(0).getNewValue());
-		// check that second child is properly added and that a valid
-		// property change event is fired.
-		parent.addChild(child2);
-		Assert.assertEquals(2, parent.getChildren().size());
-		Assert.assertEquals(2, events.size());
-		Assert.assertEquals(IVisualPart.CHILDREN_PROPERTY, events.get(1).getPropertyName());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1 }), events.get(1).getOldValue());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1, child2 }),
-				events.get(1).getNewValue());
+		}
+
+		@Override
+		public void onChanged(javafx.collections.ListChangeListener.Change<? extends E> c) {
+			if (removedValuesQueue.size() <= 0) {
+				fail("Received unexpected change.");
+			}
+			while (c.next()) {
+				assertEquals(source, c.getList());
+				assertEquals(removedValuesQueue.pollLast(), c.getRemoved());
+				assertEquals(addedValuesQueue.pollLast(), c.getAddedSubList());
+			}
+		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@Test
+	public void testAddChild() {
+		AbstractVisualPart<Object, ? extends Object> parent = new AbstractVisualPartStub();
+		ListChangeExpector<IVisualPart<Object, ? extends Object>> listChangeListener = new ListChangeExpector<>(
+				parent.getChildrenUnmodifiable());
+		parent.getChildrenUnmodifiable().addListener(listChangeListener);
+		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
+		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
+		Assert.assertEquals(0, parent.getChildrenUnmodifiable().size());
+		// check that first child is properly added and that a valid
+		// property change event is fired.
+		listChangeListener.addExpectation(Collections.<IVisualPart<Object, ? extends Object>> emptyList(),
+				Collections.<IVisualPart<Object, ? extends Object>> singletonList(child1));
+		parent.addChild(child1);
+		Assert.assertEquals(1, parent.getChildrenUnmodifiable().size());
+		listChangeListener.check();
+		// check that second child is properly added and that a valid
+		// property change event is fired.
+		listChangeListener.addExpectation(Collections.<IVisualPart<Object, ? extends Object>> emptyList(),
+				Collections.<IVisualPart<Object, ? extends Object>> singletonList(child2));
+		parent.addChild(child2);
+		listChangeListener.check();
+		Assert.assertEquals(2, parent.getChildrenUnmodifiable().size());
+	}
+
 	@Test
 	public void testRemoveChild() {
-		final List<PropertyChangeEvent> events = new ArrayList<>();
 		AbstractVisualPartStub parent = new AbstractVisualPartStub();
 		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
 		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
 		parent.addChild(child1);
 		parent.addChild(child2);
-		parent.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				events.add(evt);
-			}
-		});
-		Assert.assertEquals(2, parent.getChildren().size());
-		Assert.assertEquals(0, events.size());
+		Assert.assertEquals(2, parent.getChildrenUnmodifiable().size());
+
+		ListChangeExpector<IVisualPart<Object, ? extends Object>> listChangeListener = new ListChangeExpector<>(
+				parent.getChildrenUnmodifiable());
+		parent.getChildrenUnmodifiable().addListener(listChangeListener);
 		// check that second child is properly removed and a valid property
 		// change event is fired.
+		listChangeListener.addExpectation(Collections.<IVisualPart<Object, ? extends Object>> singletonList(child2),
+				Collections.<IVisualPart<Object, ? extends Object>> emptyList());
 		parent.removeChild(child2);
-		Assert.assertEquals(1, parent.getChildren().size());
-		Assert.assertEquals(1, events.size());
-		Assert.assertEquals(IVisualPart.CHILDREN_PROPERTY, events.get(0).getPropertyName());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1, child2 }),
-				events.get(0).getOldValue());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1 }), events.get(0).getNewValue());
+		listChangeListener.check();
+		Assert.assertEquals(1, parent.getChildrenUnmodifiable().size());
+
 		// check that first child is properly removed and a valid property
 		// change event is fired.
+		listChangeListener.addExpectation(Collections.<IVisualPart<Object, ? extends Object>> singletonList(child1),
+				Collections.<IVisualPart<Object, ? extends Object>> emptyList());
 		parent.removeChild(child1);
-		Assert.assertEquals(0, parent.getChildren().size());
-		Assert.assertEquals(2, events.size());
-		Assert.assertEquals(IVisualPart.CHILDREN_PROPERTY, events.get(1).getPropertyName());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1 }), events.get(1).getOldValue());
-		Assert.assertEquals(Collections.emptyList(), events.get(1).getNewValue());
+		listChangeListener.check();
+		Assert.assertEquals(0, parent.getChildrenUnmodifiable().size());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testReorderChild() {
-		final List<PropertyChangeEvent> events = new ArrayList<>();
 		AbstractVisualPartStub parent = new AbstractVisualPartStub();
 		AbstractVisualPartStub child1 = new AbstractVisualPartStub();
 		AbstractVisualPartStub child2 = new AbstractVisualPartStub();
@@ -117,23 +136,19 @@ public class AbstractVisualPartTests {
 		parent.addChild(child1);
 		parent.addChild(child2);
 		parent.addChild(child3);
-		parent.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				events.add(evt);
-			}
-		});
-		Assert.assertEquals(3, parent.getChildren().size());
-		Assert.assertEquals(0, events.size());
+		Assert.assertEquals(3, parent.getChildrenUnmodifiable().size());
+
 		// check that second child is properly removed and a valid property
 		// change event is fired.
+		ListChangeExpector<IVisualPart<Object, ? extends Object>> listChangeListener = new ListChangeExpector<>(
+				parent.getChildrenUnmodifiable());
+		parent.getChildrenUnmodifiable().addListener(listChangeListener);
+		listChangeListener.addExpectation(Collections.<IVisualPart<Object, ? extends Object>> singletonList(child2),
+				Collections.<IVisualPart<Object, ? extends Object>> emptyList());
+		listChangeListener.addExpectation(Collections.<IVisualPart<Object, ? extends Object>> emptyList(),
+				Collections.<IVisualPart<Object, ? extends Object>> singletonList(child2));
 		parent.reorderChild(child2, 2);
-		Assert.assertEquals(3, parent.getChildren().size());
-		Assert.assertEquals(1, events.size());
-		Assert.assertEquals(IVisualPart.CHILDREN_PROPERTY, events.get(0).getPropertyName());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1, child2, child3 }),
-				events.get(0).getOldValue());
-		Assert.assertEquals(Arrays.asList(new AbstractVisualPartStub[] { child1, child3, child2 }),
-				events.get(0).getNewValue());
+		listChangeListener.check();
+		Assert.assertEquals(3, parent.getChildrenUnmodifiable().size());
 	}
 }

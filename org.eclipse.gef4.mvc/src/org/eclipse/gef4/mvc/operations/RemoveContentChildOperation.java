@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * The {@link RemoveContentChildOperation} uses the {@link IContentPart} API to
  * remove a content object from an {@link IContentPart}.
@@ -36,7 +38,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 	private final Object contentChild;
 
 	// capture initial content children (for no-op test)
-	private List<? extends Object> initialContentChildren;
+	private List<Object> initialContentChildren;
 	private int initialIndex;
 
 	/**
@@ -56,8 +58,10 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 		super("Remove Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
-		initialIndex = parent.getContentChildren().indexOf(contentChild);
-		this.initialContentChildren = parent.getContentChildren();
+		initialIndex = parent.getContentChildrenUnmodifiable()
+				.indexOf(contentChild);
+		this.initialContentChildren = ImmutableList
+				.copyOf(parent.getContentChildrenUnmodifiable());
 	}
 
 	@Override
@@ -65,8 +69,8 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("EXEC remove content " + contentChild + " from "
 		// + parent + ".");
-		if (parent.getContent() != null
-				&& parent.getContentChildren().contains(contentChild)) {
+		if (parent.getContent() != null && parent
+				.getContentChildrenUnmodifiable().contains(contentChild)) {
 			parent.removeContentChild(contentChild);
 		}
 		return Status.OK_STATUS;
@@ -88,7 +92,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("UNDO remove content " + contentChild + " from "
 		// + parent + ".");
-		if (!parent.getContentChildren().contains(contentChild)) {
+		if (!parent.getContentChildrenUnmodifiable().contains(contentChild)) {
 			parent.addContentChild(contentChild, initialIndex);
 		}
 		return Status.OK_STATUS;

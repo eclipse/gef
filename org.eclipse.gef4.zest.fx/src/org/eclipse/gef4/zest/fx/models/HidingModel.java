@@ -12,17 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.models;
 
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+
+import javafx.beans.property.ReadOnlySetProperty;
+import javafx.beans.property.ReadOnlySetWrapper;
+import javafx.collections.FXCollections;
 
 /**
  * The {@link HidingModel} manages a {@link Set} of currently hidden
@@ -33,7 +35,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  * @author mwienand
  *
  */
-public class HidingModel implements IPropertyChangeNotifier {
+public class HidingModel {
 
 	/**
 	 * Property name that is used when firing property change notifications when
@@ -41,14 +43,8 @@ public class HidingModel implements IPropertyChangeNotifier {
 	 */
 	public static final String HIDDEN_PROPERTY = "hidden";
 
-	private final PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-	private final Set<org.eclipse.gef4.graph.Node> hidden = Collections
-			.newSetFromMap(new IdentityHashMap<org.eclipse.gef4.graph.Node, Boolean>());
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
+	private ReadOnlySetWrapper<org.eclipse.gef4.graph.Node> hiddenProperty = new ReadOnlySetWrapper<>(this,
+			HIDDEN_PROPERTY, FXCollections.observableSet(new HashSet<org.eclipse.gef4.graph.Node>()));
 
 	/**
 	 * Returns a {@link Set} containing all {@link NodeContentPart}s
@@ -102,11 +98,8 @@ public class HidingModel implements IPropertyChangeNotifier {
 	 * @return A copy of the {@link Set} that contains all hidden
 	 *         {@link org.eclipse.gef4.graph.Node}s.
 	 */
-	public Set<org.eclipse.gef4.graph.Node> getHiddenNodes() {
-		Set<org.eclipse.gef4.graph.Node> copy = Collections
-				.newSetFromMap(new IdentityHashMap<org.eclipse.gef4.graph.Node, Boolean>());
-		copy.addAll(hidden);
-		return copy;
+	public Set<org.eclipse.gef4.graph.Node> getHiddenNodesUnmodifiable() {
+		return FXCollections.unmodifiableObservableSet(hiddenProperty.get());
 	}
 
 	/**
@@ -142,6 +135,15 @@ public class HidingModel implements IPropertyChangeNotifier {
 	}
 
 	/**
+	 * Returns a read-only property containing the hidden nodes.
+	 *
+	 * @return A read-only property named {@link #HIDDEN_PROPERTY}.
+	 */
+	public ReadOnlySetProperty<org.eclipse.gef4.graph.Node> hiddenProperty() {
+		return hiddenProperty.getReadOnlyProperty();
+	}
+
+	/**
 	 * Adds the content of the given {@link NodeContentPart} to the {@link Set}
 	 * of hidden {@link org.eclipse.gef4.graph.Node}s. Notifies all property
 	 * change listeners about this change.
@@ -164,9 +166,7 @@ public class HidingModel implements IPropertyChangeNotifier {
 	 *            {@link Set} of hidden {@link org.eclipse.gef4.graph.Node}s.
 	 */
 	public void hide(org.eclipse.gef4.graph.Node node) {
-		Set<org.eclipse.gef4.graph.Node> oldHidden = getHiddenNodes();
-		hidden.add(node);
-		pcs.firePropertyChange(HIDDEN_PROPERTY, oldHidden, getHiddenNodes());
+		hiddenProperty.add(node);
 	}
 
 	/**
@@ -200,12 +200,7 @@ public class HidingModel implements IPropertyChangeNotifier {
 	 *         otherwise <code>false</code>.
 	 */
 	public boolean isHidden(org.eclipse.gef4.graph.Node node) {
-		return hidden.contains(node);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return hiddenProperty.contains(node);
 	}
 
 	/**
@@ -233,9 +228,7 @@ public class HidingModel implements IPropertyChangeNotifier {
 	 *            s.
 	 */
 	public void show(org.eclipse.gef4.graph.Node node) {
-		Set<org.eclipse.gef4.graph.Node> oldHidden = getHiddenNodes();
-		hidden.remove(node);
-		pcs.firePropertyChange(HIDDEN_PROPERTY, oldHidden, getHiddenNodes());
+		hiddenProperty.remove(node);
 	}
 
 }

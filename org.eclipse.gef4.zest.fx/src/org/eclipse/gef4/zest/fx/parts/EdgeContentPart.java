@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +25,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -38,6 +37,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
@@ -76,13 +76,13 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	 */
 	public static final String CSS_CLASS_CURVE = "curve";
 
-	private PropertyChangeListener edgeAttributesPropertyChangeListener = new PropertyChangeListener() {
+	private MapChangeListener<String, Object> edgeAttributesObserver = new MapChangeListener<String, Object>() {
+
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (Edge.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
-				refreshVisual();
-			}
+		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
+			refreshVisual();
 		}
+
 	};
 
 	@Override
@@ -131,12 +131,12 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getContent().addPropertyChangeListener(edgeAttributesPropertyChangeListener);
+		getContent().attributesProperty().addListener(edgeAttributesObserver);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		getContent().removePropertyChangeListener(edgeAttributesPropertyChangeListener);
+		getContent().attributesProperty().removeListener(edgeAttributesObserver);
 		super.doDeactivate();
 	}
 
@@ -148,7 +148,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		}
 
 		Edge edge = getContent();
-		Map<String, Object> attrs = edge.getAttributes();
+		Map<String, Object> attrs = edge.attributesProperty();
 		GeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// css class
@@ -171,11 +171,15 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 			curveNode.setStyle(connCssStyle);
 		}
 
-		// default decoration for directed graphs
+		// default decoration for directed graphs (in case edge is directed)
 		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(glc.getGraph(), true))) {
-			visual.setEndDecoration(new ArrowHead());
+			if (Boolean.TRUE.equals(getContent().attributesProperty().get(LayoutProperties.DIRECTED_PROPERTY))) {
+				visual.setEndDecoration(new ArrowHead());
+			} else {
+				visual.setEndDecoration(null);
+			}
 		} else {
-			visual.setEndDecoration(new ArrowHead());
+			visual.setEndDecoration(null);
 		}
 
 		// custom decoration
@@ -201,7 +205,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
-	public SetMultimap<Object, String> getContentAnchorages() {
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		SetMultimap<Object, String> anchorages = HashMultimap.create();
 		anchorages.put(getContent().getSource(), "START");
 		anchorages.put(getContent().getTarget(), "END");
@@ -209,7 +213,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
-	public List<? extends Object> getContentChildren() {
+	protected List<? extends Object> doGetContentChildren() {
 		return Collections.emptyList();
 	}
 

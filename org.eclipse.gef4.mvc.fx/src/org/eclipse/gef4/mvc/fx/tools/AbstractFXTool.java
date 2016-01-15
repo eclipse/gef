@@ -102,6 +102,7 @@ public class AbstractFXTool extends AbstractTool<Node> {
 	 * @return All matching policies within the hierarchy from the root part to
 	 *         the target part.
 	 */
+	@SuppressWarnings({ "serial", "unchecked" })
 	protected <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
 			IViewer<Node> viewer, Node target, Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
@@ -122,7 +123,12 @@ public class AbstractFXTool extends AbstractTool<Node> {
 				for (IPolicy<Node> policy : tool.getActivePolicies(viewer)) {
 					if (policy.getClass().isAssignableFrom(policyClass)) {
 						// System.out.println("add active policy " + policy);
-						outerTargetPolicies.add((T) policy);
+						try {
+							outerTargetPolicies.add((T) policy);
+						} catch (ClassCastException e) {
+							// ignore target policy if type parameter is not
+							// appropriate
+						}
 					}
 				}
 			}

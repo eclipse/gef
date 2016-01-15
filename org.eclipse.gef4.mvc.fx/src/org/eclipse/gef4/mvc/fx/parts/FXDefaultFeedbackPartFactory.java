@@ -288,9 +288,9 @@ public class FXDefaultFeedbackPartFactory
 
 		// selection link feedback parts
 		for (IVisualPart<Node, ? extends Node> t : targets) {
-			if (!t.getAnchorages().isEmpty()) {
+			if (!t.getAnchoragesUnmodifiable().isEmpty()) {
 				for (Entry<IVisualPart<Node, ? extends Node>, String> entry : t
-						.getAnchorages().entries()) {
+						.getAnchoragesUnmodifiable().entries()) {
 					if (entry.getKey() instanceof IVisualPart) {
 						IFeedbackPart<Node, ? extends Node> anchorLinkFeedbackPart = createLinkFeedbackPart(
 								t, entry.getKey(), entry.getValue());

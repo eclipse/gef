@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,21 +22,39 @@ import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetWrapper;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
+import org.eclipse.gef4.common.collections.ObservableMultiset;
+import org.eclipse.gef4.common.collections.ObservableMultisetWrapper;
+import org.eclipse.gef4.common.collections.ObservableSetMultimap;
+import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
+import org.eclipse.gef4.common.collections.UnmodifiableObservableMultisetWrapper;
+import org.eclipse.gef4.common.collections.UnmodifiableObservableSetMultimapWrapper;
 import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.InjectAdapters;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
-import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 /**
  * The {@link AbstractVisualPart} is an abstract implementation of the
@@ -62,24 +78,35 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 */
 	private static final String DEFAULT_ANCHORAGE_ROLE = "default";
 
-	/**
-	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
-	 * listeners about changes to this object. May be used by subclasses to
-	 * trigger the notification of listeners.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
+	private ActivatableSupport acs = new ActivatableSupport(this);
 	private AdaptableSupport<IVisualPart<VR, V>> ads = new AdaptableSupport<IVisualPart<VR, V>>(
-			this, pcs);
+			this);
 
-	private IVisualPart<VR, ? extends VR> parent;
-	private List<IVisualPart<VR, ? extends VR>> children;
+	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> parentProperty = new ReadOnlyObjectWrapper<>();
 
-	private Multiset<IVisualPart<VR, ? extends VR>> anchoreds;
-	private SetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages;
+	private ObservableList<IVisualPart<VR, ? extends VR>> children = FXCollections
+			.<IVisualPart<VR, ? extends VR>> observableArrayList();
+	private ObservableList<IVisualPart<VR, ? extends VR>> childrenUnmodifiable = FXCollections
+			.unmodifiableObservableList(children);
+	private ReadOnlyListWrapperEx<IVisualPart<VR, ? extends VR>> childrenProperty = new ReadOnlyListWrapperEx<>(
+			this, CHILDREN_PROPERTY, childrenUnmodifiable);
 
-	private boolean refreshVisual = true;
+	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = new ObservableSetMultimapWrapper<>(
+			HashMultimap.<IVisualPart<VR, ? extends VR>, String> create());
+	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiable = new UnmodifiableObservableSetMultimapWrapper<>(
+			anchorages);
+	private ReadOnlySetMultimapWrapper<IVisualPart<VR, ? extends VR>, String> anchoragesProperty = new ReadOnlySetMultimapWrapper<>(
+			anchoragesUnmodifiable);
+
+	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoreds = new ObservableMultisetWrapper<>(
+			HashMultiset.<IVisualPart<VR, ? extends VR>> create());
+	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiable = new UnmodifiableObservableMultisetWrapper<>(
+			anchoreds);
+	private ReadOnlyMultisetWrapper<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty = new ReadOnlyMultisetWrapper<>(
+			anchoredsUnmodifiable);
+
+	private BooleanProperty refreshVisualProperty = new SimpleBooleanProperty(
+			this, REFRESH_VISUAL_PROPERTY, true);
 	private V visual;
 
 	/**
@@ -108,28 +135,48 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	@Override
 	public final void activate() {
 		if (!acs.isActive()) {
+			// System.out.println("Activate " + this);
 			acs.activate();
+			activateChildren();
 			doActivate();
 		}
 	}
 
+	/**
+	 * Activates the children of this {@link AbstractVisualPart}.
+	 */
+	protected void activateChildren() {
+		for (IVisualPart<VR, ? extends VR> child : children) {
+			child.activate();
+		}
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty activeProperty() {
+		return acs.activeProperty();
+	}
+
+	@Override
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		return ads.adaptersProperty();
+	}
+
 	@Override
 	public void addChild(IVisualPart<VR, ? extends VR> child) {
-		addChild(child, getChildren().size());
+		addChild(child, children.size());
 	}
 
 	@Override
 	public void addChild(IVisualPart<VR, ? extends VR> child, int index) {
-		if (getChildren().indexOf(child) >= 0) {
-			throw new IllegalArgumentException(
-					"Cannot add " + child + " because its already a child.");
+		if (children.contains(child)) {
+			throw new IllegalArgumentException("Cannot add " + child
+					+ " as child of " + this + " because its already a child.");
 		}
 
-		// store old children list (for notifying property change listeners)
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<>(
-				getChildren());
-		addChildWithoutNotify(child, index);
+		// System.out.println(
+		// "Add child " + child + " to " + this + " with index " + index);
 
+		children.add(index, child);
 		child.setParent(this);
 
 		refreshVisual();
@@ -139,23 +186,28 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		if (isActive()) {
 			child.activate();
 		}
-
-		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
 	}
 
 	@Override
 	public void addChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children) {
-		for (IVisualPart<VR, ? extends VR> child : children) {
-			addChild(child);
-		}
+		addChildren(children, this.children.size());
 	}
 
 	@Override
 	public void addChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children, int index) {
-		for (int i = children.size() - 1; i >= 0; i--) {
-			addChild(children.get(i), index);
+		if (!Collections.disjoint(this.children, children)) {
+			List<? extends IVisualPart<VR, ? extends VR>> alreadyContainedChildren = new ArrayList<>(
+					children);
+			children.retainAll(this.children);
+			throw new IllegalArgumentException(
+					"Cannot add " + children + " as children of " + this
+							+ " because the following are already children: "
+							+ alreadyContainedChildren + ".");
+		}
+		for (int i = 0; i < children.size(); i++) {
+			addChild(children.get(i), index + i);
 		}
 	}
 
@@ -176,42 +228,32 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 						+ this.getClass());
 	}
 
-	private void addChildWithoutNotify(IVisualPart<VR, ? extends VR> child,
-			int index) {
-		if (children == null) {
-			children = new ArrayList<>(2);
-		}
-		children.add(index, child);
+	@Override
+	public ReadOnlySetMultimapProperty<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty() {
+		return anchoragesProperty.getReadOnlyProperty();
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyMultisetProperty<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty() {
+		return anchoredsUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	@Override
 	public void attachAnchored(IVisualPart<VR, ? extends VR> anchored) {
-		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
-				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
-				: HashMultiset.create(anchoreds);
-
 		// determine the viewer before adding the anchored
 		IViewer<VR> oldViewer = getViewer();
 
-		if (anchoreds == null) {
-			anchoreds = HashMultiset.create();
-		}
-		anchoreds.add(anchored);
-
 		// register if we obtain a link to the viewer
-		IViewer<VR> newViewer = getViewer();
+		HashMultiset<IVisualPart<VR, ? extends VR>> newAnchoreds = HashMultiset
+				.create(anchoreds);
+		newAnchoreds.add(anchored);
+		IViewer<VR> newViewer = determineViewer(getParent(), newAnchoreds);
 		if (oldViewer == null && newViewer != null) {
 			register(newViewer);
 		}
 
-		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
-				getAnchoreds());
+		// attach to the anchoreds (and fire change notifications)
+		anchoreds.add(anchored);
 	}
 
 	@Override
@@ -229,25 +271,22 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			throw new IllegalArgumentException("Role may not be null.");
 		}
 
-		// copy anchorages by role (required for the change notification)
-		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
-				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
-				: HashMultimap.create(anchorages);
-
-		if (oldAnchorages.containsEntry(anchorage, role)) {
+		if (anchorages.containsEntry(anchorage, role)) {
 			throw new IllegalArgumentException("Already attached to anchorage "
 					+ anchorage + " with role '" + role + "'.");
 		}
 
-		attachToAnchorageWithoutNotify(anchorage, role);
+		// System.out.println("Attach " + this + " to anchorage " + anchorage
+		// + " with role " + role);
+
+		// attach
+		anchorages.put(anchorage, role);
 		anchorage.attachAnchored(this);
 
+		// attach visuals
 		anchorage.refreshVisual();
 		attachToAnchorageVisual(anchorage, role);
 		refreshVisual();
-
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				getAnchorages());
 	}
 
 	/**
@@ -265,15 +304,9 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 						+ this.getClass());
 	}
 
-	private void attachToAnchorageWithoutNotify(
-			IVisualPart<VR, ? extends VR> anchorage, String role) {
-		if (anchorage == null) {
-			throw new IllegalArgumentException("Anchorage may not be null.");
-		}
-		if (anchorages == null) {
-			anchorages = HashMultimap.create();
-		}
-		anchorages.put(anchorage, role);
+	@Override
+	public ReadOnlyListProperty<IVisualPart<VR, ? extends VR>> childrenProperty() {
+		return childrenProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -296,36 +329,38 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	@Override
 	public final void deactivate() {
 		if (acs.isActive()) {
+			// System.out.println("Deactivate " + this);
 			doDeactivate();
+			deactivateChildren();
 			acs.deactivate();
+		}
+	}
+
+	/**
+	 * Deactivates the children of this {@link AbstractVisualPart}.
+	 */
+	protected void deactivateChildren() {
+		for (IVisualPart<VR, ? extends VR> child : children) {
+			child.deactivate();
 		}
 	}
 
 	@Override
 	public void detachAnchored(IVisualPart<VR, ? extends VR> anchored) {
-		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null
-				? HashMultiset.<IVisualPart<VR, ? extends VR>> create()
-				: HashMultiset.create(anchoreds);
-
 		// determine viewer before and after removing the anchored
 		IViewer<VR> oldViewer = getViewer();
-		anchoreds.remove(anchored);
-		IViewer<VR> newViewer = getViewer();
-		anchoreds.add(anchored);
+		HashMultiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = HashMultiset
+				.create(anchoreds);
+		oldAnchoreds.remove(anchored);
+		IViewer<VR> newViewer = determineViewer(getParent(), oldAnchoreds);
 
 		// unregister if we lose the link to the viewer
 		if (oldViewer != null && newViewer == null) {
 			unregister(oldViewer);
 		}
 
+		// detach anchoreds (and fire change notifications)
 		anchoreds.remove(anchored);
-		if (anchoreds.size() == 0) {
-			anchoreds = null;
-		}
-
-		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds,
-				getAnchoreds());
 	}
 
 	@Override
@@ -333,7 +368,6 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 		detachFromAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
 	}
 
-	// counterpart to setParent(null) in case of hierarchy
 	@Override
 	public void detachFromAnchorage(IVisualPart<VR, ? extends VR> anchorage,
 			String role) {
@@ -344,25 +378,20 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			throw new IllegalArgumentException("Role may not be null.");
 		}
 
-		// copy anchorages (required for the change notification)
-		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null
-				? HashMultimap.<IVisualPart<VR, ? extends VR>, String> create()
-				: HashMultimap.create(anchorages);
-
-		if (!oldAnchorages.containsEntry(anchorage, role)) {
+		if (!anchorages.containsEntry(anchorage, role)) {
 			throw new IllegalArgumentException("Not attached to anchorage "
 					+ anchorage + " with role '" + role + "'.");
 		}
 
-		detachFromAnchorageWithoutNotify(anchorage, role);
+		// System.out.println("Detach " + this + " from anchorage " + anchorage
+		// + " with role " + role);
 
-		anchorage.detachAnchored(this);
+		// detach visuals
 		detachFromAnchorageVisual(anchorage, role);
 
-		// TODO: send MapChangeNotification or otherwise identify changed
-		// anchorage and role
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				getAnchorages());
+		// detach
+		anchorage.detachAnchored(this);
+		anchorages.remove(anchorage, role);
 	}
 
 	/**
@@ -380,19 +409,37 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 						+ this.getClass());
 	}
 
-	private void detachFromAnchorageWithoutNotify(
-			IVisualPart<VR, ? extends VR> anchorage, String role) {
-		if (anchorages == null) {
-			throw new IllegalStateException(
-					"Cannot detach from anchorage: not attached.");
+	/**
+	 * Determines the viewer reference via the given parent or any of the given
+	 * anchoreds.
+	 *
+	 * @param parent
+	 *            The parent to obtain the viewer from.
+	 * @param anchoreds
+	 *            The anchoreds to alternatively obtain the viewer from.
+	 * @return The viewer, if it could be determined via the parent or any of
+	 *         the anchoreds.
+	 */
+	protected IViewer<VR> determineViewer(IVisualPart<VR, ? extends VR> parent,
+			Multiset<IVisualPart<VR, ? extends VR>> anchoreds) {
+		IViewer<VR> newViewer = null;
+		if (parent != null && parent.getRoot() != null) {
+			// the new viewer will be determined via the new
+			// parent's root
+			newViewer = parent.getRoot().getViewer();
+		} else {
+			// the new viewer will be determined via the current
+			// anchorages
+			for (IVisualPart<VR, ? extends VR> anchored : anchoreds
+					.elementSet()) {
+				IRootPart<VR, ? extends VR> root = anchored.getRoot();
+				if (root != null) {
+					newViewer = root.getViewer();
+					break;
+				}
+			}
 		}
-		if (!anchorages.remove(anchorage, role)) {
-			throw new IllegalStateException(
-					"Cannot detach from anchorage: not attached.");
-		}
-		if (anchorages.isEmpty()) {
-			anchorages = null;
-		}
+		return newViewer;
 	}
 
 	@Override
@@ -405,23 +452,17 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	/**
-	 * Post {@link #activate()} hook that activates this part's children.
+	 * Post {@link #activate()} hook. Does nothing by default
 	 */
 	protected void doActivate() {
-		// TODO: rather do this via property changes (so a child becomes active
-		// when its parent and anchorages are active??
-		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
-			child.activate();
-		}
+		// nothing to do by default
 	}
 
 	/**
-	 * Pre {@link #deactivate()} hook that deactivates this part's children.
+	 * Pre {@link #deactivate()} hook. Does nothing by default
 	 */
 	protected void doDeactivate() {
-		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
-			child.deactivate();
-		}
+		// nothing to do by default
 	}
 
 	/**
@@ -448,6 +489,11 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	@Override
+	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		return ads.getAdapters();
+	}
+
+	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
@@ -460,23 +506,13 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	@Override
-	public SetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchorages() {
-		if (anchorages == null) {
-			return Multimaps.unmodifiableSetMultimap(HashMultimap
-					.<IVisualPart<VR, ? extends VR>, String> create());
-		}
-		return Multimaps.unmodifiableSetMultimap(anchorages);
+	public ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchoragesUnmodifiable() {
+		return anchoragesUnmodifiable;
 	}
 
 	@Override
-	public Multiset<IVisualPart<VR, ? extends VR>> getAnchoreds() {
-		if (anchoreds == null) {
-			return Multisets
-					.<IVisualPart<VR, ? extends VR>> unmodifiableMultiset(
-							HashMultiset
-									.<IVisualPart<VR, ? extends VR>> create());
-		}
-		return Multisets.unmodifiableMultiset(anchoreds);
+	public ObservableMultiset<IVisualPart<VR, ? extends VR>> getAnchoredsUnmodifiable() {
+		return anchoredsUnmodifiable;
 	}
 
 	@Override
@@ -485,16 +521,13 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	@Override
-	public List<IVisualPart<VR, ? extends VR>> getChildren() {
-		if (children == null) {
-			return Collections.emptyList();
-		}
-		return Collections.unmodifiableList(children);
+	public ObservableList<IVisualPart<VR, ? extends VR>> getChildrenUnmodifiable() {
+		return childrenUnmodifiable;
 	}
 
 	@Override
 	public IVisualPart<VR, ? extends VR> getParent() {
-		return parent;
+		return parentProperty.get();
 	}
 
 	@Override
@@ -510,7 +543,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 				return root;
 			}
 		}
-		for (IVisualPart<VR, ? extends VR> anchored : getAnchoreds()
+		for (IVisualPart<VR, ? extends VR> anchored : getAnchoredsUnmodifiable()
 				.elementSet()) {
 			IRootPart<VR, ? extends VR> root = anchored.getRoot();
 			if (root != null) {
@@ -555,7 +588,12 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public boolean isRefreshVisual() {
-		return refreshVisual;
+		return refreshVisualProperty.get();
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<IVisualPart<VR, ? extends VR>> parentProperty() {
+		return parentProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -566,8 +604,14 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	@Override
 	public final void refreshVisual() {
 		if (visual != null && isRefreshVisual()) {
+			// System.out.println("Refresh visual of " + this);
 			doRefreshVisual(visual);
 		}
+	}
+
+	@Override
+	public BooleanProperty refreshVisualProperty() {
+		return refreshVisualProperty;
 	}
 
 	/**
@@ -599,27 +643,36 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public void removeChild(IVisualPart<VR, ? extends VR> child) {
-		if (getChildren().indexOf(child) < 0) {
-			throw new IllegalArgumentException(
-					"Cannot remove " + child + " because its not a child.");
+		if (!children.contains(child)) {
+			throw new IllegalArgumentException("Cannot remove " + child
+					+ " as child of " + this + " because it is no child.");
 		}
-		// store old children list (for notifying property change listeners)
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<>(
-				getChildren());
+
+		// System.out.println("Remove child " + child + " from " + this + ".");
 
 		if (isActive()) {
 			child.deactivate();
 		}
-		removeChildVisual(child, getChildren().indexOf(child));
-		child.setParent(null);
-		removeChildWithoutNotify(child);
 
-		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
+		removeChildVisual(child, children.indexOf(child));
+
+		child.setParent(null);
+		children.remove(child);
 	}
 
 	@Override
 	public void removeChildren(
 			List<? extends IVisualPart<VR, ? extends VR>> children) {
+		if (!this.children.containsAll(children)) {
+			List<? extends IVisualPart<VR, ? extends VR>> notContainedChildren = new ArrayList<>(
+					children);
+			notContainedChildren.removeAll(this.children);
+			throw new IllegalArgumentException(
+					"Cannot remove " + children + " as children of " + this
+							+ " because the following are no children: "
+							+ notContainedChildren + ".");
+		}
+		// TODO: use children.removeAll and perform the de-registration here
 		for (IVisualPart<VR, ? extends VR> child : children) {
 			removeChild(child);
 		}
@@ -640,27 +693,17 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 						+ this.getClass());
 	}
 
-	private void removeChildWithoutNotify(IVisualPart<VR, ? extends VR> child) {
-		children.remove(child);
-		if (children.size() == 0) {
-			children = null;
-		}
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
 	@Override
 	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index) {
-		List<IVisualPart<VR, ? extends VR>> oldChildren = new ArrayList<>(
-				getChildren());
-		removeChildVisual(child, children.indexOf(child));
-		removeChildWithoutNotify(child);
-		addChildWithoutNotify(child, index);
-		addChildVisual(child, index);
-		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
+		int oldIndex = getChildrenUnmodifiable().indexOf(child);
+		if (oldIndex < 0) {
+			throw new IllegalArgumentException("Cannot reorder child " + child
+					+ " because it is no child.");
+		}
+		// TODO: this could be made more performant (reordering the children and
+		// visuals)
+		removeChild(child);
+		addChild(child, index);
 	}
 
 	@Override
@@ -690,41 +733,35 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	 */
 	@Override
 	public void setParent(IVisualPart<VR, ? extends VR> newParent) {
-		if (this.parent == newParent) {
+		IVisualPart<VR, ? extends VR> oldParent = parentProperty.get();
+		// ensure there is no action if the parent did not change
+		if (oldParent == newParent) {
 			return;
 		}
 
-		// save old parent for the change notification
-		IVisualPart<VR, ? extends VR> oldParent = this.parent;
+		// determine how parent change will affect the viewer reference
+		final IViewer<VR> oldViewer = getViewer();
+		final IViewer<VR> newViewer = determineViewer(newParent,
+				getAnchoredsUnmodifiable());
 
-		// determine viewer before and after setting the parent
-		IViewer<VR> oldViewer = getViewer();
-		this.parent = newParent;
-		IViewer<VR> newViewer = getViewer();
-		this.parent = oldParent;
-
-		// unregister if we were registered (oldViewer != null) and the viewer
-		// changes (newViewer != oldViewer)
+		// unregister from old viewer in case we were registered (oldViewer !=
+		// null) and the viewer changes (newViewer != oldViewer)
 		if (oldViewer != null && newViewer != oldViewer) {
 			unregister(oldViewer);
 		}
 
-		this.parent = newParent;
-
-		// if we obtain a link to the viewer then register visuals
+		// if we obtain a link to the viewer then register at new viewer
 		if (newViewer != null && newViewer != oldViewer) {
 			register(newViewer);
 		}
 
-		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, newParent);
+		// change the parent property (which will notify listeners)
+		parentProperty.set(newParent);
 	}
 
 	@Override
 	public void setRefreshVisual(boolean isRefreshVisual) {
-		boolean oldValue = this.refreshVisual;
-		this.refreshVisual = isRefreshVisual;
-		pcs.firePropertyChange(REFRESH_VISUAL_PROPERTY, oldValue,
-				refreshVisual);
+		refreshVisualProperty.set(isRefreshVisual);
 	}
 
 	/**

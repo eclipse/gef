@@ -118,7 +118,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 	 * @return The target {@link IVisualPart} for this policy.
 	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart() {
-		return getHost().getAnchorages().keySet().iterator().next();
+		return getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
 
 	private Affine getTargetTransform() {
@@ -139,7 +139,8 @@ public class FXResizeTranslateOnHandleDragPolicy
 
 	private boolean isMultiSelection() {
 		return getTargetPart().getRoot().getViewer()
-				.getAdapter(SelectionModel.class).getSelection().size() > 1;
+				.getAdapter(SelectionModel.class).getSelectionUnmodifiable()
+				.size() > 1;
 	}
 
 	@Override

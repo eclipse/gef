@@ -14,26 +14,24 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * The {@link SelectionModel} is used to store the current viewer's selection.
  * It represents the selection as an ordered list of {@link IContentPart}s.
  * Thereby, it supports a multi-selection and allows to identify a primary
  * selection (the head element of the list) that may be treated specially.
- * <p>
- * The {@link SelectionModel} is an {@link IPropertyChangeNotifier} and will
- * notify about changes to the selection, using the {@link #SELECTION_PROPERTY}
- * property name.
  *
  * @author anyssen
  * @author mwienand
@@ -43,26 +41,22 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            javafx.scene.Node in case of JavaFX.
  *
  */
-public class SelectionModel<VR> implements IPropertyChangeNotifier {
+// TODO: We could expose the selection as modifiable collection and modifiable
+// read-only property if we could use an ordered set. As we use a list, we have
+// to ensure it does not contain duplicates.
+public class SelectionModel<VR> {
 
 	/**
-	 * <pre>
-	 * &quot;selection&quot;
-	 * </pre>
-	 *
-	 * The property name which is used for {@link PropertyChangeEvent}s.
+	 * Name of the {@link #selectionUnmodifiableProperty()}.
 	 */
 	public static final String SELECTION_PROPERTY = "selection";
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
-	private List<IContentPart<VR, ? extends VR>> selection = new ArrayList<>();
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
+	private ObservableList<IContentPart<VR, ? extends VR>> selection = FXCollections
+			.observableArrayList();
+	private ObservableList<IContentPart<VR, ? extends VR>> selectionUnmodifiable = FXCollections
+			.unmodifiableObservableList(selection);
+	private ReadOnlyListWrapper<IContentPart<VR, ? extends VR>> selectionUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
+			this, SELECTION_PROPERTY, selectionUnmodifiable);
 
 	/**
 	 * Updates the current selection by adding the given {@link IContentPart} to
@@ -100,38 +94,27 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void appendToSelection(
 			List<? extends IContentPart<VR, ? extends VR>> toBeAppended) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
-		selection.removeAll(toBeAppended);
+		List<IContentPart<VR, ? extends VR>> newSelection = getSelectionCopy();
+		newSelection.removeAll(toBeAppended);
 		for (IContentPart<VR, ? extends VR> p : toBeAppended) {
-			if (selection.contains(p)) {
+			if (newSelection.contains(p)) {
 				throw new IllegalArgumentException("The content part " + p
 						+ " is provided more than once in the given list.");
 			}
-			selection.add(p);
+			newSelection.add(p);
 		}
-		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelection());
+		// XXX: ObservableList.setAll() is not properly guarded against not
+		// having an effect (and will always notify attached listeners)
+		if (!selection.equals(newSelection)) {
+			selection.setAll(newSelection);
+		}
 	}
 
 	/**
 	 * Clears the current selection.
 	 */
 	public void clearSelection() {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selection.clear();
-		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelection());
-	}
-
-	/**
-	 * Returns an unmodifiable list of the currently selected
-	 * {@link IContentPart}s.
-	 *
-	 * @return An unmodifiable list of the currently selected
-	 *         {@link IContentPart}s.
-	 */
-	public List<IContentPart<VR, ? extends VR>> getSelection() {
-		return Collections.unmodifiableList(selection);
 	}
 
 	/**
@@ -143,6 +126,17 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	private List<IContentPart<VR, ? extends VR>> getSelectionCopy() {
 		return new ArrayList<>(selection);
+	}
+
+	/**
+	 * Returns an unmodifiable observable list of the currently selected
+	 * {@link IContentPart}s.
+	 *
+	 * @return An unmodifiable observable list of the currently selected
+	 *         {@link IContentPart}s.
+	 */
+	public ObservableList<IContentPart<VR, ? extends VR>> getSelectionUnmodifiable() {
+		return selectionUnmodifiable;
 	}
 
 	/**
@@ -195,18 +189,19 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void prependToSelection(
 			List<? extends IContentPart<VR, ? extends VR>> toBePrepended) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
-		selection.removeAll(toBePrepended);
+		List<IContentPart<VR, ? extends VR>> newSelection = getSelectionCopy();
+		newSelection.removeAll(toBePrepended);
 		int i = 0;
 		for (IContentPart<VR, ? extends VR> p : toBePrepended) {
-			if (selection.contains(p)) {
+			if (newSelection.contains(p)) {
 				throw new IllegalArgumentException("The content part " + p
 						+ " is provided more than once in the given list.");
 			}
-			selection.add(i++, p);
+			newSelection.add(i++, p);
 		}
-		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelection());
+		if (!selection.equals(newSelection)) {
+			selection.setAll(newSelection);
+		}
 	}
 
 	/**
@@ -220,10 +215,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void removeFromSelection(
 			Collection<? extends IContentPart<VR, ? extends VR>> contentParts) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selection.removeAll(contentParts);
-		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelection());
 	}
 
 	/**
@@ -236,12 +228,18 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void removeFromSelection(
 			IContentPart<VR, ? extends VR> contentPart) {
-		removeFromSelection(Collections.singletonList(contentPart));
+		selection.remove(contentPart);
 	}
 
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+	/**
+	 * Returns an unmodifiable read-only list property that represents the
+	 * current selection.
+	 *
+	 * @return An unmodifiable read-only property named
+	 *         {@link #SELECTION_PROPERTY}.
+	 */
+	public ReadOnlyListProperty<IContentPart<VR, ? extends VR>> selectionUnmodifiableProperty() {
+		return selectionUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -258,24 +256,24 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * Replaces the current selection with the given list of
 	 * {@link IContentPart} s.
 	 *
-	 * @param newSelection
+	 * @param selection
 	 *            The list of {@link IContentPart}s constituting the new
 	 *            selection.
 	 */
 	public void setSelection(
-			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
-		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
-		selection.clear();
+			List<? extends IContentPart<VR, ? extends VR>> selection) {
+		List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<>();
 		int i = 0;
-		for (IContentPart<VR, ? extends VR> p : newSelection) {
-			if (selection.contains(p)) {
+		for (IContentPart<VR, ? extends VR> p : selection) {
+			if (newSelection.contains(p)) {
 				throw new IllegalArgumentException("The content part " + p
 						+ " is provided more than once in the given list.");
 			}
-			selection.add(i++, p);
+			newSelection.add(i++, p);
 		}
-		pcs.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelection());
+		if (!this.selection.equals(newSelection)) {
+			this.selection.setAll(newSelection);
+		}
 	}
 
 }

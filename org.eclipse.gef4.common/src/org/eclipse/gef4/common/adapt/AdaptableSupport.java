@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -23,21 +22,20 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.common.dispose.IDisposable;
 
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * A support class to manage adapters for a source {@link IAdaptable}. It offers
  * all methods defined by {@link IAdaptable}, while not formally implementing
  * the interface, and can thus be used by a source {@link IAdaptable} as a
  * delegate.
- * <p>
- * In addition to the source {@link IAdaptable} a {@link PropertyChangeSupport}
- * is expected to be passe in during construction. It will be used to fire
- * {@link PropertyChangeEvent}s whenever an adapter is set or unset (
- * {@link #unsetAdapter(Object)}). {@link IAdaptable#ADAPTERS_PROPERTY} will be
- * used as the property name within all change events.
  * <p>
  * If the {@link IAdaptable} is also {@link IActivatable}, it will ensure
  * adapters are activated/deactivated when being set/unset dependent on the
@@ -58,9 +56,12 @@ import com.google.common.reflect.TypeToken;
  */
 public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 
+	private ObservableMap<AdapterKey<?>, Object> adapters = FXCollections
+			.<AdapterKey<?>, Object> observableHashMap();
+	private ObservableMap<AdapterKey<?>, Object> adaptersUnmodifiable = FXCollections
+			.unmodifiableObservableMap(adapters);
+	private ReadOnlyMapWrapperEx<AdapterKey<?>, Object> adaptersUnmodifiableProperty = null;
 	private A source;
-	private PropertyChangeSupport pcs;
-	private Map<AdapterKey<?>, Object> adapters;
 
 	/**
 	 * Creates a new {@link AdaptableSupport} for the given source
@@ -70,20 +71,14 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 *            The {@link IAdaptable} that encloses the to be created
 	 *            {@link AdaptableSupport}, delegating calls to it. May not be
 	 *            <code>null</code>
-	 * @param pcs
-	 *            An {@link PropertyChangeSupport}, which will be used to fire
-	 *            {@link PropertyChangeEvent}'s whenever adapters are set or
-	 *            unset. May not be <code>null</code>
 	 */
-	public AdaptableSupport(A source, PropertyChangeSupport pcs) {
+	public AdaptableSupport(A source) {
 		if (source == null) {
 			throw new IllegalArgumentException("source may not be null.");
 		}
-		if (pcs == null) {
-			throw new IllegalArgumentException("pcs may not be null.");
-		}
 		this.source = source;
-		this.pcs = pcs;
+		this.adaptersUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(source,
+				IAdaptable.ADAPTERS_PROPERTY, adaptersUnmodifiable);
 	}
 
 	private void activateAdapters() {
@@ -116,7 +111,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * @see IAdaptable#getAdapter(AdapterKey)
 	 */
 	public <T> T getAdapter(AdapterKey<T> key) {
-		if (adapters == null) {
+		if (adapters.isEmpty()) {
 			return null;
 		}
 
@@ -197,14 +192,11 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 * Retrieves all registered adapters, mapped to the respective
 	 * {@link AdapterKey}s they are registered.
 	 * 
-	 * @return A map containing the registered adapters under their
-	 *         {@link AdapterKey}s as a copy.
+	 * @return An unmodifiable observable map containing the registered adapters under
+	 *         their {@link AdapterKey}s as a copy.
 	 */
-	public Map<AdapterKey<?>, Object> getAdapters() {
-		if (adapters == null) {
-			return Collections.emptyMap();
-		}
-		return new HashMap<>(adapters);
+	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		return adaptersUnmodifiable;
 	}
 
 	/**
@@ -252,17 +244,15 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	@SuppressWarnings("unchecked")
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			TypeToken<? super T> key) {
-		if (adapters == null) {
+		if (adapters.isEmpty()) {
 			return Collections.emptyMap();
 		}
 		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<>();
-		if (adapters != null) {
-			for (AdapterKey<?> k : adapters.keySet()) {
-				if (key.isAssignableFrom(k.getKey())) {
-					// check type compliance...
-					typeSafeAdapters.put((AdapterKey<? extends T>) k,
-							(T) adapters.get(k));
-				}
+		for (AdapterKey<?> k : adapters.keySet()) {
+			if (key.isAssignableFrom(k.getKey())) {
+				// check type compliance...
+				typeSafeAdapters.put((AdapterKey<? extends T>) k,
+						(T) adapters.get(k));
 			}
 		}
 		return typeSafeAdapters;
@@ -274,20 +264,19 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (typeKey == null) {
 			throw new IllegalArgumentException("typeKey may not be null");
 		}
-		if (adapters == null) {
+		if (adapters.isEmpty()) {
 			return Collections.emptyMap();
 		}
 
 		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<>();
-		if (adapters != null) {
-			for (AdapterKey<?> k : adapters.keySet()) {
-				if (role == null || k.getRole().equals(role)) {
-					// return all adapters assignable to the given type key
-					if (typeKey.isAssignableFrom(k.getKey())) {
-						typeSafeAdapters.put((AdapterKey<? extends T>) k,
-								(T) adapters.get(k));
+		for (AdapterKey<?> k : adapters.keySet()) {
+			if (role == null || k.getRole().equals(role)) {
+				// return all adapters assignable to the given type
+				// key
+				if (typeKey.isAssignableFrom(k.getKey())) {
+					typeSafeAdapters.put((AdapterKey<? extends T>) k,
+							(T) adapters.get(k));
 
-					}
 				}
 			}
 		}
@@ -397,45 +386,49 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 					+ adapter.getClass().getSimpleName());
 		}
 
-		if (adapters == null) {
-			adapters = new HashMap<>();
-		}
-
 		AdapterKey<T> key = AdapterKey.get(adapterType, role);
 		if (adapters.containsKey(key)) {
 			if (adapters.get(key) != adapter) {
 				throw new IllegalArgumentException("A different adapter ("
-						+ adapter + ") is already registered with key " + key + " at adaptable " + source);
+						+ adapter + ") is already registered with key " + key
+						+ " at adaptable " + source);
 			} else {
 				System.err.println("The adapter " + adapter
-						+ " was already registered with key " + key + " at adaptable " + source);
+						+ " was already registered with key " + key
+						+ " at adaptable " + source);
 			}
 		}
 
-		// deactivate already registered adapters, if adaptable is IActivatable
+		// deactivate already registered adapters, if adaptable is
+		// IActivatable
 		// and currently active
 		if (source instanceof IActivatable
 				&& ((IActivatable) source).isActive()) {
 			deactivateAdapters();
 		}
 
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(
-				adapters);
-
 		adapters.put(key, adapter);
 		if (adapter instanceof IAdaptable.Bound) {
 			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
 		}
 
-		// activate all adapters, if adaptable is IActivatable and currently
+		// activate all adapters, if adaptable is IActivatable and
+		// currently
 		// active
 		if (source instanceof IActivatable
 				&& ((IActivatable) source).isActive()) {
 			activateAdapters();
 		}
+	}
 
-		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
-				new HashMap<>(adapters));
+	/**
+	 * Returns a read-only map property, containing the adapters mapped to their
+	 * keys.
+	 * 
+	 * @return A read-only map property.
+	 */
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		return adaptersUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -449,20 +442,18 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void unsetAdapter(T adapter) {
-		if (adapters == null || !adapters.containsValue(adapter)) {
+		if (!adapters.containsValue(adapter)) {
 			throw new IllegalArgumentException(
 					"Given adapter is not registered.");
 		}
 
-		// deactivate already registered adapters, if adaptable is IActivatable
+		// deactivate already registered adapters, if adaptable is
+		// IActivatable
 		// and currently active
 		if (source instanceof IActivatable
 				&& ((IActivatable) source).isActive()) {
 			deactivateAdapters();
 		}
-
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(
-				adapters);
 
 		// process all keys and remove those pointing to the given adapter
 		for (AdapterKey<?> key : adapters.keySet()) {
@@ -481,13 +472,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 				&& ((IActivatable) source).isActive()) {
 			activateAdapters();
 		}
-
-		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
-				new HashMap<>(adapters));
-
-		if (adapters.size() == 0) {
-			adapters = null;
-		}
 	}
 
 	/**
@@ -502,7 +486,8 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void dispose() {
-		// deactivate already registered adapters, if adaptable is IActivatable
+		// deactivate already registered adapters, if adaptable is
+		// IActivatable
 		// and currently active (thus adapters are also active)
 		if (source instanceof IActivatable
 				&& ((IActivatable) source).isActive()) {
@@ -510,8 +495,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 					"source needs to be deactivated before disposing this AdaptableSupport.");
 		}
 
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(
-				adapters);
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<>(adapters);
 
 		for (AdapterKey<?> key : oldAdapters.keySet()) {
 			Object adapter = adapters.remove(key);
@@ -529,7 +513,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		}
 
 		adapters.clear();
-		adapters = null;
 	}
 
 }

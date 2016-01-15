@@ -213,7 +213,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection();
+				}).getSelectionUnmodifiable();
 	}
 
 	/**

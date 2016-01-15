@@ -35,7 +35,7 @@ import javafx.scene.input.KeyEvent;
  *
  */
 public class FXDeleteSelectedOnTypePolicy
-		extends AbstractInteractionPolicy<Node>implements IFXOnTypePolicy {
+		extends AbstractInteractionPolicy<Node> implements IFXOnTypePolicy {
 
 	/**
 	 * Returns <code>true</code> if the given {@link KeyEvent} is a "delete"
@@ -76,7 +76,7 @@ public class FXDeleteSelectedOnTypePolicy
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		List<IContentPart<Node, ? extends Node>> selected = new ArrayList<>(
 				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection());
+				}).getSelectionUnmodifiable());
 
 		// if no parts are selected, we do not delete anything
 		if (selected.isEmpty()) {

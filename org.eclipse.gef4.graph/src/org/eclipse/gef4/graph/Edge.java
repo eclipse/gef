@@ -13,14 +13,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
-import org.eclipse.gef4.common.properties.MapProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * An {@link Edge} represents a (directed) connection between two {@link Node}s
@@ -31,11 +35,6 @@ import org.eclipse.gef4.graph.Graph.Builder.Context;
  *
  */
 public class Edge implements IAttributeStore {
-
-	/*
-	 * TODO: How to check consistency? The associated graph has to be an
-	 * ancestor of both source and target nodes.
-	 */
 
 	/**
 	 * The {@link Builder} can be used to construct an {@link Edge} little by
@@ -88,8 +87,8 @@ public class Edge implements IAttributeStore {
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
-		 * {@link Edge#getAttributes() attributes map} of the {@link Edge} which
-		 * is constructed by this {@link Builder}.
+		 * {@link Edge#attributesProperty() attributesProperty map} of the
+		 * {@link Edge} which is constructed by this {@link Builder}.
 		 *
 		 * @param key
 		 *            The attribute name which is inserted.
@@ -187,7 +186,8 @@ public class Edge implements IAttributeStore {
 		}
 	}
 
-	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 	private Node source;
 	private Node target;
 	private Graph graph; // associated graph
@@ -195,20 +195,21 @@ public class Edge implements IAttributeStore {
 	/**
 	 * Constructs a new {@link Edge} which connects the given <i>source</i>
 	 * {@link Node} with the given <i>target</i> {@link Node}. The given
-	 * <i>attributes</i> are copied into the {@link #getAttributes() attributes
-	 * map} of this {@link Edge}.
+	 * <i>attributesProperty</i> are copied into the
+	 * {@link #attributesProperty() attributesProperty map} of this {@link Edge}
+	 * .
 	 *
-	 * @param attrs
-	 *            A {@link Map} containing the attributes which are copied into
-	 *            the {@link #getAttributes() attributes map} of this
-	 *            {@link Edge}.
+	 * @param attributes
+	 *            A {@link Map} containing the attributesProperty which are
+	 *            copied into the {@link #attributesProperty()
+	 *            attributesProperty map} of this {@link Edge}.
 	 * @param source
 	 *            The source {@link Node} for this {@link Edge}.
 	 * @param target
 	 *            The target {@link Node} for this {@link Edge}.
 	 */
-	public Edge(Map<String, Object> attrs, Node source, Node target) {
-		this.attrs.putAll(attrs);
+	public Edge(Map<String, Object> attributes, Node source, Node target) {
+		this.attributesProperty.putAll(attributes);
 		this.source = source;
 		this.target = target;
 	}
@@ -227,8 +228,8 @@ public class Edge implements IAttributeStore {
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		attrs.addPropertyChangeListener(listener);
+	public ReadOnlyMapProperty<String, Object> attributesProperty() {
+		return attributesProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -240,15 +241,15 @@ public class Edge implements IAttributeStore {
 			return false;
 		}
 		Edge thatEdge = (Edge) that;
-		boolean attrsEqual = this.getAttributes().equals(thatEdge.getAttributes());
+		boolean attrsEqual = this.attributesProperty().equals(thatEdge.attributesProperty());
 		boolean sourceEqual = this.getSource().equals(thatEdge.getSource());
 		boolean targetEqual = this.getTarget().equals(thatEdge.getTarget());
 		return attrsEqual && sourceEqual && targetEqual;
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return attrs;
+	public ObservableMap<String, Object> getAttributes() {
+		return attributesProperty.get();
 	}
 
 	/**
@@ -281,15 +282,10 @@ public class Edge implements IAttributeStore {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = 31 * result + getAttributes().hashCode();
+		result = 31 * result + attributesProperty().hashCode();
 		result = 31 * result + getSource().hashCode();
 		result = 31 * result + getTarget().hashCode();
 		return result;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		attrs.removePropertyChangeListener(listener);
 	}
 
 	/**
@@ -329,14 +325,14 @@ public class Edge implements IAttributeStore {
 		sb.append("Edge {");
 		boolean separator = false;
 		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
-		sortedAttrs.putAll(attrs);
+		sortedAttrs.putAll(attributesProperty);
 		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {
 				sb.append(", ");
 			} else {
 				separator = true;
 			}
-			sb.append(attrKey.toString() + " : " + attrs.get(attrKey));
+			sb.append(attrKey.toString() + " : " + attributesProperty.get(attrKey));
 		}
 		sb.append("} from " + getSource() + " to " + getTarget());
 		return sb.toString();

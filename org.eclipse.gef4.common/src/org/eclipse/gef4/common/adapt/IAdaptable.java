@@ -11,13 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
-import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.ObservableMap;
 
 /**
  * An {@link IAdaptable} allows to register and retrieve adapters under a given
@@ -49,7 +49,7 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author anyssen
  */
-public interface IAdaptable extends IPropertyChangeNotifier {
+public interface IAdaptable {
 
 	/**
 	 * To be implemented by an adapter to indicate that it intends to be bounded
@@ -88,8 +88,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	}
 
 	/**
-	 * A key used as {@link PropertyChangeEvent#getPropertyName()} when
-	 * notifying about registering/unregistering of adapters.
+	 * The name of the {@link #adaptersProperty() adapters property}.
 	 */
 	public static final String ADAPTERS_PROPERTY = "adapters";
 
@@ -197,6 +196,22 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 			Class<? super T> key);
 
 	/**
+	 * Returns an unmodifiable read-only map property that contains the
+	 * registered adapters by their keys.
+	 * 
+	 * @return An unmodifiable read-only map property.
+	 */
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty();
+
+	/**
+	 * Returns an unmodifiable {@link ObservableMap} that contains the
+	 * registered adapters by their keys.
+	 * 
+	 * @return An unmodifiable {@link ObservableMap}.
+	 */
+	public ObservableMap<AdapterKey<?>, Object> getAdapters();
+
+	/**
 	 * Returns all adapters 'matching' the given {@link TypeToken} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type or of the
@@ -234,7 +249,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 *            The adapter type.
 	 * @param adapter
 	 *            The adapter to register under the given {@link Class} key.
-	 *            
+	 * 
 	 * @see IAdaptable#setAdapter(Object, String)
 	 */
 	public <T> void setAdapter(T adapter);
@@ -252,7 +267,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
 	public <T> void setAdapter(T adapter, String role);
-	
+
 	/**
 	 * Registers the given adapter under the 'default' role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}.

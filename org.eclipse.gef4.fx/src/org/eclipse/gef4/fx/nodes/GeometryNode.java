@@ -146,6 +146,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 					// create and configure clickable area shape
 					clickableAreaShape = new Path(Geometry2Shape.toPathElements(
 							geometryProperty.getValue().toPath()));
+					clickableAreaShape
+							.setId("clickable area of GeometryNode " + this);
 					clickableAreaShape.setStroke(Color.TRANSPARENT);
 					clickableAreaShape.setMouseTransparent(false);
 					clickableAreaShape.strokeWidthProperty()
@@ -281,6 +283,16 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	}
 
 	/**
+	 * Returns the {@link Shape} that is used as a delegate to render the
+	 * geometry of this {@link GeometryNode}.
+	 *
+	 * @return The geometric shape used by this {@link GeometryNode}.
+	 */
+	protected Shape getGeometricShape() {
+		return geometricShape;
+	}
+
+	/**
 	 * Retrieves the value of the geometry property.
 	 *
 	 * @return The value of the geometry property.
@@ -292,16 +304,6 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	private PathElement[] getPathElements() {
 		return Geometry2Shape
 				.toPathElements(geometryProperty.getValue().toPath());
-	}
-
-	/**
-	 * Returns the {@link Shape} that is used as a delegate to render the
-	 * geometry of this {@link GeometryNode}.
-	 *
-	 * @return The geometric shape used by this {@link GeometryNode}.
-	 */
-	protected Shape getShape() {
-		return geometricShape;
 	}
 
 	/**

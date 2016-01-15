@@ -23,6 +23,8 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
 
@@ -46,8 +48,10 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	private final List<Point> waypoints = new ArrayList<>();
-	private Decoration sourceDecoration = Decoration.NONE;
-	private Decoration targetDecoration = Decoration.NONE;
+	private final ObjectProperty<Decoration> sourceDecorationProperty = new SimpleObjectProperty<>(
+			this, SOURCE_DECORATION_PROPERTY, Decoration.NONE);
+	private final ObjectProperty<Decoration> targetDecorationProperty = new SimpleObjectProperty<>(
+			this, TARGET_DECORATION_PROPERTY, Decoration.NONE);
 	public double[] dashes = new double[0];
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
@@ -86,7 +90,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public Decoration getSourceDecoration() {
-		return sourceDecoration;
+		return sourceDecorationProperty.get();
 	}
 
 	public Set<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
@@ -94,7 +98,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public Decoration getTargetDecoration() {
-		return targetDecoration;
+		return targetDecorationProperty.get();
 	}
 
 	public List<Point> getWayPoints() {
@@ -113,17 +117,11 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public void setSourceDecoration(Decoration sourceDecoration) {
-		Decoration oldSourceDecoration = this.sourceDecoration;
-		this.sourceDecoration = sourceDecoration;
-		pcs.firePropertyChange(SOURCE_DECORATION_PROPERTY, oldSourceDecoration,
-				sourceDecoration);
+		sourceDecorationProperty.set(sourceDecoration);
 	}
 
 	public void setTargetDecoration(Decoration targetDecoration) {
-		Decoration oldTargetDecoration = this.targetDecoration;
-		this.targetDecoration = targetDecoration;
-		pcs.firePropertyChange(TARGET_DECORATION_PROPERTY, oldTargetDecoration,
-				targetDecoration);
+		targetDecorationProperty.set(targetDecoration);
 	}
 
 	public void setWayPoint(int i, Point p) {

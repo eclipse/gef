@@ -49,7 +49,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 			boolean skipMidPointsAroundCreated) {
 		// re-assign segment index and segment parameter
 		List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-				PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
+				PartUtils.getAnchoreds(getHost().getAnchoragesUnmodifiable().keySet()),
 				FXCircleSegmentHandlePart.class);
 
 		Collections.<FXCircleSegmentHandlePart> sort(parts);
@@ -159,7 +159,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	@SuppressWarnings("unchecked")
 	protected IVisualPart<Node, ? extends Connection> getTargetPart() {
 		return (IVisualPart<Node, ? extends Connection>) getHost()
-				.getAnchorages().keySet().iterator().next();
+				.getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 			// find other segment handle parts
 			List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-					PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
+					PartUtils.getAnchoreds(getHost().getAnchoragesUnmodifiable().keySet()),
 					FXCircleSegmentHandlePart.class);
 
 			// sort parts by segment index and parameter

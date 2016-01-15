@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.common.dispose.IDisposable;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
@@ -34,9 +33,16 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 
 /**
  * A behavior that can be adapted to an {@link IRootPart} or an
@@ -51,7 +57,68 @@ import com.google.inject.Inject;
  *            javafx.scene.Node in case of JavaFX.
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener, IDisposable {
+		implements IDisposable {
+
+	private ListChangeListener<Object> contentModelObserver = new ListChangeListener<Object>() {
+
+		@Override
+		public void onChanged(
+				ListChangeListener.Change<? extends Object> change) {
+			// XXX: An atomic operation (including setAll()) on the
+			// ObservableList will lead to an atomic change here; we do not have
+			// to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
+			synchronizeContentChildren(change.getList());
+			// TODO: flushing of models should be done somewhere more
+			// appropriate
+			getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+					.clearSelection();
+			getHost().getRoot().getViewer().getAdapter(HoverModel.class)
+					.clearHover();
+		}
+	};
+
+	private ChangeListener<Object> contentObserver = new ChangeListener<Object>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Object> observable,
+				Object oldValue, Object newValue) {
+			synchronizeContentChildren(ImmutableList
+					.copyOf(((IContentPart<VR, ? extends VR>) getHost())
+							.getContentChildrenUnmodifiable()));
+			synchronizeContentAnchorages(ImmutableSetMultimap
+					.copyOf(((IContentPart<VR, ? extends VR>) getHost())
+							.getContentAnchoragesUnmodifiable()));
+		}
+	};
+
+	private ListChangeListener<Object> contentChildrenObserver = new ListChangeListener<Object>() {
+
+		@Override
+		public void onChanged(
+				final ListChangeListener.Change<? extends Object> change) {
+			// XXX: An atomic operation (including setAll()) on the
+			// ObservableList will lead to an atomic change here; we do not have
+			// to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
+			synchronizeContentChildren(new ArrayList<>(change.getList()));
+		}
+	};
+
+	private SetMultimapChangeListener<Object, String> contentAnchoragesObserver = new SetMultimapChangeListener<Object, String>() {
+
+		@Override
+		public void onChanged(
+				final SetMultimapChangeListener.Change<? extends Object, ? extends String> change) {
+			// TODO: if we had an iterable atomic change (as with
+			// ObservableList) within
+			// ObservableSetMultimap, we could synchronize just once per change
+			synchronizeContentAnchorages(
+					HashMultimap.create(change.getSource()));
+		}
+	};
 
 	@Inject
 	// scoped to single instance within viewer
@@ -60,35 +127,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	@Inject
 	// scoped to single instance within viewer
 	private ContentPartPool<VR> contentPartPool;
-
-	@Override
-	public void activate() {
-		super.activate();
-		if (getHost() == getHost().getRoot()) {
-			ContentModel contentModel = getContentModel();
-			synchronizeContentChildren(contentModel.getContents());
-			contentModel.addPropertyChangeListener(this);
-		} else {
-			synchronizeContentChildren(
-					((IContentPart<VR, ? extends VR>) getHost())
-							.getContentChildren());
-			synchronizeContentAnchorages(
-					((IContentPart<VR, ? extends VR>) getHost())
-							.getContentAnchorages());
-			getHost().addPropertyChangeListener(this);
-		}
-	}
-
-	@Override
-	public void deactivate() {
-		if (getHost() == getHost().getRoot()) {
-			getHost().getRoot().getViewer().getAdapter(ContentModel.class)
-					.removePropertyChangeListener(this);
-		} else {
-			getHost().removePropertyChangeListener(this);
-		}
-		super.deactivate();
-	}
 
 	@Override
 	public void dispose() {
@@ -106,10 +144,53 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	protected void disposeIfObsolete(
 			IContentPart<VR, ? extends VR> contentPart) {
 		if (contentPart.getParent() == null
-				&& contentPart.getAnchoreds().isEmpty()) {
+				&& contentPart.getAnchoredsUnmodifiable().isEmpty()) {
 			// System.out.println("DISPOSE " + contentPart.getContent());
 			contentPartPool.add(contentPart);
 			contentPart.setContent(null);
+		}
+	}
+
+	@Override
+	protected void doActivate() {
+		IVisualPart<VR, ? extends VR> host = getHost();
+		if (host == host.getRoot()) {
+			final ContentModel contentModel = getContentModel();
+			contentModel.getContents().addListener(contentModelObserver);
+			synchronizeContentChildren(contentModel.getContents());
+		} else {
+			synchronizeContentChildren(
+					ImmutableList.copyOf(((IContentPart<VR, ? extends VR>) host)
+							.getContentChildrenUnmodifiable()));
+			synchronizeContentAnchorages(ImmutableSetMultimap
+					.copyOf(((IContentPart<VR, ? extends VR>) host)
+							.getContentAnchoragesUnmodifiable()));
+			((IContentPart<VR, ? extends VR>) host).contentProperty()
+					.addListener(contentObserver);
+			((IContentPart<VR, ? extends VR>) host)
+					.getContentChildrenUnmodifiable()
+					.addListener(contentChildrenObserver);
+			((IContentPart<VR, ? extends VR>) host)
+					.getContentAnchoragesUnmodifiable()
+					.addListener(contentAnchoragesObserver);
+		}
+	}
+
+	@Override
+	protected void doDeactivate() {
+		IVisualPart<VR, ? extends VR> host = getHost();
+		if (host == host.getRoot()) {
+			getContentModel().getContents()
+					.removeListener(contentModelObserver);
+		} else {
+			((IContentPart<VR, ? extends VR>) host).contentProperty()
+					.removeListener(contentObserver);
+			((IContentPart<VR, ? extends VR>) host)
+					.getContentChildrenUnmodifiable()
+					.removeListener(contentChildrenObserver);
+			((IContentPart<VR, ? extends VR>) host)
+					.getContentAnchoragesUnmodifiable()
+					.removeListener(contentAnchoragesObserver);
 		}
 	}
 
@@ -177,59 +258,27 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		return contentModel;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (ContentModel.CONTENTS_PROPERTY.equals(event.getPropertyName())) {
-			synchronizeContentChildren((List<Object>) event.getNewValue());
-			// TODO: flushing of models should be done somewhere more
-			// appropriate
-			getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
-					.clearSelection();
-			getHost().getRoot().getViewer().getAdapter(HoverModel.class)
-					.clearHover();
-		} else if (IContentPart.CONTENT_PROPERTY
-				.equals(event.getPropertyName())) {
-			synchronizeContentChildren(
-					((IContentPart<VR, ? extends VR>) getHost())
-							.getContentChildren());
-			synchronizeContentAnchorages(
-					((IContentPart<VR, ? extends VR>) getHost())
-							.getContentAnchorages());
-		} else if (IContentPart.CONTENT_CHILDREN_PROPERTY
-				.equals(event.getPropertyName())) {
-			synchronizeContentChildren(
-					((IContentPart<VR, ? extends VR>) getHost())
-							.getContentChildren());
-		} else if (IContentPart.CONTENT_ANCHORAGES_PROPERTY
-				.equals(event.getPropertyName())) {
-			synchronizeContentAnchorages(
-					((IContentPart<VR, ? extends VR>) getHost())
-							.getContentAnchorages());
-		}
-	}
-
 	/**
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
-	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
-	 * set of content anchorages that is passed in.
+	 * (see {@link IVisualPart#getAnchoragesUnmodifiable()}) so that it is in
+	 * sync with the set of content anchorages that is passed in.
 	 *
 	 * @param contentAnchorages
 	 *            * The map of content anchorages with roles to be synchronized
 	 *            with the list of {@link IContentPart} anchorages (
-	 *            {@link IContentPart#getAnchorages()}).
+	 *            {@link IContentPart#getAnchoragesUnmodifiable()}).
 	 *
-	 * @see IContentPart#getContentAnchorages()
-	 * @see IContentPart#getAnchorages()
+	 * @see IContentPart#getContentAnchoragesUnmodifiable()
+	 * @see IContentPart#getAnchoragesUnmodifiable()
 	 */
 	public void synchronizeContentAnchorages(
-			SetMultimap<? extends Object, String> contentAnchorages) {
+			SetMultimap<? extends Object, ? extends String> contentAnchorages) {
 		if (contentAnchorages == null) {
 			throw new IllegalArgumentException(
 					"contentAnchorages may not be null");
 		}
 		SetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = getHost()
-				.getAnchorages();
+				.getAnchoragesUnmodifiable();
 
 		// find anchorages whose content vanished
 		List<Entry<IVisualPart<VR, ? extends VR>, String>> toRemove = new ArrayList<>();
@@ -255,7 +304,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 
 		// find content for which no anchorages exist
 		List<Entry<IVisualPart<VR, ? extends VR>, String>> toAdd = new ArrayList<>();
-		for (Entry<? extends Object, String> e : contentAnchorages.entries()) {
+		for (Entry<? extends Object, ? extends String> e : contentAnchorages
+				.entries()) {
 			IContentPart<VR, ? extends VR> anchorage = findOrCreatePartFor(
 					e.getKey());
 			if (!anchorages.containsEntry(anchorage, e.getValue())) {
@@ -274,16 +324,16 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 
 	/**
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} children (see
-	 * {@link IVisualPart#getChildren()}) so that it is in sync with the set of
-	 * content children that is passed in.
+	 * {@link IVisualPart#getChildrenUnmodifiable()}) so that it is in sync with
+	 * the set of content children that is passed in.
 	 *
 	 * @param contentChildren
 	 *            The list of content children to be synchronized with the list
 	 *            of {@link IContentPart} children (
-	 *            {@link IContentPart#getChildren()}).
+	 *            {@link IContentPart#getChildrenUnmodifiable()}).
 	 *
-	 * @see IContentPart#getContentChildren()
-	 * @see IContentPart#getChildren()
+	 * @see IContentPart#getContentChildrenUnmodifiable()
+	 * @see IContentPart#getChildrenUnmodifiable()
 	 */
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentChildren(
@@ -294,7 +344,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		}
 		// only synchronize IContentPart children
 		List<IContentPart<VR, ? extends VR>> childContentParts = PartUtils
-				.filterParts(getHost().getChildren(), IContentPart.class);
+				.filterParts(getHost().getChildrenUnmodifiable(),
+						IContentPart.class);
 		// store the existing content parts in a map using the contents as keys
 		Map<Object, IContentPart<VR, ? extends VR>> contentPartMap = new HashMap<>();
 		// find all content parts for which no content element exists in

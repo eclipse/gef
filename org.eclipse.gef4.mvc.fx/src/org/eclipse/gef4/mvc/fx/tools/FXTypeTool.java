@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +27,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -129,7 +129,7 @@ public class FXTypeTool extends AbstractFXTool {
 				if (((FXViewer) viewer).getScene() == scene) {
 					IVisualPart<Node, ? extends Node> part = viewer
 							.getAdapter(new TypeToken<FocusModel<Node>>() {
-							}).getFocused();
+							}).getFocus();
 					if (part == null) {
 						targetPart = viewer.getRootPart();
 					} else {
@@ -145,6 +145,7 @@ public class FXTypeTool extends AbstractFXTool {
 		return getKeyPolicies(targetPart);
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void registerListeners() {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
@@ -154,34 +155,36 @@ public class FXTypeTool extends AbstractFXTool {
 
 			// register a viewer focus change listener to release the initially
 			// pressed key when the window loses focus
-			PropertyChangeListener viewerFocusChangeListener = new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					if (FocusModel.VIEWER_FOCUS_PROPERTY
-							.equals(evt.getPropertyName())) {
-						if (!(Boolean) evt.getNewValue()) {
-							if (firstKey[0] == null) {
-								return;
-							}
+			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
 
-							// cancel target policies
-							for (IFXOnTypePolicy policy : getActivePolicies(
-									viewer)) {
-								policy.unfocus();
-								// clear active policies and close execution
-								// transaction
-								clearActivePolicies(viewer);
-								getDomain().closeExecutionTransaction(
-										FXTypeTool.this);
-								// unset first key
-								firstKey[0] = null;
-							}
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					if (newValue == null || !newValue) {
+						if (firstKey[0] == null) {
+							return;
+						}
+
+						// cancel target policies
+						for (IFXOnTypePolicy policy : getActivePolicies(
+								viewer)) {
+							policy.unfocus();
+							// clear active policies and close execution
+							// transaction
+							clearActivePolicies(viewer);
+							getDomain()
+									.closeExecutionTransaction(FXTypeTool.this);
+							// unset first key
+							firstKey[0] = null;
 						}
 					}
+
 				}
 			};
+
 			viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
-			}).addPropertyChangeListener(viewerFocusChangeListener);
+			}).viewerFocusedProperty().addListener(viewerFocusChangeListener);
 
 			// generate event handlers
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {

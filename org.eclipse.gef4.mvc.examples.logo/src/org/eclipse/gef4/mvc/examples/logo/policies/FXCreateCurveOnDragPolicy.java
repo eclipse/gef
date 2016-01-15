@@ -66,7 +66,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
 		// find last segment handle part
 		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = curvePart
-				.getAnchoreds();
+				.getAnchoredsUnmodifiable();
 		for (IVisualPart<Node, ? extends Node> anchored : anchoreds) {
 			if (anchored instanceof FXCircleSegmentHandlePart) {
 				FXCircleSegmentHandlePart circleSegmentHandlePart = (FXCircleSegmentHandlePart) anchored;
@@ -87,7 +87,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	protected FXGeometricShapePart getShapePart() {
-		return (FXGeometricShapePart) getHost().getAnchorages().keySet()
+		return (FXGeometricShapePart) getHost().getAnchoragesUnmodifiable().keySet()
 				.iterator().next();
 	}
 
@@ -109,7 +109,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 
 		// find model part
 		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
-				.getChildren().get(0);
+				.getChildrenUnmodifiable().get(0);
 		if (!(modelPart instanceof FXGeometricModelPart)) {
 			throw new IllegalStateException(
 					"Cannot find FXGeometricModelPart.");
@@ -134,7 +134,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXOnDragPolicy {
 		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
 				getHost().getRoot().getViewer()
 						.getAdapter(new TypeToken<SelectionModel<Node>>() {
-						}).getSelection());
+						}).getSelectionUnmodifiable());
 		toBeDeselected.remove(curvePart);
 		DeselectOperation<Node> deselectOperation = new DeselectOperation<>(
 				getHost().getRoot().getViewer(), toBeDeselected);

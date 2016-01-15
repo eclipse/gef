@@ -13,31 +13,27 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.activate;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+
 /**
- * A support class to manage the active state for a source {@link IActivatable}.
+ * A support class to manage the activeProperty state for a source {@link IActivatable}.
  * It offers all methods defined by {@link IActivatable}, while not formally
  * implementing the interface, and can thus be used by a source
  * {@link IActivatable} as a delegate.
  * <p>
- * In addition to the source {@link IActivatable} a
- * {@link PropertyChangeSupport} is expected during construction. It will be
- * used to fire {@link PropertyChangeEvent}s when the active state changes, i.e.
- * whenever a call to {@link #activate()} or {@link #deactivate()} results in a
- * state change. {@link IActivatable#ACTIVE_PROPERTY} will be used as the
- * property name within all those events.
- * <p>
  * If the given {@link IActivatable} is also {@link IAdaptable}, all calls to
  * {@link #activate()} and {@link #deactivate()} will be forwarded to all
  * adapters registered at the {@link IActivatable} at that moment. However, the
- * {@link ActivatableSupport} will not register a property change listener on
- * the {@link IAdaptable} to get notified about newly set or unset adapters, so
- * they will not be automatically activated/deactivated. The source
+ * {@link ActivatableSupport} will not register a change listener on the
+ * {@link IAdaptable} to get notified about newly set or unset adapters, so they
+ * will not be automatically activated/deactivated. The source
  * {@link IActivatable} may use an {@link AdaptableSupport} as a second delegate
  * for this purpose.
  * 
@@ -46,9 +42,8 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
  */
 public class ActivatableSupport {
 
-	private boolean isActive = false;
+	private ReadOnlyBooleanWrapper activeProperty = null;
 	private IActivatable source;
-	private PropertyChangeSupport pcs;
 
 	/**
 	 * Creates a new {@link ActivatableSupport} for the given source
@@ -58,48 +53,51 @@ public class ActivatableSupport {
 	 *            The {@link IActivatable} that encloses the to be created
 	 *            {@link ActivatableSupport}, delegating calls to it. May not be
 	 *            <code>null</code>
-	 * @param pcs
-	 *            An {@link PropertyChangeSupport}, which will be used to fire
-	 *            {@link PropertyChangeEvent}'s during state changes. May not be
-	 *            <code>null</code>
 	 */
-	public ActivatableSupport(IActivatable source, PropertyChangeSupport pcs) {
+	public ActivatableSupport(IActivatable source) {
 		if (source == null) {
 			throw new IllegalArgumentException("source may not be null.");
 		}
-		if (pcs == null) {
-			throw new IllegalArgumentException("pcs may not be null.");
-		}
 		this.source = source;
-		this.pcs = pcs;
+		this.activeProperty = new ReadOnlyBooleanWrapper(source, IActivatable.ACTIVE_PROPERTY,
+				false);
 	}
 
 	/**
-	 * Reports whether this {@link ActivatableSupport} is active or inactive.
+	 * Returns a {@link ReadOnlyBooleanProperty} that reflects the activeProperty state
+	 * of this {@link ActivatableSupport}.
 	 * 
-	 * @return {@code true} in case the {@link ActivatableSupport} is active,
+	 * @return A read-only boolean {@link Property} representing the activeProperty
+	 *         state.
+	 */
+	public ReadOnlyBooleanProperty activeProperty() {
+		return activeProperty.getReadOnlyProperty();
+	}
+
+	/**
+	 * Reports whether this {@link ActivatableSupport} is activeProperty or inactive.
+	 * 
+	 * @return {@code true} in case the {@link ActivatableSupport} is activeProperty,
 	 *         {@code false} otherwise.
 	 * 
 	 * @see IActivatable#isActive()
 	 */
 	public boolean isActive() {
-		return isActive;
+		return activeProperty.get();
 	}
 
 	/**
-	 * Activates this {@link ActivatableSupport} if it is not yet active.
+	 * Activates this {@link ActivatableSupport} if it is not yet activeProperty.
 	 * 
-	 * Will first adjust the (internal) active state, then fire a
-	 * {@link PropertyChangeEvent}, and will finally activate any
+	 * Will first adjust the activeProperty state, then activate any
 	 * {@link IActivatable} adapters, being registered at the source
 	 * {@link IActivatable}.
 	 * 
 	 * @see IActivatable#activate()
 	 */
 	public void activate() {
-		if (!isActive) {
-			isActive = true;
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, false, true);
+		if (!isActive()) {
+			activeProperty.set(true);
 
 			// activate all adapters, if the IActivatable is also an IAdaptable
 			activateAdapters();
@@ -128,19 +126,17 @@ public class ActivatableSupport {
 	 * Deactivates this {@link ActivatableSupport} if it is not yet inactive.
 	 * 
 	 * Will first deactivate any {@link IActivatable} adapters, being registered
-	 * at the source {@link IActivatable}, then adjust the (internal) active
-	 * state, and finally fire a {@link PropertyChangeEvent}.
+	 * at the source {@link IActivatable}, then adjust the activeProperty state.
 	 * 
 	 * @see IActivatable#deactivate()
 	 */
 	public void deactivate() {
-		if (isActive) {
+		if (isActive()) {
 			// deactivate all adapters, if the IActivatable is also an
 			// IAdaptable
 			deactivateAdapters();
 
-			isActive = false;
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, true, false);
+			activeProperty.set(false);
 		}
 	}
 

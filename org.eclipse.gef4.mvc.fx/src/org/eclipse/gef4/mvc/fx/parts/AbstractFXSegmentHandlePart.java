@@ -50,7 +50,7 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 	public int compareTo(AbstractFXSegmentHandlePart<? extends Node> o) {
 		// if we are bound to the same anchorages, we may compare segment
 		// positions, otherwise we are not comparable
-		if (!getAnchorages().equals(o.getAnchorages())) {
+		if (!getAnchoragesUnmodifiable().equals(o.getAnchoragesUnmodifiable())) {
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
@@ -179,7 +179,7 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 	 */
 	protected void updateLocation(N visual) {
 		// only update when bound to anchorage
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchoragesUnmodifiable();
 		if (anchorages.keySet().size() < 1) {
 			return;
 		}

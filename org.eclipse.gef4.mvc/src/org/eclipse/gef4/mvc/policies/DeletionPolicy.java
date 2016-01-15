@@ -69,7 +69,7 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(
 						getHost().getRoot().getViewer().getClass())))
-						.getFocused()));
+						.getFocus()));
 		// deselect
 		commit.add(new DeselectOperation<>(viewer,
 				Collections.<IContentPart<VR, ? extends VR>> emptyList()));
@@ -105,14 +105,14 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				}, Types.<VR> argumentOf(
 						getHost().getRoot().getViewer().getClass())));
 		if (focusModel != null) {
-			if (focusModel.getFocused() == contentPartToDelete) {
+			if (focusModel.getFocus() == contentPartToDelete) {
 				getUnfocusOperation().setNewFocused(null);
 			}
 		}
 
 		// detach all content anchoreds
 		for (IVisualPart<VR, ? extends VR> anchored : HashMultiset
-				.create(contentPartToDelete.getAnchoreds())) {
+				.create(contentPartToDelete.getAnchoredsUnmodifiable())) {
 			if (anchored instanceof IContentPart) {
 				ContentPolicy<VR> anchoredContentPolicy = anchored
 						.getAdapter(new TypeToken<ContentPolicy<VR>>() {
@@ -121,7 +121,7 @@ public class DeletionPolicy<VR> extends AbstractTransactionPolicy<VR> {
 								getHost().getRoot().getViewer().getClass())));
 				if (anchoredContentPolicy != null) {
 					anchoredContentPolicy.init();
-					for (String role : anchored.getAnchorages()
+					for (String role : anchored.getAnchoragesUnmodifiable()
 							.get(contentPartToDelete)) {
 						anchoredContentPolicy.detachFromContentAnchorage(
 								contentPartToDelete.getContent(), role);

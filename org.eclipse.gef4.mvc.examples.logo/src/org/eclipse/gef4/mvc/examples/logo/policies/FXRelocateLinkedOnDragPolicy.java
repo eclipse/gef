@@ -43,7 +43,7 @@ public class FXRelocateLinkedOnDragPolicy
 		// via the FXTranslateSelectedOnDragPolicy) already
 		SelectionModel<?> selectionModel = getHost().getRoot().getViewer()
 				.getAdapter(SelectionModel.class);
-		linked.removeAll(selectionModel.getSelection());
+		linked.removeAll(selectionModel.getSelectionUnmodifiable());
 
 		return linked;
 	}

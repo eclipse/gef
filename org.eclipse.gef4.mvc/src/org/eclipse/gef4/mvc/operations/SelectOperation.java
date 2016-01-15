@@ -91,7 +91,8 @@ public class SelectOperation<VR> extends AbstractOperation
 		this.viewer = viewer;
 		this.toBeSelected = new ArrayList<>(toBeSelected);
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		initialSelection = new ArrayList<>(selectionModel.getSelection());
+		initialSelection = new ArrayList<>(
+				selectionModel.getSelectionUnmodifiable());
 	}
 
 	@Override
@@ -99,7 +100,8 @@ public class SelectOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
 		selected = new ArrayList<>(toBeSelected);
-		selected.removeAll(new ArrayList<>(selectionModel.getSelection()));
+		selected.removeAll(
+				new ArrayList<>(selectionModel.getSelectionUnmodifiable()));
 		selectionModel.prependToSelection(selected);
 		return Status.OK_STATUS;
 	}

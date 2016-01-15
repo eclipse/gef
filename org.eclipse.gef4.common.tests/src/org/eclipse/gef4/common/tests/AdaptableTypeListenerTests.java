@@ -15,7 +15,6 @@ package org.eclipse.gef4.common.tests;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
@@ -25,7 +24,6 @@ import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.common.inject.InjectAdapters;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.common.tests.AdaptableScopeTests.AdapterStoreAdapter;
 import org.junit.Test;
 
@@ -39,19 +37,20 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.spi.Message;
 
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.ObservableMap;
+
 public class AdaptableTypeListenerTests {
 
 	public static class AdaptableSpecifyingAdapterMapAndInjectAnnotation
 			implements IAdaptable {
 
-		private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-				this);
 		private AdaptableSupport<AdaptableSpecifyingAdapterMapAndInjectAnnotation> ads = new AdaptableSupport<>(
-				this, pcs);
+				this);
 
 		@Override
-		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			pcs.addPropertyChangeListener(listener);
+		public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+			return ads.adaptersProperty();
 		}
 
 		public void clear() {
@@ -76,6 +75,11 @@ public class AdaptableTypeListenerTests {
 		}
 
 		@Override
+		public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+			return ads.getAdapters();
+		}
+
+		@Override
 		public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 				Class<? super T> key) {
 			return ads.getAdapters(key);
@@ -85,12 +89,6 @@ public class AdaptableTypeListenerTests {
 		public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 				TypeToken<? super T> key) {
 			return ads.getAdapters(key);
-		}
-
-		@Override
-		public void removePropertyChangeListener(
-				PropertyChangeListener listener) {
-			pcs.removePropertyChangeListener(listener);
 		}
 
 		@Override

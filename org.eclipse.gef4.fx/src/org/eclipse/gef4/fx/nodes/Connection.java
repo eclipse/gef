@@ -22,12 +22,12 @@ import java.util.TreeSet;
 
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
-import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -723,7 +723,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 						.toPath()));
 		decorationShapeBounds.setFill(Color.RED);
 		Shape clip = Shape.intersect(decorationShapeBounds,
-				curveNode.getShape());
+				curveNode.getGeometricShape());
 		clip = Shape.subtract(clip, decoration);
 		clip = Shape.subtract(curveClip, clip);
 		return clip;
@@ -1225,6 +1225,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		ICurve newGeometry = router.routeConnection(getPoints());
 
 		// clear current visuals
+		// TODO: this causes all VCLs of anchoreds the geometry node is attached
+		// to to be unregistered. We should prevent it.
 		getChildren().clear();
 
 		// compute new curve (this can lead to another refreshGeometry() call

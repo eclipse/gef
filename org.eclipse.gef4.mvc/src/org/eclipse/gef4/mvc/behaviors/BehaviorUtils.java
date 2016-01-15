@@ -31,8 +31,8 @@ public class BehaviorUtils {
 
 	/**
 	 * Adds the given list of anchoreds as children to the given
-	 * {@link IRootPart}. Additionally, all given anchorages will be added to
-	 * the given anchoreds.
+	 * {@link IRootPart}. Additionally, all given anchorages will be attached to
+	 * the given anchorages.
 	 *
 	 * @param root
 	 *            The {@link IRootPart}, the anchored {@link IVisualPart}s are
@@ -47,9 +47,9 @@ public class BehaviorUtils {
 	 *            The visual root node of the UI toolkit this
 	 *            {@link IVisualPart} is used in, e.g. javafx.scene.Node in case
 	 *            of JavaFX.
-	 * @see #removeAnchorages(IRootPart, List, List)
+	 * @see #removeAnchoreds(IRootPart, List, List)
 	 */
-	public static <VR> void addAnchorages(IRootPart<VR, ? extends VR> root,
+	public static <VR> void addAnchoreds(IRootPart<VR, ? extends VR> root,
 			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
 			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
@@ -64,8 +64,8 @@ public class BehaviorUtils {
 
 	/**
 	 * Removes the given list of anchoreds as children from the given
-	 * {@link IRootPart}. Additionally removes the given anchorages from the
-	 * anchoreds.
+	 * {@link IRootPart}. Additionally detaches the given anchoreds from the
+	 * given anchorages.
 	 *
 	 * @param root
 	 *            The {@link IRootPart} from which the anchoreds are to be
@@ -78,9 +78,9 @@ public class BehaviorUtils {
 	 *            The visual root node of the UI toolkit this
 	 *            {@link IVisualPart} is used in, e.g. javafx.scene.Node in case
 	 *            of JavaFX.
-	 * @see #addAnchorages(IRootPart, List, List)
+	 * @see #addAnchoreds(IRootPart, List, List)
 	 */
-	public static <VR> void removeAnchorages(IRootPart<VR, ? extends VR> root,
+	public static <VR> void removeAnchoreds(IRootPart<VR, ? extends VR> root,
 			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
 			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {

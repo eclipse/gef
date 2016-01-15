@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.mvc.behaviors.BehaviorUtils;
@@ -22,6 +22,7 @@ import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsFeedbackPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import javafx.collections.SetChangeListener;
 import javafx.scene.Node;
 
 /**
@@ -41,17 +42,6 @@ import javafx.scene.Node;
 public class NodeHidingBehavior extends AbstractHidingBehavior {
 
 	private IVisualPart<Node, ? extends Node> hiddenNeighborsFeedbackPart;
-
-	@Override
-	public void activate() {
-		super.activate();
-
-		// create hidden neighbors part if it is already associated with our
-		// host
-		if (getHidingModel().hasHiddenNeighbors(getHost())) {
-			createHiddenNeighborsFeedbackPart();
-		}
-	}
 
 	private boolean containsAny(Set<org.eclipse.gef4.graph.Node> hidden, Set<org.eclipse.gef4.graph.Node> neighbors) {
 		boolean containsAny = false;
@@ -75,24 +65,33 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 			// before
 			hiddenNeighborsFeedbackPart = new HiddenNeighborsFeedbackPart();
 		}
-		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
+		BehaviorUtils.<Node> addAnchoreds(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsFeedbackPart));
-	}
-
-	@Override
-	public void deactivate() {
-		// remove hidden neighbors part if it is currently associated with our
-		// host
-		if (getHidingModel().hasHiddenNeighbors(getHost())) {
-			removeHiddenNeighborsFeedbackPart();
-		}
-
-		super.deactivate();
 	}
 
 	@Override
 	protected boolean determineHiddenStatus() {
 		return getHidingModel().isHidden(getHost().getContent());
+	}
+
+	@Override
+	protected void doActivate() {
+		super.doActivate();
+		// create hidden neighbors part if it is already associated with our
+		// host
+		if (getHidingModel().hasHiddenNeighbors(getHost())) {
+			createHiddenNeighborsFeedbackPart();
+		}
+	}
+
+	@Override
+	protected void doDeactivate() {
+		// remove hidden neighbors part if it is currently associated with our
+		// host
+		if (getHidingModel().hasHiddenNeighbors(getHost())) {
+			removeHiddenNeighborsFeedbackPart();
+		}
+		super.doDeactivate();
 	}
 
 	/**
@@ -111,13 +110,14 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 		return (NodeContentPart) super.getHost();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected void onHidingModelChange(PropertyChangeEvent event) {
-		super.onHidingModelChange(event);
+	protected void onHidingModelChange(SetChangeListener.Change<? extends org.eclipse.gef4.graph.Node> change) {
+		super.onHidingModelChange(change);
 
-		Set<org.eclipse.gef4.graph.Node> oldHidden = (Set<org.eclipse.gef4.graph.Node>) event.getOldValue();
-		Set<org.eclipse.gef4.graph.Node> newHidden = (Set<org.eclipse.gef4.graph.Node>) event.getNewValue();
+		Set<org.eclipse.gef4.graph.Node> newHidden = new HashSet<>(change.getSet());
+		Set<org.eclipse.gef4.graph.Node> oldHidden = new HashSet<>(change.getSet());
+		oldHidden.remove(change.getElementAdded());
+		oldHidden.add(change.getElementRemoved());
 
 		// check if we have to show/hide/update the pruned neighbors part
 		org.eclipse.gef4.graph.Node content = getHost().getContent();
@@ -140,7 +140,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 	 * {@link NodeHidingBehavior}.
 	 */
 	protected void removeHiddenNeighborsFeedbackPart() {
-		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
+		BehaviorUtils.<Node> removeAnchoreds(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(hiddenNeighborsFeedbackPart));
 	}
 

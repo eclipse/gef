@@ -39,7 +39,7 @@ import javafx.scene.input.RotateEvent;
  *
  */
 public class FXRotateSelectedOnRotatePolicy
-		extends AbstractInteractionPolicy<Node>implements IFXOnRotatePolicy {
+		extends AbstractInteractionPolicy<Node> implements IFXOnRotatePolicy {
 
 	private Point pivotInScene;
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
@@ -56,7 +56,7 @@ public class FXRotateSelectedOnRotatePolicy
 	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection();
+				}).getSelectionUnmodifiable();
 	}
 
 	/**

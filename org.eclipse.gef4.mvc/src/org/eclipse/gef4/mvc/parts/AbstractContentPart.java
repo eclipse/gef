@@ -18,13 +18,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
+import org.eclipse.gef4.common.collections.ObservableSetMultimap;
+import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
+import org.eclipse.gef4.common.collections.UnmodifiableObservableSetMultimapWrapper;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * The abstract base implementation of {@link IContentPart}, intended to be
@@ -42,7 +56,38 @@ import com.google.common.reflect.TypeToken;
 public abstract class AbstractContentPart<VR, V extends VR>
 		extends AbstractVisualPart<VR, V> implements IContentPart<VR, V> {
 
-	private Object content;
+	private final ObjectProperty<Object> contentProperty = new SimpleObjectProperty<>(
+			this, CONTENT_PROPERTY);
+
+	private ObservableList<Object> contentChildren = FXCollections
+			.observableArrayList();
+
+	private ObservableList<Object> contentChildrenUnmodifiable = FXCollections
+			.unmodifiableObservableList(contentChildren);
+	private ReadOnlyListWrapper<Object> contentChildrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
+			this, CONTENT_CHILDREN_PROPERTY, contentChildrenUnmodifiable);
+	private ObservableSetMultimap<Object, String> contentAnchorages = new ObservableSetMultimapWrapper<>(
+			HashMultimap.<Object, String> create());
+
+	private ObservableSetMultimap<Object, String> contentAnchoragesUnmodifiable = new UnmodifiableObservableSetMultimapWrapper<>(
+			contentAnchorages);
+	private ReadOnlySetMultimapWrapper<Object, String> contentAnchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
+			this, CONTENT_ANCHORAGES_PROPERTY, contentAnchoragesUnmodifiable);
+
+	/**
+	 * Creates a new {@link AbstractContentPart}.
+	 */
+	public AbstractContentPart() {
+		// XXX: Register the first listener on the content property, so
+		// registration is performed before all listeners are notified.
+		contentProperty.addListener(new ChangeListener<Object>() {
+			@Override
+			public void changed(ObservableValue<? extends Object> observable,
+					Object oldValue, Object newValue) {
+				onContentChanged(oldValue, newValue);
+			}
+		});
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -52,7 +97,8 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public final void addContentChild(Object contentChild, int index) {
-		List<Object> oldContentChildren = new ArrayList<>(getContentChildren());
+		List<Object> oldContentChildren = new ArrayList<>(
+				doGetContentChildren());
 		if (oldContentChildren.contains(contentChild)) {
 			int oldIndex = oldContentChildren.indexOf(contentChild);
 			if (oldIndex == index) {
@@ -67,20 +113,20 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		}
 		doAddContentChild(contentChild, index);
 		// check doAddContentChild(Object, int) does not violate postconditions
-		if (!getContentChildren().contains(contentChild)) {
+		List<? extends Object> newContentChildren = doGetContentChildren();
+		if (!newContentChildren.contains(contentChild)) {
 			throw new IllegalStateException(
 					"doAddContentChild(Object, int) did not add content child "
 							+ contentChild + " .");
 		}
-		int newIndex = getContentChildren().indexOf(contentChild);
+		int newIndex = newContentChildren.indexOf(contentChild);
 		if (newIndex != index) {
 			throw new IllegalStateException(
 					"doAddContentChild(Object, int) did not add content child "
 							+ contentChild + " at index " + index
 							+ ", but at index " + newIndex + ".");
 		}
-		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
-				Collections.unmodifiableList(getContentChildren()));
+		contentChildren.setAll(newContentChildren);
 	}
 
 	/**
@@ -93,7 +139,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	public final void attachToContentAnchorage(Object contentAnchorage,
 			String role) {
 		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
-				.create(getContentAnchorages());
+				.create(doGetContentAnchorages());
 		if (oldContentAnchorages.containsEntry(contentAnchorage, role)) {
 			throw new IllegalArgumentException("Already attached to anchorage "
 					+ contentAnchorage + " in role '" + role + "'.");
@@ -101,14 +147,44 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		doAttachToContentAnchorage(contentAnchorage, role);
 		// check doAttachToContentAnchorage(Object, String) does not violate
 		// postconditions
-		if (!getContentAnchorages().containsEntry(contentAnchorage, role)) {
+		SetMultimap<Object, String> newContentAnchorages = HashMultimap
+				.create(doGetContentAnchorages());
+		if (!newContentAnchorages.containsEntry(contentAnchorage, role)) {
 			throw new IllegalArgumentException(
 					"doAttachToContentAnchorage did not properly attach to "
 							+ contentAnchorage + " with role '" + role + "'.");
 		}
-		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
-				oldContentAnchorages,
-				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
+
+		// TODO: extract; is duplicate to code in detachFromContentAnchorages()
+		// ensure we have an atomic change per key
+		for (Object key : oldContentAnchorages.keySet()) {
+			if (newContentAnchorages.containsKey(key)) {
+				contentAnchorages.replaceValues(key,
+						newContentAnchorages.get(key));
+			} else {
+				contentAnchorages.removeAll(key);
+			}
+		}
+		for (Object key : newContentAnchorages.keySet()) {
+			if (!oldContentAnchorages.containsKey(key)) {
+				contentAnchorages.putAll(key, newContentAnchorages.get(key));
+			}
+		}
+	}
+
+	@Override
+	public ReadOnlySetMultimapProperty<Object, String> contentAnchoragesUnmodifiableProperty() {
+		return contentAnchoragesUnmodifiableProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public ReadOnlyListProperty<Object> contentChildrenUnmodifiableProperty() {
+		return contentChildrenUnmodifiableProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public final ObjectProperty<Object> contentProperty() {
+		return contentProperty;
 	}
 
 	/**
@@ -121,7 +197,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	public final void detachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		SetMultimap<Object, String> oldContentAnchorages = HashMultimap
-				.create(getContentAnchorages());
+				.create(doGetContentAnchorages());
 		if (!oldContentAnchorages.containsEntry(contentAnchorage, role)) {
 			throw new IllegalArgumentException(
 					"Not attached to content anchorage " + contentAnchorage
@@ -129,20 +205,33 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		}
 		doDetachFromContentAnchorage(contentAnchorage, role);
 		// check postconditions for doDetachFromContentAnchorage(Object, String)
-		if (getContentAnchorages().containsEntry(contentAnchorage, role)) {
+		SetMultimap<Object, String> newContentAnchorages = HashMultimap
+				.create(doGetContentAnchorages());
+		if (newContentAnchorages.containsEntry(contentAnchorage, role)) {
 			throw new IllegalArgumentException(
 					"doDetachFromContentAnchorage did not properly detach from "
 							+ contentAnchorage + " with role '" + role + "'.");
 		}
-		pcs.firePropertyChange(CONTENT_ANCHORAGES_PROPERTY,
-				oldContentAnchorages,
-				Multimaps.unmodifiableSetMultimap(getContentAnchorages()));
+		// ensure we have an atomic change per key
+		for (Object key : oldContentAnchorages.keySet()) {
+			if (newContentAnchorages.containsKey(key)) {
+				contentAnchorages.replaceValues(key,
+						newContentAnchorages.get(key));
+			} else {
+				contentAnchorages.removeAll(key);
+			}
+		}
+		for (Object key : newContentAnchorages.keySet()) {
+			if (!oldContentAnchorages.containsKey(key)) {
+				contentAnchorages.putAll(key, newContentAnchorages.get(key));
+			}
+		}
 	}
 
 	/**
 	 * Adds the given <i>contentChild</i> to this part's content children, so
 	 * that it will no longer be returned by subsequent calls to
-	 * {@link #getContentChildren()}.
+	 * {@link #doGetContentChildren()}.
 	 *
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
@@ -159,7 +248,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	/**
 	 * Attaches this part's content to the given <i>contentAnchorage</i> under
 	 * the specified <i>role</i>, so that it will be returned by subsequent
-	 * calls to {@link #getContentAnchorages()}.
+	 * calls to {@link #doGetContentAnchorages()}.
 	 *
 	 * @param contentAnchorage
 	 *            An {@link Object} to which this part's content should be
@@ -177,7 +266,7 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	/**
 	 * Detaches this part's content from the given <i>contentAnchorage</i> under
 	 * the specified <i>role</i>, so that it will no longer be returned by
-	 * subsequent calls to {@link #getContentAnchorages()}.
+	 * subsequent calls to {@link #doGetContentAnchorages()}.
 	 *
 	 * @param contentAnchorage
 	 *            An {@link Object} from which this part's content should be
@@ -193,9 +282,25 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	}
 
 	/**
+	 * Hook method to return the current list of content anchorages. Has to be
+	 * overwritten by clients.
+	 *
+	 * @return The current list of content anchorages.
+	 */
+	protected abstract SetMultimap<? extends Object, String> doGetContentAnchorages();
+
+	/**
+	 * Hook method to return the current list of content children. Has to be
+	 * overwritten by clients.
+	 *
+	 * @return The current list of content children.
+	 */
+	protected abstract List<? extends Object> doGetContentChildren();
+
+	/**
 	 * Removes the given <i>contentChild</i> from this part's content children,
 	 * so that it will no longer be returned by subsequent calls to
-	 * {@link #getContentChildren()}.
+	 * {@link #doGetContentChildren()}.
 	 *
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
@@ -226,14 +331,61 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public Object getContent() {
-		return content;
+		return contentProperty.get();
+	}
+
+	@Override
+	public ObservableSetMultimap<Object, String> getContentAnchoragesUnmodifiable() {
+		return contentAnchoragesUnmodifiable;
+	}
+
+	@Override
+	public ObservableList<Object> getContentChildrenUnmodifiable() {
+		return contentChildrenUnmodifiable;
+	}
+
+	/**
+	 * Called whenever the content of this {@link IContentPart} changed.
+	 *
+	 * @param oldContent
+	 *            The old content.
+	 * @param newContent
+	 *            The new/current content.
+	 */
+	protected void onContentChanged(Object oldContent, Object newContent) {
+		if (oldContent != null && oldContent != newContent) {
+			// unregister from content part map if we did not loose the
+			// viewer reference (otherwise we should already have
+			// removed ourselves)
+			if (getViewer() != null) {
+				unregisterFromContentPartMap(getViewer(), oldContent);
+			}
+			// clear content children and anchorages
+			if (newContent == null) {
+				contentChildren.clear();
+				contentAnchorages.clear();
+			}
+		}
+		if (newContent != null && newContent != oldContent) {
+			// if we have a viewer reference, register at content part
+			// map (otherwise do this as soon as we obtain the viewer
+			// reference)
+			if (getViewer() != null) {
+				registerAtContentPartMap(getViewer(), newContent);
+			}
+			// lazily initialize content children and anchorages
+			// XXX: We use atomic operations here to replace the contents so we
+			// have minimal resulting change notifications.
+			contentChildren.setAll(doGetContentChildren());
+			contentAnchorages.replaceAll(doGetContentAnchorages());
+		}
 	}
 
 	@Override
 	protected void register(IViewer<VR> viewer) {
 		super.register(viewer);
-		if (content != null) {
-			registerAtContentPartMap(viewer, content);
+		if (contentProperty.get() != null) {
+			registerAtContentPartMap(viewer, contentProperty.get());
 		}
 	}
 
@@ -261,7 +413,8 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public final void removeContentChild(Object contentChild) {
-		List<Object> oldContentChildren = new ArrayList<>(getContentChildren());
+		List<Object> oldContentChildren = new ArrayList<>(
+				doGetContentChildren());
 		if (!oldContentChildren.contains(contentChild)) {
 			throw new IllegalArgumentException("Cannot remove " + contentChild
 					+ " because its not a content child.");
@@ -269,13 +422,13 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		doRemoveContentChild(contentChild);
 		// check doRemoveContentChild(Object, int) does not violate
 		// postconditions
-		if (getContentChildren().contains(contentChild)) {
+		List<? extends Object> newContentChildren = doGetContentChildren();
+		if (newContentChildren.contains(contentChild)) {
 			throw new IllegalStateException(
 					"doRemoveContentChild(Object, int) did not remove content child "
 							+ contentChild + " .");
 		}
-		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
-				Collections.unmodifiableList(getContentChildren()));
+		contentChildren.setAll(newContentChildren);
 	}
 
 	/**
@@ -286,7 +439,8 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	 */
 	@Override
 	public void reorderContentChild(Object contentChild, int newIndex) {
-		List<Object> oldContentChildren = new ArrayList<>(getContentChildren());
+		List<Object> oldContentChildren = new ArrayList<>(
+				doGetContentChildren());
 		if (oldContentChildren.contains(contentChild)) {
 			throw new IllegalArgumentException("Cannot reorder " + contentChild
 					+ " because its not a content child.");
@@ -299,38 +453,26 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		doReorderContentChild(contentChild, newIndex);
 		// check doReorderContentChild(Object, int) does not violate
 		// postconditions
-		if (getContentChildren().indexOf(contentChild) != newIndex) {
+		List<? extends Object> newContentChildren = doGetContentChildren();
+		if (newContentChildren.indexOf(contentChild) != newIndex) {
 			throw new IllegalStateException(
 					"doReorderContentChild(Object, int) did not reorder content child "
 							+ contentChild + " to index " + newIndex + ".");
 		}
-		pcs.firePropertyChange(CONTENT_CHILDREN_PROPERTY, oldContentChildren,
-				Collections.unmodifiableList(getContentChildren()));
+		contentChildren.setAll(newContentChildren);
 	}
 
 	/**
-	 * Set the primary model object that this EditPart represents. This method
-	 * is used by an <code>EditPartFactory</code> when creating an EditPart.
+	 * Set the primary content object that this EditPart represents. This method
+	 * is used by an {@link IContentPartFactory} when creating an
+	 * {@link IContentPart}.
 	 *
 	 * @see IContentPart#setContent(Object)
 	 */
+
 	@Override
 	public void setContent(Object content) {
-		if (this.content == content) {
-			return;
-		}
-
-		Object oldContent = this.content;
-		if (oldContent != null && oldContent != content
-				&& getViewer() != null) {
-			unregisterFromContentPartMap(getViewer(), oldContent);
-		}
-		this.content = content;
-		if (content != null && content != oldContent && getViewer() != null) {
-			registerAtContentPartMap(getViewer(), content);
-		}
-
-		pcs.firePropertyChange(CONTENT_PROPERTY, oldContent, content);
+		this.contentProperty.set(content);
 	}
 
 	@SuppressWarnings("serial")
@@ -346,8 +488,8 @@ public abstract class AbstractContentPart<VR, V extends VR>
 					HashMultimap.<Object, String> create());
 		}
 		super.unregister(viewer);
-		if (content != null) {
-			unregisterFromContentPartMap(viewer, content);
+		if (getContent() != null) {
+			unregisterFromContentPartMap(viewer, getContent());
 		}
 	}
 

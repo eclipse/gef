@@ -12,12 +12,12 @@
 package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class HoverModel<VR> implements IPropertyChangeNotifier {
+public class HoverModel<VR> {
 
 	/**
 	 * The {@link HoverModel} fires {@link PropertyChangeEvent}s when the
@@ -36,14 +36,8 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 */
 	final public static String HOVER_PROPERTY = "hover";
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private IVisualPart<VR, ? extends VR> hovered = null;
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
+	private ObjectProperty<IVisualPart<VR, ? extends VR>> hoverProperty = new SimpleObjectProperty<>(
+			this, HOVER_PROPERTY);
 
 	/**
 	 * Sets the hovered part to <code>null</code>.
@@ -61,12 +55,16 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 * @return the currently hovered {@link IContentPart} or <code>null</code>
 	 */
 	public IVisualPart<VR, ? extends VR> getHover() {
-		return hovered;
+		return hoverProperty.get();
 	}
 
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+	/**
+	 * Returns an object property representing the current hover part.
+	 *
+	 * @return A property named {@link #HOVER_PROPERTY}.
+	 */
+	public ObjectProperty<IVisualPart<VR, ? extends VR>> hoverProperty() {
+		return hoverProperty;
 	}
 
 	/**
@@ -79,11 +77,7 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
 	public void setHover(IVisualPart<VR, ? extends VR> cp) {
-		IVisualPart<VR, ? extends VR> oldHovered = hovered;
-		hovered = cp;
-		if (oldHovered != hovered) {
-			pcs.firePropertyChange(HOVER_PROPERTY, oldHovered, hovered);
-		}
+		hoverProperty.set(cp);
 	}
 
 }

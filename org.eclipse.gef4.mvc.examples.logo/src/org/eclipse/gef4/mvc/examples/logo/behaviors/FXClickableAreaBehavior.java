@@ -11,19 +11,50 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.behaviors;
 
+import java.util.Map;
+
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 
+/**
+ * A behavior that regulates the clickable area width of the
+ * {@link FXGeometricCurvePart}'s visual dependent on the zoom level.
+ *
+ * @author anyssen
+ *
+ */
 public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 
 	private static final double ABSOLUTE_CLICKABLE_WIDTH = 8;
 	private DoubleBinding clickableAreaBinding;
+
+	private final ListChangeListener<Node> curveNodeChildrenObserver = new ListChangeListener<Node>() {
+
+		@Override
+		public void onChanged(ListChangeListener.Change<? extends Node> c) {
+			Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getHost()
+					.getRoot().getViewer().getVisualPartMap();
+			// ensure clickable area is properly registered/unregistered at/from
+			// visual part map.
+			while (c.next()) {
+				for (Node n : c.getRemoved()) {
+					visualPartMap.remove(n);
+				}
+				for (Node n : c.getAddedSubList()) {
+					visualPartMap.put(n, getHost());
+				}
+			}
+		}
+	};
+
 	private final ChangeListener<? super Number> scaleXListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
@@ -33,7 +64,7 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 	};
 
 	@Override
-	public void activate() {
+	protected void doActivate() {
 		clickableAreaBinding = new DoubleBinding() {
 			@Override
 			protected double computeValue() {
@@ -43,6 +74,8 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 				return Math.min(localClickableWidth, ABSOLUTE_CLICKABLE_WIDTH);
 			}
 		};
+		getHost().getVisual().getCurveNode().getChildrenUnmodifiable()
+				.addListener(curveNodeChildrenObserver);
 		getHost().getVisual().getCurveNode().clickableAreaWidthProperty()
 				.bind(clickableAreaBinding);
 		((FXViewer) getHost().getRoot().getViewer()).getCanvas()
@@ -51,12 +84,13 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 	}
 
 	@Override
-	public void deactivate() {
+	protected void doDeactivate() {
+		clickableAreaBinding.dispose();
 		((FXViewer) getHost().getRoot().getViewer()).getCanvas()
 				.getContentTransform().mxxProperty()
 				.removeListener(scaleXListener);
-		clickableAreaBinding.dispose();
-		super.deactivate();
+		getHost().getVisual().getCurveNode().getChildrenUnmodifiable()
+				.removeListener(curveNodeChildrenObserver);
 	}
 
 	@Override

@@ -11,26 +11,34 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 public abstract class AbstractFXGeometricElementPart<N extends Node>
-		extends AbstractFXContentPart<N> implements PropertyChangeListener {
+		extends AbstractFXContentPart<N> {
+
+	private final ChangeListener<Object> contentObserver = new ChangeListener<Object>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Object> observable,
+				Object oldValue, Object newValue) {
+			refreshVisual();
+		}
+	};
 
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getContent().addPropertyChangeListener(this);
+		contentProperty().addListener(contentObserver);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		getContent().removePropertyChangeListener(this);
+		contentProperty().removeListener(contentObserver);
 		super.doDeactivate();
 	}
 
@@ -45,13 +53,6 @@ public abstract class AbstractFXGeometricElementPart<N extends Node>
 	@Override
 	public AbstractFXGeometricElement<?> getContent() {
 		return (AbstractFXGeometricElement<?>) super.getContent();
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getSource() == getContent()) {
-			refreshVisual();
-		}
 	}
 
 }

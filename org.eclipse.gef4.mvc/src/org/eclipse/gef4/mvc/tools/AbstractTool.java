@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,11 +18,12 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.activate.IActivatable;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import javafx.beans.property.ReadOnlyBooleanProperty;
 
 /**
  *
@@ -37,15 +36,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  */
 public abstract class AbstractTool<VR> implements ITool<VR> {
 
-	/**
-	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
-	 * listeners about changes to this object. May be used by subclasses to
-	 * trigger the notification of listeners.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
-	private boolean active = false;
+	private ActivatableSupport acs = new ActivatableSupport(this);
 	private IDomain<VR> domain;
 	private Map<IViewer<VR>, List<IPolicy<VR>>> activePolicies = new IdentityHashMap<>();
 
@@ -56,19 +47,14 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 					"The IEditDomain has to be set via setDomain(IDomain) before activation.");
 		}
 
-		boolean oldActive = active;
-		active = true;
-		if (oldActive != active) {
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
-					active);
-		}
+		acs.activate();
 
 		registerListeners();
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyBooleanProperty activeProperty() {
+		return acs.activeProperty();
 	}
 
 	/**
@@ -92,12 +78,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	public void deactivate() {
 		unregisterListeners();
 
-		boolean oldActive = active;
-		active = false;
-		if (oldActive != active) {
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
-					active);
-		}
+		acs.deactivate();
 	}
 
 	@Override
@@ -121,7 +102,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 
 	@Override
 	public boolean isActive() {
-		return active;
+		return acs.isActive();
 	}
 
 	/**
@@ -130,11 +111,6 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
 	 */
 	protected void registerListeners() {
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	/**
@@ -164,7 +140,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 
 	@Override
 	public void setAdaptable(IDomain<VR> adaptable) {
-		if (active) {
+		if (isActive()) {
 			throw new IllegalStateException(
 					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
 		}

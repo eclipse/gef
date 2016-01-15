@@ -42,6 +42,15 @@ public abstract class AbstractFXRootPart<N extends Node>
 	}
 
 	@Override
+	protected void registerAtVisualPartMap(IViewer<Node> viewer, N visual) {
+		// register "main" visual for this part
+		super.registerAtVisualPartMap(viewer, visual);
+		// register nested visuals that are not controlled by other parts
+		FXPartUtils.registerNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
+	}
+
+	@Override
 	public void setAdaptable(IViewer<Node> viewer) {
 		if (viewer != null && !(viewer instanceof FXViewer)) {
 			throw new IllegalArgumentException(
@@ -49,6 +58,15 @@ public abstract class AbstractFXRootPart<N extends Node>
 							+ viewer.getClass().getName());
 		}
 		super.setAdaptable(viewer);
+	}
+
+	@Override
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, N visual) {
+		// unregister "main" visual for this part
+		super.unregisterFromVisualPartMap(viewer, visual);
+		// unregister nested visuals that are not controlled by other parts
+		FXPartUtils.unregisterNestedVisuals(this, viewer.getVisualPartMap(),
+				visual);
 	}
 
 }

@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * The {@link AddContentChildOperation} uses the {@link IContentPart} API to
  * remove a content object from an {@link IContentPart}.
@@ -39,7 +41,7 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 	private int index;
 
 	// capture initial content children (for no-op test)
-	private List<? extends Object> initialContentChildren;
+	private List<Object> initialContentChildren;
 
 	/**
 	 * Creates a new {@link AddContentChildOperation} for adding the given
@@ -62,7 +64,8 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		this.parent = parent;
 		this.contentChild = contentChild;
 		this.index = index;
-		this.initialContentChildren = parent.getContentChildren();
+		this.initialContentChildren = ImmutableList
+				.copyOf(parent.getContentChildrenUnmodifiable());
 	}
 
 	@Override
@@ -71,8 +74,8 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		// System.out.println("EXEC add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		if (parent.getContent() != null
-				&& !parent.getContentChildren().contains(contentChild)) {
+		if (parent.getContent() != null && !parent
+				.getContentChildrenUnmodifiable().contains(contentChild)) {
 			parent.addContentChild(contentChild, index);
 		}
 		// TODO: re-order in case the index does not match??
@@ -96,8 +99,8 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 		// System.out.println("UNDO add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		if (parent.getContent() != null
-				&& parent.getContentChildren().contains(contentChild)) {
+		if (parent.getContent() != null && parent
+				.getContentChildrenUnmodifiable().contains(contentChild)) {
 			parent.removeContentChild(contentChild);
 		}
 		return Status.OK_STATUS;

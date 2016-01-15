@@ -12,15 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -28,6 +25,11 @@ import org.eclipse.gef4.layout.AbstractLayoutContext;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * The {@link GraphLayoutContext} is a {@link Graph}-specific
@@ -38,21 +40,8 @@ import org.eclipse.gef4.layout.INodeLayout;
  */
 public class GraphLayoutContext extends AbstractLayoutContext {
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-	private PropertyChangeListener graphAttributesListener = new PropertyChangeListener() {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			// forward any property change events with us as source
-			if (evt instanceof KeyedPropertyChangeEvent) {
-				pcs.fireKeyedPropertyChange(evt.getPropertyName(), ((KeyedPropertyChangeEvent) evt).getKey(),
-						evt.getOldValue(), evt.getNewValue());
-			} else {
-				pcs.firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-			}
-		}
-	};
-
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this, ATTRIBUTES_PROPERTY,
+			FXCollections.<String, Object> observableHashMap());
 	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<>();
 	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<>();
 	private Graph graph;
@@ -77,13 +66,13 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyMapProperty<String, Object> attributesProperty() {
+		return attributesProperty.getReadOnlyProperty();
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return graph.getAttributes();
+	public ObservableMap<String, Object> getAttributes() {
+		return attributesProperty.get();
 	}
 
 	/**
@@ -151,11 +140,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return nodes.toArray(new INodeLayout[] {});
 	}
 
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
 	/**
 	 * Transfers the given {@link Graph} into this {@link GraphLayoutContext},
 	 * i.e. creates {@link GraphNodeLayout}s and {@link GraphEdgeLayout}s for
@@ -166,12 +150,15 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	 *            {@link GraphLayoutContext}.
 	 */
 	public void setGraph(Graph graph) {
+		if (this.graph != null) {
+			attributesProperty.unbindContentBidirectional(this.graph.attributesProperty());
+		}
 		if (graph == null) {
 			graph = new Graph();
 		}
 
 		this.graph = graph;
-		this.graph.addPropertyChangeListener(graphAttributesListener);
+		this.attributesProperty.bindContentBidirectional(this.graph.attributesProperty());
 
 		transferNodes();
 		transferEdges();

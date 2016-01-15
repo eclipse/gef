@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 /**
@@ -37,14 +38,14 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 	private final String role;
 
 	// initial content anchorages (for no-op test)
-	private SetMultimap<? extends Object, String> initialContentAnchorages;
+	private SetMultimap<Object, String> initialContentAnchorages;
 
 	/**
 	 * Creates a new {@link DetachFromContentAnchorageOperation} to detach the
 	 * given <i>anchored</i> {@link IContentPart} from the given
 	 * <i>contentAnchorage</i> under the specified <i>role</i>, so that it will
 	 * not be returned by subsequent calls to
-	 * {@link IContentPart#getContentAnchorages()}.
+	 * {@link IContentPart#getContentAnchoragesUnmodifiable()}.
 	 *
 	 * @param anchored
 	 *            The {@link IContentPart} which is to be detached from the
@@ -61,7 +62,8 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 		super("Detach From Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;
-		this.initialContentAnchorages = anchored.getContentAnchorages();
+		this.initialContentAnchorages = ImmutableSetMultimap
+				.copyOf(anchored.getContentAnchoragesUnmodifiable());
 		this.role = role;
 	}
 
@@ -70,8 +72,9 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("EXEC detach " + anchored + " from content "
 		// + contentAnchorage + " with role " + role + ".");
-		if (anchored.getContent() != null && anchored.getContentAnchorages()
-				.containsEntry(contentAnchorage, role)) {
+		if (anchored.getContent() != null
+				&& anchored.getContentAnchoragesUnmodifiable()
+						.containsEntry(contentAnchorage, role)) {
 			anchored.detachFromContentAnchorage(contentAnchorage, role);
 		}
 		return Status.OK_STATUS;
@@ -93,8 +96,9 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("UNDO detach " + anchored + " from content "
 		// + contentAnchorage + " with role " + role + ".");
-		if (anchored.getContent() != null && !anchored.getContentAnchorages()
-				.containsEntry(contentAnchorage, role)) {
+		if (anchored.getContent() != null
+				&& !anchored.getContentAnchoragesUnmodifiable()
+						.containsEntry(contentAnchorage, role)) {
 			anchored.attachToContentAnchorage(contentAnchorage, role);
 		}
 		return Status.OK_STATUS;

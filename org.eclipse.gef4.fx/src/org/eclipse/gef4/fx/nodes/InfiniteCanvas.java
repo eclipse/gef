@@ -253,10 +253,20 @@ public class InfiniteCanvas extends Region {
 		}
 	}
 
+	/**
+	 * The default grid cell width.
+	 */
+	public static final double DEFAULT_GRID_CELL_WIDTH = 10.0;
+
+	/**
+	 * The default grid cell height.
+	 */
+	public static final double DEFAULT_GRID_CELL_HEIGHT = 10.0;
+
 	// background grid
 	private GridCanvas gridCanvas;
 	private final DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
-			10);
+			DEFAULT_GRID_CELL_WIDTH);
 	private final DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
 			10);
 	private final ReadOnlyObjectWrapper<Affine> gridTransformProperty = new ReadOnlyObjectWrapper<>(

@@ -13,15 +13,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -31,6 +28,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Inject;
+
+import javafx.beans.property.ReadOnlyBooleanProperty;
 
 /**
  *
@@ -42,14 +41,6 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
-	/**
-	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
-	 * listeners about changes to this object. May be used by subclasses to
-	 * trigger the notification of listeners.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
 	@Inject
 	// scoped to single instance within viewer
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
@@ -57,20 +48,24 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Inject
 	// scoped to single instance within viewer
 	private IHandlePartFactory<VR> handlePartFactory;
+
 	private IVisualPart<VR, ? extends VR> host;
-	private boolean active;
+	private ActivatableSupport acs = new ActivatableSupport(this);
 
 	private List<IHandlePart<VR, ? extends VR>> handleParts;
 	private List<IFeedbackPart<VR, ? extends VR>> feedbackParts;
 
 	@Override
-	public void activate() {
-		boolean oldActive = active;
-		active = true;
-		if (oldActive != active) {
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
-					active);
+	public final void activate() {
+		if (!acs.isActive()) {
+			acs.activate();
+			doActivate();
 		}
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty activeProperty() {
+		return acs.activeProperty();
 	}
 
 	/**
@@ -114,7 +109,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			switchAdaptableScopes();
 			feedbackParts = feedbackPartFactory.createFeedbackParts(targets,
 					this, contextMap);
-			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
+			BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), targets,
 					feedbackParts);
 		}
 	}
@@ -160,24 +155,33 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			switchAdaptableScopes();
 			handleParts = handlePartFactory.createHandleParts(targets, this,
 					contextMap);
-			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
+			BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), targets,
 					handleParts);
 		}
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public final void deactivate() {
+		if (acs.isActive()) {
+			doDeactivate();
+			acs.deactivate();
+		}
 	}
 
-	@Override
-	public void deactivate() {
-		boolean oldActive = active;
-		active = false;
-		if (oldActive != active) {
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
-					active);
-		}
+	/**
+	 * Post {@link #activate()} hook that may be overwritten to e.g. register
+	 * listeners.
+	 */
+	protected void doActivate() {
+		// nothing to do by default
+	}
+
+	/**
+	 * Pre {@link #deactivate()} hook that may be overwritten to e.g. unregister
+	 * listeners.
+	 */
+	protected void doDeactivate() {
+		// nothing to do by default
 	}
 
 	@Override
@@ -214,7 +218,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	@Override
 	public boolean isActive() {
-		return active;
+		return acs.isActive();
 	}
 
 	/**
@@ -228,8 +232,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
 			if (targets != null && !targets.isEmpty()) {
-				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
-						targets, feedbackParts);
+				BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), targets,
+						feedbackParts);
 				feedbackParts.clear();
 			}
 		}
@@ -246,16 +250,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (handleParts != null && !handleParts.isEmpty()) {
 			if (targets != null && !targets.isEmpty()) {
-				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
-						targets, handleParts);
+				BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), targets,
+						handleParts);
 				handleParts.clear();
 			}
 		}
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy extends AbstractIn
 
 	@Override
 	public void click(MouseEvent e) {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost().getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost().getAnchoragesUnmodifiable();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}

@@ -40,10 +40,40 @@ public abstract class AbstractRootPart<VR, V extends VR>
 	private IViewer<VR> viewer;
 
 	@Override
+	protected void activateChildren() {
+		// activate content part children first (which might lead to the
+		// creation of feedback and handle part children)
+		for (IContentPart<VR, ? extends VR> child : getContentPartChildren()) {
+			child.activate();
+		}
+		// activate remaining children
+		for (IVisualPart<VR, ? extends VR> child : getChildrenUnmodifiable()) {
+			if (!(child instanceof IContentPart)) {
+				child.activate();
+			}
+		}
+	}
+
+	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
+	}
+
+	@Override
+	protected void deactivateChildren() {
+		// deactivate content part children first (which might lead to the
+		// removal of feedback and handle part children)
+		for (IContentPart<VR, ? extends VR> child : getContentPartChildren()) {
+			child.deactivate();
+		}
+		// deactivate remaining children
+		for (IVisualPart<VR, ? extends VR> child : getChildrenUnmodifiable()) {
+			if (!(child instanceof IContentPart)) {
+				child.deactivate();
+			}
+		}
 	}
 
 	@Override
@@ -54,36 +84,6 @@ public abstract class AbstractRootPart<VR, V extends VR>
 	}
 
 	@Override
-	protected void doActivate() {
-		// activate content part children first (which might lead to the
-		// creation of feedback and handle part children)
-		for (IContentPart<VR, ? extends VR> child : getContentPartChildren()) {
-			child.activate();
-		}
-		// activate remaining children
-		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
-			if (!(child instanceof IContentPart)) {
-				child.activate();
-			}
-		}
-	}
-
-	@Override
-	protected void doDeactivate() {
-		// deactivate content part children first (which might lead to the
-		// removal of feedback and handle part children)
-		for (IContentPart<VR, ? extends VR> child : getContentPartChildren()) {
-			child.deactivate();
-		}
-		// deactivate remaining children
-		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
-			if (!(child instanceof IContentPart)) {
-				child.deactivate();
-			}
-		}
-	}
-
-	@Override
 	public IViewer<VR> getAdaptable() {
 		return getViewer();
 	}
@@ -91,19 +91,19 @@ public abstract class AbstractRootPart<VR, V extends VR>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<VR, ? extends VR>> getContentPartChildren() {
-		return PartUtils.filterParts(getChildren(), IContentPart.class);
+		return PartUtils.filterParts(getChildrenUnmodifiable(), IContentPart.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IFeedbackPart<VR, ? extends VR>> getFeedbackPartChildren() {
-		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
+		return PartUtils.filterParts(getChildrenUnmodifiable(), IFeedbackPart.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IHandlePart<VR, ? extends VR>> getHandlePartChildren() {
-		return PartUtils.filterParts(getChildren(), IHandlePart.class);
+		return PartUtils.filterParts(getChildrenUnmodifiable(), IHandlePart.class);
 	}
 
 	@Override

@@ -52,6 +52,18 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+		return HashMultimap.create();
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		List<Object> objs = new ArrayList<>();
+		objs.addAll(getContent().getShapeVisuals());
+		return objs;
+	}
+
+	@Override
 	protected void doRefreshVisual(Group visual) {
 		// nothing to do
 	}
@@ -64,18 +76,6 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	@Override
 	public FXGeometricModel getContent() {
 		return (FXGeometricModel) super.getContent();
-	}
-
-	@Override
-	public SetMultimap<? extends Object, String> getContentAnchorages() {
-		return HashMultimap.create();
-	}
-
-	@Override
-	public List<Object> getContentChildren() {
-		List<Object> objs = new ArrayList<>();
-		objs.addAll(getContent().getShapeVisuals());
-		return objs;
 	}
 
 	@Override

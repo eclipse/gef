@@ -93,7 +93,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			if (root == part) {
 				return true;
 			}
-			if (isContained(root.getChildren(), part)) {
+			if (isContained(root.getChildrenUnmodifiable(), part)) {
 				return true;
 			}
 		}
@@ -132,14 +132,14 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	@Override
-	public void deactivate() {
+	protected void doDeactivate() {
 		if (isInCreationDelay()) {
 			stopCreationDelay();
 		}
 		if (isInRemovalDelay()) {
 			stopRemovalDelay();
 		}
-		super.deactivate();
+		super.doDeactivate();
 	}
 
 	/**
@@ -322,6 +322,13 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		} else {
 			super.removeFeedback(targets);
 		}
+	}
+
+	@Override
+	protected void removeHandles(
+			List<? extends IVisualPart<Node, ? extends Node>> targets) {
+		super.removeHandles(targets);
+		isHandles = getHandleParts() != null && !getHandleParts().isEmpty();
 	}
 
 	/**

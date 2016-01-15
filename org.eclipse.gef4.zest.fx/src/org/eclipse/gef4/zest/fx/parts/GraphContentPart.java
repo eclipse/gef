@@ -12,12 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -36,6 +33,8 @@ import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
+import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Pair;
@@ -50,22 +49,25 @@ import javafx.util.Pair;
  */
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
-	private PropertyChangeListener graphPropertyChangeListener = new PropertyChangeListener() {
-		@SuppressWarnings("unchecked")
+	private MapChangeListener<String, Object> graphAttributesObserver = new MapChangeListener<String, Object>() {
+
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (IAttributeStore.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
-				// the layout algorithm might have changed
-				refreshVisual();
-			} else if (Graph.NODES_PROPERTY.equals(evt.getPropertyName())
-					|| Graph.EDGES_PROPERTY.equals(evt.getPropertyName())) {
-				// update layout context
-				getAdapter(GraphLayoutContext.class).setGraph(getContent());
-				getAdapter(ContentBehavior.class).synchronizeContentChildren(getContentChildren());
-				// apply layout
-				getAdapter(LayoutContextBehavior.class).applyLayout(true);
-			}
+		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
+			refreshVisual();
 		}
+	};
+
+	private ListChangeListener<Object> graphChildrenObserver = new ListChangeListener<Object>() {
+
+		@Override
+		public void onChanged(ListChangeListener.Change<? extends Object> c) {
+			// update layout context
+			getAdapter(GraphLayoutContext.class).setGraph(getContent());
+			getAdapter(ContentBehavior.class).synchronizeContentChildren(doGetContentChildren());
+			// apply layout
+			getAdapter(LayoutContextBehavior.class).applyLayout(true);
+		}
+
 	};
 
 	@Override
@@ -83,7 +85,9 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getContent().addPropertyChangeListener(graphPropertyChangeListener);
+		getContent().attributesProperty().addListener(graphAttributesObserver);
+		getContent().getNodes().addListener(graphChildrenObserver);
+		getContent().getEdges().addListener(graphChildrenObserver);
 		// apply layout if no viewport state is saved for this graph, or we are
 		// nested inside a node, or the saved viewport is outdated
 		ViewportState savedViewport = getViewer().getAdapter(NavigationModel.class).getViewportState(getContent());
@@ -100,7 +104,9 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	protected void doDeactivate() {
-		getContent().removePropertyChangeListener(graphPropertyChangeListener);
+		getContent().attributesProperty().removeListener(graphAttributesObserver);
+		getContent().getNodes().removeListener(graphChildrenObserver);
+		getContent().getEdges().removeListener(graphChildrenObserver);
 		super.doDeactivate();
 	}
 
@@ -117,12 +123,12 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public SetMultimap<? extends Object, String> getContentAnchorages() {
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		return HashMultimap.create();
 	}
 
 	@Override
-	public List<Object> getContentChildren() {
+	protected List<? extends Object> doGetContentChildren() {
 		List<Object> children = new ArrayList<>();
 		children.addAll(getContent().getEdges());
 		for (Edge e : getContent().getEdges()) {
@@ -144,7 +150,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	private void setGraphLayoutAlgorithm() {
-		Object algo = getContent().getAttributes().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
+		Object algo = getContent().attributesProperty().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
 		if (algo instanceof ILayoutAlgorithm) {
 			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
 			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);

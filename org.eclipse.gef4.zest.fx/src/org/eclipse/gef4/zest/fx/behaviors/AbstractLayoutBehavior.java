@@ -45,19 +45,17 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	};
 
 	@Override
-	public void activate() {
-		super.activate();
-		GraphLayoutContext layoutModel = getGraphLayoutContext();
-		layoutModel.schedulePreLayoutPass(preLayout);
-		layoutModel.schedulePostLayoutPass(postLayout);
+	protected void doActivate() {
+		GraphLayoutContext layoutContext = getGraphLayoutContext();
+		layoutContext.schedulePreLayoutPass(preLayout);
+		layoutContext.schedulePostLayoutPass(postLayout);
 	}
 
 	@Override
-	public void deactivate() {
-		GraphLayoutContext layoutModel = getGraphLayoutContext();
-		layoutModel.unschedulePreLayoutPass(preLayout);
-		layoutModel.unschedulePostLayoutPass(postLayout);
-		super.deactivate();
+	protected void doDeactivate() {
+		GraphLayoutContext layoutContext = getGraphLayoutContext();
+		layoutContext.unschedulePreLayoutPass(preLayout);
+		layoutContext.unschedulePostLayoutPass(postLayout);
 	}
 
 	/**

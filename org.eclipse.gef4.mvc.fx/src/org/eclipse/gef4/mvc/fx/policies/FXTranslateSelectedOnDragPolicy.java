@@ -80,12 +80,11 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	 * @return A {@link List} containing all {@link IContentPart}s that should
 	 *         be relocated by this policy.
 	 */
-	// TODO: change visibility to protected
 	@SuppressWarnings("serial")
-	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
+	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection();
+				}).getSelectionUnmodifiable();
 	}
 
 	/**

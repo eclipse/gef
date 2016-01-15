@@ -12,17 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Map;
-
-import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.INodeLayout;
-import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * The {@link GraphEdgeLayout} is an {@link Edge}-specific
@@ -33,21 +31,8 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
  */
 public class GraphEdgeLayout implements IConnectionLayout {
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-	private PropertyChangeListener edgeAttributesListener = new PropertyChangeListener() {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			// forward any property change events with us as source
-			if (evt instanceof KeyedPropertyChangeEvent) {
-				pcs.fireKeyedPropertyChange(evt.getPropertyName(), ((KeyedPropertyChangeEvent) evt).getKey(),
-						evt.getOldValue(), evt.getNewValue());
-			} else {
-				pcs.firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-			}
-		}
-	};
-
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 	private GraphLayoutContext context;
 	private Edge edge;
 
@@ -64,23 +49,17 @@ public class GraphEdgeLayout implements IConnectionLayout {
 	public GraphEdgeLayout(GraphLayoutContext context, Edge edge) {
 		this.context = context;
 		this.edge = edge;
-		this.edge.addPropertyChangeListener(edgeAttributesListener);
-
-		// graph directed?
-		Object type = context.getGraph().getAttributes().get(ZestProperties.GRAPH_TYPE);
-		if (type == ZestProperties.GRAPH_TYPE_DIRECTED) {
-			getAttributes().put(LayoutProperties.DIRECTED_PROPERTY, true);
-		}
+		this.attributesProperty.bindContentBidirectional(edge.attributesProperty());
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyMapProperty<String, Object> attributesProperty() {
+		return attributesProperty.getReadOnlyProperty();
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return edge.getAttributes();
+	public ObservableMap<String, Object> getAttributes() {
+		return attributesProperty.get();
 	}
 
 	/**
@@ -102,8 +81,4 @@ public class GraphEdgeLayout implements IConnectionLayout {
 		return context.getNodeLayout(edge.getTarget());
 	}
 
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
 }

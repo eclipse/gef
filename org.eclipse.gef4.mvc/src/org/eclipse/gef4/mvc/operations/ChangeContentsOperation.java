@@ -115,7 +115,7 @@ public class ChangeContentsOperation extends AbstractOperation
 			throws ExecutionException {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
 		if (!contentModel.getContents().equals(newContents)) {
-			contentModel.setContents(newContents);
+			contentModel.getContents().setAll(newContents);
 		}
 		return Status.OK_STATUS;
 	}
@@ -160,7 +160,7 @@ public class ChangeContentsOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
-		contentModel.setContents(initialContents);
+		contentModel.getContents().setAll(initialContents);
 		return Status.OK_STATUS;
 	}
 

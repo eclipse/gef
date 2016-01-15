@@ -151,7 +151,7 @@ public class JFaceCustomNodeExample {
 			if (content instanceof org.eclipse.gef4.graph.Node) {
 				// create custom node if we find the custom attribute
 				org.eclipse.gef4.graph.Node n = (org.eclipse.gef4.graph.Node) content;
-				if (n.getAttributes().containsKey(ATTR_CUSTOM)) {
+				if (n.attributesProperty().containsKey(ATTR_CUSTOM)) {
 					CustomNodeContentPart part = new CustomNodeContentPart();
 					if (part != null) {
 						injector.injectMembers(part);

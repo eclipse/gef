@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -23,8 +22,12 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
-import org.eclipse.gef4.common.properties.MapProperty;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * A {@link Node} represents a vertex within a {@link Graph}.
@@ -84,8 +87,8 @@ public class Node implements IAttributeStore {
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
-		 * {@link Node#getAttributes() attributes map} of the {@link Node} which
-		 * is constructed by this {@link Builder}.
+		 * {@link Node#attributesProperty() attributesProperty map} of the
+		 * {@link Node} which is constructed by this {@link Builder}.
 		 *
 		 * @param key
 		 *            The attribute name which is inserted.
@@ -172,7 +175,8 @@ public class Node implements IAttributeStore {
 
 	}
 
-	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapper<>(this,
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 
 	/**
 	 * The {@link Graph} which this {@link Node} belongs to.
@@ -191,21 +195,22 @@ public class Node implements IAttributeStore {
 	}
 
 	/**
-	 * Constructs a new {@link Node} and copies the given <i>attributes</i> into
-	 * the {@link #getAttributes() attributes map} of this {@link Node}.
+	 * Constructs a new {@link Node} and copies the given
+	 * <i>attributesProperty</i> into the {@link #attributesProperty()
+	 * attributesProperty map} of this {@link Node}.
 	 *
-	 * @param attrs
-	 *            A {@link Map} containing the attributes which are copied into
-	 *            the {@link #getAttributes() attributes map} of this
-	 *            {@link Node}.
+	 * @param attributes
+	 *            A {@link Map} containing the attributesProperty which are
+	 *            copied into the {@link #attributesProperty()
+	 *            attributesProperty map} of this {@link Node}.
 	 */
-	public Node(Map<String, Object> attrs) {
-		this.attrs.putAll(attrs);
+	public Node(Map<String, Object> attributes) {
+		this.attributesProperty.putAll(attributes);
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		attrs.addPropertyChangeListener(listener);
+	public ReadOnlyMapProperty<String, Object> attributesProperty() {
+		return attributesProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -216,7 +221,7 @@ public class Node implements IAttributeStore {
 		if (!(that instanceof Node)) {
 			return false;
 		}
-		boolean attrsEqual = this.getAttributes().equals(((Node) that).getAttributes());
+		boolean attrsEqual = this.attributesProperty().equals(((Node) that).attributesProperty());
 		return attrsEqual;
 	}
 
@@ -311,8 +316,8 @@ public class Node implements IAttributeStore {
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return attrs;
+	public ObservableMap<String, Object> getAttributes() {
+		return attributesProperty.get();
 	}
 
 	/**
@@ -421,12 +426,7 @@ public class Node implements IAttributeStore {
 
 	@Override
 	public int hashCode() {
-		return getAttributes().hashCode();
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		attrs.removePropertyChangeListener(listener);
+		return attributesProperty().hashCode();
 	}
 
 	/**
@@ -460,14 +460,14 @@ public class Node implements IAttributeStore {
 		sb.append("Node {");
 		boolean separator = false;
 		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
-		sortedAttrs.putAll(attrs);
+		sortedAttrs.putAll(attributesProperty);
 		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {
 				sb.append(", ");
 			} else {
 				separator = true;
 			}
-			sb.append(attrKey.toString() + " : " + attrs.get(attrKey));
+			sb.append(attrKey.toString() + " : " + attributesProperty.get(attrKey));
 		}
 		sb.append("}");
 		return sb.toString();

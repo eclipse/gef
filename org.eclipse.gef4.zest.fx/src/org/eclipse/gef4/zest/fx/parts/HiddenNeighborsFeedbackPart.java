@@ -71,7 +71,7 @@ public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 
 	@Override
 	protected void doRefreshVisual(Group visual) {
-		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchorages().keySet();
+		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchoragesUnmodifiable().keySet();
 		if (keySet.isEmpty()) {
 			return;
 		}

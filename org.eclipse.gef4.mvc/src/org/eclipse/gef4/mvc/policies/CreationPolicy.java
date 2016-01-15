@@ -192,7 +192,7 @@ public class CreationPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	public IContentPart<VR, ? extends VR> create(Object content,
 			IContentPart<VR, ? extends VR> parent,
 			SetMultimap<IContentPart<VR, ? extends VR>, String> anchoreds) {
-		return create(content, parent, parent.getChildren().size(), anchoreds);
+		return create(content, parent, parent.getChildrenUnmodifiable().size(), anchoreds);
 	}
 
 	/**

@@ -119,8 +119,12 @@ public class FXGeometricCurvePart
 				.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
 				}).get();
 		if (role.equals("START")) {
+			// System.out.println(
+			// "Setting start anchor of curve " + this + " to " + anchor);
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
+			// System.out.println(
+			// "Setting end anchor of curve " + this + " to " + anchor);
 			getVisual().setEndAnchor(anchor);
 		} else {
 			throw new IllegalStateException(
@@ -156,7 +160,7 @@ public class FXGeometricCurvePart
 				});
 		contentPolicy.init();
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = HashMultimap
-				.create(getAnchorages());
+				.create(getAnchoragesUnmodifiable());
 		for (IVisualPart<Node, ? extends Node> anchorage : anchorages
 				.keySet()) {
 			if (anchorage instanceof IContentPart) {
@@ -233,8 +237,10 @@ public class FXGeometricCurvePart
 	protected void detachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		if (role.equals("START")) {
+			// System.out.println("Unsetting start anchor of curve.");
 			getVisual().setStartPoint(getVisual().getStartPoint());
 		} else if (role.equals("END")) {
+			// System.out.println("Unsetting end anchor of curve.");
 			getVisual().setEndPoint(getVisual().getEndPoint());
 		} else {
 			throw new IllegalStateException(
@@ -265,6 +271,28 @@ public class FXGeometricCurvePart
 		} else if ("END".equals(role)) {
 			getContent().getTargetAnchorages().remove(contentAnchorage);
 		}
+	}
+
+	@Override
+	protected SetMultimap<Object, String> doGetContentAnchorages() {
+		SetMultimap<Object, String> anchorages = HashMultimap.create();
+
+		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+				.getSourceAnchorages();
+		for (Object src : sourceAnchorages) {
+			anchorages.put(src, "START");
+		}
+		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+				.getTargetAnchorages();
+		for (Object dst : targetAnchorages) {
+			anchorages.put(dst, "END");
+		}
+		return anchorages;
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -393,28 +421,6 @@ public class FXGeometricCurvePart
 	@Override
 	public FXGeometricCurve getContent() {
 		return (FXGeometricCurve) super.getContent();
-	}
-
-	@Override
-	public SetMultimap<Object, String> getContentAnchorages() {
-		SetMultimap<Object, String> anchorages = HashMultimap.create();
-
-		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
-				.getSourceAnchorages();
-		for (Object src : sourceAnchorages) {
-			anchorages.put(src, "START");
-		}
-		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
-				.getTargetAnchorages();
-		for (Object dst : targetAnchorages) {
-			anchorages.put(dst, "END");
-		}
-		return anchorages;
-	}
-
-	@Override
-	public List<? extends Object> getContentChildren() {
-		return Collections.emptyList();
 	}
 
 	@Override

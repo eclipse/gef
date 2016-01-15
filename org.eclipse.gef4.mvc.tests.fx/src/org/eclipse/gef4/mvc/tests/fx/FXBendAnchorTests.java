@@ -80,12 +80,12 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		public SetMultimap<? extends Object, String> getContentAnchorages() {
+		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
 
 		@Override
-		public List<? extends Object> getContentChildren() {
+		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
 		}
 	}
@@ -148,7 +148,7 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		public SetMultimap<? extends Object, String> getContentAnchorages() {
+		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
 			ConnectionContent content = (ConnectionContent) getContent();
 			contentAnchorages.put(content.anchorageStart, START_ROLE);
@@ -157,7 +157,7 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		public List<? extends Object> getContentChildren() {
+		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
 		}
 	}
@@ -275,7 +275,7 @@ public class FXBendAnchorTests {
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
-				viewer.getAdapter(ContentModel.class).setContents(contents);
+				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
 			}
 		});
 
@@ -305,7 +305,7 @@ public class FXBendAnchorTests {
 		robot.delay(1000);
 
 		// check the connection is selected
-		assertTrue(viewer.getAdapter(SelectionModel.class).getSelection().contains(firstConnectionPart));
+		assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(firstConnectionPart));
 
 		// move mouse to second anchorage
 		AnchoragePart secondPart = (AnchoragePart) viewer.getContentPartMap().get(contents.get(1));
@@ -320,7 +320,7 @@ public class FXBendAnchorTests {
 		robot.delay(1000);
 
 		// check the anchorage is selected
-		assertTrue(viewer.getAdapter(SelectionModel.class).getSelection().contains(secondPart));
+		assertTrue(viewer.getAdapter(SelectionModel.class).getSelectionUnmodifiable().contains(secondPart));
 
 		// check the second connection was moved too
 		assertNotEquals(initialP1, secondConnectionPart.getVisual().getCurveNode().getGeometry().toBezier()[0].getP1());

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -237,12 +238,12 @@ public class ContentSynchronizationTests {
 		}
 
 		@Override
-		public SetMultimap<? extends Object, String> getContentAnchorages() {
+		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
 
 		@Override
-		public List<? extends Object> getContentChildren() {
+		protected List<? extends Object> doGetContentChildren() {
 			Tree tree = getContent();
 			if (tree.left == null) {
 				if (tree.right == null) {
@@ -287,7 +288,7 @@ public class ContentSynchronizationTests {
 
 	@After
 	public void deactivate() {
-		viewer.getAdapter(ContentModel.class).setContents(Collections.emptyList());
+		viewer.getAdapter(ContentModel.class).getContents().setAll(Collections.emptyList());
 		domain.deactivate();
 	}
 
@@ -304,11 +305,11 @@ public class ContentSynchronizationTests {
 		// no parts in the beginning
 		assertNull(viewer.getContentPartMap().get(firstContents.get(0)));
 		assertNull(viewer.getContentPartMap().get(secondContents.get(0)));
-		viewer.getAdapter(ContentModel.class).setContents(firstContents);
+		viewer.getAdapter(ContentModel.class).getContents().setAll(firstContents);
 		// both parts created now
 		assertNotNull(viewer.getContentPartMap().get(firstContents.get(0)));
 		assertNotNull(viewer.getContentPartMap().get(secondContents.get(0)));
-		viewer.getAdapter(ContentModel.class).setContents(secondContents);
+		viewer.getAdapter(ContentModel.class).getContents().setAll(secondContents);
 		// first part removed now
 		assertNull(viewer.getContentPartMap().get(firstContents.get(0)));
 		assertNotNull(viewer.getContentPartMap().get(secondContents.get(0)));
@@ -327,17 +328,19 @@ public class ContentSynchronizationTests {
 		List<Tree> sameContents = Arrays.asList(new Tree(0, b, b));
 
 		// check if the exception is thrown when the contents are set
-		boolean thrown = false;
-		String expectedMessage = "Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.";
-		String realMessage = "";
-		try {
-			viewer.getAdapter(ContentModel.class).setContents(sameContents);
-		} catch (IllegalStateException x) {
-			thrown = true;
-			realMessage = x.getMessage();
-		}
-		assertTrue(thrown);
-		assertEquals(expectedMessage, realMessage);
+		final boolean[] uncaught = new boolean[] { false };
+		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				assertTrue(e instanceof IllegalStateException);
+				assertEquals(
+						"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.",
+						e.getMessage());
+				uncaught[0] = true;
+			}
+		});
+		viewer.getAdapter(ContentModel.class).getContents().setAll(sameContents);
+		assertTrue(uncaught[0]);
 	}
 
 }

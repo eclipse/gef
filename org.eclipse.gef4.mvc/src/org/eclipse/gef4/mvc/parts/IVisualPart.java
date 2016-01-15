@@ -19,16 +19,21 @@ import java.util.Map;
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
+import org.eclipse.gef4.common.collections.ObservableMultiset;
+import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.dispose.IDisposable;
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import com.google.common.collect.Multiset;
-import com.google.common.collect.SetMultimap;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.collections.ObservableList;
 
 /**
  * An {@link IVisualPart} plays the controller role in the model-view-controller
@@ -39,10 +44,11 @@ import com.google.common.collect.SetMultimap;
  * <p>
  * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
- * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
- * <code>[n:m]</code> anchorage-anchored relationship ( {@link #getAnchorages()}
- * , {@link #getAnchoreds()}) may be established between {@link IVisualPart}s
- * located at arbitrary places within the hierarchy.
+ * {@link #getChildrenUnmodifiable()}), which roots in an {@link IRootPart}.
+ * Furthermore a <code>[n:m]</code> anchorage-anchored relationship (
+ * {@link #getAnchoragesUnmodifiable()} , {@link #getAnchoredsUnmodifiable()})
+ * may be established between {@link IVisualPart}s located at arbitrary places
+ * within the hierarchy.
  * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
  * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
@@ -73,7 +79,7 @@ import com.google.common.collect.SetMultimap;
  *            The visual node used by this {@link IVisualPart}.
  */
 public interface IVisualPart<VR, V extends VR>
-		extends IAdaptable, IActivatable, IPropertyChangeNotifier, IDisposable {
+		extends IAdaptable, IActivatable, IDisposable {
 
 	/**
 	 * Name of the property storing this part's parent.
@@ -147,6 +153,24 @@ public interface IVisualPart<VR, V extends VR>
 			List<? extends IVisualPart<VR, ? extends VR>> children, int index);
 
 	/**
+	 * Returns a read-only set-multimap property containing this part's
+	 * anchorages and their corresponding roles.
+	 *
+	 * @return A read-only set-multimap property named
+	 *         {@link #ANCHORAGES_PROPERTY}.
+	 */
+	public ReadOnlySetMultimapProperty<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty();
+
+	/**
+	 * Returns an unmodifiable read-only multiset property representing the
+	 * anchoreds of this {@link IVisualPart}.
+	 *
+	 * @return An unmodifiable read-only multiset property named
+	 *         {@link #ANCHOREDS_PROPERTY}.
+	 */
+	public ReadOnlyMultisetProperty<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty();
+
+	/**
 	 * Used by an anchored {@link IVisualPart} to establish an
 	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
 	 * <P>
@@ -186,6 +210,23 @@ public interface IVisualPart<VR, V extends VR>
 	 */
 	public void attachToAnchorage(IVisualPart<VR, ? extends VR> anchorage,
 			String role);
+
+	/**
+	 * Returns a read-only property containing the children of this
+	 * {@link IVisualPart}.
+	 *
+	 * @see #getChildrenUnmodifiable()
+	 * @see #addChild(IVisualPart)
+	 * @see #addChild(IVisualPart, int)
+	 * @see #addChildren(List)
+	 * @see #addChildren(List, int)
+	 * @see #removeChild(IVisualPart)
+	 * @see #removeChildren(List)
+	 * @see #reorderChild(IVisualPart, int)
+	 *
+	 * @return A read-only property named {@link #CHILDREN_PROPERTY}.
+	 */
+	public ReadOnlyListProperty<IVisualPart<VR, ? extends VR>> childrenProperty();
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to unestablish an
@@ -232,20 +273,22 @@ public interface IVisualPart<VR, V extends VR>
 			String role);
 
 	/**
-	 * Returns a {@link SetMultimap} of this part's anchorages and their
-	 * corresponding roles.
+	 * Returns an unmodifiable {@link ObservableSetMultimap} of this part's
+	 * anchorages and their corresponding roles.
 	 *
-	 * @return A {@link SetMultimap} of this part's anchorages and their
-	 *         corresponding roles.
+	 * @return A {@link ObservableSetMultimap} of this part's anchorages and
+	 *         their corresponding roles.
 	 */
-	public SetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchorages();
+	public ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchoragesUnmodifiable();
 
 	/**
-	 * Returns a {@link Multiset} of this part's anchoreds.
+	 * Returns an unmodifiable {@link ObservableMultiset} of this part's
+	 * anchoreds.
 	 *
-	 * @return A {@link Multiset} of this part's anchoreds.
+	 * @return An unmodifiable {@link ObservableMultiset} of this part's
+	 *         anchoreds.
 	 */
-	public Multiset<IVisualPart<VR, ? extends VR>> getAnchoreds();
+	public ObservableMultiset<IVisualPart<VR, ? extends VR>> getAnchoredsUnmodifiable();
 
 	/**
 	 * Returns a {@link Map} of this part's behaviors and their corresponding
@@ -257,11 +300,11 @@ public interface IVisualPart<VR, V extends VR>
 	public Map<AdapterKey<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors();
 
 	/**
-	 * Returns a {@link List} of this part's children.
+	 * Returns an unmodifiable {@link ObservableList} of this part's children.
 	 *
-	 * @return A {@link List} of this part's children.
+	 * @return A {@link ObservableList} of this part's children.
 	 */
-	public List<IVisualPart<VR, ? extends VR>> getChildren();
+	public ObservableList<IVisualPart<VR, ? extends VR>> getChildrenUnmodifiable();
 
 	/**
 	 * Returns the parent of this part.
@@ -305,9 +348,31 @@ public interface IVisualPart<VR, V extends VR>
 	public boolean isRefreshVisual();
 
 	/**
+	 * Returns a read-only property that refers to the parent of this
+	 * {@link IVisualPart}.
+	 *
+	 * @see #getParent()
+	 * @see #setParent(IVisualPart)
+	 *
+	 * @return A read-only property named {@link #PARENT_PROPERTY}.
+	 */
+	public ReadOnlyObjectProperty<IVisualPart<VR, ? extends VR>> parentProperty();
+
+	/**
 	 * Refreshes this part's visualization based on this part's content.
 	 */
 	public void refreshVisual();
+
+	/**
+	 * A boolean property indicating whether this {@link IVisualPart} should
+	 * refresh its visuals or not.
+	 *
+	 * @see #isRefreshVisual()
+	 * @see #setRefreshVisual(boolean)
+	 *
+	 * @return A boolean property named {@link #REFRESH_VISUAL_PROPERTY}.
+	 */
+	public BooleanProperty refreshVisualProperty();
 
 	/**
 	 * Removes the given {@link IVisualPart} from the list of this part's

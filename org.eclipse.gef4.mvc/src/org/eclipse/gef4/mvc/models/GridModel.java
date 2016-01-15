@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
-import java.beans.PropertyChangeListener;
-
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 /**
  * The {@link GridModel} stores information about a background grid, i.e. cell
@@ -26,45 +26,43 @@ import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
  * @author mwienand
  *
  */
-public class GridModel implements IPropertyChangeNotifier {
+public class GridModel {
 
-	// add grid styles??
 	/**
 	 * Name of the "grid cell width" property.
 	 */
 	public static final String GRID_CELL_WIDTH_PROPERTY = "gridCellWidth";
+
 	/**
 	 * Name of the "grid cell height" property.
 	 */
 	public static final String GRID_CELL_HEIGHT_PROPERTY = "gridCellHeight";
 
-	// whether grid should be shown
 	/**
 	 * Name of the "show grid" property.
 	 */
 	public static final String SHOW_GRID_PROPERTY = "showGrid";
+
 	/**
 	 * Name of the "zoom grid" property.
 	 */
 	public static final String ZOOM_GRID_PROPERTY = "zoomGrid";
+
 	/**
 	 * Name of the "snap to grid" property.
 	 */
 	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-
-	private double gridCellWidth = 10;
-	private double gridCellHeight = 10;
-	private boolean showGrid = true;
-	private boolean snapToGrid = false;
-	private boolean zoomGrid = true;
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
+	private DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
+			this, GRID_CELL_WIDTH_PROPERTY, 10);
+	private DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
+			this, GRID_CELL_HEIGHT_PROPERTY, 10);
+	private BooleanProperty showGridProperty = new SimpleBooleanProperty(this,
+			SHOW_GRID_PROPERTY, true);
+	private BooleanProperty snapToGridProperty = new SimpleBooleanProperty(this,
+			SNAP_TO_GRID_PROPERTY, false);
+	private BooleanProperty zoomGridProperty = new SimpleBooleanProperty(this,
+			ZOOM_GRID_PROPERTY, true);
 
 	/**
 	 * Returns the grid cell height.
@@ -72,7 +70,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 * @return The grid cell height.
 	 */
 	public double getGridCellHeight() {
-		return gridCellHeight;
+		return gridCellHeightProperty.get();
 	}
 
 	/**
@@ -81,7 +79,25 @@ public class GridModel implements IPropertyChangeNotifier {
 	 * @return The grid cell width.
 	 */
 	public double getGridCellWidth() {
-		return gridCellWidth;
+		return gridCellWidthProperty.get();
+	}
+
+	/**
+	 * Returns a double property representing the grid cell height.
+	 *
+	 * @return A double property named {@link #GRID_CELL_HEIGHT_PROPERTY}.
+	 */
+	public DoubleProperty gridCellHeightProperty() {
+		return gridCellHeightProperty;
+	}
+
+	/**
+	 * Returns a double property representing the grid cell width.
+	 *
+	 * @return A double property named {@link #GRID_CELL_WIDTH_PROPERTY}.
+	 */
+	public DoubleProperty gridCellWidthProperty() {
+		return gridCellWidthProperty;
 	}
 
 	/**
@@ -92,7 +108,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *         <code>false</code>.
 	 */
 	public boolean isShowGrid() {
-		return showGrid;
+		return showGridProperty.get();
 	}
 
 	/**
@@ -103,7 +119,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *         <code>false</code>.
 	 */
 	public boolean isSnapToGrid() {
-		return snapToGrid;
+		return snapToGridProperty.get();
 	}
 
 	/**
@@ -114,12 +130,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *         otherwise <code>false</code>.
 	 */
 	public boolean isZoomGrid() {
-		return zoomGrid;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return zoomGridProperty.get();
 	}
 
 	/**
@@ -129,10 +140,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *            The new grid cell height.
 	 */
 	public void setGridCellHeight(double gridCellHeight) {
-		double oldGridHeight = this.gridCellHeight;
-		this.gridCellHeight = gridCellHeight;
-		pcs.firePropertyChange(GRID_CELL_WIDTH_PROPERTY, oldGridHeight,
-				gridCellHeight);
+		gridCellHeightProperty.set(gridCellHeight);
 	}
 
 	/**
@@ -142,10 +150,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *            The new grid cell width.
 	 */
 	public void setGridCellWidth(double gridCellWidth) {
-		double oldGridCellWidth = this.gridCellWidth;
-		this.gridCellWidth = gridCellWidth;
-		pcs.firePropertyChange(GRID_CELL_WIDTH_PROPERTY, oldGridCellWidth,
-				gridCellWidth);
+		gridCellWidthProperty.set(gridCellWidth);
 	}
 
 	/**
@@ -156,9 +161,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *            <code>false</code> in order to hide it.
 	 */
 	public void setShowGrid(boolean showGrid) {
-		boolean oldShowGrid = this.showGrid;
-		this.showGrid = showGrid;
-		pcs.firePropertyChange(SHOW_GRID_PROPERTY, oldShowGrid, showGrid);
+		showGridProperty.set(showGrid);
 	}
 
 	/**
@@ -169,10 +172,7 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *            <code>false</code> in order to disable it.
 	 */
 	public void setSnapToGrid(boolean snapToGrid) {
-		boolean oldSnapToGrid = this.snapToGrid;
-		this.snapToGrid = snapToGrid;
-		pcs.firePropertyChange(SNAP_TO_GRID_PROPERTY, oldSnapToGrid,
-				snapToGrid);
+		snapToGridProperty.set(snapToGrid);
 	}
 
 	/**
@@ -183,9 +183,37 @@ public class GridModel implements IPropertyChangeNotifier {
 	 *            or <code>false</code> in order to not zoom the grid.
 	 */
 	public void setZoomGrid(boolean zoomGrid) {
-		boolean oldZoomGrid = this.zoomGrid;
-		this.zoomGrid = zoomGrid;
-		pcs.firePropertyChange(ZOOM_GRID_PROPERTY, oldZoomGrid, zoomGrid);
+		zoomGridProperty.set(zoomGrid);
+	}
+
+	/**
+	 * Returns a boolean property whose value indicates whether grid is to be
+	 * shown.
+	 *
+	 * @return A boolean property named {@link #SHOW_GRID_PROPERTY}.
+	 */
+	public BooleanProperty showGridProperty() {
+		return showGridProperty;
+	}
+
+	/**
+	 * Returns a boolean property whose value indicates whether snap-to-grid is
+	 * enabled.
+	 *
+	 * @return A boolean property named {@link #SNAP_TO_GRID_PROPERTY}.
+	 */
+	public BooleanProperty snapToGridProperty() {
+		return snapToGridProperty;
+	}
+
+	/**
+	 * Returns a boolean property whose value indicates whether grid is to be
+	 * zoomed.
+	 *
+	 * @return A boolean property named {@link #ZOOM_GRID_PROPERTY}.
+	 */
+	public BooleanProperty zoomGridProperty() {
+		return zoomGridProperty;
 	}
 
 }

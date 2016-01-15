@@ -93,7 +93,7 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	@Override
 	protected void doRefreshVisual(Text visual) {
 		Edge edge = getContent().getKey();
-		Map<String, Object> attrs = edge.getAttributes();
+		Map<String, Object> attrs = edge.attributesProperty();
 
 		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
 			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);
@@ -126,14 +126,14 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	}
 
 	@Override
-	public SetMultimap<? extends Object, String> getContentAnchorages() {
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
 		contentAnchorages.put(getContent().getKey(), getContent().getValue());
 		return contentAnchorages;
 	}
 
 	@Override
-	public List<? extends Object> getContentChildren() {
+	protected List<? extends Object> doGetContentChildren() {
 		return Collections.emptyList();
 	}
 
@@ -145,7 +145,7 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	 *         displays the label.
 	 */
 	public EdgeContentPart getHost() {
-		return getAnchorages().isEmpty() ? null : (EdgeContentPart) getAnchorages().keys().iterator().next();
+		return getAnchoragesUnmodifiable().isEmpty() ? null : (EdgeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
 	}
 
 	/**

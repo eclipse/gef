@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +24,16 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
-import org.eclipse.gef4.common.properties.ListProperty;
-import org.eclipse.gef4.common.properties.MapProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
+
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 /**
  * A {@link Graph} is a container for {@link Node}s and {@link Edge}s between
@@ -84,8 +91,8 @@ public final class Graph implements IAttributeStore {
 
 		/**
 		 * Puts the given <i>key</i>-<i>value</i>-pair into the
-		 * {@link Graph#getAttributes() attributes map} of the {@link Graph}
-		 * which is constructed by this {@link Builder}.
+		 * {@link Graph#attributesProperty() attributes map} of the
+		 * {@link Graph} which is constructed by this {@link Builder}.
 		 *
 		 * @param key
 		 *            The attribute name which is inserted.
@@ -218,38 +225,33 @@ public final class Graph implements IAttributeStore {
 	}
 
 	/**
-	 * The property name that is used to notify change listeners about
-	 * added/removed nodes. A property change event for this property will have
-	 * its old value set to a <code>List&lt;Node&gt;</code> holding the old
-	 * nodes and its new value set to a <code>List&lt;Node&gt;</code> holding
-	 * the new nodes.
+	 * The name of the {@link #getNodes() nodes property}.
 	 */
 	public static final String NODES_PROPERTY = "nodes";
 
 	/**
-	 * The property name that is used to notify change listeners about
-	 * added/removed edges. A property change event for this property will have
-	 * its old value set to a <code>List&lt;Edge&gt;</code> holding the old
-	 * edges and its new value set to a <code>List&lt;Edge&gt;</code> holding
-	 * the new edges.
+	 * The name of the {@link #getEdges() edgesProperty property}.
 	 */
-	public static final String EDGES_PROPERTY = "edges";
+	public static final String EDGES_PROPERTY = "edgesProperty";
 
 	/**
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
-	private final ListProperty<Node> nodes = new ListProperty<>(this, NODES_PROPERTY);
+	private final ReadOnlyListWrapper<Node> nodesProperty = new ReadOnlyListWrapperEx<>(this, NODES_PROPERTY,
+			FXCollections.<Node> observableArrayList());
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
-	private final ListProperty<Edge> edges = new ListProperty<>(this, EDGES_PROPERTY);
+	private final ReadOnlyListWrapper<Edge> edgesProperty = new ReadOnlyListWrapperEx<>(this, EDGES_PROPERTY,
+			FXCollections.<Edge> observableArrayList());
 
 	/**
 	 * Attributes of this {@link Graph}.
 	 */
-	private final MapProperty<String, Object> attrs = new MapProperty<>(this, ATTRIBUTES_PROPERTY);
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 
 	/**
 	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
@@ -259,7 +261,7 @@ public final class Graph implements IAttributeStore {
 
 	/**
 	 * Default constructor, using empty collections for attributes, nodes, and
-	 * edges.
+	 * edgesProperty.
 	 */
 	public Graph() {
 		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
@@ -267,20 +269,21 @@ public final class Graph implements IAttributeStore {
 
 	/**
 	 * Constructs a new {@link Graph} from the given attributes, nodes, and
-	 * edges. Associates all nodes and edges with this {@link Graph}.
+	 * edgesProperty. Associates all nodes and edgesProperty with this
+	 * {@link Graph}.
 	 *
-	 * @param attrs
+	 * @param attributes
 	 *            Map of graph attributes.
 	 * @param nodes
 	 *            List of {@link Node}s.
 	 * @param edges
 	 *            List of {@link Edge}s.
 	 */
-	public Graph(Map<String, Object> attrs, Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
-		this.attrs.putAll(attrs);
-		this.nodes.addAll(nodes);
-		this.edges.addAll(edges);
-		// set graph on nodes and edges
+	public Graph(Map<String, Object> attributes, Collection<? extends Node> nodes, Collection<? extends Edge> edges) {
+		this.attributesProperty.putAll(attributes);
+		this.nodesProperty.addAll(nodes);
+		this.edgesProperty.addAll(edges);
+		// set graph on nodes and edgesProperty
 		for (Node n : nodes) {
 			n.setGraph(this);
 		}
@@ -290,10 +293,18 @@ public final class Graph implements IAttributeStore {
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		nodes.addPropertyChangeListener(listener);
-		edges.addPropertyChangeListener(listener);
-		attrs.addPropertyChangeListener(listener);
+	public ReadOnlyMapProperty<String, Object> attributesProperty() {
+		return attributesProperty.getReadOnlyProperty();
+	}
+
+	/**
+	 * Returns a read-only list property containing the {@link Edge}s of this
+	 * {@link Graph}.
+	 *
+	 * @return The list of {@link Edge}s of this {@link Graph}.
+	 */
+	public ReadOnlyListProperty<Edge> edgesProperty() {
+		return edgesProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -305,24 +316,24 @@ public final class Graph implements IAttributeStore {
 			return false;
 		}
 		Graph thatGraph = (Graph) other;
-		boolean attrsEqual = this.getAttributes().equals(thatGraph.getAttributes());
+		boolean attrsEqual = this.attributesProperty().equals(thatGraph.attributesProperty());
 		boolean nodesEqual = this.getNodes().equals(thatGraph.getNodes());
 		boolean edgesEqual = this.getEdges().equals(thatGraph.getEdges());
 		return attrsEqual && nodesEqual && edgesEqual;
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return attrs;
+	public ObservableMap<String, Object> getAttributes() {
+		return attributesProperty.get();
 	}
 
 	/**
-	 * Returns the list of {@link Edge}s of this {@link Graph} by reference.
+	 * Returns the edgesProperty of this {@link Graph}.
 	 *
-	 * @return The list of {@link Edge}s of this {@link Graph} by reference.
+	 * @return A list containing the edgesProperty.
 	 */
-	public List<Edge> getEdges() {
-		return edges;
+	public ObservableList<Edge> getEdges() {
+		return edgesProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -337,29 +348,31 @@ public final class Graph implements IAttributeStore {
 	}
 
 	/**
-	 * Returns the list of {@link Node}s of this {@link Graph} by reference.
+	 * Returns the nodes of this Graph.
 	 *
-	 * @return The list of {@link Node}s of this {@link Graph} by reference.
+	 * @return A list containing the nodes.
 	 */
-	// TOOD: expose list property??
-	public List<Node> getNodes() {
-		return nodes;
+	public ObservableList<Node> getNodes() {
+		return nodesProperty.getReadOnlyProperty();
 	}
 
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = 31 * result + getAttributes().hashCode();
+		result = 31 * result + attributesProperty().hashCode();
 		result = 31 * result + getNodes().hashCode();
 		result = 31 * result + getEdges().hashCode();
 		return result;
 	}
 
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		nodes.removePropertyChangeListener(listener);
-		edges.removePropertyChangeListener(listener);
-		attrs.removePropertyChangeListener(listener);
+	/**
+	 * Returns a read-only list property containing the {@link Node}s of this
+	 * {@link Graph}.
+	 *
+	 * @return A read-only list property.
+	 */
+	public ReadOnlyListProperty<Node> nodesProperty() {
+		return nodesProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -383,14 +396,14 @@ public final class Graph implements IAttributeStore {
 		boolean separator = false;
 
 		TreeMap<String, Object> sortedAttrs = new TreeMap<>();
-		sortedAttrs.putAll(attrs);
+		sortedAttrs.putAll(attributesProperty);
 		for (Object attrKey : sortedAttrs.keySet()) {
 			if (separator) {
 				sb.append(", ");
 			} else {
 				separator = true;
 			}
-			sb.append(attrKey.toString() + " : " + attrs.get(attrKey));
+			sb.append(attrKey.toString() + " : " + attributesProperty.get(attrKey));
 		}
 		sb.append("}");
 		sb.append(".nodes {");

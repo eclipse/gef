@@ -12,11 +12,13 @@
 package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * The {@link FocusModel} stores the {@link IContentPart} which has keyboard
@@ -31,14 +33,14 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  *            javafx.scene.Node in case of JavaFX.
  *
  */
-public class FocusModel<VR> implements IPropertyChangeNotifier {
+public class FocusModel<VR> {
 
 	/**
 	 * The {@link FocusModel} fires {@link PropertyChangeEvent}s when the
 	 * focused part changes. This is the name of the property that is delivered
 	 * with the event.
 	 *
-	 * @see #setFocused(IContentPart)
+	 * @see #setFocus(IContentPart)
 	 */
 	final public static String FOCUS_PROPERTY = "focus";
 
@@ -49,24 +51,29 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *
 	 * @see #setViewerFocused(boolean)
 	 */
-	final public static String VIEWER_FOCUS_PROPERTY = "ViewerFocus";
+	final public static String VIEWER_FOCUSED_PROPERTY = "viewerFocused";
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private IContentPart<VR, ? extends VR> focused = null;
-	private boolean isViewerFocused = false;
+	private ObjectProperty<IContentPart<VR, ? extends VR>> focusedProperty = new SimpleObjectProperty<>(
+			this, FOCUS_PROPERTY);
+	private BooleanProperty viewerFocusedProperty = new SimpleBooleanProperty(
+			this, VIEWER_FOCUSED_PROPERTY, false);
 
 	/**
-	 * Constructs a new {@link FocusModel}. The {@link #getFocused() focused}
+	 * Constructs a new {@link FocusModel}. The {@link #getFocus() focused}
 	 * {@link IContentPart} is set to <code>null</code> and the
 	 * {@link #isViewerFocused()} flag is set to <code>false</code>.
 	 */
 	public FocusModel() {
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	/**
+	 * Returns an object property providing the currently focused
+	 * {@link IContentPart}.
+	 *
+	 * @return An object property named {@link #FOCUS_PROPERTY}.
+	 */
+	public ObjectProperty<IContentPart<VR, ? extends VR>> focusProperty() {
+		return focusedProperty;
 	}
 
 	/**
@@ -76,8 +83,8 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *
 	 * @return the IContentPart which has keyboard focus, or <code>null</code>
 	 */
-	public IContentPart<VR, ? extends VR> getFocused() {
-		return focused;
+	public IContentPart<VR, ? extends VR> getFocus() {
+		return focusedProperty.get();
 	}
 
 	/**
@@ -89,12 +96,7 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *         <code>false</code>.
 	 */
 	public boolean isViewerFocused() {
-		return isViewerFocused;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+		return viewerFocusedProperty.get();
 	}
 
 	/**
@@ -105,10 +107,8 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *            The {@link IContentPart} which should become the new focus
 	 *            part.
 	 */
-	public void setFocused(IContentPart<VR, ? extends VR> focusPart) {
-		IContentPart<VR, ? extends VR> old = focused;
-		focused = focusPart;
-		pcs.firePropertyChange(FOCUS_PROPERTY, old, focused);
+	public void setFocus(IContentPart<VR, ? extends VR> focusPart) {
+		focusedProperty.set(focusPart);
 	}
 
 	/**
@@ -120,9 +120,17 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *            not have keyboard focus.
 	 */
 	public void setViewerFocused(boolean viewerFocused) {
-		boolean old = isViewerFocused;
-		isViewerFocused = viewerFocused;
-		pcs.firePropertyChange(VIEWER_FOCUS_PROPERTY, old, viewerFocused);
+		viewerFocusedProperty.set(viewerFocused);
+	}
+
+	/**
+	 * Returns whether the viewer, this {@link FocusModel} is attached to, has
+	 * currently focus.
+	 *
+	 * @return A boolean property named {@link #VIEWER_FOCUSED_PROPERTY}.
+	 */
+	public BooleanProperty viewerFocusedProperty() {
+		return viewerFocusedProperty;
 	}
 
 }

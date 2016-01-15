@@ -55,7 +55,7 @@ public abstract class AbstractMvcExample extends Application {
 		domain.activate();
 
 		// set viewer contents
-		viewer.getAdapter(ContentModel.class).setContents(createContents());
+		viewer.getAdapter(ContentModel.class).getContents().setAll(createContents());
 	}
 
 	protected abstract List<? extends Object> createContents();

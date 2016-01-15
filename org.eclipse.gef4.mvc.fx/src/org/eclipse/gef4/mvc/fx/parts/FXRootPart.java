@@ -15,7 +15,6 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -68,8 +67,9 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		if (child instanceof IContentPart) {
 			int contentLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
-				if (i < getChildren().size()
-						&& getChildren().get(i) instanceof IContentPart) {
+				if (i < getChildrenUnmodifiable().size()
+						&& getChildrenUnmodifiable()
+								.get(i) instanceof IContentPart) {
 					contentLayerIndex++;
 				}
 			}
@@ -78,8 +78,9 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		} else if (child instanceof IFeedbackPart) {
 			int feedbackLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
-				if (i < getChildren().size()
-						&& (getChildren().get(i) instanceof IFeedbackPart)) {
+				if (i < getChildrenUnmodifiable().size()
+						&& (getChildrenUnmodifiable()
+								.get(i) instanceof IFeedbackPart)) {
 					feedbackLayerIndex++;
 				}
 			}
@@ -88,8 +89,9 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		} else {
 			int handleLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
-				if (i < getChildren().size()
-						&& (getChildren().get(i) instanceof IHandlePart)) {
+				if (i < getChildrenUnmodifiable().size()
+						&& (getChildrenUnmodifiable()
+								.get(i) instanceof IHandlePart)) {
 					handleLayerIndex++;
 				}
 			}
@@ -236,15 +238,6 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	}
 
 	@Override
-	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
-		// register "main" visual for this part
-		super.registerAtVisualPartMap(viewer, visual);
-		// register nested visuals that are not controlled by other parts
-		FXPartUtils.registerNestedVisuals(this, viewer.getVisualPartMap(),
-				visual);
-	}
-
-	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		if (child instanceof IContentPart) {
@@ -254,16 +247,6 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		} else {
 			getHandleLayer().getChildren().remove(child.getVisual());
 		}
-	}
-
-	@Override
-	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
-			Group visual) {
-		// unregister "main" visual for this part
-		super.unregisterFromVisualPartMap(viewer, visual);
-		// unregister nested visuals that are not controlled by other parts
-		FXPartUtils.unregisterNestedVisuals(this, viewer.getVisualPartMap(),
-				visual);
 	}
 
 }

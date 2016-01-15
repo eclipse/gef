@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +28,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -72,18 +72,26 @@ public class FXSelectionFeedbackPart
 	 */
 	public static final String SECONDARY_UNFOCUSED_EFFECT_PROVIDER = "SecondaryUnfocusedSelectionFeedbackEffectProvider";
 
-	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
+	private ChangeListener<Boolean> viewerFocusObserver = new ChangeListener<Boolean>() {
+
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (FocusModel.VIEWER_FOCUS_PROPERTY
-					.equals(evt.getPropertyName())) {
-				refreshVisual();
-			} else if (FocusModel.FOCUS_PROPERTY
-					.equals(evt.getPropertyName())) {
-				refreshVisual();
-			}
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			refreshVisual();
 		}
 	};
+
+	private ChangeListener<IContentPart<Node, ? extends Node>> focusObserver = new ChangeListener<IContentPart<Node, ? extends Node>>() {
+
+		@Override
+		public void changed(
+				ObservableValue<? extends IContentPart<Node, ? extends Node>> observable,
+				IContentPart<Node, ? extends Node> oldValue,
+				IContentPart<Node, ? extends Node> newValue) {
+			refreshVisual();
+		}
+	};
+
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
 	/**
@@ -102,24 +110,32 @@ public class FXSelectionFeedbackPart
 		return feedbackVisual;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getRoot().getViewer().getAdapter(FocusModel.class)
-				.addPropertyChangeListener(focusModelListener);
+		FocusModel<Node> focusModel = getRoot().getViewer()
+				.getAdapter(new TypeToken<FocusModel<Node>>() {
+				});
+		focusModel.viewerFocusedProperty().addListener(viewerFocusObserver);
+		focusModel.focusProperty().addListener(focusObserver);
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void doDeactivate() {
-		getRoot().getViewer().getAdapter(FocusModel.class)
-				.removePropertyChangeListener(focusModelListener);
+		FocusModel<Node> focusModel = getRoot().getViewer()
+				.getAdapter(new TypeToken<FocusModel<Node>>() {
+				});
+		focusModel.viewerFocusedProperty().removeListener(viewerFocusObserver);
+		focusModel.focusProperty().removeListener(focusObserver);
 		super.doDeactivate();
 	}
 
 	@SuppressWarnings("serial")
 	@Override
 	public void doRefreshVisual(GeometryNode<IGeometry> visual) {
-		Set<IVisualPart<Node, ? extends Node>> anchorages = getAnchorages()
+		Set<IVisualPart<Node, ? extends Node>> anchorages = getAnchoragesUnmodifiable()
 				.keySet();
 		if (anchorages.isEmpty()) {
 			return;
@@ -146,11 +162,10 @@ public class FXSelectionFeedbackPart
 
 		// update color according to focused and selected state
 		boolean focused = viewer.getAdapter(FocusModel.class).isViewerFocused()
-				&& viewer.getAdapter(FocusModel.class)
-						.getFocused() == anchorage;
+				&& viewer.getAdapter(FocusModel.class).getFocus() == anchorage;
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection();
+				}).getSelectionUnmodifiable();
 		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
 			visual.setEffect(getPrimarySelectionFeedbackEffect(focused));
@@ -189,8 +204,8 @@ public class FXSelectionFeedbackPart
 	@SuppressWarnings("serial")
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
 		Provider<? extends Effect> effectProvider = null;
-		if (!getAnchorages().isEmpty()) {
-			IVisualPart<Node, ? extends Node> host = getAnchorages().keys()
+		if (!getAnchoragesUnmodifiable().isEmpty()) {
+			IVisualPart<Node, ? extends Node> host = getAnchoragesUnmodifiable().keys()
 					.iterator().next();
 			String providerRole = focused ? PRIMARY_FOCUSED_EFFECT_PROVIDER
 					: PRIMARY_UNFOCUSED_EFFECT_PROVIDER;
@@ -223,8 +238,8 @@ public class FXSelectionFeedbackPart
 	@SuppressWarnings("serial")
 	protected Effect getSecondarySelectionFeedbackEffect(boolean focused) {
 		Provider<? extends Effect> effectProvider = null;
-		if (!getAnchorages().isEmpty()) {
-			IVisualPart<Node, ? extends Node> host = getAnchorages().keys()
+		if (!getAnchoragesUnmodifiable().isEmpty()) {
+			IVisualPart<Node, ? extends Node> host = getAnchoragesUnmodifiable().keys()
 					.iterator().next();
 			String providerRole = focused ? SECONDARY_FOCUSED_EFFECT_PROVIDER
 					: SECONDARY_UNFOCUSED_EFFECT_PROVIDER;

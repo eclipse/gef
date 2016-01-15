@@ -20,8 +20,8 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
-import org.eclipse.gef4.fx.internal.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -297,7 +297,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			 *         <i>boundsCenter</i>.
 			 */
 			protected Point getNearestVertex(Point boundsCenter, ICurve curve) {
-				Set<Point> vertices = new HashSet<Point>();
+				Set<Point> vertices = new HashSet<>();
 				// put start, mid, end points of beziers into vertices list
 				BezierCurve[] beziers = curve.toBezier();
 				for (BezierCurve bezier : beziers) {

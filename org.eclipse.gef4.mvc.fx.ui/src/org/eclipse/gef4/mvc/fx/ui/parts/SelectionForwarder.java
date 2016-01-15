@@ -11,10 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.common.reflect.Types;
@@ -30,6 +27,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
+import javafx.collections.ListChangeListener;
+
 /**
  * The {@link SelectionForwarder} can be used to propagate selections from the
  * Eclipse workbench to the MVC application and vice versa.
@@ -40,9 +39,43 @@ import com.google.common.reflect.TypeToken;
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
-public class SelectionForwarder<VR>
-		implements PropertyChangeListener, ISelectionChangedListener {
+public class SelectionForwarder<VR> implements ISelectionChangedListener {
 
+	private class SelectionObserver
+			implements ListChangeListener<IContentPart<VR, ? extends VR>> {
+
+		@Override
+		public void onChanged(
+				ListChangeListener.Change<? extends IContentPart<VR, ? extends VR>> c) {
+			// forward selection changes to selection provider (in case
+			// there is any)
+			ISelection oldSelectedContent = selectionProvider.getSelection();
+			if (c.getList().isEmpty()) {
+				if (oldSelectedContent == null
+						|| !oldSelectedContent.isEmpty()) {
+					selectionProvider.setSelection(StructuredSelection.EMPTY);
+				}
+			} else {
+				// extract content elements of selected parts
+				List<? extends IContentPart<VR, ? extends VR>> selectedContentParts = c
+						.getList();
+				List<Object> selectedContentElements = new ArrayList<>(
+						selectedContentParts.size());
+				for (IContentPart<VR, ? extends VR> cp : selectedContentParts) {
+					selectedContentElements.add(cp.getContent());
+				}
+				// set the content elements as the new selection on the
+				// selection provider
+				StructuredSelection newSelectedContent = new StructuredSelection(
+						selectedContentElements);
+				if (!newSelectedContent.equals(oldSelectedContent)) {
+					selectionProvider.setSelection(newSelectedContent);
+				}
+			}
+		}
+	}
+
+	private final SelectionObserver selectionObserver = new SelectionObserver();
 	private final ISelectionProvider selectionProvider;
 	private final IViewer<VR> viewer;
 	private final SelectionModel<VR> selectionModel;
@@ -73,7 +106,8 @@ public class SelectionForwarder<VR>
 		if (selectionProvider != null) {
 			selectionProvider.addSelectionChangedListener(this);
 		}
-		selectionModel.addPropertyChangeListener(this);
+		selectionModel.getSelectionUnmodifiable()
+				.addListener(selectionObserver);
 	}
 
 	/**
@@ -85,7 +119,8 @@ public class SelectionForwarder<VR>
 			this.selectionProvider.removeSelectionChangedListener(this);
 		}
 		if (selectionModel != null) {
-			selectionModel.removePropertyChangeListener(this);
+			selectionModel.getSelectionUnmodifiable()
+					.removeListener(selectionObserver);
 		}
 	}
 
@@ -104,59 +139,29 @@ public class SelectionForwarder<VR>
 	}
 
 	@Override
-	public void propertyChange(final PropertyChangeEvent event) {
-		if (SelectionModel.SELECTION_PROPERTY.equals(event.getPropertyName())) {
-			// forward selection changes to selection provider (in case
-			// there is any)
-			if (event.getNewValue() == null) {
-				selectionProvider.setSelection(StructuredSelection.EMPTY);
-			} else {
-				// extract content elements of selected parts
-				@SuppressWarnings("unchecked")
-				List<IContentPart<VR, ? extends VR>> selectedParts = (List<IContentPart<VR, ? extends VR>>) event
-						.getNewValue();
-				List<Object> selectedContentElements = new ArrayList<>(
-						selectedParts.size());
-				for (IContentPart<VR, ? extends VR> cp : selectedParts) {
-					selectedContentElements.add(cp.getContent());
-				}
-				// set the content elements as the new selection on the
-				// selection provider
-				// TODO: verify no events are fired when the same selection is
-				// set again
-				selectionProvider.setSelection(
-						new StructuredSelection(selectedContentElements));
-			}
-		}
-	}
-
-	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
-		if (selection instanceof StructuredSelection) {
-			StructuredSelection sel = (StructuredSelection) selection;
-			if (sel.isEmpty()) {
-				selectionModel.prependToSelection(Collections
-						.<IContentPart<VR, ? extends VR>> emptyList());
-			} else {
-				// find the content parts associated with the selection
-				Object[] selected = sel.toArray();
-				List<IContentPart<VR, ? extends VR>> parts = new ArrayList<>(
-						selected.length);
-				for (Object content : selected) {
-					IContentPart<VR, ? extends VR> part = viewer
-							.getContentPartMap().get(content);
-					if (part != null) {
-						parts.add(part);
-					}
+		if (selection.isEmpty()) {
+			if (!selectionModel.getSelectionUnmodifiable().isEmpty()) {
+				selectionModel.clearSelection();
+			}
+		} else if (selection instanceof StructuredSelection) {
+			// find the content parts associated with the selection
+			Object[] selected = ((StructuredSelection) selection).toArray();
+			List<IContentPart<VR, ? extends VR>> parts = new ArrayList<>(
+					selected.length);
+			for (Object content : selected) {
+				IContentPart<VR, ? extends VR> part = viewer.getContentPartMap()
+						.get(content);
+				if (part != null) {
+					parts.add(part);
 				}
-				// set the content parts as the new selection on the
-				// SelectionModel
-				if (!selectionModel.getSelection().equals(parts)) {
-					selectionModel.prependToSelection(parts);
-				}
+			}
+			// set the content parts as the new selection on the
+			// SelectionModel
+			if (!selectionModel.getSelectionUnmodifiable().equals(parts)) {
+				selectionModel.setSelection(parts);
 			}
 		}
 	}
-
 }

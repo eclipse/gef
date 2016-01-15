@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 
 import org.eclipse.gef4.common.reflect.Types;
@@ -22,6 +20,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * The {@link HoverBehavior} is responsible for creating and removing selection
@@ -33,16 +34,25 @@ import com.google.common.reflect.TypeToken;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class HoverBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener {
+public class HoverBehavior<VR> extends AbstractBehavior<VR> {
+
+	private ChangeListener<IVisualPart<VR, ? extends VR>> hoverObserver = new ChangeListener<IVisualPart<VR, ? extends VR>>() {
+
+		@Override
+		public void changed(
+				ObservableValue<? extends IVisualPart<VR, ? extends VR>> observable,
+				IVisualPart<VR, ? extends VR> oldValue,
+				IVisualPart<VR, ? extends VR> newValue) {
+			onHoverChange(oldValue, newValue);
+		}
+	};
 
 	@Override
-	public void activate() {
-		super.activate();
+	protected void doActivate() {
 		HoverModel<VR> hoverModel = getHoverModel();
 
 		// register
-		hoverModel.addPropertyChangeListener(this);
+		hoverModel.hoverProperty().addListener(hoverObserver);
 
 		// create feedback and handles if we are already hovered
 		IVisualPart<VR, ? extends VR> hover = hoverModel.getHover();
@@ -52,7 +62,7 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 	}
 
 	@Override
-	public void deactivate() {
+	protected void doDeactivate() {
 		HoverModel<VR> hoverModel = getHoverModel();
 
 		// remove any pending feedback and handles
@@ -66,8 +76,7 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 		removeHandles(Collections.singletonList(getHost()));
 
 		// unregister
-		hoverModel.removePropertyChangeListener(this);
-		super.deactivate();
+		hoverModel.hoverProperty().removeListener(hoverObserver);
 	}
 
 	/**
@@ -102,18 +111,6 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR>
 			addFeedback(Collections.singletonList(getHost()));
 		} else if (getHost() == oldHovered && getHost() != newHovered) {
 			removeFeedback(Collections.singletonList(getHost()));
-		}
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(HoverModel.HOVER_PROPERTY)) {
-			IVisualPart<VR, ? extends VR> oldHovered = (IVisualPart<VR, ? extends VR>) event
-					.getOldValue();
-			IVisualPart<VR, ? extends VR> newHovered = (IVisualPart<VR, ? extends VR>) event
-					.getNewValue();
-			onHoverChange(oldHovered, newHovered);
 		}
 	}
 

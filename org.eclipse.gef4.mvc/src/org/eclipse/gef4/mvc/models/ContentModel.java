@@ -11,13 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * The {@link ContentModel} stores the content {@link Object}s that are
@@ -28,53 +27,35 @@ import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
  * @author mwienand
  *
  */
-public class ContentModel implements IPropertyChangeNotifier {
+public class ContentModel {
 
 	/**
-	 * Property name used when notifying listeners about content changes.
+	 * Name of the {@link #contentsProperty()}.
 	 */
 	public static final String CONTENTS_PROPERTY = "contents";
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private List<Object> contents = new ArrayList<>();
+	private ObservableList<Object> contents = FXCollections
+			.observableArrayList();
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	private ReadOnlyListWrapper<Object> contentsProperty = new ReadOnlyListWrapperEx<>(
+			this, CONTENTS_PROPERTY, contents);
+
+	/**
+	 * A read-only property containing the current content objects.
+	 *
+	 * @return A read-only list property named {@link #CONTENTS_PROPERTY}.
+	 */
+	public ReadOnlyListProperty<Object> contentsProperty() {
+		return contentsProperty.getReadOnlyProperty();
 	}
 
 	/**
-	 * Returns an unmodifiable list containing the current content objects.
+	 * Returns an {@link ObservableList} containing the content objects.
 	 *
-	 * @return An unmodifiable list containing the current content objects.
+	 * @return An {@link ObservableList}.
 	 */
-	public List<? extends Object> getContents() {
-		return Collections.unmodifiableList(this.contents);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
-	/**
-	 * Replaces the currently stored content objects with the given list of new
-	 * content objects.
-	 *
-	 * @param contents
-	 *            A list containing the new content objects to store in this
-	 *            {@link ContentModel}.
-	 */
-	public void setContents(List<? extends Object> contents) {
-		if (!this.contents.equals(contents)) {
-			List<Object> oldContents = Collections
-					.unmodifiableList(new ArrayList<>(this.contents));
-			this.contents.clear();
-			this.contents.addAll(contents);
-			pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents,
-					getContents());
-		}
+	public ObservableList<Object> getContents() {
+		return contents;
 	}
 
 }

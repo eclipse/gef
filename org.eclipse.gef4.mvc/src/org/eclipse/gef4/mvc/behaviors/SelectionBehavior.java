@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +25,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
+import javafx.collections.ListChangeListener;
+
 /**
  * The default selection behavior is responsible for creating and removing
  * selection feedback and handles.
@@ -36,20 +37,39 @@ import com.google.common.reflect.TypeToken;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public class SelectionBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener {
+public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 
-	@Override
-	public void activate() {
-		super.activate();
+	private ListChangeListener<IContentPart<VR, ? extends VR>> selectionObserver = new ListChangeListener<IContentPart<VR, ? extends VR>>() {
 
-		// register
-		SelectionModel<VR> selectionModel = getSelectionModel();
-		selectionModel.addPropertyChangeListener(this);
-
-		// create feedback and handles if we are already selected
-		addFeedbackAndHandles(selectionModel.getSelection());
-	}
+		@Override
+		public void onChanged(
+				javafx.collections.ListChangeListener.Change<? extends IContentPart<VR, ? extends VR>> c) {
+			// order of selection should not be relevant for feedback and
+			// handles, as such we ignore permutations
+			List<IContentPart<VR, ? extends VR>> newSelection = new ArrayList<>(
+					c.getList());
+			List<IContentPart<VR, ? extends VR>> oldSelection = new ArrayList<>(
+					newSelection);
+			while (c.next()) {
+				// We need to reconstruct the old selection from the changes. As
+				// a setAll() is internally decomposed into a clear() and
+				// addAll(), we need to first remove the added elements, then
+				// re-add the removed ones to reconstruct the old selection.
+				// TODO: ideally we would only remove and add feedback for those
+				// elements that changed; the current implementation is however
+				// not capable of handling this, so we have to compute the old
+				// and new selection; again we ignore the ordering here
+				if (c.wasAdded()) {
+					oldSelection.removeAll(c.getAddedSubList());
+				}
+				if (c.wasRemoved()) {
+					oldSelection.addAll(c.getRemoved());
+				}
+			}
+			removeFeedbackAndHandles(oldSelection);
+			addFeedbackAndHandles(newSelection);
+		}
+	};
 
 	/**
 	 * Creates feedback parts and handle parts for the given list of (selected)
@@ -79,14 +99,26 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 	}
 
 	@Override
-	public void deactivate() {
+	protected void doActivate() {
+		// register
+		final SelectionModel<VR> selectionModel = getSelectionModel();
+		selectionModel.getSelectionUnmodifiable()
+				.addListener(selectionObserver);
+
+		// create feedback and handles if we are already selected
+		addFeedbackAndHandles(selectionModel.getSelectionUnmodifiable());
+	}
+
+	@Override
+	protected void doDeactivate() {
+		final SelectionModel<VR> selectionModel = getSelectionModel();
+
 		// remove any pending feedback
-		SelectionModel<VR> selectionModel = getSelectionModel();
-		removeFeedbackAndHandles(selectionModel.getSelection());
+		removeFeedbackAndHandles(selectionModel.getSelectionUnmodifiable());
 
 		// unregister
-		selectionModel.removePropertyChangeListener(this);
-		super.deactivate();
+		selectionModel.getSelectionUnmodifiable()
+				.removeListener(selectionObserver);
 	}
 
 	/**
@@ -104,20 +136,6 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR>
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(viewer.getClass())));
 		return selectionModel;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(SelectionModel.SELECTION_PROPERTY)) {
-			List<IContentPart<VR, ? extends VR>> oldSelection = (List<IContentPart<VR, ? extends VR>>) event
-					.getOldValue();
-			List<IContentPart<VR, ? extends VR>> newSelection = (List<IContentPart<VR, ? extends VR>>) event
-					.getNewValue();
-
-			removeFeedbackAndHandles(oldSelection);
-			addFeedbackAndHandles(newSelection);
-		}
 	}
 
 	/**

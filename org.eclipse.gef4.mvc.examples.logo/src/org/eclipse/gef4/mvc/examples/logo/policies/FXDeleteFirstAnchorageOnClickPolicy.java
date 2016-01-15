@@ -50,7 +50,7 @@ public class FXDeleteFirstAnchorageOnClickPolicy
 	 * @return The target {@link IVisualPart} for this policy.
 	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart() {
-		return getHost().getAnchorages().keySet().iterator().next();
+		return getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
 	}
 
 }

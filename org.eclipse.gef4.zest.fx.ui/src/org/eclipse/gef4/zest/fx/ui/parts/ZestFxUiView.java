@@ -27,10 +27,11 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
 /**
- * The {@link ZestFxUiView} is an extension to the {@link AbstractFXView}. It creates an
- * {@link Injector} based on the {@link ZestFxModule} and {@link ZestFxUiModule}
- * by default. Other than that, it provides a {@link #setGraph(Graph) method} to
- * change the {@link Graph} that is displayed.
+ * The {@link ZestFxUiView} is an extension to the {@link AbstractFXView}. It
+ * creates an {@link Injector} based on the {@link ZestFxModule} and
+ * {@link ZestFxUiModule} by default. Other than that, it provides a
+ * {@link #setGraph(Graph) method} to change the {@link Graph} that is
+ * displayed.
  *
  * @author mwienand
  *
@@ -82,7 +83,7 @@ public class ZestFxUiView extends AbstractFXView {
 		if (graph != null) {
 			contents.add(graph);
 		}
-		contentModel.setContents(contents);
+		contentModel.getContents().setAll(contents);
 	}
 
 }

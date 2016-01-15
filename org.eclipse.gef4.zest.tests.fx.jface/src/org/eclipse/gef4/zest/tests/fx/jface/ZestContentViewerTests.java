@@ -394,10 +394,10 @@ public class ZestContentViewerTests {
 		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
 		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
 		Graph nestedGraph = alphaNode.getGraph();
-		assertTrue(nestedGraph.getAttributes().containsKey("nested"));
-		assertTrue((Boolean) nestedGraph.getAttributes().get("nested"));
+		assertTrue(nestedGraph.attributesProperty().containsKey("nested"));
+		assertTrue((Boolean) nestedGraph.attributesProperty().get("nested"));
 		// ensure nested does not get root attributes
-		assertFalse(nestedGraph.getAttributes().containsKey("root"));
+		assertFalse(nestedGraph.attributesProperty().containsKey("root"));
 	}
 
 	@Test
@@ -407,10 +407,10 @@ public class ZestContentViewerTests {
 		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
 		Graph nestedGraph = alphaNode.getGraph();
 		Edge edge = nestedGraph.getEdges().get(0);
-		assertTrue(edge.getAttributes().containsKey("edge"));
-		assertTrue((Boolean) edge.getAttributes().get("edge"));
+		assertTrue(edge.attributesProperty().containsKey("edge"));
+		assertTrue((Boolean) edge.attributesProperty().get("edge"));
 		// ensure edge does not get node attributes
-		assertFalse(edge.getAttributes().containsKey("node"));
+		assertFalse(edge.attributesProperty().containsKey("node"));
 	}
 
 	@Test
@@ -418,10 +418,10 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
 		org.eclipse.gef4.graph.Node alphaNode = contentNodeMap.get(MyContentProvider.alpha());
-		assertTrue(alphaNode.getAttributes().containsKey("node"));
-		assertTrue((Boolean) alphaNode.getAttributes().get("node"));
+		assertTrue(alphaNode.attributesProperty().containsKey("node"));
+		assertTrue((Boolean) alphaNode.attributesProperty().get("node"));
 		// ensure node does not get edge attributes
-		assertFalse(alphaNode.getAttributes().containsKey("edge"));
+		assertFalse(alphaNode.attributesProperty().containsKey("edge"));
 	}
 
 	@Test
@@ -430,10 +430,10 @@ public class ZestContentViewerTests {
 		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
 		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		Graph rootGraph = firstNode.getGraph();
-		assertTrue(rootGraph.getAttributes().containsKey("root"));
-		assertTrue((Boolean) rootGraph.getAttributes().get("root"));
+		assertTrue(rootGraph.attributesProperty().containsKey("root"));
+		assertTrue((Boolean) rootGraph.attributesProperty().get("root"));
 		// ensure root does not get nested attributes
-		assertFalse(rootGraph.getAttributes().containsKey("nested"));
+		assertFalse(rootGraph.attributesProperty().containsKey("nested"));
 	}
 
 	@Test
@@ -508,7 +508,7 @@ public class ZestContentViewerTests {
 		viewer.setSelection(new StructuredSelection(Arrays.asList(firstNode)));
 		List<IContentPart<Node, ? extends Node>> selected = viewer.getFXViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection();
+				}).getSelectionUnmodifiable();
 		assertEquals(1, selected.size());
 		IContentPart<Node, ? extends Node> selectedPart = selected.get(0);
 		assertEquals(firstNode, selectedPart.getContent());

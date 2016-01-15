@@ -42,7 +42,7 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().add(index, child.getVisual());
-		for (Entry<IVisualPart<Node, ? extends Node>, String> anchorage : getAnchorages()
+		for (Entry<IVisualPart<Node, ? extends Node>, String> anchorage : getAnchoragesUnmodifiable()
 				.entries()) {
 			child.attachToAnchorage(anchorage.getKey(), anchorage.getValue());
 		}
@@ -52,7 +52,7 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		super.attachToAnchorageVisual(anchorage, role);
-		for (IVisualPart<Node, ? extends Node> child : getChildren()) {
+		for (IVisualPart<Node, ? extends Node> child : getChildrenUnmodifiable()) {
 			child.attachToAnchorage(anchorage, role);
 		}
 	}
@@ -68,7 +68,7 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	protected void detachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		super.detachFromAnchorageVisual(anchorage, role);
-		for (IVisualPart<Node, ? extends Node> child : getChildren()) {
+		for (IVisualPart<Node, ? extends Node> child : getChildrenUnmodifiable()) {
 			child.detachFromAnchorage(anchorage, role);
 		}
 	}
@@ -76,7 +76,7 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 	@Override
 	protected void doRefreshVisual(VBox visual) {
 		// check if we have a host
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchoragesUnmodifiable();
 		if (anchorages.isEmpty()) {
 			return;
 		}

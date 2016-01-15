@@ -58,7 +58,7 @@ public class CustomNodeExample extends AbstractZestExample {
 			if (content instanceof org.eclipse.gef4.graph.Node) {
 				// create custom node if we find the custom attribute
 				org.eclipse.gef4.graph.Node n = (org.eclipse.gef4.graph.Node) content;
-				Object isCustom = n.getAttributes().get(ATTR_CUSTOM);
+				Object isCustom = n.attributesProperty().get(ATTR_CUSTOM);
 				if (isCustom instanceof Boolean && (Boolean) isCustom) {
 					CustomNodeContentPart part = new CustomNodeContentPart();
 					if (part != null) {
@@ -117,7 +117,7 @@ public class CustomNodeExample extends AbstractZestExample {
 	protected Graph createGraph() {
 		Graph g = new Graph();
 		e(g, n(g, LABEL, "A", ATTR_CUSTOM, true), n(g, LABEL, "B"));
-		g.getAttributes().put(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+		g.attributesProperty().put(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
 				new SugiyamaLayoutAlgorithm());
 		return g;
 	}

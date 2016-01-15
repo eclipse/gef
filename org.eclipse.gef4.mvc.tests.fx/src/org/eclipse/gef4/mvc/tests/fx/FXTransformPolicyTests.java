@@ -67,12 +67,12 @@ public class FXTransformPolicyTests {
 		}
 
 		@Override
-		public SetMultimap<? extends Object, String> getContentAnchorages() {
+		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
 
 		@Override
-		public List<? extends Object> getContentChildren() {
+		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
 		}
 	}
@@ -133,7 +133,7 @@ public class FXTransformPolicyTests {
 		panel.setScene(scene);
 		// set viewer contents
 		Point content = new Point(0, 0);
-		viewer.getAdapter(ContentModel.class).setContents(Collections.singletonList(content));
+		viewer.getAdapter(ContentModel.class).getContents().setAll(Collections.singletonList(content));
 		// activate domain
 		domain.activate();
 		// get content part for the content object

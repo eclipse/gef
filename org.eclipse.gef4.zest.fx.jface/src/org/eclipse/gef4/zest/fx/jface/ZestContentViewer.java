@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.jface;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -25,7 +23,6 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -58,6 +55,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.collections.ListChangeListener;
 import javafx.embed.swt.FXCanvas;
 import javafx.embed.swt.SWTFXUtils;
 import javafx.scene.Scene;
@@ -72,41 +71,37 @@ import javafx.scene.Scene;
  */
 public class ZestContentViewer extends ContentViewer {
 
-	private final class SelectionNotifier implements PropertyChangeListener, IActivatable {
+	private final class SelectionNotifier
+			implements ListChangeListener<IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>>, IActivatable {
 
-		private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-		private ActivatableSupport as = new ActivatableSupport(this, pcs);
+		private ActivatableSupport acs = new ActivatableSupport(this);
 
 		@Override
 		public void activate() {
-			as.activate();
+			acs.activate();
 		}
 
 		@Override
-		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			pcs.addPropertyChangeListener(listener);
+		public ReadOnlyBooleanProperty activeProperty() {
+			return acs.activeProperty();
 		}
 
 		@Override
 		public void deactivate() {
-			as.deactivate();
+			acs.deactivate();
 		}
 
 		@Override
 		public boolean isActive() {
-			return as.isActive();
+			return acs.isActive();
 		}
 
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void onChanged(
+				ListChangeListener.Change<? extends IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>> c) {
 			if (isActive()) {
 				fireSelectionChanged(new SelectionChangedEvent(ZestContentViewer.this, getSelection()));
 			}
-		}
-
-		@Override
-		public void removePropertyChangeListener(PropertyChangeListener listener) {
-			pcs.removePropertyChangeListener(listener);
 		}
 	}
 
@@ -135,7 +130,7 @@ public class ZestContentViewer extends ContentViewer {
 
 	/**
 	 * Creates an {@link FXCanvas} inside of the given <i>parent</i>
-	 * {@link Composite}. The {@link FXCanvas} serves as the container for the
+	 * {@link Composite}. The {@link FXCanvas} serves acs the container for the
 	 * JavaFX {@link Scene} which renders the contents.
 	 *
 	 * @param parent
@@ -170,7 +165,7 @@ public class ZestContentViewer extends ContentViewer {
 		viewer = domain.getAdapter(FXViewer.class);
 		canvas.setScene(new Scene(viewer.getCanvas()));
 
-		getSelectionModel().addPropertyChangeListener(selectionNotifier);
+		getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);
 		selectionNotifier.activate();
 
 		// activate domain
@@ -205,7 +200,7 @@ public class ZestContentViewer extends ContentViewer {
 			Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,
 					contentTargetNode);
 			if (edgeAttributes != null) {
-				edge.getAttributes().putAll(edgeAttributes);
+				edge.attributesProperty().putAll(edgeAttributes);
 			}
 		}
 		return edge;
@@ -249,7 +244,7 @@ public class ZestContentViewer extends ContentViewer {
 			Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
 					.getNestedGraphAttributes(contentNestingNode);
 			if (nestedGraphAttributes != null) {
-				graph.getAttributes().putAll(nestedGraphAttributes);
+				graph.attributesProperty().putAll(nestedGraphAttributes);
 			}
 		}
 		Object[] contentNodes = nestedGraphContentProvider.getChildren(contentNestingNode);
@@ -355,7 +350,7 @@ public class ZestContentViewer extends ContentViewer {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
 			Map<String, Object> nodeAttributes = graphNodeLabelProvider.getNodeAttributes(contentNode);
 			if (nodeAttributes != null) {
-				node.getAttributes().putAll(nodeAttributes);
+				node.attributesProperty().putAll(nodeAttributes);
 			}
 		}
 
@@ -426,7 +421,7 @@ public class ZestContentViewer extends ContentViewer {
 			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
 			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getRootGraphAttributes();
 			if (rootGraphAttributes != null) {
-				graph.getAttributes().putAll(rootGraphAttributes);
+				graph.attributesProperty().putAll(rootGraphAttributes);
 			}
 		}
 		if (contentProvider instanceof IGraphNodeContentProvider) {
@@ -484,7 +479,7 @@ public class ZestContentViewer extends ContentViewer {
 		List<Object> selectedContents = new ArrayList<>();
 		SelectionModel<javafx.scene.Node> selectionModel = getSelectionModel();
 		for (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> selectedPart : selectionModel
-				.getSelection()) {
+				.getSelectionUnmodifiable()) {
 			selectedContents.add(selectedPart.getContent());
 		}
 		return new StructuredSelection(selectedContents);
@@ -509,7 +504,7 @@ public class ZestContentViewer extends ContentViewer {
 	@Override
 	protected void handleDispose(DisposeEvent event) {
 		selectionNotifier.deactivate();
-		getSelectionModel().removePropertyChangeListener(selectionNotifier);
+		getSelectionModel().getSelectionUnmodifiable().removeListener(selectionNotifier);
 
 		domain.deactivate();
 		domain.dispose();
@@ -526,8 +521,8 @@ public class ZestContentViewer extends ContentViewer {
 	@Override
 	public void refresh() {
 		contentNodeMap.clear();
-		viewer.getAdapter(ContentModel.class)
-				.setContents(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
+		viewer.getAdapter(ContentModel.class).getContents()
+				.setAll(Collections.singletonList(createRootGraph(getContentProvider(), getLabelProvider())));
 	}
 
 	/**

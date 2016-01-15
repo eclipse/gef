@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 /**
@@ -39,14 +40,14 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation
 	private final String role;
 
 	// initial content anchorages (for no-op test)
-	private SetMultimap<? extends Object, String> initialContentAnchorages;
+	private SetMultimap<Object, String> initialContentAnchorages;
 
 	/**
 	 * Creates a new {@link AttachToContentAnchorageOperation} to attach the
 	 * given <i>anchored</i> {@link IContentPart} to the given
 	 * <i>contentAnchorage</i> under the specified <i>role</i>, so that it will
 	 * be returned by subsequent calls to
-	 * {@link IContentPart#getContentAnchorages()}.
+	 * {@link IContentPart#getContentAnchoragesUnmodifiable()}.
 	 *
 	 * @param anchored
 	 *            The {@link IContentPart} which is to be attached to the given
@@ -63,7 +64,8 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation
 		super("Attach To Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;
-		this.initialContentAnchorages = anchored.getContentAnchorages();
+		this.initialContentAnchorages = ImmutableSetMultimap
+				.copyOf(anchored.getContentAnchoragesUnmodifiable());
 		this.role = role;
 	}
 
@@ -72,8 +74,9 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("EXEC attach " + anchored + " to content "
 		// + contentAnchorage + " with role " + role + ".");
-		if (anchored.getContent() != null && !anchored.getContentAnchorages()
-				.containsEntry(contentAnchorage, role)) {
+		if (anchored.getContent() != null
+				&& !anchored.getContentAnchoragesUnmodifiable()
+						.containsEntry(contentAnchorage, role)) {
 			anchored.attachToContentAnchorage(contentAnchorage, role);
 		}
 		return Status.OK_STATUS;
@@ -95,8 +98,9 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		// System.out.println("UNDO attach " + anchored + " to content "
 		// + contentAnchorage + " with role " + role + ".");
-		if (anchored.getContent() != null && anchored.getContentAnchorages()
-				.containsEntry(contentAnchorage, role)) {
+		if (anchored.getContent() != null
+				&& anchored.getContentAnchoragesUnmodifiable()
+						.containsEntry(contentAnchorage, role)) {
 			anchored.detachFromContentAnchorage(contentAnchorage, role);
 		}
 		return Status.OK_STATUS;

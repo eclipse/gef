@@ -13,6 +13,8 @@ package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
 
+import javafx.beans.property.ObjectProperty;
+
 /**
  * Objects implementing {@link ILayoutContext} interface are used for exchanging
  * of information between layout algorithms and graphical objects displaying
@@ -26,6 +28,17 @@ public interface ILayoutContext extends IAttributeStore {
 	 * the layout algorithm using this property name.
 	 */
 	public static final String LAYOUT_ALGORITHM_PROPERTY = "layoutAlgorithm";
+
+	/**
+	 * A property representing the layout algorithm used by this
+	 * {@link ILayoutContext}.
+	 * 
+	 * @see #getLayoutAlgorithm()
+	 * @see #setLayoutAlgorithm(ILayoutAlgorithm)
+	 * 
+	 * @return A property named {@link #LAYOUT_ALGORITHM_PROPERTY}.
+	 */
+	public ObjectProperty<ILayoutAlgorithm> layoutAlgorithmProperty();
 
 	/**
 	 * Applies the layout algorithm of this LayoutContext. The clean flag is

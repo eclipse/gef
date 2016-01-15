@@ -126,7 +126,7 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public SetMultimap<? extends Object, String> getContentAnchorages() {
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		SetMultimap<Object, String> anchorages = HashMultimap.create();
 		for (AbstractFXGeometricElement<? extends IGeometry> anchorage : getContent()
 				.getAnchorages()) {
@@ -136,7 +136,7 @@ public class FXGeometricShapePart
 	}
 
 	@Override
-	public List<? extends Object> getContentChildren() {
+	protected List<? extends Object> doGetContentChildren() {
 		return Collections.emptyList();
 	}
 

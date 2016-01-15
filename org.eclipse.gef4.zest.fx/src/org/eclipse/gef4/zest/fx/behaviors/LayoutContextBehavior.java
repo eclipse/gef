@@ -12,15 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IConnectionLayout;
-import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
@@ -40,6 +36,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -54,10 +51,23 @@ import javafx.scene.layout.Pane;
 // only applicable for GraphContentPart (see #getHost())
 public class LayoutContextBehavior extends AbstractBehavior<Node> {
 
-	private PropertyChangeListener layoutContextPropertyChangeListener = new PropertyChangeListener() {
+	private MapChangeListener<String, Object> layoutContextAttributesObserver = new MapChangeListener<String, Object>() {
+
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			onLayoutContextPropertyChange(evt);
+		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
+			if (LayoutProperties.BOUNDS_PROPERTY.equals(change.getKey())) {
+				applyLayout(true);
+			}
+		}
+
+	};
+
+	private ChangeListener<ILayoutAlgorithm> layoutAlgorithmObserver = new ChangeListener<ILayoutAlgorithm>() {
+
+		@Override
+		public void changed(ObservableValue<? extends ILayoutAlgorithm> observable, ILayoutAlgorithm oldValue,
+				ILayoutAlgorithm newValue) {
+			applyLayout(true);
 		}
 	};
 
@@ -80,10 +90,25 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		}
 	};
 
-	@Override
-	public void activate() {
-		super.activate();
+	/**
+	 * Performs one layout pass using the static layout algorithm that is
+	 * configured for the layout context.
+	 *
+	 * @param clean
+	 *            Whether to fully re-compute the layout or not.
+	 */
+	public void applyLayout(boolean clean) {
+		InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
+		Rectangle bounds = LayoutProperties.getBounds(layoutContext);
+		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
+				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
+						JavaFX2Geometry.toAffineTransform(canvas.getContentTransform())));
+		layoutContext.applyLayout(true);
+		layoutContext.flushChanges();
+	}
 
+	@Override
+	protected void doActivate() {
 		// register listener for bounds changes
 		Rectangle initialBounds = new Rectangle();
 		if (getHost().getParent() == getHost().getRoot()) {
@@ -139,32 +164,16 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		// register listener for layout context property changes after setting
 		// the initial layout properties, so that this listener will not be
 		// called for the initial layout properties
-		layoutContext.addPropertyChangeListener(layoutContextPropertyChangeListener);
-	}
-
-	/**
-	 * Performs one layout pass using the static layout algorithm that is
-	 * configured for the layout context.
-	 *
-	 * @param clean
-	 *            Whether to fully re-compute the layout or not.
-	 */
-	public void applyLayout(boolean clean) {
-		InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
-		Rectangle bounds = LayoutProperties.getBounds(layoutContext);
-		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
-				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
-						JavaFX2Geometry.toAffineTransform(canvas.getContentTransform())));
-		layoutContext.applyLayout(true);
-		layoutContext.flushChanges();
+		layoutContext.attributesProperty().addListener(layoutContextAttributesObserver);
+		layoutContext.layoutAlgorithmProperty().addListener(layoutAlgorithmObserver);
 	}
 
 	@Override
-	public void deactivate() {
-		super.deactivate();
+	protected void doDeactivate() {
 		// remove property change listener from context
 		if (layoutContext != null) {
-			layoutContext.removePropertyChangeListener(layoutContextPropertyChangeListener);
+			layoutContext.attributesProperty().removeListener(layoutContextAttributesObserver);
+			layoutContext.layoutAlgorithmProperty().removeListener(layoutAlgorithmObserver);
 		}
 		if (nestingVisual == null) {
 			// remove change listener from viewport
@@ -216,26 +225,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(nestingNode);
 		return (NodeContentPart) nestingNodePart;
-	}
-
-	/**
-	 * Re-layout when certain properties of the LayoutContext change:
-	 * <ul>
-	 * <li>static layout algorithm
-	 * <li>layout bounds
-	 * </ul>
-	 *
-	 * @param evt
-	 *            A {@link PropertyChangeEvent} that was fired by the layout
-	 *            context.
-	 */
-	protected void onLayoutContextPropertyChange(PropertyChangeEvent evt) {
-		if (ILayoutContext.LAYOUT_ALGORITHM_PROPERTY.equals(evt.getPropertyName())) {
-			applyLayout(true);
-		} else if (evt instanceof KeyedPropertyChangeEvent
-				&& LayoutProperties.BOUNDS_PROPERTY.equals(((KeyedPropertyChangeEvent) evt).getKey())) {
-			applyLayout(true);
-		}
 	}
 
 	/**

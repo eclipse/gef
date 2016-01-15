@@ -13,22 +13,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.activate;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+
+import javafx.beans.property.ReadOnlyBooleanProperty;
 
 /**
  * An {@link IActivatable} represents an entity that can be activated (
  * {@link #activate()}) and deactivated ({@link #deactivate()}) as required.
  * <p>
  * The current activation state of an {@link IActivatable} (whether the entity
- * is active or not) can be queried by clients ({@link #isActive()}), and it is
- * expected that an {@link IActivatable} notifies registered
- * {@link PropertyChangeListener}s about changes of its activation state by
- * means of {@link PropertyChangeEvent}s, using the property name
- * {@value #ACTIVE_PROPERTY}.
+ * is active or not) can be queried by clients ({@link #isActive()}) and changes
+ * to it can be observed via the {@link #activeProperty() active property}
  * <p>
  * Any client implementing this interface may internally use an
  * {@link ActivatableSupport} as a delegate to easily realize the required
@@ -37,11 +32,10 @@ import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
  * @author anyssen
  * 
  */
-public interface IActivatable extends IPropertyChangeNotifier {
+public interface IActivatable {
 
 	/**
-	 * A key used as {@link PropertyChangeEvent#getPropertyName()} when
-	 * notifying about changes of the activation state.
+	 * The name of the {@link #activeProperty() active property}.
 	 */
 	public static String ACTIVE_PROPERTY = "active";
 
@@ -49,26 +43,30 @@ public interface IActivatable extends IPropertyChangeNotifier {
 	 * Activates the {@link IActivatable}. It is expected that a call to
 	 * {@link IActivatable#isActive()} returns {@code true} after this method
 	 * has been called (unless {@link #deactivate()} is called to deactivate the
-	 * {@link IActivatable}), and that a {@link PropertyChangeEvent} notifying
-	 * about an activation change is send to all registered
-	 * {@link PropertyChangeListener}s, if the activation state actually
-	 * changed, i.e. the {@link IActivatable} was not active before.
+	 * {@link IActivatable}).
 	 */
 	public void activate();
+
+	/**
+	 * A read-only property providing information about the active state if this
+	 * {@link IActivatable}.
+	 * 
+	 * @return A read-only boolean property which is {@code true} in case the
+	 *         {@link IActivatable} is active, {@code false} otherwise.
+	 */
+	public ReadOnlyBooleanProperty activeProperty();
 
 	/**
 	 * Deactivates the {@link IActivatable}. It is expected that a call to
 	 * {@link IActivatable#isActive()} return {@code false} after this method
 	 * has been called (unless {{@link #activate()} is called to re-activate the
-	 * {@link IAdaptable}, and that a {@link PropertyChangeEvent} notifying
-	 * about an activation change is send to all registered
-	 * {@link PropertyChangeListener}s, if the activation state actually
-	 * changed, i.e. the {@link IActivatable} was active before.
+	 * {@link IAdaptable}.
 	 */
 	public void deactivate();
 
 	/**
-	 * Reports whether this {@link IActivatable} is active or inactive.
+	 * Reports whether this {@link IActivatable} is active or inactive, which
+	 * resembles the value of the {@link #activeProperty() active property}.
 	 * 
 	 * @return {@code true} in case the {@link IActivatable} is active,
 	 *         {@code false} otherwise.

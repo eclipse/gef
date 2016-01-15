@@ -92,7 +92,8 @@ public class DeselectOperation<VR> extends AbstractOperation
 		this.viewer = viewer;
 		this.toBeDeselected = new ArrayList<>(toBeDeselected);
 		SelectionModel<VR> selectionModel = getSelectionModel();
-		initialSelection = new ArrayList<>(selectionModel.getSelection());
+		initialSelection = new ArrayList<>(
+				selectionModel.getSelectionUnmodifiable());
 	}
 
 	@Override
@@ -100,7 +101,8 @@ public class DeselectOperation<VR> extends AbstractOperation
 			throws ExecutionException {
 		SelectionModel<VR> selectionModel = getSelectionModel();
 		deselected = new ArrayList<>(toBeDeselected);
-		deselected.retainAll(new ArrayList<>(selectionModel.getSelection()));
+		deselected.retainAll(
+				new ArrayList<>(selectionModel.getSelectionUnmodifiable()));
 		selectionModel.removeFromSelection(deselected);
 		return Status.OK_STATUS;
 	}

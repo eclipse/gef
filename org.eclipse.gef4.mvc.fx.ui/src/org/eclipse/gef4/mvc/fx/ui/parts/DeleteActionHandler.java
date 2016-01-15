@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -26,6 +24,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 import com.google.common.reflect.TypeToken;
 
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 
 /**
@@ -38,12 +37,12 @@ import javafx.scene.Node;
 public class DeleteActionHandler extends Action {
 
 	private FXViewer viewer = null;
-	private PropertyChangeListener selectionListener = new PropertyChangeListener() {
+	private ListChangeListener<IContentPart<?, ?>> selectionListener = new ListChangeListener<IContentPart<?, ?>>() {
 
-		@SuppressWarnings("unchecked")
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			updateEnabledState((SelectionModel<Node>) evt.getSource());
+		public void onChanged(
+				ListChangeListener.Change<? extends IContentPart<?, ?>> c) {
+			updateEnabledState(getSelectionModel());
 		}
 	};
 
@@ -85,11 +84,13 @@ public class DeleteActionHandler extends Action {
 		// register listeners to update enabled state
 		if (oldSelectionModel != null
 				&& oldSelectionModel != newSelectionModel) {
-			oldSelectionModel.removePropertyChangeListener(selectionListener);
+			oldSelectionModel.getSelectionUnmodifiable()
+					.removeListener(selectionListener);
 		}
 		if (newSelectionModel != null
 				&& oldSelectionModel != newSelectionModel) {
-			newSelectionModel.addPropertyChangeListener(selectionListener);
+			newSelectionModel.getSelectionUnmodifiable()
+					.addListener(selectionListener);
 		}
 		updateEnabledState(newSelectionModel);
 	}
@@ -107,7 +108,7 @@ public class DeleteActionHandler extends Action {
 		}
 		deletionPolicy.init();
 		for (IContentPart<Node, ? extends Node> s : new ArrayList<>(
-				getSelectionModel().getSelection())) {
+				getSelectionModel().getSelectionUnmodifiable())) {
 			deletionPolicy.delete(s);
 		}
 		IUndoableOperation deleteOperation = deletionPolicy.commit();
@@ -127,7 +128,7 @@ public class DeleteActionHandler extends Action {
 		if (selectionModel == null) {
 			setEnabled(false);
 		} else {
-			setEnabled(!selectionModel.getSelection().isEmpty());
+			setEnabled(!selectionModel.getSelectionUnmodifiable().isEmpty());
 		}
 	}
 }

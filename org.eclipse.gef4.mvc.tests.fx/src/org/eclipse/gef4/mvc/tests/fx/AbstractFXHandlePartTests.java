@@ -91,12 +91,12 @@ public class AbstractFXHandlePartTests {
 		}
 
 		@Override
-		public SetMultimap<? extends Object, String> getContentAnchorages() {
+		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
 
 		@Override
-		public List<? extends Object> getContentChildren() {
+		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
 		}
 	};

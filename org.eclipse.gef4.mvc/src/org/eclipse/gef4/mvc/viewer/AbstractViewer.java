@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -26,13 +24,16 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.InjectAdapters;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.ObservableMap;
 
 /**
  *
@@ -42,19 +43,11 @@ import com.google.common.reflect.TypeToken;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-public abstract class AbstractViewer<VR>
-		implements IViewer<VR>, IAdaptable.Bound<IDomain<VR>> {
+public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
-	/**
-	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
-	 * listeners about changes to this object. May be used by subclasses to
-	 * trigger the notification of listeners.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
+	private ActivatableSupport acs = new ActivatableSupport(this);
 	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
-			this, pcs);
+			this);
 
 	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<>();
 	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<>();
@@ -84,8 +77,13 @@ public abstract class AbstractViewer<VR>
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyBooleanProperty activeProperty() {
+		return acs.activeProperty();
+	}
+
+	@Override
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		return ads.adaptersProperty();
 	}
 
 	@Override
@@ -126,6 +124,11 @@ public abstract class AbstractViewer<VR>
 	@Override
 	public <T> T getAdapter(TypeToken<T> key) {
 		return ads.getAdapter(key);
+	}
+
+	@Override
+	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		return ads.getAdapters();
 	}
 
 	@Override
@@ -175,11 +178,6 @@ public abstract class AbstractViewer<VR>
 	@Override
 	public boolean isActive() {
 		return acs.isActive();
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override

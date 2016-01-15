@@ -64,7 +64,7 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		List<? extends IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
 				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelection());
+				}).getSelectionUnmodifiable());
 		toBeDeselected.remove(clonedContentPart);
 		viewer.getDomain().execute(new DeselectOperation<>(
 				getHost().getRoot().getViewer(), toBeDeselected));

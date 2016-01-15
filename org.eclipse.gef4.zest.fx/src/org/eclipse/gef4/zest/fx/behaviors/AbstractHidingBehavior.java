@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 
+import javafx.collections.SetChangeListener;
+import javafx.collections.SetChangeListener.Change;
 import javafx.scene.Node;
 
 /**
@@ -36,31 +35,16 @@ import javafx.scene.Node;
  */
 public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 
-	private PropertyChangeListener hidingModelListener = new PropertyChangeListener() {
+	private SetChangeListener<org.eclipse.gef4.graph.Node> hidingModelObserver = new SetChangeListener<org.eclipse.gef4.graph.Node>() {
+
 		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (HidingModel.HIDDEN_PROPERTY.equals(event.getPropertyName())) {
-				onHidingModelChange(event);
-			}
+		public void onChanged(SetChangeListener.Change<? extends org.eclipse.gef4.graph.Node> change) {
+			onHidingModelChange(change);
 		}
+
 	};
 
 	private boolean isHidden;
-
-	@Override
-	public void activate() {
-		super.activate();
-		// register for change notifications regarding hidden nodes
-		HidingModel hidingModel = getHidingModel();
-		hidingModel.addPropertyChangeListener(hidingModelListener);
-	}
-
-	@Override
-	public void deactivate() {
-		HidingModel hidingModel = getHidingModel();
-		hidingModel.removePropertyChangeListener(hidingModelListener);
-		super.deactivate();
-	}
 
 	/**
 	 * Returns <code>true</code> if the {@link #getHost() host} is currently
@@ -70,6 +54,19 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 	 *         hidden, otherwise <code>false</code>.
 	 */
 	protected abstract boolean determineHiddenStatus();
+
+	@Override
+	protected void doActivate() {
+		// register for change notifications regarding hidden nodes
+		HidingModel hidingModel = getHidingModel();
+		hidingModel.hiddenProperty().addListener(hidingModelObserver);
+	}
+
+	@Override
+	protected void doDeactivate() {
+		HidingModel hidingModel = getHidingModel();
+		hidingModel.hiddenProperty().removeListener(hidingModelObserver);
+	}
 
 	/**
 	 * Returns the {@link HidingModel} that is installed on the {@link IViewer}
@@ -112,10 +109,10 @@ public abstract class AbstractHidingBehavior extends AbstractBehavior<Node> {
 	 * hidden and is not hidden anymore, {@link #show()} is called. Otherwise,
 	 * {@link #hide()} is called.
 	 *
-	 * @param event
-	 *            The property change event of the {@link HidingModel}.
+	 * @param change
+	 *            The change event of the {@link HidingModel}.
 	 */
-	protected void onHidingModelChange(PropertyChangeEvent event) {
+	protected void onHidingModelChange(Change<? extends org.eclipse.gef4.graph.Node> change) {
 		// check if we have to prune/unprune the host
 		boolean wasHidden = isHidden;
 		isHidden = determineHiddenStatus();

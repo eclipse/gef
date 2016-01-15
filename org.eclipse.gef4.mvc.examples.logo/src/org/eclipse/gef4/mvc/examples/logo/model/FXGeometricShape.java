@@ -14,21 +14,24 @@ package org.eclipse.gef4.mvc.examples.logo.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javafx.scene.effect.Effect;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 
-public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.effect.Effect;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
-	private final Set<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<>();
+public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 
 	public static final String FILL_PROPERTY = "fill";
 
-	private Paint fill;
+	private final Set<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<>();
+
+	private final ObjectProperty<Paint> fillProperty = new SimpleObjectProperty<>(
+			this, FILL_PROPERTY);;
 
 	public FXGeometricShape(IShape shape, AffineTransform transform,
 			Color stroke, double strokeWidth, Paint fill, Effect effect) {
@@ -51,13 +54,11 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 	}
 
 	public Paint getFill() {
-		return fill;
+		return fillProperty.get();
 	}
 
 	public void setFill(Paint fill) {
-		Paint oldFill = this.fill;
-		this.fill = fill;
-		pcs.firePropertyChange(FILL_PROPERTY, oldFill, fill);
+		fillProperty.set(fill);
 	}
 
 }

@@ -29,6 +29,6 @@ public class MvcLogoExampleView extends AbstractFXView {
 				.with(new MvcLogoExampleUiModule())));
 		// set default contents (GEF logo)
 		getViewer().getAdapter(ContentModel.class)
-				.setContents(MvcLogoExample.createDefaultContents());
+				.getContents().setAll(MvcLogoExample.createDefaultContents());
 	}
 }

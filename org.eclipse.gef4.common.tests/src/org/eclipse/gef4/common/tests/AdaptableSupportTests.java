@@ -17,29 +17,28 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.ObservableMap;
 
 public class AdaptableSupportTests {
 
 	private class AdaptableSupportWrapper implements IAdaptable {
 
-		private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-				this);
 		private AdaptableSupport<AdaptableSupportWrapper> ads = new AdaptableSupport<>(
-				this, pcs);
+				this);
 
 		@Override
-		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			pcs.addPropertyChangeListener(listener);
+		public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+			return ads.adaptersProperty();
 		}
 
 		protected void clear() {
@@ -64,6 +63,11 @@ public class AdaptableSupportTests {
 		}
 
 		@Override
+		public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+			return ads.getAdapters();
+		}
+
+		@Override
 		public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 				Class<? super T> key) {
 			return ads.getAdapters(key);
@@ -73,12 +77,6 @@ public class AdaptableSupportTests {
 		public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 				TypeToken<? super T> key) {
 			return ads.getAdapters(key);
-		}
-
-		@Override
-		public void removePropertyChangeListener(
-				PropertyChangeListener listener) {
-			pcs.removePropertyChangeListener(listener);
 		}
 
 		@Override

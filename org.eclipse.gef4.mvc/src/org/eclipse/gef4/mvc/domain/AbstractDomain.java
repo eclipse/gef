@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +28,6 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableScope;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.InjectAdapters;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
@@ -40,6 +37,10 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.ObservableMap;
 
 /**
  *
@@ -52,16 +53,9 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
-	/**
-	 * A {@link PropertyChangeSupport} that is used as a delegate to notify
-	 * listeners about changes to this object. May be used by subclasses to
-	 * trigger the notification of listeners.
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private ActivatableSupport acs = new ActivatableSupport(this, pcs);
+	private ActivatableSupport acs = new ActivatableSupport(this);
 	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<IDomain<VR>>(
-			this, pcs);
+			this);
 
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
@@ -104,8 +98,13 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyBooleanProperty activeProperty() {
+		return acs.activeProperty();
+	}
+
+	@Override
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		return ads.adaptersProperty();
 	}
 
 	@Override
@@ -214,6 +213,11 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
+	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		return ads.getAdapters();
+	}
+
+	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
@@ -272,11 +276,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 			transaction = createExecutionTransaction();
 		}
 		transactionContext.add(tool);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override

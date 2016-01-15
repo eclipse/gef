@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
-import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 import org.eclipse.gef4.common.inject.InjectAdapters;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
 
 import com.google.common.reflect.TypeToken;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.collections.ObservableMap;
 
 /**
  * An {@link AdapterStore} is a basic {@link IAdaptable} implementation that can
@@ -26,10 +27,7 @@ import com.google.common.reflect.TypeToken;
  */
 public class AdapterStore implements IAdaptable {
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
-	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<>(this,
-			pcs);
+	private AdaptableSupport<AdapterStore> ads = new AdaptableSupport<>(this);
 
 	/**
 	 * Creates a new {@link AdapterStore} with no initial adapters.
@@ -84,11 +82,6 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
-	@Override
 	public <T> T getAdapter(AdapterKey<T> key) {
 		return ads.getAdapter(key);
 	}
@@ -113,11 +106,6 @@ public class AdapterStore implements IAdaptable {
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			TypeToken<? super T> key) {
 		return ads.getAdapters(key);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override
@@ -154,6 +142,16 @@ public class AdapterStore implements IAdaptable {
 		for (Object adapter : ads.getAdapters().values()) {
 			ads.unsetAdapter(adapter);
 		}
+	}
+
+	@Override
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		return ads.adaptersProperty();
+	}
+
+	@Override
+	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		return ads.getAdapters();
 	}
 
 }

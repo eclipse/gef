@@ -16,7 +16,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * The {@link AbstractLayoutContext} is an abstract {@link ILayoutContext}
@@ -31,19 +32,14 @@ import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
  */
 public abstract class AbstractLayoutContext implements ILayoutContext {
 
-	private ILayoutAlgorithm layoutAlgorithm = null;
+	private ObjectProperty<ILayoutAlgorithm> layoutAlgorithmProperty = new SimpleObjectProperty<>(
+			this, LAYOUT_ALGORITHM_PROPERTY);
 	private final List<INodeLayout> layoutNodes = new ArrayList<>();
 	private final List<IConnectionLayout> layoutEdges = new ArrayList<>();
 
 	private final List<Runnable> postLayoutPass = new ArrayList<>();
 	private final List<Runnable> preLayoutPass = new ArrayList<>();
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<>();
-
-	/**
-	 * Support object for notifying about property changes
-	 */
-	protected PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(
-			this);
 
 	/**
 	 * Adds the given {@link IConnectionLayout} to the list of edges and fires a
@@ -56,6 +52,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		layoutEdges.add(edge);
 	}
 
+	@Override
 	public void addLayoutFilter(ILayoutFilter layoutFilter) {
 		layoutFilters.add(layoutFilter);
 	}
@@ -71,11 +68,9 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		layoutNodes.add(node);
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
-
+	@Override
 	public void applyLayout(boolean clear) {
+		ILayoutAlgorithm layoutAlgorithm = layoutAlgorithmProperty.get();
 		if (layoutAlgorithm != null) {
 			for (Runnable r : preLayoutPass) {
 				r.run();
@@ -115,14 +110,17 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		}
 	}
 
+	@Override
 	public void flushChanges() {
 		doFlushChanges();
 	}
 
+	@Override
 	public IConnectionLayout[] getEdges() {
 		return layoutEdges.toArray(new IConnectionLayout[0]);
 	}
 
+	@Override
 	public IConnectionLayout[] getConnections(INodeLayout layoutEntity1,
 			INodeLayout layoutEntity2) {
 		List<IConnectionLayout> connections = new ArrayList<>();
@@ -142,14 +140,17 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		return connections.toArray(new IConnectionLayout[0]);
 	}
 
+	@Override
 	public INodeLayout[] getNodes() {
 		return layoutNodes.toArray(new INodeLayout[0]);
 	}
 
+	@Override
 	public ILayoutAlgorithm getLayoutAlgorithm() {
-		return layoutAlgorithm;
+		return layoutAlgorithmProperty.get();
 	}
 
+	@Override
 	public boolean isLayoutIrrelevant(IConnectionLayout connLayout) {
 		for (ILayoutFilter filter : layoutFilters) {
 			if (filter.isLayoutIrrelevant(connLayout)) {
@@ -159,6 +160,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		return false;
 	}
 
+	@Override
 	public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
 		for (ILayoutFilter filter : layoutFilters) {
 			if (filter.isLayoutIrrelevant(nodeLayout)) {
@@ -167,6 +169,11 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		}
 		return false;
 	}
+
+	@Override
+	public ObjectProperty<ILayoutAlgorithm> layoutAlgorithmProperty() {
+		return layoutAlgorithmProperty;
+	};
 
 	/**
 	 * Removes the given {@link IConnectionLayout} from the list of edges and
@@ -179,6 +186,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		layoutEdges.remove(edge);
 	}
 
+	@Override
 	public void removeLayoutFilter(ILayoutFilter layoutFilter) {
 		layoutFilters.remove(layoutFilter);
 	}
@@ -194,50 +202,49 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 		layoutNodes.remove(node);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
-
+	@Override
 	public void schedulePostLayoutPass(Runnable runnable) {
 		if (runnable == null) {
 			throw new IllegalArgumentException("Runnable may not be null.");
 		}
-		postLayoutPass.add(runnable);
+		if (!postLayoutPass.contains(runnable)) {
+			postLayoutPass.add(runnable);
+		}
 	}
 
+	@Override
 	public void schedulePreLayoutPass(Runnable runnable) {
 		if (runnable == null) {
 			throw new IllegalArgumentException("Runnable may not be null.");
 		}
-		preLayoutPass.add(runnable);
-	}
-
-	public void setLayoutAlgorithm(ILayoutAlgorithm newLayoutAlgorithm) {
-		ILayoutAlgorithm oldLayoutAlgorithm = this.layoutAlgorithm;
-		if (oldLayoutAlgorithm != newLayoutAlgorithm) {
-			this.layoutAlgorithm = newLayoutAlgorithm;
-			newLayoutAlgorithm.setLayoutContext(this);
-			pcs.firePropertyChange(LAYOUT_ALGORITHM_PROPERTY,
-					oldLayoutAlgorithm, newLayoutAlgorithm);
-		}
-	}
-
-	public void unschedulePostLayoutPass(Runnable runnable) {
-		if (!postLayoutPass.contains(runnable)) {
-			new IllegalArgumentException(
-					"Given Runnable is not contained in the list.")
-							.printStackTrace();
-		}
-		postLayoutPass.remove(runnable);
-	}
-
-	public void unschedulePreLayoutPass(Runnable runnable) {
 		if (!preLayoutPass.contains(runnable)) {
-			new IllegalArgumentException(
-					"Given Runnable is not contained in the list.")
-							.printStackTrace();
+			preLayoutPass.add(runnable);
 		}
-		preLayoutPass.remove(runnable);
+	}
+
+	@Override
+	public void setLayoutAlgorithm(ILayoutAlgorithm newLayoutAlgorithm) {
+		layoutAlgorithmProperty.set(newLayoutAlgorithm);
+	}
+
+	@Override
+	public void unschedulePostLayoutPass(Runnable runnable) {
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable may not be null.");
+		}
+		if (postLayoutPass.contains(runnable)) {
+			postLayoutPass.remove(runnable);
+		}
+	}
+
+	@Override
+	public void unschedulePreLayoutPass(Runnable runnable) {
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable may not be null.");
+		}
+		if (preLayoutPass.contains(runnable)) {
+			preLayoutPass.remove(runnable);
+		}
 	}
 
 }

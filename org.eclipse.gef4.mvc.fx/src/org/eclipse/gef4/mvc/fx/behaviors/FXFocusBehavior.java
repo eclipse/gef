@@ -17,8 +17,13 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
@@ -33,12 +38,18 @@ import javafx.scene.Node;
 public class FXFocusBehavior extends AbstractBehavior<Node>
 		implements PropertyChangeListener {
 
-	@Override
-	public void activate() {
-		super.activate();
-		getHost().getRoot().getViewer().getAdapter(FocusModel.class)
-				.addPropertyChangeListener(this);
-	}
+	private ChangeListener<IContentPart<Node, ? extends Node>> focusObserver = new ChangeListener<IContentPart<Node, ? extends Node>>() {
+
+		@Override
+		public void changed(
+				ObservableValue<? extends IContentPart<Node, ? extends Node>> observable,
+				IContentPart<Node, ? extends Node> oldValue,
+				IContentPart<Node, ? extends Node> newValue) {
+			if (newValue == getHost()) {
+				applyFocus();
+			}
+		}
+	};
 
 	/**
 	 * Assigns keyboard focus to the visualization of the host.
@@ -47,16 +58,25 @@ public class FXFocusBehavior extends AbstractBehavior<Node>
 		getHost().getVisual().requestFocus();
 	}
 
+	@SuppressWarnings("serial")
 	@Override
-	public void deactivate() {
-		getHost().getRoot().getViewer().getAdapter(FocusModel.class)
-				.removePropertyChangeListener(this);
-		super.deactivate();
+	protected void doActivate() {
+		getHost().getRoot().getViewer()
+				.getAdapter(new TypeToken<FocusModel<Node>>() {
+				}).focusProperty().addListener(focusObserver);
+	}
+
+	@SuppressWarnings("serial")
+	@Override
+	protected void doDeactivate() {
+		getHost().getRoot().getViewer()
+				.getAdapter(new TypeToken<FocusModel<Node>>() {
+				}).focusProperty().removeListener(focusObserver);
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (FocusModel.VIEWER_FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+		if (FocusModel.VIEWER_FOCUSED_PROPERTY.equals(evt.getPropertyName())) {
 			// viewer focus changed
 		} else if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
 			if (evt.getNewValue() == getHost()) {

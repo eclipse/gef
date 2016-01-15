@@ -73,7 +73,7 @@ public class FXHoverFeedbackPart
 
 	@Override
 	public void doRefreshVisual(GeometryNode<IGeometry> visual) {
-		if (getAnchorages().size() != 1) {
+		if (getAnchoragesUnmodifiable().size() != 1) {
 			return;
 		}
 
@@ -116,8 +116,8 @@ public class FXHoverFeedbackPart
 	@SuppressWarnings("serial")
 	public Effect getHoverFeedbackEffect() {
 		Provider<? extends Effect> effectProvider = null;
-		if (!getAnchorages().isEmpty()) {
-			IVisualPart<Node, ? extends Node> host = getAnchorages().keys()
+		if (!getAnchoragesUnmodifiable().isEmpty()) {
+			IVisualPart<Node, ? extends Node> host = getAnchoragesUnmodifiable().keys()
 					.iterator().next();
 			effectProvider = host.getAdapter(
 					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {

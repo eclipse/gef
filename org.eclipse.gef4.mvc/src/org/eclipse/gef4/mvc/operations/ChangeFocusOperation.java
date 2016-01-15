@@ -89,14 +89,14 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 			IContentPart<VR, ? extends VR> newFocused) {
 		super(label);
 		this.viewer = viewer;
-		this.oldFocused = getFocusModel().getFocused();
+		this.oldFocused = getFocusModel().getFocus();
 		this.newFocused = newFocused;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		getFocusModel().setFocused(newFocused);
+		getFocusModel().setFocus(newFocused);
 		return Status.OK_STATUS;
 	}
 
@@ -138,7 +138,7 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		getFocusModel().setFocused(oldFocused);
+		getFocusModel().setFocus(oldFocused);
 		return Status.OK_STATUS;
 	}
 

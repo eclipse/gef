@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.gef4.common.properties.KeyedPropertyChangeEvent;
-import org.eclipse.gef4.common.properties.PropertyChangeNotifierSupport;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.IConnectionLayout;
 import org.eclipse.gef4.layout.INodeLayout;
+
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  * The {@link GraphNodeLayout} is a {@link Node}-specific {@link INodeLayout}
@@ -33,21 +34,8 @@ import org.eclipse.gef4.layout.INodeLayout;
  */
 public class GraphNodeLayout implements INodeLayout {
 
-	private PropertyChangeNotifierSupport pcs = new PropertyChangeNotifierSupport(this);
-	private PropertyChangeListener nodeAttributesListener = new PropertyChangeListener() {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			// forward any property change events with us as source
-			if (evt instanceof KeyedPropertyChangeEvent) {
-				pcs.fireKeyedPropertyChange(evt.getPropertyName(), ((KeyedPropertyChangeEvent) evt).getKey(),
-						evt.getOldValue(), evt.getNewValue());
-			} else {
-				pcs.firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-			}
-		}
-	};
-
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 	private GraphLayoutContext context;
 	private Node node;
 
@@ -64,17 +52,17 @@ public class GraphNodeLayout implements INodeLayout {
 	public GraphNodeLayout(GraphLayoutContext context, Node node) {
 		this.context = context;
 		this.node = node;
-		node.addPropertyChangeListener(nodeAttributesListener);
+		this.attributesProperty.bindContentBidirectional(node.attributesProperty());
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	public ReadOnlyMapProperty<String, Object> attributesProperty() {
+		return attributesProperty.getReadOnlyProperty();
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
-		return node.getAttributes();
+	public ObservableMap<String, Object> getAttributes() {
+		return attributesProperty.get();
 	}
 
 	@Override
@@ -134,11 +122,6 @@ public class GraphNodeLayout implements INodeLayout {
 			successors[i++] = outgoingConnection.getTarget();
 		}
 		return successors;
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 }

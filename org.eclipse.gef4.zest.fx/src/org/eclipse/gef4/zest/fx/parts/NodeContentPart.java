@@ -12,14 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -31,6 +28,7 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.MapChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -101,7 +99,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * The zoom level that needs to be reached for the
-	 * {@link #getContentChildren()} method to return a nested {@link Graph}.
+	 * {@link #doGetContentChildren()} method to return a nested {@link Graph}.
 	 */
 	protected static final double ZOOMLEVEL_SHOW_NESTED_GRAPH = 2;
 
@@ -156,6 +154,15 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	public static final String CSS_CLASS_ICON = "icon";
 
 	private static final String NODE_LABEL_EMPTY = "-";
+
+	private MapChangeListener<String, Object> nodeAttributesObserver = new MapChangeListener<String, Object>() {
+
+		@Override
+		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
+			refreshVisual();
+		}
+
+	};
 	private Text labelText;
 	private ImageView iconImageView;
 	private Node nestedGraphIcon;
@@ -184,14 +191,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 						// update the visualization
 					}
 				}
-			}
-		}
-	};
-	private PropertyChangeListener nodeAttributesPropertyChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (IAttributeStore.ATTRIBUTES_PROPERTY.equals(evt.getPropertyName())) {
-				refreshVisual();
 			}
 		}
 	};
@@ -341,12 +340,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getContent().addPropertyChangeListener(nodeAttributesPropertyChangeListener);
+		getContent().attributesProperty().addListener(nodeAttributesObserver);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		getContent().removePropertyChangeListener(nodeAttributesPropertyChangeListener);
+		getContent().attributesProperty().removeListener(nodeAttributesObserver);
 		super.doDeactivate();
 	}
 
@@ -360,7 +359,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
 		org.eclipse.gef4.graph.Node node = getContent();
-		Map<String, Object> attrs = node.getAttributes();
+		Map<String, Object> attrs = node.attributesProperty();
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			refreshCssClass(visual, ZestProperties.getCssClass(node));
 		}
@@ -403,12 +402,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public SetMultimap<? extends Object, String> getContentAnchorages() {
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		return HashMultimap.create();
 	}
 
 	@Override
-	public List<? extends Object> getContentChildren() {
+	protected List<? extends Object> doGetContentChildren() {
 		Graph nestedGraph = getContent().getNestedGraph();
 		if (nestedGraph == null) {
 			return Collections.emptyList();
@@ -564,7 +563,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 				}
 				// TODO: show image, show children/graph icon
 				// highlight this node by moving it to the front
-				List<IVisualPart<Node, ? extends Node>> children = getParent().getChildren();
+				List<IVisualPart<Node, ? extends Node>> children = getParent().getChildrenUnmodifiable();
 				originalIndex = children.indexOf(this); // restore later
 				getParent().reorderChild(this, children.size() - 1);
 				visual.toFront();
@@ -651,19 +650,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		nestedChildrenPaneScaled.getChildren().remove(index);
-	}
-
-	/**
-	 * Resizes the area for the graph nested in this node.
-	 *
-	 * @param dw
-	 *            Delta width.
-	 * @param dh
-	 *            Delta height.
-	 */
-	// TODO: Remove this method.
-	protected void resizeNestedGraphArea(double dw, double dh) {
-		// TODO: Add new base visual with controllable dimensions (Pane)
 	}
 
 	private void restoreZOrder() {
