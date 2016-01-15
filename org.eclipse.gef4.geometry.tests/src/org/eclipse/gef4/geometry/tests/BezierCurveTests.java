@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 itemis AG and others.
- * 
+ * Copyright (c) 2012, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -237,6 +237,34 @@ public class BezierCurveTests {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		BezierCurve t0 = c0.getTranslated(new Point(-1, 4));
 		assertEquals(new BezierCurve(0, 5, 0, 14, 9, 5, 9, 14), t0);
+	}
+
+	@Test
+	public void test_intersection_line() {
+		Line line = new Line(new Point(14.5428, -10000.0),
+				new Point(14.5428, 10000.0));
+		BezierCurve curve = new BezierCurve(
+				new Point(24.200000000000077, -2.3727936609778726),
+				new Point(17.56250052131255, -2.372947931952322),
+				new Point(13.137498435758783, -2.3730630604781013),
+				new Point(6.499999999999994, -2.372678596158668));
+		Point[] intersections = line.getIntersections(curve);
+		assertEquals(1, intersections.length);
+		assertTrue(PrecisionUtils.equal(14.5428, intersections[0].x, 0));
+		assertTrue(PrecisionUtils.equal(-2.3729, intersections[0].y, -4));
+
+		// second one
+		line = new Line(new Point(14.5428, -1000.0),
+				new Point(14.5428, 1000.0));
+		intersections = line.getIntersections(curve);
+		assertEquals(1, intersections.length);
+		assertTrue(PrecisionUtils.equal(14.5428, intersections[0].x, 0));
+		assertTrue(PrecisionUtils.equal(-2.3729, intersections[0].y, -4));
+	}
+
+	@Test
+	public void test_intersection_performance() {
+
 	}
 
 	@Test

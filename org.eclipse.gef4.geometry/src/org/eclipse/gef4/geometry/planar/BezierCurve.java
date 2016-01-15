@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 itemis AG and others.
+ * Copyright (c) 2011, 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -352,6 +352,30 @@ public class BezierCurve extends AbstractGeometry
 					&& (qi.converges(shift)
 							|| pointsEquals(q.getHC(qi.a).toPoint(),
 									q.getHC(qi.b).toPoint(), shift));
+		}
+
+		/**
+		 * Returns <code>true</code> if the first interval converges to a single
+		 * point. Otherwise returns <code>false</code>.
+		 *
+		 * @return <code>true</code> if the first interval converges to a single
+		 *         point, otherwise <code>false</code>.
+		 */
+		public boolean convergesP() {
+			return pointsEquals(p.getHC(pi.a).toPoint(),
+					p.getHC(pi.b).toPoint(), 0);
+		}
+
+		/**
+		 * Returns <code>true</code> if the second interval converges to a
+		 * single point. Otherwise returns <code>false</code>.
+		 *
+		 * @return <code>true</code> if the second interval converges to a
+		 *         single point, otherwise <code>false</code>.
+		 */
+		public boolean convergesQ() {
+			return pointsEquals(q.getHC(qi.a).toPoint(),
+					q.getHC(qi.b).toPoint(), 0);
 		}
 
 		/**
@@ -1438,6 +1462,20 @@ public class BezierCurve extends AbstractGeometry
 
 		while (!partStack.isEmpty()) {
 			IntervalPair ip = partStack.pop();
+
+			if (ip.convergesP()) {
+				Point p = ip.p.getHC(ip.pi.a).toPoint();
+				if (ip.q.contains(p)) {
+					return p;
+				}
+			}
+
+			if (ip.convergesQ()) {
+				Point q = ip.q.getHC(ip.qi.a).toPoint();
+				if (ip.p.contains(q)) {
+					return q;
+				}
+			}
 
 			if (ip.converges()) {
 				// TODO: do another clipping algorithm here. the one that
