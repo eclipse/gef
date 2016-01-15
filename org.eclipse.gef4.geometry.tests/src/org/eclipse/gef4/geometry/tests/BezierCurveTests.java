@@ -241,6 +241,8 @@ public class BezierCurveTests {
 
 	@Test
 	public void test_intersection_line() {
+		// test data taken from Bugzilla 485607
+
 		Line line = new Line(new Point(14.5428, -10000.0),
 				new Point(14.5428, 10000.0));
 		BezierCurve curve = new BezierCurve(
@@ -265,6 +267,8 @@ public class BezierCurveTests {
 	@Test
 	public void test_intersection_performance() {
 		// test performance of intersection computation
+		// test data taken from Bugzilla #485776
+
 		// fast cases
 		Point referencePoint = new Point(15.0, 10000.0);
 		Line line = new Line(new Point(15.084666766666667, -10000.0),
@@ -396,8 +400,7 @@ public class BezierCurveTests {
 		endMillis = System.currentTimeMillis();
 		assertTrue(endMillis - startMillis < 200);
 
-		// 10 slow ones
-
+		// slow cases
 		referencePoint = new Point(15.0, -10000.0);
 		line = new Line(new Point(15.152400199999999, -10000.0),
 				new Point(15.152400199999999, 10000.0));
