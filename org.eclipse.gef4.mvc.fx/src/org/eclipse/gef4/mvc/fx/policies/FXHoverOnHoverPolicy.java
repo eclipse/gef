@@ -13,6 +13,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.models.HoverModel;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
@@ -35,8 +36,9 @@ public class FXHoverOnHoverPolicy extends AbstractInteractionPolicy<Node>
 	@Override
 	public void hover(MouseEvent e) {
 		// do nothing in case there is an explicit event target
-		if (getHost().getRoot().getViewer().getVisualPartMap()
-				.get(e.getTarget()) != getHost()) {
+		IVisualPart<Node, ? extends Node> explicitTarget = getHost().getRoot()
+				.getViewer().getVisualPartMap().get(e.getTarget());
+		if (explicitTarget != null && explicitTarget != getHost()) {
 			return;
 		}
 

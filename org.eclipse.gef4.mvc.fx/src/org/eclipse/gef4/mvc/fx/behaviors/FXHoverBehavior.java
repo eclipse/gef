@@ -133,6 +133,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 
 	@Override
 	protected void doDeactivate() {
+		super.doDeactivate();
 		if (isInCreationDelay()) {
 			stopCreationDelay();
 		}

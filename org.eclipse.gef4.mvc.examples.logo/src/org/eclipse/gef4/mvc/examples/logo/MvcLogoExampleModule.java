@@ -61,10 +61,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
-		// register (default) interaction policies (which are based on viewer
-		// models and do not depend on transaction policies)
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXHoverOnHoverPolicy.class);
 	}
 
 	@Override
@@ -96,6 +92,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXGeometricCurvePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// hover on hover
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXHoverOnHoverPolicy.class);
+
 		// geometry provider for selection feedback
 		adapterMapBinder
 				.addBinding(AdapterKey
@@ -148,6 +148,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXGeometricShapePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// hover on hover
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXHoverOnHoverPolicy.class);
+
 		// geometry provider for selection feedback
 		adapterMapBinder
 				.addBinding(AdapterKey
