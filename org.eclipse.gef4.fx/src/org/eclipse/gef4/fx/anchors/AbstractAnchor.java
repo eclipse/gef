@@ -65,16 +65,49 @@ public abstract class AbstractAnchor implements IAnchor {
 
 	private Map<Node, Set<AnchorKey>> keys = new HashMap<>();
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
-	private Set<Node> registerLater = new HashSet<>();
 
-	private ChangeListener<Scene> anchorageVisualSceneChangeListener = new ChangeListener<Scene>() {
+	private ChangeListener<Scene> anchoredSceneChangeListener = new ChangeListener<Scene>() {
+		@Override
+		public void changed(ObservableValue<? extends Scene> observable,
+				Scene oldValue, Scene newValue) {
+			// determine which anchored changed
+			for (Node anchored : keys.keySet()) {
+				if (anchored.sceneProperty() == observable) {
+					if (oldValue == newValue) {
+						return;
+					}
+					if (oldValue != null) {
+						// System.out.println(
+						// "Try to unregister VCL because anchored "
+						// + anchored + " lost scene reference.");
+						unregisterVCL(anchored);
+					}
+					if (newValue != null) {
+						// System.out
+						// .println("Try to register VCL because anchored "
+						// + anchored
+						// + " obtained scene reference.");
+						registerVCL(anchored);
+					}
+					break;
+				}
+			}
+		}
+	};
+
+	private ChangeListener<Scene> anchorageSceneChangeListener = new ChangeListener<Scene>() {
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable,
 				Scene oldValue, Scene newValue) {
 			if (oldValue != null) {
+				// System.out.println("Try to unregister VCLs because anchorage
+				// "
+				// + getAnchorage() + " lost scene reference.");
 				unregisterVCLs();
 			}
 			if (newValue != null) {
+				// System.out.println("Try to register VCLs because anchorage "
+				// + getAnchorage() + " obtained scene reference.");
 				registerVCLs();
 			}
 		}
@@ -85,21 +118,22 @@ public abstract class AbstractAnchor implements IAnchor {
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
+				// System.out
+				// .println("Try to unregister VCLS because old anchorage "
+				// + oldAnchorage + " was removed.");
 				unregisterVCLs();
 				oldAnchorage.sceneProperty()
-						.removeListener(anchorageVisualSceneChangeListener);
+						.removeListener(anchorageSceneChangeListener);
 			}
 			if (newAnchorage != null) {
 				// register listener on scene property, so we can react to
 				// changes of the scene property of the anchorage node
 				newAnchorage.sceneProperty()
-						.addListener(anchorageVisualSceneChangeListener);
-				// if scene is already set, register anchorage visual listener
-				// directly (else do this within scene change listener)
-				Scene scene = newAnchorage.getScene();
-				if (scene != null) {
-					registerVCLs();
-				}
+						.addListener(anchorageSceneChangeListener);
+				// System.out.println("Try to register VCLS because new
+				// anchorage "
+				// + newAnchorage + " was set.");
+				registerVCLs();
 			}
 		}
 	};
@@ -126,19 +160,18 @@ public abstract class AbstractAnchor implements IAnchor {
 		Node anchored = key.getAnchored();
 		if (!keys.containsKey(anchored)) {
 			keys.put(anchored, new HashSet<AnchorKey>());
+			anchored.sceneProperty().addListener(anchoredSceneChangeListener);
 		}
 		keys.get(anchored).add(key);
 
 		if (!vcls.containsKey(anchored)) {
 			VisualChangeListener vcl = createVCL(anchored);
 			vcls.put(anchored, vcl);
-			if (canRegister(anchored)) {
-				vcl.register(anchorageProperty.get(), anchored);
-			} else {
-				registerLater(anchored);
-			}
+			// System.out.println(
+			// "Try to register VCL, because anchored " + key.getAnchored()
+			// + " was attached to anchorage " + getAnchorage());
+			registerVCL(anchored);
 		}
-
 		updatePosition(key);
 	}
 
@@ -175,7 +208,7 @@ public abstract class AbstractAnchor implements IAnchor {
 				super.register(observed, observer);
 				/*
 				 * The visual change listener is registered when the anchorage
-				 * is attached to a Scene. Therefore, the anchorages
+				 * is attached to a scene. Therefore, the anchorages
 				 * bounds/transformation could have "changed" until
 				 * registration, so we have to recompute anchored's positions
 				 * now.
@@ -213,12 +246,14 @@ public abstract class AbstractAnchor implements IAnchor {
 
 		// clean-up for this anchored if necessary
 		if (keys.get(anchored).isEmpty()) {
+			anchored.sceneProperty()
+					.removeListener(anchoredSceneChangeListener);
 			keys.remove(anchored);
-			VisualChangeListener vcl = vcls.remove(anchored);
-			// unregister if currently registered
-			if (vcl.isRegistered()) {
-				vcl.unregister();
-			}
+			// System.out.println("Trying to unregister VCL as anchored "
+			// + anchored + " has been detached from anchorage "
+			// + getAnchorage());
+			unregisterVCL(anchored);
+			vcls.remove(anchored);
 		}
 	}
 
@@ -263,39 +298,27 @@ public abstract class AbstractAnchor implements IAnchor {
 		return positionProperty.getReadOnlyProperty();
 	}
 
-	private void registerLater(final Node anchored) {
-		if (registerLater.contains(anchored)) {
-			return;
-		}
-		registerLater.add(anchored);
-
-		ChangeListener<Scene> changeListener = new ChangeListener<Scene>() {
-			@Override
-			public void changed(ObservableValue<? extends Scene> observed,
-					Scene oldScene, Scene newScene) {
-				if (getAnchorage() == null
-						|| getAnchorage().getScene() == null) {
-					return;
-				}
-				VisualChangeListener vcl = vcls.get(anchored);
-				if (vcl == null) {
-					return;
-				}
-				if (oldScene != null) {
-					if (vcl.isRegistered()) {
-						registerLater.remove(anchored);
-						vcl.unregister();
-					}
-				}
-				if (newScene != null) {
-					if (!vcl.isRegistered()) {
-						vcl.register(getAnchorage(), anchored);
-						observed.removeListener(this);
-					}
-				}
+	/**
+	 * Registers a {@link VisualChangeListener} for the given anchored
+	 * {@link Node}.
+	 *
+	 * @param anchored
+	 *            The anchored {@link Node} to register a
+	 *            {@link VisualChangeListener} at.
+	 */
+	protected void registerVCL(Node anchored) {
+		if (canRegister(anchored)) {
+			// System.out.println("Register VCL between anchorage "
+			// + getAnchorage() + " and anchored " + anchored);
+			VisualChangeListener vcl = vcls.get(anchored);
+			if (!vcl.isRegistered()) {
+				vcl.register(getAnchorage(), anchored);
+				updatePositions(anchored);
 			}
-		};
-		anchored.sceneProperty().addListener(changeListener);
+			// else {
+			// System.out.println("VCL is already registered, thus skipping.");
+			// }
+		}
 	}
 
 	/**
@@ -304,11 +327,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	 */
 	protected void registerVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
-			if (canRegister(anchored)) {
-				vcls.get(anchored).register(getAnchorage(), anchored);
-			} else {
-				registerLater(anchored);
-			}
+			registerVCL(anchored);
 		}
 	}
 
@@ -323,12 +342,33 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	/**
+	 * Unregisters the {@link VisualChangeListener}s for the given anchored
+	 * {@link Node}.
+	 *
+	 * @param anchored
+	 *            The anchored Node to unregister a {@link VisualChangeListener}
+	 *            from.
+	 */
+	protected void unregisterVCL(Node anchored) {
+		// System.out.println("Unregister VCL between anchorage " +
+		// getAnchorage()
+		// + " and anchored " + anchored);
+		VisualChangeListener vcl = vcls.get(anchored);
+		if (vcl.isRegistered()) {
+			vcl.unregister();
+		}
+		// else {
+		// System.out.println("VCL is not registered, thus skipping.");
+		// }
+	}
+
+	/**
 	 * Unregisters the {@link VisualChangeListener}s for all anchored
 	 * {@link Node}s.
 	 */
 	protected void unregisterVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
-			vcls.get(anchored).unregister();
+			unregisterVCL(anchored);
 		}
 	}
 
