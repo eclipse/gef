@@ -18,6 +18,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef4.common.collections.UnmodifiableObservableSetWrapper;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -99,7 +100,7 @@ public class HidingModel {
 	 *         {@link org.eclipse.gef4.graph.Node}s.
 	 */
 	public Set<org.eclipse.gef4.graph.Node> getHiddenNodesUnmodifiable() {
-		return FXCollections.unmodifiableObservableSet(hiddenProperty.get());
+		return new UnmodifiableObservableSetWrapper<>(hiddenProperty.get());
 	}
 
 	/**
