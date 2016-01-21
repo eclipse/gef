@@ -116,7 +116,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			// ObservableList) within
 			// ObservableSetMultimap, we could synchronize just once per change
 			synchronizeContentAnchorages(
-					HashMultimap.create(change.getSource()));
+					HashMultimap.create(change.getSetMultimap()));
 		}
 	};
 

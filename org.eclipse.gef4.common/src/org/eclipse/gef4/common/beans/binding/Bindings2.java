@@ -76,10 +76,10 @@ public class Bindings2 {
 			// UnidirectionalSetMultimapContentBinding<K, V> will only be used
 			// for a SetMultimap<K, V>.
 			final SetMultimap<K, V> source = (SetMultimap<K, V>) change
-					.getSource();
+					.getSetMultimap();
 			final SetMultimap<K, V> destination = setMultimapRef.get();
 			if (destination == null) {
-				change.getSource().removeListener(this);
+				change.getSetMultimap().removeListener(this);
 			} else {
 				// we use replaceValues() to perform an atomic change here (and
 				// thus don't use the added and removed values from the change)
@@ -140,7 +140,7 @@ public class Bindings2 {
 			// for a SetMultimap<K, V>.
 			final Multiset<E> destination = multisetRef.get();
 			if (destination == null) {
-				change.getSource().removeListener(this);
+				change.getMultiset().removeListener(this);
 			} else {
 				// we use replaceValues() to perform an atomic change here (and
 				// thus don't use the added and removed values from the change)
@@ -234,9 +234,9 @@ public class Bindings2 {
 					try {
 						updating = true;
 						final SetMultimap<K, V> source = setMultimap1 == change
-								.getSource() ? setMultimap1 : setMultimap2;
+								.getSetMultimap() ? setMultimap1 : setMultimap2;
 						final SetMultimap<K, V> destination = setMultimap1 == change
-								.getSource() ? setMultimap2 : setMultimap1;
+								.getSetMultimap() ? setMultimap2 : setMultimap1;
 						// we use replaceValues() to perform an atomic change
 						// here (and thus don't use the added and removed values
 						// from the change)
@@ -328,7 +328,7 @@ public class Bindings2 {
 					try {
 						updating = true;
 						final Multiset<E> destination = multiset1 == change
-								.getSource() ? multiset2 : multiset1;
+								.getMultiset() ? multiset2 : multiset1;
 						// we use replaceValues() to perform an atomic change
 						// here (and thus don't use the added and removed values
 						// from the change)

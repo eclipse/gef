@@ -49,7 +49,7 @@ public interface MultisetChangeListener<E> {
 		 * 
 		 * @return The source {@link ObservableMultiset}.
 		 */
-		public ObservableMultiset<E> getSource() {
+		public ObservableMultiset<E> getMultiset() {
 			return source;
 		}
 

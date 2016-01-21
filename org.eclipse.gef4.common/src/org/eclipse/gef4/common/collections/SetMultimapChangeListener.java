@@ -57,7 +57,7 @@ public interface SetMultimapChangeListener<K, V> {
 		 * 
 		 * @return The source {@link ObservableSetMultimap}.
 		 */
-		public ObservableSetMultimap<K, V> getSource() {
+		public ObservableSetMultimap<K, V> getSetMultimap() {
 			return source;
 		}
 

@@ -162,7 +162,7 @@ public class ObservableMultisetTests {
 				fail("Received unexpected change " + change);
 			}
 
-			assertEquals(source, change.getSource());
+			assertEquals(source, change.getMultiset());
 
 			// check element
 			E expectedElement = elementQueue.pollLast();
@@ -572,10 +572,10 @@ public class ObservableMultisetTests {
 			public void onChanged(
 					org.eclipse.gef4.common.collections.MultisetChangeListener.Change<? extends Integer> change) {
 				// unregister ourselves
-				change.getSource().removeListener(this);
+				change.getMultiset().removeListener(this);
 
 				// register ourselves (again)
-				change.getSource().addListener(this);
+				change.getMultiset().addListener(this);
 			}
 		};
 		observable.addListener(multisetChangeListener);

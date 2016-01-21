@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.HashMultiset;
 import com.sun.javafx.binding.MapExpressionHelper;
 
 import javafx.beans.InvalidationListener;
@@ -64,10 +63,10 @@ public class MapExpressionHelperEx<K, V> extends MapExpressionHelper<K, V> {
 	@Override
 	public MapExpressionHelper<K, V> removeListener(
 			InvalidationListener listener) {
-		if(invalidationListeners == null){
+		if (invalidationListeners == null) {
 			invalidationListeners = new ArrayList<>();
 		}
-		
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners
 		// are added during notifications); as we only create a new multi-set in
 		// the locked case, memory should not be waisted.
@@ -100,7 +99,8 @@ public class MapExpressionHelperEx<K, V> extends MapExpressionHelper<K, V> {
 	public MapExpressionHelper<K, V> addListener(
 			ChangeListener<? super ObservableMap<K, V>> listener) {
 		if (changeListeners == null) {
-			changeListeners = new ArrayList<>();;
+			changeListeners = new ArrayList<>();
+			;
 		}
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners
 		// are added during notifications); as we only create a new multi-set in
@@ -117,10 +117,10 @@ public class MapExpressionHelperEx<K, V> extends MapExpressionHelper<K, V> {
 	@Override
 	public MapExpressionHelper<K, V> removeListener(
 			ChangeListener<? super ObservableMap<K, V>> listener) {
-		if(changeListeners == null){
+		if (changeListeners == null) {
 			changeListeners = new ArrayList<>();
 		}
-		
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners
 		// are added during notifications); as we only create a new multi-set in
 		// the locked case, memory should not be waisted.
@@ -153,7 +153,8 @@ public class MapExpressionHelperEx<K, V> extends MapExpressionHelper<K, V> {
 	public MapExpressionHelper<K, V> addListener(
 			MapChangeListener<? super K, ? super V> listener) {
 		if (mapChangeListeners == null) {
-			mapChangeListeners = new ArrayList<>();;
+			mapChangeListeners = new ArrayList<>();
+			;
 		}
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners
 		// are added during notifications); as we only create a new multi-set in
@@ -170,10 +171,10 @@ public class MapExpressionHelperEx<K, V> extends MapExpressionHelper<K, V> {
 	@Override
 	public MapExpressionHelper<K, V> removeListener(
 			MapChangeListener<? super K, ? super V> listener) {
-		if(mapChangeListeners == null){
+		if (mapChangeListeners == null) {
 			mapChangeListeners = new ArrayList<>();
 		}
-		
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners
 		// are added during notifications); as we only create a new multi-set in
 		// the locked case, memory should not be waisted.
@@ -208,8 +209,7 @@ public class MapExpressionHelperEx<K, V> extends MapExpressionHelper<K, V> {
 	}
 
 	@Override
-	public void fireValueChangedEvent(
-			Change<? extends K, ? extends V> change) {
+	public void fireValueChangedEvent(Change<? extends K, ? extends V> change) {
 		MapExpressionHelperEx.fireValueChangedEvent(delegate, change);
 	}
 

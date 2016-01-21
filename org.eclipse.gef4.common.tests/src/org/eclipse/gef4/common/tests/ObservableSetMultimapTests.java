@@ -169,7 +169,7 @@ public class ObservableSetMultimapTests {
 				fail("Received unexpected change " + change);
 			}
 
-			assertEquals(source, change.getSource());
+			assertEquals(source, change.getSetMultimap());
 
 			// check key
 			K expectedKey = keyQueue.pollLast();
@@ -388,10 +388,10 @@ public class ObservableSetMultimapTests {
 			public void onChanged(
 					org.eclipse.gef4.common.collections.SetMultimapChangeListener.Change<? extends Integer, ? extends String> change) {
 				// unregister ourselves
-				change.getSource().removeListener(this);
+				change.getSetMultimap().removeListener(this);
 
 				// register ourselves (again)
-				change.getSource().addListener(this);
+				change.getSetMultimap().addListener(this);
 			}
 		};
 		observable.addListener(setMultimapChangeListener);
