@@ -133,19 +133,29 @@ public class ObservableMultisetTests {
 			implements MultisetChangeListener<E> {
 
 		private ObservableMultiset<E> source;
-		private LinkedList<E> elementQueue = new LinkedList<>();
-		private LinkedList<Integer> addedCountQueue = new LinkedList<>();
-		private LinkedList<Integer> removedCountQueue = new LinkedList<>();
+		private LinkedList<LinkedList<E>> elementQueue = new LinkedList<>();
+		private LinkedList<LinkedList<Integer>> addedCountQueue = new LinkedList<>();
+		private LinkedList<LinkedList<Integer>> removedCountQueue = new LinkedList<>();
 
 		public MultisetChangeExpector(ObservableMultiset<E> source) {
 			this.source = source;
 		}
 
-		public void addExpectation(E element, int removedCount,
+		public void addAtomicExpectation() {
+			elementQueue.addFirst(new LinkedList<E>());
+			addedCountQueue.addFirst(new LinkedList<Integer>());
+			removedCountQueue.addFirst(new LinkedList<Integer>());
+		}
+
+		public void addElementaryExpection(E element, int removedCount,
 				int addedCount) {
-			elementQueue.addFirst(element);
-			removedCountQueue.addFirst(removedCount);
-			addedCountQueue.addFirst(addedCount);
+			if (elementQueue.size() <= 0) {
+				throw new IllegalArgumentException(
+						"Add atomic expectation first.");
+			}
+			elementQueue.getFirst().addFirst(element);
+			removedCountQueue.getFirst().addFirst(removedCount);
+			addedCountQueue.getFirst().addFirst(addedCount);
 		}
 
 		public void check() {
@@ -159,31 +169,50 @@ public class ObservableMultisetTests {
 		public void onChanged(
 				org.eclipse.gef4.common.collections.MultisetChangeListener.Change<? extends E> change) {
 			if (elementQueue.size() <= 0) {
-				fail("Received unexpected change " + change);
+				fail("Received unexpected atomic change " + change);
 			}
+
+			LinkedList<E> expectedElements = elementQueue.pollLast();
+			LinkedList<Integer> expectedAddCounts = addedCountQueue.pollLast();
+			LinkedList<Integer> expectedRemoveCounts = removedCountQueue
+					.pollLast();
 
 			assertEquals(source, change.getMultiset());
 
-			// check element
-			E expectedElement = elementQueue.pollLast();
-			assertEquals(expectedElement, change.getElement());
+			StringBuffer expectedString = new StringBuffer();
+			while (change.next()) {
+				if (expectedElements.size() <= 0) {
+					fail("Did not expect another elementary change");
+				}
+				// check element
+				E expectedElement = expectedElements.pollLast();
+				assertEquals(expectedElement, change.getElement());
 
-			// check added values
-			int expectedAddCount = addedCountQueue.pollLast();
-			assertEquals(expectedAddCount, change.getAddCount());
+				// check added values
+				int expectedAddCount = expectedAddCounts.pollLast();
+				assertEquals(expectedAddCount, change.getAddCount());
 
-			// check removed values
-			int expectedRemoveCount = removedCountQueue.pollLast();
-			assertEquals(expectedRemoveCount, change.getRemoveCount());
+				// check removed values
+				int expectedRemoveCount = expectedRemoveCounts.pollLast();
+				assertEquals(expectedRemoveCount, change.getRemoveCount());
 
-			// check string representation
-			if (expectedAddCount > 0) {
-				assertEquals("Added " + expectedElement + " " + expectedAddCount
-						+ " times.", change.toString());
-			} else {
-				assertEquals("Removed " + expectedElement + " "
-						+ expectedRemoveCount + " times.", change.toString());
+				// check string representation
+				if (!expectedString.toString().isEmpty()) {
+					expectedString.append(" ");
+				}
+				if (expectedAddCount > 0) {
+					expectedString.append("Added " + expectedAddCount
+							+ " occurrences of " + expectedElement + ".");
+				} else {
+					expectedString.append("Removed " + expectedRemoveCount
+							+ " occurrences of " + expectedElement + ".");
+				}
 			}
+			if (expectedElements.size() > 0) {
+				fail("Did not receive " + expectedElements.size()
+						+ " expected elementary changes.");
+			}
+			assertEquals(expectedString.toString(), change.toString());
 		}
 	}
 
@@ -267,7 +296,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.add(1), observable.add(1));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -287,7 +317,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.add(1), observable.add(1));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -307,7 +338,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(2, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(2, 0, 1);
 		assertEquals(backupMultiset.add(2), observable.add(2));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -358,7 +390,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(5, 0, 5);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(5, 0, 5);
 		assertEquals(backupMultiset.add(5, 5), observable.add(5, 5));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -399,7 +432,7 @@ public class ObservableMultisetTests {
 		observable.addListener(multisetChangeListener);
 
 		// add a collection with three values
-		invalidationListener.expect(3);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -408,14 +441,11 @@ public class ObservableMultisetTests {
 			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
-		multisetChangeListener.addExpectation(2, 0, 2);
-		multisetChangeListener.addExpectation(3, 0, 3);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
+		multisetChangeListener.addElementaryExpection(2, 0, 2);
+		multisetChangeListener.addElementaryExpection(3, 0, 3);
 		Multiset<Integer> toAdd = HashMultiset.create();
 		toAdd.add(1);
 		toAdd.add(2, 2);
@@ -429,7 +459,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.check();
 
 		// add another collection with three values
-		invalidationListener.expect(2);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -438,11 +468,10 @@ public class ObservableMultisetTests {
 			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(2, 0, 2);
-		multisetChangeListener.addExpectation(4, 0, 3);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(2, 0, 2);
+		multisetChangeListener.addElementaryExpection(4, 0, 3);
 		toAdd = HashMultiset.create();
 		toAdd.add(2, 2);
 		toAdd.add(4, 3);
@@ -500,7 +529,7 @@ public class ObservableMultisetTests {
 		observable.addListener(multisetChangeListener);
 
 		// clear
-		invalidationListener.expect(3);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -509,14 +538,11 @@ public class ObservableMultisetTests {
 			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 1, 0);
-		multisetChangeListener.addExpectation(2, 2, 0);
-		multisetChangeListener.addExpectation(3, 3, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 1, 0);
+		multisetChangeListener.addElementaryExpection(2, 2, 0);
+		multisetChangeListener.addElementaryExpection(3, 3, 0);
 		observable.clear();
 		backupMultiset.clear();
 		check(observable, backupMultiset);
@@ -652,8 +678,10 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
-		multisetChangeListener.addExpectation(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertTrue(observable.add(1));
 		invalidationListener.check();
 		if (observable instanceof ObservableValue) {
@@ -682,7 +710,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertTrue(observable.add(1));
 		invalidationListener.check();
 		if (observable instanceof ObservableValue) {
@@ -746,7 +775,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(2, 1, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(2, 1, 0);
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -766,7 +796,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(2, 1, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(2, 1, 0);
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -834,7 +865,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(3, 2, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(3, 2, 0);
 		assertEquals(backupMultiset.remove(3, 2), observable.remove(3, 2));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -855,7 +887,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(3, 1, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(3, 1, 0);
 		assertEquals(backupMultiset.remove(3, 2), observable.remove(3, 2));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -904,7 +937,7 @@ public class ObservableMultisetTests {
 		observable.addListener(multisetChangeListener);
 
 		// remove collection
-		invalidationListener.expect(2);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -913,13 +946,12 @@ public class ObservableMultisetTests {
 			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 1, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 1, 0);
 		// all occurrences of 2 will be removed, even if toRemove contains fewer
 		// occurrences.
-		multisetChangeListener.addExpectation(2, 2, 0);
+		multisetChangeListener.addElementaryExpection(2, 2, 0);
 		Multiset<Integer> toRemove = HashMultiset.create();
 		toRemove.add(1);
 		toRemove.add(2, 1);
@@ -974,7 +1006,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(3, 3, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(3, 3, 0);
 		Multiset<Integer> toRetain = HashMultiset.create();
 		toRetain.add(1);
 		toRetain.add(2, 1);
@@ -1021,7 +1054,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.setCount(1, 1), observable.setCount(1, 1));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -1041,7 +1075,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 3);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 3);
 		assertEquals(backupMultiset.setCount(1, 4), observable.setCount(1, 4));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -1061,7 +1096,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 2, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 2, 0);
 		assertEquals(backupMultiset.setCount(1, 2), observable.setCount(1, 2));
 		check(observable, backupMultiset);
 		invalidationListener.check();
@@ -1103,7 +1139,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 2);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 2);
 		assertEquals(backupMultiset.setCount(1, 0, 2),
 				observable.setCount(1, 0, 2));
 		check(observable, backupMultiset);
@@ -1124,7 +1161,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 0, 1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.setCount(1, 2, 3),
 				observable.setCount(1, 2, 3));
 		check(observable, backupMultiset);
@@ -1145,7 +1183,8 @@ public class ObservableMultisetTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		multisetChangeListener.addExpectation(1, 1, 0);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 1, 0);
 		assertEquals(backupMultiset.setCount(1, 3, 2),
 				observable.setCount(1, 3, 2));
 		check(observable, backupMultiset);

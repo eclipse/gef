@@ -11,14 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.collections;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 
-import org.eclipse.gef4.common.collections.MultisetChangeListenerHelper.SimpleChange;
+import org.eclipse.gef4.common.collections.MultisetChangeListenerHelper.ElementarySubChange;
 
 import com.google.common.collect.ForwardingMultiset;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 
@@ -77,14 +78,26 @@ public class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		return backingMultiset;
 	}
 
+	/**
+	 * Returns a copy of the delegate {@link Multiset}, which is used for change
+	 * notifications.
+	 * 
+	 * @return A copy of the backing {@link Multiset}.
+	 */
+	protected Multiset<E> delegateCopy() {
+		return HashMultiset.create(backingMultiset);
+	}
+
 	@Override
 	public int add(E element, int occurrences) {
+		Multiset<E> previousContents = delegateCopy();
 		int countBefore = super.add(element, occurrences);
 		if (count(element) > countBefore) {
 			// only fire change if occurrences have really been added.
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this,
-							element, 0, count(element) - countBefore));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, new ElementarySubChange<>(element, 0,
+									count(element) - countBefore)));
 		}
 		return countBefore;
 	}
@@ -92,6 +105,7 @@ public class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 	@SuppressWarnings("unchecked")
 	@Override
 	public int remove(Object element, int occurrences) {
+		Multiset<E> previousContents = delegateCopy();
 		int countBefore = super.remove(element, occurrences);
 		if (countBefore > count(element)) {
 			// if the element has been removed, the cast to E should be safe
@@ -99,41 +113,48 @@ public class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 			// occurrences, thus we have to compute how many have actually be
 			// removed.
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this,
-							(E) element, countBefore - count(element), 0));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, new ElementarySubChange<>((E) element,
+									countBefore - count(element), 0)));
 		}
 		return countBefore;
 	}
 
 	@Override
 	public int setCount(E element, int count) {
+		Multiset<E> previousContents = delegateCopy();
 		int countBefore = super.setCount(element, count);
 		if (count(element) > countBefore) {
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this,
-							(E) element, 0, count(element) - countBefore));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, new ElementarySubChange<>((E) element, 0,
+									count(element) - countBefore)));
 		} else if (count(element) < countBefore) {
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this,
-							(E) element, countBefore - count(element), 0));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, new ElementarySubChange<>((E) element,
+									countBefore - count(element), 0)));
 		}
 		return countBefore;
 	}
 
 	@Override
 	public boolean setCount(E element, int oldCount, int newCount) {
+		Multiset<E> previousContents = delegateCopy();
 		boolean changed = super.setCount(element, oldCount, newCount);
 		// if changed it means that the oldCound was matched and that now we
 		// have the new count
 		if (changed) {
 			if (newCount > oldCount) {
 				helper.fireValueChangedEvent(
-						new MultisetChangeListenerHelper.SimpleChange<>(this,
-								(E) element, 0, newCount - oldCount));
+						new MultisetChangeListenerHelper.AtomicChange<>(
+								this, previousContents, new ElementarySubChange<>(
+										(E) element, 0, newCount - oldCount)));
 			} else if (oldCount > newCount) {
 				helper.fireValueChangedEvent(
-						new MultisetChangeListenerHelper.SimpleChange<>(this,
-								(E) element, oldCount - newCount, 0));
+						new MultisetChangeListenerHelper.AtomicChange<>(
+								this, previousContents, new ElementarySubChange<>(
+										(E) element, oldCount - newCount, 0)));
 			}
 		}
 		return changed;
@@ -142,37 +163,39 @@ public class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean removeAll(Collection<?> collection) {
-		Map<E, Integer> countsBefore = new HashMap<>();
-		for (E e : elementSet()) {
-			countsBefore.put(e, count(e));
-		}
+		Multiset<E> previousContents = delegateCopy();
 		boolean changed = super.removeAll(collection);
 		if (changed) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
 			// collection may contain element multiple times; as we only want to
 			// notify once per element, we have to iterate over the set of
 			// unique elements
 			for (Object e : new HashSet<>(collection)) {
-				if (countsBefore.containsKey(e)) {
+				if (previousContents.contains(e)) {
 					// if the element was contained, its safe to cast to E in
 					// the following
-					if (countsBefore.get(e) > count(e)) {
-						helper.fireValueChangedEvent(
-								new MultisetChangeListenerHelper.SimpleChange<>(
-										this, (E) e, countsBefore.get(e), 0));
+					if (previousContents.count(e) > count(e)) {
+						elementaryChanges.add(new ElementarySubChange<>((E) e,
+								previousContents.count(e), 0));
 					}
 				}
 			}
+			helper.fireValueChangedEvent(
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, elementaryChanges));
 		}
 		return changed;
 	}
 
 	@Override
 	public boolean add(E element) {
+		Multiset<E> previousContents = delegateCopy();
 		boolean changed = super.add(element);
 		if (changed) {
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this,
-							element, 0, 1));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents,
+							new ElementarySubChange<>(element, 0, 1)));
 		}
 		return changed;
 	}
@@ -180,101 +203,113 @@ public class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object object) {
+		Multiset<E> previousContents = delegateCopy();
 		boolean changed = super.remove(object);
 		if (changed) {
 			// if remove was successful, the cast to E should be safe.
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this,
-							(E) object, 1, 0));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents,
+							new ElementarySubChange<>((E) object, 1, 0)));
 		}
 		return changed;
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends E> collection) {
-		Map<E, Integer> countsBefore = new HashMap<>();
-		for (E e : elementSet()) {
-			countsBefore.put(e, count(e));
-		}
+		Multiset<E> previousContents = delegateCopy();
 		boolean changed = super.addAll(collection);
 		if (changed) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
 			// collection may contain element multiple times; as we only want to
 			// notify once per element, we have to iterate over the set of
 			// unique elements
 			for (E e : new HashSet<>(collection)) {
-				if (countsBefore.containsKey(e)) {
+				if (previousContents.contains(e)) {
 					// already contained
-					if (count(e) > countsBefore.get(e)) {
-						helper.fireValueChangedEvent(
-								new MultisetChangeListenerHelper.SimpleChange<>(
-										this, e, 0,
-										count(e) - countsBefore.get(e)));
+					if (count(e) > previousContents.count(e)) {
+						elementaryChanges.add(new ElementarySubChange<>(e, 0,
+								count(e) - previousContents.count(e)));
 					}
 				} else {
 					// newly added
-					helper.fireValueChangedEvent(
-							new MultisetChangeListenerHelper.SimpleChange<>(
-									this, e, 0, count(e)));
+					elementaryChanges.add(new ElementarySubChange<>(e, 0, count(e)));
 				}
 			}
+			helper.fireValueChangedEvent(
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, elementaryChanges));
 		}
 		return changed;
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> collection) {
-		Map<E, Integer> countsBefore = new HashMap<>();
-		for (E e : elementSet()) {
-			countsBefore.put(e, count(e));
-		}
+		Multiset<E> previousContents = delegateCopy();
 		boolean changed = super.retainAll(collection);
 		if (changed) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
 			// collection may contain element multiple times; as we only want to
 			// notify once per element, we have to iterate over the set of
 			// unique elements
-			for (E e : countsBefore.keySet()) {
+			for (E e : previousContents.elementSet()) {
 				if (!collection.contains(e)) {
-					helper.fireValueChangedEvent(
-							new MultisetChangeListenerHelper.SimpleChange<>(
-									this, e, countsBefore.get(e), 0));
+					elementaryChanges.add(new ElementarySubChange<>(e,
+							previousContents.count(e), 0));
+
 				}
 			}
+			helper.fireValueChangedEvent(
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, elementaryChanges));
 		}
 		return changed;
 	}
 
 	@Override
 	public boolean replaceAll(Multiset<? extends E> multiset) {
-		Multiset<E> addedElements = Multisets.difference(delegate(), multiset);
-		Multiset<? extends E> removedElements = Multisets.difference(multiset,
-				delegate());
+		Multiset<E> previousContents = delegateCopy();
+
 		super.clear();
 		super.addAll(multiset);
 
-		// removed elements
-		for (E e : removedElements.elementSet()) {
+		Multiset<E> addedElements = Multisets.difference(previousContents,
+				multiset);
+		Multiset<? extends E> removedElements = Multisets.difference(multiset,
+				previousContents);
+		if (!addedElements.isEmpty() || !removedElements.isEmpty()) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
+			// removed elements
+			for (E e : removedElements.elementSet()) {
+				elementaryChanges.add(
+						new ElementarySubChange<>(e, removedElements.count(e), 0));
+			}
+			// added entries
+			for (E e : addedElements.elementSet()) {
+				elementaryChanges
+						.add(new ElementarySubChange<>(e, 0, addedElements.count(e)));
+			}
 			helper.fireValueChangedEvent(
-					new SimpleChange<>(this, e, removedElements.count(e), 0));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, elementaryChanges));
+			return true;
 		}
-		// added entries
-		for (E e : addedElements.elementSet()) {
-			helper.fireValueChangedEvent(
-					new SimpleChange<>(this, e, 0, addedElements.count(e)));
-		}
-		return !addedElements.isEmpty() || !removedElements.isEmpty();
+		return false;
 	}
 
 	@Override
 	public void clear() {
-		Map<E, Integer> countsBefore = new HashMap<>();
-		for (E e : elementSet()) {
-			countsBefore.put(e, count(e));
-		}
+		Multiset<E> previousContents = delegateCopy();
 		super.clear();
-		for (E e : countsBefore.keySet()) {
+		if (!previousContents.isEmpty()) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
+			for (E e : previousContents.elementSet()) {
+				elementaryChanges.add(
+						new ElementarySubChange<>(e, previousContents.count(e), 0));
+			}
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.SimpleChange<>(this, e,
-							countsBefore.get(e), 0));
+					new MultisetChangeListenerHelper.AtomicChange<>(this,
+							previousContents, elementaryChanges));
 		}
 	}
 

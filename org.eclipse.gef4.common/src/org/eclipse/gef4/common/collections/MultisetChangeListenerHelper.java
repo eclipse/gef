@@ -17,6 +17,10 @@ import java.util.List;
 
 import org.eclipse.gef4.common.collections.MultisetChangeListener.Change;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
+
 import javafx.beans.InvalidationListener;
 
 /**
@@ -32,30 +36,188 @@ import javafx.beans.InvalidationListener;
 public class MultisetChangeListenerHelper<E> {
 
 	/**
-	 * A simple implementation of
-	 * {@link org.eclipse.gef4.common.collections.MultisetChangeListener.Change}
-	 * .
+	 * A simple implementation of an {@link MultisetChangeListener.Change}.
 	 * 
 	 * @author anyssen
 	 *
 	 * @param <E>
-	 *            The elemenet type of the {@link ObservableMultiset}.
+	 *            The element type of the source {@link ObservableMultiset}.
 	 */
-	public static class SimpleChange<E>
+	public static class AtomicChange<E>
 			extends MultisetChangeListener.Change<E> {
+
+		private Multiset<E> previousContents;
+		private ElementarySubChange<E>[] elementarySubChanges;
+		private int cursor = -1;
+
+		/**
+		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
+		 * represents a change comprising multiple elementary sub-changesO.
+		 * 
+		 * @param source
+		 *            The source {@link ObservableMultiset} from which the
+		 *            change originated.
+		 * @param previousContents
+		 *            The previous contents of the {@link ObservableMultiset}
+		 *            before the change was applied.
+		 * @param elementarySubChanges
+		 *            The elementary sub-changes that have been applied as part
+		 *            of this change.
+		 */
+		@SuppressWarnings("unchecked")
+		public AtomicChange(ObservableMultiset<E> source,
+				Multiset<E> previousContents,
+				List<ElementarySubChange<E>> elementarySubChanges) {
+			super(source);
+			this.previousContents = previousContents;
+			this.elementarySubChanges = elementarySubChanges
+					.toArray(new ElementarySubChange[] {});
+		}
+
+		/**
+		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} for
+		 * the passed in source, based on the data provided in the passed-in
+		 * change.
+		 * <p>
+		 * This is basically used to allow properties wrapping an
+		 * {@link ObservableMultiset} to re-fire change events of their wrapped
+		 * {@link ObservableMultiset} with themselves as source.
+		 * 
+		 * @param source
+		 *            The new source {@link ObservableMultiset}.
+		 * @param change
+		 *            The change to infer a new change from. It is expected that
+		 *            the change is in initial state. In either case it will be
+		 *            reset to initial state.
+		 */
+		@SuppressWarnings("unchecked")
+		public AtomicChange(ObservableMultiset<E> source,
+				MultisetChangeListener.Change<? extends E> change) {
+			super(source);
+
+			// copy previous contents
+			this.previousContents = HashMultiset
+					.create(change.getPreviousContents());
+
+			// retrieve elementary sub-changes by iterating them
+			// TODO: we could introduce an initialized field inside Change
+			// already, so we could check the passed in change is not already
+			// initialized
+			List<ElementarySubChange<E>> elementarySubChanges = new ArrayList<>();
+			while (change.next()) {
+				elementarySubChanges
+						.add(new ElementarySubChange<E>(change.getElement(),
+								change.getRemoveCount(), change.getAddCount()));
+			}
+			change.reset();
+			this.elementarySubChanges = elementarySubChanges
+					.toArray(new ElementarySubChange[] {});
+		}
+
+		/**
+		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
+		 * represents a change comprising a single elementary sub-change.
+		 * 
+		 * @param source
+		 *            The source {@link ObservableMultiset} from which the
+		 *            change originated.
+		 * @param previousContents
+		 *            The previous contents of the {@link ObservableMultiset}
+		 *            before the change was applied.
+		 * @param elementarySubChange
+		 *            The elementary sub-change that has been applied.
+		 */
+		@SuppressWarnings("unchecked")
+		public AtomicChange(ObservableMultiset<E> source,
+				Multiset<E> previousContents,
+				ElementarySubChange<E> elementarySubChange) {
+			super(source);
+			this.previousContents = previousContents;
+			this.elementarySubChanges = new ElementarySubChange[] {
+					elementarySubChange };
+		}
+
+		@Override
+		public boolean next() {
+			cursor++;
+			return cursor < elementarySubChanges.length;
+		}
+
+		@Override
+		public void reset() {
+			cursor = -1;
+		}
+		
+		@Override
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			for(int i=0; i< elementarySubChanges.length; i++){
+				sb.append(elementarySubChanges[i].toString());
+				if(i < elementarySubChanges.length - 1){
+					sb.append(" ");
+				}
+			}
+			return sb.toString();
+		}
+
+		@Override
+		public Multiset<E> getPreviousContents() {
+			return Multisets.unmodifiableMultiset(previousContents);
+		}
+
+		@Override
+		public int getAddCount() {
+			if (cursor == -1) {
+				throw new IllegalStateException(
+						"Need to call next() before getAddCount() can be called.");
+			} else if (cursor >= elementarySubChanges.length) {
+				throw new IllegalStateException(
+						"May only call getAddCount() if next() returned true.");
+			}
+			return elementarySubChanges[cursor].getAddCount();
+		}
+
+		@Override
+		public int getRemoveCount() {
+			if (cursor == -1) {
+				throw new IllegalStateException(
+						"Need to call next() before getRemoveCount() can be called.");
+			} else if (cursor >= elementarySubChanges.length) {
+				throw new IllegalStateException(
+						"May only call getRemoveCount() if next() returned true.");
+			}
+			return elementarySubChanges[cursor].getRemoveCount();
+		}
+
+		@Override
+		public E getElement() {
+			if (cursor == -1) {
+				throw new IllegalStateException(
+						"Need to call next() before getElement() can be called.");
+			} else if (cursor >= elementarySubChanges.length) {
+				throw new IllegalStateException(
+						"May only call getElement() if next() returned true.");
+			}
+			return elementarySubChanges[cursor].getElement();
+		}
+
+	}
+
+	/**
+	 * An atomic change related to a single element of a {@link Multiset}.
+	 * 
+	 * @param <E>
+	 *            The element type of the {@link ObservableMultiset}.
+	 */
+	public static class ElementarySubChange<E> {
 
 		private E element;
 		private int removeCount;
 		private int addCount;
 
 		/**
-		 * Constructs a new
-		 * {@link org.eclipse.gef4.common.collections.MultisetChangeListenerHelper.SimpleChange}
-		 * with the given values.
+		 * Constructs a new elementary sub-change with the given values.
 		 * 
-		 * @param source
-		 *            The source {@link ObservableSetMultimap} from which the
-		 *            change resulted.
 		 * @param element
 		 *            The element that was added or removed.
 		 * @param removeCount
@@ -63,55 +225,49 @@ public class MultisetChangeListenerHelper<E> {
 		 * @param addCount
 		 *            The number of occurrences that were added.
 		 */
-		public SimpleChange(ObservableMultiset<E> source, E element,
-				int removeCount, int addCount) {
-			super(source);
+		public ElementarySubChange(E element, int removeCount, int addCount) {
 			this.element = element;
 			this.removeCount = removeCount;
 			this.addCount = addCount;
 		}
 
-		/**
-		 * Constructs a new
-		 * {@link org.eclipse.gef4.common.collections.MultisetChangeListenerHelper.SimpleChange}
-		 * based on the values of the passed in {@link Change}.
-		 * 
-		 * @param source
-		 *            The source {@link ObservableMultiset} from which the
-		 *            change resulted.
-		 * @param change
-		 *            The {@link Change} which provides the changed values.
-		 */
-		public SimpleChange(ObservableMultiset<E> source,
-				MultisetChangeListener.Change<? extends E> change) {
-			this(source, change.getElement(), change.getRemoveCount(),
-					change.getAddCount());
-		}
-
 		@Override
 		public String toString() {
 			if (addCount > 0) {
-				return "Added " + element + " " + addCount + " times.";
+				return "Added " + addCount + " occurrences of " + element + ".";
 			} else {
-				return "Removed " + element + " " + removeCount + " times.";
+				return "Removed " + removeCount + " occurrences of " + element + ".";
 			}
 		}
 
-		@Override
+		/**
+		 * Returns the number of occurrences that have been added for the
+		 * respective element as part of this elementary sub-change.
+		 * 
+		 * @return The number of added occurrences.
+		 */
 		public int getAddCount() {
 			return addCount;
 		}
 
-		@Override
+		/**
+		 * Returns the number of occurrences that have been removed for the
+		 * respective element as part of this elementary sub-change.
+		 * 
+		 * @return The number of removed occurrences.
+		 */
 		public int getRemoveCount() {
 			return removeCount;
 		}
 
-		@Override
+		/**
+		 * Returns the element that has been altered by this elementary sub-change.
+		 * 
+		 * @return The changed element.
+		 */
 		public E getElement() {
 			return element;
 		}
-
 	}
 
 	private List<InvalidationListener> invalidationListeners = null;
@@ -230,6 +386,7 @@ public class MultisetChangeListenerHelper<E> {
 			try {
 				lockMultisetChangeListeners = true;
 				for (MultisetChangeListener<? super E> l : multisetChangeListeners) {
+					change.reset();
 					l.onChanged(change);
 				}
 			} finally {

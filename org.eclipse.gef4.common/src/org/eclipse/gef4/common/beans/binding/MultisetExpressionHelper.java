@@ -20,6 +20,8 @@ import org.eclipse.gef4.common.collections.MultisetChangeListener;
 import org.eclipse.gef4.common.collections.MultisetChangeListenerHelper;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
 
+import com.google.common.collect.HashMultiset;
+
 import javafx.beans.value.ChangeListener;
 
 /**
@@ -122,7 +124,7 @@ public class MultisetExpressionHelper<E>
 				}
 			}
 			notifyMultisetListeners(
-					new SimpleChange<>(observableValue, change));
+					new AtomicChange<>(observableValue, change));
 		}
 	}
 
@@ -144,49 +146,61 @@ public class MultisetExpressionHelper<E>
 		}
 	}
 
-	private void notifyMultisetListeners(E element, int removeCount,
-			int addCount) {
-		notifyMultisetListeners(new SimpleChange<>(getSource(), element,
-				removeCount, addCount));
-	}
-
 	private void notifyMultisetListeners(ObservableMultiset<E> oldValue,
 			ObservableMultiset<E> currentValue) {
 		if (currentValue == null) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
 			// all entries have been removed
 			for (E e : oldValue.elementSet()) {
-				notifyMultisetListeners(e, oldValue.count(e), 0);
+				elementaryChanges.add(
+						new ElementarySubChange<>(e, oldValue.count(e), 0));
 			}
+			notifyMultisetListeners(
+					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
+							HashMultiset.<E> create(oldValue),
+							elementaryChanges));
 		} else if (oldValue == null) {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
 			// all entries have been added
 			for (E e : currentValue.elementSet()) {
-				notifyMultisetListeners(e, 0, currentValue.count(e));
+				elementaryChanges.add(
+						new ElementarySubChange<>(e, 0, currentValue.count(e)));
 			}
+			notifyMultisetListeners(
+					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
+							HashMultiset.<E> create(), elementaryChanges));
 		} else {
+			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
 			// compute changed/removed values
 			for (E e : oldValue.elementSet()) {
 				if (currentValue.contains(e)) {
 					// only count changed
 					if (oldValue.count(e) > currentValue.count(e)) {
 						// occurrences removed
-						notifyMultisetListeners(e,
-								oldValue.count(e) - currentValue.count(e), 0);
+						elementaryChanges.add(new ElementarySubChange<>(e,
+								oldValue.count(e) - currentValue.count(e), 0));
 					} else if (currentValue.count(e) > oldValue.count(e)) {
 						// occurrences added
-						notifyMultisetListeners(e, 0,
-								currentValue.count(e) - oldValue.count(e));
+						elementaryChanges.add(new ElementarySubChange<>(e, 0,
+								currentValue.count(e) - oldValue.count(e)));
 					}
 				} else {
 					// removed
-					notifyMultisetListeners(e, oldValue.count(e), 0);
+					elementaryChanges.add(
+							new ElementarySubChange<>(e, oldValue.count(e), 0));
 				}
 			}
 			for (E e : currentValue.elementSet()) {
 				if (!oldValue.contains(e)) {
 					// added
-					notifyMultisetListeners(e, 0, currentValue.count(e));
+					elementaryChanges.add(new ElementarySubChange<>(e, 0,
+							currentValue.count(e)));
 				}
 			}
+			notifyMultisetListeners(
+					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
+							HashMultiset.<E> create(oldValue),
+							elementaryChanges));
 		}
 	}
 

@@ -121,7 +121,7 @@ public abstract class MultisetPropertyBase<E> extends MultisetProperty<E> {
 
 		@Override
 		public void onChanged(
-				org.eclipse.gef4.common.collections.MultisetChangeListener.Change<? extends E> change) {
+				MultisetChangeListener.Change<? extends E> change) {
 			invalidateProperties();
 			invalidated();
 			fireValueChangedEvent(change);

@@ -138,17 +138,21 @@ public class Bindings2 {
 			// This cast is safe, as a
 			// UnidirectionalSetMultimapContentBinding<K, V> will only be used
 			// for a SetMultimap<K, V>.
-			final Multiset<E> destination = multisetRef.get();
-			if (destination == null) {
-				change.getMultiset().removeListener(this);
-			} else {
-				// we use replaceValues() to perform an atomic change here (and
-				// thus don't use the added and removed values from the change)
-				destination.setCount(change.getElement(),
-						destination.count(change.getElement()),
-						destination.count(change.getElement())
-								+ change.getAddCount()
-								- change.getRemoveCount());
+			while (change.next()) {
+				final Multiset<E> destination = multisetRef.get();
+				if (destination == null) {
+					change.getMultiset().removeListener(this);
+				} else {
+					// we use replaceValues() to perform an atomic change here
+					// (and
+					// thus don't use the added and removed values from the
+					// change)
+					destination.setCount(change.getElement(),
+							destination.count(change.getElement()),
+							destination.count(change.getElement())
+									+ change.getAddCount()
+									- change.getRemoveCount());
+				}
 			}
 		}
 
@@ -332,11 +336,13 @@ public class Bindings2 {
 						// we use replaceValues() to perform an atomic change
 						// here (and thus don't use the added and removed values
 						// from the change)
-						destination.setCount(change.getElement(),
+						while (change.next()) {
+							destination.setCount(change.getElement(),
 								destination.count(change.getElement()),
 								destination.count(change.getElement())
 										+ change.getAddCount()
 										- change.getRemoveCount());
+						}
 					} finally {
 						updating = false;
 					}
