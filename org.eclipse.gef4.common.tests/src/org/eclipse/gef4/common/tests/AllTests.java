@@ -20,10 +20,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ AdaptableSupportTests.class, AdaptableTypeListenerTests.class,
 		AdapterInjectorTests.class, AdaptableScopeTests.class,
-		MapPropertyExTests.class, SetPropertyExTests.class,
-		ListPropertyExTests.class, ObservableSetMultimapTests.class,
-		ObservableMultisetTests.class, SetMultimapPropertyTests.class,
-		MultisetPropertyTests.class })
+		CollectionUtilsTests.class, MapPropertyExTests.class,
+		SetPropertyExTests.class, ListPropertyExTests.class,
+		ObservableSetMultimapTests.class, ObservableMultisetTests.class,
+		SetMultimapPropertyTests.class, MultisetPropertyTests.class })
 
 public class AllTests {
 
