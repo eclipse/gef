@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.common.beans.binding.Bindings2;
+import org.eclipse.gef4.common.beans.binding.BindingUtils;
 import org.eclipse.gef4.common.beans.binding.SetMultimapExpression;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 
@@ -75,7 +75,7 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 	 *            unidirectionally bound to.
 	 */
 	public void bindContent(ObservableSetMultimap<K, V> target) {
-		Bindings2.bindContent(this, target);
+		BindingUtils.bindContent(this, target);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 	 *            bidirectionally bound to.
 	 */
 	public void bindContentBidirectional(ObservableSetMultimap<K, V> other) {
-		Bindings2.bindContentBidirectional(this, other);
+		BindingUtils.bindContentBidirectional(this, other);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,7 +161,7 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 	@SuppressWarnings("unchecked")
 	public void unbindContent(Object target) {
 		try {
-			Bindings2.unbindContent(this,
+			BindingUtils.unbindContent(this,
 					(ObservableSetMultimap<? extends K, ? extends V>) target);
 		} catch (ClassCastException e) {
 			// do nothing if types don't match
@@ -180,7 +180,7 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 	@SuppressWarnings("unchecked")
 	public void unbindContentBidirectional(Object other) {
 		try {
-			Bindings2.unbindContentBidirectional(this,
+			BindingUtils.unbindContentBidirectional(this,
 					(ObservableSetMultimap<K, V>) other);
 		} catch (ClassCastException e) {
 			// do nothing if types don't match

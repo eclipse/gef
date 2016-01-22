@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.common.beans.binding.Bindings2;
+import org.eclipse.gef4.common.beans.binding.BindingUtils;
 import org.eclipse.gef4.common.beans.binding.MultisetExpression;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
@@ -74,7 +74,7 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 	 *            unidirectionally bound to.
 	 */
 	public void bindContent(ObservableMultiset<E> target) {
-		Bindings2.bindContent(this, target);
+		BindingUtils.bindContent(this, target);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 	 *            bidirectionally bound to.
 	 */
 	public void bindContentBidirectional(ObservableMultiset<E> other) {
-		Bindings2.bindContentBidirectional(this, other);
+		BindingUtils.bindContentBidirectional(this, other);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -158,7 +158,7 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 	@SuppressWarnings("unchecked")
 	public void unbindContent(Object target) {
 		try {
-			Bindings2.unbindContent(this,
+			BindingUtils.unbindContent(this,
 					(ObservableMultiset<? extends E>) target);
 		} catch (ClassCastException e) {
 			// nothing to do in case the types don't match
@@ -177,7 +177,7 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 	@SuppressWarnings("unchecked")
 	public void unbindContentBidirectional(Object other) {
 		try {
-			Bindings2.unbindContentBidirectional(this,
+			BindingUtils.unbindContentBidirectional(this,
 					(ObservableMultiset<E>) other);
 		} catch (ClassCastException e) {
 			// nothing to do in case the types don't match

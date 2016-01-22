@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.common.beans.binding;
 
 import java.lang.ref.WeakReference;
@@ -22,104 +34,55 @@ import javafx.collections.ObservableList;
 /**
  * A utility class that augments {@link Bindings} with functionality related to
  * {@link Multiset} and {@link SetMultimap}.
- * 
+ *
  * @author anyssen
  *
  */
-public class Bindings2 {
+public class BindingUtils {
 
-	private static class UnidirectionalSetMultimapContentBinding<K, V>
-			implements SetMultimapChangeListener<K, V>, WeakListener {
+	private static class BidirectionalMultisetContentBinding<E>
+			implements MultisetChangeListener<E>, WeakListener {
 
-		private final WeakReference<SetMultimap<K, V>> setMultimapRef;
+		private final WeakReference<ObservableMultiset<E>> multiset1Ref;
+		private final WeakReference<ObservableMultiset<E>> multiset2Ref;
 
-		public UnidirectionalSetMultimapContentBinding(
-				SetMultimap<K, V> setMultimap) {
-			this.setMultimapRef = new WeakReference<>(setMultimap);
-		}
+		private boolean updating = false;
 
-		@Override
-		public boolean equals(Object other) {
-			if (this == other) {
-				return true;
-			}
-
-			if (other == null
-					|| !(other instanceof UnidirectionalSetMultimapContentBinding)) {
-				return false;
-			}
-
-			try {
-				@SuppressWarnings("unchecked")
-				UnidirectionalSetMultimapContentBinding<K, V> otherBinding = ((UnidirectionalSetMultimapContentBinding<K, V>) other);
-				SetMultimap<K, V> setMultimap = setMultimapRef.get();
-				SetMultimap<K, V> otherSetMultimap = otherBinding.setMultimapRef
-						.get();
-				return setMultimap == otherSetMultimap;
-			} catch (ClassCastException e) {
-				return false;
-			}
-		}
-
-		@Override
-		public int hashCode() {
-			// XXX: As we rely on equality to remove a binding again, we have to
-			// ensure the hash code of two bindings that target the same
-			// property is the same (which we do by using a constant).
-			return 0;
+		public BidirectionalMultisetContentBinding(
+				ObservableMultiset<E> multiset1,
+				ObservableMultiset<E> multiset2) {
+			multiset1Ref = new WeakReference<>(multiset1);
+			multiset2Ref = new WeakReference<>(multiset2);
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public void onChanged(Change<? extends K, ? extends V> change) {
-			// This cast is safe, as a
-			// UnidirectionalSetMultimapContentBinding<K, V> will only be used
-			// for a SetMultimap<K, V>.
-			final SetMultimap<K, V> source = (SetMultimap<K, V>) change
-					.getSetMultimap();
-			final SetMultimap<K, V> destination = setMultimapRef.get();
-			if (destination == null) {
-				change.getSetMultimap().removeListener(this);
-			} else {
-				// we use replaceValues() to perform an atomic change here (and
-				// thus don't use the added and removed values from the change)
-				destination.replaceValues(change.getKey(),
-						new HashSet<>(source.get(change.getKey())));
-			}
-		}
-
-		@Override
-		public boolean wasGarbageCollected() {
-			return setMultimapRef.get() == null;
-		}
-	}
-
-	private static class UnidirectionalMultisetContentBinding<E>
-			implements MultisetChangeListener<E>, WeakListener {
-
-		private final WeakReference<Multiset<E>> multisetRef;
-
-		public UnidirectionalMultisetContentBinding(Multiset<E> multiset) {
-			this.multisetRef = new WeakReference<>(multiset);
-		}
-
-		@Override
 		public boolean equals(Object other) {
 			if (this == other) {
 				return true;
 			}
 
 			if (other == null
-					|| !(other instanceof UnidirectionalMultisetContentBinding)) {
+					|| !(other instanceof BidirectionalMultisetContentBinding)) {
 				return false;
 			}
 
 			try {
-				@SuppressWarnings("unchecked")
-				UnidirectionalMultisetContentBinding<E> otherBinding = ((UnidirectionalMultisetContentBinding<E>) other);
-				Multiset<E> multiset = multisetRef.get();
-				Multiset<E> otherMultiset = otherBinding.multisetRef.get();
-				return multiset == otherMultiset;
+				BidirectionalMultisetContentBinding<E> otherBinding = (BidirectionalMultisetContentBinding<E>) other;
+
+				ObservableMultiset<E> multiset1 = multiset1Ref.get();
+				ObservableMultiset<E> multiset2 = multiset2Ref.get();
+				ObservableMultiset<E> otherMultiset1 = otherBinding.multiset1Ref
+						.get();
+				ObservableMultiset<E> otherMultiset2 = otherBinding.multiset2Ref
+						.get();
+
+				// The actual direction of the bidirectional binding is not
+				// significant, thus we can ignore it here
+				return (((multiset1 == otherMultiset1)
+						&& (multiset2 == otherMultiset2))
+						|| ((multiset1 == otherMultiset2)
+								&& (multiset2 == otherMultiset1)));
 			} catch (ClassCastException e) {
 				return false;
 			}
@@ -129,36 +92,47 @@ public class Bindings2 {
 		public int hashCode() {
 			// XXX: As we rely on equality to remove a binding again, we have to
 			// ensure the hash code of two bindings that target the same
-			// property is the same (which we do by using a constant).
+			// properties is the same (which we do by using a constant).
 			return 0;
 		}
 
 		@Override
 		public void onChanged(Change<? extends E> change) {
-			// This cast is safe, as a
-			// UnidirectionalSetMultimapContentBinding<K, V> will only be used
-			// for a SetMultimap<K, V>.
-			while (change.next()) {
-				final Multiset<E> destination = multisetRef.get();
-				if (destination == null) {
-					change.getMultiset().removeListener(this);
+			if (!updating) {
+				final ObservableMultiset<E> multiset1 = multiset1Ref.get();
+				final ObservableMultiset<E> multiset2 = multiset2Ref.get();
+				if ((multiset1 == null) || (multiset2 == null)) {
+					if (multiset1 != null) {
+						multiset1.removeListener(this);
+					}
+					if (multiset2 != null) {
+						multiset2.removeListener(this);
+					}
 				} else {
-					// we use replaceValues() to perform an atomic change here
-					// (and
-					// thus don't use the added and removed values from the
-					// change)
-					destination.setCount(change.getElement(),
-							destination.count(change.getElement()),
-							destination.count(change.getElement())
-									+ change.getAddCount()
-									- change.getRemoveCount());
+					try {
+						updating = true;
+						final Multiset<E> destination = multiset1 == change
+								.getMultiset() ? multiset2 : multiset1;
+						// we use replaceValues() to perform an atomic change
+						// here (and thus don't use the added and removed values
+						// from the change)
+						while (change.next()) {
+							destination.setCount(change.getElement(),
+									destination.count(change.getElement()),
+									destination.count(change.getElement())
+											+ change.getAddCount()
+											- change.getRemoveCount());
+						}
+					} finally {
+						updating = false;
+					}
 				}
 			}
 		}
 
 		@Override
 		public boolean wasGarbageCollected() {
-			return multisetRef.get() == null;
+			return (multiset1Ref.get() == null) || (multiset2Ref.get() == null);
 		}
 	}
 
@@ -260,22 +234,15 @@ public class Bindings2 {
 		}
 	}
 
-	private static class BidirectionalMultisetContentBinding<E>
+	private static class UnidirectionalMultisetContentBinding<E>
 			implements MultisetChangeListener<E>, WeakListener {
 
-		private final WeakReference<ObservableMultiset<E>> multiset1Ref;
-		private final WeakReference<ObservableMultiset<E>> multiset2Ref;
+		private final WeakReference<Multiset<E>> multisetRef;
 
-		private boolean updating = false;
-
-		public BidirectionalMultisetContentBinding(
-				ObservableMultiset<E> multiset1,
-				ObservableMultiset<E> multiset2) {
-			multiset1Ref = new WeakReference<>(multiset1);
-			multiset2Ref = new WeakReference<>(multiset2);
+		public UnidirectionalMultisetContentBinding(Multiset<E> multiset) {
+			this.multisetRef = new WeakReference<>(multiset);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object other) {
 			if (this == other) {
@@ -283,26 +250,16 @@ public class Bindings2 {
 			}
 
 			if (other == null
-					|| !(other instanceof BidirectionalMultisetContentBinding)) {
+					|| !(other instanceof UnidirectionalMultisetContentBinding)) {
 				return false;
 			}
 
 			try {
-				BidirectionalMultisetContentBinding<E> otherBinding = (BidirectionalMultisetContentBinding<E>) other;
-
-				ObservableMultiset<E> multiset1 = multiset1Ref.get();
-				ObservableMultiset<E> multiset2 = multiset2Ref.get();
-				ObservableMultiset<E> otherMultiset1 = otherBinding.multiset1Ref
-						.get();
-				ObservableMultiset<E> otherMultiset2 = otherBinding.multiset2Ref
-						.get();
-
-				// The actual direction of the bidirectional binding is not
-				// significant, thus we can ignore it here
-				return (((multiset1 == otherMultiset1)
-						&& (multiset2 == otherMultiset2))
-						|| ((multiset1 == otherMultiset2)
-								&& (multiset2 == otherMultiset1)));
+				@SuppressWarnings("unchecked")
+				UnidirectionalMultisetContentBinding<E> otherBinding = ((UnidirectionalMultisetContentBinding<E>) other);
+				Multiset<E> multiset = multisetRef.get();
+				Multiset<E> otherMultiset = otherBinding.multisetRef.get();
+				return multiset == otherMultiset;
 			} catch (ClassCastException e) {
 				return false;
 			}
@@ -312,54 +269,109 @@ public class Bindings2 {
 		public int hashCode() {
 			// XXX: As we rely on equality to remove a binding again, we have to
 			// ensure the hash code of two bindings that target the same
-			// properties is the same (which we do by using a constant).
+			// property is the same (which we do by using a constant).
 			return 0;
 		}
 
 		@Override
 		public void onChanged(Change<? extends E> change) {
-			if (!updating) {
-				final ObservableMultiset<E> multiset1 = multiset1Ref.get();
-				final ObservableMultiset<E> multiset2 = multiset2Ref.get();
-				if ((multiset1 == null) || (multiset2 == null)) {
-					if (multiset1 != null) {
-						multiset1.removeListener(this);
-					}
-					if (multiset2 != null) {
-						multiset2.removeListener(this);
-					}
+			// This cast is safe, as a
+			// UnidirectionalSetMultimapContentBinding<K, V> will only be used
+			// for a SetMultimap<K, V>.
+			while (change.next()) {
+				final Multiset<E> destination = multisetRef.get();
+				if (destination == null) {
+					change.getMultiset().removeListener(this);
 				} else {
-					try {
-						updating = true;
-						final Multiset<E> destination = multiset1 == change
-								.getMultiset() ? multiset2 : multiset1;
-						// we use replaceValues() to perform an atomic change
-						// here (and thus don't use the added and removed values
-						// from the change)
-						while (change.next()) {
-							destination.setCount(change.getElement(),
-								destination.count(change.getElement()),
-								destination.count(change.getElement())
-										+ change.getAddCount()
-										- change.getRemoveCount());
-						}
-					} finally {
-						updating = false;
-					}
+					// we use replaceValues() to perform an atomic change here
+					// (and
+					// thus don't use the added and removed values from the
+					// change)
+					destination.setCount(change.getElement(),
+							destination.count(change.getElement()),
+							destination.count(change.getElement())
+									+ change.getAddCount()
+									- change.getRemoveCount());
 				}
 			}
 		}
 
 		@Override
 		public boolean wasGarbageCollected() {
-			return (multiset1Ref.get() == null) || (multiset2Ref.get() == null);
+			return multisetRef.get() == null;
+		}
+	}
+
+	private static class UnidirectionalSetMultimapContentBinding<K, V>
+			implements SetMultimapChangeListener<K, V>, WeakListener {
+
+		private final WeakReference<SetMultimap<K, V>> setMultimapRef;
+
+		public UnidirectionalSetMultimapContentBinding(
+				SetMultimap<K, V> setMultimap) {
+			this.setMultimapRef = new WeakReference<>(setMultimap);
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			}
+
+			if (other == null
+					|| !(other instanceof UnidirectionalSetMultimapContentBinding)) {
+				return false;
+			}
+
+			try {
+				@SuppressWarnings("unchecked")
+				UnidirectionalSetMultimapContentBinding<K, V> otherBinding = ((UnidirectionalSetMultimapContentBinding<K, V>) other);
+				SetMultimap<K, V> setMultimap = setMultimapRef.get();
+				SetMultimap<K, V> otherSetMultimap = otherBinding.setMultimapRef
+						.get();
+				return setMultimap == otherSetMultimap;
+			} catch (ClassCastException e) {
+				return false;
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			// XXX: As we rely on equality to remove a binding again, we have to
+			// ensure the hash code of two bindings that target the same
+			// property is the same (which we do by using a constant).
+			return 0;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void onChanged(Change<? extends K, ? extends V> change) {
+			// This cast is safe, as a
+			// UnidirectionalSetMultimapContentBinding<K, V> will only be used
+			// for a SetMultimap<K, V>.
+			final SetMultimap<K, V> source = (SetMultimap<K, V>) change
+					.getSetMultimap();
+			final SetMultimap<K, V> destination = setMultimapRef.get();
+			if (destination == null) {
+				change.getSetMultimap().removeListener(this);
+			} else {
+				// we use replaceValues() to perform an atomic change here (and
+				// thus don't use the added and removed values from the change)
+				destination.replaceValues(change.getKey(),
+						new HashSet<>(source.get(change.getKey())));
+			}
+		}
+
+		@Override
+		public boolean wasGarbageCollected() {
+			return setMultimapRef.get() == null;
 		}
 	}
 
 	/**
 	 * Creates a unidirectional content binding from the given source
 	 * {@link Multiset} to the given target {@link ObservableMultiset}.
-	 * 
+	 *
 	 * @param <E>
 	 *            The element type of the given {@link Multiset} and
 	 *            {@link ObservableMultiset}.
@@ -402,7 +414,7 @@ public class Bindings2 {
 	/**
 	 * Creates a unidirectional content binding from the given source
 	 * {@link SetMultimap} to the given target {@link ObservableSetMultimap}.
-	 * 
+	 *
 	 * @param <K>
 	 *            The key type of the given {@link SetMultimap} and
 	 *            {@link ObservableSetMultimap}.
@@ -447,9 +459,50 @@ public class Bindings2 {
 	}
 
 	/**
+	 * Creates a bidirectional content binding between the given
+	 * {@link ObservableMultiset ObservableMultisets}.
+	 *
+	 * @param <E>
+	 *            The element type of the given {@link ObservableMultiset
+	 *            ObservableMultisets}.
+	 * @param source
+	 *            The first participant of the bidirectional binding. Its
+	 *            contents will be initially replaced with that of the second
+	 *            participant before both are synchronized.
+	 * @param target
+	 *            The second participant of the bidirectional binding. Its
+	 *            contents will be initially taken to update the contents of the
+	 *            first participant before both are synchronized.
+	 */
+	public static <E> void bindContentBidirectional(
+			ObservableMultiset<E> source, ObservableMultiset<E> target) {
+		if (source == null) {
+			throw new NullPointerException("Cannot bind null value.");
+		}
+		if (target == null) {
+			throw new NullPointerException("Cannot bind to null value.");
+		}
+		if (source == target) {
+			throw new IllegalArgumentException("Cannot bind source to itself.");
+		}
+
+		source.replaceAll(target);
+
+		final BidirectionalMultisetContentBinding<E> contentBinding = new BidirectionalMultisetContentBinding<>(
+				source, target);
+
+		// clear any previous bindings
+		source.removeListener(contentBinding);
+		target.removeListener(contentBinding);
+		// add new binding as listener
+		source.addListener(contentBinding);
+		target.addListener(contentBinding);
+	}
+
+	/**
 	 * Creates a unidirectional content binding between the given
 	 * {@link ObservableSetMultimap ObservableSetMultimaps}.
-	 * 
+	 *
 	 * @param <K>
 	 *            The key type of the given {@link ObservableSetMultimap
 	 *            ObservableSetMultimaps}.
@@ -491,84 +544,9 @@ public class Bindings2 {
 	}
 
 	/**
-	 * Removes a bidirectional content binding between the given
-	 * {@link ObservableSetMultimap ObservableSetMultimaps}.
-	 * 
-	 * @param <K>
-	 *            The key type of the given {@link ObservableSetMultimap
-	 *            ObservableSetMultimaps}.
-	 * @param <V>
-	 *            The value type of the given {@link ObservableSetMultimap
-	 *            ObservableSetMultimaps}.
-	 * @param source
-	 *            The first participant of the bidirectional binding.
-	 * @param target
-	 *            The second participant of the bidirectional binding.
-	 */
-	public static <K, V> void unbindContentBidirectional(
-			ObservableSetMultimap<K, V> source,
-			ObservableSetMultimap<K, V> target) {
-		if (source == null) {
-			throw new NullPointerException("Cannot bind null value.");
-		}
-		if (target == null) {
-			throw new NullPointerException("Cannot bind to null value.");
-		}
-		if (source == target) {
-			throw new IllegalArgumentException("Cannot bind source to itself.");
-		}
-
-		final BidirectionalSetMultimapContentBinding<K, V> contentBinding = new BidirectionalSetMultimapContentBinding<>(
-				source, target);
-		source.removeListener(contentBinding);
-		target.removeListener(contentBinding);
-	}
-
-	/**
-	 * Creates a bidirectional content binding between the given
-	 * {@link ObservableMultiset ObservableMultisets}.
-	 * 
-	 * @param <E>
-	 *            The element type of the given {@link ObservableMultiset
-	 *            ObservableMultisets}.
-	 * @param source
-	 *            The first participant of the bidirectional binding. Its
-	 *            contents will be initially replaced with that of the second
-	 *            participant before both are synchronized.
-	 * @param target
-	 *            The second participant of the bidirectional binding. Its
-	 *            contents will be initially taken to update the contents of the
-	 *            first participant before both are synchronized.
-	 */
-	public static <E> void bindContentBidirectional(
-			ObservableMultiset<E> source, ObservableMultiset<E> target) {
-		if (source == null) {
-			throw new NullPointerException("Cannot bind null value.");
-		}
-		if (target == null) {
-			throw new NullPointerException("Cannot bind to null value.");
-		}
-		if (source == target) {
-			throw new IllegalArgumentException("Cannot bind source to itself.");
-		}
-
-		source.replaceAll(target);
-
-		final BidirectionalMultisetContentBinding<E> contentBinding = new BidirectionalMultisetContentBinding<>(
-				source, target);
-
-		// clear any previous bindings
-		source.removeListener(contentBinding);
-		target.removeListener(contentBinding);
-		// add new binding as listener
-		source.addListener(contentBinding);
-		target.addListener(contentBinding);
-	}
-
-	/**
 	 * Removes an existing content binding from the given source
 	 * {@link Multiset} to the given target {@link ObservableMultiset}.
-	 * 
+	 *
 	 * @param <E>
 	 *            The element types of the {@link Multiset} and
 	 *            {@link ObservableMultiset}.
@@ -599,7 +577,7 @@ public class Bindings2 {
 	/**
 	 * Removes an existing unidirectional content binding from the given source
 	 * {@link SetMultimap} to the given target {@link ObservableSetMultimap}.
-	 * 
+	 *
 	 * @param <K>
 	 *            The key type of the given {@link SetMultimap} and
 	 *            {@link ObservableSetMultimap}.
@@ -633,7 +611,7 @@ public class Bindings2 {
 	/**
 	 * Removes a bidirectional content binding between the given
 	 * {@link ObservableMultiset ObservableMultisets}. .
-	 * 
+	 *
 	 * @param <E>
 	 *            The element type of the given {@link ObservableMultiset
 	 *            ObservableMultisets}.
@@ -660,9 +638,43 @@ public class Bindings2 {
 	}
 
 	/**
+	 * Removes a bidirectional content binding between the given
+	 * {@link ObservableSetMultimap ObservableSetMultimaps}.
+	 *
+	 * @param <K>
+	 *            The key type of the given {@link ObservableSetMultimap
+	 *            ObservableSetMultimaps}.
+	 * @param <V>
+	 *            The value type of the given {@link ObservableSetMultimap
+	 *            ObservableSetMultimaps}.
+	 * @param source
+	 *            The first participant of the bidirectional binding.
+	 * @param target
+	 *            The second participant of the bidirectional binding.
+	 */
+	public static <K, V> void unbindContentBidirectional(
+			ObservableSetMultimap<K, V> source,
+			ObservableSetMultimap<K, V> target) {
+		if (source == null) {
+			throw new NullPointerException("Cannot bind null value.");
+		}
+		if (target == null) {
+			throw new NullPointerException("Cannot bind to null value.");
+		}
+		if (source == target) {
+			throw new IllegalArgumentException("Cannot bind source to itself.");
+		}
+
+		final BidirectionalSetMultimapContentBinding<K, V> contentBinding = new BidirectionalSetMultimapContentBinding<>(
+				source, target);
+		source.removeListener(contentBinding);
+		target.removeListener(contentBinding);
+	}
+
+	/**
 	 * Creates a new {@link ObjectBinding} that contains the values mapped to
 	 * the specified key.
-	 * 
+	 *
 	 * @param setMultimap
 	 *            The {@link ObservableSetMultimap} from which the values are to
 	 *            be retrieved.
@@ -688,13 +700,13 @@ public class Bindings2 {
 			}
 
 			@Override
-			public void dispose() {
-				super.unbind(setMultimap);
+			protected Set<V> computeValue() {
+				return setMultimap.get(key);
 			}
 
 			@Override
-			protected Set<V> computeValue() {
-				return setMultimap.get(key);
+			public void dispose() {
+				super.unbind(setMultimap);
 			}
 
 			@Override
@@ -707,7 +719,7 @@ public class Bindings2 {
 	/**
 	 * Creates a new {@link ObjectBinding} that contains the values mapped to
 	 * the specified key.
-	 * 
+	 *
 	 * @param <K>
 	 *            The key type of the {@link ObservableSetMultimap}.
 	 * @param <V>
@@ -736,13 +748,13 @@ public class Bindings2 {
 			}
 
 			@Override
-			public void dispose() {
-				super.unbind(setMultimap);
+			protected Set<V> computeValue() {
+				return setMultimap.get(key.getValue());
 			}
 
 			@Override
-			protected Set<V> computeValue() {
-				return setMultimap.get(key.getValue());
+			public void dispose() {
+				super.unbind(setMultimap);
 			}
 
 			@Override

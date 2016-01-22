@@ -306,7 +306,7 @@ public abstract class SetMultimapExpression<K, V>
 	 * @return A new {@code ObjectBinding}.
 	 */
 	public ObjectBinding<Set<V>> valuesAt(final K key) {
-		return Bindings2.valuesAt(this, key);
+		return BindingUtils.valuesAt(this, key);
 	}
 
 	/**
@@ -318,7 +318,7 @@ public abstract class SetMultimapExpression<K, V>
 	 * @return The {@code ObjectBinding}.
 	 */
 	public ObjectBinding<Set<V>> valuesAt(final ObservableValue<K> key) {
-		return Bindings2.valuesAt(this, key);
+		return BindingUtils.valuesAt(this, key);
 	}
 
 	/**
