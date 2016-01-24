@@ -14,28 +14,11 @@
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<includes>
-						<include>**/All*Tests.class</include>
-					</includes>
-					<useUIHarness>false</useUIHarness>
-					<useUIThread>false</useUIThread>
-					<useSystemClassLoader>true</useSystemClassLoader>
-					<testFailureIgnore>true</testFailureIgnore>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
-					<dependencies>
-						<dependency>
-							<artifactId>com.google.inject.multibindings</artifactId>
-							<version>0.0.0</version>
-							<type>eclipse-plugin</type>
-						</dependency>
-					</dependencies>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

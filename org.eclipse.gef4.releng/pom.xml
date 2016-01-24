@@ -238,6 +238,45 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho.version}</version>
+					<configuration>
+						<systemProperties>
+							<SWT_GTK3>0</SWT_GTK3>
+						</systemProperties>
+						<includes>
+							<include>**/All*Tests.class</include>
+						</includes>
+						<useUIHarness>false</useUIHarness>
+						<useUIThread>false</useUIThread>
+						<useSystemClassLoader>true</useSystemClassLoader>
+						<testFailureIgnore>true</testFailureIgnore>
+						<argLine>-Xmx512m -XX:MaxPermSize=256m
+							-Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+						<frameworkExtensions>
+							<frameworkExtension>
+								<groupId>org.eclipse.fx.shared</groupId>
+								<artifactId>org.eclipse.fx.osgi</artifactId>
+								<scope>system</scope>
+								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_2.0.0.201504180501.jar</systemPath>
+								<version>1.0.0</version>
+							</frameworkExtension>
+							<frameworkExtension>
+								<groupId>org.eclipse.fx.runtime</groupId>
+								<artifactId>org.eclipse.fx.osgi.util</artifactId>
+								<scope>system</scope>
+								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_2.0.0.201504180602.jar</systemPath>
+								<version>1.0.0</version>
+							</frameworkExtension>
+						</frameworkExtensions>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>
@@ -507,7 +546,6 @@
 		<module>../org.eclipse.gef4.common.doc</module>
 		<module>../org.eclipse.gef4.common.doc-feature</module>
 		<module>../org.eclipse.gef4.common.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.geometry</module>
 		<module>../org.eclipse.gef4.geometry-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt</module>
@@ -520,7 +558,6 @@
 		<module>../org.eclipse.gef4.geometry.doc</module>
 		<module>../org.eclipse.gef4.geometry.doc-feature</module>
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.fx</module>
 		<module>../org.eclipse.gef4.fx-feature</module>
 		<module>../org.eclipse.gef4.fx.swt</module>
@@ -528,15 +565,11 @@
 		<module>../org.eclipse.gef4.fx.jface</module>
 		<module>../org.eclipse.gef4.fx.jface-feature</module>
 		<module>../org.eclipse.gef4.fx.tests</module>
-		<!-- <module>../org.eclipse.gef4.fx.tests.swt</module> -->
-		<!-- <module>../org.eclipse.gef4.fx.tests.jface</module> -->
 		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.fx.compatibility.luna</module>
 		<module>../org.eclipse.gef4.fx.compatibility.luna-feature</module>
-
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
 		<module>../org.eclipse.gef4.mvc.ui</module>
@@ -547,39 +580,31 @@
 		<module>../org.eclipse.gef4.mvc.fx.ui-feature</module>
 		<module>../org.eclipse.gef4.mvc.tests</module>
 		<module>../org.eclipse.gef4.mvc.tests.fx</module>
-		<!-- <module>../org.eclipse.gef4.mvc.tests.ui</module> -->
-		<!-- <module>../org.eclipse.gef4.mvc.tests.fx.ui</module> -->
 		<module>../org.eclipse.gef4.mvc.doc</module>
 		<module>../org.eclipse.gef4.mvc.doc-feature</module>
 		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.mvc.examples</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.ui</module>
 		<module>../org.eclipse.gef4.mvc.examples-feature</module>
-
 		<module>../org.eclipse.gef4.mvc.examples.logo.web</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.web.repository</module>
-
 		<module>../org.eclipse.gef4.mvc.compatibility.luna</module>
 		<module>../org.eclipse.gef4.mvc.compatibility.luna-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.compatibility.luna</module>
 		<module>../org.eclipse.gef4.mvc.fx.compatibility.luna-feature</module>
-
 		<module>../org.eclipse.gef4.cloudio.ui</module>
 		<module>../org.eclipse.gef4.cloudio.ui-feature</module>
 		<module>../org.eclipse.gef4.cloudio.tests.ui</module>
 		<module>../org.eclipse.gef4.cloudio.doc</module>
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.graph</module>
 		<module>../org.eclipse.gef4.graph-feature</module>
 		<module>../org.eclipse.gef4.graph.tests</module>
 		<module>../org.eclipse.gef4.graph.doc</module>
 		<module>../org.eclipse.gef4.graph.doc-feature</module>
 		<module>../org.eclipse.gef4.graph.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.dot</module>
 		<module>../org.eclipse.gef4.dot-feature</module>
 		<module>../org.eclipse.gef4.dot.ui</module>
@@ -588,14 +613,12 @@
 		<module>../org.eclipse.gef4.dot.doc</module>
 		<module>../org.eclipse.gef4.dot.doc-feature</module>
 		<module>../org.eclipse.gef4.dot.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.layout-feature</module>
 		<module>../org.eclipse.gef4.layout.tests</module>
 		<module>../org.eclipse.gef4.layout.doc</module>
 		<module>../org.eclipse.gef4.layout.doc-feature</module>
 		<module>../org.eclipse.gef4.layout.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.zest.fx</module>
 		<module>../org.eclipse.gef4.zest.fx-feature</module>
 		<module>../org.eclipse.gef4.zest.fx.jface</module>
@@ -607,15 +630,12 @@
 		<module>../org.eclipse.gef4.zest.doc</module>
 		<module>../org.eclipse.gef4.zest.doc-feature</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.zest.examples</module>
 		<module>../org.eclipse.gef4.zest.examples.graph</module>
 		<module>../org.eclipse.gef4.zest.examples.graph.ui</module>
 		<module>../org.eclipse.gef4.zest.examples-feature</module>
-
 		<module>../org.eclipse.gef4.zest.fx.compatibility.luna</module>
 		<module>../org.eclipse.gef4.zest.fx.compatibility.luna-feature</module>
-
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>
 

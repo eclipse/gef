@@ -14,37 +14,11 @@
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<includes>
-						<include>**/All*Tests.class</include>
-					</includes>
-					<useUIHarness>false</useUIHarness>
-					<useUIThread>false</useUIThread>
-					<useSystemClassLoader>true</useSystemClassLoader>
-					<testFailureIgnore>true</testFailureIgnore>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
-					<frameworkExtensions>
-						<frameworkExtension>
-							<groupId>org.eclipse.fx.shared</groupId>
-							<artifactId>org.eclipse.fx.osgi</artifactId>
-							<scope>system</scope>
-							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_2.0.0.201504180501.jar</systemPath>
-							<version>1.0.0</version>
-						</frameworkExtension>
-						<frameworkExtension>
-							<groupId>org.eclipse.fx.runtime</groupId>
-							<artifactId>org.eclipse.fx.osgi.util</artifactId>
-							<scope>system</scope>
-							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_2.0.0.201504180602.jar</systemPath>
-							<version>1.0.0</version>
-						</frameworkExtension>
-					</frameworkExtensions>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

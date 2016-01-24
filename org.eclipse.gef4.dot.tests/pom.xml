@@ -16,45 +16,12 @@
 	<properties>
 		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
 	</properties>
-	<profiles>
-		<profile>
-			<id>skip-tests</id>
-			<activation>
-				<property>
-					<name>skip-tests</name>
-				</property>
-			</activation>
-			<properties>
-				<maven.test.skip>true</maven.test.skip>
-			</properties>
-		</profile>
-		<profile>
-			<id>mac-customization</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<properties>
-				<vmargs>-Xmx1024m -XX:MaxPermSize=512m -XstartOnFirstThread</vmargs>
-			</properties>
-		</profile>
-	</profiles>
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<includes>
-						<include>**/All*Tests.class</include>
-					</includes>
-					<useUIHarness>false</useUIHarness>
-					<useUIThread>false</useUIThread>
-					<argLine>${vmargs}</argLine>
-					<testFailureIgnore>true</testFailureIgnore>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
