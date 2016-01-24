@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlySetWrapperEx;
+import org.eclipse.gef4.common.beans.property.SimpleSetPropertyEx;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,7 +33,6 @@ import com.google.inject.Provider;
 import com.sun.javafx.collections.ObservableSetWrapper;
 
 import javafx.beans.property.SetProperty;
-import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableSet;
@@ -86,7 +86,7 @@ public class SetPropertyExTests {
 
 					@Override
 					public SetProperty<Integer> get() {
-						return new SimpleSetProperty<>(
+						return new SimpleSetPropertyEx<>(
 								new ObservableSetWrapper<>(
 										new HashSet<Integer>()));
 					}

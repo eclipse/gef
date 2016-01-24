@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.beans.property.SimpleListPropertyEx;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,7 +33,6 @@ import com.google.inject.Provider;
 import com.sun.javafx.collections.ObservableListWrapper;
 
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -86,7 +86,7 @@ public class ListPropertyExTests {
 
 					@Override
 					public ListProperty<Integer> get() {
-						return new SimpleListProperty<>(
+						return new SimpleListPropertyEx<>(
 								new ObservableListWrapper<>(
 										new ArrayList<Integer>()));
 					}

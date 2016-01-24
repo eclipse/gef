@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
+import java.util.Map;
+
 import org.eclipse.gef4.common.beans.binding.MapExpressionHelperEx;
 
 import javafx.beans.InvalidationListener;
@@ -35,6 +37,8 @@ import javafx.collections.ObservableMap;
  * <li>https://bugs.openjdk.java.net/browse/JDK-8089557: fixed by not forwarding
  * listeners to the read-only property but rather keeping the lists of listeners
  * distinct.</li>
+ * <li>https://bugs.openjdk.java.net/browse/JDK-8120138: fixed by overwriting
+ * equals() and hashCode()</li>
  * </ul>
  *
  * @author mwienand
@@ -225,6 +229,41 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 		helper.addListener(listener);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object other) {
+		// Overwritten here to compensate an inappropriate equals()
+		// implementation on Java 7
+		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		if (other == this) {
+			return true;
+		}
+
+		if (other == null || !(other instanceof Map)) {
+			return false;
+		}
+
+		try {
+			Map<K, V> otherMap = (Map<K, V>) other;
+			if (otherMap.size() != size()) {
+				return false;
+			}
+			for (K key : keySet()) {
+				if (get(key) == null) {
+					if (otherMap.get(key) != null) {
+						return false;
+					}
+				} else if (!get(key).equals(otherMap.get(key))) {
+					return false;
+				}
+			}
+		} catch (ClassCastException unused) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -266,6 +305,18 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 		return readOnlyProperty;
 	}
 
+	@Override
+	public int hashCode() {
+		// Overwritten here to compensate an inappropriate hashCode()
+		// implementation on Java 7
+		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		int h = 0;
+		for (Entry<K, V> e : entrySet()) {
+			h += e.hashCode();
+		}
+		return h;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -303,5 +354,4 @@ public class ReadOnlyMapWrapperEx<K, V> extends ReadOnlyMapWrapper<K, V> {
 			helper.removeListener(listener);
 		}
 	}
-
 }

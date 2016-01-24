@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
+import java.util.List;
+
 import com.sun.javafx.binding.ListExpressionHelper;
 
 import javafx.beans.InvalidationListener;
@@ -27,8 +29,10 @@ import javafx.collections.ObservableList;
  * <li>https://bugs.openjdk.java.net/browse/JDK-8089557: fixed by not forwarding
  * listeners to the read-only property but rather keeping the lists of listeners
  * distinct.</li>
+ * <li>https://bugs.openjdk.java.net/browse/JDK-8120138: fixed by overwriting
+ * equals() and hashCode()</li>
  * </ul>
- * 
+ *
  * @author anyssen
  *
  * @param <E>
@@ -46,9 +50,23 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 	}
 
 	/**
+	 * Creates a new named {@link ReadOnlyListWrapperEx} related to the given
+	 * bean.
+	 *
+	 * @param bean
+	 *            The bean to relate the to be created
+	 *            {@link ReadOnlyListWrapperEx} to.
+	 * @param name
+	 *            The name for the to be created {@link ReadOnlyListWrapperEx}.
+	 */
+	public ReadOnlyListWrapperEx(Object bean, String name) {
+		super(bean, name);
+	}
+
+	/**
 	 * Creates a new named {@link ReadOnlyListWrapperEx}, related to the given
 	 * bean and provided with the initial value.
-	 * 
+	 *
 	 * @param bean
 	 *            The bean to relate the to be created
 	 *            {@link ReadOnlyListWrapperEx} to.
@@ -64,23 +82,9 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 	}
 
 	/**
-	 * Creates a new named {@link ReadOnlyListWrapperEx} related to the given
-	 * bean.
-	 * 
-	 * @param bean
-	 *            The bean to relate the to be created
-	 *            {@link ReadOnlyListWrapperEx} to.
-	 * @param name
-	 *            The name for the to be created {@link ReadOnlyListWrapperEx}.
-	 */
-	public ReadOnlyListWrapperEx(Object bean, String name) {
-		super(bean, name);
-	}
-
-	/**
 	 * Creates a new unnamed {@link ReadOnlyListWrapperEx} with the given
 	 * initial value.
-	 * 
+	 *
 	 * @param initialValue
 	 *            The initial value of the to be created
 	 *            {@link ReadOnlyListWrapperEx}.
@@ -105,6 +109,64 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 		helper = ListExpressionHelper.addListener(helper, this, listener);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object other) {
+		// Overwritten here to compensate an inappropriate equals()
+		// implementation on Java 7
+		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		if (this == other) {
+			return true;
+		}
+		if (other == null || !(other instanceof List)) {
+			return false;
+		}
+
+		try {
+			final List<E> otherList = (List<E>) other;
+			if (size() != otherList.size()) {
+				return false;
+			}
+			for (int i = 0; i < size(); i++) {
+				if (get(i) == null) {
+					if (otherList.get(i) != null) {
+						return false;
+					}
+				} else if (!get(i).equals(otherList.get(i))) {
+					return false;
+				}
+			}
+		} catch (ClassCastException e) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	protected void fireValueChangedEvent() {
+		ListExpressionHelper.fireValueChangedEvent(helper);
+		super.fireValueChangedEvent();
+	}
+
+	@Override
+	protected void fireValueChangedEvent(
+			ListChangeListener.Change<? extends E> change) {
+		ListExpressionHelper.fireValueChangedEvent(helper, change);
+		super.fireValueChangedEvent(change);
+	}
+
+	@Override
+	public int hashCode() {
+		// Overwritten here to compensate an inappropriate hashCode()
+		// implementation on Java 7
+		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		int hashCode = 1;
+		for (E e : this) {
+			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
+		}
+		return hashCode;
+	}
+
 	@Override
 	public void removeListener(
 			ChangeListener<? super ObservableList<E>> listener) {
@@ -119,19 +181,6 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 	@Override
 	public void removeListener(ListChangeListener<? super E> listener) {
 		helper = ListExpressionHelper.removeListener(helper, listener);
-	}
-
-	@Override
-	protected void fireValueChangedEvent() {
-		ListExpressionHelper.fireValueChangedEvent(helper);
-		super.fireValueChangedEvent();
-	}
-
-	@Override
-	protected void fireValueChangedEvent(
-			ListChangeListener.Change<? extends E> change) {
-		ListExpressionHelper.fireValueChangedEvent(helper, change);
-		super.fireValueChangedEvent(change);
 	}
 
 }

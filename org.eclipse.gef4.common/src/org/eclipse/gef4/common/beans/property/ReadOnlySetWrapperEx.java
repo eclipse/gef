@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
+import java.util.Set;
+
 import com.sun.javafx.binding.SetExpressionHelper;
 
 import javafx.beans.InvalidationListener;
@@ -29,7 +31,7 @@ import javafx.collections.SetChangeListener.Change;
  * listeners to the read-only property but rather keeping the lists of listeners
  * distinct.</li>
  * </ul>
- * 
+ *
  * @author anyssen
  *
  * @param <E>
@@ -47,9 +49,23 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 	}
 
 	/**
+	 * Creates a new named {@link ReadOnlySetWrapperEx} related to the given
+	 * bean.
+	 *
+	 * @param bean
+	 *            The bean to relate the to be created
+	 *            {@link ReadOnlySetWrapperEx} to.
+	 * @param name
+	 *            The name for the to be created {@link ReadOnlySetWrapperEx}.
+	 */
+	public ReadOnlySetWrapperEx(Object bean, String name) {
+		super(bean, name);
+	}
+
+	/**
 	 * Creates a new named {@link ReadOnlySetWrapperEx}, related to the given
 	 * bean and provided with the initial value.
-	 * 
+	 *
 	 * @param bean
 	 *            The bean to relate the to be created
 	 *            {@link ReadOnlySetWrapperEx} to.
@@ -65,23 +81,9 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 	}
 
 	/**
-	 * Creates a new named {@link ReadOnlySetWrapperEx} related to the given
-	 * bean.
-	 * 
-	 * @param bean
-	 *            The bean to relate the to be created
-	 *            {@link ReadOnlySetWrapperEx} to.
-	 * @param name
-	 *            The name for the to be created {@link ReadOnlySetWrapperEx}.
-	 */
-	public ReadOnlySetWrapperEx(Object bean, String name) {
-		super(bean, name);
-	}
-
-	/**
 	 * Creates a new unnamed {@link ReadOnlySetWrapperEx} with the given initial
 	 * value.
-	 * 
+	 *
 	 * @param initialValue
 	 *            The initial value of the to be created
 	 *            {@link ReadOnlySetWrapperEx}.
@@ -105,6 +107,60 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 		helper = SetExpressionHelper.addListener(helper, this, listener);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object other) {
+		// Overwritten here to compensate an inappropriate equals()
+		// implementation on Java 7
+		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		if (other == this) {
+			return true;
+		}
+
+		if (other == null || !(other instanceof Set)) {
+			return false;
+		}
+
+		try {
+			Set<E> otherSet = (Set<E>) other;
+			if (otherSet.size() != size()) {
+				return false;
+			}
+			if (isEmpty()) {
+				return true;
+			}
+			return containsAll(otherSet);
+		} catch (ClassCastException unused) {
+			return false;
+		}
+	}
+
+	@Override
+	protected void fireValueChangedEvent() {
+		SetExpressionHelper.fireValueChangedEvent(helper);
+		super.fireValueChangedEvent();
+	}
+
+	@Override
+	protected void fireValueChangedEvent(Change<? extends E> change) {
+		SetExpressionHelper.fireValueChangedEvent(helper, change);
+		super.fireValueChangedEvent(change);
+	}
+
+	@Override
+	public int hashCode() {
+		// Overwritten here to compensate an inappropriate hashCode()
+		// implementation on Java 7
+		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		int h = 0;
+		for (E e : this) {
+			if (e != null) {
+				h += e.hashCode();
+			}
+		}
+		return h;
+	}
+
 	@Override
 	public void removeListener(
 			ChangeListener<? super ObservableSet<E>> listener) {
@@ -119,17 +175,5 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 	@Override
 	public void removeListener(SetChangeListener<? super E> listener) {
 		helper = SetExpressionHelper.removeListener(helper, listener);
-	}
-
-	@Override
-	protected void fireValueChangedEvent() {
-		SetExpressionHelper.fireValueChangedEvent(helper);
-		super.fireValueChangedEvent();
-	}
-
-	@Override
-	protected void fireValueChangedEvent(Change<? extends E> change) {
-		SetExpressionHelper.fireValueChangedEvent(helper, change);
-		super.fireValueChangedEvent(change);
 	}
 }
