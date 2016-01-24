@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
@@ -36,10 +36,10 @@ import javafx.beans.property.ReadOnlySetProperty;
  * This class provides identical functionality for {@link SetMultimap} as
  * {@link ReadOnlyMapProperty} for {@link Map}, {@link ReadOnlySetProperty} for
  * {@link Set}, or {@link ReadOnlyListProperty} for {@link List}.
- * 
+ *
  * @param <E>
  *            The element type of the wrapped {@link ObservableMultiset}.
- * 
+ *
  * @author anyssen
  */
 public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
@@ -49,7 +49,7 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 	 * Appends a representation of this {@link SetMultimapProperty}'s value to
 	 * the given {@link StringBuilder}. Gets called from {@link #toString()} to
 	 * allow subclasses to provide a changed value representation.
-	 * 
+	 *
 	 * @param result
 	 *            A {@link StringBuilder} to append the value representation to.
 	 */
@@ -108,8 +108,9 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 
 		try {
 			Multiset<E> otherMultiset = (Multiset<E>) other;
-			if (otherMultiset.size() != size())
+			if (otherMultiset.size() != size()) {
 				return false;
+			}
 			for (E e : elementSet()) {
 				if (count(e) != otherMultiset.count(e)) {
 					return false;

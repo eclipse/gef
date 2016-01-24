@@ -111,10 +111,15 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 
 		try {
 			SetMultimap<K, V> otherSetMultiMap = (SetMultimap<K, V>) other;
-			if (otherSetMultiMap.size() != size())
+			if (otherSetMultiMap.size() != size()) {
 				return false;
+			}
 			for (K key : keySet()) {
-				if (!get(key).equals(otherSetMultiMap.get(key))) {
+				if (get(key) == null) {
+					if (otherSetMultiMap.get(key) != null) {
+						return false;
+					}
+				} else if (!get(key).equals(otherSetMultiMap.get(key))) {
 					return false;
 				}
 			}
