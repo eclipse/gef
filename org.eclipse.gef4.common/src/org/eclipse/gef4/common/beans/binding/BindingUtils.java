@@ -218,8 +218,10 @@ public class BindingUtils {
 						// we use replaceValues() to perform an atomic change
 						// here (and thus don't use the added and removed values
 						// from the change)
-						destination.replaceValues(change.getKey(),
-								new HashSet<>(source.get(change.getKey())));
+						while (change.next()) {
+							destination.replaceValues(change.getKey(),
+									new HashSet<>(source.get(change.getKey())));
+						}
 					} finally {
 						updating = false;
 					}
@@ -351,14 +353,18 @@ public class BindingUtils {
 			// for a SetMultimap<K, V>.
 			final SetMultimap<K, V> source = (SetMultimap<K, V>) change
 					.getSetMultimap();
-			final SetMultimap<K, V> destination = setMultimapRef.get();
-			if (destination == null) {
-				change.getSetMultimap().removeListener(this);
-			} else {
-				// we use replaceValues() to perform an atomic change here (and
-				// thus don't use the added and removed values from the change)
-				destination.replaceValues(change.getKey(),
-						new HashSet<>(source.get(change.getKey())));
+			while (change.next()) {
+				final SetMultimap<K, V> destination = setMultimapRef.get();
+				if (destination == null) {
+					change.getSetMultimap().removeListener(this);
+				} else {
+					// we use replaceValues() to perform an atomic change here
+					// (and
+					// thus don't use the added and removed values from the
+					// change)
+					destination.replaceValues(change.getKey(),
+							new HashSet<>(source.get(change.getKey())));
+				}
 			}
 		}
 

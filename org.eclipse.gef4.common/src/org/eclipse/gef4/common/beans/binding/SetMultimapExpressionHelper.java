@@ -24,6 +24,7 @@ import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListenerHelper;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 
 import javafx.beans.value.ChangeListener;
@@ -130,7 +131,7 @@ public class SetMultimapExpressionHelper<K, V>
 				}
 			}
 			notifySetMultimapListeners(
-					new SimpleChange<>(observableValue, change));
+					new AtomicChange<>(observableValue, change));
 		}
 	}
 
@@ -152,30 +153,37 @@ public class SetMultimapExpressionHelper<K, V>
 		}
 	}
 
-	private void notifySetMultimapListeners(K key, Set<V> removedValues,
-			Set<V> addedValues) {
-		notifySetMultimapListeners(new SimpleChange<>(getSource(), key,
-				removedValues, addedValues));
-	}
-
 	private void notifySetMultimapListeners(
 			ObservableSetMultimap<K, V> oldValue,
 			ObservableSetMultimap<K, V> currentValue) {
 		if (currentValue == null) {
+			List<ElementarySubChange<K, V>> elementaryChanges = new ArrayList<>();
 			// all entries have been removed
 			for (Map.Entry<K, Set<V>> entries : Multimaps.asMap(oldValue)
 					.entrySet()) {
-				notifySetMultimapListeners(entries.getKey(), entries.getValue(),
-						Collections.<V> emptySet());
+				elementaryChanges.add(new ElementarySubChange<>(
+						entries.getKey(), entries.getValue(),
+						Collections.<V> emptySet()));
 			}
+			notifySetMultimapListeners(
+					new SetMultimapChangeListenerHelper.AtomicChange<>(
+							getSource(), HashMultimap.<K, V> create(oldValue),
+							elementaryChanges));
 		} else if (oldValue == null) {
+			List<ElementarySubChange<K, V>> elementaryChanges = new ArrayList<>();
 			// all entries have been added
 			for (Map.Entry<K, Set<V>> entries : Multimaps.asMap(currentValue)
 					.entrySet()) {
-				notifySetMultimapListeners(entries.getKey(),
-						Collections.<V> emptySet(), entries.getValue());
+				elementaryChanges.add(new ElementarySubChange<>(
+						entries.getKey(), Collections.<V> emptySet(),
+						entries.getValue()));
 			}
+			notifySetMultimapListeners(
+					new SetMultimapChangeListenerHelper.AtomicChange<>(
+							getSource(), HashMultimap.<K, V> create(),
+							elementaryChanges));
 		} else {
+			List<ElementarySubChange<K, V>> elementaryChanges = new ArrayList<>();
 			// compute changed/removed values
 			for (Map.Entry<K, Set<V>> entries : Multimaps.asMap(oldValue)
 					.entrySet()) {
@@ -189,12 +197,13 @@ public class SetMultimapExpressionHelper<K, V>
 					Set<V> removedValues = new HashSet<>(oldValues);
 					removedValues.removeAll(newValues);
 					if (!addedValues.isEmpty() || !removedValues.isEmpty()) {
-						notifySetMultimapListeners(entries.getKey(),
-								removedValues, addedValues);
+						elementaryChanges.add(new ElementarySubChange<>(
+								entries.getKey(), removedValues, addedValues));
 					}
 				} else {
-					notifySetMultimapListeners(entries.getKey(), oldValues,
-							Collections.<V> emptySet());
+					elementaryChanges
+							.add(new ElementarySubChange<>(entries.getKey(),
+									oldValues, Collections.<V> emptySet()));
 				}
 			}
 			// compute added values
@@ -202,10 +211,14 @@ public class SetMultimapExpressionHelper<K, V>
 					.entrySet()) {
 				K key = entries.getKey();
 				if (!oldValue.containsKey(key)) {
-					notifySetMultimapListeners(key, Collections.<V> emptySet(),
-							entries.getValue());
+					elementaryChanges.add(new ElementarySubChange<>(key,
+							Collections.<V> emptySet(), entries.getValue()));
 				}
 			}
+			notifySetMultimapListeners(
+					new SetMultimapChangeListenerHelper.AtomicChange<>(
+							getSource(), HashMultimap.<K, V> create(oldValue),
+							elementaryChanges));
 		}
 	}
 

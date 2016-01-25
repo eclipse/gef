@@ -316,16 +316,17 @@ public class SetMultimapPropertyTests {
 		newValue.putAll(4, Sets.newHashSet("4-1", "4-2", "4-3"));
 		invalidationListener.expect(1);
 		changeListener.addExpectation(property.get(), newValue);
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
 				Collections.<String> emptySet());
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Sets.newHashSet("2-1", "2-2", "2-3"),
 				Collections.<String> emptySet());
-		setMultimapChangeListener.addExpectation(3,
+		setMultimapChangeListener.addElementaryExpectation(3,
 				Collections.<String> emptySet(),
 				Sets.newHashSet("3-1", "3-2", "3-3"));
-		setMultimapChangeListener.addExpectation(4,
+		setMultimapChangeListener.addElementaryExpectation(4,
 				Collections.<String> emptySet(),
 				Sets.newHashSet("4-1", "4-2", "4-3"));
 		property.set(newValue);
@@ -341,9 +342,10 @@ public class SetMultimapPropertyTests {
 		newValue.putAll(4, Sets.newHashSet("4-1", "4-2", "4-3"));
 		invalidationListener.expect(1);
 		changeListener.addExpectation(property.get(), newValue);
-		setMultimapChangeListener.addExpectation(3,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(3,
 				Sets.newHashSet("3-1", "3-3"), Sets.newHashSet("3-4"));
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(),
 				Sets.newHashSet("1-1", "1-2", "1-3"));
 		property.set(newValue);
@@ -354,12 +356,13 @@ public class SetMultimapPropertyTests {
 		// change property value (change to null)
 		invalidationListener.expect(1);
 		changeListener.addExpectation(property.get(), null);
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
 				Collections.<String> emptySet());
-		setMultimapChangeListener.addExpectation(3,
+		setMultimapChangeListener.addElementaryExpectation(3,
 				Sets.newHashSet("3-2", "3-4"), Collections.<String> emptySet());
-		setMultimapChangeListener.addExpectation(4,
+		setMultimapChangeListener.addElementaryExpectation(4,
 				Sets.newHashSet("4-1", "4-2", "4-3"),
 				Collections.<String> emptySet());
 		property.set(null);
@@ -373,7 +376,8 @@ public class SetMultimapPropertyTests {
 		newValue.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
 		invalidationListener.expect(1);
 		changeListener.addExpectation(null, newValue);
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(),
 				Sets.newHashSet("1-1", "1-2", "1-3"));
 		property.set(newValue);

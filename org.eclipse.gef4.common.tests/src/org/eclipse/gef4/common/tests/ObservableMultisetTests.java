@@ -172,28 +172,28 @@ public class ObservableMultisetTests {
 				fail("Received unexpected atomic change " + change);
 			}
 
-			LinkedList<E> expectedElements = elementQueue.pollLast();
-			LinkedList<Integer> expectedAddCounts = addedCountQueue.pollLast();
-			LinkedList<Integer> expectedRemoveCounts = removedCountQueue
+			LinkedList<E> elementaryElementsQueue = elementQueue.pollLast();
+			LinkedList<Integer> elementaryAddedCountQueue = addedCountQueue.pollLast();
+			LinkedList<Integer> elementaryRemovedCountQueue = removedCountQueue
 					.pollLast();
 
 			assertEquals(source, change.getMultiset());
 
 			StringBuffer expectedString = new StringBuffer();
 			while (change.next()) {
-				if (expectedElements.size() <= 0) {
+				if (elementaryElementsQueue.size() <= 0) {
 					fail("Did not expect another elementary change");
 				}
 				// check element
-				E expectedElement = expectedElements.pollLast();
+				E expectedElement = elementaryElementsQueue.pollLast();
 				assertEquals(expectedElement, change.getElement());
 
 				// check added values
-				int expectedAddCount = expectedAddCounts.pollLast();
+				int expectedAddCount = elementaryAddedCountQueue.pollLast();
 				assertEquals(expectedAddCount, change.getAddCount());
 
 				// check removed values
-				int expectedRemoveCount = expectedRemoveCounts.pollLast();
+				int expectedRemoveCount = elementaryRemovedCountQueue.pollLast();
 				assertEquals(expectedRemoveCount, change.getRemoveCount());
 
 				// check string representation
@@ -208,8 +208,8 @@ public class ObservableMultisetTests {
 							+ " occurrences of " + expectedElement + ".");
 				}
 			}
-			if (expectedElements.size() > 0) {
-				fail("Did not receive " + expectedElements.size()
+			if (elementaryElementsQueue.size() > 0) {
+				fail("Did not receive " + elementaryElementsQueue.size()
 						+ " expected elementary changes.");
 			}
 			assertEquals(expectedString.toString(), change.toString());

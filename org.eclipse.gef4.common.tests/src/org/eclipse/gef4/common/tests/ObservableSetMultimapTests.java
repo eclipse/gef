@@ -140,19 +140,30 @@ public class ObservableSetMultimapTests {
 			implements SetMultimapChangeListener<K, V> {
 
 		private ObservableSetMultimap<K, V> source;
-		private LinkedList<K> keyQueue = new LinkedList<>();
-		private LinkedList<Set<V>> addedValuesQueue = new LinkedList<>();
-		private LinkedList<Set<V>> removedValuesQueue = new LinkedList<>();
+		private LinkedList<LinkedList<K>> keyQueue = new LinkedList<>();
+		private LinkedList<LinkedList<Set<V>>> addedValuesQueue = new LinkedList<>();
+		private LinkedList<LinkedList<Set<V>>> removedValuesQueue = new LinkedList<>();
 
 		public SetMultimapChangeExpector(ObservableSetMultimap<K, V> source) {
 			this.source = source;
 		}
 
-		public void addExpectation(K key, Set<V> removedValues,
+		public void addAtomicExpectation() {
+			keyQueue.addFirst(new LinkedList<K>());
+			addedValuesQueue.addFirst(new LinkedList<Set<V>>());
+			removedValuesQueue.addFirst(new LinkedList<Set<V>>());
+		}
+
+		public void addElementaryExpectation(K key, Set<V> removedValues,
 				Set<V> addedValues) {
-			keyQueue.addFirst(key);
-			addedValuesQueue.addFirst(new HashSet<>(addedValues));
-			removedValuesQueue.addFirst(new HashSet<>(removedValues));
+			if (keyQueue.size() <= 0) {
+				throw new IllegalArgumentException(
+						"Add atomic expectation first.");
+			}
+			keyQueue.getFirst().addFirst(key);
+			addedValuesQueue.getFirst().addFirst(new HashSet<>(addedValues));
+			removedValuesQueue.getFirst()
+					.addFirst(new HashSet<>(removedValues));
 		}
 
 		public void check() {
@@ -169,45 +180,68 @@ public class ObservableSetMultimapTests {
 				fail("Received unexpected change " + change);
 			}
 
+			LinkedList<K> elementaryKeysQueue = keyQueue.pollLast();
+			LinkedList<Set<V>> elementaryAddedValuesQueue = addedValuesQueue
+					.pollLast();
+			LinkedList<Set<V>> elementaryRemovedValuesQueue = removedValuesQueue
+					.pollLast();
+
 			assertEquals(source, change.getSetMultimap());
 
-			// check key
-			K expectedKey = keyQueue.pollLast();
-			assertEquals(expectedKey, change.getKey());
+			StringBuffer expectedString = new StringBuffer();
+			while (change.next()) {
+				if (elementaryKeysQueue.size() <= 0) {
+					fail("Did not expect another elementary change");
+				}
+				// check key
+				K expectedKey = elementaryKeysQueue.pollLast();
+				assertEquals(expectedKey, change.getKey());
 
-			// check added values
-			Set<V> expectedAddedValues = addedValuesQueue.pollLast();
-			assertEquals(expectedAddedValues, change.getValuesAdded());
-			if (expectedAddedValues != null && !expectedAddedValues.isEmpty()) {
-				assertTrue(change.wasAdded());
-			} else {
-				assertFalse(change.wasAdded());
-			}
+				// check added values
+				Set<V> expectedAddedValues = elementaryAddedValuesQueue
+						.pollLast();
+				assertEquals(expectedAddedValues, change.getValuesAdded());
+				if (expectedAddedValues != null
+						&& !expectedAddedValues.isEmpty()) {
+					assertTrue(change.wasAdded());
+				} else {
+					assertFalse(change.wasAdded());
+				}
 
-			// check removed values
-			Set<V> expectedRemovedValues = removedValuesQueue.pollLast();
-			assertEquals(expectedRemovedValues, change.getValuesRemoved());
-			if (expectedRemovedValues != null
-					&& !expectedRemovedValues.isEmpty()) {
-				assertTrue(change.wasRemoved());
-			} else {
-				assertFalse(change.wasRemoved());
-			}
+				// check removed values
+				Set<V> expectedRemovedValues = elementaryRemovedValuesQueue
+						.pollLast();
+				assertEquals(expectedRemovedValues, change.getValuesRemoved());
+				if (expectedRemovedValues != null
+						&& !expectedRemovedValues.isEmpty()) {
+					assertTrue(change.wasRemoved());
+				} else {
+					assertFalse(change.wasRemoved());
+				}
 
-			// check string representation
-			if (expectedAddedValues.isEmpty()
-					&& !expectedRemovedValues.isEmpty()) {
-				assertEquals("Removed " + expectedRemovedValues + " for key "
-						+ expectedKey + ".", change.toString());
-			} else if (!expectedAddedValues.isEmpty()
-					&& expectedRemovedValues.isEmpty()) {
-				assertEquals("Added " + expectedAddedValues + " for key "
-						+ expectedKey + ".", change.toString());
-			} else {
-				assertEquals("Replaced " + expectedRemovedValues + " by "
-						+ expectedAddedValues + " for key " + expectedKey + ".",
-						change.toString());
+				// check string representation
+				if (!expectedString.toString().isEmpty()) {
+					expectedString.append(" ");
+				}
+				if (expectedAddedValues.isEmpty()
+						&& !expectedRemovedValues.isEmpty()) {
+					expectedString.append("Removed " + expectedRemovedValues
+							+ " for key " + expectedKey + ".");
+				} else if (!expectedAddedValues.isEmpty()
+						&& expectedRemovedValues.isEmpty()) {
+					expectedString.append("Added " + expectedAddedValues
+							+ " for key " + expectedKey + ".");
+				} else {
+					expectedString.append("Replaced " + expectedRemovedValues
+							+ " by " + expectedAddedValues + " for key "
+							+ expectedKey + ".");
+				}
 			}
+			if (elementaryKeysQueue.size() > 0) {
+				fail("Did not receive " + elementaryKeysQueue.size()
+						+ " expected elementary changes.");
+			}
+			assertEquals(expectedString.toString(), change.toString());
 		}
 	}
 
@@ -300,7 +334,7 @@ public class ObservableSetMultimapTests {
 		observable.addListener(setMultimapChangeListener);
 
 		// remove all values
-		invalidationListener.expect(3);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -309,17 +343,14 @@ public class ObservableSetMultimapTests {
 			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(null,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
 				Sets.newHashSet(null, "null"), Collections.<String> emptySet());
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
 				Collections.<String> emptySet());
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Sets.newHashSet("2-1", "2-2", "2-3"),
 				Collections.<String> emptySet());
 		observable.clear();
@@ -467,9 +498,11 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1"));
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1"));
 		assertTrue(observable.put(1, "1"));
 		invalidationListener.check();
@@ -499,7 +532,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Collections.<String> emptySet(), Collections.singleton("2"));
 		assertTrue(observable.put(2, "2"));
 		invalidationListener.check();
@@ -556,7 +590,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1-1"));
 		assertEquals(backupMap.put(1, "1-1"), observable.put(1, "1-1"));
 		check(observable, backupMap);
@@ -577,7 +612,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1-2"));
 		assertEquals(backupMap.put(1, "1-2"), observable.put(1, "1-2"));
 		check(observable, backupMap);
@@ -598,7 +634,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Collections.<String> emptySet(), Collections.singleton("2"));
 		assertEquals(backupMap.put(2, "2"), observable.put(2, "2"));
 		check(observable, backupMap);
@@ -619,7 +656,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(null,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> emptySet(),
 				Collections.<String> singleton(null));
 		assertEquals(backupMap.put(null, null), observable.put(null, null));
@@ -641,7 +679,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(null,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> emptySet(),
 				Collections.<String> singleton("null"));
 		assertEquals(backupMap.put(null, "null"), observable.put(null, "null"));
@@ -684,7 +723,7 @@ public class ObservableSetMultimapTests {
 		observable.addListener(setMultimapChangeListener);
 
 		// add distinct values for different keys
-		invalidationListener.expect(2);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -693,12 +732,11 @@ public class ObservableSetMultimapTests {
 			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-1", "1-2"));
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Collections.<String> emptySet(), Sets.newHashSet("2-1", "2-2"));
 		SetMultimap<Integer, String> toAdd = HashMultimap.create();
 		toAdd.putAll(1, Sets.newHashSet("1-1", "1-2"));
@@ -712,7 +750,7 @@ public class ObservableSetMultimapTests {
 		setMultimapChangeListener.check();
 
 		// add new and already registered values for different keys
-		invalidationListener.expect(2);
+		invalidationListener.expect(1);
 		if (observable instanceof ObservableValue) {
 			// old and new value are the same, as the observable value of the
 			// property has not been exchanged (but only its contents has been
@@ -721,12 +759,11 @@ public class ObservableSetMultimapTests {
 			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-3"));
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Collections.<String> emptySet(), Sets.newHashSet("2-3"));
 		toAdd = HashMultimap.create();
 		toAdd.putAll(1, Sets.newHashSet("1-2", "1-3"));
@@ -784,7 +821,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-1", "1-2"));
 		assertEquals(backupMap.putAll(1, Arrays.asList("1-1", "1-2")),
 				observable.putAll(1, Arrays.asList("1-1", "1-2")));
@@ -806,7 +844,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-3"));
 		assertEquals(backupMap.putAll(1, Arrays.asList("1-2", "1-3")),
 				observable.putAll(1, Arrays.asList("1-2", "1-3")));
@@ -868,7 +907,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.singleton("1-1"), Collections.<String> emptySet());
 		assertEquals(backupMap.remove(1, "1-1"), observable.remove(1, "1-1"));
 		check(observable, backupMap);
@@ -889,7 +929,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(null,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> singleton(null),
 				Collections.<String> emptySet());
 		assertEquals(backupMap.remove(null, null),
@@ -912,7 +953,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(null,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> singleton("null"),
 				Collections.<String> emptySet());
 		assertEquals(backupMap.remove(null, "null"),
@@ -993,7 +1035,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
 				Collections.<String> emptySet());
 		assertEquals(backupMap.removeAll(1), observable.removeAll(1));
@@ -1015,7 +1058,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(null,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
 				Sets.newHashSet(null, "null"), Collections.<String> emptySet());
 		assertEquals(backupMap.removeAll(null), observable.removeAll(null));
 		check(observable, backupMap);
@@ -1084,7 +1128,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(1,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
 				Sets.newHashSet("1-4", "1-5", "1-6"));
 		assertEquals(
@@ -1110,7 +1155,8 @@ public class ObservableSetMultimapTests {
 			changeListener.addExpectation(observableValue.getValue(),
 					observableValue.getValue());
 		}
-		setMultimapChangeListener.addExpectation(2,
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(2,
 				Sets.newHashSet("2-1", "2-2", "2-3"),
 				Collections.<String> emptySet());
 		assertEquals(
@@ -1134,8 +1180,6 @@ public class ObservableSetMultimapTests {
 		}
 		setMultimapChangeListener.check();
 	}
-
-	// TODO: replaceAll
 
 	/**
 	 * Confirm {@link ObservableSetMultimap} works as expected even if no

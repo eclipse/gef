@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.collections;
 
@@ -26,9 +26,9 @@ import javafx.beans.InvalidationListener;
 /**
  * A utility class to support change notifications for an
  * {@link ObservableMultiset}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <E>
  *            The element type of the {@link ObservableMultiset}.
  *
@@ -37,7 +37,7 @@ public class MultisetChangeListenerHelper<E> {
 
 	/**
 	 * A simple implementation of an {@link MultisetChangeListener.Change}.
-	 * 
+	 *
 	 * @author anyssen
 	 *
 	 * @param <E>
@@ -52,8 +52,31 @@ public class MultisetChangeListenerHelper<E> {
 
 		/**
 		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
+		 * represents a change comprising a single elementary sub-change.
+		 *
+		 * @param source
+		 *            The source {@link ObservableMultiset} from which the
+		 *            change originated.
+		 * @param previousContents
+		 *            The previous contents of the {@link ObservableMultiset}
+		 *            before the change was applied.
+		 * @param elementarySubChange
+		 *            The elementary sub-change that has been applied.
+		 */
+		@SuppressWarnings("unchecked")
+		public AtomicChange(ObservableMultiset<E> source,
+				Multiset<E> previousContents,
+				ElementarySubChange<E> elementarySubChange) {
+			super(source);
+			this.previousContents = previousContents;
+			this.elementarySubChanges = new ElementarySubChange[] {
+					elementarySubChange };
+		}
+
+		/**
+		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
 		 * represents a change comprising multiple elementary sub-changesO.
-		 * 
+		 *
 		 * @param source
 		 *            The source {@link ObservableMultiset} from which the
 		 *            change originated.
@@ -82,7 +105,7 @@ public class MultisetChangeListenerHelper<E> {
 		 * This is basically used to allow properties wrapping an
 		 * {@link ObservableMultiset} to re-fire change events of their wrapped
 		 * {@link ObservableMultiset} with themselves as source.
-		 * 
+		 *
 		 * @param source
 		 *            The new source {@link ObservableMultiset}.
 		 * @param change
@@ -114,57 +137,6 @@ public class MultisetChangeListenerHelper<E> {
 					.toArray(new ElementarySubChange[] {});
 		}
 
-		/**
-		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
-		 * represents a change comprising a single elementary sub-change.
-		 * 
-		 * @param source
-		 *            The source {@link ObservableMultiset} from which the
-		 *            change originated.
-		 * @param previousContents
-		 *            The previous contents of the {@link ObservableMultiset}
-		 *            before the change was applied.
-		 * @param elementarySubChange
-		 *            The elementary sub-change that has been applied.
-		 */
-		@SuppressWarnings("unchecked")
-		public AtomicChange(ObservableMultiset<E> source,
-				Multiset<E> previousContents,
-				ElementarySubChange<E> elementarySubChange) {
-			super(source);
-			this.previousContents = previousContents;
-			this.elementarySubChanges = new ElementarySubChange[] {
-					elementarySubChange };
-		}
-
-		@Override
-		public boolean next() {
-			cursor++;
-			return cursor < elementarySubChanges.length;
-		}
-
-		@Override
-		public void reset() {
-			cursor = -1;
-		}
-		
-		@Override
-		public String toString() {
-			StringBuffer sb = new StringBuffer();
-			for(int i=0; i< elementarySubChanges.length; i++){
-				sb.append(elementarySubChanges[i].toString());
-				if(i < elementarySubChanges.length - 1){
-					sb.append(" ");
-				}
-			}
-			return sb.toString();
-		}
-
-		@Override
-		public Multiset<E> getPreviousContents() {
-			return Multisets.unmodifiableMultiset(previousContents);
-		}
-
 		@Override
 		public int getAddCount() {
 			if (cursor == -1) {
@@ -175,6 +147,23 @@ public class MultisetChangeListenerHelper<E> {
 						"May only call getAddCount() if next() returned true.");
 			}
 			return elementarySubChanges[cursor].getAddCount();
+		}
+
+		@Override
+		public E getElement() {
+			if (cursor == -1) {
+				throw new IllegalStateException(
+						"Need to call next() before getElement() can be called.");
+			} else if (cursor >= elementarySubChanges.length) {
+				throw new IllegalStateException(
+						"May only call getElement() if next() returned true.");
+			}
+			return elementarySubChanges[cursor].getElement();
+		}
+
+		@Override
+		public Multiset<E> getPreviousContents() {
+			return Multisets.unmodifiableMultiset(previousContents);
 		}
 
 		@Override
@@ -190,22 +179,32 @@ public class MultisetChangeListenerHelper<E> {
 		}
 
 		@Override
-		public E getElement() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getElement() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getElement() if next() returned true.");
-			}
-			return elementarySubChanges[cursor].getElement();
+		public boolean next() {
+			cursor++;
+			return cursor < elementarySubChanges.length;
 		}
 
+		@Override
+		public void reset() {
+			cursor = -1;
+		}
+
+		@Override
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < elementarySubChanges.length; i++) {
+				sb.append(elementarySubChanges[i].toString());
+				if (i < elementarySubChanges.length - 1) {
+					sb.append(" ");
+				}
+			}
+			return sb.toString();
+		}
 	}
 
 	/**
-	 * An atomic change related to a single element of a {@link Multiset}.
-	 * 
+	 * An elementary change related to a single element of a {@link Multiset}.
+	 *
 	 * @param <E>
 	 *            The element type of the {@link ObservableMultiset}.
 	 */
@@ -217,7 +216,7 @@ public class MultisetChangeListenerHelper<E> {
 
 		/**
 		 * Constructs a new elementary sub-change with the given values.
-		 * 
+		 *
 		 * @param element
 		 *            The element that was added or removed.
 		 * @param removeCount
@@ -231,19 +230,10 @@ public class MultisetChangeListenerHelper<E> {
 			this.addCount = addCount;
 		}
 
-		@Override
-		public String toString() {
-			if (addCount > 0) {
-				return "Added " + addCount + " occurrences of " + element + ".";
-			} else {
-				return "Removed " + removeCount + " occurrences of " + element + ".";
-			}
-		}
-
 		/**
 		 * Returns the number of occurrences that have been added for the
 		 * respective element as part of this elementary sub-change.
-		 * 
+		 *
 		 * @return The number of added occurrences.
 		 */
 		public int getAddCount() {
@@ -251,22 +241,33 @@ public class MultisetChangeListenerHelper<E> {
 		}
 
 		/**
+		 * Returns the element that has been altered by this elementary
+		 * sub-change.
+		 *
+		 * @return The changed element.
+		 */
+		public E getElement() {
+			return element;
+		}
+
+		/**
 		 * Returns the number of occurrences that have been removed for the
 		 * respective element as part of this elementary sub-change.
-		 * 
+		 *
 		 * @return The number of removed occurrences.
 		 */
 		public int getRemoveCount() {
 			return removeCount;
 		}
 
-		/**
-		 * Returns the element that has been altered by this elementary sub-change.
-		 * 
-		 * @return The changed element.
-		 */
-		public E getElement() {
-			return element;
+		@Override
+		public String toString() {
+			if (addCount > 0) {
+				return "Added " + addCount + " occurrences of " + element + ".";
+			} else {
+				return "Removed " + removeCount + " occurrences of " + element
+						+ ".";
+			}
 		}
 	}
 
@@ -279,7 +280,7 @@ public class MultisetChangeListenerHelper<E> {
 	/**
 	 * Constructs a new {@link MultisetChangeListener} for the given source
 	 * {@link ObservableMultiset}.
-	 * 
+	 *
 	 * @param source
 	 *            The {@link ObservableMultiset} to use as source in change
 	 *            notifications.
@@ -289,22 +290,11 @@ public class MultisetChangeListenerHelper<E> {
 	}
 
 	/**
-	 * Returns the source {@link ObservableMultiset} this
-	 * {@link MultisetChangeListenerHelper} is bound to, which is used in change
-	 * notifications.
-	 * 
-	 * @return The source {@link ObservableMultiset}.
-	 */
-	protected ObservableMultiset<E> getSource() {
-		return source;
-	}
-
-	/**
 	 * Adds a new {@link InvalidationListener} to this
 	 * {@link MultisetChangeListenerHelper}. If the same listener is added more
 	 * than once, it will be registered more than once and will receive multiple
 	 * change events.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to add.
 	 */
@@ -326,7 +316,7 @@ public class MultisetChangeListenerHelper<E> {
 	 * {@link MultisetChangeListenerHelper}. If the same listener is added more
 	 * than once, it will be registered more than once and will receive multiple
 	 * change events.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to add.
 	 */
@@ -341,6 +331,32 @@ public class MultisetChangeListenerHelper<E> {
 			multisetChangeListeners = new ArrayList<>(multisetChangeListeners);
 		}
 		multisetChangeListeners.add(listener);
+	}
+
+	/**
+	 * Notifies all attached {@link InvalidationListener}s and
+	 * {@link MultisetChangeListener}s about the change.
+	 *
+	 * @param change
+	 *            The change to notify listeners about.
+	 */
+	public void fireValueChangedEvent(
+			MultisetChangeListener.Change<? extends E> change) {
+		notifyInvalidationListeners();
+		if (change != null) {
+			notifyMultisetListeners(change);
+		}
+	}
+
+	/**
+	 * Returns the source {@link ObservableMultiset} this
+	 * {@link MultisetChangeListenerHelper} is bound to, which is used in change
+	 * notifications.
+	 *
+	 * @return The source {@link ObservableMultiset}.
+	 */
+	protected ObservableMultiset<E> getSource() {
+		return source;
 	}
 
 	/**
@@ -360,24 +376,9 @@ public class MultisetChangeListenerHelper<E> {
 	}
 
 	/**
-	 * Notifies all attached {@link InvalidationListener}s and
-	 * {@link MultisetChangeListener}s about the change.
-	 * 
-	 * @param change
-	 *            The change to notify listeners about.
-	 */
-	public void fireValueChangedEvent(
-			MultisetChangeListener.Change<? extends E> change) {
-		notifyInvalidationListeners();
-		if (change != null) {
-			notifyMultisetListeners(change);
-		}
-	}
-
-	/**
 	 * Notifies the attached {@link MultisetChangeListener}s about the related
 	 * change.
-	 * 
+	 *
 	 * @param change
 	 *            The applied change.
 	 */
@@ -399,7 +400,7 @@ public class MultisetChangeListenerHelper<E> {
 	 * Removes the given {@link InvalidationListener} from this
 	 * {@link MultisetChangeListenerHelper}. If its was registered more than
 	 * once, removes one occurrence.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
@@ -431,7 +432,7 @@ public class MultisetChangeListenerHelper<E> {
 	 * Removes the given {@link MultisetChangeListener} from this
 	 * {@link MultisetChangeListenerHelper}. If its was registered more than
 	 * once, removes one occurrence.
-	 * 
+	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */

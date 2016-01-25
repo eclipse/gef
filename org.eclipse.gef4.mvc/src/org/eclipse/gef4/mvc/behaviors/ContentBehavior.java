@@ -112,9 +112,11 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		@Override
 		public void onChanged(
 				final SetMultimapChangeListener.Change<? extends Object, ? extends String> change) {
-			// TODO: if we had an iterable atomic change (as with
-			// ObservableList) within
-			// ObservableSetMultimap, we could synchronize just once per change
+			// XXX: An atomic operation (including replaceAll()) on the
+			// ObservableSetMultimap will lead to an atomic change here; we do
+			// not have to iterate through the individual changes but may simply
+			// synchronize with the list as it emerges after the changes have
+			// been applied.
 			synchronizeContentAnchorages(
 					HashMultimap.create(change.getSetMultimap()));
 		}
