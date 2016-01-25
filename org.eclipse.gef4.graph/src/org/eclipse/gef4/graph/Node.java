@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.eclipse.gef4.common.attributes.IAttributeStore;
+import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Graph.Builder.Context;
 
 import javafx.beans.property.ReadOnlyMapProperty;
@@ -175,7 +176,7 @@ public class Node implements IAttributeStore {
 
 	}
 
-	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapper<>(this,
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
 			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 
 	/**
