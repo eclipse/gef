@@ -64,9 +64,8 @@ public abstract class AbstractFXRootPart<N extends Node>
 	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, N visual) {
 		// unregister "main" visual for this part
 		super.unregisterFromVisualPartMap(viewer, visual);
-		// unregister nested visuals that are not controlled by other parts
-		FXPartUtils.unregisterNestedVisuals(this, viewer.getVisualPartMap(),
-				visual);
+		// unregister all visuals for which we are registered
+		FXPartUtils.unregisterVisuals(this, viewer.getVisualPartMap());
 	}
 
 }
