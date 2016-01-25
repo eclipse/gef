@@ -48,10 +48,6 @@ public class SelectionModelTests {
 		}
 
 		@Override
-		protected void doRefreshVisual(Object visual) {
-		}
-
-		@Override
 		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
@@ -59,6 +55,10 @@ public class SelectionModelTests {
 		@Override
 		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
+		}
+
+		@Override
+		protected void doRefreshVisual(Object visual) {
 		}
 	}
 
