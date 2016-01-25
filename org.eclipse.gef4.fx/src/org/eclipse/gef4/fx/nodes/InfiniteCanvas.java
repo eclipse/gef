@@ -748,25 +748,75 @@ public class InfiniteCanvas extends Region {
 	 * {@link #verticalScrollOffsetProperty()}, and the
 	 * {@link #contentTransformProperty()}, so that the
 	 * {@link #getContentGroup()} is fully visible within the bounds of this
-	 * {@link InfiniteCanvas}.
+	 * {@link InfiniteCanvas} if possible. The content will be centered, but the
+	 * given <i>zoomMin</i> and <i>zoomMax</i> values restrict the zoom factor,
+	 * so that the content might exceed the canvas, or does not fill it
+	 * completely.
 	 * <p>
 	 * Note, that the {@link #contentTransformProperty()} is set to a pure scale
 	 * transformation by this method.
+	 * <p>
+	 * Note, that fit-to-size cannot be performed in all situations. If the
+	 * content area is 0 or the canvas area is 0, then this method cannot fit
+	 * the content to the canvas size, and therefore, throws an
+	 * {@link IllegalStateException}. The following condition can be used to
+	 * test if fit-to-size can be performed:
+	 *
+	 * <pre>
+	 * if (infiniteCanvas.getWidth() > 0 && infiniteCanvas.getHeight() > 0
+	 * 		&& infiniteCanvas.getContentBounds().getWidth() > 0
+	 * 		&& infiniteCanvas.getContentBounds().getHeight() > 0) {
+	 * 	// save to call fit-to-size here
+	 * 	infiniteCanvas.fitToSize();
+	 * }
+	 * </pre>
+	 *
+	 * @param zoomMin
+	 *            The minimum zoom level.
+	 * @param zoomMax
+	 *            The maximum zoom level.
+	 * @throws IllegalStateException
+	 *             when the content area is zero or the canvas area is zero.
 	 */
-	public void fitToSize() {
-		// compute content center
+	public void fitToSize(double zoomMin, double zoomMax) {
+		// validate content size is not 0
 		Bounds contentBounds = getContentBounds();
-		double cx = contentBounds.getMinX() + contentBounds.getWidth() / 2;
-		double cy = contentBounds.getMinY() + contentBounds.getHeight() / 2;
+		double contentWidth = contentBounds.getWidth();
+		if (Double.isNaN(contentWidth) || Double.isInfinite(contentWidth)
+				|| contentWidth <= 0) {
+			throw new IllegalStateException("Content area is zero.");
+		}
+		double contentHeight = contentBounds.getHeight();
+		if (Double.isNaN(contentHeight) || Double.isInfinite(contentHeight)
+				|| contentHeight <= 0) {
+			throw new IllegalStateException("Content area is zero.");
+		}
+
+		// validate canvas size is not 0
+		if (getWidth() <= 0 || getHeight() <= 0) {
+			throw new IllegalStateException("Canvas area is zero.");
+		}
 
 		// compute zoom factor
-		double zf = Math.min(getWidth() / contentBounds.getWidth(),
-				getHeight() / contentBounds.getHeight());
+		double zf = Math.min(getWidth() / contentWidth,
+				getHeight() / contentHeight);
 
-		// do not scroll or zoom if the scale factor is invalid
-		if (Double.isInfinite(zf) || Double.isNaN(zf) || zf == 0) {
-			return;
+		// validate zoom factor
+		if (Double.isInfinite(zf) || Double.isNaN(zf) || zf <= 0) {
+			throw new IllegalStateException("Invalid zoom factor.");
 		}
+
+		// restrict zoom factor to [zoomMin, zoomMax] range
+		if (zf > zoomMax) {
+			zf = zoomMax;
+		}
+		if (zf < zoomMin) {
+			zf = zoomMin;
+		}
+
+		// compute content center
+		double cx = contentBounds.getMinX() + contentBounds.getWidth() / 2;
+		double cy = contentBounds.getMinY() + contentBounds.getHeight() / 2;
 
 		// compute visible area center
 		double vx = getWidth() / 2;
