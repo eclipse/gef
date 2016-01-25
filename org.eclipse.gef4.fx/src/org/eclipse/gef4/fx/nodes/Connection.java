@@ -449,6 +449,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 		// ensure connection does not paint further than geometric end points
 		// getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
+
+		// add the curve node
+		getChildren().add(curveNode);
 	}
 
 	/**
@@ -1224,10 +1227,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// TODO: children don't have to be cleared and re-added.
 		ICurve newGeometry = router.routeConnection(getPoints());
 
-		// clear current visuals
+		// clear visuals except for the curveNode
 		// TODO: this causes all VCLs of anchoreds the geometry node is attached
 		// to to be unregistered. We should prevent it.
-		getChildren().clear();
+		getChildren().retainAll(curveNode);
 
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
@@ -1238,9 +1241,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 			// System.out.println("New geometry: " + newGeometry);
 			curveNode.setGeometry(newGeometry);
 		}
-
-		// add new curve visuals
-		getChildren().add(curveNode);
 
 		// z-order decorations above curve
 		if (startDecoration != null) {
