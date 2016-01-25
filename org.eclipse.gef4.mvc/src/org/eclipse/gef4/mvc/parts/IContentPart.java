@@ -161,6 +161,12 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	public ObservableList<Object> getContentChildrenUnmodifiable();
 
 	/**
+	 * Triggers a re-computation of the content children of this
+	 * {@link IContentPart}.
+	 */
+	public void recomputeContentChildren();
+
+	/**
 	 * Removes the given <i>contentChild</i> from this part's content children,
 	 * so that it will no longer be returned by subsequent calls to
 	 * {@link #getContentChildrenUnmodifiable()}.

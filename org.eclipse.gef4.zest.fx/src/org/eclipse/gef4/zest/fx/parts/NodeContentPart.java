@@ -350,6 +350,29 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+		return HashMultimap.create();
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		Graph nestedGraph = getContent().getNestedGraph();
+		if (nestedGraph == null) {
+			return Collections.emptyList();
+		}
+		// only show children when zoomed in
+		Transform tx = getVisual().getLocalToSceneTransform();
+		double scale = JavaFX2Geometry.toAffineTransform(tx).getScaleX();
+		if (scale > ZOOMLEVEL_SHOW_NESTED_GRAPH) {
+			hideNestedGraphIcon();
+			return Collections.singletonList(nestedGraph);
+		}
+		// show an icon as a replacement when the zoom threshold is not reached
+		showNestedGraphIcon();
+		return Collections.emptyList();
+	}
+
+	@Override
 	public void doRefreshVisual(Group visual) {
 		if (getContent() == null) {
 			throw new IllegalStateException();
@@ -399,29 +422,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	public org.eclipse.gef4.graph.Node getContent() {
 		return (org.eclipse.gef4.graph.Node) super.getContent();
-	}
-
-	@Override
-	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
-		return HashMultimap.create();
-	}
-
-	@Override
-	protected List<? extends Object> doGetContentChildren() {
-		Graph nestedGraph = getContent().getNestedGraph();
-		if (nestedGraph == null) {
-			return Collections.emptyList();
-		}
-		// only show children when zoomed in
-		Transform tx = getVisual().getLocalToSceneTransform();
-		double scale = JavaFX2Geometry.toAffineTransform(tx).getScaleX();
-		if (scale > ZOOMLEVEL_SHOW_NESTED_GRAPH) {
-			hideNestedGraphIcon();
-			return Collections.singletonList(nestedGraph);
-		}
-		// show an icon as a replacement when the zoom threshold is not reached
-		showNestedGraphIcon();
-		return Collections.emptyList();
 	}
 
 	/**

@@ -382,6 +382,11 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	}
 
 	@Override
+	public void recomputeContentChildren() {
+		contentChildren.setAll(doGetContentChildren());
+	}
+
+	@Override
 	protected void register(IViewer<VR> viewer) {
 		super.register(viewer);
 		if (contentProperty.get() != null) {

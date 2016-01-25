@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.models;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -195,7 +195,7 @@ public class NavigationModel {
 		}
 	}
 
-	private Map<Graph, ViewportState> viewportStates = new HashMap<>();
+	private Map<Graph, ViewportState> viewportStates = new IdentityHashMap<>();
 
 	/**
 	 * Default constructor.

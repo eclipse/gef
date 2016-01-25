@@ -187,6 +187,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 
 		// synchronize content children of nesting node parts
 		for (NodeContentPart nestingNodePart : findNestingNodes()) {
+			nestingNodePart.recomputeContentChildren();
 			nestingNodePart.getAdapter(new TypeToken<ContentBehavior<Node>>() {
 			}).synchronizeContentChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
 		}
