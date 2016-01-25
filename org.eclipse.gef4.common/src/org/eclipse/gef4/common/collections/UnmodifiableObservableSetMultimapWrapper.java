@@ -102,6 +102,11 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	@Override
 	public Set<V> get(K key) {
 		return Collections.unmodifiableSet(observableSetMultimap.get(key));
+	};
+
+	@Override
+	public int hashCode() {
+		return observableSetMultimap.hashCode();
 	}
 
 	@Override

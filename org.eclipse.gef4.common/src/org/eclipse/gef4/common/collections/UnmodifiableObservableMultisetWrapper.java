@@ -108,6 +108,11 @@ public class UnmodifiableObservableMultisetWrapper<E>
 	}
 
 	@Override
+	public int hashCode() {
+		return observableMultiset.hashCode();
+	};
+
+	@Override
 	public boolean isEmpty() {
 		return observableMultiset.isEmpty();
 	}
