@@ -315,10 +315,14 @@ public final class Graph implements IAttributeStore {
 		if (!(other instanceof Graph)) {
 			return false;
 		}
-		Graph thatGraph = (Graph) other;
-		boolean attrsEqual = this.attributesProperty().equals(thatGraph.attributesProperty());
-		boolean nodesEqual = this.getNodes().equals(thatGraph.getNodes());
-		boolean edgesEqual = this.getEdges().equals(thatGraph.getEdges());
+		Graph otherGraph = (Graph) other;
+		// XXX: In JavaFX 2.2, a property's equals() falls back to equality of
+		// the enclosing bean; to prevent a StackOverflowError here, we fall
+		// back comparing the observed map value instead.
+		boolean attrsEqual = attributesProperty.get() == null ? false
+				: attributesProperty().get().equals(((Node) other).attributesProperty());
+		boolean nodesEqual = this.getNodes().equals(otherGraph.getNodes());
+		boolean edgesEqual = this.getEdges().equals(otherGraph.getEdges());
 		return attrsEqual && nodesEqual && edgesEqual;
 	}
 
@@ -359,7 +363,10 @@ public final class Graph implements IAttributeStore {
 	@Override
 	public int hashCode() {
 		int result = 17;
-		result = 31 * result + attributesProperty().hashCode();
+		// XXX: In JavaFX 2.2, hashCode() falls back on the hash code of the
+		// enclosing bean; to prevent a StackOverflowError, we fall back to the
+		// hash code of the contained map value, rather than the property itself
+		result = 31 * result + (attributesProperty.get() == null ? 0 : attributesProperty.get().hashCode());
 		result = 31 * result + getNodes().hashCode();
 		result = 31 * result + getEdges().hashCode();
 		return result;
