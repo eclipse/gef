@@ -21,17 +21,17 @@ public interface ILayoutFilter {
 
 	/**
 	 * Returns <code>true</code> to indicate that the given
-	 * {@link IConnectionLayout} is irrelevant for layout. Otherwise returns
+	 * {@link IEdgeLayout} is irrelevant for layout. Otherwise returns
 	 * <code>false</code>.
 	 * 
 	 * @param connectionLayout
-	 *            The {@link IConnectionLayout} which may be irrelevant for
+	 *            The {@link IEdgeLayout} which may be irrelevant for
 	 *            layout.
 	 * @return <code>true</code> to indicate that the given
-	 *         {@link IConnectionLayout} is irrelevant for layout, otherwise
+	 *         {@link IEdgeLayout} is irrelevant for layout, otherwise
 	 *         <code>false</code>.
 	 */
-	public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout);
+	public boolean isLayoutIrrelevant(IEdgeLayout connectionLayout);
 
 	/**
 	 * Returns <code>true</code> to indicate that the given {@link INodeLayout}

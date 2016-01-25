@@ -14,7 +14,7 @@ package org.eclipse.gef4.zest.fx.layout;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.INodeLayout;
 
 import javafx.beans.property.ReadOnlyMapProperty;
@@ -24,12 +24,12 @@ import javafx.collections.ObservableMap;
 
 /**
  * The {@link GraphEdgeLayout} is an {@link Edge}-specific
- * {@link IConnectionLayout} implementation.
+ * {@link IEdgeLayout} implementation.
  *
  * @author mwienand
  *
  */
-public class GraphEdgeLayout implements IConnectionLayout {
+public class GraphEdgeLayout implements IEdgeLayout {
 
 	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
 			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());

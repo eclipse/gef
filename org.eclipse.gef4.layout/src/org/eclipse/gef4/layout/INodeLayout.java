@@ -46,7 +46,7 @@ public interface INodeLayout extends IAttributeStore {
 	 * 
 	 * @return array of connections entering this node
 	 */
-	public IConnectionLayout[] getIncomingConnections();
+	public IEdgeLayout[] getIncomingConnections();
 
 	/**
 	 * Returns all connections that have this node as a source. All connections
@@ -56,6 +56,6 @@ public interface INodeLayout extends IAttributeStore {
 	 * 
 	 * @return array of connections leaving this node
 	 */
-	public IConnectionLayout[] getOutgoingConnections();
+	public IEdgeLayout[] getOutgoingConnections();
 
 }

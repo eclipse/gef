@@ -24,7 +24,7 @@ import java.util.Map;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -90,17 +90,17 @@ public class GraphLayoutContextTests {
 	 *            edge index
 	 * @see GraphLayoutContext#getEdges()
 	 * @see GraphLayoutContext#getConnections(IEntityLayout, IEntityLayout)
-	 * @see IConnectionLayout#getSource()
-	 * @see IConnectionLayout#getTarget()
+	 * @see IEdgeLayout#getSource()
+	 * @see IEdgeLayout#getTarget()
 	 */
 	private void checkEdgeIdentity(List<Edge> edges, GraphLayoutContext glc, int x) {
-		IConnectionLayout layout = glc.getEdges()[x];
+		IEdgeLayout layout = glc.getEdges()[x];
 		INodeLayout source = layout.getSource();
 		INodeLayout target = layout.getTarget();
 		assertSame(edges.get(x).getSource(), ((GraphNodeLayout) source).getNode());
 		assertSame(edges.get(x).getTarget(), ((GraphNodeLayout) target).getNode());
 
-		IConnectionLayout[] connections = glc.getConnections(source, target);
+		IEdgeLayout[] connections = glc.getConnections(source, target);
 		assertEquals(1, connections.length);
 		assertSame(layout, connections[0]);
 	}

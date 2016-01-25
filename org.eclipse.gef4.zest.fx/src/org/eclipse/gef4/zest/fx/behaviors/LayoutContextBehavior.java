@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.INodeLayout;
@@ -145,7 +145,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
 		layoutContext.addLayoutFilter(new ILayoutFilter() {
 			@Override
-			public boolean isLayoutIrrelevant(IConnectionLayout connectionLayout) {
+			public boolean isLayoutIrrelevant(IEdgeLayout connectionLayout) {
 				return ZestProperties.getLayoutIrrelevant(((GraphEdgeLayout) connectionLayout).getEdge(), true)
 						|| isLayoutIrrelevant(connectionLayout.getSource())
 						|| isLayoutIrrelevant(connectionLayout.getTarget());

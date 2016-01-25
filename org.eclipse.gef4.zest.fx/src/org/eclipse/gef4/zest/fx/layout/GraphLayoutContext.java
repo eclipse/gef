@@ -22,7 +22,7 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.AbstractLayoutContext;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
 
@@ -90,17 +90,17 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	}
 
 	@Override
-	public IConnectionLayout[] getEdges() {
-		List<IConnectionLayout> connections = new ArrayList<>();
-		IConnectionLayout[] all = super.getEdges();
+	public IEdgeLayout[] getEdges() {
+		List<IEdgeLayout> connections = new ArrayList<>();
+		IEdgeLayout[] all = super.getEdges();
 		// filter out any hidden nodes
-		for (IConnectionLayout c : all) {
+		for (IEdgeLayout c : all) {
 			if (isLayoutIrrelevant(c) || isLayoutIrrelevant(c.getSource()) || isLayoutIrrelevant(c.getTarget())) {
 				continue;
 			}
 			connections.add(c);
 		}
-		return connections.toArray(new IConnectionLayout[] {});
+		return connections.toArray(new IEdgeLayout[] {});
 	}
 
 	/**

@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.INodeLayout;
 
 import javafx.beans.property.ReadOnlyMapProperty;
@@ -66,17 +66,17 @@ public class GraphNodeLayout implements INodeLayout {
 	}
 
 	@Override
-	public IConnectionLayout[] getIncomingConnections() {
-		List<IConnectionLayout> incoming = new ArrayList<>();
+	public IEdgeLayout[] getIncomingConnections() {
+		List<IEdgeLayout> incoming = new ArrayList<>();
 
-		IConnectionLayout[] connections = context.getEdges();
-		for (IConnectionLayout c : connections) {
+		IEdgeLayout[] connections = context.getEdges();
+		for (IEdgeLayout c : connections) {
 			if (c.getTarget() == this) {
 				incoming.add(c);
 			}
 		}
 
-		return incoming.toArray(new IConnectionLayout[0]);
+		return incoming.toArray(new IEdgeLayout[0]);
 	}
 
 	/**
@@ -89,25 +89,25 @@ public class GraphNodeLayout implements INodeLayout {
 	}
 
 	@Override
-	public IConnectionLayout[] getOutgoingConnections() {
-		List<IConnectionLayout> outgoing = new ArrayList<>();
+	public IEdgeLayout[] getOutgoingConnections() {
+		List<IEdgeLayout> outgoing = new ArrayList<>();
 
-		IConnectionLayout[] connections = context.getEdges();
-		for (IConnectionLayout c : connections) {
+		IEdgeLayout[] connections = context.getEdges();
+		for (IEdgeLayout c : connections) {
 			if (c.getSource() == this) {
 				outgoing.add(c);
 			}
 		}
 
-		return outgoing.toArray(new IConnectionLayout[0]);
+		return outgoing.toArray(new IEdgeLayout[0]);
 	}
 
 	@Override
 	public INodeLayout[] getPredecessingNodes() {
-		IConnectionLayout[] incomingConnections = getIncomingConnections();
+		IEdgeLayout[] incomingConnections = getIncomingConnections();
 		INodeLayout[] predecessors = new INodeLayout[incomingConnections.length];
 		int i = 0;
-		for (IConnectionLayout incomingConnection : incomingConnections) {
+		for (IEdgeLayout incomingConnection : incomingConnections) {
 			predecessors[i++] = incomingConnection.getSource();
 		}
 		return predecessors;
@@ -115,10 +115,10 @@ public class GraphNodeLayout implements INodeLayout {
 
 	@Override
 	public INodeLayout[] getSuccessingNodes() {
-		IConnectionLayout[] outgoingConnections = getOutgoingConnections();
+		IEdgeLayout[] outgoingConnections = getOutgoingConnections();
 		INodeLayout[] successors = new INodeLayout[outgoingConnections.length];
 		int i = 0;
-		for (IConnectionLayout outgoingConnection : outgoingConnections) {
+		for (IEdgeLayout outgoingConnection : outgoingConnections) {
 			successors[i++] = outgoingConnection.getTarget();
 		}
 		return successors;

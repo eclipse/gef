@@ -35,20 +35,20 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	private ObjectProperty<ILayoutAlgorithm> layoutAlgorithmProperty = new SimpleObjectProperty<>(
 			this, LAYOUT_ALGORITHM_PROPERTY);
 	private final List<INodeLayout> layoutNodes = new ArrayList<>();
-	private final List<IConnectionLayout> layoutEdges = new ArrayList<>();
+	private final List<IEdgeLayout> layoutEdges = new ArrayList<>();
 
 	private final List<Runnable> postLayoutPass = new ArrayList<>();
 	private final List<Runnable> preLayoutPass = new ArrayList<>();
 	private final List<ILayoutFilter> layoutFilters = new ArrayList<>();
 
 	/**
-	 * Adds the given {@link IConnectionLayout} to the list of edges and fires a
+	 * Adds the given {@link IEdgeLayout} to the list of edges and fires a
 	 * corresponding connection-added-event.
 	 *
 	 * @param edge
-	 *            {@link IConnectionLayout} to add
+	 *            {@link IEdgeLayout} to add
 	 */
-	protected void addEdge(IConnectionLayout edge) {
+	protected void addEdge(IEdgeLayout edge) {
 		layoutEdges.add(edge);
 	}
 
@@ -82,10 +82,10 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 
 	/**
 	 * Removes all edges from this context using individual
-	 * {@link #removeEdge(IConnectionLayout)} calls.
+	 * {@link #removeEdge(IEdgeLayout)} calls.
 	 */
 	protected void clearEdges() {
-		for (IConnectionLayout edge : new ArrayList<>(layoutEdges)) {
+		for (IEdgeLayout edge : new ArrayList<>(layoutEdges)) {
 			removeEdge(edge);
 		}
 	}
@@ -116,28 +116,28 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	@Override
-	public IConnectionLayout[] getEdges() {
-		return layoutEdges.toArray(new IConnectionLayout[0]);
+	public IEdgeLayout[] getEdges() {
+		return layoutEdges.toArray(new IEdgeLayout[0]);
 	}
 
 	@Override
-	public IConnectionLayout[] getConnections(INodeLayout layoutEntity1,
+	public IEdgeLayout[] getConnections(INodeLayout layoutEntity1,
 			INodeLayout layoutEntity2) {
-		List<IConnectionLayout> connections = new ArrayList<>();
+		List<IEdgeLayout> connections = new ArrayList<>();
 
-		for (IConnectionLayout c : layoutEntity1.getOutgoingConnections()) {
+		for (IEdgeLayout c : layoutEntity1.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity2) {
 				connections.add(c);
 			}
 		}
 
-		for (IConnectionLayout c : layoutEntity2.getOutgoingConnections()) {
+		for (IEdgeLayout c : layoutEntity2.getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity1) {
 				connections.add(c);
 			}
 		}
 
-		return connections.toArray(new IConnectionLayout[0]);
+		return connections.toArray(new IEdgeLayout[0]);
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	@Override
-	public boolean isLayoutIrrelevant(IConnectionLayout connLayout) {
+	public boolean isLayoutIrrelevant(IEdgeLayout connLayout) {
 		for (ILayoutFilter filter : layoutFilters) {
 			if (filter.isLayoutIrrelevant(connLayout)) {
 				return true;
@@ -176,13 +176,13 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	};
 
 	/**
-	 * Removes the given {@link IConnectionLayout} from the list of edges and
+	 * Removes the given {@link IEdgeLayout} from the list of edges and
 	 * fires a corresponding connection-removed-event.
 	 *
 	 * @param edge
-	 *            {@link IConnectionLayout} to remove
+	 *            {@link IEdgeLayout} to remove
 	 */
-	protected void removeEdge(IConnectionLayout edge) {
+	protected void removeEdge(IEdgeLayout edge) {
 		layoutEdges.remove(edge);
 	}
 

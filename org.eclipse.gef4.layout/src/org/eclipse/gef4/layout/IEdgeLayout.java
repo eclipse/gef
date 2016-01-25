@@ -14,11 +14,11 @@ package org.eclipse.gef4.layout;
 import org.eclipse.gef4.common.attributes.IAttributeStore;
 
 /**
- * An {@link IConnectionLayout} represents a connection between two
+ * An {@link IEdgeLayout} represents a connection between two
  * {@link INodeLayout}s, i.e. it represents an edge of a graph within the layout
  * model.
  */
-public interface IConnectionLayout extends IAttributeStore {
+public interface IEdgeLayout extends IAttributeStore {
 
 	/**
 	 * @return source node

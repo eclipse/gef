@@ -65,7 +65,7 @@ public interface ILayoutContext extends IAttributeStore {
 	 * 
 	 * @return array of connections between nodes
 	 */
-	public IConnectionLayout[] getEdges();
+	public IEdgeLayout[] getEdges();
 
 	/**
 	 * Returns all the connections between given source and target entities. If
@@ -80,7 +80,7 @@ public interface ILayoutContext extends IAttributeStore {
 	 *            The target entity.
 	 * @return The connections between the source and target entities.
 	 */
-	public IConnectionLayout[] getConnections(INodeLayout layoutEntity1,
+	public IEdgeLayout[] getConnections(INodeLayout layoutEntity1,
 			INodeLayout layoutEntity2);
 
 	/**
@@ -117,17 +117,17 @@ public interface ILayoutContext extends IAttributeStore {
 	public void unschedulePostLayoutPass(Runnable runnable);
 
 	/**
-	 * Returns <code>true</code> when the given {@link IConnectionLayout} is not
+	 * Returns <code>true</code> when the given {@link IEdgeLayout} is not
 	 * relevant for layout according to the configured {@link ILayoutFilter
 	 * layout filters}. Otherwise returns <code>false</code>.
 	 * 
 	 * @param connLayout
-	 *            The {@link IConnectionLayout} in question.
-	 * @return <code>true</code> when the given {@link IConnectionLayout} is not
+	 *            The {@link IEdgeLayout} in question.
+	 * @return <code>true</code> when the given {@link IEdgeLayout} is not
 	 *         relevant for layout according to the configure layout filters,
 	 *         otherwise <code>false</code>.
 	 */
-	public boolean isLayoutIrrelevant(IConnectionLayout connLayout);
+	public boolean isLayoutIrrelevant(IEdgeLayout connLayout);
 
 	/**
 	 * Returns <code>true</code> when the given {@link INodeLayout} is not

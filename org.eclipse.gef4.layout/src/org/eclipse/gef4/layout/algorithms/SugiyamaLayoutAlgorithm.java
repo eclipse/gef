@@ -31,7 +31,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
@@ -850,9 +850,9 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		 * @param b
 		 * @return
 		 */
-		private List<IConnectionLayout> intersectOfConnections(
-				IConnectionLayout[] a, IConnectionLayout[] b) {
-			ArrayList<IConnectionLayout> res = new ArrayList<>();
+		private List<IEdgeLayout> intersectOfConnections(
+				IEdgeLayout[] a, IEdgeLayout[] b) {
+			ArrayList<IEdgeLayout> res = new ArrayList<>();
 
 			for (int i = 0; i < a.length; i++)
 				for (int j = 0; j < b.length; j++)

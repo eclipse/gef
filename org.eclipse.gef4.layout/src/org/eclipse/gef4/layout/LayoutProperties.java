@@ -18,7 +18,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 
 /**
  * {@link LayoutProperties} contains all properties which can be accessed on
- * {@link ILayoutContext}, {@link IConnectionLayout}, {@link INodeLayout}, their
+ * {@link ILayoutContext}, {@link IEdgeLayout}, {@link INodeLayout}, their
  * default values, as well as static accessor methods for those properties.
  */
 public class LayoutProperties {
@@ -435,15 +435,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #DIRECTED_PROPERTY} of the given
-	 * {@link IConnectionLayout}.
+	 * {@link IEdgeLayout}.
 	 * 
 	 * @param edge
-	 *            The {@link IConnectionLayout} whose {@link #DIRECTED_PROPERTY}
+	 *            The {@link IEdgeLayout} whose {@link #DIRECTED_PROPERTY}
 	 *            is read.
 	 * @return The value of the {@link #DIRECTED_PROPERTY} of the given
-	 *         {@link IConnectionLayout}.
+	 *         {@link IEdgeLayout}.
 	 */
-	public static Boolean isDirected(IConnectionLayout edge) {
+	public static Boolean isDirected(IEdgeLayout edge) {
 		Object directed = edge.getAttributes().get(DIRECTED_PROPERTY);
 		if (directed instanceof Boolean) {
 			return (Boolean) directed;
@@ -453,15 +453,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
-	 * {@link IConnectionLayout}.
+	 * {@link IEdgeLayout}.
 	 * 
 	 * @param edge
-	 *            The {@link IConnectionLayout} whose {@link #VISIBLE_PROPERTY}
+	 *            The {@link IEdgeLayout} whose {@link #VISIBLE_PROPERTY}
 	 *            is read.
 	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
-	 *         {@link IConnectionLayout}.
+	 *         {@link IEdgeLayout}.
 	 */
-	public static Boolean isVisible(IConnectionLayout edge) {
+	public static Boolean isVisible(IEdgeLayout edge) {
 		Object visible = edge.getAttributes().get(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
@@ -489,15 +489,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #WEIGHT_PROPERTY} of the given
-	 * {@link IConnectionLayout}.
+	 * {@link IEdgeLayout}.
 	 * 
 	 * @param edge
-	 *            The {@link IConnectionLayout} whose {@link #WEIGHT_PROPERTY}
+	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY}
 	 *            is read.
 	 * @return The value of the {@link #WEIGHT_PROPERTY} of the given
-	 *         {@link IConnectionLayout}.
+	 *         {@link IEdgeLayout}.
 	 */
-	public static Double getWeight(IConnectionLayout edge) {
+	public static Double getWeight(IEdgeLayout edge) {
 		Object weight = edge.getAttributes().get(WEIGHT_PROPERTY);
 		if (weight instanceof Double) {
 			return (Double) weight;
@@ -507,46 +507,46 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #DIRECTED_PROPERTY} of the given
-	 * {@link IConnectionLayout} to the given value.
+	 * {@link IEdgeLayout} to the given value.
 	 * 
 	 * @param edge
-	 *            The {@link IConnectionLayout} whose {@link #DIRECTED_PROPERTY}
+	 *            The {@link IEdgeLayout} whose {@link #DIRECTED_PROPERTY}
 	 *            is changed.
 	 * @param directed
 	 *            The new value for the {@link #DIRECTED_PROPERTY} of the given
-	 *            {@link IConnectionLayout}.
+	 *            {@link IEdgeLayout}.
 	 */
-	public static void setDirected(IConnectionLayout edge, boolean directed) {
+	public static void setDirected(IEdgeLayout edge, boolean directed) {
 		edge.getAttributes().put(DIRECTED_PROPERTY, directed);
 	}
 
 	/**
 	 * Sets the value of the {@link #VISIBLE_PROPERTY} of the given
-	 * {@link IConnectionLayout} to the given value.
+	 * {@link IEdgeLayout} to the given value.
 	 * 
 	 * @param edge
-	 *            The {@link IConnectionLayout} whose {@link #VISIBLE_PROPERTY}
+	 *            The {@link IEdgeLayout} whose {@link #VISIBLE_PROPERTY}
 	 *            is changed.
 	 * @param visible
 	 *            The new value for the {@link #VISIBLE_PROPERTY} of the given
-	 *            {@link IConnectionLayout}.
+	 *            {@link IEdgeLayout}.
 	 */
-	public static void setVisible(IConnectionLayout edge, boolean visible) {
+	public static void setVisible(IEdgeLayout edge, boolean visible) {
 		edge.getAttributes().put(VISIBLE_PROPERTY, visible);
 	}
 
 	/**
 	 * Sets the value of the {@link #WEIGHT_PROPERTY} of the given
-	 * {@link IConnectionLayout} to the given value.
+	 * {@link IEdgeLayout} to the given value.
 	 * 
 	 * @param edge
-	 *            The {@link IConnectionLayout} whose {@link #WEIGHT_PROPERTY}
+	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY}
 	 *            is changed.
 	 * @param weight
 	 *            The new value for the {@link #WEIGHT_PROPERTY} of the given
-	 *            {@link IConnectionLayout}.
+	 *            {@link IEdgeLayout}.
 	 */
-	public static void setWeight(IConnectionLayout edge, double weight) {
+	public static void setWeight(IEdgeLayout edge, double weight) {
 		edge.getAttributes().put(WEIGHT_PROPERTY, weight);
 	}
 

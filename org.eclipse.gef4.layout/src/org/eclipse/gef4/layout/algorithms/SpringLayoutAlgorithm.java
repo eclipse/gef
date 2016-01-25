@@ -19,7 +19,7 @@ import java.util.HashMap;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IConnectionLayout;
+import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.layout.INodeLayout;
@@ -384,9 +384,9 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			entityToPosition.put(entities[i], new Integer(i));
 		}
 
-		IConnectionLayout[] connections = context.getEdges();
+		IEdgeLayout[] connections = context.getEdges();
 		for (int i = 0; i < connections.length; i++) {
-			IConnectionLayout connection = connections[i];
+			IEdgeLayout connection = connections[i];
 			Integer source = entityToPosition.get(connection.getSource());
 			Integer target = entityToPosition.get(connection.getTarget());
 			if (source == null || target == null)
