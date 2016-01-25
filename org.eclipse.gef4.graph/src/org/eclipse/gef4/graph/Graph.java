@@ -320,9 +320,9 @@ public final class Graph implements IAttributeStore {
 		// the enclosing bean; to prevent a StackOverflowError here, we fall
 		// back comparing the observed map value instead.
 		boolean attrsEqual = attributesProperty.get() == null ? false
-				: attributesProperty().get().equals(((Node) other).attributesProperty());
-		boolean nodesEqual = this.getNodes().equals(otherGraph.getNodes());
-		boolean edgesEqual = this.getEdges().equals(otherGraph.getEdges());
+				: attributesProperty().get().equals(otherGraph.attributesProperty());
+		boolean nodesEqual = nodesProperty.get() == null ? false : nodesProperty.get().equals(otherGraph.getNodes());
+		boolean edgesEqual = edgesProperty.get() == null ? false : edgesProperty.get().equals(otherGraph.getEdges());
 		return attrsEqual && nodesEqual && edgesEqual;
 	}
 
@@ -367,8 +367,8 @@ public final class Graph implements IAttributeStore {
 		// enclosing bean; to prevent a StackOverflowError, we fall back to the
 		// hash code of the contained map value, rather than the property itself
 		result = 31 * result + (attributesProperty.get() == null ? 0 : attributesProperty.get().hashCode());
-		result = 31 * result + getNodes().hashCode();
-		result = 31 * result + getEdges().hashCode();
+		result = 31 * result + nodesProperty.get().hashCode();
+		result = 31 * result + edgesProperty.get().hashCode();
 		return result;
 	}
 

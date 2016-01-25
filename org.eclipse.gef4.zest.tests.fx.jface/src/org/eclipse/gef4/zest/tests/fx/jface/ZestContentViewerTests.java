@@ -438,29 +438,15 @@ public class ZestContentViewerTests {
 
 	@Test
 	public void test_provideEmptyNull() {
-		boolean thrown = false;
-		try {
-			viewer.setContentProvider(new EmptyContentProvider());
-			viewer.setInput(new Object());
-		} catch (Exception x) {
-			thrown = true;
-		}
-		// no exception => success
-		assertFalse(thrown);
+		viewer.setContentProvider(new EmptyContentProvider());
+		viewer.setInput(new Object());
 	}
 
 	@Test
 	public void test_provideNull() {
-		boolean thrown = false;
-		try {
-			viewer.setContentProvider(new NullContentProvider());
-			viewer.setLabelProvider(new NullLabelProvider());
-			viewer.setInput(new Object());
-		} catch (Exception x) {
-			thrown = true;
-		}
-		// no exception => success
-		assertFalse(thrown);
+		viewer.setContentProvider(new NullContentProvider());
+		viewer.setLabelProvider(new NullLabelProvider());
+		viewer.setInput(new Object());
 	}
 
 	@SuppressWarnings("serial")
