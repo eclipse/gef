@@ -245,7 +245,7 @@ public class Edge implements IAttributeStore {
 		// the enclosing bean; to prevent a StackOverflowError here, we fall
 		// back comparing the observed map value instead.
 		boolean attrsEqual = attributesProperty.get() == null ? false
-				: attributesProperty().get().equals(((Node) other).attributesProperty());
+				: attributesProperty().get().equals(otherEdge.attributesProperty());
 		boolean sourceEqual = this.getSource().equals(otherEdge.getSource());
 		boolean targetEqual = this.getTarget().equals(otherEdge.getTarget());
 		return attrsEqual && sourceEqual && targetEqual;
