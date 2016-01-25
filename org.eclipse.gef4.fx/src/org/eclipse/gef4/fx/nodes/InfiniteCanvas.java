@@ -55,8 +55,7 @@ import javafx.util.Duration;
 /**
  * An {@link InfiniteCanvas} provides a means to render a portion of a
  * hypothetically infinite canvas, on which arbitrary contents can be placed.
- * <p>
- *
+ * 
  * <pre>
  * +----------------+
  * |content area    |
@@ -763,9 +762,9 @@ public class InfiniteCanvas extends Region {
 	 * test if fit-to-size can be performed:
 	 *
 	 * <pre>
-	 * if (infiniteCanvas.getWidth() > 0 && infiniteCanvas.getHeight() > 0
-	 * 		&& infiniteCanvas.getContentBounds().getWidth() > 0
-	 * 		&& infiniteCanvas.getContentBounds().getHeight() > 0) {
+	 * if (infiniteCanvas.getWidth() &gt; 0 &amp;&amp; infiniteCanvas.getHeight() &gt; 0
+	 * 		&amp;&amp; infiniteCanvas.getContentBounds().getWidth() &gt; 0
+	 * 		&amp;&amp; infiniteCanvas.getContentBounds().getHeight() &gt; 0) {
 	 * 	// save to call fit-to-size here
 	 * 	infiniteCanvas.fitToSize();
 	 * }
