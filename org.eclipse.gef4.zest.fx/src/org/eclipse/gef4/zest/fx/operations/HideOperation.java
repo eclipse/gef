@@ -64,6 +64,11 @@ public class HideOperation extends AbstractOperation implements ITransactionalOp
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return initialHiddenStatus;
 	}

@@ -74,6 +74,11 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		Set<NodeContentPart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
 		return hiddenNeighbors != null && !hiddenNeighbors.isEmpty();

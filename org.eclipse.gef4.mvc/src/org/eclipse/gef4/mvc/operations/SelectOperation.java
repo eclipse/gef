@@ -52,10 +52,8 @@ public class SelectOperation<VR> extends AbstractOperation
 	public static final String DEFAULT_LABEL = "Select";
 
 	private IViewer<VR> viewer;
-
 	private List<IContentPart<VR, ? extends VR>> initialSelection;
 	private List<IContentPart<VR, ? extends VR>> toBeSelected;
-
 	private List<IContentPart<VR, ? extends VR>> selected;
 
 	/**
@@ -118,6 +116,11 @@ public class SelectOperation<VR> extends AbstractOperation
 				}.where(new TypeParameter<VR>() {
 				}, Types.<VR> argumentOf(viewer.getClass())));
 		return selectionModel;
+	}
+
+	@Override
+	public boolean isContentRelevant() {
+		return false;
 	}
 
 	@Override

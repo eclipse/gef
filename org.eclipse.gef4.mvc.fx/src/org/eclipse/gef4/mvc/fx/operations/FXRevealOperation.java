@@ -66,6 +66,11 @@ public class FXRevealOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return false;
 	}

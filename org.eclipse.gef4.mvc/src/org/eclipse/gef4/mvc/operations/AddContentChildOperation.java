@@ -83,6 +83,11 @@ public class AddContentChildOperation<VR> extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return true;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return initialContentChildren.contains(contentChild);
 	}

@@ -155,6 +155,16 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		return operations;
 	}
 
+	@Override
+	public boolean isContentRelevant() {
+		for (ITransactionalOperation op : operations) {
+			if (op.isContentRelevant()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Returns <code>true</code> if no operations are currently combined in this
 	 * composite operation. Otherwise returns <code>false</code>.

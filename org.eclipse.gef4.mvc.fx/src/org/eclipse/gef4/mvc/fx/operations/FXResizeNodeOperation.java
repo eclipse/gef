@@ -147,6 +147,11 @@ public class FXResizeNodeOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return dw == 0 && dh == 0;
 	}

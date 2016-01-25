@@ -53,10 +53,8 @@ public class DeselectOperation<VR> extends AbstractOperation
 	public static final String DEFAULT_LABEL = "Select";
 
 	private IViewer<VR> viewer;
-
 	private List<IContentPart<VR, ? extends VR>> initialSelection;
 	private List<IContentPart<VR, ? extends VR>> toBeDeselected;
-
 	private ArrayList<IContentPart<VR, ? extends VR>> deselected;
 
 	/**
@@ -128,6 +126,11 @@ public class DeselectOperation<VR> extends AbstractOperation
 	 */
 	public List<IContentPart<VR, ? extends VR>> getToBeDeselected() {
 		return toBeDeselected;
+	}
+
+	@Override
+	public boolean isContentRelevant() {
+		return false;
 	}
 
 	@Override

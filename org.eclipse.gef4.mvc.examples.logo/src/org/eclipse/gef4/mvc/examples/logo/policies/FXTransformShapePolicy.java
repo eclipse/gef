@@ -53,6 +53,11 @@ public class FXTransformShapePolicy extends FXTransformPolicy {
 		}
 
 		@Override
+		public boolean isContentRelevant() {
+			return true;
+		}
+
+		@Override
 		public boolean isNoOp() {
 			return oldTx == newTx || (oldTx != null && oldTx.equals(newTx));
 		}

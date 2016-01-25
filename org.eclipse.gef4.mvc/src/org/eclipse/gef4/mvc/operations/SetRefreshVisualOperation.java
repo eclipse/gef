@@ -71,6 +71,11 @@ public class SetRefreshVisualOperation<VR> extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return from == to;
 	}

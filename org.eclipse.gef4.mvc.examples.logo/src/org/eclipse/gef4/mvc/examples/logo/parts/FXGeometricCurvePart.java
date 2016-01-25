@@ -81,6 +81,11 @@ public class FXGeometricCurvePart
 		}
 
 		@Override
+		public boolean isContentRelevant() {
+			return true;
+		}
+
+		@Override
 		public boolean isNoOp() {
 			return oldWayPoints == newWayPoints || (oldWayPoints != null
 					&& oldWayPoints.equals(newWayPoints));

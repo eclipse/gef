@@ -97,6 +97,11 @@ public class FXBendOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return true;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return initialAnchors.equals(newAnchors);
 	}

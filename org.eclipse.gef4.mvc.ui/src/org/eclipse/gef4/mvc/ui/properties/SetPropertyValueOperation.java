@@ -200,6 +200,11 @@ public class SetPropertyValueOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return oldValue == newValue
 				|| (oldValue != null && oldValue.equals(newValue));

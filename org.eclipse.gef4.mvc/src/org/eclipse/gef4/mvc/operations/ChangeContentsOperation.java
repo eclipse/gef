@@ -121,6 +121,11 @@ public class ChangeContentsOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return true;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return initialContents == newContents || (initialContents != null
 				&& initialContents.equals(newContents));

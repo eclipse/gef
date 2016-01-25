@@ -81,6 +81,11 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return true;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return !initialContentAnchorages.containsEntry(contentAnchorage, role);
 	}

@@ -15,10 +15,12 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
@@ -238,11 +240,16 @@ public abstract class AbstractFXEditor extends EditorPart {
 		operationHistoryListener = new IOperationHistoryListener() {
 			@Override
 			public void historyNotification(final OperationHistoryEvent event) {
+				IUndoableOperation operation = event.getOperation();
 				if (event
 						.getEventType() == OperationHistoryEvent.OPERATION_ADDED
-						&& event.getHistory().getUndoHistory(event
-								.getOperation().getContexts()[0]).length > 0) {
-					setDirty(true);
+						&& event.getHistory().getUndoHistory(
+								operation.getContexts()[0]).length > 0) {
+					if (!(operation instanceof ITransactionalOperation)
+							|| ((ITransactionalOperation) operation)
+									.isContentRelevant()) {
+						setDirty(true);
+					}
 				}
 			}
 		};

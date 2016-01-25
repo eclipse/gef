@@ -84,6 +84,7 @@ public class FXTransformOperation extends AbstractOperation
 	private final Affine nodeTransform;
 
 	private Affine initialTransform;
+
 	private Affine newTransform;
 
 	/**
@@ -127,6 +128,17 @@ public class FXTransformOperation extends AbstractOperation
 
 	/**
 	 * Returns the {@link Affine} that will be applied to the
+	 * <i>nodeTransform</i> upon undoing of this operation.
+	 *
+	 * @return The {@link Affine} that will be applied to the
+	 *         <i>nodeTransform</i> upon undoing of this operation.
+	 */
+	public Affine getInitialTransform() {
+		return initialTransform;
+	}
+
+	/**
+	 * Returns the {@link Affine} that will be applied to the
 	 * <i>nodeTransform</i> upon execution of this operation.
 	 *
 	 * @return The {@link Affine} that will be applied to the
@@ -136,15 +148,9 @@ public class FXTransformOperation extends AbstractOperation
 		return newTransform;
 	}
 
-	/**
-	 * Returns the {@link Affine} that will be applied to the
-	 * <i>nodeTransform</i> upon undoing of this operation.
-	 *
-	 * @return The {@link Affine} that will be applied to the
-	 *         <i>nodeTransform</i> upon undoing of this operation.
-	 */
-	public Affine getInitialTransform() {
-		return initialTransform;
+	@Override
+	public boolean isContentRelevant() {
+		return false;
 	}
 
 	@Override

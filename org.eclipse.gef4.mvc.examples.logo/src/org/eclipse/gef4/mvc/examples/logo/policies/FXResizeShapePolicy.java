@@ -49,6 +49,11 @@ public class FXResizeShapePolicy extends FXResizePolicy {
 		}
 
 		@Override
+		public boolean isContentRelevant() {
+			return true;
+		}
+
+		@Override
 		public boolean isNoOp() {
 			return oldGeometry == newGeometry
 					|| (oldGeometry != null && oldGeometry.equals(newGeometry));

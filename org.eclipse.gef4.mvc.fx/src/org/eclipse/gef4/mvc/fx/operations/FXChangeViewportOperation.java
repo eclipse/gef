@@ -368,6 +368,11 @@ public class FXChangeViewportOperation extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return getNewWidth() == getInitialWidth()
 				&& getNewHeight() == getInitialHeight()

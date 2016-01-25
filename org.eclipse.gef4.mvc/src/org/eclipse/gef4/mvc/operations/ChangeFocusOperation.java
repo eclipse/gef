@@ -115,6 +115,11 @@ public class ChangeFocusOperation<VR> extends AbstractOperation
 	}
 
 	@Override
+	public boolean isContentRelevant() {
+		return false;
+	}
+
+	@Override
 	public boolean isNoOp() {
 		return oldFocused == newFocused;
 	}
