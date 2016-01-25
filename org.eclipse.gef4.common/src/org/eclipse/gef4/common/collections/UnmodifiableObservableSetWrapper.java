@@ -19,21 +19,22 @@ import java.util.Set;
 import com.sun.javafx.collections.ObservableSetWrapper;
 
 /**
- * An {@link UnmodifiableObservableSetWrapper} is an {@link ObservableSetWrapper} that
- * prevents manipulations to the backing data structure by throwing
- * {@link UnsupportedOperationException}s when any of the modification methods
- * is called.
+ * An {@link UnmodifiableObservableSetWrapper} is an
+ * {@link ObservableSetWrapper} that prevents manipulations to the backing data
+ * structure by throwing {@link UnsupportedOperationException}s when any of the
+ * modification methods is called.
  *
  * @author mwienand
  *
  * @param <E>
  *            Type parameter for the contained elements.
  */
-public class UnmodifiableObservableSetWrapper<E> extends ObservableSetWrapper<E> {
+public class UnmodifiableObservableSetWrapper<E>
+		extends ObservableSetWrapper<E> {
 
 	/**
-	 * Creates a new {@link UnmodifiableObservableSetWrapper} that is backed by the
-	 * given {@link Set}.
+	 * Creates a new {@link UnmodifiableObservableSetWrapper} that is backed by
+	 * the given {@link Set}.
 	 *
 	 * @param backingSet
 	 *            The {@link Set} that is backing this

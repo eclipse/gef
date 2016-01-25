@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.collections;
 
@@ -24,7 +24,7 @@ import javafx.beans.InvalidationListener;
 /**
  * An unmodifiable {@link ObservableSetMultimap}, wrapping an
  * {@link ObservableMultiset}.
- * 
+ *
  * @author anyssen
  *
  * @param <E>
@@ -38,7 +38,7 @@ public class UnmodifiableObservableMultisetWrapper<E>
 	/**
 	 * Creates a new {@link UnmodifiableObservableSetMultimapWrapper} for the
 	 * given {@link ObservableMultiset}.
-	 * 
+	 *
 	 * @param observableMultiset
 	 *            The {@link ObservableMultiset} to wrap.
 	 */
@@ -48,8 +48,8 @@ public class UnmodifiableObservableMultisetWrapper<E>
 	}
 
 	@Override
-	public int count(Object element) {
-		return observableMultiset.count(element);
+	public boolean add(E element) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -58,7 +58,97 @@ public class UnmodifiableObservableMultisetWrapper<E>
 	}
 
 	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addListener(InvalidationListener listener) {
+		observableMultiset.addListener(listener);
+	}
+
+	@Override
+	public void addListener(MultisetChangeListener<? super E> listener) {
+		observableMultiset.addListener(listener);
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean contains(Object element) {
+		return observableMultiset.contains(element);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> elements) {
+		return observableMultiset.containsAll(elements);
+	}
+
+	@Override
+	public int count(Object element) {
+		return observableMultiset.count(element);
+	}
+
+	@Override
+	public Set<E> elementSet() {
+		return Collections.unmodifiableSet(observableMultiset.elementSet());
+	}
+
+	@Override
+	public Set<Multiset.Entry<E>> entrySet() {
+		return Collections.unmodifiableSet(observableMultiset.entrySet());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return observableMultiset.equals(obj);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return observableMultiset.isEmpty();
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return Iterators.unmodifiableIterator(observableMultiset.iterator());
+	}
+
+	@Override
+	public boolean remove(Object element) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public int remove(Object element, int occurrences) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void removeListener(InvalidationListener listener) {
+		observableMultiset.removeListener(listener);
+	}
+
+	@Override
+	public void removeListener(MultisetChangeListener<? super E> listener) {
+		observableMultiset.removeListener(listener);
+	}
+
+	@Override
+	public boolean replaceAll(Multiset<? extends E> multiset) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -73,63 +163,8 @@ public class UnmodifiableObservableMultisetWrapper<E>
 	}
 
 	@Override
-	public Set<E> elementSet() {
-		return Collections.unmodifiableSet(observableMultiset.elementSet());
-	}
-
-	@Override
-	public Set<Multiset.Entry<E>> entrySet() {
-		return Collections.unmodifiableSet(observableMultiset.entrySet());
-	}
-
-	@Override
-	public Iterator<E> iterator() {
-		return Iterators.unmodifiableIterator(observableMultiset.iterator());
-	}
-
-	@Override
-	public boolean contains(Object element) {
-		return observableMultiset.contains(element);
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> elements) {
-		return observableMultiset.containsAll(elements);
-	}
-
-	@Override
-	public boolean add(E element) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean remove(Object element) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean replaceAll(Multiset<? extends E> multiset) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public int size() {
 		return observableMultiset.size();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return observableMultiset.isEmpty();
 	}
 
 	@Override
@@ -140,36 +175,6 @@ public class UnmodifiableObservableMultisetWrapper<E>
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return observableMultiset.toArray(a);
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void addListener(InvalidationListener listener) {
-		observableMultiset.addListener(listener);
-	}
-
-	@Override
-	public void removeListener(InvalidationListener listener) {
-		observableMultiset.removeListener(listener);
-	}
-
-	@Override
-	public void addListener(MultisetChangeListener<? super E> listener) {
-		observableMultiset.addListener(listener);
-	}
-
-	@Override
-	public void removeListener(MultisetChangeListener<? super E> listener) {
-		observableMultiset.removeListener(listener);
 	}
 
 }

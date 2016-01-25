@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.collections;
 
@@ -27,7 +27,7 @@ import javafx.beans.InvalidationListener;
 /**
  * An unmodifiable {@link ObservableSetMultimap}, wrapping an
  * {@link ObservableSetMultimap}.
- * 
+ *
  * @author anyssen
  *
  * @param <K>
@@ -43,7 +43,7 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	/**
 	 * Creates a new {@link UnmodifiableObservableSetMultimapWrapper} for the
 	 * given {@link ObservableSetMultimap}.
-	 * 
+	 *
 	 * @param observableSetMultimap
 	 *            The {@link ObservableSetMultimap} to wrap.
 	 */
@@ -53,23 +53,15 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	}
 
 	@Override
-	public Set<V> get(K key) {
-		return Collections.unmodifiableSet(observableSetMultimap.get(key));
+	public void addListener(InvalidationListener listener) {
+		observableSetMultimap.addListener(listener);
 	}
 
 	@Override
-	public Set<V> removeAll(Object key) {
-		throw new UnsupportedOperationException();
-	}
+	public void addListener(
+			SetMultimapChangeListener<? super K, ? super V> listener) {
+		observableSetMultimap.addListener(listener);
 
-	@Override
-	public Set<V> replaceValues(K key, Iterable<? extends V> values) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Set<Entry<K, V>> entries() {
-		return Collections.unmodifiableSet(observableSetMultimap.entries());
 	}
 
 	@Override
@@ -78,13 +70,13 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	}
 
 	@Override
-	public int size() {
-		return observableSetMultimap.size();
+	public void clear() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return observableSetMultimap.isEmpty();
+	public boolean containsEntry(Object key, Object value) {
+		return observableSetMultimap.containsEntry(key, value);
 	}
 
 	@Override
@@ -98,17 +90,37 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	}
 
 	@Override
-	public boolean containsEntry(Object key, Object value) {
-		return observableSetMultimap.containsEntry(key, value);
+	public Set<Entry<K, V>> entries() {
+		return Collections.unmodifiableSet(observableSetMultimap.entries());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return observableSetMultimap.equals(obj);
+	}
+
+	@Override
+	public Set<V> get(K key) {
+		return Collections.unmodifiableSet(observableSetMultimap.get(key));
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return observableSetMultimap.isEmpty();
+	}
+
+	@Override
+	public Multiset<K> keys() {
+		return Multisets.unmodifiableMultiset(observableSetMultimap.keys());
+	}
+
+	@Override
+	public Set<K> keySet() {
+		return Collections.unmodifiableSet(observableSetMultimap.keySet());
 	}
 
 	@Override
 	public boolean put(K key, V value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean remove(Object key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -123,41 +135,18 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	}
 
 	@Override
-	public void clear() {
+	public boolean remove(Object key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Set<K> keySet() {
-		return Collections.unmodifiableSet(observableSetMultimap.keySet());
-	}
-
-	@Override
-	public Multiset<K> keys() {
-		return Multisets.unmodifiableMultiset(observableSetMultimap.keys());
-	}
-
-	@Override
-	public Collection<V> values() {
-		return Collections
-				.unmodifiableCollection(observableSetMultimap.values());
-	}
-
-	@Override
-	public void addListener(InvalidationListener listener) {
-		observableSetMultimap.addListener(listener);
+	public Set<V> removeAll(Object key) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void removeListener(InvalidationListener listener) {
 		observableSetMultimap.removeListener(listener);
-
-	}
-
-	@Override
-	public void addListener(
-			SetMultimapChangeListener<? super K, ? super V> listener) {
-		observableSetMultimap.addListener(listener);
 
 	}
 
@@ -171,6 +160,22 @@ public class UnmodifiableObservableSetMultimapWrapper<K, V>
 	public boolean replaceAll(
 			SetMultimap<? extends K, ? extends V> setMultimap) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<V> replaceValues(K key, Iterable<? extends V> values) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int size() {
+		return observableSetMultimap.size();
+	}
+
+	@Override
+	public Collection<V> values() {
+		return Collections
+				.unmodifiableCollection(observableSetMultimap.values());
 	}
 
 }
