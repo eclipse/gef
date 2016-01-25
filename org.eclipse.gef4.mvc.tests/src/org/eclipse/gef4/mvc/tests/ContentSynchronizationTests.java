@@ -15,7 +15,7 @@ package org.eclipse.gef4.mvc.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
@@ -229,15 +229,6 @@ public class ContentSynchronizationTests {
 		}
 
 		@Override
-		protected void doRefreshVisual(Object visual) {
-		}
-
-		@Override
-		public Tree getContent() {
-			return (Tree) super.getContent();
-		}
-
-		@Override
 		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
@@ -255,6 +246,15 @@ public class ContentSynchronizationTests {
 				return Arrays.asList(tree.left);
 			}
 			return Arrays.asList(tree.left, tree.right);
+		}
+
+		@Override
+		protected void doRefreshVisual(Object visual) {
+		}
+
+		@Override
+		public Tree getContent() {
+			return (Tree) super.getContent();
 		}
 
 		@Override
@@ -279,6 +279,18 @@ public class ContentSynchronizationTests {
 		domain = new Domain();
 		injector.injectMembers(domain);
 		viewer = domain.getAdapter(Viewer.class);
+
+		// ensure exceptions are not caught
+		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				if (e instanceof RuntimeException) {
+					throw ((RuntimeException) e);
+				}
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	@Before
@@ -327,20 +339,15 @@ public class ContentSynchronizationTests {
 		// create tree A with {left = B, right = B}
 		List<Tree> sameContents = Arrays.asList(new Tree(0, b, b));
 
-		// check if the exception is thrown when the contents are set
-		final boolean[] uncaught = new boolean[] { false };
-		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread t, Throwable e) {
-				assertTrue(e instanceof IllegalStateException);
-				assertEquals(
-						"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.",
-						e.getMessage());
-				uncaught[0] = true;
-			}
-		});
-		viewer.getAdapter(ContentModel.class).getContents().setAll(sameContents);
-		assertTrue(uncaught[0]);
+		try {
+			viewer.getAdapter(ContentModel.class).getContents().setAll(sameContents);
+			// check if the exception is thrown when the contents are set
+			fail("Exception expected");
+		} catch (IllegalStateException e) {
+			assertEquals(
+					"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.",
+					e.getMessage());
+		}
 	}
 
 }
