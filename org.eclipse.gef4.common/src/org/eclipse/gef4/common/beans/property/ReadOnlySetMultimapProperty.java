@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
@@ -34,12 +34,12 @@ import javafx.beans.property.ReadOnlySetProperty;
  * This class provides identical functionality for {@link SetMultimap} as
  * {@link ReadOnlyMapProperty} for {@link Map}, {@link ReadOnlySetProperty} for
  * {@link Set}, or {@link ReadOnlyListProperty} for {@link List}.
- * 
+ *
  * @param <K>
  *            The key type of the wrapped {@link ObservableSetMultimap}.
  * @param <V>
  *            The value type of the wrapped {@link ObservableSetMultimap}.
- * 
+ *
  * @author anyssen
  */
 public abstract class ReadOnlySetMultimapProperty<K, V>
@@ -50,7 +50,7 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 	 * Appends a representation of this {@link SetMultimapProperty}'s value to
 	 * the given {@link StringBuilder}. Gets called from {@link #toString()} to
 	 * allow subclasses to provide a changed value representation.
-	 * 
+	 *
 	 * @param result
 	 *            A {@link StringBuilder} to append the value representation to.
 	 */
@@ -98,7 +98,6 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 		BindingUtils.bindContentBidirectional(this, other);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other) {
 		if (other == this) {
@@ -109,30 +108,15 @@ public abstract class ReadOnlySetMultimapProperty<K, V>
 			return false;
 		}
 
-		try {
-			SetMultimap<K, V> otherSetMultiMap = (SetMultimap<K, V>) other;
-			if (otherSetMultiMap.size() != size()) {
-				return false;
-			}
-			for (K key : keySet()) {
-				if (get(key) == null) {
-					if (otherSetMultiMap.get(key) != null) {
-						return false;
-					}
-				} else if (!get(key).equals(otherSetMultiMap.get(key))) {
-					return false;
-				}
-			}
-		} catch (ClassCastException e) {
+		if (get() == null) {
 			return false;
 		}
-
-		return true;
+		return get().equals(other);
 	}
 
 	@Override
 	public int hashCode() {
-		// as we rely on equality to remove a binding again, we have to
+		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.
 		// We fall back to the very easiest case here (and use a constant).
 		return 0;

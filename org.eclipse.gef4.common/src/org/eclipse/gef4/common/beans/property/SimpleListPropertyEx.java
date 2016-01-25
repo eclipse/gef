@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -80,7 +83,41 @@ public class SimpleListPropertyEx<E> extends SimpleListProperty<E> {
 		super(initialValue);
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+	public void bindBidirectional(Property<ObservableList<E>> other) {
+		try {
+			super.bindBidirectional(other);
+		} catch (IllegalArgumentException e) {
+			if ("Cannot bind property to itself".equals(e.getMessage())
+					&& this != other) {
+				// XXX: The super implementation relies on equals() not on
+				// object identity to infer whether a binding is valid. It thus
+				// throw an IllegalArgumentException if two equal properties are
+				// passed in, even if they are not identical. We have to
+				// ensure they are thus unequal to establish the binding; as
+				// our value will be initially overwritten anyway, we may adjust
+				// the local value; to reduce noise, we only adjust the local
+				// value if necessary
+				if (other.getValue() == null) {
+					if (getValue() == null) {
+						// set to value != null
+						setValue(FXCollections
+								.observableList(new ArrayList<E>()));
+					}
+				} else {
+					if (getValue().equals(other)) {
+						// set to null value
+						setValue(null);
+					}
+				}
+				// try again
+				super.bindBidirectional(other);
+			} else {
+				throw (e);
+			}
+		}
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		// Overwritten here to compensate an inappropriate equals()
@@ -93,24 +130,10 @@ public class SimpleListPropertyEx<E> extends SimpleListProperty<E> {
 			return false;
 		}
 
-		try {
-			final List<E> otherList = (List<E>) other;
-			if (size() != otherList.size()) {
-				return false;
-			}
-			for (int i = 0; i < size(); i++) {
-				if (get(i) == null) {
-					if (otherList.get(i) != null) {
-						return false;
-					}
-				} else if (!get(i).equals(otherList.get(i))) {
-					return false;
-				}
-			}
-		} catch (ClassCastException e) {
+		if (get() == null) {
 			return false;
 		}
-		return true;
+		return get().equals(other);
 	}
 
 	@Override
@@ -118,10 +141,39 @@ public class SimpleListPropertyEx<E> extends SimpleListProperty<E> {
 		// Overwritten here to compensate an inappropriate hashCode()
 		// implementation on Java 7
 		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
-		int hashCode = 1;
-		for (E e : this) {
-			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
+		// XXX: As we rely on equality to remove a binding again, we have to
+		// ensure the hash code is the same for a pair of given properties.
+		// We fall back to the very easiest case here (and use a constant).
+		return 0;
+	}
+
+	@Override
+	public void unbindBidirectional(Property<ObservableList<E>> other) {
+		try {
+			super.unbindBidirectional(other);
+		} catch (IllegalArgumentException e) {
+			if ("Cannot bind property to itself".equals(e.getMessage())
+					&& this != other) {
+				// XXX: The super implementation relies on equals() not on
+				// object identity to infer whether a binding is valid. It thus
+				// throw an IllegalArgumentException if two equal properties are
+				// passed in, even if they are not identical. We have to
+				// ensure they are thus unequal to remove the binding; we
+				// have to restore the current value afterwards.
+				ObservableList<E> oldValue = getValue();
+				if (other.getValue() == null) {
+					// set to value != null
+					setValue(FXCollections.observableList(new ArrayList<E>()));
+				} else {
+					// set to null value
+					setValue(null);
+				}
+				// try again
+				super.unbindBidirectional(other);
+				setValue(oldValue);
+			} else {
+				throw (e);
+			}
 		}
-		return hashCode;
 	}
 }

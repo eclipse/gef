@@ -95,7 +95,6 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 		BindingUtils.bindContentBidirectional(this, other);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other) {
 		if (other == this) {
@@ -106,26 +105,15 @@ public abstract class ReadOnlyMultisetProperty<E> extends MultisetExpression<E>
 			return false;
 		}
 
-		try {
-			Multiset<E> otherMultiset = (Multiset<E>) other;
-			if (otherMultiset.size() != size()) {
-				return false;
-			}
-			for (E e : elementSet()) {
-				if (count(e) != otherMultiset.count(e)) {
-					return false;
-				}
-			}
-		} catch (ClassCastException e) {
+		if (get() == null) {
 			return false;
 		}
-
-		return true;
+		return get().equals(other);
 	}
 
 	@Override
 	public int hashCode() {
-		// as we rely on equality to remove a binding again, we have to
+		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.
 		// We fall back to the very easiest case here (and use a constant).
 		return 0;

@@ -12,13 +12,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.property;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.sun.javafx.binding.SetExpressionHelper;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.collections.SetChangeListener.Change;
@@ -107,7 +110,40 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 		helper = SetExpressionHelper.addListener(helper, this, listener);
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+	public void bindBidirectional(Property<ObservableSet<E>> other) {
+		try {
+			super.bindBidirectional(other);
+		} catch (IllegalArgumentException e) {
+			if ("Cannot bind property to itself".equals(e.getMessage())
+					&& this != other) {
+				// XXX: The super implementation relies on equals() not on
+				// object identity to infer whether a binding is valid. It thus
+				// throw an IllegalArgumentException if two equal properties are
+				// passed in, even if they are not identical. We have to
+				// ensure they are thus unequal to establish the binding; as
+				// our value will be initially overwritten anyway, we may adjust
+				// the local value; to reduce noise, we only adjust the local
+				// value if necessary
+				if (other.getValue() == null) {
+					if (getValue() == null) {
+						// set to value != null
+						setValue(FXCollections.observableSet(new HashSet<E>()));
+					}
+				} else {
+					if (getValue().equals(other)) {
+						// set to null value
+						setValue(null);
+					}
+				}
+				// try again
+				super.bindBidirectional(other);
+			} else {
+				throw (e);
+			}
+		}
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		// Overwritten here to compensate an inappropriate equals()
@@ -121,18 +157,10 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 			return false;
 		}
 
-		try {
-			Set<E> otherSet = (Set<E>) other;
-			if (otherSet.size() != size()) {
-				return false;
-			}
-			if (isEmpty()) {
-				return true;
-			}
-			return containsAll(otherSet);
-		} catch (ClassCastException unused) {
+		if (get() == null) {
 			return false;
 		}
+		return get().equals(other);
 	}
 
 	@Override
@@ -152,13 +180,10 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 		// Overwritten here to compensate an inappropriate hashCode()
 		// implementation on Java 7
 		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
-		int h = 0;
-		for (E e : this) {
-			if (e != null) {
-				h += e.hashCode();
-			}
-		}
-		return h;
+		// XXX: As we rely on equality to remove a binding again, we have to
+		// ensure the hash code is the same for a pair of given properties.
+		// We fall back to the very easiest case here (and use a constant).
+		return 0;
 	}
 
 	@Override
@@ -175,5 +200,35 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 	@Override
 	public void removeListener(SetChangeListener<? super E> listener) {
 		helper = SetExpressionHelper.removeListener(helper, listener);
+	}
+
+	@Override
+	public void unbindBidirectional(Property<ObservableSet<E>> other) {
+		try {
+			super.unbindBidirectional(other);
+		} catch (IllegalArgumentException e) {
+			if ("Cannot bind property to itself".equals(e.getMessage())
+					&& this != other) {
+				// XXX: The super implementation relies on equals() not on
+				// object identity to infer whether a binding is valid. It thus
+				// throw an IllegalArgumentException if two equal properties are
+				// passed in, even if they are not identical. We have to
+				// ensure they are thus unequal to remove the binding; we
+				// have to restore the current value afterwards.
+				ObservableSet<E> oldValue = getValue();
+				if (other.getValue() == null) {
+					// set to value != null
+					setValue(FXCollections.observableSet(new HashSet<E>()));
+				} else {
+					// set to null value
+					setValue(null);
+				}
+				// try again
+				super.unbindBidirectional(other);
+				setValue(oldValue);
+			} else {
+				throw (e);
+			}
+		}
 	}
 }
