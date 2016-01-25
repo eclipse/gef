@@ -90,7 +90,9 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 				T newValue) {
 			resizeWidth = Double.NaN;
 			resizeHeight = Double.NaN;
-			updateVisuals();
+			if (newValue != null) {
+				updateVisuals();
+			}
 		}
 	};
 
@@ -142,7 +144,8 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 				if (newValue != null
 						&& newValue.doubleValue() > geometricShape
 								.getStrokeWidth()
-						&& clickableAreaShape == null) {
+						&& clickableAreaShape == null
+						&& geometryProperty.getValue() != null) {
 					// create and configure clickable area shape
 					clickableAreaShape = new Path(Geometry2Shape.toPathElements(
 							geometryProperty.getValue().toPath()));
@@ -468,6 +471,11 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 		}
 		if (height < 0) {
 			throw new IllegalArgumentException("Cannot resize: height < 0.");
+		}
+
+		// guard against null geometry
+		if (geometryProperty.getValue() == null) {
+			return;
 		}
 
 		// prevent unnecessary updates
