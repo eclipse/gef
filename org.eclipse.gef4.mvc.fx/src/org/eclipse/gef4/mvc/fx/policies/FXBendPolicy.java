@@ -36,6 +36,7 @@ import org.eclipse.gef4.mvc.operations.SetRefreshVisualOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
@@ -507,11 +508,12 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 
 		// snap-to-grid
 		// TODO: make snapping (0.5) configurable
-		Dimension snapToGridOffset = FXTransformPolicy.getSnapToGridOffset(
-				getHost().getRoot().getViewer().<GridModel> getAdapter(
-						GridModel.class),
-				selectedPointCurrentPositionInLocal.x,
-				selectedPointCurrentPositionInLocal.y, 0.5, 0.5);
+		Dimension snapToGridOffset = AbstractTransformPolicy
+				.getSnapToGridOffset(
+						getHost().getRoot().getViewer()
+								.<GridModel> getAdapter(GridModel.class),
+						selectedPointCurrentPositionInLocal.x,
+						selectedPointCurrentPositionInLocal.y, 0.5, 0.5);
 		selectedPointCurrentPositionInLocal
 				.translate(snapToGridOffset.getNegated());
 
