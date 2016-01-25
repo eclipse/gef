@@ -25,6 +25,7 @@
       <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
       <import plugin="com.google.inject.multibindings" version="3.0.0" match="compatible"/>
       <import plugin="javax.inject" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

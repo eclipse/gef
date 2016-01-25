@@ -22,6 +22,7 @@
 
    <requires>
       <import feature="org.eclipse.gef4.graph" version="0.3.0" match="equivalent"/>
+      <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
