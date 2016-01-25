@@ -28,7 +28,6 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
@@ -141,6 +140,19 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	@Override
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+		SetMultimap<Object, String> anchorages = HashMultimap.create();
+		anchorages.put(getContent().getSource(), "START");
+		anchorages.put(getContent().getTarget(), "END");
+		return anchorages;
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		return Collections.emptyList();
+	}
+
+	@Override
 	protected void doRefreshVisual(Connection visual) {
 		GraphLayoutContext glc = getGraphLayoutContext();
 		if (glc == null) {
@@ -171,6 +183,14 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 			curveNode.setStyle(connCssStyle);
 		}
 
+		// unregister decorations from visual part map
+		if (visual.getStartDecoration() != null) {
+			getViewer().getVisualPartMap().remove(visual.getStartDecoration());
+		}
+		if (visual.getEndDecoration() != null) {
+			getViewer().getVisualPartMap().remove(visual.getEndDecoration());
+		}
+
 		// default decoration for directed graphs (in case edge is directed)
 		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(glc.getGraph(), true))) {
 			if (Boolean.TRUE.equals(getContent().attributesProperty().get(LayoutProperties.DIRECTED_PROPERTY))) {
@@ -192,6 +212,14 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 			visual.setEndDecoration(targetDecoration);
 		}
 
+		// register decorations at visual part map
+		if (visual.getStartDecoration() != null) {
+			getViewer().getVisualPartMap().put(visual.getStartDecoration(), this);
+		}
+		if (visual.getEndDecoration() != null) {
+			getViewer().getVisualPartMap().put(visual.getEndDecoration(), this);
+		}
+
 		// connection router
 		IConnectionRouter router = ZestProperties.getRouter(edge);
 		if (router != null) {
@@ -202,19 +230,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	@Override
 	public Edge getContent() {
 		return (Edge) super.getContent();
-	}
-
-	@Override
-	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
-		SetMultimap<Object, String> anchorages = HashMultimap.create();
-		anchorages.put(getContent().getSource(), "START");
-		anchorages.put(getContent().getTarget(), "END");
-		return anchorages;
-	}
-
-	@Override
-	protected List<? extends Object> doGetContentChildren() {
-		return Collections.emptyList();
 	}
 
 	/**
@@ -228,11 +243,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	 */
 	protected GraphLayoutContext getGraphLayoutContext() {
 		return getViewer().getContentPartMap().get(getContent().getGraph()).getAdapter(GraphLayoutContext.class);
-	}
-
-	@Override
-	protected void register(IViewer<Node> viewer) {
-		super.register(viewer);
 	}
 
 	@Override
