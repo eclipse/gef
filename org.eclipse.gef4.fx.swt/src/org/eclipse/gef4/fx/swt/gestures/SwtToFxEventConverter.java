@@ -38,23 +38,25 @@ import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 
 /**
- * A gesture listener that converts and transfers SWT {@link GestureEvent}s to
- * an {@link FXCanvas}.
+ * The {@link SwtToFxEventConverter} forwards SWT events to JavaFX. It is
+ * necessary because the {@link FXCanvas} does not forward gesture events and
+ * horizontal mouse wheel events.
  *
  * @author Jan Koehnlein
  * @author anyssen
+ * @author mwienand
  */
-public class SwtToFXGestureConverter implements GestureListener {
+public class SwtToFxEventConverter {
 
 	/**
-	 * Represents the current {@link State} of touch gesture interaction.
+	 * Represents the current {@link GestureState} of touch gesture interaction.
 	 */
-	protected class State {
+	protected class GestureState {
 		/**
-		 * The {@link StateType} determines the currently performed touch
+		 * The {@link GestureStateType} determines the currently performed touch
 		 * gesture.
 		 */
-		StateType type;
+		GestureStateType type;
 
 		/**
 		 * The total horizontal scroll distance, initially set to <code>0</code>
@@ -80,12 +82,13 @@ public class SwtToFXGestureConverter implements GestureListener {
 		double lastRotation = 0;
 
 		/**
-		 * Constructs a new {@link State} of the given {@link StateType}.
+		 * Constructs a new {@link GestureState} of the given
+		 * {@link GestureStateType}.
 		 *
 		 * @param type
-		 *            The {@link #type} for this {@link State}.
+		 *            The {@link #type} for this {@link GestureState}.
 		 */
-		public State(StateType type) {
+		public GestureState(GestureStateType type) {
 			this.type = type;
 		}
 	}
@@ -93,7 +96,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 	/**
 	 * Determines the touch gesture which is currently performed.
 	 */
-	enum StateType {
+	enum GestureStateType {
 		/**
 		 * Indicates that no touch gesture is performed.
 		 */
@@ -115,14 +118,78 @@ public class SwtToFXGestureConverter implements GestureListener {
 		ZOOMING;
 	}
 
+	/**
+	 * The {@link ISceneRunnable} interface provides a callback method that is
+	 * invoked in a privileged runnable on the JavaFX application thread. The
+	 * callback is provided with a {@link TKSceneListener} that can be used to
+	 * send events to JavaFX.
+	 *
+	 * @author mwienand
+	 *
+	 */
+	protected interface ISceneRunnable {
+
+		/**
+		 * Callback method that is called in a privileged runnable on the JavaFX
+		 * application thread.
+		 *
+		 * @param sceneListener
+		 *            {@link TKSceneListener} that can be used to send events to
+		 *            JavaFX.
+		 */
+		public void run(TKSceneListener sceneListener);
+
+	}
+
 	private FXCanvas canvas;
+	private Display display;
+	private GestureState currentGestureState;
 
-	private State currentState;
+	// filter for gesture events
+	private GestureListener gestureListener = new GestureListener() {
+		@Override
+		public void gesture(GestureEvent event) {
+			sendGestureEventToFx(event);
+		}
+	};
 
-	// filter for mouse wheel event emulated from pan gesture interaction
-	private Listener emulatedMouseWheelEventFilter;
+	// filter for mouse wheel events
+	private Listener emulatedMouseWheelEventFilter = new Listener() {
+		@Override
+		public void handleEvent(final Event event) {
+			if (event.widget == canvas) {
+				if (display.getTouchEnabled() && lastPanGestureEvent != null
+						&& lastPanGestureEvent.x == event.x
+						&& lastPanGestureEvent.y == event.y) {
+					// This mouse wheel event is synthesized from a pan
+					// gesture event and thus has to be ignored.
+					event.type = SWT.None;
+				} else if (event.type == SWT.MouseHorizontalWheel) {
+					// XXX: Horizontal mouse wheel events (not synthesized
+					// from pan gesture events) are not forwarded by the
+					// original FXCanvas while vertical events are.
+					// send to JavaFX
+					sendMouseHorizontalWheelEventToFx(event);
+				}
+			}
+		}
+	};
+
 	// filter for pan gesture events emulated from mouse wheel interaction
-	private Listener emulatedPanGestureEventFilter;
+	private Listener emulatedPanGestureEventFilter = new Listener() {
+		@Override
+		public void handleEvent(Event event) {
+			if (event.widget == canvas) {
+				if (event.detail == SWT.GESTURE_PAN) {
+					if (event.xDirection == 0 && event.yDirection == 0) {
+						event.type = SWT.None;
+					} else {
+						lastPanGestureEvent = event;
+					}
+				}
+			}
+		}
+	};
 
 	// used to keep track of the last (valid) pan gesture event
 	private Event lastPanGestureEvent;
@@ -133,16 +200,16 @@ public class SwtToFXGestureConverter implements GestureListener {
 	 * @param canvas
 	 *            The {@link FXCanvas} for which event forwarding is registered.
 	 */
-	public SwtToFXGestureConverter(final FXCanvas canvas) {
+	public SwtToFxEventConverter(final FXCanvas canvas) {
 		this.canvas = canvas;
-		this.currentState = new State(StateType.IDLE);
+		this.currentGestureState = new GestureState(GestureStateType.IDLE);
 
-		canvas.addGestureListener(this);
+		canvas.addGestureListener(gestureListener);
 
-		final Display display = canvas.getDisplay();
+		display = canvas.getDisplay();
 
 		// Fix for #430940: We need to register a filter for SWT.Gesture events
-		// for two purposes:
+		// for three purposes:
 		//
 		// 1) Sort out pan gesture events if they are only emulated from mouse
 		// wheel events (in which case - at least on the Mac - they do not seem
@@ -156,26 +223,11 @@ public class SwtToFXGestureConverter implements GestureListener {
 		// 2) Keep track of the last (valid) pan gesture event to be able to
 		// sort out mouse wheel events that are emulated from gesture events
 		// (by means of a MouseWheelListener)
-		emulatedPanGestureEventFilter = new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				if (event.widget == canvas) {
-					if (event.detail == SWT.GESTURE_PAN) {
-						if (event.xDirection == 0 && event.yDirection == 0) {
-							event.type = SWT.None;
-						} else {
-							lastPanGestureEvent = event;
-						}
-					}
-				}
-			}
-		};
 		display.addFilter(SWT.Gesture, emulatedPanGestureEventFilter);
 
 		// Fix for #430940: On touch devices, SWT seems to emulate mouse
-		// wheel events from PAN gesture events. As we already transform the
-		// original PAN gesture events into proper JavaFX scroll events
+		// wheel events from PAN gesture events. As we already transform
+		// the original PAN gesture events into proper JavaFX scroll events
 		// (with a step-width of 5), the emulated mouse wheel events, which
 		// would also transferred into JavaFX scroll events by FXCanvas
 		// (with a step-width of 40), only disturb, which is why we want to
@@ -186,25 +238,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 		// the approach to keep track of the last (valid) pan gesture event
 		// and sort out those mouse wheel events that use the same x and y
 		// position.
-		emulatedMouseWheelEventFilter = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.widget == canvas) {
-					if (display.getTouchEnabled() && lastPanGestureEvent != null
-							&& lastPanGestureEvent.x == event.x
-							&& lastPanGestureEvent.y == event.y) {
-						// This mouse wheel event is synthesized from a pan
-						// gesture event and thus has to be ignored.
-						event.type = SWT.None;
-					} else if (event.type == SWT.MouseHorizontalWheel) {
-						// XXX: Horizontal mouse wheel events (not synthesized
-						// from pan gesture events) are not forwarded by the
-						// original FXCanvas while vertical events are.
-						sendHorizontalScrollEvent(event);
-					}
-				}
-			}
-		};
+		//
+		// Fix for #483742: Forward horizontal mouse wheel events to JavaFX.
 		display.addFilter(SWT.MouseVerticalWheel,
 				emulatedMouseWheelEventFilter);
 		display.addFilter(SWT.MouseHorizontalWheel,
@@ -212,23 +247,23 @@ public class SwtToFXGestureConverter implements GestureListener {
 	}
 
 	/**
-	 * Changes the internal {@link State} of the currently performed touch
-	 * gesture and sends the appropriate events to JavaFX.
+	 * Changes the internal {@link GestureState} of the currently performed
+	 * touch gesture and sends the appropriate events to JavaFX.
 	 *
 	 * @param newStateType
-	 *            The new {@link StateType}.
+	 *            The new {@link GestureStateType}.
 	 * @param event
 	 *            The {@link GestureEvent} which was performed.
 	 * @param sceneListener
 	 *            The {@link TKSceneListener} to which the corresponding JavaFX
 	 *            event is send.
-	 * @return <code>true</code> when the {@link StateType} is changed,
+	 * @return <code>true</code> when the {@link GestureStateType} is changed,
 	 *         otherwise <code>false</code>.
 	 */
-	protected boolean changeState(StateType newStateType, GestureEvent event,
-			TKSceneListener sceneListener) {
-		if (newStateType != currentState.type) {
-			switch (currentState.type) {
+	protected boolean changeState(GestureStateType newStateType,
+			GestureEvent event, TKSceneListener sceneListener) {
+		if (newStateType != currentGestureState.type) {
+			switch (currentGestureState.type) {
 			case SCROLLING:
 				sendScrollEvent(ScrollEvent.SCROLL_FINISHED, event,
 						sceneListener);
@@ -263,7 +298,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 			default:
 				// do nothing
 			}
-			currentState = new State(newStateType);
+			currentGestureState = new GestureState(newStateType);
 			return true;
 		}
 		switch (newStateType) {
@@ -288,7 +323,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 
 	/**
 	 * Unregisters event forwarding from the {@link FXCanvas} for which this
-	 * {@link SwtToFXGestureConverter} was created.
+	 * {@link SwtToFxEventConverter} was created.
 	 */
 	public void dispose() {
 		Display display = canvas.getDisplay();
@@ -301,13 +336,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 			display.removeFilter(SWT.MouseHorizontalWheel,
 					emulatedMouseWheelEventFilter);
 		}
-		canvas.removeGestureListener(this);
+		canvas.removeGestureListener(gestureListener);
 		canvas = null;
-	}
-
-	@Override
-	public void gesture(GestureEvent event) {
-		sendGestureEventToFX(event);
 	}
 
 	private boolean isAlt(final Event event) {
@@ -343,14 +373,14 @@ public class SwtToFXGestureConverter implements GestureListener {
 	}
 
 	/**
-	 * Converts the given {@link GestureEvent} to a corresponding JavaFX event
-	 * and sends it to the JavaFX scene graph of the {@link FXCanvas} which is
-	 * associated with this {@link SwtToFXGestureConverter}.
+	 * Schedules the given {@link ISceneRunnable} for execution in a privileged
+	 * runnable on the JavaFX application thread.
 	 *
-	 * @param event
-	 *            The {@link GestureEvent} to send to JavaFX.
+	 * @param sr
+	 *            The {@link ISceneRunnable} that will be executed in a
+	 *            privileged runnable on the JavaFX application thread.
 	 */
-	protected void sendGestureEventToFX(final GestureEvent event) {
+	protected void scheduleSceneRunnable(final ISceneRunnable sr) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -365,75 +395,78 @@ public class SwtToFXGestureConverter implements GestureListener {
 						if (sceneListener == null) {
 							return null;
 						}
-						switch (event.detail) {
-						case SWT.GESTURE_BEGIN:
-							break;
-						case SWT.GESTURE_END:
-							changeState(StateType.IDLE, event, sceneListener);
-							break;
-						case SWT.GESTURE_MAGNIFY:
-							changeState(StateType.ZOOMING, event,
-									sceneListener);
-							break;
-						case SWT.GESTURE_PAN:
-							changeState(StateType.SCROLLING, event,
-									sceneListener);
-							break;
-						case SWT.GESTURE_ROTATE:
-							changeState(StateType.ROTATING, event,
-									sceneListener);
-							break;
-						case SWT.GESTURE_SWIPE:
-							changeState(StateType.IDLE, event, sceneListener);
-						}
+						sr.run(sceneListener);
 						return null;
 					}
-
 				}, (AccessControlContext) ReflectionUtils
 						.getPrivateFieldValue(scenePeer, "accessCtrlCtx"));
 			}
 		});
 	}
 
-	private void sendHorizontalScrollEvent(final Event event) {
+	/**
+	 * Converts the given {@link GestureEvent} to a corresponding JavaFX event
+	 * and sends it to the JavaFX scene graph of the {@link FXCanvas} which is
+	 * associated with this {@link SwtToFxEventConverter}.
+	 *
+	 * @param event
+	 *            The {@link GestureEvent} to send to JavaFX.
+	 */
+	protected void sendGestureEventToFx(final GestureEvent event) {
+		scheduleSceneRunnable(new ISceneRunnable() {
+			@Override
+			public void run(TKSceneListener sceneListener) {
+				switch (event.detail) {
+				case SWT.GESTURE_BEGIN:
+					break;
+				case SWT.GESTURE_END:
+					changeState(GestureStateType.IDLE, event, sceneListener);
+					break;
+				case SWT.GESTURE_MAGNIFY:
+					changeState(GestureStateType.ZOOMING, event, sceneListener);
+					break;
+				case SWT.GESTURE_PAN:
+					changeState(GestureStateType.SCROLLING, event,
+							sceneListener);
+					break;
+				case SWT.GESTURE_ROTATE:
+					changeState(GestureStateType.ROTATING, event,
+							sceneListener);
+					break;
+				case SWT.GESTURE_SWIPE:
+					changeState(GestureStateType.IDLE, event, sceneListener);
+				}
+			}
+		});
+	}
+
+	private void sendHorizontalScrollEvent(final Event event,
+			TKSceneListener sceneListener) {
 		// compute absolute screen coordinates
 		final Point screenPosition = canvas.toDisplay(event.x, event.y);
 
-		// send to JavaFX
-		Platform.runLater(new Runnable() {
+		// generate scroll event: scrollX, scrollY, totalScrollX, totalScrollY,
+		// xMultiplier, yMultiplier, touchCount, scrollTextX, scrollTextY,
+		// defaultTextX, defaultTextY, x, y, screenX, screenY, modifiers (shift,
+		// control, alt, meta), direct, inertia
+		sceneListener.scrollEvent(ScrollEvent.SCROLL, event.count > 0 ? 8 : -8,
+				0, 0, 0, 5.0, 5.0, 0, 0, 0, 0, 0, event.x, event.y,
+				screenPosition.x, screenPosition.y, isShift(event),
+				isControl(event), isAlt(event), isMeta(event), false, false);
+	}
+
+	/**
+	 * Forwards a given {@link SWT#MouseHorizontalWheel} event to JavaFX.
+	 *
+	 * @param event
+	 *            The {@link SWT#MouseHorizontalWheel} event that is forwarded
+	 *            to JavaFX.
+	 */
+	protected void sendMouseHorizontalWheelEventToFx(final Event event) {
+		scheduleSceneRunnable(new ISceneRunnable() {
 			@Override
-			public void run() {
-				final Object scenePeer = ReflectionUtils
-						.getPrivateFieldValue(canvas, "scenePeer");
-				AccessController.doPrivileged(new PrivilegedAction<Void>() {
-					@Override
-					public Void run() {
-						TKSceneListener sceneListener = ReflectionUtils
-								.getPrivateFieldValue(scenePeer,
-										"sceneListener");
-						if (sceneListener == null) {
-							return null;
-						}
-
-						// generate scroll event
-						sceneListener.scrollEvent(ScrollEvent.SCROLL,
-								event.count > 0 ? 8 : -8, 0, // scrollX, scrollY
-								0, 0, // totalScrollX, totalScrollY
-								5.0, 5.0, // xMultiplier, yMultiplier
-								0, // touchCount
-								0, 0, // scrollTextX, scrollTextY
-								0, 0, // defaultTextX, defaultTextY
-								event.x, event.y, // x, y
-								screenPosition.x, screenPosition.y, // screenX,
-																	// screenY
-								isShift(event), isControl(event), isAlt(event),
-								isMeta(event), // modifiers
-								false, // direct
-								false); // inertia
-
-						return null;
-					}
-				});
+			public void run(TKSceneListener sceneListener) {
+				sendHorizontalScrollEvent(event, sceneListener);
 			}
 		});
 	}
@@ -442,23 +475,23 @@ public class SwtToFXGestureConverter implements GestureListener {
 			final GestureEvent event, TKSceneListener sceneListener) {
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
 		double rotation = (fxEventType == RotateEvent.ROTATION_FINISHED)
-				? currentState.lastRotation : -event.rotation;
+				? currentGestureState.lastRotation : -event.rotation;
 		// System.out.println(fxEventType + " " + rotation);
 		sceneListener.rotateEvent(fxEventType,
-				rotation - currentState.lastRotation, // rotation
+				rotation - currentGestureState.lastRotation, // rotation
 				rotation, // totalRotation
 				event.x, event.y, // x, y
 				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
 				false); // inertia
-		currentState.lastRotation = rotation;
+		currentGestureState.lastRotation = rotation;
 	}
 
 	private void sendScrollEvent(EventType<ScrollEvent> fxEventType,
 			final GestureEvent event, TKSceneListener sceneListener) {
-		currentState.totalScrollX += event.xDirection;
-		currentState.totalScrollY += event.yDirection;
+		currentGestureState.totalScrollX += event.xDirection;
+		currentGestureState.totalScrollY += event.yDirection;
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
 		// System.out.println(fxEventType + " " + screenPosition);
 
@@ -482,8 +515,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
-				false);
-	} // inertia
+				false); // inertia
+	}
 
 	private void sendSwipeEvent(final GestureEvent event,
 			TKSceneListener sceneListener) {
@@ -510,17 +543,18 @@ public class SwtToFXGestureConverter implements GestureListener {
 			final GestureEvent event, TKSceneListener sceneListener) {
 		Point screenPosition = canvas.toDisplay(event.x, event.y);
 		double magnification = (fxEventType == ZoomEvent.ZOOM_FINISHED)
-				? currentState.lastZoomFactor : event.magnification;
+				? currentGestureState.lastZoomFactor : event.magnification;
 		// System.out.println(fxEventType + " " + magnification);
 		sceneListener.zoomEvent(fxEventType,
-				magnification / currentState.lastZoomFactor, // zoom factor
+				magnification / currentGestureState.lastZoomFactor, // zoom
+																	// factor
 				magnification, // totalZoomFactor
 				event.x, event.y, // x, y
 				screenPosition.x, screenPosition.y, // screenX, screenY
 				isShift(event), isControl(event), isAlt(event), isMeta(event),
 				false, // direct
 				false); // inertia
-		currentState.lastZoomFactor = magnification;
+		currentGestureState.lastZoomFactor = magnification;
 	}
 
 }

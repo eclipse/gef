@@ -29,7 +29,7 @@ import javafx.scene.Scene;
 import javafx.stage.Window;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
-import org.eclipse.gef4.fx.swt.gestures.SwtToFXGestureConverter;
+import org.eclipse.gef4.fx.swt.gestures.SwtToFxEventConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -84,7 +84,7 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	};
 
-	private SwtToFXGestureConverter gestureConverter;
+	private SwtToFxEventConverter gestureConverter;
 	private List<FocusListener> focusListeners;
 	private ChangeListener<Cursor> cursorChangeListener = new ChangeListener<Cursor>() {
 		@Override
@@ -125,7 +125,7 @@ public class FXCanvasEx extends FXCanvas {
 	 */
 	public FXCanvasEx(Composite parent, int style) {
 		super(parent, style);
-		gestureConverter = new SwtToFXGestureConverter(this);
+		gestureConverter = new SwtToFxEventConverter(this);
 
 		// add a focus listener to propagate focus events also to FocusListeners
 		// registered on this canvas. FXCanvas will not notify them, as all

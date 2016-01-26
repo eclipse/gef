@@ -14,6 +14,6 @@
  * {@link org.eclipse.swt.events.GestureEvent} (touch events) to corresponding
  * JavaFX events when embedding a JavaFX scene graph into an SWT application
  * (via {@link javafx.embed.swt.FXCanvas}):
- * {@link org.eclipse.gef4.fx.swt.gestures.SwtToFXGestureConverter}.
+ * {@link org.eclipse.gef4.fx.swt.gestures.SwtToFxEventConverter}.
  */
 package org.eclipse.gef4.fx.swt.gestures;
