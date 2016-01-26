@@ -13,15 +13,13 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXInteractionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -33,14 +31,13 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class OpenParentGraphOnDoubleClickPolicy extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
+public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXInteractionPolicy implements IFXOnClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			// do nothing in case there is an explicit event target
-			IVisualPart<Node, ? extends Node> targetPart = getHost().getViewer().getVisualPartMap().get(e.getTarget());
-			if (targetPart != null && targetPart != getHost()) {
+			if (isRegistered(e.getTarget()) && !isRegisteredForHost(e.getTarget())) {
 				return;
 			}
 

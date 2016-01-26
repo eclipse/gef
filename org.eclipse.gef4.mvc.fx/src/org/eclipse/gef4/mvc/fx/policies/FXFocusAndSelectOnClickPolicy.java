@@ -11,14 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.Map;
-
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -34,8 +31,8 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class FXFocusAndSelectOnClickPolicy
-		extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
+public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
+		implements IFXOnClickPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
@@ -80,11 +77,8 @@ public class FXFocusAndSelectOnClickPolicy
 		} else if (host instanceof IRootPart) {
 			// check if click on background (either one of the root visuals, or
 			// an unregistered visual)
-			Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getHost()
-					.getRoot().getViewer().getVisualPartMap();
-			IVisualPart<Node, ? extends Node> targetPart = visualPartMap
-					.get(e.getTarget());
-			if (targetPart == null || targetPart == host) {
+			if (!isRegistered(e.getTarget())
+					|| isRegisteredForHost(e.getTarget())) {
 				// unset focus
 				focusModel.setFocus(null);
 				// remove all selected

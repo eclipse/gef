@@ -13,8 +13,6 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.mvc.models.HoverModel;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
 import com.google.common.reflect.TypeToken;
 
@@ -29,16 +27,15 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class FXHoverOnHoverPolicy extends AbstractInteractionPolicy<Node>
+public class FXHoverOnHoverPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnHoverPolicy {
 
 	@SuppressWarnings("serial")
 	@Override
 	public void hover(MouseEvent e) {
 		// do nothing in case there is an explicit event target
-		IVisualPart<Node, ? extends Node> explicitTarget = getHost().getRoot()
-				.getViewer().getVisualPartMap().get(e.getTarget());
-		if (explicitTarget != null && explicitTarget != getHost()) {
+		if (isRegistered(e.getTarget())
+				&& !isRegisteredForHost(e.getTarget())) {
 			return;
 		}
 
