@@ -61,6 +61,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
+		// select on click
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
 	@Override
@@ -141,9 +144,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXCloneOnClickPolicy.class);
-		// select on click
-		adapterMapBinder.addBinding(AdapterKey.role("1"))
-				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
 	protected void bindFXGeometricShapePartAdapters(
@@ -195,9 +195,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXCloneOnClickPolicy.class);
-		// select on click
-		adapterMapBinder.addBinding(AdapterKey.role("0"))
-				.to(FXFocusAndSelectOnClickPolicy.class);
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(

@@ -51,6 +51,13 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				});
 
 		if (host instanceof IContentPart) {
+			// check if the host is the explicit event target
+			if (isRegistered(e.getTarget())
+					&& !isRegisteredForHost(e.getTarget())) {
+				// do not process events for other parts
+				return;
+			}
+
 			focusModel.setFocus((IContentPart<Node, ? extends Node>) host);
 
 			boolean append = e.isControlDown();
