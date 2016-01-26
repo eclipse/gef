@@ -94,25 +94,4 @@
          </action>
       </actionSet>
    </extension>
-   <extension
-         id="application"
-         name="Tag Cloud"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-         <run
-               class="org.eclipse.gef4.cloudio.internal.ui.application.Application">
-         </run>
-      </application>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="org.eclipse.gef4.cloudio.internal.ui.application.PerspectiveFactory"
-            id="org.eclipse.gef4.cloudio.internal.ui.perspective"
-            name="cloudPerspective">
-      </perspective>
-   </extension>
 </plugin>
