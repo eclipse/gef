@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension point="org.eclipse.ui.activities">
+     <activity
+           description="Provides a TagCloud view to visualize tag/word clouds."
+           id="org.eclipse.gef4.cloudio.ui.capabilities.activity"
+           name="Tag cloud visualization support">
+     </activity>
+     <category
+           description="GEF4 Cloudio end-user features"
+           id="org.eclipse.gef4.cloudio.ui.capabilities.category"
+           name="GEF4 Cloudio">
+     </category>
+     <categoryActivityBinding
+           activityId="org.eclipse.gef4.cloudio.ui.capabilities.activity"
+           categoryId="org.eclipse.gef4.cloudio.ui.capabilities.category">
+     </categoryActivityBinding>
+     <activityPatternBinding
+           activityId="org.eclipse.gef4.cloudio.ui.capabilities.activity"
+           isEqualityPattern="false"
+           pattern="org.eclipse.gef4.cloudio.ui/.*">
+     </activityPatternBinding>
+     <defaultEnablement id="org.eclipse.gef4.cloudio.ui.capabilities.activity"/>
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category

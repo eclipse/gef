@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension point="org.eclipse.ui.activities">
+     <activity
+           description="Provides a Graphviz DOT authoring environment, consisting of an Xtext-based DOT editor, a Graphviz-based DOT export, and a DOT Graph view."
+           id="org.eclipse.gef4.dot.ui.capabilities.activity"
+           name="Graphviz DOT editing/visualization support">
+     </activity>
+     <category
+           description="GEF4 DOT end-user features"
+           id="org.eclipse.gef4.dot.ui.capabilities.category"
+           name="GEF4 DOT">
+     </category>
+     <categoryActivityBinding
+           activityId="org.eclipse.gef4.dot.ui.capabilities.activity"
+           categoryId="org.eclipse.gef4.dot.ui.capabilities.category">
+     </categoryActivityBinding>
+     <activityPatternBinding
+           activityId="org.eclipse.gef4.dot.ui.capabilities.activity"
+           isEqualityPattern="false"
+           pattern="org.eclipse.gef4.dot/.*">
+     </activityPatternBinding>
+     <activityPatternBinding
+           activityId="org.eclipse.gef4.dot.ui.capabilities.activity"
+           isEqualityPattern="false"
+           pattern="org.eclipse.gef4.dot.ui/.*">
+     </activityPatternBinding>
+     <defaultEnablement id="org.eclipse.gef4.dot.ui.capabilities.activity"/>
+   </extension>
 	<!-- DOT editor -->
     <extension
             point="org.eclipse.ui.editors">
