@@ -9,6 +9,7 @@
  * Contributors:
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
  *     Alexander Nyßen (itemis AG) - filter for emulated scroll and pan gesture events (#430940)
+ *     Matthias Wienand (itemis AG) - forward horizontal mouse wheel events (#483742)
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.swt.gestures;
@@ -138,7 +139,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 
 		canvas.addGestureListener(this);
 
-		Display display = canvas.getDisplay();
+		final Display display = canvas.getDisplay();
 
 		// Fix for #430940: We need to register a filter for SWT.Gesture events
 		// for two purposes:
@@ -172,37 +173,42 @@ public class SwtToFXGestureConverter implements GestureListener {
 		};
 		display.addFilter(SWT.Gesture, emulatedPanGestureEventFilter);
 
-		if (display.getTouchEnabled()) {
-			// Fix for #430940: On touch devices, SWT seems to emulate mouse
-			// wheel events from PAN gesture events. As we already transform the
-			// original PAN gesture events into proper JavaFX scroll events
-			// (with a step-width of 5), the emulated mouse wheel events, which
-			// would also transferred into JavaFX scroll events by FXCanvas
-			// (with a step-width of 40), only disturb, which is why we want to
-			// filter them out here.
-			//
-			// As these emulated mouse wheel events cannot be differentiated
-			// from valid mouse wheel events based on their field values, use
-			// the approach to keep track of the last (valid) pan gesture event
-			// and sort out those mouse wheel events that use the same x and y
-			// position.
-			emulatedMouseWheelEventFilter = new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					if (event.widget == canvas) {
-						if (lastPanGestureEvent != null
-								&& lastPanGestureEvent.x == event.x
-								&& lastPanGestureEvent.y == event.y) {
-							event.type = SWT.None;
-						}
+		// Fix for #430940: On touch devices, SWT seems to emulate mouse
+		// wheel events from PAN gesture events. As we already transform the
+		// original PAN gesture events into proper JavaFX scroll events
+		// (with a step-width of 5), the emulated mouse wheel events, which
+		// would also transferred into JavaFX scroll events by FXCanvas
+		// (with a step-width of 40), only disturb, which is why we want to
+		// filter them out here.
+		//
+		// As these emulated mouse wheel events cannot be differentiated
+		// from valid mouse wheel events based on their field values, use
+		// the approach to keep track of the last (valid) pan gesture event
+		// and sort out those mouse wheel events that use the same x and y
+		// position.
+		emulatedMouseWheelEventFilter = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.widget == canvas) {
+					if (display.getTouchEnabled() && lastPanGestureEvent != null
+							&& lastPanGestureEvent.x == event.x
+							&& lastPanGestureEvent.y == event.y) {
+						// This mouse wheel event is synthesized from a pan
+						// gesture event and thus has to be ignored.
+						event.type = SWT.None;
+					} else if (event.type == SWT.MouseHorizontalWheel) {
+						// XXX: Horizontal mouse wheel events (not synthesized
+						// from pan gesture events) are not forwarded by the
+						// original FXCanvas while vertical events are.
+						sendHorizontalScrollEvent(event);
 					}
 				}
-			};
-			display.addFilter(SWT.MouseVerticalWheel,
-					emulatedMouseWheelEventFilter);
-			display.addFilter(SWT.MouseHorizontalWheel,
-					emulatedMouseWheelEventFilter);
-		}
+			}
+		};
+		display.addFilter(SWT.MouseVerticalWheel,
+				emulatedMouseWheelEventFilter);
+		display.addFilter(SWT.MouseHorizontalWheel,
+				emulatedMouseWheelEventFilter);
 	}
 
 	/**
@@ -304,16 +310,32 @@ public class SwtToFXGestureConverter implements GestureListener {
 		sendGestureEventToFX(event);
 	}
 
+	private boolean isAlt(final Event event) {
+		return (event.stateMask & SWT.ALT) != 0;
+	}
+
 	private boolean isAlt(final GestureEvent event) {
 		return (event.stateMask & SWT.ALT) != 0;
+	}
+
+	private boolean isControl(final Event event) {
+		return (event.stateMask & SWT.CONTROL) != 0;
 	}
 
 	private boolean isControl(final GestureEvent event) {
 		return (event.stateMask & SWT.CONTROL) != 0;
 	}
 
+	private boolean isMeta(final Event event) {
+		return (event.stateMask & SWT.COMMAND) != 0;
+	}
+
 	private boolean isMeta(final GestureEvent event) {
 		return (event.stateMask & SWT.COMMAND) != 0;
+	}
+
+	private boolean isShift(final Event event) {
+		return (event.stateMask & SWT.SHIFT) != 0;
 	}
 
 	private boolean isShift(final GestureEvent event) {
@@ -369,6 +391,49 @@ public class SwtToFXGestureConverter implements GestureListener {
 
 				}, (AccessControlContext) ReflectionUtils
 						.getPrivateFieldValue(scenePeer, "accessCtrlCtx"));
+			}
+		});
+	}
+
+	private void sendHorizontalScrollEvent(final Event event) {
+		// compute absolute screen coordinates
+		final Point screenPosition = canvas.toDisplay(event.x, event.y);
+
+		// send to JavaFX
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				final Object scenePeer = ReflectionUtils
+						.getPrivateFieldValue(canvas, "scenePeer");
+				AccessController.doPrivileged(new PrivilegedAction<Void>() {
+					@Override
+					public Void run() {
+						TKSceneListener sceneListener = ReflectionUtils
+								.getPrivateFieldValue(scenePeer,
+										"sceneListener");
+						if (sceneListener == null) {
+							return null;
+						}
+
+						// generate scroll event
+						sceneListener.scrollEvent(ScrollEvent.SCROLL,
+								event.count > 0 ? 8 : -8, 0, // scrollX, scrollY
+								0, 0, // totalScrollX, totalScrollY
+								5.0, 5.0, // xMultiplier, yMultiplier
+								0, // touchCount
+								0, 0, // scrollTextX, scrollTextY
+								0, 0, // defaultTextX, defaultTextY
+								event.x, event.y, // x, y
+								screenPosition.x, screenPosition.y, // screenX,
+																	// screenY
+								isShift(event), isControl(event), isAlt(event),
+								isMeta(event), // modifiers
+								false, // direct
+								false); // inertia
+
+						return null;
+					}
+				});
 			}
 		});
 	}

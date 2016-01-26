@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.swt;
 
-import javafx.scene.Scene;
-
 import org.eclipse.gef4.fx.swt.canvas.FXCanvasEx;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import javafx.scene.Scene;
 
 public abstract class AbstractFxSwtExample {
 
