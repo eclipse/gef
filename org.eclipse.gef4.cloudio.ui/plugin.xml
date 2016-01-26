@@ -12,7 +12,7 @@
          point="org.eclipse.ui.views">
       <view
             class="org.eclipse.gef4.cloudio.internal.ui.view.TagCloudView"
-            id="org.eclipse.gef4.cloudio.internal.tagcloud"
+            id="org.eclipse.gef4.cloudio.internal.ui.view.TagCloud"
             category="org.eclipse.gef4.visualization"
             name="Tag Cloud"
             restorable="true">
@@ -29,21 +29,21 @@
                class="org.eclipse.gef4.cloudio.internal.ui.actions.ExportImageAction"
                tooltip="Export image"
                menubarPath="file/additions"
-               id="org.eclipse.gef4.cloudio.internal.export">
-               </action>
-			<action
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.ExportImage">
+           </action>
+		   <action
                label="Load Stopwords"
                class="org.eclipse.gef4.cloudio.internal.ui.actions.LoadStopWordsAction"
                tooltip="Load stop word list"
                menubarPath="file/additions"
-               id="org.eclipse.gef4.cloudio.internal.loadwords">
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.LoadStopWords">
                </action>
          <action
                label="Load File"
                class="org.eclipse.gef4.cloudio.internal.ui.actions.LoadFileAction"
                tooltip="Load a new File"
                menubarPath="file/additions"
-               id="org.eclipse.gef4.cloudio.internal.loadfile">
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.LoadFile">
          </action>
       </actionSet>
       <actionSet
@@ -52,42 +52,42 @@
             visible="true">
          <action
                class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomInAction"
-               id="org.eclipse.gef4.cloudio.internal.zoomin"
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomIn"
                label="Zoom In"
                menubarPath="edit/zoom"
                style="push">
          </action>
          <action
                class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomOutAction"
-               id="org.eclipse.gef4.cloudio.internal.zoomout"
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomOut"
                label="Zoom Out"
                menubarPath="edit/zoom"
                style="push">
          </action>
          <action
                class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomResetAction"
-               id="org.eclipse.gef4.cloudio.internal.zoomreset"
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomReset"
                label="100 %"
                menubarPath="edit/zoom"
                style="push">
          </action>
          <action
                class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomFitAction"
-               id="org.eclipse.gef4.cloudio.internal.zoomfit"
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomFit"
                label="Fit Window"
                menubarPath="edit/zoom"
                style="push">
          </action>
          <action
                class="org.eclipse.gef4.cloudio.internal.ui.actions.DeselectAllAction"
-               id="org.eclipse.gef4.cloudio.internal.deselectall"
+               id="org.eclipse.gef4.cloudio.internal.ui.actions.DeselectAll"
                label="Clear Selection"
                menubarPath="edit/select"
                style="push">
          </action>
           <action
                 class="org.eclipse.gef4.cloudio.internal.ui.actions.SelectAllAction"
-                id="org.eclipse.gef4.cloudio.internal.selectall"
+                id="org.eclipse.gef4.cloudio.internal.ui.actions.SelectAll"
                 label="Select All"
                 menubarPath="edit/select"
                 style="push">
