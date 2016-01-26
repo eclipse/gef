@@ -43,9 +43,11 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
+public class FXRotateSelectedOnHandleDragPolicy
+		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	// indication cursor
+	private CursorSupport cursorSupport = new CursorSupport(this);
 	private ImageCursor rotateCursor;
 
 	// gesture validity
@@ -97,6 +99,15 @@ public class FXRotateSelectedOnHandleDragPolicy extends AbstractFXOnDragPolicy {
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
 		}
+	}
+
+	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
 	}
 
 	/**

@@ -19,6 +19,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
@@ -33,13 +34,14 @@ import javafx.scene.transform.Affine;
  */
 // Only applicable for AbstractFXSegmentHandlePart, see #getHost().
 public class FXResizeTranslateOnHandleDragPolicy
-		extends AbstractFXOnDragPolicy {
+		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private boolean invalidGesture = false;
 	private Point initialPointerLocation;
 	private double initialTx;
 	private double initialTy;
 	private int translationIndex;
+	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -95,6 +97,15 @@ public class FXResizeTranslateOnHandleDragPolicy
 		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
 	}
 
+	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
+	}
+
 	@Override
 	public AbstractFXSegmentHandlePart<? extends Node> getHost() {
 		return (AbstractFXSegmentHandlePart<? extends Node>) super.getHost();
@@ -137,6 +148,11 @@ public class FXResizeTranslateOnHandleDragPolicy
 		return getTargetPart().getAdapter(FXTransformPolicy.class);
 	}
 
+	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
+	}
+
 	private boolean isMultiSelection() {
 		return getTargetPart().getRoot().getViewer()
 				.getAdapter(SelectionModel.class).getSelectionUnmodifiable()
@@ -168,6 +184,16 @@ public class FXResizeTranslateOnHandleDragPolicy
 		restoreRefreshVisuals(getTargetPart());
 		commit(getResizePolicy());
 		commit(getTransformPolicy());
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }

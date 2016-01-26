@@ -33,6 +33,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -45,7 +46,7 @@ import javafx.scene.input.MouseEvent;
  *
  */
 public class FXResizeTransformSelectedOnHandleDragPolicy
-		extends AbstractFXOnDragPolicy {
+		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
@@ -56,6 +57,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	private boolean invalidGesture = false;
 	private Map<IContentPart<Node, ? extends Node>, Integer> scaleIndices = new HashMap<>();
 	private Map<IContentPart<Node, ? extends Node>, Integer> translateIndices = new HashMap<>();
+	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	/**
 	 * Default constructor.
@@ -151,6 +153,15 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
 		double y2 = sel.getY() + sel.getHeight() * relY2.get(targetPart);
 		return new BoundingBox(x1, y1, x2 - x1, y2 - y1);
+	}
+
+	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -252,6 +263,11 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	}
 
 	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		// only applicable for multiple targets
 		List<IContentPart<Node, ? extends Node>> targetParts = getTargetParts();
@@ -327,6 +343,16 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		selectionBounds = null;
 		initialMouseLocation = null;
 		relX1 = relY1 = relX2 = relY2 = null;
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 	/**

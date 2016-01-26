@@ -13,11 +13,13 @@
 package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXInteractionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.CursorSupport;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -28,8 +30,9 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
+public class OffsetEdgeLabelOnDragPolicy extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
+	private CursorSupport cursorSupport = new CursorSupport(this);
 	private double initialOffsetX;
 	private double initialOffsetY;
 
@@ -43,9 +46,23 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 		getHost().getOffset().setY(initialOffsetY + dy);
 	}
 
+	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
+	}
+
 	@Override
 	public EdgeLabelPart getHost() {
 		return (EdgeLabelPart) super.getHost();
+	}
+
+	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
 	}
 
 	@Override
@@ -62,6 +79,16 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXOnDragPolicy {
 		double dy = q.getY() - p.getY();
 		getHost().getOffset().setX(initialOffsetX + dx);
 		getHost().getOffset().setY(initialOffsetY + dy);
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }

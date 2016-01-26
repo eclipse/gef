@@ -25,6 +25,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -41,15 +42,19 @@ import javafx.scene.input.MouseEvent;
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
+public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
+		implements IFXOnDragPolicy {
 
 	private int createdSegmentIndex;
+
+	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	private void adjustHandles(List<Point> points,
 			boolean skipMidPointsAroundCreated) {
 		// re-assign segment index and segment parameter
 		List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-				PartUtils.getAnchoreds(getHost().getAnchoragesUnmodifiable().keySet()),
+				PartUtils.getAnchoreds(
+						getHost().getAnchoragesUnmodifiable().keySet()),
 				FXCircleSegmentHandlePart.class);
 
 		Collections.<FXCircleSegmentHandlePart> sort(parts);
@@ -144,6 +149,15 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		return targetPart.getAdapter(FXBendPolicy.class);
 	}
 
+	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
+	}
+
 	@Override
 	public FXCircleSegmentHandlePart getHost() {
 		return (FXCircleSegmentHandlePart) super.getHost();
@@ -163,6 +177,11 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hostPart = getHost();
@@ -179,7 +198,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 
 			// find other segment handle parts
 			List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-					PartUtils.getAnchoreds(getHost().getAnchoragesUnmodifiable().keySet()),
+					PartUtils.getAnchoreds(
+							getHost().getAnchoragesUnmodifiable().keySet()),
 					FXCircleSegmentHandlePart.class);
 
 			// sort parts by segment index and parameter
@@ -235,6 +255,16 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXOnDragPolicy {
 		if (part.getSegmentParameter() != value) {
 			part.setSegmentParameter(value);
 		}
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }

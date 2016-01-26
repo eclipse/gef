@@ -33,6 +33,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -47,7 +48,8 @@ import javafx.scene.shape.StrokeType;
  * @author mwienand
  *
  */
-public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
+public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
+		implements IFXOnDragPolicy {
 
 	private static double[] bbox(Point2D start, Point2D end) {
 		double bbox[] = { start.getX(), start.getY(), end.getX(), end.getY() };
@@ -122,6 +124,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 		return containedNodes;
 	}
 
+	private CursorSupport cursorSupport = new CursorSupport(this);
+
 	// stores upon press() if the press-drag-release gesture is invalid
 	private boolean invalidGesture = false;
 
@@ -186,6 +190,15 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 	}
 
 	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
+	}
+
+	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that are
 	 * corresponding to the given {@link List} of {@link Node}s.
 	 *
@@ -207,6 +220,11 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 			}
 		}
 		return parts;
+	}
+
+	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
 	}
 
 	@Override
@@ -263,6 +281,16 @@ public class FXMarqueeOnDragPolicy extends AbstractFXOnDragPolicy {
 			getHost().getRoot().removeChild(feedback);
 			feedback = null;
 		}
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 	/**

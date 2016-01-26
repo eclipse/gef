@@ -24,6 +24,7 @@ import com.google.common.reflect.TypeToken;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -33,11 +34,13 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
+public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
+		implements IFXOnDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
 	private Map<IContentPart<Node, ? extends Node>, Integer> translationIndices = new HashMap<>();
 	private List<IContentPart<Node, ? extends Node>> targetParts;
+	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -62,6 +65,15 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 						deltaInParent.getX(), deltaInParent.getY());
 			}
 		}
+	}
+
+	/**
+	 * Returns the {@link CursorSupport} of this policy.
+	 *
+	 * @return The {@link CursorSupport} of this policy.
+	 */
+	protected CursorSupport getCursorSupport() {
+		return cursorSupport;
 	}
 
 	/**
@@ -100,6 +112,11 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	protected FXTransformPolicy getTransformPolicy(
 			IContentPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXTransformPolicy.class);
+	}
+
+	@Override
+	public void hideIndicationCursor() {
+		getCursorSupport().restoreCursor();
 	}
 
 	@Override
@@ -159,6 +176,16 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXOnDragPolicy {
 	 */
 	protected void setInitialMouseLocationInScene(Point point) {
 		initialMouseLocationInScene = point;
+	}
+
+	@Override
+	public boolean showIndicationCursor(KeyEvent event) {
+		return false;
+	}
+
+	@Override
+	public boolean showIndicationCursor(MouseEvent event) {
+		return false;
 	}
 
 }
