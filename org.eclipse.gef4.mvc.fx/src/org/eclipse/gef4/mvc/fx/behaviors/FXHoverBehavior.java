@@ -19,12 +19,16 @@ import java.util.Map;
 import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import com.google.inject.Inject;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
@@ -100,7 +104,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return false;
 	}
 
+	@Inject
+	private IHandlePartFactory<Node> handlePartFactory;
+
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();
+
 	private boolean isFeedback;
 	private boolean isHandles;
 	private PauseTransition creationDelayTransition;
@@ -115,8 +123,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 
 	@Override
 	protected void addFeedback(
-			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Map<Object, Object> contextMap) {
+			java.util.List<? extends org.eclipse.gef4.mvc.parts.IVisualPart<Node, ? extends Node>> targets,
+			java.util.List<? extends org.eclipse.gef4.mvc.parts.IFeedbackPart<Node, ? extends Node>> feedback) {
 		isFeedback = true;
 		if (getHost() instanceof IHandlePart) {
 			// add effect to handle parts as feedback, because feedback parts
@@ -124,10 +132,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			for (IVisualPart<Node, ? extends Node> part : targets) {
 				Node visual = part.getVisual();
 				effects.put(part, visual.getEffect());
-				visual.setEffect(getHandleHoverFeedbackEffect(contextMap));
+				visual.setEffect(
+						getHandleHoverFeedbackEffect(Collections.emptyMap()));
 			}
 		} else {
-			super.addFeedback(targets, contextMap);
+			super.addFeedback(targets, feedback);
 		}
 	}
 
@@ -140,7 +149,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		if (isInRemovalDelay()) {
 			stopRemovalDelay();
 		}
-		super.doDeactivate();
+		// remove any pending feedback and handles
+		removeFeedback(Collections.singletonList(getHost()));
+		removeHandles(Collections.singletonList(getHost()));
 	}
 
 	/**
@@ -159,6 +170,17 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(5);
 		return effect;
+	}
+
+	/**
+	 * Returns the {@link IHandlePartFactory} that was injected into this
+	 * {@link SelectionBehavior}.
+	 *
+	 * @return the {@link IHandlePartFactory} that was injected into this
+	 *         {@link SelectionBehavior}.
+	 */
+	protected IHandlePartFactory<Node> getHandlePartFactory() {
+		return handlePartFactory;
 	}
 
 	/**
@@ -208,8 +230,13 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	protected void onCreationDelay() {
 		unregisterMouseHandler();
 		initialPointerLocation = null;
-		addHandles(Collections.singletonList(getHost()));
-		isHandles = !getHandleParts().isEmpty();
+		// add handles
+		switchAdaptableScopes();
+		List<? extends IVisualPart<Node, ? extends Node>> targets = Collections
+				.singletonList(getHost());
+		addHandles(targets, getHandlePartFactory().createHandleParts(targets,
+				this, Collections.emptyMap()));
+		isHandles = getHandleParts() != null && !getHandleParts().isEmpty();
 	}
 
 	/**
@@ -221,7 +248,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			stopRemovalDelay();
 		}
 		if (!isFeedback) {
-			addFeedback(Collections.singletonList(getHost()));
+			switchAdaptableScopes();
+			List<? extends IVisualPart<Node, ? extends Node>> targets = Collections
+					.singletonList(getHost());
+			addFeedback(targets, getFeedbackPartFactory().createFeedbackParts(
+					targets, this, Collections.emptyMap()));
 		}
 		if (!isHandles) {
 			startHandleCreationDelay();

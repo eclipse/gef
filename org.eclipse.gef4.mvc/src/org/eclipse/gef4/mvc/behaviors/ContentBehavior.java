@@ -60,7 +60,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 		implements IDisposable {
 
 	private ListChangeListener<Object> contentModelObserver = new ListChangeListener<Object>() {
-
 		@Override
 		public void onChanged(
 				ListChangeListener.Change<? extends Object> change) {
@@ -80,7 +79,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	};
 
 	private ChangeListener<Object> contentObserver = new ChangeListener<Object>() {
-
 		@Override
 		public void changed(ObservableValue<? extends Object> observable,
 				Object oldValue, Object newValue) {
@@ -94,7 +92,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	};
 
 	private ListChangeListener<Object> contentChildrenObserver = new ListChangeListener<Object>() {
-
 		@Override
 		public void onChanged(
 				final ListChangeListener.Change<? extends Object> change) {
@@ -108,7 +105,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 	};
 
 	private SetMultimapChangeListener<Object, String> contentAnchoragesObserver = new SetMultimapChangeListener<Object, String>() {
-
 		@Override
 		public void onChanged(
 				final SetMultimapChangeListener.Change<? extends Object, ? extends String> change) {

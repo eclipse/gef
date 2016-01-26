@@ -83,6 +83,9 @@ public class CollectionUtils {
 	 */
 	public static <E> List<E> getPreviousContents(
 			ListChangeListener.Change<E> change) {
+		// reset change
+		change.reset();
+
 		ObservableList<E> currentList = change.getList();
 		ObservableListWrapper<E> previousList = new ObservableListWrapper<>(
 				new ArrayList<>(currentList));
@@ -136,6 +139,9 @@ public class CollectionUtils {
 				previousList.addAll(c.from, subList);
 			}
 		}
+
+		// reset change
+		change.reset();
 
 		return previousList;
 	}

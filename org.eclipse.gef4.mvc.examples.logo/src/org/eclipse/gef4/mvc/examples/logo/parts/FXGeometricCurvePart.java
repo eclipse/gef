@@ -120,9 +120,15 @@ public class FXGeometricCurvePart
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IAnchor anchor = anchorage
+		Provider<? extends IAnchor> anchorProvider = anchorage
 				.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
-				}).get();
+				});
+		if (anchorProvider == null) {
+			throw new IllegalStateException(
+					"Require <Provider<IAnchor>> adapter at <"
+							+ anchorage.getClass() + ">.");
+		}
+		IAnchor anchor = anchorProvider.get();
 		if (role.equals("START")) {
 			// System.out.println(
 			// "Setting start anchor of curve " + this + " to " + anchor);
