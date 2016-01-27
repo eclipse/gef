@@ -15,13 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 import javafx.scene.Node;
 
@@ -32,10 +34,10 @@ public class FXLogoHoverHandlePartFactory
 	private Injector injector;
 
 	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
+	protected List<IHandlePart<Node, ? extends Node>> createHoverHandlePartsForPolygonalOutline(
 			IVisualPart<Node, ? extends Node> target,
-			HoverBehavior<Node> contextBehavior,
-			Map<Object, Object> contextMap) {
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<>();
 		if (target instanceof FXGeometricShapePart) {
 			// create root handle part
@@ -51,11 +53,17 @@ public class FXLogoHoverHandlePartFactory
 			FXCreateCurveHoverHandlePart createCurveHp = new FXCreateCurveHoverHandlePart();
 			injector.injectMembers(createCurveHp);
 			parentHp.addChild(createCurveHp);
-
-			return handles;
 		}
-		return super.createHoverHandleParts(target, contextBehavior,
-				contextMap);
+		return handles;
+	}
+
+	@Override
+	protected List<IHandlePart<Node, ? extends Node>> createHoverHandlePartsForRectangularOutline(
+			IVisualPart<Node, ? extends Node> target,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider) {
+		return createHoverHandlePartsForPolygonalOutline(target,
+				contextBehavior, contextMap, segmentsProvider);
 	}
 
 }

@@ -13,7 +13,6 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,234 +51,8 @@ public class FXDefaultSelectionHandlePartFactory
 	 */
 	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
 
-	@Inject
-	private Injector injector;
-
-	/**
-	 * Creates an {@link FXRectangleSegmentHandlePart} for one corner of the
-	 * bounds of a multi selection. The selection bounds geometry can be
-	 * obtained from the given provider as a poly-bezier, i.e. an array of
-	 * {@link BezierCurve}s. The position of the handle part to create is
-	 * represented via segment index and parameter, where the index refers to
-	 * the respective {@link BezierCurve} segment, and the parameter (0 = start,
-	 * 0.5 = mid, 1 = end) to the relative position w.r.t. to the indexed
-	 * segment.
-	 *
-	 * @param targets
-	 *            The selected {@link IVisualPart}s that form the multi
-	 *            selection, for which feedback handles are to be created.
-	 * @param contextMap
-	 *            May contain additional information needed for the creation or
-	 *            to identify the creation context, when querying back such
-	 *            information from the context {@link IBehavior} that initiated
-	 *            the creation.
-	 * @param segmentsProvider
-	 *            A provider that delivers the selection geometry as a
-	 *            poly-bezier, represented as an array of {@link BezierCurve}s.
-	 * @param segmentIndex
-	 *            The index of the poly-bezier segment at which the handle is to
-	 *            be placed.
-	 * @param segmentParameter
-	 *            The parameter that identifies the position within the segment
-	 *            (0 = start, 0.5 = mid, 1 = end).
-	 * @return an {@link IHandlePart} for the specified corner of the bounds of
-	 *         the multi selection
-	 */
-	// TODO: if we pass in the contextMap here, we should also pass in the
-	// contextBehavior, because otherwise a back-query scenario cannot be
-	// realized.
-	protected IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
-			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Map<Object, Object> contextMap,
-			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
-			double segmentParameter) {
-		FXRectangleSegmentHandlePart part = injector
-				.getInstance(FXRectangleSegmentHandlePart.class);
-		part.setSegmentsProvider(segmentsProvider);
-		part.setSegmentIndex(segmentIndex);
-		part.setSegmentParameter(segmentParameter);
-		return part;
-	}
-
-	/**
-	 * Creates handle parts for a multi selection. The handle parts will be
-	 * located in the corners of the selection bounds.
-	 *
-	 * @param targets
-	 *            A list containing the {@link IVisualPart}s that are part of
-	 *            the multi selection.
-	 * @param handleGeometryProvider
-	 *            The <code>Provider&lt;IGeometry&gt;</code> that provides the
-	 *            selection bounds geometry.
-	 * @param contextMap
-	 *            A map in which the state-less {@link SelectionBehavior} may
-	 *            place additional context information for the creation process.
-	 *            It may either directly contain additional information needed
-	 *            by this factory, or may be passed back by the factory to the
-	 *            calling {@link SelectionBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link SelectionBehavior} to identify the creation context).
-	 * @return A list containing the created handle parts.
-	 */
-	// TODO: Maybe inline this method
-	// TODO: if we pass in the contextMap here, we should also pass in the
-	// contextBehavior, because otherwise a back-query scenario cannot be
-	// realized.
-	protected List<IHandlePart<Node, ? extends Node>> createBoundsSelectionHandleParts(
-			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Provider<? extends IGeometry> handleGeometryProvider,
-			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<>();
-
-		// per default, handle parts are created for the 4 corners of the
-		// multi selection bounds
-		Provider<BezierCurve[]> segmentsProvider = createSegmentsProvider(
-				handleGeometryProvider);
-		for (int i = 0; i < 4; i++) {
-			IHandlePart<Node, ? extends Node> part = createBoundsSelectionCornerHandlePart(
-					targets, contextMap, segmentsProvider, i, 0);
-			if (part != null) {
-				handleParts.add(part);
-			}
-		}
-		return handleParts;
-	}
-
-	/**
-	 * Creates an {@link IHandlePart} for the specified segment vertex of the
-	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 *
-	 * @param targetPart
-	 *            The {@link IVisualPart} which is selected.
-	 * @param segmentsProvider
-	 *            Provides {@link BezierCurve}s from which the handle part can
-	 *            retrieve its location.
-	 * @param segmentCount
-	 *            The number of segments that exist
-	 * @param segmentIndex
-	 *            Index of the segment of the provided {@link BezierCurve}s
-	 *            where the handle part will be located.
-	 * @param segmentParameter
-	 *            Parameter between 0 and 1 that specifies the location on the
-	 *            segment.
-	 * @return {@link IHandlePart} for the specified segment vertex of the
-	 *         provided {@link BezierCurve}s
-	 */
-	// TODO: if we pass in context behavior and context map to the other
-	// creation methods, we should also do this here.
-	// TODO: remove the segment count parameter here
-	protected IHandlePart<Node, ? extends Node> createCurveSelectionHandlePart(
-			final IVisualPart<Node, ? extends Node> targetPart,
-			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
-			int segmentIndex, double segmentParameter) {
-		FXCircleSegmentHandlePart part = injector
-				.getInstance(FXCircleSegmentHandlePart.class);
-		part.setSegmentsProvider(segmentsProvider);
-		part.setSegmentIndex(segmentIndex);
-		part.setSegmentParameter(segmentParameter);
-		return part;
-	}
-
-	/**
-	 * Generate handles for the end/join points of the individual beziers.
-	 *
-	 * @param targetPart
-	 *            The {@link IVisualPart} which is selected.
-	 * @param segmentsProvider
-	 *            Provides an {@link IGeometry} for which {@link IHandlePart}s
-	 *            are to be created.
-	 * @param contextMap
-	 *            Stores context information as an {@link IBehavior} is
-	 *            stateless.
-	 * @return {@link IHandlePart}s for the given target part.
-	 */
-	// TODO: Maybe inline this method
-	// TODO: if we pass in the contextMap here, we should also pass in the
-	// contextBehavior, because otherwise a back-query scenario cannot be
-	// realized.
-	protected List<IHandlePart<Node, ? extends Node>> createCurveSelectionHandleParts(
-			final IVisualPart<Node, ? extends Node> targetPart,
-			Provider<BezierCurve[]> segmentsProvider,
-			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<>();
-		BezierCurve[] segments = segmentsProvider.get();
-		for (int i = 0; i < segments.length; i++) {
-			IHandlePart<Node, ? extends Node> part = createCurveSelectionHandlePart(
-					targetPart, segmentsProvider, segments.length, i, 0.0);
-			if (part != null) {
-				hps.add(part);
-			}
-			part = createCurveSelectionHandlePart(targetPart, segmentsProvider,
-					segments.length, i, 0.5);
-			if (part != null) {
-				hps.add(part);
-			}
-
-			// create handle part for the curve's end point, too
-			if (i == segments.length - 1) {
-				part = createCurveSelectionHandlePart(targetPart,
-						segmentsProvider, segments.length, i, 1.0);
-				if (part != null) {
-					hps.add(part);
-				}
-			}
-		}
-		return hps;
-	}
-
-	// entry point
-	@Override
-	public List<IHandlePart<Node, ? extends Node>> createHandleParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
-		// check creation context
-		if (!(contextBehavior instanceof SelectionBehavior)) {
-			throw new IllegalStateException(
-					"The FXDefaultSelectionHandlePartFactory can only generate handle parts in the context of a SelectionBehavior, but the context behavior is a <"
-							+ contextBehavior + ">.");
-		}
-
-		// no targets
-		if (targets == null || targets.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		return createSelectionHandleParts(targets,
-				(SelectionBehavior<Node>) contextBehavior, contextMap);
-	}
-
-	/**
-	 * Creates handle parts for a multi selection.
-	 *
-	 * @param targets
-	 *            The list of {@link IVisualPart}s for which handles are
-	 *            created.
-	 * @param contextMap
-	 *            A map in which the state-less {@link SelectionBehavior} may
-	 *            place additional context information for the creation process.
-	 *            It may either directly contain additional information needed
-	 *            by this factory, or may be passed back by the factory to the
-	 *            calling {@link SelectionBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link SelectionBehavior} to identify the creation context).
-	 * @return A list containing the created handle parts.
-	 */
-	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
-			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Map<Object, Object> contextMap) {
-		Provider<? extends IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				// TODO: move code out of FXPartUtils into a geometry provider
-				// (move to FX)
-				return FXPartUtils.getUnionedVisualBoundsInScene(targets);
-			}
-		};
-		return createBoundsSelectionHandleParts(targets, handleGeometryProvider,
-				contextMap);
-	}
-
-	private Provider<BezierCurve[]> createSegmentsProvider(
+	// TODO
+	private static Provider<BezierCurve[]> createSegmentsProvider(
 			final Provider<? extends IGeometry> geometryProvider) {
 		return new Provider<BezierCurve[]>() {
 			@Override
@@ -302,110 +75,123 @@ public class FXDefaultSelectionHandlePartFactory
 		};
 	}
 
-	/**
-	 * Creates handle parts for a selection.
-	 *
-	 * @param targets
-	 *            The list of {@link IVisualPart}s for which handles are
-	 *            created.
-	 * @param selectionBehavior
-	 *            The {@link SelectionBehavior} that initiated the creation
-	 *            process.
-	 * @param contextMap
-	 *            A map in which the state-less {@link SelectionBehavior} may
-	 *            place additional context information for the creation process.
-	 *            It may either directly contain additional information needed
-	 *            by this factory, or may be passed back by the factory to the
-	 *            calling {@link SelectionBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link SelectionBehavior} to identify the creation context).
-	 * @return A list containing the created handle parts.
-	 */
-	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(
+	@Inject
+	private Injector injector;
+
+	// entry point
+	@Override
+	public List<IHandlePart<Node, ? extends Node>> createHandleParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			SelectionBehavior<Node> selectionBehavior,
-			Map<Object, Object> contextMap) {
-		if (targets.isEmpty()) {
-			return Collections.emptyList();
-		} else if (targets.size() == 1) {
-			return createSingleSelectionHandleParts(targets.get(0), contextMap);
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+		// check creation context
+		if (!(contextBehavior instanceof SelectionBehavior)) {
+			throw new IllegalArgumentException(
+					"The FXDefaultSelectionHandlePartFactory can only generate handle parts in the context of a SelectionBehavior, but the context behavior is a <"
+							+ contextBehavior + ">.");
+		}
+		// check that we have targets
+		if (targets == null || targets.isEmpty()) {
+			throw new IllegalArgumentException(
+					"Part factory is called without targets.");
+		}
+
+		if (targets.size() == 1) {
+			return createSingleSelectionHandleParts(targets.get(0),
+					contextBehavior, contextMap);
 		} else {
-			// multiple selection uses bounds
-			return createMultiSelectionHandleParts(targets, contextMap);
+			return createMultiSelectionHandleParts(targets, contextBehavior,
+					contextMap);
 		}
 	}
 
 	/**
-	 * Creates an {@link IHandlePart} for the specified vertex of the
-	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
+	 * Creates handle parts for a multi selection.
 	 *
-	 * @param target
-	 *            {@link IVisualPart} for which a selection handle is created.
-	 * @param segmentsProvider
-	 *            Provides the {@link BezierCurve}s from which the handle can
-	 *            retrieve its location.
-	 * @param segmentCount
-	 *            Number of segments.
-	 * @param segmentIndex
-	 *            Index of the segment where the handle is located.
+	 * @param targets
+	 *            The target {@link IVisualPart}s for which handles are to be
+	 *            created.
+	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiates the creation of
+	 *            feedback.
 	 * @param contextMap
-	 *            Stores context information as an {@link IBehavior} is
-	 *            stateless.
-	 * @return {@link IHandlePart} for the specified vertex of the
-	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
+	 *            A map in which the state-less context {@link IBehavior}) may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by the {@link IHandlePartFactory}, or may be passed back by
+	 *            the {@link IHandlePartFactory} to the calling context
+	 *            {@link IBehavior} to query such kind of information (in which
+	 *            case it will allow the context {@link IBehavior} to identify
+	 *            the creation context).
+	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
+	 *         given targets.
 	 */
-	protected IHandlePart<Node, ? extends Node> createSelectionSegmentHandlePart(
-			final IVisualPart<Node, ? extends Node> target,
-			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
-			int segmentIndex, Map<Object, Object> contextMap) {
-		FXCircleSegmentHandlePart part = injector
-				.getInstance(FXCircleSegmentHandlePart.class);
-		part.setSegmentsProvider(segmentsProvider);
-		part.setSegmentIndex(segmentIndex);
-		part.setSegmentParameter(0);
-		injector.injectMembers(part);
-		return part;
+	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
+			final List<? extends IVisualPart<Node, ? extends Node>> targets,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+		Provider<? extends IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				// TODO: move code out of FXPartUtils into a geometry provider
+				// (move to FX)
+				return FXPartUtils.getUnionedVisualBoundsInScene(targets);
+			}
+		};
+		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<>();
+		// per default, handle parts are created for the 4 corners of the
+		// multi selection bounds
+		Provider<BezierCurve[]> segmentsProvider = createSegmentsProvider(
+				handleGeometryProvider);
+		for (int i = 0; i < 4; i++) {
+			// create handle for the start point of the segment
+			FXRectangleSegmentHandlePart part = injector
+					.getInstance(FXRectangleSegmentHandlePart.class);
+			part.setSegmentsProvider(segmentsProvider);
+			part.setSegmentIndex(i);
+			part.setSegmentParameter(0);
+			if (part != null) {
+				handleParts.add(part);
+			}
+		}
+		return handleParts;
 	}
 
 	/**
 	 * Creates handle parts for a single selection.
 	 *
 	 * @param target
-	 *            The {@link IVisualPart} for which handles are created.
+	 *            The target {@link IVisualPart} for which handles are to be
+	 *            created.
+	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiates the creation of
+	 *            feedback.
 	 * @param contextMap
-	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
 	 *            It may either directly contain additional information needed
-	 *            by this factory, or may be passed back by the factory to the
-	 *            calling {@link SelectionBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link SelectionBehavior} to identify the creation context).
-	 * @return A list containing the created handle parts.
+	 *            by the {@link IHandlePartFactory}, or may be passed back by
+	 *            the {@link IHandlePartFactory} to the calling context
+	 *            {@link IBehavior} to query such kind of information (in which
+	 *            case it will allow the context {@link IBehavior} to identify
+	 *            the creation context).
+	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
+	 *         given targets.
 	 */
-	// TODO: Add parameter for SelectionBehavior so that back queries are
-	// possible
 	@SuppressWarnings("serial")
 	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(
 			final IVisualPart<Node, ? extends Node> target,
-			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<>();
-
-		// handle geometry is in target visual local coordinate space.
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+		// determine handle geometry (in target visual local coordinates)
 		final Provider<? extends IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
 				.getAdapter(AdapterKey
 						.get(new TypeToken<Provider<? extends IGeometry>>() {
 						}, SELECTION_HANDLES_GEOMETRY_PROVIDER));
-
-		// generate handles from selection handles geometry
 		IGeometry selectionHandlesGeometry = (selectionHandlesGeometryInTargetLocalProvider != null)
 				? selectionHandlesGeometryInTargetLocalProvider.get() : null;
-
 		if (selectionHandlesGeometry == null) {
-			return handleParts; // empty
+			return Collections.emptyList();
 		}
 
-		// we will need a provider that returns the geometry in scene
-		// coordinates
+		// create provider that returns the geometry in scene coordinates
 		final Provider<IGeometry> selectionHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
@@ -417,65 +203,160 @@ public class FXDefaultSelectionHandlePartFactory
 				selectionHandlesGeometryInSceneProvider);
 
 		if (selectionHandlesGeometry instanceof ICurve) {
-			// assure the geometry provider that is handed over returns the
-			// geometry in scene coordinates
-			handleParts.addAll(createCurveSelectionHandleParts(target,
-					selectionHandlesSegmentsInSceneProvider, contextMap));
+			// create curve handles
+			return createSingleSelectionHandlePartsForCurve(target,
+					contextBehavior, contextMap,
+					selectionHandlesSegmentsInSceneProvider);
 		} else if (selectionHandlesGeometry instanceof IShape) {
 			if (selectionHandlesGeometry instanceof Rectangle) {
-				// create corner handles
-				handleParts.addAll(createTightBoundsSelectionHandleParts(
-						Collections.singletonList(target),
-						selectionHandlesSegmentsInSceneProvider, contextMap));
+				// create box handles
+				return createSingleSelectionHandlePartsForRectangularOutline(
+						target, contextBehavior, contextMap,
+						selectionHandlesSegmentsInSceneProvider);
 			} else {
 				// create segment handles (based on outline)
-				BezierCurve[] segments = selectionHandlesSegmentsInSceneProvider
-						.get();
-				for (int i = 0; i < segments.length; i++) {
-					IHandlePart<Node, ? extends Node> hp = createSelectionSegmentHandlePart(
-							target, selectionHandlesSegmentsInSceneProvider,
-							segments.length, i, contextMap);
-					if (hp != null) {
-						handleParts.add(hp);
-					}
-				}
+				return createSingleSelectionHandlePartsForPolygonalOutline(
+						target, contextBehavior, contextMap,
+						selectionHandlesSegmentsInSceneProvider);
 			}
 		} else {
 			throw new IllegalStateException(
 					"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
 							+ selectionHandlesGeometry);
 		}
+	}
+
+	/**
+	 * Creates handle parts for a single selection of which the handle geometry
+	 * is an {@link ICurve}.
+	 *
+	 * @param target
+	 *            The target {@link IVisualPart} for which handles are to be
+	 *            created.
+	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiates the creation of
+	 *            feedback.
+	 * @param contextMap
+	 *            A map in which the state-less context {@link IBehavior}) may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by the {@link IHandlePartFactory}, or may be passed back by
+	 *            the {@link IHandlePartFactory} to the calling context
+	 *            {@link IBehavior} to query such kind of information (in which
+	 *            case it will allow the context {@link IBehavior} to identify
+	 *            the creation context).
+	 * @param segmentsProvider
+	 *            A provider for the segments of the handle geometry for which
+	 *            handles are to be created.
+	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
+	 *         given targets.
+	 */
+	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandlePartsForCurve(
+			final IVisualPart<Node, ? extends Node> target,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider) {
+		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<>();
+		BezierCurve[] segments = segmentsProvider.get();
+		for (int i = 0; i < segments.length; i++) {
+			// create handle for the start point of a segment
+			FXCircleSegmentHandlePart part = injector
+					.getInstance(FXCircleSegmentHandlePart.class);
+			part.setSegmentsProvider(segmentsProvider);
+			part.setSegmentIndex(i);
+			part.setSegmentParameter(0.0);
+			hps.add(part);
+
+			// create handle for the middle of a segment
+			part = injector.getInstance(FXCircleSegmentHandlePart.class);
+			part.setSegmentsProvider(segmentsProvider);
+			part.setSegmentIndex(i);
+			part.setSegmentParameter(0.5);
+			hps.add(part);
+
+			// create handle for the end point of the curve
+			if (i == segments.length - 1) {
+				part = injector.getInstance(FXCircleSegmentHandlePart.class);
+				part.setSegmentsProvider(segmentsProvider);
+				part.setSegmentIndex(i);
+				part.setSegmentParameter(1.0);
+				hps.add(part);
+			}
+		}
+		return hps;
+	}
+
+	/**
+	 * Creates handle parts for a single selection of which the handle geometry
+	 * is an {@link IShape} but not a {@link Rectangle}.
+	 *
+	 * @param target
+	 *            The target {@link IVisualPart} for which handles are to be
+	 *            created.
+	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiates the creation of
+	 *            feedback.
+	 * @param contextMap
+	 *            A map in which the state-less context {@link IBehavior}) may
+	 *            place additional context information for the creation process.
+	 *            It may either directly contain additional information needed
+	 *            by the {@link IHandlePartFactory}, or may be passed back by
+	 *            the {@link IHandlePartFactory} to the calling context
+	 *            {@link IBehavior} to query such kind of information (in which
+	 *            case it will allow the context {@link IBehavior} to identify
+	 *            the creation context).
+	 * @param segmentsProvider
+	 *            A provider for the segments of the handle geometry for which
+	 *            handles are to be created.
+	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
+	 *         given targets.
+	 */
+	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandlePartsForPolygonalOutline(
+			IVisualPart<Node, ? extends Node> target,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider) {
+		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<>();
+		BezierCurve[] segments = segmentsProvider.get();
+		for (int i = 0; i < segments.length; i++) {
+			// create handle for the start point of the segment
+			FXCircleSegmentHandlePart part = injector
+					.getInstance(FXCircleSegmentHandlePart.class);
+			part.setSegmentsProvider(segmentsProvider);
+			part.setSegmentIndex(i);
+			part.setSegmentParameter(0);
+			handleParts.add(part);
+		}
 		return handleParts;
 	}
 
 	/**
-	 * Creates {@link FXRectangleSegmentHandlePart}s for the segments provided
-	 * by the given segments provider.
+	 * Creates handle parts for a single selection of which the handle geometry
+	 * is a {@link Rectangle}.
 	 *
-	 * @param targetParts
-	 *            A list containing the {@link IVisualPart}s for which handles
-	 *            are created.
-	 * @param segmentsProvider
-	 *            The <code>Provider&lt;BezierCurve[]&gt;</code> that is used to
-	 *            determine the handles's positions.
+	 * @param target
+	 *            The target {@link IVisualPart} for which handles are to be
+	 *            created.
+	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiates the creation of
+	 *            feedback.
 	 * @param contextMap
-	 *            A map in which the state-less {@link SelectionBehavior} may
+	 *            A map in which the state-less context {@link IBehavior}) may
 	 *            place additional context information for the creation process.
 	 *            It may either directly contain additional information needed
-	 *            by this factory, or may be passed back by the factory to the
-	 *            calling {@link SelectionBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link SelectionBehavior} to identify the creation context).
-	 * @return A list containing the created handle parts.
+	 *            by the {@link IHandlePartFactory}, or may be passed back by
+	 *            the {@link IHandlePartFactory} to the calling context
+	 *            {@link IBehavior} to query such kind of information (in which
+	 *            case it will allow the context {@link IBehavior} to identify
+	 *            the creation context).
+	 * @param segmentsProvider
+	 *            A provider for the segments of the handle geometry for which
+	 *            handles are to be created.
+	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
+	 *         given targets.
 	 */
-	// TODO: Remove parameter targetParts since they are not used (maybe pass in
-	// the single target part)
-	// TODO: Add parameter for SelectionBehavior so that back queries are
-	// possible
-	protected Collection<? extends IHandlePart<Node, ? extends Node>> createTightBoundsSelectionHandleParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targetParts,
-			Provider<BezierCurve[]> segmentsProvider,
-			Map<Object, Object> contextMap) {
+	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandlePartsForRectangularOutline(
+			IVisualPart<Node, ? extends Node> target,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
 		for (int i = 0; i < segments.length; i++) {

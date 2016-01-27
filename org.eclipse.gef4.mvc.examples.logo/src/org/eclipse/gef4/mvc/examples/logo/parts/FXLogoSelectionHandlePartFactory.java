@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.gef4.geometry.planar.BezierCurve;
-import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -26,26 +29,18 @@ public class FXLogoSelectionHandlePartFactory
 		extends FXDefaultSelectionHandlePartFactory {
 
 	@Override
-	public IHandlePart<Node, ? extends Node> createCurveSelectionHandlePart(
-			final IVisualPart<Node, ? extends Node> targetPart,
-			final Provider<BezierCurve[]> segmentsProvider, int segmentCount,
-			int segmentIndex, double segmentParameter) {
-		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super.createCurveSelectionHandlePart(
-				targetPart, segmentsProvider, segmentCount, segmentIndex,
-				segmentParameter);
-
-		if (segmentIndex + segmentParameter > 0
-				&& segmentIndex + segmentParameter < segmentCount) {
-			// make way points (middle segment vertices) draggable
+	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandlePartsForCurve(
+			IVisualPart<Node, ? extends Node> target,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider) {
+		List<IHandlePart<Node, ? extends Node>> parts = super.createSingleSelectionHandlePartsForCurve(
+				target, contextBehavior, contextMap, segmentsProvider);
+		for (IHandlePart<Node, ? extends Node> p : parts) {
+			// make way points draggable and end points reconnectable
 			// TODO: binding the following policy requires dynamic binding
-			part.setAdapter(new FXBendOnSegmentHandleDragPolicy());
-		} else {
-			// make end points reconnectable
-			// TODO: binding the following policy requires dynamic binding
-			part.setAdapter(new FXBendOnSegmentHandleDragPolicy());
+			p.setAdapter(new FXBendOnSegmentHandleDragPolicy());
 		}
-
-		return part;
+		return parts;
 	}
 
 }

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -31,7 +32,8 @@ public class SelectionHandlePartFactory extends FXDefaultSelectionHandlePartFact
 
 	@Override
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets, Map<Object, Object> contextMap) {
+			List<? extends IVisualPart<Node, ? extends Node>> targets, IBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
 		return Collections.emptyList();
 	}
 

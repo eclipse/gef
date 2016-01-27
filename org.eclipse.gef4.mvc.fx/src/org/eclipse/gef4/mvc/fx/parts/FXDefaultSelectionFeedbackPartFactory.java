@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -66,18 +65,58 @@ public class FXDefaultSelectionFeedbackPartFactory
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		// check creation context
 		if (!(contextBehavior instanceof SelectionBehavior)) {
-			throw new IllegalStateException(
+			throw new IllegalArgumentException(
 					"The FXDefaultSelectionFeedbackPartFactory can only generate feedback parts in the context of a SelectionBehavior, but the context behavior is a <"
 							+ contextBehavior + ">.");
 		}
-
+		// check that we have targets
 		if (targets == null || targets.isEmpty()) {
-			// nothing to do if we do not have targets
-			return Collections.emptyList();
+			throw new IllegalArgumentException(
+					"Part factory is called without targets.");
 		}
 
-		return createSelectionFeedbackParts(targets,
-				(SelectionBehavior<Node>) contextBehavior, contextMap);
+		// single selection, create selection feedback based on geometry
+		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<>();
+
+		// selection outline feedback
+		final IVisualPart<Node, ? extends Node> target = targets.iterator()
+				.next();
+		@SuppressWarnings("serial")
+		final Provider<? extends IGeometry> selectionFeedbackGeometryProvider = target
+				.getAdapter(AdapterKey
+						.get(new TypeToken<Provider<? extends IGeometry>>() {
+						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
+		if (selectionFeedbackGeometryProvider != null) {
+			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
+				@Override
+				public IGeometry get() {
+					return NodeUtils.localToScene(target.getVisual(),
+							selectionFeedbackGeometryProvider.get());
+				}
+			};
+			FXSelectionFeedbackPart selectionFeedbackPart = injector
+					.getInstance(FXSelectionFeedbackPart.class);
+			selectionFeedbackPart.setGeometryProvider(geometryInSceneProvider);
+			feedbackParts.add(selectionFeedbackPart);
+		}
+
+		// selection link feedback parts
+		for (IVisualPart<Node, ? extends Node> t : targets) {
+			if (!t.getAnchoragesUnmodifiable().isEmpty()) {
+				for (Entry<IVisualPart<Node, ? extends Node>, String> entry : t
+						.getAnchoragesUnmodifiable().entries()) {
+					if (entry.getKey() instanceof IVisualPart) {
+						IFeedbackPart<Node, ? extends Node> anchorLinkFeedbackPart = createLinkFeedbackPart(
+								t, entry.getKey(), entry.getValue());
+						if (anchorLinkFeedbackPart != null) {
+							feedbackParts.add(anchorLinkFeedbackPart);
+						}
+					}
+				}
+			}
+		}
+
+		return feedbackParts;
 	}
 
 	/**
@@ -94,7 +133,7 @@ public class FXDefaultSelectionFeedbackPartFactory
 	 *         <code>null</code> if no feedback should be rendered.
 	 */
 	@SuppressWarnings("serial")
-	protected IFeedbackPart<Node, ? extends Node> createLinkFeedbackPart(
+	private IFeedbackPart<Node, ? extends Node> createLinkFeedbackPart(
 			final IVisualPart<Node, ? extends Node> anchored,
 			final IVisualPart<Node, ? extends Node> anchorage,
 			String anchorageRole) {
@@ -167,79 +206,6 @@ public class FXDefaultSelectionFeedbackPartFactory
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Creates {@link FXSelectionFeedbackPart}s and
-	 * {@link FXSelectionLinkFeedbackPart}s for the <i>targets</i>.
-	 *
-	 * @param targets
-	 *            The list of {@link IVisualPart}s for which selection feedback
-	 *            is created.
-	 * @param selectionBehavior
-	 *            The {@link SelectionBehavior} that initiated the feedback
-	 *            creation.
-	 * @param contextMap
-	 *            A map in which the state-less {@link SelectionBehavior} may
-	 *            place additional context information for the creation process.
-	 *            It may either directly contain additional information needed
-	 *            by this factory, or may be passed back by the factory to the
-	 *            calling {@link SelectionBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link SelectionBehavior} to identify the creation context).
-	 * @return A list containing the created feedback parts.
-	 */
-	@SuppressWarnings("serial")
-	protected List<IFeedbackPart<Node, ? extends Node>> createSelectionFeedbackParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			SelectionBehavior<Node> selectionBehavior,
-			Map<Object, Object> contextMap) {
-		// no feedback for empty or multiple selection
-		if (targets.size() == 0 || targets.size() > 1) {
-			return Collections.emptyList();
-		}
-
-		// single selection, create selection feedback based on geometry
-		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<>();
-
-		// selection outline feedback
-		final IVisualPart<Node, ? extends Node> target = targets.iterator()
-				.next();
-		final Provider<? extends IGeometry> selectionFeedbackGeometryProvider = target
-				.getAdapter(AdapterKey
-						.get(new TypeToken<Provider<? extends IGeometry>>() {
-						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
-		if (selectionFeedbackGeometryProvider != null) {
-			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
-				@Override
-				public IGeometry get() {
-					return NodeUtils.localToScene(target.getVisual(),
-							selectionFeedbackGeometryProvider.get());
-				}
-			};
-			FXSelectionFeedbackPart selectionFeedbackPart = injector
-					.getInstance(FXSelectionFeedbackPart.class);
-			selectionFeedbackPart.setGeometryProvider(geometryInSceneProvider);
-			feedbackParts.add(selectionFeedbackPart);
-		}
-
-		// selection link feedback parts
-		for (IVisualPart<Node, ? extends Node> t : targets) {
-			if (!t.getAnchoragesUnmodifiable().isEmpty()) {
-				for (Entry<IVisualPart<Node, ? extends Node>, String> entry : t
-						.getAnchoragesUnmodifiable().entries()) {
-					if (entry.getKey() instanceof IVisualPart) {
-						IFeedbackPart<Node, ? extends Node> anchorLinkFeedbackPart = createLinkFeedbackPart(
-								t, entry.getKey(), entry.getValue());
-						if (anchorLinkFeedbackPart != null) {
-							feedbackParts.add(anchorLinkFeedbackPart);
-						}
-					}
-				}
-			}
-		}
-
-		return feedbackParts;
 	}
 
 }

@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,51 +54,26 @@ public class FXDefaultHoverFeedbackPartFactory
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		// check creation context
 		if (!(contextBehavior instanceof HoverBehavior)) {
-			throw new IllegalStateException(
+			throw new IllegalArgumentException(
 					"The FXDefaultHoverFeedbackPartFactory can only generate feedback parts in the context of a HoverBehavior, but the context behavior is a <"
 							+ contextBehavior + ">.");
 		}
-
+		// check that we have targets
 		if (targets == null || targets.isEmpty()) {
-			// nothing to do if we do not have targets
-			return Collections.emptyList();
+			throw new IllegalArgumentException(
+					"Part factory is called without targets.");
 		}
-
-		return createHoverFeedbackParts(targets,
-				(HoverBehavior<Node>) contextBehavior, contextMap);
-	}
-
-	/**
-	 * Creates {@link FXHoverFeedbackPart}s for the given <i>targets</i>.
-	 *
-	 * @param targets
-	 *            The list of {@link IVisualPart}s for which hover feedback is
-	 *            generated.
-	 * @param hoverBehavior
-	 *            The {@link HoverBehavior} that initiated the feedback
-	 *            creation.
-	 * @param contextMap
-	 *            A map in which the state-less {@link HoverBehavior} may place
-	 *            additional context information for the creation process. It
-	 *            may either directly contain additional information needed by
-	 *            this factory, or may be passed back by the factory to the
-	 *            calling {@link HoverBehavior} to query such kind of
-	 *            information (in which case it will allow the
-	 *            {@link HoverBehavior} to identify the creation context).
-	 * @return A list containing the created feedback parts.
-	 */
-	@SuppressWarnings("serial")
-	protected List<IFeedbackPart<Node, ? extends Node>> createHoverFeedbackParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			HoverBehavior<Node> hoverBehavior, Map<Object, Object> contextMap) {
-		// no feedback for empty or multiple selection
-		if (targets.size() == 0 || targets.size() > 1) {
-			return Collections.emptyList();
+		if (targets.size() > 1) {
+			throw new IllegalArgumentException(
+					"Cannot create feedback for multiple targets.");
 		}
-		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<>();
 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
+		List<IFeedbackPart<Node, ? extends Node>> feedbackParts = new ArrayList<>();
+
+		// determine feedback geometry
+		@SuppressWarnings("serial")
 		final Provider<? extends IGeometry> hoverFeedbackGeometryProvider = target
 				.getAdapter(AdapterKey
 						.get(new TypeToken<Provider<? extends IGeometry>>() {
