@@ -18,7 +18,10 @@ import java.util.Map;
 import org.eclipse.gef4.fx.gestures.AbstractScrollGesture;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -26,18 +29,19 @@ import javafx.scene.Scene;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * The {@link FXScrollTool} is an {@link AbstractFXTool} that handles mouse
- * scroll events.
+ * The {@link FXScrollTool} is an {@link AbstractTool} that handles mouse scroll
+ * events.
  *
  * @author mwienand
  *
  */
-public class FXScrollTool extends AbstractFXTool {
-
+public class FXScrollTool extends AbstractTool<Node> {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IFXOnScrollPolicy> ON_SCROLL_POLICY_KEY = IFXOnScrollPolicy.class;
+	@Inject
+	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractScrollGesture> gestures = new HashMap<>();
 
@@ -75,7 +79,7 @@ public class FXScrollTool extends AbstractFXTool {
 					EventTarget eventTarget = event.getTarget();
 					getDomain().openExecutionTransaction(FXScrollTool.this);
 					setActivePolicies(viewer,
-							getTargetPolicies(viewer,
+							targetPolicyResolver.getTargetPolicies(viewer,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									ON_SCROLL_POLICY_KEY));

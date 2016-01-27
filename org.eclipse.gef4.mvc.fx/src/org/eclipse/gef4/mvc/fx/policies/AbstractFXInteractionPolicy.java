@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.gef4.mvc.fx.tools.AbstractFXTool;
+import org.eclipse.gef4.mvc.fx.tools.DefaultTargetPolicyResolver;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
@@ -23,9 +23,10 @@ import javafx.scene.Node;
  * {@link AbstractInteractionPolicy} and binds its visual root parameter to
  * {@link Node}. It provides two convenience methods that can be used to guard
  * interaction policies from processing events that are intended to be processed
- * by other policies. This is necessary because the {@link AbstractFXTool}
- * iterates the entire visual part hierarchy of the visual that receives the
- * input event and sends the event to all suitable policies on the way.
+ * by other policies. This is necessary because the
+ * {@link DefaultTargetPolicyResolver} iterates the entire visual part hierarchy
+ * of the visual that receives the input event and sends the event to all
+ * suitable policies on the way.
  * <ul>
  * <li>{@link #isRegistered(EventTarget)}
  * <li>{@link #isRegisteredForHost(EventTarget)}

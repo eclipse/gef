@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 itemis AG and others.
+ * Copyright (c) 2016 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
-import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -31,14 +30,28 @@ import com.google.common.reflect.TypeToken;
 import javafx.scene.Node;
 
 /**
- * The {@link AbstractFXTool} provides a mechanism to determine and prioritize
- * all policies that are to be notified about certain input events (see
- * {@link #getTargetPolicies(IViewer, Node, Class)}).
+ * The {@link DefaultTargetPolicyResolver} is an {@link ITargetPolicyResolver}
+ * that works in two stages:
+ * <ol>
+ * <li>Examining the active policies of other tools to find "multi-gesture"
+ * policies that implement or extend the given target policy type. If any
+ * "multi-gesture" policies are found, the target resolution finishes and these
+ * are returned as the target policies. Otherwise, the target resolution
+ * continues with the next stage.
+ * <li>Examining the policies of the visual parts that are contained within the
+ * root-to-target path in the visual part hierarchy. All policies that implement
+ * or extend the given target policy type are returned as target policies. The
+ * policies that are registered on the root part have highest precedence, i.e.
+ * they will be executed first, and the policies that are registered on the
+ * target part have lowest precedence, i.e. they will be executed last.
+ * </ol>
+ * For details, take a look at the
+ * {@link #getTargetPolicies(IViewer, Node, Class)} method.
  *
  * @author mwienand
  *
  */
-public class AbstractFXTool extends AbstractTool<Node> {
+public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 
 	private final static class AdapterKeyComparator
 			implements Comparator<AdapterKey<?>> {
@@ -62,18 +75,39 @@ public class AbstractFXTool extends AbstractTool<Node> {
 			true);
 
 	/**
-	 * Determines all policies of the specified type for the given
-	 * {@link IViewer} and target {@link Node}.
+	 * Determines and prioritizes all policies of the specified type for the
+	 * given {@link IViewer} and target {@link Node} that are to be notified
+	 * about an input event that was directed at the {@link Node}.
 	 * <p>
-	 * At first, the target part is determined. The target part is the first
-	 * {@link IVisualPart} that controls a {@link Node} within the parent
-	 * hierarchy of the given target {@link Node}. If no target part can be
-	 * found, the root part is used as the target part.
+	 * This strategy works in two stages:
+	 * <ol>
+	 * <li>Examining the active policies of other tools to find "multi-gesture"
+	 * policies that implement or extend the given target policy type. If any
+	 * "multi-gesture" policies are found, the target resolution finishes and
+	 * these are returned as the target policies. Otherwise, the target
+	 * resolution continues with the next stage.
+	 * <li>Examining the policies of the visual parts that are contained within
+	 * the root-to-target path in the visual part hierarchy. All policies that
+	 * implement or extend the given target policy type are returned as target
+	 * policies. The policies that are registered on the root part have highest
+	 * precedence, i.e. they will be executed first, and the policies that are
+	 * registered on the target part have lowest precedence, i.e. they will be
+	 * executed last.
+	 * </ol>
+	 * The second stage is structured in two parts:
+	 * <ol>
+	 * <li>Determination of the target part.
+	 * <li>Determination of the target policies based on the target part.
+	 * </ol>
+	 * The first {@link IVisualPart} that controls a {@link Node} within the
+	 * parent hierarchy of the given target {@link Node} is used as the target
+	 * part. If no target part can be found, the root part is used as the target
+	 * part.
 	 * <p>
 	 * Beginning at the root part, and walking down the visual part hierarchy,
 	 * all policies of the specified type are collected. The policies that are
-	 * registered on one part are sorted by their role, so that the target
-	 * policy selection is deterministic.
+	 * registered on one part are (lexicographically) sorted by their role, so
+	 * that the target policy selection is deterministic.
 	 * <p>
 	 * For example, when you have 3 parts, the root part, an intermediate part,
 	 * and a leaf part, the target policy selection for a policy of type X could
@@ -95,15 +129,15 @@ public class AbstractFXTool extends AbstractTool<Node> {
 	 * @param viewer
 	 *            The {@link IViewer} that contains the given {@link Node}.
 	 * @param target
-	 *            The target {@link Node}, i.e. the end point of the target
-	 *            policy lookup.
+	 *            The target {@link Node} that received an input event.
 	 * @param policyClass
 	 *            The type of the policies to return.
 	 * @return All matching policies within the hierarchy from the root part to
 	 *         the target part.
 	 */
+	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
-	protected <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
+	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
 			IViewer<Node> viewer, Node target, Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);

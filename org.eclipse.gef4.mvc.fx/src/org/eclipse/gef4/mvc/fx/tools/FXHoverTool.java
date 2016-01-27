@@ -20,6 +20,8 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.inject.Inject;
+
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -32,12 +34,15 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class FXHoverTool extends AbstractFXTool {
+public class FXHoverTool extends AbstractTool<Node> {
 
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IFXOnHoverPolicy> ON_HOVER_POLICY_KEY = IFXOnHoverPolicy.class;
+
+	@Inject
+	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<>();
 
@@ -72,8 +77,9 @@ public class FXHoverTool extends AbstractFXTool {
 
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
-					Collection<? extends IFXOnHoverPolicy> policies = getTargetPolicies(
-							viewer, (Node) eventTarget, ON_HOVER_POLICY_KEY);
+					Collection<? extends IFXOnHoverPolicy> policies = targetPolicyResolver
+							.getTargetPolicies(viewer, (Node) eventTarget,
+									ON_HOVER_POLICY_KEY);
 					getDomain().openExecutionTransaction(FXHoverTool.this);
 					// active policies are unnecessary because hover is not a
 					// gesture, just one event at one point in time

@@ -26,8 +26,11 @@ import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -60,7 +63,7 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class FXClickDragTool extends AbstractFXTool {
+public class FXClickDragTool extends AbstractTool<Node> {
 
 	/**
 	 * The typeKey used to retrieve those policies that are able to handle the
@@ -73,6 +76,9 @@ public class FXClickDragTool extends AbstractFXTool {
 	 * drag part of the click/drag interaction gesture.
 	 */
 	public static final Class<IFXOnDragPolicy> ON_DRAG_POLICY_KEY = IFXOnDragPolicy.class;
+
+	@Inject
+	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractMouseDragGesture> gestures = new HashMap<>();
 
@@ -101,8 +107,9 @@ public class FXClickDragTool extends AbstractFXTool {
 						// determine all drag policies that can be
 						// notified about events
 						Node target = (Node) eventTarget;
-						possibleDragPolicies[0] = getTargetPolicies(viewer,
-								target, ON_DRAG_POLICY_KEY);
+						possibleDragPolicies[0] = targetPolicyResolver
+								.getTargetPolicies(viewer, target,
+										ON_DRAG_POLICY_KEY);
 
 						// search drag policies in reverse order first,
 						// so that the policy closest to the target part
@@ -190,8 +197,9 @@ public class FXClickDragTool extends AbstractFXTool {
 
 					// process click first
 					boolean opened = false;
-					List<? extends IFXOnClickPolicy> clickPolicies = getTargetPolicies(
-							viewer, target, ON_CLICK_POLICY_KEY);
+					List<? extends IFXOnClickPolicy> clickPolicies = targetPolicyResolver
+							.getTargetPolicies(viewer, target,
+									ON_CLICK_POLICY_KEY);
 					if (clickPolicies != null && !clickPolicies.isEmpty()) {
 						opened = true;
 						getDomain()
@@ -202,8 +210,8 @@ public class FXClickDragTool extends AbstractFXTool {
 					}
 
 					// determine drag target part
-					policies = getTargetPolicies(viewer, target,
-							ON_DRAG_POLICY_KEY);
+					policies = targetPolicyResolver.getTargetPolicies(viewer,
+							target, ON_DRAG_POLICY_KEY);
 
 					// abort processing of this gesture if no policies could be
 					// found

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.inject;
 
@@ -43,7 +43,7 @@ import com.google.inject.Scope;
  * scoped objects for this {@link IAdaptable} instance, so no scoped objects may
  * be recycled afterwards. The {@link AdaptableScope} will have to be re-entered
  * for the {@link IAdaptable} instance after it has been left for it.
- * 
+ *
  * @author anyssen
  *
  * @param <A>
@@ -60,7 +60,7 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	/**
 	 * Creates a new {@link AdaptableScope} for the given {@link IAdaptable}
 	 * type.
-	 * 
+	 *
 	 * @param type
 	 *            The {@link IAdaptable} type this scope is responsible for.
 	 */
@@ -76,7 +76,7 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	 * the scope is entered and/or bound to another {@link IAdaptable} instance
 	 * (see {@link #switchTo(IAdaptable)}) or left (see
 	 * {@link #leave(IAdaptable)}) for it.
-	 * 
+	 *
 	 * @param instance
 	 *            The {@link IAdaptable} instance to enter (and bind) this
 	 *            {@link AdaptableScope} for.
@@ -89,41 +89,13 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 	}
 
 	/**
-	 * Switches this scope to be bound to the given {@link IAdaptable} instance,
-	 * so that the {@link Provider} returned by {@link #scope(Key, Provider)}
-	 * will afterwards return (recycled) instances from the set of scoped
-	 * objects that is maintained for the respective {@link IAdaptable}
-	 * instance, until the scope is bound to another {@link IAdaptable} instance
-	 * ({@link #switchTo(IAdaptable)}) or left ( {@link #leave(IAdaptable)}) for
-	 * the given instance.
-	 * <p>
-	 * When switching the scope to another {@link IAdaptable} instance, the set
-	 * of objects maintained for previously bound {@link IAdaptable} instances
-	 * is preserved (unless the scope is left for them) and will be re-used
-	 * after switching back to the respective {@link IAdaptable} instance.
-	 * <p>
-	 * Before switching the scope to an {@link IAdaptable} instance, the scope
-	 * has to be initially entered ({@link #enter(IAdaptable)}) for it, which
-	 * will automatically bind the scope to it.
-	 * 
-	 * @param instance
-	 *            The {@link IAdaptable} instance to bind this
-	 *            {@link AdaptableScope} to.
-	 */
-	public void switchTo(A instance) {
-		// System.out.println("Switching scope for type " + type + " from " +
-		// this.adaptable + " to " + instance);
-		this.adaptable = instance;
-	}
-
-	/**
 	 * Leaves this scope for the given {@link IAdaptable} instance, resulting in
 	 * unbinding this scope from it and clearing the set of scoped objects
 	 * maintained for it.
 	 * <p>
 	 * The scope may not be switched back to the {@link IAdaptable} instance
 	 * before having been re-entered for it (see {@link #enter(IAdaptable)}).
-	 * 
+	 *
 	 * @param instance
 	 *            The {@link IAdaptable} instance to (unbind and) leave this
 	 *            {@link AdaptableScope} for.
@@ -142,9 +114,9 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 			@Override
 			public T get() {
 				if (adaptable == null) {
-					throw new IllegalStateException("AdaptableScope for type + "
+					throw new IllegalStateException("AdaptableScope for type '"
 							+ type
-							+ " is not yet bound to an adaptable instance.");
+							+ "' is not yet bound to an adaptable instance.");
 				} else {
 					// obtain the map of scoped instances for the given
 					// adaptable
@@ -169,5 +141,33 @@ public class AdaptableScope<A extends IAdaptable> implements Scope {
 				}
 			}
 		};
+	}
+
+	/**
+	 * Switches this scope to be bound to the given {@link IAdaptable} instance,
+	 * so that the {@link Provider} returned by {@link #scope(Key, Provider)}
+	 * will afterwards return (recycled) instances from the set of scoped
+	 * objects that is maintained for the respective {@link IAdaptable}
+	 * instance, until the scope is bound to another {@link IAdaptable} instance
+	 * ({@link #switchTo(IAdaptable)}) or left ( {@link #leave(IAdaptable)}) for
+	 * the given instance.
+	 * <p>
+	 * When switching the scope to another {@link IAdaptable} instance, the set
+	 * of objects maintained for previously bound {@link IAdaptable} instances
+	 * is preserved (unless the scope is left for them) and will be re-used
+	 * after switching back to the respective {@link IAdaptable} instance.
+	 * <p>
+	 * Before switching the scope to an {@link IAdaptable} instance, the scope
+	 * has to be initially entered ({@link #enter(IAdaptable)}) for it, which
+	 * will automatically bind the scope to it.
+	 *
+	 * @param instance
+	 *            The {@link IAdaptable} instance to bind this
+	 *            {@link AdaptableScope} to.
+	 */
+	public void switchTo(A instance) {
+		// System.out.println("Switching scope for type " + type + " from " +
+		// this.adaptable + " to " + instance);
+		this.adaptable = instance;
 	}
 }

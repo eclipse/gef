@@ -20,14 +20,17 @@ import org.eclipse.gef4.fx.gestures.AbstractPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
 /**
- * The {@link FXPinchSpreadTool} is an {@link AbstractFXTool} to handle
+ * The {@link FXPinchSpreadTool} is an {@link AbstractTool} to handle
  * pinch/spread (zoom) interaction gestures.
  * <p>
  * The {@link FXPinchSpreadTool} handles the opening and closing of an
@@ -39,12 +42,13 @@ import javafx.scene.input.ZoomEvent;
  * @author anyssen
  *
  */
-public class FXPinchSpreadTool extends AbstractFXTool {
-
+public class FXPinchSpreadTool extends AbstractTool<Node> {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IFXOnPinchSpreadPolicy> ON_PINCH_SPREAD_POLICY_KEY = IFXOnPinchSpreadPolicy.class;
+	@Inject
+	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<>();
 
@@ -98,7 +102,7 @@ public class FXPinchSpreadTool extends AbstractFXTool {
 					// determine target policies
 					EventTarget eventTarget = e.getTarget();
 					setActivePolicies(viewer,
-							getTargetPolicies(viewer,
+							targetPolicyResolver.getTargetPolicies(viewer,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									ON_PINCH_SPREAD_POLICY_KEY));

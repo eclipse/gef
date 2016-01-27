@@ -19,14 +19,17 @@ import org.eclipse.gef4.fx.gestures.AbstractRotateGesture;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.RotateEvent;
 
 /**
- * The {@link FXRotateTool} is an {@link AbstractFXTool} to handle rotate
+ * The {@link FXRotateTool} is an {@link AbstractTool} to handle rotate
  * interaction gestures.
  * <p>
  * The {@link FXRotateTool} handles the opening and closing of an transaction
@@ -37,12 +40,13 @@ import javafx.scene.input.RotateEvent;
  * @author anyssen
  *
  */
-public class FXRotateTool extends AbstractFXTool {
-
+public class FXRotateTool extends AbstractTool<Node> {
 	/**
 	 * The type of the policy that has to be supported by target parts.
 	 */
 	public static final Class<IFXOnRotatePolicy> ON_ROTATE_POLICY_KEY = IFXOnRotatePolicy.class;
+	@Inject
+	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<>();
 
@@ -78,7 +82,7 @@ public class FXRotateTool extends AbstractFXTool {
 				protected void rotationStarted(RotateEvent event) {
 					EventTarget eventTarget = event.getTarget();
 					setActivePolicies(viewer,
-							getTargetPolicies(viewer,
+							targetPolicyResolver.getTargetPolicies(viewer,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									ON_ROTATE_POLICY_KEY));
