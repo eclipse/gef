@@ -45,12 +45,18 @@ import javafx.collections.ListChangeListener;
  */
 public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 
+	/**
+	 * The name of the named injection that is used within this
+	 * {@link SelectionBehavior} to obtain an {@link IHandlePartFactory}.
+	 */
+	public static final String PART_FACTORIES_BINDING_NAME = "selection";
+
 	@Inject
-	@Named("selection")
+	@Named(PART_FACTORIES_BINDING_NAME)
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	@Inject
-	@Named("selection")
+	@Named(PART_FACTORIES_BINDING_NAME)
 	private IHandlePartFactory<VR> handlePartFactory;
 
 	private ListChangeListener<IContentPart<VR, ? extends VR>> selectionObserver = new ListChangeListener<IContentPart<VR, ? extends VR>>() {

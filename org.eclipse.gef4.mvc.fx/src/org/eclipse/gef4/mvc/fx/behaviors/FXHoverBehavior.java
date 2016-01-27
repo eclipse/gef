@@ -106,7 +106,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	@Inject
-	@Named("hover")
+	@Named(PART_FACTORIES_BINDING_NAME)
 	private IHandlePartFactory<Node> handlePartFactory;
 
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();

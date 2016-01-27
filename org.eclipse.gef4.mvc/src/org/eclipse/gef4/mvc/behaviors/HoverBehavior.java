@@ -40,8 +40,14 @@ import javafx.beans.value.ObservableValue;
  */
 public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 
+	/**
+	 * The name of the named injection that is used within this
+	 * {@link HoverBehavior} to obtain an {@link IFeedbackPartFactory}.
+	 */
+	public static final String PART_FACTORIES_BINDING_NAME = "hover";
+
 	@Inject
-	@Named("hover")
+	@Named(PART_FACTORIES_BINDING_NAME)
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	private ChangeListener<IVisualPart<VR, ? extends VR>> hoverObserver = new ChangeListener<IVisualPart<VR, ? extends VR>>() {

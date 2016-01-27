@@ -16,9 +16,13 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
@@ -51,9 +55,10 @@ import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
-import org.eclipse.gef4.zest.fx.parts.HandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
+import org.eclipse.gef4.zest.fx.parts.HoverHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.SelectionHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
@@ -402,7 +407,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultHoverFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link GeometricOutlineProvider} to the given adapter
 	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
 	 *
@@ -411,13 +416,13 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindHoverFeedbackGeometryProviderAsEdgeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultHoverFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
 	 *
@@ -426,14 +431,14 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindHoverFeedbackGeometryProviderAsEdgeLabelPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultHandlePartFactory#HOVER_HANDLES_GEOMETRY_PROVIDER} with
-	 * implementation {@link ShapeBoundsProvider} to the given adapter map
+	 * {@link FXDefaultHoverHandlePartFactory#HOVER_HANDLES_GEOMETRY_PROVIDER}
+	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link AbstractContentPart}s.
 	 *
 	 * @param adapterMapBinder
@@ -441,7 +446,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindHoverHandlesGeometryProviderAsAbstractContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
@@ -456,10 +461,11 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named("selection")).to(HandlePartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
+		}).annotatedWith(Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
+				.to(SelectionHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named("hover")).to(HandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
+		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(HoverHandlePartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override
@@ -594,7 +600,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link GeometricOutlineProvider} to the given adapter
 	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
 	 *
@@ -603,13 +609,14 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindSelectionFeedbackGeometryProviderAsEdgeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
 	 *
@@ -618,13 +625,14 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindSelectionFeedbackGeometryProviderAsEdgeLabelPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultHandlePartFactory#SELECTION_HANDLES_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultSelectionHandlePartFactory#SELECTION_HANDLES_GEOMETRY_PROVIDER}
 	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link NodeContentPart}s.
 	 *
@@ -633,13 +641,14 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindSelectionHandlesGeometryProviderAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link GeometricOutlineProvider} to the given adapter
 	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
 	 *
@@ -649,13 +658,14 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindSelectionLinkFeedbackGeometryProviderAsEdgeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey
+						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 	}
 
 	/**
 	 * Adds a binding for
-	 * {@link FXDefaultFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
+	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link EdgeLabelPart}s.
 	 *
@@ -665,7 +675,8 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindSelectionLinkFeedbackGeometryProviderAsEdgeLabelPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
-				.addBinding(AdapterKey.role(FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.addBinding(AdapterKey
+						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 itemis AG and others.
+ * Copyright (c) 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,12 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
@@ -29,16 +27,10 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link HandlePartFactory} is an extension to
- * {@link FXDefaultHandlePartFactory} that creates {@link HideHoverHandlePart}s
- * and {@link ShowHiddenNeighborsHoverHandlePart}s for hovered
- * {@link NodeContentPart}s. Moreover, it disables the creation of handle parts
- * for a multi selection.
- *
  * @author mwienand
  *
  */
-public class HandlePartFactory extends FXDefaultHandlePartFactory {
+public class HoverHandlePartFactory extends FXDefaultHoverHandlePartFactory {
 
 	@Inject
 	private Injector injector;
@@ -70,12 +62,6 @@ public class HandlePartFactory extends FXDefaultHandlePartFactory {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
-			List<? extends IVisualPart<Node, ? extends Node>> targets, Map<Object, Object> contextMap) {
-		return Collections.emptyList();
 	}
 
 }

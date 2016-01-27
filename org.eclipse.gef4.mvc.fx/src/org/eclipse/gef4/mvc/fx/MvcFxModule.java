@@ -28,8 +28,10 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
@@ -866,33 +868,40 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Binds {@link FXDefaultFeedbackPartFactory} to
-	 * {@link IFeedbackPartFactory}, parameterized by {@link Node}, in adaptable
-	 * scope of {@link FXViewer}.
+	 * Binds {@link FXDefaultHoverFeedbackPartFactory} (named
+	 * {@link HoverBehavior#PART_FACTORIES_BINDING_NAME}) and
+	 * {@link FXDefaultSelectionFeedbackPartFactory} (named
+	 * {@link SelectionBehavior#PART_FACTORIES_BINDING_NAME}) for
+	 * {@link IFeedbackPartFactory}, in adaptable scope of {@link FXViewer}.
 	 */
 	protected void bindIFeedbackPartFactory() {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).annotatedWith(Names.named("selection"))
-				.to(FXDefaultFeedbackPartFactory.class)
+		}).annotatedWith(
+				Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
+				.to(FXDefaultSelectionFeedbackPartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).annotatedWith(Names.named("hover"))
-				.to(FXDefaultFeedbackPartFactory.class)
+		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME))
+				.to(FXDefaultHoverFeedbackPartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	/**
-	 * Binds {@link FXDefaultHandlePartFactory} to {@link IHandlePartFactory},
-	 * parameterized by {@link Node}, in adaptable scope of {@link FXViewer}.
+	 * Binds {@link FXDefaultSelectionHandlePartFactory} (named
+	 * {@link SelectionBehavior#PART_FACTORIES_BINDING_NAME}) and
+	 * {@link FXDefaultHoverHandlePartFactory} (named
+	 * {@link HoverBehavior#PART_FACTORIES_BINDING_NAME}) for
+	 * {@link IHandlePartFactory}, in adaptable scope of {@link FXViewer}.
 	 */
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named("selection"))
-				.to(FXDefaultHandlePartFactory.class)
+		}).annotatedWith(
+				Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
+				.to(FXDefaultSelectionHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named("hover"))
-				.to(FXDefaultHandlePartFactory.class)
+		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME))
+				.to(FXDefaultHoverHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
