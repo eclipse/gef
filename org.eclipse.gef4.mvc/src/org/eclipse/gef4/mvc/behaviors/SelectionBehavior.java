@@ -29,6 +29,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import javafx.collections.ListChangeListener;
 
@@ -45,9 +46,11 @@ import javafx.collections.ListChangeListener;
 public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 
 	@Inject
+	@Named("selection")
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	@Inject
+	@Named("selection")
 	private IHandlePartFactory<VR> handlePartFactory;
 
 	private ListChangeListener<IContentPart<VR, ? extends VR>> selectionObserver = new ListChangeListener<IContentPart<VR, ? extends VR>>() {

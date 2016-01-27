@@ -66,6 +66,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
 
 import javafx.scene.Node;
 
@@ -871,7 +872,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindIFeedbackPartFactory() {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).to(FXDefaultFeedbackPartFactory.class)
+		}).annotatedWith(Names.named("selection"))
+				.to(FXDefaultFeedbackPartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
+		}).annotatedWith(Names.named("hover"))
+				.to(FXDefaultFeedbackPartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
@@ -881,7 +887,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).to(FXDefaultHandlePartFactory.class)
+		}).annotatedWith(Names.named("selection"))
+				.to(FXDefaultHandlePartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+		}).annotatedWith(Names.named("hover"))
+				.to(FXDefaultHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 

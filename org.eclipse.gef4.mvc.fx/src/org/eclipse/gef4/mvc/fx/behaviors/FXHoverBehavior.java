@@ -29,6 +29,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
@@ -105,6 +106,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	@Inject
+	@Named("hover")
 	private IHandlePartFactory<Node> handlePartFactory;
 
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<>();

@@ -69,6 +69,7 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
 
 import javafx.scene.Node;
 
@@ -455,7 +456,10 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).to(HandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
+		}).annotatedWith(Names.named("selection")).to(HandlePartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+		}).annotatedWith(Names.named("hover")).to(HandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override

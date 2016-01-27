@@ -23,6 +23,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,6 +41,7 @@ import javafx.beans.value.ObservableValue;
 public class HoverBehavior<VR> extends AbstractBehavior<VR> {
 
 	@Inject
+	@Named("hover")
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	private ChangeListener<IVisualPart<VR, ? extends VR>> hoverObserver = new ChangeListener<IVisualPart<VR, ? extends VR>>() {

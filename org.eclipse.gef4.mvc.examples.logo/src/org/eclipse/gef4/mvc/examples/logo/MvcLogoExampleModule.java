@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.examples.logo;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.examples.logo.behaviors.FXClickableAreaBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
@@ -47,11 +48,13 @@ import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
 
 import javafx.scene.Node;
 
@@ -219,7 +222,12 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	@Override
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).toInstance(new FXLogoHandlePartFactory());
+		}).annotatedWith(Names.named("selection"))
+				.to(FXLogoHandlePartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+		}).annotatedWith(Names.named("hover")).to(FXLogoHandlePartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override
