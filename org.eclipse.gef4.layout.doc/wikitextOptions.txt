@@ -1,2 +1,2 @@
-wiki.title=GEF4 Layout Documentation
+wiki.title=GEF4 Layout Developer Documentation
 wiki.path=GEF/GEF4/Layout

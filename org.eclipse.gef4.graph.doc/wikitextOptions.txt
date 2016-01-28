@@ -1,2 +1,2 @@
-wiki.title=GEF4 Graph Documentation
+wiki.title=GEF4 Graph Developer Documentation
 wiki.path=GEF/GEF4/Graph

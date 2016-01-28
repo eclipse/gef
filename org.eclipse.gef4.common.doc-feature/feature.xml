@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.gef4.common.doc"
-      label="GEF4 Common Documentation"
+      label="GEF4 Common Developer Documentation"
       version="0.3.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.common.doc"

@@ -1,2 +1,2 @@
-wiki.title=GEF4 Cloudio Documentation
+wiki.title=GEF4 Cloudio Developer Documentation
 wiki.path=GEF/GEF4/Cloudio

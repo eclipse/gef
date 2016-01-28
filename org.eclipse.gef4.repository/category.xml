@@ -21,6 +21,9 @@
    <feature url="features/org.eclipse.gef4.cloudio.doc_0.3.0.qualifier.jar" id="org.eclipse.gef4.cloudio.doc" version="0.3.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.cloudio.doc.user_0.3.0.qualifier.jar" id="org.eclipse.gef4.cloudio.doc.user" version="0.3.0.qualifier">
+      <category name="GEF4 Cloudio"/>
+   </feature>
    <feature url="features/org.eclipse.gef4.cloudio.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.cloudio.sdk" version="0.3.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
@@ -73,6 +76,9 @@
       <category name="GEF4 DOT"/>
    </feature>
    <feature url="features/org.eclipse.gef4.dot.doc_0.3.0.qualifier.jar" id="org.eclipse.gef4.dot.doc" version="0.3.0.qualifier">
+      <category name="GEF4 DOT"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.dot.doc.user_0.3.0.qualifier.jar" id="org.eclipse.gef4.dot.doc.user" version="0.3.0.qualifier">
       <category name="GEF4 DOT"/>
    </feature>
    <feature url="features/org.eclipse.gef4.dot.sdk_0.3.0.qualifier.jar" id="org.eclipse.gef4.dot.sdk" version="0.3.0.qualifier">

@@ -1,2 +1,2 @@
-wiki.title=GEF4 Zest Documentation
+wiki.title=GEF4 Zest Developer Documentation
 wiki.path=GEF/GEF4/Zest

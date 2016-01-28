@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 Common Documentation
+Bundle-Name: GEF4 Common Developer Documentation
 Bundle-SymbolicName: org.eclipse.gef4.common.doc;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Vendor: Eclipse GEF

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.gef4.cloudio.doc"
-      label="GEF4 Cloudio Documentation"
+      label="GEF4 Cloudio Developer Documentation"
       version="0.3.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.cloudio.doc"
