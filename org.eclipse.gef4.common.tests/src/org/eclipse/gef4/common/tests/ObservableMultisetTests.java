@@ -173,7 +173,8 @@ public class ObservableMultisetTests {
 			}
 
 			LinkedList<E> elementaryElementsQueue = elementQueue.pollLast();
-			LinkedList<Integer> elementaryAddedCountQueue = addedCountQueue.pollLast();
+			LinkedList<Integer> elementaryAddedCountQueue = addedCountQueue
+					.pollLast();
 			LinkedList<Integer> elementaryRemovedCountQueue = removedCountQueue
 					.pollLast();
 
@@ -193,7 +194,8 @@ public class ObservableMultisetTests {
 				assertEquals(expectedAddCount, change.getAddCount());
 
 				// check removed values
-				int expectedRemoveCount = elementaryRemovedCountQueue.pollLast();
+				int expectedRemoveCount = elementaryRemovedCountQueue
+						.pollLast();
 				assertEquals(expectedRemoveCount, change.getRemoveCount());
 
 				// check string representation
@@ -545,6 +547,16 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(3, 3, 0);
 		observable.clear();
 		backupMultiset.clear();
+		check(observable, backupMultiset);
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		multisetChangeListener.check();
+
+		// clear again (while already empty)
+		invalidationListener.expect(0);
+		observable.clear();
 		check(observable, backupMultiset);
 		invalidationListener.check();
 		if (observable instanceof ObservableValue) {
@@ -958,6 +970,83 @@ public class ObservableMultisetTests {
 		toRemove.add(4, 4);
 		assertEquals(backupMultiset.removeAll(toRemove),
 				observable.removeAll(toRemove));
+		check(observable, backupMultiset);
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		multisetChangeListener.check();
+	}
+
+	@Test
+	public void replaceAll() {
+		// initialize multiset with some values
+		observable.add(1, 1);
+		observable.add(2, 2);
+		observable.add(3, 3);
+		observable.add(4, 4);
+
+		// prepare backup multiset
+		Multiset<Integer> backupMultiset = HashMultiset.create();
+		backupMultiset.add(1, 1);
+		backupMultiset.add(2, 2);
+		backupMultiset.add(3, 3);
+		backupMultiset.add(4, 4);
+		check(observable, backupMultiset);
+
+		// register listeners
+		InvalidationExpector invalidationListener = new InvalidationExpector();
+		ChangeExpector<Integer> changeListener = null;
+		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
+				observable);
+		observable.addListener(invalidationListener);
+		if (observable instanceof ObservableValue) {
+			// register change listener as well
+			@SuppressWarnings("unchecked")
+			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
+			changeListener = new ChangeExpector<>(observableValue);
+			observableValue.addListener(changeListener);
+		}
+		observable.addListener(multisetChangeListener);
+
+		// replaceAll
+		invalidationListener.expect(1);
+		if (observable instanceof ObservableValue) {
+			// old and new value are the same, as the observable value of the
+			// property has not been exchanged (but only its contents has been
+			// changed); thus we may use the current value also as newValue.
+			@SuppressWarnings("unchecked")
+			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
+			changeListener.addExpectation(observableValue.getValue(),
+					observableValue.getValue());
+		}
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(2, 1, 0); // decrease
+																// count
+		multisetChangeListener.addElementaryExpection(4, 4, 0); // remove
+		multisetChangeListener.addElementaryExpection(3, 0, 3); // increase
+																// count
+		multisetChangeListener.addElementaryExpection(5, 0, 5); // add
+
+		Multiset<Integer> toReplace = HashMultiset.create();
+		toReplace.add(1);
+		toReplace.add(2, 1);
+		toReplace.add(3, 6);
+		toReplace.add(5, 5);
+
+		observable.replaceAll(toReplace);
+		backupMultiset.clear();
+		backupMultiset.addAll(toReplace);
+		check(observable, backupMultiset);
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		multisetChangeListener.check();
+
+		// replace with same contents (should not have any effect)
+		invalidationListener.expect(0);
+		observable.replaceAll(toReplace);
 		check(observable, backupMultiset);
 		invalidationListener.check();
 		if (observable instanceof ObservableValue) {

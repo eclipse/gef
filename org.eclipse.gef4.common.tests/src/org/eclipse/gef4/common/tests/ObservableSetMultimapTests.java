@@ -362,7 +362,7 @@ public class ObservableSetMultimapTests {
 		}
 		setMultimapChangeListener.check();
 
-		// try to remove values for not contained key
+		// clear again (while already empty)
 		invalidationListener.expect(0);
 		observable.clear();
 		backupMap.clear();
@@ -1080,6 +1080,95 @@ public class ObservableSetMultimapTests {
 
 		// try to remove values of key with wrong type
 		assertEquals(backupMap.removeAll("4711"), observable.removeAll("4711"));
+		check(observable, backupMap);
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		setMultimapChangeListener.check();
+	}
+
+	@Test
+	public void replaceAll() {
+		// initialize maps with some values
+		observable.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
+		observable.putAll(2, Sets.newHashSet("2-1", "2-2", "2-3"));
+		observable.putAll(3, Sets.newHashSet("3-1", "3-2", "3-3"));
+		observable.putAll(null, Sets.newHashSet(null, "null"));
+
+		// prepare backup map
+		SetMultimap<Integer, String> backupMap = HashMultimap.create();
+		backupMap.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
+		backupMap.putAll(2, Sets.newHashSet("2-1", "2-2", "2-3"));
+		backupMap.putAll(3, Sets.newHashSet("3-1", "3-2", "3-3"));
+		backupMap.putAll(null, Sets.newHashSet(null, "null"));
+		check(observable, backupMap);
+
+		// register listeners
+		InvalidationExpector invalidationListener = new InvalidationExpector();
+		ChangeExpector<Integer, String> changeListener = null;
+		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
+				observable);
+		observable.addListener(invalidationListener);
+		if (observable instanceof ObservableValue) {
+			// register change listener as well
+			@SuppressWarnings("unchecked")
+			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
+			changeListener = new ChangeExpector<>(observableValue);
+			observableValue.addListener(changeListener);
+		}
+		observable.addListener(setMultimapChangeListener);
+
+		// remove all values
+		invalidationListener.expect(1);
+		if (observable instanceof ObservableValue) {
+			// old and new value are the same, as the observable value of the
+			// property has not been exchanged (but only its contents has been
+			// changed); thus we may use the current value also as newValue.
+			@SuppressWarnings("unchecked")
+			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
+			changeListener.addExpectation(observableValue.getValue(),
+					observableValue.getValue());
+		}
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(null,
+				Sets.newHashSet(null, "null"), Collections.<String> emptySet()); // removed
+																					// null
+																					// key
+		setMultimapChangeListener.addElementaryExpectation(2,
+				Sets.newHashSet("2-1", "2-3"), Collections.<String> emptySet()); // removed
+																					// 2-1,
+																					// 2-3
+		setMultimapChangeListener.addElementaryExpectation(3,
+				Sets.newHashSet("3-3"), Sets.newHashSet("3-4")); // removed 3-3,
+																	// added 3-4
+		setMultimapChangeListener.addElementaryExpectation(4,
+				Collections.<String> emptySet(), Sets.newHashSet("4-1"));
+
+		SetMultimap<Integer, String> toReplace = HashMultimap.create();
+		toReplace.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3")); // leave
+																	// unchanged
+		toReplace.putAll(2, Sets.newHashSet("2-2")); // remove values (2-1, 2-3)
+		toReplace.putAll(3, Sets.newHashSet("3-1", "3-2", "3-4")); // change
+																	// values
+																	// (removed
+																	// 3-3,
+																	// added
+																	// 3-4)
+		toReplace.putAll(4, Sets.newHashSet("4-1")); // add entry
+		observable.replaceAll(toReplace);
+		backupMap.clear();
+		backupMap.putAll(toReplace);
+		check(observable, backupMap);
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		setMultimapChangeListener.check();
+
+		// replace with same contents (should not have any effect)
+		invalidationListener.expect(0);
+		observable.replaceAll(toReplace);
 		check(observable, backupMap);
 		invalidationListener.check();
 		if (observable instanceof ObservableValue) {

@@ -15,18 +15,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.common.collections.SetMultimapChangeListenerHelper.ElementarySubChange;
 
 import com.google.common.collect.ForwardingSetMultimap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 
@@ -208,35 +203,36 @@ public class ObservableSetMultimapWrapper<K, V> extends
 	public boolean replaceAll(
 			SetMultimap<? extends K, ? extends V> setMultimap) {
 		SetMultimap<K, V> previousContents = delegateCopy();
-		MapDifference<K, Set<? extends V>> difference = Maps.difference(
-				Multimaps.asMap(delegate()), Multimaps.asMap(setMultimap));
 		super.clear();
 		super.putAll(setMultimap);
-		if (!difference.areEqual()) {
+		if (!previousContents.equals(setMultimap)) {
 			List<ElementarySubChange<K, V>> elementaryChanges = new ArrayList<>();
-			// removed keys
-			Map<K, Set<? extends V>> removedEntries = difference
-					.entriesOnlyOnLeft();
-			for (K key : removedEntries.keySet()) {
-				elementaryChanges.add(new ElementarySubChange<>(key,
-						new HashSet<>(removedEntries.get(key)),
-						Collections.<V> emptySet()));
+			for (K key : previousContents.keySet()) {
+				// removed key
+				if (!setMultimap.containsKey(key)) {
+					elementaryChanges.add(new ElementarySubChange<>(key,
+							new HashSet<>(previousContents.get(key)),
+							Collections.<V> emptySet()));
+				} else {
+					// changed entry?
+					Set<? extends V> addedValues = new HashSet<>(get(key));
+					addedValues.removeAll(previousContents.get(key));
+					Set<? extends V> removedValues = new HashSet<>(
+							previousContents.get(key));
+					removedValues.removeAll(get(key));
+					if (!addedValues.isEmpty() || !removedValues.isEmpty()) {
+						elementaryChanges.add(new ElementarySubChange<>(key,
+								removedValues, addedValues));
+					}
+				}
 			}
-			// added entries
-			Map<K, Set<? extends V>> addedEntries = difference
-					.entriesOnlyOnRight();
-			for (K key : addedEntries.keySet()) {
-				elementaryChanges.add(new ElementarySubChange<>(key,
-						Collections.<V> emptySet(),
-						new HashSet<>(addedEntries.get(key))));
-			}
-			// changed entries
-			Map<K, ValueDifference<Set<? extends V>>> changedEntries = difference
-					.entriesDiffering();
-			for (K key : changedEntries.keySet()) {
-				elementaryChanges.add(new ElementarySubChange<>(key,
-						new HashSet<>(changedEntries.get(key).leftValue()),
-						new HashSet<>(changedEntries.get(key).rightValue())));
+			for (K key : keySet()) {
+				// added key
+				if (!previousContents.containsKey(key)) {
+					elementaryChanges.add(new ElementarySubChange<>(key,
+							Collections.<V> emptySet(),
+							new HashSet<>(get(key))));
+				}
 			}
 			helper.fireValueChangedEvent(
 					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
