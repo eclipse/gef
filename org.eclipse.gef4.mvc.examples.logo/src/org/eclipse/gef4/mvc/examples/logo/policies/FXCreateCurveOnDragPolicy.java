@@ -30,7 +30,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
-import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
@@ -100,6 +99,14 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 	@SuppressWarnings("serial")
 	@Override
 	public void press(MouseEvent e) {
+		// find model part
+		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
+				.getChildrenUnmodifiable().get(0);
+		if (!(modelPart instanceof FXGeometricModelPart)) {
+			throw new IllegalStateException(
+					"Cannot find FXGeometricModelPart.");
+		}
+
 		// create new curve
 		FXGeometricCurve curve = new FXGeometricCurve(new Point[] {},
 				FXGeometricModel.GEF_COLOR_GREEN,
@@ -111,27 +118,13 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		CreationPolicy<Node> creationPolicy = getHost().getRoot()
 				.getAdapter(new TypeToken<CreationPolicy<Node>>() {
 				});
-		creationPolicy.init();
-
-		// find model part
-		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
-				.getChildrenUnmodifiable().get(0);
-		if (!(modelPart instanceof FXGeometricModelPart)) {
-			throw new IllegalStateException(
-					"Cannot find FXGeometricModelPart.");
-		}
+		init(creationPolicy);
 
 		// build create operation
-		creationPolicy.create(curve, (FXGeometricModelPart) modelPart,
-				HashMultimap
+		FXGeometricCurvePart curvePart = (FXGeometricCurvePart) creationPolicy
+				.create(curve, (FXGeometricModelPart) modelPart, HashMultimap
 						.<IContentPart<Node, ? extends Node>, String> create());
-		ITransactionalOperation createOperation = creationPolicy.commit();
-
-		// execute on stack
-		getHost().getRoot().getViewer().getDomain().execute(createOperation);
-
-		FXGeometricCurvePart curvePart = (FXGeometricCurvePart) getHost()
-				.getRoot().getViewer().getContentPartMap().get(curve);
+		commit(creationPolicy);
 
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(e));

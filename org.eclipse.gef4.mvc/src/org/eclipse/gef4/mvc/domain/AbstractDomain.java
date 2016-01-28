@@ -110,25 +110,21 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	@Override
 	public void closeExecutionTransaction(ITool<VR> tool) {
 		transactionContext.remove(tool);
-
-		// check if the transaction has an effect (or is empty)
-		if (transaction != null && !transaction.getOperations().isEmpty()) {
-			// adjust the label
-			transaction.setLabel(
-					transaction.getOperations().iterator().next().getLabel());
-			// successfully close operation
-			getOperationHistory().closeOperation(true, true,
-					IOperationHistory.EXECUTE);
-		} else {
-			getOperationHistory().closeOperation(true, false,
-					IOperationHistory.EXECUTE);
-		}
-
-		if (!transactionContext.isEmpty()) {
-			// open new transaction for the remaining tools in the transaction
-			// context
-			transaction = createExecutionTransaction();
-		} else {
+		// check if the last tool was removed from the transaction context
+		if (transactionContext.isEmpty()) {
+			// check if the transaction has an effect (or is empty)
+			if (transaction != null && !transaction.getOperations().isEmpty()) {
+				// adjust the label
+				transaction.setLabel(transaction.getOperations().iterator()
+						.next().getLabel());
+				// close operation, status = successful
+				getOperationHistory().closeOperation(true, true,
+						IOperationHistory.EXECUTE);
+			} else {
+				// close operation, status = unsuccessful
+				getOperationHistory().closeOperation(true, false,
+						IOperationHistory.EXECUTE);
+			}
 			transaction = null;
 		}
 	}
@@ -171,7 +167,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public void execute(IUndoableOperation operation) {
-		// TODO: reconsider
 		// reduce composite operations
 		if (operation instanceof AbstractCompositeOperation) {
 			operation = ((AbstractCompositeOperation) operation).unwrap(true);
