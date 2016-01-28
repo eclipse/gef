@@ -12,9 +12,9 @@
 package org.eclipse.gef4.mvc.fx;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.inject.AdapterMap;
-import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.inject.AdapterMap;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.ContentPartPool;

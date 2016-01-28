@@ -20,10 +20,10 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
-import org.eclipse.gef4.common.inject.AdapterMap;
-import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.common.inject.InjectAdapters;
+import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
+import org.eclipse.gef4.common.adapt.inject.AdapterMap;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.common.adapt.inject.InjectAdapters;
 import org.eclipse.gef4.common.tests.AdaptableScopeTests.AdapterStoreAdapter;
 import org.junit.Test;
 

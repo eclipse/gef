@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.common.inject;
+package org.eclipse.gef4.common.adapt.inject;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;

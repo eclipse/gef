@@ -16,7 +16,7 @@ package org.eclipse.gef4.zest.examples;
 
 import java.util.Map;
 
-import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;

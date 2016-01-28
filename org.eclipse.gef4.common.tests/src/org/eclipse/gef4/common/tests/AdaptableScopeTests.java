@@ -13,9 +13,9 @@ package org.eclipse.gef4.common.tests;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.common.inject.AdaptableScopes;
-import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
-import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.junit.Assert;
 import org.junit.Test;
 

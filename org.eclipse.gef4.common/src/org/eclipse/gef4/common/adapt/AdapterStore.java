@@ -12,7 +12,7 @@ package org.eclipse.gef4.common.adapt;
 
 import java.util.Map;
 
-import org.eclipse.gef4.common.inject.InjectAdapters;
+import org.eclipse.gef4.common.adapt.inject.InjectAdapters;
 
 import com.google.common.reflect.TypeToken;
 

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
-import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;

@@ -17,7 +17,7 @@ package org.eclipse.gef4.zest.examples.jface;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.gef4.common.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;

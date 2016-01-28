@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
-import org.eclipse.gef4.common.inject.AdapterInjectionSupport;
-import org.eclipse.gef4.common.inject.AdapterInjector;
-import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
+import org.eclipse.gef4.common.adapt.inject.AdapterInjector;
+import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;

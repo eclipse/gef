@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
-import org.eclipse.gef4.common.inject.AdapterMap;
+import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 
 import com.google.common.reflect.TypeToken;
 
