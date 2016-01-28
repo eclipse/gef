@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.common.dispose.IDisposable;
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -32,12 +33,15 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 
 import javafx.beans.value.ChangeListener;
@@ -69,12 +73,29 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR>
 			// synchronize with the list as it emerges after the changes have
 			// been applied.
 			synchronizeContentChildren(change.getList());
-			// TODO: flushing of models should be done somewhere more
-			// appropriate
-			getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
-					.clearSelection();
-			getHost().getRoot().getViewer().getAdapter(HoverModel.class)
-					.clearHover();
+
+			// TODO: Check if the flushing of the viewer models can be done in a
+			// more appropriate place.
+
+			// clear selection
+			IViewer<VR> viewer = getHost().getRoot().getViewer();
+			@SuppressWarnings("serial")
+			SelectionModel<VR> selectionModel = viewer
+					.getAdapter(new TypeToken<SelectionModel<VR>>() {
+			}.where(new TypeParameter<VR>() {
+			}, Types.<VR> argumentOf(viewer.getClass())));
+			if (selectionModel != null) {
+				selectionModel.clearSelection();
+			}
+			// clear hover
+			@SuppressWarnings("serial")
+			HoverModel<VR> hoverModel = viewer
+					.getAdapter(new TypeToken<HoverModel<VR>>() {
+			}.where(new TypeParameter<VR>() {
+			}, Types.<VR> argumentOf(viewer.getClass())));
+			if (hoverModel != null) {
+				hoverModel.clearHover();
+			}
 		}
 	};
 
