@@ -874,7 +874,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * {@link SelectionBehavior#PART_FACTORIES_BINDING_NAME}) for
 	 * {@link IFeedbackPartFactory}, in adaptable scope of {@link FXViewer}.
 	 */
-	protected void bindIFeedbackPartFactory() {
+	protected void bindIFeedbackPartFactories() {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
 		}).annotatedWith(
 				Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
@@ -893,7 +893,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 * {@link HoverBehavior#PART_FACTORIES_BINDING_NAME}) for
 	 * {@link IHandlePartFactory}, in adaptable scope of {@link FXViewer}.
 	 */
-	protected void bindIHandlePartFactory() {
+	protected void bindIHandlePartFactories() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).annotatedWith(
 				Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
@@ -1043,8 +1043,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		super.configure();
 
 		// bind default factories for handles and feedback
-		bindIHandlePartFactory();
-		bindIFeedbackPartFactory();
+		bindIHandlePartFactories();
+		bindIFeedbackPartFactories();
 
 		// bind default viewer models
 		bindHoverModel();

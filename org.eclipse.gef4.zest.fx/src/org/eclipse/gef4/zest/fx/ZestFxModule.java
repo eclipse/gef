@@ -459,7 +459,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	@Override
-	protected void bindIHandlePartFactory() {
+	protected void bindIHandlePartFactories() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).annotatedWith(Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
 				.to(SelectionHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
