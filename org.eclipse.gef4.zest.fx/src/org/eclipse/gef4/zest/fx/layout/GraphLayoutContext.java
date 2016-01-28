@@ -40,8 +40,8 @@ import javafx.collections.ObservableMap;
  */
 public class GraphLayoutContext extends AbstractLayoutContext {
 
-	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this, ATTRIBUTES_PROPERTY,
-			FXCollections.<String, Object> observableHashMap());
+	private final ReadOnlyMapWrapper<String, Object> attributesProperty = new ReadOnlyMapWrapperEx<>(this,
+			ATTRIBUTES_PROPERTY, FXCollections.<String, Object> observableHashMap());
 	private final Map<Node, GraphNodeLayout> nodeMap = new IdentityHashMap<>();
 	private final Map<Edge, GraphEdgeLayout> edgeMap = new IdentityHashMap<>();
 	private Graph graph;
@@ -150,16 +150,24 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	 *            {@link GraphLayoutContext}.
 	 */
 	public void setGraph(Graph graph) {
-		if (this.graph != null) {
-			attributesProperty.unbindContentBidirectional(this.graph.attributesProperty());
-		}
+		// TODO: we should not allow to pass in null here. Instead we should
+		// guard ourselves against null.
 		if (graph == null) {
 			graph = new Graph();
 		}
 
-		this.graph = graph;
-		this.attributesProperty.bindContentBidirectional(this.graph.attributesProperty());
+		// update attribute bindings only in case graph really changed
+		if (this.graph != graph) {
+			if (this.graph != null) {
+				attributesProperty.unbindContentBidirectional(this.graph.attributesProperty());
+			}
+			this.graph = graph;
+			this.attributesProperty.bindContentBidirectional(this.graph.attributesProperty());
+		}
 
+		// TODO: its not nice to pass in the same graph instqnce simply to
+		// refresh the nodes and edges (which is the contract here; and the
+		// reason this is always executed, even if the graph is the same)
 		transferNodes();
 		transferEdges();
 	}

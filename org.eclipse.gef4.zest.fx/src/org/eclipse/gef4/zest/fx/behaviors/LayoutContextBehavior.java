@@ -55,11 +55,11 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 
 		@Override
 		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
-			if (LayoutProperties.BOUNDS_PROPERTY.equals(change.getKey())) {
+			if (LayoutProperties.BOUNDS_PROPERTY.equals(change.getKey())
+					&& change.getMap().get(change.getKey()) != null) {
 				applyLayout(true);
 			}
 		}
-
 	};
 
 	private ChangeListener<ILayoutAlgorithm> layoutAlgorithmObserver = new ChangeListener<ILayoutAlgorithm>() {

@@ -32,6 +32,7 @@ import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
@@ -59,11 +60,13 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	private ListChangeListener<Object> graphChildrenObserver = new ListChangeListener<Object>() {
 
+		@SuppressWarnings("serial")
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Object> c) {
 			// update layout context
 			getAdapter(GraphLayoutContext.class).setGraph(getContent());
-			getAdapter(ContentBehavior.class).synchronizeContentChildren(doGetContentChildren());
+			getAdapter(new TypeToken<ContentBehavior<Node>>() {
+			}).synchronizeContentChildren(doGetContentChildren());
 			// apply layout
 			getAdapter(LayoutContextBehavior.class).applyLayout(true);
 		}
@@ -111,18 +114,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public void doRefreshVisual(Group visual) {
-		// set layout algorithm from Graph on the context
-		setGraphLayoutAlgorithm();
-		// TODO: setGraphStyleSheet();
-	}
-
-	@Override
-	public Graph getContent() {
-		return (Graph) super.getContent();
-	}
-
-	@Override
 	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 		return HashMultimap.create();
 	}
@@ -136,6 +127,18 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		}
 		children.addAll(getContent().getNodes());
 		return children;
+	}
+
+	@Override
+	public void doRefreshVisual(Group visual) {
+		// set layout algorithm from Graph on the context
+		setGraphLayoutAlgorithm();
+		// TODO: setGraphStyleSheet();
+	}
+
+	@Override
+	public Graph getContent() {
+		return (Graph) super.getContent();
 	}
 
 	@Override
