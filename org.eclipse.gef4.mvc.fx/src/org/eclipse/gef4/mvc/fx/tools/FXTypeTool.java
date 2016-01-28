@@ -128,9 +128,15 @@ public class FXTypeTool extends AbstractTool<Node> {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
 				if (((FXViewer) viewer).getScene() == scene) {
-					IVisualPart<Node, ? extends Node> part = viewer
+					FocusModel<Node> focusModel = viewer
 							.getAdapter(new TypeToken<FocusModel<Node>>() {
-							}).getFocus();
+							});
+					if (focusModel == null) {
+						throw new IllegalStateException(
+								"Cannot find FocusModel<Node>.");
+					}
+					IVisualPart<Node, ? extends Node> part = focusModel
+							.getFocus();
 					if (part == null) {
 						targetPart = viewer.getRootPart();
 					} else {
@@ -150,6 +156,15 @@ public class FXTypeTool extends AbstractTool<Node> {
 	@Override
 	protected void registerListeners() {
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			// check if we have access to a FocusModel<Node>
+			FocusModel<Node> focusModel = viewer
+					.getAdapter(new TypeToken<FocusModel<Node>>() {
+					});
+			if (focusModel == null) {
+				throw new IllegalStateException(
+						"Cannot find FocusModel<Node>.");
+			}
+
 			// store the key that is initially pressed so that we can wait for
 			// it to be released
 			final KeyCode firstKey[] = new KeyCode[] { null };
@@ -157,7 +172,6 @@ public class FXTypeTool extends AbstractTool<Node> {
 			// register a viewer focus change listener to release the initially
 			// pressed key when the window loses focus
 			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-
 				@Override
 				public void changed(
 						ObservableValue<? extends Boolean> observable,
@@ -183,9 +197,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 
 				}
 			};
-
-			viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
-			}).viewerFocusedProperty().addListener(viewerFocusChangeListener);
+			focusModel.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
 
 			// generate event handlers
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
