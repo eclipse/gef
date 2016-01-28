@@ -374,6 +374,117 @@ public class ObservableSetMultimapTests {
 		setMultimapChangeListener.check();
 	}
 
+	@Test
+	public void listenersNotProperlyIterating() {
+		SetMultimapChangeListener<Integer, String> setMultimapChangeListener = new SetMultimapChangeListener<Integer, String>() {
+
+			@Override
+			public void onChanged(
+					SetMultimapChangeListener.Change<? extends Integer, ? extends String> change) {
+				// initially cursor is left of first change
+				try {
+					// call getKey() without next
+					change.getKey();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before getKey() can be called.",
+							e.getMessage());
+				}
+				try {
+					// call wasAdded() without next
+					change.wasAdded();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before wasAdded() can be called.",
+							e.getMessage());
+				}
+				try {
+					// call getValuesAdded() without next
+					change.getValuesAdded();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before getValuesAdded() can be called.",
+							e.getMessage());
+				}
+				try {
+					// call wasRemoved() without next
+					change.wasRemoved();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before wasRemoved() can be called.",
+							e.getMessage());
+				}
+				try {
+					// call getValuesRemoved() without next
+					change.getValuesRemoved();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before getValuesRemoved() can be called.",
+							e.getMessage());
+				}
+
+				// put cursor right of last change
+				while (change.next()) {
+				}
+				change.next();
+				try {
+					// call getKey() without next
+					change.getKey();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call getKey() if next() returned true.",
+							e.getMessage());
+				}
+				try {
+					// call wasAdded() without next
+					change.wasAdded();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call wasAdded() if next() returned true.",
+							e.getMessage());
+				}
+				try {
+					// call getValuesAdded() without next
+					change.getValuesAdded();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call getValuesAdded() if next() returned true.",
+							e.getMessage());
+				}
+				try {
+					// call wasRemoved() without next
+					change.wasRemoved();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call wasRemoved() if next() returned true.",
+							e.getMessage());
+				}
+				try {
+					// call getValuesRemoved() without next
+					change.getValuesRemoved();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call getValuesRemoved() if next() returned true.",
+							e.getMessage());
+				}
+			}
+		};
+		observable.addListener(setMultimapChangeListener);
+
+		// ensure no concurrent modification exceptions result
+		observable.put(1, "1");
+	}
+
 	/**
 	 * Checks that its safe (and does not lead to a
 	 * {@link ConcurrentModificationException} if a listener registers or

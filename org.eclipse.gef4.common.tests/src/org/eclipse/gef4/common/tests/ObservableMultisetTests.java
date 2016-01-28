@@ -565,6 +565,80 @@ public class ObservableMultisetTests {
 		multisetChangeListener.check();
 	}
 
+	@Test
+	public void listenersNotProperlyIterating() {
+		MultisetChangeListener<Integer> multisetChangeListener = new MultisetChangeListener<Integer>() {
+
+			@Override
+			public void onChanged(
+					org.eclipse.gef4.common.collections.MultisetChangeListener.Change<? extends Integer> change) {
+				// initially cursor is left of first change
+				try {
+					// call getElement() without next
+					change.getElement();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before getElement() can be called.",
+							e.getMessage());
+				}
+				try {
+					// call getAddCount() without next
+					change.getAddCount();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before getAddCount() can be called.",
+							e.getMessage());
+				}
+				try {
+					// call getRemoveCount() without next
+					change.getRemoveCount();
+					fail("Expect IllegalArgumentException, because next() has not been called.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"Need to call next() before getRemoveCount() can be called.",
+							e.getMessage());
+				}
+				// put cursor right of last change
+				while (change.next()) {
+				}
+				change.next();
+				try {
+					// call getElement() without next
+					change.getElement();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call getElement() if next() returned true.",
+							e.getMessage());
+				}
+				try {
+					// call getAddCount() without next
+					change.getAddCount();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call getAddCount() if next() returned true.",
+							e.getMessage());
+				}
+				try {
+					// call getRemoveCount() without next
+					change.getRemoveCount();
+					fail("Expect IllegalArgumentException, because next() return value has not been respected.");
+				} catch (IllegalStateException e) {
+					assertEquals(
+							"May only call getRemoveCount() if next() returned true.",
+							e.getMessage());
+				}
+			}
+		};
+		observable.addListener(multisetChangeListener);
+
+		// ensure no concurrent modification exceptions result
+		observable.add(1);
+	}
+
 	/**
 	 * Checks that its safe (and does not lead to a
 	 * {@link ConcurrentModificationException} if a listener registers or

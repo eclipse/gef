@@ -143,15 +143,21 @@ public class SetMultimapChangeListenerHelper<K, V> {
 					.toArray(new ElementarySubChange[] {});
 		}
 
+		private void checkCursor() {
+			String methodName = Thread.currentThread().getStackTrace()[2]
+					.getMethodName();
+			if (cursor == -1) {
+				throw new IllegalStateException("Need to call next() before "
+						+ methodName + "() can be called.");
+			} else if (cursor >= elementarySubChanges.length) {
+				throw new IllegalStateException("May only call " + methodName
+						+ "() if next() returned true.");
+			}
+		}
+
 		@Override
 		public K getKey() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getKey() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getKey() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].getKey();
 		}
 
@@ -162,25 +168,13 @@ public class SetMultimapChangeListenerHelper<K, V> {
 
 		@Override
 		public Set<V> getValuesAdded() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getValuesAdded() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getValuesAdded() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].getValuesAdded();
 		}
 
 		@Override
 		public Set<V> getValuesRemoved() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getValuesRemoved() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getValuesRemoved() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].getValuesRemoved();
 		}
 
@@ -209,25 +203,13 @@ public class SetMultimapChangeListenerHelper<K, V> {
 
 		@Override
 		public boolean wasAdded() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before wasAdded() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call wasAdded() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].wasAdded();
 		}
 
 		@Override
 		public boolean wasRemoved() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before wasRemoved() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call wasRemoved() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].wasRemoved();
 		}
 

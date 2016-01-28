@@ -46,9 +46,9 @@ public class MultisetChangeListenerHelper<E> {
 	public static class AtomicChange<E>
 			extends MultisetChangeListener.Change<E> {
 
-		private Multiset<E> previousContents;
-		private ElementarySubChange<E>[] elementarySubChanges;
 		private int cursor = -1;
+		private ElementarySubChange<E>[] elementarySubChanges;
+		private Multiset<E> previousContents;
 
 		/**
 		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
@@ -137,27 +137,27 @@ public class MultisetChangeListenerHelper<E> {
 					.toArray(new ElementarySubChange[] {});
 		}
 
+		private void checkCursor() {
+			String methodName = Thread.currentThread().getStackTrace()[2]
+					.getMethodName();
+			if (cursor == -1) {
+				throw new IllegalStateException("Need to call next() before "
+						+ methodName + "() can be called.");
+			} else if (cursor >= elementarySubChanges.length) {
+				throw new IllegalStateException("May only call " + methodName
+						+ "() if next() returned true.");
+			}
+		}
+
 		@Override
 		public int getAddCount() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getAddCount() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getAddCount() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].getAddCount();
 		}
 
 		@Override
 		public E getElement() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getElement() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getElement() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].getElement();
 		}
 
@@ -168,13 +168,7 @@ public class MultisetChangeListenerHelper<E> {
 
 		@Override
 		public int getRemoveCount() {
-			if (cursor == -1) {
-				throw new IllegalStateException(
-						"Need to call next() before getRemoveCount() can be called.");
-			} else if (cursor >= elementarySubChanges.length) {
-				throw new IllegalStateException(
-						"May only call getRemoveCount() if next() returned true.");
-			}
+			checkCursor();
 			return elementarySubChanges[cursor].getRemoveCount();
 		}
 
@@ -210,9 +204,9 @@ public class MultisetChangeListenerHelper<E> {
 	 */
 	public static class ElementarySubChange<E> {
 
+		private int addCount;
 		private E element;
 		private int removeCount;
-		private int addCount;
 
 		/**
 		 * Constructs a new elementary sub-change with the given values.
@@ -272,10 +266,10 @@ public class MultisetChangeListenerHelper<E> {
 	}
 
 	private List<InvalidationListener> invalidationListeners = null;
-	private List<MultisetChangeListener<? super E>> multisetChangeListeners = null;
-	private ObservableMultiset<E> source;
 	private boolean lockInvalidationListeners;
 	private boolean lockMultisetChangeListeners;
+	private List<MultisetChangeListener<? super E>> multisetChangeListeners = null;
+	private ObservableMultiset<E> source;
 
 	/**
 	 * Constructs a new {@link MultisetChangeListener} for the given source
