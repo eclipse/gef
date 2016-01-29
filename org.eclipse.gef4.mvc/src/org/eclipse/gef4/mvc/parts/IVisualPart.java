@@ -66,6 +66,13 @@ import javafx.collections.ObservableList;
  * activation/deactivation of an {@link IVisualPart} will result in the
  * activation/deactivation of all registered adapters (i.e. {@link IPolicy}s and
  * {@link IBehavior}s).
+ * <p>
+ * An {@link IVisualPart} is responsible for registering itself for its
+ * visualization at the {@link IViewer#getVisualPartMap()} when it obtains a
+ * link to the {@link IViewer}. Equally, an {@link IVisualPart} is responsible
+ * for unregistering itself for its visualization from the
+ * {@link IViewer#getVisualPartMap()} when it loses a link to the
+ * {@link IViewer}.
  *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Instead, {@link AbstractVisualPart} should be subclassed.

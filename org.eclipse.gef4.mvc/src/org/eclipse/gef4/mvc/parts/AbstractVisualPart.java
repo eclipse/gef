@@ -615,10 +615,20 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	/**
-	 * Called when a link to the Viewer is obtained.
+	 * Called when a link to the {@link IViewer} is obtained. Registers this
+	 * {@link IVisualPart} for its "main" visual (i.e. the one returned by
+	 * {@link #getVisual()}) at the {@link IViewer#getVisualPartMap()} of the
+	 * given {@link IViewer}. To simplify matters, this {@link IVisualPart} only
+	 * has to register itself for its "main" visual, i.e. if the "main" visual
+	 * contains a number of children visuals, it does not need to register
+	 * itself for those children visuals. Therefore, if the visualization
+	 * changes dynamically, the registration at the visual-part-map does not
+	 * need to be updated. Consequently, when looking up an {@link IVisualPart}
+	 * for a given visual in the visual-part-map, it is required to walk up the
+	 * visual hierarchy until a registered visual is found.
 	 *
 	 * @param viewer
-	 *            The viewer to register at.
+	 *            The {@link IViewer} to register at.
 	 */
 	protected void register(IViewer<VR> viewer) {
 		// TODO: Check if the guard (visual != null) really is necessary.
@@ -765,10 +775,20 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 	}
 
 	/**
-	 * Called when the link to the Viewer is lost.
+	 * Called when the link to the {@link IViewer} is lost. Unregisters this
+	 * {@link IVisualPart} for its "main" visual (i.e. the one returned by
+	 * {@link #getVisual()}) from the {@link IViewer#getVisualPartMap()} of the
+	 * given {@link IViewer}. To simplify matters, this {@link IVisualPart} only
+	 * has to unregister itself for its "main" visual, i.e. if the "main" visual
+	 * contains a number of children visuals, it does not need to unregister
+	 * itself for those children visuals. Therefore, if the visualization
+	 * changes dynamically, the registration at the visual-part-map does not
+	 * need to be updated. Consequently, when looking up an {@link IVisualPart}
+	 * for a given visual in the visual-part-map, it is required to walk up the
+	 * visual hierarchy until a registered visual is found.
 	 *
 	 * @param viewer
-	 *            The viewer to unregister from.
+	 *            The {@link IViewer} to unregister from.
 	 */
 	protected void unregister(IViewer<VR> viewer) {
 		if (visual != null) {

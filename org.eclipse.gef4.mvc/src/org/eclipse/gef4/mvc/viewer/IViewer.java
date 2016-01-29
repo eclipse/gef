@@ -71,8 +71,15 @@ public interface IViewer<VR> extends IAdaptable, IActivatable, IDisposable,
 	 * <i>visual</i>. This map is used for hit-testing. Hit testing is performed
 	 * by first determining which visual is hit, and then mapping that to an
 	 * {@link IVisualPart}.
+	 * <p>
+	 * Note, that when looking up an {@link IVisualPart} for a given visual in
+	 * the map, it is required to walk up the visual hierarchy until a
+	 * registered visual is found, because an {@link IVisualPart} only has to
+	 * register its "main" visual (i.e. the one returned by
+	 * {@link IVisualPart#getVisual()}) at the visual-part-map, but potential
+	 * children visuals do not have to be registered.
 	 *
-	 * @return The visual part map
+	 * @return The visual-to-visual-part map.
 	 */
 	public Map<VR, IVisualPart<VR, ? extends VR>> getVisualPartMap();
 
