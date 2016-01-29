@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.tools.DefaultTargetPolicyResolver;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -62,9 +64,13 @@ public class AbstractFXInteractionPolicy
 	 */
 	protected boolean isRegistered(EventTarget eventTarget) {
 		IVisualPart<Node, ? extends Node> host = getHost();
-		IVisualPart<Node, ? extends Node> targetPart = host.getRoot()
-				.getViewer().getVisualPartMap().get(eventTarget);
-		return targetPart != null;
+		IViewer<Node> viewer = host.getRoot().getViewer();
+		if (eventTarget instanceof Node) {
+			return FXPartUtils.retrieveVisualPart(viewer,
+					(Node) eventTarget) != viewer.getRootPart();
+		}
+		// eventTarget is a Scene
+		return false;
 	}
 
 	/**
@@ -80,9 +86,13 @@ public class AbstractFXInteractionPolicy
 	 */
 	protected boolean isRegisteredForHost(EventTarget eventTarget) {
 		IVisualPart<Node, ? extends Node> host = getHost();
-		IVisualPart<Node, ? extends Node> targetPart = host.getRoot()
-				.getViewer().getVisualPartMap().get(eventTarget);
-		return targetPart == host;
+		IViewer<Node> viewer = host.getRoot().getViewer();
+		if (eventTarget instanceof Node) {
+			return FXPartUtils.retrieveVisualPart(viewer,
+					(Node) eventTarget) == host;
+		}
+		// eventTarget is a Scene
+		return false;
 	}
 
 }

@@ -30,6 +30,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
@@ -416,8 +417,8 @@ public class FXGeometricCurvePart
 			IAnchor anchor) {
 		Node anchorageNode = anchor.getAnchorage();
 		if (anchorageNode != getVisual()) {
-			IVisualPart<Node, ? extends Node> part = getViewer()
-					.getVisualPartMap().get(anchorageNode);
+			IVisualPart<Node, ? extends Node> part = FXPartUtils
+					.retrieveVisualPart(getViewer(), anchorageNode);
 			if (part instanceof IContentPart) {
 				Object content = ((IContentPart<Node, ? extends Node>) part)
 						.getContent();

@@ -18,7 +18,6 @@ import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -89,20 +88,4 @@ abstract public class AbstractFXHandlePart<V extends Node>
 		}
 	}
 
-	@Override
-	protected void registerAtVisualPartMap(IViewer<Node> viewer, V visual) {
-		// register "main" visual for this part
-		super.registerAtVisualPartMap(viewer, visual);
-		// register nested visuals that are not controlled by other parts
-		FXPartUtils.registerNestedVisuals(this, viewer.getVisualPartMap(),
-				visual);
-	}
-
-	@Override
-	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, V visual) {
-		// unregister "main" visual for this part
-		super.unregisterFromVisualPartMap(viewer, visual);
-		// unregister all visuals for which we are registered
-		FXPartUtils.unregisterVisuals(this, viewer.getVisualPartMap());
-	}
 }

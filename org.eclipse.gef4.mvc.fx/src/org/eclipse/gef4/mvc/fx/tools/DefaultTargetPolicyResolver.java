@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
@@ -181,21 +181,10 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 		// determine target part as the part that controls the first node in the
 		// scene graph hierarchy of the given target node
 		// System.out.println("Inner target policies:");
-		IVisualPart<Node, ? extends Node> targetPart = null;
-		while (targetPart == null && target != null) {
-			targetPart = viewer.getVisualPartMap().get(target);
-			target = target.getParent();
-		}
+		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+				.retrieveVisualPart(viewer, target);
 
 		// System.out.println("target part = " + targetPart);
-
-		// fallback to the root part if no target part was found
-		IRootPart<Node, ? extends Node> rootPart = viewer.getRootPart();
-		// System.out.println("root part = " + rootPart);
-		if (targetPart == null) {
-			// System.out.println(" -> use as target part");
-			targetPart = rootPart;
-		}
 
 		// collect all on-drag-policies on the way from the target part to the
 		// root part

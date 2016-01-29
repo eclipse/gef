@@ -183,14 +183,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 			curveNode.setStyle(connCssStyle);
 		}
 
-		// unregister decorations from visual part map
-		if (visual.getStartDecoration() != null) {
-			getViewer().getVisualPartMap().remove(visual.getStartDecoration());
-		}
-		if (visual.getEndDecoration() != null) {
-			getViewer().getVisualPartMap().remove(visual.getEndDecoration());
-		}
-
 		// default decoration for directed graphs (in case edge is directed)
 		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(glc.getGraph(), true))) {
 			if (Boolean.TRUE.equals(getContent().attributesProperty().get(LayoutProperties.DIRECTED_PROPERTY))) {
@@ -210,14 +202,6 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		Shape targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
-		}
-
-		// register decorations at visual part map
-		if (visual.getStartDecoration() != null) {
-			getViewer().getVisualPartMap().put(visual.getStartDecoration(), this);
-		}
-		if (visual.getEndDecoration() != null) {
-			getViewer().getVisualPartMap().put(visual.getEndDecoration(), this);
 		}
 
 		// connection router

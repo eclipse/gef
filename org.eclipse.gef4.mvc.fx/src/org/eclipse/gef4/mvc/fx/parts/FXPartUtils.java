@@ -12,9 +12,6 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -23,17 +20,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 /**
  * The {@link FXPartUtils} class contains utility methods for the computation of
  * collective bounds ({@link #getUnionedVisualBoundsInScene(Collection)}), the
  * retrieval of the first {@link IVisualPart} in the visual hierarchy of a given
- * {@link Node} ( {@link #retrieveVisualPart(IViewer, Node)}), and the
- * (un-)registration of nested visuals (
- * {@link #registerNestedVisuals(IVisualPart, Map, Node)}, and
- * {@link #unregisterVisuals(IVisualPart, Map)}).
+ * {@link Node} ( {@link #retrieveVisualPart(IViewer, Node)}).
  *
  * @author anyssen
  *
@@ -67,39 +60,6 @@ public class FXPartUtils {
 	}
 
 	/**
-	 * Registers this {@link AbstractFXContentPart} for all visuals in the
-	 * visual hierarchy of the given {@link Node} at the given
-	 * <i>visualPartMap</i>. Does nothing if the given visual is no
-	 * {@link Parent}. Does not register the part for visuals of children parts.
-	 *
-	 * @param visualPart
-	 *            The {@link IVisualPart} that controls the given parent visual.
-	 * @param visualPartMap
-	 *            The map where the visuals are registered.
-	 * @param visual
-	 *            The {@link Node} whose visual hierarchy is registered.
-	 */
-	protected static void registerNestedVisuals(
-			IVisualPart<Node, ? extends Node> visualPart,
-			Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap,
-			Node visual) {
-		if (visual instanceof Parent) {
-			for (Node nestedVisual : ((Parent) visual)
-					.getChildrenUnmodifiable()) {
-				if (!visualPartMap.containsKey(nestedVisual)
-						|| visualPart != visualPartMap.get(nestedVisual)
-								.getParent()) {
-					visualPartMap.put(nestedVisual, visualPart);
-					if (nestedVisual instanceof Parent) {
-						registerNestedVisuals(visualPart, visualPartMap,
-								nestedVisual);
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * Returns the first {@link IVisualPart} in the visual hierarchy of the
 	 * given {@link Node}. If no {@link IVisualPart} can be found within the
 	 * visual hierarchy of the {@link Node}, the {@link IRootPart} of the given
@@ -118,7 +78,6 @@ public class FXPartUtils {
 	public static IVisualPart<Node, ? extends Node> retrieveVisualPart(
 			IViewer<Node> viewer, Node target) {
 		// search for the first visual part in the visual hierarchy
-		// TODO for all visuals, a visualpart should be available
 		IVisualPart<Node, ? extends Node> targetPart = null;
 		while (targetPart == null && target != null) {
 			targetPart = viewer.getVisualPartMap().get(target);
@@ -126,32 +85,10 @@ public class FXPartUtils {
 		}
 
 		// fallback to the root part if no target part was found
-		IRootPart<Node, ? extends Node> rootPart = viewer.getRootPart();
 		if (targetPart == null) {
-			targetPart = rootPart;
+			targetPart = viewer.getRootPart();
 		}
-
 		return targetPart;
-	}
-
-	/**
-	 * Removes all visuals from the given <i>visualPartMap</i> where this
-	 * {@link AbstractFXContentPart} is registered.
-	 *
-	 * @param visualPart
-	 *            The {@link IVisualPart} that controls the given parent visual.
-	 * @param visualPartMap
-	 *            The map from which the visuals are removed.
-	 */
-	protected static void unregisterVisuals(
-			IVisualPart<Node, ? extends Node> visualPart,
-			Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap) {
-		Set<Node> keySet = new HashSet<>(visualPartMap.keySet());
-		for (Node visual : keySet) {
-			if (visualPartMap.get(visual) == visualPart) {
-				visualPartMap.remove(visual);
-			}
-		}
 	}
 
 }

@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
@@ -26,6 +25,7 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -383,14 +383,12 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 			List<Node> nodesUnderMouse) {
 		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<>();
 
-		Map<Node, IVisualPart<Node, ? extends Node>> partMap = getHost()
-				.getRoot().getViewer().getVisualPartMap();
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		for (Node node : nodesUnderMouse) {
-			if (partMap.containsKey(node)) {
-				IVisualPart<Node, ? extends Node> part = partMap.get(node);
-				if (part instanceof IContentPart) {
-					parts.add((IContentPart<Node, ? extends Node>) part);
-				}
+			IVisualPart<Node, ? extends Node> part = FXPartUtils
+					.retrieveVisualPart(viewer, node);
+			if (part instanceof IContentPart) {
+				parts.add((IContentPart<Node, ? extends Node>) part);
 			}
 		}
 		return parts;

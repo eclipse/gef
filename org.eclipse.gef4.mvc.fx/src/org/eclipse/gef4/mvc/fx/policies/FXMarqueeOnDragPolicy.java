@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -211,9 +212,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 	protected List<IContentPart<Node, ? extends Node>> getParts(
 			List<Node> nodes) {
 		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<>();
+		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		for (Node node : nodes) {
-			IVisualPart<Node, ? extends Node> part = getHost().getRoot()
-					.getViewer().getVisualPartMap().get(node);
+			IVisualPart<Node, ? extends Node> part = FXPartUtils
+					.retrieveVisualPart(viewer, node);
 			if (part != null && part instanceof IContentPart
 					&& !parts.contains(part)) {
 				parts.add((IContentPart<Node, ? extends Node>) part);
