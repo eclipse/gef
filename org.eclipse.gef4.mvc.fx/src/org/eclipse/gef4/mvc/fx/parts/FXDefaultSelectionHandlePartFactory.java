@@ -148,9 +148,7 @@ public class FXDefaultSelectionHandlePartFactory
 			part.setSegmentsProvider(segmentsProvider);
 			part.setSegmentIndex(i);
 			part.setSegmentParameter(0);
-			if (part != null) {
-				handleParts.add(part);
-			}
+			handleParts.add(part);
 		}
 		return handleParts;
 	}
