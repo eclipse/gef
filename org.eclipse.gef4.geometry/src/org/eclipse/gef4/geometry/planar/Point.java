@@ -41,6 +41,8 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
  */
 public class Point implements Cloneable, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	private static Point[] eliminateDuplicates(Point... points) {
 		// sort points by x and y
 		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
@@ -211,6 +213,9 @@ public class Point implements Cloneable, Serializable {
 	 *         the respective index positions
 	 */
 	public static final Point[] getCopy(Point[] points) {
+		if (points == null) {
+			throw new IllegalArgumentException("points may not be null.");
+		}
 		Point[] copy = new Point[points.length];
 		for (int i = 0; i < points.length; i++) {
 			copy[i] = points[i].getCopy();
@@ -350,8 +355,6 @@ public class Point implements Cloneable, Serializable {
 			points[i].y += dy;
 		}
 	}
-
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The x value.

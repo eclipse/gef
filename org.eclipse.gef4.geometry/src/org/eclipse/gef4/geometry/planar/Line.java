@@ -144,18 +144,6 @@ public class Line extends BezierCurve {
 						&& PrecisionUtils.equal(y1, getY2());
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o instanceof Line) {
-			Line l = (Line) o;
-			return equals(l.getX1(), l.getY1(), l.getX2(), l.getY2());
-		}
-		return false;
-	}
-
 	/**
 	 * Returns the smallest {@link Rectangle} containing this {@link Line}'s
 	 * start and end point

@@ -1,17 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -19,9 +20,9 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 
 /**
  * A {@link CurvedPolygon} is an {@link IShape} with {@link BezierCurve} edges.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class CurvedPolygon extends AbstractGeometry
 		implements IShape, ITranslatable<CurvedPolygon>,
@@ -35,7 +36,7 @@ public class CurvedPolygon extends AbstractGeometry
 	 * s. Subsequent {@link BezierCurve}s need to be connected with each other
 	 * and the closing segment has to be supplied, too, otherwise an
 	 * {@link IllegalArgumentException} is thrown.
-	 * 
+	 *
 	 * @param curvedSides
 	 *            the {@link BezierCurve}s representing the edges of the new
 	 *            {@link CurvedPolygon}
@@ -51,14 +52,14 @@ public class CurvedPolygon extends AbstractGeometry
 				if (!c.getP2().equals(edges[0].getP1())) {
 					throw new IllegalArgumentException(
 							"The last passed-in BezierCurve is not a closing segment. new CurvedPolygon("
-									+ curvedSides + ")");
+									+ Arrays.asList(curvedSides) + ")");
 				}
 			} else if (!c.getP2().equals(curvedSides[i + 1].getP1())) {
 				throw new IllegalArgumentException(
 						"Subsequent BezierCurves used to construct a CurvedPolygon need to be connected with each other. The "
 								+ i + "th and " + (i + 1)
 								+ "th passed-in BezierCurves violate this condition. new CurvedPolygon("
-								+ curvedSides + ")");
+								+ Arrays.asList(curvedSides) + ")");
 			}
 
 			edges[i] = c.getCopy();
@@ -72,11 +73,11 @@ public class CurvedPolygon extends AbstractGeometry
 	 * {@link BezierCurve}s. Subsequent {@link BezierCurve}s need to be
 	 * connected with each other and the closing segment has to be supplied,
 	 * too, otherwise an {@link IllegalArgumentException} is thrown.
-	 * 
+	 *
 	 * @param curvedSides
 	 *            the {@link BezierCurve}s representing the edges of the new
 	 *            {@link CurvedPolygon}
-	 * 
+	 *
 	 * @see #CurvedPolygon(BezierCurve...)
 	 */
 	public CurvedPolygon(List<BezierCurve> curvedSides) {
@@ -127,7 +128,7 @@ public class CurvedPolygon extends AbstractGeometry
 	 * BezierCurve crosses that ray from top to bottom, the winding number is
 	 * +1. If it crosses the ray from bottom to top, the winding number is -1.
 	 * Otherwise, 0 is returned.
-	 * 
+	 *
 	 * The algorithm implemented here is a generalized version of the one
 	 * realized within the sun.awt.geom.Curve#pointCrossingsFor*() methods.
 	 */
@@ -207,7 +208,7 @@ public class CurvedPolygon extends AbstractGeometry
 	/**
 	 * Returns an approximated center {@link Point} of this
 	 * {@link CurvedPolygon}.
-	 * 
+	 *
 	 * @return an approximated center {@link Point} of this
 	 *         {@link CurvedPolygon}
 	 */
@@ -370,7 +371,7 @@ public class CurvedPolygon extends AbstractGeometry
 	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
 	 * {@link Angle} around the center {@link Point} of this
 	 * {@link CurvedPolygon}.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -384,7 +385,7 @@ public class CurvedPolygon extends AbstractGeometry
 	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
 	 * {@link Angle} around the {@link Point} specified by the given x and y
 	 * coordinates.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param cx
@@ -403,7 +404,7 @@ public class CurvedPolygon extends AbstractGeometry
 	/**
 	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
 	 * {@link Angle} around the given {@link Point}.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param center
@@ -418,7 +419,7 @@ public class CurvedPolygon extends AbstractGeometry
 	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
 	 * {@link Angle} around the center {@link Point} of this
 	 * {@link CurvedPolygon}.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -432,7 +433,7 @@ public class CurvedPolygon extends AbstractGeometry
 	 * Rotates this {@link CurvedPolygon} clockwise (CW) by the given
 	 * {@link Angle} around the {@link Point} specified by the given x and y
 	 * coordinates.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param cx
@@ -451,7 +452,7 @@ public class CurvedPolygon extends AbstractGeometry
 	/**
 	 * Rotates this {@link CurvedPolygon} clockwise (CW) by the given
 	 * {@link Angle} around the given {@link Point}.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param center

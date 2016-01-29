@@ -119,45 +119,58 @@ public class Path extends AbstractGeometry implements IGeometry {
 				if (points == null || points.length != 1) {
 					throw new IllegalArgumentException(
 							"A Segment of type MOVE_TO has to be associate with exactly 1 point: new Segment("
-									+ type + ", " + points + ")");
+									+ type + ", " + (points == null ? "null"
+											: Arrays.asList(points))
+									+ ")");
 				}
 				break;
 			case LINE_TO:
 				if (points == null || points.length != 1) {
 					throw new IllegalArgumentException(
 							"A Segment of type LINE_TO has to be associate with exactly 1 point: new Segment("
-									+ type + ", " + points + ")");
+									+ type + ", " + (points == null ? "null"
+											: Arrays.asList(points))
+									+ ")");
 				}
 				break;
 			case QUAD_TO:
 				if (points == null || points.length != 2) {
 					throw new IllegalArgumentException(
 							"A Segment of type QUAD_TO has to be associate with exactly 2 points: new Segment("
-									+ type + ", " + points + ")");
+									+ type + ", " + (points == null ? "null"
+											: Arrays.asList(points))
+									+ ")");
 				}
 				break;
 			case CUBIC_TO:
 				if (points == null || points.length != 3) {
 					throw new IllegalArgumentException(
 							"A Segment of type CUBIC_TO has to be associate with exactly 3 point: new Segment("
-									+ type + ", " + points + ")");
+									+ type + ", " + (points == null ? "null"
+											: Arrays.asList(points))
+									+ ")");
 				}
 				break;
 			case CLOSE:
 				if (points != null && points.length != 0) {
 					throw new IllegalArgumentException(
 							"A Segment of type CLOSE is not to be associated with any points: new Segment("
-									+ type + ", " + points + ")");
+									+ type + ", " + (points == null ? "null"
+											: Arrays.asList(points))
+									+ ")");
 				}
 				break;
 			default:
 				throw new IllegalArgumentException(
 						"You can only create Segments of types MOVE_TO, LINE_TO, QUAD_TO, or CUBIC_TO: new Segment("
-								+ type + ", " + points + ")");
+								+ type + ", " + (points == null ? "null"
+										: Arrays.asList(points))
+								+ ")");
 			}
 
 			this.type = type;
-			this.points = Point.getCopy(points);
+			this.points = points == null ? new Point[] {}
+					: Point.getCopy(points);
 		}
 
 		@Override

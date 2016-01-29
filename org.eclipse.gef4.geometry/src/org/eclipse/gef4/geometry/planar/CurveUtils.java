@@ -41,42 +41,6 @@ class CurveUtils {
 	}
 
 	/**
-	 * Returns the intersection point of the given {@link ICurve} that has the
-	 * smallest distance to the given reference {@link Point}. If there are
-	 * multiple intersection points with the same distance, an arbitrary one
-	 * will be returned.
-	 *
-	 * @param curve1
-	 *            The first {@link ICurve} to intersect
-	 * @param curve2
-	 *            The second {@link ICurve} to intersect
-	 * @param reference
-	 *            The reference {@link Point} to compute the nearest
-	 *            intersection point to.
-	 * @return A {@link Point} representing an intersection point with the
-	 *         minimal distance to the given reference {@link Point}, or
-	 *         <code>null</code> if there is no intersection.
-	 */
-	public static Point getNearestIntersection(ICurve curve1, ICurve curve2,
-			Point reference) {
-		Point[] intersections = getIntersections(curve1, curve2);
-		if (intersections.length > 0) {
-			// find nearest intersection point
-			Point nearest = intersections[0];
-			double minDistance = reference.getDistance(nearest);
-			for (int i = 1; i < intersections.length; i++) {
-				double d = reference.getDistance(intersections[i]);
-				if (d < minDistance) {
-					minDistance = d;
-					nearest = intersections[i];
-				}
-			}
-			return nearest;
-		}
-		return null;
-	}
-
-	/**
 	 * Delegates to the {@link BezierCurve#getIntersections(ICurve)} method.
 	 *
 	 * @param curve1
@@ -197,6 +161,42 @@ class CurveUtils {
 	}
 
 	/**
+	 * Returns the intersection point of the given {@link ICurve} that has the
+	 * smallest distance to the given reference {@link Point}. If there are
+	 * multiple intersection points with the same distance, an arbitrary one
+	 * will be returned.
+	 *
+	 * @param curve1
+	 *            The first {@link ICurve} to intersect
+	 * @param curve2
+	 *            The second {@link ICurve} to intersect
+	 * @param reference
+	 *            The reference {@link Point} to compute the nearest
+	 *            intersection point to.
+	 * @return A {@link Point} representing an intersection point with the
+	 *         minimal distance to the given reference {@link Point}, or
+	 *         <code>null</code> if there is no intersection.
+	 */
+	public static Point getNearestIntersection(ICurve curve1, ICurve curve2,
+			Point reference) {
+		Point[] intersections = getIntersections(curve1, curve2);
+		if (intersections.length > 0) {
+			// find nearest intersection point
+			Point nearest = intersections[0];
+			double minDistance = reference.getDistance(nearest);
+			for (int i = 1; i < intersections.length; i++) {
+				double d = reference.getDistance(intersections[i]);
+				if (d < minDistance) {
+					minDistance = d;
+					nearest = intersections[i];
+				}
+			}
+			return nearest;
+		}
+		return null;
+	}
+
+	/**
 	 * Checks if the given {@link ICurve}s intersect in a finite number of
 	 * {@link Point}s.
 	 *
@@ -283,7 +283,7 @@ class CurveUtils {
 			} else {
 				throw new UnsupportedOperationException(
 						"This type of ICurve is not yet implemented: toPath("
-								+ curves + ")");
+								+ Arrays.asList(curves) + ")");
 			}
 		}
 		return p;

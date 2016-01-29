@@ -115,26 +115,6 @@ public class CubicCurve extends BezierCurve {
 				end.y);
 	}
 
-	@Override
-	public boolean equals(Object other) {
-		if (other instanceof CubicCurve) {
-			CubicCurve o = (CubicCurve) other;
-
-			Polygon myPoly = getControlPolygon();
-			Polygon otherPoly = o.getControlPolygon();
-
-			return myPoly.equals(otherPoly);
-		}
-		return false;
-	}
-
-	/*
-	 * TODO: Make this publicly available? (BezierCurve)
-	 */
-	private Polygon getControlPolygon() {
-		return new Polygon(getP1(), getCtrl1(), getCtrl2(), getP2());
-	}
-
 	/**
 	 * Returns a new {@link CubicCurve}, which has the same control
 	 * {@link Point}s as this one.

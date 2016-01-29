@@ -33,7 +33,7 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
  * @author mwienand
  *
  */
-public class AffineTransform {
+public class AffineTransform implements Cloneable {
 
 	// TODO: implement affine transform locally to get rid of dependency on
 	// awt.geom.

@@ -1218,22 +1218,25 @@ public class BezierCurve extends AbstractGeometry
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof BezierCurve) {
-			BezierCurve o = (BezierCurve) obj;
-			BezierCurve t = this;
-			while (o.points.length < t.points.length) {
-				o = o.getElevated();
-			}
-			while (t.points.length < o.points.length) {
-				t = t.getElevated();
-			}
-			Point[] oPoints = o.getPoints();
-			Point[] tPoints = t.getPoints();
-			return Arrays.equals(oPoints, tPoints)
-					|| Arrays.equals(oPoints, Point.getReverseCopy(tPoints));
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
 		}
-		return false;
+		if (!(other instanceof BezierCurve)) {
+			return false;
+		}
+		BezierCurve o = (BezierCurve) other;
+		BezierCurve t = this;
+		while (o.points.length < t.points.length) {
+			o = o.getElevated();
+		}
+		while (t.points.length < o.points.length) {
+			t = t.getElevated();
+		}
+		Point[] oPoints = o.getPoints();
+		Point[] tPoints = t.getPoints();
+		return Arrays.equals(oPoints, tPoints)
+				|| Arrays.equals(oPoints, Point.getReverseCopy(tPoints));
 	}
 
 	/**

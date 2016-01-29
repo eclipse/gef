@@ -97,16 +97,6 @@ public class QuadraticCurve extends BezierCurve {
 		this(p1.x, p1.y, pCtrl.x, pCtrl.y, p2.x, p2.y);
 	}
 
-	@Override
-	public boolean equals(Object other) {
-		QuadraticCurve o = (QuadraticCurve) other;
-
-		Polygon myPoly = getControlPolygon();
-		Polygon otherPoly = o.getControlPolygon();
-
-		return myPoly.equals(otherPoly);
-	}
-
 	/**
 	 * Erroneous getBounds() implementation... use the generic one instead.
 	 *
