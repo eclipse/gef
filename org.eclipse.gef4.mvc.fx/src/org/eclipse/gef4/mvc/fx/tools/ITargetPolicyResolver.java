@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.policies.IPolicy;
+import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.scene.Node;
@@ -21,7 +22,7 @@ import javafx.scene.Node;
 /**
  * The {@link ITargetPolicyResolver} provides a mechanism to determine and
  * prioritize all policies that are to be notified about certain input events
- * (see {@link #getTargetPolicies(IViewer, Node, Class)} for details).
+ * (see {@link #getTargetPolicies(ITool, IViewer, Node, Class)} for details).
  *
  * @author mwienand
  *
@@ -36,6 +37,8 @@ public interface ITargetPolicyResolver {
 	 * @param <T>
 	 *            Type parameter specifying the type of policy that is
 	 *            collected.
+	 * @param contextTool
+	 *            The {@link ITool} for which to determine target policies.
 	 * @param viewer
 	 *            The {@link IViewer} that contains the given {@link Node}.
 	 * @param target
@@ -46,6 +49,7 @@ public interface ITargetPolicyResolver {
 	 *         the target part.
 	 */
 	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			IViewer<Node> viewer, Node target, Class<T> policyClass);
+			ITool<Node> contextTool, IViewer<Node> viewer, Node target,
+			Class<T> policyClass);
 
 }

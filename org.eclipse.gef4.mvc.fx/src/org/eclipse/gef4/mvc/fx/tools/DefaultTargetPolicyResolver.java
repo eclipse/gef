@@ -46,7 +46,7 @@ import javafx.scene.Node;
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
- * {@link #getTargetPolicies(IViewer, Node, Class)} method.
+ * {@link #getTargetPolicies(ITool, IViewer, Node, Class)} method.
  *
  * @author mwienand
  *
@@ -75,9 +75,7 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 			true);
 
 	/**
-	 * Determines and prioritizes all policies of the specified type for the
-	 * given {@link IViewer} and target {@link Node} that are to be notified
-	 * about an input event that was directed at the {@link Node}.
+	 * {@inheritDoc}
 	 * <p>
 	 * This strategy works in two stages:
 	 * <ol>
@@ -122,23 +120,12 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 	 * </ol>
 	 * These policies would then all be executed/notified about an input event
 	 * by the calling tool.
-	 *
-	 * @param <T>
-	 *            Type parameter specifying the type of policy that is
-	 *            collected.
-	 * @param viewer
-	 *            The {@link IViewer} that contains the given {@link Node}.
-	 * @param target
-	 *            The target {@link Node} that received an input event.
-	 * @param policyClass
-	 *            The type of the policies to return.
-	 * @return All matching policies within the hierarchy from the root part to
-	 *         the target part.
 	 */
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
 	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			IViewer<Node> viewer, Node target, Class<T> policyClass) {
+			ITool<Node> contextTool, IViewer<Node> viewer, Node target,
+			Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);
 		// System.out.println("raw target node = " + target);
@@ -153,7 +140,7 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 				}).values();
 		for (ITool<Node> tool : tools) {
 			// System.out.println("[find active policies of " + tool + "]");
-			if (tool != this) {
+			if (tool != contextTool) {
 				for (IPolicy<Node> policy : tool.getActivePolicies(viewer)) {
 					if (policy.getClass().isAssignableFrom(policyClass)) {
 						// System.out.println("add active policy " + policy);

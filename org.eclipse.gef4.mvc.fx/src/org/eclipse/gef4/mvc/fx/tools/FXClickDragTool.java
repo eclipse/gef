@@ -108,8 +108,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						// notified about events
 						Node target = (Node) eventTarget;
 						possibleDragPolicies[0] = targetPolicyResolver
-								.getTargetPolicies(viewer, target,
-										ON_DRAG_POLICY_KEY);
+								.getTargetPolicies(FXClickDragTool.this, viewer,
+										target, ON_DRAG_POLICY_KEY);
 
 						// search drag policies in reverse order first,
 						// so that the policy closest to the target part
@@ -198,8 +198,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					// process click first
 					boolean opened = false;
 					List<? extends IFXOnClickPolicy> clickPolicies = targetPolicyResolver
-							.getTargetPolicies(viewer, target,
-									ON_CLICK_POLICY_KEY);
+							.getTargetPolicies(FXClickDragTool.this, viewer,
+									target, ON_CLICK_POLICY_KEY);
 					if (clickPolicies != null && !clickPolicies.isEmpty()) {
 						opened = true;
 						getDomain()
@@ -210,8 +210,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 
 					// determine drag target part
-					policies = targetPolicyResolver.getTargetPolicies(viewer,
-							target, ON_DRAG_POLICY_KEY);
+					policies = targetPolicyResolver.getTargetPolicies(
+							FXClickDragTool.this, viewer, target,
+							ON_DRAG_POLICY_KEY);
 
 					// abort processing of this gesture if no policies could be
 					// found
