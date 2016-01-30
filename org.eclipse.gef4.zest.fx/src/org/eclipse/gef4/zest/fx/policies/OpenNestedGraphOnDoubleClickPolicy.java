@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -31,16 +32,20 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class OpenNestedGraphOnDoubleClickPolicy extends AbstractInteractionPolicy<Node>implements IFXOnClickPolicy {
+public class OpenNestedGraphOnDoubleClickPolicy extends AbstractInteractionPolicy<Node> implements IFXOnClickPolicy {
 
 	@Override
-	public void click(MouseEvent e) {
-		if (e.getClickCount() == 2) {
+	public void click(MouseEvent event) {
+		if (event.getClickCount() == 2) {
 			// double click, so open nested graph, if it exists
 			final Graph nestedGraph = getHost().getContent().getNestedGraph();
 			if (nestedGraph != null) {
 				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-				viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true));
+				try {
+					viewer.getDomain().execute(new NavigateOperation(viewer, nestedGraph, true));
+				} catch (ExecutionException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 	}

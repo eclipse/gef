@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
@@ -37,8 +38,8 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 
 	@SuppressWarnings("serial")
 	@Override
-	public void click(MouseEvent e) {
-		if (!isCloneModifierDown(e)) {
+	public void click(MouseEvent event) {
+		if (!isCloneModifierDown(event)) {
 			return;
 		}
 
@@ -66,8 +67,12 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 				viewer.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable());
 		toBeDeselected.remove(clonedContentPart);
-		viewer.getDomain().execute(new DeselectOperation<>(
-				getHost().getRoot().getViewer(), toBeDeselected));
+		try {
+			viewer.getDomain().execute(new DeselectOperation<>(
+					getHost().getRoot().getViewer(), toBeDeselected));
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 
 		// copy the transformation
 		AffineTransform originalTransform = JavaFX2Geometry.toAffineTransform(

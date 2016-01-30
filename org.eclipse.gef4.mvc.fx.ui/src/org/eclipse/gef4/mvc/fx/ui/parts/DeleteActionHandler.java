@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -113,7 +114,11 @@ public class DeleteActionHandler extends Action {
 		}
 		IUndoableOperation deleteOperation = deletionPolicy.commit();
 		if (deleteOperation != null) {
-			viewer.getDomain().execute(deleteOperation);
+			try {
+				viewer.getDomain().execute(deleteOperation);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 

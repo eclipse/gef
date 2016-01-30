@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -50,7 +51,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 	private FXCircleSegmentHandlePart bendTargetPart;
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta) {
+	public void drag(MouseEvent event, Dimension delta) {
 		if (bendTargetPart == null) {
 			return;
 		}
@@ -59,7 +60,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
 				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
 		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-			dragPolicy.drag(e, delta);
+			dragPolicy.drag(event, delta);
 		}
 	}
 
@@ -98,7 +99,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 
 	@SuppressWarnings("serial")
 	@Override
-	public void press(MouseEvent e) {
+	public void press(MouseEvent event) {
 		// find model part
 		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
 				.getChildrenUnmodifiable().get(0);
@@ -127,7 +128,7 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		commit(creationPolicy);
 
 		// move curve to pointer location
-		curvePart.getVisual().setEndPoint(getLocation(e));
+		curvePart.getVisual().setEndPoint(getLocation(event));
 
 		// build operation to deselect all but the new curve part
 		List<IContentPart<Node, ? extends Node>> toBeDeselected = new ArrayList<>(
@@ -139,16 +140,21 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 				getHost().getRoot().getViewer(), toBeDeselected);
 
 		// execute on stack
-		getHost().getRoot().getViewer().getDomain().execute(deselectOperation);
+		try {
+			getHost().getRoot().getViewer().getDomain()
+					.execute(deselectOperation);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 
 		// find bend target part
-		bendTargetPart = findBendTargetPart(curvePart, e.getTarget());
+		bendTargetPart = findBendTargetPart(curvePart, event.getTarget());
 
 		// forward event to bend target part
 		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
 				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
 		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-			dragPolicy.press(e);
+			dragPolicy.press(event);
 		}
 	}
 

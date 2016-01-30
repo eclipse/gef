@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXInteractionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
@@ -34,10 +35,10 @@ import javafx.scene.input.MouseEvent;
 public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXInteractionPolicy implements IFXOnClickPolicy {
 
 	@Override
-	public void click(MouseEvent e) {
-		if (e.getClickCount() == 2) {
+	public void click(MouseEvent event) {
+		if (event.getClickCount() == 2) {
 			// do nothing in case there is an explicit event target
-			if (isRegistered(e.getTarget()) && !isRegisteredForHost(e.getTarget())) {
+			if (isRegistered(event.getTarget()) && !isRegisteredForHost(event.getTarget())) {
 				return;
 			}
 
@@ -53,7 +54,11 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXInteractionPol
 
 			if (nestingGraph != null) {
 				FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-				viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false));
+				try {
+					viewer.getDomain().execute(new NavigateOperation(viewer, nestingGraph, false));
+				} catch (ExecutionException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 	}

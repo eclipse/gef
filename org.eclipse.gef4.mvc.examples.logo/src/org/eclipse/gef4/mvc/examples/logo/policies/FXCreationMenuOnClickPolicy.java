@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.examples.logo.policies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -334,7 +335,11 @@ public class FXCreationMenuOnClickPolicy extends AbstractInteractionPolicy<Node>
 		rev.add(creationPolicy.commit());
 		rev.add(txPolicy.commit());
 
-		getViewer().getDomain().execute(rev);
+		try {
+			getViewer().getDomain().execute(rev);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void openMenu(final MouseEvent e) {

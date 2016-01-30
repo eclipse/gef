@@ -21,6 +21,7 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -109,24 +110,35 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public void closeExecutionTransaction(ITool<VR> tool) {
-		transactionContext.remove(tool);
-		// check if the last tool was removed from the transaction context
-		if (transactionContext.isEmpty()) {
-			// check if the transaction has an effect (or is empty)
-			if (transaction != null && !transaction.getOperations().isEmpty()) {
-				// adjust the label
+		// if (!transactionContext.contains(tool)) {
+		// throw new IllegalStateException(
+		// "No transaction active for tool " + tool + ".");
+		// }
+		if (!transactionContext.contains(tool)) {
+			return; // TODO: is this legal?
+		}
+
+		// remove tool from the transaction context and close the transaction in
+		// case the tool was the last one
+		if (transactionContext.size() == 1
+				&& transactionContext.contains(tool)) {
+			// Close transaction by adding it to the operation history in case
+			// it has an effect; all its nested operations have already been
+			// executed, thus it does not have to be executed again
+			if (transaction == null) {
+				throw new IllegalStateException(
+						"No transaction is currently active, while the transaction context sill contained tool "
+								+ tool + ".");
+			}
+			if (!transaction.getOperations().isEmpty()) {
+				// adjust the label of the transaction
 				transaction.setLabel(transaction.getOperations().iterator()
 						.next().getLabel());
-				// close operation, status = successful
-				getOperationHistory().closeOperation(true, true,
-						IOperationHistory.EXECUTE);
-			} else {
-				// close operation, status = unsuccessful
-				getOperationHistory().closeOperation(true, false,
-						IOperationHistory.EXECUTE);
+				getOperationHistory().add(transaction);
 			}
 			transaction = null;
 		}
+		transactionContext.remove(tool);
 	}
 
 	/**
@@ -141,8 +153,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		ReverseUndoCompositeOperation transaction = new ReverseUndoCompositeOperation(
 				"Transaction");
 		transaction.addContext(getUndoContext());
-		getOperationHistory().openOperation(transaction,
-				IOperationHistory.EXECUTE);
 		return transaction;
 	}
 
@@ -166,7 +176,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public void execute(IUndoableOperation operation) {
+	public void execute(IUndoableOperation operation)
+			throws ExecutionException {
 		// reduce composite operations
 		if (operation instanceof AbstractCompositeOperation) {
 			operation = ((AbstractCompositeOperation) operation).unwrap(true);
@@ -177,18 +188,19 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 				return;
 			}
 		}
-		// execute on history
-		IOperationHistory operationHistory = getOperationHistory();
-		// XXX: If we have an open transaction in the domain, we should
-		// not add an undo context, because our operation will be added to the
-		// transaction (which has the undo context).
-		if (!isExecutionTransactionOpen()) {
-			operation.addContext(getUndoContext());
+		// check if we can execute operation
+		if (!operation.canExecute()) {
+			throw new IllegalArgumentException("Operation cannot be executed.");
 		}
-		try {
-			operationHistory.execute(operation, null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		if (transaction != null) {
+			// execute operation locally and add it to the current transaction
+			operation.execute(new NullProgressMonitor(), null);
+			transaction.add(operation);
+		} else {
+			// exectue operation directly on operation history
+			operation.addContext(getUndoContext());
+			getOperationHistory().execute(operation, new NullProgressMonitor(),
+					null);
 		}
 	}
 
@@ -267,10 +279,24 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public void openExecutionTransaction(ITool<VR> tool) {
-		if (!isExecutionTransactionOpen()) {
-			transaction = createExecutionTransaction();
+		// if (transactionContext.contains(tool)) {
+		// throw new IllegalStateException(
+		// "A transaction is already active for tool " + tool + ".");
+		// }
+		// Create a new transaction in case the tool is the first one to open a
+		// transaction.
+		if (transactionContext.contains(tool)) {
+			return; // TODO: is this legal??
 		}
 		transactionContext.add(tool);
+		if (transactionContext.size() == 1
+				&& transactionContext.contains(tool)) {
+			if (transaction != null) {
+				throw new IllegalStateException(
+						"A transaction is already active, while this is the first tool within the transaction context.");
+			}
+			transaction = createExecutionTransaction();
+		}
 	}
 
 	@Override

@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.domain;
 
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -77,8 +78,11 @@ public interface IDomain<VR> extends IAdaptable, IActivatable, IDisposable {
 	 * @param operation
 	 *            The {@link IUndoableOperation} to be executed on the
 	 *            {@link IOperationHistory} of this {@link IDomain}.
+	 * @throws ExecutionException
+	 *             In case an exception occurred during the execution of the
+	 *             operation.
 	 */
-	public void execute(IUndoableOperation operation);
+	public void execute(IUndoableOperation operation) throws ExecutionException;
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.

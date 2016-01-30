@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
 
@@ -37,10 +38,14 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	@Override
-	public void zoomFinished(ZoomEvent e) {
+	public void zoomFinished(ZoomEvent event) {
 		ITransactionalOperation commit = getViewportPolicy().commit();
 		if (commit != null && !commit.isNoOp()) {
-			getHost().getRoot().getViewer().getDomain().execute(commit);
+			try {
+				getHost().getRoot().getViewer().getDomain().execute(commit);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 

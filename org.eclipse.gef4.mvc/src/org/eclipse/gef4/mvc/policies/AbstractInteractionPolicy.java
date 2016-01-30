@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.policies;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -50,7 +51,14 @@ public abstract class AbstractInteractionPolicy<VR> extends AbstractPolicy<VR> {
 		if (policy != null) {
 			ITransactionalOperation o = policy.commit();
 			if (o != null && !o.isNoOp()) {
-				domains.remove(policy).execute(o);
+				try {
+					domains.remove(policy).execute(o);
+				} catch (ExecutionException e) {
+					throw new RuntimeException(
+							"An exception occured when committing policy "
+									+ policy + ".",
+							e);
+				}
 			}
 		}
 	}
