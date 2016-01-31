@@ -15,6 +15,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.fx.swt.canvas.FXCanvasEx;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -25,12 +28,27 @@ import org.eclipse.ui.actions.ActionFactory;
 
 import com.google.common.reflect.TypeToken;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 
 /**
  * An {@link Action} to handle deletion of selection elements in an
- * {@link FXViewer}.
+ * {@link FXViewer}
+ * <P>
+ * IMPORTANT: Usually, an action handler will only be executed in case the
+ * widget that currently has focus does not already consume the triggering key
+ * event. However, in case of an {@link FXCanvas} the triggering SWT key event
+ * is never consumed, because it is forwarded to the embedded JavaFX
+ * {@link Scene}, while a consumption of the mapping JavaFX event is not
+ * propagated back.
+ * <p>
+ * Additionally, the JavaFX event handler (i.e. the {@link FXTypeTool}, in case
+ * its registered at the {@link FXDomain}) will be notified after the execution
+ * of the action handler, because {@link FXCanvasEx} wraps the event forwarding
+ * in an {@link Platform#runLater(Runnable)} call.
  *
  * @author anyssen
  *
