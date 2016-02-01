@@ -17,6 +17,7 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.value.ChangeListener;
@@ -24,6 +25,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Window;
 
 /**
  * The {@link FXViewer} is an {@link AbstractViewer} that is parameterized by
@@ -51,8 +53,36 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	protected InfiniteCanvas infiniteCanvas;
 
+	private boolean isWindowFocused = false;
+	private boolean isFocusOwnerFocused = false;
+
 	private ReadOnlyBooleanWrapper viewerFocusedProperty = new ReadOnlyBooleanWrapper(
 			false);
+
+	private BooleanBinding viewerFocusedPropertyBinding = new BooleanBinding() {
+		@Override
+		protected boolean computeValue() {
+			return isWindowFocused && isFocusOwnerFocused;
+		}
+	};
+
+	private ChangeListener<Window> windowObserver = new ChangeListener<Window>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Window> observable,
+				Window oldValue, Window newValue) {
+			onWindowChanged(oldValue, newValue);
+		}
+	};
+
+	private ChangeListener<Boolean> windowFocusedObserver = new ChangeListener<Boolean>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			onWindowFocusedChanged(oldValue, newValue);
+		}
+	};
 
 	private ChangeListener<Node> focusOwnerObserver = new ChangeListener<Node>() {
 		@Override
@@ -64,7 +94,7 @@ public class FXViewer extends AbstractViewer<Node> {
 		}
 	};
 
-	private ChangeListener<Boolean> isFocusOwnerFocusedObserver = new ChangeListener<Boolean>() {
+	private ChangeListener<Boolean> focusOwnerFocusedObserver = new ChangeListener<Boolean>() {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
@@ -76,11 +106,24 @@ public class FXViewer extends AbstractViewer<Node> {
 			if (observable == getCanvas().getScene().getFocusOwner()) {
 				if (oldValue == null ? newValue != null
 						: !oldValue.equals(newValue)) {
-					onFocusOwnerFocusedChanged(newValue);
+					onFocusOwnerFocusedChanged(oldValue, newValue);
 				}
 			}
 		}
 	};
+
+	/**
+	 * Creates a new {@link FXViewer}.
+	 */
+	public FXViewer() {
+		super();
+		// add binding to viewer focused property to have its value computed
+		// based on the values of:
+		// - window focused
+		// - focusOwner
+		// - focusOwner focused
+		viewerFocusedProperty.bind(viewerFocusedPropertyBinding);
+	}
 
 	/**
 	 * Returns the {@link InfiniteCanvas} that is managed by this
@@ -100,12 +143,6 @@ public class FXViewer extends AbstractViewer<Node> {
 				infiniteCanvas.getContentGroup().getChildren()
 						.addAll((Parent) rootPart.getVisual());
 
-				// register scene, focus owner, and focused listener if scene is
-				// available
-				if (infiniteCanvas.getScene() != null) {
-					onSceneChanged(null, infiniteCanvas.getScene());
-				}
-
 				// ensure we can properly react to scene and focus owner changes
 				infiniteCanvas.sceneProperty()
 						.addListener(new ChangeListener<Scene>() {
@@ -116,6 +153,9 @@ public class FXViewer extends AbstractViewer<Node> {
 								onSceneChanged(oldValue, newValue);
 							}
 						});
+				if (infiniteCanvas.getScene() != null) {
+					onSceneChanged(null, infiniteCanvas.getScene());
+				}
 			}
 		}
 		return infiniteCanvas;
@@ -156,37 +196,71 @@ public class FXViewer extends AbstractViewer<Node> {
 	private void onFocusOwnerChanged(Node oldFocusOwner, Node newFocusOwner) {
 		if (oldFocusOwner != null && isViewerVisual(oldFocusOwner)) {
 			oldFocusOwner.focusedProperty()
-					.removeListener(isFocusOwnerFocusedObserver);
+					.removeListener(focusOwnerFocusedObserver);
 		}
 		if (newFocusOwner != null && isViewerVisual(newFocusOwner)) {
 			newFocusOwner.focusedProperty()
-					.addListener(isFocusOwnerFocusedObserver);
+					.addListener(focusOwnerFocusedObserver);
 			// check if viewer is focused
-			if (newFocusOwner.focusedProperty().get()) {
-				viewerFocusedProperty.set(true);
+			if (Boolean.TRUE.equals(newFocusOwner.focusedProperty().get())) {
+				isFocusOwnerFocused = true;
+				viewerFocusedPropertyBinding.invalidate();
 			}
 		} else {
 			// viewer unfocused
-			viewerFocusedProperty.set(false);
+			isFocusOwnerFocused = false;
+			viewerFocusedPropertyBinding.invalidate();
 		}
 	}
 
-	private void onFocusOwnerFocusedChanged(Boolean isFocusOwnerFocused) {
-		viewerFocusedProperty.set(isFocusOwnerFocused);
+	private void onFocusOwnerFocusedChanged(Boolean oldValue,
+			Boolean newValue) {
+		isFocusOwnerFocused = Boolean.TRUE.equals(newValue);
+		viewerFocusedPropertyBinding.invalidate();
 	}
 
 	private void onSceneChanged(Scene oldScene, Scene newScene) {
+		Window oldWindow = null;
+		Window newWindow = null;
 		Node oldFocusOwner = null;
 		Node newFocusOwner = null;
 		if (oldScene != null) {
+			oldWindow = oldScene.windowProperty().get();
+			oldScene.windowProperty().removeListener(windowObserver);
 			oldFocusOwner = oldScene.focusOwnerProperty().get();
 			oldScene.focusOwnerProperty().removeListener(focusOwnerObserver);
 		}
 		if (newScene != null) {
+			newWindow = newScene.windowProperty().get();
+			newScene.windowProperty().addListener(windowObserver);
 			newFocusOwner = newScene.focusOwnerProperty().get();
 			newScene.focusOwnerProperty().addListener(focusOwnerObserver);
 		}
+		onWindowChanged(oldWindow, newWindow);
 		onFocusOwnerChanged(oldFocusOwner, newFocusOwner);
+	}
+
+	private void onWindowChanged(Window oldValue, Window newValue) {
+		if (oldValue != null) {
+			oldValue.focusedProperty().removeListener(windowFocusedObserver);
+		}
+		if (newValue != null) {
+			newValue.focusedProperty().addListener(windowFocusedObserver);
+			// check if window is focused
+			if (Boolean.TRUE.equals(newValue.focusedProperty().get())) {
+				isWindowFocused = true;
+				viewerFocusedPropertyBinding.invalidate();
+			}
+		} else {
+			// window unfocused
+			isWindowFocused = false;
+			viewerFocusedPropertyBinding.invalidate();
+		}
+	}
+
+	private void onWindowFocusedChanged(Boolean oldValue, Boolean newValue) {
+		isWindowFocused = Boolean.TRUE.equals(newValue);
+		viewerFocusedPropertyBinding.invalidate();
 	}
 
 	@Override
