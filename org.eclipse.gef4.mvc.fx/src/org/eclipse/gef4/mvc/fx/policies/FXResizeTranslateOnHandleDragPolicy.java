@@ -42,6 +42,17 @@ public class FXResizeTranslateOnHandleDragPolicy
 	private double initialTy;
 	private int translationIndex;
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private IVisualPart<Node, ? extends Node> targetPart;
+
+	/**
+	 * Returns the target {@link IVisualPart} for this policy. Per default the
+	 * first anchorage is returned.
+	 *
+	 * @return The target {@link IVisualPart} for this policy.
+	 */
+	protected IVisualPart<Node, ? extends Node> determineTargetPart() {
+		return getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
+	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -97,6 +108,16 @@ public class FXResizeTranslateOnHandleDragPolicy
 		getTransformPolicy().setPostTranslate(translationIndex, pdx, pdy);
 	}
 
+	@Override
+	public void dragAborted() {
+		if (invalidGesture) {
+			return;
+		}
+		restoreRefreshVisuals(getTargetPart());
+		commit(getResizePolicy());
+		commit(getTransformPolicy());
+	}
+
 	/**
 	 * Returns the {@link CursorSupport} of this policy.
 	 *
@@ -123,13 +144,12 @@ public class FXResizeTranslateOnHandleDragPolicy
 	}
 
 	/**
-	 * Returns the target {@link IVisualPart} for this policy. Per default the
-	 * first anchorage is returned.
+	 * Returns the target part of this policy.
 	 *
-	 * @return The target {@link IVisualPart} for this policy.
+	 * @return The target part of this policy.
 	 */
 	protected IVisualPart<Node, ? extends Node> getTargetPart() {
-		return getHost().getAnchoragesUnmodifiable().keySet().iterator().next();
+		return targetPart;
 	}
 
 	private Affine getTargetTransform() {
@@ -161,6 +181,7 @@ public class FXResizeTranslateOnHandleDragPolicy
 
 	@Override
 	public void press(MouseEvent e) {
+		setTargetPart(determineTargetPart());
 		if (e.isControlDown() || isMultiSelection()) {
 			invalidGesture = true;
 			return;
@@ -184,6 +205,18 @@ public class FXResizeTranslateOnHandleDragPolicy
 		restoreRefreshVisuals(getTargetPart());
 		commit(getResizePolicy());
 		commit(getTransformPolicy());
+	}
+
+	/**
+	 * Sets the target part (i.e. the part that is resized and translated) of
+	 * this policy to the given value.
+	 *
+	 * @param determinedTargetPart
+	 *            The target part of this policy.
+	 */
+	protected void setTargetPart(
+			IVisualPart<Node, ? extends Node> determinedTargetPart) {
+		this.targetPart = determinedTargetPart;
 	}
 
 	@Override

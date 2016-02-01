@@ -27,14 +27,36 @@ import javafx.scene.input.ZoomEvent;
 public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 		implements IFXOnPinchSpreadPolicy {
 
-	private FXChangeViewportPolicy getViewportPolicy() {
+	private FXChangeViewportPolicy viewportPolicy;
+
+	/**
+	 * Determines the {@link FXChangeViewportPolicy} that is used by this
+	 * policy.
+	 * 
+	 * @return The {@link FXChangeViewportPolicy} that is used by this policy.
+	 */
+	protected FXChangeViewportPolicy determineViewportPolicy() {
 		return getHost().getRoot().getAdapter(FXChangeViewportPolicy.class);
+	}
+
+	/**
+	 * Returns the {@link FXChangeViewportPolicy} that is used by this policy.
+	 *
+	 * @return The {@link FXChangeViewportPolicy} that is used by this policy.
+	 */
+	protected FXChangeViewportPolicy getViewportPolicy() {
+		return viewportPolicy;
 	}
 
 	@Override
 	public void zoom(ZoomEvent e) {
 		getViewportPolicy().zoomRelative(e.getZoomFactor(), e.getSceneX(),
 				e.getSceneY());
+	}
+
+	@Override
+	public void zoomAborted() {
+
 	}
 
 	@Override
@@ -51,7 +73,8 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractInteractionPolicy<Node>
 
 	@Override
 	public void zoomStarted(ZoomEvent e) {
-		getViewportPolicy().init();
+		viewportPolicy = determineViewportPolicy();
+		viewportPolicy.init();
 	}
 
 }

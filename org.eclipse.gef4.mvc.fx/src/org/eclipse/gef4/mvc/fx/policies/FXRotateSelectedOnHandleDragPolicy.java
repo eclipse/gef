@@ -57,6 +57,7 @@ public class FXRotateSelectedOnHandleDragPolicy
 	private Point initialPointerLocationInScene;
 	private Point pivotInScene;
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
+	private List<IContentPart<Node, ? extends Node>> targetParts;
 
 	/**
 	 * Computes the clock-wise rotation angle based on the initial mouse
@@ -90,6 +91,20 @@ public class FXRotateSelectedOnHandleDragPolicy
 						.getResource("/rotate_obj.gif").toExternalForm()));
 	}
 
+	/**
+	 * Returns a {@link List} containing the whole {@link SelectionModel
+	 * selection}.
+	 *
+	 * @return A {@link List} containing the whole {@link SelectionModel
+	 *         selection}.
+	 */
+	@SuppressWarnings("serial")
+	protected List<IContentPart<Node, ? extends Node>> determineTargetParts() {
+		return getHost().getRoot().getViewer()
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				}).getSelectionUnmodifiable();
+	}
+
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		// do nothing when the user does not press control
@@ -98,6 +113,21 @@ public class FXRotateSelectedOnHandleDragPolicy
 		}
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
 			updateOperation(e, part);
+		}
+	}
+
+	@Override
+	public void dragAborted() {
+		if (invalidGesture) {
+			return;
+		}
+		// rollback transform operations
+		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				restoreRefreshVisuals(part);
+				rollback(transformPolicy);
+			}
 		}
 	}
 
@@ -125,17 +155,12 @@ public class FXRotateSelectedOnHandleDragPolicy
 	}
 
 	/**
-	 * Returns a {@link List} containing the whole {@link SelectionModel
-	 * selection}.
+	 * Returns the target parts of this policy.
 	 *
-	 * @return A {@link List} containing the whole {@link SelectionModel
-	 *         selection}.
+	 * @return The target parts of this policy.
 	 */
-	@SuppressWarnings("serial")
 	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
-		return getHost().getRoot().getViewer()
-				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelectionUnmodifiable();
+		return targetParts;
 	}
 
 	/**
@@ -168,10 +193,9 @@ public class FXRotateSelectedOnHandleDragPolicy
 
 		// save pointer location for later angle calculation
 		initialPointerLocationInScene = new Point(e.getSceneX(), e.getSceneY());
-
-		// determine pivot point
+		targetParts = determineTargetParts();
 		Rectangle bounds = FXPartUtils
-				.getUnionedVisualBoundsInScene(getTargetParts());
+				.getUnionedVisualBoundsInScene(targetParts);
 		if (bounds == null) {
 			throw new IllegalStateException(
 					"Cannot determine visual bounds (null).");

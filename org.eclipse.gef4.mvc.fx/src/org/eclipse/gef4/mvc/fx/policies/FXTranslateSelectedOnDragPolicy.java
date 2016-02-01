@@ -67,6 +67,29 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		}
 	}
 
+	@Override
+	public void dragAborted() {
+		if (targetParts == null) {
+			return;
+		}
+
+		// roll back changes for all target parts
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
+			FXTransformPolicy policy = getTransformPolicy(part);
+			if (policy != null) {
+				rollback(policy);
+				restoreRefreshVisuals(part);
+			}
+		}
+
+		// reset target parts
+		targetParts = null;
+		// reset initial pointer location
+		setInitialMouseLocationInScene(null);
+		// reset translation indices
+		translationIndices.clear();
+	}
+
 	/**
 	 * Returns the {@link CursorSupport} of this policy.
 	 *

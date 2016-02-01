@@ -37,6 +37,11 @@ public interface IFXOnRotatePolicy extends IPolicy<Node> {
 	void rotate(RotateEvent e);
 
 	/**
+	 * Reaction to the unexpected finish of a rotate gesture.
+	 */
+	void rotationAborted();
+
+	/**
 	 * Reaction to the finish of rotate gestures.
 	 *
 	 * @param e

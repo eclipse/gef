@@ -43,6 +43,7 @@ public class FXRotateSelectedOnRotatePolicy
 
 	private Point pivotInScene;
 	private Map<IContentPart<Node, ? extends Node>, Integer> rotationIndices = new HashMap<>();
+	private List<IContentPart<Node, ? extends Node>> targetParts;
 
 	/**
 	 * Returns a {@link List} containing all {@link IContentPart}s that should
@@ -53,10 +54,19 @@ public class FXRotateSelectedOnRotatePolicy
 	 *         be rotated by this policy.
 	 */
 	@SuppressWarnings("serial")
-	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
+	protected List<IContentPart<Node, ? extends Node>> determineTargetParts() {
 		return getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable();
+	}
+
+	/**
+	 * Returns the target parts of this policy.
+	 *
+	 * @return The target parts of this policy.
+	 */
+	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
+		return targetParts;
 	}
 
 	/**
@@ -82,6 +92,18 @@ public class FXRotateSelectedOnRotatePolicy
 	}
 
 	@Override
+	public void rotationAborted() {
+		// roll back transform operations
+		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				restoreRefreshVisuals(part);
+				rollback(transformPolicy);
+			}
+		}
+	}
+
+	@Override
 	public void rotationFinished(RotateEvent e) {
 		// commit transform operations
 		for (IVisualPart<Node, ? extends Node> part : getTargetParts()) {
@@ -96,9 +118,9 @@ public class FXRotateSelectedOnRotatePolicy
 
 	@Override
 	public void rotationStarted(RotateEvent e) {
-		// determine pivot point
+		targetParts = determineTargetParts();
 		Rectangle bounds = FXPartUtils
-				.getUnionedVisualBoundsInScene(getTargetParts());
+				.getUnionedVisualBoundsInScene(targetParts);
 		if (bounds == null) {
 			throw new IllegalStateException(
 					"Cannot determine visual bounds (null).");

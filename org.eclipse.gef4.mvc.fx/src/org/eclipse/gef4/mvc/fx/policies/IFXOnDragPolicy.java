@@ -41,6 +41,15 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 	void drag(MouseEvent e, Dimension delta);
 
 	/**
+	 * This callback method is invoked when the mouse drag gesture is aborted,
+	 * i.e. the gesture ends unexpectedly, without a mouse release event being
+	 * fired. The policy can decide to commit or roll back its transaction. The
+	 * execution transaction to which operations are added during a mouse drag
+	 * gesture is closed after execution of this method.
+	 */
+	void dragAborted();
+
+	/**
 	 * Restores the original mouse cursor when it was previously changed by a
 	 * call to {@link #showIndicationCursor(KeyEvent)} or
 	 * {@link #showIndicationCursor(MouseEvent)}.
@@ -49,7 +58,9 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 
 	/**
 	 * This callback method is invoked when a mouse button is pressed on the
-	 * host.
+	 * host, which starts a mouse drag gesture. An execution transaction is
+	 * opened prior to execution of this method to which all operations are
+	 * added that are executed during a mouse drag gesture.
 	 *
 	 * @param e
 	 *            The original {@link MouseEvent}
@@ -57,8 +68,10 @@ public interface IFXOnDragPolicy extends IPolicy<Node> {
 	void press(MouseEvent e);
 
 	/**
-	 * This callback method is invoked when the previously pressed mouse button
-	 * is released.
+	 * This callback method is invoked when the initially pressed mouse button
+	 * is released, which ends the gesture. The execution transaction to which
+	 * operations are added during a mouse drag gesture is closed after
+	 * execution of this method.
 	 *
 	 * @param e
 	 *            The original {@link MouseEvent}.

@@ -159,6 +159,13 @@ public class FXPanOrZoomOnScrollPolicy extends AbstractInteractionPolicy<Node>
 	}
 
 	@Override
+	public void scrollAborted() {
+		rollback(getViewportPolicy());
+		setViewportPolicy(null);
+		setStopped(false);
+	}
+
+	@Override
 	public void scrollFinished() {
 		commit(getViewportPolicy());
 		setViewportPolicy(null);

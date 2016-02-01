@@ -190,6 +190,13 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 		updateFeedback();
 	}
 
+	@Override
+	public void dragAborted() {
+		if (!invalidGesture && feedback != null) {
+			removeFeedback();
+		}
+	}
+
 	/**
 	 * Returns the {@link CursorSupport} of this policy.
 	 *

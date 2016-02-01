@@ -58,6 +58,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	private Map<IContentPart<Node, ? extends Node>, Integer> scaleIndices = new HashMap<>();
 	private Map<IContentPart<Node, ? extends Node>, Integer> translateIndices = new HashMap<>();
 	private CursorSupport cursorSupport = new CursorSupport(this);
+	private List<IContentPart<Node, ? extends Node>> targetParts;
 
 	/**
 	 * Default constructor.
@@ -100,7 +101,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		}
 
 		Rectangle sel = updateSelectionBounds(e);
-		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
 			// compute initial and new bounds for this target
 			Bounds initialBounds = getBounds(selectionBounds, targetPart);
 			Bounds newBounds = getBounds(sel, targetPart);
@@ -144,6 +145,34 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 						.setPostScale(scaleIndices.get(targetPart), sx, sy);
 			}
 		}
+	}
+
+	@Override
+	public void dragAborted() {
+		if (invalidGesture) {
+			return;
+		}
+
+		// rollback transactional policies
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
+			FXTransformPolicy transformPolicy = getTransformPolicy(part);
+			if (transformPolicy != null) {
+				restoreRefreshVisuals(part);
+				rollback(transformPolicy);
+				FXResizePolicy resizePolicy = getResizePolicy(part);
+				if (resizePolicy != null) {
+					rollback(resizePolicy);
+				}
+			}
+		}
+
+		// clear transformation indices lists
+		scaleIndices.clear();
+		translateIndices.clear();
+		// null resize context vars
+		selectionBounds = null;
+		initialMouseLocation = null;
+		relX1 = relY1 = relX2 = relY2 = null;
 	}
 
 	private Bounds getBounds(Rectangle sel,
@@ -221,7 +250,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 	 *         be scaled/relocated by this policy.
 	 */
 	@SuppressWarnings("serial")
-	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
+	protected List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable();
@@ -269,8 +298,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 
 	@Override
 	public void press(MouseEvent e) {
-		// only applicable for multiple targets
-		List<IContentPart<Node, ? extends Node>> targetParts = getTargetParts();
+		targetParts = getTargetParts();
 		if (targetParts.size() < 2 || e.isControlDown()) {
 			invalidGesture = true;
 			return;
@@ -325,7 +353,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 			return;
 		}
 
-		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> part : targetParts) {
 			FXTransformPolicy transformPolicy = getTransformPolicy(part);
 			if (transformPolicy != null) {
 				restoreRefreshVisuals(part);

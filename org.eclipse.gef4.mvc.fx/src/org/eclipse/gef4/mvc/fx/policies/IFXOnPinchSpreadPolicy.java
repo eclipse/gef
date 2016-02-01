@@ -38,6 +38,11 @@ public interface IFXOnPinchSpreadPolicy extends IPolicy<Node> {
 	void zoom(ZoomEvent e);
 
 	/**
+	 * Reaction to the unexpected finish of a pinch gesture.
+	 */
+	void zoomAborted();
+
+	/**
 	 * Reaction to the finish of pinch (close fingers) gestures.
 	 *
 	 * @param e

@@ -64,6 +64,20 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		}
 	}
 
+	@Override
+	public void dragAborted() {
+		if (bendTargetPart == null) {
+			return;
+		}
+
+		// forward event to bend target part
+		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
+				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
+		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+			dragPolicy.dragAborted();
+		}
+	}
+
 	protected FXCircleSegmentHandlePart findBendTargetPart(
 			FXGeometricCurvePart curvePart, EventTarget eventTarget) {
 		// find last segment handle part

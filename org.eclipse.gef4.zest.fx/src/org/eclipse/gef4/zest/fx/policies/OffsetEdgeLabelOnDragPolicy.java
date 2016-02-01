@@ -46,6 +46,12 @@ public class OffsetEdgeLabelOnDragPolicy extends AbstractFXInteractionPolicy imp
 		getHost().getOffset().setY(initialOffsetY + dy);
 	}
 
+	@Override
+	public void dragAborted() {
+		getHost().getOffset().setX(initialOffsetX);
+		getHost().getOffset().setY(initialOffsetY);
+	}
+
 	/**
 	 * Returns the {@link CursorSupport} of this policy.
 	 *

@@ -49,6 +49,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
 
+	private IVisualPart<Node, ? extends Connection> targetPart;
+
 	private void adjustHandles(List<Point> points,
 			boolean skipMidPointsAroundCreated) {
 		// re-assign segment index and segment parameter
@@ -118,19 +120,26 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		IVisualPart<Node, ? extends Connection> targetPart = getTargetPart();
 		Connection connection = targetPart.getVisual();
-
 		List<Point> before = Arrays.asList(connection.getPoints());
 
 		getBendPolicy(targetPart)
 				.moveSelectedPoint(new Point(e.getSceneX(), e.getSceneY()));
 
 		List<Point> after = Arrays.asList(connection.getPoints());
-
 		if (before.size() != after.size()) {
 			adjustHandles(after, true);
 		}
+	}
+
+	@Override
+	public void dragAborted() {
+		restoreRefreshVisuals(targetPart);
+		rollback(getBendPolicy(targetPart));
+		adjustHandles(
+				Arrays.asList(
+						((Connection) targetPart.getVisual()).getPoints()),
+				false);
 	}
 
 	/**
@@ -185,7 +194,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hostPart = getHost();
-		IVisualPart<Node, ? extends Connection> targetPart = getTargetPart();
+		targetPart = getTargetPart();
 
 		storeAndDisableRefreshVisuals(targetPart);
 		init(getBendPolicy(targetPart));
@@ -228,7 +237,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		IVisualPart<Node, ? extends Connection> targetPart = getTargetPart();
 		restoreRefreshVisuals(targetPart);
 		// TODO: we need to ensure this can be done before
 		// enableRefreshVisuals(), because visuals should already be up to date
