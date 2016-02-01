@@ -52,9 +52,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 	 */
 	public static final Class<IFXOnTypePolicy> ON_TYPE_POLICY_KEY = IFXOnTypePolicy.class;
 
-	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
-	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
-	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
+	private Map<Scene, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
+	private Map<Scene, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
+	private Map<Scene, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
 	private Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
@@ -201,6 +201,11 @@ public class FXTypeTool extends AbstractTool<Node> {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
+			Scene scene = viewer.getRootPart().getVisual().getScene();
+			if (pressedFilterMap.containsKey(scene)) {
+				continue;
+			}
+
 			// generate event handlers
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 				@Override
@@ -221,7 +226,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					}
 				}
 			};
-			pressedFilterMap.put(viewer, pressedFilter);
+			pressedFilterMap.put(scene, pressedFilter);
 
 			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 				@Override
@@ -244,7 +249,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 					pressedKeys.remove(event.getCode());
 				}
 			};
-			releasedFilterMap.put(viewer, releasedFilter);
+			releasedFilterMap.put(scene, releasedFilter);
 
 			EventHandler<KeyEvent> typedFilter = new EventHandler<KeyEvent>() {
 				@Override
@@ -265,9 +270,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 					}
 				}
 			};
-			typedFilterMap.put(viewer, typedFilter);
+			typedFilterMap.put(scene, typedFilter);
 
-			Scene scene = viewer.getRootPart().getVisual().getScene();
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
 			scene.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
 			scene.addEventFilter(KeyEvent.KEY_TYPED, typedFilter);
@@ -280,12 +284,18 @@ public class FXTypeTool extends AbstractTool<Node> {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 			Scene scene = viewer.getRootPart().getVisual().getScene();
-			scene.removeEventFilter(KeyEvent.KEY_PRESSED,
-					pressedFilterMap.remove(viewer));
-			scene.removeEventFilter(KeyEvent.KEY_RELEASED,
-					releasedFilterMap.remove(viewer));
-			scene.removeEventFilter(KeyEvent.KEY_TYPED,
-					typedFilterMap.remove(viewer));
+			if (pressedFilterMap.containsKey(scene)) {
+				scene.removeEventFilter(KeyEvent.KEY_PRESSED,
+						pressedFilterMap.remove(scene));
+			}
+			if (releasedFilterMap.containsKey(scene)) {
+				scene.removeEventFilter(KeyEvent.KEY_RELEASED,
+						releasedFilterMap.remove(scene));
+			}
+			if (typedFilterMap.containsKey(scene)) {
+				scene.removeEventFilter(KeyEvent.KEY_TYPED,
+						typedFilterMap.remove(scene));
+			}
 		}
 	}
 

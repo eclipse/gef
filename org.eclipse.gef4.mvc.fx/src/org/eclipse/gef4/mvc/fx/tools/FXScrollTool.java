@@ -45,7 +45,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 	@Inject
 	private ITargetPolicyResolver targetPolicyResolver;
 
-	private final Map<IViewer<Node>, AbstractScrollGesture> gestures = new HashMap<>();
+	private final Map<Scene, AbstractScrollGesture> gestures = new HashMap<>();
 	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
@@ -84,6 +84,11 @@ public class FXScrollTool extends AbstractTool<Node> {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
+			Scene scene = ((FXViewer) viewer).getScene();
+			if (gestures.containsKey(scene)) {
+				continue;
+			}
+
 			// register scrolling listener
 			AbstractScrollGesture scrollGesture = new AbstractScrollGesture() {
 				@Override
@@ -117,18 +122,19 @@ public class FXScrollTool extends AbstractTool<Node> {
 					}
 				}
 			};
-			Scene scene = ((FXViewer) viewer).getScene();
 			scrollGesture.setScene(scene);
-			gestures.put(viewer, scrollGesture);
+			gestures.put(scene, scrollGesture);
 		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (final IViewer<Node> viewer : gestures.keySet()) {
+		for (Scene scene : gestures.keySet()) {
+			gestures.remove(scene).setScene(null);
+		}
+		for (final IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
-			gestures.remove(viewer).setScene(null);
 		}
 		super.unregisterListeners();
 	}

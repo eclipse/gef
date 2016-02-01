@@ -29,6 +29,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
 /**
@@ -52,7 +53,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	@Inject
 	private ITargetPolicyResolver targetPolicyResolver;
 
-	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<>();
+	private final Map<Scene, AbstractPinchSpreadGesture> gestures = new HashMap<>();
 	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
@@ -90,6 +91,11 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 			viewer.viewerFocusedProperty()
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
+
+			Scene scene = viewer.getRootPart().getVisual().getScene();
+			if (gestures.containsKey(scene)) {
+				continue;
+			}
 
 			AbstractPinchSpreadGesture gesture = new AbstractPinchSpreadGesture() {
 				@Override
@@ -144,17 +150,18 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 				}
 			};
 			gesture.setScene(((FXViewer) viewer).getScene());
-			gestures.put(viewer, gesture);
+			gestures.put(scene, gesture);
 		}
-
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (final IViewer<Node> viewer : gestures.keySet()) {
+		for (Scene scene : gestures.keySet()) {
+			gestures.remove(scene).setScene(null);
+		}
+		for (final IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
-			gestures.remove(viewer).setScene(null);
 		}
 		super.unregisterListeners();
 	}

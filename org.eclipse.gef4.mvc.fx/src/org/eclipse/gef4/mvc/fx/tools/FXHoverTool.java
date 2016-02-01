@@ -25,6 +25,7 @@ import com.google.inject.Inject;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -44,7 +45,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 	@Inject
 	private ITargetPolicyResolver targetPolicyResolver;
 
-	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<>();
+	private final Map<Scene, EventHandler<MouseEvent>> hoverFilters = new HashMap<>();
 
 	/**
 	 * Creates an {@link EventHandler} for hover {@link MouseEvent}s. The
@@ -94,25 +95,26 @@ public class FXHoverTool extends AbstractTool<Node> {
 
 	@Override
 	protected void registerListeners() {
+		super.registerListeners();
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
-				EventHandler<MouseEvent> hoverFilter = createHoverFilter(
-						(FXViewer) viewer);
-				hoverFilters.put((FXViewer) viewer, hoverFilter);
-				viewer.getRootPart().getVisual().getScene()
-						.addEventFilter(MouseEvent.ANY, hoverFilter);
+				Scene scene = viewer.getRootPart().getVisual().getScene();
+				if (!hoverFilters.containsKey(scene)) {
+					EventHandler<MouseEvent> hoverFilter = createHoverFilter(
+							(FXViewer) viewer);
+					scene.addEventFilter(MouseEvent.ANY, hoverFilter);
+					hoverFilters.put(scene, hoverFilter);
+				}
 			}
 		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (Map.Entry<FXViewer, EventHandler<MouseEvent>> e : hoverFilters
-				.entrySet()) {
-			e.getKey().getRootPart().getVisual().getScene()
-					.removeEventFilter(MouseEvent.ANY, e.getValue());
+		for (Scene scene : hoverFilters.keySet()) {
+			scene.removeEventFilter(MouseEvent.ANY, hoverFilters.remove(scene));
 		}
-		hoverFilters.clear();
+		super.unregisterListeners();
 	}
 
 }

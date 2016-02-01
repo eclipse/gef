@@ -28,6 +28,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.input.RotateEvent;
 
 /**
@@ -50,7 +51,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 	@Inject
 	private ITargetPolicyResolver targetPolicyResolver;
 
-	private final Map<IViewer<Node>, AbstractRotateGesture> gestures = new HashMap<>();
+	private final Map<Scene, AbstractRotateGesture> gestures = new HashMap<>();
 	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
@@ -89,6 +90,11 @@ public class FXRotateTool extends AbstractTool<Node> {
 					.addListener(viewerFocusChangeListener);
 			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
+			Scene scene = ((FXViewer) viewer).getScene();
+			if (gestures.containsKey(scene)) {
+				continue;
+			}
+
 			AbstractRotateGesture gesture = new AbstractRotateGesture() {
 				@Override
 				protected void rotate(RotateEvent event) {
@@ -121,18 +127,20 @@ public class FXRotateTool extends AbstractTool<Node> {
 					}
 				}
 			};
-			gesture.setScene(((FXViewer) viewer).getScene());
-			gestures.put(viewer, gesture);
+			gesture.setScene(scene);
+			gestures.put(scene, gesture);
 		}
 
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (final IViewer<Node> viewer : gestures.keySet()) {
+		for (IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
-			gestures.remove(viewer).setScene(null);
+		}
+		for (Scene scene : gestures.keySet()) {
+			gestures.remove(scene).setScene(null);
 		}
 		super.unregisterListeners();
 	}

@@ -83,13 +83,48 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	@Inject
 	private ITargetPolicyResolver targetPolicyResolver;
 
-	private final Map<IViewer<Node>, AbstractMouseDragGesture> gestures = new HashMap<>();
+	private final Map<Scene, AbstractMouseDragGesture> gestures = new HashMap<>();
 	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
+	private final Map<Scene, EventHandler<MouseEvent>> cursorMouseMoveFilters = new HashMap<>();
+
+	private Map<Scene, EventHandler<KeyEvent>> cursorKeyFilters;
 
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			// register a viewer focus change listener
+			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					if (newValue == null || !newValue) {
+						// cancel target policies
+						for (IPolicy<Node> policy : getActivePolicies(viewer)) {
+							if (policy instanceof IFXOnDragPolicy) {
+								((IFXOnDragPolicy) policy).dragAborted();
+							}
+						}
+						// clear active policies and close execution
+						// transaction
+						clearActivePolicies(viewer);
+						getDomain().closeExecutionTransaction(
+								FXClickDragTool.this);
+					}
+
+				}
+			};
+			viewer.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
+			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
+
+			Scene scene = ((FXViewer) viewer).getScene();
+			if (gestures.containsKey(scene)) {
+				// already registered for this scene
+				continue;
+			}
+
 			final IFXOnDragPolicy indicationCursorPolicy[] = new IFXOnDragPolicy[] {
 					null };
 			@SuppressWarnings("unchecked")
@@ -131,8 +166,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 				}
 			};
-			viewer.getRootPart().getVisual().getScene().addEventFilter(
-					MouseEvent.MOUSE_MOVED, indicationCursorMouseMoveFilter);
+			scene.addEventFilter(MouseEvent.MOUSE_MOVED,
+					indicationCursorMouseMoveFilter);
+			cursorMouseMoveFilters.put(scene, indicationCursorMouseMoveFilter);
 
 			// register key event filter for forwarding events to drag policies
 			// that can show a mouse cursor to indicate their action
@@ -164,34 +200,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 				}
 			};
-			viewer.getRootPart().getVisual().getScene()
-					.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
-
-			// register a viewer focus change listener
-			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
-				@Override
-				public void changed(
-						ObservableValue<? extends Boolean> observable,
-						Boolean oldValue, Boolean newValue) {
-					if (newValue == null || !newValue) {
-						// cancel target policies
-						for (IPolicy<Node> policy : getActivePolicies(viewer)) {
-							if (policy instanceof IFXOnDragPolicy) {
-								((IFXOnDragPolicy) policy).dragAborted();
-							}
-						}
-						// clear active policies and close execution
-						// transaction
-						clearActivePolicies(viewer);
-						getDomain().closeExecutionTransaction(
-								FXClickDragTool.this);
-					}
-
-				}
-			};
-			viewer.viewerFocusedProperty()
-					.addListener(viewerFocusChangeListener);
-			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
+			scene.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
+			cursorKeyFilters.put(scene, indicationCursorKeyFilter);
 
 			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
 				private Collection<? extends IFXOnDragPolicy> policies;
@@ -309,15 +319,23 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				}
 			};
 
-			gesture.setScene(((FXViewer) viewer).getScene());
-			gestures.put(viewer, gesture);
+			gesture.setScene(scene);
+			gestures.put(scene, gesture);
 		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (AbstractMouseDragGesture gesture : gestures.values()) {
-			gesture.setScene(null);
+		for (Scene scene : gestures.keySet()) {
+			gestures.remove(scene).setScene(null);
+			scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
+					cursorMouseMoveFilters.remove(scene));
+			scene.removeEventFilter(KeyEvent.ANY,
+					cursorKeyFilters.remove(scene));
+		}
+		for (IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
+			viewer.viewerFocusedProperty()
+					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}
 		super.unregisterListeners();
 	}
