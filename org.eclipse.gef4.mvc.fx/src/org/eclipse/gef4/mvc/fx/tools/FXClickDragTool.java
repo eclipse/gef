@@ -26,12 +26,15 @@ import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Inject;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -81,6 +84,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractMouseDragGesture> gestures = new HashMap<>();
+	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@Override
 	protected void registerListeners() {
@@ -162,6 +166,32 @@ public class FXClickDragTool extends AbstractTool<Node> {
 			};
 			viewer.getRootPart().getVisual().getScene()
 					.addEventFilter(KeyEvent.ANY, indicationCursorKeyFilter);
+
+			// register a viewer focus change listener
+			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					if (newValue == null || !newValue) {
+						// cancel target policies
+						for (IPolicy<Node> policy : getActivePolicies(viewer)) {
+							if (policy instanceof IFXOnDragPolicy) {
+								((IFXOnDragPolicy) policy).dragAborted();
+							}
+						}
+						// clear active policies and close execution
+						// transaction
+						clearActivePolicies(viewer);
+						getDomain().closeExecutionTransaction(
+								FXClickDragTool.this);
+					}
+
+				}
+			};
+			viewer.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
+			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
 			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
 				private Collection<? extends IFXOnDragPolicy> policies;

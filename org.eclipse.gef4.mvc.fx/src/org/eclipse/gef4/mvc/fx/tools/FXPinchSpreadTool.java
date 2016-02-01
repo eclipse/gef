@@ -25,6 +25,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Inject;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
@@ -51,6 +53,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractPinchSpreadGesture> gestures = new HashMap<>();
+	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -63,6 +66,31 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
+			// register a viewer focus change listener
+			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					if (newValue == null || !newValue) {
+						// cancel target policies
+						for (IFXOnPinchSpreadPolicy policy : getActivePolicies(
+								viewer)) {
+							policy.zoomAborted();
+						}
+						// clear active policies and close execution
+						// transaction
+						clearActivePolicies(viewer);
+						getDomain().closeExecutionTransaction(
+								FXPinchSpreadTool.this);
+					}
+
+				}
+			};
+			viewer.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
+			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
+
 			AbstractPinchSpreadGesture gesture = new AbstractPinchSpreadGesture() {
 				@Override
 				protected void zoom(ZoomEvent e) {
@@ -123,8 +151,10 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (AbstractPinchSpreadGesture gesture : gestures.values()) {
-			gesture.setScene(null);
+		for (final IViewer<Node> viewer : gestures.keySet()) {
+			viewer.viewerFocusedProperty()
+					.removeListener(viewerFocusChangeListeners.remove(viewer));
+			gestures.remove(viewer).setScene(null);
 		}
 		super.unregisterListeners();
 	}

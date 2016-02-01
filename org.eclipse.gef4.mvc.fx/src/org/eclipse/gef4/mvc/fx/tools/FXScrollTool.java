@@ -23,6 +23,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Inject;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -44,6 +46,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 	private ITargetPolicyResolver targetPolicyResolver;
 
 	private final Map<IViewer<Node>, AbstractScrollGesture> gestures = new HashMap<>();
+	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -56,7 +59,32 @@ public class FXScrollTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
-			Scene scene = ((FXViewer) viewer).getScene();
+			// register a viewer focus change listener
+			ChangeListener<Boolean> viewerFocusChangeListener = new ChangeListener<Boolean>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Boolean> observable,
+						Boolean oldValue, Boolean newValue) {
+					if (newValue == null || !newValue) {
+						// cancel target policies
+						for (IFXOnScrollPolicy policy : getActivePolicies(
+								viewer)) {
+							policy.scrollAborted();
+						}
+						// clear active policies and close execution
+						// transaction
+						clearActivePolicies(viewer);
+						getDomain()
+								.closeExecutionTransaction(FXScrollTool.this);
+					}
+
+				}
+			};
+			viewer.viewerFocusedProperty()
+					.addListener(viewerFocusChangeListener);
+			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
+
+			// register scrolling listener
 			AbstractScrollGesture scrollGesture = new AbstractScrollGesture() {
 				@Override
 				protected void scroll(ScrollEvent event) {
@@ -89,6 +117,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 					}
 				}
 			};
+			Scene scene = ((FXViewer) viewer).getScene();
 			scrollGesture.setScene(scene);
 			gestures.put(viewer, scrollGesture);
 		}
@@ -96,8 +125,10 @@ public class FXScrollTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (AbstractScrollGesture gesture : gestures.values()) {
-			gesture.setScene(null);
+		for (final IViewer<Node> viewer : gestures.keySet()) {
+			viewer.viewerFocusedProperty()
+					.removeListener(viewerFocusChangeListeners.remove(viewer));
+			gestures.remove(viewer).setScene(null);
 		}
 		super.unregisterListeners();
 	}

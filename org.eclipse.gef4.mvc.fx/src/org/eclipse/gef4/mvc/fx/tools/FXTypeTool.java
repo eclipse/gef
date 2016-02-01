@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> pressedFilterMap = new IdentityHashMap<>();
 	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> releasedFilterMap = new IdentityHashMap<>();
 	private Map<IViewer<Node>, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
+	private Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -180,25 +182,24 @@ public class FXTypeTool extends AbstractTool<Node> {
 						if (pressedKeys.isEmpty()) {
 							return;
 						}
-
 						// cancel target policies
 						for (IFXOnTypePolicy policy : getActivePolicies(
 								viewer)) {
 							policy.unfocus();
-							// clear active policies and close execution
-							// transaction
-							clearActivePolicies(viewer);
-							getDomain()
-									.closeExecutionTransaction(FXTypeTool.this);
-							// unset first key
-							pressedKeys.clear();
 						}
+						// clear active policies and close execution
+						// transaction
+						clearActivePolicies(viewer);
+						getDomain().closeExecutionTransaction(FXTypeTool.this);
+						// unset pressed keys
+						pressedKeys.clear();
 					}
 
 				}
 			};
 			viewer.viewerFocusedProperty()
 					.addListener(viewerFocusChangeListener);
+			viewerFocusChangeListeners.put(viewer, viewerFocusChangeListener);
 
 			// generate event handlers
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
@@ -276,6 +277,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 	@Override
 	protected void unregisterListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
+			viewer.viewerFocusedProperty()
+					.removeListener(viewerFocusChangeListeners.remove(viewer));
 			Scene scene = viewer.getRootPart().getVisual().getScene();
 			scene.removeEventFilter(KeyEvent.KEY_PRESSED,
 					pressedFilterMap.remove(viewer));
