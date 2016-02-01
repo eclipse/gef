@@ -37,9 +37,53 @@ public class ShapeBoundsProvider
 
 	private IVisualPart<Node, ? extends Node> host;
 
+	private double leftPadding;
+	private double topPadding;
+	private double rightPadding;
+	private double bottomPadding;
+
+	/**
+	 * Constructs a new {@link ShapeBoundsProvider} without padding.
+	 */
+	public ShapeBoundsProvider() {
+		this(0, 0, 0, 0);
+	}
+
+	/**
+	 * Constructs a new {@link ShapeBoundsProvider} with the given padding.
+	 *
+	 * @param padding
+	 *            The padding that is applied around the shape.
+	 */
+	public ShapeBoundsProvider(double padding) {
+		this(padding, padding, padding, padding);
+	}
+
+	/**
+	 * Constructs a new {@link ShapeBoundsProvider} with the given padding.
+	 *
+	 * @param leftPadding
+	 *            The padding that is applied on the left of the shape.
+	 * @param topPadding
+	 *            The padding that is applied on the top of the shape.
+	 * @param rightPadding
+	 *            The padding that is applied on the right of the shape.
+	 * @param bottomPadding
+	 *            The padding that is applied on the bottom of the shape.
+	 */
+	public ShapeBoundsProvider(double leftPadding, double topPadding,
+			double rightPadding, double bottomPadding) {
+		this.leftPadding = leftPadding;
+		this.topPadding = topPadding;
+		this.rightPadding = rightPadding;
+		this.bottomPadding = bottomPadding;
+	}
+
 	@Override
 	public Rectangle get() {
-		return JavaFX2Geometry.toRectangle(host.getVisual().getLayoutBounds());
+		return JavaFX2Geometry.toRectangle(host.getVisual().getLayoutBounds())
+				.getExpanded(leftPadding, topPadding, rightPadding,
+						bottomPadding);
 	}
 
 	@Override

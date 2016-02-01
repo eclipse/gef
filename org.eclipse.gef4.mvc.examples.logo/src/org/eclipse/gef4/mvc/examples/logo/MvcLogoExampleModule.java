@@ -58,6 +58,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
@@ -171,12 +172,22 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey
 						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.toProvider(new Provider<ShapeBoundsProvider>() {
+					@Override
+					public ShapeBoundsProvider get() {
+						return new ShapeBoundsProvider(1);
+					}
+				});
 		// geometry provider for selection handles
 		adapterMapBinder
 				.addBinding(AdapterKey
 						.role(FXDefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.toProvider(new Provider<ShapeBoundsProvider>() {
+					@Override
+					public ShapeBoundsProvider get() {
+						return new ShapeBoundsProvider(1);
+					}
+				});
 		adapterMapBinder
 				.addBinding(AdapterKey
 						.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
@@ -195,7 +206,12 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey
 						.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.toProvider(new Provider<ShapeBoundsProvider>() {
+					@Override
+					public ShapeBoundsProvider get() {
+						return new ShapeBoundsProvider(1);
+					}
+				});
 
 		// register resize/transform policies (writing changes also to model)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())

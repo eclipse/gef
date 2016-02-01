@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -84,12 +83,8 @@ public class FXDefaultFocusFeedbackPartFactory
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 				@Override
 				public IGeometry get() {
-					IGeometry geometry = focusFeedbackGeometryProvider.get();
-					// TODO: Add "padding" parameter to ShapeBoundsProvider
-					if (geometry instanceof Rectangle) {
-						geometry = ((Rectangle) geometry).getExpanded(1, 1);
-					}
-					return NodeUtils.localToScene(target.getVisual(), geometry);
+					return NodeUtils.localToScene(target.getVisual(),
+							focusFeedbackGeometryProvider.get());
 				}
 			};
 			FXFocusFeedbackPart part = injector

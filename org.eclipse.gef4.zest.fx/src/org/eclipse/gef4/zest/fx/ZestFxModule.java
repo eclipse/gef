@@ -73,6 +73,7 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 
 import com.google.inject.Binder;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
@@ -208,7 +209,12 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFocusFeedbackGeometryProviderAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.toProvider(new Provider<ShapeBoundsProvider>() {
+					@Override
+					public ShapeBoundsProvider get() {
+						return new ShapeBoundsProvider(1);
+					}
+				});
 	}
 
 	@Override
@@ -672,7 +678,12 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.toProvider(new Provider<ShapeBoundsProvider>() {
+					@Override
+					public ShapeBoundsProvider get() {
+						return new ShapeBoundsProvider(1);
+					}
+				});
 	}
 
 	/**
@@ -688,7 +699,12 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultSelectionHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.toProvider(new Provider<ShapeBoundsProvider>() {
+					@Override
+					public ShapeBoundsProvider get() {
+						return new ShapeBoundsProvider(1);
+					}
+				});
 	}
 
 	/**
