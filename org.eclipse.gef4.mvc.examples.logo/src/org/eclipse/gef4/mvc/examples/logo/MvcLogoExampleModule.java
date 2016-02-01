@@ -175,7 +175,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
-						return new ShapeBoundsProvider(1);
+						return new ShapeBoundsProvider(0.5);
 					}
 				});
 		// geometry provider for selection handles
@@ -185,7 +185,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
-						return new ShapeBoundsProvider(1);
+						return new ShapeBoundsProvider(0.5);
 					}
 				});
 		adapterMapBinder
@@ -209,7 +209,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
-						return new ShapeBoundsProvider(1);
+						return new ShapeBoundsProvider(0.5);
 					}
 				});
 

@@ -46,7 +46,7 @@ public class FXViewer extends AbstractViewer<Node> {
 	/**
 	 * Defines the CSS styling that is used to highlight a focused viewer.
 	 */
-	public static final String FOCUSED_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);-fx-border-color:#8ec0fc;-fx-border-width:3px;";
+	public static final String FOCUSED_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);-fx-border-color:#8ec0fc;-fx-border-width:2px;";
 
 	/**
 	 * The {@link InfiniteCanvas} that displays the viewer's contents.

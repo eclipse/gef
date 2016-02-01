@@ -43,7 +43,7 @@ public class FXSelectionFeedbackPart
 	/**
 	 * The stroke width for selection feedback.
 	 */
-	public static final double STROKE_WIDTH = 2d;
+	public static final double STROKE_WIDTH = 1.5d;
 
 	/**
 	 * The primary selection {@link Color}.

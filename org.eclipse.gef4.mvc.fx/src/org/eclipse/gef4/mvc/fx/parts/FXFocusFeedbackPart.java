@@ -38,7 +38,7 @@ import javafx.scene.shape.StrokeType;
 public class FXFocusFeedbackPart
 		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
-	private static final double STROKE_WIDTH = 3d;
+	private static final double STROKE_WIDTH = 1.5d;
 
 	/**
 	 * The default stroke color for this part's visualization.

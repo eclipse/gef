@@ -212,7 +212,7 @@ public class ZestFxModule extends MvcFxModule {
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
-						return new ShapeBoundsProvider(1);
+						return new ShapeBoundsProvider(0.5);
 					}
 				});
 	}
@@ -647,7 +647,7 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(ShapeBoundsProvider.class);
+				.to(GeometricOutlineProvider.class);
 	}
 
 	/**
@@ -681,7 +681,7 @@ public class ZestFxModule extends MvcFxModule {
 				.toProvider(new Provider<ShapeBoundsProvider>() {
 					@Override
 					public ShapeBoundsProvider get() {
-						return new ShapeBoundsProvider(1);
+						return new ShapeBoundsProvider(0.5);
 					}
 				});
 	}
