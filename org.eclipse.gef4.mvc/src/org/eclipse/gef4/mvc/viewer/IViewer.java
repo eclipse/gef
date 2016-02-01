@@ -25,6 +25,8 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+
 /**
  *
  * @noimplement This interface is not intended to be implemented by clients.
@@ -84,6 +86,13 @@ public interface IViewer<VR> extends IAdaptable, IActivatable, IDisposable,
 	public Map<VR, IVisualPart<VR, ? extends VR>> getVisualPartMap();
 
 	/**
+	 * Returns the value of the property {@link #viewerFocusedProperty()}.
+	 *
+	 * @return The value of the property {@link #viewerFocusedProperty()}.
+	 */
+	public boolean isViewerFocused();
+
+	/**
 	 * Ensure that the visual of the given {@link IVisualPart} is visible in
 	 * this viewer.
 	 *
@@ -91,5 +100,16 @@ public interface IViewer<VR> extends IAdaptable, IActivatable, IDisposable,
 	 *            The {@link IVisualPart} that is to be revealed.
 	 */
 	public void reveal(IVisualPart<VR, ? extends VR> visualPart);
+
+	/**
+	 * Returns a {@link ReadOnlyBooleanProperty} that represents the "focused"
+	 * state of this {@link IViewer}. An {@link IViewer} is focused when its
+	 * visualization has keyboard focus and its window is active, i.e. it is
+	 * focused if it will receive keyboard events.
+	 *
+	 * @return A {@link ReadOnlyBooleanProperty} that represents the "focused"
+	 *         state of this {@link IViewer}.
+	 */
+	public ReadOnlyBooleanProperty viewerFocusedProperty();
 
 }

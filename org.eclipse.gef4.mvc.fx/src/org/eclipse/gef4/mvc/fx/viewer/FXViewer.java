@@ -17,6 +17,10 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,6 +47,25 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	protected InfiniteCanvas infiniteCanvas;
 
+	private ReadOnlyBooleanWrapper viewerFocusedProperty = new ReadOnlyBooleanWrapper(
+			false);
+
+	private ChangeListener<Node> focusOwnerObserver = new ChangeListener<Node>() {
+		@Override
+		public void changed(ObservableValue<? extends Node> observable,
+				Node oldValue, Node newValue) {
+			onFocusOwnerChanged(oldValue, newValue);
+		}
+	};
+
+	private ChangeListener<Boolean> isFocusOwnerFocusedObserver = new ChangeListener<Boolean>() {
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			onFocusOwnerFocusedChanged(newValue);
+		}
+	};
+
 	/**
 	 * Returns the {@link InfiniteCanvas} that is managed by this
 	 * {@link FXViewer} .
@@ -57,8 +80,26 @@ public class FXViewer extends AbstractViewer<Node> {
 				infiniteCanvas = new InfiniteCanvas();
 				infiniteCanvas.setStyle(CANVAS_STYLE);
 
+				// register root visual
 				infiniteCanvas.getContentGroup().getChildren()
 						.addAll((Parent) rootPart.getVisual());
+
+				// register scene, focus owner, and focused listener if scene is
+				// available
+				if (infiniteCanvas.getScene() != null) {
+					onSceneChanged(null, infiniteCanvas.getScene());
+				}
+
+				// ensure we can properly react to scene and focus owner changes
+				infiniteCanvas.sceneProperty()
+						.addListener(new ChangeListener<Scene>() {
+							@Override
+							public void changed(
+									ObservableValue<? extends Scene> observable,
+									Scene oldValue, Scene newValue) {
+								onSceneChanged(oldValue, newValue);
+							}
+						});
 			}
 		}
 		return infiniteCanvas;
@@ -80,9 +121,65 @@ public class FXViewer extends AbstractViewer<Node> {
 		return infiniteCanvas.getScene();
 	}
 
+	private boolean isViewerControl(Node node) {
+		while (node != null) {
+			if (node == infiniteCanvas) {
+				return true;
+			}
+			node = node.getParent();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isViewerFocused() {
+		return viewerFocusedProperty.get();
+	}
+
+	private void onFocusOwnerChanged(Node oldFocusOwner, Node newFocusOwner) {
+		if (oldFocusOwner != null && isViewerControl(oldFocusOwner)) {
+			oldFocusOwner.focusedProperty()
+					.removeListener(isFocusOwnerFocusedObserver);
+		}
+		if (newFocusOwner != null && isViewerControl(newFocusOwner)) {
+			newFocusOwner.focusedProperty()
+					.addListener(isFocusOwnerFocusedObserver);
+			// check if viewer is focused
+			if (newFocusOwner.focusedProperty().get()) {
+				viewerFocusedProperty.set(true);
+			}
+		} else {
+			// viewer unfocused
+			viewerFocusedProperty.set(false);
+		}
+	}
+
+	private void onFocusOwnerFocusedChanged(Boolean isFocusOwnerFocused) {
+		viewerFocusedProperty.set(isFocusOwnerFocused);
+	}
+
+	private void onSceneChanged(Scene oldScene, Scene newScene) {
+		Node oldFocusOwner = null;
+		Node newFocusOwner = null;
+		if (oldScene != null) {
+			oldFocusOwner = oldScene.focusOwnerProperty().get();
+			oldScene.focusOwnerProperty().removeListener(focusOwnerObserver);
+		}
+		if (newScene != null) {
+			newFocusOwner = newScene.focusOwnerProperty().get();
+			newScene.focusOwnerProperty().addListener(focusOwnerObserver);
+		}
+		onFocusOwnerChanged(oldFocusOwner, newFocusOwner);
+	}
+
 	@Override
 	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
 		getCanvas().reveal(visualPart.getVisual());
+	}
+
+	@Override
+	public ReadOnlyBooleanProperty viewerFocusedProperty() {
+		return viewerFocusedProperty.getReadOnlyProperty();
 	}
 
 }
