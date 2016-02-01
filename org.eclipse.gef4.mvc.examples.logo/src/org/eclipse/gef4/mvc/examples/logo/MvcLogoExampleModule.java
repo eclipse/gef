@@ -37,6 +37,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
@@ -127,6 +128,12 @@ public class MvcLogoExampleModule extends MvcFxModule {
 						.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
 
+		// // geometry provider for focus feedback
+		// adapterMapBinder
+		// .addBinding(AdapterKey
+		// .role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+		// .to(GeometricOutlineProvider.class);
+
 		// transaction policy for resize + transform
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXResizeConnectionPolicy.class);
@@ -183,6 +190,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey
 						.role(FXDefaultHoverHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+		// geometry provider for focus feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(ShapeBoundsProvider.class);
 
 		// register resize/transform policies (writing changes also to model)

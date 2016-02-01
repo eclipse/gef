@@ -14,12 +14,12 @@ package org.eclipse.gef4.mvc.fx.providers;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
 import javafx.scene.Node;
-import javafx.scene.shape.Rectangle;
 
 /**
  * The {@link ShapeBoundsProvider} is a {@link Provider Provider<IGeometry>}
@@ -38,7 +38,7 @@ public class ShapeBoundsProvider
 	private IVisualPart<Node, ? extends Node> host;
 
 	@Override
-	public IGeometry get() {
+	public Rectangle get() {
 		return JavaFX2Geometry.toRectangle(host.getVisual().getLayoutBounds());
 	}
 

@@ -19,6 +19,7 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
@@ -194,6 +195,20 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindEdgeLayoutBehaviorAsEdgeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(EdgeLayoutBehavior.class);
+	}
+
+	/**
+	 * Binds the
+	 * {@link FXDefaultFocusFeedbackPartFactory#FOCUS_FEEDBACK_GEOMETRY_PROVIDER}
+	 * .
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder.
+	 */
+	protected void bindFocusFeedbackGeometryProviderAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
 	}
 
 	@Override
@@ -437,6 +452,20 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for
+	 * {@link FXDefaultHoverFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
+	 * with implementation {@link ShapeBoundsProvider}.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder.
+	 */
+	protected void bindHoverFeedbackGeometryProviderAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+	}
+
+	/**
+	 * Adds a binding for
 	 * {@link FXDefaultHoverHandlePartFactory#HOVER_HANDLES_GEOMETRY_PROVIDER}
 	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link AbstractContentPart}s.
@@ -531,8 +560,9 @@ public class ZestFxModule extends MvcFxModule {
 		// feedback and handles
 		bindFXHoverOnHoverPolicyAsEdgeContentPartAdapter(adapterMapBinder);
 		bindSelectionHandlesGeometryProviderAsNodeContentPartAdapter(adapterMapBinder);
-		bindSelectionFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
-		bindHoverFeedbackGeometryProviderAsEdgeLabelPartAdapter(adapterMapBinder);
+		bindSelectionFeedbackGeometryProviderAsNodeContentPartAdapter(adapterMapBinder);
+		bindHoverFeedbackGeometryProviderAsNodeContentPartAdapter(adapterMapBinder);
+		bindFocusFeedbackGeometryProviderAsNodeContentPartAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -611,7 +641,7 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(GeometricOutlineProvider.class);
+				.to(ShapeBoundsProvider.class);
 	}
 
 	/**
@@ -624,6 +654,21 @@ public class ZestFxModule extends MvcFxModule {
 	 *            The adapter map binder to which the binding is added.
 	 */
 	protected void bindSelectionFeedbackGeometryProviderAsEdgeLabelPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
+	}
+
+	/**
+	 * Binds the
+	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
+	 * .
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder.
+	 */
+	protected void bindSelectionFeedbackGeometryProviderAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(AdapterKey.role(FXDefaultSelectionFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))

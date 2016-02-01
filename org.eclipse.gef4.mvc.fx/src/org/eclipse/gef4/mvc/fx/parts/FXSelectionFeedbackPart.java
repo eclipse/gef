@@ -14,12 +14,10 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -28,11 +26,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
@@ -46,49 +40,20 @@ import javafx.scene.shape.StrokeType;
 public class FXSelectionFeedbackPart
 		extends AbstractFXFeedbackPart<GeometryNode<IGeometry>> {
 
-	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
+	/**
+	 * The stroke width for selection feedback.
+	 */
+	public static final double STROKE_WIDTH = 2d;
 
 	/**
-	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
-	 * used to decorate a primary, focused selection.
+	 * The primary selection {@link Color}.
 	 */
-	public static final String PRIMARY_FOCUSED_EFFECT_PROVIDER = "PrimaryFocusedSelectionFeedbackEffectProvider";
+	public static final Color PRIMARY_COLOR = Color.BLACK;
 
 	/**
-	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
-	 * used to decorate a primary, unfocused selection.
+	 * The secondary selection {@link Color}.
 	 */
-	public static final String PRIMARY_UNFOCUSED_EFFECT_PROVIDER = "PrimaryUnfocusedSelectionFeedbackEffectProvider";
-
-	/**
-	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
-	 * used to decorate a secondary, focused selection.
-	 */
-	public static final String SECONDARY_FOCUSED_EFFECT_PROVIDER = "SecondaryFocusedSelectionFeedbackEffectProvider";
-
-	/**
-	 * The role name for the <code>Provider&lt;Effect&gt;</code> that will be
-	 * used to decorate a secondary, unfocused selection.
-	 */
-	public static final String SECONDARY_UNFOCUSED_EFFECT_PROVIDER = "SecondaryUnfocusedSelectionFeedbackEffectProvider";
-
-	private ChangeListener<Boolean> viewerFocusObserver = new ChangeListener<Boolean>() {
-		@Override
-		public void changed(ObservableValue<? extends Boolean> observable,
-				Boolean oldValue, Boolean newValue) {
-			refreshVisual();
-		}
-	};
-
-	private ChangeListener<IContentPart<Node, ? extends Node>> focusObserver = new ChangeListener<IContentPart<Node, ? extends Node>>() {
-		@Override
-		public void changed(
-				ObservableValue<? extends IContentPart<Node, ? extends Node>> observable,
-				IContentPart<Node, ? extends Node> oldValue,
-				IContentPart<Node, ? extends Node> newValue) {
-			refreshVisual();
-		}
-	};
+	public static final Color SECONDARY_COLOR = Color.web("#666666");
 
 	private Provider<? extends IGeometry> feedbackGeometryProvider;
 
@@ -104,32 +69,8 @@ public class FXSelectionFeedbackPart
 		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);
-		feedbackVisual.setStrokeWidth(1);
+		feedbackVisual.setStrokeWidth(STROKE_WIDTH);
 		return feedbackVisual;
-	}
-
-	@SuppressWarnings("serial")
-	@Override
-	protected void doActivate() {
-		super.doActivate();
-		IViewer<Node> viewer = getRoot().getViewer();
-		viewer.viewerFocusedProperty().addListener(viewerFocusObserver);
-		FocusModel<Node> focusModel = viewer
-				.getAdapter(new TypeToken<FocusModel<Node>>() {
-				});
-		focusModel.focusProperty().addListener(focusObserver);
-	}
-
-	@SuppressWarnings("serial")
-	@Override
-	protected void doDeactivate() {
-		IViewer<Node> viewer = getRoot().getViewer();
-		viewer.viewerFocusedProperty().removeListener(viewerFocusObserver);
-		FocusModel<Node> focusModel = viewer
-				.getAdapter(new TypeToken<FocusModel<Node>>() {
-				});
-		focusModel.focusProperty().removeListener(focusObserver);
-		super.doDeactivate();
 	}
 
 	@SuppressWarnings("serial")
@@ -140,39 +81,37 @@ public class FXSelectionFeedbackPart
 		if (anchorages.isEmpty()) {
 			return;
 		}
-
 		IGeometry feedbackGeometry = getFeedbackGeometry();
 		if (feedbackGeometry == null) {
 			return;
 		}
 
+		// update geometry
 		visual.setGeometry(feedbackGeometry);
 
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
-				.next();
-		IViewer<Node> viewer = anchorage.getRoot().getViewer();
-
+		// update stroke type
 		if (feedbackGeometry instanceof ICurve) {
 			// stroke centered
 			visual.setStrokeType(StrokeType.CENTERED);
 		} else {
 			// stroke outside
 			visual.setStrokeType(StrokeType.OUTSIDE);
+			// TODO: adjust stroke width to get hair lines
 		}
 
-		// update color according to focused and selected state
-		boolean focused = viewer.isViewerFocused()
-				&& viewer.getAdapter(FocusModel.class).getFocus() == anchorage;
+		// update color
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
+				.next();
+		IViewer<Node> viewer = anchorage.getRoot().getViewer();
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable();
-		boolean primary = selected.get(0) == anchorage;
-		if (primary) {
-			visual.setEffect(getPrimarySelectionFeedbackEffect(focused));
-			visual.setStroke(Color.BLACK);
+		if (selected.get(0) == anchorage) {
+			// primary selection
+			visual.setStroke(PRIMARY_COLOR);
 		} else {
-			visual.setEffect(getSecondarySelectionFeedbackEffect(focused));
-			visual.setStroke(Color.GREY);
+			// secondary selection
+			visual.setStroke(SECONDARY_COLOR);
 		}
 	}
 
@@ -187,74 +126,6 @@ public class FXSelectionFeedbackPart
 	protected IGeometry getFeedbackGeometry() {
 		return NodeUtils.sceneToLocal(getVisual(),
 				feedbackGeometryProvider.get());
-	}
-
-	/**
-	 * Returns the {@link Effect} that is applied to a primary selection. When
-	 * an effect provider (either {@link #PRIMARY_FOCUSED_EFFECT_PROVIDER} or
-	 * {@link #PRIMARY_UNFOCUSED_EFFECT_PROVIDER}) is registered on this part's
-	 * anchorage, the provided {@link Effect} is returned. Otherwise, a
-	 * {@link DropShadow} is used.
-	 *
-	 * @param focused
-	 *            <code>true</code> if the selection is focused, otherwise
-	 *            <code>false</code>.
-	 * @return The {@link Effect} that is applied to a primary selection.
-	 */
-	@SuppressWarnings("serial")
-	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
-		Provider<? extends Effect> effectProvider = null;
-		if (!getAnchoragesUnmodifiable().isEmpty()) {
-			IVisualPart<Node, ? extends Node> host = getAnchoragesUnmodifiable()
-					.keys().iterator().next();
-			String providerRole = focused ? PRIMARY_FOCUSED_EFFECT_PROVIDER
-					: PRIMARY_UNFOCUSED_EFFECT_PROVIDER;
-			effectProvider = host.getAdapter(
-					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {
-					}, providerRole));
-		}
-		if (effectProvider == null) {
-			DropShadow effect = new DropShadow();
-			effect.setColor(focused ? FOCUS_COLOR : Color.GREY);
-			effect.setRadius(5);
-			effect.setSpread(0.6);
-			return effect;
-		}
-		return effectProvider.get();
-	}
-
-	/**
-	 * Returns the {@link Effect} that is applied to a secondary selection. When
-	 * an effect provider (either {@link #SECONDARY_FOCUSED_EFFECT_PROVIDER} or
-	 * {@link #SECONDARY_UNFOCUSED_EFFECT_PROVIDER}) is registered on this
-	 * part's anchorage, the provided {@link Effect} is returned. Otherwise, a
-	 * {@link DropShadow} is used.
-	 *
-	 * @param focused
-	 *            <code>true</code> if the selection is focused, otherwise
-	 *            <code>false</code>.
-	 * @return The {@link Effect} that is applied to a primary selection.
-	 */
-	@SuppressWarnings("serial")
-	protected Effect getSecondarySelectionFeedbackEffect(boolean focused) {
-		Provider<? extends Effect> effectProvider = null;
-		if (!getAnchoragesUnmodifiable().isEmpty()) {
-			IVisualPart<Node, ? extends Node> host = getAnchoragesUnmodifiable()
-					.keys().iterator().next();
-			String providerRole = focused ? SECONDARY_FOCUSED_EFFECT_PROVIDER
-					: SECONDARY_UNFOCUSED_EFFECT_PROVIDER;
-			effectProvider = host.getAdapter(
-					AdapterKey.get(new TypeToken<Provider<? extends Effect>>() {
-					}, providerRole));
-		}
-		if (effectProvider == null) {
-			DropShadow effect = new DropShadow();
-			effect.setColor(focused ? FOCUS_COLOR : Color.GREY);
-			effect.setRadius(5);
-			effect.setSpread(0.6);
-			return effect;
-		}
-		return effectProvider.get();
 	}
 
 	/**

@@ -16,12 +16,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -51,13 +53,17 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	 */
 	public static final String PART_FACTORIES_BINDING_NAME = "focus";
 
+	private IContentPart<Node, ? extends Node> focusPart;
+	private boolean isViewerFocused;
+
 	private ChangeListener<IContentPart<Node, ? extends Node>> focusObserver = new ChangeListener<IContentPart<Node, ? extends Node>>() {
 		@Override
 		public void changed(
 				ObservableValue<? extends IContentPart<Node, ? extends Node>> observable,
 				IContentPart<Node, ? extends Node> oldValue,
 				IContentPart<Node, ? extends Node> newValue) {
-			onFocusPartChanged(oldValue, newValue);
+			focusPart = newValue;
+			refreshFocusFeedback();
 		}
 	};
 
@@ -71,34 +77,56 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 
 	private FocusModel<Node> focusModel;
 
+	private ChangeListener<? super Boolean> viewerFocusedListener = new ChangeListener<Boolean>() {
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			isViewerFocused = newValue;
+			refreshFocusFeedback();
+		}
+	};
+
+	private IViewer<Node> viewer;
+	private boolean hasViewerFocusedFeedback;
+
 	/**
-	 * Assigns keyboard focus to the visualization of the host.
+	 * Adds viewer focused feedback.
 	 */
-	protected void applyFocus() {
-		getHost().getVisual().requestFocus();
+	protected void addViewerFocusedFeedback() {
+		if (viewer instanceof FXViewer) {
+			((FXViewer) viewer).getCanvas().setStyle(FXViewer.FOCUSED_STYLE);
+		}
+		hasViewerFocusedFeedback = true;
 	}
 
 	@SuppressWarnings("serial")
 	@Override
 	protected void doActivate() {
-		focusModel = getHost().getRoot().getViewer()
-				.getAdapter(new TypeToken<FocusModel<Node>>() {
-				});
+		super.doActivate();
+		viewer = getHost().getRoot().getViewer();
+		focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
+		});
 		if (focusModel == null) {
 			throw new IllegalStateException(
 					"Cannot obtain FocusModel<Node> from the IViewer of the host of this FXFocusBehavior.");
 		}
 
+		viewer.viewerFocusedProperty().addListener(viewerFocusedListener);
 		focusModel.focusProperty().addListener(focusObserver);
 
-		if (focusModel.getFocus() != null) {
-			onFocusPartChanged(null, focusModel.getFocus());
-		}
+		focusPart = focusModel.getFocus();
+		isViewerFocused = viewer.isViewerFocused();
+		refreshFocusFeedback();
 	}
 
 	@Override
 	protected void doDeactivate() {
 		focusModel.focusProperty().removeListener(focusObserver);
+		viewer.viewerFocusedProperty().removeListener(viewerFocusedListener);
+		focusPart = null;
+		isViewerFocused = false;
+		refreshFocusFeedback();
+		super.doDeactivate();
 	}
 
 	/**
@@ -113,31 +141,42 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Called when the {@link FocusModel#getFocus()} part is changed.
-	 *
-	 * @param oldValue
-	 *            The old focus part.
-	 * @param newValue
-	 *            The new focus part.
+	 * Refreshes focus feedback, i.e. adds or removes feedback.
 	 */
-	protected void onFocusPartChanged(
-			IContentPart<Node, ? extends Node> oldValue,
-			IContentPart<Node, ? extends Node> newValue) {
-		if (oldValue != newValue) {
+	protected void refreshFocusFeedback() {
+		if (getHost() == viewer.getRootPart()) {
+			boolean showFeedback = isViewerFocused && focusPart == null;
+			if (hasViewerFocusedFeedback && !showFeedback) {
+				removeViewerFocusedFeedback();
+			} else if (!hasViewerFocusedFeedback && showFeedback) {
+				addViewerFocusedFeedback();
+			}
+		} else {
 			List<IVisualPart<Node, ? extends Node>> targets = Collections
 					.<IVisualPart<Node, ? extends Node>> singletonList(
 							getHost());
-			if (oldValue == getHost()) {
+			boolean hasFeedback = getFeedbackParts() != null
+					&& !getFeedbackParts().isEmpty();
+			boolean isFocused = isViewerFocused && getHost() == focusPart;
+			if (hasFeedback && !isFocused) {
 				removeFeedback(targets);
-			}
-			if (newValue == getHost()) {
-				applyFocus();
+			} else if (!hasFeedback && isFocused) {
 				List<IFeedbackPart<Node, ? extends Node>> feedbackParts = feedbackPartFactory
 						.createFeedbackParts(targets, FXFocusBehavior.this,
 								Collections.emptyMap());
 				addFeedback(targets, feedbackParts);
 			}
 		}
+	}
+
+	/**
+	 * Removes viewer focused feedback.
+	 */
+	protected void removeViewerFocusedFeedback() {
+		if (viewer instanceof FXViewer) {
+			((FXViewer) viewer).getCanvas().setStyle(FXViewer.DEFAULT_STYLE);
+		}
+		hasViewerFocusedFeedback = false;
 	}
 
 }

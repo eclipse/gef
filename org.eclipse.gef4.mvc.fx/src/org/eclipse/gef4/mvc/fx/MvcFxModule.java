@@ -28,6 +28,7 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
@@ -402,6 +403,19 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Adds a binding for the {@link FXFocusBehavior} to the given adapter map
+	 * binder.
+	 *
+	 * @param adapterMapBinder
+	 *            An adapter map binder for {@link FXRootPart}.
+	 */
+	protected void bindFXFocusBehaviorAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXFocusBehavior.class);
+	}
+
+	/**
 	 * Adds a binding for {@link FXHoverOnHoverPolicy} to the {@link AdapterMap}
 	 * binder for {@link AbstractFXHandlePart}.
 	 *
@@ -573,6 +587,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindContentBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindSelectionBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		bindGridBehaviorAsFXRootPartAdapter(adapterMapBinder);
+		bindFXFocusBehaviorAsFXRootPartAdapter(adapterMapBinder);
 		// creation and deletion policy
 		bindCreationPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindDeletionPolicyAsFXRootPartAdapter(adapterMapBinder);
@@ -854,6 +869,11 @@ public class MvcFxModule extends MvcModule<Node> {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
 		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME))
 				.to(FXDefaultHoverFeedbackPartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
+		}).annotatedWith(
+				Names.named(FXFocusBehavior.PART_FACTORIES_BINDING_NAME))
+				.to(FXDefaultFocusFeedbackPartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 

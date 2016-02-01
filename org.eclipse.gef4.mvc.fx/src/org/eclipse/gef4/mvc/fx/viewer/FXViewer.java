@@ -35,12 +35,16 @@ import javafx.scene.Scene;
  */
 public class FXViewer extends AbstractViewer<Node> {
 
-	// TODO: evaluate if a style is still needed
 	/**
 	 * Defines the default CSS styling for the {@link InfiniteCanvas}: no
 	 * background, no border.
 	 */
-	private static final String CANVAS_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
+	public static final String DEFAULT_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
+
+	/**
+	 * Defines the CSS styling that is used to highlight a focused viewer.
+	 */
+	public static final String FOCUSED_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);-fx-border-color:#8ec0fc;-fx-border-width:3px;";
 
 	/**
 	 * The {@link InfiniteCanvas} that displays the viewer's contents.
@@ -54,7 +58,9 @@ public class FXViewer extends AbstractViewer<Node> {
 		@Override
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldValue, Node newValue) {
-			onFocusOwnerChanged(oldValue, newValue);
+			if (oldValue != newValue) {
+				onFocusOwnerChanged(oldValue, newValue);
+			}
 		}
 	};
 
@@ -62,7 +68,10 @@ public class FXViewer extends AbstractViewer<Node> {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
-			onFocusOwnerFocusedChanged(newValue);
+			if (oldValue == null ? newValue != null
+					: !oldValue.equals(newValue)) {
+				onFocusOwnerFocusedChanged(newValue);
+			}
 		}
 	};
 
@@ -78,7 +87,7 @@ public class FXViewer extends AbstractViewer<Node> {
 			IRootPart<Node, ? extends Node> rootPart = getRootPart();
 			if (rootPart != null) {
 				infiniteCanvas = new InfiniteCanvas();
-				infiniteCanvas.setStyle(CANVAS_STYLE);
+				infiniteCanvas.setStyle(DEFAULT_STYLE);
 
 				// register root visual
 				infiniteCanvas.getContentGroup().getChildren()

@@ -59,6 +59,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 			}
 
 			focusModel.setFocus((IContentPart<Node, ? extends Node>) host);
+			getHost().getVisual().requestFocus();
 
 			boolean append = e.isControlDown();
 			if (selectionModel
@@ -88,6 +89,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 					|| isRegisteredForHost(e.getTarget())) {
 				// unset focus
 				focusModel.setFocus(null);
+				getHost().getVisual().requestFocus();
 				// remove all selected
 				selectionModel.clearSelection();
 			}
