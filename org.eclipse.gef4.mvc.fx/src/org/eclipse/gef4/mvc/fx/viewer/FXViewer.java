@@ -68,9 +68,16 @@ public class FXViewer extends AbstractViewer<Node> {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) {
-			if (oldValue == null ? newValue != null
-					: !oldValue.equals(newValue)) {
-				onFocusOwnerFocusedChanged(newValue);
+			// XXX: If a new focusOwner is set and the old focusOwner was
+			// focused, it will fire a "focused" change from true to false. Such
+			// events are disregarded, so that the viewer does not lose its
+			// focus if it will gain it immediately afterwards (which is handled
+			// within #focusOwnerChanged()).
+			if (observable == getCanvas().getScene().getFocusOwner()) {
+				if (oldValue == null ? newValue != null
+						: !oldValue.equals(newValue)) {
+					onFocusOwnerFocusedChanged(newValue);
+				}
 			}
 		}
 	};
