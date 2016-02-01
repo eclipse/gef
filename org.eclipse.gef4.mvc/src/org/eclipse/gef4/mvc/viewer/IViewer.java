@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.scene.Node;
 
 /**
  *
@@ -91,6 +92,18 @@ public interface IViewer<VR> extends IAdaptable, IActivatable, IDisposable,
 	 * @return The value of the property {@link #viewerFocusedProperty()}.
 	 */
 	public boolean isViewerFocused();
+
+	/**
+	 * Returns <code>true</code> if the given visual is contained within this
+	 * {@link IViewer}. Otherwise returns <code>false</code>.
+	 *
+	 * @param node
+	 *            The visual for which is determined if it is contained within
+	 *            this {@link IViewer}.
+	 * @return <code>true</code> if the given visual is contained within this
+	 *         {@link IViewer}, otherwise <code>false</code>.
+	 */
+	public boolean isViewerVisual(Node node);
 
 	/**
 	 * Ensure that the visual of the given {@link IVisualPart} is visible in

@@ -46,7 +46,7 @@ import javafx.scene.Node;
  * target part have lowest precedence, i.e. they will be executed last.
  * </ol>
  * For details, take a look at the
- * {@link #getTargetPolicies(ITool, IViewer, Node, Class)} method.
+ * {@link #getTargetPolicies(ITool, Node, Class)} method.
  *
  * @author mwienand
  *
@@ -124,12 +124,19 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 	@Override
 	@SuppressWarnings({ "serial", "unchecked" })
 	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			ITool<Node> contextTool, IViewer<Node> viewer, Node target,
-			Class<T> policyClass) {
+			ITool<Node> contextTool, Node target, Class<T> policyClass) {
 		// System.out.println("\n=== determine target policies ===");
 		// System.out.println("viewer = " + viewer);
 		// System.out.println("raw target node = " + target);
 		// System.out.println("policy class = " + policyClass);
+
+		// determine viewer that contains the given target part
+		IViewer<Node> viewer = FXPartUtils
+				.retrieveViewer(contextTool.getDomain(), target);
+		if (viewer == null) {
+			throw new IllegalArgumentException(
+					"The given target Node is not contained within an IViewer.");
+		}
 
 		// determine outer targets, i.e. already running/active policies of
 		// other tools

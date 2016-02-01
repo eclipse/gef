@@ -79,7 +79,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
 					Collection<? extends IFXOnHoverPolicy> policies = targetPolicyResolver
-							.getTargetPolicies(FXHoverTool.this, viewer,
+							.getTargetPolicies(FXHoverTool.this,
 									(Node) eventTarget, ON_HOVER_POLICY_KEY);
 					getDomain().openExecutionTransaction(FXHoverTool.this);
 					// active policies are unnecessary because hover is not a

@@ -22,7 +22,7 @@ import javafx.scene.Node;
 /**
  * The {@link ITargetPolicyResolver} provides a mechanism to determine and
  * prioritize all policies that are to be notified about certain input events
- * (see {@link #getTargetPolicies(ITool, IViewer, Node, Class)} for details).
+ * (see {@link #getTargetPolicies(ITool, Node, Class)} for details).
  *
  * @author mwienand
  *
@@ -39,8 +39,6 @@ public interface ITargetPolicyResolver {
 	 *            collected.
 	 * @param contextTool
 	 *            The {@link ITool} for which to determine target policies.
-	 * @param viewer
-	 *            The {@link IViewer} that contains the given {@link Node}.
 	 * @param target
 	 *            The target {@link Node} that received an input event.
 	 * @param policyClass
@@ -49,7 +47,6 @@ public interface ITargetPolicyResolver {
 	 *         the target part.
 	 */
 	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
-			ITool<Node> contextTool, IViewer<Node> viewer, Node target,
-			Class<T> policyClass);
+			ITool<Node> contextTool, Node target, Class<T> policyClass);
 
 }

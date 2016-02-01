@@ -117,7 +117,7 @@ public class FXRotateTool extends AbstractTool<Node> {
 					EventTarget eventTarget = event.getTarget();
 					setActivePolicies(viewer,
 							targetPolicyResolver.getTargetPolicies(
-									FXRotateTool.this, viewer,
+									FXRotateTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									ON_ROTATE_POLICY_KEY));

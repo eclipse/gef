@@ -12,12 +12,17 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Collection;
+import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -57,6 +62,40 @@ public class FXPartUtils {
 			}
 		}
 		return bounds;
+	}
+
+	/**
+	 * Returns the {@link IViewer} of the given {@link IDomain} in which the
+	 * given {@link Node} is contained, or <code>null</code> if the given
+	 * {@link Node} is not contained within an {@link IViewer} of the given
+	 * {@link IDomain}.
+	 *
+	 * @param domain
+	 *            The {@link IDomain} that contains the {@link IViewer}s that
+	 *            are tested to contain the given target {@link Node}.
+	 * @param target
+	 *            The {@link Node} for which to determine the containg
+	 *            {@link IViewer}.
+	 * @return The {@link IViewer} in which the given target {@link Node} is
+	 *         contained, or <code>null</code>.
+	 */
+	@SuppressWarnings("serial")
+	public static IViewer<Node> retrieveViewer(IDomain<Node> domain,
+			Node target) {
+		// determine viewers within domain
+		Map<AdapterKey<? extends IViewer<Node>>, IViewer<Node>> viewers = domain
+				.getAdapters(new TypeToken<IViewer<Node>>() {
+				});
+
+		// test if the target node is contained within any of the viewers
+		for (IViewer<Node> viewer : viewers.values()) {
+			if (viewer.isViewerVisual(target)) {
+				return viewer;
+			}
+		}
+
+		// visual is not contained within any of the viewers of the given domain
+		return null;
 	}
 
 	/**

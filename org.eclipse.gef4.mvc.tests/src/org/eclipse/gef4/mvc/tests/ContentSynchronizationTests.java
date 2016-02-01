@@ -67,6 +67,7 @@ import com.google.inject.multibindings.MapBinder;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.scene.Node;
 
 /**
  * Tests for the {@link ContentBehavior}.
@@ -270,6 +271,11 @@ public class ContentSynchronizationTests {
 
 		@Override
 		public boolean isViewerFocused() {
+			return true;
+		}
+
+		@Override
+		public boolean isViewerVisual(Node node) {
 			return true;
 		}
 

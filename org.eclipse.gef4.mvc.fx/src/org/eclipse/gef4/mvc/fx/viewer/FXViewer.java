@@ -121,7 +121,13 @@ public class FXViewer extends AbstractViewer<Node> {
 		return infiniteCanvas.getScene();
 	}
 
-	private boolean isViewerControl(Node node) {
+	@Override
+	public boolean isViewerFocused() {
+		return viewerFocusedProperty.get();
+	}
+
+	@Override
+	public boolean isViewerVisual(Node node) {
 		while (node != null) {
 			if (node == infiniteCanvas) {
 				return true;
@@ -131,17 +137,12 @@ public class FXViewer extends AbstractViewer<Node> {
 		return false;
 	}
 
-	@Override
-	public boolean isViewerFocused() {
-		return viewerFocusedProperty.get();
-	}
-
 	private void onFocusOwnerChanged(Node oldFocusOwner, Node newFocusOwner) {
-		if (oldFocusOwner != null && isViewerControl(oldFocusOwner)) {
+		if (oldFocusOwner != null && isViewerVisual(oldFocusOwner)) {
 			oldFocusOwner.focusedProperty()
 					.removeListener(isFocusOwnerFocusedObserver);
 		}
-		if (newFocusOwner != null && isViewerControl(newFocusOwner)) {
+		if (newFocusOwner != null && isViewerVisual(newFocusOwner)) {
 			newFocusOwner.focusedProperty()
 					.addListener(isFocusOwnerFocusedObserver);
 			// check if viewer is focused

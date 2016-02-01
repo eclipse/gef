@@ -113,7 +113,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 					getDomain().openExecutionTransaction(FXScrollTool.this);
 					setActivePolicies(viewer,
 							targetPolicyResolver.getTargetPolicies(
-									FXScrollTool.this, viewer,
+									FXScrollTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									ON_SCROLL_POLICY_KEY));

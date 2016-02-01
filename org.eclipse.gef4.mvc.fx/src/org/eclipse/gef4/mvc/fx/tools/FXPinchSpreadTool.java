@@ -137,7 +137,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 					EventTarget eventTarget = e.getTarget();
 					setActivePolicies(viewer,
 							targetPolicyResolver.getTargetPolicies(
-									FXPinchSpreadTool.this, viewer,
+									FXPinchSpreadTool.this,
 									eventTarget instanceof Node
 											? (Node) eventTarget : null,
 									ON_PINCH_SPREAD_POLICY_KEY));
