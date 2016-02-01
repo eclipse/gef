@@ -76,9 +76,7 @@ public class FXFocusBehavior extends AbstractBehavior<Node>
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (FocusModel.VIEWER_FOCUSED_PROPERTY.equals(evt.getPropertyName())) {
-			// viewer focus changed
-		} else if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+		if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
 			if (evt.getNewValue() == getHost()) {
 				applyFocus();
 			}

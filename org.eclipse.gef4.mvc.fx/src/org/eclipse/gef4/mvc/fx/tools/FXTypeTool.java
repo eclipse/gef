@@ -197,7 +197,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 
 				}
 			};
-			focusModel.viewerFocusedProperty()
+			viewer.viewerFocusedProperty()
 					.addListener(viewerFocusChangeListener);
 
 			// generate event handlers

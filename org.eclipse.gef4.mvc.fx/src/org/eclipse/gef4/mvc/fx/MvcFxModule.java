@@ -45,7 +45,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.providers.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.tools.DefaultTargetPolicyResolver;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
-import org.eclipse.gef4.mvc.fx.tools.FXFocusTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.fx.tools.FXRotateTool;
@@ -381,8 +380,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXRotateToolAsFXDomainAdapter(adapterMapBinder);
 		bindFXPinchSpreadToolAsFXDomainAdapter(adapterMapBinder);
 		bindFXScrollToolAsFXDomainAdapter(adapterMapBinder);
-		bindFXFocusToolAsFXDomainAdapter(adapterMapBinder);
-
 		bindIViewerAsFXDomainAdapter(adapterMapBinder);
 	}
 
@@ -402,32 +399,6 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXFocusBehavior.class);
-	}
-
-	/**
-	 * Binds {@link FXFocusTool} to the {@link FXDomain} adaptable scope.
-	 */
-	protected void bindFXFocusTool() {
-		binder().bind(FXFocusTool.class)
-				.in(AdaptableScopes.typed(FXDomain.class));
-	}
-
-	/**
-	 * Adds a binding for {@link FXFocusTool} to the {@link AdapterMap} binder
-	 * for {@link FXDomain}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXDomain} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindFXFocusToolAsFXDomainAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXFocusTool.class);
 	}
 
 	/**
@@ -1068,7 +1039,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXRotateTool();
 		bindFXScrollTool();
 		bindFXTypeTool();
-		bindFXFocusTool();
 
 		// bind special behavior implementations
 		bindHoverBehavior();

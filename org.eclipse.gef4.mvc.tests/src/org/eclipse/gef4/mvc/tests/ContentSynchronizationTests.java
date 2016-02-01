@@ -65,6 +65,9 @@ import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+
 /**
  * Tests for the {@link ContentBehavior}.
  *
@@ -263,8 +266,20 @@ public class ContentSynchronizationTests {
 	}
 
 	public static class Viewer extends AbstractViewer<Object> {
+		ReadOnlyBooleanWrapper focusedProperty = new ReadOnlyBooleanWrapper(true);
+
+		@Override
+		public boolean isViewerFocused() {
+			return true;
+		}
+
 		@Override
 		public void reveal(IVisualPart<Object, ? extends Object> visualPart) {
+		}
+
+		@Override
+		public ReadOnlyBooleanProperty viewerFocusedProperty() {
+			return focusedProperty.getReadOnlyProperty();
 		}
 	}
 

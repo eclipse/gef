@@ -15,9 +15,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
@@ -44,24 +42,12 @@ public class FocusModel<VR> {
 	 */
 	final public static String FOCUS_PROPERTY = "focus";
 
-	/**
-	 * The {@link FocusModel} fires {@link PropertyChangeEvent}s when the viewer
-	 * focused state changes. This is the name of the property that is delivered
-	 * with the event.
-	 *
-	 * @see #setViewerFocused(boolean)
-	 */
-	final public static String VIEWER_FOCUSED_PROPERTY = "viewerFocused";
-
 	private ObjectProperty<IContentPart<VR, ? extends VR>> focusedProperty = new SimpleObjectProperty<>(
 			this, FOCUS_PROPERTY);
-	private BooleanProperty viewerFocusedProperty = new SimpleBooleanProperty(
-			this, VIEWER_FOCUSED_PROPERTY, false);
 
 	/**
 	 * Constructs a new {@link FocusModel}. The {@link #getFocus() focused}
-	 * {@link IContentPart} is set to <code>null</code> and the
-	 * {@link #isViewerFocused()} flag is set to <code>false</code>.
+	 * {@link IContentPart} is set to <code>null</code>.
 	 */
 	public FocusModel() {
 	}
@@ -88,18 +74,6 @@ public class FocusModel<VR> {
 	}
 
 	/**
-	 * Returns <code>true</code> if the viewer where this model is registered
-	 * currently has keyboard focus. Otherwise returns <code>false</code>.
-	 *
-	 * @return <code>true</code> if the viewer where this model is registered
-	 *         currently has keyboard focus. Otherwise returns
-	 *         <code>false</code>.
-	 */
-	public boolean isViewerFocused() {
-		return viewerFocusedProperty.get();
-	}
-
-	/**
 	 * Selects the given IContentPart as the focus part. Note that setting the
 	 * focus part does not assign keyboard focus to the part.
 	 *
@@ -109,28 +83,6 @@ public class FocusModel<VR> {
 	 */
 	public void setFocus(IContentPart<VR, ? extends VR> focusPart) {
 		focusedProperty.set(focusPart);
-	}
-
-	/**
-	 * Updates the {@link #isViewerFocused()} property of this model.
-	 *
-	 * @param viewerFocused
-	 *            <code>true</code> to indicate that the viewer has keyboard
-	 *            focus, or <code>false</code> to indicate that the viewer does
-	 *            not have keyboard focus.
-	 */
-	public void setViewerFocused(boolean viewerFocused) {
-		viewerFocusedProperty.set(viewerFocused);
-	}
-
-	/**
-	 * Returns whether the viewer, this {@link FocusModel} is attached to, has
-	 * currently focus.
-	 *
-	 * @return A boolean property named {@link #VIEWER_FOCUSED_PROPERTY}.
-	 */
-	public BooleanProperty viewerFocusedProperty() {
-		return viewerFocusedProperty;
 	}
 
 }
