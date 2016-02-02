@@ -86,13 +86,11 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 			if (selection.isEmpty()) {
 				// unfocus when the only selected part was deselected
 				focusModel.setFocus(null);
-				getHost().getVisual().requestFocus();
 			} else {
 				// focus new primary selection
 				IContentPart<Node, ? extends Node> primarySelection = selection
 						.get(0);
 				focusModel.setFocus(primarySelection);
-				primarySelection.getVisual().requestFocus();
 			}
 		} else if (host instanceof IRootPart) {
 			// check if click on background (either one of the root visuals, or
@@ -101,7 +99,6 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 					|| isRegisteredForHost(e.getTarget())) {
 				// unset focus
 				focusModel.setFocus(null);
-				getHost().getVisual().requestFocus();
 				// remove all selected
 				selectionModel.clearSelection();
 			}
