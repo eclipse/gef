@@ -124,8 +124,8 @@ public class FXFocusFeedbackPart
 			// stroke centered
 			visual.setStrokeType(StrokeType.CENTERED);
 			if (selected.contains(anchorage)) {
-				// place behind selection feedback
 				visual.setStrokeWidth(FXSelectionFeedbackPart.STROKE_WIDTH * 3);
+				// XXX: place behind selection feedback
 				visual.toBack();
 			} else {
 				visual.setStrokeWidth(STROKE_WIDTH);

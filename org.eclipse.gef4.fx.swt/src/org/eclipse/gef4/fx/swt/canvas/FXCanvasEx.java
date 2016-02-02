@@ -52,7 +52,6 @@ public class FXCanvasEx extends FXCanvas {
 	private SwtToFxEventConverter gestureConverter;
 
 	private ChangeListener<Cursor> cursorChangeListener = new ChangeListener<Cursor>() {
-
 		@Override
 		public void changed(ObservableValue<? extends Cursor> observable,
 				Cursor oldCursor, Cursor newCursor) {
