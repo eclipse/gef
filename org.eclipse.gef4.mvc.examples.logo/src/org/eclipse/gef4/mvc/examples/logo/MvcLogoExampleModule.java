@@ -51,6 +51,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
@@ -76,6 +77,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// select on click
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXFocusAndSelectOnClickPolicy.class);
+		// select on type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXSelectOnTypePolicy.class);
 	}
 
 	@Override
@@ -94,6 +98,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// keyboard focus traversal
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTraverseOnTypePolicy.class);
+		// select on type
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXSelectOnTypePolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(
