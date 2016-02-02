@@ -13,7 +13,6 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -22,6 +21,7 @@ import java.util.Map;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -87,6 +87,12 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 	private final Map<Scene, EventHandler<MouseEvent>> cursorMouseMoveFilters = new HashMap<>();
 	private final Map<Scene, EventHandler<KeyEvent>> cursorKeyFilters = new HashMap<>();
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IFXOnDragPolicy> getActivePolicies(IViewer<Node> viewer) {
+		return (List<IFXOnDragPolicy>) super.getActivePolicies(viewer);
+	}
 
 	@Override
 	protected void registerListeners() {
@@ -203,18 +209,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 			cursorKeyFilters.put(scene, indicationCursorKeyFilter);
 
 			AbstractMouseDragGesture gesture = new AbstractMouseDragGesture() {
-				private Collection<? extends IFXOnDragPolicy> policies;
-
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
 						double dy) {
 					// abort processing of this gesture if no policies could be
 					// found that can process it
-					if (policies == null) {
+					if (getActivePolicies(viewer).isEmpty()) {
 						return;
 					}
 
-					for (IFXOnDragPolicy policy : policies) {
+					for (IFXOnDragPolicy policy : getActivePolicies(viewer)) {
 						policy.drag(e, new Dimension(dx, dy));
 					}
 				}
@@ -234,11 +238,13 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					scene.removeEventFilter(KeyEvent.ANY,
 							indicationCursorKeyFilter);
 
-					// process click first
+					// determine click policies
 					boolean opened = false;
 					List<? extends IFXOnClickPolicy> clickPolicies = targetPolicyResolver
 							.getTargetPolicies(FXClickDragTool.this, target,
 									ON_CLICK_POLICY_KEY);
+
+					// process click first
 					if (clickPolicies != null && !clickPolicies.isEmpty()) {
 						opened = true;
 						getDomain()
@@ -248,22 +254,37 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						}
 					}
 
-					// determine drag target part
-					policies = targetPolicyResolver.getTargetPolicies(
-							FXClickDragTool.this, target, ON_DRAG_POLICY_KEY);
+					// determine viewer that contains the given target part
+					IViewer<Node> viewer = FXPartUtils
+							.retrieveViewer(getDomain(), target);
 
-					// abort processing of this gesture if no policies could be
-					// found
-					if (policies.isEmpty()) {
+					// determine drag policies
+					List<? extends IFXOnDragPolicy> policies = null;
+					if (viewer != null) {
+						// XXX: A click policy could have changed the visual
+						// hierarchy so that the viewer cannot be determined for
+						// the target node anymore. If that is the case, no drag
+						// policies should be notified about the event.
+						policies = targetPolicyResolver.getTargetPolicies(
+								FXClickDragTool.this, target, viewer,
+								ON_DRAG_POLICY_KEY);
+					}
+
+					// abort processing of this gesture if no drag policies
+					// could be found
+					if (policies == null || policies.isEmpty()) {
 						// remove this tool from the domain's execution
-						// transaction
-						getDomain().closeExecutionTransaction(
-								FXClickDragTool.this);
+						// transaction if previously opened
+						if (opened) {
+							getDomain().closeExecutionTransaction(
+									FXClickDragTool.this);
+						}
 						policies = null;
 						return;
 					}
 
 					// add this tool to the execution transaction of the domain
+					// if not yet opened
 					if (!opened) {
 						getDomain()
 								.openExecutionTransaction(FXClickDragTool.this);
@@ -291,23 +312,20 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// abort processing of this gesture if no policies could be
 					// found that can process it
-					if (policies == null) {
+					if (getActivePolicies(viewer).isEmpty()) {
 						return;
+					}
+
+					// send release() to all drag policies
+					for (IFXOnDragPolicy policy : getActivePolicies(viewer)) {
+						policy.release(e, new Dimension(dx, dy));
 					}
 
 					// clear active policies before processing release
 					clearActivePolicies(viewer);
 
-					// send release() to all drag policies
-					for (IFXOnDragPolicy policy : policies) {
-						policy.release(e, new Dimension(dx, dy));
-					}
-
 					// remove this tool from the domain's execution transaction
 					getDomain().closeExecutionTransaction(FXClickDragTool.this);
-
-					// reset drag policies
-					policies = null;
 
 					// hide indication cursor
 					if (indicationCursorPolicy[0] != null) {

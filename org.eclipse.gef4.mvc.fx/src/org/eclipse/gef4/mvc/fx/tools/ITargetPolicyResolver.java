@@ -31,8 +31,8 @@ public interface ITargetPolicyResolver {
 
 	/**
 	 * Determines and prioritizes all policies of the specified type for the
-	 * given {@link IViewer} and target {@link Node} that are to be notified
-	 * about an input event that was directed at the {@link Node}.
+	 * given target {@link Node} that are to be notified about an input event
+	 * that was directed at the {@link Node}.
 	 *
 	 * @param <T>
 	 *            Type parameter specifying the type of policy that is
@@ -48,5 +48,29 @@ public interface ITargetPolicyResolver {
 	 */
 	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
 			ITool<Node> contextTool, Node target, Class<T> policyClass);
+
+	/**
+	 * Determines and prioritizes all policies of the specified type for the
+	 * given {@link IViewer} and target {@link Node} that are to be notified
+	 * about an input event that was directed at the {@link Node}.
+	 *
+	 * @param <T>
+	 *            Type parameter specifying the type of policy that is
+	 *            collected.
+	 * @param contextTool
+	 *            The {@link ITool} for which to determine target policies.
+	 * @param target
+	 *            The target {@link Node} that received an input event.
+	 * @param viewer
+	 *            The {@link IViewer} that contains the given target
+	 *            {@link Node}.
+	 * @param policyClass
+	 *            The type of the policies to return.
+	 * @return All matching policies within the hierarchy from the root part to
+	 *         the target part.
+	 */
+	public <T extends IPolicy<Node>> List<? extends T> getTargetPolicies(
+			ITool<Node> contextTool, Node target, IViewer<Node> viewer,
+			Class<T> policyClass);
 
 }
