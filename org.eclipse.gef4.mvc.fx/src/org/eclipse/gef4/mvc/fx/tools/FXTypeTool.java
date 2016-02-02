@@ -28,6 +28,7 @@ import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -57,28 +58,14 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private Map<Scene, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
 	private Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
+	@Inject
+	private ITargetPolicyResolver targetPolicyResolver;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<? extends IFXOnTypePolicy> getActivePolicies(
 			IViewer<Node> viewer) {
 		return (List<IFXOnTypePolicy>) super.getActivePolicies(viewer);
-	}
-
-	/**
-	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
-	 * installed on the given target {@link IVisualPart}.
-	 *
-	 * @param targetPart
-	 *            The target {@link IVisualPart} of which the
-	 *            {@link IFXOnTypePolicy}s are returned.
-	 * @return A {@link Set} containing all {@link IFXOnTypePolicy}s that are
-	 *         installed on the given target {@link IVisualPart}.
-	 */
-	// TODO: Rename to getOnTypePolicies()
-	protected Set<? extends IFXOnTypePolicy> getKeyPolicies(
-			IVisualPart<Node, ? extends Node> targetPart) {
-		return new HashSet<>(targetPart
-				.<IFXOnTypePolicy> getAdapters(ON_TYPE_POLICY_KEY).values());
 	}
 
 	/**
@@ -93,18 +80,19 @@ public class FXTypeTool extends AbstractTool<Node> {
 	 *         installed on the target {@link IVisualPart} for the given
 	 *         {@link KeyEvent}.
 	 */
-	protected Set<? extends IFXOnTypePolicy> getTargetPolicies(KeyEvent event) {
+	protected List<? extends IFXOnTypePolicy> getTargetPolicies(
+			KeyEvent event) {
 		EventTarget target = event.getTarget();
 		if (target instanceof Scene) {
 			return getTargetPolicies((Scene) target);
 		} else if (target instanceof Node) {
 			Scene scene = ((Node) target).getScene();
 			if (scene == null) {
-				return Collections.emptySet();
+				return Collections.emptyList();
 			}
 			return getTargetPolicies(scene);
 		} else {
-			return Collections.emptySet();
+			return Collections.emptyList();
 		}
 	}
 
@@ -120,12 +108,12 @@ public class FXTypeTool extends AbstractTool<Node> {
 	 *            The {@link Scene} for which to determine the
 	 *            {@link IFXOnTypePolicy}s that are installed on the target
 	 *            {@link IVisualPart}.
-	 * @return A {@link Set} containing all {@link IFXOnTypePolicy}s that are
+	 * @return A {@link List} containing all {@link IFXOnTypePolicy}s that are
 	 *         installed on the target {@link IVisualPart} for the given
 	 *         {@link Scene}.
 	 */
 	@SuppressWarnings("serial")
-	protected Set<? extends IFXOnTypePolicy> getTargetPolicies(Scene scene) {
+	protected List<? extends IFXOnTypePolicy> getTargetPolicies(Scene scene) {
 		IVisualPart<Node, ? extends Node> targetPart = null;
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
@@ -149,9 +137,10 @@ public class FXTypeTool extends AbstractTool<Node> {
 			}
 		}
 		if (targetPart == null) {
-			return Collections.emptySet();
+			return Collections.emptyList();
 		}
-		return getKeyPolicies(targetPart);
+		return targetPolicyResolver.getTargetPolicies(this,
+				targetPart.getVisual(), IFXOnTypePolicy.class);
 	}
 
 	@SuppressWarnings("serial")
