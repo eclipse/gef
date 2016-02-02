@@ -19,6 +19,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -58,9 +59,6 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				return;
 			}
 
-			focusModel.setFocus((IContentPart<Node, ? extends Node>) host);
-			getHost().getVisual().requestFocus();
-
 			boolean append = e.isControlDown();
 			if (selectionModel
 					.isSelected((IContentPart<Node, ? extends Node>) host)) {
@@ -81,6 +79,20 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 					selectionModel.setSelection(
 							(IContentPart<Node, ? extends Node>) host);
 				}
+			}
+
+			ObservableList<IContentPart<Node, ? extends Node>> selection = selectionModel
+					.getSelectionUnmodifiable();
+			if (selection.isEmpty()) {
+				// unfocus when the only selected part was deselected
+				focusModel.setFocus(null);
+				getHost().getVisual().requestFocus();
+			} else {
+				// focus new primary selection
+				IContentPart<Node, ? extends Node> primarySelection = selection
+						.get(0);
+				focusModel.setFocus(primarySelection);
+				primarySelection.getVisual().requestFocus();
 			}
 		} else if (host instanceof IRootPart) {
 			// check if click on background (either one of the root visuals, or
