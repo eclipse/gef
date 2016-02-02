@@ -20,6 +20,7 @@ import org.eclipse.gef4.mvc.examples.logo.behaviors.FXClickableAreaBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHoverHandlePartFactory;
@@ -51,6 +52,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPol
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTraverseOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
@@ -89,6 +91,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXDeleteSelectedOnTypePolicy.class);
+		// keyboard focus traversal
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXTraverseOnTypePolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(
@@ -128,12 +133,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.addBinding(AdapterKey
 						.role(FXDefaultHoverFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(GeometricOutlineProvider.class);
-
-		// // geometry provider for focus feedback
-		// adapterMapBinder
-		// .addBinding(AdapterKey
-		// .role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
-		// .to(GeometricOutlineProvider.class);
+		// geometry provider for focus feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(GeometricOutlineProvider.class);
 
 		// transaction policy for resize + transform
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -160,6 +164,21 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXCloneOnClickPolicy.class);
+	}
+
+	/**
+	 * Binds adapters for {@link FXGeometricModelPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the bindings are added.
+	 */
+	protected void bindFXGeometricModelPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// geometry provider for focus feedback
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(FXDefaultFocusFeedbackPartFactory.FOCUS_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(ShapeBoundsProvider.class);
 	}
 
 	protected void bindFXGeometricShapePartAdapters(
@@ -277,6 +296,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindIContentPartFactory();
 
 		// contents
+		bindFXGeometricModelPartAdapters(AdapterMaps
+				.getAdapterMapBinder(binder(), FXGeometricModelPart.class));
 		bindFXGeometricShapePartAdapters(AdapterMaps
 				.getAdapterMapBinder(binder(), FXGeometricShapePart.class));
 		bindFXGeometricCurvePartAdapters(AdapterMaps
