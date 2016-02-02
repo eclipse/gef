@@ -110,7 +110,7 @@ public class FXFocusFeedbackPart
 		// update geometry
 		visual.setGeometry(feedbackGeometry);
 
-		// increase geometry size if selected
+		// determine selection
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
 				.next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
@@ -118,25 +118,34 @@ public class FXFocusFeedbackPart
 		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				}).getSelectionUnmodifiable();
-		if (selected.contains(anchorage)) {
-			visual.resizeGeometry(
-					feedbackGeometry.getBounds().getWidth()
-							+ FXSelectionFeedbackPart.STROKE_WIDTH * 2,
-					feedbackGeometry.getBounds().getHeight()
-							+ FXSelectionFeedbackPart.STROKE_WIDTH * 2);
-			visual.setGeometry(
-					feedbackGeometry.getTransformed(new AffineTransform(1, 0, 0,
-							1, -FXSelectionFeedbackPart.STROKE_WIDTH,
-							-FXSelectionFeedbackPart.STROKE_WIDTH)));
-		}
 
+		// adjust feedback depending on geometry
 		if (feedbackGeometry instanceof ICurve) {
 			// stroke centered
 			visual.setStrokeType(StrokeType.CENTERED);
+			if (selected.contains(anchorage)) {
+				// place behind selection feedback
+				visual.setStrokeWidth(FXSelectionFeedbackPart.STROKE_WIDTH * 3);
+				visual.toBack();
+			} else {
+				visual.setStrokeWidth(STROKE_WIDTH);
+			}
 		} else {
 			// stroke outside
 			visual.setStrokeType(StrokeType.OUTSIDE);
 			// TODO: adjust stroke width to get hair lines
+			// increase geometry size if selected
+			if (selected.contains(anchorage)) {
+				visual.resizeGeometry(
+						feedbackGeometry.getBounds().getWidth()
+								+ FXSelectionFeedbackPart.STROKE_WIDTH * 2,
+						feedbackGeometry.getBounds().getHeight()
+								+ FXSelectionFeedbackPart.STROKE_WIDTH * 2);
+				visual.setGeometry(
+						feedbackGeometry.getTransformed(new AffineTransform(1,
+								0, 0, 1, -FXSelectionFeedbackPart.STROKE_WIDTH,
+								-FXSelectionFeedbackPart.STROKE_WIDTH)));
+			}
 		}
 	}
 
