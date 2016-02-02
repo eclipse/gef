@@ -53,6 +53,7 @@ public class FXViewer extends AbstractViewer<Node> {
 	 */
 	protected InfiniteCanvas infiniteCanvas;
 
+	private boolean isInitialized = false;
 	private boolean isWindowFocused = false;
 	private boolean isFocusOwnerFocused = false;
 
@@ -253,6 +254,7 @@ public class FXViewer extends AbstractViewer<Node> {
 			}
 		} else {
 			// window unfocused
+			isInitialized = false;
 			isWindowFocused = false;
 			viewerFocusedPropertyBinding.invalidate();
 		}
@@ -261,6 +263,15 @@ public class FXViewer extends AbstractViewer<Node> {
 	private void onWindowFocusedChanged(Boolean oldValue, Boolean newValue) {
 		isWindowFocused = Boolean.TRUE.equals(newValue);
 		viewerFocusedPropertyBinding.invalidate();
+		if (!isInitialized) {
+			// XXX: When the embedded scene is opened, the viewer needs to
+			// request focus for the root visual once so that a focus owner is
+			// set. This could also possibly be done in the FXFocusBehavior, but
+			// keeping it here we can limit 'knowledge' about the embedded
+			// window.
+			getRootPart().getVisual().requestFocus();
+			isInitialized = true;
+		}
 	}
 
 	@Override

@@ -63,7 +63,7 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 				IContentPart<Node, ? extends Node> oldValue,
 				IContentPart<Node, ? extends Node> newValue) {
 			focusPart = newValue;
-			transferFocusToFx();
+			applyFocusToVisual();
 			refreshFocusFeedback();
 		}
 	};
@@ -185,7 +185,7 @@ public class FXFocusBehavior extends AbstractBehavior<Node> {
 	 * {@link Node#requestFocus()} on the visual of the focus part, or on the
 	 * root visual if no part is focused.
 	 */
-	protected void transferFocusToFx() {
+	protected void applyFocusToVisual() {
 		if (focusPart == null) {
 			viewer.getRootPart().getVisual().requestFocus();
 		} else {
