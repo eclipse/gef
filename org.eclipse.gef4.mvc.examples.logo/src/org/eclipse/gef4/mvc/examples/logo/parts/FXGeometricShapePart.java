@@ -26,11 +26,22 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Affine;
 
 public class FXGeometricShapePart
 		extends AbstractFXGeometricElementPart<GeometryNode<IShape>> {
+
+	private final ChangeListener<? super Paint> fillObserver = new ChangeListener<Paint>() {
+		@Override
+		public void changed(ObservableValue<? extends Paint> observable,
+				Paint oldValue, Paint newValue) {
+			refreshVisual();
+		}
+	};
 
 	@Override
 	protected void attachToAnchorageVisual(
@@ -51,6 +62,12 @@ public class FXGeometricShapePart
 	}
 
 	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getContent().fillProperty().addListener(fillObserver);
+	}
+
+	@Override
 	protected void doAddContentChild(Object contentChild, int index) {
 		// nothing to do
 	}
@@ -67,9 +84,30 @@ public class FXGeometricShapePart
 	}
 
 	@Override
+	protected void doDeactivate() {
+		getContent().fillProperty().removeListener(fillObserver);
+		super.doDeactivate();
+	}
+
+	@Override
 	protected void doDetachFromContentAnchorage(Object contentAnchorage,
 			String role) {
 		getContent().getAnchorages().remove(contentAnchorage);
+	}
+
+	@Override
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+		SetMultimap<Object, String> anchorages = HashMultimap.create();
+		for (AbstractFXGeometricElement<? extends IGeometry> anchorage : getContent()
+				.getAnchorages()) {
+			anchorages.put(anchorage, "link");
+		}
+		return anchorages;
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -123,21 +161,6 @@ public class FXGeometricShapePart
 	@Override
 	public FXGeometricShape getContent() {
 		return (FXGeometricShape) super.getContent();
-	}
-
-	@Override
-	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
-		SetMultimap<Object, String> anchorages = HashMultimap.create();
-		for (AbstractFXGeometricElement<? extends IGeometry> anchorage : getContent()
-				.getAnchorages()) {
-			anchorages.put(anchorage, "link");
-		}
-		return anchorages;
-	}
-
-	@Override
-	protected List<? extends Object> doGetContentChildren() {
-		return Collections.emptyList();
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> anchorages = new HashSet<>();
 
 	private final ObjectProperty<Paint> fillProperty = new SimpleObjectProperty<>(
-			this, FILL_PROPERTY);;
+			this, FILL_PROPERTY);
 
 	public FXGeometricShape(IShape shape, AffineTransform transform,
 			Color stroke, double strokeWidth, Paint fill, Effect effect) {
@@ -47,6 +47,10 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 	public void addAnchorage(
 			AbstractFXGeometricElement<? extends IGeometry> anchorage) {
 		this.anchorages.add(anchorage);
+	}
+
+	public ObjectProperty<Paint> fillProperty() {
+		return fillProperty;
 	}
 
 	public Set<AbstractFXGeometricElement<? extends IGeometry>> getAnchorages() {
