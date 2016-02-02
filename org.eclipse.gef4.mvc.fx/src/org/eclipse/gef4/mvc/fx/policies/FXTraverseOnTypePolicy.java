@@ -38,6 +38,38 @@ public class FXTraverseOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
 	/**
+	 * Returns the inner most {@link IContentPart} child within the part
+	 * hierarchy of the given {@link IContentPart}. If the given
+	 * {@link IContentPart} does not have any {@link IContentPart} children,
+	 * then the given {@link IContentPart} is returned.
+	 *
+	 * @param part
+	 *            The {@link IContentPart} for which to determine the inner most
+	 *            {@link IContentPart} child.
+	 * @return The inner most {@link IContentPart} child within the part
+	 *         hierarchy of the given {@link IContentPart}.
+	 */
+	protected IContentPart<Node, ? extends Node> findInnerMostContentPart(
+			IContentPart<Node, ? extends Node> part) {
+		ObservableList<IVisualPart<Node, ? extends Node>> children = part
+				.getChildrenUnmodifiable();
+		while (!children.isEmpty()) {
+			for (int i = children.size() - 1; i >= 0; i--) {
+				IVisualPart<Node, ? extends Node> child = children.get(i);
+				if (child instanceof IContentPart) {
+					// continue searching for content part children within this
+					// child's part hierarchy
+					part = (IContentPart<Node, ? extends Node>) child;
+					children = part.getChildrenUnmodifiable();
+					break;
+				}
+			}
+		}
+		// did not find a content part child => return the given content part
+		return part;
+	}
+
+	/**
 	 * Determines the next {@link IContentPart} to which keyboard focus is
 	 * assigned, depending on the currently focused {@link IContentPart}.
 	 * <p>
@@ -90,11 +122,51 @@ public class FXTraverseOnTypePolicy extends AbstractFXInteractionPolicy
 		return null;
 	}
 
+	/**
+	 * Determines the previous {@link IContentPart} to which keyboard focus is
+	 * assigned, depending on the currently focused {@link IContentPart}.
+	 * <p>
+	 * At first, the previous content part sibling of the given focus part is
+	 * determined. If a siblings list ends, the search continues with the
+	 * parent's siblings.
+	 * <p>
+	 * The inner most content part child of the previous content part sibling is
+	 * returned as the previous content part, or <code>null</code> if no
+	 * previous content part sibling could be found.
+	 *
+	 * @param current
+	 *            The currently focused {@link IContentPart}.
+	 * @return The previous {@link IContentPart} to which keyboard focus is
+	 *         assigned, or <code>null</code> if no previous
+	 *         {@link IContentPart} could be determined.
+	 */
+	protected IContentPart<Node, ? extends Node> findPreviousContentPart(
+			IContentPart<Node, ? extends Node> current) {
+		// find previous content part sibling
+		IVisualPart<Node, ? extends Node> parent = current.getParent();
+		if (parent instanceof IContentPart) {
+			ObservableList<IVisualPart<Node, ? extends Node>> children = parent
+					.getChildrenUnmodifiable();
+			int index = children.indexOf(current) - 1;
+			while (index >= 0) {
+				IVisualPart<Node, ? extends Node> part = children.get(index);
+				if (part instanceof IContentPart) {
+					return findInnerMostContentPart(
+							(IContentPart<Node, ? extends Node>) part);
+				}
+				index--;
+			}
+			return (IContentPart<Node, ? extends Node>) parent;
+		}
+		// could not find a previous content part
+		return null;
+	}
+
 	@SuppressWarnings("serial")
 	@Override
 	public void pressed(KeyEvent event) {
 		if (KeyCode.TAB.equals(event.getCode())) {
-			// find focus model
+			// get focus model
 			IViewer<Node> viewer = getHost().getRoot().getViewer();
 			FocusModel<Node> focusModel = viewer
 					.getAdapter(new TypeToken<FocusModel<Node>>() {
@@ -106,20 +178,33 @@ public class FXTraverseOnTypePolicy extends AbstractFXInteractionPolicy
 								+ getHost() + ">.");
 			}
 
+			// determine focus traversal direction
+			boolean searchBackwards = event.isShiftDown();
+
 			// get current focus part
 			IContentPart<Node, ? extends Node> current = focusModel.getFocus();
 
 			// determine next focus part
 			IContentPart<Node, ? extends Node> next = null;
 			if (current == null) {
-				// focus first content leaf
 				List<IContentPart<Node, ? extends Node>> children = viewer
 						.getRootPart().getContentPartChildren();
 				if (children != null && !children.isEmpty()) {
-					next = children.get(0);
+					if (searchBackwards) {
+						// focus last content leaf
+						next = findInnerMostContentPart(
+								children.get(children.size() - 1));
+					} else {
+						// focus first content part
+						next = children.get(0);
+					}
 				}
 			} else {
-				next = findNextContentPart(current);
+				if (searchBackwards) {
+					next = findPreviousContentPart(current);
+				} else {
+					next = findNextContentPart(current);
+				}
 			}
 
 			// give focus to the next part or to the viewer (if next is null)
