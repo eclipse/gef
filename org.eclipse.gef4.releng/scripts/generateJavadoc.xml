@@ -10,6 +10,7 @@
 		<echo message="Determining path to javadoc executable, using home dir ${java.home}..." />
 		<available file="${java.home}/../bin/javadoc.exe" property="javadoc" value="${java.home}/../bin/javadoc.exe" />
 		<available file="${java.home}/../bin/javadoc" property="javadoc" value="${java.home}/../bin/javadoc" />
+		<available file="${java.home}/bin/javadoc.exe" property="javadoc" value="${java.home}/bin/javadoc.exe" />
 		<available file="${java.home}/bin/javadoc" property="javadoc" value="${java.home}/bin/javadoc" />
 		<echo message="Done: ${javadoc}" />
 
