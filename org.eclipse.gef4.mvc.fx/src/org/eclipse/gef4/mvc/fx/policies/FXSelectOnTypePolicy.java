@@ -11,7 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.Collections;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -53,22 +60,41 @@ public class FXSelectOnTypePolicy extends AbstractFXInteractionPolicy
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				});
 
+		IUndoableOperation op = null;
 		if (host instanceof IRootPart) {
 			// clear the selection if on the root part/background
-			selectionModel.clearSelection();
+			op = new DeselectOperation<>(viewer,
+					selectionModel.getSelectionUnmodifiable());
 		} else if (host instanceof IContentPart) {
 			IContentPart<Node, ? extends Node> contentPart = (IContentPart<Node, ? extends Node>) host;
 			// depending on modifier, append or set the selection
 			if (event.isControlDown()) {
 				// append selection
 				if (selectionModel.isSelected(contentPart)) {
-					selectionModel.removeFromSelection(contentPart);
+					op = new DeselectOperation<>(viewer,
+							Collections.singletonList(contentPart));
 				} else {
-					selectionModel.prependToSelection(contentPart);
+					op = new SelectOperation<>(viewer,
+							Collections.singletonList(contentPart));
 				}
 			} else {
 				// set selection
-				selectionModel.setSelection(contentPart);
+				ReverseUndoCompositeOperation rvOp = new ReverseUndoCompositeOperation(
+						"SetSelection()");
+				rvOp.add(new DeselectOperation<>(viewer,
+						selectionModel.getSelectionUnmodifiable()));
+				rvOp.add(new SelectOperation<>(viewer,
+						Collections.singletonList(contentPart)));
+				op = rvOp;
+			}
+		}
+
+		// execute on stack
+		if (op != null) {
+			try {
+				viewer.getDomain().execute(op);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
 			}
 		}
 	}

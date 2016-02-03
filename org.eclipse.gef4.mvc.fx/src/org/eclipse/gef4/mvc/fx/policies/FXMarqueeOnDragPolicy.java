@@ -17,18 +17,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-
-import com.google.common.reflect.TypeToken;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -255,7 +254,6 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 		addFeedback();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
 		if (invalidGesture) {
@@ -273,12 +271,13 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 
 		List<IContentPart<Node, ? extends Node>> parts = getParts(nodes);
 
-		// change selection within selection model
-		SelectionModel<Node> selectionModel = root.getViewer()
-				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				});
-		selectionModel.prependToSelection(parts);
-
+		// select the parts contained within the marquee area
+		try {
+			root.getViewer().getDomain()
+					.execute(new SelectOperation<>(root.getViewer(), parts));
+		} catch (ExecutionException e1) {
+			throw new IllegalStateException(e1);
+		}
 		removeFeedback();
 	}
 

@@ -11,11 +11,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SelectOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
@@ -44,14 +54,19 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 		}
 
 		IVisualPart<Node, ? extends Node> host = getHost();
-		FocusModel<Node> focusModel = host.getRoot().getViewer()
-				.getAdapter(new TypeToken<FocusModel<Node>>() {
-				});
-		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
+		IViewer<Node> viewer = host.getRoot().getViewer();
+		SelectionModel<Node> selectionModel = viewer
 				.getAdapter(new TypeToken<SelectionModel<Node>>() {
 				});
 
+		// query current selection
+		ObservableList<IContentPart<Node, ? extends Node>> oldSelection = selectionModel
+				.getSelectionUnmodifiable();
+
+		// perform different changes depending on host type
 		if (host instanceof IContentPart) {
+			IContentPart<Node, ? extends Node> contentPart = (IContentPart<Node, ? extends Node>) host;
+
 			// check if the host is the explicit event target
 			if (isRegistered(e.getTarget())
 					&& !isRegisteredForHost(e.getTarget())) {
@@ -59,49 +74,81 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				return;
 			}
 
+			// determine if replacing or extending the selection
 			boolean append = e.isControlDown();
-			if (selectionModel
-					.isSelected((IContentPart<Node, ? extends Node>) host)) {
+			List<IContentPart<Node, ? extends Node>> singletonHostList = Collections
+					.<IContentPart<Node, ? extends Node>> singletonList(
+							contentPart);
+
+			// create selection change operation(s)
+			IUndoableOperation selectionChangeOperation = null;
+			if (selectionModel.isSelected(contentPart)) {
 				if (append) {
-					// deselect the target edit part (ensure we get a new
-					// primary selection)
-					selectionModel.removeFromSelection(
-							(IContentPart<Node, ? extends Node>) host);
+					// deselect the host
+					selectionChangeOperation = new DeselectOperation<>(viewer,
+							singletonHostList);
 				}
 			} else {
 				if (append) {
-					// prepend to current selection (as new primary)
-					selectionModel.prependToSelection(
-							(IContentPart<Node, ? extends Node>) host);
+					// prepend host to current selection (as new primary)
+					selectionChangeOperation = new SelectOperation<>(viewer,
+							singletonHostList);
 				} else {
-					// clear old selection, target should become the only
-					// selected
-					selectionModel.setSelection(
-							(IContentPart<Node, ? extends Node>) host);
+					// clear old selection, host becomes the only selected
+					ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
+							"SetSelection()");
+					revOp.add(new DeselectOperation<>(viewer, oldSelection));
+					revOp.add(new SelectOperation<>(viewer, singletonHostList));
+					selectionChangeOperation = revOp;
 				}
 			}
 
+			// execute selection changes
+			if (selectionChangeOperation != null) {
+				try {
+					viewer.getDomain().execute(selectionChangeOperation);
+				} catch (ExecutionException e1) {
+					throw new IllegalStateException(e1);
+				}
+			}
+
+			// change focus depending on selection changes
+			ChangeFocusOperation<Node> changeFocusOperation = null;
 			ObservableList<IContentPart<Node, ? extends Node>> selection = selectionModel
 					.getSelectionUnmodifiable();
 			if (selection.isEmpty()) {
 				// unfocus when the only selected part was deselected
-				focusModel.setFocus(null);
+				changeFocusOperation = new ChangeFocusOperation<>(viewer, null);
 			} else {
 				// focus new primary selection
 				IContentPart<Node, ? extends Node> primarySelection = selection
 						.get(0);
-				focusModel.setFocus(primarySelection);
+				changeFocusOperation = new ChangeFocusOperation<>(viewer,
+						primarySelection);
+			}
+
+			// execute focus change
+			try {
+				viewer.getDomain().execute(changeFocusOperation);
+			} catch (ExecutionException e1) {
+				throw new IllegalStateException(e1);
 			}
 		} else if (host instanceof IRootPart) {
 			// check if click on background (either one of the root visuals, or
 			// an unregistered visual)
 			if (!isRegistered(e.getTarget())
 					|| isRegisteredForHost(e.getTarget())) {
-				// unset focus
-				focusModel.setFocus(null);
-				// remove all selected
-				selectionModel.clearSelection();
+				// unset focus and clear selection
+				try {
+					viewer.getDomain()
+							.execute(new ChangeFocusOperation<>(viewer, null));
+					viewer.getDomain().execute(new DeselectOperation<>(viewer,
+							selectionModel.getSelectionUnmodifiable()));
+				} catch (ExecutionException e1) {
+					throw new IllegalStateException(e1);
+				}
 			}
 		}
 	}
+
 }
