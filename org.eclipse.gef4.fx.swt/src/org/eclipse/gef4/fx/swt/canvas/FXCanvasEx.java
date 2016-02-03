@@ -19,6 +19,8 @@ import java.lang.reflect.Method;
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.swt.gestures.SwtToFxEventConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -86,6 +88,17 @@ public class FXCanvasEx extends FXCanvas {
 		}
 	};
 
+	private TraverseListener eclipseUiTraversalListener = new TraverseListener() {
+		@Override
+		public void keyTraversed(TraverseEvent e) {
+			if ((e.detail == SWT.TRAVERSE_TAB_NEXT
+					|| e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+					&& (e.stateMask & SWT.CTRL) != 0) {
+				e.doit = true;
+			}
+		}
+	};
+
 	/**
 	 * Creates a new {@link FXCanvasEx} for the given parent and with the given
 	 * style.
@@ -100,6 +113,7 @@ public class FXCanvasEx extends FXCanvas {
 	 */
 	public FXCanvasEx(Composite parent, int style) {
 		super(parent, style);
+		addTraverseListener(eclipseUiTraversalListener);
 		gestureConverter = new SwtToFxEventConverter(this);
 	}
 
