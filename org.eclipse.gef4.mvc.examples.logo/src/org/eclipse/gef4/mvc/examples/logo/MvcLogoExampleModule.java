@@ -49,7 +49,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
@@ -268,7 +268,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
-				.to(FXResizeTranslateOnHandleDragPolicy.class);
+				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
 		// rotate on drag + control
 		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXRotateSelectedOnHandleDragPolicy.class);

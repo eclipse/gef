@@ -29,7 +29,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXBendOnSegmentHandleDragPolicy} is an {@link IFXOnDragPolicy}
+ * The {@link FXBendFirstAnchorageOnSegmentHandleDragPolicy} is an {@link IFXOnDragPolicy}
  * that can be installed on the handle parts of an {@link Connection}, so that
  * the user is able to manipulate that connection by dragging its handles. This
  * policy expects that a handle is created for each anchor point of the
@@ -42,7 +42,7 @@ import javafx.scene.input.MouseEvent;
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
+public class FXBendFirstAnchorageOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
 	private int createdSegmentIndex;
@@ -143,19 +143,19 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
 	}
 
 	/**
-	 * Returns the {@link FXBendPolicy} that is installed on the given
+	 * Returns the {@link FXBendConnectionPolicy} that is installed on the given
 	 * {@link IVisualPart}.
 	 *
 	 * @param targetPart
 	 *            The {@link IVisualPart} of which the installed
-	 *            {@link FXBendPolicy} is returned.
-	 * @return The {@link FXBendPolicy} that is installed on the given
+	 *            {@link FXBendConnectionPolicy} is returned.
+	 * @return The {@link FXBendConnectionPolicy} that is installed on the given
 	 *         {@link IVisualPart}.
 	 */
-	protected FXBendPolicy getBendPolicy(
+	protected FXBendConnectionPolicy getBendPolicy(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		// retrieve the default bend policy
-		return targetPart.getAdapter(FXBendPolicy.class);
+		return targetPart.getAdapter(FXBendConnectionPolicy.class);
 	}
 
 	/**

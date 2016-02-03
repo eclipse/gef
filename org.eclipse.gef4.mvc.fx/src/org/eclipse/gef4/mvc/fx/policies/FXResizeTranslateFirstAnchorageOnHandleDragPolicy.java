@@ -24,7 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
 /**
- * The {@link FXResizeTranslateOnHandleDragPolicy} is an {@link IFXOnDragPolicy}
+ * The {@link FXResizeTranslateFirstAnchorageOnHandleDragPolicy} is an {@link IFXOnDragPolicy}
  * that handles the resize and relocation of its (selected) first anchorage when
  * an {@link AbstractFXSegmentHandlePart} of the box selection of the first
  * anchorage is dragged with the mouse.
@@ -33,7 +33,7 @@ import javafx.scene.transform.Affine;
  *
  */
 // Only applicable for AbstractFXSegmentHandlePart, see #getHost().
-public class FXResizeTranslateOnHandleDragPolicy
+public class FXResizeTranslateFirstAnchorageOnHandleDragPolicy
 		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private boolean invalidGesture = false;

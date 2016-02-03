@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -38,7 +38,7 @@ public class FXLogoSelectionHandlePartFactory
 		for (IHandlePart<Node, ? extends Node> p : parts) {
 			// make way points draggable and end points reconnectable
 			// TODO: binding the following policy requires dynamic binding
-			p.setAdapter(new FXBendOnSegmentHandleDragPolicy());
+			p.setAdapter(new FXBendFirstAnchorageOnSegmentHandleDragPolicy());
 		}
 		return parts;
 	}

@@ -45,7 +45,7 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link FXBendPolicy} can be used to manipulate the points constituting an
+ * The {@link FXBendConnectionPolicy} can be used to manipulate the points constituting an
  * {@link Connection}, i.e. its start, way, and end points. Each point is
  * realized though an {@link IAnchor}, which may either be local to the
  * {@link Connection} (i.e. the anchor refers to the {@link Connection} as
@@ -64,7 +64,7 @@ import javafx.scene.Node;
  * @author mwienand
  * @author anyssen
  */
-public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
+public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * The overlay threshold, i.e. the distance between two points so that they
@@ -555,7 +555,7 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	public String toString() {
-		return "FXBendPolicy[host=" + getHost() + "]";
+		return "FXBendConnectionPolicy[host=" + getHost() + "]";
 	}
 
 }

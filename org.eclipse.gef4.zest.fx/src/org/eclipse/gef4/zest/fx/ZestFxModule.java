@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
@@ -285,7 +285,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FXResizeTranslateOnHandleDragPolicy} to the
+	 * Adds a binding for {@link FXResizeTranslateFirstAnchorageOnHandleDragPolicy} to the
 	 * given adapter map binder that will insert the bindings into
 	 * {@link FXRectangleSegmentHandlePart}s.
 	 *
@@ -295,7 +295,7 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXResizeTranslateOnHandleDragPolicyAsFXRectangleSegmentHandlePartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("ResizeRelocateOnHandleDrag"))
-				.to(FXResizeTranslateOnHandleDragPolicy.class);
+				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
 	}
 
 	@Override
