@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import org.eclipse.gef4.fx.jface.FXPaintCellEditor;
+import org.eclipse.gef4.fx.jface.FXPaintLabelProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -35,6 +36,8 @@ public class FXPaintPropertyDescriptor extends PropertyDescriptor {
 	 */
 	public FXPaintPropertyDescriptor(Object id, String displayName) {
 		super(id, displayName);
+		// set an appropriate label provider by default
+		setLabelProvider(new FXPaintLabelProvider());
 	}
 
 	@Override
@@ -45,5 +48,4 @@ public class FXPaintPropertyDescriptor extends PropertyDescriptor {
 		}
 		return editor;
 	}
-
 }

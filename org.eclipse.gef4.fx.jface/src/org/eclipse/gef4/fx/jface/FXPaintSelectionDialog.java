@@ -34,11 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swt.SWTFXUtils;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.LinearGradient;
@@ -55,37 +50,6 @@ import javafx.scene.paint.Stop;
  *
  */
 public class FXPaintSelectionDialog extends Dialog {
-
-	/**
-	 * Creates a rectangular {@link Image} to visualize the given {@link Paint}.
-	 *
-	 * @param width
-	 *            The width of the resulting {@link Image}.
-	 * @param height
-	 *            The height of the resulting {@link Image}.
-	 * @param paint
-	 *            The {@link Paint} to use for filling the {@link Image}.
-	 * @return The resulting (filled) {@link Image}.
-	 */
-	protected static ImageData createPaintImage(int width, int height, Paint paint) {
-		// use JavaFX canvas to render a rectangle with the given paint
-		Canvas canvas = new Canvas(width, height);
-		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-		graphicsContext.setFill(paint);
-		graphicsContext.fillRect(0, 0, width, height);
-		graphicsContext.setStroke(Color.BLACK);
-		graphicsContext.strokeRect(0, 0, width, height);
-		// handle transparent color separately (we want to differentiate it from
-		// transparent fill)
-		if (paint instanceof Color && ((Color) paint).getOpacity() == 0) {
-			// draw a red line from bottom-left to top-right to indicate a
-			// transparent fill color
-			graphicsContext.setStroke(Color.RED);
-			graphicsContext.strokeLine(0, height - 1, width, 1);
-		}
-		WritableImage snapshot = canvas.snapshot(new SnapshotParameters(), null);
-		return SWTFXUtils.fromFXImage(snapshot, null);
-	}
 
 	private Paint paint;
 
@@ -354,7 +318,7 @@ public class FXPaintSelectionDialog extends Dialog {
 	 */
 	protected void updateImageLabel() {
 		if (optionsCombo != null && imageLabel != null && paint != null) {
-			ImageData imageData = createPaintImage(64, optionsCombo.getItemHeight() - 1, paint);
+			ImageData imageData = FXPaintUtils.getPaintImageData(64, optionsCombo.getItemHeight() - 1, paint);
 			imageLabel.setImage(new Image(imageLabel.getDisplay(), imageData, imageData.getTransparencyMask()));
 		}
 	}

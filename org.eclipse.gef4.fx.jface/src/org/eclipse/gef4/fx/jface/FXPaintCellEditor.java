@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 
@@ -78,7 +79,7 @@ public class FXPaintCellEditor extends DialogCellEditor {
 		} else if (w instanceof Tree) {
 			height = ((Tree) w).getItemHeight() - 1;
 		}
-		return FXPaintSelectionDialog.createPaintImage(width, height, paint);
+		return FXPaintUtils.getPaintImageData(width, height, paint);
 	}
 
 	@Override
@@ -88,6 +89,16 @@ public class FXPaintCellEditor extends DialogCellEditor {
 			image = null;
 		}
 		super.dispose();
+	}
+
+	@Override
+	protected void doSetValue(Object value) {
+		Object oldValue = getValue();
+		// XXX: Updating contents is expensive (as we create an image), we thus
+		// only call it if really necessary
+		if (oldValue == null ? value != null : !oldValue.equals(value)) {
+			super.doSetValue(value);
+		}
 	}
 
 	@Override
@@ -107,15 +118,20 @@ public class FXPaintCellEditor extends DialogCellEditor {
 
 	@Override
 	protected void updateContents(Object value) {
+		Label defaultLabel = getDefaultLabel();
+		if (defaultLabel == null) {
+			return;
+		}
+
 		final Paint paint = value == null ? Color.TRANSPARENT : (Paint) value;
 
 		if (image != null) {
 			image.dispose();
 		}
+		ImageData imageData = createPaintImage(defaultLabel.getParent().getParent(), paint);
+		image = new Image(defaultLabel.getDisplay(), imageData, imageData.getTransparencyMask());
 
-		ImageData id = createPaintImage(getDefaultLabel().getParent().getParent(), paint);
-		image = new Image(getDefaultLabel().getDisplay(), id, id.getTransparencyMask());
-
-		getDefaultLabel().setImage(image);
+		defaultLabel.setImage(image);
+		defaultLabel.setText(FXPaintUtils.getPaintDisplayText(paint));
 	}
 }
