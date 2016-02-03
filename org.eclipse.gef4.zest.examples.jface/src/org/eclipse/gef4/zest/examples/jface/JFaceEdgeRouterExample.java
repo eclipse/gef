@@ -24,8 +24,8 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class JFaceEdgeRouterExample {
 
-	static class MyContentProvider implements IGraphNodeContentProvider {
+	static class MyContentProvider implements IGraphContentProvider {
 		private Object input;
 
 		private static String first() {
@@ -66,7 +66,7 @@ public class JFaceEdgeRouterExample {
 			return new Object[] { first(), second(), third() };
 		}
 
-		public Object[] getConnectedTo(Object entity) {
+		public Object[] getAdjacentNodes(Object entity) {
 			if (entity.equals(first())) {
 				return new Object[] { second() };
 			}
@@ -87,6 +87,16 @@ public class JFaceEdgeRouterExample {
 		public void inputChanged(Viewer viewer, Object oldInput,
 				Object newInput) {
 			input = newInput;
+		}
+
+		@Override
+		public Object[] getNestedGraphNodes(Object node) {
+			return null;
+		}
+
+		@Override
+		public boolean hasNestedGraph(Object node) {
+			return false;
 		}
 	}
 
@@ -124,7 +134,7 @@ public class JFaceEdgeRouterExample {
 	}
 
 	static class MyLabelProvider extends LabelProvider
-			implements IGraphNodeLabelProvider {
+			implements IGraphAttributesProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -149,7 +159,13 @@ public class JFaceEdgeRouterExample {
 		}
 
 		@Override
-		public Map<String, Object> getRootGraphAttributes() {
+		public Map<String, Object> getGraphAttributes() {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getNestedGraphAttributes(
+				Object nestingNode) {
 			return null;
 		}
 	}

@@ -15,7 +15,7 @@
 package org.eclipse.gef4.zest.examples.jface;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.fx.jface.INestedGraphContentProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class JFaceNestingExample {
 
-	static class MyContentProvider implements INestedGraphContentProvider {
+	static class MyContentProvider implements IGraphContentProvider {
 		private Object input;
 
 		private static String first() {
@@ -68,7 +68,7 @@ public class JFaceNestingExample {
 			return new Object[] { first(), second(), third() };
 		}
 
-		public Object[] getConnectedTo(Object entity) {
+		public Object[] getAdjacentNodes(Object entity) {
 			if (entity.equals(first())) {
 				return new Object[] { second() };
 			}
@@ -101,7 +101,7 @@ public class JFaceNestingExample {
 		}
 
 		@Override
-		public Object[] getChildren(Object node) {
+		public Object[] getNestedGraphNodes(Object node) {
 			if (node.equals(first())) {
 				return new Object[] { alpha(), beta(), gamma() };
 			}
@@ -109,7 +109,7 @@ public class JFaceNestingExample {
 		}
 
 		@Override
-		public boolean hasChildren(Object node) {
+		public boolean hasNestedGraph(Object node) {
 			return node.equals(first());
 		}
 	}

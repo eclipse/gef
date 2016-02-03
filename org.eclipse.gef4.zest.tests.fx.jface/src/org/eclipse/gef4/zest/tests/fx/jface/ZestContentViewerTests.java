@@ -32,10 +32,8 @@ import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
-import org.eclipse.gef4.zest.fx.jface.INestedGraphContentProvider;
-import org.eclipse.gef4.zest.fx.jface.INestedGraphLabelProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -64,13 +62,18 @@ import javafx.scene.Node;
 
 public class ZestContentViewerTests {
 
-	static class EmptyContentProvider implements IGraphNodeContentProvider {
+	static class EmptyContentProvider implements IGraphContentProvider {
 		@Override
 		public void dispose() {
 		}
 
 		@Override
-		public Object[] getConnectedTo(Object node) {
+		public Object[] getAdjacentNodes(Object node) {
+			return null;
+		}
+
+		@Override
+		public Object[] getNestedGraphNodes(Object node) {
 			return null;
 		}
 
@@ -80,11 +83,16 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
+		public boolean hasNestedGraph(Object node) {
+			return false;
+		}
+
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
-	static class MyContentProvider implements INestedGraphContentProvider {
+	static class MyContentProvider implements IGraphContentProvider {
 		public static String alpha() {
 			return "alpha";
 		}
@@ -116,15 +124,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public Object[] getChildren(Object node) {
-			if (node.equals(first())) {
-				return new Object[] { alpha(), beta(), gamma() };
-			}
-			return new Object[] {};
-		}
-
-		@Override
-		public Object[] getConnectedTo(Object entity) {
+		public Object[] getAdjacentNodes(Object entity) {
 			if (entity.equals(first())) {
 				return new Object[] { second() };
 			}
@@ -147,6 +147,14 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
+		public Object[] getNestedGraphNodes(Object node) {
+			if (node.equals(first())) {
+				return new Object[] { alpha(), beta(), gamma() };
+			}
+			return new Object[] {};
+		}
+
+		@Override
 		public Object[] getNodes() {
 			if (input == null) {
 				return new Object[] {};
@@ -155,7 +163,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public boolean hasChildren(Object node) {
+		public boolean hasNestedGraph(Object node) {
 			return node.equals(first());
 		}
 
@@ -165,8 +173,8 @@ public class ZestContentViewerTests {
 		}
 	}
 
-	static class MyLabelProvider extends LabelProvider implements IColorProvider, IFontProvider, IToolTipProvider,
-			IGraphNodeLabelProvider, INestedGraphLabelProvider {
+	static class MyLabelProvider extends LabelProvider
+			implements IColorProvider, IFontProvider, IToolTipProvider, IGraphAttributesProvider {
 		private static Image image = new Image(display, 10, 10);
 
 		@Override
@@ -191,6 +199,11 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
+		public Map<String, Object> getGraphAttributes() {
+			return Collections.singletonMap("root", (Object) true);
+		}
+
+		@Override
 		public Image getImage(Object element) {
 			return image;
 		}
@@ -203,11 +216,6 @@ public class ZestContentViewerTests {
 		@Override
 		public Map<String, Object> getNodeAttributes(Object node) {
 			return Collections.singletonMap("node", (Object) true);
-		}
-
-		@Override
-		public Map<String, Object> getRootGraphAttributes() {
-			return Collections.singletonMap("root", (Object) true);
 		}
 
 		@Override
@@ -224,19 +232,19 @@ public class ZestContentViewerTests {
 		}
 	}
 
-	static class NullContentProvider implements INestedGraphContentProvider {
+	static class NullContentProvider implements IGraphContentProvider {
 		@Override
 		public void dispose() {
 		}
 
 		@Override
-		public Object[] getChildren(Object node) {
-			return "2".equals(node) ? new String[] { "2.1", "2.2" } : null;
+		public Object[] getAdjacentNodes(Object node) {
+			return null;
 		}
 
 		@Override
-		public Object[] getConnectedTo(Object node) {
-			return null;
+		public Object[] getNestedGraphNodes(Object node) {
+			return "2".equals(node) ? new String[] { "2.1", "2.2" } : null;
 		}
 
 		@Override
@@ -245,7 +253,7 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
-		public boolean hasChildren(Object node) {
+		public boolean hasNestedGraph(Object node) {
 			return "2".equals(node);
 		}
 
@@ -254,8 +262,8 @@ public class ZestContentViewerTests {
 		}
 	}
 
-	static class NullLabelProvider extends LabelProvider implements IColorProvider, IFontProvider, IToolTipProvider,
-			IGraphNodeLabelProvider, INestedGraphLabelProvider {
+	static class NullLabelProvider extends LabelProvider
+			implements IColorProvider, IFontProvider, IToolTipProvider, IGraphAttributesProvider {
 		@Override
 		public Color getBackground(Object element) {
 			return null;
@@ -277,17 +285,17 @@ public class ZestContentViewerTests {
 		}
 
 		@Override
+		public Map<String, Object> getGraphAttributes() {
+			return null;
+		}
+
+		@Override
 		public Map<String, Object> getNestedGraphAttributes(Object nestingNode) {
 			return null;
 		}
 
 		@Override
 		public Map<String, Object> getNodeAttributes(Object node) {
-			return null;
-		}
-
-		@Override
-		public Map<String, Object> getRootGraphAttributes() {
 			return null;
 		}
 

@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,7 +42,7 @@ import javafx.scene.shape.Polygon;
 
 public class JFaceEdgeDecorationExample {
 
-	static class MyContentProvider implements IGraphNodeContentProvider {
+	static class MyContentProvider implements IGraphContentProvider {
 		private Object input;
 
 		private static String first() {
@@ -65,7 +65,7 @@ public class JFaceEdgeDecorationExample {
 			return new Object[] { first(), second(), third() };
 		}
 
-		public Object[] getConnectedTo(Object entity) {
+		public Object[] getAdjacentNodes(Object entity) {
 			if (entity.equals(first())) {
 				return new Object[] { second() };
 			}
@@ -87,6 +87,16 @@ public class JFaceEdgeDecorationExample {
 				Object newInput) {
 			input = newInput;
 		}
+
+		@Override
+		public Object[] getNestedGraphNodes(Object node) {
+			return null;
+		}
+
+		@Override
+		public boolean hasNestedGraph(Object node) {
+			return false;
+		}
 	}
 
 	static class CircleHead extends Circle {
@@ -102,7 +112,7 @@ public class JFaceEdgeDecorationExample {
 	}
 
 	static class MyLabelProvider extends LabelProvider
-			implements IGraphNodeLabelProvider {
+			implements IGraphAttributesProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -131,8 +141,14 @@ public class JFaceEdgeDecorationExample {
 		}
 
 		@Override
-		public Map<String, Object> getRootGraphAttributes() {
+		public Map<String, Object> getGraphAttributes() {
 			return Collections.emptyMap();
+		}
+
+		@Override
+		public Map<String, Object> getNestedGraphAttributes(
+				Object nestingNode) {
+			return null;
 		}
 	}
 

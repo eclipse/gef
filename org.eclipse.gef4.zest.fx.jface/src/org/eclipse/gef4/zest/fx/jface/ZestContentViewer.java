@@ -175,10 +175,10 @@ public class ZestContentViewer extends ContentViewer {
 	/**
 	 * Constructs and returns a new {@link Edge} connecting the given
 	 * <i>sourceNode</i> and <i>targetNode</i>. If the <i>labelProvider</i>
-	 * implements {@link IGraphNodeLabelProvider}, then attributes for the edge
+	 * implements {@link IGraphAttributesProvider}, then attributes for the edge
 	 * are determined using the
-	 * {@link IGraphNodeLabelProvider#getEdgeAttributes(Object, Object)} methods
-	 * and inserted into the edge.
+	 * {@link IGraphAttributesProvider#getEdgeAttributes(Object, Object)}
+	 * methods and inserted into the edge.
 	 *
 	 * @param labelProvider
 	 *            This viewer's {@link ILabelProvider} for convenience.
@@ -195,8 +195,8 @@ public class ZestContentViewer extends ContentViewer {
 	protected Edge createEdge(ILabelProvider labelProvider, Object contentSourceNode, Node sourceNode,
 			Object contentTargetNode, Node targetNode) {
 		Edge edge = new Edge(sourceNode, targetNode);
-		if (labelProvider instanceof IGraphNodeLabelProvider) {
-			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
+		if (labelProvider instanceof IGraphAttributesProvider) {
+			IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
 			Map<String, Object> edgeAttributes = graphNodeLabelProvider.getEdgeAttributes(contentSourceNode,
 					contentTargetNode);
 			if (edgeAttributes != null) {
@@ -229,27 +229,26 @@ public class ZestContentViewer extends ContentViewer {
 	 *
 	 * @param contentNestingNode
 	 *            The content {@link Object} that represents the nesting node.
-	 * @param nestedGraphContentProvider
-	 *            This viewer's {@link INestedGraphContentProvider} for
-	 *            convenience.
+	 * @param graphContentProvider
+	 *            This viewer's {@link IGraphContentProvider} for convenience.
 	 * @param labelProvider
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @return The new {@link Graph}.
 	 */
-	protected Graph createNestedGraph(Object contentNestingNode, INestedGraphContentProvider nestedGraphContentProvider,
+	protected Graph createNestedGraph(Object contentNestingNode, IGraphContentProvider graphContentProvider,
 			ILabelProvider labelProvider) {
 		Graph graph = createEmptyGraph();
-		if (labelProvider instanceof INestedGraphLabelProvider) {
-			INestedGraphLabelProvider nestedGraphLabelProvider = (INestedGraphLabelProvider) labelProvider;
+		if (labelProvider instanceof IGraphAttributesProvider) {
+			IGraphAttributesProvider nestedGraphLabelProvider = (IGraphAttributesProvider) labelProvider;
 			Map<String, Object> nestedGraphAttributes = nestedGraphLabelProvider
 					.getNestedGraphAttributes(contentNestingNode);
 			if (nestedGraphAttributes != null) {
 				graph.attributesProperty().putAll(nestedGraphAttributes);
 			}
 		}
-		Object[] contentNodes = nestedGraphContentProvider.getChildren(contentNestingNode);
+		Object[] contentNodes = graphContentProvider.getNestedGraphNodes(contentNestingNode);
 		if (contentNodes != null) {
-			createNodesAndEdges(nestedGraphContentProvider, labelProvider, graph, contentNodes);
+			createNodesAndEdges(graphContentProvider, labelProvider, graph, contentNodes);
 		}
 		return graph;
 	}
@@ -262,13 +261,12 @@ public class ZestContentViewer extends ContentViewer {
 	 * @param contentNode
 	 *            The content {@link Object} that represents the node.
 	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphNodeContentProvider} for
-	 *            convenience.
+	 *            This viewer's {@link IGraphContentProvider} for convenience.
 	 * @param labelProvider
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @return The new {@link Node}.
 	 */
-	protected Node createNode(Object contentNode, IGraphNodeContentProvider graphContentProvider,
+	protected Node createNode(Object contentNode, IGraphContentProvider graphContentProvider,
 			ILabelProvider labelProvider) {
 		// do not create the same node twice
 		if (contentNodeMap.containsKey(contentNode)) {
@@ -346,8 +344,8 @@ public class ZestContentViewer extends ContentViewer {
 		ZestProperties.setNodeTextCssStyle(node, textCssStyle);
 
 		// custom attributes
-		if (labelProvider instanceof IGraphNodeLabelProvider) {
-			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
+		if (labelProvider instanceof IGraphAttributesProvider) {
+			IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
 			Map<String, Object> nodeAttributes = graphNodeLabelProvider.getNodeAttributes(contentNode);
 			if (nodeAttributes != null) {
 				node.attributesProperty().putAll(nodeAttributes);
@@ -355,12 +353,9 @@ public class ZestContentViewer extends ContentViewer {
 		}
 
 		// create nested graph (optional)
-		if (graphContentProvider instanceof INestedGraphContentProvider) {
-			INestedGraphContentProvider nestedGraphProvider = (INestedGraphContentProvider) graphContentProvider;
-			if (nestedGraphProvider.hasChildren(contentNode)) {
-				Graph graph = createNestedGraph(contentNode, nestedGraphProvider, labelProvider);
-				graph.setNestingNode(node);
-			}
+		if (graphContentProvider.hasNestedGraph(contentNode)) {
+			Graph graph = createNestedGraph(contentNode, graphContentProvider, labelProvider);
+			graph.setNestingNode(node);
 		}
 
 		return node;
@@ -371,8 +366,7 @@ public class ZestContentViewer extends ContentViewer {
 	 * array of <i>contentNodes</i>.
 	 *
 	 * @param graphContentProvider
-	 *            This viewer's {@link IGraphNodeContentProvider} for
-	 *            convenience.
+	 *            This viewer's {@link IGraphContentProvider} for convenience.
 	 * @param labelProvider
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @param graph
@@ -381,7 +375,7 @@ public class ZestContentViewer extends ContentViewer {
 	 *            Content elements which represent nodes that are to be created
 	 *            together with the edges between them.
 	 */
-	protected void createNodesAndEdges(IGraphNodeContentProvider graphContentProvider, ILabelProvider labelProvider,
+	protected void createNodesAndEdges(IGraphContentProvider graphContentProvider, ILabelProvider labelProvider,
 			Graph graph, Object[] contentNodes) {
 		// create nodes
 		for (Object node : contentNodes) {
@@ -392,7 +386,7 @@ public class ZestContentViewer extends ContentViewer {
 		// create edges
 		for (Object contentSourceNode : contentNodes) {
 			Node sourceNode = contentNodeMap.get(contentSourceNode);
-			Object[] connectedTo = graphContentProvider.getConnectedTo(contentSourceNode);
+			Object[] connectedTo = graphContentProvider.getAdjacentNodes(contentSourceNode);
 			if (connectedTo != null) {
 				for (Object contentTargetNode : connectedTo) {
 					Node targetNode = contentNodeMap.get(contentTargetNode);
@@ -417,15 +411,15 @@ public class ZestContentViewer extends ContentViewer {
 	 */
 	protected Graph createRootGraph(IContentProvider contentProvider, ILabelProvider labelProvider) {
 		Graph graph = createEmptyGraph();
-		if (labelProvider instanceof IGraphNodeLabelProvider) {
-			IGraphNodeLabelProvider graphNodeLabelProvider = (IGraphNodeLabelProvider) labelProvider;
-			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getRootGraphAttributes();
+		if (labelProvider instanceof IGraphAttributesProvider) {
+			IGraphAttributesProvider graphNodeLabelProvider = (IGraphAttributesProvider) labelProvider;
+			Map<String, Object> rootGraphAttributes = graphNodeLabelProvider.getGraphAttributes();
 			if (rootGraphAttributes != null) {
 				graph.attributesProperty().putAll(rootGraphAttributes);
 			}
 		}
-		if (contentProvider instanceof IGraphNodeContentProvider) {
-			IGraphNodeContentProvider graphNodeProvider = (IGraphNodeContentProvider) contentProvider;
+		if (contentProvider instanceof IGraphContentProvider) {
+			IGraphContentProvider graphNodeProvider = (IGraphContentProvider) contentProvider;
 			Object[] nodes = graphNodeProvider.getNodes();
 			if (nodes != null) {
 				createNodesAndEdges(graphNodeProvider, labelProvider, graph, nodes);

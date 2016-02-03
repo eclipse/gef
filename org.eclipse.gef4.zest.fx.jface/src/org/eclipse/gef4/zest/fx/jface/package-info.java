@@ -12,11 +12,9 @@
 /**
  * This package provides a specific
  * {@link org.eclipse.jface.viewers.ContentViewer} to render graphs (
- * {@link org.eclipse.gef4.zest.fx.jface.ZestContentViewer}) and related
- * content ({@link org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider},
- * {@link org.eclipse.gef4.zest.fx.jface.INestedGraphContentProvider}) and
- * label providers (
- * {@link org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider},
- * {@link org.eclipse.gef4.zest.fx.jface.INestedGraphLabelProvider}).
+ * {@link org.eclipse.gef4.zest.fx.jface.ZestContentViewer}) and related content
+ * ({@link org.eclipse.gef4.zest.fx.jface.IGraphContentProvider} and label
+ * providers (
+ * {@link org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider}.
  */
 package org.eclipse.gef4.zest.fx.jface;

@@ -23,12 +23,12 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
-import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
+import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
-import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -60,7 +60,7 @@ public class JFaceCustomNodeExample {
 
 	private static final String ATTR_CUSTOM = "custom";
 
-	static class MyContentProvider implements IGraphNodeContentProvider {
+	static class MyContentProvider implements IGraphContentProvider {
 		private Object input;
 
 		private static String first() {
@@ -83,7 +83,7 @@ public class JFaceCustomNodeExample {
 			return new Object[] { first(), second(), third() };
 		}
 
-		public Object[] getConnectedTo(Object entity) {
+		public Object[] getAdjacentNodes(Object entity) {
 			if (entity.equals(first())) {
 				return new Object[] { second() };
 			}
@@ -105,10 +105,20 @@ public class JFaceCustomNodeExample {
 				Object newInput) {
 			input = newInput;
 		}
+
+		@Override
+		public Object[] getNestedGraphNodes(Object node) {
+			return null;
+		}
+
+		@Override
+		public boolean hasNestedGraph(Object node) {
+			return false;
+		}
 	}
 
 	static class MyLabelProvider extends LabelProvider
-			implements IGraphNodeLabelProvider {
+			implements IGraphAttributesProvider {
 		public Image getImage(Object element) {
 			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
 		}
@@ -135,12 +145,19 @@ public class JFaceCustomNodeExample {
 		}
 
 		@Override
-		public Map<String, Object> getRootGraphAttributes() {
+		public Map<String, Object> getGraphAttributes() {
+			return null;
+		}
+
+		@Override
+		public Map<String, Object> getNestedGraphAttributes(
+				Object nestingNode) {
 			return null;
 		}
 	}
 
-	public static class CustomContentPartFactory extends ZestFxContentPartFactory {
+	public static class CustomContentPartFactory
+			extends ZestFxContentPartFactory {
 		@Inject
 		private Injector injector;
 
