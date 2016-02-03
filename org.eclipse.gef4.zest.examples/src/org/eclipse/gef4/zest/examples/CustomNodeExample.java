@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import com.google.inject.Inject;
@@ -47,7 +47,7 @@ import javafx.scene.text.Text;
 
 public class CustomNodeExample extends AbstractZestExample {
 
-	public static class CustomContentPartFactory extends ContentPartFactory {
+	public static class CustomContentPartFactory extends ZestFxContentPartFactory {
 		@Inject
 		private Injector injector;
 

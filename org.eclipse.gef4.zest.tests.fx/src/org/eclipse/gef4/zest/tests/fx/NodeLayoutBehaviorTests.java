@@ -14,7 +14,7 @@ package org.eclipse.gef4.zest.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
@@ -113,7 +113,7 @@ public class NodeLayoutBehaviorTests {
 		 * corner, therefore we expect <code>translate-xy = location - size /
 		 * 2</code>.
 		 */
-		Affine affine = Geometry2JavaFX
+		Affine affine = Geometry2FX
 				.toFXAffine(behavior.getHost().getAdapter(FXTransformPolicy.class).getCurrentNodeTransform());
 		// FIXME: as size is not set (in case there are no child nodes), this
 		// seems to be invalid

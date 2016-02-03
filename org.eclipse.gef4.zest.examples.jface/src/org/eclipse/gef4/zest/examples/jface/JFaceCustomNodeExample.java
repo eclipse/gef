@@ -27,7 +27,7 @@ import org.eclipse.gef4.zest.fx.jface.IGraphNodeContentProvider;
 import org.eclipse.gef4.zest.fx.jface.IGraphNodeLabelProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
-import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -140,7 +140,7 @@ public class JFaceCustomNodeExample {
 		}
 	}
 
-	public static class CustomContentPartFactory extends ContentPartFactory {
+	public static class CustomContentPartFactory extends ZestFxContentPartFactory {
 		@Inject
 		private Injector injector;
 

@@ -27,7 +27,7 @@ import javafx.scene.Node;
 import javafx.util.Pair;
 
 /**
- * The {@link ContentPartFactory} is a {@link Graph}-specific
+ * The {@link ZestFxContentPartFactory} is a {@link Graph}-specific
  * {@link IContentPartFactory}. It creates {@link GraphContentPart}s,
  * {@link NodeContentPart}s, and {@link EdgeContentPart}s for the corresponding
  * {@link Graph}s, {@link Node}s, and {@link Edge}s.
@@ -35,7 +35,7 @@ import javafx.util.Pair;
  * @author mwienand
  *
  */
-public class ContentPartFactory implements IContentPartFactory<Node> {
+public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 
 	@Inject
 	private Injector injector;

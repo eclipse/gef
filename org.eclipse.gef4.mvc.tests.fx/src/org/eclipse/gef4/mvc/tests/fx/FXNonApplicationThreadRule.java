@@ -64,7 +64,7 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class FxNonApplicationThreadRule implements TestRule {
+public class FXNonApplicationThreadRule implements TestRule {
 
 	public final static class EventSynchronizer<T extends Event> {
 		private Scene scene;

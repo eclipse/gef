@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -90,12 +90,12 @@ public class NodeUtils {
 	 *         transformation matrix for the given {@link Node}.
 	 */
 	public static AffineTransform getLocalToSceneTx(Node node) {
-		AffineTransform tx = JavaFX2Geometry
+		AffineTransform tx = FX2Geometry
 				.toAffineTransform(node.getLocalToParentTransform());
 		Node tmp = node;
 		while (tmp.getParent() != null) {
 			tmp = tmp.getParent();
-			tx = JavaFX2Geometry
+			tx = FX2Geometry
 					.toAffineTransform(tmp.getLocalToParentTransform())
 					.concatenate(tx);
 		}
@@ -215,7 +215,7 @@ public class NodeUtils {
 				&& ((Polygon) node).getStroke() != null
 				&& ((Polygon) node).getStrokeType() != StrokeType.INSIDE ? 0.5
 						: 0;
-		return JavaFX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
+		return FX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
 				offset, offset);
 	}
 
@@ -231,7 +231,7 @@ public class NodeUtils {
 	 * @return The new, transformed {@link IGeometry}.
 	 */
 	public static IGeometry localToParent(Node n, IGeometry g) {
-		AffineTransform localToParentTx = JavaFX2Geometry
+		AffineTransform localToParentTx = FX2Geometry
 				.toAffineTransform(n.getLocalToParentTransform());
 		return g.getTransformed(localToParentTx);
 	}
@@ -280,7 +280,7 @@ public class NodeUtils {
 	public static IGeometry parentToLocal(Node n, IGeometry g) {
 		// retrieve transform from scene to target parent, by inverting target
 		// parent to scene
-		AffineTransform localToParentTx = JavaFX2Geometry
+		AffineTransform localToParentTx = FX2Geometry
 				.toAffineTransform(n.getLocalToParentTransform());
 		AffineTransform parentToLocalTx = null;
 		try {

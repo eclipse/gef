@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.scene.Node;
@@ -79,9 +79,9 @@ public class StaticAnchor extends AbstractAnchor {
 		Node anchored = key.getAnchored();
 		Node anchorage = getAnchorage();
 		Point positionInScene = anchorage == null ? referencePosition
-				: JavaFX2Geometry.toPoint(anchorage.localToScene(
+				: FX2Geometry.toPoint(anchorage.localToScene(
 						referencePosition.x, referencePosition.y));
-		Point positionInAnchoredLocal = JavaFX2Geometry.toPoint(
+		Point positionInAnchoredLocal = FX2Geometry.toPoint(
 				anchored.sceneToLocal(positionInScene.x, positionInScene.y));
 		return positionInAnchoredLocal;
 	}

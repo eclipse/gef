@@ -13,7 +13,7 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IEdgeLayout;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -102,7 +102,7 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		Rectangle bounds = LayoutProperties.getBounds(layoutContext);
 		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
 				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
-						JavaFX2Geometry.toAffineTransform(canvas.getContentTransform())));
+						FX2Geometry.toAffineTransform(canvas.getContentTransform())));
 		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
 	}

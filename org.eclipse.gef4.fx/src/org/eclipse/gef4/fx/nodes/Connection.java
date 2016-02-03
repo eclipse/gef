@@ -30,8 +30,8 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -224,7 +224,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 		// TODO: move to utility && replace with safe algorithm
 		private Point getCenter(Node anchorageNode) {
-			Point center = JavaFX2Geometry
+			Point center = FX2Geometry
 					.toRectangle(connection.sceneToLocal(anchorageNode
 							.localToScene(anchorageNode.getLayoutBounds())))
 					.getCenter();
@@ -653,7 +653,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	// // then subtract the curve shape from the result, and the decoration
 	// // from that
 	// Path decorationVisualBoundsPath = new Path(
-	// Geometry2JavaFX
+	// Geometry2FX
 	// .toPathElements(
 	// NodeUtils
 	// .parentToLocal(curveNode,
@@ -916,8 +916,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (!anchor.isAttached(getEndAnchorKey())) {
 			return null;
 		}
-		return JavaFX2Geometry
-				.toPoint(getCurveNode().localToParent(Geometry2JavaFX
+		return FX2Geometry
+				.toPoint(getCurveNode().localToParent(Geometry2FX
 						.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
 	}
 
@@ -1033,8 +1033,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (!anchor.isAttached(getStartAnchorKey())) {
 			return null;
 		}
-		return JavaFX2Geometry
-				.toPoint(getCurveNode().localToParent(Geometry2JavaFX
+		return FX2Geometry
+				.toPoint(getCurveNode().localToParent(Geometry2FX
 						.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
 	}
 
@@ -1129,8 +1129,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (!anchor.isAttached(getWayAnchorKey(index))) {
 			return null;
 		}
-		return JavaFX2Geometry
-				.toPoint(getCurveNode().localToParent(Geometry2JavaFX.toFXPoint(
+		return FX2Geometry
+				.toPoint(getCurveNode().localToParent(Geometry2FX.toFXPoint(
 						anchor.getPosition(getWayAnchorKey(index)))));
 	}
 
@@ -1270,7 +1270,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 			}
 			// XXX: All CAG operations deliver result shapes that reflect areas
 			// in scene coordinates.
-			clip.getTransforms().add(Geometry2JavaFX
+			clip.getTransforms().add(Geometry2FX
 					.toFXAffine(NodeUtils.getSceneToLocalTx(curveNode)));
 			curveNode.setClip(clip);
 		} else {

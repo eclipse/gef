@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
@@ -145,12 +145,12 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 			InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 			org.eclipse.gef4.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef4.geometry.planar.Rectangle(
 					0, 0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
-			Point pivotPoint = JavaFX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
+			Point pivotPoint = FX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
 
 			for (NodeContentPart nodePart : new ArrayList<>(nestingNodeContentParts)) {
 				Group visual = nodePart.getVisual();
 				Bounds boundsInScene = visual.localToScene(visual.getLayoutBounds());
-				org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = JavaFX2Geometry
+				org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = FX2Geometry
 						.toRectangle(infiniteCanvas.sceneToLocal(boundsInScene));
 				if (boundsInViewport.touches(viewportBounds)) {
 					double distance = boundsInViewport.getCenter().getDistance(pivotPoint);

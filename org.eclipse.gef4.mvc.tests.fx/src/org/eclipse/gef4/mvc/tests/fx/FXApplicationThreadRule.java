@@ -32,7 +32,7 @@ import javafx.embed.swing.JFXPanel;
  * @author anyssen
  *
  */
-public class FxApplicationThreadRule implements TestRule {
+public class FXApplicationThreadRule implements TestRule {
 
 	private static boolean initializedJavaFxToolkit = false;
 

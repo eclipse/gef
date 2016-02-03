@@ -28,9 +28,9 @@ import javafx.scene.transform.Affine;
  * @author anyssen
  *
  */
-public class Geometry2JavaFX {
+public class Geometry2FX {
 
-	private Geometry2JavaFX() {
+	private Geometry2FX() {
 		// this class should not be instantiated by clients
 	}
 

@@ -20,8 +20,8 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -150,8 +150,8 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		checkInitialized();
 
 		// create new way point
-		Point mouseInLocal = JavaFX2Geometry.toPoint(getConnection()
-				.sceneToLocal(Geometry2JavaFX.toFXPoint(mouseInScene)));
+		Point mouseInLocal = FX2Geometry.toPoint(getConnection()
+				.sceneToLocal(Geometry2FX.toFXPoint(mouseInScene)));
 		getBendOperation().getNewAnchors().add(segmentIndex + 1,
 				createUnconnectedAnchor(mouseInLocal));
 
@@ -234,9 +234,9 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 		IAnchor anchor = null;
 		// try to find an anchor that is provided from an underlying node
 		if (canConnect) {
-			Point selectedPointCurrentPositionInScene = JavaFX2Geometry
+			Point selectedPointCurrentPositionInScene = FX2Geometry
 					.toPoint(getConnection().localToScene(
-							Geometry2JavaFX.toFXPoint(positionInLocal)));
+							Geometry2FX.toFXPoint(positionInLocal)));
 			List<Node> pickedNodes = NodeUtils.getNodesAt(
 					getHost().getRoot().getVisual(),
 					selectedPointCurrentPositionInScene.x,
@@ -309,15 +309,15 @@ public class FXBendPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	// TODO: extract to somewhere else (this is used in several places)
 	protected Point getMouseDeltaInLocal(Point currentMousePositionInScene) {
-		Point mouseInLocal = JavaFX2Geometry
-				.toPoint(getConnection().sceneToLocal(Geometry2JavaFX
+		Point mouseInLocal = FX2Geometry
+				.toPoint(getConnection().sceneToLocal(Geometry2FX
 						.toFXPoint(currentMousePositionInScene)));
 		// compensate the movement of the local coordinate system w.r.t. the
 		// scene coordinate system (the scene coordinate system stays consistent
 		// w.r.t. to mouse movement)
 		Point deltaInLocal = mouseInLocal
-				.getTranslated(JavaFX2Geometry
-						.toPoint(getConnection().sceneToLocal(Geometry2JavaFX
+				.getTranslated(FX2Geometry
+						.toPoint(getConnection().sceneToLocal(Geometry2FX
 								.toFXPoint(initialMousePositionInScene)))
 				.getNegated());
 		return deltaInLocal;

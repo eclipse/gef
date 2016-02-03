@@ -26,12 +26,12 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
-public class DotToZestGraphConverter {
+public class Dot2ZestGraphConverter {
 
 	private Graph dotGraph;
 	private Map<Node, Node> dotToZestNodes = new HashMap<Node, Node>();
 
-	public DotToZestGraphConverter(Graph dotGraph) {
+	public Dot2ZestGraphConverter(Graph dotGraph) {
 		this.dotGraph = dotGraph;
 	}
 

@@ -69,7 +69,7 @@ public class FXClickDragToolTests {
 	 * JavaFX toolkit is properly initialized).
 	 */
 	@Rule
-	public FxNonApplicationThreadRule ctx = new FxNonApplicationThreadRule();
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
 
 	@Inject
 	private FXDomainDriver domain;

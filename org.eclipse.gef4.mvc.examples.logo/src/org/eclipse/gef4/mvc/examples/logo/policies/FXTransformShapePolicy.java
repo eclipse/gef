@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
@@ -90,7 +90,7 @@ public class FXTransformShapePolicy extends FXTransformPolicy {
 		// determine transformation
 		Provider<? extends Affine> affineProvider = host
 				.getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY);
-		AffineTransform tx = JavaFX2Geometry
+		AffineTransform tx = FX2Geometry
 				.toAffineTransform(affineProvider.get());
 		final AffineTransform oldTransform = hostContent.getTransform();
 		final AffineTransform newTransform = new AffineTransform(tx.getM00(),

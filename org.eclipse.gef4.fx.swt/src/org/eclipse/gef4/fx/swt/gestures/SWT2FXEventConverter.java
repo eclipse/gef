@@ -38,7 +38,7 @@ import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 
 /**
- * The {@link SwtToFxEventConverter} forwards SWT events to JavaFX. It is
+ * The {@link SWT2FXEventConverter} forwards SWT events to JavaFX. It is
  * necessary because the {@link FXCanvas} does not forward gesture events and
  * horizontal mouse wheel events.
  *
@@ -46,7 +46,7 @@ import javafx.scene.input.ZoomEvent;
  * @author anyssen
  * @author mwienand
  */
-public class SwtToFxEventConverter {
+public class SWT2FXEventConverter {
 
 	/**
 	 * Represents the current {@link GestureState} of touch gesture interaction.
@@ -200,7 +200,7 @@ public class SwtToFxEventConverter {
 	 * @param canvas
 	 *            The {@link FXCanvas} for which event forwarding is registered.
 	 */
-	public SwtToFxEventConverter(final FXCanvas canvas) {
+	public SWT2FXEventConverter(final FXCanvas canvas) {
 		this.canvas = canvas;
 		this.currentGestureState = new GestureState(GestureStateType.IDLE);
 
@@ -323,7 +323,7 @@ public class SwtToFxEventConverter {
 
 	/**
 	 * Unregisters event forwarding from the {@link FXCanvas} for which this
-	 * {@link SwtToFxEventConverter} was created.
+	 * {@link SWT2FXEventConverter} was created.
 	 */
 	public void dispose() {
 		Display display = canvas.getDisplay();
@@ -407,7 +407,7 @@ public class SwtToFxEventConverter {
 	/**
 	 * Converts the given {@link GestureEvent} to a corresponding JavaFX event
 	 * and sends it to the JavaFX scene graph of the {@link FXCanvas} which is
-	 * associated with this {@link SwtToFxEventConverter}.
+	 * associated with this {@link SWT2FXEventConverter}.
 	 *
 	 * @param event
 	 *            The {@link GestureEvent} to send to JavaFX.

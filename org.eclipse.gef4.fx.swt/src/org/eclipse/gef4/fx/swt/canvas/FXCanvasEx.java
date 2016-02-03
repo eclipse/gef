@@ -17,7 +17,7 @@ package org.eclipse.gef4.fx.swt.canvas;
 import java.lang.reflect.Method;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
-import org.eclipse.gef4.fx.swt.gestures.SwtToFxEventConverter;
+import org.eclipse.gef4.fx.swt.gestures.SWT2FXEventConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
@@ -41,7 +41,7 @@ import javafx.stage.Window;
  * <ul>
  * <li>https://bugs.openjdk.java.net/browse/JDK-8143596 (gesture events not
  * forwarded) and horizontal mouse events not forwarded: fixed by forwarding of
- * missing SWT events to JavaFX through an {@link SwtToFxEventConverter}.</li>
+ * missing SWT events to JavaFX through an {@link SWT2FXEventConverter}.</li>
  * <li>https://bugs.openjdk.java.net/browse/JDK-8088147 (image cursors not
  * supported): fixed by adding support for image cursors.</li>
  * </ul>
@@ -51,7 +51,7 @@ import javafx.stage.Window;
  */
 public class FXCanvasEx extends FXCanvas {
 
-	private SwtToFxEventConverter gestureConverter;
+	private SWT2FXEventConverter gestureConverter;
 
 	private ChangeListener<Cursor> cursorChangeListener = new ChangeListener<Cursor>() {
 		@Override
@@ -114,7 +114,7 @@ public class FXCanvasEx extends FXCanvas {
 	public FXCanvasEx(Composite parent, int style) {
 		super(parent, style);
 		addTraverseListener(eclipseUiTraversalListener);
-		gestureConverter = new SwtToFxEventConverter(this);
+		gestureConverter = new SWT2FXEventConverter(this);
 	}
 
 	@Override

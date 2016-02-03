@@ -23,7 +23,7 @@ import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -393,7 +393,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		chopBoxAnchor.positionProperty().addListener(anchorPositionListener);
 
 		// compute bounds center
-		Point boundsCenterInLocal = JavaFX2Geometry
+		Point boundsCenterInLocal = FX2Geometry
 				.toRectangle(eLetterShape.getLayoutBounds()).getCenter();
 		Point2D boundsCenterInScene = eLetterShape
 				.localToScene(boundsCenterInLocal.x, boundsCenterInLocal.y);
@@ -412,7 +412,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 			Point2D vertexInScene = eLetterShape.localToScene(vertexInLocal.x,
 					vertexInLocal.y);
 			boolean isMinDistance = unpreciseEquals(eLetterShapeReferencePoint,
-					JavaFX2Geometry.toPoint(vertexInScene));
+					FX2Geometry.toPoint(vertexInScene));
 
 			Circle vertexNode = createVertexNode(vertexInScene);
 			markerLayer.getChildren().add(vertexNode);
@@ -426,16 +426,16 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 			distanceLine.toBack();
 
 			// show distance on mouse hover
-			double distance = JavaFX2Geometry.toPoint(vertexInScene)
-					.getDistance(JavaFX2Geometry.toPoint(boundsCenterInScene));
+			double distance = FX2Geometry.toPoint(vertexInScene)
+					.getDistance(FX2Geometry.toPoint(boundsCenterInScene));
 			final Text distanceText = createDistanceText(distance);
 			Vector direction = new Vector(
-					JavaFX2Geometry.toPoint(vertexInScene),
-					JavaFX2Geometry.toPoint(boundsCenterInScene));
+					FX2Geometry.toPoint(vertexInScene),
+					FX2Geometry.toPoint(boundsCenterInScene));
 			Point labelPosition = isMinDistance
-					? JavaFX2Geometry.toPoint(vertexInScene).getTranslated(
+					? FX2Geometry.toPoint(vertexInScene).getTranslated(
 							direction.getMultiplied(0.5).toPoint())
-					: JavaFX2Geometry.toPoint(boundsCenterInScene)
+					: FX2Geometry.toPoint(boundsCenterInScene)
 							.getTranslated(-15, 15);
 			distanceText.relocate(labelPosition.x, labelPosition.y);
 			distanceText.setVisible(false);

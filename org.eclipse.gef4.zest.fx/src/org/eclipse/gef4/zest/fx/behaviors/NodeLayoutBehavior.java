@@ -13,8 +13,8 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.LayoutProperties;
@@ -75,8 +75,8 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		}
 
 		FXTransformOperation transformOperation = new FXTransformOperation(transform);
-		transformOperation.setNewTransform(Geometry2JavaFX
-				.toFXAffine(JavaFX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy)));
+		transformOperation.setNewTransform(Geometry2FX
+				.toFXAffine(FX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy)));
 		try {
 			transformOperation.execute(null, null);
 		} catch (ExecutionException e) {

@@ -33,7 +33,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class HoverHandlePartFactory extends FXDefaultHoverHandlePartFactory {
+public class ZestFxHoverHandlePartFactory extends FXDefaultHoverHandlePartFactory {
 
 	@Inject
 	private Injector injector;

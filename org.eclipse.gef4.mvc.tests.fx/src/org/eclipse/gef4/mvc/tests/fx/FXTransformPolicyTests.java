@@ -102,7 +102,7 @@ public class FXTransformPolicyTests {
 	 * JavaFX toolkit is properly initialized).
 	 */
 	@Rule
-	public FxApplicationThreadRule fxApplicationThreadRule = new FxApplicationThreadRule();
+	public FXApplicationThreadRule fxApplicationThreadRule = new FXApplicationThreadRule();
 
 	public FXTransformPolicy createTransformPolicy() {
 		// create injector

@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -362,7 +362,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 		// only show children when zoomed in
 		Transform tx = getVisual().getLocalToSceneTransform();
-		double scale = JavaFX2Geometry.toAffineTransform(tx).getScaleX();
+		double scale = FX2Geometry.toAffineTransform(tx).getScaleX();
 		if (scale > ZOOMLEVEL_SHOW_NESTED_GRAPH) {
 			hideNestedGraphIcon();
 			return Collections.singletonList(nestedGraph);

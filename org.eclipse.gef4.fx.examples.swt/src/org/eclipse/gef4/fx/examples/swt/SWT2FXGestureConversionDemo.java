@@ -28,7 +28,7 @@ import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.VBox;
 
-public class SwtToFXGestureConversionDemo {
+public class SWT2FXGestureConversionDemo {
 
 	private static Scene createScene() {
 		VBox root = new VBox();

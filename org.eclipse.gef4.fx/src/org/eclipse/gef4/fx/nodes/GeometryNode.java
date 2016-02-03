@@ -13,7 +13,7 @@
 package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
@@ -413,7 +413,7 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 				: resizeWidth;
 		double height = Double.isNaN(resizeHeight) ? layoutBounds.getHeight()
 				: resizeHeight;
-		return Geometry2JavaFX.toFXBounds(new Rectangle(layoutBounds.getMinX(),
+		return Geometry2FX.toFXBounds(new Rectangle(layoutBounds.getMinX(),
 				layoutBounds.getMinY(), width, height));
 	}
 

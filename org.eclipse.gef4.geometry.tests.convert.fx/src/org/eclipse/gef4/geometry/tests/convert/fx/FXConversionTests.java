@@ -13,8 +13,8 @@ package org.eclipse.gef4.geometry.tests.convert.fx;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -26,19 +26,19 @@ public class FXConversionTests {
 	@Test
 	public void test_Affine() {
 		AffineTransform transform = new AffineTransform(0, 1, 2, 3, 4, 5);
-		assertEquals(transform, JavaFX2Geometry.toAffineTransform(Geometry2JavaFX.toFXAffine(transform)));
+		assertEquals(transform, FX2Geometry.toAffineTransform(Geometry2FX.toFXAffine(transform)));
 	}
 	
 	@Test
 	public void test_Bounds() {
 		Rectangle rectangle = new Rectangle(5, 6, 7, 8);
-		assertEquals(rectangle, JavaFX2Geometry.toRectangle(Geometry2JavaFX.toFXBounds(rectangle)));
+		assertEquals(rectangle, FX2Geometry.toRectangle(Geometry2FX.toFXBounds(rectangle)));
 	}
 	
 	@Test
 	public void test_Point() {
 		Point point = new Point(1, 2);
-		assertEquals(point, JavaFX2Geometry.toPoint(Geometry2JavaFX.toFXPoint(point)));
+		assertEquals(point, FX2Geometry.toPoint(Geometry2FX.toFXPoint(point)));
 	}
 
 }

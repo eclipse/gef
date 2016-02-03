@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
@@ -234,7 +234,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 		if (canvas.getPrefHeight() != newHeight) {
 			canvas.setPrefHeight(newHeight);
 		}
-		Affine newContentAffine = Geometry2JavaFX
+		Affine newContentAffine = Geometry2FX
 				.toFXAffine(newContentTransform);
 		if (!canvas.getContentTransform().equals(newContentAffine)) {
 			canvas.setContentTransform(newContentAffine);
@@ -395,7 +395,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 		this.canvas = canvas;
 		initialWidth = canvas.getWidth();
 		initialHeight = canvas.getHeight();
-		initialContentTransform = JavaFX2Geometry
+		initialContentTransform = FX2Geometry
 				.toAffineTransform(canvas.getContentTransform());
 		initialHorizontalScrollOffset = canvas.getHorizontalScrollOffset();
 		initialVerticalScrollOffset = canvas.getVerticalScrollOffset();
@@ -480,7 +480,7 @@ public class FXChangeViewportOperation extends AbstractOperation
 		if (canvas.getPrefHeight() != initialHeight) {
 			canvas.setPrefHeight(initialHeight);
 		}
-		Affine initialContentAffine = Geometry2JavaFX
+		Affine initialContentAffine = Geometry2FX
 				.toFXAffine(initialContentTransform);
 		if (!canvas.getContentTransform().equals(initialContentAffine)) {
 			canvas.setContentTransform(initialContentAffine);

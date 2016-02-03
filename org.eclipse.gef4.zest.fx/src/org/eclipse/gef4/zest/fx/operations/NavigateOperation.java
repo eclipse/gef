@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.operations;
 import java.util.Collections;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
@@ -69,7 +69,7 @@ public class NavigateOperation extends ReverseUndoCompositeOperation {
 		// persist the state of the initial graph
 		InfiniteCanvas canvas = viewer.getCanvas();
 		initialViewportState = new ViewportState(canvas.getHorizontalScrollOffset(), canvas.getVerticalScrollOffset(),
-				canvas.getWidth(), canvas.getHeight(), JavaFX2Geometry.toAffineTransform(canvas.getContentTransform()));
+				canvas.getWidth(), canvas.getHeight(), FX2Geometry.toAffineTransform(canvas.getContentTransform()));
 		navigationModel.setViewportState(initialGraph, initialViewportState);
 	}
 

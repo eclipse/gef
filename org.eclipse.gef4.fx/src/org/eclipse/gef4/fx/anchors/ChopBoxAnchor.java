@@ -24,8 +24,8 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -274,7 +274,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 
 				// fallback to layout-bounds
 				if (geometry == null) {
-					geometry = JavaFX2Geometry
+					geometry = FX2Geometry
 							.toRectangle(anchorage.getLayoutBounds());
 				}
 
@@ -624,8 +624,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 */
 	protected Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
-		return JavaFX2Geometry.toPoint(anchored
-				.sceneToLocal(Geometry2JavaFX.toFXPoint(computationStrategy
+		return FX2Geometry.toPoint(anchored
+				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
 						.computePositionInScene(getAnchorage(), anchored,
 								anchoredReferencePointInLocal))));
 	}

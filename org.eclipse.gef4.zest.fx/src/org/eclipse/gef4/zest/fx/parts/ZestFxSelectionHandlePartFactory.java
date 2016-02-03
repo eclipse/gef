@@ -28,7 +28,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class SelectionHandlePartFactory extends FXDefaultSelectionHandlePartFactory {
+public class ZestFxSelectionHandlePartFactory extends FXDefaultSelectionHandlePartFactory {
 
 	@Override
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(

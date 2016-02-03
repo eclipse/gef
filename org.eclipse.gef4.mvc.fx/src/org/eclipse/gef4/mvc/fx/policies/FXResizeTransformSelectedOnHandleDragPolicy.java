@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -287,7 +287,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 		if (contentPart == null) {
 			throw new IllegalArgumentException("contentPart may not be null!");
 		}
-		return JavaFX2Geometry.toRectangle(contentPart.getVisual()
+		return FX2Geometry.toRectangle(contentPart.getVisual()
 				.localToScene(contentPart.getVisual().getLayoutBounds()));
 	}
 
@@ -319,7 +319,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 				init(transformPolicy);
 				// transform scale pivot to parent coordinates
 				Point pivotInScene = getVisualBounds(targetPart).getTopLeft();
-				Point pivotInParent = JavaFX2Geometry
+				Point pivotInParent = FX2Geometry
 						.toPoint(getHost().getVisual().getParent()
 								.sceneToLocal(pivotInScene.x, pivotInScene.y));
 				// create transformations for scaling around pivot

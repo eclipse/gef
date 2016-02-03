@@ -13,7 +13,7 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
 import javafx.beans.binding.DoubleBinding;
@@ -66,10 +66,10 @@ public class LayoutSnippet extends AbstractFxExample {
 	}
 
 	private void applyTransform(Affine dst, Transform transform) {
-		AffineTransform affineTransform = JavaFX2Geometry
+		AffineTransform affineTransform = FX2Geometry
 				.toAffineTransform(dst);
 		AffineTransform result = affineTransform
-				.concatenate(JavaFX2Geometry.toAffineTransform(transform));
+				.concatenate(FX2Geometry.toAffineTransform(transform));
 		setAffine(dst, result);
 	}
 

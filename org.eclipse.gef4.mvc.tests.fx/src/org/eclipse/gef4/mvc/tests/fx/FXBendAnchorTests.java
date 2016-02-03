@@ -246,7 +246,7 @@ public class FXBendAnchorTests {
 	 * Ensure the JavaFX toolkit is properly initialized.
 	 */
 	@Rule
-	public FxNonApplicationThreadRule ctx = new FxNonApplicationThreadRule();
+	public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule();
 
 	@Inject
 	private FXDomain domain;

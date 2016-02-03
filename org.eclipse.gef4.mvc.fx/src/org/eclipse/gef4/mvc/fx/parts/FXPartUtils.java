@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -52,7 +52,7 @@ public class FXPartUtils {
 			Collection<? extends IVisualPart<Node, ? extends Node>> parts) {
 		Rectangle bounds = null;
 		for (IVisualPart<Node, ? extends Node> part : parts) {
-			Rectangle boundsInScene = JavaFX2Geometry
+			Rectangle boundsInScene = FX2Geometry
 					.toRectangle(part.getVisual()
 							.localToScene(part.getVisual().getLayoutBounds()));
 			if (bounds == null) {

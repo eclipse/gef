@@ -27,9 +27,9 @@ import javafx.scene.transform.Transform;
  * @author anyssen
  *
  */
-public class JavaFX2Geometry {
+public class FX2Geometry {
 
-	private JavaFX2Geometry() {
+	private FX2Geometry() {
 		// this class should not be instantiated by clients
 	}
 

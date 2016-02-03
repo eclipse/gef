@@ -51,15 +51,15 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
-import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
-import org.eclipse.gef4.zest.fx.parts.HoverHandlePartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.eclipse.gef4.zest.fx.parts.SelectionHandlePartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxSelectionHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
@@ -486,20 +486,20 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Binds {@link IContentPartFactory} to {@link ContentPartFactory}.
+	 * Binds {@link IContentPartFactory} to {@link ZestFxContentPartFactory}.
 	 */
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).to(ContentPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
+		}).to(ZestFxContentPartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override
 	protected void bindIHandlePartFactories() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).annotatedWith(Names.named(SelectionBehavior.PART_FACTORIES_BINDING_NAME))
-				.to(SelectionHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
+				.to(ZestFxSelectionHandlePartFactory.class).in(AdaptableScopes.typed(FXViewer.class));
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(HoverHandlePartFactory.class)
+		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(ZestFxHoverHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 

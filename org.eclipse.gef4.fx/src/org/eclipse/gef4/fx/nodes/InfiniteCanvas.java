@@ -16,8 +16,8 @@ package org.eclipse.gef4.fx.nodes;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
 import javafx.animation.FadeTransition;
@@ -835,10 +835,10 @@ public class InfiniteCanvas extends Region {
 
 		// concatenate old transformation and scale transformation to yield the
 		// new transformation
-		AffineTransform newTransform = JavaFX2Geometry
+		AffineTransform newTransform = FX2Geometry
 				.toAffineTransform(getContentTransform())
 				.concatenate(scaleTransform);
-		setContentTransform(Geometry2JavaFX.toFXAffine(newTransform));
+		setContentTransform(Geometry2FX.toFXAffine(newTransform));
 	}
 
 	/**

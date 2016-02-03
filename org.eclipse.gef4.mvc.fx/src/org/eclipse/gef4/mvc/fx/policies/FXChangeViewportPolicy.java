@@ -13,7 +13,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -38,7 +38,7 @@ public class FXChangeViewportPolicy extends AbstractTransactionPolicy<Node> {
 	@Override
 	protected ITransactionalOperation createOperation() {
 		FXViewer viewer = (FXViewer) getHost().getRoot().getViewer();
-		return new FXChangeViewportOperation(viewer.getCanvas(), JavaFX2Geometry
+		return new FXChangeViewportOperation(viewer.getCanvas(), FX2Geometry
 				.toAffineTransform(viewer.getCanvas().getContentTransform()));
 	}
 

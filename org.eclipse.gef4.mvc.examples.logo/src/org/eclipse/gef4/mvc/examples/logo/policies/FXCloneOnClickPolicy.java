@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
@@ -75,7 +75,7 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 		}
 
 		// copy the transformation
-		AffineTransform originalTransform = JavaFX2Geometry.toAffineTransform(
+		AffineTransform originalTransform = FX2Geometry.toAffineTransform(
 				getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY)
 						.get());
 		FXTransformPolicy transformPolicy = clonedContentPart

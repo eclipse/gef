@@ -12,7 +12,7 @@
 package org.eclipse.gef4.mvc.fx.providers;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -81,7 +81,7 @@ public class ShapeBoundsProvider
 
 	@Override
 	public Rectangle get() {
-		return JavaFX2Geometry.toRectangle(host.getVisual().getLayoutBounds())
+		return FX2Geometry.toRectangle(host.getVisual().getLayoutBounds())
 				.getExpanded(leftPadding, topPadding, rightPadding,
 						bottomPadding);
 	}

@@ -173,7 +173,7 @@ public class DotGraphView extends ZestFxUiView {
 
 	@Override
 	public void setGraph(Graph graph) {
-		super.setGraph(new DotToZestGraphConverter(graph).convert());
+		super.setGraph(new Dot2ZestGraphConverter(graph).convert());
 	}
 
 	private boolean toggle(Action action, boolean input) {

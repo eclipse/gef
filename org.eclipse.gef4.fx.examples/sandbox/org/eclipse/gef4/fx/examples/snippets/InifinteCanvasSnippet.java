@@ -14,7 +14,7 @@ package org.eclipse.gef4.fx.examples.snippets;
 
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
 import javafx.event.EventHandler;
@@ -76,7 +76,7 @@ public class InifinteCanvasSnippet extends AbstractFxExample {
 
 					// compute zoom transformation
 					Affine tx = infiniteCanvas.getContentTransform();
-					AffineTransform at = JavaFX2Geometry.toAffineTransform(tx);
+					AffineTransform at = FX2Geometry.toAffineTransform(tx);
 					at.concatenate(new AffineTransform()
 							.translate(contentPivot.getX(), contentPivot.getY())
 							.scale(zoomFactor, zoomFactor)
