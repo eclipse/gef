@@ -567,8 +567,8 @@
 		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
-		<module>../org.eclipse.gef4.fx.compatibility.luna</module>
-		<module>../org.eclipse.gef4.fx.compatibility.luna-feature</module>
+		<module>../org.eclipse.gef4.fx.compatibility.equinox</module>
+		<module>../org.eclipse.gef4.fx.compatibility.equinox-feature</module>
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
 		<module>../org.eclipse.gef4.mvc.ui</module>
@@ -588,10 +588,10 @@
 		<module>../org.eclipse.gef4.mvc.examples-feature</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.web</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.web.repository</module>
-		<module>../org.eclipse.gef4.mvc.compatibility.luna</module>
-		<module>../org.eclipse.gef4.mvc.compatibility.luna-feature</module>
-		<module>../org.eclipse.gef4.mvc.fx.compatibility.luna</module>
-		<module>../org.eclipse.gef4.mvc.fx.compatibility.luna-feature</module>
+		<module>../org.eclipse.gef4.mvc.compatibility.equinox</module>
+		<module>../org.eclipse.gef4.mvc.compatibility.equinox-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.compatibility.equinox</module>
+		<module>../org.eclipse.gef4.mvc.fx.compatibility.equinox-feature</module>
 		<module>../org.eclipse.gef4.cloudio.ui</module>
 		<module>../org.eclipse.gef4.cloudio.ui-feature</module>
 		<module>../org.eclipse.gef4.cloudio.tests.ui</module>
@@ -637,8 +637,8 @@
 		<module>../org.eclipse.gef4.zest.examples.graph</module>
 		<module>../org.eclipse.gef4.zest.examples.graph.ui</module>
 		<module>../org.eclipse.gef4.zest.examples-feature</module>
-		<module>../org.eclipse.gef4.zest.fx.compatibility.luna</module>
-		<module>../org.eclipse.gef4.zest.fx.compatibility.luna-feature</module>
+		<module>../org.eclipse.gef4.zest.fx.compatibility.equinox</module>
+		<module>../org.eclipse.gef4.zest.fx.compatibility.equinox-feature</module>
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>
 
