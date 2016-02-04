@@ -81,14 +81,16 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 							contentPart);
 
 			// create selection change operation(s)
+			boolean wasDeselected = false;
 			IUndoableOperation selectionChangeOperation = null;
 			if (selectionModel.isSelected(contentPart)) {
 				if (append) {
 					// deselect the host
 					selectionChangeOperation = new DeselectOperation<>(viewer,
 							singletonHostList);
+					wasDeselected = true;
 				}
-			} else {
+			} else if (contentPart.isSelectable()) {
 				if (append) {
 					// prepend host to current selection (as new primary)
 					selectionChangeOperation = new SelectOperation<>(viewer,
@@ -116,22 +118,26 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 			ChangeFocusOperation<Node> changeFocusOperation = null;
 			ObservableList<IContentPart<Node, ? extends Node>> selection = selectionModel
 					.getSelectionUnmodifiable();
-			if (selection.isEmpty()) {
+			if (wasDeselected && selection.isEmpty()) {
 				// unfocus when the only selected part was deselected
 				changeFocusOperation = new ChangeFocusOperation<>(viewer, null);
 			} else {
 				// focus new primary selection
 				IContentPart<Node, ? extends Node> primarySelection = selection
 						.get(0);
-				changeFocusOperation = new ChangeFocusOperation<>(viewer,
-						primarySelection);
+				if (primarySelection.isFocusable()) {
+					changeFocusOperation = new ChangeFocusOperation<>(viewer,
+							primarySelection);
+				}
 			}
 
 			// execute focus change
-			try {
-				viewer.getDomain().execute(changeFocusOperation);
-			} catch (ExecutionException e1) {
-				throw new IllegalStateException(e1);
+			if (changeFocusOperation != null) {
+				try {
+					viewer.getDomain().execute(changeFocusOperation);
+				} catch (ExecutionException e1) {
+					throw new IllegalStateException(e1);
+				}
 			}
 		} else if (host instanceof IRootPart) {
 			// check if click on background (either one of the root visuals, or

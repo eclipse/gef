@@ -183,9 +183,9 @@ public class FXTraverseOnTypePolicy extends AbstractFXInteractionPolicy
 
 			// get current focus part
 			IContentPart<Node, ? extends Node> current = focusModel.getFocus();
-
-			// determine next focus part
 			IContentPart<Node, ? extends Node> next = null;
+
+			// determine the first focus part if no part currently has focus
 			if (current == null) {
 				List<IContentPart<Node, ? extends Node>> children = viewer
 						.getRootPart().getContentPartChildren();
@@ -199,20 +199,34 @@ public class FXTraverseOnTypePolicy extends AbstractFXInteractionPolicy
 						next = children.get(0);
 					}
 				}
-			} else {
+			}
+			// find the next/previous part that is focusable
+			if (current != null || next != null && !next.isFocusable()) {
+				// in case we did not select a next part yet, start with the
+				// currently focused part
+				if (next == null) {
+					next = current;
+				}
+				// search until a focusable part is found
 				if (searchBackwards) {
-					next = findPreviousContentPart(current);
+					do {
+						next = findPreviousContentPart(next);
+					} while (next != null && !next.isFocusable());
 				} else {
-					next = findNextContentPart(current);
+					do {
+						next = findNextContentPart(next);
+					} while (next != null && !next.isFocusable());
 				}
 			}
 
 			// give focus to the next part or to the viewer (if next is null)
-			try {
-				viewer.getDomain()
-						.execute(new ChangeFocusOperation<>(viewer, next));
-			} catch (ExecutionException e) {
-				throw new IllegalStateException(e);
+			if (next == null || next.isFocusable()) {
+				try {
+					viewer.getDomain()
+							.execute(new ChangeFocusOperation<>(viewer, next));
+				} catch (ExecutionException e) {
+					throw new IllegalStateException(e);
+				}
 			}
 		}
 	}

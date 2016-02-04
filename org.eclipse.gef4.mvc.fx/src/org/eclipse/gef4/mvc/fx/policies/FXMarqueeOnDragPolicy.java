@@ -13,6 +13,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -260,18 +261,30 @@ public class FXMarqueeOnDragPolicy extends AbstractFXInteractionPolicy
 			return;
 		}
 
+		// compute bounding box in scene coordinates
 		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		Node rootVisual = root.getVisual();
 		endPosInRoot = rootVisual.sceneToLocal(e.getSceneX(), e.getSceneY());
 		Point2D start = rootVisual.localToScene(startPosInRoot);
 		Point2D end = rootVisual.localToScene(endPosInRoot);
 		double[] bbox = bbox(start, end);
+
+		// find nodes contained in bbox
 		List<Node> nodes = findContainedNodes(rootVisual.getScene().getRoot(),
 				bbox[0], bbox[1], bbox[2], bbox[3]);
 
+		// find content parts for contained nodes
 		List<IContentPart<Node, ? extends Node>> parts = getParts(nodes);
 
-		// select the parts contained within the marquee area
+		// filter out all parts that are not selectable
+		Iterator<IContentPart<Node, ? extends Node>> it = parts.iterator();
+		while (it.hasNext()) {
+			if (!it.next().isSelectable()) {
+				it.remove();
+			}
+		}
+
+		// select the selectable parts contained within the marquee area
 		try {
 			root.getViewer().getDomain()
 					.execute(new SelectOperation<>(root.getViewer(), parts));
