@@ -17,7 +17,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ SelectionModelTests.class, AbstractVisualPartTests.class, ContentSynchronizationTests.class })
+@SuiteClasses({ SelectionModelTests.class, AbstractVisualPartTests.class, ContentSynchronizationTests.class,
+		FocusTraversalPolicyTests.class })
 public class AllTests {
 
 }
