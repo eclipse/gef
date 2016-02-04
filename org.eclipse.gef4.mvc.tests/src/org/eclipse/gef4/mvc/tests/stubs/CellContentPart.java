@@ -11,21 +11,41 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tests.stubs;
 
-import org.eclipse.gef4.mvc.parts.AbstractRootPart;
+import java.util.List;
+
+import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class RootPart extends AbstractRootPart<Object, Object> {
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
+public class CellContentPart extends AbstractContentPart<Object, Object> {
 	@Override
 	protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
 	}
 
 	@Override
 	protected Object createVisual() {
-		return this;
+		return new Object();
+	}
+
+	@Override
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+		return HashMultimap.create();
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		return ((Cell) getContent()).children;
 	}
 
 	@Override
 	protected void doRefreshVisual(Object visual) {
+	}
+
+	@Override
+	public boolean isFocusable() {
+		return ((Cell) getContent()).name.startsWith("C");
 	}
 
 	@Override

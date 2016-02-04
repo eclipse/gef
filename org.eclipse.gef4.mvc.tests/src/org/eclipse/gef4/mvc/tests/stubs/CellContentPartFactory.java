@@ -11,20 +11,26 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tests.stubs;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 
-public class HandlePartFactory implements IHandlePartFactory<Object> {
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
+public class CellContentPartFactory implements IContentPartFactory<Object> {
+	@Inject
+	private Injector injector;
+
 	@Override
-	public List<IHandlePart<Object, ? extends Object>> createHandleParts(
-			List<? extends IVisualPart<Object, ? extends Object>> targets, IBehavior<Object> contextBehavior,
+	public IContentPart<Object, ? extends Object> createContentPart(Object content, IBehavior<Object> contextBehavior,
 			Map<Object, Object> contextMap) {
-		return Collections.emptyList();
+		if (content instanceof Cell) {
+			return injector.getInstance(CellContentPart.class);
+		} else {
+			throw new IllegalArgumentException(content.getClass().toString());
+		}
 	}
 }

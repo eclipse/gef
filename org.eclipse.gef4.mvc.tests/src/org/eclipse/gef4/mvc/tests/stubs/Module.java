@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.tests.stubs;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
@@ -17,9 +28,6 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.tests.ContentSynchronizationTests;
-import org.eclipse.gef4.mvc.tests.ContentSynchronizationTests.ContentPartFactory;
-import org.eclipse.gef4.mvc.tests.ContentSynchronizationTests.TreeContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.AbstractModule;
@@ -43,7 +51,7 @@ public class Module extends AbstractModule {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Object>>() {
 		}).to(FeedbackPartFactory.class);
 		binder().bind(new TypeLiteral<IContentPartFactory<Object>>() {
-		}).toInstance(new ContentPartFactory());
+		}).toInstance(new CellContentPartFactory());
 		// bind domain, viewer, and root part
 		binder().bind(new TypeLiteral<IDomain<Object>>() {
 		}).to(Domain.class);
@@ -69,11 +77,10 @@ public class Module extends AbstractModule {
 		// bind ContentBehavior for RootPart
 		MapBinder<AdapterKey<?>, Object> rootPartAdapterMapBinder = AdapterMaps.getAdapterMapBinder(binder(),
 				RootPart.class);
-		rootPartAdapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<ContentBehavior<Object>>() {
-				});
-		// bind ContentBehavior for the TreeContentPart
-		AdapterMaps.getAdapterMapBinder(binder(), TreeContentPart.class).addBinding(AdapterKey.defaultRole())
+		rootPartAdapterMapBinder.addBinding(AdapterKey.defaultRole()).to(new TypeLiteral<ContentBehavior<Object>>() {
+		});
+		// bind ContentBehavior for the CellContentPart
+		AdapterMaps.getAdapterMapBinder(binder(), CellContentPart.class).addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<ContentBehavior<Object>>() {
 				});
 	}

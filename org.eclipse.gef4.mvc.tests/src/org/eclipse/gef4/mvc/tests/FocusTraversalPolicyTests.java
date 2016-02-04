@@ -17,26 +17,19 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
-import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
+import org.eclipse.gef4.mvc.tests.stubs.Cell;
 import org.eclipse.gef4.mvc.tests.stubs.Domain;
 import org.eclipse.gef4.mvc.tests.stubs.Module;
 import org.eclipse.gef4.mvc.tests.stubs.Viewer;
@@ -45,79 +38,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Modules;
 
 public class FocusTraversalPolicyTests {
-
-	private static class Cell {
-		public String name = "X";
-		public List<Cell> children = new ArrayList<>();
-
-		public Cell(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String toString() {
-			return "{" + name + ": " + children + "}";
-		}
-	}
-
-	private static class CellContentPartFactory implements IContentPartFactory<Object> {
-		@Inject
-		private Injector injector;
-
-		@Override
-		public IContentPart<Object, ? extends Object> createContentPart(Object content,
-				IBehavior<Object> contextBehavior, Map<Object, Object> contextMap) {
-			if (content instanceof Cell) {
-				return injector.getInstance(CellPart.class);
-			} else {
-				throw new IllegalArgumentException(content.getClass().toString());
-			}
-		}
-	}
-
-	private static class CellPart extends AbstractContentPart<Object, Object> {
-		@Override
-		protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
-		}
-
-		@Override
-		protected Object createVisual() {
-			return new Object();
-		}
-
-		@Override
-		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
-			return HashMultimap.create();
-		}
-
-		@Override
-		protected List<? extends Object> doGetContentChildren() {
-			return ((Cell) getContent()).children;
-		}
-
-		@Override
-		protected void doRefreshVisual(Object visual) {
-		}
-
-		@Override
-		public boolean isFocusable() {
-			return ((Cell) getContent()).name.startsWith("C");
-		}
-
-		@Override
-		protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
-		}
-	}
 
 	public static String NEXT = "NEXT";
 	public static String PREV = "PREV";
@@ -127,76 +53,9 @@ public class FocusTraversalPolicyTests {
 
 	private static Viewer viewer;
 
-	/**
-	 * Creates a complex structure of {@link Cell}s from the given
-	 * {@link String} representation.
-	 * <p>
-	 * Example tree:
-	 *
-	 * <pre>
-	 * Root (R)
-	 *  +- Content 0 (C0)
-	 *  |   +- Sub Content 0.0 (C00)
-	 *  |   +- Sub Content 0.1 (C10)
-	 *  |
-	 *  +- Content 1 (C1)
-	 *  |   +- Sub Content 1.0 (C10)
-	 *  |
-	 *  +- Content 2 (C2)
-	 *      +- Sub Content 2.0 (C20)
-	 *      +- Sub Content 2.1 (C21)
-	 * </pre>
-	 *
-	 * Corresponding string representation:
-	 *
-	 * <pre>
-	 * R-C0-C00
-	 * R-C0-C01
-	 * R-C1-C10
-	 * R-C2-C20
-	 * R-C2-C21
-	 * </pre>
-	 *
-	 * A mapping from the names (e.g. "R", "C0", "C1", "C2", "C00", etc.) to the
-	 * generated {@link Cell}s is put into the given nameToCellMap.
-	 *
-	 * @param repr
-	 *            String that describes the tree of cells to create.
-	 * @param nameToCellMap
-	 *            Map that is used to store cell name to Cell object mappings.
-	 * @return Root {@link Cell}.
-	 */
-	private static Cell createCellTree(String repr, Map<String, Cell> nameToCellMap) {
-		Cell root = new Cell("R");
-		nameToCellMap.put("R", root);
-
-		String[] lines = repr.split("\n");
-		for (String line : lines) {
-			String[] cells = line.split("-");
-			Cell c = nameToCellMap.get(cells[0]);
-			for (String sc : cells) {
-				if (!sc.equals(c.name)) {
-					Cell subCell = null;
-					if (nameToCellMap.containsKey(sc)) {
-						subCell = nameToCellMap.get(sc);
-					} else {
-						subCell = new Cell(sc);
-						nameToCellMap.put(sc, subCell);
-					}
-					if (!c.children.contains(subCell)) {
-						c.children.add(subCell);
-					}
-					c = subCell;
-				}
-			}
-		}
-
-		return root;
-	}
-
 	@BeforeClass
 	public static void setUpMVC() {
-		injector = Guice.createInjector(Modules.override(new Module() {
+		injector = Guice.createInjector(new Module() {
 			@Override
 			protected void configure() {
 				super.configure();
@@ -208,19 +67,8 @@ public class FocusTraversalPolicyTests {
 				AdapterMaps.getAdapterMapBinder(binder(), AbstractRootPart.class).addBinding(AdapterKey.defaultRole())
 						.to(new TypeLiteral<FocusTraversalPolicy<Object>>() {
 				});
-				// bind ContentBehavior for the CellContentPart
-				AdapterMaps.getAdapterMapBinder(binder(), CellPart.class).addBinding(AdapterKey.defaultRole())
-						.to(new TypeLiteral<ContentBehavior<Object>>() {
-				});
 			}
-		}).with(new Module() {
-			@Override
-			protected void configure() {
-				// overwrite content part factory
-				binder().bind(new TypeLiteral<IContentPartFactory<Object>>() {
-				}).toInstance(new CellContentPartFactory());
-			}
-		}));
+		});
 		domain = new Domain();
 		injector.injectMembers(domain);
 		viewer = domain.getAdapter(Viewer.class);
@@ -343,7 +191,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RC0_RC1() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = createCellTree(String.join("\n", "R-C0", "R-C1"), cells);
+		Cell root = Cell.createCellTree(String.join("\n", "R-C0", "R-C1"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -406,7 +254,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RCC0C00_RCC1C10_RCC2C20() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = createCellTree(String.join("\n", "R-C-C0-C00", "R-C-C1-C10", "R-C-C2-C20"), cells);
+		Cell root = Cell.createCellTree(String.join("\n", "R-C-C0-C00", "R-C-C1-C10", "R-C-C2-C20"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -418,7 +266,7 @@ public class FocusTraversalPolicyTests {
 		// check full cycle (forwards)
 		checkFocusTraversal(cells, NEXT, "C", NEXT, "C0", NEXT, "C00", NEXT, "C1", NEXT, "C10", NEXT, "C2", NEXT, "C20",
 				NEXT, null);
-		// check full cycle (backwards)
+		// check full cycle (backwards)u
 		checkFocusTraversal(cells, PREV, "C20", PREV, "C2", PREV, "C10", PREV, "C1", PREV, "C00", PREV, "C0", PREV, "C",
 				PREV, null);
 	}
@@ -460,7 +308,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RV0_RC1_RV2() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = createCellTree(String.join("\n", "R-V0", "R-C1", "R-V2"), cells);
+		Cell root = Cell.createCellTree(String.join("\n", "R-V0", "R-C1", "R-V2"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -512,7 +360,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RV0C0_RV1C1() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = createCellTree(String.join("\n", "R-V0-C0", "R-V1-C1"), cells);
+		Cell root = Cell.createCellTree(String.join("\n", "R-V0-C0", "R-V1-C1"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
