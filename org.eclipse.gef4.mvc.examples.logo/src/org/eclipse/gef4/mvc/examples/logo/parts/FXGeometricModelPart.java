@@ -79,6 +79,11 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
+	public boolean isFocusable() {
+		return false;
+	}
+
+	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
 			int index) {
 		getVisual().getChildren().remove(child.getVisual());
