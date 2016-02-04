@@ -60,6 +60,7 @@ import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -95,6 +96,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXDeleteSelectedOnTypePolicy.class);
+		// focus traversal
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(new TypeLiteral<FocusTraversalPolicy<Node>>() {
+				});
 		// keyboard focus traversal
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTraverseOnTypePolicy.class);
