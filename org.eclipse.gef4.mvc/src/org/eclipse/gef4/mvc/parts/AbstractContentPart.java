@@ -344,6 +344,16 @@ public abstract class AbstractContentPart<VR, V extends VR>
 		return contentChildrenUnmodifiable;
 	}
 
+	@Override
+	public boolean isFocusable() {
+		return true;
+	}
+
+	@Override
+	public boolean isSelectable() {
+		return true;
+	}
+
 	/**
 	 * Called whenever the content of this {@link IContentPart} changed.
 	 *

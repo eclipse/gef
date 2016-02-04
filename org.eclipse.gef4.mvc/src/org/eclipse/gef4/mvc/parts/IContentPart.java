@@ -18,10 +18,12 @@ import java.util.List;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
+import org.eclipse.gef4.mvc.models.FocusModel;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionModel;
 
 /**
  * An {@link IVisualPart} that visualizes an underlying content element.
@@ -159,6 +161,28 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	 * @return A {@link List} of all of this part's content children.
 	 */
 	public ObservableList<Object> getContentChildrenUnmodifiable();
+
+	/**
+	 * Returns <code>true</code> if policies and other parts of the application
+	 * are allowed to assign focus to this part by changing the
+	 * {@link FocusModel}. Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if policies and other parts of the application
+	 *         are allowed to assign focus to this part by changing the
+	 *         {@link FocusModel}, otherwise <code>false</code>.
+	 */
+	public boolean isFocusable();
+
+	/**
+	 * Returns <code>true</code> if policies and other parts of the application
+	 * are allowed to add this part to the selection maintained by the
+	 * {@link SelectionModel}. Otherwise returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if policies and other parts of the application
+	 *         are allowed to add this part to the selection maintained by the
+	 *         {@link SelectionModel}, otherwise <code>false</code>.
+	 */
+	public boolean isSelectable();
 
 	/**
 	 * Triggers a re-computation of the content children of this
