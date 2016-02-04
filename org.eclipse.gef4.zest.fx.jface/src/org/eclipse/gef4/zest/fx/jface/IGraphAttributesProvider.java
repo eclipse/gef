@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * The {@link IGraphAttributesProvider} can be used to provide arbitrary
- * attributes for nodes, edges, and the root graph (i.e. not for nested graphs).
+ * attributes for nodes, edges, the root graph, and any nested graphs.
  *
  * @author mwienand
  *
