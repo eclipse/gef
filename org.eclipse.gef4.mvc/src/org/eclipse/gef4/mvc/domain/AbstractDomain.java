@@ -54,6 +54,7 @@ import javafx.collections.ObservableMap;
  */
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
+	private static final int DEFAULT_UNDO_LIMIT = 128;
 	private ActivatableSupport acs = new ActivatableSupport(this);
 	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<IDomain<VR>>(
 			this);
@@ -326,20 +327,25 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 * {@link AbstractDomain} to the given value. Operation history listeners
 	 * are un-/registered accordingly.
 	 *
-	 * @param stack
+	 * @param operationHistory
 	 *            The new {@link IOperationHistory} for this domain.
 	 */
 	@Inject
-	public void setOperationHistory(IOperationHistory stack) {
-		if (operationHistory != null && operationHistory != stack) {
-			operationHistory
+	public void setOperationHistory(IOperationHistory operationHistory) {
+		if (this.operationHistory != null
+				&& this.operationHistory != operationHistory) {
+			this.operationHistory
 					.removeOperationHistoryListener(operationHistoryListener);
 		}
-		if (operationHistory != stack) {
-			operationHistory = stack;
-			if (operationHistory != null) {
-				operationHistory
+		if (this.operationHistory != operationHistory) {
+			this.operationHistory = operationHistory;
+			if (this.operationHistory != null) {
+				this.operationHistory
 						.addOperationHistoryListener(operationHistoryListener);
+				if (undoContext != null) {
+					this.operationHistory.setLimit(undoContext,
+							DEFAULT_UNDO_LIMIT);
+				}
 			}
 		}
 	}
@@ -354,6 +360,9 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	@Inject
 	public void setUndoContext(IUndoContext undoContext) {
 		this.undoContext = undoContext;
+		if (operationHistory != null && undoContext != null) {
+			operationHistory.setLimit(undoContext, DEFAULT_UNDO_LIMIT);
+		}
 	}
 
 	@Override
