@@ -18,6 +18,7 @@ import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -99,10 +100,11 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *         assigned, or <code>null</code> if no subsequent
 	 *         {@link IContentPart} could be determined.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected IContentPart<VR, ? extends VR> findNextContentPart(
 			IContentPart<VR, ? extends VR> current) {
 		// search children for content parts
-		ObservableList<IVisualPart<VR, ? extends VR>> children = current
+		List<IVisualPart<VR, ? extends VR>> children = current
 				.getChildrenUnmodifiable();
 		if (!children.isEmpty()) {
 			for (IVisualPart<VR, ? extends VR> child : children) {
@@ -114,8 +116,10 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		// no content part children available, therefore, we have to search our
 		// siblings and move up the hierarchy
 		IVisualPart<VR, ? extends VR> parent = current.getParent();
-		while (parent instanceof IContentPart) {
-			children = parent.getChildrenUnmodifiable();
+		while (parent instanceof IContentPart || parent instanceof IRootPart) {
+			children = parent instanceof IContentPart
+					? parent.getChildrenUnmodifiable()
+					: ((IRootPart) parent).getContentPartChildren();
 			int index = children.indexOf(current) + 1;
 			while (index < children.size()) {
 				IVisualPart<VR, ? extends VR> part = children.get(index);
@@ -124,8 +128,12 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				}
 				index++;
 			}
-			current = (IContentPart<VR, ? extends VR>) parent;
-			parent = current.getParent();
+			if (parent instanceof IContentPart) {
+				current = (IContentPart<VR, ? extends VR>) parent;
+				parent = current.getParent();
+			} else {
+				return null;
+			}
 		}
 		// could not find another content part
 		return null;
@@ -153,9 +161,11 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 			IContentPart<VR, ? extends VR> current) {
 		// find previous content part sibling
 		IVisualPart<VR, ? extends VR> parent = current.getParent();
-		if (parent instanceof IContentPart) {
-			ObservableList<IVisualPart<VR, ? extends VR>> children = parent
-					.getChildrenUnmodifiable();
+		if (parent instanceof IContentPart || parent instanceof IRootPart) {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			List<IVisualPart<VR, ? extends VR>> children = parent instanceof IContentPart
+					? parent.getChildrenUnmodifiable()
+					: ((IRootPart) parent).getContentPartChildren();
 			int index = children.indexOf(current) - 1;
 			while (index >= 0) {
 				IVisualPart<VR, ? extends VR> part = children.get(index);
@@ -165,7 +175,9 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 				}
 				index--;
 			}
-			return (IContentPart<VR, ? extends VR>) parent;
+			if (parent instanceof IContentPart) {
+				return (IContentPart<VR, ? extends VR>) parent;
+			}
 		}
 		// could not find a previous content part
 		return null;
