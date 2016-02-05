@@ -13,14 +13,13 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
-import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
@@ -64,23 +63,28 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double dw = size.width - w;
 		double dh = size.height - h;
 
-		FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
-		resizeOperation.setDw(dw);
-		resizeOperation.setDh(dh);
-
-		try {
-			resizeOperation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		FXResizePolicy resizePolicy = getHost().getAdapter(FXResizePolicy.class);
+		resizePolicy.init();
+		resizePolicy.resize(dw, dh);
+		ITransactionalOperation resizeOperation = resizePolicy.commit();
+		if (resizeOperation != null) {
+			try {
+				resizeOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 
-		FXTransformOperation transformOperation = new FXTransformOperation(transform);
-		transformOperation.setNewTransform(Geometry2FX
-				.toFXAffine(FX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy)));
-		try {
-			transformOperation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		FXTransformPolicy transformPolicy = getHost().getAdapter(FXTransformPolicy.class);
+		transformPolicy.init();
+		transformPolicy.setTransform(FX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy));
+		ITransactionalOperation transformOperation = transformPolicy.commit();
+		if (transformOperation != null) {
+			try {
+				transformOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 	}
 

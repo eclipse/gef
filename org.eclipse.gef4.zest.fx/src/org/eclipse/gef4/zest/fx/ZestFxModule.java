@@ -28,10 +28,8 @@ import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
@@ -51,16 +49,18 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
-import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.eclipse.gef4.zest.fx.parts.ZestFxSelectionHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxSelectionHandlePartFactory;
+import org.eclipse.gef4.zest.fx.policies.FXResizeNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.FXTransformNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
@@ -274,19 +274,20 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FXResizePolicy} to the given adapter map binder
-	 * that will insert the bindings into {@link NodeContentPart}s.
+	 * Adds a binding for {@link FXResizeNodePolicy} to the given adapter map
+	 * binder that will insert the bindings into {@link NodeContentPart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
 	 */
-	protected void bindFXResizePolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
+	protected void bindFXResizeNodePolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizeNodePolicy.class);
 	}
 
 	/**
-	 * Adds a binding for {@link FXResizeTranslateFirstAnchorageOnHandleDragPolicy} to the
-	 * given adapter map binder that will insert the bindings into
+	 * Adds a binding for
+	 * {@link FXResizeTranslateFirstAnchorageOnHandleDragPolicy} to the given
+	 * adapter map binder that will insert the bindings into
 	 * {@link FXRectangleSegmentHandlePart}s.
 	 *
 	 * @param adapterMapBinder
@@ -318,14 +319,15 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FXTransformPolicy} to the given adapter map
+	 * Adds a binding for {@link FXTransformNodePolicy} to the given adapter map
 	 * binder that will insert the bindings into {@link NodeContentPart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
 	 */
-	protected void bindFXTransformPolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
+	protected void bindFXTransformNodePolicyAsNodeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformNodePolicy.class);
 	}
 
 	/**
@@ -558,9 +560,9 @@ public class ZestFxModule extends MvcFxModule {
 		bindHideOnTypePolicyAsNodeContentPartAdapter(adapterMapBinder);
 		bindOpenNestedGraphOnDoubleClickPolicyAsNodeContentPartAdapter(adapterMapBinder);
 		// transform policy for relocation
-		bindFXTransformPolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindFXTransformNodePolicyAsNodeContentPartAdapter(adapterMapBinder);
 		// resize policy to resize nesting nodes
-		bindFXResizePolicyAsNodeContentPartAdapter(adapterMapBinder);
+		bindFXResizeNodePolicyAsNodeContentPartAdapter(adapterMapBinder);
 		// anchor provider
 		bindChopBoxAnchorProviderAsNodeContentPartAdapter(adapterMapBinder);
 		// feedback and handles
