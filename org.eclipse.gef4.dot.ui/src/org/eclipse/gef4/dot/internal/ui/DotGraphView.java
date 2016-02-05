@@ -35,6 +35,7 @@ import org.eclipse.gef4.dot.internal.DotExtractor;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -56,6 +57,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+
+import com.google.inject.Guice;
+import com.google.inject.util.Modules;
 
 import javafx.scene.Scene;
 
@@ -83,6 +87,8 @@ public class DotGraphView extends ZestFxUiView {
 	private Link resourceLabel = null;
 
 	public DotGraphView() {
+		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
+				.with(new ZestFxUiModule())));
 		setGraph(new DotImport(currentDot).newGraphInstance());
 	}
 
