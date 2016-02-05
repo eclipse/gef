@@ -10,5 +10,11 @@
             restorable="true">
       </view>
    </extension>
-
+   <extension point="org.eclipse.core.runtime.adapters">
+		<factory
+				class="org.eclipse.gef4.zest.examples.graph.ui.properties.PropertySourceAdapterFactory"
+				adaptableType="org.eclipse.gef4.graph.Node">
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+		</factory>
+	</extension>
 </plugin>

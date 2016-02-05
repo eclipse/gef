@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import java.awt.Point;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -649,7 +649,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			// translate
 			FXTransformPolicy transformPolicy = getAdapter(FXTransformPolicy.class);
 			transformPolicy.init();
-			transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1, position.getX(), position.getY()));
+			transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1, position.x, position.y));
 			try {
 				transformPolicy.commit().execute(null, null);
 			} catch (ExecutionException e) {
