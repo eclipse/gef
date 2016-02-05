@@ -42,8 +42,6 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void postLayout() {
-		// TODO: Refresh should not be necessary.
-		getHost().refreshVisual();
 	}
 
 	@Override
