@@ -12,12 +12,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
+import java.awt.Point;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -104,6 +108,14 @@ public class ZestProperties {
 	public static final String EDGE_LABEL_CSS_STYLE = "edge-label-css-style";
 
 	/**
+	 * This attribute determines the way points for the {@link #EDGE_ROUTER}.
+	 *
+	 * @see #getRouterPoints(Edge)
+	 * @see #setRouterPoints(Edge, List)
+	 */
+	public static final String EDGE_ROUTER_POINTS = "edge-router-points";
+
+	/**
 	 * This attribute determines the CSS style for a node rectangle. This
 	 * attribute does not have a default value.
 	 *
@@ -129,6 +141,15 @@ public class ZestProperties {
 	 * @see #setIcon(Node, Image)
 	 */
 	public static final String NODE_ICON = "icon";
+
+	/**
+	 * This attribute determines the bounds for a {@link Node}, i.e. its
+	 * position and size.
+	 *
+	 * @see #getBounds(Node)
+	 * @see #setBounds(Node, Rectangle)
+	 */
+	public static final String NODE_BOUNDS = "bounds";
 
 	/**
 	 * This attribute determines the tooltip for a node. This attribute does not
@@ -225,6 +246,23 @@ public class ZestProperties {
 	 * The default value of the {@link #NODE_FISHEYE} attribute.
 	 */
 	public static Boolean NODE_FISHEYE_DEFAULT = false;
+
+	/**
+	 * Returns the value of the {@link #NODE_BOUNDS} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to return the {@link #NODE_BOUNDS}.
+	 * @return The value of the {@link #NODE_BOUNDS} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static Rectangle getBounds(Node node) {
+		Object bounds = node.getAttributes().get(NODE_BOUNDS);
+		if (bounds instanceof Rectangle) {
+			return (Rectangle) bounds;
+		}
+		return null;
+	}
 
 	/**
 	 * Returns the value of the {@link #ELEMENT_CSS_CLASS} attribute of the
@@ -366,8 +404,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #GRAPH_LAYOUT_ALGORITHM} attribute of the given
-	 * {@link Graph}.
+	 * Returns the value of the {@link #GRAPH_LAYOUT_ALGORITHM} attribute of the
+	 * given {@link Graph}.
 	 *
 	 * @param graph
 	 *            The {@link Graph} of which the layout algorithm is determined.
@@ -468,6 +506,24 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #EDGE_ROUTER_POINTS} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} for which to determine the router points.
+	 * @return The value of the {@link #EDGE_ROUTER_POINTS} attribute of the
+	 *         given {@link Edge}.
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<Point> getRouterPoints(Edge edge) {
+		Object routerPoints = edge.getAttributes().get(EDGE_ROUTER_POINTS);
+		if (routerPoints instanceof List) {
+			return (List<Point>) routerPoints;
+		}
+		return Collections.emptyList();
+	}
+
+	/**
 	 * Returns the value of the {@link #EDGE_SOURCE_DECORATION} attribute of the
 	 * given {@link Edge}.
 	 *
@@ -528,6 +584,20 @@ public class ZestProperties {
 			}
 		}
 		return returnDefaultIfMissing ? GRAPH_TYPE_DEFAULT : null;
+	}
+
+	/**
+	 * Sets the value of the {@link #NODE_BOUNDS} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to return the {@link #NODE_BOUNDS}.
+	 * @param bounds
+	 *            The {@link Rectangle} describing the new bounds for the given
+	 *            {@link Node}.
+	 */
+	public static void setBounds(Node node, Rectangle bounds) {
+		node.getAttributes().put(NODE_BOUNDS, bounds);
 	}
 
 	/**
@@ -742,6 +812,21 @@ public class ZestProperties {
 	 */
 	public static void setRouter(Edge edge, IConnectionRouter router) {
 		edge.attributesProperty().put(EDGE_ROUTER, router);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_ROUTER_POINTS} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the {@link #EDGE_ROUTER_POINTS}
+	 *            attribute is changed.
+	 * @param routerPoints
+	 *            The new {@link List} of router {@link Point}s for the given
+	 *            {@link Edge}.
+	 */
+	public static void setRouterPoints(Edge edge, List<Point> routerPoints) {
+		edge.getAttributes().put(EDGE_ROUTER_POINTS, routerPoints);
 	}
 
 	/**
