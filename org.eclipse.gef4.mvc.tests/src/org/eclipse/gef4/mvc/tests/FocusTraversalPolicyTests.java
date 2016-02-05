@@ -154,6 +154,19 @@ public class FocusTraversalPolicyTests {
 		domain.deactivate();
 	}
 
+	private String join(String delimiter, String... strings) {
+		// TODO: when switching to J2SE-1.8 BREE, we could replace this with
+		// String.join();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < strings.length; i++) {
+			sb.append(strings[i]);
+			if (i < strings.length - 1) {
+				sb.append(delimiter);
+			}
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * All parts are focusable, cell tree:
 	 *
@@ -191,7 +204,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RC0_RC1() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = Cell.createCellTree(String.join("\n", "R-C0", "R-C1"), cells);
+		Cell root = Cell.createCellTree(join("\n", "R-C0", "R-C1"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -254,7 +267,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RCC0C00_RCC1C10_RCC2C20() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = Cell.createCellTree(String.join("\n", "R-C-C0-C00", "R-C-C1-C10", "R-C-C2-C20"), cells);
+		Cell root = Cell.createCellTree(join("\n", "R-C-C0-C00", "R-C-C1-C10", "R-C-C2-C20"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -308,7 +321,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RV0_RC1_RV2() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = Cell.createCellTree(String.join("\n", "R-V0", "R-C1", "R-V2"), cells);
+		Cell root = Cell.createCellTree(join("\n", "R-V0", "R-C1", "R-V2"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -360,7 +373,7 @@ public class FocusTraversalPolicyTests {
 	@Test
 	public void test_RV0C0_RV1C1() {
 		Map<String, Cell> cells = new HashMap<>();
-		Cell root = Cell.createCellTree(String.join("\n", "R-V0-C0", "R-V1-C1"), cells);
+		Cell root = Cell.createCellTree(join("\n", "R-V0-C0", "R-V1-C1"), cells);
 		viewer.getAdapter(ContentModel.class).getContents().setAll(root.children);
 
 		// check initial state
@@ -374,5 +387,4 @@ public class FocusTraversalPolicyTests {
 		// check full cycle (backwards)
 		checkFocusTraversal(cells, PREV, "C1", PREV, "C0", PREV, null);
 	}
-
 }
