@@ -17,9 +17,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
@@ -156,13 +160,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	private static final String NODE_LABEL_EMPTY = "-";
 
 	private MapChangeListener<String, Object> nodeAttributesObserver = new MapChangeListener<String, Object>() {
-
 		@Override
 		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
 			refreshVisual();
 		}
-
 	};
+
 	private Text labelText;
 	private ImageView iconImageView;
 	private Node nestedGraphIcon;
@@ -417,6 +420,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON));
 		refreshNestedGraphArea(visual, isNesting());
 		refreshTooltip(visual, attrs.get(ZestProperties.NODE_TOOLTIP));
+		refreshBounds(visual, attrs.get(ZestProperties.NODE_BOUNDS));
 	}
 
 	@Override
@@ -518,6 +522,39 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 */
 	protected boolean isNesting() {
 		return getContent().getNestedGraph() != null;
+	}
+
+	/**
+	 * Adjusts the position and size of this part's visual to the given bounds.
+	 *
+	 * @param visual
+	 *            The visual of this part.
+	 * @param object
+	 *            The {@link Rectangle} describing the bounds for this part's
+	 *            visual.
+	 */
+	protected void refreshBounds(Group visual, Object object) {
+		if (object instanceof Rectangle) {
+			Rectangle bounds = (Rectangle) object;
+			// translate
+			FXTransformPolicy transformPolicy = getAdapter(FXTransformPolicy.class);
+			transformPolicy.init();
+			transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1, bounds.getX(), bounds.getY()));
+			try {
+				transformPolicy.commit().execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
+			// resize
+			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
+			resizeOperation.setDw(bounds.getWidth() - visual.getLayoutBounds().getWidth());
+			resizeOperation.setDh(bounds.getHeight() - visual.getLayoutBounds().getHeight());
+			try {
+				resizeOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
+		}
 	}
 
 	/**
