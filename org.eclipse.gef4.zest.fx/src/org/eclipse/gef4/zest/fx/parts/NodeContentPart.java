@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.awt.Point;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -420,7 +422,8 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON));
 		refreshNestedGraphArea(visual, isNesting());
 		refreshTooltip(visual, attrs.get(ZestProperties.NODE_TOOLTIP));
-		refreshBounds(visual, attrs.get(ZestProperties.NODE_BOUNDS));
+		refreshPosition(visual, attrs.get(ZestProperties.NODE_POSITION));
+		refreshSize(visual, attrs.get(ZestProperties.NODE_SIZE));
 	}
 
 	@Override
@@ -522,39 +525,6 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 */
 	protected boolean isNesting() {
 		return getContent().getNestedGraph() != null;
-	}
-
-	/**
-	 * Adjusts the position and size of this part's visual to the given bounds.
-	 *
-	 * @param visual
-	 *            The visual of this part.
-	 * @param object
-	 *            The {@link Rectangle} describing the bounds for this part's
-	 *            visual.
-	 */
-	protected void refreshBounds(Group visual, Object object) {
-		if (object instanceof Rectangle) {
-			Rectangle bounds = (Rectangle) object;
-			// translate
-			FXTransformPolicy transformPolicy = getAdapter(FXTransformPolicy.class);
-			transformPolicy.init();
-			transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1, bounds.getX(), bounds.getY()));
-			try {
-				transformPolicy.commit().execute(null, null);
-			} catch (ExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-			// resize
-			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
-			resizeOperation.setDw(bounds.getWidth() - visual.getLayoutBounds().getWidth());
-			resizeOperation.setDh(bounds.getHeight() - visual.getLayoutBounds().getHeight());
-			try {
-				resizeOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
 	}
 
 	/**
@@ -662,6 +632,53 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		} else {
 			vbox.setPrefSize(0, 0);
 			vbox.resize(0, 0);
+		}
+	}
+
+	/**
+	 * Adjusts the node's position to fit the given {@link Point}.
+	 *
+	 * @param visual
+	 *            This node's visual.
+	 * @param object
+	 *            This node's position.
+	 */
+	protected void refreshPosition(Group visual, Object object) {
+		if (object instanceof Point) {
+			Point position = (Point) object;
+			// translate
+			FXTransformPolicy transformPolicy = getAdapter(FXTransformPolicy.class);
+			transformPolicy.init();
+			transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1, position.getX(), position.getY()));
+			try {
+				transformPolicy.commit().execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+	}
+
+	/**
+	 * Adjusts the position and size of this part's visual to the given bounds.
+	 *
+	 * @param visual
+	 *            The visual of this part.
+	 * @param object
+	 *            The {@link Rectangle} describing the bounds for this part's
+	 *            visual.
+	 */
+	protected void refreshSize(Group visual, Object object) {
+		if (object instanceof Dimension) {
+			Dimension size = (Dimension) object;
+			// resize
+			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
+			resizeOperation.setDw(size.getWidth() - visual.getLayoutBounds().getWidth());
+			resizeOperation.setDh(size.getHeight() - visual.getLayoutBounds().getHeight());
+			try {
+				resizeOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 	}
 

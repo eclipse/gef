@@ -12,20 +12,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
-import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.operations.ChangeNodeBoundsOperation;
+import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
  * The {@link FXResizeNodePolicy} is a specialization of {@link FXResizePolicy}
- * that chains a {@link ChangeNodeBoundsOperation} for updating the resized
+ * that chains a {@link ChangeNodeSizeOperation} for updating the resized
  * {@link Node}. Therefore, it is only applicable for {@link NodeContentPart}.
  *
  * @author mwienand
@@ -35,17 +32,19 @@ public class FXResizeNodePolicy extends FXResizePolicy {
 
 	@Override
 	public ITransactionalOperation commit() {
+		// extract changes
 		Dimension initialSize = getResizeOperation().getInitialSize();
 		double dw = getResizeOperation().getDw();
 		double dh = getResizeOperation().getDh();
+
+		// get visual operation
 		ITransactionalOperation visualOperation = super.commit();
-		Rectangle currentBounds = ZestProperties.getBounds(getHost().getContent());
-		if (currentBounds == null) {
-			currentBounds = FX2Geometry.toRectangle(getHost().getVisual().getLayoutBounds());
-		}
-		Rectangle finalBounds = new Rectangle(currentBounds.getX(), currentBounds.getY(), initialSize.width + dw,
-				initialSize.height + dh);
-		ChangeNodeBoundsOperation modelOperation = new ChangeNodeBoundsOperation(getHost(), finalBounds);
+
+		// create model operation
+		Dimension finalSize = new Dimension(initialSize.width + dw, initialSize.height + dh);
+		ChangeNodeSizeOperation modelOperation = new ChangeNodeSizeOperation(getHost(), finalSize);
+
+		// assemble visual and model operations
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("ResizeNode()");
 		if (visualOperation != null) {
 			fwdOp.add(visualOperation);

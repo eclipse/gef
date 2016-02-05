@@ -18,52 +18,50 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
- * The {@link ChangeNodeBoundsOperation} can be used to manipulate the position
- * and size of a {@link Node}.
+ * The {@link ChangeNodeSizeOperation} can be used to manipulate the size of a
+ * {@link Node}.
  *
  * @author mwienand
  *
  */
-public class ChangeNodeBoundsOperation extends AbstractOperation implements ITransactionalOperation {
+public class ChangeNodeSizeOperation extends AbstractOperation implements ITransactionalOperation {
 
 	private NodeContentPart nodePart;
-	private Rectangle initialBounds;
-	private Rectangle finalBounds;
+	private Dimension initialSize;
+	private Dimension finalSize;
 
 	/**
-	 * Constructs a new {@link ChangeNodeBoundsOperation} that can be used to
+	 * Constructs a new {@link ChangeNodeSizeOperation} that can be used to
 	 * manipulate the position and size of the given {@link Node}.
 	 *
 	 * @param nodePart
 	 *            The {@link Node} that is manipulated by this operation.
-	 * @param finalBounds
-	 *            The {@link Rectangle} describing the final bounds for the
+	 * @param finalSize
+	 *            The {@link Dimension} describing the final bounds for the
 	 *            given {@link Node}.
 	 */
-	public ChangeNodeBoundsOperation(NodeContentPart nodePart, Rectangle finalBounds) {
+	public ChangeNodeSizeOperation(NodeContentPart nodePart, Dimension finalSize) {
 		super("TransformNode()");
 		this.nodePart = nodePart;
-		this.finalBounds = finalBounds;
-		initialBounds = ZestProperties.getBounds(nodePart.getContent());
-		if (initialBounds == null) {
-			initialBounds = FX2Geometry.toRectangle(nodePart.getVisual().getLayoutBounds());
-		} else {
-			initialBounds = initialBounds.getCopy();
+		this.finalSize = finalSize;
+		initialSize = ZestProperties.getSize(nodePart.getContent());
+		if (initialSize != null) {
+			initialSize = initialSize.getCopy();
 		}
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		if (!finalBounds.equals(ZestProperties.getBounds(nodePart.getContent()))) {
-			ZestProperties.setBounds(nodePart.getContent(), finalBounds);
+		Dimension currentSize = ZestProperties.getSize(nodePart.getContent());
+		if (finalSize != currentSize && (finalSize == null || !finalSize.equals(currentSize))) {
+			ZestProperties.setSize(nodePart.getContent(), finalSize);
 		}
 		return Status.OK_STATUS;
 	}
@@ -75,7 +73,7 @@ public class ChangeNodeBoundsOperation extends AbstractOperation implements ITra
 
 	@Override
 	public boolean isNoOp() {
-		return initialBounds.equals(finalBounds);
+		return initialSize == finalSize || (initialSize != null && initialSize.equals(finalSize));
 	}
 
 	@Override
@@ -84,20 +82,21 @@ public class ChangeNodeBoundsOperation extends AbstractOperation implements ITra
 	}
 
 	/**
-	 * Sets the final bounds for this operation to the given value.
+	 * Sets the final size for this operation to the given value.
 	 *
-	 * @param finalBounds
-	 *            A {@link Rectangle} describing the final bounds for this
+	 * @param finalSize
+	 *            A {@link Dimension} describing the final size for this
 	 *            operation.
 	 */
-	public void setFinalBounds(Rectangle finalBounds) {
-		this.finalBounds = finalBounds;
+	public void setFinalSize(Dimension finalSize) {
+		this.finalSize = finalSize;
 	}
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		if (!initialBounds.equals(ZestProperties.getBounds(nodePart.getContent()))) {
-			ZestProperties.setBounds(nodePart.getContent(), initialBounds);
+		Dimension currentSize = ZestProperties.getSize(nodePart.getContent());
+		if (initialSize != currentSize && (initialSize == null || !initialSize.equals(currentSize))) {
+			ZestProperties.setSize(nodePart.getContent(), initialSize);
 		}
 		return Status.OK_STATUS;
 	}

@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.awt.Point;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
-import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -108,12 +110,16 @@ public class ZestProperties {
 	public static final String EDGE_LABEL_CSS_STYLE = "edge-label-css-style";
 
 	/**
-	 * This attribute determines the way points for the {@link #EDGE_ROUTER}.
+	 * This attribute determines the way points that are passed along to the
+	 * {@link #EDGE_ROUTER} in addition to the start and end point, which are
+	 * provided by the {@link Connection} and computed by {@link IAnchor}s at
+	 * the source and target node of the {@link Edge} (and not included in the
+	 * list of way points).
 	 *
-	 * @see #getRouterPoints(Edge)
-	 * @see #setRouterPoints(Edge, List)
+	 * @see #getWayPoints(Edge)
+	 * @see #setWayPoints(Edge, List)
 	 */
-	public static final String EDGE_ROUTER_POINTS = "edge-router-points";
+	public static final String EDGE_WAY_POINTS = "edge-way-points";
 
 	/**
 	 * This attribute determines the CSS style for a node rectangle. This
@@ -143,13 +149,20 @@ public class ZestProperties {
 	public static final String NODE_ICON = "icon";
 
 	/**
-	 * This attribute determines the bounds for a {@link Node}, i.e. its
-	 * position and size.
+	 * This attribute determines the size for a {@link Node}.
 	 *
-	 * @see #getBounds(Node)
-	 * @see #setBounds(Node, Rectangle)
+	 * @see #getSize(Node)
+	 * @see #setSize(Node, Dimension)
 	 */
-	public static final String NODE_BOUNDS = "bounds";
+	public static final String NODE_SIZE = "size";
+
+	/**
+	 * This attribute determines the position for a {@link Node}.
+	 *
+	 * @see #getPosition(Node)
+	 * @see #setPosition(Node, Point)
+	 */
+	public static final String NODE_POSITION = "position";
 
 	/**
 	 * This attribute determines the tooltip for a node. This attribute does not
@@ -246,23 +259,6 @@ public class ZestProperties {
 	 * The default value of the {@link #NODE_FISHEYE} attribute.
 	 */
 	public static Boolean NODE_FISHEYE_DEFAULT = false;
-
-	/**
-	 * Returns the value of the {@link #NODE_BOUNDS} attribute of the given
-	 * {@link Node}.
-	 *
-	 * @param node
-	 *            The {@link Node} for which to return the {@link #NODE_BOUNDS}.
-	 * @return The value of the {@link #NODE_BOUNDS} attribute of the given
-	 *         {@link Node}.
-	 */
-	public static Rectangle getBounds(Node node) {
-		Object bounds = node.getAttributes().get(NODE_BOUNDS);
-		if (bounds instanceof Rectangle) {
-			return (Rectangle) bounds;
-		}
-		return null;
-	}
 
 	/**
 	 * Returns the value of the {@link #ELEMENT_CSS_CLASS} attribute of the
@@ -493,6 +489,23 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #NODE_POSITION} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the position is determined.
+	 * @return The value of the {@link #NODE_POSITION} attribute of the given
+	 *         {@link Node}.
+	 */
+	public static Point getPosition(Node node) {
+		Object object = node.getAttributes().get(NODE_POSITION);
+		if (object instanceof Point) {
+			return (Point) object;
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the value of the {@link #EDGE_ROUTER} attribute of the given
 	 * {@link Edge}.
 	 *
@@ -506,21 +519,20 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EDGE_ROUTER_POINTS} attribute of the
-	 * given {@link Edge}.
+	 * Returns the value of the {@link #NODE_SIZE} attribute of the given
+	 * {@link Node}.
 	 *
-	 * @param edge
-	 *            The {@link Edge} for which to determine the router points.
-	 * @return The value of the {@link #EDGE_ROUTER_POINTS} attribute of the
-	 *         given {@link Edge}.
+	 * @param node
+	 *            The {@link Node} for which to return the {@link #NODE_SIZE}.
+	 * @return The value of the {@link #NODE_SIZE} attribute of the given
+	 *         {@link Node}.
 	 */
-	@SuppressWarnings("unchecked")
-	public static List<Point> getRouterPoints(Edge edge) {
-		Object routerPoints = edge.getAttributes().get(EDGE_ROUTER_POINTS);
-		if (routerPoints instanceof List) {
-			return (List<Point>) routerPoints;
+	public static Dimension getSize(Node node) {
+		Object bounds = node.getAttributes().get(NODE_SIZE);
+		if (bounds instanceof Dimension) {
+			return (Dimension) bounds;
 		}
-		return Collections.emptyList();
+		return null;
 	}
 
 	/**
@@ -587,17 +599,21 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #NODE_BOUNDS} attribute of the given
-	 * {@link Node} to the given value.
+	 * Returns the value of the {@link #EDGE_WAY_POINTS} attribute of the given
+	 * {@link Edge}.
 	 *
-	 * @param node
-	 *            The {@link Node} for which to return the {@link #NODE_BOUNDS}.
-	 * @param bounds
-	 *            The {@link Rectangle} describing the new bounds for the given
-	 *            {@link Node}.
+	 * @param edge
+	 *            The {@link Edge} for which to determine the router points.
+	 * @return The value of the {@link #EDGE_WAY_POINTS} attribute of the given
+	 *         {@link Edge}.
 	 */
-	public static void setBounds(Node node, Rectangle bounds) {
-		node.getAttributes().put(NODE_BOUNDS, bounds);
+	@SuppressWarnings("unchecked")
+	public static List<Point> getWayPoints(Edge edge) {
+		Object routerPoints = edge.getAttributes().get(EDGE_WAY_POINTS);
+		if (routerPoints instanceof List) {
+			return (List<Point>) routerPoints;
+		}
+		return Collections.emptyList();
 	}
 
 	/**
@@ -802,6 +818,20 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #NODE_POSITION} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the {@link #NODE_POSITION} attribute
+	 *            is changed.
+	 * @param position
+	 *            The new node position.
+	 */
+	public static void setPosition(Node node, Point position) {
+		node.getAttributes().put(NODE_POSITION, position);
+	}
+
+	/**
 	 * Sets the value of the {@link #EDGE_ROUTER} attribute of the given
 	 * {@link Edge} to the given value.
 	 *
@@ -815,18 +845,17 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EDGE_ROUTER_POINTS} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the value of the {@link #NODE_SIZE} attribute of the given
+	 * {@link Node} to the given value.
 	 *
-	 * @param edge
-	 *            The {@link Edge} of which the {@link #EDGE_ROUTER_POINTS}
-	 *            attribute is changed.
-	 * @param routerPoints
-	 *            The new {@link List} of router {@link Point}s for the given
-	 *            {@link Edge}.
+	 * @param node
+	 *            The {@link Node} for which to return the {@link #NODE_SIZE}.
+	 * @param size
+	 *            The {@link Dimension} describing the new size for the given
+	 *            {@link Node}.
 	 */
-	public static void setRouterPoints(Edge edge, List<Point> routerPoints) {
-		edge.getAttributes().put(EDGE_ROUTER_POINTS, routerPoints);
+	public static void setSize(Node node, Dimension size) {
+		node.getAttributes().put(NODE_SIZE, size);
 	}
 
 	/**
@@ -888,6 +917,21 @@ public class ZestProperties {
 					+ "\"; supported values: " + GRAPH_TYPE_VALUES);
 		}
 		graph.attributesProperty().put(GRAPH_TYPE, type);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_WAY_POINTS} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the {@link #EDGE_WAY_POINTS}
+	 *            attribute is changed.
+	 * @param routerPoints
+	 *            The new {@link List} of router {@link Point}s for the given
+	 *            {@link Edge}.
+	 */
+	public static void setWayPoints(Edge edge, List<Point> routerPoints) {
+		edge.getAttributes().put(EDGE_WAY_POINTS, routerPoints);
 	}
 
 }
