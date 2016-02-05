@@ -155,17 +155,8 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		if (graph == null) {
 			graph = new Graph();
 		}
-
-		// update attribute bindings only in case graph really changed
-		if (this.graph != graph) {
-			if (this.graph != null) {
-				attributesProperty.unbindContentBidirectional(this.graph.attributesProperty());
-			}
-			this.graph = graph;
-			this.attributesProperty.bindContentBidirectional(this.graph.attributesProperty());
-		}
-
-		// TODO: its not nice to pass in the same graph instqnce simply to
+		this.graph = graph;
+		// TODO: its not nice to pass in the same graph instance simply to
 		// refresh the nodes and edges (which is the contract here; and the
 		// reason this is always executed, even if the graph is the same)
 		transferNodes();
