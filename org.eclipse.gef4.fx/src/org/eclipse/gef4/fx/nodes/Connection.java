@@ -30,8 +30,8 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -416,7 +416,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 				}
 			});
 
-	private int nextWayAnchorId = 0;
 	// refresh geometry on position changes
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
@@ -916,9 +915,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (!anchor.isAttached(getEndAnchorKey())) {
 			return null;
 		}
-		return FX2Geometry
-				.toPoint(getCurveNode().localToParent(Geometry2FX
-						.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
+		return FX2Geometry.toPoint(getCurveNode().localToParent(
+				Geometry2FX.toFXPoint(anchor.getPosition(getEndAnchorKey()))));
 	}
 
 	/**
@@ -1033,9 +1031,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (!anchor.isAttached(getStartAnchorKey())) {
 			return null;
 		}
-		return FX2Geometry
-				.toPoint(getCurveNode().localToParent(Geometry2FX
-						.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
+		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
+				.toFXPoint(anchor.getPosition(getStartAnchorKey()))));
 	}
 
 	/**
@@ -1129,9 +1126,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		if (!anchor.isAttached(getWayAnchorKey(index))) {
 			return null;
 		}
-		return FX2Geometry
-				.toPoint(getCurveNode().localToParent(Geometry2FX.toFXPoint(
-						anchor.getPosition(getWayAnchorKey(index)))));
+		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
+				.toFXPoint(anchor.getPosition(getWayAnchorKey(index)))));
 	}
 
 	/**
