@@ -209,6 +209,12 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		if (router != null) {
 			visual.setRouter(router);
 		}
+
+		// control points
+		List<Point> controlPoints = ZestProperties.getWayPoints(edge);
+		if (controlPoints != null && !controlPoints.isEmpty()) {
+			visual.setWayPoints(controlPoints);
+		}
 	}
 
 	@Override
