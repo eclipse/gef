@@ -25,10 +25,12 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.providers.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javafx.geometry.Bounds;
@@ -36,6 +38,13 @@ import javafx.scene.Group;
 import javafx.scene.transform.Affine;
 
 public class NodeLayoutBehaviorTests {
+
+	/**
+	 * Ensure all tests are executed on the JavaFX application thread (and the
+	 * JavaFX toolkit is properly initialized).
+	 */
+	@Rule
+	public FXApplicationThreadRule fxApplicationThreadRule = new FXApplicationThreadRule();
 
 	private GraphNodeLayout createNodeLayout() {
 		Node node = new Node.Builder().buildNode();

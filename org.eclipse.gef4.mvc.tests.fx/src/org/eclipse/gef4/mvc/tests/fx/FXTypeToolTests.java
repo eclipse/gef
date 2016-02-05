@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.junit.Rule;
 import org.junit.Test;

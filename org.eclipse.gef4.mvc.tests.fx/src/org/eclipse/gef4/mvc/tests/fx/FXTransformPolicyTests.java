@@ -30,6 +30,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

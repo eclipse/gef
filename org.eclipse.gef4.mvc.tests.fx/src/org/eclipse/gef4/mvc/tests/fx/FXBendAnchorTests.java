@@ -46,6 +46,7 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.tests.fx.rules.FXNonApplicationThreadRule;
 import org.junit.Rule;
 import org.junit.Test;
 

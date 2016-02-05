@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.tests.fx;
+package org.eclipse.gef4.mvc.tests.fx.rules;
 
 import java.awt.AWTException;
 import java.awt.Robot;
