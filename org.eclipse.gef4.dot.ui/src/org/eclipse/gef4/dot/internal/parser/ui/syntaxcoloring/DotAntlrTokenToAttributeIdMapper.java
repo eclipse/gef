@@ -25,12 +25,8 @@ public class DotAntlrTokenToAttributeIdMapper
 	@Override
 	protected String calculateId(String tokenName, int tokenType) {
 		// ensure CompassPt constants are lexically highlighted as STRING tokens
-		if ("RULE_STRING".equals(tokenName) || tokenName.equals("'n'") //$NON-NLS-1$ //$NON-NLS-2$
-				|| tokenName.equals("'ne'") || tokenName.equals("'e'") //$NON-NLS-1$ //$NON-NLS-2$
-				|| tokenName.equals("'se'") || tokenName.equals("'s'") //$NON-NLS-1$ //$NON-NLS-2$
-				|| tokenName.equals("'sw'") || tokenName.equals("'w'") //$NON-NLS-1$ //$NON-NLS-2$
-				|| tokenName.equals("'nw'") || tokenName.equals("'c'") //$NON-NLS-1$ //$NON-NLS-2$
-				|| tokenName.equals("'_'")) { //$NON-NLS-1$
+		if ("RULE_STRING".equals(tokenName) //$NON-NLS-1$
+				|| "RULE_COMPASS_PT".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.STRING_ID;
 		} else if ("RULE_NUMERAL".equals(tokenName)) { //$NON-NLS-1$
 			return DotHighlightingConfiguration.NUMERAL_ID;
