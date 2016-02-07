@@ -8,30 +8,33 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Point;
 
 /**
- * An {@link IConnectionRouter} {@link #routeConnection(Point[]) computes} an
- * {@link ICurve} based on a number of supplied {@link Point}s.
+ * An {@link IConnectionRouter} is responsible for {@link #route(Connection)
+ * computing} an {@link ICurve} that represents the geometry of the
+ * {@link Connection}.
  *
  * @author mwienand
+ * @author anyssen
  *
  */
 public interface IConnectionRouter {
 
 	/**
-	 * Computes the curve geometry for a connection based on the given points.
+	 * Computes the {@link ICurve} geometry for the given connection.
 	 *
-	 * @param points
-	 *            start point, way points, and end point of the routed
-	 *            connection.
-	 * @return new curve geometry for the connection.
+	 * @param connection
+	 *            The {@link Connection} to route.
+	 *
+	 * @return A new {@link ICurve} geometry representing the geometry that is
+	 *         to be rendered for the given connection.
 	 */
-	public ICurve routeConnection(Point[] points);
+	public ICurve route(Connection connection);
 
 }

@@ -20,8 +20,8 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -45,9 +45,9 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link FXBendConnectionPolicy} can be used to manipulate the points constituting an
- * {@link Connection}, i.e. its start, way, and end points. Each point is
- * realized though an {@link IAnchor}, which may either be local to the
+ * The {@link FXBendConnectionPolicy} can be used to manipulate the points
+ * constituting an {@link Connection}, i.e. its start, way, and end points. Each
+ * point is realized though an {@link IAnchor}, which may either be local to the
  * {@link Connection} (i.e. the anchor refers to the {@link Connection} as
  * anchorage), or it may be provided by another {@link IVisualPart} (i.e. the
  * anchor is provided by a {@link Provider} adapted to the part), to which the
@@ -98,7 +98,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 *         . Otherwise returns <code>false</code>.
 	 *
 	 * @see Connection#isStartConnected()
-	 * @see Connection#isWayConnected(int)
+	 * @see Connection#isControlConnected(int)
 	 * @see Connection#isEndConnected()
 	 *
 	 */
@@ -309,9 +309,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	// TODO: extract to somewhere else (this is used in several places)
 	protected Point getMouseDeltaInLocal(Point currentMousePositionInScene) {
-		Point mouseInLocal = FX2Geometry
-				.toPoint(getConnection().sceneToLocal(Geometry2FX
-						.toFXPoint(currentMousePositionInScene)));
+		Point mouseInLocal = FX2Geometry.toPoint(getConnection().sceneToLocal(
+				Geometry2FX.toFXPoint(currentMousePositionInScene)));
 		// compensate the movement of the local coordinate system w.r.t. the
 		// scene coordinate system (the scene coordinate system stays consistent
 		// w.r.t. to mouse movement)
@@ -550,7 +549,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 		initialMousePositionInScene = mouseInScene.getCopy();
 		selectedPointInitialPositionInLocal = getBendOperation().getConnection()
-				.getPoints()[selectedPointIndex];
+				.getPoints().get(selectedPointIndex);
 	}
 
 	@Override

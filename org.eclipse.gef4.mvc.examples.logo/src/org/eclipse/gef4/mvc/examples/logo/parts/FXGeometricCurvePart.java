@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.PolyBezierConnectionRouter;
+import org.eclipse.gef4.fx.nodes.PolyBezierInterpolationRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -154,7 +154,7 @@ public class FXGeometricCurvePart
 		// determine old and new points
 		final FXGeometricCurve curve = getContent();
 		final List<Point> oldWayPoints = curve.getWayPointsCopy();
-		final List<Point> newWayPoints = getVisual().getWayPoints();
+		final List<Point> newWayPoints = getVisual().getControlPoints();
 
 		// create model operation
 		final ITransactionalOperation updateModelOperation = new ChangeWayPointsOperation(
@@ -240,7 +240,7 @@ public class FXGeometricCurvePart
 	@Override
 	protected Connection createVisual() {
 		Connection visual = new Connection();
-		visual.setRouter(new PolyBezierConnectionRouter());
+		visual.setRouter(new PolyBezierInterpolationRouter());
 		visual.getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
 		return visual;
 	}
@@ -325,8 +325,8 @@ public class FXGeometricCurvePart
 			}
 		}
 
-		if (!visual.getWayPoints().equals(wayPoints)) {
-			visual.setWayPoints(wayPoints);
+		if (!visual.getControlPoints().equals(wayPoints)) {
+			visual.setControlPoints(wayPoints);
 		}
 
 		// decorations

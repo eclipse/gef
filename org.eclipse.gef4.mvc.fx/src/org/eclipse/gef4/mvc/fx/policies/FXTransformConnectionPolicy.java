@@ -84,7 +84,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 			indices.add(0);
 		}
 		for (int i = 0; i < op.getNewAnchors().size() - 2; i++) {
-			if (!op.getConnection().isWayConnected(i)) {
+			if (!op.getConnection().isControlConnected(i)) {
 				indices.add(i + 1);
 			}
 		}
@@ -108,7 +108,8 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 			e.printStackTrace();
 		}
 		// compute initial anchor positions (inverse transformed)
-		initialPositions = op.getConnection().getPoints();
+		initialPositions = op.getConnection().getPoints()
+				.toArray(new Point[] {});
 		for (int i : getIndicesOfMovableAnchors()) {
 			initialPositions[i] = inverse.getTransformed(initialPositions[i]);
 		}

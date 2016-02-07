@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -29,21 +28,21 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * The {@link FXBendFirstAnchorageOnSegmentHandleDragPolicy} is an {@link IFXOnDragPolicy}
- * that can be installed on the handle parts of an {@link Connection}, so that
- * the user is able to manipulate that connection by dragging its handles. This
- * policy expects that a handle is created for each anchor point of the
- * connection (start, way, end), as well as for each middle point of a segment.
- * Moreover, this policy expects that the respective handles are of type
- * {@link FXCircleSegmentHandlePart}.
+ * The {@link FXBendFirstAnchorageOnSegmentHandleDragPolicy} is an
+ * {@link IFXOnDragPolicy} that can be installed on the handle parts of an
+ * {@link Connection}, so that the user is able to manipulate that connection by
+ * dragging its handles. This policy expects that a handle is created for each
+ * anchor point of the connection (start, way, end), as well as for each middle
+ * point of a segment. Moreover, this policy expects that the respective handles
+ * are of type {@link FXCircleSegmentHandlePart}.
  *
  * @author mwienand
  * @author anyssen
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendFirstAnchorageOnSegmentHandleDragPolicy extends AbstractFXInteractionPolicy
-		implements IFXOnDragPolicy {
+public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
+		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
 	private int createdSegmentIndex;
 
@@ -121,12 +120,12 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy extends AbstractFXInt
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		Connection connection = targetPart.getVisual();
-		List<Point> before = Arrays.asList(connection.getPoints());
+		List<Point> before = connection.getPoints();
 
 		getBendPolicy(targetPart)
 				.moveSelectedPoint(new Point(e.getSceneX(), e.getSceneY()));
 
-		List<Point> after = Arrays.asList(connection.getPoints());
+		List<Point> after = connection.getPoints();
 		if (before.size() != after.size()) {
 			adjustHandles(after, true);
 		}
@@ -136,10 +135,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy extends AbstractFXInt
 	public void dragAborted() {
 		restoreRefreshVisuals(targetPart);
 		rollback(getBendPolicy(targetPart));
-		adjustHandles(
-				Arrays.asList(
-						((Connection) targetPart.getVisual()).getPoints()),
-				false);
+		adjustHandles(((Connection) targetPart.getVisual()).getPoints(), false);
 	}
 
 	/**
@@ -246,10 +242,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy extends AbstractFXInt
 		// it may be that the bend policy returns null (no-op) because a newly
 		// created segment point was direcly removed through overlay. In this
 		// case, we need to adjust the handles as well
-		adjustHandles(
-				Arrays.asList(
-						((Connection) targetPart.getVisual()).getPoints()),
-				false);
+		adjustHandles(((Connection) targetPart.getVisual()).getPoints(), false);
 	}
 
 	private void setSegmentIndex(FXCircleSegmentHandlePart part, int value) {

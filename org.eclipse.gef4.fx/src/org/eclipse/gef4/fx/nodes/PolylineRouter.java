@@ -12,26 +12,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.PolyBezier;
+import org.eclipse.gef4.geometry.planar.Polyline;
 
 /**
- * The {@link PolyBezierConnectionRouter} interpolates a cubic Bezier spline
- * through the supplied {@link Point}s.
+ * The {@link PolylineRouter} constructs a {@link javafx.scene.shape.Polyline}
+ * through the supplied {@link Point way points}.
  *
  * @author mwienand
  *
  */
-public class PolyBezierConnectionRouter implements IConnectionRouter {
+public class PolylineRouter implements IConnectionRouter {
 
 	@Override
-	public ICurve routeConnection(Point[] points) {
-		if (points == null || points.length < 2) {
-			return new Line(0, 0, 0, 0);
-		}
-		return PolyBezier.interpolateCubic(points);
+	public Polyline route(Connection connection) {
+		return new Polyline(connection.getPoints().toArray(new Point[] {}));
 	}
-
 }

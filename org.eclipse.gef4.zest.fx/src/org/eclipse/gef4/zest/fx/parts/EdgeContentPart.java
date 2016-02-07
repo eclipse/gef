@@ -213,7 +213,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		// control points
 		List<Point> controlPoints = ZestProperties.getWayPoints(edge);
 		if (controlPoints != null && !controlPoints.isEmpty()) {
-			visual.setWayPoints(controlPoints);
+			visual.setControlPoints(controlPoints);
 		}
 	}
 

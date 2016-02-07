@@ -8,11 +8,14 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +42,10 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -59,11 +64,26 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 /**
- * The {@link Connection} provides a visualization for a binary connection whose
- * route can be influenced by a number of way points and which supports to add
- * start and end decorations.
+ * A (binary) {@link Connection} is a visual curve, whose appearance is defined
+ * through a single start and end point, and a set of control points, which may
+ * be 'connected', i.e. be attached to an {@link IAnchor}. The exact curve shape
+ * is determined by an {@link IConnectionRouter}, which is responsible of
+ * computing an {@link ICurve} geometry for a given {@link Connection} (which is
+ * then rendered using a {@link GeometryNode}).
+ * <p>
+ * Whether the control points are interpreted as way points (that lie on the
+ * curve) or as 'real' control points depends on the {@link IConnectionRouter}.
+ * While {@link PolylineRouter} and {@link PolyBezierInterpolationRouter} interpret
+ * control points to be way points, other routers may e.g. interpret them as the
+ * control points of a {@link BezierCurve}.
+ * <P>
+ * In addition to the curve shape, the visual appearance of a {@link Connection}
+ * can be controlled via start and end decorations. They will be rendered
+ * 'on-top' of the curve shape and the curve shape will be properly clipped at
+ * the decorations (so it does not paint through).
  *
  * @author mwienand
+ * @author anyssen
  *
  */
 public class Connection extends Group /* or rather Parent?? */ {
@@ -72,9 +92,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 * The {@link ChopBoxHelper} can be registered for an {@link Connection} and
 	 * serves as a {@link IReferencePointProvider} for all {@link AnchorKey}s of
 	 * that {@link Connection} which are registered at {@link ChopBoxAnchor}s.
-	 *
-	 * @author mwienand
-	 *
 	 */
 	public static class ChopBoxHelper
 			implements ChopBoxAnchor.IReferencePointProvider {
@@ -88,9 +105,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 		 * currently set reference point, you can use {@link #getRaw(Object)},
 		 * which will never trigger a reference point computation, but instead
 		 * simply look it up in the map.
-		 *
-		 * @author mwienand
-		 *
 		 */
 		public class ReferencePointMap extends HashMap<AnchorKey, Point> {
 
@@ -386,9 +400,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 	/**
 	 * Prefix for the default <i>ids</i> used by this connection to identify
-	 * specific way points at way point anchors.
+	 * specific control points at control point anchors.
 	 */
-	private static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
+	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
 	// visuals
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
@@ -397,21 +411,21 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 	private Shape endDecoration = null;
 
-	private IConnectionRouter router = new PolylineConnectionRouter();
+	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
+			new PolylineRouter());
 
 	// used to pass as argument to IAnchor#attach() and #detach()
 	private AdapterStore as = new AdapterStore();
 	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
-	// waypoint anchors are kept in an ordered set (sorted by their indices)
-	// TODO: actually, we just need the waypoint count
-	private SortedSet<AnchorKey> wayAnchorKeys = new TreeSet<>(
+	// control anchors are kept in an ordered set (sorted by their indices)
+	private SortedSet<AnchorKey> controlAnchorKeys = new TreeSet<>(
 			new Comparator<AnchorKey>() {
 
 				@Override
 				public int compare(AnchorKey o1, AnchorKey o2) {
-					int o1Index = getWayAnchorIndex(o1);
-					int o2Index = getWayAnchorIndex(o2);
+					int o1Index = getControlAnchorIndex(o1);
+					int o2Index = getControlAnchorIndex(o2);
 					return o1Index - o2Index;
 				}
 			});
@@ -467,45 +481,45 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 * @param anchorKey
 	 *            The {@link AnchorKey} under which the {@link IAnchor} is
 	 *            registered.
-	 * @param wayIndex
-	 *            The way anchor index (only for way point anchors, ignored for
-	 *            start and end anchors).
+	 * @param controlIndex
+	 *            The control anchor index (only for control point anchors,
+	 *            ignored for start and end anchors).
 	 */
 	// TODO: differentiate between set and add instead of put
 	protected void addAnchor(IAnchor anchor, AnchorKey anchorKey,
-			int wayIndex) {
+			int controlIndex) {
 		/*
 		 * XXX: The anchor is put into the map before attaching it, so that
 		 * listeners on the map can register position change listeners on the
 		 * anchor (but cannot query its position, yet).
 		 */
-		// waypoints to move are kept in reverse order
-		List<IAnchor> wayAnchorsToMove = new ArrayList<>();
+		// controlpoints to move are kept in reverse order
+		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
-			// remove all waypoints at a larger index
-			int wayPointCount = wayAnchorKeys.size();
-			for (int i = wayPointCount - 1; i >= wayIndex; i--) {
+			// remove all controlpoints at a larger index
+			int controlPointCount = controlAnchorKeys.size();
+			for (int i = controlPointCount - 1; i >= controlIndex; i--) {
 				// (temporarily) remove all anchors that are to be moved up
-				AnchorKey ak = getWayAnchorKey(i);
-				IAnchor a = getWayAnchor(i);
-				wayAnchorsToMove.add(0, a);
-				wayAnchorKeys.remove(ak);
+				AnchorKey ak = getControlAnchorKey(i);
+				IAnchor a = getControlAnchor(i);
+				controlAnchorsToMove.add(0, a);
+				controlAnchorKeys.remove(ak);
 				anchorsProperty.remove(ak);
 				a.detach(ak, as);
 			}
-			wayAnchorKeys.add(anchorKey);
+			controlAnchorKeys.add(anchorKey);
 		}
 		anchorsProperty.put(anchorKey, anchor);
 		anchor.attach(anchorKey, as);
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
-			// re-add all waypoints at a larger index
-			for (int i = 0; i < wayAnchorsToMove.size(); i++) {
-				AnchorKey ak = getWayAnchorKey(wayIndex + i + 1);
-				IAnchor a = wayAnchorsToMove.get(i);
-				wayAnchorKeys.add(ak);
+			// re-add all controlpoints at a larger index
+			for (int i = 0; i < controlAnchorsToMove.size(); i++) {
+				AnchorKey ak = getControlAnchorKey(controlIndex + i + 1);
+				IAnchor a = controlAnchorsToMove.get(i);
+				controlAnchorKeys.add(ak);
 				anchorsProperty.put(ak, a);
 				a.attach(ak, as);
 			}
@@ -521,51 +535,51 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Adds the given {@link IAnchor} as a way point anchor for the given index
-	 * into the {@link #anchorsProperty()} of this {@link Connection}.
+	 * Adds the given {@link IAnchor} as a control point anchor for the given
+	 * index into the {@link #anchorsProperty()} of this {@link Connection}.
 	 *
 	 * @param index
 	 *            The position where the {@link IAnchor} is inserted within the
-	 *            way point anchors of this {@link Connection}.
+	 *            control point anchors of this {@link Connection}.
 	 * @param anchor
 	 *            The {@link IAnchor} which determines the position of the
-	 *            corresponding way point.
+	 *            corresponding control point.
 	 */
-	public void addWayAnchor(int index, IAnchor anchor) {
+	public void addControlAnchor(int index, IAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		addAnchor(anchor, getWayAnchorKey(index), index);
+		addAnchor(anchor, getControlAnchorKey(index), index);
 	}
 
 	/**
-	 * Adds an {@link StaticAnchor} yielding the given {@link Point} as a way
-	 * point anchor for the given index into the {@link #anchorsProperty()} of
-	 * this {@link Connection}.
+	 * Adds an {@link StaticAnchor} yielding the given {@link Point} as a
+	 * control point anchor for the given index into the
+	 * {@link #anchorsProperty()} of this {@link Connection}.
 	 *
 	 * @param index
 	 *            The position where the {@link IAnchor} is inserted within the
-	 *            way point anchors of this {@link Connection}.
-	 * @param wayPointInLocal
-	 *            The position for the specified way point.
+	 *            control point anchors of this {@link Connection}.
+	 * @param controlPointInLocal
+	 *            The position for the specified control point.
 	 */
-	public void addWayPoint(int index, Point wayPointInLocal) {
-		if (wayPointInLocal == null) {
-			wayPointInLocal = new Point();
+	public void addControlPoint(int index, Point controlPointInLocal) {
+		if (controlPointInLocal == null) {
+			controlPointInLocal = new Point();
 		}
-		IAnchor anchor = new StaticAnchor(this, wayPointInLocal);
-		addWayAnchor(index, anchor);
+		IAnchor anchor = new StaticAnchor(this, controlPointInLocal);
+		addControlAnchor(index, anchor);
 	}
 
 	/**
 	 * Returns the {@link ReadOnlyMapProperty} which stores the
 	 * {@link AnchorKey}s and corresponding {@link IAnchor}s which determine the
-	 * start point, way points, and end point of this {@link Connection}.
+	 * start point, control points, and end point of this {@link Connection}.
 	 *
 	 * @return The {@link ReadOnlyMapProperty} which stores the
 	 *         {@link AnchorKey}s and corresponding {@link IAnchor}s which
-	 *         determine the start point, way points, and end point of this
+	 *         determine the start point, control points, and end point of this
 	 *         {@link Connection}
 	 */
 	protected ReadOnlyMapProperty<AnchorKey, IAnchor> anchorsProperty() {
@@ -759,7 +773,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	/**
 	 * Returns the anchor at the given index. The start anchor will be provided
 	 * for <code>index == 0</code>, the end anchor for the last defined index.
-	 * Way anchors will be returned for all indices in between.
+	 * Control anchors will be returned for all indices in between.
 	 *
 	 * @param index
 	 *            The index of the anchor to retrieve.
@@ -768,10 +782,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 	public IAnchor getAnchor(int index) {
 		if (index == 0) {
 			return getStartAnchor();
-		} else if (index == wayAnchorKeys.size() + 1) {
+		} else if (index == controlAnchorKeys.size() + 1) {
 			return getEndAnchor();
 		} else {
-			return getWayAnchor(index - 1);
+			return getControlAnchor(index - 1);
 		}
 	}
 
@@ -782,8 +796,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 * </li>
 	 * <li>{@link #getAnchors()}<code>.size() - 1</code> for the
 	 * {@link #getEndAnchorKey() end anchor key}</li>
-	 * <li>{@link #getWayAnchorIndex(AnchorKey)}<code> + 1</code> for way point
-	 * anchor keys</li>
+	 * <li>{@link #getControlAnchorIndex(AnchorKey)}<code> + 1</code> for
+	 * control point anchor keys</li>
 	 * </ul>
 	 *
 	 * @param anchorKey
@@ -797,7 +811,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		} else if (anchorKey.equals(getEndAnchorKey())) {
 			return getAnchors().size() - 1;
 		} else {
-			return getWayAnchorIndex(anchorKey) + 1;
+			return getControlAnchorIndex(anchorKey) + 1;
 		}
 	}
 
@@ -820,21 +834,21 @@ public class Connection extends Group /* or rather Parent?? */ {
 		} else if (anchorIndex == getAnchors().size() - 1) {
 			return getEndAnchorKey();
 		} else {
-			return getWayAnchorKey(anchorIndex - 1);
+			return getControlAnchorKey(anchorIndex - 1);
 		}
 	}
 
 	/**
 	 * Returns a {@link List} containing the {@link IAnchor}s which are assigned
-	 * to this {@link Connection} in the order: start anchor, way point anchors,
-	 * end anchor.
+	 * to this {@link Connection} in the order: start anchor, control point
+	 * anchors, end anchor.
 	 *
 	 * @return A {@link List} containing the {@link IAnchor}s which are assigned
 	 *         to this {@link Connection}.
 	 */
 	public List<IAnchor> getAnchors() {
-		int wayPointCount = wayAnchorKeys.size();
-		List<IAnchor> anchors = new ArrayList<>(wayPointCount + 2);
+		int controlPointCount = controlAnchorKeys.size();
+		List<IAnchor> anchors = new ArrayList<>(controlPointCount + 2);
 
 		// start anchor
 		IAnchor startAnchor = getStartAnchor();
@@ -843,8 +857,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		}
 		anchors.add(startAnchor);
 
-		// way anchors
-		anchors.addAll(getWayAnchors());
+		// control anchors
+		anchors.addAll(getControlAnchors());
 
 		// end anchor
 		IAnchor endAnchor = getEndAnchor();
@@ -854,6 +868,121 @@ public class Connection extends Group /* or rather Parent?? */ {
 		anchors.add(endAnchor);
 
 		return anchors;
+	}
+
+	/**
+	 * Returns the control {@link IAnchor anchor} for the given control anchor
+	 * index which is currently assigned, or <code>null</code> if no control
+	 * {@link IAnchor anchor} is assigned for that index.
+	 *
+	 * @param index
+	 *            The control anchor index determining which control
+	 *            {@link IAnchor anchor} to return.
+	 * @return The control {@link IAnchor anchor} for the given index, or
+	 *         <code>null</code>.
+	 */
+	public IAnchor getControlAnchor(int index) {
+		return anchorsProperty.get(getControlAnchorKey(index));
+	}
+
+	/**
+	 * Returns the control anchor index for the given {@link AnchorKey}, i.e.
+	 * <code>0</code> for the first control {@link IAnchor anchor},
+	 * <code>1</code> for the seconds, etc.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} whose control anchor index is returned.
+	 * @return The control anchor index for the given {@link AnchorKey}.
+	 * @throws IllegalArgumentException
+	 *             when there currently is no control {@link IAnchor anchor}
+	 *             assigned to this {@link Connection} for the given
+	 *             {@link AnchorKey}.
+	 */
+	protected int getControlAnchorIndex(AnchorKey key) {
+		if (!key.getId().startsWith(CONTROL_POINT_ROLE_PREFIX)) {
+			throw new IllegalArgumentException(
+					"Given AnchorKey " + key + " is no control anchor key.");
+		}
+		int index = Integer.parseInt(
+				key.getId().substring(CONTROL_POINT_ROLE_PREFIX.length()));
+		return index;
+	}
+
+	/**
+	 * Returns the {@link AnchorKey} for the given control anchor index.
+	 *
+	 * @param index
+	 *            The control anchor index for which the {@link AnchorKey} is
+	 *            returned.
+	 * @return The {@link AnchorKey} for the given control anchor index.
+	 */
+	protected AnchorKey getControlAnchorKey(int index) {
+		return new AnchorKey(getCurveNode(), CONTROL_POINT_ROLE_PREFIX + index);
+	}
+
+	/**
+	 * Returns a {@link List} containing the control {@link IAnchor anchors}
+	 * currently assigned to this {@link Connection}.
+	 *
+	 * @return A {@link List} containing the control {@link IAnchor anchors}
+	 *         currently assigned to this {@link Connection}.
+	 */
+	public List<IAnchor> getControlAnchors() {
+		int controlPointsCount = controlAnchorKeys.size();
+		List<IAnchor> controlPointAnchors = new ArrayList<>(controlPointsCount);
+		for (int i = 0; i < controlPointsCount; i++) {
+			IAnchor controlAnchor = getControlAnchor(i);
+			if (controlAnchor == null) {
+				throw new IllegalStateException(
+						"control anchor may never be null.");
+			}
+			controlPointAnchors.add(controlAnchor);
+		}
+		return controlPointAnchors;
+	}
+
+	/**
+	 * Returns the control {@link Point} for the given control anchor index
+	 * within the coordinate system of this {@link Connection} which is
+	 * determined by querying the anchor position for the corresponding
+	 * {@link #getControlAnchor(int) control anchor}, or <code>null</code> if no
+	 * {@link #getControlAnchor(int) control anchor} is assigned for the given
+	 * index.
+	 *
+	 * @param index
+	 *            The control anchor index for which to return the anchor
+	 *            position.
+	 * @return The start {@link Point} of this {@link Connection}, or
+	 *         <code>null</code>.
+	 */
+	public Point getControlPoint(int index) {
+		IAnchor anchor = getControlAnchor(index);
+		if (anchor == null) {
+			throw new IllegalArgumentException(
+					"No controlpoint at index " + index);
+		}
+		if (!anchor.isAttached(getControlAnchorKey(index))) {
+			return null;
+		}
+		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
+				.toFXPoint(anchor.getPosition(getControlAnchorKey(index)))));
+	}
+
+	/**
+	 * Returns a {@link List} containing the control {@link Point}s of this
+	 * {@link Connection}.
+	 *
+	 * @return A {@link List} containing the control {@link Point}s of this
+	 *         {@link Connection}.
+	 */
+	public List<Point> getControlPoints() {
+		List<IAnchor> controlPointAnchors = getControlAnchors();
+		List<Point> controlPoints = new ArrayList<>(controlPointAnchors.size());
+		for (int i = 0; i < controlPointAnchors.size(); i++) {
+			controlPoints.add(controlPointAnchors.get(i)
+					.getPosition(getControlAnchorKey(i)));
+		}
+		return controlPoints;
 	}
 
 	/**
@@ -922,7 +1051,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	/**
 	 * Returns the point at the given index. The start point will be provided
 	 * for <code>index == 0</code>, the end point for the last defined index.
-	 * Way points will be returned for all indices in between.
+	 * Control points will be returned for all indices in between.
 	 *
 	 * @param index
 	 *            The index of the point to retrieve.
@@ -933,43 +1062,44 @@ public class Connection extends Group /* or rather Parent?? */ {
 	public Point getPoint(int index) {
 		if (index == 0) {
 			return getStartPoint();
-		} else if (index == wayAnchorKeys.size() + 1) {
+		} else if (index == controlAnchorKeys.size() + 1) {
 			return getEndPoint();
 		} else {
-			return getWayPoint(index - 1);
+			return getControlPoint(index - 1);
 		}
 	}
 
 	/**
 	 * Returns the {@link Point}s constituting this {@link Connection} within
-	 * its coordinate system in the order: start point, way points, end point.
-	 * They are determined by querying the corresponding anchor positions. In
-	 * case not all anchors are assigned, an empty array is returned.
+	 * its coordinate system in the order: start point, control points, end
+	 * point. They are determined by querying the corresponding anchor
+	 * positions. In case not all anchors are assigned, an empty array is
+	 * returned.
 	 *
 	 * @return The {@link Point}s constituting this {@link Connection}.
 	 */
-	public Point[] getPoints() {
-		int wayPointCount = wayAnchorKeys.size();
-		Point[] points = new Point[wayPointCount + 2];
+	public List<Point> getPoints() {
+		int controlPointCount = controlAnchorKeys.size();
+		Point[] points = new Point[controlPointCount + 2];
 
 		points[0] = getStartPoint();
 		if (points[0] == null) {
-			return new Point[] {};
+			return Collections.emptyList();
 		}
 
-		for (int i = 0; i < wayPointCount; i++) {
-			points[i + 1] = getWayPoint(i);
+		for (int i = 0; i < controlPointCount; i++) {
+			points[i + 1] = getControlPoint(i);
 			if (points[i + 1] == null) {
-				return new Point[] {};
+				return Collections.emptyList();
 			}
 		}
 
 		points[points.length - 1] = getEndPoint();
 		if (points[points.length - 1] == null) {
-			return new Point[] {};
+			return Collections.emptyList();
 		}
 
-		return points;
+		return Arrays.asList(points);
 	}
 
 	/**
@@ -978,7 +1108,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 * @return The {@link IConnectionRouter} of this {@link Connection}.
 	 */
 	public IConnectionRouter getRouter() {
-		return router;
+		return routerProperty.get();
 	}
 
 	/**
@@ -1036,116 +1166,20 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Returns the way {@link IAnchor anchor} for the given way anchor index
-	 * which is currently assigned, or <code>null</code> if no way
-	 * {@link IAnchor anchor} is assigned for that index.
+	 * Returns <code>true</code> if the currently assigned
+	 * {@link #getControlAnchor(int) control anchor} for the given index is
+	 * bound to an anchorage. Otherwise returns <code>false</code>.
 	 *
 	 * @param index
-	 *            The way anchor index determining which way {@link IAnchor
-	 *            anchor} to return.
-	 * @return The way {@link IAnchor anchor} for the given index, or
-	 *         <code>null</code>.
+	 *            The control anchor index of the control anchor to test for
+	 *            connectedness.
+	 * @return <code>true</code> if the currently assigned
+	 *         {@link #getControlAnchor(int) control anchor} for the given index
+	 *         is bound to an anchorage, otherwise <code>false</code>.
 	 */
-	public IAnchor getWayAnchor(int index) {
-		return anchorsProperty.get(getWayAnchorKey(index));
-	}
-
-	/**
-	 * Returns the way anchor index for the given {@link AnchorKey}, i.e.
-	 * <code>0</code> for the first way {@link IAnchor anchor}, <code>1</code>
-	 * for the seconds, etc.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} whose way anchor index is returned.
-	 * @return The way anchor index for the given {@link AnchorKey}.
-	 * @throws IllegalArgumentException
-	 *             when there currently is no way {@link IAnchor anchor}
-	 *             assigned to this {@link Connection} for the given
-	 *             {@link AnchorKey}.
-	 */
-	protected int getWayAnchorIndex(AnchorKey key) {
-		if (!key.getId().startsWith(WAY_POINT_ROLE_PREFIX)) {
-			throw new IllegalArgumentException(
-					"Given AnchorKey " + key + " is no waypoint anchor key.");
-		}
-		int index = Integer.parseInt(
-				key.getId().substring(WAY_POINT_ROLE_PREFIX.length()));
-		return index;
-	}
-
-	/**
-	 * Returns the {@link AnchorKey} for the given way anchor index.
-	 *
-	 * @param index
-	 *            The way anchor index for which the {@link AnchorKey} is
-	 *            returned.
-	 * @return The {@link AnchorKey} for the given way anchor index.
-	 */
-	protected AnchorKey getWayAnchorKey(int index) {
-		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX + index);
-	}
-
-	/**
-	 * Returns a {@link List} containing the way {@link IAnchor anchors}
-	 * currently assigned to this {@link Connection}.
-	 *
-	 * @return A {@link List} containing the way {@link IAnchor anchors}
-	 *         currently assigned to this {@link Connection}.
-	 */
-	public List<IAnchor> getWayAnchors() {
-		int wayPointsCount = wayAnchorKeys.size();
-		List<IAnchor> wayPointAnchors = new ArrayList<>(wayPointsCount);
-		for (int i = 0; i < wayPointsCount; i++) {
-			IAnchor wayAnchor = getWayAnchor(i);
-			if (wayAnchor == null) {
-				throw new IllegalStateException(
-						"Way anchor may never be null.");
-			}
-			wayPointAnchors.add(wayAnchor);
-		}
-		return wayPointAnchors;
-	}
-
-	/**
-	 * Returns the way {@link Point} for the given way anchor index within the
-	 * coordinate system of this {@link Connection} which is determined by
-	 * querying the anchor position for the corresponding
-	 * {@link #getWayAnchor(int) way anchor}, or <code>null</code> if no
-	 * {@link #getWayAnchor(int) way anchor} is assigned for the given index.
-	 *
-	 * @param index
-	 *            The way anchor index for which to return the anchor position.
-	 * @return The start {@link Point} of this {@link Connection}, or
-	 *         <code>null</code>.
-	 */
-	public Point getWayPoint(int index) {
-		IAnchor anchor = getWayAnchor(index);
-		if (anchor == null) {
-			throw new IllegalArgumentException("No waypoint at index " + index);
-		}
-		if (!anchor.isAttached(getWayAnchorKey(index))) {
-			return null;
-		}
-		return FX2Geometry.toPoint(getCurveNode().localToParent(Geometry2FX
-				.toFXPoint(anchor.getPosition(getWayAnchorKey(index)))));
-	}
-
-	/**
-	 * Returns a {@link List} containing the way {@link Point}s of this
-	 * {@link Connection}.
-	 *
-	 * @return A {@link List} containing the way {@link Point}s of this
-	 *         {@link Connection}.
-	 */
-	public List<Point> getWayPoints() {
-		// TODO: use set...
-		List<IAnchor> wayPointAnchors = getWayAnchors();
-		List<Point> wayPoints = new ArrayList<>(wayPointAnchors.size());
-		for (int i = 0; i < wayPointAnchors.size(); i++) {
-			wayPoints.add(
-					wayPointAnchors.get(i).getPosition(getWayAnchorKey(i)));
-		}
-		return wayPoints;
+	public boolean isControlConnected(int index) {
+		IAnchor anchor = getControlAnchor(index);
+		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}
 
 	/**
@@ -1179,23 +1213,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Returns <code>true</code> if the currently assigned
-	 * {@link #getWayAnchor(int) way anchor} for the given index is bound to an
-	 * anchorage. Otherwise returns <code>false</code>.
-	 *
-	 * @param index
-	 *            The way anchor index of the way anchor to test for
-	 *            connectedness.
-	 * @return <code>true</code> if the currently assigned
-	 *         {@link #getWayAnchor(int) way anchor} for the given index is
-	 *         bound to an anchorage, otherwise <code>false</code>.
-	 */
-	public boolean isWayConnected(int index) {
-		IAnchor anchor = getWayAnchor(index);
-		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
-	}
-
-	/**
 	 * Refreshes the visualization, i.e.
 	 * <ol>
 	 * <li>determines the {@link #getPoints() points} constituting this
@@ -1220,12 +1237,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 
 		inRefresh = true;
 
-		// TODO: children don't have to be cleared and re-added.
-		ICurve newGeometry = router.routeConnection(getPoints());
+		// TODO: guard against router value being null
+		ICurve newGeometry = routerProperty.get().route(this);
 
 		// clear visuals except for the curveNode
-		// TODO: this causes all VCLs of anchoreds the geometry node is attached
-		// to to be unregistered. We should prevent it.
 		getChildren().retainAll(curveNode);
 
 		// compute new curve (this can lead to another refreshGeometry() call
@@ -1294,18 +1309,18 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Removes all way points of this {@link Connection}.
+	 * Removes all control points of this {@link Connection}.
 	 */
-	public void removeAllWayAnchors() {
-		removeAllWayPoints();
+	public void removeAllControlAnchors() {
+		removeAllControlPoints();
 	}
 
 	/**
-	 * Removes all way points of this {@link Connection}.
+	 * Removes all control points of this {@link Connection}.
 	 */
-	public void removeAllWayPoints() {
-		for (int i = wayAnchorKeys.size() - 1; i >= 0; i--) {
-			removeWayPoint(i);
+	public void removeAllControlPoints() {
+		for (int i = controlAnchorKeys.size() - 1; i >= 0; i--) {
+			removeControlPoint(i);
 		}
 	}
 
@@ -1327,35 +1342,35 @@ public class Connection extends Group /* or rather Parent?? */ {
 		 * XXX: detach() after removing from the anchors-map, so that listeners
 		 * on the anchors-map can retrieve the anchor position.
 		 */
-		List<IAnchor> wayAnchorsToMove = new ArrayList<>();
-		int wayIndex = -1;
+		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
+		int controlIndex = -1;
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())
-				&& wayAnchorKeys.contains(anchorKey)) {
-			// remove all way anchors at a larger index
-			wayIndex = getWayAnchorIndex(anchorKey);
-			int wayPointCount = wayAnchorKeys.size();
-			for (int i = wayPointCount - 1; i > wayIndex; i--) {
+				&& controlAnchorKeys.contains(anchorKey)) {
+			// remove all control anchors at a larger index
+			controlIndex = getControlAnchorIndex(anchorKey);
+			int controlPointCount = controlAnchorKeys.size();
+			for (int i = controlPointCount - 1; i > controlIndex; i--) {
 				// (temporarily) remove all anchors that are to be moved down
-				AnchorKey ak = getWayAnchorKey(i);
-				IAnchor a = getWayAnchor(i);
-				wayAnchorsToMove.add(0, a);
-				wayAnchorKeys.remove(ak);
+				AnchorKey ak = getControlAnchorKey(i);
+				IAnchor a = getControlAnchor(i);
+				controlAnchorsToMove.add(0, a);
+				controlAnchorKeys.remove(ak);
 				anchorsProperty.remove(ak);
 				a.detach(ak, as);
 			}
-			wayAnchorKeys.remove(anchorKey);
+			controlAnchorKeys.remove(anchorKey);
 		}
 		anchorsProperty.remove(anchorKey);
 		anchor.detach(anchorKey, as);
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
-			// re-add all waypoints at a larger index
-			for (int i = 0; i < wayAnchorsToMove.size(); i++) {
-				AnchorKey ak = getWayAnchorKey(wayIndex + i);
-				IAnchor a = wayAnchorsToMove.get(i);
-				wayAnchorKeys.add(ak);
+			// re-add all controlpoints at a larger index
+			for (int i = 0; i < controlAnchorsToMove.size(); i++) {
+				AnchorKey ak = getControlAnchorKey(controlIndex + i);
+				IAnchor a = controlAnchorsToMove.get(i);
+				controlAnchorKeys.add(ak);
 				anchorsProperty.put(ak, a);
 				a.attach(ak, as);
 			}
@@ -1364,34 +1379,35 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
-	 * Removes the way anchor specified by the given index from this
+	 * Removes the control anchor specified by the given index from this
 	 * {@link Connection}.
 	 *
 	 * @param index
-	 *            The index specifying which way anchor to remove.
+	 *            The index specifying which control anchor to remove.
 	 */
-	public void removeWayAnchor(int index) {
-		removeWayPoint(index);
+	public void removeControlAnchor(int index) {
+		removeControlPoint(index);
 	}
 
 	/**
-	 * Removes the way point specified by the given way anchor index from this
-	 * {@link Connection}.
+	 * Removes the control point specified by the given control anchor index
+	 * from this {@link Connection}.
 	 *
 	 * @param index
-	 *            The way anchor index specifying which way point to remove.
+	 *            The control anchor index specifying which control point to
+	 *            remove.
 	 */
-	public void removeWayPoint(int index) {
+	public void removeControlPoint(int index) {
 		// check index out of range
-		if (index < 0 || index >= wayAnchorKeys.size()) {
+		if (index < 0 || index >= controlAnchorKeys.size()) {
 			throw new IllegalArgumentException("Index out of range (index: "
-					+ index + ", size: " + wayAnchorKeys.size() + ").");
+					+ index + ", size: " + controlAnchorKeys.size() + ").");
 		}
 
-		AnchorKey anchorKey = getWayAnchorKey(index);
+		AnchorKey anchorKey = getControlAnchorKey(index);
 		if (!anchorsProperty.containsKey(anchorKey)) {
 			throw new IllegalStateException(
-					"Inconsistent state: way anchor not in map!");
+					"Inconsistent state: control anchor not in map!");
 		}
 
 		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
@@ -1399,11 +1415,23 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Returns a writable property containing the {@link IConnectionRouter} of
+	 * this connection.
+	 *
+	 * @return A writable property providing the {@link IConnectionRouter} used
+	 *         by this connection.
+	 */
+	public ObjectProperty<IConnectionRouter> routerProperty() {
+		return routerProperty;
+	}
+
+	/**
 	 * Replaces all {@link #getAnchors() anchors} of this {@link Connection}
 	 * with the given {@link IAnchor}s, i.e. the first given {@link IAnchor}
 	 * replaces the currently assigned start anchor, the last given
 	 * {@link IAnchor} replaces the currently assigned end anchor, and the
-	 * intermediate {@link IAnchor}s replace the currently assigned way anchors.
+	 * intermediate {@link IAnchor}s replace the currently assigned control
+	 * anchors.
 	 *
 	 * @param anchors
 	 *            The new {@link IAnchor}s for this {@link Connection}.
@@ -1421,11 +1449,106 @@ public class Connection extends Group /* or rather Parent?? */ {
 		inRefresh = true;
 		setStartAnchor(anchors.get(0));
 		if (anchors.size() > 2) {
-			setWayAnchors(anchors.subList(1, anchors.size() - 1));
+			setControlAnchors(anchors.subList(1, anchors.size() - 1));
 		} else {
-			removeAllWayPoints();
+			removeAllControlPoints();
 		}
 		setEndAnchor(anchors.get(anchors.size() - 1));
+		inRefresh = oldInRefresh;
+		refresh();
+	}
+
+	/**
+	 * Sets the control anchor for the given control anchor index to the given
+	 * {@link IAnchor}.
+	 *
+	 * @param index
+	 *            The control anchor index of the control anchor to replace.
+	 * @param anchor
+	 *            The new control {@link IAnchor} for that index.
+	 */
+	public void setControlAnchor(int index, IAnchor anchor) {
+		if (index < 0 || index >= controlAnchorKeys.size()) {
+			throw new IllegalArgumentException("index out of range.");
+		}
+		if (anchor == null) {
+			throw new IllegalArgumentException("anchor may not be null.");
+		}
+
+		AnchorKey anchorKey = getControlAnchorKey(index);
+		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		if (oldAnchor != anchor) {
+			if (oldAnchor != null) {
+				// suppress refresh, as addAnchor() will cause a refresh as well
+				boolean oldInRefresh = inRefresh;
+				inRefresh = true;
+				removeAnchor(anchorKey, oldAnchor);
+				inRefresh = oldInRefresh;
+			}
+			addAnchor(anchor, anchorKey, index);
+		}
+	}
+
+	/**
+	 * Replaces all control anchors of this {@link Connection} with the given
+	 * {@link List} of {@link IAnchor}s.
+	 *
+	 * @param anchors
+	 *            The new control {@link IAnchor}s for this {@link Connection}.
+	 */
+	public void setControlAnchors(List<IAnchor> anchors) {
+		int controlPointsSize = controlAnchorKeys.size();
+		// XXX: We have to do the removal of control anchors before
+		// changing/adding anchors.
+		for (int i = controlPointsSize - 1; i >= anchors.size(); i--) {
+			removeControlPoint(i);
+		}
+		for (int i = 0; i < controlPointsSize && i < anchors.size(); i++) {
+			setControlAnchor(i, anchors.get(i));
+		}
+		for (int i = controlPointsSize; i < anchors.size(); i++) {
+			addControlAnchor(i, anchors.get(i));
+		}
+	}
+
+	/**
+	 * Sets the control anchor for the given control anchor index to an
+	 * {@link StaticAnchor} which yields the given {@link Point}.
+	 *
+	 * @param index
+	 *            The control anchor index of the control anchor to replace.
+	 * @param controlPointInLocal
+	 *            The new control {@link Point} for that index.
+	 */
+	public void setControlPoint(int index, Point controlPointInLocal) {
+		if (controlPointInLocal == null) {
+			controlPointInLocal = new Point();
+		}
+		IAnchor anchor = new StaticAnchor(this, controlPointInLocal);
+		setControlAnchor(index, anchor);
+	}
+
+	/**
+	 * Replaces all control anchors of this {@link Connection} with
+	 * {@link StaticAnchor}s yielding the given {@link Point}s.
+	 *
+	 * @param controlPoints
+	 *            The new control {@link Point}s for this {@link Connection}.
+	 */
+	public void setControlPoints(List<Point> controlPoints) {
+		int controlSize = controlAnchorKeys.size();
+		boolean oldInRefresh = inRefresh;
+		inRefresh = true;
+		int i = 0;
+		for (; i < controlSize && i < controlPoints.size(); i++) {
+			setControlPoint(i, controlPoints.get(i));
+		}
+		for (; i < controlPoints.size(); i++) {
+			addControlPoint(i, controlPoints.get(i));
+		}
+		for (; i < controlSize; i++) {
+			removeControlPoint(i);
+		}
 		inRefresh = oldInRefresh;
 		refresh();
 	}
@@ -1506,7 +1629,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 *            The new {@link IConnectionRouter} for this {@link Connection}.
 	 */
 	public void setRouter(IConnectionRouter router) {
-		this.router = router;
+		routerProperty.set(router);
 		refresh();
 	}
 
@@ -1579,101 +1702,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 		// make that changeable in StaticAnchor
 		IAnchor anchor = new StaticAnchor(this, startPointInLocal);
 		setStartAnchor(anchor);
-	}
-
-	/**
-	 * Sets the way anchor for the given way anchor index to the given
-	 * {@link IAnchor}.
-	 *
-	 * @param index
-	 *            The way anchor index of the way anchor to replace.
-	 * @param anchor
-	 *            The new way {@link IAnchor} for that index.
-	 */
-	public void setWayAnchor(int index, IAnchor anchor) {
-		if (index < 0 || index >= wayAnchorKeys.size()) {
-			throw new IllegalArgumentException("index out of range.");
-		}
-		if (anchor == null) {
-			throw new IllegalArgumentException("anchor may not be null.");
-		}
-
-		AnchorKey anchorKey = getWayAnchorKey(index);
-		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
-		if (oldAnchor != anchor) {
-			if (oldAnchor != null) {
-				// suppress refresh, as addAnchor() will cause a refresh as well
-				boolean oldInRefresh = inRefresh;
-				inRefresh = true;
-				removeAnchor(anchorKey, oldAnchor);
-				inRefresh = oldInRefresh;
-			}
-			addAnchor(anchor, anchorKey, index);
-		}
-	}
-
-	/**
-	 * Replaces all way anchors of this {@link Connection} with the given
-	 * {@link List} of {@link IAnchor}s.
-	 *
-	 * @param anchors
-	 *            The new way {@link IAnchor}s for this {@link Connection}.
-	 */
-	public void setWayAnchors(List<IAnchor> anchors) {
-		int wayPointsSize = wayAnchorKeys.size();
-		// XXX: We have to do the removal of way anchors before
-		// changing/adding anchors.
-		for (int i = wayPointsSize - 1; i >= anchors.size(); i--) {
-			removeWayPoint(i);
-		}
-		for (int i = 0; i < wayPointsSize && i < anchors.size(); i++) {
-			setWayAnchor(i, anchors.get(i));
-		}
-		for (int i = wayPointsSize; i < anchors.size(); i++) {
-			addWayAnchor(i, anchors.get(i));
-		}
-	}
-
-	/**
-	 * Sets the way anchor for the given way anchor index to an
-	 * {@link StaticAnchor} which yields the given {@link Point}.
-	 *
-	 * @param index
-	 *            The way anchor index of the way anchor to replace.
-	 * @param wayPointInLocal
-	 *            The new way {@link Point} for that index.
-	 */
-	public void setWayPoint(int index, Point wayPointInLocal) {
-		if (wayPointInLocal == null) {
-			wayPointInLocal = new Point();
-		}
-		IAnchor anchor = new StaticAnchor(this, wayPointInLocal);
-		setWayAnchor(index, anchor);
-	}
-
-	/**
-	 * Replaces all way anchors of this {@link Connection} with
-	 * {@link StaticAnchor}s yielding the given {@link Point}s.
-	 *
-	 * @param wayPoints
-	 *            The new way {@link Point}s for this {@link Connection}.
-	 */
-	public void setWayPoints(List<Point> wayPoints) {
-		int waySize = wayAnchorKeys.size();
-		boolean oldInRefresh = inRefresh;
-		inRefresh = true;
-		int i = 0;
-		for (; i < waySize && i < wayPoints.size(); i++) {
-			setWayPoint(i, wayPoints.get(i));
-		}
-		for (; i < wayPoints.size(); i++) {
-			addWayPoint(i, wayPoints.get(i));
-		}
-		for (; i < waySize; i++) {
-			removeWayPoint(i);
-		}
-		inRefresh = oldInRefresh;
-		refresh();
 	}
 
 }

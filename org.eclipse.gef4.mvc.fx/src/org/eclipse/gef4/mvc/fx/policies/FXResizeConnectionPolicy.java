@@ -62,7 +62,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 			indices.add(0);
 		}
 		for (int i = 0; i < op.getNewAnchors().size() - 2; i++) {
-			if (!op.getConnection().isWayConnected(i)) {
+			if (!op.getConnection().isControlConnected(i)) {
 				indices.add(i + 1);
 			}
 		}
@@ -79,7 +79,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 		Connection connection = (Connection) getHost().getVisual();
 		op = new FXBendOperation(connection);
 		// save initial anchor positions
-		initialPositions = connection.getPoints();
+		initialPositions = connection.getPoints().toArray(new Point[] {});
 		// compute relative positions
 		Bounds layoutBounds = connection.getLayoutBounds();
 		relX = new Double[initialPositions.length];

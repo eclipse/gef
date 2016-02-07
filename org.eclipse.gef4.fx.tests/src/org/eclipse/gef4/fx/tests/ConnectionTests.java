@@ -14,9 +14,8 @@ package org.eclipse.gef4.fx.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.lang.reflect.Field;
+import java.util.List;
 
-import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.junit.Test;
@@ -36,18 +35,18 @@ public class ConnectionTests {
 		connection.getCurveNode().setTranslateY(5);
 
 		connection.setStartPoint(startPoint);
-		connection.addWayPoint(0, wayPoint);
+		connection.addControlPoint(0, wayPoint);
 		connection.setEndPoint(endPoint);
 
 		assertEquals(startPoint, connection.getStartPoint());
-		assertEquals(wayPoint, connection.getWayPoint(0));
+		assertEquals(wayPoint, connection.getControlPoint(0));
 		assertEquals(endPoint, connection.getEndPoint());
 
-		Point[] points = connection.getPoints();
-		assertEquals(3, points.length);
-		assertEquals(startPoint, points[0]);
-		assertEquals(wayPoint, points[1]);
-		assertEquals(endPoint, points[2]);
+		List<Point> points = connection.getPoints();
+		assertEquals(3, points.size());
+		assertEquals(startPoint, points.get(0));
+		assertEquals(wayPoint, points.get(1));
+		assertEquals(endPoint, points.get(2));
 	}
 
 	@Test
@@ -58,28 +57,28 @@ public class ConnectionTests {
 		connection.setStartPoint(startPoint);
 		connection.setEndPoint(endPoint);
 
-		connection.addWayPoint(0, new Point(50,50));
-		assertEquals(new Point(50,50), connection.getWayPoint(0));
+		connection.addControlPoint(0, new Point(50,50));
+		assertEquals(new Point(50,50), connection.getControlPoint(0));
 
-		connection.addWayPoint(0,  new Point(100, 100));
-		assertEquals(new Point(100,100), connection.getWayPoint(0));
-		assertEquals(new Point(50,50), connection.getWayPoint(1));
+		connection.addControlPoint(0,  new Point(100, 100));
+		assertEquals(new Point(100,100), connection.getControlPoint(0));
+		assertEquals(new Point(50,50), connection.getControlPoint(1));
 		
-		connection.addWayPoint(1,  new Point(150, 150));
-		assertEquals(new Point(100,100), connection.getWayPoint(0));
-		assertEquals(new Point(150,150), connection.getWayPoint(1));
-		assertEquals(new Point(50,50), connection.getWayPoint(2));
+		connection.addControlPoint(1,  new Point(150, 150));
+		assertEquals(new Point(100,100), connection.getControlPoint(0));
+		assertEquals(new Point(150,150), connection.getControlPoint(1));
+		assertEquals(new Point(50,50), connection.getControlPoint(2));
 		
-		connection.addWayPoint(1,  new Point(200, 200));
-		assertEquals(new Point(100,100), connection.getWayPoint(0));
-		assertEquals(new Point(200,200), connection.getWayPoint(1));
-		assertEquals(new Point(150,150), connection.getWayPoint(2));
-		assertEquals(new Point(50,50), connection.getWayPoint(3));
+		connection.addControlPoint(1,  new Point(200, 200));
+		assertEquals(new Point(100,100), connection.getControlPoint(0));
+		assertEquals(new Point(200,200), connection.getControlPoint(1));
+		assertEquals(new Point(150,150), connection.getControlPoint(2));
+		assertEquals(new Point(50,50), connection.getControlPoint(3));
 		
-		connection.removeWayPoint(1);
-		assertEquals(new Point(100,100), connection.getWayPoint(0));
-		assertEquals(new Point(150,150), connection.getWayPoint(1));
-		assertEquals(new Point(50,50), connection.getWayPoint(2));
+		connection.removeControlPoint(1);
+		assertEquals(new Point(100,100), connection.getControlPoint(0));
+		assertEquals(new Point(150,150), connection.getControlPoint(1));
+		assertEquals(new Point(50,50), connection.getControlPoint(2));
 	}
 
 }

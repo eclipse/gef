@@ -143,8 +143,8 @@ public class FXBendAnchorTests {
 
 		@Override
 		protected void doRefreshVisual(Connection visual) {
-			if (visual.getWayPoints().size() == 0) {
-				visual.addWayPoint(0, ((ConnectionContent) getContent()).getWayPoint());
+			if (visual.getControlPoints().size() == 0) {
+				visual.addControlPoint(0, ((ConnectionContent) getContent()).getWayPoint());
 			}
 		}
 

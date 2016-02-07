@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -103,7 +104,8 @@ public class JFaceEdgeRouterExample {
 	protected static IConnectionRouter getManhattenRouter() {
 		return new IConnectionRouter() {
 			@Override
-			public ICurve routeConnection(Point[] points) {
+			public ICurve route(Connection connection) {
+				Point[] points = connection.getPoints().toArray(new Point[] {});
 				if (points == null || points.length < 2) {
 					return new org.eclipse.gef4.geometry.planar.Polyline(0, 0,
 							0, 0);
