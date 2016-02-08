@@ -21,7 +21,8 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.GraphCopier;
 
 /**
- * Transformation of DOT files or strings to Zest Graph instances.
+ * Utilities to import DOT files or strings into Graph instances containing
+ * attributes defined in {@link DotProperties}.
  * 
  * @author Fabian Steeg (fsteeg)
  */
