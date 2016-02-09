@@ -151,8 +151,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	}
 
 	/**
-	 * Ensures that within {@link EdgeRhsNode}, '->' is used in directed graphs,
-	 * while '--' is used in undirected graphs.
+	 * Ensures that within {@link EdgeRhsNode}, '-&gt;' is used in directed
+	 * graphs, while '--' is used in undirected graphs.
 	 * 
 	 * @param edgeRhsNode
 	 *            The EdgeRhsNode to validate.
@@ -164,7 +164,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	}
 
 	/**
-	 * Ensures that within {@link EdgeRhsSubgraph} '->' is used in directed
+	 * Ensures that within {@link EdgeRhsSubgraph} '-&gt;' is used in directed
 	 * graphs, while '--' is used in undirected graphs.
 	 * 
 	 * @param edgeRhsSubgraph
