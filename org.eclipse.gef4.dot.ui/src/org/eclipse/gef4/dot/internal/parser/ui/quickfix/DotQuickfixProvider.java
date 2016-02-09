@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
+import org.eclipse.gef4.dot.internal.parser.dot.AttributeValue;
+import org.eclipse.gef4.dot.internal.parser.dot.OldID;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -45,11 +47,17 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 					"Use valid '" + validValue + "' instead of invalid '" //$NON-NLS-1$ //$NON-NLS-2$
 							+ issue.getData()[0] + "' edge style.", //$NON-NLS-1$
 					null, new ISemanticModification() {
-
 						@Override
 						public void apply(EObject element,
 								IModificationContext context) throws Exception {
-							((Attribute) element).setValue(validValue);
+							AttributeValue value = ((Attribute) element)
+									.getValue();
+							if (value instanceof OldID) {
+								((OldID) value).setValue(validValue);
+							} else {
+								throw new IllegalStateException(
+										"Edge style cannot be an HTML label."); //$NON-NLS-1$
+							}
 						}
 					});
 		}

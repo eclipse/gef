@@ -19,6 +19,7 @@ import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.dot.AttributeType;
+import org.eclipse.gef4.dot.internal.parser.dot.AttributeValue;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef4.dot.internal.parser.dot.DotPackage;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeOp;
@@ -27,7 +28,11 @@ import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhsSubgraph;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtNode;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlAttribute;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlLabel;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlTag;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
+import org.eclipse.gef4.dot.internal.parser.dot.OldID;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.xtext.validation.Check;
 
@@ -59,7 +64,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			// 'style' can also be used for nodes or clusters, so we have to
 			// check the context as well
 			String unquotedValue = DotTerminalConverters
-					.unquote(attribute.getValue());
+					.unquote(getStringValue(attribute.getValue()));
 			if (!DotProperties.EDGE_STYLE_VALUES.contains(unquotedValue)) {
 				// provide (issue) code and data for quickfix
 				error("Style '" + unquotedValue
@@ -68,6 +73,44 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						ATTRIBUTE__INVALID_VALUE__EDGE_STYLE, unquotedValue);
 			}
 		}
+	}
+
+	private String convertHtmlTagToString(HtmlTag tag) {
+		// opening tag
+		StringBuilder sb = new StringBuilder("<" + tag.getName());
+		// attributes
+		if (!tag.getAttributes().isEmpty()) {
+			for (HtmlAttribute attr : tag.getAttributes()) {
+				sb.append(
+						" " + attr.getName() + "=\"" + attr.getValue() + "\"");
+			}
+		}
+		// self-closing?
+		if (tag.isSelfClosing()) {
+			sb.append("/>");
+		} else {
+			// close the opening tag
+			sb.append(">");
+			// children
+			if (!tag.getChildren().isEmpty()) {
+				for (HtmlTag child : tag.getChildren()) {
+					sb.append(convertHtmlTagToString(child));
+				}
+			}
+			// closing tag
+			sb.append("</" + tag.getName() + ">");
+		}
+		return sb.toString();
+	}
+
+	private String getStringValue(AttributeValue value) {
+		if (value instanceof OldID) {
+			return ((OldID) value).getValue();
+		} else if (value instanceof HtmlLabel) {
+			return convertHtmlTagToString(((HtmlLabel) value).getTag());
+		}
+		throw new IllegalArgumentException(
+				"The given AttributeValue is neither an OldID nor an HtmlLabel.");
 	}
 
 	/**

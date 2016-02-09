@@ -23,12 +23,17 @@ import org.eclipse.gef4.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.dot.AttributeType;
+import org.eclipse.gef4.dot.internal.parser.dot.AttributeValue;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhsNode;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtNode;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlAttribute;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlLabel;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlTag;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeId;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
+import org.eclipse.gef4.dot.internal.parser.dot.OldID;
 import org.eclipse.gef4.dot.internal.parser.dot.Stmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.parser.dot.util.DotSwitch;
@@ -94,7 +99,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		 * TreeLayoutAlgorithm.LEFT_RIGHT if nothing else is specified
 		 */
 		if (DotProperties.GRAPH_RANKDIR.equals(object.getName())) {
-			String value = object.getValue();
+			String value = getStringValue(object.getValue());
 			if (value == null)
 				value = "";
 			value = value.toLowerCase();
@@ -108,6 +113,44 @@ public final class DotInterpreter extends DotSwitch<Object> {
 									: DotProperties.GRAPH_RANKDIR_DEFAULT);
 		}
 		return super.caseAttribute(object);
+	}
+
+	private String getStringValue(AttributeValue value) {
+		if (value instanceof OldID) {
+			return ((OldID) value).getValue();
+		} else if (value instanceof HtmlLabel) {
+			return convertHtmlTagToString(((HtmlLabel) value).getTag());
+		}
+		throw new IllegalArgumentException(
+				"The given AttributeValue is neither an OldID nor an HtmlLabel.");
+	}
+
+	private String convertHtmlTagToString(HtmlTag tag) {
+		// opening tag
+		StringBuilder sb = new StringBuilder("<" + tag.getName());
+		// attributes
+		if (!tag.getAttributes().isEmpty()) {
+			for (HtmlAttribute attr : tag.getAttributes()) {
+				sb.append(
+						" " + attr.getName() + "=\"" + attr.getValue() + "\"");
+			}
+		}
+		// self-closing?
+		if (tag.isSelfClosing()) {
+			sb.append("/>");
+		} else {
+			// close the opening tag
+			sb.append(">");
+			// children
+			if (!tag.getChildren().isEmpty()) {
+				for (HtmlTag child : tag.getChildren()) {
+					sb.append(convertHtmlTagToString(child));
+				}
+			}
+			// closing tag
+			sb.append("</" + tag.getName() + ">");
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -308,7 +351,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					if (next instanceof Attribute) {
 						Attribute attributeElement = (Attribute) next;
 						if (attributeElement.getName().equals(attributeName)) {
-							return escaped(attributeElement.getValue());
+							return escaped(getStringValue(
+									attributeElement.getValue()));
 						}
 					}
 				}

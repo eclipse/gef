@@ -52,7 +52,21 @@ AttrList:
 	"[" (attributes+=Attribute ("," | ";")?)+ "]";
 
 Attribute:
-	name=ID "=" value=ID;
+	name=ID "=" value=AttributeValue;
+
+AttributeValue: OldID | HtmlLabel;
+
+OldID: value=ID;
+
+HtmlLabel: "<" tag=HtmlTag ">";
+
+HtmlTag:
+	"<" name=STRING attributes+=HtmlAttribute
+	( selfClosing?="/" ">"
+	| ">" children+=HtmlTag* "<" "/" closingTag=[HtmlTag] ">")
+;
+
+HtmlAttribute: name=STRING "=" value=ID;
 
 	// XXX: We perform an assign action, so the parse tree is rewritten in case a subgraph is specified through an EdgeStmt
 SubgraphOrEdgeStmtSubgraph:
