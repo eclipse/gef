@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui.util;
+package org.eclipse.gef4.cloudio.internal.ui.util;
 
 import org.eclipse.swt.SWT;
 

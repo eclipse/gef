@@ -9,14 +9,14 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui.layout;
+package org.eclipse.gef4.cloudio.internal.ui.layout;
 
 import java.util.Random;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef4.cloudio.ui.Word;
-import org.eclipse.gef4.cloudio.ui.util.CloudMatrix;
-import org.eclipse.gef4.cloudio.ui.util.RectTree;
+import org.eclipse.gef4.cloudio.internal.ui.Word;
+import org.eclipse.gef4.cloudio.internal.ui.util.CloudMatrix;
+import org.eclipse.gef4.cloudio.internal.ui.util.RectTree;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 

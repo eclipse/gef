@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui;
 
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.swt.graphics.Color;

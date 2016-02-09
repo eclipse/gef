@@ -14,8 +14,8 @@ package org.eclipse.gef4.cloudio.examples.snippets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.cloudio.ui.TagCloud;
-import org.eclipse.gef4.cloudio.ui.Word;
+import org.eclipse.gef4.cloudio.internal.ui.TagCloud;
+import org.eclipse.gef4.cloudio.internal.ui.Word;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

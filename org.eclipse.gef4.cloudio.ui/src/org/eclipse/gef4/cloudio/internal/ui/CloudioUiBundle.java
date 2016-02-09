@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui;
 
 import java.io.IOException;
 import java.io.InputStream;

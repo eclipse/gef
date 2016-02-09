@@ -10,9 +10,9 @@
  *     
  *******************************************************************************/
 
-package org.eclipse.gef4.cloudio.ui.util;
+package org.eclipse.gef4.cloudio.internal.ui.util;
 
-import org.eclipse.gef4.cloudio.ui.util.RectTree.RectNode;
+import org.eclipse.gef4.cloudio.internal.ui.util.RectTree.RectNode;
 
 /**
  * This class contains all global information about the drawable area and the

@@ -17,11 +17,11 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.cloudio.internal.ui.TagCloud;
+import org.eclipse.gef4.cloudio.internal.ui.TagCloudViewer;
 import org.eclipse.gef4.cloudio.internal.ui.data.Type;
-import org.eclipse.gef4.cloudio.ui.TagCloud;
-import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
-import org.eclipse.gef4.cloudio.ui.layout.DefaultLayouter;
-import org.eclipse.gef4.cloudio.ui.layout.ILayouter;
+import org.eclipse.gef4.cloudio.internal.ui.layout.DefaultLayouter;
+import org.eclipse.gef4.cloudio.internal.ui.layout.ILayouter;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;

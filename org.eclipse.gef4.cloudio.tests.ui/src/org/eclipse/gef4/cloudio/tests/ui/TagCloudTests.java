@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.gef4.cloudio.ui.TagCloud;
-import org.eclipse.gef4.cloudio.ui.Word;
+import org.eclipse.gef4.cloudio.internal.ui.TagCloud;
+import org.eclipse.gef4.cloudio.internal.ui.Word;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;

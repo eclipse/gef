@@ -15,9 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.gef4.cloudio.internal.ui.TagCloudViewer;
 import org.eclipse.gef4.cloudio.internal.ui.data.Type;
 import org.eclipse.gef4.cloudio.internal.ui.data.TypeCollector;
-import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;

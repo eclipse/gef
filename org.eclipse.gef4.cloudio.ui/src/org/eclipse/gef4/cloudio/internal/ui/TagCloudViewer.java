@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.gef4.cloudio.ui.layout.ILayouter;
+import org.eclipse.gef4.cloudio.internal.ui.layout.ILayouter;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;

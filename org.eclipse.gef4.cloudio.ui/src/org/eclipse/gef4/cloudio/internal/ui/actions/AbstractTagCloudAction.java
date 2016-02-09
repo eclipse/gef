@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.cloudio.internal.ui.actions;
 
+import org.eclipse.gef4.cloudio.internal.ui.TagCloudViewer;
 import org.eclipse.gef4.cloudio.internal.ui.view.TagCloudView;
-import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;

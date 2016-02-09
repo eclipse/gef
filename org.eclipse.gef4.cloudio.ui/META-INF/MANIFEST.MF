@@ -3,14 +3,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Cloudio.UI
 Bundle-SymbolicName: org.eclipse.gef4.cloudio.ui;singleton:=true
 Bundle-Version: 0.3.0.qualifier
-Bundle-Activator: org.eclipse.gef4.cloudio.ui.CloudioUiBundle
+Bundle-Activator: org.eclipse.gef4.cloudio.internal.ui.CloudioUiBundle
 Require-Bundle: org.eclipse.swt;bundle-version="[3.102.0,4.0.0)",
  org.eclipse.jface;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.105.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.cloudio.ui;x-internal:=true,
- org.eclipse.gef4.cloudio.ui.layout;x-internal:=true,
- org.eclipse.gef4.cloudio.ui.util;x-internal:=true
+Export-Package: org.eclipse.gef4.cloudio.internal.ui;x-friends:="org.eclipse.gef4.cloudio.tests.ui",
+ org.eclipse.gef4.cloudio.internal.ui.actions;x-friends:="org.eclipse.gef4.cloudio.tests.ui",
+ org.eclipse.gef4.cloudio.internal.ui.data;x-friends:="org.eclipse.gef4.cloudio.tests.ui",
+ org.eclipse.gef4.cloudio.internal.ui.layout;x-friends:="org.eclipse.gef4.cloudio.tests.ui",
+ org.eclipse.gef4.cloudio.internal.ui.util;x-friends:="org.eclipse.gef4.cloudio.tests.ui",
+ org.eclipse.gef4.cloudio.internal.ui.view;x-friends:="org.eclipse.gef4.cloudio.tests.ui"
 Bundle-Vendor: Eclipse GEF

@@ -11,8 +11,8 @@
  *******************************************************************************/
 /**
  * This package provides a {@link org.eclipse.swt.widgets.Canvas} dedicated to
- * visualizing word clouds ({@link org.eclipse.gef4.cloudio.ui.TagCloud}), as
+ * visualizing word clouds ({@link org.eclipse.gef4.cloudio.internal.ui.TagCloud}), as
  * well as a related {@link org.eclipse.jface.viewers.ContentViewer} (
- * {@link org.eclipse.gef4.cloudio.ui.TagCloudViewer}).
+ * {@link org.eclipse.gef4.cloudio.internal.ui.TagCloudViewer}).
  */
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui;

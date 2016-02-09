@@ -9,7 +9,7 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,11 +25,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.gef4.cloudio.ui.layout.DefaultLayouter;
-import org.eclipse.gef4.cloudio.ui.layout.ILayouter;
-import org.eclipse.gef4.cloudio.ui.util.CloudMatrix;
-import org.eclipse.gef4.cloudio.ui.util.RectTree;
-import org.eclipse.gef4.cloudio.ui.util.SmallRect;
+import org.eclipse.gef4.cloudio.internal.ui.layout.DefaultLayouter;
+import org.eclipse.gef4.cloudio.internal.ui.layout.ILayouter;
+import org.eclipse.gef4.cloudio.internal.ui.util.CloudMatrix;
+import org.eclipse.gef4.cloudio.internal.ui.util.RectTree;
+import org.eclipse.gef4.cloudio.internal.ui.util.SmallRect;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;

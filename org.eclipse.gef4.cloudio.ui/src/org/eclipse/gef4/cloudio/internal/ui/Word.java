@@ -9,10 +9,10 @@
  *     Stephan Schwiebert - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.cloudio.ui;
+package org.eclipse.gef4.cloudio.internal.ui;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef4.cloudio.ui.util.RectTree;
+import org.eclipse.gef4.cloudio.internal.ui.util.RectTree;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
