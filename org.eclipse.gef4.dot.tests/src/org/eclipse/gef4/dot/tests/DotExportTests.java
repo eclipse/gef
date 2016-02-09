@@ -16,8 +16,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.DotExport;
-import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.dot.internal.DotExport;
+import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;

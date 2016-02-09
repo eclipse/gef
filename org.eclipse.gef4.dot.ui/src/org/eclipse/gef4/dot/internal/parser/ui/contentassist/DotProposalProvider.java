@@ -13,7 +13,7 @@
 package org.eclipse.gef4.dot.internal.parser.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.services.DotGrammarAccess;

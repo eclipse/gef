@@ -15,10 +15,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.dot.DotImport;
-import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.dot.internal.DotAst;
+import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotInterpreter;
+import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;

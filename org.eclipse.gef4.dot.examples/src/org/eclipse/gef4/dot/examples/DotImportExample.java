@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.examples;
 
-import org.eclipse.gef4.dot.DotImport;
+import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.graph.Graph;
 
 /**

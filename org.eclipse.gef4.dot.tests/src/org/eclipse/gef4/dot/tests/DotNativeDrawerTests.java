@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.eclipse.gef4.dot.DotExport;
+import org.eclipse.gef4.dot.internal.DotExport;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.DotNativeDrawer;
 import org.eclipse.gef4.dot.internal.ui.GraphvizPreferencePage;

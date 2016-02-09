@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
-import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.dot.internal.DotTemplate;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;

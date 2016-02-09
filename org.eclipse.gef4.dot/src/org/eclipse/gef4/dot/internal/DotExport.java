@@ -9,13 +9,11 @@
  *     Fabian Steeg - initial API and implementation (see bug #277380)
  *******************************************************************************/
 
-package org.eclipse.gef4.dot;
+package org.eclipse.gef4.dot.internal;
 
 import java.io.File;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.internal.DotFileUtils;
-import org.eclipse.gef4.dot.internal.DotTemplate;
 import org.eclipse.gef4.graph.Graph;
 
 /**

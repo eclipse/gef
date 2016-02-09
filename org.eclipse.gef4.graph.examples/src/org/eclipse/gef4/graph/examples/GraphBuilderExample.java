@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.examples;
 
-import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 

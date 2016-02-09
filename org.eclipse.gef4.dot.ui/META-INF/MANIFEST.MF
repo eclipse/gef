@@ -29,14 +29,16 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"
 Bundle-ClassPath: .
-Export-Package: org.eclipse.gef4.dot.internal.parser.ui.contentassist,
- org.eclipse.gef4.dot.internal.parser.ui.quickfix,
- org.eclipse.gef4.dot.internal.ui;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui.contentassist;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr.internal;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui.labeling;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui.outline;x-internal:=true,
- org.eclipse.gef4.dot.internal.parser.ui.quickfix;x-internal:=true
 Bundle-Vendor: Eclipse GEF
+Export-Package: org.eclipse.gef4.dot.internal.parser.ui;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr.internal;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.contentassist.antlr.lexer;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.internal;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.labeling;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.outline;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.quickfix;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.parser.ui.syntaxcoloring;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.ui;x-friends:="org.eclipse.gef4.dot.tests",
+ org.eclipse.gef4.dot.internal.ui.handlers
