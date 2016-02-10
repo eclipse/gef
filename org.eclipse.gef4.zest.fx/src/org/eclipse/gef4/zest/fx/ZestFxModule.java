@@ -19,6 +19,7 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.behaviors.FXClickableAreaBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
@@ -137,6 +138,9 @@ public class ZestFxModule extends MvcFxModule {
 		bindSelectionLinkFeedbackGeometryProviderAsEdgeContentPartAdapter(adapterMapBinder);
 		bindSelectionFeedbackGeometryProviderAsEdgeContentPartAdapter(adapterMapBinder);
 		bindHoverFeedbackGeometryProviderAsEdgeContentPartAdapter(adapterMapBinder);
+
+		// clickable area resizing
+		bindFXClickableAreaBehaviorAsEdgeContentPartAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -222,6 +226,11 @@ public class ZestFxModule extends MvcFxModule {
 		// overwrite default zoom policy to perform semantic zooming (navigating
 		// nested graphs on zoom level changes)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SemanticZoomPolicy.class);
+	}
+
+	private void bindFXClickableAreaBehaviorAsEdgeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXClickableAreaBehavior.class);
 	}
 
 	/**

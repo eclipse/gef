@@ -9,11 +9,12 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.examples.logo.behaviors;
+package org.eclipse.gef4.mvc.fx.behaviors;
 
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
@@ -21,8 +22,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
- * A behavior that regulates the clickable area width of the
- * {@link FXGeometricCurvePart}'s visual dependent on the zoom level.
+ * A behavior that regulates the clickable area width of an {@link IVisualPart}
+ * 's connection visual dependent on the zoom level.
  *
  * @author anyssen
  *
@@ -66,9 +67,10 @@ public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
 				.removeListener(scaleXListener);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public FXGeometricCurvePart getHost() {
-		return (FXGeometricCurvePart) super.getHost();
+	public IVisualPart<Node, Connection> getHost() {
+		return (IVisualPart<Node, Connection>) super.getHost();
 	}
 
 }
