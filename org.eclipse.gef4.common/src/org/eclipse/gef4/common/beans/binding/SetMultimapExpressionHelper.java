@@ -130,7 +130,7 @@ public class SetMultimapExpressionHelper<K, V>
 					lockChangeListeners = false;
 				}
 			}
-			notifySetMultimapListeners(
+			notifySetMultimapChangeListeners(
 					new AtomicChange<>(observableValue, change));
 		}
 	}
@@ -165,7 +165,7 @@ public class SetMultimapExpressionHelper<K, V>
 						entries.getKey(), entries.getValue(),
 						Collections.<V> emptySet()));
 			}
-			notifySetMultimapListeners(
+			notifySetMultimapChangeListeners(
 					new SetMultimapChangeListenerHelper.AtomicChange<>(
 							getSource(), HashMultimap.<K, V> create(oldValue),
 							elementaryChanges));
@@ -178,7 +178,7 @@ public class SetMultimapExpressionHelper<K, V>
 						entries.getKey(), Collections.<V> emptySet(),
 						entries.getValue()));
 			}
-			notifySetMultimapListeners(
+			notifySetMultimapChangeListeners(
 					new SetMultimapChangeListenerHelper.AtomicChange<>(
 							getSource(), HashMultimap.<K, V> create(),
 							elementaryChanges));
@@ -215,7 +215,7 @@ public class SetMultimapExpressionHelper<K, V>
 							Collections.<V> emptySet(), entries.getValue()));
 				}
 			}
-			notifySetMultimapListeners(
+			notifySetMultimapChangeListeners(
 					new SetMultimapChangeListenerHelper.AtomicChange<>(
 							getSource(), HashMultimap.<K, V> create(oldValue),
 							elementaryChanges));

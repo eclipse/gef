@@ -272,8 +272,8 @@ public class MultisetChangeListenerHelper<E> {
 	private ObservableMultiset<E> source;
 
 	/**
-	 * Constructs a new {@link MultisetChangeListener} for the given source
-	 * {@link ObservableMultiset}.
+	 * Constructs a new {@link MultisetChangeListenerHelper} for the given
+	 * source {@link ObservableMultiset}.
 	 *
 	 * @param source
 	 *            The {@link ObservableMultiset} to use as source in change
@@ -338,7 +338,7 @@ public class MultisetChangeListenerHelper<E> {
 			MultisetChangeListener.Change<? extends E> change) {
 		notifyInvalidationListeners();
 		if (change != null) {
-			notifyMultisetListeners(change);
+			notifyMultisetChangeListeners(change);
 		}
 	}
 
@@ -376,7 +376,7 @@ public class MultisetChangeListenerHelper<E> {
 	 * @param change
 	 *            The applied change.
 	 */
-	protected void notifyMultisetListeners(Change<? extends E> change) {
+	protected void notifyMultisetChangeListeners(Change<? extends E> change) {
 		if (multisetChangeListeners != null) {
 			try {
 				lockMultisetChangeListeners = true;

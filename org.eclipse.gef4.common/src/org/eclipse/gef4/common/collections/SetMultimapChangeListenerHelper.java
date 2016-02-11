@@ -327,8 +327,8 @@ public class SetMultimapChangeListenerHelper<K, V> {
 	private boolean lockSetMultimapChangeListeners;
 
 	/**
-	 * Constructs a new {@link SetMultimapChangeListener} for the given source
-	 * {@link ObservableSetMultimap}.
+	 * Constructs a new {@link SetMultimapChangeListenerHelper} for the given
+	 * source {@link ObservableSetMultimap}.
 	 *
 	 * @param source
 	 *            The {@link ObservableSetMultimap} to use as source in change
@@ -395,7 +395,7 @@ public class SetMultimapChangeListenerHelper<K, V> {
 			SetMultimapChangeListener.Change<? extends K, ? extends V> change) {
 		notifyInvalidationListeners();
 		if (change != null) {
-			notifySetMultimapListeners(change);
+			notifySetMultimapChangeListeners(change);
 		}
 	}
 
@@ -433,7 +433,7 @@ public class SetMultimapChangeListenerHelper<K, V> {
 	 * @param change
 	 *            The applied change.
 	 */
-	protected void notifySetMultimapListeners(
+	protected void notifySetMultimapChangeListeners(
 			Change<? extends K, ? extends V> change) {
 		if (setMultimapChangeListeners != null) {
 			try {

@@ -123,7 +123,7 @@ public class MultisetExpressionHelper<E>
 					lockChangeListeners = false;
 				}
 			}
-			notifyMultisetListeners(
+			notifyMultisetChangeListeners(
 					new AtomicChange<>(observableValue, change));
 		}
 	}
@@ -155,7 +155,7 @@ public class MultisetExpressionHelper<E>
 				elementaryChanges.add(
 						new ElementarySubChange<>(e, oldValue.count(e), 0));
 			}
-			notifyMultisetListeners(
+			notifyMultisetChangeListeners(
 					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
 							HashMultiset.<E> create(oldValue),
 							elementaryChanges));
@@ -166,7 +166,7 @@ public class MultisetExpressionHelper<E>
 				elementaryChanges.add(
 						new ElementarySubChange<>(e, 0, currentValue.count(e)));
 			}
-			notifyMultisetListeners(
+			notifyMultisetChangeListeners(
 					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
 							HashMultiset.<E> create(), elementaryChanges));
 		} else {
@@ -197,7 +197,7 @@ public class MultisetExpressionHelper<E>
 							currentValue.count(e)));
 				}
 			}
-			notifyMultisetListeners(
+			notifyMultisetChangeListeners(
 					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
 							HashMultiset.<E> create(oldValue),
 							elementaryChanges));
