@@ -19,7 +19,7 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.behaviors.FXClickableAreaBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
@@ -31,7 +31,9 @@ import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
@@ -94,6 +96,7 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
 		bindFXFocusAndSelectOnClickPolicyAsAbstractContentPartAdapter(adapterMapBinder);
+		bindFXSelectFocusedOnTypeAsAbstractContentPartAdapter(adapterMapBinder);
 		bindHoverHandlesGeometryProviderAsAbstractContentPartAdapter(adapterMapBinder);
 	}
 
@@ -228,9 +231,16 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(SemanticZoomPolicy.class);
 	}
 
-	private void bindFXClickableAreaBehaviorAsEdgeContentPartAdapter(
+	/**
+	 * Adds a binding for {@link FXConnectionClickableAreaBehavior} to the given adapter
+	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXClickableAreaBehaviorAsEdgeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXClickableAreaBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXConnectionClickableAreaBehavior.class);
 	}
 
 	/**
@@ -312,6 +322,12 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXRootPartAdapters(adapterMapBinder);
 		bindOpenParentGraphOnDoubleClickPolicyAsFXRootPartAdapter(adapterMapBinder);
+
+		// keyboard focus traversal
+		bindFXTraverseFocusOnClickPolicyAsFXRootPartAdapter(adapterMapBinder);
+
+		// select focused on type
+		bindFXSelectFocusedOnTypeAsFXRootPartAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -325,6 +341,31 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXRotateSelectedOnHandleDragPolicyAsFXRectangleSegmentHandlePartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXSelectFocusedOnTypePolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link AbstractContentPart}s. s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXSelectFocusedOnTypeAsAbstractContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXSelectFocusedOnTypePolicy} to the given
+	 * adapter map binder that will insert the bindings into {@link FXRootPart}
+	 * s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXSelectFocusedOnTypeAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
 	}
 
 	/**
@@ -350,6 +391,19 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXTranslateSelectedOnDragPolicyAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXTraverseFocusOnTypePolicy} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link NodeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXTraverseFocusOnClickPolicyAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTraverseFocusOnTypePolicy.class);
 	}
 
 	@Override

@@ -20,13 +20,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXTraverseOnTypePolicy} implements focus traversal via keyboard
+ * The {@link FXTraverseFocusOnTypePolicy} implements focus traversal via keyboard
  * input.
  *
  * @author mwienand
  *
  */
-public class FXTraverseOnTypePolicy extends AbstractFXInteractionPolicy
+public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
 	@SuppressWarnings("serial")

@@ -28,7 +28,7 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class FXClickableAreaBehavior extends AbstractBehavior<Node> {
+public class FXConnectionClickableAreaBehavior extends AbstractBehavior<Node> {
 
 	private static final double ABSOLUTE_CLICKABLE_WIDTH = 8;
 	private DoubleBinding clickableAreaBinding;

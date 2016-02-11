@@ -40,7 +40,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOrZoomOnScrollPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.providers.FXTransformProvider;
@@ -63,6 +62,7 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
+import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Binder;
@@ -313,6 +313,25 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(new TypeLiteral<FocusModel<Node>>() {
+				});
+	}
+
+	/**
+	 * Adds a binding for {@link FocusTraversalPolicy} to the {@link AdapterMap}
+	 * binder for {@link AbstractRootPart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindFocusTraversalPolicyAsFXRootPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(new TypeLiteral<FocusTraversalPolicy<Node>>() {
 				});
 	}
 
@@ -580,7 +599,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXPanOrZoomOnScrollPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXZoomOnPinchSpreadPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindFXPanOnTypePolicyAsFXRootPartAdapter(adapterMapBinder);
-		bindFXRotateSelectedOnRotatePolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register change viewport policy
 		bindFXChangeViewportPolicyAsFXRootPartAdapter(adapterMapBinder);
 		// register default behaviors
@@ -591,24 +609,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		// creation and deletion policy
 		bindCreationPolicyAsFXRootPartAdapter(adapterMapBinder);
 		bindDeletionPolicyAsFXRootPartAdapter(adapterMapBinder);
-	}
-
-	/**
-	 * Adds a binding for {@link FXRotateSelectedOnRotatePolicy} to the
-	 * {@link AdapterMap} binder for {@link FXRootPart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXRootPart} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindFXRotateSelectedOnRotatePolicyAsFXRootPartAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXRotateSelectedOnRotatePolicy.class);
+		// bind focus traversal policy
+		bindFocusTraversalPolicyAsFXRootPartAdapter(adapterMapBinder);
 	}
 
 	/**

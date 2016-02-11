@@ -37,7 +37,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.behaviors.FXClickableAreaBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
@@ -51,16 +51,16 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXTraverseOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -80,7 +80,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXFocusAndSelectOnClickPolicy.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXSelectOnTypePolicy.class);
+				.to(FXSelectFocusedOnTypePolicy.class);
 	}
 
 	@Override
@@ -96,16 +96,15 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXDeleteSelectedOnTypePolicy.class);
-		// focus traversal
+		// interaction policy to rotate selected through rotate gesture
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<FocusTraversalPolicy<Node>>() {
-				});
-		// keyboard focus traversal
+				.to(FXRotateSelectedOnRotatePolicy.class);
+		// keyboard focus traversal through key navigation
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXTraverseOnTypePolicy.class);
+				.to(FXTraverseFocusOnTypePolicy.class);
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXSelectOnTypePolicy.class);
+				.to(FXSelectFocusedOnTypePolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(
@@ -171,7 +170,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// clickable area resizing
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXClickableAreaBehavior.class);
+				.to(FXConnectionClickableAreaBehavior.class);
 
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("0"))

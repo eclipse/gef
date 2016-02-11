@@ -31,13 +31,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXSelectOnTypePolicy} implements (de-)selecting a focused part via
+ * The {@link FXSelectFocusedOnTypePolicy} implements (de-)selecting a focused part via
  * the keyboard.
  *
  * @author mwienand
  *
  */
-public class FXSelectOnTypePolicy extends AbstractFXInteractionPolicy
+public class FXSelectFocusedOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
 	@Override
