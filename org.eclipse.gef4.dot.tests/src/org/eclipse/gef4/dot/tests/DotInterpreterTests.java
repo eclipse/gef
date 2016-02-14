@@ -343,6 +343,29 @@ public final class DotInterpreterTests {
 		interpreter.interpret(parse("graph Sample{graph[layout=cool];1;}")); //$NON-NLS-1$
 	}
 
+	@Test
+	public void htmlLabel() {
+		// self closing tags
+		interpreter.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
+				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"<hr/>\n"
+				+ /* 6 */">\n" + /* 7 */"];\n" + /* 8 */"}"));
+		// simple tag with text content
+		interpreter.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
+				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"<b>\n"
+				+ /* 6 */"alpha\n" + /* 7 */"</b>\n" + /* 8 */">\n"
+				+ /* 9 */"];\n" + /* 10 */"}"));
+		// nested tags with text content
+		interpreter.interpret(parse("graph Sample{\n" + "n[\n" + "label=\n"
+				+ "<\n" + "<table>\n" + "<tr><td><b>alpha</b></td></tr>\n"
+				+ "</table>\n" + ">\n" + "];\n" + "}"));
+		// simple tag with text around the tag
+		interpreter.interpret(parse(
+				/* 1 */"graph Sample{\n" + /* 2 */"n[\n" + /* 3 */"label=\n"
+						+ /* 4 */"<\n" + /* 5 */ "pre\n" + /* 6 */"<b>\n"
+						+ /* 7 */"alpha\n" + /* 8 */"</b>\n" + /* 9 */ "post\n"
+						+ /* 10 */">\n" + /* 11 */"];\n" + /* 12 */"}"));
+	}
+
 	private DotAst parse(String dot) {
 		return new DotAst(dot);
 	}

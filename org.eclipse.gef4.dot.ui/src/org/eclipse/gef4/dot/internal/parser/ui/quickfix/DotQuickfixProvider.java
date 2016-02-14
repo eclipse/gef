@@ -17,7 +17,7 @@ import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.dot.AttributeValue;
-import org.eclipse.gef4.dot.internal.parser.dot.OldID;
+import org.eclipse.gef4.dot.internal.parser.dot.PlainValue;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -52,8 +52,8 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 								IModificationContext context) throws Exception {
 							AttributeValue value = ((Attribute) element)
 									.getValue();
-							if (value instanceof OldID) {
-								((OldID) value).setValue(validValue);
+							if (value instanceof PlainValue) {
+								((PlainValue) value).setValue(validValue);
 							} else {
 								throw new IllegalStateException(
 										"Edge style cannot be an HTML label."); //$NON-NLS-1$

@@ -54,16 +54,16 @@ AttrList:
 Attribute:
 	name=ID "=" value=AttributeValue;
 
-AttributeValue: OldID | HtmlLabel;
+AttributeValue: PlainValue | HtmlValue;
 
-OldID: value=ID;
+PlainValue: value=ID;
 
-HtmlLabel: "<" tag=HtmlTag ">";
+HtmlValue: {HtmlValue} "<" pre=HtmlText? (tag+=HtmlTag post+=HtmlText?)* ">";
 
 HtmlTag:
-	"<" name=STRING attributes+=HtmlAttribute
+	root?="<" name=STRING attributes+=HtmlAttribute*
 	( selfClosing?="/" ">"
-	| ">" children+=HtmlTag* "<" "/" closingTag=[HtmlTag] ">")
+	| ">" pre=HtmlText? (children+=HtmlTag post+=HtmlText?)* "</" closingTag=[HtmlTag] ">")
 ;
 
 HtmlAttribute: name=STRING "=" value=ID;
@@ -90,9 +90,14 @@ EdgeRhsSubgraph:
 NodeId:
 	name=ID (port=Port)?;
 
+HtmlText: text+=HTML+;
+
 	// XXX: While node, edge, graph, digraph, subgraph, and strict are keywords (and thus not allowed as part of an ID), compass point values are no keywords (and may thus be used as ID)
 ID:
 	STRING | QUOTED_STRING | NUMERAL | COMPASS_PT;
+
+HTML:
+	COMPASS_PT | STRING | NUMERAL | ANY_OTHER;
 
 enum EdgeOp:
 	directed="->" | undirected="--";

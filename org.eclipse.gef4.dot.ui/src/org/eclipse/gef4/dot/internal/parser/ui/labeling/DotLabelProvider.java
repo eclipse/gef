@@ -12,16 +12,20 @@
 package org.eclipse.gef4.dot.internal.parser.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.gef4.dot.internal.HtmlToText;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
+import org.eclipse.gef4.dot.internal.parser.dot.AttributeValue;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhs;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhsNode;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtNode;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphvizModel;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlValue;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeId;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
+import org.eclipse.gef4.dot.internal.parser.dot.PlainValue;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
@@ -116,7 +120,20 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 
 	Object text(Attribute attr) {
 		String format = "%s = %s: Attribute"; //$NON-NLS-1$
-		return styled(String.format(format, attr.getName(), attr.getValue()));
+		// get attribute value
+		String textValue = null;
+		AttributeValue value = attr.getValue();
+		// differentiate plain values from html values
+		if (value instanceof PlainValue) {
+			textValue = ((PlainValue) value).getValue();
+		} else if (value instanceof HtmlValue) {
+			textValue = HtmlToText.convertHtmlValueToString((HtmlValue) value);
+		} else {
+			throw new IllegalArgumentException(
+					"The value of the given Attribute is neither PlainValue nor HtmlValue."); //$NON-NLS-1$
+		}
+
+		return styled(String.format(format, attr.getName(), textValue));
 	}
 
 	Object text(AttrList attrs) {
