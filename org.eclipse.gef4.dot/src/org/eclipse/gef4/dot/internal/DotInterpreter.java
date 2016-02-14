@@ -56,6 +56,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String currentEdgeLabelValue;
 	private String currentEdgeSourceNodeId;
 	private boolean createConnection;
+	private boolean currentEdgeLabelIsHtml;
+	private boolean globalEdgeLabelIsHtml;
+	private boolean globalNodeLabelIsHtml;
 
 	/**
 	 * @param dotAst
@@ -120,7 +123,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			return HtmlToText.convertHtmlValueToString(((HtmlValue) value));
 		}
 		throw new IllegalArgumentException(
-				"The given AttributeValue is neither an OldID nor an HtmlLabel.");
+				"The given AttributeValue is neither a PlainValue nor an HtmlValue.");
 	}
 
 	@Override
@@ -137,10 +140,15 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	@Override
 	public Object caseEdgeStmtNode(EdgeStmtNode object) {
-		currentEdgeLabelValue = getAttributeValue(object,
+		AttributeValue label = getAttributeValue(object,
 				DotProperties.EDGE_LABEL);
-		currentEdgeStyleValue = getAttributeValue(object,
+		currentEdgeLabelValue = label == null ? null
+				: escaped(getStringValue(label));
+		currentEdgeLabelIsHtml = label instanceof HtmlValue;
+		AttributeValue style = getAttributeValue(object,
 				DotProperties.EDGE_STYLE);
+		currentEdgeStyleValue = style == null ? null
+				: escaped(getStringValue(style));
 		return super.caseEdgeStmtNode(object);
 	}
 
@@ -167,8 +175,16 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		if (currentEdgeLabelValue != null) {
 			graphConnection.attr(DotProperties.EDGE_LABEL,
 					currentEdgeLabelValue);
+			if (currentEdgeLabelIsHtml != DotProperties.IS_HTML_LABEL_DEFAULT) {
+				graphConnection.attr(DotProperties.IS_HTML_LABEL,
+						currentEdgeLabelIsHtml);
+			}
 		} else if (globalEdgeLabel != null) {
 			graphConnection.attr(DotProperties.EDGE_LABEL, globalEdgeLabel);
+			if (globalEdgeLabelIsHtml != DotProperties.IS_HTML_LABEL_DEFAULT) {
+				graphConnection.attr(DotProperties.IS_HTML_LABEL,
+						globalEdgeLabelIsHtml);
+			}
 		}
 		/* Set the optional style, if set in the DOT input and supported: */
 		String currentEdgeStyleLc = new String(
@@ -228,15 +244,23 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		AttributeType type = attrStmt.getType();
 		switch (type) {
 		case EDGE: {
-			globalEdgeStyle = getAttributeValue(attrStmt,
+			AttributeValue style = getAttributeValue(attrStmt,
 					DotProperties.EDGE_STYLE);
-			globalEdgeLabel = getAttributeValue(attrStmt,
+			globalEdgeStyle = style == null ? null
+					: escaped(getStringValue(style));
+			AttributeValue label = getAttributeValue(attrStmt,
 					DotProperties.EDGE_LABEL);
+			globalEdgeLabel = label == null ? null
+					: escaped(getStringValue(label));
+			globalEdgeLabelIsHtml = label instanceof HtmlValue;
 			break;
 		}
 		case NODE: {
-			globalNodeLabel = getAttributeValue(attrStmt,
+			AttributeValue label = getAttributeValue(attrStmt,
 					DotProperties.NODE_LABEL);
+			globalNodeLabel = label == null ? null
+					: escaped(getStringValue(label));
+			globalNodeLabelIsHtml = label instanceof HtmlValue;
 			break;
 		}
 		case GRAPH: {
@@ -245,8 +269,10 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					graph.attr(a.getName(), a.getValue());
 				}
 			}
-			String graphLayout = getAttributeValue(attrStmt,
+			AttributeValue layout = getAttributeValue(attrStmt,
 					DotProperties.GRAPH_LAYOUT);
+			String graphLayout = layout == null ? null
+					: escaped(getStringValue(layout));
 			if (graphLayout != null) {
 				String graphLayoutLc = new String(graphLayout).toLowerCase();
 				if (!supported(graphLayoutLc,
@@ -264,8 +290,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private void createNode(final NodeStmt nodeStatement) {
 		String nodeId = escaped(nodeStatement.getNode().getName());
-		String label = getAttributeValue(nodeStatement,
+		AttributeValue label = getAttributeValue(nodeStatement,
 				DotProperties.NODE_LABEL);
+		String labelStringValue = label == null ? null
+				: escaped(getStringValue(label));
+		boolean isHtmlLabel = label instanceof HtmlValue;
 
 		Node node;
 		if (nodes.containsKey(nodeId)) {
@@ -275,10 +304,16 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					.buildNode();
 		}
 
-		if (label != null) {
-			DotProperties.setLabel(node, label);
+		if (labelStringValue != null) {
+			DotProperties.setLabel(node, labelStringValue);
+			if (isHtmlLabel != DotProperties.IS_HTML_LABEL_DEFAULT) {
+				DotProperties.setIsHtmlLabel(node, isHtmlLabel);
+			}
 		} else if (globalNodeLabel != null) {
 			DotProperties.setLabel(node, globalNodeLabel);
+			if (globalNodeLabelIsHtml != DotProperties.IS_HTML_LABEL_DEFAULT) {
+				DotProperties.setIsHtmlLabel(node, globalNodeLabelIsHtml);
+			}
 		}
 
 		if (!nodes.containsKey(nodeId)) {
@@ -307,7 +342,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	 *            The name of the attribute to get the value for, e.g. "label"
 	 * @return The value of the given attribute, e.g. "hi"
 	 */
-	private String getAttributeValue(final Stmt eStatementObject,
+	private AttributeValue getAttributeValue(final Stmt eStatementObject,
 			final String attributeName) {
 		Iterator<EObject> nodeContents = eStatementObject.eContents()
 				.iterator();
@@ -321,8 +356,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					if (next instanceof Attribute) {
 						Attribute attributeElement = (Attribute) next;
 						if (attributeElement.getName().equals(attributeName)) {
-							return escaped(getStringValue(
-									attributeElement.getValue()));
+							return attributeElement.getValue();
 						}
 					}
 				}

@@ -344,7 +344,7 @@ public final class DotInterpreterTests {
 	}
 
 	@Test
-	public void htmlLabel() {
+	public void htmlLabels() {
 		// self closing tags
 		interpreter.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
 				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"<hr/>\n"
@@ -369,6 +369,12 @@ public final class DotInterpreterTests {
 				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"<s>\n"
 				+ /* 6 */"text\n" + /* 7 */ "</s>\n" + /* 8 */ ">\n"
 				+ /* 9 */ "];\n" + /* 10 */"}"));
+		// test if DotProperties#IS_HTML_LABEL is properly set
+		Graph graph = interpreter.interpret(parse(
+				"graph Sample{ n[label=\"normal text label\"]; m[label=<<b>html</b> label>]; }"));
+		assertEquals(false, DotProperties.IS_HTML_LABEL_DEFAULT);
+		assertEquals(null, DotProperties.isHtmlLabel(graph.getNodes().get(0)));
+		assertEquals(true, DotProperties.isHtmlLabel(graph.getNodes().get(1)));
 	}
 
 	private DotAst parse(String dot) {

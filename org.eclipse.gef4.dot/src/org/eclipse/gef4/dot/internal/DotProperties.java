@@ -31,6 +31,19 @@ import org.eclipse.gef4.graph.Node;
 public class DotProperties {
 
 	/**
+	 * Boolean property that determines if a {@link #NODE_LABEL} or
+	 * {@link #EDGE_LABEL} contains HTML content.
+	 * 
+	 * @see #IS_HTML_LABEL_DEFAULT
+	 */
+	public static final String IS_HTML_LABEL = "is-html-label";
+
+	/**
+	 * Default value for the {@link #IS_HTML_LABEL} property.
+	 */
+	public static final Boolean IS_HTML_LABEL_DEFAULT = false;
+
+	/**
 	 * Specifies the identifier of a node.
 	 */
 	public static final String NODE_ID = "id";
@@ -365,6 +378,34 @@ public class DotProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #IS_HTML_LABEL} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #IS_HTML_LABEL} property.
+	 * @return The value of the {@link #IS_HTML_LABEL} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Boolean isHtmlLabel(Edge edge) {
+		return (Boolean) edge.attributesProperty().get(IS_HTML_LABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #IS_HTML_LABEL} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #IS_HTML_LABEL} property.
+	 * @return The value of the {@link #IS_HTML_LABEL} property of the given
+	 *         {@link Node}.
+	 */
+	public static Boolean isHtmlLabel(Node node) {
+		return (Boolean) node.attributesProperty().get(IS_HTML_LABEL);
+	}
+
+	/**
 	 * Sets the {@link #NODE_LABEL} property of the given {@link Node} to the
 	 * given <i>label</i> value.
 	 * 
@@ -496,6 +537,34 @@ public class DotProperties {
 	 */
 	public static void setId(Edge edge, String id) {
 		edge.attributesProperty().put(EDGE_ID, id);
+	}
+
+	/**
+	 * Sets the {@link #IS_HTML_LABEL} property of the given {@link Edge} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #IS_HTML_LABEL} property.
+	 * @param isHtmlLabel
+	 *            The new value for the {@link #IS_HTML_LABEL} property.
+	 */
+	public static void setIsHtmlLabel(Edge edge, Boolean isHtmlLabel) {
+		edge.attributesProperty().put(IS_HTML_LABEL, isHtmlLabel);
+	}
+
+	/**
+	 * Sets the {@link #IS_HTML_LABEL} property of the given {@link Node} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #IS_HTML_LABEL} property.
+	 * @param isHtmlLabel
+	 *            The new value for the {@link #IS_HTML_LABEL} property.
+	 */
+	public static void setIsHtmlLabel(Node node, Boolean isHtmlLabel) {
+		node.attributesProperty().put(IS_HTML_LABEL, isHtmlLabel);
 	}
 
 }
