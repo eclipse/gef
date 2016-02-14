@@ -61,12 +61,12 @@ PlainValue: value=ID;
 HtmlValue: {HtmlValue} "<" pre=HtmlText? (tag+=HtmlTag post+=HtmlText?)* ">";
 
 HtmlTag:
-	root?="<" name=STRING attributes+=HtmlAttribute*
+	root?="<" name=(STRING|COMPASS_PT) attributes+=HtmlAttribute*
 	( selfClosing?="/" ">"
 	| ">" pre=HtmlText? (children+=HtmlTag post+=HtmlText?)* "</" closingTag=[HtmlTag] ">")
 ;
 
-HtmlAttribute: name=STRING "=" value=ID;
+HtmlAttribute: name=(STRING|COMPASS_PT) "=" value=ID;
 
 	// XXX: We perform an assign action, so the parse tree is rewritten in case a subgraph is specified through an EdgeStmt
 SubgraphOrEdgeStmtSubgraph:

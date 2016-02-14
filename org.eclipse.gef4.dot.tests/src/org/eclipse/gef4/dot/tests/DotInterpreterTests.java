@@ -364,6 +364,11 @@ public final class DotInterpreterTests {
 						+ /* 4 */"<\n" + /* 5 */ "pre\n" + /* 6 */"<b>\n"
 						+ /* 7 */"alpha\n" + /* 8 */"</b>\n" + /* 9 */ "post\n"
 						+ /* 10 */">\n" + /* 11 */"];\n" + /* 12 */"}"));
+		// regression: COMPASS_PT as tag name
+		interpreter.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
+				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"<s>\n"
+				+ /* 6 */"text\n" + /* 7 */ "</s>\n" + /* 8 */ ">\n"
+				+ /* 9 */ "];\n" + /* 10 */"}"));
 	}
 
 	private DotAst parse(String dot) {
