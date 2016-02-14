@@ -24,6 +24,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
  * 
  */
 public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
+
 	/**
 	 * Treat node statements as leafs if they have no attributes.
 	 * 
@@ -47,6 +48,17 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	/**
+	 * Mark 'Attribute' model elements as leafs.
+	 * 
+	 * @param attr
+	 *            The 'Attribute' model element.
+	 * @return true
+	 */
+	protected boolean _isLeaf(Attribute attr) {
+		return true;
+	}
+
+	/**
 	 * Skip the `AttrList` wrapper element in the outline structure.
 	 * 
 	 * @param parent
@@ -63,4 +75,16 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 			}
 		}
 	}
+
+	/**
+	 * Skip the 'Attribute' in the outline structure.
+	 * 
+	 * @param parent
+	 *            The outline parent node
+	 * @param attr
+	 *            The `Attribute` model element
+	 */
+	protected void _createChildren(IOutlineNode parent, Attribute attr) {
+	}
+
 }
