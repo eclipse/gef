@@ -381,6 +381,20 @@ public final class DotInterpreterTests {
 		interpreter.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
 				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"&nbsp;\n"
 				+ /* 6 */">\n" + /* 7 */"];\n" + /* 8 */"}"));
+		// no whitespace is inserted between text and tags
+		graph = interpreter
+				.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
+						+ /* 3 */"label=\n" + /* 4 */"<pre<b>bold</b>post>\n"
+						+ /* 5 */"];\n" + /* 6 */ "}"));
+		assertEquals("pre<b>bold</b>post",
+				graph.getNodes().get(0).getAttributes().get("label"));
+		// whitespace is preserved around tags
+		graph = interpreter.interpret(parse(/* 1 */"graph Sample{\n"
+				+ /* 2 */"n[\n" + /* 3 */"label=\n" + /* 4 */"<\n"
+				+ /* 5 */"pre\n" + /* 6 */"<b>bold</b>\n" + /* 7 */"post\n"
+				+ /* 8 */">\n" + /* 9 */ "];\n" + /* 10 */ "}"));
+		assertEquals("pre <b>bold</b> post",
+				graph.getNodes().get(0).getAttributes().get("label"));
 	}
 
 	private DotAst parse(String dot) {

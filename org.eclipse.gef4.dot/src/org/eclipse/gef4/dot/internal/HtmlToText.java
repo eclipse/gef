@@ -53,7 +53,9 @@ public class HtmlToText {
 
 	public static String convertHtmlTagToString(HtmlTag tag) {
 		// opening tag
-		StringBuilder sb = new StringBuilder("<" + tag.getName());
+		StringBuilder sb = new StringBuilder(
+				(tag.getPreOpenWs() == null || tag.getPreOpenWs().length() == 0
+						? "" : " ") + "<" + tag.getName());
 		// attributes
 		if (!tag.getAttributes().isEmpty()) {
 			for (HtmlAttribute attr : tag.getAttributes()) {
@@ -63,10 +65,12 @@ public class HtmlToText {
 		}
 		// self-closing?
 		if (tag.isSelfClosing()) {
-			sb.append("/>");
+			sb.append("/>" + (tag.getPostOpenWs() == null
+					|| tag.getPostOpenWs().length() == 0 ? "" : " "));
 		} else {
 			// close the opening tag
-			sb.append(">");
+			sb.append(">" + (tag.getPostOpenWs() == null
+					|| tag.getPostOpenWs().length() == 0 ? "" : " "));
 			// add pre text
 			if (tag.getPre() != null) {
 				EList<String> text = tag.getPre().getText();
@@ -92,7 +96,13 @@ public class HtmlToText {
 				}
 			}
 			// closing tag
-			sb.append("</" + tag.getName() + ">");
+			sb.append(
+					(tag.getPreCloseWs() == null
+							|| tag.getPreCloseWs().length() == 0 ? "" : " ")
+							+ "</" + tag.getName() + ">"
+							+ (tag.getPostCloseWs() == null
+									|| tag.getPostCloseWs().length() == 0 ? ""
+											: " "));
 		}
 		return sb.toString();
 	}

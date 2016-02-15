@@ -58,12 +58,12 @@ AttributeValue: PlainValue | HtmlValue;
 
 PlainValue: value=ID;
 
-HtmlValue: {HtmlValue} "<" pre=HtmlText? (tag+=HtmlTag post+=HtmlText?)* ">";
+HtmlValue hidden(ML_COMMENT, SL_COMMENT, HTML_COMMENT): {HtmlValue} "<" WS? pre=HtmlText? (tag+=HtmlTag post+=HtmlText?)* WS? ">";
 
-HtmlTag:
-	root?="<" name=(STRING|COMPASS_PT) attributes+=HtmlAttribute*
-	( selfClosing?="/" ">"
-	| ">" pre=HtmlText? (children+=HtmlTag post+=HtmlText?)* "</" closingTag=[HtmlTag] ">")
+HtmlTag hidden(ML_COMMENT, SL_COMMENT, HTML_COMMENT):
+	preOpenWs=WS? "<" WS? name=(STRING|COMPASS_PT) WS? (attributes+=HtmlAttribute WS?)*
+	( selfClosing?="/" WS? ">" postOpenWs=WS?
+	| ">" postOpenWs=WS? pre=HtmlText? (children+=HtmlTag post+=HtmlText?)* preCloseWs=WS? "<" WS? "/" WS? closingTag=[HtmlTag] WS? ">" postCloseWs=WS?)
 ;
 
 HtmlAttribute: name=(STRING|COMPASS_PT) "=" value=ID;
@@ -129,6 +129,9 @@ terminal ML_COMMENT:
 
 terminal SL_COMMENT:
 	('//' | '#') !('\n' | '\r')* ('\r'? '\n')?;
+	
+terminal HTML_COMMENT:
+	'<!--'->'-->';
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n')+;
