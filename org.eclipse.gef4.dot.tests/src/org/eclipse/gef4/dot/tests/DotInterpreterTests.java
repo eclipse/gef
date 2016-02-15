@@ -404,6 +404,15 @@ public final class DotInterpreterTests {
 				+ /* 9 */ "];\n" + /* 10 */ "}"));
 		assertEquals("pre <b>bold</b> post",
 				graph.getNodes().get(0).getAttributes().get("label"));
+		// attributeus
+		graph = interpreter.interpret(parse(
+				/* 1 */"graph Sample{\n" + /* 2 */"n[\n" + /* 3 */"label=\n"
+						+ /* 4 */"<<table border=1><tr><td>\n"
+						+ /* 5 */"<!-- c2 -->pre<!--c3 -->\n"
+						+ /* 6 */"<!-- c4--><b><!--c5-->bold<!--c6--></b>\n"
+						+ /* 7 */"<!--c7-->post\n"
+						+ /* 8 */"<!--c8--></tr></td></table>>\n"
+						+ /* 9 */ "];\n" + /* 10 */ "}"));
 	}
 
 	private DotAst parse(String dot) {

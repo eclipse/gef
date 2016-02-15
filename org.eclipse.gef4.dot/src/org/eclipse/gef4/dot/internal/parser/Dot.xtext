@@ -68,12 +68,12 @@ HtmlContent:
 	contents+=(HtmlTag|HtmlText)+;
 
 HtmlTag:
-	HTML_OPEN_BRACKET name=(STRING|COMPASS_PT) attributes+=HtmlAttribute*
-	( selfClosing?="/" HTML_CLOSE_BRACKET
-	| HTML_CLOSE_BRACKET children+=HtmlContent? HTML_OPEN_BRACKET "/" closingTag=[HtmlTag] HTML_CLOSE_BRACKET);
+	HTML_OPEN_BRACKET WS? name=(STRING|COMPASS_PT) WS? attributes+=HtmlAttribute*
+	( selfClosing?="/" WS? HTML_CLOSE_BRACKET
+	| HTML_CLOSE_BRACKET children+=HtmlContent? HTML_OPEN_BRACKET WS? "/" WS? closingTag=[HtmlTag] WS? HTML_CLOSE_BRACKET);
 
 HtmlAttribute:
-	name=(STRING|COMPASS_PT) "=" value=ID;
+	name=(STRING|COMPASS_PT) WS? "=" WS? value=ID;
 
 HtmlText:
 	=> fragments+=HTML_FRAGMENT+;
