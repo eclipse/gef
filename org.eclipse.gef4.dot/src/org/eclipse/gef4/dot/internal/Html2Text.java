@@ -12,110 +12,69 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.internal.parser.dot.HtmlAttribute;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlContent;
 import org.eclipse.gef4.dot.internal.parser.dot.HtmlTag;
+import org.eclipse.gef4.dot.internal.parser.dot.HtmlText;
 import org.eclipse.gef4.dot.internal.parser.dot.HtmlValue;
 
 public class Html2Text {
 
 	public static String convertHtmlValueToString(HtmlValue htmlValue) {
 		StringBuilder sb = new StringBuilder();
-		// add pre text
-		if (htmlValue.getPre() != null) {
-			EList<String> text = htmlValue.getPre().getText();
-			if (text != null) {
-				sb.append(stringJoin(" ", text));
-			}
-		}
-		// add tags and post text
-		int tagSize = htmlValue.getTag().size();
-		int postSize = htmlValue.getPost().size();
-		int maxSize = Math.max(tagSize, postSize);
-		for (int i = 0; i < maxSize; i++) {
-			// convert tag to html
-			if (i < tagSize) {
-				sb.append(convertHtmlTagToString(htmlValue.getTag().get(i)));
-			}
-			// add post text
-			if (i < postSize) {
-				EList<String> text = htmlValue.getPost().get(i).getText();
-				if (text != null) {
-					sb.append(stringJoin(" ", text));
+		EList<EObject> contents = htmlValue.getContent().getContents();
+		convertContentsToString(sb, contents, true);
+		return sb.toString();
+	}
+
+	protected static void convertContentsToString(StringBuilder sb,
+			EList<EObject> contents, boolean trim) {
+		for (int i = 0; i < contents.size(); i++) {
+			Object c = contents.get(i);
+			if (c instanceof HtmlTag) {
+				sb.append(convertHtmlTagToString((HtmlTag) c));
+			} else if (c instanceof HtmlText) {
+				EList<String> fragments = ((HtmlText) c).getFragments();
+				for (int j = 0; j < fragments.size(); j++) {
+					String fragment = fragments.get(j);
+					if (fragment.matches("^\\s+$")) {
+						boolean isFirst = i == 0 && j == 0;
+						boolean isLast = i == contents.size() - 1
+								&& j == fragments.size() - 1;
+						if (!isFirst && !isLast || !trim) {
+							sb.append(" ");
+						}
+					} else {
+						sb.append(fragment);
+					}
 				}
 			}
 		}
-		return sb.toString();
 	}
 
 	public static String convertHtmlTagToString(HtmlTag tag) {
 		// opening tag
-		StringBuilder sb = new StringBuilder(
-				(tag.getPreOpenWs() == null || tag.getPreOpenWs().length() == 0
-						? "" : " ") + "<" + tag.getName());
+		StringBuilder sb = new StringBuilder("<" + tag.getName());
 		// attributes
 		if (!tag.getAttributes().isEmpty()) {
 			for (HtmlAttribute attr : tag.getAttributes()) {
-				sb.append(
-						" " + attr.getName() + "=\"" + attr.getValue() + "\"");
+				sb.append(" " + attr.getName() + "=" + attr.getValue());
 			}
 		}
 		// self-closing?
 		if (tag.isSelfClosing()) {
-			sb.append("/>" + (tag.getPostOpenWs() == null
-					|| tag.getPostOpenWs().length() == 0 ? "" : " "));
+			sb.append("/>");
 		} else {
 			// close the opening tag
-			sb.append(">" + (tag.getPostOpenWs() == null
-					|| tag.getPostOpenWs().length() == 0 ? "" : " "));
-			// add pre text
-			if (tag.getPre() != null) {
-				EList<String> text = tag.getPre().getText();
-				if (text != null) {
-					sb.append(stringJoin(" ", text));
-				}
-			}
-			// children and post text
-			int tagSize = tag.getChildren().size();
-			int postSize = tag.getPost().size();
-			int max = Math.max(tagSize, postSize);
-			for (int i = 0; i < max; i++) {
-				// add child
-				if (i < tagSize) {
-					sb.append(convertHtmlTagToString(tag.getChildren().get(i)));
-				}
-				// add post text
-				if (i < postSize) {
-					EList<String> text = tag.getPost().get(i).getText();
-					if (text != null) {
-						sb.append(stringJoin(" ", text));
-					}
-				}
+			sb.append(">");
+			// children and text
+			for (HtmlContent content : tag.getChildren()) {
+				convertContentsToString(sb, content.getContents(), false);
 			}
 			// closing tag
-			sb.append(
-					(tag.getPreCloseWs() == null
-							|| tag.getPreCloseWs().length() == 0 ? "" : " ")
-							+ "</" + tag.getName() + ">"
-							+ (tag.getPostCloseWs() == null
-									|| tag.getPostCloseWs().length() == 0 ? ""
-											: " "));
-		}
-		return sb.toString();
-	}
-
-	private static String stringJoin(String delimiter, List<String> text) {
-		StringBuilder sb = new StringBuilder();
-		Iterator<String> it = text.iterator();
-		while (it.hasNext()) {
-			String t = it.next();
-			sb.append(t);
-			if (it.hasNext()) {
-				sb.append(delimiter);
-			}
+			sb.append("</" + tag.getName() + ">");
 		}
 		return sb.toString();
 	}

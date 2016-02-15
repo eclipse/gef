@@ -55,19 +55,31 @@ AttrList:
 Attribute:
 	name=ID "=" value=AttributeValue;
 
-AttributeValue: PlainValue | HtmlValue;
+AttributeValue:
+	PlainValue | HtmlValue;
 
-PlainValue: value=ID;
+PlainValue:
+	value=ID;
 
-HtmlValue hidden(ML_COMMENT, SL_COMMENT, HTML_COMMENT): {HtmlValue} "<" WS? pre=HtmlText? (tag+=HtmlTag post+=HtmlText?)* WS? ">";
+HtmlValue hidden(ML_COMMENT, SL_COMMENT, HTML_COMMENT):
+	{HtmlValue} HTML_OPEN_BRACKET content=HtmlContent? HTML_CLOSE_BRACKET;
 
-HtmlTag hidden(ML_COMMENT, SL_COMMENT, HTML_COMMENT):
-	preOpenWs=WS? "<" WS? name=(STRING|COMPASS_PT) WS? (attributes+=HtmlAttribute WS?)*
-	( selfClosing?="/" WS? ">" postOpenWs=WS?
-	| ">" postOpenWs=WS? pre=HtmlText? (children+=HtmlTag post+=HtmlText?)* preCloseWs=WS? "<" WS? "/" WS? closingTag=[HtmlTag] WS? ">" postCloseWs=WS?)
-;
+HtmlContent:
+	contents+=(HtmlTag|HtmlText)+;
 
-HtmlAttribute: name=(STRING|COMPASS_PT) "=" value=ID;
+HtmlTag:
+	HTML_OPEN_BRACKET name=(STRING|COMPASS_PT) attributes+=HtmlAttribute*
+	( selfClosing?="/" HTML_CLOSE_BRACKET
+	| HTML_CLOSE_BRACKET children+=HtmlContent? HTML_OPEN_BRACKET "/" closingTag=[HtmlTag] HTML_CLOSE_BRACKET);
+
+HtmlAttribute:
+	name=(STRING|COMPASS_PT) "=" value=ID;
+
+HtmlText:
+	=> fragments+=HTML_FRAGMENT+;
+
+HTML_FRAGMENT:
+	COMPASS_PT | STRING | NUMERAL | HTML_ENTITY | WS | ANY_OTHER;
 
 	// XXX: We perform an assign action, so the parse tree is rewritten in case a subgraph is specified through an EdgeStmt
 SubgraphOrEdgeStmtSubgraph:
@@ -91,14 +103,9 @@ EdgeRhsSubgraph:
 NodeId:
 	name=ID (port=Port)?;
 
-HtmlText: text+=HTML+;
-
 	// XXX: While node, edge, graph, digraph, subgraph, and strict are keywords (and thus not allowed as part of an ID), compass point values are no keywords (and may thus be used as ID)
 ID:
 	STRING | QUOTED_STRING | NUMERAL | COMPASS_PT;
-
-HTML:
-	COMPASS_PT | STRING | NUMERAL | HTML_ENTITY | ANY_OTHER;
 
 enum EdgeOp:
 	directed="->" | undirected="--";
@@ -133,6 +140,12 @@ terminal SL_COMMENT:
 	
 terminal HTML_COMMENT:
 	'<!--'->'-->';
+
+terminal HTML_OPEN_BRACKET:
+	'<';
+
+terminal HTML_CLOSE_BRACKET:
+	'>';
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n')+;

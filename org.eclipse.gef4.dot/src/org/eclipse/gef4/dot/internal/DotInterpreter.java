@@ -142,9 +142,10 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	public Object caseEdgeStmtNode(EdgeStmtNode object) {
 		AttributeValue label = getAttributeValue(object,
 				DotProperties.EDGE_LABEL);
-		currentEdgeLabelValue = label == null ? null
-				: escaped(getStringValue(label));
 		currentEdgeLabelIsHtml = label instanceof HtmlValue;
+		currentEdgeLabelValue = label == null ? null
+				: currentEdgeLabelIsHtml ? getStringValue(label)
+						: escaped(getStringValue(label));
 		AttributeValue style = getAttributeValue(object,
 				DotProperties.EDGE_STYLE);
 		currentEdgeStyleValue = style == null ? null
@@ -250,17 +251,19 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					: escaped(getStringValue(style));
 			AttributeValue label = getAttributeValue(attrStmt,
 					DotProperties.EDGE_LABEL);
-			globalEdgeLabel = label == null ? null
-					: escaped(getStringValue(label));
 			globalEdgeLabelIsHtml = label instanceof HtmlValue;
+			globalEdgeLabel = label == null ? null
+					: globalEdgeLabelIsHtml ? getStringValue(label)
+							: escaped(getStringValue(label));
 			break;
 		}
 		case NODE: {
 			AttributeValue label = getAttributeValue(attrStmt,
 					DotProperties.NODE_LABEL);
-			globalNodeLabel = label == null ? null
-					: escaped(getStringValue(label));
 			globalNodeLabelIsHtml = label instanceof HtmlValue;
+			globalNodeLabel = label == null ? null
+					: globalNodeLabelIsHtml ? getStringValue(label)
+							: escaped(getStringValue(label));
 			break;
 		}
 		case GRAPH: {
@@ -292,9 +295,10 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		String nodeId = escaped(nodeStatement.getNode().getName());
 		AttributeValue label = getAttributeValue(nodeStatement,
 				DotProperties.NODE_LABEL);
-		String labelStringValue = label == null ? null
-				: escaped(getStringValue(label));
 		boolean isHtmlLabel = label instanceof HtmlValue;
+		String labelStringValue = label == null ? null
+				: isHtmlLabel ? getStringValue(label)
+						: escaped(getStringValue(label));
 
 		Node node;
 		if (nodes.containsKey(nodeId)) {
