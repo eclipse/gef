@@ -15,55 +15,14 @@ package org.eclipse.gef4.dot.internal.ui;
 import org.eclipse.gef4.dot.DotProperties;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker.State;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import javafx.scene.web.WebView;
 
 public class DotNodeContentPart extends NodeContentPart {
 
-	private static final String SCRIPT_GET_WIDTH = "document.getElementById('content').offsetWidth";
-	private static final String SCRIPT_GET_HEIGHT = "document.getElementById('content').offsetHeight";
-	private static final double VERTICAL_PADDING = 20;
-	private static final double HORIZONTAL_PADDING = 20;
-	private static final String NO_SCROLLBARS_STYLE = "document.body.style.overflow = 'hidden';"; //$NON-NLS-1$
-	private static final String PRE_HTML = "<html><head><title></title></head><body><div id=\"content\" style=\"float:left;\">";
-	private static final String POST_HTML = "</div></body></html>";
-
 	private Group labelGroup = new Group();
-	private WebView labelWebView = new WebView();
-	private String loadedContent = null;
-
-	{
-		// ensure no scrollbars are shown in the web view
-		labelWebView.getEngine().getLoadWorker().stateProperty()
-				.addListener(new ChangeListener<State>() {
-					public void changed(ObservableValue<? extends State> o,
-							State old, final State state) {
-						if (state == State.RUNNING
-								|| state == State.SUCCEEDED) {
-							labelWebView.getEngine()
-									.executeScript(NO_SCROLLBARS_STYLE);
-						}
-						if (state == State.SUCCEEDED) {
-							Object width = labelWebView.getEngine()
-									.executeScript(SCRIPT_GET_WIDTH);
-							Object height = labelWebView.getEngine()
-									.executeScript(SCRIPT_GET_HEIGHT);
-							// FIXME: compute real padding
-							labelWebView.setPrefSize(
-									HORIZONTAL_PADDING + (Integer) width,
-									VERTICAL_PADDING + (Integer) height);
-						}
-					}
-				});
-		// ensure web view can be resized to any size
-		labelWebView.setMinSize(0, 0);
-		labelWebView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-	}
+	private HtmlLabel htmlLabel = new HtmlLabel();
 
 	protected Group createVisual() {
 		// super call to create visual
@@ -76,7 +35,7 @@ public class DotNodeContentPart extends NodeContentPart {
 		textParent.getChildren().remove(text);
 		textParent.getChildren().add(index, labelGroup);
 		// put label Text and WebView into label Group
-		labelGroup.getChildren().addAll(text, labelWebView);
+		labelGroup.getChildren().addAll(text, htmlLabel);
 		// return the modified group
 		return group;
 	}
@@ -91,17 +50,13 @@ public class DotNodeContentPart extends NodeContentPart {
 		}
 		if (isHtmlLabel) {
 			getLabelText().setVisible(false);
-			labelWebView.setVisible(true);
+			htmlLabel.setVisible(true);
 			// supply HTML to web engine
 			String label = DotProperties.getLabel(getContent());
-			if (loadedContent == null || !loadedContent.equals(label)) {
-				loadedContent = label;
-				labelWebView.getEngine()
-						.loadContent(PRE_HTML + label + POST_HTML);
-			}
+			htmlLabel.loadContent(label);
 		} else {
 			getLabelText().setVisible(true);
-			labelWebView.setVisible(false);
+			htmlLabel.setVisible(false);
 		}
 	}
 

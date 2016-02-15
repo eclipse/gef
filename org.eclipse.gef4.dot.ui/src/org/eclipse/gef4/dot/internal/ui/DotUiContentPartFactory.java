@@ -30,6 +30,7 @@ public class DotUiContentPartFactory extends ZestFxContentPartFactory {
 	@Inject
 	private Injector injector;
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IContentPart<Node, ? extends Node> createContentPart(Object content,
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
