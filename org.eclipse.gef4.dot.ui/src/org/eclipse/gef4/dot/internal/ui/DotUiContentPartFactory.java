@@ -14,6 +14,7 @@ package org.eclipse.gef4.dot.internal.ui;
 
 import java.util.Map;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
@@ -22,6 +23,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import javafx.scene.Node;
+import javafx.util.Pair;
 
 public class DotUiContentPartFactory extends ZestFxContentPartFactory {
 
@@ -31,8 +33,14 @@ public class DotUiContentPartFactory extends ZestFxContentPartFactory {
 	@Override
 	public IContentPart<Node, ? extends Node> createContentPart(Object content,
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+		IContentPart<Node, ? extends Node> part = null;
 		if (content instanceof org.eclipse.gef4.graph.Node) {
-			DotNodeContentPart part = new DotNodeContentPart();
+			part = new DotNodeContentPart();
+		} else if (content instanceof Pair
+				&& ((Pair) content).getKey() instanceof Edge) {
+			part = new DotEdgeLabelPart();
+		}
+		if (part != null) {
 			injector.injectMembers(part);
 			return part;
 		}

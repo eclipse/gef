@@ -13,17 +13,15 @@
 package org.eclipse.gef4.dot.internal.ui;
 
 import org.eclipse.gef4.dot.DotProperties;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.scene.Group;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 
-public class DotNodeContentPart extends NodeContentPart {
+public class DotEdgeLabelPart extends EdgeLabelPart {
 
 	private static final String SCRIPT_GET_WIDTH = "document.getElementById('content').offsetWidth";
 	private static final String SCRIPT_GET_HEIGHT = "document.getElementById('content').offsetHeight";
@@ -33,7 +31,6 @@ public class DotNodeContentPart extends NodeContentPart {
 	private static final String PRE_HTML = "<html><head><title></title></head><body><div id=\"content\" style=\"float:left;\">";
 	private static final String POST_HTML = "</div></body></html>";
 
-	private Group labelGroup = new Group();
 	private WebView labelWebView = new WebView();
 	private String loadedContent = null;
 
@@ -65,42 +62,32 @@ public class DotNodeContentPart extends NodeContentPart {
 		labelWebView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 
+	@Override
 	protected Group createVisual() {
-		// super call to create visual
 		Group group = super.createVisual();
-		// find the label Text
-		Text text = getLabelText();
-		// replace labelText with labelGroup in the visual hierarchy
-		Pane textParent = (Pane) text.getParent();
-		int index = textParent.getChildren().indexOf(text);
-		textParent.getChildren().remove(text);
-		textParent.getChildren().add(index, labelGroup);
-		// put label Text and WebView into label Group
-		labelGroup.getChildren().addAll(text, labelWebView);
-		// return the modified group
+		group.getChildren().add(labelWebView);
 		return group;
 	}
 
-	@Override
-	public void doRefreshVisual(Group visual) {
+	protected void doRefreshVisual(Group visual) {
 		super.doRefreshVisual(visual);
 		// check if HTML label
-		Boolean isHtmlLabel = DotProperties.isHtmlLabel(getContent());
+		Boolean isHtmlLabel = DotProperties.isHtmlLabel(getContent().getKey());
 		if (isHtmlLabel == null) {
 			isHtmlLabel = DotProperties.IS_HTML_LABEL_DEFAULT;
 		}
 		if (isHtmlLabel) {
-			getLabelText().setVisible(false);
+			getText().setVisible(false);
 			labelWebView.setVisible(true);
 			// supply HTML to web engine
-			String label = DotProperties.getLabel(getContent());
+			String label = DotProperties.getLabel(getContent().getKey());
 			if (loadedContent == null || !loadedContent.equals(label)) {
 				loadedContent = label;
 				labelWebView.getEngine()
 						.loadContent(PRE_HTML + label + POST_HTML);
 			}
 		} else {
-			getLabelText().setVisible(true);
+			getText().setVisible(true);
 			labelWebView.setVisible(false);
 		}
 	}
