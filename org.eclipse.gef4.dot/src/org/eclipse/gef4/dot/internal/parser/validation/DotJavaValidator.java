@@ -14,7 +14,7 @@
 package org.eclipse.gef4.dot.internal.parser.validation;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.dot.internal.DotProperties;
 import org.eclipse.gef4.dot.internal.Html2Text;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
