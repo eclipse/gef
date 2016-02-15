@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Matthias Wienand - contribution for Bugzilla #321775
+ * 
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
@@ -375,6 +377,10 @@ public final class DotInterpreterTests {
 		assertEquals(false, DotProperties.IS_HTML_LABEL_DEFAULT);
 		assertEquals(null, DotProperties.isHtmlLabel(graph.getNodes().get(0)));
 		assertEquals(true, DotProperties.isHtmlLabel(graph.getNodes().get(1)));
+		// entities
+		interpreter.interpret(parse(/* 1 */"graph Sample{\n" + /* 2 */"n[\n"
+				+ /* 3 */"label=\n" + /* 4 */"<\n" + /* 5 */"&nbsp;\n"
+				+ /* 6 */">\n" + /* 7 */"];\n" + /* 8 */"}"));
 	}
 
 	private DotAst parse(String dot) {

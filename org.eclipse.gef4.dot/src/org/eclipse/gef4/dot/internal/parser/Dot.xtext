@@ -97,7 +97,7 @@ ID:
 	STRING | QUOTED_STRING | NUMERAL | COMPASS_PT;
 
 HTML:
-	COMPASS_PT | STRING | NUMERAL | ANY_OTHER;
+	COMPASS_PT | STRING | NUMERAL | HTML_ENTITY | ANY_OTHER;
 
 enum EdgeOp:
 	directed="->" | undirected="--";
@@ -111,6 +111,9 @@ enum AttributeType:
 	// XXX: While keywords are case insensitive, compass point values are not; we thus parse them as terminals
 terminal COMPASS_PT:
 	'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'c' | '_';
+
+terminal HTML_ENTITY:
+	'&' ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')* ';';
 
 terminal STRING:
 	('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
