@@ -13,8 +13,10 @@
 package org.eclipse.gef4.dot.internal.ui;
 
 import org.eclipse.gef4.dot.DotProperties;
+import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -52,8 +54,30 @@ public class DotNodeContentPart extends NodeContentPart {
 			getLabelText().setVisible(false);
 			htmlLabel.setVisible(true);
 			// supply HTML to web engine
-			String label = DotProperties.getLabel(getContent());
-			htmlLabel.loadContent(label);
+			final String label = DotProperties.getLabel(getContent());
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					if (htmlLabel.loadContent(label)) {
+						// apply layout when the size of the HTML label is
+						// adjusted
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								Platform.runLater(new Runnable() {
+									@Override
+									public void run() {
+										getParent()
+												.getAdapter(
+														LayoutContextBehavior.class)
+												.applyLayout(true);
+									}
+								});
+							}
+						});
+					}
+				}
+			});
 		} else {
 			getLabelText().setVisible(true);
 			htmlLabel.setVisible(false);

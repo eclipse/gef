@@ -6,17 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *    Michael Clay    - initial API and implementation (bug #277380)
- *    Fabian Steeg    - updates for current Xtext and minor tweaks
- *    Alexander Nyßen - fixed generation problems w.r.t. terminals (bug #429512)
- *                    - fixed problems resulting from non-optional subgraph names 
- *                      and shadowing of IDs by CommentPt literals (bug #430132)
- *                    - completely refactored grammar to be more consistent to 
- *                      Dot language definition (bug #451097)
- *                    - transferred CompassPt into terminal rule to realize case
- *                      insensitive keywords properly (bug #454626)
- *                    - refactored grammar to be unambiguous (not relying on 
- *                      backtracking)
+ *    Michael Clay     - initial API and implementation (bug #277380)
+ *    Fabian Steeg     - updates for current Xtext and minor tweaks
+ *    Alexander Nyßen  - fixed generation problems w.r.t. terminals (bug #429512)
+ *                     - fixed problems resulting from non-optional subgraph names 
+ *                       and shadowing of IDs by CommentPt literals (bug #430132)
+ *                     - completely refactored grammar to be more consistent to 
+ *                       Dot language definition (bug #451097)
+ *                     - transferred CompassPt into terminal rule to realize case
+ *                       insensitive keywords properly (bug #454626)
+ *                     - refactored grammar to be unambiguous (not relying on 
+ *                       backtracking)
+ *    Matthias Wienand - contribution for Bugzilla #321775
  * 
  *******************************************************************************/
 grammar org.eclipse.gef4.dot.internal.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)

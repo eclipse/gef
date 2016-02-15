@@ -22,8 +22,8 @@ public class HtmlLabel extends Group {
 
 	private static final String SCRIPT_GET_WIDTH = "document.getElementById('content').offsetWidth"; //$NON-NLS-1$
 	private static final String SCRIPT_GET_HEIGHT = "document.getElementById('content').offsetHeight"; //$NON-NLS-1$
-	private static final double VERTICAL_PADDING = 10;
-	private static final double HORIZONTAL_PADDING = 10;
+	private static final double VERTICAL_PADDING = 15;
+	private static final double HORIZONTAL_PADDING = 15;
 	private static final String NO_SCROLLBARS_STYLE = "document.body.style.overflow = 'hidden';"; //$NON-NLS-1$
 	private static final String PRE_HTML = "<html><head><title></title></head><body><div id=\"content\" style=\"float:left;\">"; //$NON-NLS-1$
 	private static final String POST_HTML = "</div></body></html>"; //$NON-NLS-1$
@@ -43,6 +43,10 @@ public class HtmlLabel extends Group {
 									.executeScript(NO_SCROLLBARS_STYLE);
 						}
 						if (state == State.SUCCEEDED) {
+							// update pref size next pulse
+							// Platform.runLater(new Runnable() {
+							// @Override
+							// public void run() {
 							Object width = webView.getEngine()
 									.executeScript(SCRIPT_GET_WIDTH);
 							Object height = webView.getEngine()
@@ -51,6 +55,8 @@ public class HtmlLabel extends Group {
 							webView.setPrefSize(
 									HORIZONTAL_PADDING + (Integer) width,
 									VERTICAL_PADDING + (Integer) height);
+							// }
+							// });
 						}
 					}
 				});
@@ -61,11 +67,13 @@ public class HtmlLabel extends Group {
 		getChildren().add(webView);
 	}
 
-	public void loadContent(String content) {
+	public boolean loadContent(String content) {
 		if (loadedContent == null || !loadedContent.equals(content)) {
 			loadedContent = content;
 			webView.getEngine().loadContent(PRE_HTML + content + POST_HTML);
+			return true;
 		}
+		return false;
 	}
 
 }
