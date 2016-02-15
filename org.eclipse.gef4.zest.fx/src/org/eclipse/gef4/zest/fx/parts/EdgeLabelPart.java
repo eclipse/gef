@@ -29,6 +29,7 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
@@ -45,7 +46,7 @@ import javafx.util.Pair;
  * @author mwienand
  *
  */
-public class EdgeLabelPart extends AbstractFXContentPart<Text> {
+public class EdgeLabelPart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * The CSS class that is assigned to the visualization of the
@@ -64,7 +65,9 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 			refreshVisual();
 		}
 	};
+
 	private Translate translate;
+	private Text text;
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
@@ -72,17 +75,19 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	}
 
 	@Override
-	protected Text createVisual() {
-		Text text = new Text();
+	protected Group createVisual() {
+		text = new Text();
 		text.setTextOrigin(VPos.TOP);
 		text.setManaged(false);
 		text.setPickOnBounds(true);
-		// add translation transform to the Text
-		translate = new Translate();
-		text.getTransforms().add(translate);
 		// add css class
 		text.getStyleClass().add(CSS_CLASS_LABEL);
-		return text;
+		// wrap Text in Group
+		Group group = new Group(text);
+		// add translation transform to the Group
+		translate = new Translate();
+		group.getTransforms().add(translate);
+		return group;
 	}
 
 	@Override
@@ -91,7 +96,19 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	}
 
 	@Override
-	protected void doRefreshVisual(Text visual) {
+	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+		SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
+		contentAnchorages.put(getContent().getKey(), getContent().getValue());
+		return contentAnchorages;
+	}
+
+	@Override
+	protected List<? extends Object> doGetContentChildren() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	protected void doRefreshVisual(Group visual) {
 		Edge edge = getContent().getKey();
 		Map<String, Object> attrs = edge.attributesProperty();
 
@@ -103,7 +120,7 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		// label
 		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
 		if (label instanceof String) {
-			getVisual().setText((String) label);
+			getText().setText((String) label);
 		}
 
 		EdgeContentPart edgeContentPart = getHost();
@@ -125,18 +142,6 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		return (Pair<Edge, String>) super.getContent();
 	}
 
-	@Override
-	protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
-		SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
-		contentAnchorages.put(getContent().getKey(), getContent().getValue());
-		return contentAnchorages;
-	}
-
-	@Override
-	protected List<? extends Object> doGetContentChildren() {
-		return Collections.emptyList();
-	}
-
 	/**
 	 * Returns the {@link EdgeContentPart} for which this {@link EdgeLabelPart}
 	 * displays the label.
@@ -145,7 +150,8 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	 *         displays the label.
 	 */
 	public EdgeContentPart getHost() {
-		return getAnchoragesUnmodifiable().isEmpty() ? null : (EdgeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
+		return getAnchoragesUnmodifiable().isEmpty() ? null
+				: (EdgeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
 	}
 
 	/**
@@ -155,6 +161,15 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	 */
 	public Translate getOffset() {
 		return translate;
+	}
+
+	/**
+	 * Returns the {@link Text} that displays the edge's label.
+	 *
+	 * @return The {@link Text} that displays the edge's label.
+	 */
+	protected Text getText() {
+		return text;
 	}
 
 }
