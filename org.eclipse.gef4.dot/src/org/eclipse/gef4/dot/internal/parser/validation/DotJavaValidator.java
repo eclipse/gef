@@ -15,7 +15,7 @@ package org.eclipse.gef4.dot.internal.parser.validation;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.DotProperties;
-import org.eclipse.gef4.dot.internal.HtmlToText;
+import org.eclipse.gef4.dot.internal.Html2Text;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
@@ -78,7 +78,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		if (value instanceof PlainValue) {
 			return ((PlainValue) value).getValue();
 		} else if (value instanceof HtmlValue) {
-			return HtmlToText.convertHtmlValueToString(((HtmlValue) value));
+			return Html2Text.convertHtmlValueToString(((HtmlValue) value));
 		}
 		throw new IllegalArgumentException(
 				"The given AttributeValue is neither an OldID nor an HtmlLabel.");

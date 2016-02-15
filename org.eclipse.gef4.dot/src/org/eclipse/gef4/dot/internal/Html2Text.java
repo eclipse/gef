@@ -20,7 +20,7 @@ import org.eclipse.gef4.dot.internal.parser.dot.HtmlAttribute;
 import org.eclipse.gef4.dot.internal.parser.dot.HtmlTag;
 import org.eclipse.gef4.dot.internal.parser.dot.HtmlValue;
 
-public class HtmlToText {
+public class Html2Text {
 
 	public static String convertHtmlValueToString(HtmlValue htmlValue) {
 		StringBuilder sb = new StringBuilder();

@@ -12,7 +12,7 @@
 package org.eclipse.gef4.dot.internal.parser.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.gef4.dot.internal.HtmlToText;
+import org.eclipse.gef4.dot.internal.Html2Text;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
@@ -127,7 +127,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		if (value instanceof PlainValue) {
 			textValue = ((PlainValue) value).getValue();
 		} else if (value instanceof HtmlValue) {
-			textValue = HtmlToText.convertHtmlValueToString((HtmlValue) value);
+			textValue = Html2Text.convertHtmlValueToString((HtmlValue) value);
 		} else {
 			throw new IllegalArgumentException(
 					"The value of the given Attribute is neither PlainValue nor HtmlValue."); //$NON-NLS-1$

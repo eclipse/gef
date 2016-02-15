@@ -120,7 +120,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		if (value instanceof PlainValue) {
 			return ((PlainValue) value).getValue();
 		} else if (value instanceof HtmlValue) {
-			return HtmlToText.convertHtmlValueToString(((HtmlValue) value));
+			return Html2Text.convertHtmlValueToString(((HtmlValue) value));
 		}
 		throw new IllegalArgumentException(
 				"The given AttributeValue is neither a PlainValue nor an HtmlValue.");
