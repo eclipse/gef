@@ -65,7 +65,8 @@ public class Dot2ZestGraphConverter {
 		Node zestTarget = dotToZestNodes.get(dotEdge.getTarget());
 		// create edge
 		Edge zestEdge = new Edge(zestSource, zestTarget);
-		convertEdgeAttributes(dotEdge.getAttributes(), zestEdge.getAttributes());
+		convertEdgeAttributes(dotEdge.getAttributes(),
+				zestEdge.getAttributes());
 		return zestEdge;
 	}
 
@@ -92,11 +93,18 @@ public class Dot2ZestGraphConverter {
 		if (curveCssStyle != null) {
 			zest.put(ZestProperties.EDGE_CURVE_CSS_STYLE, curveCssStyle);
 		}
+
+		// HTML label
+		Object isHtmlLabel = dot.get(DotProperties.IS_HTML_LABEL);
+		if (isHtmlLabel != null) {
+			zest.put(DotProperties.IS_HTML_LABEL, isHtmlLabel);
+		}
 	}
 
 	private Node convertNode(Node dotNode) {
 		Node zestNode = new Node();
-		convertNodeAttributes(dotNode.getAttributes(), zestNode.getAttributes());
+		convertNodeAttributes(dotNode.getAttributes(),
+				zestNode.getAttributes());
 		// convert nested graph
 		if (dotNode.getNestedGraph() != null) {
 			Graph nested = convertGraph(dotNode.getNestedGraph());
@@ -112,6 +120,11 @@ public class Dot2ZestGraphConverter {
 		Object dotLabel = dot.get(DotProperties.NODE_LABEL);
 		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
 		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
+		// HTML label
+		Object isHtmlLabel = dot.get(DotProperties.IS_HTML_LABEL);
+		if (isHtmlLabel != null) {
+			zest.put(DotProperties.IS_HTML_LABEL, isHtmlLabel);
+		}
 	}
 
 	private void convertGraphAttributes(Map<String, Object> dot,

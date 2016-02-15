@@ -13,9 +13,15 @@
 package org.eclipse.gef4.dot.internal.ui;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
+
+import javafx.scene.Node;
 
 /**
  * The {@link DotGraphViewModule} extends the {@link ZestFxModule} and removes
@@ -67,6 +73,13 @@ public class DotGraphViewModule extends ZestFxModule {
 	protected void bindEdgeLayoutBehaviorAsEdgeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindEdgeLayoutBehaviorAsEdgeContentPartAdapter(adapterMapBinder);
+	}
+
+	@Override
+	protected void bindIContentPartFactory() {
+		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+		}).to(DotUiContentPartFactory.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 }
