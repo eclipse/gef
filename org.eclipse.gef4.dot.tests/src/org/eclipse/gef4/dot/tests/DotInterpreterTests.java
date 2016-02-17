@@ -404,7 +404,7 @@ public final class DotInterpreterTests {
 				+ /* 9 */ "];\n" + /* 10 */ "}"));
 		assertEquals("pre <b>bold</b> post",
 				graph.getNodes().get(0).getAttributes().get("label"));
-		// attributeus
+		// single attribute
 		graph = interpreter.interpret(parse(
 				/* 1 */"graph Sample{\n" + /* 2 */"n[\n" + /* 3 */"label=\n"
 						+ /* 4 */"<<table border=1><tr><td>\n"
@@ -413,6 +413,24 @@ public final class DotInterpreterTests {
 						+ /* 7 */"<!--c7-->post\n"
 						+ /* 8 */"<!--c8--></tr></td></table>>\n"
 						+ /* 9 */ "];\n" + /* 10 */ "}"));
+		// whitespace after single attribute
+		graph = interpreter.interpret(parse(
+				/* 1 */"graph Sample{\n" + /* 2 */"n[\n" + /* 3 */"label=\n"
+						+ /* 4 */"<<table border=1\n" + /* 5 */ "><tr><td>\n"
+						+ /* 6 */"<!-- c2 -->pre<!--c3 -->\n"
+						+ /* 7 */"<!-- c4--><b><!--c5-->bold<!--c6--></b>\n"
+						+ /* 8 */"<!--c7-->post\n"
+						+ /* 9 */"<!--c8--></tr></td></table>>\n"
+						+ /* 10 */ "];\n" + /* 11 */ "}"));
+		// multiple attributes
+		graph = interpreter.interpret(parse(/* 1 */"graph Sample{\n"
+				+ /* 2 */"n[\n" + /* 3 */"label=\n" + /* 4 */"<<table\n"
+				+ /* 5 */ "border=1\n" + /* 6 */ "width=\"50%\"\n"
+				+ /* 7 */ "><tr><td>\n" + /* 8 */"<!-- c2 -->pre<!--c3 -->\n"
+				+ /* 9 */"<!-- c4--><b><!--c5-->bold<!--c6--></b>\n"
+				+ /* 10 */"<!--c7-->post\n"
+				+ /* 11 */"<!--c8--></tr></td></table>>\n" + /* 12 */ "];\n"
+				+ /* 13 */ "}"));
 	}
 
 	private DotAst parse(String dot) {

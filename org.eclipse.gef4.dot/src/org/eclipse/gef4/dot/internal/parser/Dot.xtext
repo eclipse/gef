@@ -68,7 +68,8 @@ HtmlContent:
 	contents+=(HtmlTag|HtmlText)+;
 
 HtmlTag:
-	HTML_OPEN_BRACKET WS? name=(STRING|COMPASS_PT) WS? attributes+=HtmlAttribute*
+	HTML_OPEN_BRACKET WS? name=(STRING|COMPASS_PT) WS?
+	( attributes+=HtmlAttribute WS? )*
 	( selfClosing?="/" WS? HTML_CLOSE_BRACKET
 	| HTML_CLOSE_BRACKET children+=HtmlContent? HTML_OPEN_BRACKET WS? "/" WS? closingTag=[HtmlTag] WS? HTML_CLOSE_BRACKET);
 
