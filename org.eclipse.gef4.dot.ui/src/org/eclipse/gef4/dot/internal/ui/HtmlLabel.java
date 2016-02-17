@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
@@ -20,6 +21,8 @@ import javafx.scene.web.WebView;
 
 public class HtmlLabel extends Group {
 
+	private static final double INITIAL_WIDTH = 500;
+	private static final double INITIAL_HEIGHT = 500;
 	private static final String SCRIPT_GET_WIDTH = "document.getElementById('content').offsetWidth"; //$NON-NLS-1$
 	private static final String SCRIPT_GET_HEIGHT = "document.getElementById('content').offsetHeight"; //$NON-NLS-1$
 	private static final double VERTICAL_PADDING = 15;
@@ -43,20 +46,26 @@ public class HtmlLabel extends Group {
 									.executeScript(NO_SCROLLBARS_STYLE);
 						}
 						if (state == State.SUCCEEDED) {
-							// update pref size next pulse
-							// Platform.runLater(new Runnable() {
-							// @Override
-							// public void run() {
-							Object width = webView.getEngine()
-									.executeScript(SCRIPT_GET_WIDTH);
-							Object height = webView.getEngine()
-									.executeScript(SCRIPT_GET_HEIGHT);
-							// FIXME: compute real padding
-							webView.setPrefSize(
-									HORIZONTAL_PADDING + (Integer) width,
-									VERTICAL_PADDING + (Integer) height);
-							// }
-							// });
+							webView.setPrefSize(INITIAL_WIDTH, INITIAL_HEIGHT);
+							// next pulse, the web view is resized to its
+							// preferred size
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									// now we aks it to compute the content size
+									Object width = webView.getEngine()
+											.executeScript(SCRIPT_GET_WIDTH);
+									Object height = webView.getEngine()
+											.executeScript(SCRIPT_GET_HEIGHT);
+									// and resize it to that computed size
+									// FIXME: compute real padding
+									webView.setPrefSize(
+											HORIZONTAL_PADDING
+													+ (Integer) width,
+											VERTICAL_PADDING
+													+ (Integer) height);
+								}
+							});
 						}
 					}
 				});
