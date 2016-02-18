@@ -30,11 +30,17 @@ import javafx.collections.ObservableMap;
  * A replacement for {@link SimpleMapProperty} to fix the following JavaFX
  * issues:
  * <ul>
- * <li>https://bugs.openjdk.java.net/browse/JDK-8136465: fixed by keeping track
- * of all listeners and ensuring that remaining listeners are re-added when a
+ * <li>All listeners were removed when removing one
+ * (https://bugs.openjdk.java.net/browse/JDK-8136465): fixed by keeping track of
+ * all listeners and ensuring that remaining listeners are re-added when a
  * listener is removed.</li>
- * <li>https://bugs.openjdk.java.net/browse/JDK-8120138: fixed by overwriting
- * equals() and hashCode()</li>
+ * <li>No proper implementation of equals() for Java 7, but object equality
+ * considered (https://bugs.openjdk.java.net/browse/JDK-8120138): fixed by
+ * overwriting equals() and hashCode() and by overwriting
+ * {@link #bindBidirectional(Property)} and
+ * {@link #unbindBidirectional(Property)}, which relied on the wrong
+ * implementation.</li>
+ * </ul>
  * </ul>
  *
  * @author anyssen
@@ -128,14 +134,15 @@ public class SimpleMapPropertyEx<K, V> extends SimpleMapProperty<K, V> {
 		} catch (IllegalArgumentException e) {
 			if ("Cannot bind property to itself".equals(e.getMessage())
 					&& this != other) {
-				// XXX: The super implementation relies on equals() not on
-				// object identity to infer whether a binding is valid. It thus
-				// throw an IllegalArgumentException if two equal properties are
-				// passed in, even if they are not identical. We have to
-				// ensure they are thus unequal to establish the binding; as
-				// our value will be initially overwritten anyway, we may adjust
-				// the local value; to reduce noise, we only adjust the local
-				// value if necessary
+				// XXX: In JavaSE-1.7 super implementation relies on equals()
+				// not on object identity (as in JavaSE-1.8) to infer whether a
+				// binding is valid. It thus throws an IllegalArgumentException
+				// if two equal properties are passed in, even if they are not
+				// identical. We have to ensure they are thus unequal to
+				// establish the binding; as our value will be initially
+				// overwritten anyway, we may adjust the local value; to reduce
+				// noise, we only adjust the local value if necessary.
+				// TODO: Remove when dropping support for JavaSE-1.7
 				if (other.getValue() == null) {
 					if (getValue() == null) {
 						// set to value != null
@@ -159,8 +166,9 @@ public class SimpleMapPropertyEx<K, V> extends SimpleMapProperty<K, V> {
 	@Override
 	public boolean equals(Object other) {
 		// Overwritten here to compensate an inappropriate equals()
-		// implementation on Java 7
+		// implementation in JavaSE-1.7
 		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
+		// TODO: Remove when dropping support for JavaSE-1.7
 		if (other == this) {
 			return true;
 		}
@@ -192,9 +200,6 @@ public class SimpleMapPropertyEx<K, V> extends SimpleMapProperty<K, V> {
 
 	@Override
 	public int hashCode() {
-		// Overwritten here to compensate an inappropriate hashCode()
-		// implementation on Java 7
-		// (https://bugs.openjdk.java.net/browse/JDK-8120138)
 		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.
 		// We fall back to the very easiest case here (and use a constant).
@@ -231,12 +236,14 @@ public class SimpleMapPropertyEx<K, V> extends SimpleMapProperty<K, V> {
 		} catch (IllegalArgumentException e) {
 			if ("Cannot bind property to itself".equals(e.getMessage())
 					&& this != other) {
-				// XXX: The super implementation relies on equals() not on
-				// object identity to infer whether a binding is valid. It thus
-				// throw an IllegalArgumentException if two equal properties are
+				// XXX: In JavaSE-1.7, the super implementation relies on
+				// equals() not on object identity (as in JavaSE-1.8) to infer
+				// whether a binding is valid. It thus throws an
+				// IllegalArgumentException if two equal properties are
 				// passed in, even if they are not identical. We have to
 				// ensure they are thus unequal to remove the binding; we
 				// have to restore the current value afterwards.
+				// TODO: Remove when dropping support for JavaSE-1.7
 				ObservableMap<K, V> oldValue = getValue();
 				if (other.getValue() == null) {
 					// set to value != null
