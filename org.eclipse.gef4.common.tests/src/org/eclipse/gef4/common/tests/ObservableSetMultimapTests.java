@@ -283,6 +283,9 @@ public class ObservableSetMultimapTests {
 
 	private ObservableSetMultimap<Integer, String> observable;
 	private Provider<ObservableSetMultimap<Integer, String>> observableProvider;
+	private InvalidationExpector invalidationListener;
+	private ChangeExpector<Integer, String> changeListener;
+	private SetMultimapChangeExpector<Integer, String> setMultimapChangeListener;
 
 	public ObservableSetMultimapTests(
 			Provider<ObservableSetMultimap<Integer, String>> sourceProvider) {
@@ -304,6 +307,14 @@ public class ObservableSetMultimapTests {
 		}
 	}
 
+	protected void checkListeners() {
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		setMultimapChangeListener.check();
+	}
+
 	@Test
 	public void clear() {
 		// initialize maps with some values
@@ -318,20 +329,7 @@ public class ObservableSetMultimapTests {
 		backupMap.putAll(null, Sets.newHashSet(null, "null"));
 		check(observable, backupMap);
 
-		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// remove all values
 		invalidationListener.expect(1);
@@ -356,22 +354,14 @@ public class ObservableSetMultimapTests {
 		observable.clear();
 		backupMap.clear();
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// clear again (while already empty)
 		invalidationListener.expect(0);
 		observable.clear();
 		backupMap.clear();
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -676,19 +666,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// put a single value
 		invalidationListener.expect(1);
@@ -706,11 +684,7 @@ public class ObservableSetMultimapTests {
 				Collections.<String> emptySet(), Collections.singleton("1-1"));
 		assertEquals(backupMap.put(1, "1-1"), observable.put(1, "1-1"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// put a second value
 		invalidationListener.expect(1);
@@ -728,11 +702,7 @@ public class ObservableSetMultimapTests {
 				Collections.<String> emptySet(), Collections.singleton("1-2"));
 		assertEquals(backupMap.put(1, "1-2"), observable.put(1, "1-2"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// put a different value
 		invalidationListener.expect(1);
@@ -750,11 +720,7 @@ public class ObservableSetMultimapTests {
 				Collections.<String> emptySet(), Collections.singleton("2"));
 		assertEquals(backupMap.put(2, "2"), observable.put(2, "2"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// null key and values are allowed within SetMultimap
 		invalidationListener.expect(1);
@@ -773,11 +739,7 @@ public class ObservableSetMultimapTests {
 				Collections.<String> singleton(null));
 		assertEquals(backupMap.put(null, null), observable.put(null, null));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// add a real value to null key
 		invalidationListener.expect(1);
@@ -796,20 +758,12 @@ public class ObservableSetMultimapTests {
 				Collections.<String> singleton("null"));
 		assertEquals(backupMap.put(null, "null"), observable.put(null, "null"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// put same value again should not yield any notification.
 		assertEquals(backupMap.put(2, "2"), observable.put(2, "2"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -819,19 +773,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// add distinct values for different keys
 		invalidationListener.expect(1);
@@ -854,11 +796,7 @@ public class ObservableSetMultimapTests {
 		toAdd.putAll(2, Sets.newHashSet("2-1", "2-2"));
 		assertEquals(backupMap.putAll(toAdd), observable.putAll(toAdd));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// add new and already registered values for different keys
 		invalidationListener.expect(1);
@@ -881,11 +819,7 @@ public class ObservableSetMultimapTests {
 		toAdd.putAll(2, Sets.newHashSet("2-2", "2-3"));
 		assertEquals(backupMap.putAll(toAdd), observable.putAll(toAdd));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// add already registered values
 		toAdd = HashMultimap.create();
@@ -893,11 +827,7 @@ public class ObservableSetMultimapTests {
 		toAdd.putAll(2, Sets.newHashSet("2-2", "2-3"));
 		assertEquals(backupMap.putAll(toAdd), observable.putAll(toAdd));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -907,19 +837,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// add two new distinct values
 		invalidationListener.expect(1);
@@ -938,11 +856,7 @@ public class ObservableSetMultimapTests {
 		assertEquals(backupMap.putAll(1, Arrays.asList("1-1", "1-2")),
 				observable.putAll(1, Arrays.asList("1-1", "1-2")));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// add a new and an already added value
 		invalidationListener.expect(1);
@@ -961,21 +875,28 @@ public class ObservableSetMultimapTests {
 		assertEquals(backupMap.putAll(1, Arrays.asList("1-2", "1-3")),
 				observable.putAll(1, Arrays.asList("1-2", "1-3")));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// put already added values
 		assertEquals(backupMap.putAll(1, Arrays.asList("1-2", "1-3")),
 				observable.putAll(1, Arrays.asList("1-2", "1-3")));
 		check(observable, backupMap);
-		invalidationListener.check();
+		checkListeners();
+	}
+
+	protected void registerListeners() {
+		invalidationListener = new InvalidationExpector();
+		changeListener = null;
+		setMultimapChangeListener = new SetMultimapChangeExpector<>(observable);
+		observable.addListener(invalidationListener);
 		if (observable instanceof ObservableValue) {
-			changeListener.check();
+			// register change listener as well
+			@SuppressWarnings("unchecked")
+			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
+			changeListener = new ChangeExpector<>(observableValue);
+			observableValue.addListener(changeListener);
 		}
-		setMultimapChangeListener.check();
+		observable.addListener(setMultimapChangeListener);
 	}
 
 	@Test
@@ -993,19 +914,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// remove a Compound value
 		invalidationListener.expect(1);
@@ -1023,11 +932,7 @@ public class ObservableSetMultimapTests {
 				Collections.singleton("1-1"), Collections.<String> emptySet());
 		assertEquals(backupMap.remove(1, "1-1"), observable.remove(1, "1-1"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// remove null value from null key
 		invalidationListener.expect(1);
@@ -1047,11 +952,7 @@ public class ObservableSetMultimapTests {
 		assertEquals(backupMap.remove(null, null),
 				observable.remove(null, null));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// remove real value from null key
 		invalidationListener.expect(1);
@@ -1071,39 +972,23 @@ public class ObservableSetMultimapTests {
 		assertEquals(backupMap.remove(null, "null"),
 				observable.remove(null, "null"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// try to remove not contained value
 		assertEquals(backupMap.remove(1, "1-1"), observable.remove(1, "1-1"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// try to remove entry with key of wrong type
 		assertEquals(backupMap.remove("1", "1-1"),
 				observable.remove("1", "1-1"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// try to remove entry with value of wrong type
 		assertEquals(backupMap.remove(1, 1), observable.remove(1, 1));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1121,19 +1006,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// remove values for a single key
 		invalidationListener.expect(1);
@@ -1152,11 +1025,7 @@ public class ObservableSetMultimapTests {
 				Collections.<String> emptySet());
 		assertEquals(backupMap.removeAll(1), observable.removeAll(1));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// remove values for null key
 		invalidationListener.expect(1);
@@ -1174,29 +1043,17 @@ public class ObservableSetMultimapTests {
 				Sets.newHashSet(null, "null"), Collections.<String> emptySet());
 		assertEquals(backupMap.removeAll(null), observable.removeAll(null));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// try to remove values for not contained key
 		assertEquals(backupMap.removeAll(4711), observable.removeAll(4711));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// try to remove values of key with wrong type
 		assertEquals(backupMap.removeAll("4711"), observable.removeAll("4711"));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1216,19 +1073,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// remove all values
 		invalidationListener.expect(1);
@@ -1271,21 +1116,13 @@ public class ObservableSetMultimapTests {
 		backupMap.clear();
 		backupMap.putAll(toReplace);
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// replace with same contents (should not have any effect)
 		invalidationListener.expect(0);
 		observable.replaceAll(toReplace);
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1303,19 +1140,7 @@ public class ObservableSetMultimapTests {
 		check(observable, backupMap);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
-		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(setMultimapChangeListener);
+		registerListeners();
 
 		// replace all values of a specific key
 		invalidationListener.expect(1);
@@ -1338,11 +1163,7 @@ public class ObservableSetMultimapTests {
 				observable.replaceValues(1,
 						Sets.newHashSet("1-4", "1-5", "1-6")));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// use replacement to clear values for a key
 		invalidationListener.expect(1);
@@ -1363,22 +1184,14 @@ public class ObservableSetMultimapTests {
 				backupMap.replaceValues(2, Collections.<String> emptySet()),
 				observable.replaceValues(2, Collections.<String> emptySet()));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 
 		// try to replace values for non existing key
 		assertEquals(
 				backupMap.replaceValues(4711, Sets.newHashSet("4", "7", "1")),
 				observable.replaceValues(4711, Sets.newHashSet("4", "7", "1")));
 		check(observable, backupMap);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		setMultimapChangeListener.check();
+		checkListeners();
 	}
 
 	/**

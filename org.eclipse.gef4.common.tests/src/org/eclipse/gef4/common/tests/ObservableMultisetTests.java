@@ -260,6 +260,9 @@ public class ObservableMultisetTests {
 
 	private ObservableMultiset<Integer> observable;
 	private Provider<ObservableMultiset<Integer>> observableProvider;
+	private InvalidationExpector invalidationListener;
+	private ChangeExpector<Integer> changeListener;
+	private MultisetChangeExpector<Integer> multisetChangeListener;
 
 	public ObservableMultisetTests(
 			Provider<ObservableMultiset<Integer>> sourceProvider) {
@@ -272,20 +275,7 @@ public class ObservableMultisetTests {
 		Multiset<Integer> backupMultiset = HashMultiset.create();
 		check(observable, backupMultiset);
 
-		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// add a single value
 		invalidationListener.expect(1);
@@ -302,11 +292,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.add(1), observable.add(1));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// add a second occurrence of the same value
 		invalidationListener.expect(1);
@@ -323,11 +309,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.add(1), observable.add(1));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// add a different value
 		invalidationListener.expect(1);
@@ -344,11 +326,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(2, 0, 1);
 		assertEquals(backupMultiset.add(2), observable.add(2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -358,19 +336,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// add zero occurrences (no change expected)
 		assertEquals(backupMultiset.add(1, 0), observable.remove(1, 0));
@@ -396,20 +362,12 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(5, 0, 5);
 		assertEquals(backupMultiset.add(5, 5), observable.add(5, 5));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// add a value zero times (no events should occur)
 		assertEquals(backupMultiset.add(1, 0), observable.add(1, 0));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -419,19 +377,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// add a collection with three values
 		invalidationListener.expect(1);
@@ -454,11 +400,7 @@ public class ObservableMultisetTests {
 		toAdd.add(3, 3);
 		assertEquals(backupMultiset.addAll(toAdd), observable.addAll(toAdd));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// add another collection with three values
 		invalidationListener.expect(1);
@@ -479,11 +421,7 @@ public class ObservableMultisetTests {
 		toAdd.add(4, 3);
 		assertEquals(backupMultiset.addAll(toAdd), observable.addAll(toAdd));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Before
@@ -501,6 +439,14 @@ public class ObservableMultisetTests {
 		}
 	}
 
+	protected void checkListeners() {
+		invalidationListener.check();
+		if (observable instanceof ObservableValue) {
+			changeListener.check();
+		}
+		multisetChangeListener.check();
+	}
+
 	@Test
 	public void clear() {
 		// initialize multiset with some values
@@ -516,19 +462,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// clear
 		invalidationListener.expect(1);
@@ -548,21 +482,13 @@ public class ObservableMultisetTests {
 		observable.clear();
 		backupMultiset.clear();
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// clear again (while already empty)
 		invalidationListener.expect(0);
 		observable.clear();
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -821,6 +747,21 @@ public class ObservableMultisetTests {
 		multisetChangeListener.check();
 	}
 
+	protected void registerListeners() {
+		invalidationListener = new InvalidationExpector();
+		changeListener = null;
+		multisetChangeListener = new MultisetChangeExpector<>(observable);
+		observable.addListener(invalidationListener);
+		if (observable instanceof ObservableValue) {
+			// register change listener as well
+			@SuppressWarnings("unchecked")
+			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
+			changeListener = new ChangeExpector<>(observableValue);
+			observableValue.addListener(changeListener);
+		}
+		observable.addListener(multisetChangeListener);
+	}
+
 	@Test
 	public void remove() {
 		// initialize multiset with some values
@@ -836,19 +777,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// remove (first occurrence of) value
 		invalidationListener.expect(1);
@@ -865,11 +794,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(2, 1, 0);
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// remove (second occurrence of) value
 		invalidationListener.expect(1);
@@ -886,20 +811,12 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(2, 1, 0);
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// remove not contained value (no change expected)
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -917,28 +834,12 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// remove zero occurrences (no change expected)
 		assertEquals(backupMultiset.remove(3, 0), observable.remove(3, 0));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// remove (two occurrences of) value
 		invalidationListener.expect(1);
@@ -955,11 +856,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(3, 2, 0);
 		assertEquals(backupMultiset.remove(3, 2), observable.remove(3, 2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// remove more occurrences than contained (change contains fewer
 		// occurrences)
@@ -977,20 +874,12 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(3, 1, 0);
 		assertEquals(backupMultiset.remove(3, 2), observable.remove(3, 2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// remove not contained value (no change expected)
 		assertEquals(backupMultiset.remove(3, 1), observable.remove(3, 1));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1008,19 +897,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// remove collection
 		invalidationListener.expect(1);
@@ -1045,11 +922,7 @@ public class ObservableMultisetTests {
 		assertEquals(backupMultiset.removeAll(toRemove),
 				observable.removeAll(toRemove));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1069,19 +942,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// replaceAll
 		invalidationListener.expect(1);
@@ -1112,21 +973,13 @@ public class ObservableMultisetTests {
 		backupMultiset.clear();
 		backupMultiset.addAll(toReplace);
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// replace with same contents (should not have any effect)
 		invalidationListener.expect(0);
 		observable.replaceAll(toReplace);
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1144,19 +997,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// remove collection
 		invalidationListener.expect(1);
@@ -1178,11 +1019,7 @@ public class ObservableMultisetTests {
 		assertEquals(backupMultiset.retainAll(toRetain),
 				observable.retainAll(toRetain));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1192,19 +1029,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// set count for non contained element
 		invalidationListener.expect(1);
@@ -1221,11 +1046,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.setCount(1, 1), observable.setCount(1, 1));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// increase count for already contained element
 		invalidationListener.expect(1);
@@ -1242,11 +1063,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(1, 0, 3);
 		assertEquals(backupMultiset.setCount(1, 4), observable.setCount(1, 4));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// decrease count for already contained element
 		invalidationListener.expect(1);
@@ -1263,11 +1080,7 @@ public class ObservableMultisetTests {
 		multisetChangeListener.addElementaryExpection(1, 2, 0);
 		assertEquals(backupMultiset.setCount(1, 2), observable.setCount(1, 2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	@Test
@@ -1277,19 +1090,7 @@ public class ObservableMultisetTests {
 		check(observable, backupMultiset);
 
 		// register listeners
-		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
-		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
-				observable);
-		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
-		observable.addListener(multisetChangeListener);
+		registerListeners();
 
 		// set count for non contained element
 		invalidationListener.expect(1);
@@ -1307,11 +1108,7 @@ public class ObservableMultisetTests {
 		assertEquals(backupMultiset.setCount(1, 0, 2),
 				observable.setCount(1, 0, 2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// set count to increase occurrences
 		invalidationListener.expect(1);
@@ -1329,11 +1126,7 @@ public class ObservableMultisetTests {
 		assertEquals(backupMultiset.setCount(1, 2, 3),
 				observable.setCount(1, 2, 3));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// set count to decrease occurrences
 		invalidationListener.expect(1);
@@ -1351,21 +1144,13 @@ public class ObservableMultisetTests {
 		assertEquals(backupMultiset.setCount(1, 3, 2),
 				observable.setCount(1, 3, 2));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 
 		// set count where old value is not met (no change expected)
 		assertEquals(backupMultiset.setCount(1, 4, 3),
 				observable.setCount(1, 4, 3));
 		check(observable, backupMultiset);
-		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
-		multisetChangeListener.check();
+		checkListeners();
 	}
 
 	/**
