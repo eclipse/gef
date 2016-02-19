@@ -41,7 +41,6 @@ import javafx.collections.ObservableMap;
  * {@link #unbindBidirectional(Property)}, which relied on the wrong
  * implementation.</li>
  * </ul>
- * </ul>
  *
  * @author anyssen
  *
