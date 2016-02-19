@@ -1223,6 +1223,12 @@ public class ObservableListTests {
 		backupList.removeAll(Arrays.asList(5, 3));
 		check(observable, backupList);
 		checkListeners();
+
+		// remove all (no effect, elements were already removed)
+		observable.removeAll(Arrays.asList(5, 3));
+		backupList.removeAll(Arrays.asList(5, 3));
+		check(observable, backupList);
+		checkListeners();
 	}
 
 	@Test
@@ -1353,6 +1359,12 @@ public class ObservableListTests {
 		listChangeListener.addAtomicExpectation();
 		listChangeListener.addElementaryExpection(Arrays.asList(3, 5), null,
 				null, 1, 1);
+		observable.retainAll(Arrays.asList(1, 6));
+		backupList.retainAll(Arrays.asList(1, 6));
+		check(observable, backupList);
+		checkListeners();
+
+		// no change expected as no further elements are removed
 		observable.retainAll(Arrays.asList(1, 6));
 		backupList.retainAll(Arrays.asList(1, 6));
 		check(observable, backupList);
