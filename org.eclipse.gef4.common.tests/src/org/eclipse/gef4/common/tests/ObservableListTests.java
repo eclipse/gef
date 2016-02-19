@@ -14,6 +14,7 @@ package org.eclipse.gef4.common.tests;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
@@ -206,23 +207,43 @@ public class ObservableListTests {
 				List<E> expectedRemovedElements = elementaryRemovedElementsQueue
 						.pollLast();
 				if (expectedRemovedElements != null) {
+					assertTrue(change.wasRemoved());
 					assertEquals(expectedRemovedElements, change.getRemoved());
+					assertEquals(expectedRemovedElements.size(),
+							change.getRemovedSize());
+				} else {
+					assertFalse(change.wasRemoved());
 				}
 
 				// check added
 				List<E> expectedAddedElements = elementaryAddedElementsQueue
 						.pollLast();
 				if (expectedAddedElements != null) {
+					assertTrue(change.wasAdded());
+					if (expectedRemovedElements != null) {
+						assertTrue(change.wasReplaced());
+					}
 					assertEquals(expectedAddedElements,
 							change.getAddedSubList());
+					assertEquals(expectedAddedElements.size(),
+							change.getAddedSize());
+				} else {
+					assertFalse(change.wasAdded());
 				}
 
 				// check permutations
 				int[] expectedPermutations = elementaryPermutationsQueue
 						.pollLast();
 				if (expectedPermutations != null) {
+					assertTrue(change.wasPermutated());
 					assertArrayEquals(expectedPermutations,
 							CollectionUtils.getPermutation(change));
+					for (int i = 0; i < expectedPermutations.length; i++) {
+						assertEquals(expectedPermutations[i],
+								change.getPermutation(i));
+					}
+				} else {
+					assertFalse(change.wasPermutated());
 				}
 
 				// check from
