@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.binding;
 
@@ -18,11 +18,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.gef4.common.beans.value.ObservableSetMultimapValue;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
-import org.eclipse.gef4.common.collections.UnmodifiableObservableSetMultimapWrapper;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
@@ -45,7 +43,7 @@ import javafx.beans.value.ObservableValue;
  * This class provides identical functionality for {@link SetMultimap} as
  * {@link MapExpression} for {@link Map}, {@link SetExpression} for {@link Set},
  * or {@link ListExpression} for {@link List}.
- * 
+ *
  * @author anyssen
  *
  * @param <K>
@@ -73,50 +71,40 @@ public abstract class SetMultimapExpression<K, V>
 		}
 	}
 
-	private final ObservableSetMultimap<K, V> EMPTY_SETMULTIMAP = new UnmodifiableObservableSetMultimapWrapper<>(
-			new ObservableSetMultimapWrapper<>(HashMultimap.<K, V> create()));
-
-	@Override
-	public ObservableSetMultimap<K, V> getValue() {
-		return get();
+	/**
+	 * Returns a {@code SetMultimapExpression} that wraps an
+	 * {@link ObservableSetMultimapValue}. If the
+	 * {@code ObservableSetMultimapValue} is already a
+	 * {@code SetMultimapExpression}, it will be returned. Otherwise a new
+	 * concrete {@link SetMultimapBinding} is created that is bound to the
+	 * {@code ObservableSetMultimapValue}.
+	 *
+	 * @param <K>
+	 *            The key type of the {@link SetMultimapExpression}.
+	 * @param <V>
+	 *            The value type of the {@link SetMultimapExpression}.
+	 *
+	 * @param setMultimapValue
+	 *            The {@code ObservableSetMultimapValue} for which to return a
+	 *            {@link SetMultimapExpression}.
+	 * @return The passed in {@link ObservableSetMultimapValue} if its already a
+	 *         {@link SetMultimapExpression}, or a newly created
+	 *         {@link SetMultimapBinding} for it.
+	 */
+	public static <K, V> SetMultimapExpression<K, V> setMultimapExpression(
+			final ObservableSetMultimapValue<K, V> setMultimapValue) {
+		if (setMultimapValue == null) {
+			throw new IllegalArgumentException(
+					"setMultimapValue may not be null.");
+		}
+		if (setMultimapValue instanceof SetMultimapExpression) {
+			return (SetMultimapExpression<K, V>) setMultimapValue;
+		}
+		return new SetMultimapBindingImpl<>(setMultimapValue);
 	}
 
-	@Override
-	public Set<V> get(K key) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.get(key)
-				: setMultimap.get(key);
-	}
-
-	@Override
-	public Set<V> removeAll(Object key) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.removeAll(key)
-				: setMultimap.removeAll(key);
-	}
-
-	@Override
-	public Set<V> replaceValues(K key, Iterable<? extends V> values) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null)
-				? EMPTY_SETMULTIMAP.replaceValues(key, values)
-				: setMultimap.replaceValues(key, values);
-	}
-
-	@Override
-	public boolean replaceAll(
-			SetMultimap<? extends K, ? extends V> setMultimap) {
-		final ObservableSetMultimap<K, V> delegate = get();
-		return (delegate == null) ? EMPTY_SETMULTIMAP.replaceAll(setMultimap)
-				: delegate.replaceAll(setMultimap);
-	}
-
-	@Override
-	public Set<Entry<K, V>> entries() {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.entries()
-				: setMultimap.entries();
-	}
+	private final ObservableSetMultimap<K, V> EMPTY_SETMULTIMAP = CollectionUtils
+			.emptySetMultimap();
 
 	@Override
 	public Map<K, Collection<V>> asMap() {
@@ -125,18 +113,34 @@ public abstract class SetMultimapExpression<K, V>
 				: setMultimap.asMap();
 	}
 
-	@Override
-	public int size() {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.size()
-				: setMultimap.size();
+	/**
+	 * Creates a {@link StringBinding} that holds the value of the
+	 * {@link SetMultimapExpression} turned into a {@link String}. If the value
+	 * of this {@code SetMultimapExpression} changes, the value of the
+	 * {@link StringBinding} will be updated automatically.
+	 *
+	 * @return A new {@code StringBinding}.
+	 */
+	public StringBinding asString() {
+		return (StringBinding) Bindings.convert(this);
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public void clear() {
 		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.isEmpty()
-				: setMultimap.isEmpty();
+		if (setMultimap == null) {
+			EMPTY_SETMULTIMAP.clear();
+		} else {
+			setMultimap.clear();
+		}
+	}
+
+	@Override
+	public boolean containsEntry(Object key, Object value) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null)
+				? EMPTY_SETMULTIMAP.containsEntry(key, value)
+				: setMultimap.containsEntry(key, value);
 	}
 
 	@Override
@@ -153,88 +157,40 @@ public abstract class SetMultimapExpression<K, V>
 				: setMultimap.containsValue(value);
 	}
 
-	@Override
-	public boolean containsEntry(Object key, Object value) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null)
-				? EMPTY_SETMULTIMAP.containsEntry(key, value)
-				: setMultimap.containsEntry(key, value);
-	}
-
-	@Override
-	public boolean put(K key, V value) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.put(key, value)
-				: setMultimap.put(key, value);
-	}
-
-	@Override
-	public boolean remove(Object key, Object value) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.remove(key, value)
-				: setMultimap.remove(key, value);
-	}
-
-	@Override
-	public boolean putAll(K key, Iterable<? extends V> values) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.putAll(key, values)
-				: setMultimap.putAll(key, values);
-	}
-
-	@Override
-	public boolean putAll(Multimap<? extends K, ? extends V> multimap) {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.putAll(multimap)
-				: setMultimap.putAll(multimap);
-	}
-
-	@Override
-	public void clear() {
-		final SetMultimap<K, V> setMultimap = get();
-		if (setMultimap == null) {
-			EMPTY_SETMULTIMAP.clear();
-		} else {
-			setMultimap.clear();
-		}
-	}
-
-	@Override
-	public Set<K> keySet() {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.keySet()
-				: setMultimap.keySet();
-	}
-
-	@Override
-	public Multiset<K> keys() {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.keys()
-				: setMultimap.keys();
-	}
-
-	@Override
-	public Collection<V> values() {
-		final SetMultimap<K, V> setMultimap = get();
-		return (setMultimap == null) ? EMPTY_SETMULTIMAP.values()
-				: setMultimap.values();
-	}
-
-	/**
-	 * An integer property that represents the size of the {@link SetMultimap}.
-	 * 
-	 * @return A read-only property.
-	 */
-	public abstract ReadOnlyIntegerProperty sizeProperty();
-
 	/**
 	 * A boolean property that reflects whether the {@link SetMultimap} is
 	 * empty.
-	 * 
+	 *
 	 * @return A read-only property.
-	 * 
+	 *
 	 */
 	public abstract ReadOnlyBooleanProperty emptyProperty();
+
+	@Override
+	public Set<Entry<K, V>> entries() {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.entries()
+				: setMultimap.entries();
+	}
+
+	@Override
+	public Set<V> get(K key) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.get(key)
+				: setMultimap.get(key);
+	}
+
+	@Override
+	public ObservableSetMultimap<K, V> getValue() {
+		return get();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.isEmpty()
+				: setMultimap.isEmpty();
+	}
 
 	/**
 	 * Creates a new {@link BooleanBinding} that indicates whether this
@@ -267,16 +223,6 @@ public abstract class SetMultimapExpression<K, V>
 
 	/**
 	 * Creates a new {@link BooleanBinding} that indicates if the wrapped
-	 * {@link ObservableSetMultimap} is <code>null</code>.
-	 *
-	 * @return A new {@code BooleanBinding}.
-	 */
-	public BooleanBinding isNull() {
-		return Bindings.isNull(this);
-	}
-
-	/**
-	 * Creates a new {@link BooleanBinding} that indicates if the wrapped
 	 * {@link ObservableSetMultimap} is not <code>null</code>.
 	 *
 	 * @return A new {@code BooleanBinding}.
@@ -286,15 +232,99 @@ public abstract class SetMultimapExpression<K, V>
 	}
 
 	/**
-	 * Creates a {@link StringBinding} that holds the value of the
-	 * {@link SetMultimapExpression} turned into a {@link String}. If the value
-	 * of this {@code SetMultimapExpression} changes, the value of the
-	 * {@link StringBinding} will be updated automatically.
+	 * Creates a new {@link BooleanBinding} that indicates if the wrapped
+	 * {@link ObservableSetMultimap} is <code>null</code>.
 	 *
-	 * @return A new {@code StringBinding}.
+	 * @return A new {@code BooleanBinding}.
 	 */
-	public StringBinding asString() {
-		return (StringBinding) Bindings.convert(this);
+	public BooleanBinding isNull() {
+		return Bindings.isNull(this);
+	}
+
+	@Override
+	public Multiset<K> keys() {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.keys()
+				: setMultimap.keys();
+	}
+
+	@Override
+	public Set<K> keySet() {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.keySet()
+				: setMultimap.keySet();
+	}
+
+	@Override
+	public boolean put(K key, V value) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.put(key, value)
+				: setMultimap.put(key, value);
+	}
+
+	@Override
+	public boolean putAll(K key, Iterable<? extends V> values) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.putAll(key, values)
+				: setMultimap.putAll(key, values);
+	}
+
+	@Override
+	public boolean putAll(Multimap<? extends K, ? extends V> multimap) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.putAll(multimap)
+				: setMultimap.putAll(multimap);
+	}
+
+	@Override
+	public boolean remove(Object key, Object value) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.remove(key, value)
+				: setMultimap.remove(key, value);
+	}
+
+	@Override
+	public Set<V> removeAll(Object key) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.removeAll(key)
+				: setMultimap.removeAll(key);
+	}
+
+	@Override
+	public boolean replaceAll(
+			SetMultimap<? extends K, ? extends V> setMultimap) {
+		final ObservableSetMultimap<K, V> delegate = get();
+		return (delegate == null) ? EMPTY_SETMULTIMAP.replaceAll(setMultimap)
+				: delegate.replaceAll(setMultimap);
+	}
+
+	@Override
+	public Set<V> replaceValues(K key, Iterable<? extends V> values) {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null)
+				? EMPTY_SETMULTIMAP.replaceValues(key, values)
+				: setMultimap.replaceValues(key, values);
+	}
+
+	@Override
+	public int size() {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.size()
+				: setMultimap.size();
+	}
+
+	/**
+	 * An integer property that represents the size of the {@link SetMultimap}.
+	 *
+	 * @return A read-only property.
+	 */
+	public abstract ReadOnlyIntegerProperty sizeProperty();
+
+	@Override
+	public Collection<V> values() {
+		final SetMultimap<K, V> setMultimap = get();
+		return (setMultimap == null) ? EMPTY_SETMULTIMAP.values()
+				: setMultimap.values();
 	}
 
 	/**
@@ -319,38 +349,6 @@ public abstract class SetMultimapExpression<K, V>
 	 */
 	public ObjectBinding<Set<V>> valuesAt(final ObservableValue<K> key) {
 		return BindingUtils.valuesAt(this, key);
-	}
-
-	/**
-	 * Returns a {@code SetMultimapExpression} that wraps an
-	 * {@link ObservableSetMultimapValue}. If the
-	 * {@code ObservableSetMultimapValue} is already a
-	 * {@code SetMultimapExpression}, it will be returned. Otherwise a new
-	 * concrete {@link SetMultimapBinding} is created that is bound to the
-	 * {@code ObservableSetMultimapValue}.
-	 * 
-	 * @param <K>
-	 *            The key type of the {@link SetMultimapExpression}.
-	 * @param <V>
-	 *            The value type of the {@link SetMultimapExpression}.
-	 *
-	 * @param setMultimapValue
-	 *            The {@code ObservableSetMultimapValue} for which to return a
-	 *            {@link SetMultimapExpression}.
-	 * @return The passed in {@link ObservableSetMultimapValue} if its already a
-	 *         {@link SetMultimapExpression}, or a newly created
-	 *         {@link SetMultimapBinding} for it.
-	 */
-	public static <K, V> SetMultimapExpression<K, V> setMultimapExpression(
-			final ObservableSetMultimapValue<K, V> setMultimapValue) {
-		if (setMultimapValue == null) {
-			throw new IllegalArgumentException(
-					"setMultimapValue may not be null.");
-		}
-		if (setMultimapValue instanceof SetMultimapExpression) {
-			return (SetMultimapExpression<K, V>) setMultimapValue;
-		}
-		return new SetMultimapBindingImpl<>(setMultimapValue);
 	}
 
 }

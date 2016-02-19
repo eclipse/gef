@@ -16,10 +16,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.common.beans.value.WritableSetMultimapValue;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 import javafx.beans.binding.Bindings;
@@ -62,8 +61,8 @@ public abstract class SetMultimapProperty<K, V>
 				if (other.getValue() == null) {
 					if (getValue() == null) {
 						// set to value != null
-						setValue(new ObservableSetMultimapWrapper<>(
-								HashMultimap.<K, V> create()));
+						setValue(CollectionUtils
+								.<K, V> observableHashMultimap());
 					}
 				} else {
 					if (getValue().equals(other)) {
@@ -101,8 +100,7 @@ public abstract class SetMultimapProperty<K, V>
 				ObservableSetMultimap<K, V> oldValue = getValue();
 				if (other.getValue() == null) {
 					// set to value != null
-					setValue(new ObservableSetMultimapWrapper<>(
-							HashMultimap.<K, V> create()));
+					setValue(CollectionUtils.<K, V> observableHashMultimap());
 				} else {
 					// set to null value
 					setValue(null);

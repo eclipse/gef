@@ -30,7 +30,7 @@ import javafx.beans.InvalidationListener;
  * @param <E>
  *            The element type of the {@link ObservableMultiset}.
  */
-public class UnmodifiableObservableMultisetWrapper<E>
+class UnmodifiableObservableMultisetWrapper<E>
 		implements ObservableMultiset<E> {
 
 	private ObservableMultiset<E> observableMultiset;

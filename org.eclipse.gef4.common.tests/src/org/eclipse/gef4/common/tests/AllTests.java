@@ -22,8 +22,9 @@ import org.junit.runners.Suite.SuiteClasses;
 		AdapterInjectorTests.class, AdaptableScopeTests.class,
 		CollectionUtilsTests.class, MapPropertyExTests.class,
 		SetPropertyExTests.class, ListPropertyExTests.class,
-		ObservableSetMultimapTests.class, ObservableMultisetTests.class,
-		SetMultimapPropertyTests.class, MultisetPropertyTests.class })
+		ObservableListTests.class, ObservableSetMultimapTests.class,
+		ObservableMultisetTests.class, SetMultimapPropertyTests.class,
+		MultisetPropertyTests.class })
 
 public class AllTests {
 

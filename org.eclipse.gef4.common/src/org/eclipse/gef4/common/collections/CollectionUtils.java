@@ -8,17 +8,28 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen  (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.common.collections;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
-import com.sun.javafx.collections.ObservableListWrapper;
+import org.eclipse.gef4.common.collections.ListChangeListenerHelper.AtomicChange;
+import org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.SetMultimap;
+
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 /**
  * The {@link CollectionUtils} contains a method to compute the old value of an
@@ -27,45 +38,82 @@ import javafx.collections.ObservableList;
  * {@link #getPreviousContents(javafx.collections.ListChangeListener.Change)}.
  *
  * @author mwienand
+ * @author anyssen
  *
  */
 public class CollectionUtils {
 
-	private static class ElementaryListChange<E> {
+	/**
+	 * Returns an empty, unmodifiable {@link ObservableMultiset}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableMultiset}.
+	 * @return An empty, unmodifiable {@link ObservableMultiset}.
+	 */
+	public static <E> ObservableMultiset<E> emptyMultiset() {
+		// TODO: use singleton field
+		return new UnmodifiableObservableMultisetWrapper<>(
+				new ObservableMultisetWrapper<>(HashMultiset.<E> create()));
+	}
 
-		public static <E> ElementaryListChange<E> createAddRemove(
-				List<E> removed, int from, int to) {
-			return new ElementaryListChange<>(false, true, removed, from, to,
-					null);
+	/**
+	 * Returns an empty, unmodifiable {@link ObservableSet}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableSet}.
+	 * @return An empty, unmodifiable {@link ObservableSet}.
+	 */
+	// TODO: Remove when dropping support for JavaSE-1.7 (where FXCollections
+	// already provides this).
+	public static <E> ObservableSet<E> emptySet() {
+		// TODO: use singleton field
+		return unmodifiableObservableSet(
+				FXCollections.observableSet(new HashSet<E>()));
+	}
+
+	/**
+	 * Returns an empty, unmodifiable {@link ObservableSetMultimap}.
+	 *
+	 * @param <K>
+	 *            The key type of the {@link ObservableSetMultimap}.
+	 * @param <V>
+	 *            The value type of the {@link ObservableSetMultimap}.
+	 * @return An empty, unmodifiable {@link ObservableSetMultimap}.
+	 */
+	public static <K, V> ObservableSetMultimap<K, V> emptySetMultimap() {
+		// TODO: use singleton field
+		return new UnmodifiableObservableSetMultimapWrapper<>(
+				new ObservableSetMultimapWrapper<>(
+						HashMultimap.<K, V> create()));
+	}
+
+	/**
+	 * Computes the permutation for the given {@link Change}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList} that was
+	 *            changed.
+	 * @param change
+	 *            The change, for which {@link Change#wasPermutated()} has to
+	 *            return <code>true</code>.
+	 * @return An integer array mapping previous indexes to current ones.
+	 */
+	public static <E> int[] getPermutation(
+			ListChangeListener.Change<? extends E> change) {
+		if (!change.wasPermutated()) {
+			throw new IllegalArgumentException(
+					"Change is no permutation change.");
 		}
-
-		public static <E> ElementaryListChange<E> createPermutation(int from,
-				int to, List<Integer> perm) {
-			return new ElementaryListChange<>(true, false, null, from, to,
-					perm);
+		if (change instanceof AtomicChange) {
+			return ((AtomicChange<?>) change).getPermutation();
 		}
-
-		public boolean isPerm;
-		public boolean isAddRemove;
-		public int from;
-		public int to;
-		public List<E> removed;
-		public List<Integer> permutation;
-
-		private ElementaryListChange(boolean p, boolean a, List<E> removed,
-				int from, int to, List<Integer> perm) {
-			this.from = from;
-			this.to = to;
-			isPerm = p;
-			isAddRemove = a;
-			if (removed != null) {
-				this.removed = new ArrayList<>(removed);
-			}
-			if (perm != null) {
-				permutation = new ArrayList<>(perm);
-			}
+		int[] permutation = new int[change.getTo() - change.getFrom()];
+		for (int oldIndex = change.getFrom(); oldIndex < change
+				.getTo(); oldIndex++) {
+			int newIndex = change.getPermutation(oldIndex);
+			permutation[oldIndex] = newIndex;
 		}
-
+		return permutation;
 	}
 
 	/**
@@ -83,67 +131,205 @@ public class CollectionUtils {
 	 */
 	public static <E> List<E> getPreviousContents(
 			ListChangeListener.Change<E> change) {
-		// reset change
-		change.reset();
+		if (change instanceof AtomicChange) {
+			return ((AtomicChange<E>) change).getPreviousContents();
+		}
 
 		ObservableList<E> currentList = change.getList();
-		ObservableListWrapper<E> previousList = new ObservableListWrapper<>(
-				new ArrayList<>(currentList));
+		ObservableList<E> previousList = FXCollections
+				.observableArrayList(currentList);
 
 		// walk over elementary changes and record them in a list
-		List<ElementaryListChange<E>> changes = new ArrayList<>();
-
-		while (change.next()) {
-			if (change.wasPermutated()) {
-				// find permutation
-				List<Integer> permutation = new ArrayList<>();
-				for (int oldIndex = change.getFrom(); oldIndex < change
-						.getTo(); oldIndex++) {
-					int newIndex = change.getPermutation(oldIndex);
-					permutation.add(newIndex);
-				}
-				// record change
-				changes.add(ElementaryListChange.<E> createPermutation(
-						change.getFrom(), change.getTo(), permutation));
-			} else if (change.wasAdded() || change.wasRemoved()) {
-				// record change
-				changes.add(ElementaryListChange.<E> createAddRemove(
-						change.getRemoved(), change.getFrom(), change.getTo()));
-			} else if (change.wasUpdated()) {
-				// nothing to do
-			}
-		}
+		change.reset();
+		List<ElementarySubChange<E>> changes = ListChangeListenerHelper
+				.getElementaryChanges(change);
 
 		// undo the changes in reverse order
 		for (int i = changes.size() - 1; i >= 0; i--) {
-			ElementaryListChange<E> c = changes.get(i);
-
-			if (c.isAddRemove) {
+			ElementarySubChange<E> c = changes.get(i);
+			int from = c.getFrom();
+			int to = c.getTo();
+			if (ElementarySubChange.Kind.ADD.equals(c.getKind())
+					|| ElementarySubChange.Kind.REPLACE.equals(c.getKind())) {
 				// remove added elements
-				for (int j = c.to - 1; j >= c.from; j--) {
+				for (int j = to - 1; j >= from; j--) {
 					previousList.remove(j);
 				}
+			}
+			if (ElementarySubChange.Kind.REMOVE.equals(c.getKind())
+					|| ElementarySubChange.Kind.REPLACE.equals(c.getKind())) {
 				// add removed elements
-				if (c.removed != null) {
-					previousList.addAll(c.from, c.removed);
-				}
-			} else if (c.isPerm) {
+				List<E> removed = c.getRemoved();
+				previousList.addAll(from, removed);
+			}
+			if (ElementarySubChange.Kind.PERMUTATE.equals(c.getKind())) {
 				// create sub list with old permutation
-				List<E> subList = new ArrayList<>(c.to - c.from);
-				for (int j = c.from; j < c.to; j++) {
-					int k = c.permutation.get(j - c.from);
+				int[] permutation = c.getPermutation();
+				List<E> subList = new ArrayList<>(to - from);
+				for (int j = from; j < to; j++) {
+					int k = permutation[j - from];
 					subList.add(currentList.get(k));
 				}
 				// insert sub list at correct position
-				previousList.remove(c.from, c.to);
-				previousList.addAll(c.from, subList);
+				previousList.remove(from, to);
+				previousList.addAll(from, subList);
 			}
 		}
-
-		// reset change
-		change.reset();
-
 		return previousList;
+	}
+
+	/**
+	 * Returns a (modifiable) new {@link ObservableList} wrapping an
+	 * {@link ArrayList}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList}. The
+	 *            {@link List} to wrap.
+	 * @return An {@link ObservableList} wrapping the given {@link List}.
+	 */
+	public static <E> ObservableList<E> observableArrayList() {
+		return observableList(new ArrayList<E>());
+	}
+
+	/**
+	 * Returns a (modifiable) new {@link ObservableSetMultimap} wrapping a
+	 * {@link HashMultimap}.
+	 *
+	 * @param <K>
+	 *            The key type of the {@link ObservableSetMultimap}.
+	 * @param <V>
+	 *            The value type of the {@link ObservableSetMultimap}
+	 * @return An {@link ObservableSetMultimap} wrapping a {@link HashMultimap}.
+	 */
+	public static <K, V> ObservableSetMultimap<K, V> observableHashMultimap() {
+		return observableSetMultimap(HashMultimap.<K, V> create());
+	}
+
+	/**
+	 * Returns a (modifiable) new {@link ObservableMultiset} wrapping a
+	 * {@link HashMultiset}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList}.
+	 * @return An {@link ObservableMultiset} wrapping a {@link HashMultiset}.
+	 */
+	public static <E> ObservableMultiset<E> observableHashMultiset() {
+		return observableMultiset(HashMultiset.<E> create());
+	}
+
+	/**
+	 * Returns a (modifiable) new {@link ObservableList} wrapping the given
+	 * {@link List}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList}.
+	 * @param list
+	 *            The {@link List} to wrap.
+	 * @return An {@link ObservableList} wrapping the given {@link List}.
+	 */
+	public static <E> ObservableList<E> observableList(List<E> list) {
+		if (list == null) {
+			throw new NullPointerException();
+		}
+		return new ObservableListWrapperEx<>(list);
+	}
+
+	/**
+	 * Returns a (modifiable) new {@link ObservableMultiset} wrapping the given
+	 * {@link List}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableList}.
+	 * @param multiset
+	 *            The {@link Multiset} to wrap.
+	 * @return An {@link ObservableMultiset} wrapping the given {@link List}.
+	 */
+	public static <E> ObservableMultiset<E> observableMultiset(
+			Multiset<E> multiset) {
+		if (multiset == null) {
+			throw new NullPointerException();
+		}
+		return new ObservableMultisetWrapper<>(multiset);
+	}
+
+	/**
+	 * Returns a (modifiable) new {@link ObservableSetMultimap} wrapping the
+	 * given {@link SetMultimap}.
+	 *
+	 * @param <K>
+	 *            The key type of the {@link ObservableSetMultimap}.
+	 * @param <V>
+	 *            The value type of the {@link ObservableSetMultimap}
+	 * @param setMultimap
+	 *            The {@link SetMultimap} to wrap.
+	 * @return An {@link ObservableSetMultimap} wrapping the given {@link List}.
+	 */
+	public static <K, V> ObservableSetMultimap<K, V> observableSetMultimap(
+			SetMultimap<K, V> setMultimap) {
+		if (setMultimap == null) {
+			throw new NullPointerException();
+		}
+		return new ObservableSetMultimapWrapper<>(setMultimap);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link ObservableMultiset} wrapping the given
+	 * {@link ObservableMultiset}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableMultiset}.
+	 * @param multiset
+	 *            The {@link ObservableMultiset} to wrap.
+	 * @return An unmodifiable wrapper around the given
+	 *         {@link ObservableMultiset}.
+	 */
+	public static <E> ObservableMultiset<E> unmodifiableObservableMultiset(
+			ObservableMultiset<E> multiset) {
+		if (multiset == null) {
+			throw new NullPointerException();
+		}
+		return new UnmodifiableObservableMultisetWrapper<>(multiset);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link ObservableSet} wrapping the given
+	 * {@link ObservableSet}.
+	 *
+	 * @param <E>
+	 *            The element type of the {@link ObservableSet}.
+	 * @param set
+	 *            The {@link ObservableSet} to wrap.
+	 * @return An unmodifiable wrapper around the given {@link ObservableSet}.
+	 */
+	// TODO: Remove when dropping support for JavaSE-1.7 (where FXCollections
+	// already provides this).
+	public static <E> ObservableSet<E> unmodifiableObservableSet(
+			ObservableSet<E> set) {
+		if (set == null) {
+			throw new NullPointerException();
+		}
+		return new UnmodifiableObservableSetWrapper<>(set);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link ObservableSetMultimap} wrapping the given
+	 * {@link ObservableSetMultimap}.
+	 *
+	 * @param <K>
+	 *            The key type of the {@link ObservableSetMultimap}.
+	 * @param <V>
+	 *            The value type of the {@link ObservableSetMultimap}.
+	 * @param setMultimap
+	 *            The {@link ObservableSetMultimap} to wrap.
+	 * @return An unmodifiable wrapper around the given
+	 *         {@link ObservableSetMultimap}.
+	 */
+	public static <K, V> ObservableSetMultimap<K, V> unmodifiableObservableSetMultimap(
+			ObservableSetMultimap<K, V> setMultimap) {
+		if (setMultimap == null) {
+			throw new NullPointerException();
+		}
+		return new UnmodifiableObservableSetMultimapWrapper<>(setMultimap);
 	}
 
 }

@@ -26,8 +26,8 @@ import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
 import org.eclipse.gef4.common.beans.property.SetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.SimpleSetMultimapProperty;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
 import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.ChangeExpector;
 import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.InvalidationExpector;
 import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.SetMultimapChangeExpector;
@@ -54,9 +54,8 @@ public class SetMultimapPropertyTests {
 						// test SimpleSetMultimapProperty, which is the
 						// 'default' implementation of the related
 						// ObservableValue.
-						return new SimpleSetMultimapProperty<>(
-								new ObservableSetMultimapWrapper<>(HashMultimap
-										.<Integer, String> create()));
+						return new SimpleSetMultimapProperty<>(CollectionUtils
+								.<Integer, String> observableHashMultimap());
 					}
 				} }, { new Provider<SetMultimapProperty<Integer, String>>() {
 
@@ -65,9 +64,8 @@ public class SetMultimapPropertyTests {
 						// test ReadOnlySetMultimapWrapper, which is the
 						// 'default' implementation of the related
 						// read-only property support.
-						return new ReadOnlySetMultimapWrapper<>(
-								new ObservableSetMultimapWrapper<>(HashMultimap
-										.<Integer, String> create()));
+						return new ReadOnlySetMultimapWrapper<>(CollectionUtils
+								.<Integer, String> observableHashMultimap());
 					}
 				} } });
 	}
@@ -91,8 +89,8 @@ public class SetMultimapPropertyTests {
 		assertFalse(property2.isBound());
 
 		// change value of first property
-		ObservableSetMultimap<Integer, String> newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		ObservableSetMultimap<Integer, String> newValue = CollectionUtils
+				.observableHashMultimap();
 		newValue.put(1, "1-1");
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -100,8 +98,7 @@ public class SetMultimapPropertyTests {
 		assertEquals(property1, property2);
 
 		// change value of second property
-		newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		newValue = CollectionUtils.observableHashMultimap();
 		newValue.put(2, "2-1");
 		property2.set(newValue);
 		assertEquals(property1, property2);
@@ -112,8 +109,7 @@ public class SetMultimapPropertyTests {
 		property2.unbindBidirectional(property1);
 		assertFalse(property1.isBound());
 		assertFalse(property2.isBound());
-		newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		newValue = CollectionUtils.observableHashMultimap();
 		newValue.put(3, "3-1");
 		property1.set(newValue);
 		assertNotEquals(property1, property2);
@@ -161,8 +157,8 @@ public class SetMultimapPropertyTests {
 	public void bidirectionalContentBinding() {
 		SetMultimapProperty<Integer, String> property1 = propertyProvider.get();
 		SetMultimapProperty<Integer, String> property2 = propertyProvider.get();
-		ObservableSetMultimap<Integer, String> backupMap = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		ObservableSetMultimap<Integer, String> backupMap = CollectionUtils
+				.observableHashMultimap();
 
 		property1.bindContentBidirectional(property2);
 		// XXX: According to JavaFX contract, a content binding does not lead to
@@ -310,8 +306,8 @@ public class SetMultimapPropertyTests {
 		property.addListener(changeListener);
 
 		// change property value (disjoint values)
-		ObservableSetMultimap<Integer, String> newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		ObservableSetMultimap<Integer, String> newValue = CollectionUtils
+				.observableHashMultimap();
 		newValue.putAll(3, Sets.newHashSet("3-1", "3-2", "3-3"));
 		newValue.putAll(4, Sets.newHashSet("4-1", "4-2", "4-3"));
 		invalidationListener.expect(1);
@@ -335,8 +331,7 @@ public class SetMultimapPropertyTests {
 		changeListener.check();
 
 		// change property value (overlapping values)
-		newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		newValue = CollectionUtils.observableHashMultimap();
 		newValue.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
 		newValue.putAll(3, Sets.newHashSet("3-2", "3-4"));
 		newValue.putAll(4, Sets.newHashSet("4-1", "4-2", "4-3"));
@@ -371,8 +366,7 @@ public class SetMultimapPropertyTests {
 		changeListener.check();
 
 		// change property value (change from null)
-		newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		newValue = CollectionUtils.observableHashMultimap();
 		newValue.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
 		invalidationListener.expect(1);
 		changeListener.addExpectation(null, newValue);
@@ -410,8 +404,8 @@ public class SetMultimapPropertyTests {
 		assertTrue(property2.isBound());
 
 		// change value of first property
-		ObservableSetMultimap<Integer, String> newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		ObservableSetMultimap<Integer, String> newValue = CollectionUtils
+				.observableHashMultimap();
 		newValue.put(1, "1-1");
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -420,8 +414,8 @@ public class SetMultimapPropertyTests {
 
 		// set value on second (bound) property (yields IAE)
 		try {
-			property2.set(new ObservableSetMultimapWrapper<>(
-					HashMultimap.<Integer, String> create()));
+			property2.set(
+					CollectionUtils.<Integer, String> observableHashMultimap());
 			fail("Expected IllegalArgumentException because property is bound.");
 		} catch (IllegalArgumentException e) {
 			assertEquals("A bound value cannot be set.", e.getMessage());
@@ -433,8 +427,7 @@ public class SetMultimapPropertyTests {
 		assertFalse(property2.isBound());
 
 		// change value after binding has been removed
-		newValue = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		newValue = CollectionUtils.observableHashMultimap();
 		newValue.put(3, "3-1");
 		property1.set(newValue);
 		assertNotEquals(property1, property2);
@@ -460,8 +453,8 @@ public class SetMultimapPropertyTests {
 	public void unidirectionalContentBinding() {
 		SetMultimapProperty<Integer, String> property1 = propertyProvider.get();
 		SetMultimapProperty<Integer, String> property2 = propertyProvider.get();
-		ObservableSetMultimap<Integer, String> backupMap = new ObservableSetMultimapWrapper<>(
-				HashMultimap.<Integer, String> create());
+		ObservableSetMultimap<Integer, String> backupMap = CollectionUtils
+				.observableHashMultimap();
 
 		property2.bindContent(property1);
 		// XXX: According to JavaFX contract, content binding does not lead to

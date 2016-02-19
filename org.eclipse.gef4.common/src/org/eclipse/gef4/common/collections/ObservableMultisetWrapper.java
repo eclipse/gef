@@ -34,7 +34,7 @@ import javafx.beans.InvalidationListener;
  *
  * @author anyssen
  */
-public class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
+class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		implements ObservableMultiset<E> {
 
 	private MultisetChangeListenerHelper<E> helper = new MultisetChangeListenerHelper<>(

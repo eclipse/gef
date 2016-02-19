@@ -38,8 +38,8 @@ import javafx.beans.InvalidationListener;
  *
  * @author anyssen
  */
-public class ObservableSetMultimapWrapper<K, V> extends
-		ForwardingSetMultimap<K, V> implements ObservableSetMultimap<K, V> {
+class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
+		implements ObservableSetMultimap<K, V> {
 
 	private SetMultimap<K, V> backingSetMultiMap;
 	private SetMultimapChangeListenerHelper<K, V> helper = new SetMultimapChangeListenerHelper<>(

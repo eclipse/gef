@@ -24,9 +24,9 @@ import java.util.LinkedList;
 import org.eclipse.gef4.common.beans.binding.MultisetExpressionHelper;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetWrapper;
 import org.eclipse.gef4.common.beans.property.SimpleMultisetProperty;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.MultisetChangeListener;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
-import org.eclipse.gef4.common.collections.ObservableMultisetWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -226,8 +226,7 @@ public class ObservableMultisetTests {
 					public ObservableMultiset<Integer> get() {
 						// test ObservableMultisetWrapper as the 'default'
 						// implementation of ObservableSetMultimap
-						return new ObservableMultisetWrapper<>(
-								HashMultiset.<Integer> create());
+						return CollectionUtils.observableHashMultiset();
 					}
 				} },
 
@@ -239,9 +238,8 @@ public class ObservableMultisetTests {
 								// 'default' implementation of the related
 								// ObservableValue.
 								return new SimpleMultisetProperty<>(
-										new ObservableMultisetWrapper<>(
-												HashMultiset
-														.<Integer> create()));
+										CollectionUtils
+												.<Integer> observableHashMultiset());
 							}
 						} }, { new Provider<ObservableMultiset<Integer>>() {
 
@@ -251,9 +249,8 @@ public class ObservableMultisetTests {
 								// 'default' implementation of the related
 								// read-only support.
 								return new ReadOnlyMultisetWrapper<>(
-										new ObservableMultisetWrapper<>(
-												HashMultiset
-														.<Integer> create()));
+										CollectionUtils
+												.<Integer> observableHashMultiset());
 							}
 						} } });
 	}

@@ -29,8 +29,7 @@ import com.sun.javafx.collections.ObservableSetWrapper;
  * @param <E>
  *            Type parameter for the contained elements.
  */
-public class UnmodifiableObservableSetWrapper<E>
-		extends ObservableSetWrapper<E> {
+class UnmodifiableObservableSetWrapper<E> extends ObservableSetWrapper<E> {
 
 	/**
 	 * Creates a new {@link UnmodifiableObservableSetWrapper} that is backed by

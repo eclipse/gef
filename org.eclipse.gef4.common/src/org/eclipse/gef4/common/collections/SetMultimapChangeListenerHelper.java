@@ -466,8 +466,8 @@ public class SetMultimapChangeListenerHelper<K, V> {
 
 		// XXX: We have to ignore the hash code when removing listeners, as
 		// otherwise unbinding will be broken (JavaFX bindings violate the
-		// contract between equals() and hashCode()); remove() may thus not be
-		// used.
+		// contract between equals() and hashCode(): JI-9028554); remove() may
+		// thus not be used.
 		for (Iterator<InvalidationListener> iterator = invalidationListeners
 				.iterator(); iterator.hasNext();) {
 			if (iterator.next().equals(listener)) {
@@ -499,8 +499,8 @@ public class SetMultimapChangeListenerHelper<K, V> {
 		}
 		// XXX: We have to ignore the hash code when removing listeners, as
 		// otherwise unbinding will be broken (JavaFX bindings violate the
-		// contract between equals() and hashCode()); remove() may thus not be
-		// used.
+		// contract between equals() and hashCode(): JI-9028554); remove() may
+		// thus not be used.
 		for (Iterator<SetMultimapChangeListener<? super K, ? super V>> iterator = setMultimapChangeListeners
 				.iterator(); iterator.hasNext();) {
 			if (iterator.next().equals(listener)) {

@@ -28,8 +28,8 @@ import java.util.Set;
 import org.eclipse.gef4.common.beans.binding.SetMultimapExpressionHelper;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
 import org.eclipse.gef4.common.beans.property.SimpleSetMultimapProperty;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListenerHelper;
 import org.junit.Before;
@@ -253,8 +253,7 @@ public class ObservableSetMultimapTests {
 					public ObservableSetMultimap<Integer, String> get() {
 						// test ObservableSetMultimapWrapper as the 'default'
 						// implementation of ObservableSetMultimap
-						return new ObservableSetMultimapWrapper<>(
-								HashMultimap.<Integer, String> create());
+						return CollectionUtils.observableHashMultimap();
 					}
 				} }, { new Provider<ObservableSetMultimap<Integer, String>>() {
 
@@ -263,9 +262,8 @@ public class ObservableSetMultimapTests {
 						// test SimpleSetMultimapProperty, which is the
 						// 'default' implementation of the related
 						// ObservableValue.
-						return new SimpleSetMultimapProperty<>(
-								new ObservableSetMultimapWrapper<>(HashMultimap
-										.<Integer, String> create()));
+						return new SimpleSetMultimapProperty<>(CollectionUtils
+								.<Integer, String> observableHashMultimap());
 					}
 				} }, { new Provider<ObservableSetMultimap<Integer, String>>() {
 
@@ -274,9 +272,8 @@ public class ObservableSetMultimapTests {
 						// test ReadOnlySetMultimapWrapper, which is the
 						// 'default' implementation of the related
 						// read-only support.
-						return new ReadOnlySetMultimapWrapper<>(
-								new ObservableSetMultimapWrapper<>(HashMultimap
-										.<Integer, String> create()));
+						return new ReadOnlySetMultimapWrapper<>(CollectionUtils
+								.<Integer, String> observableHashMultimap());
 					}
 				} } });
 	}

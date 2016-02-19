@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.binding;
 
@@ -18,11 +18,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.common.beans.value.ObservableMultisetValue;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
-import org.eclipse.gef4.common.collections.ObservableMultisetWrapper;
-import org.eclipse.gef4.common.collections.UnmodifiableObservableMultisetWrapper;
 
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import javafx.beans.binding.Bindings;
@@ -41,7 +39,7 @@ import javafx.beans.property.ReadOnlyIntegerProperty;
  * This class provides identical functionality for {@link Multiset} as
  * {@link MapExpression} for {@link Map}, {@link SetExpression} for {@link Set},
  * or {@link ListExpression} for {@link List}.
- * 
+ *
  * @author anyssen
  *
  * @param <E>
@@ -72,7 +70,7 @@ public abstract class MultisetExpression<E>
 	 * is already a {@code MultisetExpression}, it will be returned. Otherwise a
 	 * new concrete {@link MultisetBinding} is created that is bound to the
 	 * {@code ObservableMultisetValue}.
-	 * 
+	 *
 	 * @param <E>
 	 *            The element type of the {@link MultisetExpression}.
 	 *
@@ -95,8 +93,8 @@ public abstract class MultisetExpression<E>
 		return new MultisetBindingImpl<>(multisetValue);
 	}
 
-	private final ObservableMultiset<E> EMPTY_MULTISET = new UnmodifiableObservableMultisetWrapper<>(
-			new ObservableMultisetWrapper<>(HashMultiset.<E> create()));
+	private final ObservableMultiset<E> EMPTY_MULTISET = CollectionUtils
+			.emptyMultiset();
 
 	@Override
 	public boolean add(E element) {
@@ -171,9 +169,9 @@ public abstract class MultisetExpression<E>
 
 	/**
 	 * A boolean property that reflects whether the {@link Multiset} is empty.
-	 * 
+	 *
 	 * @return A read-only property.
-	 * 
+	 *
 	 */
 	public abstract ReadOnlyBooleanProperty emptyProperty();
 
@@ -273,6 +271,13 @@ public abstract class MultisetExpression<E>
 	}
 
 	@Override
+	public boolean replaceAll(Multiset<? extends E> multiset) {
+		final ObservableMultiset<E> delegate = get();
+		return (delegate == null) ? EMPTY_MULTISET.replaceAll(multiset)
+				: delegate.replaceAll(multiset);
+	}
+
+	@Override
 	public boolean retainAll(Collection<?> c) {
 		final Multiset<E> multiset = get();
 		return (multiset == null) ? EMPTY_MULTISET.retainAll(c)
@@ -284,13 +289,6 @@ public abstract class MultisetExpression<E>
 		final Multiset<E> multiset = get();
 		return (multiset == null) ? EMPTY_MULTISET.setCount(element, count)
 				: multiset.setCount(element, count);
-	}
-
-	@Override
-	public boolean replaceAll(Multiset<? extends E> multiset) {
-		final ObservableMultiset<E> delegate = get();
-		return (delegate == null) ? EMPTY_MULTISET.replaceAll(multiset)
-				: delegate.replaceAll(multiset);
 	}
 
 	@Override
@@ -309,7 +307,7 @@ public abstract class MultisetExpression<E>
 
 	/**
 	 * An integer property that represents the size of the {@link Multiset}.
-	 * 
+	 *
 	 * @return A read-only property.
 	 */
 	public abstract ReadOnlyIntegerProperty sizeProperty();

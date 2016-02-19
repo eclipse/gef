@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 import javafx.beans.property.ReadOnlyListProperty;
@@ -51,7 +52,7 @@ public class SelectionModel<VR> {
 	 */
 	public static final String SELECTION_PROPERTY = "selection";
 
-	private ObservableList<IContentPart<VR, ? extends VR>> selection = FXCollections
+	private ObservableList<IContentPart<VR, ? extends VR>> selection = CollectionUtils
 			.observableArrayList();
 	private ObservableList<IContentPart<VR, ? extends VR>> selectionUnmodifiable = FXCollections
 			.unmodifiableObservableList(selection);

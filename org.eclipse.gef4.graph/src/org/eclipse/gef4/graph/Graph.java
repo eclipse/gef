@@ -26,6 +26,7 @@ import java.util.UUID;
 import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -238,14 +239,14 @@ public final class Graph implements IAttributeStore {
 	 * {@link Node}s directly contained by this {@link Graph}.
 	 */
 	private final ReadOnlyListWrapper<Node> nodesProperty = new ReadOnlyListWrapperEx<>(this, NODES_PROPERTY,
-			FXCollections.<Node> observableArrayList());
+			CollectionUtils.<Node> observableArrayList());
 
 	/**
 	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
 	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
 	 */
 	private final ReadOnlyListWrapper<Edge> edgesProperty = new ReadOnlyListWrapperEx<>(this, EDGES_PROPERTY,
-			FXCollections.<Edge> observableArrayList());
+			CollectionUtils.<Edge> observableArrayList());
 
 	/**
 	 * Attributes of this {@link Graph}.

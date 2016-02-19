@@ -35,7 +35,7 @@ import javafx.beans.InvalidationListener;
  * @param <V>
  *            The value type of the {@link ObservableSetMultimap}.
  */
-public class UnmodifiableObservableSetMultimapWrapper<K, V>
+class UnmodifiableObservableSetMultimapWrapper<K, V>
 		implements ObservableSetMultimap<K, V> {
 
 	private ObservableSetMultimap<K, V> observableSetMultimap;

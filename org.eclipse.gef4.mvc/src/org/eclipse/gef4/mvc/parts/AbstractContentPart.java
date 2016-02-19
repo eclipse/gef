@@ -21,9 +21,8 @@ import java.util.Map;
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
-import org.eclipse.gef4.common.collections.UnmodifiableObservableSetMultimapWrapper;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -59,18 +58,18 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	private final ObjectProperty<Object> contentProperty = new SimpleObjectProperty<>(
 			this, CONTENT_PROPERTY);
 
-	private ObservableList<Object> contentChildren = FXCollections
+	private ObservableList<Object> contentChildren = CollectionUtils
 			.observableArrayList();
 
 	private ObservableList<Object> contentChildrenUnmodifiable = FXCollections
 			.unmodifiableObservableList(contentChildren);
 	private ReadOnlyListWrapper<Object> contentChildrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
 			this, CONTENT_CHILDREN_PROPERTY, contentChildrenUnmodifiable);
-	private ObservableSetMultimap<Object, String> contentAnchorages = new ObservableSetMultimapWrapper<>(
-			HashMultimap.<Object, String> create());
 
-	private ObservableSetMultimap<Object, String> contentAnchoragesUnmodifiable = new UnmodifiableObservableSetMultimapWrapper<>(
-			contentAnchorages);
+	private ObservableSetMultimap<Object, String> contentAnchorages = CollectionUtils
+			.observableHashMultimap();
+	private ObservableSetMultimap<Object, String> contentAnchoragesUnmodifiable = CollectionUtils
+			.unmodifiableObservableSetMultimap(contentAnchorages);
 	private ReadOnlySetMultimapWrapper<Object, String> contentAnchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
 			this, CONTENT_ANCHORAGES_PROPERTY, contentAnchoragesUnmodifiable);
 

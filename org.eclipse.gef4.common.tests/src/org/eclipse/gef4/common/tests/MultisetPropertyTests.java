@@ -25,8 +25,8 @@ import org.eclipse.gef4.common.beans.property.MultisetProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetWrapper;
 import org.eclipse.gef4.common.beans.property.SimpleMultisetProperty;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
-import org.eclipse.gef4.common.collections.ObservableMultisetWrapper;
 import org.eclipse.gef4.common.tests.ObservableMultisetTests.ChangeExpector;
 import org.eclipse.gef4.common.tests.ObservableMultisetTests.InvalidationExpector;
 import org.eclipse.gef4.common.tests.ObservableMultisetTests.MultisetChangeExpector;
@@ -52,9 +52,8 @@ public class MultisetPropertyTests {
 						// test SimpleMultisetProperty, which is the
 						// 'default' implementation of the related
 						// ObservableValue.
-						return new SimpleMultisetProperty<>(
-								new ObservableMultisetWrapper<>(
-										HashMultiset.<Integer> create()));
+						return new SimpleMultisetProperty<>(CollectionUtils
+								.<Integer> observableHashMultiset());
 					}
 				} }, { new Provider<MultisetProperty<Integer>>() {
 
@@ -63,9 +62,8 @@ public class MultisetPropertyTests {
 						// test ReadOnlyMultisetWrapper, which is the
 						// 'default' implementation of the related
 						// read-only property support.
-						return new ReadOnlyMultisetWrapper<>(
-								new ObservableMultisetWrapper<>(
-										HashMultiset.<Integer> create()));
+						return new ReadOnlyMultisetWrapper<>(CollectionUtils
+								.<Integer> observableHashMultiset());
 					}
 				} } });
 	}
@@ -89,8 +87,8 @@ public class MultisetPropertyTests {
 		assertFalse(property2.isBound());
 
 		// change value of first property
-		ObservableMultiset<Integer> newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		ObservableMultiset<Integer> newValue = CollectionUtils
+				.observableHashMultiset();
 		newValue.add(1, 1);
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -98,8 +96,7 @@ public class MultisetPropertyTests {
 		assertEquals(property1, property2);
 
 		// change value of second property
-		newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		newValue = CollectionUtils.observableHashMultiset();
 		newValue.add(2, 2);
 		property2.set(newValue);
 		assertEquals(property1, property2);
@@ -110,8 +107,7 @@ public class MultisetPropertyTests {
 		property2.unbindBidirectional(property1);
 		assertFalse(property1.isBound());
 		assertFalse(property2.isBound());
-		newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		newValue = CollectionUtils.observableHashMultiset();
 		newValue.add(3, 3);
 		property1.set(newValue);
 		assertNotEquals(property1, property2);
@@ -159,8 +155,8 @@ public class MultisetPropertyTests {
 	public void bidirectionalContentBinding() {
 		MultisetProperty<Integer> property1 = propertyProvider.get();
 		MultisetProperty<Integer> property2 = propertyProvider.get();
-		ObservableMultiset<Integer> backupMap = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		ObservableMultiset<Integer> backupMap = CollectionUtils
+				.observableHashMultiset();
 
 		property1.bindContentBidirectional(property2);
 		// XXX: According to JavaFX contract, a content binding does not lead to
@@ -274,8 +270,8 @@ public class MultisetPropertyTests {
 		property.addListener(changeListener);
 
 		// change property value (disjoint values)
-		ObservableMultiset<Integer> newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		ObservableMultiset<Integer> newValue = CollectionUtils
+				.observableHashMultiset();
 		newValue.add(3, 3);
 		newValue.add(4, 4);
 		newValue.add(5, 5);
@@ -295,8 +291,7 @@ public class MultisetPropertyTests {
 		changeListener.check();
 
 		// change property value (non-disjoint values)
-		newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		newValue = CollectionUtils.observableHashMultiset();
 		newValue.add(4, 2);
 		newValue.add(5, 5);
 		newValue.add(6, 8);
@@ -327,8 +322,7 @@ public class MultisetPropertyTests {
 		changeListener.check();
 
 		// change property value (change from null)
-		newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		newValue = CollectionUtils.observableHashMultiset();
 		newValue.add(1, 1);
 		invalidationListener.expect(1);
 		changeListener.addExpectation(null, newValue);
@@ -364,8 +358,8 @@ public class MultisetPropertyTests {
 		assertTrue(property2.isBound());
 
 		// change value of first property
-		ObservableMultiset<Integer> newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		ObservableMultiset<Integer> newValue = CollectionUtils
+				.observableHashMultiset();
 		newValue.add(1);
 		property1.set(newValue);
 		assertEquals(newValue, property1.get());
@@ -374,8 +368,7 @@ public class MultisetPropertyTests {
 
 		// set value on second (bound) property (yields IAE)
 		try {
-			property2.set(new ObservableMultisetWrapper<>(
-					HashMultiset.<Integer> create()));
+			property2.set(CollectionUtils.<Integer> observableHashMultiset());
 			fail("Expected IllegalArgumentException because property is bound.");
 		} catch (IllegalArgumentException e) {
 			assertEquals("A bound value cannot be set.", e.getMessage());
@@ -387,8 +380,7 @@ public class MultisetPropertyTests {
 		assertFalse(property2.isBound());
 
 		// change value after binding has been removed
-		newValue = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		newValue = CollectionUtils.observableHashMultiset();
 		newValue.add(3, 3);
 		property1.set(newValue);
 		assertNotEquals(property1, property2);
@@ -414,8 +406,8 @@ public class MultisetPropertyTests {
 	public void unidirectionalContentBinding() {
 		MultisetProperty<Integer> property1 = propertyProvider.get();
 		MultisetProperty<Integer> property2 = propertyProvider.get();
-		ObservableMultiset<Integer> backupMap = new ObservableMultisetWrapper<>(
-				HashMultiset.<Integer> create());
+		ObservableMultiset<Integer> backupMap = CollectionUtils
+				.observableHashMultiset();
 
 		property2.bindContent(property1);
 		// XXX: According to JavaFX contract, content binding does not lead to

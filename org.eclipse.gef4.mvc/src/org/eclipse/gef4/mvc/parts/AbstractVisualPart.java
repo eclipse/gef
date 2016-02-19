@@ -30,17 +30,13 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetWrapper;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
-import org.eclipse.gef4.common.collections.ObservableMultisetWrapper;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.collections.ObservableSetMultimapWrapper;
-import org.eclipse.gef4.common.collections.UnmodifiableObservableMultisetWrapper;
-import org.eclipse.gef4.common.collections.UnmodifiableObservableSetMultimapWrapper;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.reflect.TypeToken;
@@ -84,24 +80,24 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> parentProperty = new ReadOnlyObjectWrapper<>();
 
-	private ObservableList<IVisualPart<VR, ? extends VR>> children = FXCollections
-			.<IVisualPart<VR, ? extends VR>> observableArrayList();
+	private ObservableList<IVisualPart<VR, ? extends VR>> children = CollectionUtils
+			.observableArrayList();
 	private ObservableList<IVisualPart<VR, ? extends VR>> childrenUnmodifiable = FXCollections
 			.unmodifiableObservableList(children);
 	private ReadOnlyListWrapperEx<IVisualPart<VR, ? extends VR>> childrenProperty = new ReadOnlyListWrapperEx<>(
 			this, CHILDREN_PROPERTY, childrenUnmodifiable);
 
-	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = new ObservableSetMultimapWrapper<>(
-			HashMultimap.<IVisualPart<VR, ? extends VR>, String> create());
-	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiable = new UnmodifiableObservableSetMultimapWrapper<>(
-			anchorages);
+	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = CollectionUtils
+			.observableHashMultimap();
+	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiable = CollectionUtils
+			.unmodifiableObservableSetMultimap(anchorages);
 	private ReadOnlySetMultimapWrapper<IVisualPart<VR, ? extends VR>, String> anchoragesProperty = new ReadOnlySetMultimapWrapper<>(
 			anchoragesUnmodifiable);
 
-	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoreds = new ObservableMultisetWrapper<>(
-			HashMultiset.<IVisualPart<VR, ? extends VR>> create());
-	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiable = new UnmodifiableObservableMultisetWrapper<>(
-			anchoreds);
+	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoreds = CollectionUtils
+			.observableHashMultiset();
+	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiable = CollectionUtils
+			.unmodifiableObservableMultiset(anchoreds);
 	private ReadOnlyMultisetWrapper<IVisualPart<VR, ? extends VR>> anchoredsUnmodifiableProperty = new ReadOnlyMultisetWrapper<>(
 			anchoredsUnmodifiable);
 

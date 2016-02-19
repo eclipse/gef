@@ -16,10 +16,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.common.beans.value.WritableMultisetValue;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
-import org.eclipse.gef4.common.collections.ObservableMultisetWrapper;
 
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import javafx.beans.binding.Bindings;
@@ -59,8 +58,7 @@ public abstract class MultisetProperty<E> extends ReadOnlyMultisetProperty<E>
 				if (other.getValue() == null) {
 					if (getValue() == null) {
 						// set to value != null
-						setValue(new ObservableMultisetWrapper<>(
-								HashMultiset.<E> create()));
+						setValue(CollectionUtils.<E> observableHashMultiset());
 					}
 				} else {
 					if (getValue().equals(other)) {
@@ -97,8 +95,7 @@ public abstract class MultisetProperty<E> extends ReadOnlyMultisetProperty<E>
 				ObservableMultiset<E> oldValue = getValue();
 				if (other.getValue() == null) {
 					// set to value != null
-					setValue(new ObservableMultisetWrapper<>(
-							HashMultiset.<E> create()));
+					setValue(CollectionUtils.<E> observableHashMultiset());
 				} else {
 					// set to null value
 					setValue(null);

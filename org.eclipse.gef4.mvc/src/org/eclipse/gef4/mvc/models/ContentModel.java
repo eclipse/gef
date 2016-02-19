@@ -12,10 +12,10 @@
 package org.eclipse.gef4.mvc.models;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -34,7 +34,7 @@ public class ContentModel {
 	 */
 	public static final String CONTENTS_PROPERTY = "contents";
 
-	private ObservableList<Object> contents = FXCollections
+	private ObservableList<Object> contents = CollectionUtils
 			.observableArrayList();
 
 	private ReadOnlyListWrapper<Object> contentsProperty = new ReadOnlyListWrapperEx<>(
