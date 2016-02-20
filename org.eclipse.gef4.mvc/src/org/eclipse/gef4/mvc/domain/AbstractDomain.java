@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -90,6 +91,24 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	 */
 	public AbstractDomain() {
 		AdaptableScopes.enter(this);
+
+		// XXX: Observable collections wrap notification of listeners into a
+		// try/catch block and report all exceptions to the registered
+		// UncaughtExceptionHandler. We do not want to have exceptions silently
+		// captured anywhere in the framework, thus register a handler here
+		// (that may of course be overwritten by clients) that
+		// re-throws all silently captured exceptions.
+		Thread.currentThread()
+				.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						if (e instanceof RuntimeException) {
+							throw (RuntimeException) e;
+						} else {
+							throw new RuntimeException(e);
+						}
+					}
+				});
 	}
 
 	@Override

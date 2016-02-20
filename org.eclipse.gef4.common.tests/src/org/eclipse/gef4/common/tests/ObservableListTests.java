@@ -607,6 +607,155 @@ public class ObservableListTests {
 		checkListeners();
 	}
 
+	/**
+	 * Tests that exceptions, which are thrown in the context of listener
+	 * notification are captured and forwarded to the UncaughtExceptionHandler
+	 * registered for the Thread.
+	 */
+	@Test
+	public void exceptionHandling() throws InterruptedException {
+		assumeTrue(
+				"Skip for all except ObservableListWrapperEx, SimpleListPropertyEx, or ReadOnlyListWrapperEx on JavaSE-1.7",
+				System.getProperty("java.version").startsWith("1.7.0")
+						&& observable.getClass().getSimpleName()
+								.equals("ObservableListWrapperEx")
+						|| observable instanceof SimpleListPropertyEx
+						|| observable instanceof ReadOnlyListWrapperEx);
+
+		// invalidation listeners
+		final boolean[] caughtException = new boolean[] { false };
+		final boolean[] uncaughtException = new boolean[] { false };
+		// XXX: Run test in own thread as otherwise junit will already catch the
+		// uncaught exception before the registered handler.
+		Thread testThread = new Thread() {
+			@Override
+			public void run() {
+				InvalidationListener listener = new InvalidationListener() {
+
+					@Override
+					public void invalidated(Observable arg0) {
+						throw new IllegalArgumentException(
+								"expected invalidation");
+					}
+				};
+				observable.addListener(listener);
+				Thread.currentThread().setUncaughtExceptionHandler(
+						new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						if (e.getMessage().equals("expected invalidation")) {
+							caughtException[0] = true;
+						}
+					}
+				});
+				try {
+					observable.add(1);
+				} catch (IllegalArgumentException e) {
+					if (e.getMessage().equals("exptected invalidation")) {
+						uncaughtException[0] = true;
+					}
+				}
+				observable.removeListener(listener);
+			}
+		};
+		testThread.start();
+		testThread.join();
+		assertTrue(caughtException[0]);
+		assertFalse(uncaughtException[0]);
+
+		// list change listeners
+		caughtException[0] = false;
+		uncaughtException[0] = false;
+		testThread = new Thread() {
+			@Override
+			public void run() {
+				ListChangeListener<Integer> listener = new ListChangeListener<Integer>() {
+
+					@Override
+					public void onChanged(
+							ListChangeListener.Change<? extends Integer> c) {
+						throw new IllegalArgumentException(
+								"expected list change");
+					}
+
+				};
+				observable.addListener(listener);
+				Thread.currentThread().setUncaughtExceptionHandler(
+						new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						if (e.getMessage().equals("expected list change")) {
+							caughtException[0] = true;
+						}
+					}
+				});
+				try {
+					observable.add(1);
+				} catch (IllegalArgumentException e) {
+					if (e.getMessage().equals("exptected list change")) {
+						uncaughtException[0] = true;
+					}
+				}
+				observable.removeListener(listener);
+			}
+		};
+		testThread.start();
+		testThread.join();
+		assertTrue(caughtException[0]);
+		assertFalse(uncaughtException[0]);
+
+		// change listeners
+		// TODO: change listener notifications are not "guarded" by try/catch.
+		// if (observable instanceof ObservableValue) {
+		// caughtException[0] = false;
+		// uncaughtException[0] = false;
+		// testThread = new Thread() {
+		// @SuppressWarnings("unchecked")
+		// @Override
+		// public void run() {
+		// ObservableValue<ObservableList<Integer>> observableValue =
+		// (ObservableValue<ObservableList<Integer>>) observable;
+		// ChangeListener<ObservableList<Integer>> listener = new
+		// ChangeListener<ObservableList<Integer>>() {
+		//
+		// @Override
+		// public void changed(
+		// ObservableValue<? extends ObservableList<Integer>> observable,
+		// ObservableList<Integer> oldValue,
+		// ObservableList<Integer> newValue) {
+		// throw new IllegalArgumentException(
+		// "expected change");
+		// }
+		// };
+		// observableValue.addListener(listener);
+		// Thread.currentThread().setUncaughtExceptionHandler(
+		// new UncaughtExceptionHandler() {
+		// @Override
+		// public void uncaughtException(Thread t, Throwable e) {
+		// if (e.getMessage().equals("expected change")) {
+		// caughtException[0] = true;
+		// }
+		// }
+		// });
+		// try {
+		// ((ListPropertyBase<Integer>) observableValue)
+		// .set(CollectionUtils
+		// .observableList(Arrays.asList(3)));
+		// } catch (IllegalArgumentException e) {
+		// if (e.getMessage().equals("expected change")) {
+		// uncaughtException[0] = true;
+		// }
+		// }
+		// observableValue.removeListener(listener);
+		// }
+		// };
+		// testThread.start();
+		// testThread.join();
+		// assertTrue(caughtException[0]);
+		// assertFalse(uncaughtException[0]);
+		// }
+	}
+
 	@Test
 	public void listenersNotProperlyIterating() {
 		ListChangeListener<Integer> listChangeListener = new ListChangeListener<Integer>() {

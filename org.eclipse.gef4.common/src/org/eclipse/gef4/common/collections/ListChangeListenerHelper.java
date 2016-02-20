@@ -654,7 +654,12 @@ public class ListChangeListenerHelper<E> {
 			try {
 				lockInvalidationListeners = true;
 				for (InvalidationListener l : invalidationListeners) {
-					l.invalidated(source);
+					try {
+						l.invalidated(source);
+					} catch (Exception e) {
+						Thread.currentThread().getUncaughtExceptionHandler()
+								.uncaughtException(Thread.currentThread(), e);
+					}
 				}
 			} finally {
 				lockInvalidationListeners = false;
@@ -675,7 +680,12 @@ public class ListChangeListenerHelper<E> {
 				lockListChangeListeners = true;
 				for (ListChangeListener<? super E> l : listChangeListeners) {
 					change.reset();
-					l.onChanged(change);
+					try {
+						l.onChanged(change);
+					} catch (Exception e) {
+						Thread.currentThread().getUncaughtExceptionHandler()
+								.uncaughtException(Thread.currentThread(), e);
+					}
 				}
 			} finally {
 				lockListChangeListeners = false;

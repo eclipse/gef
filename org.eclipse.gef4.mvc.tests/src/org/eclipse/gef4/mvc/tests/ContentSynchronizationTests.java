@@ -17,7 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -54,17 +53,6 @@ public class ContentSynchronizationTests {
 		domain = new Domain();
 		injector.injectMembers(domain);
 		viewer = domain.getAdapter(Viewer.class);
-
-		// ensure exceptions are not caught
-		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread t, Throwable e) {
-				if (e instanceof RuntimeException) {
-					throw ((RuntimeException) e);
-				}
-				throw new RuntimeException(e);
-			}
-		});
 	}
 
 	@Before

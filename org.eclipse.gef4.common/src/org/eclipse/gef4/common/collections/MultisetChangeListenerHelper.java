@@ -361,7 +361,12 @@ public class MultisetChangeListenerHelper<E> {
 			try {
 				lockInvalidationListeners = true;
 				for (InvalidationListener l : invalidationListeners) {
-					l.invalidated(source);
+					try {
+						l.invalidated(source);
+					} catch (Exception e) {
+						Thread.currentThread().getUncaughtExceptionHandler()
+								.uncaughtException(Thread.currentThread(), e);
+					}
 				}
 			} finally {
 				lockInvalidationListeners = false;
@@ -382,7 +387,12 @@ public class MultisetChangeListenerHelper<E> {
 				lockMultisetChangeListeners = true;
 				for (MultisetChangeListener<? super E> l : multisetChangeListeners) {
 					change.reset();
-					l.onChanged(change);
+					try {
+						l.onChanged(change);
+					} catch (Exception e) {
+						Thread.currentThread().getUncaughtExceptionHandler()
+								.uncaughtException(Thread.currentThread(), e);
+					}
 				}
 			} finally {
 				lockMultisetChangeListeners = false;

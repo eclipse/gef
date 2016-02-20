@@ -418,7 +418,12 @@ public class SetMultimapChangeListenerHelper<K, V> {
 			try {
 				lockInvalidationListeners = true;
 				for (InvalidationListener l : invalidationListeners) {
-					l.invalidated(source);
+					try {
+						l.invalidated(source);
+					} catch (Exception e) {
+						Thread.currentThread().getUncaughtExceptionHandler()
+								.uncaughtException(Thread.currentThread(), e);
+					}
 				}
 			} finally {
 				lockInvalidationListeners = false;
@@ -440,7 +445,12 @@ public class SetMultimapChangeListenerHelper<K, V> {
 				lockSetMultimapChangeListeners = true;
 				for (SetMultimapChangeListener<? super K, ? super V> l : setMultimapChangeListeners) {
 					change.reset();
-					l.onChanged(change);
+					try {
+						l.onChanged(change);
+					} catch (Exception e) {
+						Thread.currentThread().getUncaughtExceptionHandler()
+								.uncaughtException(Thread.currentThread(), e);
+					}
 				}
 			} finally {
 				lockSetMultimapChangeListeners = false;
