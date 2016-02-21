@@ -72,47 +72,6 @@ import javafx.beans.value.ObservableValue;
 @RunWith(Parameterized.class)
 public class ObservableSetMultimapTests {
 
-	protected static class ChangeExpector<K, V>
-			implements ChangeListener<ObservableSetMultimap<K, V>> {
-
-		private ObservableValue<ObservableSetMultimap<K, V>> source;
-		private LinkedList<ObservableSetMultimap<K, V>> oldValueQueue = new LinkedList<>();
-		private LinkedList<ObservableSetMultimap<K, V>> newValueQueue = new LinkedList<>();
-
-		public ChangeExpector(
-				ObservableValue<ObservableSetMultimap<K, V>> source) {
-			this.source = source;
-		}
-
-		public void addExpectation(ObservableSetMultimap<K, V> oldValue,
-				ObservableSetMultimap<K, V> newValue) {
-			// We check that the reference to the observable value is correct,
-			// thus do not copy the passed in values.
-			oldValueQueue.addFirst(oldValue);
-			newValueQueue.addFirst(newValue);
-		}
-
-		@Override
-		public void changed(
-				ObservableValue<? extends ObservableSetMultimap<K, V>> observable,
-				ObservableSetMultimap<K, V> oldValue,
-				ObservableSetMultimap<K, V> newValue) {
-			if (oldValueQueue.size() <= 0) {
-				fail("Received unexpected change.");
-			}
-			assertEquals(source, observable);
-			assertEquals(oldValueQueue.pollLast(), oldValue);
-			assertEquals(newValueQueue.pollLast(), newValue);
-		}
-
-		public void check() {
-			if (oldValueQueue.size() > 0) {
-				fail("Did not receive " + oldValueQueue.size()
-						+ " expected changes.");
-			}
-		}
-	}
-
 	protected static class InvalidationExpector
 			implements InvalidationListener {
 		int expect = 0;
@@ -281,7 +240,6 @@ public class ObservableSetMultimapTests {
 	private ObservableSetMultimap<Integer, String> observable;
 	private Provider<ObservableSetMultimap<Integer, String>> observableProvider;
 	private InvalidationExpector invalidationListener;
-	private ChangeExpector<Integer, String> changeListener;
 	private SetMultimapChangeExpector<Integer, String> setMultimapChangeListener;
 
 	public ObservableSetMultimapTests(
@@ -306,9 +264,6 @@ public class ObservableSetMultimapTests {
 
 	protected void checkListeners() {
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		setMultimapChangeListener.check();
 	}
 
@@ -330,15 +285,6 @@ public class ObservableSetMultimapTests {
 
 		// remove all values
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Sets.newHashSet(null, "null"), Collections.<String> emptySet());
@@ -533,7 +479,6 @@ public class ObservableSetMultimapTests {
 	public void listenersRegisteredMoreThanOnce() {
 		// register listeners (twice)
 		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer, String> changeListener = null;
 		SetMultimapChangeExpector<Integer, String> setMultimapChangeListener = new SetMultimapChangeExpector<>(
 				observable);
 		observable.addListener(invalidationListener);
@@ -548,27 +493,6 @@ public class ObservableSetMultimapTests {
 		};
 		observable.addListener(invalidationListener2);
 		observable.removeListener(invalidationListener2);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-			observableValue.addListener(changeListener);
-			// add and remove should have no effect
-			ChangeListener<ObservableSetMultimap<Integer, String>> changeListener2 = new ChangeListener<ObservableSetMultimap<Integer, String>>() {
-
-				@Override
-				public void changed(
-						ObservableValue<? extends ObservableSetMultimap<Integer, String>> observable,
-						ObservableSetMultimap<Integer, String> oldValue,
-						ObservableSetMultimap<Integer, String> newValue) {
-					// ignore
-				}
-			};
-			observableValue.addListener(changeListener2);
-			observableValue.removeListener(changeListener2);
-		}
 		observable.addListener(setMultimapChangeListener);
 		observable.addListener(setMultimapChangeListener);
 		// add and remove should have no effect
@@ -585,17 +509,6 @@ public class ObservableSetMultimapTests {
 
 		// perform put
 		invalidationListener.expect(2);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1"));
@@ -604,55 +517,25 @@ public class ObservableSetMultimapTests {
 				Collections.<String> emptySet(), Collections.singleton("1"));
 		assertTrue(observable.put(1, "1"));
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		setMultimapChangeListener.check();
 
 		// remove single listener occurrence
 		observable.removeListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			observableValue.removeListener(changeListener);
-		}
 		observable.removeListener(setMultimapChangeListener);
 
 		// perform another put
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(2,
 				Collections.<String> emptySet(), Collections.singleton("2"));
 		assertTrue(observable.put(2, "2"));
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		setMultimapChangeListener.check();
 
 		// remove listeners and ensure no notifications are received
 		observable.removeListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			observableValue.removeListener(changeListener);
-		}
 		observable.removeListener(setMultimapChangeListener);
 		assertTrue(observable.put(3, "3"));
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		setMultimapChangeListener.check();
 	}
 
@@ -667,15 +550,6 @@ public class ObservableSetMultimapTests {
 
 		// put a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1-1"));
@@ -685,15 +559,6 @@ public class ObservableSetMultimapTests {
 
 		// put a second value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Collections.singleton("1-2"));
@@ -703,15 +568,6 @@ public class ObservableSetMultimapTests {
 
 		// put a different value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(2,
 				Collections.<String> emptySet(), Collections.singleton("2"));
@@ -721,15 +577,6 @@ public class ObservableSetMultimapTests {
 
 		// null key and values are allowed within SetMultimap
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> emptySet(),
@@ -740,15 +587,6 @@ public class ObservableSetMultimapTests {
 
 		// add a real value to null key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> emptySet(),
@@ -774,15 +612,6 @@ public class ObservableSetMultimapTests {
 
 		// add distinct values for different keys
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-1", "1-2"));
@@ -797,15 +626,6 @@ public class ObservableSetMultimapTests {
 
 		// add new and already registered values for different keys
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-3"));
@@ -838,15 +658,6 @@ public class ObservableSetMultimapTests {
 
 		// add two new distinct values
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-1", "1-2"));
@@ -857,15 +668,6 @@ public class ObservableSetMultimapTests {
 
 		// add a new and an already added value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.<String> emptySet(), Sets.newHashSet("1-3"));
@@ -883,16 +685,8 @@ public class ObservableSetMultimapTests {
 
 	protected void registerListeners() {
 		invalidationListener = new InvalidationExpector();
-		changeListener = null;
 		setMultimapChangeListener = new SetMultimapChangeExpector<>(observable);
 		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
 		observable.addListener(setMultimapChangeListener);
 	}
 
@@ -915,15 +709,6 @@ public class ObservableSetMultimapTests {
 
 		// remove a Compound value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Collections.singleton("1-1"), Collections.<String> emptySet());
@@ -933,15 +718,6 @@ public class ObservableSetMultimapTests {
 
 		// remove null value from null key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> singleton(null),
@@ -953,15 +729,6 @@ public class ObservableSetMultimapTests {
 
 		// remove real value from null key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Collections.<String> singleton("null"),
@@ -1007,15 +774,6 @@ public class ObservableSetMultimapTests {
 
 		// remove values for a single key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
@@ -1026,15 +784,6 @@ public class ObservableSetMultimapTests {
 
 		// remove values for null key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Sets.newHashSet(null, "null"), Collections.<String> emptySet());
@@ -1074,15 +823,6 @@ public class ObservableSetMultimapTests {
 
 		// remove all values
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(null,
 				Sets.newHashSet(null, "null"), Collections.<String> emptySet()); // removed
@@ -1141,15 +881,6 @@ public class ObservableSetMultimapTests {
 
 		// replace all values of a specific key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(1,
 				Sets.newHashSet("1-1", "1-2", "1-3"),
@@ -1164,15 +895,6 @@ public class ObservableSetMultimapTests {
 
 		// use replacement to clear values for a key
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableSetMultimap<Integer, String>> observableValue = (ObservableValue<ObservableSetMultimap<Integer, String>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		setMultimapChangeListener.addAtomicExpectation();
 		setMultimapChangeListener.addElementaryExpectation(2,
 				Sets.newHashSet("2-1", "2-2", "2-3"),

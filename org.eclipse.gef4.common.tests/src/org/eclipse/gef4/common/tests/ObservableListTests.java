@@ -71,46 +71,6 @@ import javafx.collections.ObservableList;
 @RunWith(Parameterized.class)
 public class ObservableListTests {
 
-	protected static class ChangeExpector<E>
-			implements ChangeListener<ObservableList<E>> {
-
-		private ObservableValue<ObservableList<E>> source;
-		private LinkedList<ObservableList<E>> oldValueQueue = new LinkedList<>();
-		private LinkedList<ObservableList<E>> newValueQueue = new LinkedList<>();
-
-		public ChangeExpector(ObservableValue<ObservableList<E>> source) {
-			this.source = source;
-		}
-
-		public void addExpectation(ObservableList<E> oldValue,
-				ObservableList<E> newValue) {
-			// We check that the reference to the observable value is correct,
-			// thus do not copy the passed in values.
-			oldValueQueue.addFirst(oldValue);
-			newValueQueue.addFirst(newValue);
-		}
-
-		@Override
-		public void changed(
-				ObservableValue<? extends ObservableList<E>> observable,
-				ObservableList<E> oldValue, ObservableList<E> newValue) {
-			if (oldValueQueue.size() <= 0) {
-				fail("Received unexpected change.");
-			}
-			// if(overvable instanceof ReadOnlyMapWrapper)
-			assertEquals(source, observable);
-			assertEquals(oldValueQueue.pollLast(), oldValue);
-			assertEquals(newValueQueue.pollLast(), newValue);
-		}
-
-		public void check() {
-			if (oldValueQueue.size() > 0) {
-				fail("Did not receive " + oldValueQueue.size()
-						+ " expected changes.");
-			}
-		}
-	}
-
 	protected static class InvalidationExpector
 			implements InvalidationListener {
 		int expect = 0;
@@ -160,7 +120,7 @@ public class ObservableListTests {
 			this.previousValue = new ArrayList<>(source);
 		}
 
-		public void addElementaryExpection(List<E> removedElements,
+		public void addElementaryExpectation(List<E> removedElements,
 				List<E> addedElements, int[] permutations, int from, int to) {
 			if (addedElementsQueue.size() <= 0) {
 				throw new IllegalArgumentException(
@@ -358,7 +318,6 @@ public class ObservableListTests {
 	private ObservableList<Integer> observable;
 	private Provider<ObservableList<Integer>> observableProvider;
 	private InvalidationExpector invalidationListener;
-	private ChangeExpector<Integer> changeListener;
 	private ListChangeExpector<Integer> listChangeListener;
 
 	public ObservableListTests(
@@ -376,17 +335,8 @@ public class ObservableListTests {
 
 		// add a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Collections.<Integer> singletonList(1), null, 0, 1);
 		assertEquals(backupList.add(1), observable.add(1));
 		check(observable, backupList);
@@ -394,17 +344,8 @@ public class ObservableListTests {
 
 		// add a different value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Collections.<Integer> singletonList(2), null, 1, 2);
 		assertEquals(backupList.add(2), observable.add(2));
 		check(observable, backupList);
@@ -425,17 +366,8 @@ public class ObservableListTests {
 
 		// add a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Collections.<Integer> singletonList(4), null, 2, 3);
 		backupList.add(2, 4);
 		observable.add(2, 4);
@@ -454,17 +386,8 @@ public class ObservableListTests {
 
 		// add a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Arrays.asList(1, 2, 3, 4, 5), null, 0, 5);
 		backupList.addAll(Arrays.asList(1, 2, 3, 4, 5));
 		observable.addAll(Arrays.asList(1, 2, 3, 4, 5));
@@ -483,17 +406,8 @@ public class ObservableListTests {
 
 		// add a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Arrays.asList(1, 2, 3, 4, 5), null, 0, 5);
 		backupList.addAll(Arrays.asList(1, 2, 3, 4, 5));
 		observable.addAll(1, 2, 3, 4, 5);
@@ -515,17 +429,8 @@ public class ObservableListTests {
 
 		// add a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Arrays.asList(1, 2, 3, 4, 5), null, 3, 8);
 		backupList.addAll(3, Arrays.asList(1, 2, 3, 4, 5));
 		observable.addAll(3, Arrays.asList(1, 2, 3, 4, 5));
@@ -550,9 +455,6 @@ public class ObservableListTests {
 
 	protected void checkListeners() {
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		listChangeListener.check();
 	}
 
@@ -575,18 +477,9 @@ public class ObservableListTests {
 
 		// clear
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(1, 2, 3), null,
-				null, 0, 0);
+		listChangeListener.addElementaryExpectation(Arrays.asList(1, 2, 3),
+				null, null, 0, 0);
 		observable.clear();
 		backupList.clear();
 		check(observable, backupList);
@@ -1067,7 +960,6 @@ public class ObservableListTests {
 	public void listenersRegisteredMoreThanOnce() {
 		// register listeners (twice)
 		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
 		ListChangeExpector<Integer> listChangeListener = new ListChangeExpector<>(
 				observable);
 		observable.addListener(invalidationListener);
@@ -1082,27 +974,6 @@ public class ObservableListTests {
 		};
 		observable.addListener(invalidationListener2);
 		observable.removeListener(invalidationListener2);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-			observableValue.addListener(changeListener);
-			// add and remove should have no effect
-			ChangeListener<ObservableList<Integer>> changeListener2 = new ChangeListener<ObservableList<Integer>>() {
-
-				@Override
-				public void changed(
-						ObservableValue<? extends ObservableList<Integer>> observable,
-						ObservableList<Integer> oldValue,
-						ObservableList<Integer> newValue) {
-					// ignore
-				}
-			};
-			observableValue.addListener(changeListener2);
-			observableValue.removeListener(changeListener2);
-		}
 		observable.addListener(listChangeListener);
 		observable.addListener(listChangeListener);
 		// add and remove should have no effect
@@ -1120,89 +991,40 @@ public class ObservableListTests {
 
 		// perform add
 		invalidationListener.expect(2);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Collections.singletonList(1), null, 0, 1);
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Collections.singletonList(1), null, 0, 1);
 		assertTrue(observable.add(1));
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		listChangeListener.check();
 
 		// remove single listener occurrence
 		observable.removeListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			observableValue.removeListener(changeListener);
-		}
 		observable.removeListener(listChangeListener);
 
 		// perform another add
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null,
+		listChangeListener.addElementaryExpectation(null,
 				Collections.singletonList(1), null, 1, 2);
 		assertTrue(observable.add(1));
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		listChangeListener.check();
 
 		// remove listeners and ensure no notifications are received
 		observable.removeListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			observableValue.removeListener(changeListener);
-		}
 		observable.removeListener(listChangeListener);
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		listChangeListener.check();
 	}
 
 	protected void registerListeners() {
 		invalidationListener = new InvalidationExpector();
-		changeListener = null;
 		listChangeListener = new ListChangeExpector<>(observable);
 		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
 		observable.addListener(listChangeListener);
 	}
 
@@ -1225,18 +1047,9 @@ public class ObservableListTests {
 
 		// clear
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(2), null, null,
-				1, 1);
+		listChangeListener.addElementaryExpectation(Arrays.asList(2), null,
+				null, 1, 1);
 		observable.remove(1);
 		backupList.remove(1);
 		check(observable, backupList);
@@ -1266,17 +1079,8 @@ public class ObservableListTests {
 
 		// clear
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(2, 3), null,
+		listChangeListener.addElementaryExpectation(Arrays.asList(2, 3), null,
 				null, 1, 1);
 		observable.remove(1, 3);
 		backupList.remove(2);
@@ -1304,18 +1108,9 @@ public class ObservableListTests {
 
 		// clear
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(1), null, null,
-				0, 0);
+		listChangeListener.addElementaryExpectation(Arrays.asList(1), null,
+				null, 0, 0);
 		observable.remove((Object) 1);
 		backupList.remove((Object) 1);
 		check(observable, backupList);
@@ -1353,22 +1148,13 @@ public class ObservableListTests {
 
 		// remove all (elements are not continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect two changes, as the deleted elements are not 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(2), null, null,
-				1, 1);
+		listChangeListener.addElementaryExpectation(Arrays.asList(2), null,
+				null, 1, 1);
 		// after the initial delete, 4 is now located at index 2
-		listChangeListener.addElementaryExpection(Arrays.asList(4), null, null,
-				2, 2);
+		listChangeListener.addElementaryExpectation(Arrays.asList(4), null,
+				null, 2, 2);
 		observable.removeAll(Arrays.asList(4, 2));
 		backupList.removeAll(Arrays.asList(4, 2));
 		check(observable, backupList);
@@ -1376,18 +1162,9 @@ public class ObservableListTests {
 
 		// remove all (elements are continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect a single change, as the deleted elements are 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(3, 5), null,
+		listChangeListener.addElementaryExpectation(Arrays.asList(3, 5), null,
 				null, 1, 1);
 		observable.removeAll(Arrays.asList(5, 3));
 		backupList.removeAll(Arrays.asList(5, 3));
@@ -1426,22 +1203,13 @@ public class ObservableListTests {
 
 		// remove all (elements are not continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect two changes, as the deleted elements are not 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(2), null, null,
-				1, 1);
+		listChangeListener.addElementaryExpectation(Arrays.asList(2), null,
+				null, 1, 1);
 		// after the initial delete, 4 is now located at index 2
-		listChangeListener.addElementaryExpection(Arrays.asList(4), null, null,
-				2, 2);
+		listChangeListener.addElementaryExpectation(Arrays.asList(4), null,
+				null, 2, 2);
 		observable.removeAll(4, 2);
 		backupList.removeAll(Arrays.asList(4, 2));
 		check(observable, backupList);
@@ -1449,18 +1217,9 @@ public class ObservableListTests {
 
 		// remove all (elements are continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect a single change, as the deleted elements are 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(3, 5), null,
+		listChangeListener.addElementaryExpectation(Arrays.asList(3, 5), null,
 				null, 1, 1);
 		observable.removeAll(5, 3);
 		backupList.removeAll(Arrays.asList(5, 3));
@@ -1493,22 +1252,13 @@ public class ObservableListTests {
 
 		// remove all (elements are not continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect two changes, as the deleted elements are not 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(2), null, null,
-				1, 1);
+		listChangeListener.addElementaryExpectation(Arrays.asList(2), null,
+				null, 1, 1);
 		// after the initial delete, 4 is now located at index 2
-		listChangeListener.addElementaryExpection(Arrays.asList(4), null, null,
-				2, 2);
+		listChangeListener.addElementaryExpectation(Arrays.asList(4), null,
+				null, 2, 2);
 		observable.retainAll(Arrays.asList(1, 3, 5, 6));
 		backupList.retainAll(Arrays.asList(1, 3, 5, 6));
 		check(observable, backupList);
@@ -1516,18 +1266,9 @@ public class ObservableListTests {
 
 		// remove all (elements are continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect a single change, as the deleted elements are 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(3, 5), null,
+		listChangeListener.addElementaryExpectation(Arrays.asList(3, 5), null,
 				null, 1, 1);
 		observable.retainAll(Arrays.asList(1, 6));
 		backupList.retainAll(Arrays.asList(1, 6));
@@ -1566,22 +1307,13 @@ public class ObservableListTests {
 
 		// remove all (elements are not continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect two changes, as the deleted elements are not 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(2), null, null,
-				1, 1);
+		listChangeListener.addElementaryExpectation(Arrays.asList(2), null,
+				null, 1, 1);
 		// after the initial delete, 4 is now located at index 2
-		listChangeListener.addElementaryExpection(Arrays.asList(4), null, null,
-				2, 2);
+		listChangeListener.addElementaryExpectation(Arrays.asList(4), null,
+				null, 2, 2);
 		observable.retainAll(1, 3, 5, 6);
 		backupList.retainAll(Arrays.asList(1, 3, 5, 6));
 		check(observable, backupList);
@@ -1589,18 +1321,9 @@ public class ObservableListTests {
 
 		// remove all (elements are continuous)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		// we expect a single change, as the deleted elements are 'continuous'
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(3, 5), null,
+		listChangeListener.addElementaryExpectation(Arrays.asList(3, 5), null,
 				null, 1, 1);
 		observable.retainAll(1, 6);
 		backupList.retainAll(Arrays.asList(1, 6));
@@ -1622,17 +1345,8 @@ public class ObservableListTests {
 
 		// set different value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(
+		listChangeListener.addElementaryExpectation(
 				Collections.<Integer> singletonList(2),
 				Collections.<Integer> singletonList(4), null, 1, 2);
 		backupList.set(1, 4);
@@ -1668,17 +1382,8 @@ public class ObservableListTests {
 
 		// set different value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(1, 2, 3),
+		listChangeListener.addElementaryExpectation(Arrays.asList(1, 2, 3),
 				Arrays.asList(3, 4, 5), null, 0, 3);
 		backupList.clear();
 		backupList.addAll(Arrays.asList(3, 4, 5));
@@ -1713,17 +1418,8 @@ public class ObservableListTests {
 
 		// set different value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(Arrays.asList(1, 2, 3),
+		listChangeListener.addElementaryExpectation(Arrays.asList(1, 2, 3),
 				Arrays.asList(3, 4, 5), null, 0, 3);
 		backupList.clear();
 		backupList.addAll(Arrays.asList(3, 4, 5));
@@ -1772,17 +1468,8 @@ public class ObservableListTests {
 
 		// sort
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableList<Integer>> observableValue = (ObservableValue<ObservableList<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		listChangeListener.addAtomicExpectation();
-		listChangeListener.addElementaryExpection(null, null,
+		listChangeListener.addElementaryExpectation(null, null,
 				new int[] { 2, 0, 1 }, 0, 3);
 		Collections.sort(observable);
 		Collections.sort(backupList);

@@ -66,46 +66,6 @@ import javafx.beans.value.ObservableValue;
 @RunWith(Parameterized.class)
 public class ObservableMultisetTests {
 
-	protected static class ChangeExpector<E>
-			implements ChangeListener<ObservableMultiset<E>> {
-
-		private ObservableValue<ObservableMultiset<E>> source;
-		private LinkedList<ObservableMultiset<E>> oldValueQueue = new LinkedList<>();
-		private LinkedList<ObservableMultiset<E>> newValueQueue = new LinkedList<>();
-
-		public ChangeExpector(ObservableValue<ObservableMultiset<E>> source) {
-			this.source = source;
-		}
-
-		public void addExpectation(ObservableMultiset<E> oldValue,
-				ObservableMultiset<E> newValue) {
-			// We check that the reference to the observable value is correct,
-			// thus do not copy the passed in values.
-			oldValueQueue.addFirst(oldValue);
-			newValueQueue.addFirst(newValue);
-		}
-
-		@Override
-		public void changed(
-				ObservableValue<? extends ObservableMultiset<E>> observable,
-				ObservableMultiset<E> oldValue,
-				ObservableMultiset<E> newValue) {
-			if (oldValueQueue.size() <= 0) {
-				fail("Received unexpected change.");
-			}
-			assertEquals(source, observable);
-			assertEquals(oldValueQueue.pollLast(), oldValue);
-			assertEquals(newValueQueue.pollLast(), newValue);
-		}
-
-		public void check() {
-			if (oldValueQueue.size() > 0) {
-				fail("Did not receive " + oldValueQueue.size()
-						+ " expected changes.");
-			}
-		}
-	}
-
 	protected static class InvalidationExpector
 			implements InvalidationListener {
 		int expect = 0;
@@ -258,7 +218,6 @@ public class ObservableMultisetTests {
 	private ObservableMultiset<Integer> observable;
 	private Provider<ObservableMultiset<Integer>> observableProvider;
 	private InvalidationExpector invalidationListener;
-	private ChangeExpector<Integer> changeListener;
 	private MultisetChangeExpector<Integer> multisetChangeListener;
 
 	public ObservableMultisetTests(
@@ -276,15 +235,6 @@ public class ObservableMultisetTests {
 
 		// add a single value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.add(1), observable.add(1));
@@ -293,15 +243,6 @@ public class ObservableMultisetTests {
 
 		// add a second occurrence of the same value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.add(1), observable.add(1));
@@ -310,15 +251,6 @@ public class ObservableMultisetTests {
 
 		// add a different value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(2, 0, 1);
 		assertEquals(backupMultiset.add(2), observable.add(2));
@@ -339,22 +271,10 @@ public class ObservableMultisetTests {
 		assertEquals(backupMultiset.add(1, 0), observable.remove(1, 0));
 		check(observable, backupMultiset);
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		multisetChangeListener.check();
 
 		// add a single value multiple times
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(5, 0, 5);
 		assertEquals(backupMultiset.add(5, 5), observable.add(5, 5));
@@ -378,15 +298,6 @@ public class ObservableMultisetTests {
 
 		// add a collection with three values
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		multisetChangeListener.addElementaryExpection(2, 0, 2);
@@ -401,15 +312,6 @@ public class ObservableMultisetTests {
 
 		// add another collection with three values
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(2, 0, 2);
 		multisetChangeListener.addElementaryExpection(4, 0, 3);
@@ -438,9 +340,6 @@ public class ObservableMultisetTests {
 
 	protected void checkListeners() {
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		multisetChangeListener.check();
 	}
 
@@ -463,15 +362,6 @@ public class ObservableMultisetTests {
 
 		// clear
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 1, 0);
 		multisetChangeListener.addElementaryExpection(2, 2, 0);
@@ -623,7 +513,6 @@ public class ObservableMultisetTests {
 	public void listenersRegisteredMoreThanOnce() {
 		// register listeners (twice)
 		InvalidationExpector invalidationListener = new InvalidationExpector();
-		ChangeExpector<Integer> changeListener = null;
 		MultisetChangeExpector<Integer> multisetChangeListener = new MultisetChangeExpector<>(
 				observable);
 		observable.addListener(invalidationListener);
@@ -638,27 +527,6 @@ public class ObservableMultisetTests {
 		};
 		observable.addListener(invalidationListener2);
 		observable.removeListener(invalidationListener2);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-			observableValue.addListener(changeListener);
-			// add and remove should have no effect
-			ChangeListener<ObservableMultiset<Integer>> changeListener2 = new ChangeListener<ObservableMultiset<Integer>>() {
-
-				@Override
-				public void changed(
-						ObservableValue<? extends ObservableMultiset<Integer>> observable,
-						ObservableMultiset<Integer> oldValue,
-						ObservableMultiset<Integer> newValue) {
-					// ignore
-				}
-			};
-			observableValue.addListener(changeListener2);
-			observableValue.removeListener(changeListener2);
-		}
 		observable.addListener(multisetChangeListener);
 		observable.addListener(multisetChangeListener);
 		// add and remove should have no effect
@@ -676,86 +544,37 @@ public class ObservableMultisetTests {
 
 		// perform add
 		invalidationListener.expect(2);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertTrue(observable.add(1));
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		multisetChangeListener.check();
 
 		// remove single listener occurrence
 		observable.removeListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			observableValue.removeListener(changeListener);
-		}
 		observable.removeListener(multisetChangeListener);
 
 		// perform another add
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertTrue(observable.add(1));
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		multisetChangeListener.check();
 
 		// remove listeners and ensure no notifications are received
 		observable.removeListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			observableValue.removeListener(changeListener);
-		}
 		observable.removeListener(multisetChangeListener);
 		invalidationListener.check();
-		if (observable instanceof ObservableValue) {
-			changeListener.check();
-		}
 		multisetChangeListener.check();
 	}
 
 	protected void registerListeners() {
 		invalidationListener = new InvalidationExpector();
-		changeListener = null;
 		multisetChangeListener = new MultisetChangeExpector<>(observable);
 		observable.addListener(invalidationListener);
-		if (observable instanceof ObservableValue) {
-			// register change listener as well
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener = new ChangeExpector<>(observableValue);
-			observableValue.addListener(changeListener);
-		}
 		observable.addListener(multisetChangeListener);
 	}
 
@@ -778,15 +597,6 @@ public class ObservableMultisetTests {
 
 		// remove (first occurrence of) value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(2, 1, 0);
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
@@ -795,15 +605,6 @@ public class ObservableMultisetTests {
 
 		// remove (second occurrence of) value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(2, 1, 0);
 		assertEquals(backupMultiset.remove(2), observable.remove(2));
@@ -840,15 +641,6 @@ public class ObservableMultisetTests {
 
 		// remove (two occurrences of) value
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(3, 2, 0);
 		assertEquals(backupMultiset.remove(3, 2), observable.remove(3, 2));
@@ -858,15 +650,6 @@ public class ObservableMultisetTests {
 		// remove more occurrences than contained (change contains fewer
 		// occurrences)
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(3, 1, 0);
 		assertEquals(backupMultiset.remove(3, 2), observable.remove(3, 2));
@@ -898,15 +681,6 @@ public class ObservableMultisetTests {
 
 		// remove collection
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 1, 0);
 		// all occurrences of 2 will be removed, even if toRemove contains fewer
@@ -943,15 +717,6 @@ public class ObservableMultisetTests {
 
 		// replaceAll
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(2, 1, 0); // decrease
 																// count
@@ -998,15 +763,6 @@ public class ObservableMultisetTests {
 
 		// remove collection
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(3, 3, 0);
 		Multiset<Integer> toRetain = HashMultiset.create();
@@ -1030,15 +786,6 @@ public class ObservableMultisetTests {
 
 		// set count for non contained element
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.setCount(1, 1), observable.setCount(1, 1));
@@ -1047,15 +794,6 @@ public class ObservableMultisetTests {
 
 		// increase count for already contained element
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 3);
 		assertEquals(backupMultiset.setCount(1, 4), observable.setCount(1, 4));
@@ -1064,15 +802,6 @@ public class ObservableMultisetTests {
 
 		// decrease count for already contained element
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 2, 0);
 		assertEquals(backupMultiset.setCount(1, 2), observable.setCount(1, 2));
@@ -1091,15 +820,6 @@ public class ObservableMultisetTests {
 
 		// set count for non contained element
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 2);
 		assertEquals(backupMultiset.setCount(1, 0, 2),
@@ -1109,15 +829,6 @@ public class ObservableMultisetTests {
 
 		// set count to increase occurrences
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		assertEquals(backupMultiset.setCount(1, 2, 3),
@@ -1127,15 +838,6 @@ public class ObservableMultisetTests {
 
 		// set count to decrease occurrences
 		invalidationListener.expect(1);
-		if (observable instanceof ObservableValue) {
-			// old and new value are the same, as the observable value of the
-			// property has not been exchanged (but only its contents has been
-			// changed); thus we may use the current value also as newValue.
-			@SuppressWarnings("unchecked")
-			ObservableValue<ObservableMultiset<Integer>> observableValue = (ObservableValue<ObservableMultiset<Integer>>) observable;
-			changeListener.addExpectation(observableValue.getValue(),
-					observableValue.getValue());
-		}
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 1, 0);
 		assertEquals(backupMultiset.setCount(1, 3, 2),
