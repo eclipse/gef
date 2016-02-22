@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +118,21 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				for (int i = iter.size(); i <= last; i++)
 					iter.add(new NodeWrapper());
 				updateIndex(iter);
+			}
+		}
+
+		/**
+		 * Removes the padding nodes from the layers
+		 */
+		private void unpadLayers() {
+			for (List<NodeWrapper> layer : layers) {
+				Iterator<NodeWrapper> it = layer.iterator();
+				while (it.hasNext()) {
+					NodeWrapper wrapper = it.next();
+					if (wrapper.isPadding()) {
+						it.remove();
+					}
+				}
 			}
 		}
 
@@ -241,6 +257,7 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 				refineLayers();
 			}
 			reduceCrossings();
+			unpadLayers();
 		}
 	}
 
