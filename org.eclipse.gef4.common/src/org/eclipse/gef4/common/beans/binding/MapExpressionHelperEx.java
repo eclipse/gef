@@ -23,8 +23,7 @@ import javafx.collections.ObservableMap;
  * @param <V>
  *            The value type of the {@link MapExpression}.
  */
-public class MapExpressionHelperEx<K, V>
-		extends MapListenerHelperEx<K, V> {
+public class MapExpressionHelperEx<K, V> extends MapListenerHelperEx<K, V> {
 
 	private List<ChangeListener<? super ObservableMap<K, V>>> changeListeners = null;
 	private ObservableMapValue<K, V> observableValue = null;
@@ -52,7 +51,7 @@ public class MapExpressionHelperEx<K, V>
 	 * than once and will receive multiple change events.
 	 *
 	 * @param listener
-	 *            The listener to add.
+	 *            The {@link ChangeListener} to add.
 	 */
 	public void addListener(
 			ChangeListener<? super ObservableMap<K, V>> listener) {
@@ -125,23 +124,21 @@ public class MapExpressionHelperEx<K, V>
 			ObservableMap<K, V> currentValue) {
 		if (currentValue == null) {
 			for (K key : oldValue.keySet()) {
-				notifyMapChangeListeners(
-						new MapListenerHelperEx.AtomicChange<>(
-								getSource(), key, oldValue.get(key), null));
+				notifyMapChangeListeners(new MapListenerHelperEx.AtomicChange<>(
+						getSource(), key, oldValue.get(key), null));
 			}
 		} else if (oldValue == null) {
 			for (K key : currentValue.keySet()) {
-				notifyMapChangeListeners(
-						new MapListenerHelperEx.AtomicChange<>(
-								getSource(), key, null, currentValue.get(key)));
+				notifyMapChangeListeners(new MapListenerHelperEx.AtomicChange<>(
+						getSource(), key, null, currentValue.get(key)));
 			}
 		} else {
 			for (K key : oldValue.keySet()) {
 				if (!currentValue.containsKey(key)) {
 					// removed values
 					notifyMapChangeListeners(
-							new MapListenerHelperEx.AtomicChange<>(
-									getSource(), key, oldValue.get(key), null));
+							new MapListenerHelperEx.AtomicChange<>(getSource(),
+									key, oldValue.get(key), null));
 				}
 			}
 			for (K key : currentValue.keySet()) {
@@ -149,8 +146,8 @@ public class MapExpressionHelperEx<K, V>
 						: !currentValue.get(key).equals(oldValue.get(key))) {
 					// added/changed values
 					notifyMapChangeListeners(
-							new MapListenerHelperEx.AtomicChange<>(
-									getSource(), key, oldValue.get(key),
+							new MapListenerHelperEx.AtomicChange<>(getSource(),
+									key, oldValue.get(key),
 									currentValue.get(key)));
 				}
 			}
@@ -159,11 +156,11 @@ public class MapExpressionHelperEx<K, V>
 
 	/**
 	 * Removes the given {@link ChangeListener} from this
-	 * {@link MapChangeListener}. If its was registered more than once, removes
-	 * one occurrence.
+	 * {@link MapChangeListener}. If it was registered more than once, removes
+	 * only one occurrence.
 	 *
 	 * @param listener
-	 *            The listener to remove.
+	 *            The {@link ChangeListener} to remove.
 	 */
 	public void removeListener(
 			ChangeListener<? super ObservableMap<K, V>> listener) {

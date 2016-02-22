@@ -121,31 +121,29 @@ public class SetExpressionHelperEx<E> extends SetListenerHelperEx<E> {
 			ObservableSet<E> currentValue) {
 		if (currentValue == null) {
 			for (E e : oldValue) {
-				notifySetChangeListeners(
-						new SetListenerHelperEx.AtomicChange<>(
-								getSource(), e, null));
+				notifySetChangeListeners(new SetListenerHelperEx.AtomicChange<>(
+						getSource(), e, null));
 			}
 		} else if (oldValue == null) {
 			for (E e : currentValue) {
-				notifySetChangeListeners(
-						new SetListenerHelperEx.AtomicChange<>(
-								getSource(), null, e));
+				notifySetChangeListeners(new SetListenerHelperEx.AtomicChange<>(
+						getSource(), null, e));
 			}
 		} else {
 			for (E e : oldValue) {
 				if (!currentValue.contains(e)) {
 					// removed values
 					notifySetChangeListeners(
-							new SetListenerHelperEx.AtomicChange<>(
-									getSource(), e, null));
+							new SetListenerHelperEx.AtomicChange<>(getSource(),
+									e, null));
 				}
 			}
 			for (E e : currentValue) {
 				if (!oldValue.contains(e)) {
 					// added values
 					notifySetChangeListeners(
-							new SetListenerHelperEx.AtomicChange<>(
-									getSource(), null, e));
+							new SetListenerHelperEx.AtomicChange<>(getSource(),
+									null, e));
 				}
 			}
 		}
@@ -153,11 +151,11 @@ public class SetExpressionHelperEx<E> extends SetListenerHelperEx<E> {
 
 	/**
 	 * Removes the given {@link ChangeListener} from this
-	 * {@link SetChangeListener}. If its was registered more than once, removes
-	 * one occurrence.
+	 * {@link SetChangeListener}. If it was registered more than once, removes
+	 * only one occurrence.
 	 *
 	 * @param listener
-	 *            The listener to remove.
+	 *            The {@link ChangeListener} to remove.
 	 */
 	public void removeListener(
 			ChangeListener<? super ObservableSet<E>> listener) {

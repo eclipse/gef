@@ -33,8 +33,7 @@ import javafx.beans.value.ChangeListener;
  *            The element type of the {@link ObservableMultiset}.
  *
  */
-public class MultisetExpressionHelper<E>
-		extends MultisetListenerHelper<E> {
+public class MultisetExpressionHelper<E> extends MultisetListenerHelper<E> {
 
 	private List<ChangeListener<? super ObservableMultiset<E>>> changeListeners = null;
 
@@ -195,11 +194,11 @@ public class MultisetExpressionHelper<E>
 
 	/**
 	 * Removes the given {@link ChangeListener} from this
-	 * {@link MultisetChangeListener}. If its was registered more than once,
-	 * removes one occurrence.
+	 * {@link MultisetChangeListener}. If it was registered more than once,
+	 * removes only one occurrence.
 	 *
 	 * @param listener
-	 *            The listener to remove.
+	 *            The {@link ChangeListener} to remove.
 	 */
 	public void removeListener(
 			ChangeListener<? super ObservableMultiset<E>> listener) {

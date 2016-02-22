@@ -155,8 +155,8 @@ public class SetMultimapExpressionHelper<K, V>
 						Collections.<V> emptySet()));
 			}
 			notifySetMultimapChangeListeners(
-					new SetMultimapListenerHelper.AtomicChange<>(
-							getSource(), HashMultimap.<K, V> create(oldValue),
+					new SetMultimapListenerHelper.AtomicChange<>(getSource(),
+							HashMultimap.<K, V> create(oldValue),
 							elementaryChanges));
 		} else if (oldValue == null) {
 			List<ElementarySubChange<K, V>> elementaryChanges = new ArrayList<>();
@@ -168,9 +168,8 @@ public class SetMultimapExpressionHelper<K, V>
 						entries.getValue()));
 			}
 			notifySetMultimapChangeListeners(
-					new SetMultimapListenerHelper.AtomicChange<>(
-							getSource(), HashMultimap.<K, V> create(),
-							elementaryChanges));
+					new SetMultimapListenerHelper.AtomicChange<>(getSource(),
+							HashMultimap.<K, V> create(), elementaryChanges));
 		} else {
 			List<ElementarySubChange<K, V>> elementaryChanges = new ArrayList<>();
 			// compute changed/removed values
@@ -205,19 +204,19 @@ public class SetMultimapExpressionHelper<K, V>
 				}
 			}
 			notifySetMultimapChangeListeners(
-					new SetMultimapListenerHelper.AtomicChange<>(
-							getSource(), HashMultimap.<K, V> create(oldValue),
+					new SetMultimapListenerHelper.AtomicChange<>(getSource(),
+							HashMultimap.<K, V> create(oldValue),
 							elementaryChanges));
 		}
 	}
 
 	/**
 	 * Removes the given {@link ChangeListener} from this
-	 * {@link SetMultimapChangeListener}. If its was registered more than once,
-	 * removes one occurrence.
+	 * {@link SetMultimapChangeListener}. If it was registered more than once,
+	 * removes only one occurrence.
 	 *
 	 * @param listener
-	 *            The listener to remove.
+	 *            The {@link ChangeListener} to remove.
 	 */
 	public void removeListener(
 			ChangeListener<? super ObservableSetMultimap<K, V>> listener) {

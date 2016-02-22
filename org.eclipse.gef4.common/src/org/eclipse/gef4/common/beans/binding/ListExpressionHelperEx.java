@@ -134,29 +134,26 @@ public class ListExpressionHelperEx<E> extends ListListenerHelperEx<E> {
 	private void notifyListListeners(ObservableList<E> oldValue,
 			ObservableList<E> currentValue) {
 		if (currentValue == null) {
-			notifyListChangeListeners(
-					new ListListenerHelperEx.AtomicChange<>(getSource(),
-							new ArrayList<>(oldValue),
-							ElementarySubChange.removed(oldValue, 0, 0)));
+			notifyListChangeListeners(new ListListenerHelperEx.AtomicChange<>(
+					getSource(), new ArrayList<>(oldValue),
+					ElementarySubChange.removed(oldValue, 0, 0)));
 		} else if (oldValue == null) {
-			notifyListChangeListeners(
-					new ListListenerHelperEx.AtomicChange<>(getSource(),
-							Collections.<E> emptyList(),
-							ElementarySubChange.added(currentValue, 0,
-									currentValue.size())));
+			notifyListChangeListeners(new ListListenerHelperEx.AtomicChange<>(
+					getSource(), Collections.<E> emptyList(),
+					ElementarySubChange.added(currentValue, 0,
+							currentValue.size())));
 		} else {
-			notifyListChangeListeners(
-					new ListListenerHelperEx.AtomicChange<>(getSource(),
-							new ArrayList<>(oldValue),
-							ElementarySubChange.replaced(oldValue, currentValue,
-									0, currentValue.size())));
+			notifyListChangeListeners(new ListListenerHelperEx.AtomicChange<>(
+					getSource(), new ArrayList<>(oldValue),
+					ElementarySubChange.replaced(oldValue, currentValue, 0,
+							currentValue.size())));
 		}
 	}
 
 	/**
 	 * Removes the given {@link ChangeListener} from this
-	 * {@link ListChangeListener}. If its was registered more than once, removes
-	 * one occurrence.
+	 * {@link ListChangeListener}. If it was registered more than once, removes
+	 * only one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
