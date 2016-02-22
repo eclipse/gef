@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.MultisetProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetProperty;
@@ -27,7 +28,6 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyMultisetWrapper;
 import org.eclipse.gef4.common.beans.property.SimpleMultisetProperty;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
-import org.eclipse.gef4.common.tests.ObservableMultisetTests.ChangeExpector;
 import org.eclipse.gef4.common.tests.ObservableMultisetTests.InvalidationExpector;
 import org.eclipse.gef4.common.tests.ObservableMultisetTests.MultisetChangeExpector;
 import org.junit.Test;
@@ -39,8 +39,51 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.inject.Provider;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 @RunWith(Parameterized.class)
 public class MultisetPropertyTests {
+
+	protected static class ChangeExpector<E>
+			implements ChangeListener<ObservableMultiset<E>> {
+
+		private ObservableValue<ObservableMultiset<E>> source;
+		private LinkedList<ObservableMultiset<E>> oldValueQueue = new LinkedList<>();
+		private LinkedList<ObservableMultiset<E>> newValueQueue = new LinkedList<>();
+
+		public ChangeExpector(ObservableValue<ObservableMultiset<E>> source) {
+			this.source = source;
+		}
+
+		public void addExpectation(ObservableMultiset<E> oldValue,
+				ObservableMultiset<E> newValue) {
+			// We check that the reference to the observable value is correct,
+			// thus do not copy the passed in values.
+			oldValueQueue.addFirst(oldValue);
+			newValueQueue.addFirst(newValue);
+		}
+
+		@Override
+		public void changed(
+				ObservableValue<? extends ObservableMultiset<E>> observable,
+				ObservableMultiset<E> oldValue,
+				ObservableMultiset<E> newValue) {
+			if (oldValueQueue.size() <= 0) {
+				fail("Received unexpected change.");
+			}
+			assertEquals(source, observable);
+			assertEquals(oldValueQueue.pollLast(), oldValue);
+			assertEquals(newValueQueue.pollLast(), newValue);
+		}
+
+		public void check() {
+			if (oldValueQueue.size() > 0) {
+				fail("Did not receive " + oldValueQueue.size()
+						+ " expected changes.");
+			}
+		}
+	}
 
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -321,14 +364,53 @@ public class MultisetPropertyTests {
 		multisetChangeListener.check();
 		changeListener.check();
 
+		// set to null again (no expectation)
+		property.set(null);
+		invalidationListener.check();
+		multisetChangeListener.check();
+		changeListener.check();
+
 		// change property value (change from null)
 		newValue = CollectionUtils.observableHashMultiset();
 		newValue.add(1, 1);
 		invalidationListener.expect(1);
-		changeListener.addExpectation(null, newValue);
+		changeListener.addExpectation(property.get(), newValue);
 		multisetChangeListener.addAtomicExpectation();
 		multisetChangeListener.addElementaryExpection(1, 0, 1);
 		property.set(newValue);
+		invalidationListener.check();
+		multisetChangeListener.check();
+		changeListener.check();
+
+		// set to identical value (no notifications expected)
+		property.set(newValue);
+		invalidationListener.check();
+		multisetChangeListener.check();
+		changeListener.check();
+
+		// set to equal value (no list change notification expected)
+		newValue = CollectionUtils.observableHashMultiset();
+		newValue.add(1, 1);
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		property.set(newValue);
+		invalidationListener.check();
+		multisetChangeListener.check();
+		changeListener.check();
+
+		// modify value (change equality but not identit)y; no change
+		// notification expected
+		invalidationListener.expect(1);
+		multisetChangeListener.addAtomicExpectation();
+		multisetChangeListener.addElementaryExpection(1, 1, 0);
+		property.get().removeAll(Arrays.asList(1));
+		invalidationListener.check();
+		multisetChangeListener.check();
+		changeListener.check();
+
+		// only touch value (don't change identity nor equality); no
+		// notifications expected
+		property.get().removeAll(Arrays.asList(1));
 		invalidationListener.check();
 		multisetChangeListener.check();
 		changeListener.check();

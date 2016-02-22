@@ -15,10 +15,16 @@ package org.eclipse.gef4.common.beans.property;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.gef4.common.beans.binding.SetExpressionHelperEx;
+
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleSetProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
+import javafx.collections.SetChangeListener.Change;
 
 /**
  * A replacement for {@link SimpleSetProperty} to fix the following JavaFX
@@ -39,6 +45,8 @@ import javafx.collections.ObservableSet;
  *
  */
 public class SimpleSetPropertyEx<E> extends SimpleSetProperty<E> {
+
+	private SetExpressionHelperEx<E> helper = null;
 
 	/**
 	 * Creates a new unnamed {@link SimpleSetPropertyEx}.
@@ -85,6 +93,30 @@ public class SimpleSetPropertyEx<E> extends SimpleSetProperty<E> {
 	 */
 	public SimpleSetPropertyEx(ObservableSet<E> initialValue) {
 		super(initialValue);
+	}
+
+	@Override
+	public void addListener(ChangeListener<? super ObservableSet<E>> listener) {
+		if (helper == null) {
+			helper = new SetExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
+	}
+
+	@Override
+	public void addListener(InvalidationListener listener) {
+		if (helper == null) {
+			helper = new SetExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
+	}
+
+	@Override
+	public void addListener(SetChangeListener<? super E> listener) {
+		if (helper == null) {
+			helper = new SetExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
@@ -143,11 +175,47 @@ public class SimpleSetPropertyEx<E> extends SimpleSetProperty<E> {
 	}
 
 	@Override
+	protected void fireValueChangedEvent() {
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+	}
+
+	@Override
+	protected void fireValueChangedEvent(Change<? extends E> change) {
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
+	}
+
+	@Override
 	public int hashCode() {
 		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.
 		// We fall back to the very easiest case here (and use a constant).
 		return 0;
+	}
+
+	@Override
+	public void removeListener(
+			ChangeListener<? super ObservableSet<E>> listener) {
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(InvalidationListener listener) {
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(SetChangeListener<? super E> listener) {
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override

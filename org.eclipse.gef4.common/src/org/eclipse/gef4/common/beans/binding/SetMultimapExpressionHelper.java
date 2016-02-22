@@ -22,7 +22,7 @@ import java.util.Set;
 import org.eclipse.gef4.common.beans.value.ObservableSetMultimapValue;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
-import org.eclipse.gef4.common.collections.SetMultimapChangeListenerHelper;
+import org.eclipse.gef4.common.collections.SetMultimapListenerHelper;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
@@ -41,7 +41,7 @@ import javafx.beans.value.ChangeListener;
  *
  */
 public class SetMultimapExpressionHelper<K, V>
-		extends SetMultimapChangeListenerHelper<K, V> {
+		extends SetMultimapListenerHelper<K, V> {
 
 	private List<ChangeListener<? super ObservableSetMultimap<K, V>>> changeListeners = null;
 
@@ -103,8 +103,7 @@ public class SetMultimapExpressionHelper<K, V>
 
 	/**
 	 * Fires notifications to all attached
-	 * {@link javafx.beans.InvalidationListener InvalidationListeners},
-	 * {@link javafx.beans.value.ChangeListener ChangeListeners}, and
+	 * {@link javafx.beans.InvalidationListener InvalidationListeners} and
 	 * {@link SetMultimapChangeListener SetMultimapChangeListeners}.
 	 *
 	 * @param change
@@ -113,23 +112,11 @@ public class SetMultimapExpressionHelper<K, V>
 	@Override
 	public void fireValueChangedEvent(
 			SetMultimapChangeListener.Change<? extends K, ? extends V> change) {
-		notifyInvalidationListeners();
 		if (change != null) {
-			// FIXME: For ListPropertyBase, firing change events in case the
-			// underlying observable list changes is reported as a bug, see
-			// https://bugs.openjdk.java.net/browse/JDK-8089169; While it would
-			// be cleaner, this corresponds to the current behavior of other
-			// JavaFX collection-related properties.
-			if (changeListeners != null) {
-				try {
-					lockChangeListeners = true;
-					for (ChangeListener<? super ObservableSetMultimap<K, V>> l : changeListeners) {
-						l.changed(observableValue, currentValue, currentValue);
-					}
-				} finally {
-					lockChangeListeners = false;
-				}
-			}
+			notifyInvalidationListeners();
+			// XXX: We do not notify change listeners here, as the identity of
+			// the observed value did not change (see
+			// https://bugs.openjdk.java.net/browse/JDK-8089169)
 			notifySetMultimapChangeListeners(
 					new AtomicChange<>(observableValue, change));
 		}
@@ -137,8 +124,8 @@ public class SetMultimapExpressionHelper<K, V>
 
 	private void notifyListeners(ObservableSetMultimap<K, V> oldValue,
 			ObservableSetMultimap<K, V> currentValue) {
-		notifyInvalidationListeners();
 		if (currentValue != oldValue) {
+			notifyInvalidationListeners();
 			if (changeListeners != null) {
 				try {
 					lockChangeListeners = true;
@@ -149,7 +136,9 @@ public class SetMultimapExpressionHelper<K, V>
 					lockChangeListeners = false;
 				}
 			}
-			notifySetMultimapListeners(oldValue, currentValue);
+			if (oldValue == null || !oldValue.equals(currentValue)) {
+				notifySetMultimapListeners(oldValue, currentValue);
+			}
 		}
 	}
 
@@ -166,7 +155,7 @@ public class SetMultimapExpressionHelper<K, V>
 						Collections.<V> emptySet()));
 			}
 			notifySetMultimapChangeListeners(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(
+					new SetMultimapListenerHelper.AtomicChange<>(
 							getSource(), HashMultimap.<K, V> create(oldValue),
 							elementaryChanges));
 		} else if (oldValue == null) {
@@ -179,7 +168,7 @@ public class SetMultimapExpressionHelper<K, V>
 						entries.getValue()));
 			}
 			notifySetMultimapChangeListeners(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(
+					new SetMultimapListenerHelper.AtomicChange<>(
 							getSource(), HashMultimap.<K, V> create(),
 							elementaryChanges));
 		} else {
@@ -216,7 +205,7 @@ public class SetMultimapExpressionHelper<K, V>
 				}
 			}
 			notifySetMultimapChangeListeners(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(
+					new SetMultimapListenerHelper.AtomicChange<>(
 							getSource(), HashMultimap.<K, V> create(oldValue),
 							elementaryChanges));
 		}

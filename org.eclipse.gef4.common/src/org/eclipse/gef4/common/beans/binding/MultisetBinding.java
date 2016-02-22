@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.binding;
 
@@ -42,9 +42,9 @@ import javafx.collections.ObservableList;
  * This class provides identical functionality for {@link Multiset} as
  * {@link MapBinding} for {@link Map}, {@link SetBinding} for {@link Set}, or
  * {@link ListBinding} for {@link List}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <E>
  *            The element type of the {@link ObservableMultiset}.
  *
@@ -54,6 +54,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 
 	private class EmptyProperty extends ReadOnlyBooleanPropertyBase {
 
+		@Override
 		protected void fireValueChangedEvent() {
 			super.fireValueChangedEvent();
 		}
@@ -75,6 +76,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 	}
 
 	private class SizeProperty extends ReadOnlyIntegerPropertyBase {
+		@Override
 		protected void fireValueChangedEvent() {
 			super.fireValueChangedEvent();
 		}
@@ -112,7 +114,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 	// dependencies this binding is bound to
 	private ObservableList<Observable> dependencies = null;
 	private InvalidationListener invalidatingDependenciesObserver = new InvalidationListener() {
-		
+
 		@Override
 		public void invalidated(Observable observable) {
 			invalidate();
@@ -142,8 +144,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 	}
 
 	@Override
-	public void addListener(
-			MultisetChangeListener<? super E> listener) {
+	public void addListener(MultisetChangeListener<? super E> listener) {
 		if (helper == null) {
 			helper = new MultisetExpressionHelper<>(this);
 		}
@@ -173,7 +174,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 
 	/**
 	 * Computes the current value of this {@link MultisetBinding}.
-	 * 
+	 *
 	 * @return The current value of this {@link MultisetBinding}.
 	 */
 	protected abstract ObservableMultiset<E> computeValue();
@@ -199,7 +200,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 	 * {@link javafx.beans.InvalidationListener InvalidationListeners},
 	 * {@link javafx.beans.value.ChangeListener ChangeListeners}, and
 	 * {@link SetMultimapChangeListener SetMultimapChangeListeners}.
-	 * 
+	 *
 	 */
 	protected void fireValueChangedEvent() {
 		if (helper != null) {
@@ -293,8 +294,7 @@ public abstract class MultisetBinding<E> extends MultisetExpression<E>
 	}
 
 	@Override
-	public void removeListener(
-			MultisetChangeListener<? super E> listener) {
+	public void removeListener(MultisetChangeListener<? super E> listener) {
 		if (helper != null) {
 			helper.removeListener(listener);
 		}

@@ -15,6 +15,7 @@ package org.eclipse.gef4.common.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.common.beans.property.SimpleMapPropertyEx;
+import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.InvalidationExpector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,6 +37,8 @@ import com.sun.javafx.collections.ObservableMapWrapper;
 import javafx.beans.property.MapProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 
 @RunWith(Parameterized.class)
@@ -75,6 +79,78 @@ public class MapPropertyExTests {
 			if (oldValueQueue.size() > 0) {
 				fail("Did not receive " + oldValueQueue.size()
 						+ " expected changes.");
+			}
+		}
+	}
+
+	protected static class MapChangeExpector<K, V>
+			implements MapChangeListener<K, V> {
+
+		private ObservableMap<K, V> source;
+		private LinkedList<K> keyQueue = new LinkedList<>();
+		private LinkedList<V> addedValueQueue = new LinkedList<>();
+		private LinkedList<V> removedValueQueue = new LinkedList<>();
+
+		public MapChangeExpector(ObservableMap<K, V> source) {
+			this.source = source;
+		}
+
+		public void addExpectation(K key, V removedValue, V addedValue) {
+			keyQueue.addFirst(key);
+			addedValueQueue.addFirst(addedValue);
+			removedValueQueue.addFirst(removedValue);
+		}
+
+		public void check() {
+			if (keyQueue.size() > 0) {
+				fail("Did not receive " + keyQueue.size()
+						+ " expected changes.");
+			}
+		}
+
+		@Override
+		public void onChanged(
+				MapChangeListener.Change<? extends K, ? extends V> change) {
+			if (keyQueue.size() <= 0) {
+				fail("Received unexpected change " + change);
+			}
+
+			assertEquals(source, change.getMap());
+
+			// check key
+			K expectedKey = keyQueue.pollLast();
+			assertEquals(expectedKey, change.getKey());
+
+			// check added values
+			V expectedAddedValue = addedValueQueue.pollLast();
+			assertEquals(expectedAddedValue, change.getValueAdded());
+			if (expectedAddedValue != null) {
+				assertTrue(change.wasAdded());
+			} else {
+				assertFalse(change.wasAdded());
+			}
+
+			// check removed values
+			V expectedRemovedValue = removedValueQueue.pollLast();
+			assertEquals(expectedRemovedValue, change.getValueRemoved());
+			if (expectedRemovedValue != null) {
+				assertTrue(change.wasRemoved());
+			} else {
+				assertFalse(change.wasRemoved());
+			}
+
+			// check string representation
+			if (expectedAddedValue == null && expectedRemovedValue != null) {
+				assertEquals("Removed " + expectedRemovedValue + " for key "
+						+ expectedKey + ".", change.toString());
+			} else if (expectedAddedValue != null
+					&& expectedRemovedValue == null) {
+				assertEquals("Added " + expectedAddedValue + " for key "
+						+ expectedKey + ".", change.toString());
+			} else {
+				assertEquals("Replaced " + expectedRemovedValue + " by "
+						+ expectedAddedValue + " for key " + expectedKey + ".",
+						change.toString());
 			}
 		}
 	}
@@ -184,6 +260,8 @@ public class MapPropertyExTests {
 		}
 	}
 
+	// TODO:change notifications
+
 	@Test
 	public void bidirectionalContentBinding() {
 		MapProperty<Integer, String> property1 = propertyProvider.get();
@@ -276,6 +354,136 @@ public class MapPropertyExTests {
 		changeListener.addExpectation(property.get(), newValue);
 		newValue.put(1, "1");
 		property.set(newValue);
+		changeListener.check();
+	}
+
+	/**
+	 * Check change notifications for observed value changes are properly fired.
+	 */
+	@Test
+	public void changeNotifications() {
+		MapProperty<Integer, String> property = propertyProvider.get();
+
+		// initialize property
+		ObservableMap<Integer, String> newValue = FXCollections
+				.observableHashMap();
+		newValue.put(1, "1");
+		newValue.put(2, "2");
+		newValue.put(3, "3");
+		property.set(newValue);
+
+		// register listener
+		InvalidationExpector invalidationListener = new InvalidationExpector();
+		MapChangeExpector<Integer, String> mapChangeListener = new MapChangeExpector<>(
+				property);
+		ChangeExpector<Integer, String> changeListener = new ChangeExpector<>(
+				property);
+		property.addListener(invalidationListener);
+		property.addListener(mapChangeListener);
+		property.addListener(changeListener);
+
+		// change property value (disjoint values)
+		newValue = FXCollections.observableHashMap();
+		newValue.put(4, "4");
+		newValue.put(5, "5");
+		newValue.put(6, "6");
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		mapChangeListener.addExpectation(1, "1", null);
+		mapChangeListener.addExpectation(2, "2", null);
+		mapChangeListener.addExpectation(3, "3", null);
+		mapChangeListener.addExpectation(4, null, "4");
+		mapChangeListener.addExpectation(5, null, "5");
+		mapChangeListener.addExpectation(6, null, "6");
+		property.set(newValue);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// change property value (overlapping values)
+		newValue = FXCollections.observableHashMap();
+		newValue.put(5, "55");
+		newValue.put(6, "6");
+		newValue.put(7, "7");
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		mapChangeListener.addExpectation(4, "4", null);
+		mapChangeListener.addExpectation(5, "5", "55");
+		mapChangeListener.addExpectation(7, null, "7");
+		property.set(newValue);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// change property value (change to null)
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), null);
+		mapChangeListener.addExpectation(5, "55", null);
+		mapChangeListener.addExpectation(6, "6", null);
+		mapChangeListener.addExpectation(7, "7", null);
+		property.set(null);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// set to null again (no expectation)
+		property.set(null);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// change property value (change from null)
+		newValue = FXCollections.observableHashMap();
+		newValue.put(1, "1");
+		newValue.put(2, "2");
+		newValue.put(3, "3");
+		invalidationListener.expect(1);
+		changeListener.addExpectation(null, newValue);
+		mapChangeListener.addExpectation(1, null, "1");
+		mapChangeListener.addExpectation(2, null, "2");
+		mapChangeListener.addExpectation(3, null, "3");
+		property.set(null);
+		property.set(newValue);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// set to identical value (no notifications expected)
+		property.set(newValue);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// set to equal value (no list change notification expected)
+		newValue = FXCollections.observableHashMap();
+		newValue.put(1, "1");
+		newValue.put(2, "2");
+		newValue.put(3, "3");
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		property.set(newValue);
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// change observed value (only invalidation and list change expected)
+		// FIXME: ObservableMapWrapper fires an invalidation event for each
+		// change to the map (whereas a change of the observable value leads to
+		// a single notification). We could provide an own ObservableMap
+		// implementation to fix this.
+		invalidationListener.expect(3);
+		mapChangeListener.addExpectation(1, "1", null);
+		mapChangeListener.addExpectation(2, "2", null);
+		mapChangeListener.addExpectation(3, "3", null);
+		property.get().clear();
+		invalidationListener.check();
+		mapChangeListener.check();
+		changeListener.check();
+
+		// touch observed value (don't change it)
+		property.get().clear();
+		invalidationListener.check();
+		mapChangeListener.check();
 		changeListener.check();
 	}
 }

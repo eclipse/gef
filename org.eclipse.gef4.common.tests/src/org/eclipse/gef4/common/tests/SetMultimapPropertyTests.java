@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
@@ -28,7 +29,6 @@ import org.eclipse.gef4.common.beans.property.SetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.SimpleSetMultimapProperty;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
-import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.ChangeExpector;
 import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.InvalidationExpector;
 import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.SetMultimapChangeExpector;
 import org.junit.Test;
@@ -41,8 +41,52 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 @RunWith(Parameterized.class)
 public class SetMultimapPropertyTests {
+
+	protected static class ChangeExpector<K, V>
+			implements ChangeListener<ObservableSetMultimap<K, V>> {
+
+		private ObservableValue<ObservableSetMultimap<K, V>> source;
+		private LinkedList<ObservableSetMultimap<K, V>> oldValueQueue = new LinkedList<>();
+		private LinkedList<ObservableSetMultimap<K, V>> newValueQueue = new LinkedList<>();
+
+		public ChangeExpector(
+				ObservableValue<ObservableSetMultimap<K, V>> source) {
+			this.source = source;
+		}
+
+		public void addExpectation(ObservableSetMultimap<K, V> oldValue,
+				ObservableSetMultimap<K, V> newValue) {
+			// We check that the reference to the observable value is correct,
+			// thus do not copy the passed in values.
+			oldValueQueue.addFirst(oldValue);
+			newValueQueue.addFirst(newValue);
+		}
+
+		@Override
+		public void changed(
+				ObservableValue<? extends ObservableSetMultimap<K, V>> observable,
+				ObservableSetMultimap<K, V> oldValue,
+				ObservableSetMultimap<K, V> newValue) {
+			if (oldValueQueue.size() <= 0) {
+				fail("Received unexpected change.");
+			}
+			assertEquals(source, observable);
+			assertEquals(oldValueQueue.pollLast(), oldValue);
+			assertEquals(newValueQueue.pollLast(), newValue);
+		}
+
+		public void check() {
+			if (oldValueQueue.size() > 0) {
+				fail("Did not receive " + oldValueQueue.size()
+						+ " expected changes.");
+			}
+		}
+	}
 
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -365,6 +409,12 @@ public class SetMultimapPropertyTests {
 		setMultimapChangeListener.check();
 		changeListener.check();
 
+		// set to null again (no expectation)
+		property.set(null);
+		invalidationListener.check();
+		setMultimapChangeListener.check();
+		changeListener.check();
+
 		// change property value (change from null)
 		newValue = CollectionUtils.observableHashMultimap();
 		newValue.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
@@ -375,6 +425,39 @@ public class SetMultimapPropertyTests {
 				Collections.<String> emptySet(),
 				Sets.newHashSet("1-1", "1-2", "1-3"));
 		property.set(newValue);
+		invalidationListener.check();
+		setMultimapChangeListener.check();
+		changeListener.check();
+
+		// set to identical value (no notifications expected)
+		property.set(newValue);
+		invalidationListener.check();
+		setMultimapChangeListener.check();
+		changeListener.check();
+
+		// set to equal value (no list change notification expected)
+		newValue = CollectionUtils.observableHashMultimap();
+		newValue.putAll(1, Sets.newHashSet("1-1", "1-2", "1-3"));
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		property.set(newValue);
+		invalidationListener.check();
+		setMultimapChangeListener.check();
+		changeListener.check();
+
+		// change observed value (only invalidation and list change expected)
+		invalidationListener.expect(1);
+		setMultimapChangeListener.addAtomicExpectation();
+		setMultimapChangeListener.addElementaryExpectation(1,
+				Sets.newHashSet("1-1", "1-2", "1-3"),
+				Collections.<String> emptySet());
+		property.get().removeAll(1);
+		invalidationListener.check();
+		setMultimapChangeListener.check();
+		changeListener.check();
+
+		// touch observed value (don't change it)
+		property.get().removeAll(1);
 		invalidationListener.check();
 		setMultimapChangeListener.check();
 		changeListener.check();

@@ -31,7 +31,7 @@ import java.util.List;
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.beans.property.SimpleListPropertyEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
-import org.eclipse.gef4.common.collections.ListChangeListenerHelper.AtomicChange;
+import org.eclipse.gef4.common.collections.ListListenerHelperEx.AtomicChange;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -494,7 +494,6 @@ public class ObservableListTests {
 						|| observable instanceof ReadOnlyListWrapperEx);
 
 		// clear again (while already empty)
-		invalidationListener.expect(0);
 		observable.clear();
 		check(observable, backupList);
 		checkListeners();

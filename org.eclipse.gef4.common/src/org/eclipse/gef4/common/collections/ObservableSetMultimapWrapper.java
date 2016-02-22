@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.gef4.common.collections.SetMultimapChangeListenerHelper.ElementarySubChange;
+import org.eclipse.gef4.common.collections.SetMultimapListenerHelper.ElementarySubChange;
 
 import com.google.common.collect.ForwardingSetMultimap;
 import com.google.common.collect.HashMultimap;
@@ -42,7 +42,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 		implements ObservableSetMultimap<K, V> {
 
 	private SetMultimap<K, V> backingSetMultiMap;
-	private SetMultimapChangeListenerHelper<K, V> helper = new SetMultimapChangeListenerHelper<>(
+	private SetMultimapListenerHelper<K, V> helper = new SetMultimapListenerHelper<>(
 			this);
 
 	/**
@@ -79,7 +79,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 						previousContents.get(key), Collections.<V> emptySet()));
 			}
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 		}
 	}
@@ -104,7 +104,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 		SetMultimap<K, V> previousContents = delegateCopy();
 		if (super.put(key, value)) {
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents,
 							new ElementarySubChange<>(key,
 									Collections.<V> emptySet(),
@@ -123,7 +123,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 			Set<V> addedValues = new HashSet<>(get(key));
 			addedValues.removeAll(previousContents.get(key));
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents, new ElementarySubChange<>(key,
 									removedValues, addedValues)));
 			return true;
@@ -147,7 +147,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 						removedValues, addedValues));
 			}
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 			return true;
 		}
@@ -162,7 +162,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 			// XXX: If the key or value are not of matching type, the super call
 			// should not have an effect; as such, the cast should be safe here.
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents,
 							new ElementarySubChange<>((K) key,
 									Collections.singleton((V) value),
@@ -181,7 +181,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 			// XXX: If values could be removed, the key should have the
 			// appropriate type. As such the cast here should be safe.
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents, new ElementarySubChange<>((K) key,
 									oldValues, Collections.<V> emptySet())));
 		}
@@ -235,7 +235,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 				}
 			}
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 			return true;
 		}
@@ -248,7 +248,7 @@ class ObservableSetMultimapWrapper<K, V> extends ForwardingSetMultimap<K, V>
 		Set<V> replacedValues = super.replaceValues(key, values);
 		if (!replacedValues.isEmpty()) {
 			helper.fireValueChangedEvent(
-					new SetMultimapChangeListenerHelper.AtomicChange<>(this,
+					new SetMultimapListenerHelper.AtomicChange<>(this,
 							previousContents, new ElementarySubChange<>(key,
 									replacedValues, Sets.newHashSet(values))));
 

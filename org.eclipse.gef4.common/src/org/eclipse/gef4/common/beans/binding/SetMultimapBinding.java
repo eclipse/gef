@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.beans.binding;
 
@@ -41,9 +41,9 @@ import javafx.collections.ObservableList;
  * This class provides identical functionality for {@link SetMultimap} as
  * {@link MapBinding} for {@link Map}, {@link SetBinding} for {@link Set}, or
  * {@link ListBinding} for {@link List}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <K>
  *            The key type of the {@link ObservableSetMultimap}.
  * @param <V>
@@ -56,6 +56,7 @@ public abstract class SetMultimapBinding<K, V>
 
 	private class EmptyProperty extends ReadOnlyBooleanPropertyBase {
 
+		@Override
 		protected void fireValueChangedEvent() {
 			super.fireValueChangedEvent();
 		}
@@ -77,6 +78,7 @@ public abstract class SetMultimapBinding<K, V>
 	}
 
 	private class SizeProperty extends ReadOnlyIntegerPropertyBase {
+		@Override
 		protected void fireValueChangedEvent() {
 			super.fireValueChangedEvent();
 		}
@@ -111,9 +113,8 @@ public abstract class SetMultimapBinding<K, V>
 	};
 	private ObservableSetMultimap<K, V> value = null;
 
-
 	private InvalidationListener invalidatingDependenciesObserver = new InvalidationListener() {
-		
+
 		@Override
 		public void invalidated(Observable observable) {
 			invalidate();
@@ -175,7 +176,7 @@ public abstract class SetMultimapBinding<K, V>
 
 	/**
 	 * Computes the current value of this {@link SetMultimapBinding}.
-	 * 
+	 *
 	 * @return The current value of this {@link SetMultimapBinding}.
 	 */
 	protected abstract ObservableSetMultimap<K, V> computeValue();
@@ -201,7 +202,7 @@ public abstract class SetMultimapBinding<K, V>
 	 * {@link javafx.beans.InvalidationListener InvalidationListeners},
 	 * {@link javafx.beans.value.ChangeListener ChangeListeners}, and
 	 * {@link SetMultimapChangeListener SetMultimapChangeListeners}.
-	 * 
+	 *
 	 */
 	protected void fireValueChangedEvent() {
 		if (helper != null) {

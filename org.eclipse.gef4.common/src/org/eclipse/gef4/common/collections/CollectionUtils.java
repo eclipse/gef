@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.gef4.common.collections.ListChangeListenerHelper.AtomicChange;
-import org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange;
+import org.eclipse.gef4.common.collections.ListListenerHelperEx.AtomicChange;
+import org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
@@ -141,7 +141,7 @@ public class CollectionUtils {
 
 		// walk over elementary changes and record them in a list
 		change.reset();
-		List<ElementarySubChange<E>> changes = ListChangeListenerHelper
+		List<ElementarySubChange<E>> changes = ListListenerHelperEx
 				.getElementaryChanges(change);
 
 		// undo the changes in reverse order

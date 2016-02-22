@@ -24,6 +24,9 @@ import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.beans.property.SimpleListPropertyEx;
+import org.eclipse.gef4.common.collections.CollectionUtils;
+import org.eclipse.gef4.common.tests.ObservableListTests.ListChangeExpector;
+import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.InvalidationExpector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -202,6 +205,112 @@ public class ListPropertyExTests {
 		newValue.add(1);
 		changeListener.addExpectation(property.get(), newValue);
 		property.set(newValue);
+		changeListener.check();
+	}
+
+	/**
+	 * Check change notifications for observed value changes are properly fired.
+	 */
+	@Test
+	public void changeNotifications() {
+		ListProperty<Integer> property = propertyProvider.get();
+
+		// initialize property
+		property.addAll(Arrays.asList(1, 2, 3));
+
+		// register listener
+		InvalidationExpector invalidationListener = new InvalidationExpector();
+		ListChangeExpector<Integer> listChangeListener = new ListChangeExpector<>(
+				property);
+		ChangeExpector<Integer> changeListener = new ChangeExpector<>(property);
+		property.addListener(invalidationListener);
+		property.addListener(listChangeListener);
+		property.addListener(changeListener);
+
+		// change property value (disjoint values)
+		ObservableList<Integer> newValue = CollectionUtils
+				.observableList(Arrays.asList(4, 5, 6));
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		listChangeListener.addAtomicExpectation();
+		listChangeListener.addElementaryExpectation(Arrays.asList(1, 2, 3),
+				Arrays.asList(4, 5, 6), null, 0, 3);
+		property.set(newValue);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// change property value (overlapping values)
+		newValue = CollectionUtils.observableList(Arrays.asList(5, 6, 7));
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		listChangeListener.addAtomicExpectation();
+		listChangeListener.addElementaryExpectation(Arrays.asList(4, 5, 6),
+				Arrays.asList(5, 6, 7), null, 0, 3);
+		property.set(newValue);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// change property value (change to null)
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), null);
+		listChangeListener.addAtomicExpectation();
+		listChangeListener.addElementaryExpectation(Arrays.asList(5, 6, 7),
+				null, null, 0, 0);
+		property.set(null);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// set to null again (no expectation)
+		property.set(null);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// change property value (change from null)
+		newValue = CollectionUtils.observableList(Arrays.asList(1, 2, 3));
+		invalidationListener.expect(1);
+		changeListener.addExpectation(null, newValue);
+		listChangeListener.addAtomicExpectation();
+		listChangeListener.addElementaryExpectation(null,
+				Arrays.asList(1, 2, 3), null, 0, 3);
+		property.set(newValue);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// set to identical value (no notifications expected)
+		property.set(newValue);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// set to equal value (no list change notification expected)
+		newValue = CollectionUtils
+				.observableList(new ArrayList<>(Arrays.asList(1, 2, 3)));
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		property.set(newValue);
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// change observed value (only invalidation and list change expected)
+		invalidationListener.expect(1);
+		listChangeListener.addAtomicExpectation();
+		listChangeListener.addElementaryExpectation(Arrays.asList(2), null,
+				null, 1, 1);
+		property.get().removeAll(Arrays.asList(2));
+		invalidationListener.check();
+		listChangeListener.check();
+		changeListener.check();
+
+		// touch observed value (don't change it)
+		property.get().removeAll(Arrays.asList(2));
+		invalidationListener.check();
+		listChangeListener.check();
 		changeListener.check();
 	}
 }

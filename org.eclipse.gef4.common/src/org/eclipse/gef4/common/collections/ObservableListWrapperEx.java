@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange;
+import org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange;
 
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.HashMultimap;
@@ -47,7 +47,7 @@ import javafx.collections.ObservableList;
  * (JI-9029640, JI-9029642).</li>
  * <li>Change objects are not immutable
  * (https://bugs.openjdk.java.net/browse/JDK-8092504): fixed by using
- * {@link ListChangeListenerHelper} as a replacement for ListListenerHelper.
+ * {@link ListListenerHelperEx} as a replacement for ListListenerHelper.
  * </li>
  * </ul>
  *
@@ -63,7 +63,7 @@ import javafx.collections.ObservableList;
 class ObservableListWrapperEx<E> extends ForwardingList<E>
 		implements ObservableList<E>, SortableList<E> {
 
-	private ListChangeListenerHelper<E> helper = new ListChangeListenerHelper<>(
+	private ListListenerHelperEx<E> helper = new ListListenerHelperEx<>(
 			this);
 	private List<E> backingList;
 
@@ -84,9 +84,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		boolean result = super.add(element);
 		if (result) {
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents,
-							ListChangeListenerHelper.ElementarySubChange.added(
+							ListListenerHelperEx.ElementarySubChange.added(
 									Collections.singletonList(element),
 									previousContents.size(),
 									previousContents.size() + 1)));
@@ -99,9 +99,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		List<E> previousContents = delegateCopy();
 		super.add(index, element);
 		helper.fireValueChangedEvent(
-				new ListChangeListenerHelper.AtomicChange<>(this,
+				new ListListenerHelperEx.AtomicChange<>(this,
 						previousContents,
-						ListChangeListenerHelper.ElementarySubChange.added(
+						ListListenerHelperEx.ElementarySubChange.added(
 								Collections.singletonList(element), index,
 								index + 1)));
 	}
@@ -111,9 +111,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		List<E> previousContents = delegateCopy();
 		boolean result = super.addAll(collection);
 		helper.fireValueChangedEvent(
-				new ListChangeListenerHelper.AtomicChange<>(this,
+				new ListListenerHelperEx.AtomicChange<>(this,
 						previousContents,
-						ListChangeListenerHelper.ElementarySubChange.added(
+						ListListenerHelperEx.ElementarySubChange.added(
 								new ArrayList<>(collection),
 								previousContents.size(),
 								previousContents.size() + collection.size())));
@@ -131,9 +131,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		List<E> previousContents = delegateCopy();
 		boolean result = super.addAll(index, elements);
 		helper.fireValueChangedEvent(
-				new ListChangeListenerHelper.AtomicChange<>(this,
+				new ListListenerHelperEx.AtomicChange<>(this,
 						previousContents,
-						ListChangeListenerHelper.ElementarySubChange.added(
+						ListListenerHelperEx.ElementarySubChange.added(
 								new ArrayList<>(elements), index,
 								index + elements.size())));
 		return result;
@@ -155,9 +155,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		super.clear();
 		if (!previousContents.isEmpty()) {
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents,
-							ListChangeListenerHelper.ElementarySubChange
+							ListListenerHelperEx.ElementarySubChange
 									.removed(previousContents, 0, 0)));
 		}
 	}
@@ -182,9 +182,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		List<E> previousContents = delegateCopy();
 		E result = super.remove(index);
 		helper.fireValueChangedEvent(
-				new ListChangeListenerHelper.AtomicChange<>(this,
+				new ListListenerHelperEx.AtomicChange<>(this,
 						previousContents,
-						ListChangeListenerHelper.ElementarySubChange.removed(
+						ListListenerHelperEx.ElementarySubChange.removed(
 								Collections.singletonList(result), index,
 								index)));
 		return result;
@@ -198,9 +198,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 			removed.add(0, super.remove(i));
 		}
 		helper.fireValueChangedEvent(
-				new ListChangeListenerHelper.AtomicChange<>(this,
+				new ListListenerHelperEx.AtomicChange<>(this,
 						previousContents,
-						ListChangeListenerHelper.ElementarySubChange
+						ListListenerHelperEx.ElementarySubChange
 								.removed(removed, from, from)));
 	}
 
@@ -212,9 +212,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 			// XXX: if remove was successful, its safe to cast here
 			int index = previousContents.indexOf(object);
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents,
-							ListChangeListenerHelper.ElementarySubChange
+							ListListenerHelperEx.ElementarySubChange
 									.removed(
 											Collections
 													.singletonList((E) object),
@@ -266,7 +266,7 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 			// determine lowest index that was removed (will be used as from and
 			// to index)
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 			return true;
 		}
@@ -331,7 +331,7 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 			// determine lowest index that was removed (will be used as from and
 			// to index)
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 			return true;
 		}
@@ -351,7 +351,7 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 			E result = super.remove(index);
 			super.add(index, element);
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents,
 							ElementarySubChange.replaced(
 									Collections.singletonList(result),
@@ -369,7 +369,7 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 			delegate().clear();
 			delegate().addAll(collection);
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents, ElementarySubChange.replaced(
 									previousContents, delegate(), 0, size())));
 			return true;
@@ -426,9 +426,9 @@ class ObservableListWrapperEx<E> extends ForwardingList<E>
 		}
 		if (changed) {
 			helper.fireValueChangedEvent(
-					new ListChangeListenerHelper.AtomicChange<>(this,
+					new ListListenerHelperEx.AtomicChange<>(this,
 							previousContents,
-							ListChangeListenerHelper.ElementarySubChange
+							ListListenerHelperEx.ElementarySubChange
 									.<E> permutated(permutation, 0, a.length)));
 		}
 	}

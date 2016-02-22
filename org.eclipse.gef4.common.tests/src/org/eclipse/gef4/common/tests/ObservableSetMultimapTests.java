@@ -31,7 +31,7 @@ import org.eclipse.gef4.common.beans.property.SimpleSetMultimapProperty;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
-import org.eclipse.gef4.common.collections.SetMultimapChangeListenerHelper;
+import org.eclipse.gef4.common.collections.SetMultimapListenerHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +51,7 @@ import javafx.beans.value.ObservableValue;
 /**
  * Tests for correct behavior of {@link ObservableSetMultimap} implementations,
  * including respective {@link ObservableValue observable values}, as well as
- * related {@link SetMultimapChangeListenerHelper} and
+ * related {@link SetMultimapListenerHelper} and
  * {@link SetMultimapExpressionHelper} helper classes. Concrete implementations
  * are tested by parameterizing the test with a respective Provider, which is
  * done for {@link ObservableSetMultimapWrapper} as well as

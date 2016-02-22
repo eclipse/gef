@@ -15,14 +15,18 @@ package org.eclipse.gef4.common.beans.property;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.javafx.binding.ListExpressionHelper;
+import org.eclipse.gef4.common.beans.binding.ListExpressionHelperEx;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 
 /**
@@ -48,7 +52,100 @@ import javafx.collections.ObservableList;
  */
 public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 
-	private ListExpressionHelper<E> helper = null;
+	private class ReadOnlyPropertyImpl extends ReadOnlyListProperty<E> {
+
+		private ListExpressionHelperEx<E> helper = null;
+
+		@Override
+		public void addListener(
+				ChangeListener<? super ObservableList<E>> listener) {
+			if (helper == null) {
+				helper = new ListExpressionHelperEx<>(this);
+			}
+			helper.addListener(listener);
+		}
+
+		@Override
+		public void addListener(InvalidationListener listener) {
+			if (helper == null) {
+				helper = new ListExpressionHelperEx<>(this);
+			}
+			helper.addListener(listener);
+		}
+
+		@Override
+		public void addListener(ListChangeListener<? super E> listener) {
+			if (helper == null) {
+				helper = new ListExpressionHelperEx<>(this);
+			}
+			helper.addListener(listener);
+		}
+
+		@Override
+		public ReadOnlyBooleanProperty emptyProperty() {
+			return ReadOnlyListWrapperEx.this.emptyProperty();
+		}
+
+		private void fireValueChangedEvent() {
+			if (helper == null) {
+				helper = new ListExpressionHelperEx<>(this);
+			}
+			helper.fireValueChangedEvent();
+		}
+
+		private void fireValueChangedEvent(Change<? extends E> change) {
+			if (helper == null) {
+				helper = new ListExpressionHelperEx<>(this);
+			}
+			helper.fireValueChangedEvent(change);
+		}
+
+		@Override
+		public ObservableList<E> get() {
+			return ReadOnlyListWrapperEx.this.get();
+		}
+
+		@Override
+		public Object getBean() {
+			return ReadOnlyListWrapperEx.this.getBean();
+		}
+
+		@Override
+		public String getName() {
+			return ReadOnlyListWrapperEx.this.getName();
+		}
+
+		@Override
+		public void removeListener(
+				ChangeListener<? super ObservableList<E>> listener) {
+			if (helper != null) {
+				helper.removeListener(listener);
+			}
+		}
+
+		@Override
+		public void removeListener(InvalidationListener listener) {
+			if (helper != null) {
+				helper.removeListener(listener);
+			}
+		}
+
+		@Override
+		public void removeListener(ListChangeListener<? super E> listener) {
+			if (helper != null) {
+				helper.removeListener(listener);
+			}
+		}
+
+		@Override
+		public ReadOnlyIntegerProperty sizeProperty() {
+			return ReadOnlyListWrapperEx.this.sizeProperty();
+		}
+	}
+
+	private ReadOnlyPropertyImpl readOnlyProperty = null;
+
+	private ListExpressionHelperEx<E> helper = null;
 
 	/**
 	 * Creates a new unnamed {@link ReadOnlyListWrapperEx}.
@@ -104,17 +201,26 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 	@Override
 	public void addListener(
 			ChangeListener<? super ObservableList<E>> listener) {
-		helper = ListExpressionHelper.addListener(helper, this, listener);
+		if (helper == null) {
+			helper = new ListExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
 	public void addListener(InvalidationListener listener) {
-		helper = ListExpressionHelper.addListener(helper, this, listener);
+		if (helper == null) {
+			helper = new ListExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
 	public void addListener(ListChangeListener<? super E> listener) {
-		helper = ListExpressionHelper.addListener(helper, this, listener);
+		if (helper == null) {
+			helper = new ListExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
@@ -174,15 +280,31 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 
 	@Override
 	protected void fireValueChangedEvent() {
-		ListExpressionHelper.fireValueChangedEvent(helper);
-		super.fireValueChangedEvent();
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+		if (readOnlyProperty != null) {
+			readOnlyProperty.fireValueChangedEvent();
+		}
 	}
 
 	@Override
 	protected void fireValueChangedEvent(
 			ListChangeListener.Change<? extends E> change) {
-		ListExpressionHelper.fireValueChangedEvent(helper, change);
-		super.fireValueChangedEvent(change);
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
+		if (readOnlyProperty != null) {
+			readOnlyProperty.fireValueChangedEvent(change);
+		}
+	}
+
+	@Override
+	public ReadOnlyListProperty<E> getReadOnlyProperty() {
+		if (readOnlyProperty == null) {
+			readOnlyProperty = new ReadOnlyPropertyImpl();
+		}
+		return readOnlyProperty;
 	}
 
 	@Override
@@ -196,17 +318,23 @@ public class ReadOnlyListWrapperEx<E> extends ReadOnlyListWrapper<E> {
 	@Override
 	public void removeListener(
 			ChangeListener<? super ObservableList<E>> listener) {
-		helper = ListExpressionHelper.removeListener(helper, listener);
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override
 	public void removeListener(InvalidationListener listener) {
-		helper = ListExpressionHelper.removeListener(helper, listener);
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override
 	public void removeListener(ListChangeListener<? super E> listener) {
-		helper = ListExpressionHelper.removeListener(helper, listener);
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override

@@ -1,53 +1,62 @@
+/******************************************************************************
+ * Copyright (c) 2015 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.common.beans.binding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.common.collections.MapListenerHelperEx;
+import org.eclipse.gef4.common.collections.ListListenerHelperEx;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.MapExpression;
+import javafx.beans.binding.ListExpression;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableMapValue;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
+import javafx.beans.value.ObservableListValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 /**
- * A utility class to support notifications for an {@link MapExpression}.
+ * A utility class to support notifications for an {@link ListExpression}.
  *
  * @author anyssen
  *
- * @param <K>
- *            The key type of the {@link MapExpression}.
- * @param <V>
- *            The value type of the {@link MapExpression}.
+ * @param <E>
+ *            The element type of the {@link ListExpression}.
+ *
  */
-public class MapExpressionHelperEx<K, V>
-		extends MapListenerHelperEx<K, V> {
+public class ListExpressionHelperEx<E> extends ListListenerHelperEx<E> {
 
-	private List<ChangeListener<? super ObservableMap<K, V>>> changeListeners = null;
-	private ObservableMapValue<K, V> observableValue = null;
-	private ObservableMap<K, V> currentValue = null;
+	private List<ChangeListener<? super ObservableList<E>>> changeListeners = null;
+	private ObservableListValue<E> observableValue = null;
+	private ObservableList<E> currentValue = null;
 
 	private boolean lockChangeListeners;
 
 	/**
-	 * Constructs a new {@link MapExpressionHelperEx} for the given source
-	 * {@link ObservableMapValue}.
+	 * Constructs a new {@link ListExpressionHelperEx} for the given source
+	 * {@link ObservableListValue}.
 	 *
 	 * @param observableValue
-	 *            The observableValue {@link ObservableMap}, which is used in
+	 *            The observableValue {@link ObservableList}, which is used in
 	 *            change notifications.
 	 */
-	public MapExpressionHelperEx(ObservableMapValue<K, V> observableValue) {
+	public ListExpressionHelperEx(ObservableListValue<E> observableValue) {
 		super(observableValue);
 		this.observableValue = observableValue;
 		this.currentValue = observableValue.getValue();
 	}
 
 	/**
-	 * Adds a new {@link ChangeListener} to this {@link MapExpressionHelperEx}.
+	 * Adds a new {@link ChangeListener} to this {@link ListExpressionHelperEx}.
 	 * If the same listener is added more than once, it will be registered more
 	 * than once and will receive multiple change events.
 	 *
@@ -55,7 +64,7 @@ public class MapExpressionHelperEx<K, V>
 	 *            The listener to add.
 	 */
 	public void addListener(
-			ChangeListener<? super ObservableMap<K, V>> listener) {
+			ChangeListener<? super ObservableList<E>> listener) {
 		if (changeListeners == null) {
 			changeListeners = new ArrayList<>();
 		}
@@ -72,43 +81,44 @@ public class MapExpressionHelperEx<K, V>
 	 * Fires notifications to all attached
 	 * {@link javafx.beans.InvalidationListener InvalidationListeners},
 	 * {@link javafx.beans.value.ChangeListener ChangeListeners}, and
-	 * {@link MapChangeListener MapChangeListeners}.
+	 * {@link ListChangeListener ListChangeListeners}.
 	 *
 	 */
 	public void fireValueChangedEvent() {
-		final ObservableMap<K, V> oldValue = currentValue;
+		final ObservableList<E> oldValue = currentValue;
 		currentValue = observableValue.getValue();
 		notifyListeners(oldValue, currentValue);
 	}
 
 	/**
-	 * Fires notifications to all attached {@link InvalidationListener
-	 * InvalidationListeners}, and {@link MapChangeListener MapChangeListeners}.
+	 * Fires notifications to all attached
+	 * {@link javafx.beans.InvalidationListener InvalidationListeners}, and
+	 * {@link ListChangeListener ListChangeListeners}.
 	 *
 	 * @param change
 	 *            The change that needs to be propagated.
 	 */
 	@Override
 	public void fireValueChangedEvent(
-			MapChangeListener.Change<? extends K, ? extends V> change) {
+			ListChangeListener.Change<? extends E> change) {
 		if (change != null) {
 			notifyInvalidationListeners();
 			// XXX: We do not notify change listeners here, as the identity of
 			// the observed value did not change (see
 			// https://bugs.openjdk.java.net/browse/JDK-8089169)
-			notifyMapChangeListeners(
+			notifyListChangeListeners(
 					new AtomicChange<>(observableValue, change));
 		}
 	}
 
-	private void notifyListeners(ObservableMap<K, V> oldValue,
-			ObservableMap<K, V> currentValue) {
+	private void notifyListeners(ObservableList<E> oldValue,
+			ObservableList<E> currentValue) {
 		if (currentValue != oldValue) {
 			notifyInvalidationListeners();
 			if (changeListeners != null) {
 				try {
 					lockChangeListeners = true;
-					for (ChangeListener<? super ObservableMap<K, V>> l : changeListeners) {
+					for (ChangeListener<? super ObservableList<E>> l : changeListeners) {
 						l.changed(observableValue, oldValue, currentValue);
 					}
 				} finally {
@@ -116,57 +126,43 @@ public class MapExpressionHelperEx<K, V>
 				}
 			}
 			if (oldValue == null || !oldValue.equals(currentValue)) {
-				notifyMapListeners(oldValue, currentValue);
+				notifyListListeners(oldValue, currentValue);
 			}
 		}
 	}
 
-	private void notifyMapListeners(ObservableMap<K, V> oldValue,
-			ObservableMap<K, V> currentValue) {
+	private void notifyListListeners(ObservableList<E> oldValue,
+			ObservableList<E> currentValue) {
 		if (currentValue == null) {
-			for (K key : oldValue.keySet()) {
-				notifyMapChangeListeners(
-						new MapListenerHelperEx.AtomicChange<>(
-								getSource(), key, oldValue.get(key), null));
-			}
+			notifyListChangeListeners(
+					new ListListenerHelperEx.AtomicChange<>(getSource(),
+							new ArrayList<>(oldValue),
+							ElementarySubChange.removed(oldValue, 0, 0)));
 		} else if (oldValue == null) {
-			for (K key : currentValue.keySet()) {
-				notifyMapChangeListeners(
-						new MapListenerHelperEx.AtomicChange<>(
-								getSource(), key, null, currentValue.get(key)));
-			}
+			notifyListChangeListeners(
+					new ListListenerHelperEx.AtomicChange<>(getSource(),
+							Collections.<E> emptyList(),
+							ElementarySubChange.added(currentValue, 0,
+									currentValue.size())));
 		} else {
-			for (K key : oldValue.keySet()) {
-				if (!currentValue.containsKey(key)) {
-					// removed values
-					notifyMapChangeListeners(
-							new MapListenerHelperEx.AtomicChange<>(
-									getSource(), key, oldValue.get(key), null));
-				}
-			}
-			for (K key : currentValue.keySet()) {
-				if (currentValue.get(key) == null ? oldValue.get(key) != null
-						: !currentValue.get(key).equals(oldValue.get(key))) {
-					// added/changed values
-					notifyMapChangeListeners(
-							new MapListenerHelperEx.AtomicChange<>(
-									getSource(), key, oldValue.get(key),
-									currentValue.get(key)));
-				}
-			}
+			notifyListChangeListeners(
+					new ListListenerHelperEx.AtomicChange<>(getSource(),
+							new ArrayList<>(oldValue),
+							ElementarySubChange.replaced(oldValue, currentValue,
+									0, currentValue.size())));
 		}
 	}
 
 	/**
 	 * Removes the given {@link ChangeListener} from this
-	 * {@link MapChangeListener}. If its was registered more than once, removes
+	 * {@link ListChangeListener}. If its was registered more than once, removes
 	 * one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
 	public void removeListener(
-			ChangeListener<? super ObservableMap<K, V>> listener) {
+			ChangeListener<? super ObservableList<E>> listener) {
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
@@ -177,7 +173,7 @@ public class MapExpressionHelperEx<K, V>
 		// otherwise unbinding will be broken (JavaFX bindings violate the
 		// contract between equals() and hashCode()); remove() may thus not be
 		// used.
-		for (Iterator<ChangeListener<? super ObservableMap<K, V>>> iterator = changeListeners
+		for (Iterator<ChangeListener<? super ObservableList<E>>> iterator = changeListeners
 				.iterator(); iterator.hasNext();) {
 			if (iterator.next().equals(listener)) {
 				iterator.remove();
@@ -188,5 +184,4 @@ public class MapExpressionHelperEx<K, V>
 			changeListeners = null;
 		}
 	}
-
 }

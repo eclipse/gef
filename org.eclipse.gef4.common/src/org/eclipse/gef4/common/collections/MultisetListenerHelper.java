@@ -12,68 +12,61 @@
 package org.eclipse.gef4.common.collections;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.gef4.common.collections.SetMultimapChangeListener.Change;
+import org.eclipse.gef4.common.collections.MultisetChangeListener.Change;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 
 import javafx.beans.InvalidationListener;
 
 /**
  * A utility class to support change notifications for an
- * {@link ObservableSetMultimap}.
+ * {@link ObservableMultiset}.
  *
  * @author anyssen
  *
- * @param <K>
- *            The key type of the {@link ObservableSetMultimap}.
- * @param <V>
- *            The value type of the {@link ObservableSetMultimap}.
+ * @param <E>
+ *            The element type of the {@link ObservableMultiset}.
  *
  */
-public class SetMultimapChangeListenerHelper<K, V> {
+public class MultisetListenerHelper<E> {
 
 	/**
-	 * A simple implementation of an {@link SetMultimapChangeListener.Change}.
+	 * A simple implementation of an {@link MultisetChangeListener.Change}.
 	 *
 	 * @author anyssen
 	 *
-	 * @param <K>
-	 *            The key type of the source {@link ObservableSetMultimap}.
-	 * @param <V>
-	 *            The value type of the source {@link ObservableSetMultimap}.
-	 *
+	 * @param <E>
+	 *            The element type of the source {@link ObservableMultiset}.
 	 */
-	public static class AtomicChange<K, V>
-			extends SetMultimapChangeListener.Change<K, V> {
+	public static class AtomicChange<E>
+			extends MultisetChangeListener.Change<E> {
 
-		private SetMultimap<K, V> previousContents;
-		private ElementarySubChange<K, V>[] elementarySubChanges;
 		private int cursor = -1;
+		private ElementarySubChange<E>[] elementarySubChanges;
+		private Multiset<E> previousContents;
 
 		/**
-		 * Creates a new {@link SetMultimapChangeListenerHelper.AtomicChange}
-		 * that represents a change comprising a single elementary sub-change.
+		 * Creates a new {@link MultisetListenerHelper.AtomicChange} that
+		 * represents a change comprising a single elementary sub-change.
 		 *
 		 * @param source
-		 *            The source {@link ObservableSetMultimap} from which the
+		 *            The source {@link ObservableMultiset} from which the
 		 *            change originated.
 		 * @param previousContents
-		 *            The previous contents of the {@link ObservableSetMultimap}
+		 *            The previous contents of the {@link ObservableMultiset}
 		 *            before the change was applied.
 		 * @param elementarySubChange
 		 *            The elementary sub-change that has been applied.
 		 */
 		@SuppressWarnings("unchecked")
-		public AtomicChange(ObservableSetMultimap<K, V> source,
-				SetMultimap<K, V> previousContents,
-				ElementarySubChange<K, V> elementarySubChange) {
+		public AtomicChange(ObservableMultiset<E> source,
+				Multiset<E> previousContents,
+				ElementarySubChange<E> elementarySubChange) {
 			super(source);
 			this.previousContents = previousContents;
 			this.elementarySubChanges = new ElementarySubChange[] {
@@ -81,7 +74,7 @@ public class SetMultimapChangeListenerHelper<K, V> {
 		}
 
 		/**
-		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} that
+		 * Creates a new {@link MultisetListenerHelper.AtomicChange} that
 		 * represents a change comprising multiple elementary sub-changesO.
 		 *
 		 * @param source
@@ -95,9 +88,9 @@ public class SetMultimapChangeListenerHelper<K, V> {
 		 *            of this change.
 		 */
 		@SuppressWarnings("unchecked")
-		public AtomicChange(ObservableSetMultimap<K, V> source,
-				SetMultimap<K, V> previousContents,
-				List<ElementarySubChange<K, V>> elementarySubChanges) {
+		public AtomicChange(ObservableMultiset<E> source,
+				Multiset<E> previousContents,
+				List<ElementarySubChange<E>> elementarySubChanges) {
 			super(source);
 			this.previousContents = previousContents;
 			this.elementarySubChanges = elementarySubChanges
@@ -105,7 +98,7 @@ public class SetMultimapChangeListenerHelper<K, V> {
 		}
 
 		/**
-		 * Creates a new {@link MultisetChangeListenerHelper.AtomicChange} for
+		 * Creates a new {@link MultisetListenerHelper.AtomicChange} for
 		 * the passed in source, based on the data provided in the passed-in
 		 * change.
 		 * <p>
@@ -121,22 +114,23 @@ public class SetMultimapChangeListenerHelper<K, V> {
 		 *            reset to initial state.
 		 */
 		@SuppressWarnings("unchecked")
-		public AtomicChange(ObservableSetMultimap<K, V> source,
-				SetMultimapChangeListener.Change<? extends K, ? extends V> change) {
+		public AtomicChange(ObservableMultiset<E> source,
+				MultisetChangeListener.Change<? extends E> change) {
 			super(source);
 
 			// copy previous contents
-			this.previousContents = HashMultimap
+			this.previousContents = HashMultiset
 					.create(change.getPreviousContents());
+
 			// retrieve elementary sub-changes by iterating them
 			// TODO: we could introduce an initialized field inside Change
 			// already, so we could check the passed in change is not already
 			// initialized
-			List<ElementarySubChange<K, V>> elementarySubChanges = new ArrayList<>();
+			List<ElementarySubChange<E>> elementarySubChanges = new ArrayList<>();
 			while (change.next()) {
-				elementarySubChanges.add(new ElementarySubChange<K, V>(
-						change.getKey(), change.getValuesRemoved(),
-						change.getValuesAdded()));
+				elementarySubChanges
+						.add(new ElementarySubChange<E>(change.getElement(),
+								change.getRemoveCount(), change.getAddCount()));
 			}
 			change.reset();
 			this.elementarySubChanges = elementarySubChanges
@@ -156,26 +150,26 @@ public class SetMultimapChangeListenerHelper<K, V> {
 		}
 
 		@Override
-		public K getKey() {
+		public int getAddCount() {
 			checkCursor();
-			return elementarySubChanges[cursor].getKey();
+			return elementarySubChanges[cursor].getAddCount();
 		}
 
 		@Override
-		public SetMultimap<K, V> getPreviousContents() {
-			return Multimaps.unmodifiableSetMultimap(previousContents);
+		public E getElement() {
+			checkCursor();
+			return elementarySubChanges[cursor].getElement();
 		}
 
 		@Override
-		public Set<V> getValuesAdded() {
-			checkCursor();
-			return elementarySubChanges[cursor].getValuesAdded();
+		public Multiset<E> getPreviousContents() {
+			return Multisets.unmodifiableMultiset(previousContents);
 		}
 
 		@Override
-		public Set<V> getValuesRemoved() {
+		public int getRemoveCount() {
 			checkCursor();
-			return elementarySubChanges[cursor].getValuesRemoved();
+			return elementarySubChanges[cursor].getRemoveCount();
 		}
 
 		@Override
@@ -200,149 +194,100 @@ public class SetMultimapChangeListenerHelper<K, V> {
 			}
 			return sb.toString();
 		}
-
-		@Override
-		public boolean wasAdded() {
-			checkCursor();
-			return elementarySubChanges[cursor].wasAdded();
-		}
-
-		@Override
-		public boolean wasRemoved() {
-			checkCursor();
-			return elementarySubChanges[cursor].wasRemoved();
-		}
-
 	}
 
 	/**
-	 * An elementary change related to a single key of a
-	 * {@link ObservableSetMultimap}. .
+	 * An elementary change related to a single element of a {@link Multiset}.
 	 *
-	 * @author anyssen
-	 *
-	 * @param <K>
-	 *            The key type of the {@link ObservableSetMultimap}.
-	 * @param <V>
-	 *            The value type of the {@link ObservableSetMultimap}.
+	 * @param <E>
+	 *            The element type of the {@link ObservableMultiset}.
 	 */
-	public static class ElementarySubChange<K, V> {
+	public static class ElementarySubChange<E> {
 
-		private K key = null;
-		private Set<V> removedValues;
-		private Set<V> addedValues;
+		private int addCount;
+		private E element;
+		private int removeCount;
 
 		/**
-		 * Constructs a new
-		 * {@link SetMultimapChangeListenerHelper.ElementarySubChange} with the
-		 * given values.
+		 * Constructs a new elementary sub-change with the given values.
 		 *
-		 * @param key
-		 *            The key to which the change is related.
-		 * @param removedValues
-		 *            The values removed by the change.
-		 * @param addedValues
-		 *            The values added by the change.
+		 * @param element
+		 *            The element that was added or removed.
+		 * @param removeCount
+		 *            The number of occurrences that were removed.
+		 * @param addCount
+		 *            The number of occurrences that were added.
 		 */
-		public ElementarySubChange(K key, Set<? extends V> removedValues,
-				Set<? extends V> addedValues) {
-			this.key = key;
-			this.removedValues = new HashSet<>(removedValues);
-			this.addedValues = new HashSet<>(addedValues);
+		public ElementarySubChange(E element, int removeCount, int addCount) {
+			this.element = element;
+			this.removeCount = removeCount;
+			this.addCount = addCount;
 		}
 
 		/**
-		 * Returns the key that was modified in this elementary sub-change, i.e.
-		 * for which values were added or removed.
+		 * Returns the number of occurrences that have been added for the
+		 * respective element as part of this elementary sub-change.
 		 *
-		 * @return The key this elementary sub-change is related to.
+		 * @return The number of added occurrences.
 		 */
-		public K getKey() {
-			return key;
+		public int getAddCount() {
+			return addCount;
 		}
 
 		/**
-		 * Returns the values added by this elementary sub-change.
+		 * Returns the element that has been altered by this elementary
+		 * sub-change.
 		 *
-		 * @return The values that were added by this elementary sub-change, if
-		 *         any. Will return an empty set in case no elements were added.
+		 * @return The changed element.
 		 */
-		public Set<V> getValuesAdded() {
-			return addedValues;
+		public E getElement() {
+			return element;
 		}
 
 		/**
-		 * Returns the values removed by this elementary sub-change.
+		 * Returns the number of occurrences that have been removed for the
+		 * respective element as part of this elementary sub-change.
 		 *
-		 * @return The values that were removed by this elementary sub-change,
-		 *         if any. Will return an empty set in case no elements were
-		 *         removed.
+		 * @return The number of removed occurrences.
 		 */
-		public Set<V> getValuesRemoved() {
-			return removedValues;
+		public int getRemoveCount() {
+			return removeCount;
 		}
 
 		@Override
 		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			if (wasAdded()) {
-				if (wasRemoved()) {
-					builder.append("Replaced ").append(removedValues)
-							.append(" by ").append(addedValues);
-				} else {
-					builder.append("Added ").append(addedValues);
-				}
+			if (addCount > 0) {
+				return "Added " + addCount + " occurrences of " + element + ".";
 			} else {
-				builder.append("Removed ").append(removedValues);
+				return "Removed " + removeCount + " occurrences of " + element
+						+ ".";
 			}
-			builder.append(" for key ").append(key).append(".");
-			return builder.toString();
-		}
-
-		/**
-		 * Indicates whether values were added by this elementary sub-change.
-		 *
-		 * @return <code>true</code> if values were added, <code>false</code>
-		 *         otherwise.
-		 */
-		public boolean wasAdded() {
-			return !addedValues.isEmpty();
-		}
-
-		/**
-		 * Indicates whether values were removed by this elementary sub-change.
-		 *
-		 * @return <code>true</code> if values were removed, <code>false</code>
-		 *         otherwise.
-		 */
-		public boolean wasRemoved() {
-			return !removedValues.isEmpty();
 		}
 	}
 
 	private List<InvalidationListener> invalidationListeners = null;
-	private List<SetMultimapChangeListener<? super K, ? super V>> setMultimapChangeListeners = null;
-	private ObservableSetMultimap<K, V> source;
 	private boolean lockInvalidationListeners;
-	private boolean lockSetMultimapChangeListeners;
+	private boolean lockMultisetChangeListeners;
+	private List<MultisetChangeListener<? super E>> multisetChangeListeners = null;
+	private ObservableMultiset<E> source;
 
 	/**
-	 * Constructs a new {@link SetMultimapChangeListenerHelper} for the given
-	 * source {@link ObservableSetMultimap}.
+	 * Constructs a new {@link MultisetListenerHelper} for the given
+	 * source {@link ObservableMultiset}.
 	 *
 	 * @param source
-	 *            The {@link ObservableSetMultimap} to use as source in change
+	 *            The {@link ObservableMultiset} to use as source in change
 	 *            notifications.
 	 */
-	public SetMultimapChangeListenerHelper(ObservableSetMultimap<K, V> source) {
+	public MultisetListenerHelper(ObservableMultiset<E> source) {
 		this.source = source;
 	}
 
 	/**
 	 * Adds a new {@link InvalidationListener} to this
-	 * {@link SetMultimapChangeListenerHelper}. If the same listener is added
-	 * more than once, it will be registered more than once and will receive
-	 * multiple change events.
+	 * {@link MultisetListenerHelper}. If the same listener is added more
+	 * than once, it will be registered more than once and will receive multiple
+	 * change events.
 	 *
 	 * @param listener
 	 *            The listener to add.
@@ -362,51 +307,49 @@ public class SetMultimapChangeListenerHelper<K, V> {
 
 	/**
 	 * Adds a new {@link SetMultimapChangeListener} to this
-	 * {@link SetMultimapChangeListenerHelper}. If the same listener is added
-	 * more than once, it will be registered more than once and will receive
-	 * multiple change events.
+	 * {@link MultisetListenerHelper}. If the same listener is added more
+	 * than once, it will be registered more than once and will receive multiple
+	 * change events.
 	 *
 	 * @param listener
 	 *            The listener to add.
 	 */
-	public void addListener(
-			SetMultimapChangeListener<? super K, ? super V> listener) {
-		if (setMultimapChangeListeners == null) {
-			setMultimapChangeListeners = new ArrayList<>();
+	public void addListener(MultisetChangeListener<? super E> listener) {
+		if (multisetChangeListeners == null) {
+			multisetChangeListeners = new ArrayList<>();
 		}
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
-		if (lockSetMultimapChangeListeners) {
-			setMultimapChangeListeners = new ArrayList<>(
-					setMultimapChangeListeners);
+		if (lockMultisetChangeListeners) {
+			multisetChangeListeners = new ArrayList<>(multisetChangeListeners);
 		}
-		setMultimapChangeListeners.add(listener);
+		multisetChangeListeners.add(listener);
 	}
 
 	/**
 	 * Notifies all attached {@link InvalidationListener}s and
-	 * {@link SetMultimapChangeListener}s about the change.
+	 * {@link MultisetChangeListener}s about the change.
 	 *
 	 * @param change
 	 *            The change to notify listeners about.
 	 */
 	public void fireValueChangedEvent(
-			SetMultimapChangeListener.Change<? extends K, ? extends V> change) {
+			MultisetChangeListener.Change<? extends E> change) {
 		notifyInvalidationListeners();
 		if (change != null) {
-			notifySetMultimapChangeListeners(change);
+			notifyMultisetChangeListeners(change);
 		}
 	}
 
 	/**
-	 * Returns the source {@link ObservableSetMultimap} this
-	 * {@link SetMultimapChangeListenerHelper} is bound to, which is used in
-	 * change notifications.
+	 * Returns the source {@link ObservableMultiset} this
+	 * {@link MultisetListenerHelper} is bound to, which is used in change
+	 * notifications.
 	 *
-	 * @return The source {@link ObservableSetMultimap}.
+	 * @return The source {@link ObservableMultiset}.
 	 */
-	protected ObservableSetMultimap<K, V> getSource() {
+	protected ObservableMultiset<E> getSource() {
 		return source;
 	}
 
@@ -432,18 +375,17 @@ public class SetMultimapChangeListenerHelper<K, V> {
 	}
 
 	/**
-	 * Notifies the attached {@link SetMultimapChangeListener}s about the
-	 * related change.
+	 * Notifies the attached {@link MultisetChangeListener}s about the related
+	 * change.
 	 *
 	 * @param change
 	 *            The applied change.
 	 */
-	protected void notifySetMultimapChangeListeners(
-			Change<? extends K, ? extends V> change) {
-		if (setMultimapChangeListeners != null) {
+	protected void notifyMultisetChangeListeners(Change<? extends E> change) {
+		if (multisetChangeListeners != null) {
 			try {
-				lockSetMultimapChangeListeners = true;
-				for (SetMultimapChangeListener<? super K, ? super V> l : setMultimapChangeListeners) {
+				lockMultisetChangeListeners = true;
+				for (MultisetChangeListener<? super E> l : multisetChangeListeners) {
 					change.reset();
 					try {
 						l.onChanged(change);
@@ -453,14 +395,14 @@ public class SetMultimapChangeListenerHelper<K, V> {
 					}
 				}
 			} finally {
-				lockSetMultimapChangeListeners = false;
+				lockMultisetChangeListeners = false;
 			}
 		}
 	}
 
 	/**
 	 * Removes the given {@link InvalidationListener} from this
-	 * {@link SetMultimapChangeListenerHelper}. If its was registered more than
+	 * {@link MultisetListenerHelper}. If its was registered more than
 	 * once, removes one occurrence.
 	 *
 	 * @param listener
@@ -491,35 +433,33 @@ public class SetMultimapChangeListenerHelper<K, V> {
 	}
 
 	/**
-	 * Removes the given {@link SetMultimapChangeListener} from this
-	 * {@link SetMultimapChangeListenerHelper}. If its was registered more than
+	 * Removes the given {@link MultisetChangeListener} from this
+	 * {@link MultisetListenerHelper}. If its was registered more than
 	 * once, removes one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
-	public void removeListener(
-			SetMultimapChangeListener<? super K, ? super V> listener) {
+	public void removeListener(MultisetChangeListener<? super E> listener) {
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
-		if (lockSetMultimapChangeListeners) {
-			setMultimapChangeListeners = new ArrayList<>(
-					setMultimapChangeListeners);
+		if (lockMultisetChangeListeners) {
+			multisetChangeListeners = new ArrayList<>(multisetChangeListeners);
 		}
 		// XXX: We have to ignore the hash code when removing listeners, as
 		// otherwise unbinding will be broken (JavaFX bindings violate the
 		// contract between equals() and hashCode(): JI-9028554); remove() may
 		// thus not be used.
-		for (Iterator<SetMultimapChangeListener<? super K, ? super V>> iterator = setMultimapChangeListeners
+		for (Iterator<MultisetChangeListener<? super E>> iterator = multisetChangeListeners
 				.iterator(); iterator.hasNext();) {
 			if (iterator.next().equals(listener)) {
 				iterator.remove();
 				break;
 			}
 		}
-		if (setMultimapChangeListeners.isEmpty()) {
-			setMultimapChangeListeners = null;
+		if (multisetChangeListeners.isEmpty()) {
+			multisetChangeListeners = null;
 		}
 	}
 }

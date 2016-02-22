@@ -15,10 +15,13 @@ package org.eclipse.gef4.common.beans.property;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.sun.javafx.binding.SetExpressionHelper;
+import org.eclipse.gef4.common.beans.binding.SetExpressionHelperEx;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlySetProperty;
 import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -49,7 +52,99 @@ import javafx.collections.SetChangeListener.Change;
  */
 public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 
-	private SetExpressionHelper<E> helper = null;
+	private class ReadOnlyPropertyImpl extends ReadOnlySetProperty<E> {
+
+		private SetExpressionHelperEx<E> helper = null;
+
+		@Override
+		public void addListener(
+				ChangeListener<? super ObservableSet<E>> listener) {
+			if (helper == null) {
+				helper = new SetExpressionHelperEx<>(this);
+			}
+			helper.addListener(listener);
+		}
+
+		@Override
+		public void addListener(InvalidationListener listener) {
+			if (helper == null) {
+				helper = new SetExpressionHelperEx<>(this);
+			}
+			helper.addListener(listener);
+		}
+
+		@Override
+		public void addListener(SetChangeListener<? super E> listener) {
+			if (helper == null) {
+				helper = new SetExpressionHelperEx<>(this);
+			}
+			helper.addListener(listener);
+		}
+
+		@Override
+		public ReadOnlyBooleanProperty emptyProperty() {
+			return ReadOnlySetWrapperEx.this.emptyProperty();
+		}
+
+		private void fireValueChangedEvent() {
+			if (helper == null) {
+				helper = new SetExpressionHelperEx<>(this);
+			}
+			helper.fireValueChangedEvent();
+		}
+
+		private void fireValueChangedEvent(Change<? extends E> change) {
+			if (helper == null) {
+				helper = new SetExpressionHelperEx<>(this);
+			}
+			helper.fireValueChangedEvent(change);
+		}
+
+		@Override
+		public ObservableSet<E> get() {
+			return ReadOnlySetWrapperEx.this.get();
+		}
+
+		@Override
+		public Object getBean() {
+			return ReadOnlySetWrapperEx.this.getBean();
+		}
+
+		@Override
+		public String getName() {
+			return ReadOnlySetWrapperEx.this.getName();
+		}
+
+		@Override
+		public void removeListener(
+				ChangeListener<? super ObservableSet<E>> listener) {
+			if (helper != null) {
+				helper.removeListener(listener);
+			}
+		}
+
+		@Override
+		public void removeListener(InvalidationListener listener) {
+			if (helper != null) {
+				helper.removeListener(listener);
+			}
+		}
+
+		@Override
+		public void removeListener(SetChangeListener<? super E> listener) {
+			if (helper != null) {
+				helper.removeListener(listener);
+			}
+		}
+
+		@Override
+		public ReadOnlyIntegerProperty sizeProperty() {
+			return ReadOnlySetWrapperEx.this.sizeProperty();
+		}
+	}
+
+	private ReadOnlyPropertyImpl readOnlyProperty = null;
+	private SetExpressionHelperEx<E> helper = null;
 
 	/**
 	 * Creates a new unnamed {@link ReadOnlySetWrapperEx}.
@@ -104,17 +199,26 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 
 	@Override
 	public void addListener(ChangeListener<? super ObservableSet<E>> listener) {
-		helper = SetExpressionHelper.addListener(helper, this, listener);
+		if (helper == null) {
+			helper = new SetExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
 	public void addListener(InvalidationListener listener) {
-		helper = SetExpressionHelper.addListener(helper, this, listener);
+		if (helper == null) {
+			helper = new SetExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
 	public void addListener(SetChangeListener<? super E> listener) {
-		helper = SetExpressionHelper.addListener(helper, this, listener);
+		if (helper == null) {
+			helper = new SetExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
@@ -174,14 +278,22 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 
 	@Override
 	protected void fireValueChangedEvent() {
-		SetExpressionHelper.fireValueChangedEvent(helper);
-		super.fireValueChangedEvent();
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+		if (readOnlyProperty != null) {
+			readOnlyProperty.fireValueChangedEvent();
+		}
 	}
 
 	@Override
 	protected void fireValueChangedEvent(Change<? extends E> change) {
-		SetExpressionHelper.fireValueChangedEvent(helper, change);
-		super.fireValueChangedEvent(change);
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
+		if (readOnlyProperty != null) {
+			readOnlyProperty.fireValueChangedEvent(change);
+		}
 	}
 
 	@Override
@@ -195,17 +307,23 @@ public class ReadOnlySetWrapperEx<E> extends ReadOnlySetWrapper<E> {
 	@Override
 	public void removeListener(
 			ChangeListener<? super ObservableSet<E>> listener) {
-		helper = SetExpressionHelper.removeListener(helper, listener);
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override
 	public void removeListener(InvalidationListener listener) {
-		helper = SetExpressionHelper.removeListener(helper, listener);
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override
 	public void removeListener(SetChangeListener<? super E> listener) {
-		helper = SetExpressionHelper.removeListener(helper, listener);
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override

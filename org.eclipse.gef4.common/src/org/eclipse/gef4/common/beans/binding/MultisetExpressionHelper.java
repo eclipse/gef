@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.gef4.common.beans.value.ObservableMultisetValue;
 import org.eclipse.gef4.common.collections.MultisetChangeListener;
-import org.eclipse.gef4.common.collections.MultisetChangeListenerHelper;
+import org.eclipse.gef4.common.collections.MultisetListenerHelper;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
 
 import com.google.common.collect.HashMultiset;
@@ -34,7 +34,7 @@ import javafx.beans.value.ChangeListener;
  *
  */
 public class MultisetExpressionHelper<E>
-		extends MultisetChangeListenerHelper<E> {
+		extends MultisetListenerHelper<E> {
 
 	private List<ChangeListener<? super ObservableMultiset<E>>> changeListeners = null;
 
@@ -96,8 +96,7 @@ public class MultisetExpressionHelper<E>
 
 	/**
 	 * Fires notifications to all attached
-	 * {@link javafx.beans.InvalidationListener InvalidationListeners},
-	 * {@link javafx.beans.value.ChangeListener ChangeListeners}, and
+	 * {@link javafx.beans.InvalidationListener InvalidationListeners}, and
 	 * {@link MultisetChangeListener MultisetChangeListeners}.
 	 *
 	 * @param change
@@ -106,23 +105,11 @@ public class MultisetExpressionHelper<E>
 	@Override
 	public void fireValueChangedEvent(
 			MultisetChangeListener.Change<? extends E> change) {
-		notifyInvalidationListeners();
 		if (change != null) {
-			// FIXME: For ListPropertyBase, firing change events in case the
-			// underlying observable list changes is reported as a bug, see
-			// https://bugs.openjdk.java.net/browse/JDK-8089169; While it would
-			// be cleaner, this corresponds to the current behavior of other
-			// JavaFX collection-related properties.
-			if (changeListeners != null) {
-				try {
-					lockChangeListeners = true;
-					for (ChangeListener<? super ObservableMultiset<E>> l : changeListeners) {
-						l.changed(observableValue, currentValue, currentValue);
-					}
-				} finally {
-					lockChangeListeners = false;
-				}
-			}
+			notifyInvalidationListeners();
+			// XXX: We do not notify change listeners here, as the identity of
+			// the observed value did not change (see
+			// https://bugs.openjdk.java.net/browse/JDK-8089169)
 			notifyMultisetChangeListeners(
 					new AtomicChange<>(observableValue, change));
 		}
@@ -130,8 +117,8 @@ public class MultisetExpressionHelper<E>
 
 	private void notifyListeners(ObservableMultiset<E> oldValue,
 			ObservableMultiset<E> currentValue) {
-		notifyInvalidationListeners();
 		if (currentValue != oldValue) {
+			notifyInvalidationListeners();
 			if (changeListeners != null) {
 				try {
 					lockChangeListeners = true;
@@ -142,7 +129,9 @@ public class MultisetExpressionHelper<E>
 					lockChangeListeners = false;
 				}
 			}
-			notifyMultisetListeners(oldValue, currentValue);
+			if (oldValue == null || !oldValue.equals(currentValue)) {
+				notifyMultisetListeners(oldValue, currentValue);
+			}
 		}
 	}
 
@@ -156,7 +145,7 @@ public class MultisetExpressionHelper<E>
 						new ElementarySubChange<>(e, oldValue.count(e), 0));
 			}
 			notifyMultisetChangeListeners(
-					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
+					new MultisetListenerHelper.AtomicChange<>(getSource(),
 							HashMultiset.<E> create(oldValue),
 							elementaryChanges));
 		} else if (oldValue == null) {
@@ -167,7 +156,7 @@ public class MultisetExpressionHelper<E>
 						new ElementarySubChange<>(e, 0, currentValue.count(e)));
 			}
 			notifyMultisetChangeListeners(
-					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
+					new MultisetListenerHelper.AtomicChange<>(getSource(),
 							HashMultiset.<E> create(), elementaryChanges));
 		} else {
 			List<ElementarySubChange<E>> elementaryChanges = new ArrayList<>();
@@ -198,7 +187,7 @@ public class MultisetExpressionHelper<E>
 				}
 			}
 			notifyMultisetChangeListeners(
-					new MultisetChangeListenerHelper.AtomicChange<>(getSource(),
+					new MultisetListenerHelper.AtomicChange<>(getSource(),
 							HashMultiset.<E> create(oldValue),
 							elementaryChanges));
 		}

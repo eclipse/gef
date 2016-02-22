@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.gef4.common.collections.MultisetChangeListenerHelper.ElementarySubChange;
+import org.eclipse.gef4.common.collections.MultisetListenerHelper.ElementarySubChange;
 
 import com.google.common.collect.ForwardingMultiset;
 import com.google.common.collect.HashMultiset;
@@ -37,7 +37,7 @@ import javafx.beans.InvalidationListener;
 class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		implements ObservableMultiset<E> {
 
-	private MultisetChangeListenerHelper<E> helper = new MultisetChangeListenerHelper<>(
+	private MultisetListenerHelper<E> helper = new MultisetListenerHelper<>(
 			this);
 	private Multiset<E> backingMultiset;
 
@@ -59,7 +59,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		boolean changed = super.add(element);
 		if (changed) {
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents,
 							new ElementarySubChange<>(element, 0, 1)));
 		}
@@ -73,7 +73,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		if (count(element) > countBefore) {
 			// only fire change if occurrences have really been added.
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, new ElementarySubChange<>(element,
 									0, count(element) - countBefore)));
 		}
@@ -103,7 +103,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 				}
 			}
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 		}
 		return changed;
@@ -130,7 +130,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 						previousContents.count(e), 0));
 			}
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 		}
 	}
@@ -158,7 +158,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		if (changed) {
 			// if remove was successful, the cast to E should be safe.
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents,
 							new ElementarySubChange<>((E) object, 1, 0)));
 		}
@@ -176,7 +176,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 			// occurrences, thus we have to compute how many have actually be
 			// removed.
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents,
 							new ElementarySubChange<>((E) element,
 									countBefore - count(element), 0)));
@@ -205,7 +205,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 				}
 			}
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 		}
 		return changed;
@@ -245,7 +245,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 						addedElements.count(e)));
 			}
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 			return true;
 		}
@@ -269,7 +269,7 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 				}
 			}
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, elementaryChanges));
 		}
 		return changed;
@@ -281,12 +281,12 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		int countBefore = super.setCount(element, count);
 		if (count(element) > countBefore) {
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, new ElementarySubChange<>(element,
 									0, count(element) - countBefore)));
 		} else if (count(element) < countBefore) {
 			helper.fireValueChangedEvent(
-					new MultisetChangeListenerHelper.AtomicChange<>(this,
+					new MultisetListenerHelper.AtomicChange<>(this,
 							previousContents, new ElementarySubChange<>(element,
 									countBefore - count(element), 0)));
 		}
@@ -302,12 +302,12 @@ class ObservableMultisetWrapper<E> extends ForwardingMultiset<E>
 		if (changed) {
 			if (newCount > oldCount) {
 				helper.fireValueChangedEvent(
-						new MultisetChangeListenerHelper.AtomicChange<>(this,
+						new MultisetListenerHelper.AtomicChange<>(this,
 								previousContents, new ElementarySubChange<>(
 										element, 0, newCount - oldCount)));
 			} else if (oldCount > newCount) {
 				helper.fireValueChangedEvent(
-						new MultisetChangeListenerHelper.AtomicChange<>(this,
+						new MultisetListenerHelper.AtomicChange<>(this,
 								previousContents, new ElementarySubChange<>(
 										element, oldCount - newCount, 0)));
 			}

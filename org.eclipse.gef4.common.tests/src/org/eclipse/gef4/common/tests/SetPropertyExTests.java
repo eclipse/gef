@@ -15,6 +15,7 @@ package org.eclipse.gef4.common.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.LinkedList;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlySetWrapperEx;
 import org.eclipse.gef4.common.beans.property.SimpleSetPropertyEx;
+import org.eclipse.gef4.common.tests.ObservableSetMultimapTests.InvalidationExpector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,7 +37,9 @@ import com.sun.javafx.collections.ObservableSetWrapper;
 import javafx.beans.property.SetProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 
 @RunWith(Parameterized.class)
 public class SetPropertyExTests {
@@ -75,6 +79,66 @@ public class SetPropertyExTests {
 			if (oldValueQueue.size() > 0) {
 				fail("Did not receive " + oldValueQueue.size()
 						+ " expected changes.");
+			}
+		}
+	}
+
+	protected static class SetChangeExpector<E>
+			implements SetChangeListener<E> {
+
+		private ObservableSet<E> source;
+		private LinkedList<E> addedElementQueue = new LinkedList<>();
+		private LinkedList<E> removedElementQueue = new LinkedList<>();
+
+		public SetChangeExpector(ObservableSet<E> source) {
+			this.source = source;
+		}
+
+		public void addExpectation(E removedElement, E addedElement) {
+			addedElementQueue.addFirst(addedElement);
+			removedElementQueue.addFirst(removedElement);
+		}
+
+		public void check() {
+			if (addedElementQueue.size() > 0) {
+				fail("Did not receive " + addedElementQueue.size()
+						+ " expected changes.");
+			}
+		}
+
+		@Override
+		public void onChanged(SetChangeListener.Change<? extends E> change) {
+			if (addedElementQueue.size() <= 0) {
+				fail("Received unexpected change " + change);
+			}
+
+			assertEquals(source, change.getSet());
+
+			// check added element
+			E expectedAddedElement = addedElementQueue.pollLast();
+			assertEquals(expectedAddedElement, change.getElementAdded());
+			if (expectedAddedElement != null) {
+				assertTrue(change.wasAdded());
+			} else {
+				assertFalse(change.wasAdded());
+			}
+
+			// check removed values
+			E expectedRemovedElement = removedElementQueue.pollLast();
+			assertEquals(expectedRemovedElement, change.getElementRemoved());
+			if (expectedRemovedElement != null) {
+				assertTrue(change.wasRemoved());
+			} else {
+				assertFalse(change.wasRemoved());
+			}
+
+			// check string representation
+			if (expectedRemovedElement != null) {
+				assertEquals("Removed " + expectedRemovedElement + ".",
+						change.toString());
+			} else {
+				assertEquals("Added " + expectedAddedElement + ".",
+						change.toString());
 			}
 		}
 	}
@@ -203,4 +267,132 @@ public class SetPropertyExTests {
 		property.set(newValue);
 		changeListener.check();
 	}
+
+	/**
+	 * Check change notifications for observed value changes are properly fired.
+	 */
+	@Test
+	public void changeNotifications() {
+		SetProperty<Integer> property = propertyProvider.get();
+
+		// initialize property
+		ObservableSet<Integer> newValue = FXCollections.observableSet();
+		newValue.add(1);
+		newValue.add(2);
+		newValue.add(3);
+		property.set(newValue);
+
+		// register listener
+		InvalidationExpector invalidationListener = new InvalidationExpector();
+		SetChangeExpector<Integer> setChangeListener = new SetChangeExpector<>(
+				property);
+		ChangeExpector<Integer> changeListener = new ChangeExpector<>(property);
+		property.addListener(invalidationListener);
+		property.addListener(setChangeListener);
+		property.addListener(changeListener);
+
+		// change property value (disjoint values)
+		newValue = FXCollections.observableSet();
+		newValue.add(4);
+		newValue.add(5);
+		newValue.add(6);
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		setChangeListener.addExpectation(1, null);
+		setChangeListener.addExpectation(2, null);
+		setChangeListener.addExpectation(3, null);
+		setChangeListener.addExpectation(null, 4);
+		setChangeListener.addExpectation(null, 5);
+		setChangeListener.addExpectation(null, 6);
+		property.set(newValue);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// change property value (overlapping values)
+		newValue = FXCollections.observableSet();
+		newValue.add(5);
+		newValue.add(6);
+		newValue.add(7);
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		setChangeListener.addExpectation(4, null);
+		setChangeListener.addExpectation(null, 7);
+		property.set(newValue);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// change property value (change to null)
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), null);
+		setChangeListener.addExpectation(5, null);
+		setChangeListener.addExpectation(6, null);
+		setChangeListener.addExpectation(7, null);
+		property.set(null);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// set to null again (no expectation)
+		property.set(null);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// change property value (change from null)
+		newValue = FXCollections.observableSet();
+		newValue.add(1);
+		newValue.add(2);
+		newValue.add(3);
+		invalidationListener.expect(1);
+		changeListener.addExpectation(null, newValue);
+		setChangeListener.addExpectation(null, 1);
+		setChangeListener.addExpectation(null, 2);
+		setChangeListener.addExpectation(null, 3);
+		property.set(null);
+		property.set(newValue);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// set to identical value (no notifications expected)
+		property.set(newValue);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// set to equal value (no list change notification expected)
+		newValue = FXCollections.observableSet();
+		newValue.add(1);
+		newValue.add(2);
+		newValue.add(3);
+		invalidationListener.expect(1);
+		changeListener.addExpectation(property.get(), newValue);
+		property.set(newValue);
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// change observed value (only invalidation and list change expected)
+		// FIXME: ObservableMapWrapper fires an invalidation event for each
+		// change to the map (whereas a change of the observable value leads to
+		// a single notification). We could provide an own ObservableMap
+		// implementation to fix this.
+		invalidationListener.expect(3);
+		setChangeListener.addExpectation(1, null);
+		setChangeListener.addExpectation(2, null);
+		setChangeListener.addExpectation(3, null);
+		property.get().clear();
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+
+		// touch observed value (don't change it)
+		property.get().clear();
+		invalidationListener.check();
+		setChangeListener.check();
+		changeListener.check();
+	}
+
 }

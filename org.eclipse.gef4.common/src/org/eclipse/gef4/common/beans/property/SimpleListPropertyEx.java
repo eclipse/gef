@@ -15,9 +15,15 @@ package org.eclipse.gef4.common.beans.property;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.beans.binding.ListExpressionHelperEx;
+
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 
 /**
@@ -39,6 +45,8 @@ import javafx.collections.ObservableList;
  *
  */
 public class SimpleListPropertyEx<E> extends SimpleListProperty<E> {
+
+	private ListExpressionHelperEx<E> helper = null;
 
 	/**
 	 * Creates a new unnamed {@link SimpleListPropertyEx}.
@@ -85,6 +93,31 @@ public class SimpleListPropertyEx<E> extends SimpleListProperty<E> {
 	 */
 	public SimpleListPropertyEx(ObservableList<E> initialValue) {
 		super(initialValue);
+	}
+
+	@Override
+	public void addListener(
+			ChangeListener<? super ObservableList<E>> listener) {
+		if (helper == null) {
+			helper = new ListExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
+	}
+
+	@Override
+	public void addListener(InvalidationListener listener) {
+		if (helper == null) {
+			helper = new ListExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
+	}
+
+	@Override
+	public void addListener(ListChangeListener<? super E> listener) {
+		if (helper == null) {
+			helper = new ListExpressionHelperEx<>(this);
+		}
+		helper.addListener(listener);
 	}
 
 	@Override
@@ -143,11 +176,47 @@ public class SimpleListPropertyEx<E> extends SimpleListProperty<E> {
 	}
 
 	@Override
+	protected void fireValueChangedEvent() {
+		if (helper != null) {
+			helper.fireValueChangedEvent();
+		}
+	}
+
+	@Override
+	protected void fireValueChangedEvent(Change<? extends E> change) {
+		if (helper != null) {
+			helper.fireValueChangedEvent(change);
+		}
+	}
+
+	@Override
 	public int hashCode() {
 		// XXX: As we rely on equality to remove a binding again, we have to
 		// ensure the hash code is the same for a pair of given properties.
 		// We fall back to the very easiest case here (and use a constant).
 		return 0;
+	}
+
+	@Override
+	public void removeListener(
+			ChangeListener<? super ObservableList<E>> listener) {
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(InvalidationListener listener) {
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(ListChangeListener<? super E> listener) {
+		if (helper != null) {
+			helper.removeListener(listener);
+		}
 	}
 
 	@Override

@@ -24,8 +24,7 @@ import javafx.collections.ObservableList;
 
 /**
  * A utility class to support change notifications for an {@link ObservableList}
- * , replacing the JavaFX-internal {@code ListChangeListener} helper class. Used
- * by {@link ObservableListWrapperEx}.
+ * , replacing the JavaFX-internal {@code ListChangeListener} helper class.
  *
  * @author anyssen
  *
@@ -33,7 +32,7 @@ import javafx.collections.ObservableList;
  *            The element type of the {@link ObservableList}.
  *
  */
-public class ListChangeListenerHelper<E> {
+public class ListListenerHelperEx<E> {
 
 	/**
 	 * A simple implementation of an
@@ -52,7 +51,7 @@ public class ListChangeListenerHelper<E> {
 		private List<E> previousContents;
 
 		/**
-		 * Creates a new {@link ListChangeListenerHelper.AtomicChange} that
+		 * Creates a new {@link ListListenerHelperEx.AtomicChange} that
 		 * represents a change comprising a single elementary sub-change.
 		 *
 		 * @param source
@@ -74,15 +73,15 @@ public class ListChangeListenerHelper<E> {
 		}
 
 		/**
-		 * Creates a new {@link ListChangeListenerHelper.AtomicChange} that
+		 * Creates a new {@link ListListenerHelperEx.AtomicChange} that
 		 * represents a change comprising multiple elementary sub-changesO.
 		 *
 		 * @param source
-		 *            The source {@link ObservableMultiset} from which the
-		 *            change originated.
+		 *            The source {@link ObservableList} from which the change
+		 *            originated.
 		 * @param previousContents
-		 *            The previous contents of the {@link ObservableMultiset}
-		 *            before the change was applied.
+		 *            The previous contents of the {@link ObservableList} before
+		 *            the change was applied.
 		 * @param elementarySubChanges
 		 *            The elementary sub-changes that have been applied as part
 		 *            of this change.
@@ -97,7 +96,7 @@ public class ListChangeListenerHelper<E> {
 		}
 
 		/**
-		 * Creates a new {@link ListChangeListenerHelper.AtomicChange} for the
+		 * Creates a new {@link ListListenerHelperEx.AtomicChange} for the
 		 * passed in source, based on the data provided in the passed-in change.
 		 * <p>
 		 * This is basically used to allow properties wrapping an
@@ -105,7 +104,7 @@ public class ListChangeListenerHelper<E> {
 		 * {@link ObservableList} with themselves as source.
 		 *
 		 * @param source
-		 *            The new source {@link ObservableMultiset}.
+		 *            The new source {@link ObservableList}.
 		 * @param change
 		 *            The change to infer a new change from. It is expected that
 		 *            the change is in initial state. In either case it will be
@@ -298,7 +297,7 @@ public class ListChangeListenerHelper<E> {
 
 		/**
 		 * Creates a new
-		 * {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 * {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 * representing an addition.
 		 *
 		 * @param <E>
@@ -311,7 +310,7 @@ public class ListChangeListenerHelper<E> {
 		 * @param added
 		 *            The elements that were added during this change.
 		 * @return An
-		 *         {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 *         {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 *         representing the change.
 		 */
 		public static <E> ElementarySubChange<E> added(List<? extends E> added,
@@ -322,7 +321,7 @@ public class ListChangeListenerHelper<E> {
 
 		/**
 		 * Creates a new
-		 * {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 * {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 * representing a permutation.
 		 *
 		 * @param <E>
@@ -335,7 +334,7 @@ public class ListChangeListenerHelper<E> {
 		 * @param to
 		 *            The end index of the change.
 		 * @return An
-		 *         {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 *         {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 *         representing the change.
 		 */
 		public static <E> ElementarySubChange<E> permutated(int[] permutation,
@@ -346,7 +345,7 @@ public class ListChangeListenerHelper<E> {
 
 		/**
 		 * Creates a new
-		 * {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 * {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 * representing a removal.
 		 *
 		 * @param <E>
@@ -359,7 +358,7 @@ public class ListChangeListenerHelper<E> {
 		 * @param removed
 		 *            The elements that were removed during this change.
 		 * @return An
-		 *         {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 *         {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 *         representing the change.
 		 */
 		public static <E> ElementarySubChange<E> removed(
@@ -370,7 +369,7 @@ public class ListChangeListenerHelper<E> {
 
 		/**
 		 * Creates a new
-		 * {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 * {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 * representing a replacement.
 		 *
 		 * @param <E>
@@ -385,7 +384,7 @@ public class ListChangeListenerHelper<E> {
 		 * @param added
 		 *            The elements that were added during this change.
 		 * @return An
-		 *         {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 *         {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 *         representing the change.
 		 */
 		public static <E> ElementarySubChange<E> replaced(
@@ -405,7 +404,7 @@ public class ListChangeListenerHelper<E> {
 
 		/**
 		 * Creates a new
-		 * {@link org.eclipse.gef4.common.collections.ListChangeListenerHelper.ElementarySubChange}
+		 * {@link org.eclipse.gef4.common.collections.ListListenerHelperEx.ElementarySubChange}
 		 * .
 		 *
 		 * @param kind
@@ -565,20 +564,20 @@ public class ListChangeListenerHelper<E> {
 	private ObservableList<E> source;
 
 	/**
-	 * Constructs a new {@link ListChangeListenerHelper} for the given source
+	 * Constructs a new {@link ListListenerHelperEx} for the given source
 	 * {@link ObservableList}.
 	 *
 	 * @param source
 	 *            The {@link ObservableList} to use as source in change
 	 *            notifications.
 	 */
-	public ListChangeListenerHelper(ObservableList<E> source) {
+	public ListListenerHelperEx(ObservableList<E> source) {
 		this.source = source;
 	}
 
 	/**
 	 * Adds a new {@link InvalidationListener} to this
-	 * {@link ListChangeListenerHelper}. If the same listener is added more than
+	 * {@link ListListenerHelperEx}. If the same listener is added more than
 	 * once, it will be registered more than once and will receive multiple
 	 * change events.
 	 *
@@ -599,8 +598,8 @@ public class ListChangeListenerHelper<E> {
 	}
 
 	/**
-	 * Adds a new {@link SetMultimapChangeListener} to this
-	 * {@link ListChangeListenerHelper}. If the same listener is added more than
+	 * Adds a new {@link ListChangeListener} to this
+	 * {@link ListListenerHelperEx}. If the same listener is added more than
 	 * once, it will be registered more than once and will receive multiple
 	 * change events.
 	 *
@@ -622,7 +621,7 @@ public class ListChangeListenerHelper<E> {
 
 	/**
 	 * Notifies all attached {@link InvalidationListener}s and
-	 * {@link MultisetChangeListener}s about the change.
+	 * {@link ListChangeListener}s about the change.
 	 *
 	 * @param change
 	 *            The change to notify listeners about.
@@ -637,7 +636,7 @@ public class ListChangeListenerHelper<E> {
 
 	/**
 	 * Returns the source {@link ObservableList} this
-	 * {@link ListChangeListenerHelper} is bound to, which is used in change
+	 * {@link ListListenerHelperEx} is bound to, which is used in change
 	 * notifications.
 	 *
 	 * @return The source {@link ObservableList}.
@@ -668,7 +667,7 @@ public class ListChangeListenerHelper<E> {
 	}
 
 	/**
-	 * Notifies the attached {@link MultisetChangeListener}s about the related
+	 * Notifies the attached {@link ListChangeListener}s about the related
 	 * change.
 	 *
 	 * @param change
@@ -695,7 +694,7 @@ public class ListChangeListenerHelper<E> {
 
 	/**
 	 * Removes the given {@link InvalidationListener} from this
-	 * {@link ListChangeListenerHelper}. If its was registered more than once,
+	 * {@link ListListenerHelperEx}. If its was registered more than once,
 	 * removes one occurrence.
 	 *
 	 * @param listener
@@ -727,7 +726,7 @@ public class ListChangeListenerHelper<E> {
 
 	/**
 	 * Removes the given {@link ListChangeListener} from this
-	 * {@link ListChangeListenerHelper}. If its was registered more than once,
+	 * {@link ListListenerHelperEx}. If its was registered more than once,
 	 * removes one occurrence.
 	 *
 	 * @param listener
