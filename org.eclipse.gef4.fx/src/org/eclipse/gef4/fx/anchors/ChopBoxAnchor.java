@@ -254,7 +254,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 *         to the given reference point.
 		 */
 		// TODO: Move to GEF4 geometry
-		public static Point getHorizontalProjection(ICurve curve,
+		private static Point getHorizontalProjection(ICurve curve,
 				Point reference) {
 			// Determine points on curve with same y-coordinate; by computing a
 			// line
@@ -278,6 +278,55 @@ public class ChopBoxAnchor extends AbstractAnchor {
 
 		/**
 		 * Returns a point on the {@link ICurve} for which holds that its
+		 * x-coordinate or y-coordinate is the same as that of the given
+		 * reference point, and its distance to the given reference point is
+		 * minimal (i.e. there is no other point with the same x-coordinate or
+		 * y-coordinate that has a smaller distance).
+		 *
+		 * @param curve
+		 *            The {@link ICurve} to test. The returned {@link Point} has
+		 *            to be contained by it.
+		 *
+		 * @param reference
+		 *            The reference point which is used to determine the
+		 *            distance.
+		 * @return The point on the {@link ICurve} that is horizontally or
+		 *         vertically nearest to the given reference point.
+		 */
+		// TODO: Move to GEF4 Geometry
+		private static Point getOrthogonalProjection(ICurve curve,
+				Point reference) {
+			Point nearestHorizonalProjection = getHorizontalProjection(curve,
+					reference);
+			if (nearestHorizonalProjection == null) {
+				// if there is no horizontal projection, the vertical one has to
+				// be
+				// minimal (if it exists)
+				return getVerticalProjection(curve, reference);
+			} else {
+				Point nearestVerticalProjection = getVerticalProjection(curve,
+						reference);
+				if (nearestVerticalProjection == null) {
+					// if there is no vertical projection, the horizontal one
+					// has to
+					// be minimal
+					return nearestHorizonalProjection;
+				} else {
+					// compute whether horizontal or vertical is minimal
+					double horizontalDistance = nearestHorizonalProjection
+							.getDistance(reference);
+					double verticalDistance = nearestVerticalProjection
+							.getDistance(reference);
+					if (horizontalDistance <= verticalDistance) {
+						return nearestHorizonalProjection;
+					}
+					return nearestVerticalProjection;
+				}
+			}
+		}
+
+		/**
+		 * Returns a point on the {@link ICurve} for which holds that its
 		 * x-coordinate is the same as that of the given reference point, and
 		 * its distance to the given reference point is minimal (i.e. there is
 		 * no other point with the same x-coordinate that has a smaller
@@ -294,7 +343,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 *         the given reference point.
 		 */
 		// TODO: move to GEF4 geometry
-		public static Point getVerticalProjection(ICurve curve,
+		private static Point getVerticalProjection(ICurve curve,
 				Point reference) {
 			// Determine points on curve with same x-coordinate; by computing a
 			// line
@@ -347,54 +396,6 @@ public class ChopBoxAnchor extends AbstractAnchor {
 				}
 			}
 			return nearestOrthogonalProjectionInScene;
-		}
-
-		/**
-		 * Returns a point on the {@link ICurve} for which holds that its
-		 * x-coordinate or y-coordinate is the same as that of the given
-		 * reference point, and its distance to the given reference point is
-		 * minimal (i.e. there is no other point with the same x-coordinate or
-		 * y-coordinate that has a smaller distance).
-		 *
-		 * @param curve
-		 *            The {@link ICurve} to test. The returned {@link Point} has
-		 *            to be contained by it.
-		 *
-		 * @param reference
-		 *            The reference point which is used to determine the
-		 *            distance.
-		 * @return The point on the {@link ICurve} that is horizontally or
-		 *         vertically nearest to the given reference point.
-		 */
-		// TODO: Move to GEF4 Geometry
-		public Point getOrthogonalProjection(ICurve curve, Point reference) {
-			Point nearestHorizonalProjection = getHorizontalProjection(curve,
-					reference);
-			if (nearestHorizonalProjection == null) {
-				// if there is no horizontal projection, the vertical one has to
-				// be
-				// minimal (if it exists)
-				return getVerticalProjection(curve, reference);
-			} else {
-				Point nearestVerticalProjection = getVerticalProjection(curve,
-						reference);
-				if (nearestVerticalProjection == null) {
-					// if there is no vertical projection, the horizontal one
-					// has to
-					// be minimal
-					return nearestHorizonalProjection;
-				} else {
-					// compute whether horizontal or vertical is minimal
-					double horizontalDistance = nearestHorizonalProjection
-							.getDistance(reference);
-					double verticalDistance = nearestVerticalProjection
-							.getDistance(reference);
-					if (horizontalDistance <= verticalDistance) {
-						return nearestHorizonalProjection;
-					}
-					return nearestVerticalProjection;
-				}
-			}
 		}
 
 	}
