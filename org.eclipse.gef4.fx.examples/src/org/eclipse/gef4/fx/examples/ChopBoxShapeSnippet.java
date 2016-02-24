@@ -86,7 +86,7 @@ public class ChopBoxShapeSnippet extends AbstractFxExample {
 		Scene scene = new Scene(root, 500, 400);
 
 		// create choice box to select shape
-		ChoiceBox<String> shapeChoiceBox = new ChoiceBox<String>();
+		ChoiceBox<String> shapeChoiceBox = new ChoiceBox<>();
 		shapeChoiceBox.getItems().addAll("Arc", "Circle", "CubicCurve",
 				"Ellipse", "Line", "Path", "Polygon", "Polyline", "QuadCurve",
 				"Rectangle", "Star Polygon");

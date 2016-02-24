@@ -154,7 +154,7 @@ public class FXDefaultSelectionFeedbackPartFactory
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
 					// TODO (#471628): inject; maybe extend IComputationStrategy
 					// interface
-					private final ChopBoxAnchor.IComputationStrategy.Impl computationStrategy = new ChopBoxAnchor.IComputationStrategy.Impl();
+					private final ChopBoxAnchor.ProjectionStrategy computationStrategy = new ChopBoxAnchor.ProjectionStrategy();
 
 					private Point computePosition(Node anchoredVisual,
 							IGeometry anchoredGeometryInLocal,

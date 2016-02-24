@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.AbstractComputationStrategy;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -55,7 +56,7 @@ import javafx.scene.text.Text;
 public class ChopBoxELetterSnippet extends AbstractFxExample {
 
 	private static class ComputationStrategy
-			extends ChopBoxAnchor.IComputationStrategy.Impl {
+			extends ChopBoxAnchor.ProjectionStrategy {
 
 		@Override
 		protected Point computeAnchorageReferencePointInScene(Node node,
@@ -429,8 +430,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 			double distance = FX2Geometry.toPoint(vertexInScene)
 					.getDistance(FX2Geometry.toPoint(boundsCenterInScene));
 			final Text distanceText = createDistanceText(distance);
-			Vector direction = new Vector(
-					FX2Geometry.toPoint(vertexInScene),
+			Vector direction = new Vector(FX2Geometry.toPoint(vertexInScene),
 					FX2Geometry.toPoint(boundsCenterInScene));
 			Point labelPosition = isMinDistance
 					? FX2Geometry.toPoint(vertexInScene).getTranslated(
@@ -614,8 +614,8 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		}
 		List<Node> intersectionNodes = new ArrayList<>();
 		ICurve eLetterOutline = (ICurve) NodeUtils.localToScene(eLetterShape,
-				computationStrategy.getOutlines(eLetterShape.getGeometry())
-						.get(0));
+				AbstractComputationStrategy
+						.getOutlineSegments(eLetterShape.getGeometry()).get(0));
 		org.eclipse.gef4.geometry.planar.Line referenceLine = new org.eclipse.gef4.geometry.planar.Line(
 				referencePosition, eLetterReferencePoint);
 		Point[] intersectionPoints = eLetterOutline
