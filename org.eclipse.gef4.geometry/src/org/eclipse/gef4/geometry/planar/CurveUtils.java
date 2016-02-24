@@ -161,6 +161,30 @@ class CurveUtils {
 	}
 
 	/**
+	 * Returns the overlaps between the given two {@link ICurve curves}, if the
+	 * given two {@link ICurve curves} overlap.
+	 *
+	 * @param curve1
+	 *            The first {@link ICurve}, for which to compute overlaps.
+	 * @param curve2
+	 *            The second {@link ICurve}, for which to compute overlaps.
+	 * @return An array of {@link ICurve curves} representing overlaps between
+	 *         the two given curves. An empty array in case the curves do not
+	 *         overlap.
+	 */
+	public static ICurve[] getOverlaps(ICurve curve1, ICurve curve2) {
+		Set<ICurve> overlaps = new HashSet<>();
+
+		for (BezierCurve bezier1 : curve1.toBezier()) {
+			for (BezierCurve bezier2 : curve2.toBezier()) {
+				overlaps.add(bezier1.getOverlap(bezier2));
+			}
+		}
+
+		return overlaps.toArray(new ICurve[] {});
+	}
+	
+	/**
 	 * Checks if the given {@link ICurve}s intersect in a finite number of
 	 * {@link Point}s.
 	 *

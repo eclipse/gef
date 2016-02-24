@@ -1873,6 +1873,11 @@ public class BezierCurve extends AbstractGeometry
 	}
 
 	@Override
+	public final ICurve[] getOverlaps(ICurve c) {
+		return CurveUtils.getOverlaps(this, c);
+	}
+
+	@Override
 	public Point getP1() {
 		return points[0].toPoint();
 	}

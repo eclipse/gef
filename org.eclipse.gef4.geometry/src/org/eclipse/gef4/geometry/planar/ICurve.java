@@ -39,9 +39,19 @@ public interface ICurve extends IGeometry {
 	 *
 	 * @param c
 	 *            The {@link ICurve} to compute intersection points with.
-	 * @return the points of intersection.
+	 * @return The points of intersection.
 	 */
 	public Point[] getIntersections(final ICurve c);
+
+	/**
+	 * Returns the curve segments at which this {@link ICurve} and the given
+	 * {@link ICurve} overlap.
+	 *
+	 * @param c
+	 *            The curve to compute overlaps with.
+	 * @return The segments where both curves overlap.
+	 */
+	public ICurve[] getOverlaps(final ICurve c);
 
 	/**
 	 * Returns a {@link Point} representing the start point of this

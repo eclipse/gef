@@ -244,6 +244,12 @@ public class PolyBezier extends AbstractGeometry
 	}
 
 	@Override
+
+	public ICurve[] getOverlaps(ICurve c) {
+		return CurveUtils.getOverlaps(this, c);
+	}
+
+	@Override
 	public Point getP1() {
 		return beziers[0].getP1();
 	}

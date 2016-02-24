@@ -124,6 +124,11 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	public Point[] getIntersections(ICurve c) {
 		return CurveUtils.getIntersections(this, c);
 	}
+	
+	@Override
+	public ICurve[] getOverlaps(ICurve c) {
+		return CurveUtils.getOverlaps(this, c);
+	}
 
 	@Override
 	public PolyBezier getRotatedCCW(Angle angle) {

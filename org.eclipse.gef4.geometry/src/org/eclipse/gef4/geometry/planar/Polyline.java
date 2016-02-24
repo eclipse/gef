@@ -158,6 +158,12 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	}
 
 	@Override
+
+	public ICurve[] getOverlaps(ICurve c) {
+		return CurveUtils.getOverlaps(this, c);
+	}
+
+	@Override
 	public Point getP1() {
 		return points[0].getCopy();
 	}
