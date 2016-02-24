@@ -277,6 +277,9 @@ public class Point implements Cloneable, Serializable {
 	 * @return One of the candidates with minimal distance.
 	 */
 	public static Point nearest(Point referencePoint, Point[] candidates) {
+		if (candidates.length == 0) {
+			return null;
+		}
 		// find nearest point
 		Point nearest = candidates[0];
 		double minDistance = referencePoint.getDistance(nearest);
