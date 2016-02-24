@@ -1838,11 +1838,6 @@ public class BezierCurve extends AbstractGeometry
 		return intersections.toArray(new Point[] {});
 	}
 
-	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
-	}
-
 	/**
 	 * <p>
 	 * Returns a {@link BezierCurve} that represents the overlap of this

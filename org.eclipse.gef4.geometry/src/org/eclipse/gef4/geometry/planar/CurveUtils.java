@@ -161,55 +161,19 @@ class CurveUtils {
 	}
 
 	/**
-	 * Returns the intersection point of the given {@link ICurve} that has the
-	 * smallest distance to the given reference {@link Point}. If there are
-	 * multiple intersection points with the same distance, an arbitrary one
-	 * will be returned.
-	 *
-	 * @param curve1
-	 *            The first {@link ICurve} to intersect
-	 * @param curve2
-	 *            The second {@link ICurve} to intersect
-	 * @param reference
-	 *            The reference {@link Point} to compute the nearest
-	 *            intersection point to.
-	 * @return A {@link Point} representing an intersection point with the
-	 *         minimal distance to the given reference {@link Point}, or
-	 *         <code>null</code> if there is no intersection.
-	 */
-	public static Point getNearestIntersection(ICurve curve1, ICurve curve2,
-			Point reference) {
-		Point[] intersections = getIntersections(curve1, curve2);
-		if (intersections.length > 0) {
-			// find nearest intersection point
-			Point nearest = intersections[0];
-			double minDistance = reference.getDistance(nearest);
-			for (int i = 1; i < intersections.length; i++) {
-				double d = reference.getDistance(intersections[i]);
-				if (d < minDistance) {
-					minDistance = d;
-					nearest = intersections[i];
-				}
-			}
-			return nearest;
-		}
-		return null;
-	}
-
-	/**
 	 * Checks if the given {@link ICurve}s intersect in a finite number of
 	 * {@link Point}s.
 	 *
 	 * @param c1
-	 *            the first {@link ICurve} to check for intersection
+	 *            The first {@link ICurve} to check for intersection
 	 *            {@link Point}s
 	 * @param c2
-	 *            the second {@link ICurve} to check for intersection
+	 *            The second {@link ICurve} to check for intersection
 	 *            {@link Point}s
 	 * @return <code>true</code> if both {@link ICurve}s have a finite set of
 	 *         intersection {@link Point}s, otherwise <code>false</code>
 	 */
-	public static boolean intersects(ICurve c1, ICurve c2) {
+	public static boolean intersect(ICurve c1, ICurve c2) {
 		return getIntersections(c1, c2).length > 0;
 	}
 
@@ -224,7 +188,7 @@ class CurveUtils {
 	 * @return <code>true</code> if both {@link ICurve}s overlap, otherwise
 	 *         <code>false</code>
 	 */
-	public static boolean overlaps(ICurve c1, ICurve c2) {
+	public static boolean overlap(ICurve c1, ICurve c2) {
 		for (BezierCurve seg1 : c1.toBezier()) {
 			for (BezierCurve seg2 : c2.toBezier()) {
 				if (seg1.overlaps(seg2)) {

@@ -109,10 +109,6 @@ public class QuadraticCurve extends BezierCurve {
 	 * @return the bounds {@link Rectangle}
 	 */
 
-	private Polygon getControlPolygon() {
-		return new Polygon(getP1(), getCtrl(), getP2());
-	}
-
 	/**
 	 * Returns a new {@link QuadraticCurve}, which has the same start, end, and
 	 * control point coordinates as this one.

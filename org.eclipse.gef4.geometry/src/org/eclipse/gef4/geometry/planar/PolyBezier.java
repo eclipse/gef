@@ -244,11 +244,6 @@ public class PolyBezier extends AbstractGeometry
 	}
 
 	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
-	}
-
-	@Override
 	public Point getP1() {
 		return beziers[0].getP1();
 	}
@@ -359,12 +354,12 @@ public class PolyBezier extends AbstractGeometry
 
 	@Override
 	public boolean intersects(ICurve c) {
-		return CurveUtils.intersects(c, this);
+		return CurveUtils.intersect(c, this);
 	}
 
 	@Override
 	public boolean overlaps(ICurve c) {
-		return CurveUtils.overlaps(c, this);
+		return CurveUtils.overlap(c, this);
 	}
 
 	/**

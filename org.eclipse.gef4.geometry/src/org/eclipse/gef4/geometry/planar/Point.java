@@ -267,6 +267,30 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns (one of) the candidate(s) with minimal distance to the given
+	 * reference point.
+	 *
+	 * @param referencePoint
+	 *            The reference point, to which distance has to be minimal.
+	 * @param candidates
+	 *            The points from which to choose the one with minimal distance.
+	 * @return One of the candidates with minimal distance.
+	 */
+	public static Point nearest(Point referencePoint, Point[] candidates) {
+		// find nearest point
+		Point nearest = candidates[0];
+		double minDistance = referencePoint.getDistance(nearest);
+		for (int i = 1; i < candidates.length; i++) {
+			double d = referencePoint.getDistance(candidates[i]);
+			if (d < minDistance) {
+				minDistance = d;
+				nearest = candidates[i];
+			}
+		}
+		return nearest;
+	}
+
+	/**
 	 * Rotates (in-place) the given {@link Point}s counter-clock-wise (CCW) by
 	 * the specified {@link Angle} around the given center {@link Point}.
 	 *

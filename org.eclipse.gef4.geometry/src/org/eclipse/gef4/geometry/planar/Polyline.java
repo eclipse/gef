@@ -158,11 +158,6 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	}
 
 	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
-	}
-
-	@Override
 	public Point getP1() {
 		return points[0].getCopy();
 	}
@@ -199,12 +194,12 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 
 	@Override
 	public boolean intersects(ICurve c) {
-		return CurveUtils.intersects(c, this);
+		return CurveUtils.intersect(c, this);
 	}
 
 	@Override
 	public boolean overlaps(ICurve c) {
-		return CurveUtils.overlaps(c, this);
+		return CurveUtils.overlap(c, this);
 	}
 
 	@Override

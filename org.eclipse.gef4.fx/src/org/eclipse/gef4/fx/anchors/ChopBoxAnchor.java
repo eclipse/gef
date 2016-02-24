@@ -24,8 +24,8 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IComputationStrategy.Impl;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -225,10 +225,11 @@ public class ChopBoxAnchor extends AbstractAnchor {
 				Point nearestIntersectionInScene = null;
 				double nearestDistance = 0d;
 				for (ICurve anchorageOutlineInScene : anchorageOutlinesInScene) {
-					Point nearestIntersection = anchorageOutlineInScene
-							.getNearestIntersection(referenceLineInScene,
-									anchoredReferencePointInScene);
-					if (nearestIntersection != null) {
+					Point[] intersections = anchorageOutlineInScene
+							.getIntersections(referenceLineInScene);
+					if (intersections.length > 0) {
+						Point nearestIntersection = Point.nearest(
+								anchoredReferencePointInScene, intersections);
 						double distance = anchoredReferencePointInScene
 								.getDistance(nearestIntersection);
 						if (nearestIntersectionInScene == null
@@ -624,10 +625,9 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 */
 	protected Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
-		return FX2Geometry.toPoint(anchored
-				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
-						.computePositionInScene(getAnchorage(), anchored,
-								anchoredReferencePointInLocal))));
+		return FX2Geometry.toPoint(anchored.sceneToLocal(Geometry2FX.toFXPoint(
+				computationStrategy.computePositionInScene(getAnchorage(),
+						anchored, anchoredReferencePointInLocal))));
 	}
 
 	/**

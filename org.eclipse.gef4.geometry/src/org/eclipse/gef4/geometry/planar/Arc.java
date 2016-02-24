@@ -121,11 +121,6 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	}
 
 	@Override
-	public Point getNearestIntersection(ICurve c, Point reference) {
-		return CurveUtils.getNearestIntersection(this, c, reference);
-	}
-
-	@Override
 	public Point[] getIntersections(ICurve c) {
 		return CurveUtils.getIntersections(this, c);
 	}

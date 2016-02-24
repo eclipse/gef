@@ -44,19 +44,6 @@ public interface ICurve extends IGeometry {
 	public Point[] getIntersections(final ICurve c);
 
 	/**
-	 * Returns an intersection point between this {@link ICurve} and the given
-	 * {@link ICurve} with minimal distance to the given reference point.
-	 *
-	 * @param curve
-	 *            The {@link ICurve} to intersect with.
-	 * @param reference
-	 *            The reference {@link Point} to which the intersection point
-	 *            will have to have the nearest distance.
-	 * @return The point of interaction nearest to the given reference point.
-	 */
-	public Point getNearestIntersection(final ICurve curve, Point reference);
-
-	/**
 	 * Returns a {@link Point} representing the start point of this
 	 * {@link ICurve}.
 	 *
