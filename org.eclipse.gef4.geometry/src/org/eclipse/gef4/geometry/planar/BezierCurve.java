@@ -104,7 +104,7 @@ public class BezierCurve extends AbstractGeometry
 	 * sub-curves of a {@link BezierCurve} by bounding the {@link BezierCurve}'s
 	 * parameter value to the respective interval.
 	 */
-	public static final class Interval {
+	static final class Interval {
 
 		/**
 		 * Constructs a new {@link Interval} object holding an invalid parameter
@@ -279,7 +279,7 @@ public class BezierCurve extends AbstractGeometry
 	 * An {@link IntervalPair} combines two {@link BezierCurve}s and their
 	 * corresponding parameter ranges.
 	 */
-	public static final class IntervalPair {
+	static final class IntervalPair {
 
 		/**
 		 * The first {@link BezierCurve}.
@@ -1749,7 +1749,7 @@ public class BezierCurve extends AbstractGeometry
 	 *         intersection. For an infinite number of intersection
 	 *         {@link Point}s, an empty {@link Set} is returned.
 	 */
-	public Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
+	protected Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
 			Set<Point> intersections) {
 		Set<IntervalPair> intervalPairs = new HashSet<>();
 		Set<IntervalPair> endPointIntervalPairs = new HashSet<>();
