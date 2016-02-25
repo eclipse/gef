@@ -35,8 +35,10 @@ import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
@@ -683,6 +685,14 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		}
 	}
 
+	/**
+	 * The name of the {@link #computationStrategyProperty() computation
+	 * strategy property}.
+	 */
+	public static final String COMPUTATION_STRATEGY_PROPERTY = "computationStrategy";
+
+	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ProjectionStrategy();
+
 	private Map<AnchorKey, IReferencePointProvider> anchoredReferencePointProviders = new HashMap<>();
 
 	private MapChangeListener<AnchorKey, Point> anchoredReferencePointsChangeListener = new MapChangeListener<AnchorKey, Point>() {
@@ -712,7 +722,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		}
 	};
 
-	private IComputationStrategy computationStrategy;
+	private ObjectProperty<IComputationStrategy> computationStrategyProperty;
 
 	/**
 	 * Constructs a new {@link ChopBoxAnchor} for the given anchorage visual.
@@ -722,7 +732,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 *            The anchorage visual.
 	 */
 	public ChopBoxAnchor(Node anchorage) {
-		this(anchorage, new ProjectionStrategy());
+		super(anchorage);
 	}
 
 	/**
@@ -737,7 +747,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	public ChopBoxAnchor(Node anchorage,
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
-		this.computationStrategy = computationStrategy;
+		setComputationStrategy(computationStrategy);
 	}
 
 	/**
@@ -773,6 +783,21 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		// add listener to reference point changes
 		referencePointProvider.referencePointProperty()
 				.addListener(anchoredReferencePointsChangeListener);
+	}
+
+	/**
+	 * Returns a writable object property for the {@link IComputationStrategy}
+	 * used by this {@link ChopBoxAnchor}.
+	 *
+	 * @return A writable property.
+	 */
+	public ObjectProperty<IComputationStrategy> computationStrategyProperty() {
+		if (computationStrategyProperty == null) {
+			computationStrategyProperty = new SimpleObjectProperty<>(this,
+					COMPUTATION_STRATEGY_PROPERTY,
+					DEFAULT_COMPUTATION_STRATEGY);
+		}
+		return computationStrategyProperty;
 	}
 
 	/**
@@ -814,7 +839,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	protected Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
 		return FX2Geometry.toPoint(anchored.sceneToLocal(Geometry2FX.toFXPoint(
-				computationStrategy.computePositionInScene(getAnchorage(),
+				getComputationStrategy().computePositionInScene(getAnchorage(),
 						anchored, anchoredReferencePointInLocal))));
 	}
 
@@ -851,6 +876,29 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		super.detach(key, info);
 
 		anchoredReferencePointProviders.remove(key);
+	}
+
+	/**
+	 * Returns the computation strategy used by this {@link ChopBoxAnchor}.
+	 *
+	 * @return The computation strategy being used.
+	 */
+	public IComputationStrategy getComputationStrategy() {
+		return computationStrategyProperty == null
+				? DEFAULT_COMPUTATION_STRATEGY
+				: computationStrategyProperty().get();
+	}
+
+	/**
+	 * Sets the given {@link IComputationStrategy} for this
+	 * {@link ChopBoxAnchor}.
+	 *
+	 * @param computationStrategy
+	 *            The new {@link IComputationStrategy} to use.
+	 */
+	public void setComputationStrategy(
+			IComputationStrategy computationStrategy) {
+		computationStrategyProperty().set(computationStrategy);
 	}
 
 }
