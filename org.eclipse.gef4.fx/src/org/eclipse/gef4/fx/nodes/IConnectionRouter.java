@@ -27,7 +27,9 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 public interface IConnectionRouter {
 
 	/**
-	 * Computes the {@link ICurve} geometry for the given connection.
+	 * Computes the {@link ICurve} geometry for the given connection. If
+	 * necessary, the {@link IConnectionRouter router} may also adjust the
+	 * {@link Connection connection's} control points.
 	 *
 	 * @param connection
 	 *            The {@link Connection} to route.
