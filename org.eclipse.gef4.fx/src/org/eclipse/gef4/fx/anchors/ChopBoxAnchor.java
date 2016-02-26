@@ -71,6 +71,34 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	public static abstract class AbstractComputationStrategy
 			implements IComputationStrategy {
 		/**
+		 * Creates a geometry representing the outline of the given {@link Node}
+		 * .
+		 *
+		 * @param node
+		 *            The node to infer an outline geometry for.
+		 * @return An {@link IGeometry} from which the outline may be retrieved.
+		 */
+		public static IGeometry getOutlineGeometry(Node node) {
+			IGeometry geometry = null;
+			// TODO: Refactor that control flow is hanled via exceptions
+			try {
+				geometry = NodeUtils.getGeometricOutline(node);
+			} catch (IllegalArgumentException e) {
+			}
+
+			// resize to layout-bounds to include stroke if not a curve
+			if (geometry instanceof IShape) {
+				return NodeUtils.getResizedToShapeBounds(node, geometry);
+			}
+
+			// fall back to layout-bounds
+			if (geometry == null) {
+				geometry = FX2Geometry.toRectangle(node.getLayoutBounds());
+			}
+			return geometry;
+		}
+
+		/**
 		 * Determines the outline of the given {@link IGeometry}, represented as
 		 * a list of {@link ICurve}s.
 		 *
@@ -106,26 +134,10 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * @return The anchorage reference geometry within the local coordinate
 		 *         system of the given anchorage visual.
 		 */
+		// TODO: move to somewhere appropriate
 		protected IGeometry getAnchorageReferenceGeometryInLocal(
 				Node anchorage) {
-			IGeometry geometry = null;
-			// TODO: Refactor that control flow is hanled via exceptions
-			try {
-				geometry = NodeUtils.getGeometricOutline(anchorage);
-			} catch (IllegalArgumentException e) {
-			}
-
-			// resize to layout-bounds to include stroke if not a curve
-			if (geometry instanceof IShape) {
-				return NodeUtils.getResizedToShapeBounds(anchorage, geometry);
-			}
-
-			// fall back to layout-bounds
-			if (geometry == null) {
-				geometry = FX2Geometry.toRectangle(anchorage.getLayoutBounds());
-			}
-
-			return geometry;
+			return getOutlineGeometry(anchorage);
 		}
 
 		/**
@@ -137,6 +149,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * @return The anchorage reference geometry within the global scene
 		 *         coordinate system.
 		 */
+		// TODO: Move to somewhere appropriate
 		protected IGeometry getAnchorageReferenceGeometryInScene(
 				Node anchorage) {
 			return NodeUtils.localToScene(anchorage,
