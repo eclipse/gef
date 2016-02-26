@@ -73,9 +73,9 @@ import javafx.scene.transform.Translate;
  * <p>
  * Whether the control points are interpreted as way points (that lie on the
  * curve) or as 'real' control points depends on the {@link IConnectionRouter}.
- * While {@link PolylineRouter} and {@link PolyBezierInterpolationRouter} interpret
- * control points to be way points, other routers may e.g. interpret them as the
- * control points of a {@link BezierCurve}.
+ * While {@link PolylineRouter} and {@link PolyBezierInterpolationRouter}
+ * interpret control points to be way points, other routers may e.g. interpret
+ * them as the control points of a {@link BezierCurve}.
  * <P>
  * In addition to the curve shape, the visual appearance of a {@link Connection}
  * can be controlled via start and end decorations. They will be rendered
@@ -1238,7 +1238,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 		inRefresh = true;
 
 		// TODO: guard against router value being null
-		ICurve newGeometry = routerProperty.get().route(this);
+		ICurve newGeometry = getRouter().route(this);
 
 		// clear visuals except for the curveNode
 		getChildren().retainAll(curveNode);
