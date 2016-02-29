@@ -177,13 +177,16 @@ class CurveUtils {
 
 		for (BezierCurve bezier1 : curve1.toBezier()) {
 			for (BezierCurve bezier2 : curve2.toBezier()) {
-				overlaps.add(bezier1.getOverlap(bezier2));
+				BezierCurve overlap = bezier1.getOverlap(bezier2);
+				if (overlap != null) {
+					overlaps.add(overlap);
+				}
 			}
 		}
 
 		return overlaps.toArray(new ICurve[] {});
 	}
-	
+
 	/**
 	 * Checks if the given {@link ICurve}s intersect in a finite number of
 	 * {@link Point}s.
