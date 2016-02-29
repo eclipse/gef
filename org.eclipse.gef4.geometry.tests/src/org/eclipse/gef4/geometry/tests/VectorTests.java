@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2014 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -25,11 +25,11 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link Vector}.
- * 
+ *
  * @author aboyko
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class VectorTests {
 
@@ -216,13 +216,13 @@ public class VectorTests {
 
 		/*
 		 * the description of the method is mistakable:
-		 * 
+		 *
 		 * 1) does it mean that an angle of 180 degrees returns the same
 		 * dissimilarity as an angle of 0 degrees?
-		 * 
+		 *
 		 * 2) or does it mean that an angle of 180 degrees returns the highest
 		 * dissimilarity?
-		 * 
+		 *
 		 * the following code expects the first case
 		 */
 
@@ -238,6 +238,7 @@ public class VectorTests {
 	@Test
 	public void test_getDivided() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				for (double r = -2; r <= 2; r += 0.2) {
 					// TODO: no PrecisionUtils in getDivided()
@@ -306,6 +307,7 @@ public class VectorTests {
 		final Vector x = new Vector(1, 0);
 
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				assertTrue(a.x != 0);
 				assertTrue(a.y != 0);
@@ -327,6 +329,7 @@ public class VectorTests {
 		assertTrue(a.getOrthogonalComplement().equals(new Vector(5, 3)));
 
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				assertTrue(PrecisionUtils.equal(
 						a.getOrthogonalComplement().getDotProduct(a), 0));
@@ -359,8 +362,10 @@ public class VectorTests {
 	@Test
 	public void test_isHorizontal() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
-				assertTrue(a.isHorizontal() != PrecisionUtils.equal(a.x, 0));
+				assertTrue(a.isHorizontal() == (!PrecisionUtils.equal(a.x, 0)
+						&& PrecisionUtils.equal(a.y, 0)));
 			}
 		});
 	}
@@ -368,6 +373,7 @@ public class VectorTests {
 	@Test
 	public void test_isNull() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				assertTrue(a.isNull() == (PrecisionUtils.equal(a.x, 0)
 						&& PrecisionUtils.equal(a.y, 0)));
@@ -401,8 +407,10 @@ public class VectorTests {
 	@Test
 	public void test_isVertical() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
-				assertTrue(a.isVertical() != PrecisionUtils.equal(a.y, 0));
+				assertTrue(a.isVertical() == (!PrecisionUtils.equal(a.y, 0)
+						&& PrecisionUtils.equal(a.x, 0)));
 			}
 		});
 	}
@@ -410,6 +418,7 @@ public class VectorTests {
 	@Test
 	public void test_rotateCCW() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				for (double alpha = 0; alpha <= 4 * Math.PI; alpha += 0.1) {
 					Angle angle = Angle.fromRad(alpha);
@@ -429,6 +438,7 @@ public class VectorTests {
 	@Test
 	public void test_rotateCW() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				for (double alpha = 0; alpha <= 4 * Math.PI; alpha += 0.1) {
 					Angle angle = Angle.fromRad(alpha);
@@ -447,6 +457,7 @@ public class VectorTests {
 	@Test
 	public void test_toPoint() {
 		forVectors(new VectorAction() {
+			@Override
 			public void action(Vector a) {
 				Point p = a.toPoint();
 				assertTrue(PrecisionUtils.equal(a.x, p.x));

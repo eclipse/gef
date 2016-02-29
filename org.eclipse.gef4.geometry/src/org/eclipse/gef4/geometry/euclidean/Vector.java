@@ -386,14 +386,16 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Checks if this {@link Vector}'s horizontal component (the x coordinate)
-	 * does not equal 0.
+	 * Checks if this {@link Vector} is horizontal, i.e. whether its horizontal
+	 * component (the x coordinate) does not equal 0, while its vertical
+	 * component (the y coordinate) does.
 	 *
 	 * @return <code>true</code> if this {@link Vector}'s x coordinate does not
-	 *         equal 0, otherwise <code>false</code>
+	 *         equal 0 and this {@link Vector}'s y coordinate does equal 0,
+	 *         otherwise <code>false</code>
 	 */
 	public boolean isHorizontal() {
-		return !PrecisionUtils.equal(x, 0);
+		return !PrecisionUtils.equal(x, 0) && PrecisionUtils.equal(y, 0);
 	}
 
 	/**
@@ -437,14 +439,15 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Checks if this {@link Vector}'s vertical component (the y coordinate)
-	 * does not equal 0.
+	 * Checks if this {@link Vector} is vertical, i.e. whether its vertical
+	 * component (the x coordinate) does not equal 0, while its horizontal
+	 * component (the y coordinate) does.
 	 *
 	 * @return <code>true</code> if this {@link Vector}'s y coordinate does not
-	 *         equal 0, otherwise <code>false</code>
+	 *         equal 0 and this {@link Vector}'s x coordinate does equal 0,
 	 */
 	public boolean isVertical() {
-		return !PrecisionUtils.equal(y, 0);
+		return !PrecisionUtils.equal(y, 0) && PrecisionUtils.equal(x, 0);
 	}
 
 	/**

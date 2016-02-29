@@ -336,6 +336,35 @@ public class Line extends BezierCurve {
 	}
 
 	/**
+	 * Returns the single point on this {@link Line} that is nearest to the
+	 * given {@link Point}. Will return the start or end point (whichever is
+	 * nearer) of this {@link Line} in case the projection of the point lies
+	 * outside.
+	 *
+	 * @param p
+	 *            The {@link Point} to project onto this {@link Line}.
+	 * @return The nearest point on this line to the given point.
+	 */
+	// TODO: This method should overwrite a more general from
+	// ICurve.getProjection(Point), which requires that we implement projection
+	// of points to beziers (see bug #488354)
+	// This implementation should nevertheless be preserved as more
+	// efficient/precise optimization that is specific to Line.
+	public Point getProjection(Point p) {
+		Straight s = new Straight(this);
+		Point projected = s.getProjection(new Vector(p)).toPoint();
+		// XXX: We can use our bounds to do a simple containment test here, as
+		// the point was already projected onto the straight through this line.
+		// If its not located within the bounds, its not on this line and we
+		// have to return start or end point as nearest point.
+		if (getBounds().contains(projected)) {
+			return projected;
+		} else {
+			return Point.nearest(projected, getPoints());
+		}
+	}
+
+	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
