@@ -165,16 +165,18 @@ public class OrthogonalRouter implements IConnectionRouter {
 
 	@Override
 	public void route(Connection connection) {
-		// XXX: Route may be invoked multiple times until the anchor positions
-		// are property computed (because transforms change, etc.); we need to
-		// clean those points we have inserted before to guarantee that we only
-		// do 'minimal' routing
-		Point[] points = connection.getPoints().toArray(new Point[] {});
-		if (points == null || points.length < 2) {
+		if (connection.getPoints().size() < 2) {
+			// we cannot route if the connection does not have at least start
+			// and end points.
 			return;
 		}
 
-		// remove way points added through a preceding routing step
+		// XXX: Route may be invoked multiple times until the anchor positions
+		// are property computed (because transforms change, etc.); we need to
+		// remove those points we have inserted in a preceding pass to
+		// guarantee that we only do 'minimal' routing; as we use a special
+		// subclass of StaticAnchor, we can easily sort them out through an
+		// instance check.
 		int pointsRemoved = 0;
 		List<IAnchor> controlAnchors = connection.getControlAnchors();
 		for (int i = 0; i < controlAnchors.size(); i++) {
@@ -186,21 +188,20 @@ public class OrthogonalRouter implements IConnectionRouter {
 		}
 
 		// The router will respect the connection's anchors already provided
-		// and will add control anchors were needed. It will proceed all anchors
-		// from start to end and compute the respective direction to the next
-		// anchor. The start and end anchors are treated specifically in case
-		// they are connected, because the automatic position computation of the
-		// anchor has to be ignored here.
+		// and will add control anchors only were needed. It will proceed all
+		// anchors from start to end and compute the respective direction to the
+		// next anchor. For those anchors that are connected, reference points
+		// will be computed.
 		Map<Integer, Point> pointsToInsert = new HashMap<>();
 		Vector previousDirection = null;
 		Vector currentDirection = null;
 		for (int i = 0; i < connection.getPoints().size() - 1; i++) {
 			Point currentPoint = getPosition(connection, i);
-
-			// direction between previous way point and current one
+			// direction between preceding way/control point and current one has
+			// been computed in previous iteration
 			previousDirection = currentDirection;
-			// compute the direction between the current reference
-			// geometry/point and the next one
+			// compute the direction between the current way/control point and
+			// the succeeding one
 			currentDirection = getDirection(connection, i);
 
 			// given the direction, determine if points have to be added
@@ -265,16 +266,14 @@ public class OrthogonalRouter implements IConnectionRouter {
 
 		int pointsInserted = 0;
 		for (int insertionIndex : pointsToInsert.keySet()) {
-			// XXX: we need to keep track of those way points inserted here, so
-			// we can remove them in a succeeding routing pass
+			// XXX: We need to keep track of those way points we insert, so we
+			// can remove them in a succeeding routing pass; we use a special
+			// subclass of StaticAnchor for this purpose, so we can easily
+			// identify them through an instance check.
 			connection.addControlAnchor(insertionIndex + pointsInserted - 1,
 					new OrthogonalPolylineRouterAnchor(connection,
 							pointsToInsert.get(insertionIndex)));
 			pointsInserted++;
 		}
-
-		// TODO: optimize (we could remove points that now lie within a single
-		// segment (i.e. two adjacent segments in same direction (but this would
-		// not be 'minimal' -> should be done by bend policy!
 	}
 }
