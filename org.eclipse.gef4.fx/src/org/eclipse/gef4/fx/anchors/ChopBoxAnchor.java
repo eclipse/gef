@@ -59,7 +59,7 @@ import javafx.scene.Node;
  *
  */
 // TODO: Find an appropriate name for this (outline anchor or shape anchor or
-// perimeter anchor)
+// perimeter anchor, or dynamic anchor)
 // It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class ChopBoxAnchor extends AbstractAnchor {
 
@@ -280,15 +280,62 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			Line line = new Line(bounds.getX(), reference.y,
 					bounds.getX() + bounds.getWidth(), reference.y);
 			if (curve.overlaps(line)) {
-				// ICurve[] overlaps = curve.getOverlaps(line);
-				throw new UnsupportedOperationException("Not yet implemented.");
+				ICurve[] overlaps = curve.getOverlaps(line);
+				// compute nearest of overlaps start and end points
 				// TODO: then compute nearest point on overlap to reference
 				// point
+				Point nearest = null;
+				double distance = 0;
+				for (ICurve overlap : overlaps) {
+					Point currentNearest = Point.nearest(reference,
+							new Point[] { overlap.getP1(), overlap.getP2() });
+					double currentDistance = reference
+							.getDistance(currentNearest);
+					if (nearest == null || currentDistance < distance) {
+						nearest = currentNearest;
+						distance = currentDistance;
+					}
+				}
+				return nearest;
 			} else if (curve.intersects(line)) {
 				return Point.nearest(reference, curve.getIntersections(line));
 			}
 			// no point found for the given y-coordinate
 			return null;
+		}
+
+		/**
+		 * Returns the nearest projection onto the given geometry's rectangular
+		 * bounds. Will ensure that parameter values on the respective outline
+		 * fall into 0.2 .. 0.8.
+		 *
+		 * @param g
+		 *            The {@link IGeometry} whose bounds to use.
+		 * @param p
+		 *            The {@link Point} to project.
+		 * @return The nearest point on the outline segment that lies within the
+		 *         parameter range 0.2 .. 0.8.
+		 */
+		public static Point getNearestBoundsProjection(IGeometry g, Point p) {
+			Line[] outlineSegments = g.getBounds().getOutlineSegments();
+			Point nearestProjection = null;
+			double nearestDistance = 0;
+			for (Line l : outlineSegments) {
+				Point projection = l.getProjection(p);
+				double parameter = l.getParameterAt(projection);
+				if (parameter < 0.2) {
+					parameter = 0.2;
+				} else if (parameter > 0.8) {
+					parameter = 0.8;
+				}
+				projection = l.get(parameter);
+				double distance = p.getDistance(projection);
+				if (nearestProjection == null || distance < nearestDistance) {
+					nearestDistance = distance;
+					nearestProjection = projection;
+				}
+			}
+			return nearestProjection;
 		}
 
 		/**
@@ -361,17 +408,29 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		private static Point getVerticalProjection(ICurve curve,
 				Point reference) {
 			// Determine points on curve with same x-coordinate; by computing a
-			// line
-			// with the respective x-coordinate inside its bounds; then
-			// computing
-			// the nearest intersection on the curve
+			// line with the respective x-coordinate inside its bounds; then
+			// computing the nearest intersection on the curve
 			Rectangle bounds = curve.getBounds();
 			Line line = new Line(reference.x, bounds.getY(), reference.x,
 					bounds.getY() + bounds.getHeight());
 			if (curve.overlaps(line)) {
-				// ICurve[] overlaps = curve.getOverlaps(line);
-				throw new UnsupportedOperationException("Not yet implemented.");
-				// TODO: compute nearest point on overlap to reference point
+				ICurve[] overlaps = curve.getOverlaps(line);
+				// compute nearest of overlaps start and end points
+				// TODO: then compute nearest point on overlap to reference
+				// point
+				Point nearest = null;
+				double distance = 0;
+				for (ICurve overlap : overlaps) {
+					Point currentNearest = Point.nearest(reference,
+							new Point[] { overlap.getP1(), overlap.getP2() });
+					double currentDistance = reference
+							.getDistance(currentNearest);
+					if (nearest == null || currentDistance < distance) {
+						nearest = currentNearest;
+						distance = currentDistance;
+					}
+				}
+				return nearest;
 			} else if (curve.intersects(line)) {
 				return Point.nearest(reference, curve.getIntersections(line));
 			}
@@ -395,7 +454,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					anchorageReferenceGeometryInScene);
 
 			Point nearestOrthogonalProjectionInScene = null;
-			double nearestDistance = Double.MAX_VALUE;
+			double nearestOrthogonalProjectionDistance = Double.MAX_VALUE;
 			for (ICurve segment : anchorageReferenceGeometryOutlineSegmentsInScene) {
 				// determine nearest orthogonal projection of each curve
 				Point projection = getOrthogonalProjection(segment,
@@ -404,15 +463,23 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					double distance = projection
 							.getDistance(anchoredReferencePointInScene);
 					if (nearestOrthogonalProjectionInScene == null
-							|| distance < nearestDistance) {
+							|| distance < nearestOrthogonalProjectionDistance) {
 						nearestOrthogonalProjectionInScene = projection;
-						nearestDistance = distance;
+						nearestOrthogonalProjectionDistance = distance;
 					}
 				}
 			}
-			return nearestOrthogonalProjectionInScene;
-		}
 
+			if (nearestOrthogonalProjectionInScene != null) {
+				return nearestOrthogonalProjectionInScene;
+			} else {
+				// TODO: fall back to closes point (we could extend
+				// ProjectionStrategy and call super here)
+				return getNearestBoundsProjection(
+						anchorageReferenceGeometryInScene,
+						anchoredReferencePointInScene);
+			}
+		}
 	}
 
 	/**
@@ -849,7 +916,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 * @return Point The anchor position within the local coordinate system of
 	 *         the to be anchored {@link Node}.
 	 */
-	protected Point computePosition(Node anchored,
+	public Point computePosition(Node anchored,
 			Point anchoredReferencePointInLocal) {
 		return FX2Geometry.toPoint(anchored.sceneToLocal(Geometry2FX.toFXPoint(
 				getComputationStrategy().computePositionInScene(getAnchorage(),
