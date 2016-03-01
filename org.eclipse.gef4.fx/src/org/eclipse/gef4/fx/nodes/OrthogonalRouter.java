@@ -8,8 +8,6 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
- * Note: Parts of this class have been transferred from org.eclipse.draw2d.ManhattanConnectionRouter.
- *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
