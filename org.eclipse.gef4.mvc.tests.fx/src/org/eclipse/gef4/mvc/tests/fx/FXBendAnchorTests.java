@@ -72,15 +72,6 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		protected void doRefreshVisual(Rectangle visual) {
-			org.eclipse.gef4.geometry.planar.Rectangle rect = (org.eclipse.gef4.geometry.planar.Rectangle) getContent();
-			visual.setX(rect.getX());
-			visual.setY(rect.getY());
-			visual.setWidth(rect.getWidth());
-			visual.setHeight(rect.getHeight());
-		}
-
-		@Override
 		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			return HashMultimap.create();
 		}
@@ -88,6 +79,15 @@ public class FXBendAnchorTests {
 		@Override
 		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
+		}
+
+		@Override
+		protected void doRefreshVisual(Rectangle visual) {
+			org.eclipse.gef4.geometry.planar.Rectangle rect = (org.eclipse.gef4.geometry.planar.Rectangle) getContent();
+			visual.setX(rect.getX());
+			visual.setY(rect.getY());
+			visual.setWidth(rect.getWidth());
+			visual.setHeight(rect.getHeight());
 		}
 	}
 
@@ -142,13 +142,6 @@ public class FXBendAnchorTests {
 		}
 
 		@Override
-		protected void doRefreshVisual(Connection visual) {
-			if (visual.getControlPoints().size() == 0) {
-				visual.addControlPoint(0, ((ConnectionContent) getContent()).getWayPoint());
-			}
-		}
-
-		@Override
 		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
 			ConnectionContent content = (ConnectionContent) getContent();
@@ -160,6 +153,13 @@ public class FXBendAnchorTests {
 		@Override
 		protected List<? extends Object> doGetContentChildren() {
 			return Collections.emptyList();
+		}
+
+		@Override
+		protected void doRefreshVisual(Connection visual) {
+			if (visual.getControlPoints().size() == 0) {
+				visual.addControlPoint(0, ((ConnectionContent) getContent()).getWayPoint());
+			}
 		}
 	}
 
@@ -213,7 +213,7 @@ public class FXBendAnchorTests {
 			// relocate on drag
 			adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.ON_DRAG_POLICY_KEY, "translateSelected"))
 					.to(FXTranslateSelectedOnDragPolicy.class);
-			// bind chopbox anchor provider
+			// bind dynamic anchor provider
 			adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IAnchor>>() {
 			})).to(DynamicAnchorProvider.class);
 		}

@@ -58,9 +58,6 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-// TODO: Find an appropriate name for this (outline anchor or shape anchor or
-// perimeter anchor, or dynamic anchor)
-// It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class DynamicAnchor extends AbstractAnchor {
 
 	/**
@@ -765,9 +762,7 @@ public class DynamicAnchor extends AbstractAnchor {
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 			if (change.wasAdded()) {
-				// Do some defensive checks here. However, if we run into null
-				// key or value here, this will be an inconsistency of the
-				// ChopBoxHelper#referencePointProperty()
+				// do some defensive checks
 				if (change.getKey() == null) {
 					throw new IllegalStateException(
 							"Attempt to put <null> key into reference point map!");
@@ -778,9 +773,7 @@ public class DynamicAnchor extends AbstractAnchor {
 				}
 				if (anchoredReferencePointProviders
 						.containsKey(change.getKey())) {
-					// only recompute position, if one of our own keys changed
-					// (ChopBoxHelper#referencePointProperty() may contain
-					// AnchorKeys registered at other anchors as well)
+					// only recompute position if one of our own keys changed
 					updatePosition(change.getKey());
 				}
 			}
@@ -926,11 +919,11 @@ public class DynamicAnchor extends AbstractAnchor {
 				.getAdapter(IReferencePointProvider.class);
 		if (helper == null) {
 			throw new IllegalArgumentException(
-					"No ChopBoxHelper could be obtained via info.");
+					"No IReferencePointProvider could be obtained via info.");
 		}
 		if (anchoredReferencePointProviders.get(key) != helper) {
 			throw new IllegalStateException(
-					"The passed in ChopBoxHelper had not been obtained for "
+					"The passed in IReferencePointProvider had not been obtained for "
 							+ key + " within attach() before.");
 		}
 

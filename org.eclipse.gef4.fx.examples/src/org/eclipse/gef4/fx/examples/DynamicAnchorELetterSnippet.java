@@ -53,7 +53,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
 
-public class ChopBoxELetterSnippet extends AbstractFxExample {
+public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 
 	private static class ComputationStrategy
 			extends DynamicAnchor.ProjectionStrategy {
@@ -133,19 +133,19 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private static final Paint REFERENCE_POINT_STROKE = Color.BLACK;
 	private static final double REFERENCE_POINT_RADIUS = 3;
 
-	private static final Paint CHOP_BOX_POINT_FILL = Color.RED;
-	private static final Paint CHOP_BOX_POINT_STROKE = Color.BLACK;
-	private static final double CHOP_BOX_POINT_RADIUS = 3;
+	private static final Paint DYNAMIC_ANCHOR_POINT_FILL = Color.RED;
+	private static final Paint DYNAMIC_ANCHOR_POINT_STROKE = Color.BLACK;
+	private static final double DYNAMIC_ANCHOR_POINT_RADIUS = 3;
 
 	private static final double INTERSECTION_RADIUS = 3;
 	private static final Paint INTERSECTION_STROKE = Color.BLACK;
 	private static final Paint INTERSECTION_FILL = Color.DARKRED;
 
-	private static final Paint CHOP_BOX_LINE_STROKE_REAL = Color.rgb(99, 123,
-			71);
-	private static final double CHOP_BOX_LINE_STROKE_WIDTH_REAL = 2;
-	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY = Color.DARKRED;
-	private static final double CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY = 2;
+	private static final Paint DYNAMIC_ANCHOR_LINE_STROKE_REAL = Color.rgb(99,
+			123, 71);
+	private static final double DYNAMIC_ANCHOR_LINE_STROKE_WIDTH_REAL = 2;
+	private static final Paint DYNAMIC_ANCHOR_LINE_STROKE_IMAGINARY = Color.DARKRED;
+	private static final double DYNAMIC_ANCHOR_LINE_STROKE_WIDTH_IMAGINARY = 2;
 	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL = Color.LIGHTGREY;
 
 	private static final double PAD = 100;
@@ -171,12 +171,12 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private Group intersectionLayer; // between markers and interaction elements
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
-	private DynamicAnchor chopBoxAnchor;
+	private DynamicAnchor dynamicAnchor;
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
-	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<>();
-	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<>();
-	private Map<AnchorKey, Line> chopBoxLinesImaginary = new HashMap<>();
+	private Map<AnchorKey, Circle> dynamicPoints = new HashMap<>();
+	private Map<AnchorKey, Line> dynamicLinesReal = new HashMap<>();
+	private Map<AnchorKey, Line> dynamicLinesImaginary = new HashMap<>();
 	private Map<AnchorKey, List<Node>> intersections = new HashMap<>();
 	private List<Node> vertices = new ArrayList<>();
 	private List<Node> distanceLines = new ArrayList<>();
@@ -196,11 +196,11 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		}
 	};
 
-	public ChopBoxELetterSnippet() {
-		super("FX ChopBox E-Letter Snippet");
+	public DynamicAnchorELetterSnippet() {
+		super("DynamicAnchor E-Letter Snippet");
 	}
 
-	private void attachToChopBoxAnchor(final AnchorKey ak,
+	private void attachToDynamicAnchor(final AnchorKey ak,
 			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
 		AdapterStore as = new AdapterStore();
 		as.setAdapter(new DynamicAnchor.IReferencePointProvider() {
@@ -209,8 +209,8 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 				return referencePointProperty;
 			}
 		});
-		chopBoxAnchor.attach(ak, as);
-		updateChopBoxLines(ak);
+		dynamicAnchor.attach(ak, as);
+		updateDynamicAnchorLines(ak);
 	}
 
 	private Circle createBoundsCenterNode(Point2D boundsCenterInScene) {
@@ -220,30 +220,6 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		centerNode.setCenterX(boundsCenterInScene.getX());
 		centerNode.setCenterY(boundsCenterInScene.getY());
 		return centerNode;
-	}
-
-	private Line createChopBoxLineImaginary(AnchorKey ak) {
-		Line chopBoxLineImaginary = new Line();
-		chopBoxLineImaginary.getStrokeDashArray().addAll(10d, 10d);
-		chopBoxLineImaginary
-				.setStrokeWidth(CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY);
-		chopBoxLineImaginary.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY);
-		return chopBoxLineImaginary;
-	}
-
-	private Line createChopBoxLineReal(AnchorKey ak) {
-		Line chopBoxLineReal = new Line();
-		chopBoxLineReal.setStrokeLineCap(StrokeLineCap.BUTT);
-		chopBoxLineReal.setStrokeWidth(CHOP_BOX_LINE_STROKE_WIDTH_REAL);
-		chopBoxLineReal.setStroke(CHOP_BOX_LINE_STROKE_REAL);
-		return chopBoxLineReal;
-	}
-
-	private Circle createChopBoxNode() {
-		Circle chopBoxPointNode = new Circle(CHOP_BOX_POINT_RADIUS);
-		chopBoxPointNode.setFill(CHOP_BOX_POINT_FILL);
-		chopBoxPointNode.setStroke(CHOP_BOX_POINT_STROKE);
-		return chopBoxPointNode;
 	}
 
 	private Line createDistanceLine(Point2D boundsCenterInScene,
@@ -265,6 +241,32 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		distanceText.setStroke(DISTANCE_TEXT_STROKE);
 		distanceText.setFill(DISTANCE_TEXT_FILL);
 		return distanceText;
+	}
+
+	private Line createDynamicAnchorLineImaginary(AnchorKey ak) {
+		Line dynamicAnchorLineImaginary = new Line();
+		dynamicAnchorLineImaginary.getStrokeDashArray().addAll(10d, 10d);
+		dynamicAnchorLineImaginary
+				.setStrokeWidth(DYNAMIC_ANCHOR_LINE_STROKE_WIDTH_IMAGINARY);
+		dynamicAnchorLineImaginary
+				.setStroke(DYNAMIC_ANCHOR_LINE_STROKE_IMAGINARY);
+		return dynamicAnchorLineImaginary;
+	}
+
+	private Line createDynamicAnchorLineReal(AnchorKey ak) {
+		Line dynamicAnchorLineReal = new Line();
+		dynamicAnchorLineReal.setStrokeLineCap(StrokeLineCap.BUTT);
+		dynamicAnchorLineReal
+				.setStrokeWidth(DYNAMIC_ANCHOR_LINE_STROKE_WIDTH_REAL);
+		dynamicAnchorLineReal.setStroke(DYNAMIC_ANCHOR_LINE_STROKE_REAL);
+		return dynamicAnchorLineReal;
+	}
+
+	private Circle createDynamicAnchorNode() {
+		Circle dynamicAnchorPointNode = new Circle(DYNAMIC_ANCHOR_POINT_RADIUS);
+		dynamicAnchorPointNode.setFill(DYNAMIC_ANCHOR_POINT_FILL);
+		dynamicAnchorPointNode.setStroke(DYNAMIC_ANCHOR_POINT_STROKE);
+		return dynamicAnchorPointNode;
 	}
 
 	private Node createELetterReferenceNode() {
@@ -298,24 +300,24 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private void createReferencePoint(final double x, final double y) {
 		final Circle referencePointNode = createReferencePointNode(x, y);
 		interactionLayer.getChildren().add(referencePointNode);
-		Circle chopBoxPointNode = createChopBoxNode();
+		Circle dynamicAnchorPointNode = createDynamicAnchorNode();
 
 		// create key for the anchor relation (role is arbitrary)
 		final AnchorKey ak = new AnchorKey(referencePointNode, "link");
 
-		// create real and imaginary chop box lines
-		Line chopBoxLineReal = createChopBoxLineReal(ak);
-		Line chopBoxLineImaginary = createChopBoxLineImaginary(ak);
-		intersectionLayer.getChildren().addAll(chopBoxLineImaginary,
-				chopBoxPointNode);
-		markerLayer.getChildren().add(chopBoxLineReal);
-		chopBoxLineReal.toBack();
-		chopBoxLineImaginary.toBack();
+		// create real and imaginary dynamic anchor lines
+		Line dynamicAnchorLineReal = createDynamicAnchorLineReal(ak);
+		Line dynamicAnchorLineImaginary = createDynamicAnchorLineImaginary(ak);
+		intersectionLayer.getChildren().addAll(dynamicAnchorLineImaginary,
+				dynamicAnchorPointNode);
+		markerLayer.getChildren().add(dynamicAnchorLineReal);
+		dynamicAnchorLineReal.toBack();
+		dynamicAnchorLineImaginary.toBack();
 
-		// associate the chop box point and line with that key
-		chopBoxPoints.put(ak, chopBoxPointNode);
-		chopBoxLinesReal.put(ak, chopBoxLineReal);
-		chopBoxLinesImaginary.put(ak, chopBoxLineImaginary);
+		// associate the dynamicAnchor point and line with that key
+		dynamicPoints.put(ak, dynamicAnchorPointNode);
+		dynamicLinesReal.put(ak, dynamicAnchorLineReal);
+		dynamicLinesImaginary.put(ak, dynamicAnchorLineImaginary);
 
 		// put initial reference point
 		referencePointProperty.put(ak, new Point(x, y));
@@ -329,12 +331,12 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 				referencePointNode.setCenterY(y);
 				// update reference point
 				referencePointProperty.put(ak, new Point(x, y));
-				updateChopBoxLines(ak);
+				updateDynamicAnchorLines(ak);
 			}
 		};
 		dragGesture.setScene(scene);
 
-		attachToChopBoxAnchor(ak, referencePointProperty);
+		attachToDynamicAnchor(ak, referencePointProperty);
 	}
 
 	private Circle createReferencePointNode(final double x, final double y) {
@@ -355,7 +357,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 
 		// description (what is demonstrated)
 		Label descriptionLabel = new Label(
-				"This example demonstrates the chop box anchor position computation. An ChopBoxAnchor is associated with the E letter shape (anchorage). The computation uses 2 reference points: the anchorage reference point (orange) and the anchored reference point (blue). The red point is the resulting anchor position.");
+				"This example demonstrates the dynamic anchor anchor position computation. A DynamicAnchor is associated with the E letter shape (anchorage). The computation uses 2 reference points: the anchorage reference point (orange) and the anchored reference point (blue). The red point is the resulting anchor position.");
 		descriptionLabel.setStyle("-fx-font-size: 10pt");
 		descriptionLabel.setWrapText(true);
 		descriptionLabel.resizeRelocate(10, 10, WIDTH - 20, PAD - 20);
@@ -388,10 +390,10 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		root.getChildren().addAll(markerLayer, intersectionLayer,
 				interactionLayer);
 
-		// create chop box anchor and reference point property (so we can access
+		// create dynamic anchor and reference point property (so we can access
 		// the reference points easily)
-		chopBoxAnchor = new DynamicAnchor(eLetterShape);
-		chopBoxAnchor.positionProperty().addListener(anchorPositionListener);
+		dynamicAnchor = new DynamicAnchor(eLetterShape);
+		dynamicAnchor.positionProperty().addListener(anchorPositionListener);
 
 		// compute bounds center
 		Point boundsCenterInLocal = FX2Geometry
@@ -556,10 +558,10 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	}
 
 	protected void onAnchorPositionChange(AnchorKey key, Point anchorPosition) {
-		// update chop box point
-		Circle chopBoxPoint = chopBoxPoints.get(key);
-		chopBoxPoint.setCenterX(anchorPosition.x);
-		chopBoxPoint.setCenterY(anchorPosition.y);
+		// update dynamic anchor point
+		Circle dynamicAnchorPoint = dynamicPoints.get(key);
+		dynamicAnchorPoint.setCenterX(anchorPosition.x);
+		dynamicAnchorPoint.setCenterY(anchorPosition.y);
 	}
 
 	private void setVisible(List<Node> nodes, boolean isVisible) {
@@ -573,11 +575,11 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 				fillVisible ? Color.rgb(135, 150, 220) : Color.TRANSPARENT);
 		eLetterShape.setEffect(
 				fillVisible ? GeometryNodeSnippet.createShadowEffect() : null);
-		for (Line l : chopBoxLinesImaginary.values()) {
+		for (Line l : dynamicLinesImaginary.values()) {
 			if (fillVisible) {
 				l.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL);
 			} else {
-				l.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY);
+				l.setStroke(DYNAMIC_ANCHOR_LINE_STROKE_IMAGINARY);
 			}
 		}
 	}
@@ -587,11 +589,11 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 				&& PrecisionUtils.equal(q.y, p.y, -2);
 	}
 
-	private void updateChopBoxLines(AnchorKey ak) {
+	private void updateDynamicAnchorLines(AnchorKey ak) {
 		// update real line
-		Line lineReal = chopBoxLinesReal.get(ak);
+		Line lineReal = dynamicLinesReal.get(ak);
 		Point referencePosition = referencePointProperty.get(ak);
-		Point anchorPosition = chopBoxAnchor.getPosition(ak);
+		Point anchorPosition = dynamicAnchor.getPosition(ak);
 		lineReal.setStartX(referencePosition.x);
 		lineReal.setStartY(referencePosition.y);
 		lineReal.setEndX(anchorPosition.x);
@@ -601,7 +603,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 		Point eLetterReferencePoint = computationStrategy
 				.computeAnchorageReferencePointInScene(eLetterShape,
 						eLetterShape.getGeometry(), null);
-		Line lineImaginary = chopBoxLinesImaginary.get(ak);
+		Line lineImaginary = dynamicLinesImaginary.get(ak);
 		lineImaginary.setStartX(anchorPosition.x);
 		lineImaginary.setStartY(anchorPosition.y);
 		lineImaginary.setEndX(eLetterReferencePoint.x);

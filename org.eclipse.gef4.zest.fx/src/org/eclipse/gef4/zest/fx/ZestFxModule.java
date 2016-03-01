@@ -113,7 +113,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
 	 */
-	protected void bindChopBoxAnchorProviderAsNodeContentPartAdapter(
+	protected void bindDynamicAnchorProviderAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DynamicAnchorProvider.class);
 	}
@@ -627,7 +627,7 @@ public class ZestFxModule extends MvcFxModule {
 		// resize policy to resize nesting nodes
 		bindFXResizeNodePolicyAsNodeContentPartAdapter(adapterMapBinder);
 		// anchor provider
-		bindChopBoxAnchorProviderAsNodeContentPartAdapter(adapterMapBinder);
+		bindDynamicAnchorProviderAsNodeContentPartAdapter(adapterMapBinder);
 		// feedback and handles
 		bindFXHoverOnHoverPolicyAsEdgeContentPartAdapter(adapterMapBinder);
 		bindSelectionHandlesGeometryProviderAsNodeContentPartAdapter(adapterMapBinder);

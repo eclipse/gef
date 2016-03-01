@@ -259,7 +259,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(CloneShapePolicy.class);
 
-		// bind chopbox anchor provider
+		// bind dynamic anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(DynamicAnchorProvider.class);
 

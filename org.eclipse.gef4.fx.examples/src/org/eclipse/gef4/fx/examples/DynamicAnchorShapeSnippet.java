@@ -48,7 +48,7 @@ import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class ChopBoxShapeSnippet extends AbstractFxExample {
+public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -76,8 +76,8 @@ public class ChopBoxShapeSnippet extends AbstractFxExample {
 		}
 	};
 
-	public ChopBoxShapeSnippet() {
-		super("ChopBoxAnchor for JavaFX Shape");
+	public DynamicAnchorShapeSnippet() {
+		super("DynamicAnchor for JavaFX Shape");
 	}
 
 	@Override

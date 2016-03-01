@@ -26,7 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ChopBoxConnectionSnippet extends AbstractFxExample {
+public class DynamicAnchorConnectionSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -40,8 +40,8 @@ public class ChopBoxConnectionSnippet extends AbstractFxExample {
 	private DynamicAnchor anchorB;
 	private DynamicAnchor anchorC;
 
-	public ChopBoxConnectionSnippet() {
-		super("ChopBoxConnectionSnippet");
+	public DynamicAnchorConnectionSnippet() {
+		super("DynamicConnectionSnippet");
 	}
 
 	private EventHandler<ActionEvent> createMoveHandler(final String label,

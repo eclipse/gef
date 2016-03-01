@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class ChopBoxAnchorSnippet extends AbstractFxExample {
+public class DynamicAnchorSnippet extends AbstractFxExample {
 
 	public static void main(String[] args) {
 		launch();
@@ -38,8 +38,8 @@ public class ChopBoxAnchorSnippet extends AbstractFxExample {
 	private Rectangle r1;
 	private Rectangle r2;
 
-	public ChopBoxAnchorSnippet() {
-		super("ChopBoxAnchorSnippet");
+	public DynamicAnchorSnippet() {
+		super("DynamicAnchorSnippet");
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class ChopBoxAnchorSnippet extends AbstractFxExample {
 				r2.getLayoutBounds().getMinY() + r2.getLayoutY()
 						+ r2.getHeight() / 2);
 
-		// use static values for chopbox anchor reference points
+		// use static values for dynamic anchor reference points
 		IReferencePointProvider.Impl referencePointProvider = new IReferencePointProvider.Impl();
 		referencePointProvider.put(startKey, r2Center);
 		referencePointProvider.put(endKey, r1Center);

@@ -70,9 +70,9 @@ import javafx.scene.transform.Translate;
  * <p>
  * Whether the control points are interpreted as way points (that lie on the
  * curve) or as 'real' control points depends on the
- * {@link IConnectionInterpolator}. While {@link PolylineInterpolator}
- * and {@link PolyBezierInterpolator} interpret control points to be way
- * points, other routers may e.g. interpret them as the control points of a
+ * {@link IConnectionInterpolator}. While {@link PolylineInterpolator} and
+ * {@link PolyBezierInterpolator} interpret control points to be way points,
+ * other routers may e.g. interpret them as the control points of a
  * {@link BezierCurve}.
  * <P>
  * In addition to the curve shape, the visual appearance of a {@link Connection}
@@ -169,6 +169,7 @@ public class Connection extends Group implements IReferencePointProvider {
 
 		// register any adapters that will be needed during attach() and
 		// detach() at anchors
+		// TODO: statically construct AdapterStore
 		registerAnchorInfos(as);
 
 		// ensure connection does not paint further than geometric end points
@@ -1041,7 +1042,8 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *            registered via adapters.
 	 */
 	protected void registerAnchorInfos(IAdaptable adaptable) {
-		// register an ChopBoxHelper, which is passed to the attached anchors.
+		// register this Connection as an IReferencePointProvider at the given
+		// IAdaptable
 		adaptable.setAdapter(this);
 	}
 

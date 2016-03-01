@@ -26,6 +26,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 /**
+ * The {@link StraightRouter} is an {@link IConnectionRouter} that leaves the
+ * {@link Connection}'s control points untouched and only provides reference
+ * points for the {@link Connection}'s anchors.
  *
  * @author mwienand
  *
@@ -50,7 +53,7 @@ public class StraightRouter implements IConnectionRouter {
 		IAnchor anchor = anchors.get(anchorIndex);
 		if (!(anchor instanceof DynamicAnchor)) {
 			throw new IllegalStateException(
-					"specified anchor is no ChopBoxAnchor");
+					"Specified anchor '" + anchor + "' is no DynamicAnchor.");
 		}
 		Node anchorage = anchor.getAnchorage();
 
@@ -118,7 +121,7 @@ public class StraightRouter implements IConnectionRouter {
 			return;
 		}
 
-		// only compute reference points for chop box anchors
+		// only compute reference points for dynamic anchors
 		if (!(connection.getAnchors()
 				.get(anchorIndex) instanceof DynamicAnchor)) {
 			return;
@@ -139,7 +142,7 @@ public class StraightRouter implements IConnectionRouter {
 			 * position is inside the anchorage of the current anchor. This
 			 * means, the reference point that is returned now will be discarded
 			 * in a succeeding call (we have to come up with some value here for
-			 * the ChopBoxAnchor to work with).
+			 * the DynamicAnchor to work with).
 			 */
 			newRef = new Point();
 		} else if (pred != null) {
