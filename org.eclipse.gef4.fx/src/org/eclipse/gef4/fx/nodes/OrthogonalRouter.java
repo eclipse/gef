@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +48,9 @@ public class OrthogonalRouter implements IConnectionRouter {
 	// private sub-class to 'mark' those way-points that are added by the router
 	// (so they can be removed when re-routing)
 	private class OrthogonalPolylineRouterAnchor extends StaticAnchor {
-		public OrthogonalPolylineRouterAnchor(
+		public OrthogonalPolylineRouterAnchor(Node anchorage,
 				Point referencePositionInAnchorageLocal) {
-			super(referencePositionInAnchorageLocal);
+			super(anchorage, referencePositionInAnchorageLocal);
 		}
 	}
 
@@ -159,15 +158,11 @@ public class OrthogonalRouter implements IConnectionRouter {
 				// perform an instance test
 				Point referencePoint = getAnchorReferencePoint(connection,
 						index);
-
 				// update reference point for the anchor key at the given index
 				connection.referencePointProperty()
 						.put(connection.getAnchorKey(index), referencePoint);
-
-				System.out.println("ref point: " + referencePoint);
 				Point computePosition = ((DynamicAnchor) anchor)
 						.computePosition(connection, referencePoint);
-				System.out.println("computed position = " + computePosition);
 				return computePosition;
 			}
 		}
@@ -185,8 +180,6 @@ public class OrthogonalRouter implements IConnectionRouter {
 			return;
 		}
 
-		System.out.println("input: " + Arrays.asList(points));
-
 		// remove way points added through a preceding routing step
 		int pointsRemoved = 0;
 		List<IAnchor> controlAnchors = connection.getControlAnchors();
@@ -197,7 +190,6 @@ public class OrthogonalRouter implements IConnectionRouter {
 				pointsRemoved++;
 			}
 		}
-		// System.out.println("route " + connection.getPoints());
 
 		// The router will respect the connection's anchors already provided
 		// and will add control anchors were needed. It will proceed all anchors
@@ -210,12 +202,12 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Vector currentDirection = null;
 		for (int i = 0; i < connection.getPoints().size() - 1; i++) {
 			Point currentPoint = getPosition(connection, i);
+
 			// direction between previous way point and current one
 			previousDirection = currentDirection;
 			// compute the direction between the current reference
 			// geometry/point and the next one
 			currentDirection = getDirection(connection, i);
-			System.out.println("direction: " + currentDirection);
 
 			// given the direction, determine if points have to be added
 			if (!currentDirection.isHorizontal()
@@ -282,7 +274,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 			// XXX: we need to keep track of those way points inserted here, so
 			// we can remove them in a succeeding routing pass
 			connection.addControlAnchor(insertionIndex + pointsInserted - 1,
-					new OrthogonalPolylineRouterAnchor(
+					new OrthogonalPolylineRouterAnchor(connection,
 							pointsToInsert.get(insertionIndex)));
 			pointsInserted++;
 		}
@@ -290,9 +282,5 @@ public class OrthogonalRouter implements IConnectionRouter {
 		// TODO: optimize (we could remove points that now lie within a single
 		// segment (i.e. two adjacent segments in same direction (but this would
 		// not be 'minimal' -> should be done by bend policy!
-
-		// return a polyline through the points
-		System.out.println("routed: " + Arrays
-				.asList(connection.getPoints().toArray(new Point[] {})));
 	}
 }

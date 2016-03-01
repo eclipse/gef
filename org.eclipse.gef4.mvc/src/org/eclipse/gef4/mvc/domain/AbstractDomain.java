@@ -102,6 +102,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 				.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 					@Override
 					public void uncaughtException(Thread t, Throwable e) {
+						e.printStackTrace();
 						if (e instanceof RuntimeException) {
 							throw (RuntimeException) e;
 						} else {

@@ -38,7 +38,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
+import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
@@ -215,7 +215,7 @@ public class FXBendAnchorTests {
 					.to(FXTranslateSelectedOnDragPolicy.class);
 			// bind chopbox anchor provider
 			adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IAnchor>>() {
-			})).to(ChopBoxAnchorProvider.class);
+			})).to(DynamicAnchorProvider.class);
 		}
 
 		protected void bindConnectionAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {

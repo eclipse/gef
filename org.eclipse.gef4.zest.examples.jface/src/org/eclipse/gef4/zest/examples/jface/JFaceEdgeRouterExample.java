@@ -14,15 +14,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.jface;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
-import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
@@ -102,35 +101,23 @@ public class JFaceEdgeRouterExample {
 	}
 
 	protected static IConnectionRouter getManhattenRouter() {
-		return new IConnectionRouter() {
+		return new OrthogonalRouter() {
 			@Override
-			public ICurve route(Connection connection) {
-				Point[] points = connection.getPoints().toArray(new Point[] {});
-				if (points == null || points.length < 2) {
-					return new org.eclipse.gef4.geometry.planar.Polyline(0, 0,
-							0, 0);
+			public void route(Connection connection) {
+				if (connection.getPoints().size() < 2) {
+					return;
 				}
-				List<Point> manhattenPoints = new ArrayList<>();
-				Point start = points[0];
-				Point end = points[points.length - 1];
-				Point mid = start.getTranslated(end).getScaled(0.5);
-				boolean isHorizontal = Math.abs(end.x - start.x) > Math
-						.abs(end.y - start.y);
-
-				manhattenPoints.add(start);
-				if (isHorizontal) {
-					manhattenPoints.add(new Point(mid.x, start.y));
-					manhattenPoints.add(new Point(mid.x, mid.y));
-					manhattenPoints.add(new Point(mid.x, end.y));
-				} else {
-					manhattenPoints.add(new Point(start.x, mid.y));
-					manhattenPoints.add(new Point(mid.x, mid.y));
-					manhattenPoints.add(new Point(end.x, mid.y));
+				for (IAnchor anchor : connection.getAnchors()) {
+					if (anchor instanceof DynamicAnchor) {
+						DynamicAnchor dynamicAnchor = (DynamicAnchor) anchor;
+						if (!(dynamicAnchor
+								.getComputationStrategy() instanceof DynamicAnchor.OrthogonalProjectionStrategy)) {
+							dynamicAnchor.setComputationStrategy(
+									new DynamicAnchor.OrthogonalProjectionStrategy());
+						}
+					}
 				}
-				manhattenPoints.add(end);
-
-				return new org.eclipse.gef4.geometry.planar.Polyline(
-						manhattenPoints.toArray(new Point[] {}));
+				super.route(connection);
 			}
 		};
 	}
@@ -151,8 +138,8 @@ public class JFaceEdgeRouterExample {
 		@Override
 		public Map<String, Object> getEdgeAttributes(Object sourceNode,
 				Object targetNode) {
-			return Collections.singletonMap(ZestProperties.EDGE_ROUTER,
-					(Object) getManhattenRouter());
+			return Collections.<String, Object> singletonMap(
+					ZestProperties.EDGE_ROUTER, getManhattenRouter());
 		}
 
 		@Override

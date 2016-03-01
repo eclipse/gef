@@ -21,13 +21,13 @@ import com.google.inject.Provider;
 import javafx.scene.Node;
 
 /**
- * The {@link ChopBoxAnchorProvider} is a <code>Provider&lt;IAnchor&gt;</code>
+ * The {@link DynamicAnchorProvider} is a <code>Provider&lt;IAnchor&gt;</code>
  * implementation that provides an {@link DynamicAnchor} for the host visual.
  *
  * @author anyssen
  *
  */
-public class ChopBoxAnchorProvider implements Provider<IAnchor>,
+public class DynamicAnchorProvider implements Provider<IAnchor>,
 		IAdaptable.Bound<IVisualPart<Node, ? extends Node>> {
 
 	private IVisualPart<Node, ? extends Node> visualPart;

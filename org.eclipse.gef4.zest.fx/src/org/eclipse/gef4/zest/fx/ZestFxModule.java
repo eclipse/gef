@@ -34,7 +34,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
+import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -107,7 +107,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link ChopBoxAnchorProvider} to the given adapter map
+	 * Adds a binding for {@link DynamicAnchorProvider} to the given adapter map
 	 * binder that will insert the bindings into {@link NodeContentPart}s.
 	 *
 	 * @param adapterMapBinder
@@ -115,7 +115,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindChopBoxAnchorProviderAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ChopBoxAnchorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DynamicAnchorProvider.class);
 	}
 
 	/**

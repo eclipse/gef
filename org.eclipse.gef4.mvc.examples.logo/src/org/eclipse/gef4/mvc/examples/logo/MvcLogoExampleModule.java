@@ -55,7 +55,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.providers.ChopBoxAnchorProvider;
+import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -261,7 +261,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(ChopBoxAnchorProvider.class);
+				.to(DynamicAnchorProvider.class);
 
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("1"))

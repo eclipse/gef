@@ -366,7 +366,6 @@ public class DynamicAnchor extends AbstractAnchor {
 		 */
 		private static Point getOrthogonalProjection(ICurve curve,
 				Point reference) {
-			System.out.println("getOrthogonalProjection ref=" + reference);
 			Point nearestHorizonalProjection = getHorizontalProjection(curve,
 					reference);
 			if (nearestHorizonalProjection == null) {
@@ -381,8 +380,6 @@ public class DynamicAnchor extends AbstractAnchor {
 					// if there is no vertical projection, the horizontal one
 					// has to
 					// be minimal
-					System.out.println("found horizontal projection: "
-							+ nearestHorizonalProjection);
 					return nearestHorizonalProjection;
 				} else {
 					// compute whether horizontal or vertical is minimal
@@ -391,9 +388,6 @@ public class DynamicAnchor extends AbstractAnchor {
 					double verticalDistance = nearestVerticalProjection
 							.getDistance(reference);
 					if (horizontalDistance <= verticalDistance) {
-						System.out.println(
-								"found horizontal projection (min-dist): "
-										+ nearestHorizonalProjection);
 						return nearestHorizonalProjection;
 					}
 					return nearestVerticalProjection;
@@ -462,13 +456,10 @@ public class DynamicAnchor extends AbstractAnchor {
 			}
 
 			if (nearestOrthogonalProjectionInScene != null) {
-				System.out.println("return nearest ortho: "
-						+ nearestOrthogonalProjectionInScene);
 				return nearestOrthogonalProjectionInScene;
 			} else {
 				// TODO: fall back to closes point (we could extend
 				// ProjectionStrategy and call super here)
-				System.out.println("return neareset bounds proj");
 				return getNearestBoundsProjection(
 						anchorageReferenceGeometryInScene,
 						anchoredReferencePointInScene);
