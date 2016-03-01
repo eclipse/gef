@@ -14,7 +14,7 @@ package org.eclipse.gef4.fx.examples;
 
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
 
@@ -58,7 +58,7 @@ public class ChopBoxShapeSnippet extends AbstractFxExample {
 	private Line anchorLine;
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
-	private ChopBoxAnchor anchor;
+	private DynamicAnchor anchor;
 	private AnchorKey anchorKey;
 	private AdapterStore adapterStore;
 
@@ -217,9 +217,9 @@ public class ChopBoxShapeSnippet extends AbstractFxExample {
 		selectedShapeGroup.getChildren().add(shape);
 
 		// create anchor
-		anchor = new ChopBoxAnchor(shape);
+		anchor = new DynamicAnchor(shape);
 		adapterStore = new AdapterStore();
-		adapterStore.setAdapter(new ChopBoxAnchor.IReferencePointProvider() {
+		adapterStore.setAdapter(new DynamicAnchor.IReferencePointProvider() {
 			@Override
 			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
 				return referencePointProperty;

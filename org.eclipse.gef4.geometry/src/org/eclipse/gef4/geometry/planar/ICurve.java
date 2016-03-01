@@ -74,7 +74,7 @@ public interface ICurve extends IGeometry {
 	/**
 	 * Returns a projection of the given <i>reference</i> {@link Point} onto
 	 * this {@link ICurve}, i.e. a {@link Point} on this {@link ICurve} that is
-	 * closest to the given <i>reference</i> {@link Point}.
+	 * closest to the given <i>reference</i> {@link Point}. Note, that
 	 *
 	 * @param reference
 	 *            The reference {@link Point} for which to return the

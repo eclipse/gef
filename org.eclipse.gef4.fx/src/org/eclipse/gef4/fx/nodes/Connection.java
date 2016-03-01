@@ -27,8 +27,8 @@ import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
@@ -39,7 +39,6 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.beans.property.ObjectProperty;
@@ -51,9 +50,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -72,10 +69,11 @@ import javafx.scene.transform.Translate;
  * then rendered using a {@link GeometryNode}).
  * <p>
  * Whether the control points are interpreted as way points (that lie on the
- * curve) or as 'real' control points depends on the {@link IConnectionRouter}.
- * While {@link PolylineRouter} and {@link PolyBezierInterpolationRouter}
- * interpret control points to be way points, other routers may e.g. interpret
- * them as the control points of a {@link BezierCurve}.
+ * curve) or as 'real' control points depends on the
+ * {@link IConnectionInterpolator}. While {@link PolylineInterpolator}
+ * and {@link PolyBezierInterpolator} interpret control points to be way
+ * points, other routers may e.g. interpret them as the control points of a
+ * {@link BezierCurve}.
  * <P>
  * In addition to the curve shape, the visual appearance of a {@link Connection}
  * can be controlled via start and end decorations. They will be rendered
@@ -86,300 +84,7 @@ import javafx.scene.transform.Translate;
  * @author anyssen
  *
  */
-public class Connection extends Group /* or rather Parent?? */ {
-
-	/**
-	 * The {@link ChopBoxHelper} can be registered for an {@link Connection} and
-	 * serves as a {@link IReferencePointProvider} for all {@link AnchorKey}s of
-	 * that {@link Connection} which are registered at {@link ChopBoxAnchor}s.
-	 */
-	public static class ChopBoxHelper
-			implements ChopBoxAnchor.IReferencePointProvider {
-
-		/**
-		 * The {@link ReferencePointMap} is used to store the reference points
-		 * for the individual {@link AnchorKey}s. A reference point is computed
-		 * whenever it is requested (i.e. {@link #get(Object)} is called).
-		 * Currently, the computation is only performed if no reference point is
-		 * available (i.e. on the anchor attachment). In order to query a
-		 * currently set reference point, you can use {@link #getRaw(Object)},
-		 * which will never trigger a reference point computation, but instead
-		 * simply look it up in the map.
-		 */
-		public class ReferencePointMap extends HashMap<AnchorKey, Point> {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Point get(Object key) {
-				if (!(key instanceof AnchorKey)) {
-					throw new IllegalArgumentException(
-							"Expected AnchorKey but got <" + key + ">");
-				}
-
-				AnchorKey ak = (AnchorKey) key;
-				if (!containsKey(ak)) {
-					if (!(connection.getStartAnchor() == null
-							|| connection.getEndAnchor() == null)) {
-						updateReferencePoint(connection.getAnchorIndex(ak), ak);
-					} else {
-						put(ak, new Point());
-					}
-				}
-				return super.get(ak);
-			}
-
-			/**
-			 * Does not compute a value for the given <i>key</i> but returns the
-			 * currently stored value instead.
-			 *
-			 * @param key
-			 *            The key for which to look up the value.
-			 * @return The value currently stored at the given <i>key</i>.
-			 */
-			public Point getRaw(Object key) {
-				return super.get(key);
-			}
-
-		}
-
-		// need to hold a reference to the ReferencePointMap in order to be able
-		// to call #getRaw().
-		private ReferencePointMap referencePoints = new ReferencePointMap();
-		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
-				FXCollections.observableMap(referencePoints));
-
-		/**
-		 * Manages the addition and removal of position-change-listeners for the
-		 * {@link AnchorKey}s of the {@link Connection}.
-		 */
-		private MapChangeListener<AnchorKey, IAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IAnchor>() {
-			@Override
-			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IAnchor> change) {
-				AnchorKey key = change.getKey();
-				IAnchor oldAnchor = change.getValueRemoved();
-				if (oldAnchor != null && pcls.containsKey(key)) {
-					oldAnchor.positionProperty()
-							.removeListener(pcls.remove(key));
-					updateReferencePoints(null);
-				}
-				IAnchor newAnchor = change.getValueAdded();
-				if (newAnchor != null) {
-					MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
-							newAnchor, key);
-					pcls.put(key, pcl);
-					newAnchor.positionProperty().addListener(pcl);
-				}
-			}
-		};
-
-		/**
-		 * {@link Connection} to work with.
-		 */
-		private Connection connection;
-
-		/**
-		 * Map to store/manage position change listeners for individual
-		 * {@link AnchorKey}s.
-		 */
-		private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> pcls = new HashMap<>();
-
-		/**
-		 * Constructs a new {@link ChopBoxHelper} for the given
-		 * {@link Connection}.
-		 *
-		 * @param connection
-		 *            The {@link Connection} for which this
-		 *            {@link ChopBoxHelper} provides the reference points.
-		 */
-		public ChopBoxHelper(Connection connection) {
-			this.connection = connection;
-			/*
-			 * If the map behind the anchors-property is replaced, we have to
-			 * update our anchorsChangeListener accordingly.
-			 */
-			connection.anchorsProperty().addListener(
-					new ChangeListener<ObservableMap<AnchorKey, IAnchor>>() {
-						@Override
-						public void changed(
-								ObservableValue<? extends ObservableMap<AnchorKey, IAnchor>> observable,
-								ObservableMap<AnchorKey, IAnchor> oldValue,
-								ObservableMap<AnchorKey, IAnchor> newValue) {
-							if (oldValue == newValue) {
-								return;
-							}
-							if (oldValue != null) {
-								oldValue.removeListener(anchorsChangeListener);
-							}
-							if (newValue != null) {
-								newValue.addListener(anchorsChangeListener);
-							}
-						}
-					});
-			connection.anchorsProperty().addListener(anchorsChangeListener);
-		}
-
-		private MapChangeListener<? super AnchorKey, ? super Point> createPCL(
-				final IAnchor anchor, final AnchorKey key) {
-			return new MapChangeListener<AnchorKey, Point>() {
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-					if (change.wasAdded()) {
-						if (change.getKey().equals(key)
-								&& anchor.isAttached(key)) {
-							updateReferencePoints(key);
-						}
-					}
-				}
-			};
-		}
-
-		// TODO: move to utility && replace with safe algorithm
-		private Point getCenter(Node anchorageNode) {
-			Point center = FX2Geometry
-					.toRectangle(connection.sceneToLocal(anchorageNode
-							.localToScene(anchorageNode.getLayoutBounds())))
-					.getCenter();
-			if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
-				return null;
-			}
-			return center;
-		}
-
-		private Point getNeighbor(int anchorIndex, int step) {
-			List<IAnchor> anchors = connection.getAnchors();
-			IAnchor anchor = anchors.get(anchorIndex);
-			if (!(anchor instanceof ChopBoxAnchor)) {
-				throw new IllegalStateException(
-						"specified anchor is no ChopBoxAnchor");
-			}
-			Node anchorage = anchor.getAnchorage();
-
-			// first uncontained static anchor (no anchorage)
-			// or first anchorage center
-			for (int i = anchorIndex + step; i < anchors.size()
-					&& i >= 0; i += step) {
-				IAnchor predAnchor = anchors.get(i);
-				if (predAnchor == null) {
-					throw new IllegalStateException(
-							"connection inconsistent (null anchor)");
-				}
-				Node predAnchorage = predAnchor.getAnchorage();
-				if (predAnchorage == null || predAnchorage == connection) {
-					// anchor is static
-					AnchorKey anchorKey = connection.getAnchorKey(i);
-					Point position = predAnchor.getPosition(anchorKey);
-					if (position == null) {
-						throw new IllegalStateException(
-								"connection inconsistent (null position)");
-					}
-					Point2D local = anchorage.sceneToLocal(
-							connection.localToScene(position.x, position.y));
-					// TODO: NPE maybe local is null?
-					if (!anchorage.contains(local)) {
-						return position;
-					}
-				} else {
-					// anchor position depends on anchorage
-					Point position = getCenter(predAnchorage);
-					if (position == null) {
-						throw new IllegalStateException(
-								"cannot determine anchorage center");
-					}
-					return position;
-				}
-			}
-
-			// no neighbor found
-			return null;
-		}
-
-		private Point getPred(int anchorIndex) {
-			return getNeighbor(anchorIndex, -1);
-		}
-
-		private Point getSucc(int anchorIndex) {
-			return getNeighbor(anchorIndex, 1);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
-		 * referencePointProperty()
-		 */
-		@Override
-		public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
-			return referencePointProperty;
-		}
-
-		private void updateReferencePoint(int anchorIndex, AnchorKey key) {
-			// FIXME: cannot query connection if start/end is unset
-			if (connection.getStartAnchor() == null
-					|| connection.getEndAnchor() == null) {
-				return;
-			}
-
-			// only compute reference points for chop box anchors
-			if (!(connection.getAnchors()
-					.get(anchorIndex) instanceof ChopBoxAnchor)) {
-				return;
-			}
-
-			// get old reference point
-			Point oldRef = referencePoints.getRaw(key);
-
-			// compute new reference point
-			Point newRef = null;
-			Point pred = getPred(anchorIndex);
-			Point succ = getSucc(anchorIndex);
-			if (pred == null && succ == null) {
-				/*
-				 * Neither predecessor nor successor can be identified. This can
-				 * happen for the initialization of connections when a static
-				 * position is inside the anchorage of the current anchor. This
-				 * means, the reference point that is returned now will be
-				 * discarded in a succeeding call (we have to come up with some
-				 * value here for the ChopBoxAnchor to work with).
-				 */
-				newRef = new Point();
-			} else if (pred != null) {
-				newRef = pred;
-			} else if (succ != null) {
-				newRef = succ;
-			} else {
-				newRef = new Line(pred, succ).get(0.5);
-			}
-
-			// only update if necessary (when it changes)
-			if (oldRef == null || !newRef.equals(oldRef)) {
-				referencePointProperty.put(key, newRef);
-			}
-		}
-
-		private void updateReferencePoints(AnchorKey key) {
-			// FIXME: cannot query connection if start/end is unset
-			if (connection.getStartAnchor() == null
-					|| connection.getEndAnchor() == null) {
-				return;
-			}
-
-			int anchorIndex = key == null ? -1 : connection.getAnchorIndex(key);
-			List<IAnchor> anchors = connection.getAnchors();
-			for (int i = 0; i < anchors.size(); i++) {
-				// we do not have to update the reference point for the
-				// given key, because the corresponding position just
-				// changed, so it was updated already
-				if (anchorIndex == i) {
-					continue;
-				}
-				updateReferencePoint(i, connection.getAnchorKey(i));
-			}
-		}
-
-	}
+public class Connection extends Group implements IReferencePointProvider {
 
 	/**
 	 * CSS class assigned to decoration visuals.
@@ -404,6 +109,9 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
+	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
+			FXCollections.observableMap(new HashMap<AnchorKey, Point>()));
+
 	// visuals
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 	// TODO: use properties (JavaFX Property) for decorations
@@ -412,7 +120,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 	private Shape endDecoration = null;
 
 	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
-			new PolylineRouter());
+			new StraightRouter());
+
+	private ObjectProperty<IConnectionInterpolator> interpolatorProperty = new SimpleObjectProperty<IConnectionInterpolator>(
+			new PolylineInterpolator());
 
 	// used to pass as argument to IAnchor#attach() and #detach()
 	private AdapterStore as = new AdapterStore();
@@ -511,6 +222,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 			controlAnchorKeys.add(anchorKey);
 		}
 		anchorsProperty.put(anchorKey, anchor);
+		// ensure a reference point is set for the new anchor key
+		referencePointProperty.put(anchorKey, new Point());
 		anchor.attach(anchorKey, as);
 
 		if (!anchorKey.equals(getStartAnchorKey())
@@ -651,37 +364,6 @@ public class Connection extends Group /* or rather Parent?? */ {
 		arrangeDecoration(endDecoration, endPoint, endDirection);
 	}
 
-	// /**
-	// * Adjusts the curveClip so that the curve node does not paint through the
-	// * given decoration.
-	// *
-	// * @param curveClip
-	// * A shape that represents the clip of the curve node.
-	// * @param decoration
-	// * The decoration to clip the curve node from.
-	// * @return A shape representing the resulting clip.
-	// */
-	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
-	// // first intersect curve shape with decoration layout bounds,
-	// // then subtract the curve shape from the result, and the decoration
-	// // from that
-	// Path decorationVisualBoundsPath = new Path(
-	// Geometry2FX
-	// .toPathElements(
-	// NodeUtils
-	// .parentToLocal(curveNode,
-	// NodeUtils.localToParent(
-	// decoration,
-	// getShapeBounds(
-	// decoration)))
-	// .toPath()));
-	// decorationVisualBoundsPath.setFill(Color.RED);
-	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
-	// curveNode.getShape());
-	// decorationClip = Shape.subtract(decorationClip, decoration);
-	// return Shape.subtract(curveClip, decorationClip);
-	// }
-
 	/**
 	 * Updates the start decoration of this {@link Connection}.
 	 */
@@ -715,6 +397,37 @@ public class Connection extends Group /* or rather Parent?? */ {
 		Vector curveStartDirection = new Vector(slope);
 		arrangeDecoration(startDecoration, startPoint, curveStartDirection);
 	}
+
+	// /**
+	// * Adjusts the curveClip so that the curve node does not paint through the
+	// * given decoration.
+	// *
+	// * @param curveClip
+	// * A shape that represents the clip of the curve node.
+	// * @param decoration
+	// * The decoration to clip the curve node from.
+	// * @return A shape representing the resulting clip.
+	// */
+	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
+	// // first intersect curve shape with decoration layout bounds,
+	// // then subtract the curve shape from the result, and the decoration
+	// // from that
+	// Path decorationVisualBoundsPath = new Path(
+	// Geometry2FX
+	// .toPathElements(
+	// NodeUtils
+	// .parentToLocal(curveNode,
+	// NodeUtils.localToParent(
+	// decoration,
+	// getShapeBounds(
+	// decoration)))
+	// .toPath()));
+	// decorationVisualBoundsPath.setFill(Color.RED);
+	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
+	// curveNode.getShape());
+	// decorationClip = Shape.subtract(decorationClip, decoration);
+	// return Shape.subtract(curveClip, decorationClip);
+	// }
 
 	/**
 	 * Adjusts the curveClip so that the curve node does not paint through the
@@ -1049,6 +762,15 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Returns the {@link IConnectionInterpolator} of this {@link Connection}.
+	 *
+	 * @return The {@link IConnectionInterpolator} of this {@link Connection}.
+	 */
+	public IConnectionInterpolator getInterpolator() {
+		return interpolatorProperty.get();
+	}
+
+	/**
 	 * Returns the point at the given index. The start point will be provided
 	 * for <code>index == 0</code>, the end point for the last defined index.
 	 * Control points will be returned for all indices in between.
@@ -1166,6 +888,15 @@ public class Connection extends Group /* or rather Parent?? */ {
 	}
 
 	/**
+	 * Returns the {@link IConnectionInterpolator} property.
+	 *
+	 * @return The {@link IConnectionInterpolator} property.
+	 */
+	public ObjectProperty<IConnectionInterpolator> interpolatorProperty() {
+		return interpolatorProperty;
+	}
+
+	/**
 	 * Returns <code>true</code> if the currently assigned
 	 * {@link #getControlAnchor(int) control anchor} for the given index is
 	 * bound to an anchorage. Otherwise returns <code>false</code>.
@@ -1212,6 +943,11 @@ public class Connection extends Group /* or rather Parent?? */ {
 				&& anchor.getAnchorage() != this;
 	}
 
+	@Override
+	public ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty() {
+		return referencePointProperty.getReadOnlyProperty();
+	}
+
 	/**
 	 * Refreshes the visualization, i.e.
 	 * <ol>
@@ -1238,7 +974,8 @@ public class Connection extends Group /* or rather Parent?? */ {
 		inRefresh = true;
 
 		// TODO: guard against router value being null
-		ICurve newGeometry = getRouter().route(this);
+		getRouter().route(this);
+		ICurve newGeometry = getInterpolator().interpolate(this);
 
 		// clear visuals except for the curveNode
 		getChildren().retainAll(curveNode);
@@ -1294,10 +1031,10 @@ public class Connection extends Group /* or rather Parent?? */ {
 	/**
 	 * Registers anchor information as adapters on the given {@link IAdaptable}
 	 * . These anchor information is supplied to all {@link IAnchor anchors}
-	 * which are assigned to this {@link Connection}. Per default, an
-	 * {@link ChopBoxHelper} is registered as a {@link IReferencePointProvider}
-	 * , so that the {@link Connection} works in conjunction with
-	 * {@link ChopBoxAnchor}.
+	 * which are assigned to this {@link Connection}. Per default, this
+	 * {@link Connection} is registered as a {@link IReferencePointProvider} ,
+	 * so that the {@link Connection} works in conjunction with
+	 * {@link DynamicAnchor}.
 	 *
 	 * @param adaptable
 	 *            The {@link IAdaptable} on which anchor information is
@@ -1305,7 +1042,7 @@ public class Connection extends Group /* or rather Parent?? */ {
 	 */
 	protected void registerAnchorInfos(IAdaptable adaptable) {
 		// register an ChopBoxHelper, which is passed to the attached anchors.
-		adaptable.setAdapter(new ChopBoxHelper(this));
+		adaptable.setAdapter(this);
 	}
 
 	/**
@@ -1619,6 +1356,18 @@ public class Connection extends Group /* or rather Parent?? */ {
 		}
 		IAnchor anchor = new StaticAnchor(this, endPointInLocal);
 		setEndAnchor(anchor);
+	}
+
+	/**
+	 * Sets the {@link IConnectionInterpolator} of this {@link Connection} to
+	 * the given {@link IConnectionInterpolator}.
+	 *
+	 * @param interpolator
+	 *            The new {@link IConnectionInterpolator} for this
+	 *            {@link Connection}.
+	 */
+	public void setInterpolator(IConnectionInterpolator interpolator) {
+		interpolatorProperty.set(interpolator);
 	}
 
 	/**

@@ -15,7 +15,7 @@
  * implementation ({@link org.eclipse.gef4.fx.anchors.AbstractAnchor}), as
  * well as concrete anchor implementations (
  * {@link org.eclipse.gef4.fx.anchors.StaticAnchor},
- * {@link org.eclipse.gef4.fx.anchors.ChopBoxAnchor}) to manage dynamic
+ * {@link org.eclipse.gef4.fx.anchors.DynamicAnchor}) to manage dynamic
  * positioning of visuals in dependence of others.
  */
 package org.eclipse.gef4.fx.anchors;

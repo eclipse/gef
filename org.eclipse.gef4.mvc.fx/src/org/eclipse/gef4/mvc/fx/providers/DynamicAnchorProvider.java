@@ -12,7 +12,7 @@
 package org.eclipse.gef4.mvc.fx.providers;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -22,7 +22,7 @@ import javafx.scene.Node;
 
 /**
  * The {@link ChopBoxAnchorProvider} is a <code>Provider&lt;IAnchor&gt;</code>
- * implementation that provides an {@link ChopBoxAnchor} for the host visual.
+ * implementation that provides an {@link DynamicAnchor} for the host visual.
  *
  * @author anyssen
  *
@@ -36,7 +36,7 @@ public class ChopBoxAnchorProvider implements Provider<IAnchor>,
 	@Override
 	public IAnchor get() {
 		if (anchor == null) {
-			anchor = new ChopBoxAnchor(getAdaptable().getVisual());
+			anchor = new DynamicAnchor(getAdaptable().getVisual());
 		}
 		return anchor;
 	}

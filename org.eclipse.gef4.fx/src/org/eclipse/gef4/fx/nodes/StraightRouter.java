@@ -1,0 +1,177 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen  (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
+package org.eclipse.gef4.fx.nodes;
+
+import java.util.List;
+
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Point;
+
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+
+/**
+ *
+ * @author mwienand
+ *
+ */
+public class StraightRouter implements IConnectionRouter {
+
+	// TODO: move to utility && replace with safe algorithm
+	private Point getCenter(Connection connection, Node anchorageNode) {
+		Point center = FX2Geometry
+				.toRectangle(connection.sceneToLocal(anchorageNode
+						.localToScene(anchorageNode.getLayoutBounds())))
+				.getCenter();
+		if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
+			return null;
+		}
+		return center;
+	}
+
+	private Point getNeighbor(Connection connection, int anchorIndex,
+			int step) {
+		List<IAnchor> anchors = connection.getAnchors();
+		IAnchor anchor = anchors.get(anchorIndex);
+		if (!(anchor instanceof DynamicAnchor)) {
+			throw new IllegalStateException(
+					"specified anchor is no ChopBoxAnchor");
+		}
+		Node anchorage = anchor.getAnchorage();
+
+		// first uncontained static anchor (no anchorage)
+		// or first anchorage center
+		for (int i = anchorIndex + step; i < anchors.size()
+				&& i >= 0; i += step) {
+			IAnchor predAnchor = anchors.get(i);
+			if (predAnchor == null) {
+				throw new IllegalStateException(
+						"connection inconsistent (null anchor)");
+			}
+			Node predAnchorage = predAnchor.getAnchorage();
+			if (predAnchorage == null || predAnchorage == connection) {
+				// anchor is static
+				AnchorKey anchorKey = connection.getAnchorKey(i);
+				Point position = predAnchor.getPosition(anchorKey);
+				if (position == null) {
+					throw new IllegalStateException(
+							"connection inconsistent (null position)");
+				}
+				Point2D local = anchorage.sceneToLocal(
+						connection.localToScene(position.x, position.y));
+				// TODO: NPE maybe local is null?
+				if (!anchorage.contains(local)) {
+					return position;
+				}
+			} else {
+				// anchor position depends on anchorage
+				Point position = getCenter(connection, predAnchorage);
+				if (position == null) {
+					throw new IllegalStateException(
+							"cannot determine anchorage center");
+				}
+				return position;
+			}
+		}
+
+		// no neighbor found
+		return null;
+	}
+
+	private Point getPred(Connection connection, int anchorIndex) {
+		return getNeighbor(connection, anchorIndex, -1);
+	}
+
+	private Point getSucc(Connection connection, int anchorIndex) {
+		return getNeighbor(connection, anchorIndex, 1);
+	}
+
+	@Override
+	public void route(Connection connection) {
+		if (connection.getPoints().size() < 2) {
+			return;
+		}
+		for (int i = 0; i < connection.getAnchors().size(); i++) {
+			updateReferencePoints(connection, i);
+		}
+	}
+
+	private void updateReferencePoint(Connection connection, int anchorIndex) {
+		// FIXME: cannot query connection if start/end is unset
+		if (connection.getStartAnchor() == null
+				|| connection.getEndAnchor() == null) {
+			return;
+		}
+
+		// only compute reference points for chop box anchors
+		if (!(connection.getAnchors()
+				.get(anchorIndex) instanceof DynamicAnchor)) {
+			return;
+		}
+
+		// get old reference point
+		AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
+		Point oldRef = connection.referencePointProperty().get(anchorKey);
+
+		// compute new reference point
+		Point newRef = null;
+		Point pred = getPred(connection, anchorIndex);
+		Point succ = getSucc(connection, anchorIndex);
+		if (pred == null && succ == null) {
+			/*
+			 * Neither predecessor nor successor can be identified. This can
+			 * happen for the initialization of connections when a static
+			 * position is inside the anchorage of the current anchor. This
+			 * means, the reference point that is returned now will be discarded
+			 * in a succeeding call (we have to come up with some value here for
+			 * the ChopBoxAnchor to work with).
+			 */
+			newRef = new Point();
+		} else if (pred != null) {
+			newRef = pred;
+		} else if (succ != null) {
+			newRef = succ;
+		} else {
+			newRef = new Line(pred, succ).get(0.5);
+		}
+
+		// only update if necessary (when it changes)
+		if (oldRef == null || !newRef.equals(oldRef)) {
+			connection.referencePointProperty().put(anchorKey, newRef);
+		}
+	}
+
+	private void updateReferencePoints(Connection connection, int anchorIndex) {
+		// FIXME: cannot query connection if start/end is unset
+		if (connection.getStartAnchor() == null
+				|| connection.getEndAnchor() == null) {
+			return;
+		}
+		List<IAnchor> anchors = connection.getAnchors();
+		for (int i = 0; i < anchors.size(); i++) {
+			// we do not have to update the reference point for the
+			// given key, because the corresponding position just
+			// changed, so it was updated already
+			if (anchorIndex == i) {
+				continue;
+			}
+			updateReferencePoint(connection, i);
+		}
+	}
+
+}

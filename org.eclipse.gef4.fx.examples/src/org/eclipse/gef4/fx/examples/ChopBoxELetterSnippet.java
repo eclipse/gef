@@ -19,8 +19,8 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.AbstractComputationStrategy;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AbstractComputationStrategy;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -56,7 +56,7 @@ import javafx.scene.text.Text;
 public class ChopBoxELetterSnippet extends AbstractFxExample {
 
 	private static class ComputationStrategy
-			extends ChopBoxAnchor.ProjectionStrategy {
+			extends DynamicAnchor.ProjectionStrategy {
 
 		@Override
 		protected Point computeAnchorageReferencePointInScene(Node node,
@@ -171,7 +171,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private Group intersectionLayer; // between markers and interaction elements
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
-	private ChopBoxAnchor chopBoxAnchor;
+	private DynamicAnchor chopBoxAnchor;
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<>();
@@ -203,7 +203,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 	private void attachToChopBoxAnchor(final AnchorKey ak,
 			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
 		AdapterStore as = new AdapterStore();
-		as.setAdapter(new ChopBoxAnchor.IReferencePointProvider() {
+		as.setAdapter(new DynamicAnchor.IReferencePointProvider() {
 			@Override
 			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
 				return referencePointProperty;
@@ -390,7 +390,7 @@ public class ChopBoxELetterSnippet extends AbstractFxExample {
 
 		// create chop box anchor and reference point property (so we can access
 		// the reference points easily)
-		chopBoxAnchor = new ChopBoxAnchor(eLetterShape);
+		chopBoxAnchor = new DynamicAnchor(eLetterShape);
 		chopBoxAnchor.positionProperty().addListener(anchorPositionListener);
 
 		// compute bounds center

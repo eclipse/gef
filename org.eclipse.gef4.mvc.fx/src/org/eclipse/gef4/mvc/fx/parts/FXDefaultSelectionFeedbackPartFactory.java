@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -154,7 +154,7 @@ public class FXDefaultSelectionFeedbackPartFactory
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
 					// TODO (#471628): inject; maybe extend IComputationStrategy
 					// interface
-					private final ChopBoxAnchor.ProjectionStrategy computationStrategy = new ChopBoxAnchor.ProjectionStrategy();
+					private final DynamicAnchor.ProjectionStrategy computationStrategy = new DynamicAnchor.ProjectionStrategy();
 
 					private Point computePosition(Node anchoredVisual,
 							IGeometry anchoredGeometryInLocal,

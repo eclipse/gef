@@ -22,7 +22,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 
@@ -217,14 +217,14 @@ public class MouseDragSnippet extends AbstractFxExample {
 			if (anchors.containsKey(n)) {
 				an = anchors.get(n);
 			} else {
-				an = new ChopBoxAnchor(n);
+				an = new DynamicAnchor(n);
 				anchors.put(n, an);
 			}
 
 			if (anchors.containsKey(m)) {
 				am = anchors.get(m);
 			} else {
-				am = new ChopBoxAnchor(n);
+				am = new DynamicAnchor(n);
 				anchors.put(m, am);
 			}
 

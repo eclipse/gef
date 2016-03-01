@@ -14,8 +14,8 @@ package org.eclipse.gef4.fx.examples.snippets;
 
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.IReferencePointProvider;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.geometry.planar.Point;
 
@@ -55,8 +55,8 @@ public class ChopBoxAnchorSnippet extends AbstractFxExample {
 		r2.relocate(200, 200);
 		final Line l = new Line();
 
-		ChopBoxAnchor startAnchor = new ChopBoxAnchor(r1);
-		ChopBoxAnchor endAnchor = new ChopBoxAnchor(r2);
+		DynamicAnchor startAnchor = new DynamicAnchor(r1);
+		DynamicAnchor endAnchor = new DynamicAnchor(r2);
 		final AnchorKey startKey = new AnchorKey(l, "start");
 		final AnchorKey endKey = new AnchorKey(l, "end");
 

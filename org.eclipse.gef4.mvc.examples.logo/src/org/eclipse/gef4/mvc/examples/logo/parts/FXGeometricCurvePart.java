@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.PolyBezierInterpolationRouter;
+import org.eclipse.gef4.fx.nodes.PolyBezierInterpolator;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -240,7 +240,7 @@ public class FXGeometricCurvePart
 	@Override
 	protected Connection createVisual() {
 		Connection visual = new Connection();
-		visual.setRouter(new PolyBezierInterpolationRouter());
+		visual.setInterpolator(new PolyBezierInterpolator());
 		visual.getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
 		return visual;
 	}

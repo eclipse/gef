@@ -13,12 +13,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor.AbstractComputationStrategy;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AbstractComputationStrategy;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -27,6 +28,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import javafx.scene.Node;
 
@@ -42,7 +44,7 @@ import javafx.scene.Node;
 // TODO: extract abstract orthogonal router (which provides the control point
 // manipulation), so that a PolyBezier may be used as ICurve as well (to have
 // smooth bend corners)
-public class OrthogonalPolylineRouter implements IConnectionRouter {
+public class OrthogonalRouter implements IConnectionRouter {
 
 	// private sub-class to 'mark' those way-points that are added by the router
 	// (so they can be removed when re-routing)
@@ -94,49 +96,48 @@ public class OrthogonalPolylineRouter implements IConnectionRouter {
 		referenceGeometry = getAnchorageGeometry(connection, referenceIndex);
 		if (referenceGeometry != null) {
 			IGeometry geometry = getAnchorageGeometry(connection, index);
-			// if (geometry != null) {
-			// XXX: if index and reference index both point to anchors that
-			// use a
-			// reference geometry, we have to compute a horizontal or
-			// vertical projection between both geometries (if existent)
-			// before falling back.
-			// int x1 = Math.max(x, rect.x());
-			// int x2 = Math.min(x + width, rect.x() + rect.width());
-			// int y1 = Math.max(y, rect.y());
-			// int y2 = Math.min(y + height, rect.y() + rect.height());
-			// } else {
-			return ChopBoxAnchor.OrthogonalProjectionStrategy
+			if (geometry != null) {
+				// XXX: if index and reference index both point to anchors that
+				// use a reference geometry, we have to compute a horizontal or
+				// vertical projection between both geometries (if existent)
+				// before falling back.
+				Rectangle bounds = geometry.getBounds();
+				Rectangle refBounds = referenceGeometry.getBounds();
+
+				double x1 = Math.max(bounds.getX(), refBounds.getX());
+				double x2 = Math.min(bounds.getX() + bounds.getWidth(),
+						refBounds.getX() + refBounds.getWidth());
+				if (x1 <= x2) {
+					// vertical overlap => return horizontally stable position
+					return new Point(x1 + (x2 - x1) / 2,
+							refBounds.getY() > bounds.getY()
+									+ bounds.getHeight() ? refBounds.getY()
+											: refBounds.getY()
+													+ refBounds.getHeight());
+				}
+
+				double y1 = Math.max(bounds.getY(), refBounds.getY());
+				double y2 = Math.min(bounds.getY() + bounds.getHeight(),
+						refBounds.getY() + refBounds.getHeight());
+				if (y1 <= y2) {
+					// horizontal overlap => return vertically stable position
+					return new Point(
+							refBounds.getX() > bounds.getX() + bounds.getWidth()
+									? refBounds.getX()
+									: refBounds.getX() + refBounds.getWidth(),
+							y1 + (y2 - y1) / 2);
+				}
+			}
+			// TODO: revise handling of this case
+			// fallback to nearest bounds projection
+			return DynamicAnchor.OrthogonalProjectionStrategy
 					.getNearestBoundsProjection(referenceGeometry,
 							connection.getPoint(index));
-			// }
 		}
 		return connection.getPoint(referenceIndex);
 	}
 
 	private Vector getDirection(Connection connection, int i) {
-		// Vector currentDirection;
-		// IGeometry currentReferenceGeometry = getReferenceGeometry(connection,
-		// i);
-		// IGeometry nextReferenceGeometry = getReferenceGeometry(connection,
-		// i + 1);
-		// if (currentReferenceGeometry != null) {
-		// if (nextReferenceGeometry != null) {
-		// currentDirection = getDirection(currentReferenceGeometry,
-		// nextReferenceGeometry);
-		// } else {
-		// currentDirection = getDirection(currentReferenceGeometry,
-		// connection.getPoint(i + 1));
-		// }
-		// } else {
-		// if (nextReferenceGeometry != null) {
-		// currentDirection = getDirection(getPosition(connection, i),
-		// nextReferenceGeometry);
-		// } else {
-		// currentDirection = getDirection(getPosition(connection, i),
-		// connection.getPoint(i + 1));
-		// }
-		// }
-		// return currentDirection;
 		return new Vector(getPosition(connection, i),
 				getPosition(connection, i + 1));
 	}
@@ -153,28 +154,38 @@ public class OrthogonalPolylineRouter implements IConnectionRouter {
 			// XXX: If we have an anchor, we have to use it to compute the
 			// position. To obtain a stable position, we have to provide our own
 			// (stable) reference point.
-			if (anchor instanceof ChopBoxAnchor) {
+			if (anchor instanceof DynamicAnchor) {
 				// TODO: maybe we can generalize this (so we do not have to
 				// perform an instance test
 				Point referencePoint = getAnchorReferencePoint(connection,
 						index);
-				return ((ChopBoxAnchor) anchor).computePosition(connection,
-						referencePoint);
+
+				// update reference point for the anchor key at the given index
+				connection.referencePointProperty()
+						.put(connection.getAnchorKey(index), referencePoint);
+
+				System.out.println("ref point: " + referencePoint);
+				Point computePosition = ((DynamicAnchor) anchor)
+						.computePosition(connection, referencePoint);
+				System.out.println("computed position = " + computePosition);
+				return computePosition;
 			}
 		}
 		return connection.getPoint(index);
 	}
 
 	@Override
-	public ICurve route(Connection connection) {
+	public void route(Connection connection) {
 		// XXX: Route may be invoked multiple times until the anchor positions
 		// are property computed (because transforms change, etc.); we need to
 		// clean those points we have inserted before to guarantee that we only
 		// do 'minimal' routing
 		Point[] points = connection.getPoints().toArray(new Point[] {});
 		if (points == null || points.length < 2) {
-			return new org.eclipse.gef4.geometry.planar.Polyline(0, 0, 0, 0);
+			return;
 		}
+
+		System.out.println("input: " + Arrays.asList(points));
 
 		// remove way points added through a preceding routing step
 		int pointsRemoved = 0;
@@ -204,6 +215,7 @@ public class OrthogonalPolylineRouter implements IConnectionRouter {
 			// compute the direction between the current reference
 			// geometry/point and the next one
 			currentDirection = getDirection(connection, i);
+			System.out.println("direction: " + currentDirection);
 
 			// given the direction, determine if points have to be added
 			if (!currentDirection.isHorizontal()
@@ -280,6 +292,7 @@ public class OrthogonalPolylineRouter implements IConnectionRouter {
 		// not be 'minimal' -> should be done by bend policy!
 
 		// return a polyline through the points
-		return new Polyline(connection.getPoints().toArray(new Point[] {}));
+		System.out.println("routed: " + Arrays
+				.asList(connection.getPoints().toArray(new Point[] {})));
 	}
 }

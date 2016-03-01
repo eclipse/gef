@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
+ * Copyright (c) 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,26 +13,25 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.geometry.planar.ICurve;
 
 /**
- * An {@link IConnectionRouter} is responsible for {@link #route(Connection)
- * adjustment} of a {@link Connection}'s points. This may also include providing
- * reference points for {@link DynamicAnchor}s the connection is attached to.
- *
- * @author mwienand
- * @author anyssen
- *
+ * An {@link IConnectionInterpolator} is responsible for
+ * {@link #interpolate(Connection) computing} an {@link ICurve} that represents
+ * the geometry of the {@link Connection}.
  */
-public interface IConnectionRouter {
+public interface IConnectionInterpolator {
 
 	/**
-	 * Adjusts the {@link Connection connection's} points (if necessary), which
-	 * includes computing reference points for {@link DynamicAnchor}s (if any).
+	 * An {@link ICurve} that is interpolated through the {@link Connection}'s
+	 * points.
 	 *
 	 * @param connection
-	 *            The {@link Connection} to route.
+	 *            The {@link Connection} for which to interpolate an
+	 *            {@link ICurve}.
+	 * @return The {@link ICurve} that was interpolated through the
+	 *         {@link Connection}'s points.
 	 */
-	public void route(Connection connection);
+	ICurve interpolate(Connection connection);
 
 }

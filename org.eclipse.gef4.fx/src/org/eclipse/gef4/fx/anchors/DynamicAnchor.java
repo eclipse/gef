@@ -45,7 +45,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 /**
- * The {@link ChopBoxAnchor} computes anchor positions based on a reference
+ * The {@link DynamicAnchor} computes anchor positions based on a reference
  * position per anchored and one reference position for the anchorage. The
  * anchoreds' reference positions are provided when
  * {@link #attach(AnchorKey, IAdaptable) attaching} an {@link AnchorKey}. The
@@ -61,7 +61,7 @@ import javafx.scene.Node;
 // TODO: Find an appropriate name for this (outline anchor or shape anchor or
 // perimeter anchor, or dynamic anchor)
 // It has nothing to do with a ChopBox, so this does not seem to be intuitive.
-public class ChopBoxAnchor extends AbstractAnchor {
+public class DynamicAnchor extends AbstractAnchor {
 
 	/**
 	 * Abstract base class for {@link IComputationStrategy computation
@@ -186,10 +186,10 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	/**
 	 * A {@link IReferencePointProvider} needs to be provided as default adapter
 	 * (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable} info that
-	 * gets passed into {@link ChopBoxAnchor#attach(AnchorKey, IAdaptable)} and
-	 * {@link ChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
+	 * gets passed into {@link DynamicAnchor#attach(AnchorKey, IAdaptable)} and
+	 * {@link DynamicAnchor#detach(AnchorKey, IAdaptable)}. The
 	 * {@link IReferencePointProvider} has to provide a reference point for each
-	 * {@link AdapterKey} that is attached to the {@link ChopBoxAnchor}. It will
+	 * {@link AdapterKey} that is attached to the {@link DynamicAnchor}. It will
 	 * be used when computing anchor positions for the respective
 	 * {@link AnchorKey}.
 	 *
@@ -251,6 +251,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	public static class OrthogonalProjectionStrategy
 			extends AbstractComputationStrategy {
 
+		private static final double TOLERANCE = 0.2;
+
 		/**
 		 * Returns a point on the {@link ICurve} for which holds that its
 		 * y-coordinate is the same as that of the given reference point, and
@@ -268,7 +270,6 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * @return The point on the {@link ICurve} that is horizontally nearest
 		 *         to the given reference point.
 		 */
-		// TODO: Move to GEF4 geometry
 		private static Point getHorizontalProjection(ICurve curve,
 				Point reference) {
 			// Determine points on curve with same y-coordinate; by computing a
@@ -279,29 +280,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			Rectangle bounds = curve.getBounds();
 			Line line = new Line(bounds.getX(), reference.y,
 					bounds.getX() + bounds.getWidth(), reference.y);
-			if (curve.overlaps(line)) {
-				ICurve[] overlaps = curve.getOverlaps(line);
-				// compute nearest of overlaps start and end points
-				// TODO: then compute nearest point on overlap to reference
-				// point
-				Point nearest = null;
-				double distance = 0;
-				for (ICurve overlap : overlaps) {
-					Point currentNearest = Point.nearest(reference,
-							new Point[] { overlap.getP1(), overlap.getP2() });
-					double currentDistance = reference
-							.getDistance(currentNearest);
-					if (nearest == null || currentDistance < distance) {
-						nearest = currentNearest;
-						distance = currentDistance;
-					}
-				}
-				return nearest;
-			} else if (curve.intersects(line)) {
-				return Point.nearest(reference, curve.getIntersections(line));
-			}
-			// no point found for the given y-coordinate
-			return null;
+			return getNearestOrthogonalProjection(curve, reference, line);
 		}
 
 		/**
@@ -316,6 +295,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * @return The nearest point on the outline segment that lies within the
 		 *         parameter range 0.2 .. 0.8.
 		 */
+		// TODO: Make private
 		public static Point getNearestBoundsProjection(IGeometry g, Point p) {
 			Line[] outlineSegments = g.getBounds().getOutlineSegments();
 			Point nearestProjection = null;
@@ -323,10 +303,10 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			for (Line l : outlineSegments) {
 				Point projection = l.getProjection(p);
 				double parameter = l.getParameterAt(projection);
-				if (parameter < 0.2) {
-					parameter = 0.2;
-				} else if (parameter > 0.8) {
-					parameter = 0.8;
+				if (parameter < TOLERANCE) {
+					parameter = TOLERANCE;
+				} else if (parameter > 1 - TOLERANCE) {
+					parameter = 1 - TOLERANCE;
 				}
 				projection = l.get(parameter);
 				double distance = p.getDistance(projection);
@@ -336,6 +316,35 @@ public class ChopBoxAnchor extends AbstractAnchor {
 				}
 			}
 			return nearestProjection;
+		}
+
+		private static Point getNearestOrthogonalProjection(ICurve curve,
+				Point reference, Line line) {
+			if (curve.overlaps(line)) {
+				ICurve[] overlaps = curve.getOverlaps(line);
+				// XXX: All overlaps have to be lines since a line can only
+				// overlap with another line. As such, it is sufficient to check
+				// the start and end points of the overlaps.
+				Point nearest = null;
+				double distance = 0;
+				for (ICurve overlap : overlaps) {
+					Point currentNearest = Point.nearest(reference,
+							new Point[] { overlap.getP1(), overlap.getP2() });
+					double currentDistance = reference
+							.getDistance(currentNearest);
+					if (nearest == null || currentDistance < distance) {
+						nearest = currentNearest;
+						distance = currentDistance;
+					}
+				}
+				// TODO: respect TOLERANCE
+				return nearest;
+			} else if (curve.intersects(line)) {
+				// TODO: respect TOLERANCE
+				return Point.nearest(reference, curve.getIntersections(line));
+			}
+			// no point found for the given y-coordinate
+			return null;
 		}
 
 		/**
@@ -355,9 +364,9 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * @return The point on the {@link ICurve} that is horizontally or
 		 *         vertically nearest to the given reference point.
 		 */
-		// TODO: Move to GEF4 Geometry
 		private static Point getOrthogonalProjection(ICurve curve,
 				Point reference) {
+			System.out.println("getOrthogonalProjection ref=" + reference);
 			Point nearestHorizonalProjection = getHorizontalProjection(curve,
 					reference);
 			if (nearestHorizonalProjection == null) {
@@ -372,6 +381,8 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					// if there is no vertical projection, the horizontal one
 					// has to
 					// be minimal
+					System.out.println("found horizontal projection: "
+							+ nearestHorizonalProjection);
 					return nearestHorizonalProjection;
 				} else {
 					// compute whether horizontal or vertical is minimal
@@ -380,6 +391,9 @@ public class ChopBoxAnchor extends AbstractAnchor {
 					double verticalDistance = nearestVerticalProjection
 							.getDistance(reference);
 					if (horizontalDistance <= verticalDistance) {
+						System.out.println(
+								"found horizontal projection (min-dist): "
+										+ nearestHorizonalProjection);
 						return nearestHorizonalProjection;
 					}
 					return nearestVerticalProjection;
@@ -404,7 +418,6 @@ public class ChopBoxAnchor extends AbstractAnchor {
 		 * @return The point on the {@link ICurve} that is vertically nearest to
 		 *         the given reference point.
 		 */
-		// TODO: move to GEF4 geometry
 		private static Point getVerticalProjection(ICurve curve,
 				Point reference) {
 			// Determine points on curve with same x-coordinate; by computing a
@@ -413,29 +426,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			Rectangle bounds = curve.getBounds();
 			Line line = new Line(reference.x, bounds.getY(), reference.x,
 					bounds.getY() + bounds.getHeight());
-			if (curve.overlaps(line)) {
-				ICurve[] overlaps = curve.getOverlaps(line);
-				// compute nearest of overlaps start and end points
-				// TODO: then compute nearest point on overlap to reference
-				// point
-				Point nearest = null;
-				double distance = 0;
-				for (ICurve overlap : overlaps) {
-					Point currentNearest = Point.nearest(reference,
-							new Point[] { overlap.getP1(), overlap.getP2() });
-					double currentDistance = reference
-							.getDistance(currentNearest);
-					if (nearest == null || currentDistance < distance) {
-						nearest = currentNearest;
-						distance = currentDistance;
-					}
-				}
-				return nearest;
-			} else if (curve.intersects(line)) {
-				return Point.nearest(reference, curve.getIntersections(line));
-			}
-			// no point found for the given y-coordinate
-			return null;
+			return getNearestOrthogonalProjection(curve, reference, line);
 		}
 
 		@Override
@@ -471,10 +462,13 @@ public class ChopBoxAnchor extends AbstractAnchor {
 			}
 
 			if (nearestOrthogonalProjectionInScene != null) {
+				System.out.println("return nearest ortho: "
+						+ nearestOrthogonalProjectionInScene);
 				return nearestOrthogonalProjectionInScene;
 			} else {
 				// TODO: fall back to closes point (we could extend
 				// ProjectionStrategy and call super here)
+				System.out.println("return neareset bounds proj");
 				return getNearestBoundsProjection(
 						anchorageReferenceGeometryInScene,
 						anchoredReferencePointInScene);
@@ -805,18 +799,18 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	private ObjectProperty<IComputationStrategy> computationStrategyProperty;
 
 	/**
-	 * Constructs a new {@link ChopBoxAnchor} for the given anchorage visual.
+	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual.
 	 * Uses the default computation strategy ( {@link ProjectionStrategy} ).
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
 	 */
-	public ChopBoxAnchor(Node anchorage) {
+	public DynamicAnchor(Node anchorage) {
 		super(anchorage);
 	}
 
 	/**
-	 * Constructs a new {@link ChopBoxAnchor} for the given anchorage visual
+	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual
 	 * using the given {@link IComputationStrategy}.
 	 *
 	 * @param anchorage
@@ -824,14 +818,14 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 * @param computationStrategy
 	 *            The {@link IComputationStrategy} to use.
 	 */
-	public ChopBoxAnchor(Node anchorage,
+	public DynamicAnchor(Node anchorage,
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
 		setComputationStrategy(computationStrategy);
 	}
 
 	/**
-	 * Attaches the given {@link AnchorKey} to this {@link ChopBoxAnchor}.
+	 * Attaches the given {@link AnchorKey} to this {@link DynamicAnchor}.
 	 * Requires that an {@link IReferencePointProvider} can be obtained from the
 	 * passed in {@link IAdaptable}.
 	 *
@@ -840,7 +834,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
 	 *            {@link IReferencePointProvider} that provides reference points
-	 *            for this {@link ChopBoxAnchor}.
+	 *            for this {@link DynamicAnchor}.
 	 *
 	 */
 	@Override
@@ -867,7 +861,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 
 	/**
 	 * Returns a writable object property for the {@link IComputationStrategy}
-	 * used by this {@link ChopBoxAnchor}.
+	 * used by this {@link DynamicAnchor}.
 	 *
 	 * @return A writable property.
 	 */
@@ -924,7 +918,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * Detaches the given {@link AnchorKey} from this {@link ChopBoxAnchor}.
+	 * Detaches the given {@link AnchorKey} from this {@link DynamicAnchor}.
 	 * Requires that an {@link IReferencePointProvider} can be obtained from the
 	 * passed in {@link IAdaptable}.
 	 *
@@ -933,7 +927,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
 	 *            {@link IReferencePointProvider} that provides reference points
-	 *            for this {@link ChopBoxAnchor}.
+	 *            for this {@link DynamicAnchor}.
 	 */
 	@Override
 	public void detach(AnchorKey key, IAdaptable info) {
@@ -959,7 +953,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * Returns the computation strategy used by this {@link ChopBoxAnchor}.
+	 * Returns the computation strategy used by this {@link DynamicAnchor}.
 	 *
 	 * @return The computation strategy being used.
 	 */
@@ -971,7 +965,7 @@ public class ChopBoxAnchor extends AbstractAnchor {
 
 	/**
 	 * Sets the given {@link IComputationStrategy} for this
-	 * {@link ChopBoxAnchor}.
+	 * {@link DynamicAnchor}.
 	 *
 	 * @param computationStrategy
 	 *            The new {@link IComputationStrategy} to use.

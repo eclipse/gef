@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.fx.nodes.Connection;
 
@@ -36,9 +36,9 @@ public class ChopBoxConnectionSnippet extends AbstractFxExample {
 
 	private Rectangle nodeB;
 	private Rectangle nodeC;
-	private ChopBoxAnchor anchorA;
-	private ChopBoxAnchor anchorB;
-	private ChopBoxAnchor anchorC;
+	private DynamicAnchor anchorA;
+	private DynamicAnchor anchorB;
+	private DynamicAnchor anchorC;
 
 	public ChopBoxConnectionSnippet() {
 		super("ChopBoxConnectionSnippet");
@@ -90,9 +90,9 @@ public class ChopBoxConnectionSnippet extends AbstractFxExample {
 				btnA, btnB, btnC);
 		root.getChildren().add(group);
 
-		anchorA = new ChopBoxAnchor(nodeA);
-		anchorB = new ChopBoxAnchor(nodeB);
-		anchorC = new ChopBoxAnchor(nodeC);
+		anchorA = new DynamicAnchor(nodeA);
+		anchorB = new DynamicAnchor(nodeB);
+		anchorC = new DynamicAnchor(nodeC);
 		connectionAB.setStartAnchor(anchorA);
 		connectionAB.setEndAnchor(anchorB);
 		connectionBC.setStartAnchor(anchorB);

@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples;
 
-import org.eclipse.gef4.fx.anchors.ChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -65,7 +65,7 @@ public class ConnectionSnippet extends AbstractFxExample {
 
 		// set start point and end anchor
 		connection.setStartPoint(new Point(150, 150));
-		connection.setEndAnchor(new ChopBoxAnchor(end));
+		connection.setEndAnchor(new DynamicAnchor(end));
 
 		Group root = new Group();
 		root.getChildren().addAll(end, connection);
