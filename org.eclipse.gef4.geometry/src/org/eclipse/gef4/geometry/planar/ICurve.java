@@ -72,6 +72,19 @@ public interface ICurve extends IGeometry {
 	public Point getP2();
 
 	/**
+	 * Returns the projection of the given <i>reference</i> {@link Point} onto
+	 * this {@link ICurve}, i.e. the {@link Point} on this {@link ICurve} that
+	 * is closest to the given <i>reference</i> {@link Point}.
+	 *
+	 * @param reference
+	 *            The reference {@link Point} for which to return the
+	 *            projection.
+	 * @return The projection of the given <i>reference</i> {@link Point} onto
+	 *         this {@link ICurve}.
+	 */
+	public Point getProjection(Point reference);
+
+	/**
 	 * Returns the start {@link Point}'s x coordinate.
 	 *
 	 * @return the start {@link Point}'s x coordinate
@@ -134,7 +147,4 @@ public interface ICurve extends IGeometry {
 	 *         {@link ICurve}
 	 */
 	public BezierCurve[] toBezier();
-
-	// start point, end point, control points (optional)
-	// TODO: need to elevate
 }

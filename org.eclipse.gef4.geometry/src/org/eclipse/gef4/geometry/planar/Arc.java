@@ -82,11 +82,6 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 		super(x, y, width, height, startAngle, angularExtent);
 	}
 
-	/*
-	 * TODO: Construct Arc from PolyBezier to round out their relation. (Arc
-	 * returns PolyBezier objects if it is rotated.)
-	 */
-
 	@Override
 	public boolean contains(Point p) {
 		for (CubicCurve c : computeBezierApproximation()) {
@@ -96,6 +91,11 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 		}
 		return false;
 	}
+
+	/*
+	 * TODO: Construct Arc from PolyBezier to round out their relation. (Arc
+	 * returns PolyBezier objects if it is rotated.)
+	 */
 
 	@Override
 	public boolean equals(Object obj) {
@@ -124,10 +124,25 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	public Point[] getIntersections(ICurve c) {
 		return CurveUtils.getIntersections(this, c);
 	}
-	
+
 	@Override
 	public ICurve[] getOverlaps(ICurve c) {
 		return CurveUtils.getOverlaps(this, c);
+	}
+
+	@Override
+	public Point getProjection(Point reference) {
+		double minDistance = 0;
+		Point minProjection = null;
+		for (BezierCurve bc : toBezier()) {
+			Point projection = bc.getProjection(reference);
+			double distance = projection.getDistance(reference);
+			if (minProjection == null || distance < minDistance) {
+				minProjection = projection;
+				minDistance = distance;
+			}
+		}
+		return minProjection;
 	}
 
 	@Override

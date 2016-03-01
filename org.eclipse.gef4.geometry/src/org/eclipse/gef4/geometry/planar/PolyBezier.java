@@ -260,6 +260,21 @@ public class PolyBezier extends AbstractGeometry
 	}
 
 	@Override
+	public Point getProjection(Point reference) {
+		double minDistance = 0;
+		Point minProjection = null;
+		for (BezierCurve bc : beziers) {
+			Point projection = bc.getProjection(reference);
+			double distance = projection.getDistance(reference);
+			if (minProjection == null || distance < minDistance) {
+				minProjection = projection;
+				minDistance = distance;
+			}
+		}
+		return minProjection;
+	}
+
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle) {
 		return getCopy().rotateCCW(angle);
 	}

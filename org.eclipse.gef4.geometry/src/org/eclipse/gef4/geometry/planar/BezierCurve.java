@@ -1964,6 +1964,27 @@ public class BezierCurve extends AbstractGeometry
 	}
 
 	@Override
+	public Point getProjection(final Point reference) {
+		// // determine start point and start distance
+		// Point start = getP1();
+		// double startDistance = start.getDistance(reference);
+		//
+		// // determine end point and end distance
+		// Point end = getP2();
+		// double endDistance = end.getDistance(reference);
+
+		// determine extreme point and its distance
+		IPointCmp cmp = new IPointCmp() {
+			@Override
+			public boolean pIsBetterThanQ(Point p, Point q) {
+				return p.getDistance(reference) < q.getDistance(reference);
+			}
+		};
+		Point extremeProjection = findExtreme(cmp, Interval.getFull());
+		return extremeProjection;
+	}
+
+	@Override
 	public BezierCurve getRotatedCCW(Angle angle) {
 		return getCopy().rotateCCW(angle);
 	}
