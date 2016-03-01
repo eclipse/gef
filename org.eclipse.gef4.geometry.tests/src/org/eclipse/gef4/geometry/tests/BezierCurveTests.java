@@ -555,6 +555,34 @@ public class BezierCurveTests {
 	}
 
 	@Test
+	public void test_projection() {
+		// nearest start
+		BezierCurve c0 = new BezierCurve(10, 10, 20, 15, 30, 10);
+		Point projection = c0.getProjection(new Point(0, 0));
+		assertEquals(c0.getP1(), projection);
+
+		// nearest end
+		projection = c0.getProjection(new Point(40, 0));
+		assertEquals(c0.getP2(), projection);
+
+		// multiple
+		Point reference = new Point(20, -20);
+		projection = c0.getProjection(reference);
+		assertEquals(c0.getP1().getDistance(new Point(20, -20)),
+				projection.getDistance(reference), 0.001);
+
+		// circular approximation
+		Ellipse ellipse = new Ellipse(-10, -10, 20, 20);
+		CubicCurve[] outlineSegments = ellipse.getOutlineSegments();
+		reference = new Point(0, 0);
+		for (CubicCurve c : outlineSegments) {
+			projection = c.getProjection(reference);
+			assertEquals(reference.getDistance(new Point(-10, 0)),
+					projection.getDistance(reference), 0.001);
+		}
+	}
+
+	@Test
 	public void test_split() {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		BezierCurve c1 = c0.getClipped(0, 0.5);
