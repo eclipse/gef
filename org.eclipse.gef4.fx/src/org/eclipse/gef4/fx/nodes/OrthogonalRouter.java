@@ -23,10 +23,8 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import javafx.scene.Node;
@@ -34,15 +32,11 @@ import javafx.scene.Node;
 /**
  * An {@link IConnectionRouter} that interprets the {@link Connection} control
  * points as way points and adjusts the way points (if necessary) so that the
- * {@link Connection} is routed orthogonally. Will return a {@link Polyline} as
- * rendering {@link ICurve} for the {@link Connection}.
+ * {@link Connection} is routed orthogonally.
  *
  * @author anyssen
  *
  */
-// TODO: extract abstract orthogonal router (which provides the control point
-// manipulation), so that a PolyBezier may be used as ICurve as well (to have
-// smooth bend corners)
 public class OrthogonalRouter implements IConnectionRouter {
 
 	// private sub-class to 'mark' those way-points that are added by the router
