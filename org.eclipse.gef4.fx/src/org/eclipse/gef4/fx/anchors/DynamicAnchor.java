@@ -251,6 +251,48 @@ public class DynamicAnchor extends AbstractAnchor {
 		private static final double TOLERANCE = 0.2;
 
 		/**
+		 * Adjusts the given parameter value to respect the tolerance of 20%
+		 * space around the corners.
+		 *
+		 * @param parameter
+		 *            The parameter to adjust.
+		 * @return The adjusted paremeter.
+		 */
+		private static double adjustParameterToRespectTolerance(
+				double parameter) {
+			if (parameter < TOLERANCE) {
+				parameter = TOLERANCE;
+			} else if (parameter > 1 - TOLERANCE) {
+				parameter = 1 - TOLERANCE;
+			}
+			return parameter;
+		}
+
+		/**
+		 * Converts the given {@link ICurve} to a sequence of
+		 * {@link BezierCurve}s and determines the {@link BezierCurve} that
+		 * contains the given {@link Point}, or <code>null</code> if no
+		 * {@link BezierCurve} contains the {@link Point}.
+		 *
+		 * @param curve
+		 *            The {@link ICurve} that contains the {@link Point}.
+		 * @param point
+		 *            The {@link Point} for which to determine the containing
+		 *            {@link BezierCurve}.
+		 * @return The {@link BezierCurve} segment of the given {@link ICurve}
+		 *         that contains the given {@link Point}, or <code>null</code>.
+		 */
+		private static BezierCurve getContainingBezierCurve(ICurve curve,
+				Point point) {
+			for (BezierCurve bc : curve.toBezier()) {
+				if (bc.contains(point)) {
+					return bc;
+				}
+			}
+			return null;
+		}
+
+		/**
 		 * Returns a point on the {@link ICurve} for which holds that its
 		 * y-coordinate is the same as that of the given reference point, and
 		 * its distance to the given reference point is minimal (i.e. there is
@@ -300,11 +342,7 @@ public class DynamicAnchor extends AbstractAnchor {
 			for (Line l : outlineSegments) {
 				Point projection = l.getProjection(p);
 				double parameter = l.getParameterAt(projection);
-				if (parameter < TOLERANCE) {
-					parameter = TOLERANCE;
-				} else if (parameter > 1 - TOLERANCE) {
-					parameter = 1 - TOLERANCE;
-				}
+				parameter = adjustParameterToRespectTolerance(parameter);
 				projection = l.get(parameter);
 				double distance = p.getDistance(projection);
 				if (nearestProjection == null || distance < nearestDistance) {
@@ -334,11 +372,23 @@ public class DynamicAnchor extends AbstractAnchor {
 						distance = currentDistance;
 					}
 				}
-				// TODO: respect TOLERANCE
+				if (nearest != null) {
+					BezierCurve bc = getContainingBezierCurve(curve, nearest);
+					// adjust parameter to respect tolerance
+					double parameter = bc.getParameterAt(nearest);
+					parameter = adjustParameterToRespectTolerance(parameter);
+					return bc.get(parameter);
+				}
 				return nearest;
 			} else if (curve.intersects(line)) {
-				// TODO: respect TOLERANCE
-				return Point.nearest(reference, curve.getIntersections(line));
+				Point nearest = Point.nearest(reference,
+						curve.getIntersections(line));
+				// find bezier containing the nearest point
+				BezierCurve bc = getContainingBezierCurve(curve, nearest);
+				// adjust parameter to respect tolerance
+				double parameter = bc.getParameterAt(nearest);
+				parameter = adjustParameterToRespectTolerance(parameter);
+				return bc.get(parameter);
 			}
 			// no point found for the given y-coordinate
 			return null;
