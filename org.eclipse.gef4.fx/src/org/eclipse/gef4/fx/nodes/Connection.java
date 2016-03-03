@@ -1300,8 +1300,9 @@ public class Connection extends Group implements IReferencePointProvider {
 		for (; i < controlPoints.size(); i++) {
 			addControlPoint(i, controlPoints.get(i));
 		}
+		int initialRemovalIndex = i;
 		for (; i < controlSize; i++) {
-			removeControlPoint(i);
+			removeControlPoint(controlSize - 1 - (i - initialRemovalIndex));
 		}
 		inRefresh = oldInRefresh;
 		refresh();
