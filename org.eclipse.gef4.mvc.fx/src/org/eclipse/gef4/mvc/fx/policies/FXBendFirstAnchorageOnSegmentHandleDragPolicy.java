@@ -196,33 +196,43 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		init(getBendPolicy(targetPart));
 
 		if (hostPart.getSegmentParameter() == 0.5) {
-			// create new way point
-			getBendPolicy(targetPart).createAndSelectPoint(
-					hostPart.getSegmentIndex(),
-					new Point(e.getSceneX(), e.getSceneY()));
+			if (e.isShiftDown()) {
+				// move segment => select the segment end points
+				getBendPolicy(targetPart).selectPoint(
+						hostPart.getSegmentIndex(), 0,
+						new Point(e.getSceneX(), e.getSceneY()));
+				getBendPolicy(targetPart).selectPoint(
+						hostPart.getSegmentIndex(), 1,
+						new Point(e.getSceneX(), e.getSceneY()));
+			} else {
+				// create new way point
+				getBendPolicy(targetPart).createAndSelectPoint(
+						hostPart.getSegmentIndex(),
+						new Point(e.getSceneX(), e.getSceneY()));
 
-			// find other segment handle parts
-			List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-					PartUtils.getAnchoreds(
-							getHost().getAnchoragesUnmodifiable().keySet()),
-					FXCircleSegmentHandlePart.class);
+				// find other segment handle parts
+				List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
+						PartUtils.getAnchoreds(
+								getHost().getAnchoragesUnmodifiable().keySet()),
+						FXCircleSegmentHandlePart.class);
 
-			// sort parts by segment index and parameter
-			Collections.<FXCircleSegmentHandlePart> sort(parts);
+				// sort parts by segment index and parameter
+				Collections.<FXCircleSegmentHandlePart> sort(parts);
 
-			// increment segment index of succeeding parts
-			for (FXCircleSegmentHandlePart p : parts) {
-				if (p.getSegmentIndex() > hostPart.getSegmentIndex()
-						|| (p.getSegmentIndex() == hostPart.getSegmentIndex()
-								&& p.getSegmentParameter() == 1)) {
-					p.setSegmentIndex(p.getSegmentIndex() + 1);
+				// increment segment index of succeeding parts
+				for (FXCircleSegmentHandlePart p : parts) {
+					if (p.getSegmentIndex() > hostPart.getSegmentIndex() || (p
+							.getSegmentIndex() == hostPart.getSegmentIndex()
+							&& p.getSegmentParameter() == 1)) {
+						p.setSegmentIndex(p.getSegmentIndex() + 1);
+					}
 				}
-			}
 
-			// adjust index and parameter of this segment handle part
-			hostPart.setSegmentIndex(hostPart.getSegmentIndex() + 1);
-			hostPart.setSegmentParameter(0);
-			createdSegmentIndex = hostPart.getSegmentIndex();
+				// adjust index and parameter of this segment handle part
+				hostPart.setSegmentIndex(hostPart.getSegmentIndex() + 1);
+				hostPart.setSegmentParameter(0);
+				createdSegmentIndex = hostPart.getSegmentIndex();
+			}
 		} else {
 			// select existing way point
 			getBendPolicy(targetPart).selectPoint(hostPart.getSegmentIndex(),

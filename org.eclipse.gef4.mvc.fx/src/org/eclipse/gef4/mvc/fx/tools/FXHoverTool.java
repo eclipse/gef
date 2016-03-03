@@ -78,6 +78,8 @@ public class FXHoverTool extends AbstractTool<Node> {
 
 				EventTarget eventTarget = event.getTarget();
 				if (eventTarget instanceof Node) {
+					// FIXME: For some events, "The given target Node is not
+					// contained within an IViewer."
 					Collection<? extends IFXOnHoverPolicy> policies = targetPolicyResolver
 							.getTargetPolicies(FXHoverTool.this,
 									(Node) eventTarget, ON_HOVER_POLICY_KEY);

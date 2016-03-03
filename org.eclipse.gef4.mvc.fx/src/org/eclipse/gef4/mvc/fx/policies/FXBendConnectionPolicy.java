@@ -431,23 +431,35 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * can be restored later.</li>
 	 * </ol>
 	 *
-	 * @param index
-	 *            The index of the selected point that is tested for overlay.
-	 *
 	 * @param mouseInScene
 	 *            The current mouse position in scene coordinates.
 	 */
-	protected void handleOverlay(int index, Point mouseInScene) {
+	protected void handleOverlay(Point mouseInScene) {
 		// put removed back in (may be removed againg before returning)
-		IAnchor removedOverlainAnchor = removedOverlainAnchors.get(index);
-		if (removedOverlainAnchor != null) {
-			selectedPointsIndices.set(index,
-					selectedPointsIndicesBeforeOverlaidRemoval.get(index));
-			getBendOperation().getNewAnchors().add(
-					removedOverlainAnchorsIndices.get(index),
-					removedOverlainAnchor);
-			locallyExecuteOperation();
-			removedOverlainAnchors.remove(index);
+		for (int index = 0; index < selectedPointsIndices.size(); index++) {
+			IAnchor removedOverlainAnchor = removedOverlainAnchors.get(index);
+			if (removedOverlainAnchor != null) {
+				// add anchor
+				getBendOperation().getNewAnchors().add(
+						removedOverlainAnchorsIndices.get(index),
+						removedOverlainAnchor);
+				// reset point index
+				selectedPointsIndices.set(index,
+						selectedPointsIndicesBeforeOverlaidRemoval.get(index));
+				// increment subsequent indices
+				for (int i = index + 1; i < selectedPointsIndices.size(); i++) {
+					selectedPointsIndices.set(i,
+							selectedPointsIndices.get(i) + 1);
+					selectedPointsIndicesBeforeOverlaidRemoval.put(i,
+							selectedPointsIndicesBeforeOverlaidRemoval.get(i)
+									+ 1);
+					removedOverlainAnchorsIndices.put(i,
+							removedOverlainAnchorsIndices.get(i) + 1);
+				}
+				// execute
+				locallyExecuteOperation();
+				removedOverlainAnchors.remove(index);
+			}
 		}
 
 		// do not remove overlaid if there are no way points
@@ -455,49 +467,67 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			return;
 		}
 
-		removedOverlainAnchorsIndices.put(index, -1);
-		Integer selectedPointIndex = selectedPointsIndices.get(index);
-		selectedPointsIndicesBeforeOverlaidRemoval.put(index,
-				selectedPointIndex);
-		IAnchor overlayAnchor = null;
+		// remove overlain anchors
+		for (int index = 0; index < selectedPointsIndices.size(); index++) {
+			removedOverlainAnchorsIndices.put(index, -1);
+			Integer selectedPointIndex = selectedPointsIndices.get(index);
+			selectedPointsIndicesBeforeOverlaidRemoval.put(index,
+					selectedPointIndex);
+			IAnchor overlayAnchor = null;
 
-		// determine if left neighbor is overlain (and can be removed)
-		if (selectedPointIndex > 0) {
-			int candidateIndex = selectedPointIndex - 1;
-			overlayAnchor = getOverlayAnchor(index, candidateIndex,
-					mouseInScene);
-			if (overlayAnchor != null) {
-				// remove previous (in case of start point, ensure we stay
-				// anchored to the same anchorage)
-				removedOverlainAnchorsIndices.put(index, candidateIndex);
-				selectedPointIndex--;
-				selectedPointsIndices.set(index, selectedPointIndex);
+			// determine if left neighbor is overlain (and can be removed)
+			if (selectedPointIndex > 0) {
+				int candidateIndex = selectedPointIndex - 1;
+				overlayAnchor = getOverlayAnchor(index, candidateIndex,
+						mouseInScene);
+				if (overlayAnchor != null) {
+					// remove previous (in case of start point, ensure we stay
+					// anchored to the same anchorage)
+					removedOverlainAnchorsIndices.put(index, candidateIndex);
+					selectedPointIndex--;
+					selectedPointsIndices.set(index, selectedPointIndex);
+				}
 			}
-		}
 
-		// if left neighbor is not overlain (and not removed), determine if
-		// right neighbor is overlain (and can be removed)
-		if (removedOverlainAnchorsIndices.get(index) == -1
-				&& selectedPointIndex < getBendOperation().getNewAnchors()
-						.size() - 1) {
-			int candidateIndex = selectedPointIndex + 1;
-			overlayAnchor = getOverlayAnchor(index, candidateIndex,
-					mouseInScene);
-			if (overlayAnchor != null) {
-				// remove next (in case of end point, ensure we stay
-				// anchored to the same anchorage)
-				removedOverlainAnchorsIndices.put(index, candidateIndex);
+			// if left neighbor is not overlain (and not removed), determine if
+			// right neighbor is overlain (and can be removed)
+			if (removedOverlainAnchorsIndices.get(index) == -1
+					&& selectedPointIndex < getBendOperation().getNewAnchors()
+							.size() - 1) {
+				int candidateIndex = selectedPointIndex + 1;
+				overlayAnchor = getOverlayAnchor(index, candidateIndex,
+						mouseInScene);
+				if (overlayAnchor != null) {
+					// remove next (in case of end point, ensure we stay
+					// anchored to the same anchorage)
+					removedOverlainAnchorsIndices.put(index, candidateIndex);
+				}
 			}
-		}
 
-		// remove neighbor if overlaid
-		if (removedOverlainAnchorsIndices.get(index) != -1) {
-			getBendOperation().getNewAnchors().set(
-					selectedPointsIndicesBeforeOverlaidRemoval.get(index),
-					overlayAnchor);
-			removedOverlainAnchor = getBendOperation().getNewAnchors()
-					.remove((int) removedOverlainAnchorsIndices.get(index));
-			locallyExecuteOperation();
+			// remove neighbor if overlaid
+			if (removedOverlainAnchorsIndices.get(index) != -1) {
+				// decrement subsequent indices
+				for (int i = index + 1; i < selectedPointsIndices.size(); i++) {
+					selectedPointsIndices.set(i,
+							selectedPointsIndices.get(i) - 1);
+					selectedPointsIndicesBeforeOverlaidRemoval.put(i,
+							selectedPointsIndicesBeforeOverlaidRemoval.get(i)
+									- 1);
+					removedOverlainAnchorsIndices.put(i,
+							removedOverlainAnchorsIndices.get(i) - 1);
+				}
+				// replace anchor
+				getBendOperation().getNewAnchors().set(
+						selectedPointsIndicesBeforeOverlaidRemoval.get(index),
+						overlayAnchor);
+				// save overlain anchor
+				removedOverlainAnchors.put(index,
+						getBendOperation().getNewAnchors()
+								.remove((int) removedOverlainAnchorsIndices
+										.get(index)));
+				// execute
+				locallyExecuteOperation();
+			}
 		}
 	}
 
@@ -514,7 +544,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	/**
 	 * Moves the currently selected point to the given mouse position in scene
 	 * coordinates. Checks if the selected point overlays another point using
-	 * {@link #handleOverlay(int, Point)}.
+	 * {@link #handleOverlay(Point)}.
 	 *
 	 * @param mouseInScene
 	 *            The current mouse position in scene coordinates.
@@ -541,17 +571,21 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			selectedPointCurrentPositionInLocal
 					.translate(snapToGridOffset.getNegated());
 
-			getBendOperation().getNewAnchors()
-					.set(selectedPointsIndices.get(i), findOrCreateAnchor(
-							selectedPointCurrentPositionInLocal,
+			getBendOperation().getNewAnchors().set(selectedPointsIndices.get(i),
+					findOrCreateAnchor(selectedPointCurrentPositionInLocal,
 							canConnect(selectedPointsIndices.get(i))));
 		}
 
 		locallyExecuteOperation();
 
-		for (int i = 0; i < selectedPointsIndices.size(); i++) {
-			handleOverlay(i, mouseInScene);
-		}
+		handleOverlay(mouseInScene);
+		// System.out.println("selected points indices: " +
+		// selectedPointsIndices);
+		// System.out.println("selected points indices before overlay removal: "
+		// + selectedPointsIndicesBeforeOverlaidRemoval);
+		// System.out.println("removed overlain anchors indices: "
+		// + removedOverlainAnchorsIndices);
+		// System.out.println();
 	}
 
 	/**
