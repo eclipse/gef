@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
@@ -103,7 +104,14 @@ public class FXCurvePropertySource implements IPropertySource {
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			curve.setStrokeWidth(Double.parseDouble((String) value));
 		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
-			curve.setSegmentBased(Boolean.parseBoolean((String) value));
+			// TODO: Changing the way points has to be undoable. We need to bind
+			// an own UndoablePropertySheetEntry in the UiModule that chains an
+			// operation changing the way points on the domain object.
+			boolean isSegmentBased = Boolean.parseBoolean((String) value);
+			if (isSegmentBased) {
+				curve.setWayPoints(new Point[] {});
+			}
+			curve.setSegmentBased(isSegmentBased);
 		}
 	}
 

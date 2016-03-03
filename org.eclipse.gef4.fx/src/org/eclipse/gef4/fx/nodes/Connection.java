@@ -1252,8 +1252,13 @@ public class Connection extends Group implements IReferencePointProvider {
 	 */
 	public void setControlAnchors(List<IAnchor> anchors) {
 		int controlPointsSize = controlAnchorKeys.size();
+
+		boolean oldInRefresh = inRefresh;
+		inRefresh = true;
+
 		// XXX: We have to do the removal of control anchors before
-		// changing/adding anchors.
+		// changing/adding anchors. TODO: Remove this comment if the order is
+		// not important.
 		for (int i = controlPointsSize - 1; i >= anchors.size(); i--) {
 			removeControlPoint(i);
 		}
@@ -1263,6 +1268,9 @@ public class Connection extends Group implements IReferencePointProvider {
 		for (int i = controlPointsSize; i < anchors.size(); i++) {
 			addControlAnchor(i, anchors.get(i));
 		}
+
+		inRefresh = oldInRefresh;
+		refresh();
 	}
 
 	/**
