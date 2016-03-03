@@ -450,11 +450,16 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				for (int i = index + 1; i < selectedPointsIndices.size(); i++) {
 					selectedPointsIndices.set(i,
 							selectedPointsIndices.get(i) + 1);
-					selectedPointsIndicesBeforeOverlaidRemoval.put(i,
-							selectedPointsIndicesBeforeOverlaidRemoval.get(i)
-									+ 1);
-					removedOverlainAnchorsIndices.put(i,
-							removedOverlainAnchorsIndices.get(i) + 1);
+					if (selectedPointsIndicesBeforeOverlaidRemoval
+							.containsKey(i)) {
+						selectedPointsIndicesBeforeOverlaidRemoval.put(i,
+								selectedPointsIndicesBeforeOverlaidRemoval
+										.get(i) + 1);
+					}
+					if (removedOverlainAnchorsIndices.containsKey(i)) {
+						removedOverlainAnchorsIndices.put(i,
+								removedOverlainAnchorsIndices.get(i) + 1);
+					}
 				}
 				// execute
 				locallyExecuteOperation();
@@ -510,11 +515,16 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				for (int i = index + 1; i < selectedPointsIndices.size(); i++) {
 					selectedPointsIndices.set(i,
 							selectedPointsIndices.get(i) - 1);
-					selectedPointsIndicesBeforeOverlaidRemoval.put(i,
-							selectedPointsIndicesBeforeOverlaidRemoval.get(i)
-									- 1);
-					removedOverlainAnchorsIndices.put(i,
-							removedOverlainAnchorsIndices.get(i) - 1);
+					if (selectedPointsIndicesBeforeOverlaidRemoval
+							.containsKey(i)) {
+						selectedPointsIndicesBeforeOverlaidRemoval.put(i,
+								selectedPointsIndicesBeforeOverlaidRemoval
+										.get(i) - 1);
+					}
+					if (removedOverlainAnchorsIndices.containsKey(i)) {
+						removedOverlainAnchorsIndices.put(i,
+								removedOverlainAnchorsIndices.get(i) - 1);
+					}
 				}
 				// replace anchor
 				getBendOperation().getNewAnchors().set(
