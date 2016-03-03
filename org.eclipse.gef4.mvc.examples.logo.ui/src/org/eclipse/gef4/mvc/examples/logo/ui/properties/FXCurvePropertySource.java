@@ -29,6 +29,8 @@ public class FXCurvePropertySource implements IPropertySource {
 					Decoration.CIRCLE.name() });
 	private static final IPropertyDescriptor STROKE_WIDTH_PROPERTY = new TextPropertyDescriptor(
 			FXGeometricCurve.STROKE_WIDTH_PROPERTY, "Stroke Width");
+	private static final IPropertyDescriptor IS_SEGMENT_BASED_PROPERTY = new TextPropertyDescriptor(
+			FXGeometricCurve.IS_SEGMENT_BASED_PROPERTY, "Segment Based");
 
 	private FXGeometricCurve curve;
 
@@ -45,7 +47,8 @@ public class FXCurvePropertySource implements IPropertySource {
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return new IPropertyDescriptor[] { SOURCE_DECORATION_PROPERTY,
-				TARGET_DECORATION_PROPERTY, STROKE_WIDTH_PROPERTY };
+				TARGET_DECORATION_PROPERTY, STROKE_WIDTH_PROPERTY,
+				IS_SEGMENT_BASED_PROPERTY };
 	}
 
 	@Override
@@ -56,6 +59,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			return curve.getTargetDecoration().ordinal();
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			return new Double(curve.getStrokeWidth()).toString();
+		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
+			return new Boolean(curve.isSegmentBased()).toString();
 		} else {
 			return null;
 		}
@@ -69,6 +74,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			return !curve.getTargetDecoration().equals(Decoration.NONE);
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			return curve.getStrokeWidth() != 1;
+		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
+			return !curve.isSegmentBased();
 		} else {
 			return false;
 		}
@@ -82,6 +89,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			curve.setTargetDecoration(Decoration.NONE);
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			curve.setStrokeWidth(1);
+		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
+			curve.setSegmentBased(false);
 		}
 	}
 
@@ -92,7 +101,10 @@ public class FXCurvePropertySource implements IPropertySource {
 		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
 			curve.setTargetDecoration(Decoration.values()[(int) value]);
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
-			curve.setStrokeWidth(Double.parseDouble((String)value));
+			curve.setStrokeWidth(Double.parseDouble((String) value));
+		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
+			curve.setSegmentBased(Boolean.parseBoolean((String) value));
 		}
 	}
+
 }

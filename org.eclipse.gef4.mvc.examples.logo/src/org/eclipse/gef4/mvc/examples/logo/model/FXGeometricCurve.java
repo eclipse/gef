@@ -23,7 +23,9 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
@@ -37,6 +39,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
 	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
 	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
+	public static final String IS_SEGMENT_BASED_PROPERTY = "segmentBasedProperty";
 
 	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
 		if (waypoints == null || waypoints.length == 0) {
@@ -52,6 +55,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 			this, SOURCE_DECORATION_PROPERTY, Decoration.NONE);
 	private final ObjectProperty<Decoration> targetDecorationProperty = new SimpleObjectProperty<>(
 			this, TARGET_DECORATION_PROPERTY, Decoration.NONE);
+	private final BooleanProperty isSegmentBasedProperty = new SimpleBooleanProperty(
+			this, IS_SEGMENT_BASED_PROPERTY, false);
 	public double[] dashes = new double[0];
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
@@ -109,11 +114,19 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return new ArrayList<>(waypoints);
 	}
 
+	public boolean isSegmentBased() {
+		return isSegmentBasedProperty.get();
+	}
+
 	public void removeWayPoint(int i) {
 		// TODO: check index
 		List<Point> points = getWayPointsCopy();
 		points.remove(i);
 		setWayPoints(points.toArray(new Point[] {}));
+	}
+
+	public void setSegmentBased(boolean isSegmentBased) {
+		isSegmentBasedProperty.set(isSegmentBased);
 	}
 
 	public void setSourceDecoration(Decoration sourceDecoration) {
