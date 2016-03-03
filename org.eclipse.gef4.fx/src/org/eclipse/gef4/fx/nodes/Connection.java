@@ -109,16 +109,18 @@ public class Connection extends Group implements IReferencePointProvider {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
+	private boolean isSegmentBased = false;
+
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.observableMap(new HashMap<AnchorKey, Point>()));
 
 	// visuals
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
+
 	// TODO: use properties (JavaFX Property) for decorations
 	private Shape startDecoration = null;
 
 	private Shape endDecoration = null;
-
 	private ObjectProperty<IConnectionRouter> routerProperty = new SimpleObjectProperty<IConnectionRouter>(
 			new StraightRouter());
 
@@ -127,8 +129,10 @@ public class Connection extends Group implements IReferencePointProvider {
 
 	// used to pass as argument to IAnchor#attach() and #detach()
 	private AdapterStore as = new AdapterStore();
+
 	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
+
 	// control anchors are kept in an ordered set (sorted by their indices)
 	private SortedSet<AnchorKey> controlAnchorKeys = new TreeSet<>(
 			new Comparator<AnchorKey>() {
@@ -140,7 +144,6 @@ public class Connection extends Group implements IReferencePointProvider {
 					return o1Index - o2Index;
 				}
 			});
-
 	// refresh geometry on position changes
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorPCL = new HashMap<>();
@@ -399,37 +402,6 @@ public class Connection extends Group implements IReferencePointProvider {
 		arrangeDecoration(startDecoration, startPoint, curveStartDirection);
 	}
 
-	// /**
-	// * Adjusts the curveClip so that the curve node does not paint through the
-	// * given decoration.
-	// *
-	// * @param curveClip
-	// * A shape that represents the clip of the curve node.
-	// * @param decoration
-	// * The decoration to clip the curve node from.
-	// * @return A shape representing the resulting clip.
-	// */
-	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
-	// // first intersect curve shape with decoration layout bounds,
-	// // then subtract the curve shape from the result, and the decoration
-	// // from that
-	// Path decorationVisualBoundsPath = new Path(
-	// Geometry2FX
-	// .toPathElements(
-	// NodeUtils
-	// .parentToLocal(curveNode,
-	// NodeUtils.localToParent(
-	// decoration,
-	// getShapeBounds(
-	// decoration)))
-	// .toPath()));
-	// decorationVisualBoundsPath.setFill(Color.RED);
-	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
-	// curveNode.getShape());
-	// decorationClip = Shape.subtract(decorationClip, decoration);
-	// return Shape.subtract(curveClip, decorationClip);
-	// }
-
 	/**
 	 * Adjusts the curveClip so that the curve node does not paint through the
 	 * given decoration.
@@ -483,6 +455,37 @@ public class Connection extends Group implements IReferencePointProvider {
 			}
 		};
 	}
+
+	// /**
+	// * Adjusts the curveClip so that the curve node does not paint through the
+	// * given decoration.
+	// *
+	// * @param curveClip
+	// * A shape that represents the clip of the curve node.
+	// * @param decoration
+	// * The decoration to clip the curve node from.
+	// * @return A shape representing the resulting clip.
+	// */
+	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
+	// // first intersect curve shape with decoration layout bounds,
+	// // then subtract the curve shape from the result, and the decoration
+	// // from that
+	// Path decorationVisualBoundsPath = new Path(
+	// Geometry2FX
+	// .toPathElements(
+	// NodeUtils
+	// .parentToLocal(curveNode,
+	// NodeUtils.localToParent(
+	// decoration,
+	// getShapeBounds(
+	// decoration)))
+	// .toPath()));
+	// decorationVisualBoundsPath.setFill(Color.RED);
+	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
+	// curveNode.getShape());
+	// decorationClip = Shape.subtract(decorationClip, decoration);
+	// return Shape.subtract(curveClip, decorationClip);
+	// }
 
 	/**
 	 * Returns the anchor at the given index. The start anchor will be provided
@@ -927,6 +930,18 @@ public class Connection extends Group implements IReferencePointProvider {
 		IAnchor anchor = getEndAnchor();
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
+	}
+
+	/**
+	 * Returns <code>true</code> to hint that this {@link Connection} is segment
+	 * based, i.e. its control points should only be moved in pairs. Otherwise
+	 * returns <code>false</code>.
+	 *
+	 * @return <code>true</code> if this {@link Connection} is segment based,
+	 *         otherwise <code>false</code>.
+	 */
+	public boolean isSegmentBased() {
+		return isSegmentBased;
 	}
 
 	/**
@@ -1382,6 +1397,18 @@ public class Connection extends Group implements IReferencePointProvider {
 	public void setRouter(IConnectionRouter router) {
 		routerProperty.set(router);
 		refresh();
+	}
+
+	/**
+	 * Sets this {@link Connection} to be segment based or way point based,
+	 * depending on the given argument.
+	 *
+	 * @param isSegmentBased
+	 *            <code>true</code> if this {@link Connection} should be segment
+	 *            based, otherwise <code>false</code>.
+	 */
+	public void setSegmentBased(boolean isSegmentBased) {
+		this.isSegmentBased = isSegmentBased;
 	}
 
 	/**
