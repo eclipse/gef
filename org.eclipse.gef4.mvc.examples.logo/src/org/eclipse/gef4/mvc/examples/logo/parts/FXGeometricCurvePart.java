@@ -24,7 +24,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.nodes.PolyBezierInterpolator;
+import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
+import org.eclipse.gef4.fx.nodes.StraightRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -405,6 +408,15 @@ public class FXGeometricCurvePart
 		}
 		if (!visual.getCurveNode().getStrokeDashArray().equals(dashList)) {
 			visual.getCurveNode().getStrokeDashArray().setAll(dashList);
+		}
+
+		// connection router
+		if (content.isSegmentBased()) {
+			visual.setInterpolator(new PolylineInterpolator());
+			visual.setRouter(new OrthogonalRouter());
+		} else {
+			visual.setRouter(new StraightRouter());
+			visual.setInterpolator(new PolyBezierInterpolator());
 		}
 
 		previousContent = content;
