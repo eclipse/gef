@@ -123,7 +123,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		List<Point> before = connection.getPoints();
 
 		getBendPolicy(targetPart)
-				.moveSelectedPoint(new Point(e.getSceneX(), e.getSceneY()));
+				.moveSelectedPoints(new Point(e.getSceneX(), e.getSceneY()));
 
 		List<Point> after = connection.getPoints();
 		if (before.size() != after.size()) {

@@ -13,7 +13,9 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
@@ -72,12 +74,16 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
 
-	private IAnchor removedOverlainAnchor;
-	private int removedOverlainAnchorIndex;
-
-	private int selectedPointIndex;
-	private Point selectedPointInitialPositionInLocal;
-	private int selectedPointIndexBeforeOverlaidRemoval;
+	// selection index => removed anchor
+	private Map<Integer, IAnchor> removedOverlainAnchors = new HashMap<>();
+	// selection index => overlain index
+	private Map<Integer, Integer> removedOverlainAnchorsIndices = new HashMap<>();
+	// selection index => segment index
+	private List<Integer> selectedPointsIndices = new ArrayList<>();
+	// selection index => initial position
+	private List<Point> selectedPointsInitialPositionsInLocal = new ArrayList<>();
+	// selection index => previous index
+	private Map<Integer, Integer> selectedPointsIndicesBeforeOverlaidRemoval = new HashMap<>();
 
 	private Point initialMousePositionInScene;
 
@@ -329,6 +335,9 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * same anchorage, returns the anchor that can be found at the candidate
 	 * location.
 	 *
+	 * @param selectionIndex
+	 *            The index of the selected point.
+	 *
 	 * @param candidateIndex
 	 *            The candidate index.
 	 * @param mouseInScene
@@ -337,13 +346,15 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * @return The overlaid {@link IAnchor} to be used for the currently
 	 *         selected point
 	 */
-	protected IAnchor getOverlayAnchor(int candidateIndex, Point mouseInScene) {
+	protected IAnchor getOverlayAnchor(int selectionIndex, int candidateIndex,
+			Point mouseInScene) {
 		Connection connection = getConnection();
 		Point candidateLocation = connection.getPoint(candidateIndex);
 
 		// overlay if distance is small enough and we do not change the
 		// anchorage
-		Point selectedPointCurrentPositionInLocal = this.selectedPointInitialPositionInLocal
+		Point selectedPointCurrentPositionInLocal = selectedPointsInitialPositionsInLocal
+				.get(selectionIndex)
 				.getTranslated(getMouseDeltaInLocal(mouseInScene));
 		if (candidateLocation.getDistance(
 				selectedPointCurrentPositionInLocal) >= getOverlayThreshold()) {
@@ -397,13 +408,16 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * Returns the initial position of the currently selected point in the local
 	 * coordinate system of the {@link Connection}.
 	 *
+	 * @param selectionIndex
+	 *            The index of the selected point.
+	 *
 	 * @return The initial position in the local coordinate system of the
 	 *         {@link Connection}.
 	 *
 	 * @see #selectPoint(int, double, Point)
 	 */
-	protected Point getSelectedPointInitialPositionInLocal() {
-		return selectedPointInitialPositionInLocal;
+	protected Point getSelectedPointInitialPositionInLocal(int selectionIndex) {
+		return selectedPointsInitialPositionsInLocal.get(selectionIndex);
 	}
 
 	/**
@@ -417,17 +431,23 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * can be restored later.</li>
 	 * </ol>
 	 *
+	 * @param index
+	 *            The index of the selected point that is tested for overlay.
+	 *
 	 * @param mouseInScene
 	 *            The current mouse position in scene coordinates.
 	 */
-	protected void handleOverlay(Point mouseInScene) {
+	protected void handleOverlay(int index, Point mouseInScene) {
 		// put removed back in (may be removed againg before returning)
+		IAnchor removedOverlainAnchor = removedOverlainAnchors.get(index);
 		if (removedOverlainAnchor != null) {
-			selectedPointIndex = selectedPointIndexBeforeOverlaidRemoval;
-			getBendOperation().getNewAnchors().add(removedOverlainAnchorIndex,
+			selectedPointsIndices.set(index,
+					selectedPointsIndicesBeforeOverlaidRemoval.get(index));
+			getBendOperation().getNewAnchors().add(
+					removedOverlainAnchorsIndices.get(index),
 					removedOverlainAnchor);
 			locallyExecuteOperation();
-			removedOverlainAnchor = null;
+			removedOverlainAnchors.remove(index);
 		}
 
 		// do not remove overlaid if there are no way points
@@ -435,97 +455,109 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			return;
 		}
 
-		removedOverlainAnchorIndex = -1;
-		selectedPointIndexBeforeOverlaidRemoval = selectedPointIndex;
+		removedOverlainAnchorsIndices.put(index, -1);
+		Integer selectedPointIndex = selectedPointsIndices.get(index);
+		selectedPointsIndicesBeforeOverlaidRemoval.put(index,
+				selectedPointIndex);
 		IAnchor overlayAnchor = null;
 
 		// determine if left neighbor is overlain (and can be removed)
 		if (selectedPointIndex > 0) {
 			int candidateIndex = selectedPointIndex - 1;
-			overlayAnchor = getOverlayAnchor(candidateIndex, mouseInScene);
+			overlayAnchor = getOverlayAnchor(index, candidateIndex,
+					mouseInScene);
 			if (overlayAnchor != null) {
 				// remove previous (in case of start point, ensure we stay
 				// anchored to the same anchorage)
-				removedOverlainAnchorIndex = candidateIndex;
+				removedOverlainAnchorsIndices.put(index, candidateIndex);
 				selectedPointIndex--;
+				selectedPointsIndices.set(index, selectedPointIndex);
 			}
 		}
 
 		// if left neighbor is not overlain (and not removed), determine if
 		// right neighbor is overlain (and can be removed)
-		if (removedOverlainAnchorIndex == -1
+		if (removedOverlainAnchorsIndices.get(index) == -1
 				&& selectedPointIndex < getBendOperation().getNewAnchors()
 						.size() - 1) {
 			int candidateIndex = selectedPointIndex + 1;
-			overlayAnchor = getOverlayAnchor(candidateIndex, mouseInScene);
+			overlayAnchor = getOverlayAnchor(index, candidateIndex,
+					mouseInScene);
 			if (overlayAnchor != null) {
 				// remove next (in case of end point, ensure we stay
 				// anchored to the same anchorage)
-				removedOverlainAnchorIndex = candidateIndex;
+				removedOverlainAnchorsIndices.put(index, candidateIndex);
 			}
 		}
 
 		// remove neighbor if overlaid
-		if (removedOverlainAnchorIndex != -1) {
+		if (removedOverlainAnchorsIndices.get(index) != -1) {
 			getBendOperation().getNewAnchors().set(
-					selectedPointIndexBeforeOverlaidRemoval, overlayAnchor);
+					selectedPointsIndicesBeforeOverlaidRemoval.get(index),
+					overlayAnchor);
 			removedOverlainAnchor = getBendOperation().getNewAnchors()
-					.remove(removedOverlainAnchorIndex);
+					.remove((int) removedOverlainAnchorsIndices.get(index));
 			locallyExecuteOperation();
 		}
 	}
 
 	@Override
 	public void init() {
-		removedOverlainAnchor = null;
-		removedOverlainAnchorIndex = -1;
-		selectedPointIndex = -1;
-		selectedPointIndexBeforeOverlaidRemoval = -1;
-		selectedPointInitialPositionInLocal = null;
+		removedOverlainAnchors.clear();
+		removedOverlainAnchorsIndices.clear();
+		selectedPointsIndices.clear();
+		selectedPointsIndicesBeforeOverlaidRemoval.clear();
+		selectedPointsInitialPositionsInLocal.clear();
 		super.init();
 	}
 
 	/**
 	 * Moves the currently selected point to the given mouse position in scene
 	 * coordinates. Checks if the selected point overlays another point using
-	 * {@link #handleOverlay(Point)}.
+	 * {@link #handleOverlay(int, Point)}.
 	 *
 	 * @param mouseInScene
 	 *            The current mouse position in scene coordinates.
 	 */
-	public void moveSelectedPoint(Point mouseInScene) {
+	public void moveSelectedPoints(Point mouseInScene) {
 		checkInitialized();
-		if (selectedPointIndex < 0) {
+		if (selectedPointsIndices.isEmpty()) {
 			throw new IllegalStateException("No point was selected.");
 		}
 
-		// update position
-		Point selectedPointCurrentPositionInLocal = this.selectedPointInitialPositionInLocal
-				.getTranslated(getMouseDeltaInLocal(mouseInScene));
+		// update positions
+		for (int i = 0; i < selectedPointsIndices.size(); i++) {
+			Point selectedPointCurrentPositionInLocal = this.selectedPointsInitialPositionsInLocal
+					.get(i).getTranslated(getMouseDeltaInLocal(mouseInScene));
 
-		// snap-to-grid
-		// TODO: make snapping (0.5) configurable
-		Dimension snapToGridOffset = AbstractTransformPolicy
-				.getSnapToGridOffset(
-						getHost().getRoot().getViewer()
-								.<GridModel> getAdapter(GridModel.class),
-						selectedPointCurrentPositionInLocal.x,
-						selectedPointCurrentPositionInLocal.y, 0.5, 0.5);
-		selectedPointCurrentPositionInLocal
-				.translate(snapToGridOffset.getNegated());
+			// snap-to-grid
+			// TODO: make snapping (0.5) configurable
+			Dimension snapToGridOffset = AbstractTransformPolicy
+					.getSnapToGridOffset(
+							getHost().getRoot().getViewer()
+									.<GridModel> getAdapter(GridModel.class),
+							selectedPointCurrentPositionInLocal.x,
+							selectedPointCurrentPositionInLocal.y, 0.5, 0.5);
+			selectedPointCurrentPositionInLocal
+					.translate(snapToGridOffset.getNegated());
 
-		getBendOperation().getNewAnchors().set(selectedPointIndex,
-				findOrCreateAnchor(selectedPointCurrentPositionInLocal,
-						canConnect(selectedPointIndex)));
+			getBendOperation().getNewAnchors()
+					.set(selectedPointsIndices.get(i), findOrCreateAnchor(
+							selectedPointCurrentPositionInLocal,
+							canConnect(selectedPointsIndices.get(i))));
+		}
 
 		locallyExecuteOperation();
-		handleOverlay(mouseInScene);
+
+		for (int i = 0; i < selectedPointsIndices.size(); i++) {
+			handleOverlay(i, mouseInScene);
+		}
 	}
 
 	/**
 	 * Selects the point specified by the given segment index and parameter for
 	 * manipulation. Captures the initial position of the selected point (see
-	 * {@link #getSelectedPointInitialPositionInLocal()}) and the related
+	 * {@link #getSelectedPointInitialPositionInLocal(int)}) and the related
 	 * initial mouse location.
 	 *
 	 * @param segmentIndex
@@ -542,14 +574,15 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 		// store handle part information
 		if (segmentParameter == 1) {
-			selectedPointIndex = segmentIndex + 1;
+			selectedPointsIndices.add(segmentIndex + 1);
 		} else {
-			selectedPointIndex = segmentIndex;
+			selectedPointsIndices.add(segmentIndex);
 		}
 
 		initialMousePositionInScene = mouseInScene.getCopy();
-		selectedPointInitialPositionInLocal = getBendOperation().getConnection()
-				.getPoints().get(selectedPointIndex);
+		selectedPointsInitialPositionsInLocal.add(getBendOperation()
+				.getConnection().getPoints().get(selectedPointsIndices
+						.get(selectedPointsIndices.size() - 1)));
 	}
 
 	@Override
