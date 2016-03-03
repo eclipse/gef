@@ -224,8 +224,9 @@ public class OrthogonalRouter implements IConnectionRouter {
 							y1 + (y2 - y1) / 2);
 				}
 			}
-			// TODO: revise handling of this case
-			// fallback to nearest bounds projection
+			// TODO: revise handling of this case -> we could optimize this by
+			// providing a desired direction; fallback to nearest bounds
+			// projection
 			return DynamicAnchor.OrthogonalProjectionStrategy
 					.getNearestBoundsProjection(referenceGeometry,
 							geometry.getBounds().getCenter());
@@ -266,8 +267,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		return connection.getPoint(index);
 	}
 
-	private Polygon[] getTriangles(Connection connection, int i,
-			Point currentPoint) {
+	private Polygon[] getTriangles(Connection connection, int i) {
 		Node anchorage = connection.getAnchor(i).getAnchorage();
 		Bounds boundsInScene = anchorage
 				.localToScene(anchorage.getLayoutBounds());
@@ -287,7 +287,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Point2D pointInScene = connection.localToScene(currentPoint.x,
 				currentPoint.y);
 		Point point = FX2Geometry.toPoint(pointInScene);
-		Polygon[] triangles = getTriangles(connection, i, currentPoint);
+		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[2].contains(point);
 	}
 
@@ -295,7 +295,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Point2D pointInScene = connection.localToScene(currentPoint.x,
 				currentPoint.y);
 		Point point = FX2Geometry.toPoint(pointInScene);
-		Polygon[] triangles = getTriangles(connection, i, currentPoint);
+		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[3].contains(point);
 	}
 
@@ -303,7 +303,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Point2D pointInScene = connection.localToScene(currentPoint.x,
 				currentPoint.y);
 		Point point = FX2Geometry.toPoint(pointInScene);
-		Polygon[] triangles = getTriangles(connection, i, currentPoint);
+		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[1].contains(point);
 	}
 
@@ -311,7 +311,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Point2D pointInScene = connection.localToScene(currentPoint.x,
 				currentPoint.y);
 		Point point = FX2Geometry.toPoint(pointInScene);
-		Polygon[] triangles = getTriangles(connection, i, currentPoint);
+		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[0].contains(point);
 	}
 
@@ -320,7 +320,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Point2D pointInScene = connection.localToScene(currentPoint.x,
 				currentPoint.y);
 		Point point = FX2Geometry.toPoint(pointInScene);
-		Polygon[] triangles = getTriangles(connection, i, currentPoint);
+		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[0].contains(point) || triangles[2].contains(point);
 	}
 
