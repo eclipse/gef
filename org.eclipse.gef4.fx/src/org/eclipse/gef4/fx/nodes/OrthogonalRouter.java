@@ -51,6 +51,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 		private int index;
 		private Vector direction;
 		private Point point;
+		private List<IAnchor> initialControlAnchors;
 
 		public ControlPointManipulator(Connection c) {
 			this.connection = c;
@@ -64,13 +65,15 @@ public class OrthogonalRouter implements IConnectionRouter {
 				// special subclass of StaticAnchor for this purpose, so we can
 				// easily identify them through an instance check.
 				for (Point pointToInsert : pointsToInsert.get(insertionIndex)) {
-					connection.addControlAnchor(
+					initialControlAnchors.add(
 							insertionIndex + pointsInserted - 1,
 							new OrthogonalPolylineRouterAnchor(connection,
 									pointToInsert));
 					pointsInserted++;
 				}
 			}
+			// exchange the connection's points all at once
+			connection.setControlAnchors(initialControlAnchors);
 		}
 
 		public Vector addRoutingPoint(int index, Point point, double dx,
@@ -124,14 +127,17 @@ public class OrthogonalRouter implements IConnectionRouter {
 			// we use a special subclass of StaticAnchor, we can easily sort
 			// them out through an instance check.
 			int pointsRemoved = 0;
-			List<IAnchor> controlAnchors = connection.getControlAnchors();
-			for (int i = 0; i < controlAnchors.size(); i++) {
-				if (controlAnchors
+			initialControlAnchors = new ArrayList<>(
+					connection.getControlAnchors());
+			for (int i = 0; i < initialControlAnchors.size(); i++) {
+				if (initialControlAnchors
 						.get(i) instanceof OrthogonalPolylineRouterAnchor) {
 					connection.removeControlAnchor(i - pointsRemoved);
 					pointsRemoved++;
 				}
 			}
+			initialControlAnchors = new ArrayList<>(
+					connection.getControlAnchors());
 		}
 
 		public void setRoutingData(int index, Point point, Vector direction) {
