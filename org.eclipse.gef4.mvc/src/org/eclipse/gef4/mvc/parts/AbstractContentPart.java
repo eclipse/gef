@@ -23,11 +23,13 @@ import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
+import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 import javafx.beans.property.ObjectProperty;
@@ -494,8 +496,9 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	protected void unregister(IViewer<VR> viewer) {
 		// remove content children and anchorages
 		ContentBehavior<VR> contentBehavior = this
-				.getAdapter(new TypeToken<ContentBehavior<VR>>(getClass()) {
-				});
+				.getAdapter(new TypeToken<ContentBehavior<VR>>() {
+				}.where(new TypeParameter<VR>() {
+				}, Types.<VR> argumentOf(viewer.getClass())));
 		if (contentBehavior != null) {
 			contentBehavior.synchronizeContentChildren(Collections.emptyList());
 			contentBehavior.synchronizeContentAnchorages(
