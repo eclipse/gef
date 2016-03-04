@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.tests.stubs;
+package org.eclipse.gef4.mvc.tests.stubs.cell;
 
 import java.util.List;
 
@@ -19,14 +19,15 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-public class CellContentPart extends AbstractContentPart<Object, Object> {
+public class CellContentPart<VR, V extends VR> extends AbstractContentPart<VR, V> {
+
 	@Override
-	protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 
 	@Override
-	protected Object createVisual() {
-		return new Object();
+	protected V createVisual() {
+		return null;
 	}
 
 	@Override
@@ -49,6 +50,6 @@ public class CellContentPart extends AbstractContentPart<Object, Object> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
+	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 }

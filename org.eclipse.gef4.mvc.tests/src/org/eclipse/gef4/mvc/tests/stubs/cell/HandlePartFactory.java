@@ -9,26 +9,21 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.tests.stubs;
+package org.eclipse.gef4.mvc.tests.stubs.cell;
 
-import org.eclipse.gef4.mvc.parts.AbstractRootPart;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class RootPart extends AbstractRootPart<Object, Object> {
+public class HandlePartFactory<VR> implements IHandlePartFactory<VR> {
 	@Override
-	protected void addChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
-	}
-
-	@Override
-	protected Object createVisual() {
-		return this;
-	}
-
-	@Override
-	protected void doRefreshVisual(Object visual) {
-	}
-
-	@Override
-	protected void removeChildVisual(IVisualPart<Object, ? extends Object> child, int index) {
+	public List<IHandlePart<VR, ? extends VR>> createHandleParts(List<? extends IVisualPart<VR, ? extends VR>> targets,
+			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap) {
+		return Collections.emptyList();
 	}
 }

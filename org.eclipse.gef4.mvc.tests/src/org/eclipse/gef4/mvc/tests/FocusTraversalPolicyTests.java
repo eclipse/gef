@@ -25,14 +25,17 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
-import org.eclipse.gef4.mvc.tests.stubs.Cell;
 import org.eclipse.gef4.mvc.tests.stubs.Domain;
 import org.eclipse.gef4.mvc.tests.stubs.Module;
 import org.eclipse.gef4.mvc.tests.stubs.Viewer;
+import org.eclipse.gef4.mvc.tests.stubs.cell.Cell;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -49,8 +52,8 @@ public class FocusTraversalPolicyTests {
 	public static String PREV = "PREV";
 
 	private static Injector injector;
-	private static Domain domain;
 
+	private static Domain domain;
 	private static Viewer viewer;
 
 	@BeforeClass
@@ -59,6 +62,12 @@ public class FocusTraversalPolicyTests {
 			@Override
 			protected void configure() {
 				super.configure();
+
+				binder().bind(new TypeLiteral<IDomain<Object>>() {
+				}).to(Domain.class);
+				binder().bind(new TypeLiteral<IViewer<Object>>() {
+				}).to(Viewer.class);
+
 				// bind FocusModel
 				AdapterMaps.getAdapterMapBinder(binder(), Viewer.class).addBinding(AdapterKey.defaultRole())
 						.to(new TypeLiteral<FocusModel<Object>>() {
@@ -95,7 +104,8 @@ public class FocusTraversalPolicyTests {
 		domain.activate();
 		focusModel = viewer.getAdapter(new TypeToken<FocusModel<Object>>() {
 		});
-		traversePolicy = viewer.getRootPart().getAdapter(new TypeToken<FocusTraversalPolicy<Object>>() {
+		IRootPart<Object, ? extends Object> rootPart = viewer.getRootPart();
+		traversePolicy = rootPart.getAdapter(new TypeToken<FocusTraversalPolicy<Object>>() {
 		});
 	}
 

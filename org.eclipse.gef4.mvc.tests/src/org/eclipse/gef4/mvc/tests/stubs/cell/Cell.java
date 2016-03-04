@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.tests.stubs;
+package org.eclipse.gef4.mvc.tests.stubs.cell;
 
 import java.util.ArrayList;
 import java.util.Arrays;
