@@ -267,7 +267,9 @@ public class OrthogonalRouter implements IConnectionRouter {
 				connection.referencePointProperty()
 						.put(connection.getAnchorKey(index), referencePoint);
 				Point computePosition = ((DynamicAnchor) anchor)
-						.computePosition(connection, referencePoint);
+						.computePosition(connection, referencePoint,
+								((DynamicAnchor) anchor).getComputationStrategy(
+										connection.getAnchorKey(index)));
 				return computePosition;
 			}
 		}

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
@@ -412,12 +413,75 @@ public class FXGeometricCurvePart
 
 		// connection router
 		if (content.isSegmentBased()) {
-			// TODO: change projection strategy on the source and target anchors
+			// FIXME: Change the computation strategy from the operation that
+			// changes the curve's isSegmentBased flag.
+			Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+					.getSourceAnchorages();
+			if (!sourceAnchorages.isEmpty()) {
+				AbstractFXGeometricElement<? extends IGeometry> source = sourceAnchorages
+						.iterator().next();
+				IContentPart<Node, ? extends Node> sourcePart = getViewer()
+						.getContentPartMap().get(source);
+				IAnchor sourceAnchor = sourcePart
+						.getAdapter(new TypeToken<Provider<IAnchor>>() {
+						}).get();
+				((DynamicAnchor) sourceAnchor).setComputationStrategy(
+						visual.getStartAnchorKey(),
+						new DynamicAnchor.OrthogonalProjectionStrategy());
+			}
+
+			Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+					.getTargetAnchorages();
+			if (!targetAnchorages.isEmpty()) {
+				AbstractFXGeometricElement<? extends IGeometry> target = targetAnchorages
+						.iterator().next();
+				IContentPart<Node, ? extends Node> targetPart = getViewer()
+						.getContentPartMap().get(target);
+				IAnchor targetAnchor = targetPart
+						.getAdapter(new TypeToken<Provider<IAnchor>>() {
+						}).get();
+				((DynamicAnchor) targetAnchor).setComputationStrategy(
+						visual.getEndAnchorKey(),
+						new DynamicAnchor.OrthogonalProjectionStrategy());
+			}
+
 			visual.setInterpolator(new PolylineInterpolator());
 			visual.setRouter(new OrthogonalRouter());
 		} else {
-			// TODO: restore projection strategy on the source and target
-			// anchors
+			// FIXME: Restore the computation strategy from the operation that
+			// changes the curve's isSegmentBased flag.
+			Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+					.getSourceAnchorages();
+			if (!sourceAnchorages.isEmpty()) {
+				AbstractFXGeometricElement<? extends IGeometry> source = sourceAnchorages
+						.iterator().next();
+				IContentPart<Node, ? extends Node> sourcePart = getViewer()
+						.getContentPartMap().get(source);
+				if (sourcePart != null) {
+					IAnchor sourceAnchor = sourcePart
+							.getAdapter(new TypeToken<Provider<IAnchor>>() {
+							}).get();
+					((DynamicAnchor) sourceAnchor).removeComputationStrategy(
+							visual.getStartAnchorKey());
+				}
+			}
+
+			Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+					.getTargetAnchorages();
+			if (!targetAnchorages.isEmpty()) {
+				AbstractFXGeometricElement<? extends IGeometry> target = targetAnchorages
+						.iterator().next();
+				IContentPart<Node, ? extends Node> targetPart = getViewer()
+						.getContentPartMap().get(target);
+				if (targetPart != null) {
+					IAnchor targetAnchor = targetPart
+							.getAdapter(new TypeToken<Provider<IAnchor>>() {
+							}).get();
+					((DynamicAnchor) targetAnchor).removeComputationStrategy(
+							visual.getEndAnchorKey());
+				}
+			}
+
 			visual.setRouter(new StraightRouter());
 			visual.setInterpolator(new PolyBezierInterpolator());
 		}

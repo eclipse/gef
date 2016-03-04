@@ -264,7 +264,6 @@ public class Connection extends Group implements IReferencePointProvider {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
-
 		addAnchor(anchor, getControlAnchorKey(index), index);
 	}
 
@@ -314,7 +313,6 @@ public class Connection extends Group implements IReferencePointProvider {
 	 */
 	protected void arrangeDecoration(Shape decoration, Point start,
 			Vector direction) {
-
 		decoration.getTransforms().clear();
 
 		// arrange on start of curve.
@@ -454,37 +452,6 @@ public class Connection extends Group implements IReferencePointProvider {
 		};
 	}
 
-	// /**
-	// * Adjusts the curveClip so that the curve node does not paint through the
-	// * given decoration.
-	// *
-	// * @param curveClip
-	// * A shape that represents the clip of the curve node.
-	// * @param decoration
-	// * The decoration to clip the curve node from.
-	// * @return A shape representing the resulting clip.
-	// */
-	// protected Shape clipAtDecoration(Shape curveClip, Shape decoration) {
-	// // first intersect curve shape with decoration layout bounds,
-	// // then subtract the curve shape from the result, and the decoration
-	// // from that
-	// Path decorationVisualBoundsPath = new Path(
-	// Geometry2FX
-	// .toPathElements(
-	// NodeUtils
-	// .parentToLocal(curveNode,
-	// NodeUtils.localToParent(
-	// decoration,
-	// getShapeBounds(
-	// decoration)))
-	// .toPath()));
-	// decorationVisualBoundsPath.setFill(Color.RED);
-	// Shape decorationClip = Shape.intersect(decorationVisualBoundsPath,
-	// curveNode.getShape());
-	// decorationClip = Shape.subtract(decorationClip, decoration);
-	// return Shape.subtract(curveClip, decorationClip);
-	// }
-
 	/**
 	 * Returns the anchor at the given index. The start anchor will be provided
 	 * for <code>index == 0</code>, the end anchor for the last defined index.
@@ -520,7 +487,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *            determined.
 	 * @return The anchor index for the given {@link AnchorKey}.
 	 */
-	protected int getAnchorIndex(AnchorKey anchorKey) {
+	public int getAnchorIndex(AnchorKey anchorKey) {
 		if (anchorKey.equals(getStartAnchorKey())) {
 			return 0;
 		} else if (anchorKey.equals(getEndAnchorKey())) {
@@ -538,7 +505,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *            The anchor index for which to determine the {@link AnchorKey}.
 	 * @return The {@link AnchorKey} for the given anchor index.
 	 */
-	protected AnchorKey getAnchorKey(int anchorIndex) {
+	public AnchorKey getAnchorKey(int anchorIndex) {
 		if (anchorIndex < 0 || anchorIndex >= getAnchors().size()) {
 			throw new IllegalArgumentException(
 					"The given anchor index is out of bounds.");
@@ -613,7 +580,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *             assigned to this {@link Connection} for the given
 	 *             {@link AnchorKey}.
 	 */
-	protected int getControlAnchorIndex(AnchorKey key) {
+	public int getControlAnchorIndex(AnchorKey key) {
 		if (!key.getId().startsWith(CONTROL_POINT_ROLE_PREFIX)) {
 			throw new IllegalArgumentException(
 					"Given AnchorKey " + key + " is no control anchor key.");
@@ -631,7 +598,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *            returned.
 	 * @return The {@link AnchorKey} for the given control anchor index.
 	 */
-	protected AnchorKey getControlAnchorKey(int index) {
+	public AnchorKey getControlAnchorKey(int index) {
 		return new AnchorKey(getCurveNode(), CONTROL_POINT_ROLE_PREFIX + index);
 	}
 
@@ -727,7 +694,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *
 	 * @return The end {@link AnchorKey} for this {@link Connection}.
 	 */
-	protected AnchorKey getEndAnchorKey() {
+	public AnchorKey getEndAnchorKey() {
 		return new AnchorKey(getCurveNode(), END_ROLE);
 	}
 
@@ -853,7 +820,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	 *
 	 * @return The start {@link AnchorKey} for this {@link Connection}.
 	 */
-	protected AnchorKey getStartAnchorKey() {
+	public AnchorKey getStartAnchorKey() {
 		return new AnchorKey(getCurveNode(), START_ROLE);
 	}
 

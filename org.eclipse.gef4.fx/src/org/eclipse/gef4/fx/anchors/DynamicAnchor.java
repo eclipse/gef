@@ -193,6 +193,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @author anyssen
 	 *
 	 */
+	// TODO: Remove this interface, manage reference points per anchor key
+	// directly within the DynamicAnchor.
 	public interface IReferencePointProvider {
 
 		/**
@@ -798,15 +800,17 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * The name of the {@link #computationStrategyProperty() computation
+	 * The name of the {@link #defaultComputationStrategyProperty() computation
 	 * strategy property}.
 	 */
-	public static final String COMPUTATION_STRATEGY_PROPERTY = "computationStrategy";
-
+	public static final String DEFAULT_COMPUTATION_STRATEGY_PROPERTY = "defaultComputationStrategy";
 	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ProjectionStrategy();
+	private ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty;
+	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategiesProperty = new ReadOnlyMapWrapperEx<>(
+			FXCollections
+					.<AnchorKey, IComputationStrategy> observableHashMap());
 
 	private Map<AnchorKey, IReferencePointProvider> anchoredReferencePointProviders = new HashMap<>();
-
 	private MapChangeListener<AnchorKey, Point> anchoredReferencePointsChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
@@ -829,8 +833,6 @@ public class DynamicAnchor extends AbstractAnchor {
 			}
 		}
 	};
-
-	private ObjectProperty<IComputationStrategy> computationStrategyProperty;
 
 	/**
 	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual.
@@ -855,7 +857,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	public DynamicAnchor(Node anchorage,
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
-		setComputationStrategy(computationStrategy);
+		setDefaultComputationStrategy(computationStrategy);
 	}
 
 	/**
@@ -894,18 +896,14 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * Returns a writable object property for the {@link IComputationStrategy}
-	 * used by this {@link DynamicAnchor}.
+	 * Returns a {@link ReadOnlyMapProperty} that stores the individual
+	 * {@link IComputationStrategy} for each {@link AnchorKey}.
 	 *
-	 * @return A writable property.
+	 * @return A {@link ReadOnlyMapProperty} that stores the individual
+	 *         {@link IComputationStrategy} for each {@link AnchorKey}.
 	 */
-	public ObjectProperty<IComputationStrategy> computationStrategyProperty() {
-		if (computationStrategyProperty == null) {
-			computationStrategyProperty = new SimpleObjectProperty<>(this,
-					COMPUTATION_STRATEGY_PROPERTY,
-					DEFAULT_COMPUTATION_STRATEGY);
-		}
-		return computationStrategyProperty;
+	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty() {
+		return computationStrategiesProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -919,6 +917,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	@Override
 	protected Point computePosition(AnchorKey key) {
+		// determine reference point
 		Point referencePoint = anchoredReferencePointProviders.get(key)
 				.referencePointProperty().get(key);
 		if (referencePoint == null) {
@@ -926,7 +925,9 @@ public class DynamicAnchor extends AbstractAnchor {
 					"The IReferencePointProvider does not provide a reference point for this key: "
 							+ key);
 		}
-		return computePosition(key.getAnchored(), referencePoint);
+		// compute position
+		return computePosition(key.getAnchored(), referencePoint,
+				getComputationStrategy(key));
 	}
 
 	/**
@@ -941,14 +942,33 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *            A reference {@link Point} used for calculation of the anchor
 	 *            position, provided within the local coordinate system of the
 	 *            to be anchored {@link Node}.
+	 * @param computationStrategy
+	 *            The {@link IComputationStrategy} that is used to compute the
+	 *            position based on the given reference point.
 	 * @return Point The anchor position within the local coordinate system of
 	 *         the to be anchored {@link Node}.
 	 */
 	public Point computePosition(Node anchored,
-			Point anchoredReferencePointInLocal) {
+			Point anchoredReferencePointInLocal,
+			IComputationStrategy computationStrategy) {
 		return FX2Geometry.toPoint(anchored.sceneToLocal(Geometry2FX.toFXPoint(
-				getComputationStrategy().computePositionInScene(getAnchorage(),
+				computationStrategy.computePositionInScene(getAnchorage(),
 						anchored, anchoredReferencePointInLocal))));
+	}
+
+	/**
+	 * Returns a writable object property for the {@link IComputationStrategy}
+	 * used by this {@link DynamicAnchor}.
+	 *
+	 * @return A writable property.
+	 */
+	public ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty() {
+		if (defaultComputationStrategyProperty == null) {
+			defaultComputationStrategyProperty = new SimpleObjectProperty<>(
+					this, DEFAULT_COMPUTATION_STRATEGY_PROPERTY,
+					DEFAULT_COMPUTATION_STRATEGY);
+		}
+		return defaultComputationStrategyProperty;
 	}
 
 	/**
@@ -987,26 +1007,79 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * Returns the computation strategy used by this {@link DynamicAnchor}.
+	 * Returns the {@link IComputationStrategy} that is used by this
+	 * {@link DynamicAnchor} to compute the position for the given
+	 * {@link AnchorKey}. If no {@link IComputationStrategy} was explicitly set
+	 * for the given {@link AnchorKey}, then the
+	 * {@link #getDefaultComputationStrategy()} is returned.
 	 *
-	 * @return The computation strategy being used.
+	 * @param key
+	 *            The {@link AnchorKey} for which the
+	 *            {@link IComputationStrategy} is determined.
+	 * @return The {@link IComputationStrategy} that is used by this
+	 *         {@link DynamicAnchor} to compute the position for the given
+	 *         {@link AnchorKey}.
 	 */
-	public IComputationStrategy getComputationStrategy() {
-		return computationStrategyProperty == null
+	public IComputationStrategy getComputationStrategy(AnchorKey key) {
+		if (computationStrategiesProperty.containsKey(key)) {
+			return computationStrategiesProperty.get(key);
+		}
+		return getDefaultComputationStrategy();
+	}
+
+	/**
+	 * Returns the default {@link IComputationStrategy} used by this
+	 * {@link DynamicAnchor} when no {@link IComputationStrategy} is explicitly
+	 * set for an {@link AnchorKey}.
+	 *
+	 * @return The default {@link IComputationStrategy}.
+	 */
+	public IComputationStrategy getDefaultComputationStrategy() {
+		return defaultComputationStrategyProperty == null
 				? DEFAULT_COMPUTATION_STRATEGY
-				: computationStrategyProperty().get();
+				: defaultComputationStrategyProperty().get();
+	}
+
+	/**
+	 * Removes the {@link IComputationStrategy} that is currently registered for
+	 * the given {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which to remove the associated
+	 *            {@link IComputationStrategy}.
+	 */
+	public void removeComputationStrategy(AnchorKey key) {
+		computationStrategiesProperty.remove(key);
+	}
+
+	/**
+	 * Sets the given {@link IComputationStrategy} to be used by this
+	 * {@link DynamicAnchor} to compute the position for the given
+	 * {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which the given
+	 *            {@link IComputationStrategy} will be used to compute its
+	 *            position.
+	 * @param computationStrategy
+	 *            The {@link IComputationStrategy} that will be used to compute
+	 *            positions for the given {@link AnchorKey}.
+	 */
+	public void setComputationStrategy(AnchorKey key,
+			IComputationStrategy computationStrategy) {
+		computationStrategiesProperty.put(key, computationStrategy);
 	}
 
 	/**
 	 * Sets the given {@link IComputationStrategy} for this
-	 * {@link DynamicAnchor}.
+	 * {@link DynamicAnchor} as the default strategy.
 	 *
 	 * @param computationStrategy
-	 *            The new {@link IComputationStrategy} to use.
+	 *            The new default {@link IComputationStrategy}.
 	 */
-	public void setComputationStrategy(
+	public void setDefaultComputationStrategy(
 			IComputationStrategy computationStrategy) {
-		computationStrategyProperty().set(computationStrategy);
+		defaultComputationStrategyProperty().set(computationStrategy);
 	}
 
 }

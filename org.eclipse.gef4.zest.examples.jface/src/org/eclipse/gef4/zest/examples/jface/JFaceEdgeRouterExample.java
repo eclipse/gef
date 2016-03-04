@@ -104,6 +104,7 @@ public class JFaceEdgeRouterExample {
 		return new OrthogonalRouter() {
 			@Override
 			public void route(Connection connection) {
+				// FIXME: Register computation strategy per anchor key.
 				if (connection.getPoints().size() < 2) {
 					return;
 				}
@@ -111,8 +112,8 @@ public class JFaceEdgeRouterExample {
 					if (anchor instanceof DynamicAnchor) {
 						DynamicAnchor dynamicAnchor = (DynamicAnchor) anchor;
 						if (!(dynamicAnchor
-								.getComputationStrategy() instanceof DynamicAnchor.OrthogonalProjectionStrategy)) {
-							dynamicAnchor.setComputationStrategy(
+								.getDefaultComputationStrategy() instanceof DynamicAnchor.OrthogonalProjectionStrategy)) {
+							dynamicAnchor.setDefaultComputationStrategy(
 									new DynamicAnchor.OrthogonalProjectionStrategy());
 						}
 					}
