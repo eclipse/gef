@@ -223,13 +223,14 @@ public class OrthogonalRouter implements IConnectionRouter {
 									: refBounds.getX() + refBounds.getWidth(),
 							y1 + (y2 - y1) / 2);
 				}
+				// TODO: revise handling of this case -> we could optimize this
+				// by
+				// providing a desired direction; fallback to nearest bounds
+				// projection
+				return DynamicAnchor.OrthogonalProjectionStrategy
+						.getNearestBoundsProjection(referenceGeometry,
+								geometry.getBounds().getCenter());
 			}
-			// TODO: revise handling of this case -> we could optimize this by
-			// providing a desired direction; fallback to nearest bounds
-			// projection
-			return DynamicAnchor.OrthogonalProjectionStrategy
-					.getNearestBoundsProjection(referenceGeometry,
-							geometry.getBounds().getCenter());
 		}
 		return connection.getPoint(referenceIndex);
 	}
