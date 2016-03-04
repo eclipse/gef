@@ -58,8 +58,8 @@ public class SetMultimapListenerHelper<K, V> {
 		private int cursor = -1;
 
 		/**
-		 * Creates a new {@link SetMultimapListenerHelper.AtomicChange}
-		 * that represents a change comprising a single elementary sub-change.
+		 * Creates a new {@link SetMultimapListenerHelper.AtomicChange} that
+		 * represents a change comprising a single elementary sub-change.
 		 *
 		 * @param source
 		 *            The source {@link ObservableSetMultimap} from which the
@@ -105,9 +105,8 @@ public class SetMultimapListenerHelper<K, V> {
 		}
 
 		/**
-		 * Creates a new {@link MultisetListenerHelper.AtomicChange} for
-		 * the passed in source, based on the data provided in the passed-in
-		 * change.
+		 * Creates a new {@link MultisetListenerHelper.AtomicChange} for the
+		 * passed in source, based on the data provided in the passed-in change.
 		 * <p>
 		 * This is basically used to allow properties wrapping an
 		 * {@link ObservableMultiset} to re-fire change events of their wrapped
@@ -234,8 +233,8 @@ public class SetMultimapListenerHelper<K, V> {
 
 		/**
 		 * Constructs a new
-		 * {@link SetMultimapListenerHelper.ElementarySubChange} with the
-		 * given values.
+		 * {@link SetMultimapListenerHelper.ElementarySubChange} with the given
+		 * values.
 		 *
 		 * @param key
 		 *            The key to which the change is related.
@@ -327,8 +326,8 @@ public class SetMultimapListenerHelper<K, V> {
 	private boolean lockSetMultimapChangeListeners;
 
 	/**
-	 * Constructs a new {@link SetMultimapListenerHelper} for the given
-	 * source {@link ObservableSetMultimap}.
+	 * Constructs a new {@link SetMultimapListenerHelper} for the given source
+	 * {@link ObservableSetMultimap}.
 	 *
 	 * @param source
 	 *            The {@link ObservableSetMultimap} to use as source in change
@@ -340,9 +339,9 @@ public class SetMultimapListenerHelper<K, V> {
 
 	/**
 	 * Adds a new {@link InvalidationListener} to this
-	 * {@link SetMultimapListenerHelper}. If the same listener is added
-	 * more than once, it will be registered more than once and will receive
-	 * multiple change events.
+	 * {@link SetMultimapListenerHelper}. If the same listener is added more
+	 * than once, it will be registered more than once and will receive multiple
+	 * change events.
 	 *
 	 * @param listener
 	 *            The listener to add.
@@ -362,9 +361,9 @@ public class SetMultimapListenerHelper<K, V> {
 
 	/**
 	 * Adds a new {@link SetMultimapChangeListener} to this
-	 * {@link SetMultimapListenerHelper}. If the same listener is added
-	 * more than once, it will be registered more than once and will receive
-	 * multiple change events.
+	 * {@link SetMultimapListenerHelper}. If the same listener is added more
+	 * than once, it will be registered more than once and will receive multiple
+	 * change events.
 	 *
 	 * @param listener
 	 *            The listener to add.
@@ -401,8 +400,8 @@ public class SetMultimapListenerHelper<K, V> {
 
 	/**
 	 * Returns the source {@link ObservableSetMultimap} this
-	 * {@link SetMultimapListenerHelper} is bound to, which is used in
-	 * change notifications.
+	 * {@link SetMultimapListenerHelper} is bound to, which is used in change
+	 * notifications.
 	 *
 	 * @return The source {@link ObservableSetMultimap}.
 	 */
@@ -460,13 +459,17 @@ public class SetMultimapListenerHelper<K, V> {
 
 	/**
 	 * Removes the given {@link InvalidationListener} from this
-	 * {@link SetMultimapListenerHelper}. If its was registered more than
-	 * once, removes one occurrence.
+	 * {@link SetMultimapListenerHelper}. If its was registered more than once,
+	 * removes one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
 	public void removeListener(InvalidationListener listener) {
+		if (invalidationListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
@@ -492,14 +495,18 @@ public class SetMultimapListenerHelper<K, V> {
 
 	/**
 	 * Removes the given {@link SetMultimapChangeListener} from this
-	 * {@link SetMultimapListenerHelper}. If its was registered more than
-	 * once, removes one occurrence.
+	 * {@link SetMultimapListenerHelper}. If its was registered more than once,
+	 * removes one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
 	public void removeListener(
 			SetMultimapChangeListener<? super K, ? super V> listener) {
+		if (setMultimapChangeListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.

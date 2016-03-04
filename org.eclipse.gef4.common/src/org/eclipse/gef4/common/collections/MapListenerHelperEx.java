@@ -78,8 +78,8 @@ public class MapListenerHelperEx<K, V> {
 		}
 
 		/**
-		 * Creates a new {@link MapListenerHelperEx.AtomicChange} for the
-		 * passed in source, based on the data provided in the passed-in change.
+		 * Creates a new {@link MapListenerHelperEx.AtomicChange} for the passed
+		 * in source, based on the data provided in the passed-in change.
 		 * <p>
 		 * This is basically used to allow properties wrapping an
 		 * {@link ObservableMap} to re-fire change events of their wrapped
@@ -160,8 +160,8 @@ public class MapListenerHelperEx<K, V> {
 
 	/**
 	 * Adds a new {@link InvalidationListener} to this
-	 * {@link MapListenerHelperEx}. If the same listener is added more
-	 * than once, it will be registered more than once and will receive multiple
+	 * {@link MapListenerHelperEx}. If the same listener is added more than
+	 * once, it will be registered more than once and will receive multiple
 	 * change events.
 	 *
 	 * @param listener
@@ -181,10 +181,9 @@ public class MapListenerHelperEx<K, V> {
 	}
 
 	/**
-	 * Adds a new {@link MapChangeListener} to this
-	 * {@link MapListenerHelperEx}. If the same listener is added more
-	 * than once, it will be registered more than once and will receive multiple
-	 * change events.
+	 * Adds a new {@link MapChangeListener} to this {@link MapListenerHelperEx}.
+	 * If the same listener is added more than once, it will be registered more
+	 * than once and will receive multiple change events.
 	 *
 	 * @param listener
 	 *            The listener to add.
@@ -218,9 +217,8 @@ public class MapListenerHelperEx<K, V> {
 	}
 
 	/**
-	 * Returns the source {@link ObservableMap} this
-	 * {@link MapListenerHelperEx} is bound to, which is used in change
-	 * notifications.
+	 * Returns the source {@link ObservableMap} this {@link MapListenerHelperEx}
+	 * is bound to, which is used in change notifications.
 	 *
 	 * @return The source {@link ObservableMap}.
 	 */
@@ -284,6 +282,10 @@ public class MapListenerHelperEx<K, V> {
 	 *            The listener to remove.
 	 */
 	public void removeListener(InvalidationListener listener) {
+		if (invalidationListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
@@ -317,6 +319,10 @@ public class MapListenerHelperEx<K, V> {
 	 */
 	public void removeListener(
 			MapChangeListener<? super K, ? super V> listener) {
+		if (mapChangeListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.

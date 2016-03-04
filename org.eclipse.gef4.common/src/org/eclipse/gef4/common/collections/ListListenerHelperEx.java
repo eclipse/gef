@@ -701,6 +701,10 @@ public class ListListenerHelperEx<E> {
 	 *            The listener to remove.
 	 */
 	public void removeListener(InvalidationListener listener) {
+		if (invalidationListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
@@ -733,6 +737,10 @@ public class ListListenerHelperEx<E> {
 	 *            The listener to remove.
 	 */
 	public void removeListener(ListChangeListener<? super E> listener) {
+		if (listChangeListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.

@@ -68,8 +68,8 @@ public class SetListenerHelperEx<E> {
 		}
 
 		/**
-		 * Creates a new {@link SetListenerHelperEx.AtomicChange} for the
-		 * passed in source, based on the data provided in the passed-in change.
+		 * Creates a new {@link SetListenerHelperEx.AtomicChange} for the passed
+		 * in source, based on the data provided in the passed-in change.
 		 * <p>
 		 * This is basically used to allow properties wrapping an
 		 * {@link ObservableSet} to re-fire change events of their wrapped
@@ -140,8 +140,8 @@ public class SetListenerHelperEx<E> {
 
 	/**
 	 * Adds a new {@link InvalidationListener} to this
-	 * {@link SetListenerHelperEx}. If the same listener is added more
-	 * than once, it will be registered more than once and will receive multiple
+	 * {@link SetListenerHelperEx}. If the same listener is added more than
+	 * once, it will be registered more than once and will receive multiple
 	 * change events.
 	 *
 	 * @param listener
@@ -161,10 +161,9 @@ public class SetListenerHelperEx<E> {
 	}
 
 	/**
-	 * Adds a new {@link SetChangeListener} to this
-	 * {@link SetListenerHelperEx}. If the same listener is added more
-	 * than once, it will be registered more than once and will receive multiple
-	 * change events.
+	 * Adds a new {@link SetChangeListener} to this {@link SetListenerHelperEx}.
+	 * If the same listener is added more than once, it will be registered more
+	 * than once and will receive multiple change events.
 	 *
 	 * @param listener
 	 *            The listener to add.
@@ -198,9 +197,8 @@ public class SetListenerHelperEx<E> {
 	}
 
 	/**
-	 * Returns the source {@link ObservableSet} this
-	 * {@link SetListenerHelperEx} is bound to, which is used in change
-	 * notifications.
+	 * Returns the source {@link ObservableSet} this {@link SetListenerHelperEx}
+	 * is bound to, which is used in change notifications.
 	 *
 	 * @return The source {@link ObservableSet}.
 	 */
@@ -263,6 +261,10 @@ public class SetListenerHelperEx<E> {
 	 *            The listener to remove.
 	 */
 	public void removeListener(InvalidationListener listener) {
+		if (invalidationListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
@@ -295,6 +297,10 @@ public class SetListenerHelperEx<E> {
 	 *            The listener to remove.
 	 */
 	public void removeListener(SetChangeListener<? super E> listener) {
+		if (setChangeListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.

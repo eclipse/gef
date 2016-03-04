@@ -98,9 +98,8 @@ public class MultisetListenerHelper<E> {
 		}
 
 		/**
-		 * Creates a new {@link MultisetListenerHelper.AtomicChange} for
-		 * the passed in source, based on the data provided in the passed-in
-		 * change.
+		 * Creates a new {@link MultisetListenerHelper.AtomicChange} for the
+		 * passed in source, based on the data provided in the passed-in change.
 		 * <p>
 		 * This is basically used to allow properties wrapping an
 		 * {@link ObservableMultiset} to re-fire change events of their wrapped
@@ -272,8 +271,8 @@ public class MultisetListenerHelper<E> {
 	private ObservableMultiset<E> source;
 
 	/**
-	 * Constructs a new {@link MultisetListenerHelper} for the given
-	 * source {@link ObservableMultiset}.
+	 * Constructs a new {@link MultisetListenerHelper} for the given source
+	 * {@link ObservableMultiset}.
 	 *
 	 * @param source
 	 *            The {@link ObservableMultiset} to use as source in change
@@ -285,8 +284,8 @@ public class MultisetListenerHelper<E> {
 
 	/**
 	 * Adds a new {@link InvalidationListener} to this
-	 * {@link MultisetListenerHelper}. If the same listener is added more
-	 * than once, it will be registered more than once and will receive multiple
+	 * {@link MultisetListenerHelper}. If the same listener is added more than
+	 * once, it will be registered more than once and will receive multiple
 	 * change events.
 	 *
 	 * @param listener
@@ -307,8 +306,8 @@ public class MultisetListenerHelper<E> {
 
 	/**
 	 * Adds a new {@link SetMultimapChangeListener} to this
-	 * {@link MultisetListenerHelper}. If the same listener is added more
-	 * than once, it will be registered more than once and will receive multiple
+	 * {@link MultisetListenerHelper}. If the same listener is added more than
+	 * once, it will be registered more than once and will receive multiple
 	 * change events.
 	 *
 	 * @param listener
@@ -402,13 +401,17 @@ public class MultisetListenerHelper<E> {
 
 	/**
 	 * Removes the given {@link InvalidationListener} from this
-	 * {@link MultisetListenerHelper}. If its was registered more than
-	 * once, removes one occurrence.
+	 * {@link MultisetListenerHelper}. If its was registered more than once,
+	 * removes one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
 	public void removeListener(InvalidationListener listener) {
+		if (invalidationListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
@@ -434,13 +437,17 @@ public class MultisetListenerHelper<E> {
 
 	/**
 	 * Removes the given {@link MultisetChangeListener} from this
-	 * {@link MultisetListenerHelper}. If its was registered more than
-	 * once, removes one occurrence.
+	 * {@link MultisetListenerHelper}. If its was registered more than once,
+	 * removes one occurrence.
 	 *
 	 * @param listener
 	 *            The listener to remove.
 	 */
 	public void removeListener(MultisetChangeListener<? super E> listener) {
+		if (multisetChangeListeners == null) {
+			return;
+		}
+
 		// XXX: Prevent ConcurrentModificationExceptions (in case listeners are
 		// added during notifications); as we only create a new multi-set in the
 		// locked case, memory should not be waisted.
