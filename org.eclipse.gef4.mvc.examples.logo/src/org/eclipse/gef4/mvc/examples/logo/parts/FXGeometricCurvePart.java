@@ -412,11 +412,12 @@ public class FXGeometricCurvePart
 
 		// connection router
 		if (content.isSegmentBased()) {
-			visual.setSegmentBased(true);
+			// TODO: change projection strategy on the source and target anchors
 			visual.setInterpolator(new PolylineInterpolator());
 			visual.setRouter(new OrthogonalRouter());
 		} else {
-			visual.setSegmentBased(false);
+			// TODO: restore projection strategy on the source and target
+			// anchors
 			visual.setRouter(new StraightRouter());
 			visual.setInterpolator(new PolyBezierInterpolator());
 		}

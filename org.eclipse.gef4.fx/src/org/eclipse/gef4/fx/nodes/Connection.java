@@ -109,8 +109,6 @@ public class Connection extends Group implements IReferencePointProvider {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
-	private boolean isSegmentBased = false;
-
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.observableMap(new HashMap<AnchorKey, Point>()));
 
@@ -933,18 +931,6 @@ public class Connection extends Group implements IReferencePointProvider {
 	}
 
 	/**
-	 * Returns <code>true</code> to hint that this {@link Connection} is segment
-	 * based, i.e. its control points should only be moved in pairs. Otherwise
-	 * returns <code>false</code>.
-	 *
-	 * @return <code>true</code> if this {@link Connection} is segment based,
-	 *         otherwise <code>false</code>.
-	 */
-	public boolean isSegmentBased() {
-		return isSegmentBased;
-	}
-
-	/**
 	 * Returns <code>true</code> if the currently assigned
 	 * {@link #getStartAnchor() start anchor} is bound to an anchorage.
 	 * Otherwise returns <code>false</code>.
@@ -1404,18 +1390,6 @@ public class Connection extends Group implements IReferencePointProvider {
 	public void setRouter(IConnectionRouter router) {
 		routerProperty.set(router);
 		refresh();
-	}
-
-	/**
-	 * Sets this {@link Connection} to be segment based or way point based,
-	 * depending on the given argument.
-	 *
-	 * @param isSegmentBased
-	 *            <code>true</code> if this {@link Connection} should be segment
-	 *            based, otherwise <code>false</code>.
-	 */
-	public void setSegmentBased(boolean isSegmentBased) {
-		this.isSegmentBased = isSegmentBased;
 	}
 
 	/**

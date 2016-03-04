@@ -21,6 +21,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
@@ -567,7 +568,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// XXX: For segment based connections, the control points need to be
 		// normalized, i.e. all control points that lie on the orthogonal
 		// connection between two other control points have to be removed.
-		if (getConnection().isSegmentBased()) {
+		if (getConnection().getRouter() instanceof OrthogonalRouter) {
 			FXBendOperation bendOperation = getBendOperation();
 			List<IAnchor> newAnchors = bendOperation.getNewAnchors();
 
@@ -622,7 +623,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// constrain movement in one direction for segment based connections
 		int numPoints = selectedPointsInitialPositionsInLocal.size();
 		boolean isSegmentBased = numPoints > 1
-				&& getConnection().isSegmentBased();
+				&& getConnection().getRouter() instanceof OrthogonalRouter;
 		Point mouseDeltaInLocal = getMouseDeltaInLocal(mouseInScene);
 		if (isSegmentBased) {
 			boolean isHorizontallyConstrained = PrecisionUtils.equal(
