@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -255,31 +257,84 @@ public class FXDefaultSelectionHandlePartFactory
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
-		for (int i = 0; i < segments.length; i++) {
-			// create handle for the start point of a segment
-			FXCircleSegmentHandlePart part = injector
-					.getInstance(FXCircleSegmentHandlePart.class);
-			part.setSegmentsProvider(segmentsProvider);
-			part.setSegmentIndex(i);
-			part.setSegmentParameter(0.0);
-			hps.add(part);
 
-			// create handle for the middle of a segment
-			part = injector.getInstance(FXCircleSegmentHandlePart.class);
-			part.setSegmentsProvider(segmentsProvider);
-			part.setSegmentIndex(i);
-			part.setSegmentParameter(0.5);
-			hps.add(part);
+		if (target.getVisual() instanceof Connection
+				&& ((Connection) target.getVisual())
+						.getRouter() instanceof OrthogonalRouter) {
+			// generate segment based handles
+			for (int i = 0; i < segments.length; i++) {
+				// create handle for the start point of the curve
+				if (i == 0) {
+					FXCircleSegmentHandlePart part = injector
+							.getInstance(FXCircleSegmentHandlePart.class);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(0.0);
+					hps.add(part);
+				}
 
-			// create handle for the end point of the curve
-			if (i == segments.length - 1) {
+				// create quarter handle for the creation of a new segment
+				FXCircleSegmentHandlePart part = injector
+						.getInstance(FXCircleSegmentHandlePart.class);
+				part.setSegmentsProvider(segmentsProvider);
+				part.setSegmentIndex(i);
+				part.setSegmentParameter(0.25);
+				hps.add(part);
+
+				// create mid point handle for the translation of a segment
 				part = injector.getInstance(FXCircleSegmentHandlePart.class);
 				part.setSegmentsProvider(segmentsProvider);
 				part.setSegmentIndex(i);
-				part.setSegmentParameter(1.0);
+				part.setSegmentParameter(0.5);
 				hps.add(part);
+
+				// create quarter handle for the creation of a new segment
+				part = injector.getInstance(FXCircleSegmentHandlePart.class);
+				part.setSegmentsProvider(segmentsProvider);
+				part.setSegmentIndex(i);
+				part.setSegmentParameter(0.75);
+				hps.add(part);
+
+				// create handle for the end point of the curve
+				if (i == segments.length - 1) {
+					part = injector
+							.getInstance(FXCircleSegmentHandlePart.class);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(1.0);
+					hps.add(part);
+				}
+			}
+		} else {
+			// generate vertex based handles
+			for (int i = 0; i < segments.length; i++) {
+				// create handle for the start point of a segment
+				FXCircleSegmentHandlePart part = injector
+						.getInstance(FXCircleSegmentHandlePart.class);
+				part.setSegmentsProvider(segmentsProvider);
+				part.setSegmentIndex(i);
+				part.setSegmentParameter(0.0);
+				hps.add(part);
+
+				// create handle for the middle of a segment
+				part = injector.getInstance(FXCircleSegmentHandlePart.class);
+				part.setSegmentsProvider(segmentsProvider);
+				part.setSegmentIndex(i);
+				part.setSegmentParameter(0.5);
+				hps.add(part);
+
+				// create handle for the end point of the curve
+				if (i == segments.length - 1) {
+					part = injector
+							.getInstance(FXCircleSegmentHandlePart.class);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(1.0);
+					hps.add(part);
+				}
 			}
 		}
+
 		return hps;
 	}
 
