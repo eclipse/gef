@@ -412,9 +412,11 @@ public class FXGeometricCurvePart
 
 		// connection router
 		if (content.isSegmentBased()) {
+			visual.setSegmentBased(true);
 			visual.setInterpolator(new PolylineInterpolator());
 			visual.setRouter(new OrthogonalRouter());
 		} else {
+			visual.setSegmentBased(false);
 			visual.setRouter(new StraightRouter());
 			visual.setInterpolator(new PolyBezierInterpolator());
 		}

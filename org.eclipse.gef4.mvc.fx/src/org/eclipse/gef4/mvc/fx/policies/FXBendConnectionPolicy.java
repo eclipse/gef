@@ -24,6 +24,7 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -565,10 +566,26 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			throw new IllegalStateException("No point was selected.");
 		}
 
+		// constrain movement in one direction for segment based connections
+		int numPoints = selectedPointsInitialPositionsInLocal.size();
+		boolean isSegmentBased = numPoints > 1
+				&& getConnection().isSegmentBased();
+		Point mouseDeltaInLocal = getMouseDeltaInLocal(mouseInScene);
+		if (isSegmentBased) {
+			boolean isHorizontallyConstrained = PrecisionUtils.equal(
+					selectedPointsInitialPositionsInLocal.get(0).y,
+					selectedPointsInitialPositionsInLocal.get(1).y);
+			if (isHorizontallyConstrained) {
+				mouseDeltaInLocal.x = 0;
+			} else {
+				mouseDeltaInLocal.y = 0;
+			}
+		}
+
 		// update positions
 		for (int i = 0; i < selectedPointsIndices.size(); i++) {
 			Point selectedPointCurrentPositionInLocal = this.selectedPointsInitialPositionsInLocal
-					.get(i).getTranslated(getMouseDeltaInLocal(mouseInScene));
+					.get(i).getTranslated(mouseDeltaInLocal);
 
 			// snap-to-grid
 			// TODO: make snapping (0.5) configurable
