@@ -11,19 +11,25 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tests.stubs.cell;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class HandlePartFactory<VR> implements IHandlePartFactory<VR> {
+public class CellRootPart<VR, V extends VR> extends AbstractRootPart<VR, V> {
+
 	@Override
-	public List<IHandlePart<VR, ? extends VR>> createHandleParts(List<? extends IVisualPart<VR, ? extends VR>> targets,
-			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap) {
-		return Collections.emptyList();
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+	}
+
+	@Override
+	protected V createVisual() {
+		return null;
+	}
+
+	@Override
+	protected void doRefreshVisual(Object visual) {
+	}
+
+	@Override
+	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 	}
 }

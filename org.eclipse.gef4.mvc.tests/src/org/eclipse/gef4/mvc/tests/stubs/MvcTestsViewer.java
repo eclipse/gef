@@ -17,7 +17,7 @@ import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 
-public class Viewer extends AbstractViewer<Object> {
+public class MvcTestsViewer extends AbstractViewer<Object> {
 	ReadOnlyBooleanWrapper focusedProperty = new ReadOnlyBooleanWrapper(true);
 
 	@Override

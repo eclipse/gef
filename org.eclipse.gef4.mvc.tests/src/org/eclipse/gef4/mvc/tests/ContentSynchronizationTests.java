@@ -23,9 +23,9 @@ import java.util.List;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.tests.stubs.Domain;
-import org.eclipse.gef4.mvc.tests.stubs.Module;
-import org.eclipse.gef4.mvc.tests.stubs.Viewer;
+import org.eclipse.gef4.mvc.tests.stubs.MvcTestsDomain;
+import org.eclipse.gef4.mvc.tests.stubs.MvcTestsModule;
+import org.eclipse.gef4.mvc.tests.stubs.MvcTestsViewer;
 import org.eclipse.gef4.mvc.tests.stubs.cell.Cell;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.After;
@@ -46,24 +46,24 @@ import com.google.inject.TypeLiteral;
 public class ContentSynchronizationTests {
 
 	private static Injector injector;
-	private static Domain domain;
-	private static Viewer viewer;
+	private static MvcTestsDomain domain;
+	private static MvcTestsViewer viewer;
 
 	@BeforeClass
 	public static void setUpMVC() {
-		injector = Guice.createInjector(new Module() {
+		injector = Guice.createInjector(new MvcTestsModule() {
 			@Override
 			protected void configure() {
 				super.configure();
 				binder().bind(new TypeLiteral<IDomain<Object>>() {
-				}).to(Domain.class);
+				}).to(MvcTestsDomain.class);
 				binder().bind(new TypeLiteral<IViewer<Object>>() {
-				}).to(Viewer.class);
+				}).to(MvcTestsViewer.class);
 			}
 		});
-		domain = new Domain();
+		domain = new MvcTestsDomain();
 		injector.injectMembers(domain);
-		viewer = domain.getAdapter(Viewer.class);
+		viewer = domain.getAdapter(MvcTestsViewer.class);
 
 	}
 

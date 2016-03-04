@@ -25,15 +25,14 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
-import org.eclipse.gef4.mvc.tests.stubs.Domain;
-import org.eclipse.gef4.mvc.tests.stubs.Module;
-import org.eclipse.gef4.mvc.tests.stubs.Viewer;
+import org.eclipse.gef4.mvc.tests.stubs.MvcTestsDomain;
+import org.eclipse.gef4.mvc.tests.stubs.MvcTestsModule;
+import org.eclipse.gef4.mvc.tests.stubs.MvcTestsViewer;
 import org.eclipse.gef4.mvc.tests.stubs.cell.Cell;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.After;
@@ -53,23 +52,18 @@ public class FocusTraversalPolicyTests {
 
 	private static Injector injector;
 
-	private static Domain domain;
-	private static Viewer viewer;
+	private static MvcTestsDomain domain;
+	private static MvcTestsViewer viewer;
 
 	@BeforeClass
 	public static void setUpMVC() {
-		injector = Guice.createInjector(new Module() {
+		injector = Guice.createInjector(new MvcTestsModule() {
 			@Override
 			protected void configure() {
 				super.configure();
 
-				binder().bind(new TypeLiteral<IDomain<Object>>() {
-				}).to(Domain.class);
-				binder().bind(new TypeLiteral<IViewer<Object>>() {
-				}).to(Viewer.class);
-
 				// bind FocusModel
-				AdapterMaps.getAdapterMapBinder(binder(), Viewer.class).addBinding(AdapterKey.defaultRole())
+				AdapterMaps.getAdapterMapBinder(binder(), IViewer.class).addBinding(AdapterKey.defaultRole())
 						.to(new TypeLiteral<FocusModel<Object>>() {
 				});
 				// bind FocusTraversalPolicy
@@ -78,9 +72,9 @@ public class FocusTraversalPolicyTests {
 				});
 			}
 		});
-		domain = new Domain();
+		domain = new MvcTestsDomain();
 		injector.injectMembers(domain);
-		viewer = domain.getAdapter(Viewer.class);
+		viewer = domain.getAdapter(MvcTestsViewer.class);
 
 		// ensure exceptions are not caught
 		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
