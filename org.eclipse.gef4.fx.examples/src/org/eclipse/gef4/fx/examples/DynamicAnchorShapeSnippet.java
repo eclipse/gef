@@ -18,10 +18,8 @@ import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -56,8 +54,6 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 
 	private Circle refPoint;
 	private Line anchorLine;
-	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
 	private DynamicAnchor anchor;
 	private AnchorKey anchorKey;
 	private AdapterStore adapterStore;
@@ -127,8 +123,11 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 								refPoint.getCenterX(), refPoint.getCenterY());
 						Point2D refInLocal = anchorLine
 								.sceneToLocal(refInScene);
-						referencePointProperty.put(anchorKey, new Point(
-								refInLocal.getX(), refInLocal.getY()));
+						if (anchor != null) {
+							anchor.referencePointProperty().put(anchorKey,
+									new Point(refInLocal.getX(),
+											refInLocal.getY()));
+						}
 						anchorLine.setEndX(refInLocal.getX());
 						anchorLine.setEndY(refInLocal.getY());
 					}
@@ -218,15 +217,15 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 
 		// create anchor
 		anchor = new DynamicAnchor(shape);
-		adapterStore = new AdapterStore();
-		adapterStore.setAdapter(new DynamicAnchor.IReferencePointProvider() {
-			@Override
-			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
-				return referencePointProperty;
-			}
-		});
+
+		Point2D refInScene = refPoint.localToScene(refPoint.getCenterX(),
+				refPoint.getCenterY());
+		Point2D refInLocal = anchorLine.sceneToLocal(refInScene);
+		anchor.referencePointProperty().put(anchorKey,
+				new Point(refInLocal.getX(), refInLocal.getY()));
+
 		anchor.positionProperty().addListener(anchorPositionChangeListener);
-		anchor.attach(anchorKey, adapterStore);
+		anchor.attach(anchorKey, null);
 	}
 
 }

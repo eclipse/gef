@@ -23,12 +23,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.gef4.common.adapt.AdapterStore;
-import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.Geometry2Shape;
@@ -84,7 +80,7 @@ import javafx.scene.transform.Translate;
  * @author anyssen
  *
  */
-public class Connection extends Group implements IReferencePointProvider {
+public class Connection extends Group {
 
 	/**
 	 * CSS class assigned to decoration visuals.
@@ -109,9 +105,6 @@ public class Connection extends Group implements IReferencePointProvider {
 	 */
 	private static final String CONTROL_POINT_ROLE_PREFIX = "controlpoint-";
 
-	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections.observableMap(new HashMap<AnchorKey, Point>()));
-
 	// visuals
 	private GeometryNode<ICurve> curveNode = new GeometryNode<>();
 
@@ -124,9 +117,6 @@ public class Connection extends Group implements IReferencePointProvider {
 
 	private ObjectProperty<IConnectionInterpolator> interpolatorProperty = new SimpleObjectProperty<IConnectionInterpolator>(
 			new PolylineInterpolator());
-
-	// used to pass as argument to IAnchor#attach() and #detach()
-	private AdapterStore as = new AdapterStore();
 
 	private ReadOnlyMapWrapper<AnchorKey, IAnchor> anchorsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, IAnchor> observableHashMap());
@@ -168,11 +158,6 @@ public class Connection extends Group implements IReferencePointProvider {
 		// in some cases
 		setAutoSizeChildren(false);
 
-		// register any adapters that will be needed during attach() and
-		// detach() at anchors
-		// TODO: statically construct AdapterStore
-		registerAnchorInfos(as);
-
 		// ensure connection does not paint further than geometric end points
 		// getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
 
@@ -183,9 +168,7 @@ public class Connection extends Group implements IReferencePointProvider {
 	/**
 	 * Inserts the given {@link IAnchor} into the {@link #anchorsProperty()} of
 	 * this {@link Connection}. The given {@link AnchorKey} is attached to the
-	 * {@link IAnchor}, supplying it with the previously
-	 * {@link #registerAnchorInfos(IAdaptable) registered} anchor information.
-	 * Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
+	 * {@link IAnchor}. Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
 	 * {@link AnchorKey} is registered on the position property of the
 	 * {@link IAnchor} and the visualization is {@link #refresh() refreshed}.
 	 *
@@ -219,14 +202,12 @@ public class Connection extends Group implements IReferencePointProvider {
 				controlAnchorsToMove.add(0, a);
 				controlAnchorKeys.remove(ak);
 				anchorsProperty.remove(ak);
-				a.detach(ak, as);
+				a.detach(ak, null);
 			}
 			controlAnchorKeys.add(anchorKey);
 		}
 		anchorsProperty.put(anchorKey, anchor);
-		// ensure a reference point is set for the new anchor key
-		referencePointProperty.put(anchorKey, new Point());
-		anchor.attach(anchorKey, as);
+		anchor.attach(anchorKey, null);
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
@@ -236,7 +217,7 @@ public class Connection extends Group implements IReferencePointProvider {
 				IAnchor a = controlAnchorsToMove.get(i);
 				controlAnchorKeys.add(ak);
 				anchorsProperty.put(ak, a);
-				a.attach(ak, as);
+				a.attach(ak, null);
 			}
 		}
 
@@ -912,11 +893,6 @@ public class Connection extends Group implements IReferencePointProvider {
 				&& anchor.getAnchorage() != this;
 	}
 
-	@Override
-	public ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty() {
-		return referencePointProperty.getReadOnlyProperty();
-	}
-
 	/**
 	 * Refreshes the visualization, i.e.
 	 * <ol>
@@ -996,24 +972,6 @@ public class Connection extends Group implements IReferencePointProvider {
 	}
 
 	/**
-	 * Registers anchor information as adapters on the given {@link IAdaptable}
-	 * . These anchor information is supplied to all {@link IAnchor anchors}
-	 * which are assigned to this {@link Connection}. Per default, this
-	 * {@link Connection} is registered as a {@link IReferencePointProvider} ,
-	 * so that the {@link Connection} works in conjunction with
-	 * {@link DynamicAnchor}.
-	 *
-	 * @param adaptable
-	 *            The {@link IAdaptable} on which anchor information is
-	 *            registered via adapters.
-	 */
-	protected void registerAnchorInfos(IAdaptable adaptable) {
-		// register this Connection as an IReferencePointProvider at the given
-		// IAdaptable
-		adaptable.setAdapter(this);
-	}
-
-	/**
 	 * Removes all control points of this {@link Connection}.
 	 */
 	public void removeAllControlAnchors() {
@@ -1062,12 +1020,12 @@ public class Connection extends Group implements IReferencePointProvider {
 				controlAnchorsToMove.add(0, a);
 				controlAnchorKeys.remove(ak);
 				anchorsProperty.remove(ak);
-				a.detach(ak, as);
+				a.detach(ak, null);
 			}
 			controlAnchorKeys.remove(anchorKey);
 		}
 		anchorsProperty.remove(anchorKey);
-		anchor.detach(anchorKey, as);
+		anchor.detach(anchorKey, null);
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
@@ -1077,7 +1035,7 @@ public class Connection extends Group implements IReferencePointProvider {
 				IAnchor a = controlAnchorsToMove.get(i);
 				controlAnchorKeys.add(ak);
 				anchorsProperty.put(ak, a);
-				a.attach(ak, as);
+				a.attach(ak, null);
 			}
 		}
 		refresh();

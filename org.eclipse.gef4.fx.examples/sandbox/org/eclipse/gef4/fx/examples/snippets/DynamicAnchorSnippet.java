@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
-import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.IReferencePointProvider;
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.geometry.planar.Point;
 
@@ -62,7 +60,6 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 
 		// update start and end point in case provided position values change
 		ChangeListener<ObservableMap<AnchorKey, Point>> changeListener = new ChangeListener<ObservableMap<AnchorKey, Point>>() {
-
 			@Override
 			public void changed(
 					ObservableValue<? extends ObservableMap<AnchorKey, Point>> observable,
@@ -93,12 +90,10 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 						+ r2.getHeight() / 2);
 
 		// use static values for dynamic anchor reference points
-		IReferencePointProvider.Impl referencePointProvider = new IReferencePointProvider.Impl();
-		referencePointProvider.put(startKey, r2Center);
-		referencePointProvider.put(endKey, r1Center);
-
-		startAnchor.attach(startKey, new AdapterStore(referencePointProvider));
-		endAnchor.attach(endKey, new AdapterStore(referencePointProvider));
+		startAnchor.referencePointProperty().put(startKey, r2Center);
+		startAnchor.attach(startKey, null);
+		endAnchor.referencePointProperty().put(endKey, r1Center);
+		endAnchor.attach(endKey, null);
 
 		Group g = new Group(r1, r2, l);
 		root.getChildren().add(g);

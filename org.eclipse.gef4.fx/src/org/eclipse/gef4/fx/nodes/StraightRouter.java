@@ -122,14 +122,15 @@ public class StraightRouter implements IConnectionRouter {
 		}
 
 		// only compute reference points for dynamic anchors
-		if (!(connection.getAnchors()
-				.get(anchorIndex) instanceof DynamicAnchor)) {
+		IAnchor anchor = connection.getAnchors().get(anchorIndex);
+		if (!(anchor instanceof DynamicAnchor)) {
 			return;
 		}
 
 		// get old reference point
 		AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
-		Point oldRef = connection.referencePointProperty().get(anchorKey);
+		Point oldRef = ((DynamicAnchor) anchor).referencePointProperty()
+				.get(anchorKey);
 
 		// compute new reference point
 		Point newRef = null;
@@ -155,7 +156,8 @@ public class StraightRouter implements IConnectionRouter {
 
 		// only update if necessary (when it changes)
 		if (oldRef == null || !newRef.equals(oldRef)) {
-			connection.referencePointProperty().put(anchorKey, newRef);
+			((DynamicAnchor) anchor).referencePointProperty().put(anchorKey,
+					newRef);
 		}
 	}
 

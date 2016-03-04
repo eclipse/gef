@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AbstractComputationStrategy;
@@ -33,8 +32,6 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -172,8 +169,6 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private Group interactionLayer; // always on top
 	private GeometryNode<CurvedPolygon> eLetterShape;
 	private DynamicAnchor dynamicAnchor;
-	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
 	private Map<AnchorKey, Circle> dynamicPoints = new HashMap<>();
 	private Map<AnchorKey, Line> dynamicLinesReal = new HashMap<>();
 	private Map<AnchorKey, Line> dynamicLinesImaginary = new HashMap<>();
@@ -201,15 +196,9 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	}
 
 	private void attachToDynamicAnchor(final AnchorKey ak,
-			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
-		AdapterStore as = new AdapterStore();
-		as.setAdapter(new DynamicAnchor.IReferencePointProvider() {
-			@Override
-			public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
-				return referencePointProperty;
-			}
-		});
-		dynamicAnchor.attach(ak, as);
+			final Point refPoint) {
+		dynamicAnchor.referencePointProperty().put(ak, refPoint);
+		dynamicAnchor.attach(ak, null);
 		updateDynamicAnchorLines(ak);
 	}
 
@@ -320,7 +309,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		dynamicLinesImaginary.put(ak, dynamicAnchorLineImaginary);
 
 		// put initial reference point
-		referencePointProperty.put(ak, new Point(x, y));
+		Point refPoint = new Point(x, y);
 
 		// adjust reference point on drag
 		OnDrag dragGesture = new OnDrag(referencePointNode) {
@@ -330,13 +319,13 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 				referencePointNode.setCenterX(x);
 				referencePointNode.setCenterY(y);
 				// update reference point
-				referencePointProperty.put(ak, new Point(x, y));
+				dynamicAnchor.referencePointProperty().put(ak, new Point(x, y));
 				updateDynamicAnchorLines(ak);
 			}
 		};
 		dragGesture.setScene(scene);
 
-		attachToDynamicAnchor(ak, referencePointProperty);
+		attachToDynamicAnchor(ak, refPoint);
 	}
 
 	private Circle createReferencePointNode(final double x, final double y) {
@@ -592,7 +581,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private void updateDynamicAnchorLines(AnchorKey ak) {
 		// update real line
 		Line lineReal = dynamicLinesReal.get(ak);
-		Point referencePosition = referencePointProperty.get(ak);
+		Point referencePosition = dynamicAnchor.getReferencePoint(ak);
 		Point anchorPosition = dynamicAnchor.getPosition(ak);
 		lineReal.setStartX(referencePosition.x);
 		lineReal.setStartY(referencePosition.y);

@@ -12,13 +12,10 @@
 package org.eclipse.gef4.fx.anchors;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
@@ -37,7 +34,6 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
-import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -177,66 +173,6 @@ public class DynamicAnchor extends AbstractAnchor {
 		 */
 		Point computePositionInScene(Node anchorage, Node anchored,
 				Point anchoredReferencePointInLocal);
-
-	}
-
-	/**
-	 * A {@link IReferencePointProvider} needs to be provided as default adapter
-	 * (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable} info that
-	 * gets passed into {@link DynamicAnchor#attach(AnchorKey, IAdaptable)} and
-	 * {@link DynamicAnchor#detach(AnchorKey, IAdaptable)}. The
-	 * {@link IReferencePointProvider} has to provide a reference point for each
-	 * {@link AdapterKey} that is attached to the {@link DynamicAnchor}. It will
-	 * be used when computing anchor positions for the respective
-	 * {@link AnchorKey}.
-	 *
-	 * @author anyssen
-	 *
-	 */
-	// TODO: Remove this interface, manage reference points per anchor key
-	// directly within the DynamicAnchor.
-	public interface IReferencePointProvider {
-
-		/**
-		 * A simple {@link IReferencePointProvider} implementation that allows
-		 * to statically set reference points for {@link AnchorKey}s.
-		 *
-		 */
-		public class Impl implements IReferencePointProvider {
-
-			private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
-					FXCollections.<AnchorKey, Point> observableHashMap());
-
-			/**
-			 * Sets or updates the reference point for the given
-			 * {@link AnchorKey}.
-			 *
-			 * @param anchorKey
-			 *            The {@link AnchorKey} for which the reference point is
-			 *            to be set or updated.
-			 * @param referencePoint
-			 *            The new reference point to set.
-			 */
-			public void put(AnchorKey anchorKey, Point referencePoint) {
-				referencePointProperty.put(anchorKey, referencePoint);
-			}
-
-			@Override
-			public ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty() {
-				return referencePointProperty.getReadOnlyProperty();
-			}
-		}
-
-		/**
-		 * Provides a {@link ReadOnlyMapProperty} that stores positions (in the
-		 * local coordinate system of the anchored {@link Node}) for all
-		 * attached {@link AnchorKey}s.
-		 *
-		 * @return A {@link ReadOnlyMapProperty} that stores positions (in the
-		 *         local coordinate system of the anchored {@link Node}) for all
-		 *         attached {@link AnchorKey}s.
-		 */
-		public abstract ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty();
 
 	}
 
@@ -804,19 +740,21 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * strategy property}.
 	 */
 	public static final String DEFAULT_COMPUTATION_STRATEGY_PROPERTY = "defaultComputationStrategy";
+
 	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ProjectionStrategy();
 	private ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty;
-	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategiesProperty = new ReadOnlyMapWrapperEx<>(
+	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategyProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections
 					.<AnchorKey, IComputationStrategy> observableHashMap());
+	private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
+			FXCollections.<AnchorKey, Point> observableHashMap());
 
-	private Map<AnchorKey, IReferencePointProvider> anchoredReferencePointProviders = new HashMap<>();
-	private MapChangeListener<AnchorKey, Point> anchoredReferencePointsChangeListener = new MapChangeListener<AnchorKey, Point>() {
+	private MapChangeListener<AnchorKey, Point> referencePointChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 			if (change.wasAdded()) {
-				// do some defensive checks
+				// prevent null from being put into the map
 				if (change.getKey() == null) {
 					throw new IllegalStateException(
 							"Attempt to put <null> key into reference point map!");
@@ -825,9 +763,9 @@ public class DynamicAnchor extends AbstractAnchor {
 					throw new IllegalStateException(
 							"Attempt to put <null> value into reference point map!");
 				}
-				if (anchoredReferencePointProviders
-						.containsKey(change.getKey())) {
-					// only recompute position if one of our own keys changed
+				if (getKeys().containsKey(change.getKey().getAnchored())
+						&& getKeys().get(change.getKey().getAnchored())
+								.contains(change.getKey())) {
 					updatePosition(change.getKey());
 				}
 			}
@@ -843,6 +781,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public DynamicAnchor(Node anchorage) {
 		super(anchorage);
+		referencePointProperty.addListener(referencePointChangeListener);
 	}
 
 	/**
@@ -858,41 +797,7 @@ public class DynamicAnchor extends AbstractAnchor {
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
 		setDefaultComputationStrategy(computationStrategy);
-	}
-
-	/**
-	 * Attaches the given {@link AnchorKey} to this {@link DynamicAnchor}.
-	 * Requires that an {@link IReferencePointProvider} can be obtained from the
-	 * passed in {@link IAdaptable}.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} to be attached.
-	 * @param info
-	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link IReferencePointProvider} that provides reference points
-	 *            for this {@link DynamicAnchor}.
-	 *
-	 */
-	@Override
-	public void attach(AnchorKey key, IAdaptable info) {
-		IReferencePointProvider referencePointProvider = info
-				.getAdapter(IReferencePointProvider.class);
-		if (referencePointProvider == null) {
-			throw new IllegalArgumentException(
-					"No IReferencePointProvider could be obtained via info.");
-		}
-
-		// we need to keep track of it, otherwise we will not be able to access
-		// the reference point information (in case of other changes).
-		anchoredReferencePointProviders.put(key, referencePointProvider);
-
-		// will enforce a re-computation of positions, so we need to have
-		// obtained the helper beforehand.
-		super.attach(key, info);
-
-		// add listener to reference point changes
-		referencePointProvider.referencePointProperty()
-				.addListener(anchoredReferencePointsChangeListener);
+		referencePointProperty.addListener(referencePointChangeListener);
 	}
 
 	/**
@@ -902,31 +807,19 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @return A {@link ReadOnlyMapProperty} that stores the individual
 	 *         {@link IComputationStrategy} for each {@link AnchorKey}.
 	 */
-	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty() {
-		return computationStrategiesProperty.getReadOnlyProperty();
+	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategyProperty() {
+		return computationStrategyProperty.getReadOnlyProperty();
 	}
 
 	/**
-	 * Recomputes the position for the given attached {@link AnchorKey} by
-	 * retrieving a reference position via the {@link IReferencePointProvider}
-	 * that was obtained when attaching the {@link AnchorKey} (
-	 * {@link #attach(AnchorKey, IAdaptable)}).
+	 * Recomputes the position for the given attached {@link AnchorKey}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} for which to compute an anchor position.
 	 */
 	@Override
 	protected Point computePosition(AnchorKey key) {
-		// determine reference point
-		Point referencePoint = anchoredReferencePointProviders.get(key)
-				.referencePointProperty().get(key);
-		if (referencePoint == null) {
-			throw new IllegalStateException(
-					"The IReferencePointProvider does not provide a reference point for this key: "
-							+ key);
-		}
-		// compute position
-		return computePosition(key.getAnchored(), referencePoint,
+		return computePosition(key.getAnchored(), getReferencePoint(key),
 				getComputationStrategy(key));
 	}
 
@@ -972,41 +865,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * Detaches the given {@link AnchorKey} from this {@link DynamicAnchor}.
-	 * Requires that an {@link IReferencePointProvider} can be obtained from the
-	 * passed in {@link IAdaptable}.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} to be detached.
-	 * @param info
-	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link IReferencePointProvider} that provides reference points
-	 *            for this {@link DynamicAnchor}.
-	 */
-	@Override
-	public void detach(AnchorKey key, IAdaptable info) {
-		IReferencePointProvider helper = info
-				.getAdapter(IReferencePointProvider.class);
-		if (helper == null) {
-			throw new IllegalArgumentException(
-					"No IReferencePointProvider could be obtained via info.");
-		}
-		if (anchoredReferencePointProviders.get(key) != helper) {
-			throw new IllegalStateException(
-					"The passed in IReferencePointProvider had not been obtained for "
-							+ key + " within attach() before.");
-		}
-
-		// unregister reference point listener
-		helper.referencePointProperty()
-				.removeListener(anchoredReferencePointsChangeListener);
-
-		super.detach(key, info);
-
-		anchoredReferencePointProviders.remove(key);
-	}
-
-	/**
 	 * Returns the {@link IComputationStrategy} that is used by this
 	 * {@link DynamicAnchor} to compute the position for the given
 	 * {@link AnchorKey}. If no {@link IComputationStrategy} was explicitly set
@@ -1021,8 +879,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *         {@link AnchorKey}.
 	 */
 	public IComputationStrategy getComputationStrategy(AnchorKey key) {
-		if (computationStrategiesProperty.containsKey(key)) {
-			return computationStrategiesProperty.get(key);
+		if (computationStrategyProperty.containsKey(key)) {
+			return computationStrategyProperty.get(key);
 		}
 		return getDefaultComputationStrategy();
 	}
@@ -1041,6 +899,35 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	/**
+	 * Returns the reference {@link Point} for the given {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which to determine the reference
+	 *            {@link Point}.
+	 * @return The reference {@link Point} for the given {@link AnchorKey}.
+	 */
+	public Point getReferencePoint(AnchorKey key) {
+		Point referencePoint = referencePointProperty().get(key);
+		if (referencePoint == null) {
+			referencePoint = new Point(0, 0);
+		}
+		return referencePoint;
+	}
+
+	/**
+	 * Provides a {@link ReadOnlyMapProperty} that stores positions (in the
+	 * local coordinate system of the anchored {@link Node}) for all attached
+	 * {@link AnchorKey}s.
+	 *
+	 * @return A {@link ReadOnlyMapProperty} that stores positions (in the local
+	 *         coordinate system of the anchored {@link Node}) for all attached
+	 *         {@link AnchorKey}s.
+	 */
+	public ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty() {
+		return referencePointProperty.getReadOnlyProperty();
+	}
+
+	/**
 	 * Removes the {@link IComputationStrategy} that is currently registered for
 	 * the given {@link AnchorKey}.
 	 *
@@ -1049,7 +936,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *            {@link IComputationStrategy}.
 	 */
 	public void removeComputationStrategy(AnchorKey key) {
-		computationStrategiesProperty.remove(key);
+		computationStrategyProperty.remove(key);
 	}
 
 	/**
@@ -1067,7 +954,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public void setComputationStrategy(AnchorKey key,
 			IComputationStrategy computationStrategy) {
-		computationStrategiesProperty.put(key, computationStrategy);
+		computationStrategyProperty.put(key, computationStrategy);
 	}
 
 	/**

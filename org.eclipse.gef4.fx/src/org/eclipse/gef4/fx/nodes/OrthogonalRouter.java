@@ -264,7 +264,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 				Point referencePoint = getAnchorReferencePoint(connection,
 						index);
 				// update reference point for the anchor key at the given index
-				connection.referencePointProperty()
+				((DynamicAnchor) anchor).referencePointProperty()
 						.put(connection.getAnchorKey(index), referencePoint);
 				Point computePosition = ((DynamicAnchor) anchor)
 						.computePosition(connection, referencePoint,
