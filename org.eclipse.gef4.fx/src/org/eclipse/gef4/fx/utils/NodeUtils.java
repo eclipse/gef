@@ -66,6 +66,51 @@ import javafx.scene.text.Text;
 public class NodeUtils {
 
 	/**
+	 * Returns an {@link IGeometry} that corresponds to the geometric outline of
+	 * the given {@link Node}. The {@link IGeometry} is specified within the
+	 * local coordinate system of the given {@link Node}.
+	 * <p>
+	 * The following {@link Node}s are supported:
+	 * <ul>
+	 * <li>{@link Connection}
+	 * <li>{@link GeometryNode}
+	 * <li>{@link Arc}
+	 * <li>{@link Circle}
+	 * <li>{@link CubicCurve}
+	 * <li>{@link Ellipse}
+	 * <li>{@link Line}
+	 * <li>{@link Path}
+	 * <li>{@link Polygon}
+	 * <li>{@link Polyline}
+	 * <li>{@link QuadCurve}
+	 * <li>{@link Rectangle}
+	 * </ul>
+	 *
+	 * @param visual
+	 *            The {@link Node} of which the geometric outline is returned.
+	 * @return An {@link IGeometry} that corresponds to the geometric outline of
+	 *         the given {@link Node}.
+	 * @throws IllegalArgumentException
+	 *             if the given {@link Node} is not supported.
+	 */
+	public static IGeometry getGeometricOutline(Node visual) {
+		if (visual instanceof Connection) {
+			GeometryNode<ICurve> curveNode = ((Connection) visual)
+					.getCurveNode();
+			return localToParent(curveNode, curveNode.getGeometry());
+		} else if (visual instanceof GeometryNode) {
+			return ((GeometryNode<?>) visual).getGeometry();
+		} else if (visual instanceof Shape && !(visual instanceof Text)
+				&& !(visual instanceof SVGPath)) {
+			return Shape2Geometry.toGeometry((Shape) visual);
+		} else {
+			throw new IllegalArgumentException(
+					"Cannot determine geometric outline for the given visual <"
+							+ visual + ">.");
+		}
+	}
+
+	/**
 	 * Returns an {@link AffineTransform} which represents the transformation
 	 * matrix to transform geometries from the local coordinate system of the
 	 * given {@link Node} into the coordinate system of the {@link Scene}.
@@ -95,8 +140,7 @@ public class NodeUtils {
 		Node tmp = node;
 		while (tmp.getParent() != null) {
 			tmp = tmp.getParent();
-			tx = FX2Geometry
-					.toAffineTransform(tmp.getLocalToParentTransform())
+			tx = FX2Geometry.toAffineTransform(tmp.getLocalToParentTransform())
 					.concatenate(tx);
 		}
 		return tx;
@@ -310,48 +354,20 @@ public class NodeUtils {
 	}
 
 	/**
-	 * Returns an {@link IGeometry} that corresponds to the geometric outline of
-	 * the given {@link Node}. The {@link IGeometry} is specified within the
-	 * local coordinate system of the given {@link Node}.
-	 * <p>
-	 * The following {@link Node}s are supported:
-	 * <ul>
-	 * <li>{@link Connection}
-	 * <li>{@link GeometryNode}
-	 * <li>{@link Arc}
-	 * <li>{@link Circle}
-	 * <li>{@link CubicCurve}
-	 * <li>{@link Ellipse}
-	 * <li>{@link Line}
-	 * <li>{@link Path}
-	 * <li>{@link Polygon}
-	 * <li>{@link Polyline}
-	 * <li>{@link QuadCurve}
-	 * <li>{@link Rectangle}
-	 * </ul>
+	 * Transforms the given {@link Point} from scene coordinates to the local
+	 * coordinate system of the given {@link Node}.
 	 *
-	 * @param visual
-	 *            The {@link Node} of which the geometric outline is returned.
-	 * @return An {@link IGeometry} that corresponds to the geometric outline of
-	 *         the given {@link Node}.
-	 * @throws IllegalArgumentException
-	 *             if the given {@link Node} is not supported.
+	 * @param n
+	 *            The {@link Node} used to determine the transformation matrix.
+	 * @param p
+	 *            The {@link Point} to transform.
+	 * @return The new, transformed {@link Point}.
 	 */
-	public static IGeometry getGeometricOutline(Node visual) {
-		if (visual instanceof Connection) {
-			GeometryNode<ICurve> curveNode = ((Connection) visual)
-					.getCurveNode();
-			return localToParent(curveNode, curveNode.getGeometry());
-		} else if (visual instanceof GeometryNode) {
-			return ((GeometryNode<?>) visual).getGeometry();
-		} else if (visual instanceof Shape && !(visual instanceof Text)
-				&& !(visual instanceof SVGPath)) {
-			return Shape2Geometry.toGeometry((Shape) visual);
-		} else {
-			throw new IllegalArgumentException(
-					"Cannot determine geometric outline for the given visual <"
-							+ visual + ">.");
-		}
+	public static Point sceneToLocal(Node n, Point p) {
+		// retrieve transform from scene to target parent, by inverting target
+		// parent to scene
+		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
+		return sceneToLocalTx.getTransformed(p);
 	}
 
 }
