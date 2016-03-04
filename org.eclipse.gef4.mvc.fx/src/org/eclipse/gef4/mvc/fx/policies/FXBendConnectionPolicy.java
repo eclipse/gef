@@ -26,6 +26,7 @@ import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
@@ -421,6 +422,15 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		return selectedPointsInitialPositionsInLocal.get(selectionIndex);
 	}
 
+	private int getStaticAnchorIndex(List<IAnchor> newAnchors, int i) {
+		for (int j = i; j < newAnchors.size(); j++) {
+			if (newAnchors.get(j) instanceof StaticAnchor) {
+				return j;
+			}
+		}
+		return -1;
+	}
+
 	/**
 	 * Handles the hiding of an overlain point as well as the expose of a
 	 * previously overlain point.
@@ -552,6 +562,49 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		super.init();
 	}
 
+	@Override
+	protected void locallyExecuteOperation() {
+		// XXX: For segment based connections, the control points need to be
+		// normalized, i.e. all control points that lie on the orthogonal
+		// connection between two other control points have to be removed.
+		if (getConnection().isSegmentBased()) {
+			FXBendOperation bendOperation = getBendOperation();
+			List<IAnchor> newAnchors = bendOperation.getNewAnchors();
+
+			// find first static anchor
+			int prevIndex = getStaticAnchorIndex(newAnchors, 0);
+			if (prevIndex >= 0) {
+				List<Integer> indicesToRemove = new ArrayList<>();
+				int currentIndex = getStaticAnchorIndex(newAnchors,
+						prevIndex + 1);
+				int nextIndex = getStaticAnchorIndex(newAnchors,
+						currentIndex + 1);
+				while (currentIndex >= 0 && nextIndex >= 0) {
+					Point prev = ((StaticAnchor) newAnchors.get(prevIndex))
+							.getReferencePosition();
+					Point current = ((StaticAnchor) newAnchors
+							.get(currentIndex)).getReferencePosition();
+					Point next = ((StaticAnchor) newAnchors.get(nextIndex))
+							.getReferencePosition();
+
+					Line line = new Line(prev, next);
+					if (line.contains(current)) {
+						indicesToRemove.add(currentIndex);
+						currentIndex = prevIndex;
+					}
+
+					prevIndex = currentIndex;
+					currentIndex = nextIndex;
+					nextIndex = getStaticAnchorIndex(newAnchors, nextIndex + 1);
+				}
+				for (int i = indicesToRemove.size() - 1; i >= 0; i--) {
+					newAnchors.remove(indicesToRemove.get(i));
+				}
+			}
+		}
+		super.locallyExecuteOperation();
+	}
+
 	/**
 	 * Moves the currently selected point to the given mouse position in scene
 	 * coordinates. Checks if the selected point overlays another point using
@@ -641,9 +694,19 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		}
 
 		initialMousePositionInScene = mouseInScene.getCopy();
-		selectedPointsInitialPositionsInLocal.add(getBendOperation()
-				.getConnection().getPoints().get(selectedPointsIndices
-						.get(selectedPointsIndices.size() - 1)));
+		Integer index = selectedPointsIndices
+				.get(selectedPointsIndices.size() - 1);
+		Point position = getConnection().getPoints().get(index);
+		selectedPointsInitialPositionsInLocal.add(position);
+
+		// XXX: In case a router inserted control points, those have to be
+		// converted to real static anchors when interacted with so that the
+		// router is not allowed to remove them later.
+		IAnchor anchor = getConnection().getAnchor(index);
+		if (anchor instanceof StaticAnchor) {
+			getBendOperation().getNewAnchors().set(index,
+					createUnconnectedAnchor(position));
+		}
 	}
 
 	@Override

@@ -11,33 +11,52 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import java.util.Set;
+
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
- * An {@link StaticAnchor} provides a position for each {@link AnchorKey},
- * based on a reference position relative to the anchorage {@link Node}, to
- * which the {@link StaticAnchor} is bound, or based on a (global) static
- * reference position in case the {@link StaticAnchor} is unbound.
+ * An {@link StaticAnchor} provides a position for each {@link AnchorKey}, based
+ * on a reference position relative to the anchorage {@link Node}, to which the
+ * {@link StaticAnchor} is bound, or based on a (global) static reference
+ * position in case the {@link StaticAnchor} is unbound.
  *
  * @author mwienand
  * @author anyssen
  */
 public class StaticAnchor extends AbstractAnchor {
 
-	// TODO: expose reference position as a property, and make sure positions
-	// are re-computed when anchorage or reference position changes.
-	private Point referencePosition;
+	private ObjectProperty<Point> referencePositionProperty = new SimpleObjectProperty<>();
+
+	{
+		referencePositionProperty.addListener(new ChangeListener<Point>() {
+			@Override
+			public void changed(ObservableValue<? extends Point> observable,
+					Point oldValue, Point newValue) {
+				// recompute positions for all anchor keys
+				for (Set<AnchorKey> keys : getKeys().values()) {
+					for (AnchorKey key : keys) {
+						updatePosition(key);
+					}
+				}
+			}
+		});
+	}
 
 	/**
-	 * Creates an {@link StaticAnchor} that is bound to the provided
-	 * anchorage. It will used the passed in reference position (in the local
-	 * coordinate system of the anchorage {@link Node}) to compute positions
-	 * (see {@link #positionProperty()}) for all attached {@link AnchorKey}s (in
-	 * the local coordinate system of the attached {@link AnchorKey}'s
-	 * {@link Node}).
+	 * Creates an {@link StaticAnchor} that is bound to the provided anchorage.
+	 * It will used the passed in reference position (in the local coordinate
+	 * system of the anchorage {@link Node}) to compute positions (see
+	 * {@link #positionProperty()}) for all attached {@link AnchorKey}s (in the
+	 * local coordinate system of the attached {@link AnchorKey}'s {@link Node}
+	 * ).
 	 * <p>
 	 * In case the anchorage {@link Node} or any of its ancestors are changed in
 	 * a way that will affect the position, the {@link #positionProperty()} will
@@ -54,7 +73,7 @@ public class StaticAnchor extends AbstractAnchor {
 	public StaticAnchor(Node anchorage,
 			Point referencePositionInAnchorageLocal) {
 		super(anchorage);
-		this.referencePosition = referencePositionInAnchorageLocal;
+		referencePositionProperty.set(referencePositionInAnchorageLocal);
 	}
 
 	/**
@@ -69,7 +88,7 @@ public class StaticAnchor extends AbstractAnchor {
 	 */
 	public StaticAnchor(Point referencePositionInScene) {
 		super(null);
-		this.referencePosition = referencePositionInScene;
+		referencePositionProperty.set(referencePositionInScene);
 	}
 
 	@Override
@@ -78,17 +97,51 @@ public class StaticAnchor extends AbstractAnchor {
 		// local coordinate system, so transform it into scene coordinates
 		Node anchored = key.getAnchored();
 		Node anchorage = getAnchorage();
-		Point positionInScene = anchorage == null ? referencePosition
+		Point positionInScene = anchorage == null
+				? referencePositionProperty.get()
 				: FX2Geometry.toPoint(anchorage.localToScene(
-						referencePosition.x, referencePosition.y));
+						referencePositionProperty.get().x,
+						referencePositionProperty.get().y));
 		Point positionInAnchoredLocal = FX2Geometry.toPoint(
 				anchored.sceneToLocal(positionInScene.x, positionInScene.y));
 		return positionInAnchoredLocal;
 	}
 
+	/**
+	 * Returns the reference position of this {@link StaticAnchor}.
+	 *
+	 * @return The reference position of this {@link StaticAnchor}.
+	 */
+	public Point getReferencePosition() {
+		return referencePositionProperty.get();
+	}
+
+	/**
+	 * Returns the {@link ObjectProperty} that manages the reference position of
+	 * this {@link StaticAnchor}.
+	 *
+	 * @return The {@link ObjectProperty} that manages the reference position of
+	 *         this {@link StaticAnchor}.
+	 */
+	public ObjectProperty<Point> referencePositionProperty() {
+		return referencePositionProperty;
+	}
+
+	/**
+	 * Sets the reference position of this {@link StaticAnchor} to the given
+	 * value.
+	 *
+	 * @param referencePosition
+	 *            The new reference position for this {@link StaticAnchor}.
+	 */
+	public void setReferencePosition(Point referencePosition) {
+		referencePositionProperty.set(referencePosition);
+	}
+
 	@Override
 	public String toString() {
-		return "StaticAnchor[referencePosition = " + referencePosition + "]";
+		return "StaticAnchor[referencePosition = "
+				+ referencePositionProperty.get() + "]";
 	}
 
 }

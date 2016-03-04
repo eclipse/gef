@@ -985,8 +985,6 @@ public class Connection extends Group implements IReferencePointProvider {
 		if (inRefresh) {
 			return;
 		}
-		// System.out.println(this + "refresh()");
-
 		inRefresh = true;
 
 		// TODO: guard against router value being null
