@@ -3,7 +3,7 @@
 -charset "UTF-8"
 -sourcepath "../org.eclipse.gef4.geometry/src"
 -d reference/api
--classpath "@rt@@path.separator@@context@"
+-classpath "@classpath@"
 -use
 -breakiterator
 -splitIndex
