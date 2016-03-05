@@ -42,7 +42,7 @@ public class FXRevealOperation extends AbstractOperation
 	private IVisualPart<Node, ? extends Node> part = null;
 
 	/**
-	 * Constrcuts a new {@link FXRevealOperation} that will reveal the given
+	 * Constructs a new {@link FXRevealOperation} that will reveal the given
 	 * {@link IVisualPart} upon execution.
 	 *
 	 * @param part
