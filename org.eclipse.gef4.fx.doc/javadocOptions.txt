@@ -23,8 +23,8 @@ org.eclipse.gef4.fx.anchors
 org.eclipse.gef4.fx.gestures
 org.eclipse.gef4.fx.listeners
 org.eclipse.gef4.fx.nodes
+org.eclipse.gef4.fx.utils
 org.eclipse.gef4.fx.swt.canvas
 org.eclipse.gef4.fx.swt.controls
 org.eclipse.gef4.fx.swt.gestures
 org.eclipse.gef4.fx.jface
-org.eclipse.gef4.fx.ui.properties
