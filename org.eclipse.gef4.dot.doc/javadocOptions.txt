@@ -1,9 +1,9 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.dot/src@args.list.delimiter@../org.eclipse.gef4.dot/src-gen"
+-sourcepath "../org.eclipse.gef4.dot/src@path.separator@../org.eclipse.gef4.dot/src-gen"
 -d reference/api
--classpath "@rt@@args.list.delimiter@@context@"
+-classpath "@rt@@path.separator@@context@"
 -use
 -breakiterator
 -splitIndex

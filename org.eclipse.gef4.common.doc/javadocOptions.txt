@@ -3,7 +3,7 @@
 -charset "UTF-8"
 -sourcepath "../org.eclipse.gef4.common/src"
 -d reference/api
--classpath "@rt@@args.list.delimiter@@context@"
+-classpath "@rt@@path.separator@@context@"
 -use
 -breakiterator
 -splitIndex

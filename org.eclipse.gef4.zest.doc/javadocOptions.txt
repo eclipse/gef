@@ -1,9 +1,9 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.zest.fx/src@args.list.delimiter@../org.eclipse.gef4.zest.fx.jface/src@args.list.delimiter@../org.eclipse.gef4.zest.fx.ui/src"
+-sourcepath "../org.eclipse.gef4.zest.fx/src@path.separator@../org.eclipse.gef4.zest.fx.jface/src@path.separator@../org.eclipse.gef4.zest.fx.ui/src"
 -d reference/api
--classpath "@rt@@args.list.delimiter@@context@"
+-classpath "@rt@@path.separator@@context@"
 -use
 -breakiterator
 -splitIndex

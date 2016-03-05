@@ -8,23 +8,11 @@
 		<echo message="Done." />
 
 		<echo message="Determining path to javadoc executable, using home dir ${java.home}..." />
-		<available file="${java.home}/../bin/javadoc.exe" property="javadoc" value="${java.home}/../bin/javadoc.exe" />
+		<available file="${java.home}\..\bin\javadoc.exe" property="javadoc" value="${java.home}\..\bin\javadoc.exe" />
 		<available file="${java.home}/../bin/javadoc" property="javadoc" value="${java.home}/../bin/javadoc" />
-		<available file="${java.home}/bin/javadoc.exe" property="javadoc" value="${java.home}/bin/javadoc.exe" />
+		<available file="${java.home}\bin\javadoc.exe" property="javadoc" value="${java.home}\bin\javadoc.exe" />
 		<available file="${java.home}/bin/javadoc" property="javadoc" value="${java.home}/bin/javadoc" />
 		<echo message="Done: ${javadoc}" />
-
-		<echo message="Determining args list delimiter..." />
-		<condition property="args.list.delimiter" value=":">
-			<or>
-				<os family="unix" />
-				<os family="mac" />
-			</or>
-		</condition>
-		<condition property="args.list.delimiter" value=";">
-			<os family="windows" />
-		</condition>
-		<echo message="Done: '${args.list.delimiter}'" />
 
 		<echo message="Determining context libs for javadoc generation ..." />
 		<path id="api.context.libs">
@@ -32,7 +20,7 @@
 				<include name="*.jar" />
 			</fileset>
 		</path>
-		<pathconvert property="api.context.libs.classpath" pathsep="${args.list.delimiter}">
+		<pathconvert property="api.context.libs.classpath" pathsep="${path.separator}">
 			<path refid="api.context.libs" />
 		</pathconvert>
 		<echo message="Done: ${api.context.libs.classpath}" />
@@ -40,15 +28,16 @@
 		<echo message="Replacing tokens in javadocOptions.txt" />
 		<replace file="${basedir}/javadocOptions.txt" token="@context@" value="${api.context.libs.classpath}" />
 		<!-- Add jfxrt.jar for Java 7, jfxswt.jar for Java 8 -->
-		<replace file="${basedir}/javadocOptions.txt" token="@rt@" value="${bootclasspath}${args.list.delimiter}${java.home}/lib/jfxrt.jar${args.list.delimiter}${java.home}/lib/jfxswt.jar" />
-		<replace file="${basedir}/javadocOptions.txt" token="@args.list.delimiter@" value="${args.list.delimiter}" />
-		<replace file="${basedir}/javadocOptions.txt" token="@linkoffline-target@" value="linkoffline-target" />
+		<replace file="${basedir}${file.separator}javadocOptions.txt" token="@path.separator@" value="${path.separator}" />
+		<replace file="${basedir}${file.separator}javadocOptions.txt" token="@file.separator@" value="${file.separator}" />
+		<replace file="${basedir}${file.separator}javadocOptions.txt" token="@rt@" value="${bootclasspath}${path.separator}${java.home}${file.separator}lib${file.separator}jfxrt.jar${path.separator}${java.home}${file.separator}lib${file.separator}jfxswt.jar" />
+		<replace file="${basedir}${file.separator}javadocOptions.txt" token="@linkoffline-target@" value="linkoffline-target" />
 		<echo message="Done." />
 
 		<echo message="Generating javadoc..." />
 		<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
 			<!-- Ensure API tools tags (noimplement, noextend, noreference, nooverride) and EMF tags (generated) are not reported as errors (unknown tags) -->
-			<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
+			<arg line="@${basedir}${file.separator}javadocOptions.txt -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
 		</exec>
 		<echo message="Done." />
 	</target>

@@ -1,9 +1,9 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.mvc/src@args.list.delimiter@../org.eclipse.gef4.mvc.ui/src@args.list.delimiter@../org.eclipse.gef4.mvc.fx/src@args.list.delimiter@../org.eclipse.gef4.mvc.fx.ui/src"
+-sourcepath "../org.eclipse.gef4.mvc/src@path.separator@../org.eclipse.gef4.mvc.ui/src@path.separator@../org.eclipse.gef4.mvc.fx/src@path.separator@../org.eclipse.gef4.mvc.fx.ui/src"
 -d reference/api
--classpath "@rt@@args.list.delimiter@@context@"
+-classpath "@rt@@path.separator@@context@"
 -use
 -breakiterator
 -splitIndex
