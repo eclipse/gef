@@ -29,7 +29,7 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<encoding>UTF-8</encoding>
+					<encoding>${project.build.sourceEncoding}</encoding>
 					<!-- add JavaFX to classpath (jfxrt for Java 7, jfxswt.jar for Java 
 						8) -->
 					<extraClasspathElements>
