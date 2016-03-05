@@ -28,6 +28,7 @@
 		<echo message="Determining JavaFX libs for javadoc generation ..." />
 		<path id="javafx.libs">
 			<fileset dir="${java.home}/lib">
+				<!-- Add jfxrt.jar for Java 7, jfxswt.jar for Java 8 -->
 				<include name="jfxrt.jar" />
 				<include name="jfxswt.jar" />
 			</fileset>
@@ -39,7 +40,6 @@
 		<echo message="Replacing tokens in javadocOptions.txt" />
 		<replace file="${basedir}/javadocOptions.txt" token="@path.separator@" value="${path.separator}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@file.separator@" value="${file.separator}" />
-		<!-- Add jfxrt.jar for Java 7, jfxswt.jar for Java 8 -->
 		<replace file="${basedir}/javadocOptions.txt" token="@classpath@" value="${javafx.libs.classpath}${path.separator}${api.context.libs.classpath}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@linkoffline-target@" value="linkoffline-target" />
 		<echo message="Done." />
