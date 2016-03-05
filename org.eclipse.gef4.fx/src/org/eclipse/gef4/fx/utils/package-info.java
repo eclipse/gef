@@ -11,7 +11,7 @@
  *******************************************************************************/
 /**
  * This package provides utilities for picking nodes, querying the pointer
- * location, and for applying transformations.</li>
+ * location, and for applying transformations.
  *
  * @author anyssen
  *
