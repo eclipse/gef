@@ -20,16 +20,27 @@
 				<include name="*.jar" />
 			</fileset>
 		</path>
-		<pathconvert property="api.context.libs.classpath" pathsep="${path.separator}" dirsep="${file.separator}">
+		<pathconvert property="api.context.libs.classpath" pathsep="${path.separator}" dirsep="/">
 			<path refid="api.context.libs" />
 		</pathconvert>
 		<echo message="Done: ${api.context.libs.classpath}" />
+
+		<echo message="Determining JavaFX libs for javadoc generation ..." />
+		<path id="javafx.libs">
+			<fileset dir="${java.home}/lib">
+				<include name="jfxrt.jar" />
+				<include name="jfxswt.jar" />
+			</fileset>
+		</path>
+		<pathconvert property="javafx.libs.classpath" pathsep="${path.separator}" dirsep="/">
+			<path refid="javafx.libs" />
+		</pathconvert>
 
 		<echo message="Replacing tokens in javadocOptions.txt" />
 		<replace file="${basedir}/javadocOptions.txt" token="@path.separator@" value="${path.separator}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@file.separator@" value="${file.separator}" />
 		<!-- Add jfxrt.jar for Java 7, jfxswt.jar for Java 8 -->
-		<replace file="${basedir}/javadocOptions.txt" token="@classpath@" value="${java.home}${file.separator}lib${file.separator}jfxrt.jar${path.separator}${java.home}${file.separator}lib${file.separator}jfxswt.jar${path.separator}${api.context.libs.classpath}" />
+		<replace file="${basedir}/javadocOptions.txt" token="@classpath@" value="${javafx.libs.classpath}${path.separator}${api.context.libs.classpath}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@linkoffline-target@" value="linkoffline-target" />
 		<echo message="Done." />
 
@@ -41,4 +52,3 @@
 		<echo message="Done." />
 	</target>
 </project>
-
