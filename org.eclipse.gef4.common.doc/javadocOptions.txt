@@ -24,5 +24,4 @@ org.eclipse.gef4.common.beans.property
 org.eclipse.gef4.common.beans.value
 org.eclipse.gef4.common.collections
 org.eclipse.gef4.common.dispose
-org.eclipse.gef4.common.notify
 org.eclipse.gef4.common.reflect
