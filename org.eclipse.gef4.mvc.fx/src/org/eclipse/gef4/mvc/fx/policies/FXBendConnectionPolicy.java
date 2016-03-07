@@ -147,6 +147,47 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	/**
+	 * Copies the specified point and selects it for further manipulation.
+	 *
+	 * @param segmentIndex
+	 *            The index of the manipulated segment.
+	 * @param segmentParameter
+	 *            The parameter describing the point on the specified segment.
+	 * @param mouseInScene
+	 *            The current mouse pointer location.
+	 */
+	public void copyAndSelectPoint(int segmentIndex, double segmentParameter,
+			Point mouseInScene) {
+		checkInitialized();
+
+		// determine anchor index
+		int anchorIndex, insertionIndex;
+		if (segmentParameter == 1) {
+			anchorIndex = segmentIndex + 1;
+			insertionIndex = anchorIndex;
+		} else {
+			anchorIndex = segmentIndex;
+			insertionIndex = anchorIndex + 1;
+		}
+
+		// copy anchor at that index
+		List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
+		IAnchor anchorToCopy = newAnchors.get(anchorIndex);
+		Point position = getConnection().getPoints().get(anchorIndex);
+		boolean canConnect = anchorToCopy.getAnchorage() != getConnection();
+		IAnchor copy = findOrCreateAnchor(position, canConnect);
+		newAnchors.add(insertionIndex, copy);
+
+		// execute locally to add the new anchor
+		locallyExecuteOperation();
+
+		// select the copied way point
+		// XXX: Segment parameter is always 0 because the copied anchor may
+		// never be the last point (except after overlay removal)
+		selectPoint(insertionIndex, 0, mouseInScene);
+	}
+
+	/**
 	 * Creates a new point at the given segment. The new way point is then
 	 * selected for further manipulation.
 	 *

@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
@@ -197,13 +198,48 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 		if (hostPart.getSegmentParameter() == 0.5) {
 			if (e.isShiftDown()) {
+				// determine connectedness for neighbor anchors
+				int firstAnchorIndex = hostPart.getSegmentIndex();
+				int secondAnchorIndex = hostPart.getSegmentIndex() + 1;
+
+				Node firstAnchorage = targetPart.getVisual()
+						.getAnchor(firstAnchorIndex).getAnchorage();
+				boolean isFirstConnected = firstAnchorage != null
+						&& firstAnchorage != targetPart.getVisual();
+
+				Node secondAnchorage = targetPart.getVisual()
+						.getAnchor(secondAnchorIndex).getAnchorage();
+				boolean isSecondConnected = secondAnchorage != null
+						&& secondAnchorage != targetPart.getVisual();
+
+				// determine mouse position in scene
+				Point mouseInScene = new Point(e.getSceneX(), e.getSceneY());
+
 				// move segment => select the segment end points
-				getBendPolicy(targetPart).selectPoint(
-						hostPart.getSegmentIndex(), 0,
-						new Point(e.getSceneX(), e.getSceneY()));
-				getBendPolicy(targetPart).selectPoint(
-						hostPart.getSegmentIndex(), 1,
-						new Point(e.getSceneX(), e.getSceneY()));
+				int firstIndex = hostPart.getSegmentIndex();
+				int secondIndex = isFirstConnected ? firstIndex + 1
+						: firstIndex;
+
+				if (isFirstConnected) {
+					getBendPolicy(targetPart).copyAndSelectPoint(firstIndex, 0,
+							mouseInScene);
+				} else {
+					getBendPolicy(targetPart).selectPoint(firstIndex, 0,
+							mouseInScene);
+				}
+				if (isSecondConnected) {
+					getBendPolicy(targetPart).copyAndSelectPoint(secondIndex, 1,
+							mouseInScene);
+				} else {
+					getBendPolicy(targetPart).selectPoint(secondIndex, 1,
+							mouseInScene);
+				}
+
+				// update handles
+				if (isFirstConnected || isSecondConnected) {
+					targetPart.getAdapter(SelectionBehavior.class)
+							.updateHandles();
+				}
 			} else {
 				// create new way point
 				getBendPolicy(targetPart).createAndSelectPoint(
