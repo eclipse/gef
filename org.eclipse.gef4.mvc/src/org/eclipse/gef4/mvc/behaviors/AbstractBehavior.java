@@ -14,10 +14,13 @@
 package org.eclipse.gef4.mvc.behaviors;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -208,6 +211,72 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		AdaptableScopes.switchTo(domain);
 		AdaptableScopes.switchTo(viewer);
 		AdaptableScopes.switchTo(host);
+	}
+
+	/**
+	 * Updates the handle parts for the given target. Handle parts that are not
+	 * equal to any handle part within the given list of handle parts are
+	 * removed, and the remaining handle parts are added. Therefore, the given
+	 * handle parts are the
+	 *
+	 * @param target
+	 *            The target {@link IVisualPart} for which to update the
+	 *            handles.
+	 * @param handles
+	 *            The new handles for the given target.
+	 */
+	protected void updateHandles(IVisualPart<VR, ? extends VR> target,
+			List<? extends IHandlePart<VR, ? extends VR>> handles) {
+		if (handles != null && !handles.isEmpty()) {
+			// determine old handles for target
+			List<IHandlePart<VR, ? extends VR>> oldHandles = new ArrayList<>(
+					getHandleParts());
+			Iterator<IHandlePart<VR, ? extends VR>> it = oldHandles.iterator();
+			while (it.hasNext()) {
+				IHandlePart<VR, ? extends VR> oldHandle = it.next();
+				ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = oldHandle
+						.getAnchoragesUnmodifiable();
+				if (!anchorages.keySet().contains(target)) {
+					it.remove();
+				}
+			}
+
+			// set the handles as anchoreds so that they can be compared
+			List<IHandlePart<VR, ? extends VR>> newHandles = new ArrayList<>(
+					handles);
+			BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(),
+					Collections.singletonList(target), newHandles);
+
+			// remove handles that no longer exist
+			// TODO
+
+			// find new handles that did not exist yet
+			List<IHandlePart<VR, ? extends VR>> alreadyExists = new ArrayList<>();
+			it = newHandles.iterator();
+			while (it.hasNext()) {
+				IHandlePart<VR, ? extends VR> newHandle = it.next();
+				boolean existsAlready = false;
+				for (IHandlePart<VR, ? extends VR> oldHandle : oldHandles) {
+					if (oldHandle instanceof Comparable) {
+						Comparable<IHandlePart<VR, ? extends VR>> comparable = (Comparable<IHandlePart<VR, ? extends VR>>) oldHandle;
+						int compareTo = comparable.compareTo(newHandle);
+						if (compareTo == 0) {
+							existsAlready = true;
+							break;
+						}
+					}
+				}
+				if (existsAlready) {
+					alreadyExists.add(newHandle);
+					it.remove();
+				}
+			}
+			// remove already existing handles
+			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
+					Collections.singletonList(target), alreadyExists);
+			// add new handles that did not exist yet
+			handleParts.addAll(newHandles);
+		}
 	}
 
 }

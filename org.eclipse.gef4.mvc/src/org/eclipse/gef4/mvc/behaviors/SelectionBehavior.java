@@ -21,6 +21,7 @@ import org.eclipse.gef4.common.reflect.Types;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -189,4 +190,18 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 			removeFeedback(Collections.singletonList(getHost()));
 		}
 	}
+
+	/**
+	 * Updates the handles of this host.
+	 */
+	public void updateHandles() {
+		// determine new handles
+		switchAdaptableScopes();
+		List<IHandlePart<VR, ? extends VR>> newHandles = handlePartFactory
+				.createHandleParts(Collections.singletonList(getHost()), this,
+						Collections.emptyMap());
+		// compare to current handles => remove/add as needed
+		updateHandles(getHost(), newHandles);
+	}
+
 }
