@@ -45,10 +45,21 @@
 		<echo message="Done." />
 
 		<echo message="Generating javadoc..." />
-		<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
-			<!-- Ensure API tools tags (noimplement, noextend, noreference, nooverride) and EMF tags (generated) are not reported as errors (unknown tags) -->
-			<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
-		</exec>
+		<!-- Ensure API tools tags (noimplement, noextend, noreference, nooverride) and EMF tags (generated) are not reported as errors (unknown tags) -->
+		<if>
+			<equals arg1="${java.vm.specification.version}" arg2="1.7" />
+			<then>
+				<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
+					<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
+				</exec>
+			</then>
+			<else>
+				<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
+					<!-- add javafx option only in java 8 environment -->
+					<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -javafx -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
+				</exec>
+			</else>
+		</if>
 		<echo message="Done." />
 	</target>
 </project>
