@@ -25,13 +25,14 @@ import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.GridModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
@@ -119,6 +120,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
+		normalizeControlPoints();
 		ITransactionalOperation bendOperation = super.commit();
 
 		if (bendOperation == null || bendOperation.isNoOp()) {
@@ -130,7 +132,10 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
 				bendOperation.getLabel());
 		updateOperation.add(bendOperation);
-		updateOperation.add(createReselectOperation());
+		ReverseUndoCompositeOperation reselectOperation = createReselectOperation();
+		if (reselectOperation != null) {
+			updateOperation.add(reselectOperation);
+		}
 
 		// guard the update operation from refreshes
 		// TODO: check if this is needed (it should actually be performed by
@@ -161,19 +166,19 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		checkInitialized();
 
 		// determine anchor index
-		int anchorIndex, insertionIndex;
+		int toCopyAnchorIndex, insertionIndex;
 		if (segmentParameter == 1) {
-			anchorIndex = segmentIndex + 1;
-			insertionIndex = anchorIndex;
+			toCopyAnchorIndex = segmentIndex + 1;
+			insertionIndex = toCopyAnchorIndex;
 		} else {
-			anchorIndex = segmentIndex;
-			insertionIndex = anchorIndex + 1;
+			toCopyAnchorIndex = segmentIndex;
+			insertionIndex = toCopyAnchorIndex + 1;
 		}
 
 		// copy anchor at that index
 		List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-		IAnchor anchorToCopy = newAnchors.get(anchorIndex);
-		Point position = getConnection().getPoints().get(anchorIndex);
+		IAnchor anchorToCopy = newAnchors.get(toCopyAnchorIndex);
+		Point position = getConnection().getPoints().get(toCopyAnchorIndex);
 		boolean canConnect = anchorToCopy.getAnchorage() != getConnection();
 		IAnchor copy = findOrCreateAnchor(position, canConnect);
 		newAnchors.add(insertionIndex, copy);
@@ -222,8 +227,12 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * @return An {@link IUndoableOperation} that deselects and selects the root
 	 *         part.
 	 */
+	@SuppressWarnings("serial")
 	protected ReverseUndoCompositeOperation createReselectOperation() {
-		if (!(getHost() instanceof IContentPart)) {
+		if (!(getHost() instanceof IContentPart) || !(getHost().getRoot()
+				.getViewer().getAdapter(new TypeToken<SelectionModel<Node>>() {
+				})
+				.isSelected((IContentPart<Node, ? extends Node>) getHost()))) {
 			return null;
 		}
 
@@ -464,15 +473,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		return selectedPointsInitialPositionsInLocal.get(selectionIndex);
 	}
 
-	private int getStaticAnchorIndex(List<IAnchor> newAnchors, int i) {
-		for (int j = i; j < newAnchors.size(); j++) {
-			if (newAnchors.get(j) instanceof StaticAnchor) {
-				return j;
-			}
-		}
-		return -1;
-	}
-
 	/**
 	 * Handles the hiding of an overlain point as well as the expose of a
 	 * previously overlain point.
@@ -606,45 +606,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	protected void locallyExecuteOperation() {
-		// XXX: For segment based connections, the control points need to be
-		// normalized, i.e. all control points that lie on the orthogonal
-		// connection between two other control points have to be removed.
-		if (getConnection().getRouter() instanceof OrthogonalRouter) {
-			FXBendOperation bendOperation = getBendOperation();
-			List<IAnchor> newAnchors = bendOperation.getNewAnchors();
-
-			// find first static anchor
-			int prevIndex = getStaticAnchorIndex(newAnchors, 0);
-			if (prevIndex >= 0) {
-				List<Integer> indicesToRemove = new ArrayList<>();
-				int currentIndex = getStaticAnchorIndex(newAnchors,
-						prevIndex + 1);
-				int nextIndex = getStaticAnchorIndex(newAnchors,
-						currentIndex + 1);
-				while (currentIndex >= 0 && nextIndex >= 0) {
-					Point prev = ((StaticAnchor) newAnchors.get(prevIndex))
-							.getReferencePosition();
-					Point current = ((StaticAnchor) newAnchors
-							.get(currentIndex)).getReferencePosition();
-					Point next = ((StaticAnchor) newAnchors.get(nextIndex))
-							.getReferencePosition();
-
-					Line line = new Line(prev, next);
-					if (line.contains(current)) {
-						indicesToRemove.add(currentIndex);
-						currentIndex = prevIndex;
-					}
-
-					prevIndex = currentIndex;
-					currentIndex = nextIndex;
-					nextIndex = getStaticAnchorIndex(newAnchors, nextIndex + 1);
-				}
-				for (int i = indicesToRemove.size() - 1; i >= 0; i--) {
-					newAnchors.remove(indicesToRemove.get(i));
-				}
-			}
-		}
 		super.locallyExecuteOperation();
+		getBendOperation().setNewAnchors(getConnection().getAnchors());
 	}
 
 	/**
@@ -708,6 +671,86 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// System.out.println("removed overlain anchors indices: "
 		// + removedOverlainAnchorsIndices);
 		// System.out.println();
+	}
+
+	/**
+	 * For segment based connections, the control points need to be normalized,
+	 * i.e. all control points that lie on the orthogonal connection between two
+	 * other control points have to be removed.
+	 */
+	public void normalizeControlPoints() {
+		if (!(getConnection().getRouter() instanceof OrthogonalRouter)) {
+			return;
+		}
+
+		// determine new anchors
+		FXBendOperation bendOperation = getBendOperation();
+		List<IAnchor> newAnchors = bendOperation.getNewAnchors();
+
+		// determine corresponding positions
+		List<Point> newPositions = getConnection().getPoints();
+
+		if (newAnchors.size() != newPositions.size()) {
+			System.out.println("ERROR ### " + newAnchors.size() + " :: "
+					+ newPositions.size());
+		}
+		System.out.println("[normalization original points]");
+		for (int i = 1; i < newPositions.size() - 1; i++) {
+			System.out.println(newPositions.get(i - 1) + " -> "
+					+ newPositions.get(i) + " -> " + newPositions.get(i + 1));
+		}
+		System.out.println("[normalization point removal]");
+
+		// test each static anchor for removal potential
+		int numRemoved = 0;
+		for (int i = 1; i < newAnchors.size() - 1; i++) {
+			IAnchor anchor = newAnchors.get(i);
+			if (anchor instanceof StaticAnchor
+					&& !getConnection().getRouter().isImplicitAnchor(anchor)) {
+				// determine surrounding positions
+				Point prev = newPositions.get(i - 1 + numRemoved);
+				Point next = newPositions.get(i + 1 + numRemoved);
+				Point current = newPositions.get(i + numRemoved);
+
+				System.out.println(prev + " -> " + current + " -> " + next);
+
+				// determine in-direction and out-direction for current point
+				Vector inDirection = new Vector(prev, current);
+				Vector outDirection = new Vector(current, next);
+
+				if (inDirection.isNull() || outDirection.isNull()
+						|| inDirection.isParallelTo(outDirection)) {
+					// make previous and next explicit
+					// TODO: instanceof check instead of obj->class->str->cmp
+					if (getConnection().getRouter().isImplicitAnchor(
+							newAnchors.get(i - 1 + numRemoved))) {
+						// System.out.println(" => explicitize prev");
+						newAnchors.set(i - 1 + numRemoved,
+								createUnconnectedAnchor(
+										newPositions.get(i - 1 + numRemoved)));
+					}
+					if (getConnection().getRouter().isImplicitAnchor(
+							newAnchors.get(i + 1 + numRemoved))) {
+						// System.out.println(" => explicitize next");
+						newAnchors.set(i + 1 + numRemoved,
+								createUnconnectedAnchor(
+										newPositions.get(i + 1 + numRemoved)));
+					}
+					// System.out.println(" => remove current");
+					// remove current point as it is unnecessary
+					newAnchors.remove(i + numRemoved);
+					// decrement index
+					i--;
+					numRemoved++;
+					break;
+				}
+			}
+		}
+
+		if (numRemoved != 0) {
+			locallyExecuteOperation();
+			normalizeControlPoints();
+		}
 	}
 
 	/**

@@ -47,6 +47,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXNormalizeConnectedOnDrag;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
@@ -266,6 +267,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXCloneOnClickPolicy.class);
+
+		// normalize connected on drag
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXNormalizeConnectedOnDrag.class);
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(
