@@ -145,7 +145,7 @@
                  id="org.eclipse.gef4.dot.ui.toolbar">
               <command
                     commandId="org.eclipse.gef4.dot.ui.export"
-                    icon="IMG_ETOOL_PRINT_EDIT"
+                    icon="icons/graphviz_dot.png"
                     style="toggle">
                  <visibleWhen
                        checkEnabled="false">
