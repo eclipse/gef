@@ -14,6 +14,7 @@
 package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.IAnchor;
 
 /**
  * An {@link IConnectionRouter} is responsible for {@link #route(Connection)
@@ -25,6 +26,18 @@ import org.eclipse.gef4.fx.anchors.DynamicAnchor;
  *
  */
 public interface IConnectionRouter {
+
+	/**
+	 * Returns <code>true</code> if the given {@link IAnchor} was added by this
+	 * {@link IConnectionRouter} during {@link #route(Connection)}. Otherwise
+	 * returns <code>false</code>.
+	 *
+	 * @param anchor
+	 *            The {@link IAnchor} that is tested for implicitness.
+	 * @return <code>true</code> if the given {@link IAnchor} is implicit,
+	 *         otherwise <code>false</code>.
+	 */
+	public boolean isImplicitAnchor(IAnchor anchor);
 
 	/**
 	 * Adjusts the {@link Connection connection's} points (if necessary), which

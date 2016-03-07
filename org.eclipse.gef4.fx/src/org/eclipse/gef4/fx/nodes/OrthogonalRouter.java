@@ -300,6 +300,11 @@ public class OrthogonalRouter implements IConnectionRouter {
 		return triangles[2].contains(point);
 	}
 
+	@Override
+	public boolean isImplicitAnchor(IAnchor anchor) {
+		return anchor instanceof OrthogonalPolylineRouterAnchor;
+	}
+
 	private boolean isLeft(Connection connection, int i, Point currentPoint) {
 		Point2D pointInScene = connection.localToScene(currentPoint.x,
 				currentPoint.y);
@@ -631,4 +636,5 @@ public class OrthogonalRouter implements IConnectionRouter {
 		}
 		return currentDirection;
 	}
+
 }

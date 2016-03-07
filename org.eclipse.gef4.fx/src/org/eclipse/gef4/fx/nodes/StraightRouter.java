@@ -105,6 +105,11 @@ public class StraightRouter implements IConnectionRouter {
 	}
 
 	@Override
+	public boolean isImplicitAnchor(IAnchor anchor) {
+		return false;
+	}
+
+	@Override
 	public void route(Connection connection) {
 		if (connection.getPoints().size() < 2) {
 			return;
