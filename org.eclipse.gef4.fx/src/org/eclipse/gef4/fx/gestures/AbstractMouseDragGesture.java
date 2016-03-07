@@ -106,7 +106,8 @@ public abstract class AbstractMouseDragGesture extends AbstractGesture {
 			return;
 		}
 
-		if (type.equals(MouseEvent.MOUSE_EXITED_TARGET)) {
+		if (type.equals(MouseEvent.MOUSE_EXITED_TARGET)
+				|| type.equals(MouseEvent.MOUSE_ENTERED_TARGET)) {
 			// ignore mouse exited target events here (they may result from
 			// visual changes that are caused by a preceding press)
 			return;
