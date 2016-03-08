@@ -33,6 +33,7 @@ import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
  * 
  * @author Fabian Steeg (fsteeg)
  */
+// TODO: remove this abstraction, integrate into DotInterpreter
 public final class DotAst {
 
 	private Resource resource;

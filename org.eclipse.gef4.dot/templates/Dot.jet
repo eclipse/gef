@@ -1,4 +1,4 @@
-<%@ jet package="org.eclipse.gef4.dot.internal" imports="import org.eclipse.gef4.dot.internal.DotProperties org.eclipse.gef4.graph.*" class="DotTemplate" %>
+<%@ jet package="org.eclipse.gef4.dot.internal" imports="import org.eclipse.gef4.dot.internal.DotAttributes org.eclipse.gef4.graph.*" class="DotTemplate" %>
 <%/*******************************************************************************
  * Copyright (c) 2009, 2010 Fabian Steeg. All rights reserved. This program and 
  * the accompanying materials are made available under the terms of the Eclipse
@@ -8,8 +8,8 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/%>
 <% Graph graph = (Graph) argument; %>
-<% String algo = DotProperties.getLayout(graph); if (algo == null) algo = DotProperties.GRAPH_LAYOUT_DEFAULT;%>
-<% boolean digraph = DotProperties.GRAPH_TYPE_DIRECTED.equals(DotProperties.getType(graph)); %>
+<% String algo = DotAttributes.getLayout(graph); if (algo == null) algo = DotAttributes.GRAPH_LAYOUT_DEFAULT;%>
+<% boolean digraph = DotAttributes.GRAPH_TYPE_DIRECTED.equals(DotAttributes.getType(graph)); %>
 <% String simpleClassName = graph.getClass().getSimpleName(); %>
 <% /* The exact name 'Graph' is not valid for rendering with Graphviz: */ %>
 <% simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; %>
@@ -19,16 +19,16 @@
 	/* Global settings */
 	graph[layout=<%=algo%>]
 	node[shape=box]
-	rankdir=<%=DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph).toUpperCase() : DotProperties.GRAPH_RANKDIR_TD.toUpperCase()%>
+	rankdir=<%=DotAttributes.getRankdir(graph) != null ? DotAttributes.getRankdir(graph).toUpperCase() : DotAttributes.GRAPH_RANKDIR_TD.toUpperCase()%>
 	
 	/* Nodes */
 	<% for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; %> 
-	<%=node.hashCode()%>[label="<%=DotProperties.getLabel(node)%>"];
+	<%=node.hashCode()%>[label="<%=DotAttributes.getLabel(node)%>"];
 	<% }%>
 	
 	/* Edges */
 	<% for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; %> 
-	<%boolean dashed = DotProperties.EDGE_STYLE_DASHED.equals(DotProperties.getStyle(edge)); boolean dotted = DotProperties.EDGE_STYLE_DOTTED.equals(DotProperties.getStyle(edge));%> 
-	<%=edge.getSource().hashCode()%> <%= digraph ? "->" : "--" %> <%=edge.getTarget().hashCode()%>[style=<%=dashed?"dashed":dotted?"dotted":"solid"%> label="<%=DotProperties.getLabel(edge)%>"];
+	<%boolean dashed = DotAttributes.EDGE_STYLE_DASHED.equals(DotAttributes.getStyle(edge)); boolean dotted = DotAttributes.EDGE_STYLE_DOTTED.equals(DotAttributes.getStyle(edge));%> 
+	<%=edge.getSource().hashCode()%> <%= digraph ? "->" : "--" %> <%=edge.getTarget().hashCode()%>[style=<%=dashed?"dashed":dotted?"dotted":"solid"%> label="<%=DotAttributes.getLabel(edge)%>"];
 	<% }%>
 }

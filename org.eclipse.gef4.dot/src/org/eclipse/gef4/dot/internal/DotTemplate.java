@@ -1,6 +1,6 @@
 package org.eclipse.gef4.dot.internal;
 
-import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.graph.*;
 
 public class DotTemplate
@@ -46,8 +46,8 @@ public class DotTemplate
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
      Graph graph = (Graph) argument; 
-     String algo = DotProperties.getLayout(graph); if (algo == null) algo = DotProperties.GRAPH_LAYOUT_DEFAULT;
-     boolean digraph = DotProperties.GRAPH_TYPE_DIRECTED.equals(DotProperties.getType(graph)); 
+     String algo = DotAttributes.getLayout(graph); if (algo == null) algo = DotAttributes.GRAPH_LAYOUT_DEFAULT;
+     boolean digraph = DotAttributes.GRAPH_TYPE_DIRECTED.equals(DotAttributes.getType(graph)); 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
      simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; 
@@ -59,19 +59,19 @@ public class DotTemplate
     stringBuffer.append(TEXT_4);
     stringBuffer.append(algo);
     stringBuffer.append(TEXT_5);
-    stringBuffer.append(DotProperties.getRankdir(graph) != null ? DotProperties.getRankdir(graph).toUpperCase() : DotProperties.GRAPH_RANKDIR_TD.toUpperCase());
+    stringBuffer.append(DotAttributes.getRankdir(graph) != null ? DotAttributes.getRankdir(graph).toUpperCase() : DotAttributes.GRAPH_RANKDIR_TD.toUpperCase());
     stringBuffer.append(TEXT_6);
      for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; 
     stringBuffer.append(TEXT_7);
     stringBuffer.append(node.hashCode());
     stringBuffer.append(TEXT_8);
-    stringBuffer.append(DotProperties.getLabel(node));
+    stringBuffer.append(DotAttributes.getLabel(node));
     stringBuffer.append(TEXT_9);
      }
     stringBuffer.append(TEXT_10);
      for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; 
     stringBuffer.append(TEXT_11);
-    boolean dashed = DotProperties.EDGE_STYLE_DASHED.equals(DotProperties.getStyle(edge)); boolean dotted = DotProperties.EDGE_STYLE_DOTTED.equals(DotProperties.getStyle(edge));
+    boolean dashed = DotAttributes.EDGE_STYLE_DASHED.equals(DotAttributes.getStyle(edge)); boolean dotted = DotAttributes.EDGE_STYLE_DOTTED.equals(DotAttributes.getStyle(edge));
     stringBuffer.append(TEXT_12);
     stringBuffer.append(edge.getSource().hashCode());
     stringBuffer.append(TEXT_13);
@@ -81,7 +81,7 @@ public class DotTemplate
     stringBuffer.append(TEXT_15);
     stringBuffer.append(dashed?"dashed":dotted?"dotted":"solid");
     stringBuffer.append(TEXT_16);
-    stringBuffer.append(DotProperties.getLabel(edge));
+    stringBuffer.append(DotAttributes.getLabel(edge));
     stringBuffer.append(TEXT_17);
      }
     stringBuffer.append(TEXT_18);

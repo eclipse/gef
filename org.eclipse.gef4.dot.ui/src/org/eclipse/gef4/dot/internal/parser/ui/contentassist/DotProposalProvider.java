@@ -13,7 +13,7 @@
 package org.eclipse.gef4.dot.internal.parser.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.services.DotGrammarAccess;
@@ -55,8 +55,8 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
 			if (DotJavaValidator.isEdgeAttribute(attribute)
-					&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
-				for (String edgeStyle : DotProperties.EDGE_STYLE_VALUES) {
+					&& DotAttributes.EDGE_STYLE.equals(attribute.getName())) {
+				for (String edgeStyle : DotAttributes.EDGE_STYLE_VALUES) {
 					// quote attribute value if needed only
 					final String proposedValue = DotTerminalConverters
 							.needsToBeQuoted(edgeStyle)

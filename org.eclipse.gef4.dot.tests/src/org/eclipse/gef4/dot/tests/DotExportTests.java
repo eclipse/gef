@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.eclipse.gef4.dot.internal.DotExport;
-import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -71,16 +71,16 @@ public class DotExportTests extends DotTemplateTests {
 	// @Test
 	// public void layoutToGraphvizLayoutMapping() {
 	// Graph.Builder graph = new Graph.Builder();
-	// graph.attr(DotProperties.GRAPH_LAYOUT, new TreeLayoutAlgorithm());
+	// graph.attr(DotAttributes.GRAPH_LAYOUT, new TreeLayoutAlgorithm());
 	// assertTrue("TreeLayout -> 'dot'", new DotExport(graph.build())
 	// .toDotString().contains("graph[layout=dot]"));
-	// graph.attr(DotProperties.GRAPH_LAYOUT, new RadialLayoutAlgorithm());
+	// graph.attr(DotAttributes.GRAPH_LAYOUT, new RadialLayoutAlgorithm());
 	// assertTrue("RadialLayout -> 'twopi'", new DotExport(graph.build())
 	// .toDotString().contains("graph[layout=twopi]"));
-	// graph.attr(DotProperties.GRAPH_LAYOUT, new GridLayoutAlgorithm());
+	// graph.attr(DotAttributes.GRAPH_LAYOUT, new GridLayoutAlgorithm());
 	// assertTrue("GridLayout -> 'osage'", new DotExport(graph.build())
 	// .toDotString().contains("graph[layout=osage]"));
-	// graph.attr(DotProperties.GRAPH_LAYOUT, new SpringLayoutAlgorithm());
+	// graph.attr(DotAttributes.GRAPH_LAYOUT, new SpringLayoutAlgorithm());
 	// assertTrue("SpringLayout, small -> 'fdp'", new DotExport(graph.build())
 	// .toDotString().contains("graph[layout=fdp]"));
 	// for (int i = 0; i < 100; i++) {
@@ -96,21 +96,21 @@ public class DotExportTests extends DotTemplateTests {
 	@Test
 	public void layoutToGraphvizLayoutMapping() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DOT);
+		graph.attr(DotAttributes.GRAPH_LAYOUT, DotAttributes.GRAPH_LAYOUT_DOT);
 		assertTrue("'dot'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=dot]"));
-		graph.attr(DotProperties.GRAPH_LAYOUT,
-				DotProperties.GRAPH_LAYOUT_TWOPI);
+		graph.attr(DotAttributes.GRAPH_LAYOUT,
+				DotAttributes.GRAPH_LAYOUT_TWOPI);
 		assertTrue("'twopi'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=twopi]"));
-		graph.attr(DotProperties.GRAPH_LAYOUT,
-				DotProperties.GRAPH_LAYOUT_OSAGE);
+		graph.attr(DotAttributes.GRAPH_LAYOUT,
+				DotAttributes.GRAPH_LAYOUT_OSAGE);
 		assertTrue("'osage'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=osage]"));
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_FDP);
+		graph.attr(DotAttributes.GRAPH_LAYOUT, DotAttributes.GRAPH_LAYOUT_FDP);
 		assertTrue("'fdp'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=fdp]"));
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_SFDP);
+		graph.attr(DotAttributes.GRAPH_LAYOUT, DotAttributes.GRAPH_LAYOUT_SFDP);
 		assertTrue("'sfdp'", new DotExport(graph.build()).toDotString()
 				.contains("graph[layout=sfdp]"));
 	}

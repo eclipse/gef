@@ -18,7 +18,7 @@ import org.eclipse.gef4.graph.Graph;
 
 /**
  * Utilities to export DOT files or strings from {@link Graph} instances
- * containing attributes defined in {@link DotProperties}.
+ * containing attributes defined in {@link DotAttributes}.
  * 
  * @author Fabian Steeg (fsteeg)
  */

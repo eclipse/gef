@@ -12,23 +12,44 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
 
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.gef4.dot.internal.parser.DotAttributesStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotAttributesParser;
+import org.eclipse.gef4.dot.internal.parser.services.DotAttributesGrammarAccess;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.xtext.ParserRule;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
+import org.eclipse.xtext.parser.IParseResult;
+
+import com.google.inject.Injector;
 
 /**
- * The {@link DotProperties} class contains all properties which are supported
- * by the {@link DotImport}, i.e. they are set on the resulting {@link Graph}.
+ * The {@link DotAttributes} class contains all properties which are supported
+ * by {@link DotImport} and {@link DotExport}, i.e. they are set on the
+ * resulting {@link Graph}.
  * 
  * @author mwienand
  * @author anyssen
  *
  */
-public class DotProperties {
+public class DotAttributes {
+
+	// TODO: if platform is running, don't use standalone setup here
+	private static final Injector injector = new DotAttributesStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	private static final DotAttributesParser dotAttributesParser = injector
+			.getInstance(DotAttributesParser.class);
+
+	private static final DotAttributesGrammarAccess dotAttributesGrammarAccess = injector
+			.getInstance(DotAttributesGrammarAccess.class);
 
 	/**
 	 * Specifies the identifier of a node.
@@ -421,6 +442,13 @@ public class DotProperties {
 	 *            The new value of the {@link #NODE_POS} property.
 	 */
 	public static void setPos(Node node, String pos) {
+		IParseResult parseResult = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), pos);
+		if (parseResult.hasSyntaxErrors()) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + NODE_POS + "' to '" + pos
+							+ "': " + getSyntaxErrorMessages(parseResult));
+		}
 		node.getAttributes().put(NODE_POS, pos);
 	}
 
@@ -528,6 +556,23 @@ public class DotProperties {
 	 */
 	public static void setId(Edge edge, String id) {
 		edge.attributesProperty().put(EDGE_ID, id);
+	}
+
+	private static IParseResult parsePropertyValue(ParserRule rule,
+			String propertyValue) {
+		IParseResult parseResult = dotAttributesParser.parse(rule,
+				new StringReader(propertyValue));
+		return parseResult;
+	}
+
+	private static String getSyntaxErrorMessages(IParseResult parseResult) {
+		StringBuilder sb = new StringBuilder();
+		for (INode error : parseResult.getSyntaxErrors()) {
+			SyntaxErrorMessage syntaxErrorMessage = error
+					.getSyntaxErrorMessage();
+			sb.append(syntaxErrorMessage.getMessage());
+		}
+		return sb.toString();
 	}
 
 }

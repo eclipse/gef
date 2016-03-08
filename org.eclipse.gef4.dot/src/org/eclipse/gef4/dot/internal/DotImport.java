@@ -19,7 +19,7 @@ import org.eclipse.gef4.graph.GraphCopier;
 
 /**
  * Utilities to import DOT files or strings into Graph instances containing
- * attributes defined in {@link DotProperties}.
+ * attributes defined in {@link DotAttributes}.
  * 
  * @author Fabian Steeg (fsteeg)
  */
@@ -110,7 +110,7 @@ public final class DotImport {
 	 *            The graph to add the imported dot into
 	 */
 	public void into(Graph.Builder graph) {
-		new GraphCopier(toGraph(), DotProperties.NODE_ID).into(graph);
+		new GraphCopier(toGraph(), DotAttributes.NODE_ID).into(graph);
 	}
 
 	@Override

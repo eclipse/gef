@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
-import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotTemplate;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -31,17 +31,17 @@ public class DotTemplateTests {
 	@Test
 	public void zestGraph() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotProperties.GRAPH_LAYOUT, DotProperties.GRAPH_LAYOUT_DOT);
-		graph.attr(DotProperties.GRAPH_RANKDIR, DotProperties.GRAPH_RANKDIR_LR);
-		Node node1 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node 1")
+		graph.attr(DotAttributes.GRAPH_LAYOUT, DotAttributes.GRAPH_LAYOUT_DOT);
+		graph.attr(DotAttributes.GRAPH_RANKDIR, DotAttributes.GRAPH_RANKDIR_LR);
+		Node node1 = new Node.Builder().attr(DotAttributes.NODE_LABEL, "Node 1")
 				.buildNode();
-		Node node2 = new Node.Builder().attr(DotProperties.NODE_LABEL, "Node 2")
+		Node node2 = new Node.Builder().attr(DotAttributes.NODE_LABEL, "Node 2")
 				.buildNode();
 		Edge edge = new Edge.Builder(node1, node2)
-				.attr(DotProperties.EDGE_LABEL, "A dotted edge")
-				.attr(DotProperties.EDGE_STYLE, DotProperties.EDGE_STYLE_DOTTED)
+				.attr(DotAttributes.EDGE_LABEL, "A dotted edge")
+				.attr(DotAttributes.EDGE_STYLE, DotAttributes.EDGE_STYLE_DOTTED)
 				.buildEdge();
-		graph.attr(DotProperties.GRAPH_TYPE, DotProperties.GRAPH_TYPE_DIRECTED)
+		graph.attr(DotAttributes.GRAPH_TYPE, DotAttributes.GRAPH_TYPE_DIRECTED)
 				.edges(edge);
 		String dot = new DotTemplate().generate(graph.build());
 		Assert.assertTrue(
@@ -96,8 +96,8 @@ public class DotTemplateTests {
 		Assert.assertTrue(
 				"DOT representation must contain simple class name of Dot input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
-		Assert.assertTrue(DotProperties.GRAPH_TYPE_DIRECTED
-				.equals(DotProperties.getType(graph)) ? dot.contains("digraph") //$NON-NLS-1$
+		Assert.assertTrue(DotAttributes.GRAPH_TYPE_DIRECTED
+				.equals(DotAttributes.getType(graph)) ? dot.contains("digraph") //$NON-NLS-1$
 						: !dot.contains("digraph")); //$NON-NLS-1$
 		System.out.println(dot);
 	}

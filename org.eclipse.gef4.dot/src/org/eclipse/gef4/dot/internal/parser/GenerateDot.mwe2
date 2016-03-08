@@ -16,26 +16,22 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var projectName = "org.eclipse.gef4.dot"
-var fileExtensions = "dot"
-
-// grammarURI has to be platform:/resource for headless execution (Tycho)
-var grammarURI = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/Dot.xtext"
 var runtimeProject = "../${projectName}"
 var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
-		// register current projects and its siblings for platform URI map, as they are not on the classpath.
+	// register current projects and its siblings for platform URI map, as they are not on the classpath.
 		platformUri = "${runtimeProject}/.."
 	}
 
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}/src-gen"
 	}
-	
+
 	component = DirectoryCleaner {
-    	directory = "${runtimeProject}/model/generated"
-    }
+		directory = "${runtimeProject}/model/generated"
+	}
 
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}.ui/src-gen"
@@ -47,15 +43,17 @@ Workflow {
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
+		
 		language = auto-inject {
-			uri = grammarURI
-
-			// Java API to access grammar elements (required by several other fragments)
+		// grammarURI has to be platform:/resource for headless execution (Tycho)
+			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/Dot.xtext"// Java API to access grammar elements (required by several other fragments)
+			fileExtensions="dot"
+			
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
 			fragment = ecore.EMFGeneratorFragment auto-inject {
-				// has to be explicitly set for headless execution (Tycho)
+			// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
 
@@ -100,6 +98,37 @@ Workflow {
 					ignoreCase = true
 				}
 			}
+		}
+	}
+
+	component = Generator {
+		pathRtProject = runtimeProject
+		pathUiProject = "${runtimeProject}.ui"
+		projectNameRt = projectName
+		projectNameUi = "${projectName}.ui"
+		encoding = encoding
+		language = auto-inject {
+			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotAttributes.xtext"// Java API to access grammar elements (required by several other fragments)
+			fileExtensions="dot_attributes"
+			
+			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
+
+			// a custom ResourceFactory for use with EMF
+			fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
+
+			// generates Java API for the generated EPackages
+			fragment = ecore.EMFGeneratorFragment auto-inject {
+			// has to be explicitly set for headless execution (Tycho)
+				javaModelDirectory = "/${projectName}/src-gen"
+			}
+
+			// serializer 2.0
+			fragment = serializer.SerializerFragment auto-inject {
+				generateStub = false
+			}
+
+			// The antlr parser generator fragment
+			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
 		}
 	}
 }

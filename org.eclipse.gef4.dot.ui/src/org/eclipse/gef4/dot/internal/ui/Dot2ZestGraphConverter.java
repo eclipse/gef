@@ -15,7 +15,7 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -74,19 +74,19 @@ public class Dot2ZestGraphConverter {
 	private void convertEdgeAttributes(Map<String, Object> dot,
 			Map<String, Object> zest) {
 		// convert id and label
-		Object dotId = dot.get(DotProperties.EDGE_ID);
-		Object dotLabel = dot.get(DotProperties.EDGE_LABEL);
+		Object dotId = dot.get(DotAttributes.EDGE_ID);
+		Object dotLabel = dot.get(DotAttributes.EDGE_LABEL);
 		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
 		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
 
 		// convert edge style
-		Object dotStyle = dot.get(DotProperties.EDGE_STYLE);
+		Object dotStyle = dot.get(DotAttributes.EDGE_STYLE);
 		String curveCssStyle = null;
-		if (DotProperties.EDGE_STYLE_DASHED.equals(dotStyle)) {
+		if (DotAttributes.EDGE_STYLE_DASHED.equals(dotStyle)) {
 			curveCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
-		} else if (DotProperties.EDGE_STYLE_DOTTED.equals(dotStyle)) {
+		} else if (DotAttributes.EDGE_STYLE_DOTTED.equals(dotStyle)) {
 			curveCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
-		} else if (DotProperties.EDGE_STYLE_BOLD.equals(dotStyle)) {
+		} else if (DotAttributes.EDGE_STYLE_BOLD.equals(dotStyle)) {
 			curveCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
 		}
 		// TODO: handle tapered edges
@@ -111,16 +111,16 @@ public class Dot2ZestGraphConverter {
 	private void convertNodeAttributes(Map<String, Object> dot,
 			Map<String, Object> zest) {
 		// convert id and label
-		Object dotId = dot.get(DotProperties.NODE_ID);
+		Object dotId = dot.get(DotAttributes.NODE_ID);
 		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
-		Object dotLabel = dot.get(DotProperties.NODE_LABEL);
+		Object dotLabel = dot.get(DotAttributes.NODE_LABEL);
 		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or ID becomes its label.
 			dotLabel = dotId;
 		}
 		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
-		Object dotPos = dot.get(DotProperties.NODE_POS);
+		Object dotPos = dot.get(DotAttributes.NODE_POS);
 		if (dotPos != null) {
 			String posString = (String) dotPos;
 			// handle force sign (but ignore it, because for Zest, all positions
@@ -142,32 +142,32 @@ public class Dot2ZestGraphConverter {
 	private void convertGraphAttributes(Map<String, Object> dot,
 			Map<String, Object> zest) {
 		// convert layout and rankdir to LayoutAlgorithm
-		Object dotLayout = dot.get(DotProperties.GRAPH_LAYOUT);
-		Object dotRankdir = dot.get(DotProperties.GRAPH_RANKDIR);
+		Object dotLayout = dot.get(DotAttributes.GRAPH_LAYOUT);
+		Object dotRankdir = dot.get(DotAttributes.GRAPH_RANKDIR);
 		ILayoutAlgorithm algo = null;
-		if (DotProperties.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
-				|| DotProperties.GRAPH_LAYOUT_NEATO.equals(dotLayout)
-				|| DotProperties.GRAPH_LAYOUT_TWOPI.equals(dotLayout)) {
+		if (DotAttributes.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
+				|| DotAttributes.GRAPH_LAYOUT_NEATO.equals(dotLayout)
+				|| DotAttributes.GRAPH_LAYOUT_TWOPI.equals(dotLayout)) {
 			algo = new RadialLayoutAlgorithm();
-		} else if (DotProperties.GRAPH_LAYOUT_FDP.equals(dotLayout)
-				|| DotProperties.GRAPH_LAYOUT_SFDP.equals(dotLayout)) {
+		} else if (DotAttributes.GRAPH_LAYOUT_FDP.equals(dotLayout)
+				|| DotAttributes.GRAPH_LAYOUT_SFDP.equals(dotLayout)) {
 			algo = new SpringLayoutAlgorithm();
-		} else if (DotProperties.GRAPH_LAYOUT_GRID.equals(dotLayout)
-				|| DotProperties.GRAPH_LAYOUT_OSAGE.equals(dotLayout)) {
+		} else if (DotAttributes.GRAPH_LAYOUT_GRID.equals(dotLayout)
+				|| DotAttributes.GRAPH_LAYOUT_OSAGE.equals(dotLayout)) {
 			algo = new GridLayoutAlgorithm();
 		} else {
-			boolean lr = DotProperties.GRAPH_RANKDIR_LR.equals(dotRankdir);
+			boolean lr = DotAttributes.GRAPH_RANKDIR_LR.equals(dotRankdir);
 			algo = new TreeLayoutAlgorithm(lr ? TreeLayoutAlgorithm.LEFT_RIGHT
 					: TreeLayoutAlgorithm.TOP_DOWN);
 		}
 		zest.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, algo);
 
 		// convert graph type
-		Object dotType = dot.get(DotProperties.GRAPH_TYPE);
-		if (DotProperties.GRAPH_TYPE_DIRECTED.equals(dotType)) {
+		Object dotType = dot.get(DotAttributes.GRAPH_TYPE);
+		if (DotAttributes.GRAPH_TYPE_DIRECTED.equals(dotType)) {
 			zest.put(ZestProperties.GRAPH_TYPE,
 					ZestProperties.GRAPH_TYPE_DIRECTED);
-		} else if (DotProperties.GRAPH_TYPE_UNDIRECTED.equals(dotType)) {
+		} else if (DotAttributes.GRAPH_TYPE_UNDIRECTED.equals(dotType)) {
 			zest.put(ZestProperties.GRAPH_TYPE,
 					ZestProperties.GRAPH_TYPE_UNDIRECTED);
 		}

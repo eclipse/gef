@@ -14,7 +14,7 @@
 package org.eclipse.gef4.dot.internal.parser.validation;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
@@ -55,12 +55,12 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidAttributeValue(Attribute attribute) {
 		if (isEdgeAttribute(attribute)
-				&& DotProperties.EDGE_STYLE.equals(attribute.getName())) {
+				&& DotAttributes.EDGE_STYLE.equals(attribute.getName())) {
 			// 'style' can also be used for nodes or clusters, so we have to
 			// check the context as well
 			String unquotedValue = DotTerminalConverters
 					.unquote(attribute.getValue());
-			if (!DotProperties.EDGE_STYLE_VALUES.contains(unquotedValue)) {
+			if (!DotAttributes.EDGE_STYLE_VALUES.contains(unquotedValue)) {
 				// provide (issue) code and data for quickfix
 				error("Style '" + unquotedValue
 						+ "' is not a valid DOT style for Edge.",
