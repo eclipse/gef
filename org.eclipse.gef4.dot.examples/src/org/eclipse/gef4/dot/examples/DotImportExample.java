@@ -21,9 +21,9 @@ public final class DotImportExample {
 
 	public static void main(final String[] args) {
 		/* We can create Graphs based on GraphViz Dot files/string */
-		Graph graph = new DotImport("graph { 1--2 ; 1--3 }").newGraphInstance();
+		Graph graph = new DotImport("graph { 1--2 ; 1--3 }").toGraph();
 		Graph digraph = new DotImport("digraph { 1->2 ; 1->3 }")
-				.newGraphInstance();
+				.toGraph();
 
 		/*
 		 * We can also import GraphViz Dot files/string into an existing graph

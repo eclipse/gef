@@ -17,8 +17,8 @@ import java.util.Scanner;
 import org.eclipse.gef4.graph.Graph;
 
 /**
- * Utilities to exportDOT files or strings from Graph instances containing
- * attributes defined in {@link DotProperties}.
+ * Utilities to export DOT files or strings from {@link Graph} instances
+ * containing attributes defined in {@link DotProperties}.
  * 
  * @author Fabian Steeg (fsteeg)
  */
@@ -37,24 +37,16 @@ public final class DotExport {
 	}
 
 	/**
-	 * @param dotString
-	 *            The DOT graph to export to an image
-	 */
-	public DotExport(String dotString) {
-		this.dotString = dotString;
-	}
-
-	/**
-	 * Export a Zest Graph to a DOT string.
+	 * Export a DOT string representation.
 	 * 
-	 * @return The DOT representation of the given Zest graph
+	 * @return The DOT representation of the input {@link Graph}.
 	 */
 	public String toDotString() {
 		return dotString;
 	}
 
 	/**
-	 * Export a Zest Graph to a DOT file.
+	 * Export a DOT file.
 	 * 
 	 * @param destination
 	 *            The file to store the DOT export

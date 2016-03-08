@@ -37,8 +37,8 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 
 /**
- * Create a Zest graph instance from a DOT string by interpreting the AST of the
- * parsed DOT.
+ * Create a {@link Graph} instance from a DOT string by interpreting the AST of
+ * the parsed DOT.
  * 
  * @author Fabian Steeg (fsteeg)
  */

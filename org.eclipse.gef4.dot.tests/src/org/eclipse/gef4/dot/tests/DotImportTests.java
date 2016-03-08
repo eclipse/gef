@@ -38,7 +38,7 @@ public final class DotImportTests {
 	static Graph importFrom(final File dotFile) {
 		Assert.assertTrue("DOT input file must exist: " + dotFile, //$NON-NLS-1$
 				dotFile.exists());
-		Graph graph = new DotImport(dotFile).newGraphInstance();
+		Graph graph = new DotImport(dotFile).toGraph();
 		Assert.assertNotNull("Resulting graph must not be null", graph); //$NON-NLS-1$
 		return graph;
 	}
@@ -99,7 +99,7 @@ public final class DotImportTests {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testFaultyGraphBasicImport() {
-		new DotImport("graph Sample{").newGraphInstance();
+		new DotImport("graph Sample{").toGraph();
 	}
 
 	@Test
@@ -218,10 +218,10 @@ public final class DotImportTests {
 		/* The DOT input, can be given as a String, File or IFile: */
 		DotImport dotImport = new DotImport("digraph Simple { 1;2; 1->2 }"); //$NON-NLS-1$
 		/* Create a Zest graph instance: */
-		dotImport.newGraphInstance();
+		dotImport.toGraph();
 
 		DotImport importer = new DotImport("digraph Sample{1;2;1->2}"); //$NON-NLS-1$
-		Graph graph = importer.newGraphInstance();
+		Graph graph = importer.toGraph();
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotProperties.GRAPH_TYPE_DIRECTED,
 				DotProperties.getType(graph));
@@ -229,7 +229,7 @@ public final class DotImportTests {
 
 	@Test
 	public void importUndeclaredNodesToNewGraph() {
-		Graph graph = new DotImport("digraph{1->2;1->3}").newGraphInstance();
+		Graph graph = new DotImport("digraph{1->2;1->3}").toGraph();
 		Assert.assertEquals(3, graph.getNodes().size());
 		Assert.assertEquals(2, graph.getEdges().size());
 	}
@@ -238,7 +238,7 @@ public final class DotImportTests {
 	public void importSubgraphsToNewGraph() {
 		DotImport dotImport = new DotImport(
 				"digraph{subgraph {1->2}; subgraph {1->3}}");
-		Graph graph = dotImport.newGraphInstance();
+		Graph graph = dotImport.toGraph();
 		assertEquals("Non-cluster subgraphs should be ignored in rendering", 3,
 				graph.getNodes().size());
 		assertEquals(2, graph.getEdges().size());

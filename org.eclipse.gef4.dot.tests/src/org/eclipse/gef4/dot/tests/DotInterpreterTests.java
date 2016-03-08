@@ -302,7 +302,7 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void multiEdgeStatements() {
-		Graph graph = new DotImport("digraph{1->2->3->4}").newGraphInstance(); //$NON-NLS-1$
+		Graph graph = new DotImport("digraph{1->2->3->4}").toGraph(); //$NON-NLS-1$
 		assertEquals(4, graph.getNodes().size());
 		assertEquals(3, graph.getEdges().size());
 		/* Each node should be connected to one other, the previous node: */
@@ -325,7 +325,7 @@ public final class DotInterpreterTests {
 	/* see http://www.graphviz.org/doc/info/attrs.html#d:style */
 	public void edgeStyleInvis() {
 		Graph graph = new DotImport("digraph{1->2[style=invis]}") //$NON-NLS-1$
-				.newGraphInstance();
+				.toGraph();
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getEdges().size());
 	}

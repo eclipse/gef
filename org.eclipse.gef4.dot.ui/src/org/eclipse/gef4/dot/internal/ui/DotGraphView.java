@@ -90,7 +90,7 @@ public class DotGraphView extends ZestFxUiView {
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
 				.with(new ZestFxUiModule())));
-		setGraph(new DotImport(currentDot).newGraphInstance());
+		setGraph(new DotImport(currentDot).toGraph());
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public class DotGraphView extends ZestFxUiView {
 										message));
 						return;
 					}
-					setGraph(dotImport.newGraphInstance());
+					setGraph(dotImport.toGraph());
 					resourceLabel.setText(
 							String.format(GRAPH_RESOURCE, file.getName()));
 					resourceLabel.setToolTipText(file.getAbsolutePath());

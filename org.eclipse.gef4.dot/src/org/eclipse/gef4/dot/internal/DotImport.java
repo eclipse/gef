@@ -29,7 +29,7 @@ public final class DotImport {
 
 	/**
 	 * @param dotFile
-	 *            The DOT file to import
+	 *            The DOT file to import.
 	 */
 	public DotImport(final File dotFile) {
 		this.dotString = DotFileUtils.read(dotFile);
@@ -38,7 +38,7 @@ public final class DotImport {
 
 	/**
 	 * @param dotString
-	 *            The DOT graph to import
+	 *            The DOT string to import.
 	 */
 	public DotImport(final String dotString) {
 		init(dotString);
@@ -96,7 +96,7 @@ public final class DotImport {
 	/**
 	 * @return The Zest graph instantiated from the imported DOT
 	 */
-	public Graph newGraphInstance() {
+	public Graph toGraph() {
 		guardFaultyParse();
 		/*
 		 * TODO switch to a string as the member holding the DOT to avoid
@@ -110,7 +110,7 @@ public final class DotImport {
 	 *            The graph to add the imported dot into
 	 */
 	public void into(Graph.Builder graph) {
-		new GraphCopier(newGraphInstance(), DotProperties.NODE_ID).into(graph);
+		new GraphCopier(toGraph(), DotProperties.NODE_ID).into(graph);
 	}
 
 	@Override
