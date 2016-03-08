@@ -65,7 +65,8 @@ public class Dot2ZestGraphConverter {
 		Node zestTarget = dotToZestNodes.get(dotEdge.getTarget());
 		// create edge
 		Edge zestEdge = new Edge(zestSource, zestTarget);
-		convertEdgeAttributes(dotEdge.getAttributes(), zestEdge.getAttributes());
+		convertEdgeAttributes(dotEdge.getAttributes(),
+				zestEdge.getAttributes());
 		return zestEdge;
 	}
 
@@ -96,7 +97,8 @@ public class Dot2ZestGraphConverter {
 
 	private Node convertNode(Node dotNode) {
 		Node zestNode = new Node();
-		convertNodeAttributes(dotNode.getAttributes(), zestNode.getAttributes());
+		convertNodeAttributes(dotNode.getAttributes(),
+				zestNode.getAttributes());
 		// convert nested graph
 		if (dotNode.getNestedGraph() != null) {
 			Graph nested = convertGraph(dotNode.getNestedGraph());
@@ -110,6 +112,11 @@ public class Dot2ZestGraphConverter {
 		// convert id and label
 		Object dotId = dot.get(DotProperties.NODE_ID);
 		Object dotLabel = dot.get(DotProperties.NODE_LABEL);
+		if (dotLabel.equals("\\N")) { //$NON-NLS-1$
+			// The node default label '\N' is used to indicate that a node's
+			// name or ID becomes its label.
+			dotLabel = dotId;
+		}
 		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
 		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
 	}
