@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.dot.internal.DotExtractor;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.DotImport;
+import org.eclipse.gef4.dot.internal.DotNativeDrawer;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
@@ -199,15 +200,23 @@ public class DotGraphView extends ZestFxUiView {
 		if (file == null || !file.exists()) {
 			return false;
 		}
-		String dotString = currentDot;
-		if (file.getName().endsWith("." + EXTENSION)) { //$NON-NLS-1$
-			dotString = DotFileUtils.read(file);
-		} else {
-			dotString = new DotExtractor(file).getDotString();
-		}
-		currentDot = dotString;
+
 		currentFile = file;
-		setGraphAsync(dotString, file);
+		if (currentFile.getName().endsWith("." + EXTENSION)) { //$NON-NLS-1$
+			currentDot = DotFileUtils.read(currentFile);
+		} else {
+			currentDot = new DotExtractor(currentFile).getDotString();
+		}
+
+		// if Graphviz 'dot' executable is available, we use it to augment
+		// layout information
+		if (GraphvizPreferencePage.isGraphvizConfigured()) {
+			String[] result = DotNativeDrawer.executeDot(
+					new File(GraphvizPreferencePage.getDotExecutablePath()),
+					file, null, null);
+			currentDot = result[0];
+		}
+		setGraphAsync(currentDot, currentFile);
 		return true;
 	}
 

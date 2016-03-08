@@ -41,6 +41,11 @@ public class DotProperties {
 	public static final String NODE_LABEL = "label";
 
 	/**
+	 * Specified the position of a node
+	 */
+	public static final String NODE_POS = "pos";
+
+	/**
 	 * Specifies the identifier of an edge.
 	 */
 	public static final String EDGE_ID = "id";
@@ -390,6 +395,33 @@ public class DotProperties {
 	 */
 	public static String getId(Node node) {
 		return (String) node.attributesProperty().get(NODE_ID);
+	}
+
+	/**
+	 * Returns the value of the {@link #NODE_POS} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_POS} property.
+	 * @return The value of the {@link #NODE_POS} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getPos(Node node) {
+		return (String) node.attributesProperty().get(NODE_POS);
+	}
+
+	/**
+	 * Sets the {@link #NODE_POS} property of the given {@link Node} ot the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param pos
+	 *            The new value of the {@link #NODE_POS} property.
+	 */
+	public static void setPos(Node node, String pos) {
+		node.getAttributes().put(NODE_POS, pos);
 	}
 
 	/**

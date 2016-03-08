@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.dot.internal.DotProperties;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -111,14 +112,31 @@ public class Dot2ZestGraphConverter {
 			Map<String, Object> zest) {
 		// convert id and label
 		Object dotId = dot.get(DotProperties.NODE_ID);
+		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
 		Object dotLabel = dot.get(DotProperties.NODE_LABEL);
-		if (dotLabel.equals("\\N")) { //$NON-NLS-1$
+		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or ID becomes its label.
 			dotLabel = dotId;
 		}
-		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
 		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
+		Object dotPos = dot.get(DotProperties.NODE_POS);
+		if (dotPos != null) {
+			String posString = (String) dotPos;
+			// handle force sign (but ignore it, because for Zest, all positions
+			// should be considered as being forced)
+			if (posString.contains("!")) { //$NON-NLS-1$
+				posString = posString.substring(0, posString.indexOf("!")); //$NON-NLS-1$
+			}
+			double x = Double.parseDouble(
+					posString.substring(0, posString.indexOf(","))); //$NON-NLS-1$
+			double y = Double.parseDouble(
+					posString.substring(posString.indexOf(",") + 1)); //$NON-NLS-1$
+			zest.put(ZestProperties.NODE_POSITION, new Point(x, y));
+			// if a position is specified in the DOT input, ensure Zest does not
+			// alter it
+			zest.put(ZestProperties.NODE_POSITION_FORCED, Boolean.TRUE);
+		}
 	}
 
 	private void convertGraphAttributes(Map<String, Object> dot,

@@ -251,8 +251,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private void createNode(final NodeStmt nodeStatement) {
 		String nodeId = escaped(nodeStatement.getNode().getName());
-		String label = getAttributeValue(nodeStatement,
-				DotProperties.NODE_LABEL);
 
 		Node node;
 		if (nodes.containsKey(nodeId)) {
@@ -262,10 +260,18 @@ public final class DotInterpreter extends DotSwitch<Object> {
 					.buildNode();
 		}
 
+		String label = getAttributeValue(nodeStatement,
+				DotProperties.NODE_LABEL);
 		if (label != null) {
 			DotProperties.setLabel(node, label);
 		} else if (globalNodeLabel != null) {
+			// TODO: this should not be done
 			DotProperties.setLabel(node, globalNodeLabel);
+		}
+
+		String pos = getAttributeValue(nodeStatement, DotProperties.NODE_POS);
+		if (pos != null) {
+			DotProperties.setPos(node, pos);
 		}
 
 		if (!nodes.containsKey(nodeId)) {
