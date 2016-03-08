@@ -265,7 +265,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		if (label != null) {
 			DotProperties.setLabel(node, label);
 		} else if (globalNodeLabel != null) {
-			// TODO: this should not be done
 			DotProperties.setLabel(node, globalNodeLabel);
 		}
 
