@@ -21,7 +21,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -76,17 +75,15 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			}
 		}
 
-		if (!ZestProperties.getPositionForced(nodeLayout.getNode(), true)) {
-			FXTransformPolicy transformPolicy = getHost().getAdapter(FXTransformPolicy.class);
-			transformPolicy.init();
-			transformPolicy.setTransform(FX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy));
-			ITransactionalOperation transformOperation = transformPolicy.commit();
-			if (transformOperation != null) {
-				try {
-					transformOperation.execute(null, null);
-				} catch (ExecutionException e) {
-					throw new IllegalStateException(e);
-				}
+		FXTransformPolicy transformPolicy = getHost().getAdapter(FXTransformPolicy.class);
+		transformPolicy.init();
+		transformPolicy.setTransform(FX2Geometry.toAffineTransform(transform).setToTranslation(x + dx, y + dy));
+		ITransactionalOperation transformOperation = transformPolicy.commit();
+		if (transformOperation != null) {
+			try {
+				transformOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
 			}
 		}
 	}

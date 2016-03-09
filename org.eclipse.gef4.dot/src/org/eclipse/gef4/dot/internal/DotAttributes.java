@@ -62,14 +62,19 @@ public class DotAttributes {
 	public static final String NODE_LABEL = "label";
 
 	/**
-	 * Specified the position of a node
+	 * Specified the 'pos' attribute of a node
 	 */
 	public static final String NODE_POS = "pos";
 
 	/**
-	 * Specifies the identifier of an edge.
+	 * Specifies the 'id' attribuge of an edge.
 	 */
 	public static final String EDGE_ID = "id";
+
+	/**
+	 * Specifies the 'pos' attribute of an edge.
+	 */
+	public static final String EDGE_POS = "pos";
 
 	/**
 	 * Specifies the label of an edge.
@@ -433,7 +438,7 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #NODE_POS} property of the given {@link Node} ot the
+	 * Sets the {@link #NODE_POS} property of the given {@link Node} to the
 	 * given value.
 	 * 
 	 * @param node
@@ -450,6 +455,26 @@ public class DotAttributes {
 							+ "': " + getSyntaxErrorMessages(parseResult));
 		}
 		node.getAttributes().put(NODE_POS, pos);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_POS} property of the given {@link Edge} to the
+	 * given value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} whose property value to set.
+	 * @param pos
+	 *            The new value of the {@link #EDGE_POS} property.
+	 */
+	public static void setPos(Edge edge, String pos) {
+		IParseResult parseResult = parsePropertyValue(
+				dotAttributesGrammarAccess.getSplineTypeRule(), pos);
+		if (parseResult.hasSyntaxErrors()) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + EDGE_POS + "' to '" + pos
+							+ "': " + getSyntaxErrorMessages(parseResult));
+		}
+		edge.getAttributes().put(EDGE_POS, pos);
 	}
 
 	/**

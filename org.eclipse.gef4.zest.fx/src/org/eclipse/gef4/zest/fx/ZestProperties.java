@@ -165,19 +165,6 @@ public class ZestProperties {
 	public static final String NODE_POSITION = "position";
 
 	/**
-	 * This attribute determines whether the position of a {@link Node} is
-	 * forced, i.e. it has to be ignored by auto-layout.
-	 *
-	 * @see #getPositionForced(Node, boolean)
-	 * @see #setPositionForced(Node, Boolean)
-	 */
-	public static final String NODE_POSITION_FORCED = "position-forced";
-
-	/**
-	 * The default value of the {@link #NODE_POSITION_FORCED} property.
-	 */
-	public static final Boolean NODE_POSITION_FORCED_DEFAULT = Boolean.FALSE;
-	/**
 	 * This attribute determines the tooltip for a node. This attribute does not
 	 * have a default value.
 	 *
@@ -519,25 +506,6 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #NODE_POSITION_FORCED} attribute of the
-	 * given {@link Node}.
-	 *
-	 * @param node
-	 *            The Node whose property value to return.
-	 * @param returnDefaultIfMissing
-	 *            <code>true</code> to indicate that the default attribute value
-	 *            should be returned if the attribute is not set for the given
-	 *            {@link Edge}, otherwise <code>false</code>.
-	 * @return The value of the {@link #NODE_POSITION_FORCED} value if it is
-	 *         set. <code>null</code> or {@link #NODE_POSITION_FORCED_DEFAULT}
-	 *         otherwise, dependent on the returnDefaultIfMissing value.
-	 */
-	public static Boolean getPositionForced(Node node, boolean returnDefaultIfMissing) {
-		Object object = node.getAttributes().get(NODE_POSITION_FORCED);
-		return object != null ? (Boolean) object : (returnDefaultIfMissing ? NODE_POSITION_FORCED_DEFAULT : null);
-	}
-
-	/**
 	 * Returns the value of the {@link #EDGE_ROUTER} attribute of the given
 	 * {@link Edge}.
 	 *
@@ -861,19 +829,6 @@ public class ZestProperties {
 	 */
 	public static void setPosition(Node node, Point position) {
 		node.getAttributes().put(NODE_POSITION, position);
-	}
-
-	/**
-	 * Sets the value of the {@link #NODE_POSITION_FORCED} attribute of the
-	 * given {@link Node} to the given value.
-	 *
-	 * @param node
-	 *            The {@link Node} whose attribute value is to set.
-	 * @param positionForced
-	 *            The new attribute value.
-	 */
-	public static void setPositionForced(Node node, Boolean positionForced) {
-		node.getAttributes().put(NODE_POSITION_FORCED, positionForced);
 	}
 
 	/**

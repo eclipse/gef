@@ -123,8 +123,7 @@ public class Dot2ZestGraphConverter {
 		Object dotPos = dot.get(DotAttributes.NODE_POS);
 		if (dotPos != null) {
 			String posString = (String) dotPos;
-			// handle force sign (but ignore it, because for Zest, all positions
-			// should be considered as being forced)
+			// handle update sign
 			if (posString.contains("!")) { //$NON-NLS-1$
 				posString = posString.substring(0, posString.indexOf("!")); //$NON-NLS-1$
 			}
@@ -135,7 +134,7 @@ public class Dot2ZestGraphConverter {
 			zest.put(ZestProperties.NODE_POSITION, new Point(x, y));
 			// if a position is specified in the DOT input, ensure Zest does not
 			// alter it
-			zest.put(ZestProperties.NODE_POSITION_FORCED, Boolean.TRUE);
+			zest.put(ZestProperties.ELEMENT_LAYOUT_IRRELEVANT, Boolean.TRUE);
 		}
 	}
 
