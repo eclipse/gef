@@ -67,6 +67,16 @@ public class DotAttributes {
 	public static final String NODE_POS = "pos";
 
 	/**
+	 * Specified the 'height' attribute of a node
+	 */
+	public static final String NODE_HEIGHT = "height";
+
+	/**
+	 * Specified the 'width' attribute of a node
+	 */
+	public static final String NODE_WIDTH = "width";
+
+	/**
 	 * Specifies the 'id' attribuge of an edge.
 	 */
 	public static final String EDGE_ID = "id";
@@ -438,6 +448,34 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #NODE_HEIGHT} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_HEIGHT} property.
+	 * @return The value of the {@link #NODE_HEIGHT} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getHeight(Node node) {
+		return (String) node.attributesProperty().get(NODE_HEIGHT);
+	}
+
+	/**
+	 * Returns the value of the {@link #NODE_WIDTH} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_WIDTH} property.
+	 * @return The value of the {@link #NODE_WIDTH} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getWidth(Node node) {
+		return (String) node.attributesProperty().get(NODE_WIDTH);
+	}
+
+	/**
 	 * Sets the {@link #NODE_POS} property of the given {@link Node} to the
 	 * given value.
 	 * 
@@ -455,6 +493,46 @@ public class DotAttributes {
 							+ "': " + getSyntaxErrorMessages(parseResult));
 		}
 		node.getAttributes().put(NODE_POS, pos);
+	}
+
+	/**
+	 * Sets the {@link #NODE_HEIGHT} property of the given {@link Node} to the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param height
+	 *            The new value of the {@link #NODE_HEIGHT} property.
+	 */
+	public static void setHeight(Node node, String height) {
+		try {
+			Double.parseDouble(height);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + NODE_HEIGHT + "' to '"
+							+ height + "': parsing as double failed.");
+		}
+		node.getAttributes().put(NODE_HEIGHT, height);
+	}
+
+	/**
+	 * Sets the {@link #NODE_WIDTH} property of the given {@link Node} to the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param width
+	 *            The new value of the {@link #NODE_WIDTH} property.
+	 */
+	public static void setWidth(Node node, String width) {
+		try {
+			Double.parseDouble(width);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + NODE_WIDTH + "' to '"
+							+ width + "': parsing as double failed.");
+		}
+		node.getAttributes().put(NODE_WIDTH, width);
 	}
 
 	/**
@@ -599,5 +677,4 @@ public class DotAttributes {
 		}
 		return sb.toString();
 	}
-
 }

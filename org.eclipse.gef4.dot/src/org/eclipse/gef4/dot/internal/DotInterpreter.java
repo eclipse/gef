@@ -138,7 +138,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		} else {
 			String targetNodeId = escaped(object.getName());
 			if (currentEdgeSourceNodeId != null && targetNodeId != null) {
-				addConnectionTo(targetNodeId);
+				createEdge(targetNodeId);
 				// current target node may be source for next EdgeRHS
 				currentEdgeSourceNodeId = targetNodeId;
 			}
@@ -147,7 +147,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		return super.caseNodeId(object);
 	}
 
-	private void addConnectionTo(String targetNodeId) {
+	private void createEdge(String targetNodeId) {
 		Edge.Builder graphConnection = new Edge.Builder(
 				node(currentEdgeSourceNodeId), node(targetNodeId));
 		/* Set the optional label, if set in the DOT input: */
@@ -271,6 +271,18 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		String pos = getAttributeValue(nodeStatement, DotAttributes.NODE_POS);
 		if (pos != null) {
 			DotAttributes.setPos(node, pos);
+		}
+
+		String width = getAttributeValue(nodeStatement,
+				DotAttributes.NODE_WIDTH);
+		if (width != null) {
+			DotAttributes.setWidth(node, width);
+		}
+
+		String height = getAttributeValue(nodeStatement,
+				DotAttributes.NODE_HEIGHT);
+		if (height != null) {
+			DotAttributes.setHeight(node, height);
 		}
 
 		if (!nodes.containsKey(nodeId)) {

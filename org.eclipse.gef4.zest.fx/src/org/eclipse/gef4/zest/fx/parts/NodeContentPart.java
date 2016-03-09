@@ -291,18 +291,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	protected Group createVisual() {
 		// container set-up
 		final Group group = new Group() {
+			// @Override
 			@Override
 			public boolean isResizable() {
-				// every node is resizable when it contains a graph
-				return isNesting();
+				return true;
 			}
 
 			@Override
 			public void resize(double w, double h) {
-				if (!isResizable()) {
-					return;
-				}
-
 				// compute new size, based on layout bounds
 				Bounds layoutBounds = getLayoutBounds();
 				Bounds vboxBounds = vbox.getLayoutBounds();
@@ -672,8 +668,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			Dimension size = (Dimension) object;
 			// resize
 			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
-			resizeOperation.setDw(size.getWidth() - visual.getLayoutBounds().getWidth());
-			resizeOperation.setDh(size.getHeight() - visual.getLayoutBounds().getHeight());
+			if (size.getWidth() != -1) {
+				resizeOperation.setDw(size.getWidth() - visual.getLayoutBounds().getWidth());
+			}
+			if (size.getHeight() != -1) {
+				resizeOperation.setDh(size.getHeight() - visual.getLayoutBounds().getHeight());
+			}
 			try {
 				resizeOperation.execute(null, null);
 			} catch (ExecutionException e) {

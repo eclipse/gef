@@ -35,8 +35,47 @@ public class DotAttributesTests {
 			DotAttributes.setPos(n, "47x, 11");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
-			assertEquals(e.getMessage(),
-					"Cannot set node attribute 'pos' to '47x, 11': extraneous input 'x' expecting ','");
+			assertEquals(
+					"Cannot set node attribute 'pos' to '47x, 11': extraneous input 'x' expecting ','",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_height() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid values
+		DotAttributes.setHeight(n, "0.56");
+		DotAttributes.setHeight(n, "76");
+
+		// set invalid values
+		try {
+			DotAttributes.setHeight(n, "47x, 11");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'height' to '47x, 11': parsing as double failed.",
+					e.getMessage());
+		}
+	}
+
+	@Test
+	public void node_width() {
+		Node n = new Node.Builder().buildNode();
+
+		// set valid values
+		DotAttributes.setWidth(n, "0.56");
+		DotAttributes.setWidth(n, "76");
+
+		// set invalid values
+		try {
+			DotAttributes.setWidth(n, "47x, 11");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'width' to '47x, 11': parsing as double failed.",
+					e.getMessage());
 		}
 	}
 

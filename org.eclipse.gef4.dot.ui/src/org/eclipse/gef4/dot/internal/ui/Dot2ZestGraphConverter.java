@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -103,34 +104,33 @@ public class Dot2ZestGraphConverter {
 	}
 
 	private Node convertNode(Node dotNode) {
-		Node zestNode = new Node();
-		convertNodeAttributes(dotNode.getAttributes(),
-				zestNode.getAttributes());
+		Node node = new Node();
+		convertNodeAttributes(dotNode, node);
 		// convert nested graph
 		if (dotNode.getNestedGraph() != null) {
 			Graph nested = convertGraph(dotNode.getNestedGraph());
-			zestNode.setNestedGraph(nested);
+			node.setNestedGraph(nested);
 		}
-		return zestNode;
+		return node;
 	}
 
 	// TODO: change into applyNodeAttributes, pass in node, and use set methods
 	// of ZestProperties
-	private void convertNodeAttributes(Map<String, Object> dot,
-			Map<String, Object> zest) {
+	private void convertNodeAttributes(Node dotNode, Node zestNode) {
 		// convert id and label
-		Object dotId = dot.get(DotAttributes.NODE_ID);
-		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
-		Object dotLabel = dot.get(DotAttributes.NODE_LABEL);
+		String dotId = DotAttributes.getId(dotNode);
+		ZestProperties.setCssId(zestNode, dotId);
+
+		String dotLabel = DotAttributes.getLabel(dotNode);
 		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or ID becomes its label.
 			dotLabel = dotId;
 		}
-		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
+		ZestProperties.setLabel(zestNode, dotLabel);
 
 		// position
-		Object dotPos = dot.get(DotAttributes.NODE_POS);
+		String dotPos = DotAttributes.getPos(dotNode);
 		if (dotPos != null) {
 			boolean inputOnly = ((String) dotPos).contains("!");//$NON-NLS-1$
 			String posString = inputOnly ? ((String) dotPos).substring(0,
@@ -139,18 +139,27 @@ public class Dot2ZestGraphConverter {
 					posString.substring(0, posString.indexOf(","))); //$NON-NLS-1$
 			double y = (invertYAxis ? -1 : 1) * Double.parseDouble(
 					posString.substring(posString.indexOf(",") + 1)); //$NON-NLS-1$
-			zest.put(ZestProperties.NODE_POSITION, new Point(x, y));
+			ZestProperties.setPosition(zestNode, new Point(x, y));
 			// if a position is marked as input-only in Dot, have Zest ignore it
-			if (inputOnly) {
-				zest.put(ZestProperties.ELEMENT_LAYOUT_IRRELEVANT,
-						Boolean.TRUE);
-			} else {
-				zest.put(ZestProperties.ELEMENT_LAYOUT_IRRELEVANT,
-						Boolean.FALSE);
-			}
+			ZestProperties.setLayoutIrrelevant(zestNode, inputOnly);
 		}
 
-		// TODO: size
+		// size
+		Dimension zestSize = new Dimension(-1, -1);
+		String dotHeight = DotAttributes.getHeight(dotNode);
+		if (dotHeight != null) {
+			// TODO: determine DPI (maybe pass in as option)
+			double zestHeight = Double.parseDouble(dotHeight) * 72; // inches
+			zestSize.setHeight(zestHeight);
+		}
+		String dotWidth = DotAttributes.getWidth(dotNode);
+		if (dotWidth != null) {
+			double zestWidth = Double.parseDouble(dotWidth) * 72; // inches
+			zestSize.setWidth(zestWidth);
+		}
+		if (!new Dimension(-1, -1).equals(zestSize)) {
+			ZestProperties.setSize(zestNode, zestSize);
+		}
 	}
 
 	private void convertGraphAttributes(Map<String, Object> dot,
