@@ -26,12 +26,13 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 /**
- * A {@link DotBSplineInterpolator} is a {@link IConnectionRouter router} that creates
- * a {@link PolyBezier} geometry corresponding to a single B-spline. It expects
- * that the start, end, and control points of the {@link Connection} it routes
- * correspond to what can be specified through the 'pos' attribute of edges
- * within Graphviz DOT as follows (if multiple splines are specified through the
- * 'pos' attribute, they have to be represented through multiple connections).
+ * A {@link DotBSplineInterpolator} is a {@link IConnectionRouter router} that
+ * creates a {@link PolyBezier} geometry corresponding to a single B-spline. It
+ * expects that the start, end, and control points of the {@link Connection} it
+ * routes correspond to what can be specified through the 'pos' attribute of
+ * edges within Graphviz DOT as follows (if multiple splines are specified
+ * through the 'pos' attribute, they have to be represented through multiple
+ * connections).
  * <p>
  * The {@link DotBSplineInterpolator} expects that the connection's
  * {@link Connection#getControlPoints() control points} represent control points
@@ -54,10 +55,10 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 		// return a line in case we have no start or end point or the points do
 		// not correctly specify bezier segments.
 		List<Point> controlPoints = connection.getControlPoints();
+		int numControlPoints = controlPoints.size();
 		if (start == null || end == null) {
 			return new Line(0, 0, 0, 0);
-		} else if (controlPoints.size() < 4
-				|| (controlPoints.size() - 1) % 3 != 0) {
+		} else if (numControlPoints < 4 || (numControlPoints % 3 != 0)) {
 			return new Line(start, end);
 		}
 
@@ -69,13 +70,15 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 			segments.add(new Line(start, c));
 		}
 		// process segments
-		for (int i = 1; i < controlPoints.size(); i += 3) {
+		c = controlPoints.get(1);
+		for (int i = 2; i + 2 < numControlPoints; i += 3) {
 			segments.add(new CubicCurve(c, controlPoints.get(i),
 					controlPoints.get(i + 1), controlPoints.get(i + 2)));
 			// keep track of the last control point of the respective segment
 			// (which is the start point of the next segment)
 			c = controlPoints.get(i + 2);
 		}
+		c = controlPoints.get(numControlPoints - 1);
 		if (!end.equals(c)) {
 			segments.add(new Line(c, end));
 		}

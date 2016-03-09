@@ -13,9 +13,12 @@
 package org.eclipse.gef4.dot.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType_Spline;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Node;
 import org.junit.Test;
@@ -88,5 +91,17 @@ public class DotAttributesTests {
 		// set valid values
 		DotAttributes.setPos(e,
 				"e,42.762,459.02 49.25,203.93 41.039,213.9 31.381,227.75 27,242 3.486,318.47 8.9148,344.07 27,422 29.222,431.57 33.428,441.41 37.82,449.98");
+		assertEquals(
+				"e,42.762,459.02 49.25,203.93 41.039,213.9 31.381,227.75 27,242 3.486,318.47 8.9148,344.07 27,422 29.222,431.57 33.428,441.41 37.82,449.98",
+				DotAttributes.getPos(e));
+
+		SplineType posParsed = DotAttributes.getPosParsed(e);
+		assertNotNull(posParsed);
+		assertEquals(1, posParsed.getSplines().size());
+		SplineType_Spline spline = posParsed.getSplines().get(0);
+		assertNotNull(spline.getEndp());
+		assertEquals(spline.getEndp().getX(), 42.762, 0.0);
+		assertEquals(spline.getEndp().getY(), 459.02, 0.0);
+		assertEquals(9, spline.getControlPoints().size());
 	}
 }

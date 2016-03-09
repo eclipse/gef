@@ -20,6 +20,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -208,6 +209,11 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 		IConnectionRouter router = ZestProperties.getRouter(edge);
 		if (router != null) {
 			visual.setRouter(router);
+		}
+
+		IConnectionInterpolator interpolator = ZestProperties.getInterpolator(edge);
+		if (interpolator != null) {
+			visual.setInterpolator(interpolator);
 		}
 
 		// control points

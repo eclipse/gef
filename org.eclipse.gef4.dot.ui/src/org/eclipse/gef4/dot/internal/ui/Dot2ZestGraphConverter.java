@@ -12,10 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType_Spline;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
@@ -73,33 +77,75 @@ public class Dot2ZestGraphConverter {
 		Node zestTarget = dotToZestNodes.get(dotEdge.getTarget());
 		// create edge
 		Edge zestEdge = new Edge(zestSource, zestTarget);
-		convertEdgeAttributes(dotEdge.getAttributes(),
-				zestEdge.getAttributes());
+		convertEdgeAttributes(dotEdge, zestEdge);
 		return zestEdge;
 	}
 
-	private void convertEdgeAttributes(Map<String, Object> dot,
-			Map<String, Object> zest) {
+	private void convertEdgeAttributes(Edge dot, Edge zest) {
 		// convert id and label
-		Object dotId = dot.get(DotAttributes.EDGE_ID);
-		Object dotLabel = dot.get(DotAttributes.EDGE_LABEL);
-		zest.put(ZestProperties.ELEMENT_CSS_ID, dotId);
-		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
+		String dotId = DotAttributes.getId(dot);
+		String dotLabel = DotAttributes.getLabel(dot);
+		ZestProperties.setCssId(zest, dotId);
+		ZestProperties.setLabel(zest, dotLabel);
 
 		// convert edge style
-		Object dotStyle = dot.get(DotAttributes.EDGE_STYLE);
-		String curveCssStyle = null;
+		String dotStyle = DotAttributes.getStyle(dot);
+		String connectionCssStyle = null;
 		if (DotAttributes.EDGE_STYLE_DASHED.equals(dotStyle)) {
-			curveCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
+			connectionCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
 		} else if (DotAttributes.EDGE_STYLE_DOTTED.equals(dotStyle)) {
-			curveCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
+			connectionCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
 		} else if (DotAttributes.EDGE_STYLE_BOLD.equals(dotStyle)) {
-			curveCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
+			connectionCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
 		}
 		// TODO: handle tapered edges
+		if (connectionCssStyle != null) {
+			ZestProperties.setEdgeConnCssStyle(zest, connectionCssStyle);
+		}
 
-		if (curveCssStyle != null) {
-			zest.put(ZestProperties.EDGE_CURVE_CSS_STYLE, curveCssStyle);
+		// position (only convert in native mode, as the results will otherwise
+		// not match)
+		if (!emulateLayout) {
+			String dotPos = DotAttributes.getPos(dot);
+			if (dotPos != null) {
+				SplineType splineType = DotAttributes.getPosParsed(dot);
+				List<Point> controlPoints = new ArrayList<>();
+				for (SplineType_Spline spline : splineType.getSplines()) {
+					// start
+					org.eclipse.gef4.dot.internal.parser.dotAttributes.Point startp = spline
+							.getStartp();
+					if (startp == null) {
+						// if we have no start point, add the first control
+						// point
+						// twice
+						startp = spline.getControlPoints().get(0);
+					}
+					controlPoints.add(new Point(startp.getX(),
+							(invertYAxis ? -1 : 1) * startp.getY()));
+
+					// control points
+					for (org.eclipse.gef4.dot.internal.parser.dotAttributes.Point cp : spline
+							.getControlPoints()) {
+						controlPoints.add(new Point(cp.getX(),
+								(invertYAxis ? -1 : 1) * cp.getY()));
+					}
+
+					// end
+					org.eclipse.gef4.dot.internal.parser.dotAttributes.Point endp = spline
+							.getEndp();
+					if (endp == null) {
+						// if we have no end point, add the last control point
+						// twice
+						endp = spline.getControlPoints()
+								.get(spline.getControlPoints().size() - 1);
+					}
+					controlPoints.add(new Point(endp.getX(),
+							(invertYAxis ? -1 : 1) * endp.getY()));
+				}
+				ZestProperties.setControlPoints(zest, controlPoints);
+				ZestProperties.setInterpolator(zest,
+						new DotBSplineInterpolator());
+			}
 		}
 	}
 
@@ -116,49 +162,40 @@ public class Dot2ZestGraphConverter {
 
 	// TODO: change into applyNodeAttributes, pass in node, and use set methods
 	// of ZestProperties
-	private void convertNodeAttributes(Node dotNode, Node zestNode) {
+	private void convertNodeAttributes(Node dot, Node zest) {
 		// convert id and label
-		String dotId = DotAttributes.getId(dotNode);
-		ZestProperties.setCssId(zestNode, dotId);
+		String dotId = DotAttributes.getId(dot);
+		ZestProperties.setCssId(zest, dotId);
 
-		String dotLabel = DotAttributes.getLabel(dotNode);
+		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or ID becomes its label.
 			dotLabel = dotId;
 		}
-		ZestProperties.setLabel(zestNode, dotLabel);
+		ZestProperties.setLabel(zest, dotLabel);
 
-		// position
-		String dotPos = DotAttributes.getPos(dotNode);
-		if (dotPos != null) {
-			boolean inputOnly = ((String) dotPos).contains("!");//$NON-NLS-1$
-			String posString = inputOnly ? ((String) dotPos).substring(0,
-					((String) dotPos).indexOf("!")) : (String) dotPos;//$NON-NLS-1$
-			double x = Double.parseDouble(
-					posString.substring(0, posString.indexOf(","))); //$NON-NLS-1$
-			double y = (invertYAxis ? -1 : 1) * Double.parseDouble(
-					posString.substring(posString.indexOf(",") + 1)); //$NON-NLS-1$
-			ZestProperties.setPosition(zestNode, new Point(x, y));
-			// if a position is marked as input-only in Dot, have Zest ignore it
-			ZestProperties.setLayoutIrrelevant(zestNode, inputOnly);
-		}
-
-		// size
-		Dimension zestSize = new Dimension(-1, -1);
-		String dotHeight = DotAttributes.getHeight(dotNode);
-		if (dotHeight != null) {
-			// TODO: determine DPI (maybe pass in as option)
+		// Convert position and size; as node position is interpreted as center,
+		// we need to know the size in order to infer correct zest positions
+		String dotPos = DotAttributes.getPos(dot);
+		String dotHeight = DotAttributes.getHeight(dot);
+		String dotWidth = DotAttributes.getWidth(dot);
+		if (dotPos != null && dotWidth != null && dotHeight != null) {
+			// dot default scaling is 72 DPI
 			double zestHeight = Double.parseDouble(dotHeight) * 72; // inches
-			zestSize.setHeight(zestHeight);
-		}
-		String dotWidth = DotAttributes.getWidth(dotNode);
-		if (dotWidth != null) {
 			double zestWidth = Double.parseDouble(dotWidth) * 72; // inches
-			zestSize.setWidth(zestWidth);
-		}
-		if (!new Dimension(-1, -1).equals(zestSize)) {
-			ZestProperties.setSize(zestNode, zestSize);
+			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
+
+			// node position is interpreted as center of node in Dot, and
+			// top-left in Zest
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point posParsed = DotAttributes
+					.getPosParsed(dot);
+			ZestProperties.setPosition(zest,
+					new Point(posParsed.getX() - zestWidth / 2,
+							(invertYAxis ? -1 : 1) * (posParsed.getY())
+									- zestHeight / 2));
+			// if a position is marked as input-only in Dot, have Zest ignore it
+			ZestProperties.setLayoutIrrelevant(zest, posParsed.isInputOnly());
 		}
 	}
 

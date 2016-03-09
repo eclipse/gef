@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -117,9 +118,9 @@ public class ZestProperties {
 	 * list of way points).
 	 *
 	 * @see #getWayPoints(Edge)
-	 * @see #setWayPoints(Edge, List)
+	 * @see #setControlPoints(Edge, List)
 	 */
-	public static final String EDGE_WAY_POINTS = "edge-way-points";
+	public static final String EDGE_CONTROL_POINTS_POINTS = "edge-control-points";
 
 	/**
 	 * This attribute determines the CSS style for a node rectangle. This
@@ -208,6 +209,16 @@ public class ZestProperties {
 	 * @see #setRouter(Edge, IConnectionRouter)
 	 */
 	public static final String EDGE_ROUTER = "edge-router";
+
+	/**
+	 * This attribute determines the {@link IConnectionInterpolator} used to
+	 * infer a geometry for an edge. This attribute does not have a default
+	 * value.
+	 *
+	 * @see #getInterpolator(Edge)
+	 * @see #setInterpolator(Edge, IConnectionInterpolator)
+	 */
+	public static final String EDGE_INTERPOLATOR = "edge-interpolator";
 
 	/**
 	 * This attribute determines if a graph is directed or undirected.
@@ -374,6 +385,18 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #EDGE_INTERPOLATOR} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the interpolator is determined.
+	 * @return The router of the given {@link Edge}.
+	 */
+	public static IConnectionInterpolator getInterpolator(Edge edge) {
+		return (IConnectionInterpolator) edge.attributesProperty().get(EDGE_INTERPOLATOR);
+	}
+
+	/**
 	 * Returns the value of the {@link #ELEMENT_LABEL} attribute of the given
 	 * {@link Edge}.
 	 *
@@ -513,7 +536,6 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the router is determined.
 	 * @return The router of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
 	public static IConnectionRouter getRouter(Edge edge) {
 		return (IConnectionRouter) edge.attributesProperty().get(EDGE_ROUTER);
 	}
@@ -599,21 +621,36 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EDGE_WAY_POINTS} attribute of the given
-	 * {@link Edge}.
+	 * Returns the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 * the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} for which to determine the router points.
-	 * @return The value of the {@link #EDGE_WAY_POINTS} attribute of the given
-	 *         {@link Edge}.
+	 * @return The value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 *         the given {@link Edge}.
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Point> getWayPoints(Edge edge) {
-		Object routerPoints = edge.getAttributes().get(EDGE_WAY_POINTS);
+		Object routerPoints = edge.getAttributes().get(EDGE_CONTROL_POINTS_POINTS);
 		if (routerPoints instanceof List) {
 			return (List<Point>) routerPoints;
 		}
 		return Collections.emptyList();
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 * the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the
+	 *            {@link #EDGE_CONTROL_POINTS_POINTS} attribute is changed.
+	 * @param controlPoints
+	 *            The new {@link List} of router {@link Point}s for the given
+	 *            {@link Edge}.
+	 */
+	public static void setControlPoints(Edge edge, List<Point> controlPoints) {
+		edge.getAttributes().put(EDGE_CONTROL_POINTS_POINTS, controlPoints);
 	}
 
 	/**
@@ -720,6 +757,20 @@ public class ZestProperties {
 	 */
 	public static void setIcon(Node node, Image icon) {
 		node.attributesProperty().put(NODE_ICON, icon);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_INTERPOLATOR} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the interpolator is changed.
+	 * @param interpolator
+	 *            The new {@link IConnectionInterpolator} for the given
+	 *            {@link Edge} .
+	 */
+	public static void setInterpolator(Edge edge, IConnectionInterpolator interpolator) {
+		edge.attributesProperty().put(EDGE_INTERPOLATOR, interpolator);
 	}
 
 	/**
@@ -917,21 +968,6 @@ public class ZestProperties {
 					+ "\"; supported values: " + GRAPH_TYPE_VALUES);
 		}
 		graph.attributesProperty().put(GRAPH_TYPE, type);
-	}
-
-	/**
-	 * Sets the value of the {@link #EDGE_WAY_POINTS} attribute of the given
-	 * {@link Edge} to the given value.
-	 *
-	 * @param edge
-	 *            The {@link Edge} of which the {@link #EDGE_WAY_POINTS}
-	 *            attribute is changed.
-	 * @param routerPoints
-	 *            The new {@link List} of router {@link Point}s for the given
-	 *            {@link Edge}.
-	 */
-	public static void setWayPoints(Edge edge, List<Point> routerPoints) {
-		edge.getAttributes().put(EDGE_WAY_POINTS, routerPoints);
 	}
 
 }

@@ -52,6 +52,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String currentEdgeStyleValue;
 	private String currentEdgeLabelValue;
 	private String currentEdgeSourceNodeId;
+	private String currentEdgePos;
 	private boolean createConnection;
 
 	/**
@@ -128,6 +129,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.EDGE_LABEL);
 		currentEdgeStyleValue = getAttributeValue(object,
 				DotAttributes.EDGE_STYLE);
+		currentEdgePos = getAttributeValue(object, DotAttributes.EDGE_POS);
 		return super.caseEdgeStmtNode(object);
 	}
 
@@ -148,14 +150,13 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	}
 
 	private void createEdge(String targetNodeId) {
-		Edge.Builder graphConnection = new Edge.Builder(
+		Edge.Builder edgeBuilder = new Edge.Builder(
 				node(currentEdgeSourceNodeId), node(targetNodeId));
 		/* Set the optional label, if set in the DOT input: */
 		if (currentEdgeLabelValue != null) {
-			graphConnection.attr(DotAttributes.EDGE_LABEL,
-					currentEdgeLabelValue);
+			edgeBuilder.attr(DotAttributes.EDGE_LABEL, currentEdgeLabelValue);
 		} else if (globalEdgeLabel != null) {
-			graphConnection.attr(DotAttributes.EDGE_LABEL, globalEdgeLabel);
+			edgeBuilder.attr(DotAttributes.EDGE_LABEL, globalEdgeLabel);
 		}
 		/* Set the optional style, if set in the DOT input and supported: */
 		String currentEdgeStyleLc = new String(
@@ -167,14 +168,20 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				&& supported(currentEdgeStyleLc,
 						DotAttributes.EDGE_STYLE_VALUES)) {
 			// if an explicit local style is set, use it
-			graphConnection.attr(DotAttributes.EDGE_STYLE, currentEdgeStyleLc);
+			edgeBuilder.attr(DotAttributes.EDGE_STYLE, currentEdgeStyleLc);
 		} else if (!DotAttributes.EDGE_STYLE_VOID.equals(globalEdgeStyleLc)
 				&& supported(globalEdgeStyleLc,
 						DotAttributes.EDGE_STYLE_VALUES)) {
 			// if an explicit global style is set, use it
-			graphConnection.attr(DotAttributes.EDGE_STYLE, globalEdgeStyleLc);
+			edgeBuilder.attr(DotAttributes.EDGE_STYLE, globalEdgeStyleLc);
 		}
-		graph.edges(graphConnection.buildEdge());
+
+		// pos
+		if (currentEdgePos != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_POS, currentEdgePos);
+		}
+
+		graph.edges(edgeBuilder.buildEdge());
 	}
 
 	private boolean supported(String value, Set<String> vals) {

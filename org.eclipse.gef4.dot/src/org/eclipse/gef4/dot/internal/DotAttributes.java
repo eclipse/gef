@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.dot.internal.parser.DotAttributesStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.Point;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotAttributesParser;
 import org.eclipse.gef4.dot.internal.parser.services.DotAttributesGrammarAccess;
 import org.eclipse.gef4.graph.Edge;
@@ -448,6 +450,55 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #EDGE_POS} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_POS} property.
+	 * @return The value of the {@link #EDGE_POS} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getPos(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_POS);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #EDGE_POS} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_POS} property, parsed as a {@link SplineType}.
+	 * @return The value of the {@link #EDGE_POS} property of the given
+	 *         {@link Edge}.
+	 */
+	public static SplineType getPosParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getSplineTypeRule(), getPos(edge));
+		SplineType splineType = (SplineType) parsedPropertyValue
+				.getRootASTElement();
+		return splineType;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #NODE_POS} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_POS} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #NODE_POS} property of the given
+	 *         {@link Node}.
+	 */
+	public static Point getPosParsed(Node node) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getPos(node));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
+	}
+
+	/**
 	 * Returns the value of the {@link #NODE_HEIGHT} property of the given
 	 * {@link Node}.
 	 * 
@@ -549,7 +600,7 @@ public class DotAttributes {
 				dotAttributesGrammarAccess.getSplineTypeRule(), pos);
 		if (parseResult.hasSyntaxErrors()) {
 			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + EDGE_POS + "' to '" + pos
+					"Cannot set edge attribute '" + EDGE_POS + "' to '" + pos
 							+ "': " + getSyntaxErrorMessages(parseResult));
 		}
 		edge.getAttributes().put(EDGE_POS, pos);
