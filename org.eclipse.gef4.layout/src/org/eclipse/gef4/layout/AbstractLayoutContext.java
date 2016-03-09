@@ -104,15 +104,16 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	 * Executes all scheduled post-layout {@link Runnable}s (previously added by
 	 * {@link #schedulePostLayoutPass(Runnable)}.
 	 */
-	protected void doFlushChanges() {
-		for (Runnable r : new ArrayList<>(postLayoutPass)) {
-			r.run();
-		}
-	}
-
 	@Override
 	public void flushChanges() {
-		doFlushChanges();
+		// only flush changes if layout was applied (which is the case if an
+		// algorithm is set)
+		ILayoutAlgorithm layoutAlgorithm = layoutAlgorithmProperty.get();
+		if (layoutAlgorithm != null) {
+			for (Runnable r : new ArrayList<>(postLayoutPass)) {
+				r.run();
+			}
+		}
 	}
 
 	@Override
@@ -176,8 +177,8 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	};
 
 	/**
-	 * Removes the given {@link IEdgeLayout} from the list of edges and
-	 * fires a corresponding connection-removed-event.
+	 * Removes the given {@link IEdgeLayout} from the list of edges and fires a
+	 * corresponding connection-removed-event.
 	 *
 	 * @param edge
 	 *            {@link IEdgeLayout} to remove
