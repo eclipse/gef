@@ -218,7 +218,7 @@ public class ZestContentViewer extends ContentViewer {
 	protected Graph createEmptyGraph() {
 		Graph graph = new Graph();
 		if (layoutAlgorithm != null) {
-			ZestProperties.setLayout(graph, layoutAlgorithm);
+			ZestProperties.setLayoutAlgorithm(graph, layoutAlgorithm);
 		}
 		return graph;
 	}

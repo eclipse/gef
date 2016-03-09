@@ -128,7 +128,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 				if (layoutAlgorithm[0] == null) {
 					layoutAlgorithm[0] = new ManualSpringLayoutAlgorithm();
 					layoutAlgorithm[0].setRandom(false);
-					ZestProperties.setLayout(graph, layoutAlgorithm[0]);
+					ZestProperties.setLayoutAlgorithm(graph, layoutAlgorithm[0]);
 				} else {
 					viewer.getContentPartMap().get(graph)
 							.getAdapter(GraphLayoutContext.class)

@@ -153,12 +153,16 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	private void setGraphLayoutAlgorithm() {
-		Object algo = getContent().attributesProperty().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
-		if (algo instanceof ILayoutAlgorithm) {
-			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) algo;
-			ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
-			if (layoutContext != null && layoutContext.getLayoutAlgorithm() != algo) {
+		ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
+		Object layoutAlgorithmValue = getContent().attributesProperty().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
+		if (layoutAlgorithmValue != null) {
+			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) layoutAlgorithmValue;
+			if (layoutContext.getLayoutAlgorithm() == null) {
 				layoutContext.setLayoutAlgorithm(layoutAlgorithm);
+			}
+		} else {
+			if (layoutContext.getLayoutAlgorithm() != null) {
+				layoutContext.setLayoutAlgorithm(null);
 			}
 		}
 	}

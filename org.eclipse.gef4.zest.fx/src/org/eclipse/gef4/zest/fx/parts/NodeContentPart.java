@@ -379,14 +379,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	public void doRefreshVisual(Group visual) {
-		if (getContent() == null) {
+		org.eclipse.gef4.graph.Node node = getContent();
+		if (node == null) {
 			throw new IllegalStateException();
 		}
 
 		// set CSS class
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
-		org.eclipse.gef4.graph.Node node = getContent();
 		Map<String, Object> attrs = node.attributesProperty();
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
 			refreshCssClass(visual, ZestProperties.getCssClass(node));
@@ -419,11 +419,11 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		str = refreshFisheye(visual, attrs, str);
 		refreshLabel(visual, str);
 
-		refreshIcon(visual, attrs.get(ZestProperties.NODE_ICON));
+		refreshIcon(visual, ZestProperties.getIcon(node));
 		refreshNestedGraphArea(visual, isNesting());
-		refreshTooltip(visual, attrs.get(ZestProperties.NODE_TOOLTIP));
-		refreshPosition(visual, attrs.get(ZestProperties.NODE_POSITION));
-		refreshSize(visual, attrs.get(ZestProperties.NODE_SIZE));
+		refreshTooltip(visual, ZestProperties.getTooltip(node));
+		refreshPosition(visual, ZestProperties.getPosition(node));
+		refreshSize(visual, ZestProperties.getSize(node));
 	}
 
 	@Override

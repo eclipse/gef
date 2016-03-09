@@ -491,7 +491,7 @@ public class ZestContentViewerTests {
 		assertEquals(layoutAlgorithm, viewer.getLayoutAlgorithm());
 		viewer.setInput(new Object());
 		Graph rootGraph = (Graph) viewer.getFXViewer().getAdapter(ContentModel.class).getContents().get(0);
-		assertEquals(layoutAlgorithm, ZestProperties.getLayout(rootGraph));
+		assertEquals(layoutAlgorithm, ZestProperties.getLayoutAlgorithm(rootGraph));
 	}
 
 	@SuppressWarnings("serial")

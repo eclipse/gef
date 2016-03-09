@@ -66,7 +66,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private static final String DOT_EXPORTFORMAT_DEFAULT = "pdf"; //$NON-NLS-1$
 
 	private DotExportRadioGroupFieldEditor radioGroupFieldEditor;
-	private IPreferenceStore preferenceStore;
 
 	public GraphvizPreferencePage() {
 		super(GRID);
@@ -83,8 +82,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	}
 
 	public static String getDotExecutablePath() {
-		String dotExecutablePath = dotUiPrefs().get(DOT_PATH_PREF_KEY, ""); //$NON-NLS-1$
-		return dotExecutablePath;
+		return dotUiPrefs().get(DOT_PATH_PREF_KEY, "");//$NON-NLS-1$
 	}
 
 	public static String getDotExportFormat() {
@@ -99,24 +97,22 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		return file.getName().equals("dot") || file.getName().equals("dot.exe"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	private static Preferences dotUiPrefs() {
-		String qualifier = DotActivator.getInstance().getBundle()
-				.getSymbolicName();
-		Preferences preferences = ConfigurationScope.INSTANCE
-				.getNode(qualifier);
-		return preferences;
+	// TODO: move to activator
+	protected static Preferences dotUiPrefs() {
+		return ConfigurationScope.INSTANCE.getNode(
+				DotActivator.getInstance().getBundle().getSymbolicName());
+	}
+
+	// TODO: move to activator
+	protected static IPreferenceStore dotUiPrefStore() {
+		return new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+				DotActivator.getInstance().getBundle().getSymbolicName());
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
-		String qualifier = DotActivator.getInstance().getBundle()
-				.getSymbolicName();
-		preferenceStore = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
-				qualifier);
-		setPreferenceStore(preferenceStore);
-
+		setPreferenceStore(dotUiPrefStore());
 		setDescription(DOT_SELECT_LONG);
-
 	}
 
 	@Override
@@ -177,7 +173,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		};
 		addField(fileFieldEditor);
 
-		preferenceStore
+		getPreferenceStore()
 				.addPropertyChangeListener(new IPropertyChangeListener() {
 
 					@Override

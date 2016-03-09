@@ -43,7 +43,7 @@ public class FullyMeshedLayoutExample extends AbstractZestExample {
 
 	@Override
 	protected Graph createGraph() {
-		ZestProperties.setLayout(graph, new RadialLayoutAlgorithm());
+		ZestProperties.setLayoutAlgorithm(graph, new RadialLayoutAlgorithm());
 		return graph;
 	}
 

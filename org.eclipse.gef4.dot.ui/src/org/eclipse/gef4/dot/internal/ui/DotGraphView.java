@@ -42,6 +42,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,7 +56,9 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -87,10 +91,40 @@ public class DotGraphView extends ZestFxUiView {
 	private File currentFile = null;
 	private Link resourceLabel = null;
 
+	private IPropertyChangeListener preferenceChangeListener = new IPropertyChangeListener() {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty()
+					.equals(GraphvizPreferencePage.DOT_PATH_PREF_KEY)) {
+				// we may enter or leave native mode, so update the graph
+				updateGraph(currentFile);
+			}
+		}
+	};
+
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
 				.with(new ZestFxUiModule())));
 		setGraph(new DotImport(currentDot).toGraph());
+	}
+
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		GraphvizPreferencePage.dotUiPrefStore()
+				.addPropertyChangeListener(preferenceChangeListener);
+	}
+
+	protected boolean isNativeMode() {
+		return GraphvizPreferencePage.isGraphvizConfigured();
+	}
+
+	@Override
+	public void dispose() {
+		GraphvizPreferencePage.dotUiPrefStore()
+				.removePropertyChangeListener(preferenceChangeListener);
+		super.dispose();
 	}
 
 	@Override
@@ -153,6 +187,7 @@ public class DotGraphView extends ZestFxUiView {
 
 	private void setGraphAsync(final String dot, final File file) {
 		getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
+
 			@Override
 			public void run() {
 				if (!dot.trim().isEmpty()) {
@@ -170,7 +205,9 @@ public class DotGraphView extends ZestFxUiView {
 					}
 					setGraph(dotImport.toGraph());
 					resourceLabel.setText(
-							String.format(GRAPH_RESOURCE, file.getName()));
+							String.format(GRAPH_RESOURCE, file.getName())
+									+ (isNativeMode() ? " [native]" //$NON-NLS-1$
+											: " [emulated]")); //$NON-NLS-1$
 					resourceLabel.setToolTipText(file.getAbsolutePath());
 				}
 			}
@@ -180,7 +217,13 @@ public class DotGraphView extends ZestFxUiView {
 
 	@Override
 	public void setGraph(Graph graph) {
-		super.setGraph(new Dot2ZestGraphConverter(graph).convert());
+		// do no convert layout algorithm and rankdir in emulated mode, invert
+		// y-axis in native mode (as by default y-axis is
+		// handled differently in dot)
+		boolean isNativeMode = isNativeMode();
+		super.setGraph(
+				new Dot2ZestGraphConverter(graph, !isNativeMode, isNativeMode)
+						.convert());
 	}
 
 	private boolean toggle(Action action, boolean input) {
@@ -208,9 +251,10 @@ public class DotGraphView extends ZestFxUiView {
 			currentDot = new DotExtractor(currentFile).getDotString();
 		}
 
-		// if Graphviz 'dot' executable is available, we use it to augment
-		// layout information
-		if (GraphvizPreferencePage.isGraphvizConfigured()) {
+		// if Graphviz 'dot' executable is available, we use it for layout
+		// (native mode); otherwise we emulate layout with GEF4 Layout
+		// algorithms.
+		if (isNativeMode()) {
 			String[] result = DotNativeDrawer.executeDot(
 					new File(GraphvizPreferencePage.getDotExecutablePath()),
 					file, null, null);

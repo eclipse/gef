@@ -31,9 +31,15 @@ public class Dot2ZestGraphConverter {
 
 	private Graph dotGraph;
 	private Map<Node, Node> dotToZestNodes = new HashMap<Node, Node>();
+	private boolean emulateLayout;
+	private boolean invertYAxis;
 
-	public Dot2ZestGraphConverter(Graph dotGraph) {
+	// TODO: we may need an option class here if multiple options are needed
+	public Dot2ZestGraphConverter(Graph dotGraph, boolean emulateLayout,
+			boolean invertYAxis) {
 		this.dotGraph = dotGraph;
+		this.emulateLayout = emulateLayout;
+		this.invertYAxis = invertYAxis;
 	}
 
 	public Graph convert() {
@@ -108,6 +114,8 @@ public class Dot2ZestGraphConverter {
 		return zestNode;
 	}
 
+	// TODO: change into applyNodeAttributes, pass in node, and use set methods
+	// of ZestProperties
 	private void convertNodeAttributes(Map<String, Object> dot,
 			Map<String, Object> zest) {
 		// convert id and label
@@ -120,46 +128,56 @@ public class Dot2ZestGraphConverter {
 			dotLabel = dotId;
 		}
 		zest.put(ZestProperties.ELEMENT_LABEL, dotLabel);
+
+		// position
 		Object dotPos = dot.get(DotAttributes.NODE_POS);
 		if (dotPos != null) {
-			String posString = (String) dotPos;
-			// handle update sign
-			if (posString.contains("!")) { //$NON-NLS-1$
-				posString = posString.substring(0, posString.indexOf("!")); //$NON-NLS-1$
-			}
+			boolean inputOnly = ((String) dotPos).contains("!");//$NON-NLS-1$
+			String posString = inputOnly ? ((String) dotPos).substring(0,
+					((String) dotPos).indexOf("!")) : (String) dotPos;//$NON-NLS-1$
 			double x = Double.parseDouble(
 					posString.substring(0, posString.indexOf(","))); //$NON-NLS-1$
-			double y = Double.parseDouble(
+			double y = (invertYAxis ? -1 : 1) * Double.parseDouble(
 					posString.substring(posString.indexOf(",") + 1)); //$NON-NLS-1$
 			zest.put(ZestProperties.NODE_POSITION, new Point(x, y));
-			// if a position is specified in the DOT input, ensure Zest does not
-			// alter it
-			zest.put(ZestProperties.ELEMENT_LAYOUT_IRRELEVANT, Boolean.TRUE);
+			// if a position is marked as input-only in Dot, have Zest ignore it
+			if (inputOnly) {
+				zest.put(ZestProperties.ELEMENT_LAYOUT_IRRELEVANT,
+						Boolean.TRUE);
+			} else {
+				zest.put(ZestProperties.ELEMENT_LAYOUT_IRRELEVANT,
+						Boolean.FALSE);
+			}
 		}
+
+		// TODO: size
 	}
 
 	private void convertGraphAttributes(Map<String, Object> dot,
 			Map<String, Object> zest) {
 		// convert layout and rankdir to LayoutAlgorithm
-		Object dotLayout = dot.get(DotAttributes.GRAPH_LAYOUT);
-		Object dotRankdir = dot.get(DotAttributes.GRAPH_RANKDIR);
-		ILayoutAlgorithm algo = null;
-		if (DotAttributes.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
-				|| DotAttributes.GRAPH_LAYOUT_NEATO.equals(dotLayout)
-				|| DotAttributes.GRAPH_LAYOUT_TWOPI.equals(dotLayout)) {
-			algo = new RadialLayoutAlgorithm();
-		} else if (DotAttributes.GRAPH_LAYOUT_FDP.equals(dotLayout)
-				|| DotAttributes.GRAPH_LAYOUT_SFDP.equals(dotLayout)) {
-			algo = new SpringLayoutAlgorithm();
-		} else if (DotAttributes.GRAPH_LAYOUT_GRID.equals(dotLayout)
-				|| DotAttributes.GRAPH_LAYOUT_OSAGE.equals(dotLayout)) {
-			algo = new GridLayoutAlgorithm();
-		} else {
-			boolean lr = DotAttributes.GRAPH_RANKDIR_LR.equals(dotRankdir);
-			algo = new TreeLayoutAlgorithm(lr ? TreeLayoutAlgorithm.LEFT_RIGHT
-					: TreeLayoutAlgorithm.TOP_DOWN);
+		if (emulateLayout) {
+			Object dotLayout = dot.get(DotAttributes.GRAPH_LAYOUT);
+			Object dotRankdir = dot.get(DotAttributes.GRAPH_RANKDIR);
+			ILayoutAlgorithm algo = null;
+			if (DotAttributes.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
+					|| DotAttributes.GRAPH_LAYOUT_NEATO.equals(dotLayout)
+					|| DotAttributes.GRAPH_LAYOUT_TWOPI.equals(dotLayout)) {
+				algo = new RadialLayoutAlgorithm();
+			} else if (DotAttributes.GRAPH_LAYOUT_FDP.equals(dotLayout)
+					|| DotAttributes.GRAPH_LAYOUT_SFDP.equals(dotLayout)) {
+				algo = new SpringLayoutAlgorithm();
+			} else if (DotAttributes.GRAPH_LAYOUT_GRID.equals(dotLayout)
+					|| DotAttributes.GRAPH_LAYOUT_OSAGE.equals(dotLayout)) {
+				algo = new GridLayoutAlgorithm();
+			} else {
+				boolean lr = DotAttributes.GRAPH_RANKDIR_LR.equals(dotRankdir);
+				algo = new TreeLayoutAlgorithm(
+						lr ? TreeLayoutAlgorithm.LEFT_RIGHT
+								: TreeLayoutAlgorithm.TOP_DOWN);
+			}
+			zest.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, algo);
 		}
-		zest.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, algo);
 
 		// convert graph type
 		Object dotType = dot.get(DotAttributes.GRAPH_TYPE);

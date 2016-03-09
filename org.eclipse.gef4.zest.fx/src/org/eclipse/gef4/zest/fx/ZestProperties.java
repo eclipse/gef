@@ -250,8 +250,8 @@ public class ZestProperties {
 	 * This attribute determines the {@link ILayoutAlgorithm} used to layout the
 	 * graph.
 	 *
-	 * @see #getLayout(Graph)
-	 * @see #setLayout(Graph, ILayoutAlgorithm)
+	 * @see #getLayoutAlgorithm(Graph)
+	 * @see #setLayoutAlgorithm(Graph, ILayoutAlgorithm)
 	 */
 	public static final String GRAPH_LAYOUT_ALGORITHM = "layout";
 
@@ -407,7 +407,7 @@ public class ZestProperties {
 	 *            The {@link Graph} of which the layout algorithm is determined.
 	 * @return The layout algorithm of the given {@link Graph}.
 	 */
-	public static ILayoutAlgorithm getLayout(Graph graph) {
+	public static ILayoutAlgorithm getLayoutAlgorithm(Graph graph) {
 		Object layout = graph.attributesProperty().get(GRAPH_LAYOUT_ALGORITHM);
 		if (layout instanceof ILayoutAlgorithm) {
 			return (ILayoutAlgorithm) layout;
@@ -757,7 +757,7 @@ public class ZestProperties {
 	 * @param algorithm
 	 *            The new {@link ILayoutAlgorithm} for the given {@link Graph}.
 	 */
-	public static void setLayout(Graph graph, ILayoutAlgorithm algorithm) {
+	public static void setLayoutAlgorithm(Graph graph, ILayoutAlgorithm algorithm) {
 		graph.attributesProperty().put(GRAPH_LAYOUT_ALGORITHM, algorithm);
 	}
 

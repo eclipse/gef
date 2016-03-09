@@ -198,6 +198,16 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 				radioBox.setFont(font);
 			}
 
+			dotExportHintLabel = new Label(parent, SWT.NONE);
+			dotExportHintLabel.setText(dotExportHintText);
+			FontData fontData = dotExportHintLabel.getFont().getFontData()[0];
+			Font boldFont = new Font(Display.getCurrent(), new FontData(
+					fontData.getName(), fontData.getHeight() - 1, SWT.BOLD));
+			dotExportHintLabel.setFont(boldFont);
+			GridData gridData = new GridData();
+			gridData.horizontalSpan = 2;
+			dotExportHintLabel.setLayoutData(gridData);
+
 			if (labelsAndValues != null) {
 				radioButtons = new Button[labelsAndValues.length];
 				for (int i = 0; i < labelsAndValues.length; i++) {
@@ -217,21 +227,9 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 						}
 					});
 				}
-			} else {
-				dotExportHintLabel = new Label(parent, SWT.NONE);
-				dotExportHintLabel.setText(dotExportHintText);
-
-				FontData fontData = dotExportHintLabel.getFont()
-						.getFontData()[0];
-				Font boldFont = new Font(Display.getCurrent(),
-						new FontData(fontData.getName(),
-								fontData.getHeight() - 1, SWT.BOLD));
-				dotExportHintLabel.setFont(boldFont);
-
-				GridData gridData = new GridData();
-				gridData.horizontalSpan = 2;
-				dotExportHintLabel.setLayoutData(gridData);
+				hideDotExportHintLabel();
 			}
+
 			radioBox.addDisposeListener(new DisposeListener() {
 
 				@Override
@@ -353,14 +351,24 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 						});
 					}
 					load();
-					// hide the dot export hint label
-					dotExportHintLabel.setVisible(false);
-					((GridData) dotExportHintLabel
-							.getLayoutData()).exclude = true;
+					hideDotExportHintLabel();
 					parent.layout();
 				}
 			}
+
 		});
+	}
+
+	protected void hideDotExportHintLabel() {
+		// hide the dot export hint label
+		dotExportHintLabel.setVisible(false);
+		((GridData) dotExportHintLabel.getLayoutData()).exclude = true;
+	}
+
+	protected void showHideDotExportHintLabel() {
+		// show the dot export hint label
+		dotExportHintLabel.setVisible(true);
+		((GridData) dotExportHintLabel.getLayoutData()).exclude = false;
 	}
 
 	public void clear() {
@@ -370,9 +378,7 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 				radioButton.dispose();
 			}
 
-			// show the dot export hint label
-			dotExportHintLabel.setVisible(true);
-			((GridData) dotExportHintLabel.getLayoutData()).exclude = false;
+			showHideDotExportHintLabel();
 			// do synchronous layout
 			Display.getDefault().syncExec(new Runnable() {
 
@@ -383,4 +389,5 @@ public class DotExportRadioGroupFieldEditor extends RadioGroupFieldEditor {
 			});
 		}
 	}
+
 }
