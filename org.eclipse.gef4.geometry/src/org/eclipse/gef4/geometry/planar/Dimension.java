@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2014 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration to double precision
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -22,14 +22,14 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
  * A {@link Dimension} represents a width and a height in 2-dimensional space.
  * It provides various methods for manipulating the {@link Dimension} or
  * creating new derived objects.
- * 
+ *
  * @author ebordeau
  * @author rhudson
  * @author pshah
  * @author ahunter
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Dimension implements Cloneable, Serializable {
 
@@ -38,7 +38,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates a new {@link Dimension} representing the maximum of the two
 	 * provided {@link Dimension}s.
-	 * 
+	 *
 	 * @param d1
 	 *            the first {@link Dimension}
 	 * @param d2
@@ -54,7 +54,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates a new {@link Dimension} representing the minimum of the two
 	 * provided {@link Dimension}s.
-	 * 
+	 *
 	 * @param d1
 	 *            the first {@link Dimension}
 	 * @param d2
@@ -88,7 +88,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Constructs a {@link Dimension} with the width and height of the passed-in
 	 * {@link Dimension}.
-	 * 
+	 *
 	 * @param d
 	 *            the {@link Dimension} supplying the initial width and height
 	 *            values
@@ -100,7 +100,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Constructs a {@link Dimension} with the supplied width and height values.
-	 * 
+	 *
 	 * @param w
 	 *            the width of the new {@link Dimension}
 	 * @param h
@@ -122,7 +122,7 @@ public class Dimension implements Cloneable, Serializable {
 	 * {@link Dimension}'s width and height have to be smaller than this
 	 * {@link Dimension}'s width and height, within the default imprecision (see
 	 * {@link PrecisionUtils}).
-	 * 
+	 *
 	 * @param d
 	 *            the {@link Dimension} that is checked if it fits into this
 	 *            {@link Dimension}
@@ -137,7 +137,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Returns <code>true</code> if this Dimension's width and height are equal
 	 * to the given width and height.
-	 * 
+	 *
 	 * @param width
 	 *            the width
 	 * @param height
@@ -155,7 +155,7 @@ public class Dimension implements Cloneable, Serializable {
 	 * <code>true</code> if the Object is a Dimension and its width and height
 	 * are equal to this Dimension's width and height, <code>false</code>
 	 * otherwise.
-	 * 
+	 *
 	 * @param o
 	 *            the Object being tested for equality
 	 * @return <code>true</code> if the given object is equal to this dimension
@@ -171,7 +171,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Expands the size of this Dimension by the specified amount.
-	 * 
+	 *
 	 * @param d
 	 *            the Dimension providing the expansion width and height
 	 * @return <code>this</code> for convenience
@@ -182,7 +182,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Expands the size of this Dimension by the specified width and height.
-	 * 
+	 *
 	 * @param w
 	 *            Value by which the width should be increased
 	 * @param h
@@ -197,7 +197,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Creates and returns a copy of this {@link Dimension}.
-	 * 
+	 *
 	 * @return a copy of this Dimension
 	 */
 	public Dimension getCopy() {
@@ -207,7 +207,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates and returns a {@link Dimension} representing the sum of this
 	 * {@link Dimension} and the one specified.
-	 * 
+	 *
 	 * @param d
 	 *            the dimension providing the expansion width and height
 	 * @return a new dimension expanded by <i>d</i>
@@ -219,7 +219,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates and returns a new Dimension representing the sum of this
 	 * {@link Dimension} and the one specified.
-	 * 
+	 *
 	 * @param w
 	 *            value by which the width of this is to be expanded
 	 * @param h
@@ -232,7 +232,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Returns the height of this dimension.
-	 * 
+	 *
 	 * @return The current height
 	 */
 	public double getHeight() {
@@ -242,7 +242,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates and returns a new Dimension representing the intersection of this
 	 * Dimension and the one specified.
-	 * 
+	 *
 	 * @param d
 	 *            the Dimension to intersect with
 	 * @return A new Dimension representing the intersection
@@ -253,7 +253,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Creates and returns a new Dimension with negated values.
-	 * 
+	 *
 	 * @return a new Dimension with negated values
 	 */
 	public Dimension getNegated() {
@@ -263,7 +263,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates a new Dimension with its width and height scaled by the specified
 	 * value.
-	 * 
+	 *
 	 * @param amount
 	 *            Value by which the width and height are scaled
 	 * @return a new dimension with the scale applied
@@ -275,7 +275,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates a new Dimension with its width and height scaled by the specified
 	 * values.
-	 * 
+	 *
 	 * @param widthFactor
 	 *            the value by which the width is to be scaled
 	 * @param heightFactor
@@ -289,7 +289,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates and returns a new Dimension whose size will be reduced by the
 	 * width and height of the given Dimension.
-	 * 
+	 *
 	 * @param d
 	 *            the dimension whose width and height values will be considered
 	 * @return a new dimension representing the difference
@@ -301,7 +301,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates and returns a new Dimension whose size will be reduced by the
 	 * given width and height.
-	 * 
+	 *
 	 * @param w
 	 *            the value by which the width is to be reduced
 	 * @param h
@@ -315,7 +315,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Creates a new Dimension with its height and width swapped. Useful in
 	 * orientation change calculations.
-	 * 
+	 *
 	 * @return a new Dimension with its height and width swapped
 	 */
 	public Dimension getTransposed() {
@@ -326,7 +326,7 @@ public class Dimension implements Cloneable, Serializable {
 	 * Creates a new Dimension representing the union of this Dimension with the
 	 * one specified. Union is defined as the max() of the values from each
 	 * Dimension.
-	 * 
+	 *
 	 * @param d
 	 *            the Dimension to be unioned
 	 * @return a new Dimension
@@ -337,7 +337,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Returns the width of this dimension
-	 * 
+	 *
 	 * @return the current width of this dimension
 	 */
 	public double getWidth() {
@@ -357,7 +357,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * This Dimension is intersected with the one specified. Intersection is
 	 * performed by taking the min() of the values from each dimension.
-	 * 
+	 *
 	 * @param d
 	 *            the Dimension used to perform the min()
 	 * @return <code>this</code> for convenience
@@ -370,7 +370,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Returns <code>true</code> if either dimension is less than or equal to 0.
-	 * 
+	 *
 	 * @return <code>true</code> if either dimension is less than or equal to 0.
 	 */
 	public boolean isEmpty() {
@@ -379,7 +379,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Negates the width and height of this Dimension.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public Dimension negate() {
@@ -389,7 +389,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Scales the width and height of this Dimension by the amount supplied, and
 	 * returns this for convenience.
-	 * 
+	 *
 	 * @param factor
 	 *            value by which this Dimension's width and height are to be
 	 *            scaled
@@ -402,7 +402,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Scales the width of this Dimension by <i>w</i> and scales the height of
 	 * this Dimension by <i>h</i>. Returns this for convenience.
-	 * 
+	 *
 	 * @param widthFactor
 	 *            the value by which the width is to be scaled
 	 * @param heightFactor
@@ -417,12 +417,12 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Sets the height of this Rectangle to the specified one.
-	 * 
+	 *
 	 * @param height
 	 *            The new height
 	 * @return this for convenience
 	 */
-	public Dimension setHeight(int height) {
+	public Dimension setHeight(double height) {
 		this.height = height;
 		return this;
 	}
@@ -430,7 +430,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Copies the width and height values of the input Dimension to this
 	 * Dimension.
-	 * 
+	 *
 	 * @param d
 	 *            the dimension supplying the values
 	 * @return <code>this</code> for convenience
@@ -443,7 +443,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Sets the size of this dimension to the specified width and height.
-	 * 
+	 *
 	 * @param w
 	 *            The new width
 	 * @param h
@@ -458,7 +458,7 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Sets the width of this Rectangle to the specified one.
-	 * 
+	 *
 	 * @param width
 	 *            The new width
 	 * @return this for convenience
@@ -471,7 +471,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Shrinks the size of this Dimension by the width and height values of the
 	 * given Dimension.
-	 * 
+	 *
 	 * @param d
 	 *            The dimension whose width and height values are to be used
 	 * @return <code>this</code> for convenience
@@ -483,7 +483,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Reduces the width of this Dimension by <i>w</i>, and reduces the height
 	 * of this Dimension by <i>h</i>. Returns this for convenience.
-	 * 
+	 *
 	 * @param w
 	 *            the value by which the width is to be reduced
 	 * @param h
@@ -509,7 +509,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Swaps the width and height of this Dimension, and returns this for
 	 * convenience. Can be useful in orientation changes.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public Dimension transpose() {
@@ -522,7 +522,7 @@ public class Dimension implements Cloneable, Serializable {
 	/**
 	 * Sets the width of this Dimension to the greater of this Dimension's width
 	 * and <i>d</i>.width. Likewise for this Dimension's height.
-	 * 
+	 *
 	 * @param d
 	 *            the Dimension to union with this Dimension
 	 * @return <code>this</code> for convenience
