@@ -94,7 +94,7 @@ final public class DotNativeDrawer {
 		String[] commands = new String[] { dotExecutablePath.getAbsolutePath(),
 				outputFormat == null ? "" : "-T" + outputFormat,
 				outputFile == null ? ""
-						: "-o " + outputFile.toPath().toString(),
+						: ("-o" + outputFile.toPath().toString()),
 				dotInputFile.toPath().toString() };
 		return call(commands);
 	}
