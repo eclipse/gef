@@ -98,7 +98,14 @@ public class Dot2ZestGraphConverter {
 		}
 
 		// head and tail label labels
-		// TODO: haid and tail labels
+		String dotHeadLabel = DotAttributes.getHeadLabel(dot);
+		if (dotHeadLabel != null) {
+			ZestProperties.setTargetLabel(zest, dotHeadLabel);
+		}
+		String dotTailLabel = DotAttributes.getTailLabel(dot);
+		if (dotTailLabel != null) {
+			ZestProperties.setSourceLabel(zest, dotTailLabel);
+		}
 
 		// convert edge style
 		String dotStyle = DotAttributes.getStyle(dot);
@@ -142,10 +149,22 @@ public class Dot2ZestGraphConverter {
 						computeZestLabelPosition(
 								DotAttributes.getXlpParsed(dot), dotXLabel));
 			}
-			// head and tail label positions (head_lp, tail_lp) and sizes ->
-			// depend on label font size (if present, otherwise fall back to
-			// edge font size)
-			// TODO: haid and tail label positions
+			// head and tail label positions (head_lp, tail_lp)
+			String headLp = DotAttributes.getHeadLp(dot);
+			if (dotHeadLabel != null && headLp != null) {
+				ZestProperties.setTargetLabelPosition(zest,
+						computeZestLabelPosition(
+								DotAttributes.getHeadLpParsed(dot),
+								dotHeadLabel));
+			}
+			String tailLp = DotAttributes.getTailLp(dot);
+			if (dotTailLabel != null && tailLp != null) {
+				ZestProperties.setSourceLabelPosition(zest,
+						computeZestLabelPosition(
+								DotAttributes.getTailLpParsed(dot),
+								dotTailLabel));
+			}
+
 		}
 	}
 

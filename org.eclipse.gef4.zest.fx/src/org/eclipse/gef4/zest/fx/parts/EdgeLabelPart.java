@@ -121,13 +121,23 @@ public class EdgeLabelPart extends AbstractFXContentPart<Group> {
 		}
 
 		// label or external label (depends on which element we control)
-		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
+		if (ZestProperties.ELEMENT_LABEL.equals(getContent().getValue())) {
+			String label = ZestProperties.getLabel(edge);
+			if (label != null) {
+				text.setText(label);
+			}
+		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
 			String label = ZestProperties.getExternalLabel(edge);
 			if (label != null) {
 				text.setText(label);
 			}
-		} else {
-			String label = ZestProperties.getLabel(edge);
+		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(getContent().getValue())) {
+			String label = ZestProperties.getSourceLabel(edge);
+			if (label != null) {
+				text.setText(label);
+			}
+		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(getContent().getValue())) {
+			String label = ZestProperties.getTargetLabel(edge);
 			if (label != null) {
 				text.setText(label);
 			}
@@ -139,11 +149,16 @@ public class EdgeLabelPart extends AbstractFXContentPart<Group> {
 		}
 
 		Point labelPosition = null;
-		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
-			labelPosition = ZestProperties.getExternalLabelPosition(edge);
-		} else {
+		if (ZestProperties.ELEMENT_LABEL.equals(getContent().getValue())) {
 			labelPosition = ZestProperties.getLabelPosition(edge);
+		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
+			labelPosition = ZestProperties.getExternalLabelPosition(edge);
+		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(getContent().getValue())) {
+			labelPosition = ZestProperties.getSourceLabelPosition(edge);
+		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(getContent().getValue())) {
+			labelPosition = ZestProperties.getTargetLabelPosition(edge);
 		}
+
 		if (labelPosition != null) {
 			refreshPosition(getVisual(), labelPosition);
 		} else {

@@ -57,6 +57,10 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String currentEdgeXLabel;
 	private String currentEdgeXlp;
 	private String currentEdgeLp;
+	private String currentEdgeTailLabel;
+	private String currentEdgeHeadLabel;
+	private String currentEdgeHeadLp;
+	private String currentEdgeTailLp;
 
 	/**
 	 * @param dotAst
@@ -135,6 +139,14 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		currentEdgeXlp = getAttributeValue(object, DotAttributes.EDGE_XLP);
 		currentEdgeStyle = getAttributeValue(object, DotAttributes.EDGE_STYLE);
 		currentEdgePos = getAttributeValue(object, DotAttributes.EDGE_POS);
+		currentEdgeHeadLabel = getAttributeValue(object,
+				DotAttributes.EDGE_HEADLABEL);
+		currentEdgeHeadLp = getAttributeValue(object,
+				DotAttributes.EDGE_HEAD_LP);
+		currentEdgeTailLabel = getAttributeValue(object,
+				DotAttributes.EDGE_TAILLABEL);
+		currentEdgeTailLp = getAttributeValue(object,
+				DotAttributes.EDGE_TAIL_LP);
 		return super.caseEdgeStmtNode(object);
 	}
 
@@ -169,6 +181,18 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			edgeBuilder.attr(DotAttributes.EDGE_XLABEL, currentEdgeXLabel);
 		}
 
+		// head label (headllabel)
+		if (currentEdgeHeadLabel != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_HEADLABEL,
+					currentEdgeHeadLabel);
+		}
+
+		// tail label (taillabel)
+		if (currentEdgeTailLabel != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_TAILLABEL,
+					currentEdgeTailLabel);
+		}
+
 		// style
 		String currentEdgeStyleLc = new String(
 				currentEdgeStyle == null ? "" : currentEdgeStyle).toLowerCase();
@@ -198,6 +222,16 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// external label position (xlp)
 		if (currentEdgeXlp != null) {
 			edgeBuilder.attr(DotAttributes.EDGE_XLP, currentEdgeXlp);
+		}
+
+		// head label position (head_lp)
+		if (currentEdgeHeadLp != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_HEAD_LP, currentEdgeHeadLp);
+		}
+
+		// tail label position (tail_lp)
+		if (currentEdgeTailLp != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_TAIL_LP, currentEdgeTailLp);
 		}
 
 		graph.edges(edgeBuilder.buildEdge());

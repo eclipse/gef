@@ -54,7 +54,9 @@ public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 			part = new EdgeContentPart();
 		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof Edge
 				&& (ZestProperties.ELEMENT_LABEL.equals(((Pair) content).getValue())
-						|| ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue()))) {
+						|| ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue())
+						|| ZestProperties.EDGE_SOURCE_LABEL.equals(((Pair) content).getValue())
+						|| ZestProperties.EDGE_TARGET_LABEL.equals(((Pair) content).getValue()))) {
 			part = new EdgeLabelPart();
 		}
 		if (part != null) {

@@ -94,6 +94,16 @@ public class DotAttributes {
 	public static final String EDGE_LABEL = "label";
 
 	/**
+	 * Specifies the tail label of an edge (taillabel).
+	 */
+	public static final String EDGE_TAILLABEL = "taillabel";
+
+	/**
+	 * Specifies the tail label of an edge (headlabel).
+	 */
+	public static final String EDGE_HEADLABEL = "headlabel";
+
+	/**
 	 * Specifies the external label of an edge.
 	 */
 	public static final String EDGE_XLABEL = "xlabel";
@@ -114,9 +124,19 @@ public class DotAttributes {
 	public static final String EDGE_XLP = "xlp";
 
 	/**
-	 * Specifies the position of an edge's label.
+	 * Specifies the position of an edge's label (lp).
 	 */
 	public static final String EDGE_LP = "lp";
+
+	/**
+	 * Specifies the position of an edge's head label (head_lp).
+	 */
+	public static final String EDGE_HEAD_LP = "head_lp";
+
+	/**
+	 * Specifies the position of an edge's tail label (tail_lp).
+	 */
+	public static final String EDGE_TAIL_LP = "tail_lp";
 
 	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
@@ -559,6 +579,34 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #EDGE_HEAD_LP} property of the given {@link Edge} to the
+	 * given <i>headLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_HEAD_LP} property.
+	 * @param headLp
+	 *            The new value for the {@link #EDGE_HEAD_LP} property.
+	 */
+	public static void setHeadLp(Edge edge, String headLp) {
+		edge.attributesProperty().put(EDGE_LP, headLp);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_TAIL_LP} property of the given {@link Edge} to the
+	 * given <i>tailLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_TAIL_LP} property.
+	 * @param tailLp
+	 *            The new value for the {@link #EDGE_TAIL_LP} property.
+	 */
+	public static void setTailLp(Edge edge, String tailLp) {
+		edge.attributesProperty().put(EDGE_TAIL_LP, tailLp);
+	}
+
+	/**
 	 * Sets the {@link #NODE_XLABEL} property of the given {@link Node} to the
 	 * given <i>xLabel</i> value.
 	 * 
@@ -626,6 +674,34 @@ public class DotAttributes {
 	 */
 	public static String getLp(Edge edge) {
 		return (String) edge.attributesProperty().get(EDGE_LP);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_HEAD_LP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_HEAD_LP} property.
+	 * @return The value of the {@link #EDGE_HEAD_LP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getHeadLp(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_HEAD_LP);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_TAIL_LP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_TAIL_LP} property.
+	 * @return The value of the {@link #EDGE_TAIL_LP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getTailLp(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_TAIL_LP);
 	}
 
 	/**
@@ -800,6 +876,34 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #EDGE_HEADLABEL} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_HEADLABEL} property.
+	 * @return The value of the {@link #EDGE_HEADLABEL} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getHeadLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_HEADLABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_TAILLABEL} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_TAILLABEL} property.
+	 * @return The value of the {@link #EDGE_TAILLABEL} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getTailLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_TAILLABEL);
+	}
+
+	/**
 	 * Sets the {@link #EDGE_LABEL} property of the given {@link Edge} to the
 	 * given <i>label</i> value.
 	 * 
@@ -811,6 +915,34 @@ public class DotAttributes {
 	 */
 	public static void setLabel(Edge edge, String label) {
 		edge.attributesProperty().put(EDGE_LABEL, label);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_HEADLABEL} property of the given {@link Edge} to
+	 * the given <i>label</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_HEADLABEL} property.
+	 * @param label
+	 *            The new value for the {@link #EDGE_HEADLABEL} property.
+	 */
+	public static void setHeadLabel(Edge edge, String label) {
+		edge.attributesProperty().put(EDGE_HEADLABEL, label);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_TAILLABEL} property of the given {@link Edge} to
+	 * the given <i>label</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_TAILLABEL} property.
+	 * @param label
+	 *            The new value for the {@link #EDGE_TAILLABEL} property.
+	 */
+	public static void setTailLabel(Edge edge, String label) {
+		edge.attributesProperty().put(EDGE_TAILLABEL, label);
 	}
 
 	/**
@@ -941,6 +1073,40 @@ public class DotAttributes {
 	public static Point getLpParsed(Edge edge) {
 		IParseResult parsedPropertyValue = parsePropertyValue(
 				dotAttributesGrammarAccess.getPointRule(), getLp(edge));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #EDGE_HEAD_LP} property of the
+	 * given {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_HEAD_LP} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #EDGE_HEAD_LP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Point getHeadLpParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getHeadLp(edge));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #EDGE_TAIL_LP} property of the
+	 * given {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_TAIL_LP} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #EDGE_TAIL_LP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Point getTailLpParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getTailLp(edge));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}

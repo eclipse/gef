@@ -149,6 +149,18 @@ public class ZestProperties {
 	public static final String EDGE_LABEL_POSITION = "edge-label-position";
 
 	/**
+	 * This attribute determines the position of an edge's source label (in case
+	 * it exists).
+	 */
+	public static final String EDGE_SOURCE_LABEL_POSITION = "edge-source-label-position";
+
+	/**
+	 * This attribute determines the position of an edge's target label (in case
+	 * it exists).
+	 */
+	public static final String EDGE_TARGET_LABEL_POSITION = "edge-target-label-position";
+
+	/**
 	 * This attribute determines the icon for a node. This attribute does not
 	 * have a default value.
 	 *
@@ -208,6 +220,24 @@ public class ZestProperties {
 	 * @see #setSourceDecoration(Edge, javafx.scene.shape.Shape)
 	 */
 	public static final String EDGE_SOURCE_DECORATION = "source-decoration";
+
+	/**
+	 * This attribute determines the target label for an edge. This attribute
+	 * does not have a default value.
+	 *
+	 * @see #getTargetLabel(Edge)
+	 * @see #setTargetLabel(Edge, String)
+	 */
+	public static final String EDGE_TARGET_LABEL = "target-label";
+
+	/**
+	 * This attribute determines the source label for an edge. This attribute
+	 * does not have a default value.
+	 *
+	 * @see #getSourceLabel(Edge)
+	 * @see #setSourceLabel(Edge, String)
+	 */
+	public static final String EDGE_SOURCE_LABEL = "source-label";
 
 	/**
 	 * This attribute determines the {@link IConnectionRouter} used to route an
@@ -632,6 +662,36 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #EDGE_SOURCE_LABEL} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source decoration is determined.
+	 * @return The source label of the given {@link Edge}.
+	 */
+	public static String getSourceLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_SOURCE_LABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_SOURCE_LABEL_POSITION} attribute of
+	 * the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label position is
+	 *            determined.
+	 * @return The value of the {@link #EDGE_SOURCE_LABEL_POSITION} attribute of
+	 *         the given {@link Edge}.
+	 */
+	public static Point getSourceLabelPosition(Edge edge) {
+		Object object = edge.getAttributes().get(EDGE_SOURCE_LABEL_POSITION);
+		if (object instanceof Point) {
+			return (Point) object;
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the value of the {@link #EDGE_TARGET_DECORATION} attribute of the
 	 * given {@link Edge}.
 	 *
@@ -639,9 +699,38 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the target decoration is determined.
 	 * @return The target decoration of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
 	public static javafx.scene.shape.Shape getTargetDecoration(Edge edge) {
 		return (javafx.scene.shape.Shape) edge.attributesProperty().get(EDGE_TARGET_DECORATION);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_TARGET_LABEL} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration is determined.
+	 * @return The target decoration of the given {@link Edge}.
+	 */
+	public static String getTargetLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_TARGET_LABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_TARGET_LABEL_POSITION} attribute of
+	 * the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label position is
+	 *            determined.
+	 * @return The value of the {@link #EDGE_TARGET_LABEL_POSITION} attribute of
+	 *         the given {@link Edge}.
+	 */
+	public static Point getTargetLabelPosition(Edge edge) {
+		Object object = edge.getAttributes().get(EDGE_TARGET_LABEL_POSITION);
+		if (object instanceof Point) {
+			return (Point) object;
+		}
+		return null;
 	}
 
 	/**
@@ -1051,6 +1140,33 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #EDGE_SOURCE_LABEL} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration is changed.
+	 * @param sourceLabel
+	 *            The new source label for the given {@link Edge}.
+	 */
+	public static void setSourceLabel(Edge edge, String sourceLabel) {
+		edge.attributesProperty().put(EDGE_SOURCE_LABEL, sourceLabel);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_SOURCE_LABEL_POSITION} attribute of
+	 * the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the source label is changed.
+	 * @param labelPosition
+	 *            The new position for the source label of the given
+	 *            {@link Edge}.
+	 */
+	public static void setSourceLabelPosition(Edge edge, Point labelPosition) {
+		edge.attributesProperty().put(EDGE_SOURCE_LABEL_POSITION, labelPosition);
+	}
+
+	/**
 	 * Sets the value of the {@link #EDGE_TARGET_DECORATION} attribute of the
 	 * given {@link Edge} to the given value.
 	 *
@@ -1062,6 +1178,33 @@ public class ZestProperties {
 	 */
 	public static void setTargetDecoration(Edge edge, javafx.scene.shape.Shape targetDecoration) {
 		edge.attributesProperty().put(EDGE_TARGET_DECORATION, targetDecoration);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_TARGET_LABEL} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration is changed.
+	 * @param targetLabel
+	 *            The new target label for the given {@link Edge}.
+	 */
+	public static void setTargetLabel(Edge edge, String targetLabel) {
+		edge.attributesProperty().put(EDGE_TARGET_LABEL, targetLabel);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_TARGET_LABEL_POSITION} attribute of
+	 * the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target label is changed.
+	 * @param labelPosition
+	 *            The new position for the target label of the given
+	 *            {@link Edge}.
+	 */
+	public static void setTargetLabelPosition(Edge edge, Point labelPosition) {
+		edge.attributesProperty().put(EDGE_TARGET_LABEL_POSITION, labelPosition);
 	}
 
 	/**

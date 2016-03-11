@@ -129,6 +129,12 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			if (ZestProperties.getExternalLabel(e) != null) {
 				children.add(new Pair<>(e, ZestProperties.ELEMENT_EXTERNAL_LABEL));
 			}
+			if (ZestProperties.getSourceLabel(e) != null) {
+				children.add(new Pair<>(e, ZestProperties.EDGE_SOURCE_LABEL));
+			}
+			if (ZestProperties.getTargetLabel(e) != null) {
+				children.add(new Pair<>(e, ZestProperties.EDGE_TARGET_LABEL));
+			}
 		}
 		children.addAll(getContent().getNodes());
 		return children;
