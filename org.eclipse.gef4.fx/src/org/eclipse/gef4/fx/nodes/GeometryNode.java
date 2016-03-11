@@ -895,6 +895,12 @@ public class GeometryNode<T extends IGeometry> extends Parent {
 	private void updateVisuals(Path... paths) {
 		PathElement[] pathElements = getPathElements();
 		for (Path p : paths) {
+			// FIXME: JavaFX 8 sometimes throws an
+			// ArrayIndexOutOfBoundsException when updating the path elements.
+			// The exception occurs because JavaFX uses a dirty node counter
+			// that is not synchronized with the actual dirty nodes list. The
+			// list is empty, but the counter is positive, thus, an item is
+			// fetched that does not exist.
 			p.getElements().setAll(pathElements);
 		}
 	}
