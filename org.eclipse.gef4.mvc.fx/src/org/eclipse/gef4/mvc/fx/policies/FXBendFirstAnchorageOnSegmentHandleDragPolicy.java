@@ -21,6 +21,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
@@ -51,8 +52,15 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	private IVisualPart<Node, ? extends Connection> targetPart;
 
+	private Point initialMouseInScene;
+
 	private void adjustHandles(List<Point> points,
 			boolean skipMidPointsAroundCreated) {
+		if (12 != 1) {
+			targetPart.getAdapter(SelectionBehavior.class).updateHandles();
+			return;
+		}
+
 		// re-assign segment index and segment parameter
 		List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
 				PartUtils.getAnchoreds(
@@ -123,8 +131,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		Connection connection = targetPart.getVisual();
 		List<Point> before = connection.getPoints();
 
-		getBendPolicy(targetPart)
-				.moveSelectedPoints(new Point(e.getSceneX(), e.getSceneY()));
+		getBendPolicy(targetPart).move(initialMouseInScene,
+				new Point(e.getSceneX(), e.getSceneY()));
 
 		List<Point> after = connection.getPoints();
 		if (before.size() != after.size()) {
@@ -189,51 +197,57 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	@Override
 	public void press(MouseEvent e) {
+		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hostPart = getHost();
 		targetPart = getTargetPart();
 
 		storeAndDisableRefreshVisuals(targetPart);
-		init(getBendPolicy(targetPart));
+		FXBendConnectionPolicy bendPolicy = getBendPolicy(targetPart);
+		init(bendPolicy);
 
 		if (hostPart.getSegmentParameter() == 0.5) {
 			if (e.isShiftDown()) {
 				// determine connectedness for neighbor anchors
-				int firstAnchorIndex = hostPart.getSegmentIndex();
-				int secondAnchorIndex = hostPart.getSegmentIndex() + 1;
+				int firstSegmentIndex = hostPart.getSegmentIndex();
+				int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
 
 				Node firstAnchorage = targetPart.getVisual()
-						.getAnchor(firstAnchorIndex).getAnchorage();
+						.getAnchor(firstSegmentIndex).getAnchorage();
 				boolean isFirstConnected = firstAnchorage != null
 						&& firstAnchorage != targetPart.getVisual();
 
 				Node secondAnchorage = targetPart.getVisual()
-						.getAnchor(secondAnchorIndex).getAnchorage();
+						.getAnchor(secondSegmentIndex).getAnchorage();
 				boolean isSecondConnected = secondAnchorage != null
 						&& secondAnchorage != targetPart.getVisual();
 
-				// determine mouse position in scene
-				Point mouseInScene = new Point(e.getSceneX(), e.getSceneY());
-
 				// move segment => select the segment end points
-				int firstIndex = hostPart.getSegmentIndex();
-				int secondIndex = isFirstConnected ? firstIndex + 1
-						: firstIndex;
+
+				// XXX: Make second explicit first so that the first segment
+				// index is still valid.
+				AnchorHandle secondAnchorHandle = bendPolicy
+						.makeExplicitBefore(secondSegmentIndex);
+				AnchorHandle firstAnchorHandle = bendPolicy
+						.makeExplicitAfter(firstSegmentIndex);
 
 				if (isFirstConnected) {
-					getBendPolicy(targetPart).copyAndSelectPoint(firstIndex, 0,
-							mouseInScene);
-				} else {
-					getBendPolicy(targetPart).selectPoint(firstIndex, 0,
-							mouseInScene);
+					firstAnchorHandle = bendPolicy.createAfter(
+							firstAnchorHandle,
+							firstAnchorHandle.getInitialPosition());
 				}
+				System.out.println("select " + firstAnchorHandle.getAnchor()
+						+ ", " + firstAnchorHandle.getInitialPosition());
+				bendPolicy.select(firstAnchorHandle);
+
 				if (isSecondConnected) {
-					getBendPolicy(targetPart).copyAndSelectPoint(secondIndex, 1,
-							mouseInScene);
-				} else {
-					getBendPolicy(targetPart).selectPoint(secondIndex, 1,
-							mouseInScene);
+					secondAnchorHandle = bendPolicy.createBefore(
+							secondAnchorHandle,
+							secondAnchorHandle.getInitialPosition());
 				}
+				System.out.println("select " + secondAnchorHandle.getAnchor()
+						+ ", " + secondAnchorHandle.getInitialPosition());
+				bendPolicy.select(secondAnchorHandle);
 
 				// update handles
 				if (isFirstConnected || isSecondConnected) {
@@ -242,9 +256,17 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				}
 			} else {
 				// create new way point
-				getBendPolicy(targetPart).createAndSelectPoint(
-						hostPart.getSegmentIndex(),
-						new Point(e.getSceneX(), e.getSceneY()));
+				AnchorHandle previousAnchorHandle = bendPolicy
+						.findExplicitAnchorBackwards(
+								hostPart.getSegmentIndex());
+				AnchorHandle newAnchorHandle = bendPolicy
+						.createAfter(previousAnchorHandle, initialMouseInScene);
+
+				// select for manipulation
+				bendPolicy.select(newAnchorHandle);
+
+				// TODO: Check if SelectionBehavior#updateHandles() works here,
+				// too.
 
 				// find other segment handle parts
 				List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
@@ -270,21 +292,19 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				createdSegmentIndex = hostPart.getSegmentIndex();
 			}
 		} else {
-			// select existing way point
-			getBendPolicy(targetPart).selectPoint(hostPart.getSegmentIndex(),
-					hostPart.getSegmentParameter(),
-					new Point(e.getSceneX(), e.getSceneY()));
+			// compute connection index from handle part data
+			int connectionIndex = hostPart.getSegmentIndex()
+					+ (hostPart.getSegmentParameter() == 1 ? 1 : 0);
+
+			// make anchor explicit if it is implicit
+			bendPolicy.select(bendPolicy.makeExplicitAfter(connectionIndex));
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		restoreRefreshVisuals(targetPart);
-		// TODO: we need to ensure this can be done before
-		// enableRefreshVisuals(), because visuals should already be up to date
-		// (and we thus save a potential refresh)
 		commit(getBendPolicy(targetPart));
-
+		restoreRefreshVisuals(targetPart);
 		// it may be that the bend policy returns null (no-op) because a newly
 		// created segment point was direcly removed through overlay. In this
 		// case, we need to adjust the handles as well

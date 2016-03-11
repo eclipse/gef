@@ -13,9 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
@@ -38,7 +36,6 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
-import org.eclipse.gef4.mvc.operations.SetRefreshVisualOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
@@ -73,54 +70,197 @@ import javafx.scene.Node;
 public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
+	 *
+	 * @author mwienand
+	 *
+	 */
+	public class AnchorHandle {
+
+		private Point initialPosition = null;
+
+		/**
+		 * The explicit anchor index for this handle. This value is volatile, it
+		 * will be updated when anchors are manipulated.
+		 */
+		private int explicitAnchorIndex = 0;
+
+		/**
+		 * Flag that stores if the referenced anchor was made explicit as a side
+		 * effect of interaction.
+		 */
+		private boolean wasImplicit = false;
+
+		/**
+		 * Creates a new {@link AnchorHandle} for the explicit anchor at the
+		 * given index.
+		 *
+		 * @param explicitAnchorIndex
+		 *            The explicit anchor index for which to create a handle.
+		 */
+		public AnchorHandle(int explicitAnchorIndex) {
+			this(explicitAnchorIndex, false);
+		}
+
+		/**
+		 * Creates a new {@link AnchorHandle} for the explicit anchor at the
+		 * given index.
+		 *
+		 * @param explicitAnchorIndex
+		 *            The explicit anchor index for which to create a handle.
+		 * @param wasImplicit
+		 *            Flag to indicate that the referenced anchor was made
+		 *            explicit as a side effect of interaction.
+		 */
+		public AnchorHandle(int explicitAnchorIndex, boolean wasImplicit) {
+			this.explicitAnchorIndex = explicitAnchorIndex;
+			this.wasImplicit = wasImplicit;
+			initialPosition = getPosition();
+		}
+
+		/**
+		 * Returns the {@link IAnchor} that corresponds to this
+		 * {@link AnchorHandle}.
+		 *
+		 * @return The {@link IAnchor} that corresponds to this
+		 *         {@link AnchorHandle}.
+		 */
+		public IAnchor getAnchor() {
+			return getConnection().getAnchor(getConnectionIndex());
+		}
+
+		/**
+		 * Returns the index within the Connection's anchors for this
+		 * {@link AnchorHandle}.
+		 *
+		 * @return The connection's anchor index for this {@link AnchorHandle}.
+		 */
+		public int getConnectionIndex() {
+			int explicitCount = -1;
+
+			for (int i = 0; i < getConnection().getPoints().size(); i++) {
+				IAnchor a = getConnection().getAnchor(i);
+				if (!getConnection().getRouter().isImplicitAnchor(a)) {
+					explicitCount++;
+				}
+				if (explicitCount == explicitAnchorIndex) {
+					// found all operation indices
+					return i;
+				}
+			}
+
+			throw new IllegalArgumentException(
+					"Cannot determine connection index for operation index "
+							+ explicitAnchorIndex + ".");
+		}
+
+		/**
+		 * Returns the initial position of the referenced anchor. The initial
+		 * position is evaluated upon handle construction.
+		 *
+		 * @return The initial position of the referenced anchor.
+		 */
+		public Point getInitialPosition() {
+			return initialPosition;
+		}
+
+		/**
+		 * Returns the operation index for this {@link AnchorHandle}.
+		 *
+		 * @return The operation index for this {@link AnchorHandle}.
+		 */
+		public int getOperationIndex() {
+			return explicitAnchorIndex;
+		}
+
+		/**
+		 * Returns the current position of the referenced anchor.
+		 *
+		 * @return The current position of the referenced anchor.
+		 */
+		public Point getPosition() {
+			return getConnection().getPoint(getConnectionIndex());
+		}
+
+		/**
+		 * Returns <code>true</code> if this {@link AnchorHandle} was made
+		 * explicit as a side effect of interaction. Otherwise returns
+		 * <code>false</code>.
+		 *
+		 * @return <code>true</code> if this {@link AnchorHandle} was made
+		 *         explicit, otherwise <code>false</code>.
+		 */
+		public boolean wasImplicit() {
+			return wasImplicit;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public class RemovedHandle {
+		/**
+		 * The replacement {@link AnchorHandle}.
+		 */
+		AnchorHandle replacement;
+
+		/**
+		 * The removed {@link IAnchor}.
+		 */
+		IAnchor removed;
+
+		/**
+		 * Flag that indicates if the removed handle was before its replacement.
+		 */
+		boolean wasBefore;
+
+		/**
+		 * The selected {@link AnchorHandle} that was removed.
+		 */
+		AnchorHandle selected;
+
+		/**
+		 *
+		 * @param removed
+		 *            The removed {@link IAnchor}.
+		 * @param replacement
+		 *            The replacement {@link AnchorHandle}.
+		 * @param wasBefore
+		 *            Flag that indicates if the removed handle was before its
+		 *            replacement.
+		 * @param selectedHandle
+		 *            The selected {@link AnchorHandle} that was removed.
+		 */
+		public RemovedHandle(IAnchor removed, AnchorHandle replacement,
+				boolean wasBefore, AnchorHandle selectedHandle) {
+			this.removed = removed;
+			this.replacement = replacement;
+			this.wasBefore = wasBefore;
+			this.selected = selectedHandle;
+		}
+	}
+
+	/**
 	 * The overlay threshold, i.e. the distance between two points so that they
 	 * are regarded as overlying.
 	 */
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
 
-	// selection index => removed anchor
-	private Map<Integer, IAnchor> removedOverlainAnchors = new HashMap<>();
-	// selection index => overlain index
-	private Map<Integer, Integer> removedOverlainAnchorsIndices = new HashMap<>();
-	// selection index => segment index
-	private List<Integer> selectedPointsIndices = new ArrayList<>();
-	// selection index => initial position
-	private List<Point> selectedPointsInitialPositionsInLocal = new ArrayList<>();
-	// selection index => previous index
-	private Map<Integer, Integer> selectedPointsIndicesBeforeOverlaidRemoval = new HashMap<>();
+	private List<AnchorHandle> selectedAnchors = new ArrayList<>();
+	private List<AnchorHandle> explicitAnchors = new ArrayList<>();
+	private List<RemovedHandle> removedAnchors = new ArrayList<>();
 
-	private Point initialMousePositionInScene;
-
-	/**
-	 * Returns <code>true</code> if the currently modified start, end, or way
-	 * point can be connected, i.e. realized by an anchor that is not anchored
-	 * to the {@link Connection} itself (see {@link IAnchor#getAnchorage()} ),
-	 * but provided through a {@link IVisualPart}'s anchor provider (i.e. a
-	 * {@link Provider}&lt;{@link IAnchor}&gt; adapted to the
-	 * {@link IVisualPart}). Otherwise returns <code>false</code>. Per default,
-	 * only the start and the end point can be attached.
-	 *
-	 * @param pointIndex
-	 *            The index of the currently modified connection point.
-	 *
-	 * @return <code>true</code> if the currently modified point can be realized
-	 *         through an {@link IAnchor} not anchored on the {@link Connection}
-	 *         . Otherwise returns <code>false</code>.
-	 *
-	 * @see Connection#isStartConnected()
-	 * @see Connection#isControlConnected(int)
-	 * @see Connection#isEndConnected()
-	 *
-	 */
-	protected boolean canConnect(int pointIndex) {
-		// up to now, only allow attaching start and end point.
-		return pointIndex == 0
-				|| pointIndex == getBendOperation().getNewAnchors().size() - 1;
+	private boolean canConnect(int explicitAnchorIndex) {
+		return explicitAnchorIndex == 0
+				|| explicitAnchorIndex == explicitAnchors.size() - 1;
 	}
 
 	@Override
 	public ITransactionalOperation commit() {
-		normalizeControlPoints();
+		System.out.println(
+				"before normalization: " + getConnection().getPoints());
+		normalize();
+		System.out
+				.println("after normalization: " + getConnection().getPoints());
 		ITransactionalOperation bendOperation = super.commit();
 
 		if (bendOperation == null || bendOperation.isNoOp()) {
@@ -128,7 +268,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		}
 
 		// chain a reselect operation here, so handles are properly updated
-		// TODO: check if we cannot handle this otherwise
 		ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
 				bendOperation.getLabel());
 		updateOperation.add(bendOperation);
@@ -137,83 +276,53 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			updateOperation.add(reselectOperation);
 		}
 
-		// guard the update operation from refreshes
-		// TODO: check if this is needed (it should actually be performed by
-		// the interaction policy)
-		ReverseUndoCompositeOperation commit = new ReverseUndoCompositeOperation(
-				bendOperation.getLabel());
-		commit.add(new SetRefreshVisualOperation<>(getHost(),
-				getHost().isRefreshVisual(), false));
-		commit.add(updateOperation);
-		commit.add(new SetRefreshVisualOperation<>(getHost(), false,
-				getHost().isRefreshVisual()));
-
-		return commit;
+		return updateOperation;
 	}
 
 	/**
-	 * Copies the specified point and selects it for further manipulation.
+	 * Creates a new anchor after the anchor specified by the given explicit
+	 * anchor index. Returns the new anchor's explicit index.
 	 *
-	 * @param segmentIndex
-	 *            The index of the manipulated segment.
-	 * @param segmentParameter
-	 *            The parameter describing the point on the specified segment.
+	 * @param explicitAnchorHandle
+	 *            An {@link AnchorHandle} that references the explicit anchor
+	 *            after which the new anchor is inserted.
 	 * @param mouseInScene
-	 *            The current mouse pointer location.
+	 *            The position for the new anchor in scene coordinates.
+	 *
+	 * @return The {@link AnchorHandle} for the new anchor.
 	 */
-	public void copyAndSelectPoint(int segmentIndex, double segmentParameter,
+	public AnchorHandle createAfter(AnchorHandle explicitAnchorHandle,
 			Point mouseInScene) {
 		checkInitialized();
-
-		// determine anchor index
-		int toCopyAnchorIndex, insertionIndex;
-		if (segmentParameter == 1) {
-			toCopyAnchorIndex = segmentIndex + 1;
-			insertionIndex = toCopyAnchorIndex;
-		} else {
-			toCopyAnchorIndex = segmentIndex;
-			insertionIndex = toCopyAnchorIndex + 1;
-		}
-
-		// copy anchor at that index
-		List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-		IAnchor anchorToCopy = newAnchors.get(toCopyAnchorIndex);
-		Point position = getConnection().getPoints().get(toCopyAnchorIndex);
-		boolean canConnect = anchorToCopy.getAnchorage() != getConnection();
-		IAnchor copy = findOrCreateAnchor(position, canConnect);
-		newAnchors.add(insertionIndex, copy);
-
-		// execute locally to add the new anchor
-		locallyExecuteOperation();
-
-		// select the copied way point
-		// XXX: Segment parameter is always 0 because the copied anchor may
-		// never be the last point (except after overlay removal)
-		selectPoint(insertionIndex, 0, mouseInScene);
+		// determine insertion index
+		int insertionIndex = explicitAnchorHandle.explicitAnchorIndex + 1;
+		// insert new anchor
+		insertExplicitAnchor(insertionIndex, mouseInScene);
+		// return handle to newly created anchor
+		return explicitAnchors.get(insertionIndex);
 	}
 
 	/**
-	 * Creates a new point at the given segment. The new way point is then
-	 * selected for further manipulation.
+	 * Creates a new anchor before the anchor specified by the given explicit
+	 * anchor index. Returns the new anchor's explicit index.
 	 *
-	 * @param segmentIndex
-	 *            The index of the segment for which a new way point is created.
+	 * @param explicitAnchorHandle
+	 *            An {@link AnchorHandle} that references the explicit anchor
+	 *            after which the new anchor is inserted.
 	 * @param mouseInScene
-	 *            The mouse position in scene coordinates.
+	 *            The position for the new anchor in scene coordinates.
+	 *
+	 * @return The {@link AnchorHandle} for the new anchor.
 	 */
-	public void createAndSelectPoint(int segmentIndex, Point mouseInScene) {
+	public AnchorHandle createBefore(AnchorHandle explicitAnchorHandle,
+			Point mouseInScene) {
 		checkInitialized();
-
-		// create new way point
-		Point mouseInLocal = FX2Geometry.toPoint(getConnection()
-				.sceneToLocal(Geometry2FX.toFXPoint(mouseInScene)));
-		getBendOperation().getNewAnchors().add(segmentIndex + 1,
-				createUnconnectedAnchor(mouseInLocal));
-
-		locallyExecuteOperation();
-
-		// select newly created way point
-		selectPoint(segmentIndex + 1, 0, mouseInScene);
+		// determine insertion index
+		int insertionIndex = explicitAnchorHandle.explicitAnchorIndex;
+		// insert new anchor
+		insertExplicitAnchor(insertionIndex, mouseInScene);
+		// return index of newly created anchor
+		return explicitAnchors.get(insertionIndex);
 	}
 
 	@Override
@@ -269,6 +378,79 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			Point selectedPointCurrentPositionInLocal) {
 		return new StaticAnchor(getConnection(),
 				selectedPointCurrentPositionInLocal);
+	}
+
+	/**
+	 * Returns an {@link AnchorHandle} for the first explicit anchor that can be
+	 * found when iterating the connection anchors backwards, starting at the
+	 * given connection index. If the anchor at the given index is an explicit
+	 * anchor, an {@link AnchorHandle} for that anchor will be returned. If no
+	 * explicit anchor is found, an exception is thrown, because the start and
+	 * end anchor of a connection need to be explicit.
+	 *
+	 * @param connectionIndex
+	 *            The index that specifies the anchor of the connection at which
+	 *            the search starts.
+	 * @return An {@link AnchorHandle} for the previous explicit anchor.
+	 */
+	public AnchorHandle findExplicitAnchorBackwards(int connectionIndex) {
+		for (int i = connectionIndex; i >= 0; i--) {
+			IAnchor anchor = getConnection().getAnchor(i);
+			if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+				// found an explicit anchor
+				// iterate explicit anchors to find the one with matching
+				// connection index
+				for (int j = 0; j < explicitAnchors.size(); j++) {
+					if (explicitAnchors.get(j).getConnectionIndex() == i) {
+						return explicitAnchors.get(j);
+					}
+				}
+			}
+		}
+
+		// start and end need to be explicit, therefore, we should always be
+		// able to find an explicit anchor, regardless of the passed-in
+		// connection index
+		throw new IllegalStateException(
+				"The start and end anchor of a Connection need to be explicit.");
+	}
+
+	/**
+	 * Returns an {@link AnchorHandle} for the first explicit anchor that can be
+	 * found when iterating the connection anchors forwards, starting at the
+	 * given connection index. If the anchor at the given index is an explicit
+	 * anchor, an {@link AnchorHandle} for that anchor will be returned. If no
+	 * explicit anchor is found, an exception is thrown, because the start and
+	 * end anchor of a connection need to be explicit.
+	 *
+	 * @param connectionIndex
+	 *            The index that specifies the anchor of the connection at which
+	 *            the search starts.
+	 * @return An {@link AnchorHandle} for the next explicit anchor.
+	 */
+	public AnchorHandle findExplicitAnchorForwards(int connectionIndex) {
+		for (int i = connectionIndex; i < getConnection().getAnchors()
+				.size(); i++) {
+			IAnchor anchor = getConnection().getAnchor(i);
+			if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+				// found an explicit anchor
+				// iterate explicit anchors to find the one with matching
+				// connection index
+				for (int j = 0; j < explicitAnchors.size(); j++) {
+					if (explicitAnchors.get(j).getConnectionIndex() == i) {
+						return explicitAnchors.get(j);
+					}
+				}
+				throw new IllegalStateException(
+						"The explicit anchors of the connection are out of sync with the explicit anchors of the policy.");
+			}
+		}
+
+		// start and end need to be explicit, therefore, we should always be
+		// able to find an explicit anchor, regardless of the passed-in
+		// connection index
+		throw new IllegalStateException(
+				"The start and end anchor of a Connection need to be explicit.");
 	}
 
 	/**
@@ -360,6 +542,9 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * Computes the mouse movement delta (w.r.t. to the initial mouse position)
 	 * in local coordinates .
 	 *
+	 * @param initialMousePositionInScene
+	 *            The initial mouse position in scene coordinates.
+	 *
 	 * @param currentMousePositionInScene
 	 *            The current mouse position in scene coordinates.
 	 * @return The movement delta, translated into local coordinates of the
@@ -367,7 +552,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 *
 	 */
 	// TODO: extract to somewhere else (this is used in several places)
-	protected Point getMouseDeltaInLocal(Point currentMousePositionInScene) {
+	protected Point getMouseDeltaInLocal(Point initialMousePositionInScene,
+			Point currentMousePositionInScene) {
 		Point mouseInLocal = FX2Geometry.toPoint(getConnection().sceneToLocal(
 				Geometry2FX.toFXPoint(currentMousePositionInScene)));
 		// compensate the movement of the local coordinate system w.r.t. the
@@ -379,48 +565,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 								.toFXPoint(initialMousePositionInScene)))
 				.getNegated());
 		return deltaInLocal;
-	}
-
-	/**
-	 * If the point at the given index is overlain by the currently selected
-	 * point, i.e. their distance is smaller than the
-	 * {@link #getOverlayThreshold() overlay threshold} and they are above the
-	 * same anchorage, returns the anchor that can be found at the candidate
-	 * location.
-	 *
-	 * @param selectionIndex
-	 *            The index of the selected point.
-	 *
-	 * @param candidateIndex
-	 *            The candidate index.
-	 * @param mouseInScene
-	 *            The current mouse position in scene coordinates.
-	 *
-	 * @return The overlaid {@link IAnchor} to be used for the currently
-	 *         selected point
-	 */
-	protected IAnchor getOverlayAnchor(int selectionIndex, int candidateIndex,
-			Point mouseInScene) {
-		Connection connection = getConnection();
-		Point candidateLocation = connection.getPoint(candidateIndex);
-
-		// overlay if distance is small enough and we do not change the
-		// anchorage
-		Point selectedPointCurrentPositionInLocal = selectedPointsInitialPositionsInLocal
-				.get(selectionIndex)
-				.getTranslated(getMouseDeltaInLocal(mouseInScene));
-		if (candidateLocation.getDistance(
-				selectedPointCurrentPositionInLocal) >= getOverlayThreshold()) {
-			return null;
-		}
-
-		IAnchor candidateAnchor = findOrCreateAnchor(
-				selectedPointCurrentPositionInLocal, true);
-		if (connection.getAnchors().get(candidateIndex)
-				.getAnchorage() == candidateAnchor.getAnchorage()) {
-			return connection.getAnchors().get(candidateIndex);
-		}
-		return null;
 	}
 
 	/**
@@ -457,182 +601,156 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		return parts;
 	}
 
-	/**
-	 * Returns the initial position of the currently selected point in the local
-	 * coordinate system of the {@link Connection}.
-	 *
-	 * @param selectionIndex
-	 *            The index of the selected point.
-	 *
-	 * @return The initial position in the local coordinate system of the
-	 *         {@link Connection}.
-	 *
-	 * @see #selectPoint(int, double, Point)
-	 */
-	protected Point getSelectedPointInitialPositionInLocal(int selectionIndex) {
-		return selectedPointsInitialPositionsInLocal.get(selectionIndex);
-	}
-
-	/**
-	 * Handles the hiding of an overlain point as well as the expose of a
-	 * previously overlain point.
-	 * <ol>
-	 * <li>Restores a point that was previously removed because it was overlaid.
-	 * </li>
-	 * <li>Checks if the currently modified point overlays another point of the
-	 * {@link Connection}. The overlaid point is removed and saved so that it
-	 * can be restored later.</li>
-	 * </ol>
-	 *
-	 * @param mouseInScene
-	 *            The current mouse position in scene coordinates.
-	 */
-	protected void handleOverlay(Point mouseInScene) {
-		// put removed back in (may be removed againg before returning)
-		for (int index = 0; index < selectedPointsIndices.size(); index++) {
-			IAnchor removedOverlainAnchor = removedOverlainAnchors.get(index);
-			if (removedOverlainAnchor != null) {
-				// add anchor
-				getBendOperation().getNewAnchors().add(
-						removedOverlainAnchorsIndices.get(index),
-						removedOverlainAnchor);
-				// reset point index
-				selectedPointsIndices.set(index,
-						selectedPointsIndicesBeforeOverlaidRemoval.get(index));
-				// increment subsequent indices
-				for (int i = index + 1; i < selectedPointsIndices.size(); i++) {
-					selectedPointsIndices.set(i,
-							selectedPointsIndices.get(i) + 1);
-					if (selectedPointsIndicesBeforeOverlaidRemoval
-							.containsKey(i)) {
-						selectedPointsIndicesBeforeOverlaidRemoval.put(i,
-								selectedPointsIndicesBeforeOverlaidRemoval
-										.get(i) + 1);
-					}
-					if (removedOverlainAnchorsIndices.containsKey(i)) {
-						removedOverlainAnchorsIndices.put(i,
-								removedOverlainAnchorsIndices.get(i) + 1);
-					}
-				}
-				// execute
-				locallyExecuteOperation();
-				removedOverlainAnchors.remove(index);
-			}
-		}
-
-		// do not remove overlaid if there are no way points
-		if (getBendOperation().getNewAnchors().size() <= 2) {
-			return;
-		}
-
-		// remove overlain anchors
-		for (int index = 0; index < selectedPointsIndices.size(); index++) {
-			removedOverlainAnchorsIndices.put(index, -1);
-			Integer selectedPointIndex = selectedPointsIndices.get(index);
-			selectedPointsIndicesBeforeOverlaidRemoval.put(index,
-					selectedPointIndex);
-			IAnchor overlayAnchor = null;
-
-			// determine if left neighbor is overlain (and can be removed)
-			if (selectedPointIndex > 0) {
-				int candidateIndex = selectedPointIndex - 1;
-				overlayAnchor = getOverlayAnchor(index, candidateIndex,
-						mouseInScene);
-				if (overlayAnchor != null) {
-					// remove previous (in case of start point, ensure we stay
-					// anchored to the same anchorage)
-					removedOverlainAnchorsIndices.put(index, candidateIndex);
-					selectedPointIndex--;
-					selectedPointsIndices.set(index, selectedPointIndex);
-				}
-			}
-
-			// if left neighbor is not overlain (and not removed), determine if
-			// right neighbor is overlain (and can be removed)
-			if (removedOverlainAnchorsIndices.get(index) == -1
-					&& selectedPointIndex < getBendOperation().getNewAnchors()
-							.size() - 1) {
-				int candidateIndex = selectedPointIndex + 1;
-				overlayAnchor = getOverlayAnchor(index, candidateIndex,
-						mouseInScene);
-				if (overlayAnchor != null) {
-					// remove next (in case of end point, ensure we stay
-					// anchored to the same anchorage)
-					removedOverlainAnchorsIndices.put(index, candidateIndex);
-				}
-			}
-
-			// remove neighbor if overlaid
-			if (removedOverlainAnchorsIndices.get(index) != -1) {
-				// decrement subsequent indices
-				for (int i = index + 1; i < selectedPointsIndices.size(); i++) {
-					selectedPointsIndices.set(i,
-							selectedPointsIndices.get(i) - 1);
-					if (selectedPointsIndicesBeforeOverlaidRemoval
-							.containsKey(i)) {
-						selectedPointsIndicesBeforeOverlaidRemoval.put(i,
-								selectedPointsIndicesBeforeOverlaidRemoval
-										.get(i) - 1);
-					}
-					if (removedOverlainAnchorsIndices.containsKey(i)) {
-						removedOverlainAnchorsIndices.put(i,
-								removedOverlainAnchorsIndices.get(i) - 1);
-					}
-				}
-				// replace anchor
-				getBendOperation().getNewAnchors().set(
-						selectedPointsIndicesBeforeOverlaidRemoval.get(index),
-						overlayAnchor);
-				// save overlain anchor
-				removedOverlainAnchors.put(index,
-						getBendOperation().getNewAnchors()
-								.remove((int) removedOverlainAnchorsIndices
-										.get(index)));
-				// execute
-				locallyExecuteOperation();
-			}
-		}
-	}
-
 	@Override
 	public void init() {
-		removedOverlainAnchors.clear();
-		removedOverlainAnchorsIndices.clear();
-		selectedPointsIndices.clear();
-		selectedPointsIndicesBeforeOverlaidRemoval.clear();
-		selectedPointsInitialPositionsInLocal.clear();
+		selectedAnchors.clear();
+		explicitAnchors.clear();
+		removedAnchors.clear();
 		super.init();
+		// create handles for all explicit anchors
+		int explicitAnchorIndex = 0;
+		for (int i = 0; i < getConnection().getAnchors().size(); i++) {
+			IAnchor anchor = getConnection().getAnchor(i);
+			if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+				explicitAnchors.add(new AnchorHandle(explicitAnchorIndex++));
+			}
+		}
 	}
 
-	@Override
-	protected void locallyExecuteOperation() {
-		super.locallyExecuteOperation();
-		getBendOperation().setNewAnchors(getConnection().getAnchors());
+	/**
+	 * Creates a new static anchor for the given position and inserts it at the
+	 * given index.
+	 *
+	 * @param insertionIndex
+	 *            The explicit anchor index at which the new anchor is inserted.
+	 * @param mouseInScene
+	 *            The position for the new anchor in scene coordinates.
+	 */
+	protected void insertExplicitAnchor(int insertionIndex,
+			Point mouseInScene) {
+		// convert position to local coordinates
+		Point mouseInLocal = FX2Geometry.toPoint(getConnection()
+				.sceneToLocal(Geometry2FX.toFXPoint(mouseInScene)));
+		getBendOperation().getNewAnchors().add(insertionIndex,
+				createUnconnectedAnchor(mouseInLocal));
+		System.out.println("local position = " + mouseInLocal);
+		locallyExecuteOperation();
+		AnchorHandle newAnchorHandle = new AnchorHandle(insertionIndex);
+		explicitAnchors.add(insertionIndex, newAnchorHandle);
+		// update explicit anchor indices
+		// => increment successing anchors' indices
+		for (int i = insertionIndex + 1; i < explicitAnchors.size(); i++) {
+			explicitAnchors.get(i).explicitAnchorIndex++;
+		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the anchor at the given connection index is
+	 * explicit. Otherwise returns <code>false</code>.
+	 *
+	 * @param connectionIndex
+	 *            The connection index that specifies the anchor to test.
+	 * @return <code>true</code> if the specified anchor is explicit, otherwise
+	 *         <code>false</code>.
+	 */
+	public boolean isExplicit(int connectionIndex) {
+		IAnchor anchor = getConnection().getAnchor(connectionIndex);
+		return !getConnection().getRouter().isImplicitAnchor(anchor);
+	}
+
+	/**
+	 * Returns true if the first specified anchor overlays the second specified
+	 * anchor.
+	 *
+	 * @param overlayingExplicitAnchorIndex
+	 * @param overlainExplicitAnchorIndex
+	 * @return
+	 */
+	private boolean isExplicitOverlay(int overlayingExplicitAnchorIndex,
+			int overlainExplicitAnchorIndex) {
+		AnchorHandle overlaying = explicitAnchors
+				.get(overlayingExplicitAnchorIndex);
+		AnchorHandle overlain = explicitAnchors
+				.get(overlainExplicitAnchorIndex);
+		return overlaying.getPosition().getDistance(
+				overlain.getPosition()) <= DEFAULT_OVERLAY_THRESHOLD;
+	}
+
+	/**
+	 * Returns an {@link AnchorHandle} for the explicit anchor at the given
+	 * connection index. If the anchor at the given connection index is
+	 * implicit, it will be made explicit first.
+	 *
+	 * @param connectionIndex
+	 *            The connection index of the anchor to make explicit.
+	 * @return The {@link AnchorHandle} for the explicit anchor that references
+	 *         the specified connection anchor.
+	 */
+	public AnchorHandle makeExplicitAfter(int connectionIndex) {
+		AnchorHandle precedingAnchorHandle = findExplicitAnchorBackwards(
+				connectionIndex);
+		if (isExplicit(connectionIndex)) {
+			// the "preceding" anchor handle is actually the anchor handle for
+			// the passed-in connection index
+			return precedingAnchorHandle;
+		}
+		// create a new anchor handle after the preceding anchor handle. use the
+		// connection to determine the position for the new anchor.
+		Point position = getConnection().getPoint(connectionIndex);
+		return createAfter(precedingAnchorHandle, FX2Geometry
+				.toPoint(getConnection().localToScene(position.x, position.y)));
+	}
+
+	/**
+	 * Returns an {@link AnchorHandle} for the explicit anchor at the given
+	 * connection index. If the anchor at the given connection index is
+	 * implicit, it will be made explicit first.
+	 *
+	 * @param connectionIndex
+	 *            The connection index of the anchor to make explicit.
+	 * @return The {@link AnchorHandle} for the explicit anchor that references
+	 *         the specified connection anchor.
+	 */
+	public AnchorHandle makeExplicitBefore(int connectionIndex) {
+		AnchorHandle nextAnchorHandle = findExplicitAnchorForwards(
+				connectionIndex);
+		if (isExplicit(connectionIndex)) {
+			// the "next" anchor handle is actually the anchor handle for
+			// the passed-in connection index
+			return nextAnchorHandle;
+		}
+		// create a new anchor handle before the next anchor handle. use the
+		// connection to determine the position for the new anchor.
+		Point position = getConnection().getPoint(connectionIndex);
+		return createBefore(nextAnchorHandle, FX2Geometry
+				.toPoint(getConnection().localToScene(position.x, position.y)));
 	}
 
 	/**
 	 * Moves the currently selected point to the given mouse position in scene
-	 * coordinates. Checks if the selected point overlays another point using
-	 * {@link #handleOverlay(Point)}.
+	 * coordinates.
 	 *
-	 * @param mouseInScene
+	 * @param initialMouseInScene
+	 *            The initial mouse position in scene coordinates.
+	 * @param currentMouseInScene
 	 *            The current mouse position in scene coordinates.
 	 */
-	public void moveSelectedPoints(Point mouseInScene) {
+	public void move(Point initialMouseInScene, Point currentMouseInScene) {
 		checkInitialized();
-		if (selectedPointsIndices.isEmpty()) {
-			throw new IllegalStateException("No point was selected.");
-		}
+
+		// restore removed so that selection is present
+		restoreRemoved();
 
 		// constrain movement in one direction for segment based connections
-		int numPoints = selectedPointsInitialPositionsInLocal.size();
+		int numPoints = selectedAnchors.size();
 		boolean isSegmentBased = numPoints > 1
 				&& getConnection().getRouter() instanceof OrthogonalRouter;
-		Point mouseDeltaInLocal = getMouseDeltaInLocal(mouseInScene);
+		Point mouseDeltaInLocal = getMouseDeltaInLocal(initialMouseInScene,
+				currentMouseInScene);
 		if (isSegmentBased) {
 			boolean isHorizontallyConstrained = PrecisionUtils.equal(
-					selectedPointsInitialPositionsInLocal.get(0).y,
-					selectedPointsInitialPositionsInLocal.get(1).y);
+					selectedAnchors.get(0).getInitialPosition().y,
+					selectedAnchors.get(1).getInitialPosition().y);
 			if (isHorizontallyConstrained) {
 				mouseDeltaInLocal.x = 0;
 			} else {
@@ -641,9 +759,9 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		}
 
 		// update positions
-		for (int i = 0; i < selectedPointsIndices.size(); i++) {
-			Point selectedPointCurrentPositionInLocal = this.selectedPointsInitialPositionsInLocal
-					.get(i).getTranslated(mouseDeltaInLocal);
+		for (int i = 0; i < selectedAnchors.size(); i++) {
+			Point selectedPointCurrentPositionInLocal = selectedAnchors.get(i)
+					.getInitialPosition().getTranslated(mouseDeltaInLocal);
 
 			// snap-to-grid
 			// TODO: make snapping (0.5) configurable
@@ -656,21 +774,19 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			selectedPointCurrentPositionInLocal
 					.translate(snapToGridOffset.getNegated());
 
-			getBendOperation().getNewAnchors().set(selectedPointsIndices.get(i),
-					findOrCreateAnchor(selectedPointCurrentPositionInLocal,
-							canConnect(selectedPointsIndices.get(i))));
-		}
+			int explicitAnchorIndex = selectedAnchors
+					.get(i).explicitAnchorIndex;
+			boolean canConnect = canConnect(explicitAnchorIndex);
 
+			// update anchor
+			getBendOperation().getNewAnchors().set(explicitAnchorIndex,
+					findOrCreateAnchor(selectedPointCurrentPositionInLocal,
+							canConnect));
+		}
 		locallyExecuteOperation();
 
-		handleOverlay(mouseInScene);
-		// System.out.println("selected points indices: " +
-		// selectedPointsIndices);
-		// System.out.println("selected points indices before overlay removal: "
-		// + selectedPointsIndicesBeforeOverlaidRemoval);
-		// System.out.println("removed overlain anchors indices: "
-		// + removedOverlainAnchorsIndices);
-		// System.out.println();
+		// remove overlain
+		removeOverlain(initialMouseInScene, currentMouseInScene);
 	}
 
 	/**
@@ -678,41 +794,38 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * i.e. all control points that lie on the orthogonal connection between two
 	 * other control points have to be removed.
 	 */
-	public void normalizeControlPoints() {
+	public void normalize() {
 		if (!(getConnection().getRouter() instanceof OrthogonalRouter)) {
 			return;
 		}
 
-		// determine new anchors
-		FXBendOperation bendOperation = getBendOperation();
-		List<IAnchor> newAnchors = bendOperation.getNewAnchors();
+		// execute operation so that changes are applied
+		System.out.println("[normalize]");
+		System.out
+				.println("operation  = " + getBendOperation().getNewAnchors());
+		locallyExecuteOperation();
+
+		// determine all connection anchors
+		List<IAnchor> anchors = getConnection().getAnchors();
+		System.out.println("connection = " + anchors);
 
 		// determine corresponding positions
-		List<Point> newPositions = getConnection().getPoints();
+		List<Point> positions = getConnection().getPoints();
+		System.out.println(" -> points = " + positions);
 
-		if (newAnchors.size() != newPositions.size()) {
-			System.out.println("ERROR ### " + newAnchors.size() + " :: "
-					+ newPositions.size());
-		}
-		System.out.println("[normalization original points]");
-		for (int i = 1; i < newPositions.size() - 1; i++) {
-			System.out.println(newPositions.get(i - 1) + " -> "
-					+ newPositions.get(i) + " -> " + newPositions.get(i + 1));
-		}
-		System.out.println("[normalization point removal]");
+		// test each explicit static anchor for removal potential
+		int explicitIndex = 0; // start is explicit
+		boolean removed = false;
+		for (int i = 1; i < anchors.size() - 1; i++) {
+			IAnchor anchor = anchors.get(i);
+			if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+				// found an explicit anchor
+				explicitIndex++;
 
-		// test each static anchor for removal potential
-		int numRemoved = 0;
-		for (int i = 1; i < newAnchors.size() - 1; i++) {
-			IAnchor anchor = newAnchors.get(i);
-			if (anchor instanceof StaticAnchor
-					&& !getConnection().getRouter().isImplicitAnchor(anchor)) {
 				// determine surrounding positions
-				Point prev = newPositions.get(i - 1 + numRemoved);
-				Point next = newPositions.get(i + 1 + numRemoved);
-				Point current = newPositions.get(i + numRemoved);
-
-				System.out.println(prev + " -> " + current + " -> " + next);
+				Point prev = positions.get(i - 1);
+				Point next = positions.get(i + 1);
+				Point current = positions.get(i);
 
 				// determine in-direction and out-direction for current point
 				Vector inDirection = new Vector(prev, current);
@@ -720,78 +833,118 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 				if (inDirection.isNull() || outDirection.isNull()
 						|| inDirection.isParallelTo(outDirection)) {
+					System.out.println("::straight line from " + prev + " over "
+							+ current + " to " + next);
+					System.out.println("middle anchor = " + getBendOperation()
+							.getNewAnchors().get(explicitIndex));
 					// make previous and next explicit
-					// TODO: instanceof check instead of obj->class->str->cmp
-					if (getConnection().getRouter().isImplicitAnchor(
-							newAnchors.get(i - 1 + numRemoved))) {
-						// System.out.println(" => explicitize prev");
-						newAnchors.set(i - 1 + numRemoved,
-								createUnconnectedAnchor(
-										newPositions.get(i - 1 + numRemoved)));
+					if (getConnection().getRouter()
+							.isImplicitAnchor(anchors.get(i + 1))) {
+						// make next explicit
+						System.out.println(":: -> make end explicit");
+						makeExplicitBefore(i + 1);
 					}
-					if (getConnection().getRouter().isImplicitAnchor(
-							newAnchors.get(i + 1 + numRemoved))) {
-						// System.out.println(" => explicitize next");
-						newAnchors.set(i + 1 + numRemoved,
-								createUnconnectedAnchor(
-										newPositions.get(i + 1 + numRemoved)));
+					if (getConnection().getRouter()
+							.isImplicitAnchor(anchors.get(i - 1))) {
+						// make previous explicit
+						System.out.println(":: -> make start explicit");
+						makeExplicitAfter(i - 1);
+						explicitIndex++;
 					}
-					// System.out.println(" => remove current");
 					// remove current point as it is unnecessary
-					newAnchors.remove(i + numRemoved);
-					// decrement index
-					i--;
-					numRemoved++;
+					System.out.println(":: -> remove middle");
+					System.out.println("middle anchor = " + getBendOperation()
+							.getNewAnchors().get(explicitIndex));
+					explicitAnchors.remove(explicitIndex);
+					getBendOperation().getNewAnchors().remove(explicitIndex);
+					// start a new normalization
+					removed = true;
 					break;
 				}
 			}
 		}
 
-		if (numRemoved != 0) {
+		if (removed) {
+			normalize();
+		}
+
+		System.out.println("[/normalize]");
+	}
+
+	private void removeOverlain(Point initialMouse, Point currentMouse) {
+		for (int i = 0; i < selectedAnchors.size(); i++) {
+			AnchorHandle handle = selectedAnchors.get(i);
+			int index = handle.explicitAnchorIndex;
+			// XXX: If an overlay is recognized, the overlaying anchor is
+			// removed and practically replaced by the overlain anchor. This
+			// might seem unintuitive, however, it enables the user to cleanly
+			// remove control points by dragging them onto a neighboring point,
+			// without augmenting any other control points.
+			boolean isLeftOverlain = index > 0
+					&& isExplicitOverlay(index, index - 1);
+			boolean isRightOverlain = index < explicitAnchors.size() - 1
+					&& isExplicitOverlay(index, index + 1);
+
+			if (isLeftOverlain || isRightOverlain) {
+				int overlainIndex = isLeftOverlain ? index - 1 : index + 1;
+				AnchorHandle explicitNeighborHandle = explicitAnchors
+						.get(overlainIndex);
+				if (selectedAnchors.contains(explicitNeighborHandle)) {
+					throw new IllegalStateException(
+							"Selected overlays other selected.");
+				}
+				// remove overlaying anchor handle (the selected handle)
+				explicitAnchors.remove(index);
+				int connectionIndex = handle.getConnectionIndex();
+				IAnchor toBeRemovedAnchor = getConnection()
+						.getAnchor(connectionIndex);
+				// remove from connection
+				getBendOperation().getNewAnchors().remove(index);
+				// decrement indices of successing anchor handles
+				for (int j = index; j < explicitAnchors.size(); j++) {
+					explicitAnchors.get(j).explicitAnchorIndex--;
+				}
+				// store removed
+				RemovedHandle removedHandle = new RemovedHandle(
+						toBeRemovedAnchor, explicitNeighborHandle,
+						!isLeftOverlain, handle);
+				removedAnchors.add(removedHandle);
+				locallyExecuteOperation();
+			}
+		}
+	}
+
+	private void restoreRemoved() {
+		while (!removedAnchors.isEmpty()) {
+			RemovedHandle removedHandle = removedAnchors.remove(0);
+			AnchorHandle replacementHandle = removedHandle.replacement;
+			// add the removed anchor
+			int insertionIndex = removedHandle.wasBefore
+					? replacementHandle.explicitAnchorIndex
+					: replacementHandle.explicitAnchorIndex + 1;
+			getBendOperation().getNewAnchors().add(insertionIndex,
+					removedHandle.removed);
 			locallyExecuteOperation();
-			normalizeControlPoints();
+			explicitAnchors.add(insertionIndex, removedHandle.selected);
+			// update anchor indices
+			for (int i = insertionIndex; i < explicitAnchors.size(); i++) {
+				explicitAnchors.get(i).explicitAnchorIndex = i;
+			}
 		}
 	}
 
 	/**
 	 * Selects the point specified by the given segment index and parameter for
-	 * manipulation. Captures the initial position of the selected point (see
-	 * {@link #getSelectedPointInitialPositionInLocal(int)}) and the related
-	 * initial mouse location.
+	 * manipulation. Captures the initial position of the selected point and the
+	 * related initial mouse location.
 	 *
-	 * @param segmentIndex
-	 *            The index of the segment of which a point is to be
-	 *            manipulated.
-	 * @param segmentParameter
-	 *            The parameter on the segment to identify if its the end point.
-	 * @param mouseInScene
-	 *            The current mouse position in scene coordinates.
+	 * @param explicitAnchorHandle
+	 *            Index of the explicit anchor to select for manipulation.
 	 */
-	public void selectPoint(int segmentIndex, double segmentParameter,
-			Point mouseInScene) {
+	public void select(AnchorHandle explicitAnchorHandle) {
 		checkInitialized();
-
-		// store handle part information
-		if (segmentParameter == 1) {
-			selectedPointsIndices.add(segmentIndex + 1);
-		} else {
-			selectedPointsIndices.add(segmentIndex);
-		}
-
-		initialMousePositionInScene = mouseInScene.getCopy();
-		Integer index = selectedPointsIndices
-				.get(selectedPointsIndices.size() - 1);
-		Point position = getConnection().getPoints().get(index);
-		selectedPointsInitialPositionsInLocal.add(position);
-
-		// XXX: In case a router inserted control points, those have to be
-		// converted to real static anchors when interacted with so that the
-		// router is not allowed to remove them later.
-		IAnchor anchor = getConnection().getAnchor(index);
-		if (anchor instanceof StaticAnchor) {
-			getBendOperation().getNewAnchors().set(index,
-					createUnconnectedAnchor(position));
-		}
+		// save selected anchor handles
+		selectedAnchors.add(explicitAnchorHandle);
 	}
 
 	@Override
