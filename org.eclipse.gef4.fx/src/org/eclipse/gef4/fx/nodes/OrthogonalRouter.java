@@ -17,8 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AbstractComputationStrategy;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -155,6 +157,12 @@ public class OrthogonalRouter implements IConnectionRouter {
 				Point referencePositionInAnchorageLocal) {
 			super(anchorage, referencePositionInAnchorageLocal);
 		}
+
+		@Override
+		public String toString() {
+			return "OrthogonalRouterAnchor[referencePosition="
+					+ getReferencePosition() + "]";
+		}
 	}
 
 	private static final double OFFSET = 15;
@@ -266,10 +274,12 @@ public class OrthogonalRouter implements IConnectionRouter {
 				// update reference point for the anchor key at the given index
 				((DynamicAnchor) anchor).referencePointProperty()
 						.put(connection.getAnchorKey(index), referencePoint);
+				AnchorKey anchorKey = connection.getAnchorKey(index);
+				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)
+						.getComputationStrategy(anchorKey);
 				Point computePosition = ((DynamicAnchor) anchor)
 						.computePosition(connection, referencePoint,
-								((DynamicAnchor) anchor).getComputationStrategy(
-										connection.getAnchorKey(index)));
+								computationStrategy);
 				return computePosition;
 			}
 		}
@@ -319,6 +329,16 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Point point = FX2Geometry.toPoint(pointInScene);
 		Polygon[] triangles = getTriangles(connection, i);
 		return triangles[1].contains(point);
+	}
+
+	private boolean isSufficientlyHorizontal(Vector currentDirection) {
+		return Math.abs(currentDirection.y) < 0.5
+				&& Math.abs(currentDirection.x) > Math.abs(currentDirection.y);
+	}
+
+	private boolean isSufficientlyVertical(Vector currentDirection) {
+		return Math.abs(currentDirection.y) > Math.abs(currentDirection.x)
+				&& Math.abs(currentDirection.x) < 0.5;
 	}
 
 	private boolean isTop(Connection connection, int i, Point currentPoint) {
@@ -373,14 +393,22 @@ public class OrthogonalRouter implements IConnectionRouter {
 			// the succeeding one
 			currentDirection = getDirection(connection, i);
 
+			if (Math.abs(currentDirection.x) <= 0.05
+					&& Math.abs(currentDirection.y) <= 0.05) {
+				// effectively 0 => do not insert point
+				// => use previous direction as current direction
+				currentDirection = previousDirection;
+				continue;
+			}
+
 			// given the direction, determine if points have to be added
-			if (currentDirection.isHorizontal()
-					|| currentDirection.isVertical()) {
+			if (isSufficientlyHorizontal(currentDirection)
+					|| isSufficientlyVertical(currentDirection)) {
 				// XXX: We may have to adjust an already orthogonal segment in
 				// case it overlaps with an anchorage outline.
-				currentDirection = routeOrthogonalSegment(connection,
-						controlPointManipulator, currentDirection, i,
-						currentPoint);
+				// currentDirection = routeOrthogonalSegment(connection,
+				// controlPointManipulator, currentDirection, i,
+				// currentPoint);
 			} else {
 				currentDirection = routeNonOrthogonalSegment(connection,
 						controlPointManipulator, previousDirection,
@@ -543,7 +571,9 @@ public class OrthogonalRouter implements IConnectionRouter {
 			if (currentDirection.isVertical()) {
 				boolean isLeft = isLeft(connection, i, currentPoint);
 				boolean isRight = isRight(connection, i, currentPoint);
-				if (isLeft || isRight) {
+				boolean isBottom = isBottom(connection, i, currentPoint);
+				boolean isTop = isTop(connection, i, currentPoint);
+				if ((isLeft || isRight) && !(isBottom || isTop)) {
 					// insert two control points
 					double offset = isLeft ? -OFFSET : OFFSET;
 					controlPointManipulator.addRoutingPoints(i + 1,
@@ -552,11 +582,13 @@ public class OrthogonalRouter implements IConnectionRouter {
 					currentDirection = new Vector(-offset, 0);
 				}
 			} else if (currentDirection.isHorizontal()) {
-				boolean isTop = isTop(connection, i, currentPoint);
+				boolean isLeft = isLeft(connection, i, currentPoint);
+				boolean isRight = isRight(connection, i, currentPoint);
 				boolean isBottom = isBottom(connection, i, currentPoint);
-				if (isTop || isBottom) {
-					double offset = isTop ? -OFFSET : OFFSET;
+				boolean isTop = isTop(connection, i, currentPoint);
+				if ((isTop || isBottom) && !(isLeft || isRight)) {
 					// insert two control points above
+					double offset = isTop ? -OFFSET : OFFSET;
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, 0, offset, currentDirection.x,
 							offset);
@@ -567,13 +599,17 @@ public class OrthogonalRouter implements IConnectionRouter {
 				&& connection.isEndConnected()) {
 			// end point, connected
 			if (currentDirection.isHorizontal()) {
+				boolean isLeft = isLeft(connection, i + 1, currentPoint
+						.getTranslated(currentDirection.x, currentDirection.y));
+				boolean isRight = isRight(connection, i + 1, currentPoint
+						.getTranslated(currentDirection.x, currentDirection.y));
 				boolean isTop = isTop(connection, i + 1, currentPoint
 						.getTranslated(currentDirection.x, currentDirection.y));
 				boolean isBottom = isBottom(connection, i + 1, currentPoint
 						.getTranslated(currentDirection.x, currentDirection.y));
-				if (isTop || isBottom) {
-					double offset = isTop ? -OFFSET : OFFSET;
+				if ((isTop || isBottom) && !(isLeft || isRight)) {
 					// insert 2 points above
+					double offset = isTop ? -OFFSET : OFFSET;
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, 0, offset, currentDirection.x,
 							offset);
@@ -584,9 +620,13 @@ public class OrthogonalRouter implements IConnectionRouter {
 						.getTranslated(currentDirection.x, currentDirection.y));
 				boolean isRight = isRight(connection, i + 1, currentPoint
 						.getTranslated(currentDirection.x, currentDirection.y));
-				if (isLeft || isRight) {
-					double offset = isLeft ? -OFFSET : OFFSET;
+				boolean isTop = isTop(connection, i + 1, currentPoint
+						.getTranslated(currentDirection.x, currentDirection.y));
+				boolean isBottom = isBottom(connection, i + 1, currentPoint
+						.getTranslated(currentDirection.x, currentDirection.y));
+				if ((isLeft || isRight) && !(isTop || isBottom)) {
 					// insert 2 points on the left
+					double offset = isLeft ? -OFFSET : OFFSET;
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, offset, 0, offset,
 							currentDirection.y);
