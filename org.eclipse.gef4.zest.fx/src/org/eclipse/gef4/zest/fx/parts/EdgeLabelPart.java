@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -29,6 +30,7 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
@@ -45,7 +47,7 @@ import javafx.util.Pair;
  * @author mwienand
  *
  */
-public class EdgeLabelPart extends AbstractFXContentPart<Text> {
+public class EdgeLabelPart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * The CSS class that is assigned to the visualization of the
@@ -66,14 +68,16 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	};
 	private Translate translate;
 
+	private Text text;
+
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
 	}
 
 	@Override
-	protected Text createVisual() {
-		Text text = new Text();
+	protected Group createVisual() {
+		text = new Text();
 		text.setTextOrigin(VPos.TOP);
 		text.setManaged(false);
 		text.setPickOnBounds(true);
@@ -82,47 +86,16 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		text.getTransforms().add(translate);
 		// add css class
 		text.getStyleClass().add(CSS_CLASS_LABEL);
-		return text;
+
+		Group g = new Group();
+		g.getStyleClass().add(EdgeContentPart.CSS_CLASS);
+		g.getChildren().add(text);
+		return g;
 	}
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.unregister();
-	}
-
-	@Override
-	protected void doRefreshVisual(Text visual) {
-		Edge edge = getContent().getKey();
-		Map<String, Object> attrs = edge.attributesProperty();
-
-		if (attrs.containsKey(ZestProperties.EDGE_LABEL_CSS_STYLE)) {
-			String textCssStyle = ZestProperties.getEdgeLabelCssStyle(edge);
-			getVisual().setStyle(textCssStyle);
-		}
-
-		// label
-		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
-		if (label instanceof String) {
-			getVisual().setText((String) label);
-		}
-
-		EdgeContentPart edgeContentPart = getHost();
-		if (edgeContentPart == null) {
-			return;
-		}
-		// determine bounds of anchorage visual
-		Rectangle bounds = edgeContentPart.getVisual().getCurveNode().getGeometry().getBounds();
-		// determine text bounds
-		Bounds textBounds = getVisual().getLayoutBounds();
-		// compute label position
-		visual.setTranslateX(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2);
-		visual.setTranslateY(bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Pair<Edge, String> getContent() {
-		return (Pair<Edge, String>) super.getContent();
 	}
 
 	@Override
@@ -137,6 +110,60 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 		return Collections.emptyList();
 	}
 
+	@Override
+	protected void doRefreshVisual(Group visual) {
+		Edge edge = getContent().getKey();
+		Map<String, Object> attrs = edge.attributesProperty();
+
+		if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
+			String textCssStyle = ZestProperties.getLabelCssStyle(edge);
+			getVisual().setStyle(textCssStyle);
+		}
+
+		// label or external label (depends on which element we control)
+		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
+			String label = ZestProperties.getExternalLabel(edge);
+			if (label != null) {
+				text.setText(label);
+			}
+		} else {
+			String label = ZestProperties.getLabel(edge);
+			if (label != null) {
+				text.setText(label);
+			}
+		}
+
+		EdgeContentPart edgeContentPart = getHost();
+		if (edgeContentPart == null) {
+			return;
+		}
+
+		Point labelPosition = null;
+		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
+			labelPosition = ZestProperties.getExternalLabelPosition(edge);
+		} else {
+			labelPosition = ZestProperties.getLabelPosition(edge);
+		}
+		if (labelPosition != null) {
+			refreshPosition(getVisual(), labelPosition);
+		} else {
+			// determine bounds of anchorage visual
+			Rectangle bounds = edgeContentPart.getVisual().getCurveNode().getGeometry().getBounds();
+			// determine text bounds
+			Bounds textBounds = getVisual().getLayoutBounds();
+			// compute label position
+			refreshPosition(getVisual(), new Point(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2,
+					bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight()));
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<Edge, String> getContent() {
+		return (Pair<Edge, String>) super.getContent();
+	}
+
 	/**
 	 * Returns the {@link EdgeContentPart} for which this {@link EdgeLabelPart}
 	 * displays the label.
@@ -145,7 +172,8 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	 *         displays the label.
 	 */
 	public EdgeContentPart getHost() {
-		return getAnchoragesUnmodifiable().isEmpty() ? null : (EdgeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
+		return getAnchoragesUnmodifiable().isEmpty() ? null
+				: (EdgeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
 	}
 
 	/**
@@ -155,6 +183,34 @@ public class EdgeLabelPart extends AbstractFXContentPart<Text> {
 	 */
 	public Translate getOffset() {
 		return translate;
+	}
+
+	/**
+	 * Adjusts the label's position to fit the given {@link Point}.
+	 *
+	 * @param visual
+	 *            This node's visual.
+	 * @param position
+	 *            This node's position.
+	 */
+	protected void refreshPosition(Node visual, Point position) {
+		if (position != null) {
+			// TODO: use transform policy, so positions are persisted properly
+			getVisual().setTranslateX(position.x);
+			getVisual().setTranslateY(position.y);
+
+			// // translate
+			// FXTransformPolicy transformPolicy =
+			// getAdapter(FXTransformPolicy.class);
+			// transformPolicy.init();
+			// transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1,
+			// position.x, position.y));
+			// try {
+			// transformPolicy.commit().execute(null, null);
+			// } catch (ExecutionException e) {
+			// throw new IllegalStateException(e);
+			// }
+		}
 	}
 
 }

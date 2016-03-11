@@ -341,7 +341,7 @@ public class ZestContentViewer extends ContentViewer {
 			}
 		}
 
-		ZestProperties.setNodeTextCssStyle(node, textCssStyle);
+		ZestProperties.setLabelCssStyle(node, textCssStyle);
 
 		// custom attributes
 		if (labelProvider instanceof IGraphAttributesProvider) {

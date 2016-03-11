@@ -32,6 +32,9 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+import javafx.geometry.Bounds;
+import javafx.scene.text.Text;
+
 public class Dot2ZestGraphConverter {
 
 	private Graph dotGraph;
@@ -88,6 +91,15 @@ public class Dot2ZestGraphConverter {
 		ZestProperties.setCssId(zest, dotId);
 		ZestProperties.setLabel(zest, dotLabel);
 
+		// external label (xlabel)
+		String dotXLabel = DotAttributes.getXLabel(dot);
+		if (dotXLabel != null) {
+			ZestProperties.setExternalLabel(zest, dotXLabel);
+		}
+
+		// head and tail label labels
+		// TODO: haid and tail labels
+
 		// convert edge style
 		String dotStyle = DotAttributes.getStyle(dot);
 		String connectionCssStyle = null;
@@ -103,50 +115,76 @@ public class Dot2ZestGraphConverter {
 			ZestProperties.setEdgeConnCssStyle(zest, connectionCssStyle);
 		}
 
-		// position (only convert in native mode, as the results will otherwise
-		// not match)
+		// only convert layout information in native mode, as the results will
+		// otherwise
+		// not match
 		if (!emulateLayout) {
+			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null) {
-				SplineType splineType = DotAttributes.getPosParsed(dot);
-				List<Point> controlPoints = new ArrayList<>();
-				for (SplineType_Spline spline : splineType.getSplines()) {
-					// start
-					org.eclipse.gef4.dot.internal.parser.dotAttributes.Point startp = spline
-							.getStartp();
-					if (startp == null) {
-						// if we have no start point, add the first control
-						// point
-						// twice
-						startp = spline.getControlPoints().get(0);
-					}
-					controlPoints.add(new Point(startp.getX(),
-							(invertYAxis ? -1 : 1) * startp.getY()));
-
-					// control points
-					for (org.eclipse.gef4.dot.internal.parser.dotAttributes.Point cp : spline
-							.getControlPoints()) {
-						controlPoints.add(new Point(cp.getX(),
-								(invertYAxis ? -1 : 1) * cp.getY()));
-					}
-
-					// end
-					org.eclipse.gef4.dot.internal.parser.dotAttributes.Point endp = spline
-							.getEndp();
-					if (endp == null) {
-						// if we have no end point, add the last control point
-						// twice
-						endp = spline.getControlPoints()
-								.get(spline.getControlPoints().size() - 1);
-					}
-					controlPoints.add(new Point(endp.getX(),
-							(invertYAxis ? -1 : 1) * endp.getY()));
-				}
-				ZestProperties.setControlPoints(zest, controlPoints);
+				ZestProperties.setControlPoints(zest,
+						computeZestConnectionBSplineControlPoints(dot));
 				ZestProperties.setInterpolator(zest,
 						new DotBSplineInterpolator());
 			}
+
+			// label position (lp)
+			String dotLp = DotAttributes.getLp(dot);
+			if (dotLabel != null && dotLp != null) {
+				ZestProperties.setLabelPosition(zest, computeZestLabelPosition(
+						DotAttributes.getLpParsed(dot), dotLabel));
+			}
+
+			// external label position (xlp)
+			String dotXlp = DotAttributes.getXlp(dot);
+			if (dotXLabel != null && dotXlp != null) {
+				ZestProperties.setExternalLabelPosition(zest,
+						computeZestLabelPosition(
+								DotAttributes.getXlpParsed(dot), dotXLabel));
+			}
+			// head and tail label positions (head_lp, tail_lp) and sizes ->
+			// depend on label font size (if present, otherwise fall back to
+			// edge font size)
+			// TODO: haid and tail label positions
 		}
+	}
+
+	private List<Point> computeZestConnectionBSplineControlPoints(Edge dot) {
+		SplineType splineType = DotAttributes.getPosParsed(dot);
+		List<Point> controlPoints = new ArrayList<>();
+		for (SplineType_Spline spline : splineType.getSplines()) {
+			// start
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point startp = spline
+					.getStartp();
+			if (startp == null) {
+				// if we have no start point, add the first control
+				// point
+				// twice
+				startp = spline.getControlPoints().get(0);
+			}
+			controlPoints.add(new Point(startp.getX(),
+					(invertYAxis ? -1 : 1) * startp.getY()));
+
+			// control points
+			for (org.eclipse.gef4.dot.internal.parser.dotAttributes.Point cp : spline
+					.getControlPoints()) {
+				controlPoints.add(new Point(cp.getX(),
+						(invertYAxis ? -1 : 1) * cp.getY()));
+			}
+
+			// end
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point endp = spline
+					.getEndp();
+			if (endp == null) {
+				// if we have no end point, add the last control point
+				// twice
+				endp = spline.getControlPoints()
+						.get(spline.getControlPoints().size() - 1);
+			}
+			controlPoints.add(new Point(endp.getX(),
+					(invertYAxis ? -1 : 1) * endp.getY()));
+		}
+		return controlPoints;
 	}
 
 	private Node convertNode(Node dotNode) {
@@ -160,13 +198,12 @@ public class Dot2ZestGraphConverter {
 		return node;
 	}
 
-	// TODO: change into applyNodeAttributes, pass in node, and use set methods
-	// of ZestProperties
 	private void convertNodeAttributes(Node dot, Node zest) {
 		// convert id and label
 		String dotId = DotAttributes.getId(dot);
 		ZestProperties.setCssId(zest, dotId);
 
+		// label
 		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
@@ -175,6 +212,12 @@ public class Dot2ZestGraphConverter {
 		}
 		ZestProperties.setLabel(zest, dotLabel);
 
+		// external label (xlabel)
+		String dotXLabel = DotAttributes.getXLabel(dot);
+		if (dotXLabel != null) {
+			ZestProperties.setExternalLabel(zest, dotXLabel);
+		}
+
 		// Convert position and size; as node position is interpreted as center,
 		// we need to know the size in order to infer correct zest positions
 		String dotPos = DotAttributes.getPos(dot);
@@ -182,21 +225,50 @@ public class Dot2ZestGraphConverter {
 		String dotWidth = DotAttributes.getWidth(dot);
 		if (dotPos != null && dotWidth != null && dotHeight != null) {
 			// dot default scaling is 72 DPI
+			// TODO: if dpi option is set, we should probably use it!
 			double zestHeight = Double.parseDouble(dotHeight) * 72; // inches
 			double zestWidth = Double.parseDouble(dotWidth) * 72; // inches
 			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
 
 			// node position is interpreted as center of node in Dot, and
 			// top-left in Zest
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point posParsed = DotAttributes
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotPosParsed = DotAttributes
 					.getPosParsed(dot);
 			ZestProperties.setPosition(zest,
-					new Point(posParsed.getX() - zestWidth / 2,
-							(invertYAxis ? -1 : 1) * (posParsed.getY())
-									- zestHeight / 2));
+					computeZestPosition(dotPosParsed, zestWidth, zestHeight));
 			// if a position is marked as input-only in Dot, have Zest ignore it
-			ZestProperties.setLayoutIrrelevant(zest, posParsed.isInputOnly());
+			ZestProperties.setLayoutIrrelevant(zest,
+					dotPosParsed.isInputOnly());
 		}
+
+		// external label position (xlp)
+		String dotXlp = DotAttributes.getXlp(dot);
+		if (dotXLabel != null && dotXlp != null) {
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotXlpParsed = DotAttributes
+					.getXlpParsed(dot);
+			ZestProperties.setExternalLabelPosition(zest,
+					computeZestLabelPosition(dotXlpParsed, dotXLabel));
+		}
+	}
+
+	private Point computeZestPosition(
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotPosition,
+			double widthInPixel, double heightInPixel) {
+		// dot positions are provided as center positions, Zest uses top-left
+		return new Point(dotPosition.getX() - widthInPixel / 2,
+				(invertYAxis ? -1 : 1) * (dotPosition.getY())
+						- heightInPixel / 2);
+	}
+
+	private Point computeZestLabelPosition(
+			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotLabelPosition,
+			String labelText) {
+		// FIXME: Is it legal to use JavaFX for metrics calculation here (while
+		// we are part of DOT.UI)?
+		// TODO: respect font settings (font name and size)
+		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
+		return computeZestPosition(dotLabelPosition, layoutBounds.getWidth(),
+				layoutBounds.getHeight());
 	}
 
 	private void convertGraphAttributes(Map<String, Object> dot,

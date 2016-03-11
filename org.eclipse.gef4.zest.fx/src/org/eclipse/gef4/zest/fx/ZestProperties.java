@@ -102,15 +102,6 @@ public class ZestProperties {
 	public static final String EDGE_CURVE_CSS_STYLE = "edge-curve-css-style";
 
 	/**
-	 * This attribute determines the CSS style for an edge label. This attribute
-	 * does not have a default value.
-	 *
-	 * @see #getEdgeLabelCssStyle(Edge)
-	 * @see #setEdgeTextCssStyle(Edge, String)
-	 */
-	public static final String EDGE_LABEL_CSS_STYLE = "edge-label-css-style";
-
-	/**
 	 * This attribute determines the way points that are passed along to the
 	 * {@link #EDGE_ROUTER} in addition to the start and end point, which are
 	 * provided by the {@link Connection} and computed by {@link IAnchor}s at
@@ -132,13 +123,30 @@ public class ZestProperties {
 	public static final String NODE_RECT_CSS_STYLE = "node-rect-css-style";
 
 	/**
-	 * This attribute determines the CSS style for a node label. This attribute
-	 * does not have a default value.
+	 * This attribute determines the CSS style for a node or edge label. This
+	 * attribute does not have a default value.
 	 *
 	 * @see #getNodeLabelCssStyle(Node)
-	 * @see #setNodeTextCssStyle(Node, String)
+	 * @see #setLabelCssStyle(Node, String)
 	 */
-	public static final String NODE_LABEL_CSS_STYLE = "node-label-css-style";
+	public static final String ELEMENT_LABEL_CSS_STYLE = "element-label-css-style";
+
+	/**
+	 * This attribute determines the (optional) external label of a node.
+	 */
+	public static final String ELEMENT_EXTERNAL_LABEL = "element-external-label";
+
+	/**
+	 * This attribute determines the position of a node's external label (in
+	 * case it exists).
+	 */
+	public static final String ELEMENT_EXTERNAL_LABEL_POSITION = "element-external-label-position";
+
+	/**
+	 * This attribute determines the position of an edge's label (in case it
+	 * exists).
+	 */
+	public static final String EDGE_LABEL_POSITION = "edge-label-position";
 
 	/**
 	 * This attribute determines the icon for a node. This attribute does not
@@ -331,22 +339,49 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the curve CSS style is determined.
 	 * @return The curve CSS style of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
 	public static String getEdgeCurveCssStyle(Edge edge) {
 		return (String) edge.attributesProperty().get(EDGE_CURVE_CSS_STYLE);
 	}
 
 	/**
-	 * Returns the value of the {@link #EDGE_LABEL_CSS_STYLE} attribute of the
+	 * Returns the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
 	 * given {@link Edge}.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the label CSS style is determined.
-	 * @return The label CSS style of the given {@link Edge}.
+	 *            The {@link Edge} of which the label is determined.
+	 * @return The label of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
-	public static String getEdgeLabelCssStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_LABEL_CSS_STYLE);
+	public static String getExternalLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(ELEMENT_EXTERNAL_LABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
+	 * given {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the label is determined.
+	 * @return The label of the given {@link Node}.
+	 */
+	public static String getExternalLabel(Node node) {
+		return (String) node.attributesProperty().get(ELEMENT_EXTERNAL_LABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #ELEMENT_EXTERNAL_LABEL_POSITION}
+	 * attribute of the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the position is determined.
+	 * @return The value of the {@link #ELEMENT_EXTERNAL_LABEL_POSITION}
+	 *         attribute of the given {@link Edge}.
+	 */
+	public static Point getExternalLabelPosition(Edge edge) {
+		Object object = edge.getAttributes().get(ELEMENT_EXTERNAL_LABEL_POSITION);
+		if (object instanceof Point) {
+			return (Point) object;
+		}
+		return null;
 	}
 
 	/**
@@ -404,7 +439,6 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the label is determined.
 	 * @return The label of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
 	public static String getLabel(Edge edge) {
 		return (String) edge.attributesProperty().get(ELEMENT_LABEL);
 	}
@@ -417,9 +451,37 @@ public class ZestProperties {
 	 *            The {@link Node} of which the label is determined.
 	 * @return The label of the given {@link Node}.
 	 */
-	// TODO: Return null if not present.
 	public static String getLabel(Node node) {
 		return (String) node.attributesProperty().get(ELEMENT_LABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #ELEMENT_LABEL_CSS_STYLE} attribute of
+	 * the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label CSS style is determined.
+	 * @return The label CSS style of the given {@link Edge}.
+	 */
+	public static String getLabelCssStyle(Edge edge) {
+		return (String) edge.attributesProperty().get(ELEMENT_LABEL_CSS_STYLE);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_LABEL_POSITION} attribute of the
+	 * given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the position is determined.
+	 * @return The value of the {@link #EDGE_LABEL_POSITION} attribute of the
+	 *         given {@link Edge}.
+	 */
+	public static Point getLabelPosition(Edge edge) {
+		Object object = edge.getAttributes().get(EDGE_LABEL_POSITION);
+		if (object instanceof Point) {
+			return (Point) object;
+		}
+		return null;
 	}
 
 	/**
@@ -485,8 +547,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #NODE_LABEL_CSS_STYLE} attribute of the
-	 * given {@link Node}.
+	 * Returns the value of the {@link #ELEMENT_LABEL_CSS_STYLE} attribute of
+	 * the given {@link Node}.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label CSS style is determined.
@@ -494,7 +556,7 @@ public class ZestProperties {
 	 */
 	// TODO: Return null if not present.
 	public static String getNodeLabelCssStyle(Node node) {
-		return (String) node.attributesProperty().get(NODE_LABEL_CSS_STYLE);
+		return (String) node.attributesProperty().get(ELEMENT_LABEL_CSS_STYLE);
 	}
 
 	/**
@@ -720,17 +782,57 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EDGE_LABEL_CSS_STYLE} attribute of the
+	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
 	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the label CSS style is changed.
-	 * @param textCssStyle
-	 *            The new label CSS style for the given {@link Edge}.
+	 *            The {@link Edge} of which the external label is changed.
+	 * @param label
+	 *            The new label for the given {@link Edge}.
 	 */
-	// TODO: Rename to setEdgeLabelCssStyle
-	public static void setEdgeTextCssStyle(Edge edge, String textCssStyle) {
-		edge.attributesProperty().put(EDGE_LABEL_CSS_STYLE, textCssStyle);
+	public static void setExternalLabel(Edge edge, String label) {
+		edge.attributesProperty().put(ELEMENT_EXTERNAL_LABEL, label);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
+	 * given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the external label is changed.
+	 * @param label
+	 *            The new label for the given {@link Node}.
+	 */
+	public static void setExternalLabel(Node node, String label) {
+		node.attributesProperty().put(ELEMENT_EXTERNAL_LABEL, label);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL_POSITION} attribute
+	 * of the given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the
+	 *            {@link #ELEMENT_EXTERNAL_LABEL_POSITION} attribute is changed.
+	 * @param externalLabelPosition
+	 *            The new external label position.
+	 */
+	public static void setExternalLabelPosition(Edge edge, Point externalLabelPosition) {
+		edge.getAttributes().put(ELEMENT_EXTERNAL_LABEL_POSITION, externalLabelPosition);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL_POSITION} attribute
+	 * of the given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the
+	 *            {@link #ELEMENT_EXTERNAL_LABEL_POSITION} attribute is changed.
+	 * @param externalLabelPosition
+	 *            The new external label position.
+	 */
+	public static void setExternalLabelPosition(Node node, Point externalLabelPosition) {
+		node.getAttributes().put(ELEMENT_EXTERNAL_LABEL_POSITION, externalLabelPosition);
 	}
 
 	/**
@@ -800,6 +902,45 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Sets the value of the {@link #ELEMENT_LABEL_CSS_STYLE} attribute of the
+	 * given {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label CSS style is changed.
+	 * @param textCssStyle
+	 *            The new label CSS style for the given {@link Edge}.
+	 */
+	public static void setLabelCssStyle(Edge edge, String textCssStyle) {
+		edge.attributesProperty().put(ELEMENT_LABEL_CSS_STYLE, textCssStyle);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_LABEL_CSS_STYLE} attribute of the
+	 * given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the node label CSS style is changed.
+	 * @param textCssStyle
+	 *            The new node label CSS style for the given {@link Node}.
+	 */
+	public static void setLabelCssStyle(Node node, String textCssStyle) {
+		node.attributesProperty().put(ELEMENT_LABEL_CSS_STYLE, textCssStyle);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_LABEL_POSITION} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the label is changed.
+	 * @param labelPosition
+	 *            The new position for the label of the given {@link Edge}.
+	 */
+	public static void setLabelPosition(Edge edge, Point labelPosition) {
+		edge.attributesProperty().put(EDGE_LABEL_POSITION, labelPosition);
+	}
+
+	/**
 	 * Sets the value of the {@link #GRAPH_TYPE} attribute of the given
 	 * {@link Graph} to the given value.
 	 *
@@ -852,20 +993,6 @@ public class ZestProperties {
 	 */
 	public static void setNodeRectCssStyle(Node node, String rectCssStyle) {
 		node.attributesProperty().put(NODE_RECT_CSS_STYLE, rectCssStyle);
-	}
-
-	/**
-	 * Sets the value of the {@link #NODE_LABEL_CSS_STYLE} attribute of the
-	 * given {@link Node} to the given value.
-	 *
-	 * @param node
-	 *            The {@link Node} of which the node label CSS style is changed.
-	 * @param textCssStyle
-	 *            The new node label CSS style for the given {@link Node}.
-	 */
-	// TODO: Rename to setNodeLabelCssStyle
-	public static void setNodeTextCssStyle(Node node, String textCssStyle) {
-		node.attributesProperty().put(NODE_LABEL_CSS_STYLE, textCssStyle);
 	}
 
 	/**

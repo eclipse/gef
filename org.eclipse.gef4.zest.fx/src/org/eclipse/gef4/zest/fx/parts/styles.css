@@ -17,6 +17,8 @@
 
 .node .label {
 	-fx-fill: white;
+	-fx-font-size: 14;
+	-fx-font-family: "Times New Roman";
 }
 
 .edge .curve {
@@ -26,6 +28,8 @@
 
 .edge .label {
 	-fx-fill: black;
+	-fx-font-size: 14;
+	-fx-font-family: "Times New Roman";
 }
 
 .edge .decoration {

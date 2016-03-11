@@ -399,7 +399,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		if (attrs.containsKey(ZestProperties.NODE_RECT_CSS_STYLE)) {
 			rect.setStyle(ZestProperties.getNodeRectCssStyle(node));
 		}
-		if (attrs.containsKey(ZestProperties.NODE_LABEL_CSS_STYLE)) {
+		if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
 			labelText.setStyle(ZestProperties.getNodeLabelCssStyle(node));
 		}
 
@@ -636,12 +636,11 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 *
 	 * @param visual
 	 *            This node's visual.
-	 * @param object
+	 * @param position
 	 *            This node's position.
 	 */
-	protected void refreshPosition(Group visual, Object object) {
-		if (object instanceof Point) {
-			Point position = (Point) object;
+	protected void refreshPosition(Node visual, Point position) {
+		if (position != null) {
 			// translate
 			FXTransformPolicy transformPolicy = getAdapter(FXTransformPolicy.class);
 			transformPolicy.init();

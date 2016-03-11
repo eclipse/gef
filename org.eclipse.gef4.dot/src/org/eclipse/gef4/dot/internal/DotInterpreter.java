@@ -49,11 +49,14 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
 	private String globalNodeLabel;
-	private String currentEdgeStyleValue;
-	private String currentEdgeLabelValue;
+	private String currentEdgeStyle;
+	private String currentEdgeLabel;
 	private String currentEdgeSourceNodeId;
 	private String currentEdgePos;
-	private boolean createConnection;
+	private boolean createEdge;
+	private String currentEdgeXLabel;
+	private String currentEdgeXlp;
+	private String currentEdgeLp;
 
 	/**
 	 * @param dotAst
@@ -125,17 +128,19 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	@Override
 	public Object caseEdgeStmtNode(EdgeStmtNode object) {
-		currentEdgeLabelValue = getAttributeValue(object,
-				DotAttributes.EDGE_LABEL);
-		currentEdgeStyleValue = getAttributeValue(object,
-				DotAttributes.EDGE_STYLE);
+		currentEdgeLabel = getAttributeValue(object, DotAttributes.EDGE_LABEL);
+		currentEdgeLp = getAttributeValue(object, DotAttributes.EDGE_LP);
+		currentEdgeXLabel = getAttributeValue(object,
+				DotAttributes.EDGE_XLABEL);
+		currentEdgeXlp = getAttributeValue(object, DotAttributes.EDGE_XLP);
+		currentEdgeStyle = getAttributeValue(object, DotAttributes.EDGE_STYLE);
 		currentEdgePos = getAttributeValue(object, DotAttributes.EDGE_POS);
 		return super.caseEdgeStmtNode(object);
 	}
 
 	@Override
 	public Object caseNodeId(NodeId object) {
-		if (!createConnection) {
+		if (!createEdge) {
 			currentEdgeSourceNodeId = escaped(object.getName());
 		} else {
 			String targetNodeId = escaped(object.getName());
@@ -144,7 +149,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				// current target node may be source for next EdgeRHS
 				currentEdgeSourceNodeId = targetNodeId;
 			}
-			createConnection = false;
+			createEdge = false;
 		}
 		return super.caseNodeId(object);
 	}
@@ -152,16 +157,21 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private void createEdge(String targetNodeId) {
 		Edge.Builder edgeBuilder = new Edge.Builder(
 				node(currentEdgeSourceNodeId), node(targetNodeId));
-		/* Set the optional label, if set in the DOT input: */
-		if (currentEdgeLabelValue != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_LABEL, currentEdgeLabelValue);
+		// label
+		if (currentEdgeLabel != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_LABEL, currentEdgeLabel);
 		} else if (globalEdgeLabel != null) {
 			edgeBuilder.attr(DotAttributes.EDGE_LABEL, globalEdgeLabel);
 		}
-		/* Set the optional style, if set in the DOT input and supported: */
+
+		// external label (xlabel)
+		if (currentEdgeXLabel != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_XLABEL, currentEdgeXLabel);
+		}
+
+		// style
 		String currentEdgeStyleLc = new String(
-				currentEdgeStyleValue == null ? "" : currentEdgeStyleValue)
-						.toLowerCase();
+				currentEdgeStyle == null ? "" : currentEdgeStyle).toLowerCase();
 		String globalEdgeStyleLc = new String(
 				globalEdgeStyle == null ? "" : globalEdgeStyle).toLowerCase();
 		if (!DotAttributes.EDGE_STYLE_VOID.equals(currentEdgeStyleLc)
@@ -176,9 +186,18 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			edgeBuilder.attr(DotAttributes.EDGE_STYLE, globalEdgeStyleLc);
 		}
 
-		// pos
+		// position (pos)
 		if (currentEdgePos != null) {
 			edgeBuilder.attr(DotAttributes.EDGE_POS, currentEdgePos);
+		}
+		// label position (lp)
+		if (currentEdgeLp != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_LP, currentEdgeLp);
+		}
+
+		// external label position (xlp)
+		if (currentEdgeXlp != null) {
+			edgeBuilder.attr(DotAttributes.EDGE_XLP, currentEdgeXlp);
 		}
 
 		graph.edges(edgeBuilder.buildEdge());
@@ -194,7 +213,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	@Override
 	public Object caseEdgeRhsNode(EdgeRhsNode object) {
 		// Set the flag for the node_id case handled above
-		createConnection = true;
+		createEdge = true;
 		return super.caseEdgeRhsNode(object);
 	}
 
@@ -275,9 +294,20 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			DotAttributes.setLabel(node, globalNodeLabel);
 		}
 
+		String xLabel = getAttributeValue(nodeStatement,
+				DotAttributes.NODE_XLABEL);
+		if (xLabel != null) {
+			DotAttributes.setXLabel(node, xLabel);
+		}
+
 		String pos = getAttributeValue(nodeStatement, DotAttributes.NODE_POS);
 		if (pos != null) {
 			DotAttributes.setPos(node, pos);
+		}
+
+		String xlp = getAttributeValue(nodeStatement, DotAttributes.NODE_XLP);
+		if (xlp != null) {
+			DotAttributes.setXlp(node, xlp);
 		}
 
 		String width = getAttributeValue(nodeStatement,

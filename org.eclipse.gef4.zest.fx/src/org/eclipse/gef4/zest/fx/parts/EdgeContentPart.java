@@ -65,7 +65,7 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 	}
 
 	/**
-	 * The CSS class that is assigned to the {@link Connection} of this
+	 * The CSS class that is assigned to the visual of this
 	 * {@link EdgeContentPart}.
 	 */
 	public static final String CSS_CLASS = "edge";

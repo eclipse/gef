@@ -19,6 +19,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -51,7 +52,9 @@ public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 			part = new NodeContentPart();
 		} else if (content instanceof Edge) {
 			part = new EdgeContentPart();
-		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof Edge) {
+		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof Edge
+				&& (ZestProperties.ELEMENT_LABEL.equals(((Pair) content).getValue())
+						|| ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue()))) {
 			part = new EdgeLabelPart();
 		}
 		if (part != null) {

@@ -94,6 +94,31 @@ public class DotAttributes {
 	public static final String EDGE_LABEL = "label";
 
 	/**
+	 * Specifies the external label of an edge.
+	 */
+	public static final String EDGE_XLABEL = "xlabel";
+
+	/**
+	 * Specifies the external label of an node.
+	 */
+	public static final String NODE_XLABEL = "xlabel";
+
+	/**
+	 * Specifies the position of a node's external label.
+	 */
+	public static final String NODE_XLP = "xlp";
+
+	/**
+	 * Specifies the position of an edge's external label.
+	 */
+	public static final String EDGE_XLP = "xlp";
+
+	/**
+	 * Specifies the position of an edge's label.
+	 */
+	public static final String EDGE_LP = "lp";
+
+	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
 	 * dotted, etc. Possible values are defined by {@link #EDGE_STYLE_VALUES}.
 	 * The default value is defined by {@link #EDGE_STYLE_DEFAULT}.
@@ -408,6 +433,62 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #NODE_XLABEL} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_XLABEL} property.
+	 * @return The value of the {@link #NODE_XLABEL} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getXLabel(Node node) {
+		return (String) node.attributesProperty().get(NODE_XLABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_XLABEL} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_XLABEL} property.
+	 * @return The value of the {@link #EDGE_XLABEL} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getXLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_XLABEL);
+	}
+
+	/**
+	 * Returns the value of the {@link #NODE_XLP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_XLP} property.
+	 * @return The value of the {@link #NODE_XLP} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getXlp(Node node) {
+		return (String) node.attributesProperty().get(NODE_XLP);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_XLP} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_XLP} property.
+	 * @return The value of the {@link #EDGE_XLP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getXlp(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_XLP);
+	}
+
+	/**
 	 * Sets the {@link #NODE_LABEL} property of the given {@link Node} to the
 	 * given <i>label</i> value.
 	 * 
@@ -419,6 +500,76 @@ public class DotAttributes {
 	 */
 	public static void setLabel(Node node, String label) {
 		node.attributesProperty().put(NODE_LABEL, label);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_XLABEL} property of the given {@link Edge} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_XLABEL} property.
+	 * @param xLabel
+	 *            The new value for the {@link #EDGE_XLABEL} property.
+	 */
+	public static void setXLabel(Edge edge, String xLabel) {
+		edge.attributesProperty().put(EDGE_XLABEL, xLabel);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_XLP} property of the given {@link Edge} to the
+	 * given <i>xlp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_XLP} property.
+	 * @param xlp
+	 *            The new value for the {@link #EDGE_XLP} property.
+	 */
+	public static void setXlp(Edge edge, String xlp) {
+		edge.attributesProperty().put(EDGE_XLP, xlp);
+	}
+
+	/**
+	 * Sets the {@link #NODE_XLP} property of the given {@link Node} to the
+	 * given <i>xlp</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #NODE_XLP} property.
+	 * @param xlp
+	 *            The new value for the {@link #NODE_XLP} property.
+	 */
+	public static void setXlp(Node node, String xlp) {
+		node.attributesProperty().put(NODE_XLP, xlp);
+	}
+
+	/**
+	 * Sets the {@link #EDGE_LP} property of the given {@link Edge} to the given
+	 * <i>lp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #EDGE_LP} property.
+	 * @param lp
+	 *            The new value for the {@link #EDGE_LP} property.
+	 */
+	public static void setLp(Edge edge, String lp) {
+		edge.attributesProperty().put(EDGE_LP, lp);
+	}
+
+	/**
+	 * Sets the {@link #NODE_XLABEL} property of the given {@link Node} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #NODE_XLABEL} property.
+	 * @param xLabel
+	 *            The new value for the {@link #NODE_XLABEL} property.
+	 */
+	public static void setXLabel(Node node, String xLabel) {
+		node.attributesProperty().put(NODE_XLABEL, xLabel);
 	}
 
 	/**
@@ -461,6 +612,20 @@ public class DotAttributes {
 	 */
 	public static String getPos(Edge edge) {
 		return (String) edge.attributesProperty().get(EDGE_POS);
+	}
+
+	/**
+	 * Returns the value of the {@link #EDGE_LP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_LP} property.
+	 * @return The value of the {@link #EDGE_LP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getLp(Edge edge) {
+		return (String) edge.attributesProperty().get(EDGE_LP);
 	}
 
 	/**
@@ -727,5 +892,56 @@ public class DotAttributes {
 			sb.append(syntaxErrorMessage.getMessage());
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #NODE_XLP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #NODE_XLP} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #NODE_XLP} property of the given
+	 *         {@link Node}.
+	 */
+	public static Point getXlpParsed(Node node) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getXlp(node));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #EDGE_XLP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_XLP} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #EDGE_XLP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Point getXlpParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getXlp(edge));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #EDGE_LP} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #EDGE_LP} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #EDGE_LP} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Point getLpParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getLp(edge));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
 	}
 }

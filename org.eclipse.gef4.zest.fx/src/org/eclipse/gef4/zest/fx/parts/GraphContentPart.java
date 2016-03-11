@@ -123,7 +123,12 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		List<Object> children = new ArrayList<>();
 		children.addAll(getContent().getEdges());
 		for (Edge e : getContent().getEdges()) {
-			children.add(new Pair<>(e, "LABEL"));
+			if (ZestProperties.getLabel(e) != null) {
+				children.add(new Pair<>(e, ZestProperties.ELEMENT_LABEL));
+			}
+			if (ZestProperties.getExternalLabel(e) != null) {
+				children.add(new Pair<>(e, ZestProperties.ELEMENT_EXTERNAL_LABEL));
+			}
 		}
 		children.addAll(getContent().getNodes());
 		return children;
