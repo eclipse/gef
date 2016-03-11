@@ -250,14 +250,20 @@ public class DynamicAnchor extends AbstractAnchor {
 		private static Point getHorizontalProjection(ICurve curve,
 				Point reference) {
 			// Determine points on curve with same y-coordinate; by computing a
-			// line
-			// with the respective y-coordinate inside its bounds; then
-			// computing
-			// the nearest intersection on the curve
+			// line with the respective y-coordinate inside its bounds; then
+			// computing the nearest intersection on the curve
 			Rectangle bounds = curve.getBounds();
 			Line line = new Line(bounds.getX(), reference.y,
 					bounds.getX() + bounds.getWidth(), reference.y);
-			return getNearestOrthogonalProjection(curve, reference, line);
+			Point projection = getNearestOrthogonalProjection(curve, reference,
+					line);
+			// a horizontal projection is constant in y, therefore, we can
+			// ensure that the projection has the same y coordinate as the
+			// reference
+			if (projection != null) {
+				projection.y = reference.y;
+			}
+			return projection;
 		}
 
 		/**
@@ -355,16 +361,14 @@ public class DynamicAnchor extends AbstractAnchor {
 					reference);
 			if (nearestHorizonalProjection == null) {
 				// if there is no horizontal projection, the vertical one has to
-				// be
-				// minimal (if it exists)
+				// be minimal (if it exists)
 				return getVerticalProjection(curve, reference);
 			} else {
 				Point nearestVerticalProjection = getVerticalProjection(curve,
 						reference);
 				if (nearestVerticalProjection == null) {
 					// if there is no vertical projection, the horizontal one
-					// has to
-					// be minimal
+					// has to be minimal
 					return nearestHorizonalProjection;
 				} else {
 					// compute whether horizontal or vertical is minimal
@@ -405,7 +409,15 @@ public class DynamicAnchor extends AbstractAnchor {
 			Rectangle bounds = curve.getBounds();
 			Line line = new Line(reference.x, bounds.getY(), reference.x,
 					bounds.getY() + bounds.getHeight());
-			return getNearestOrthogonalProjection(curve, reference, line);
+			Point projection = getNearestOrthogonalProjection(curve, reference,
+					line);
+			// a vertical projection is constant in x, therefore, we can
+			// ensure that the projection has the same x coordinate as the
+			// reference
+			if (projection != null) {
+				projection.x = reference.x;
+			}
+			return projection;
 		}
 
 		@Override
