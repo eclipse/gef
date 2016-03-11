@@ -1853,6 +1853,10 @@ public class BezierCurve extends AbstractGeometry
 	 *         <code>null</code>
 	 */
 	public BezierCurve getOverlap(BezierCurve other) {
+		if (equals(other)) {
+			return getCopy();
+		}
+
 		Set<Point> intersections = new HashSet<>();
 		Set<IntervalPair> intervalPairs = new HashSet<>();
 		Set<IntervalPair> endPointIntervalPairs = new HashSet<>();
