@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.operations;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -49,7 +50,8 @@ public class FXBendOperation extends AbstractOperation
 	public FXBendOperation(Connection connection) {
 		super("Bend");
 		this.connection = connection;
-		this.initialAnchors = new ArrayList<>(connection.getAnchors());
+		this.initialAnchors = new ArrayList<>(
+				onlyExplicit(connection.getAnchors()));
 		this.newAnchors = new ArrayList<>(initialAnchors);
 	}
 
@@ -104,6 +106,18 @@ public class FXBendOperation extends AbstractOperation
 	@Override
 	public boolean isNoOp() {
 		return initialAnchors.equals(newAnchors);
+	}
+
+	private List<IAnchor> onlyExplicit(List<IAnchor> anchors) {
+		ArrayList<IAnchor> explicit = new ArrayList<>(anchors);
+		Iterator<IAnchor> it = explicit.iterator();
+		while (it.hasNext()) {
+			IAnchor anchor = it.next();
+			if (connection.getRouter().isImplicitAnchor(anchor)) {
+				it.remove();
+			}
+		}
+		return explicit;
 	}
 
 	@Override
