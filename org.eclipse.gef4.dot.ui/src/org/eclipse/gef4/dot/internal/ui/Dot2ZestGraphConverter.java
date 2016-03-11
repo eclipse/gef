@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Alexander Nyßen  (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
@@ -42,7 +43,8 @@ public class Dot2ZestGraphConverter {
 	private boolean emulateLayout;
 	private boolean invertYAxis;
 
-	// TODO: we may need an option class here if multiple options are needed
+	// TODO: introduce an option class that we can pass in (allows us to add
+	// options without breaking API)
 	public Dot2ZestGraphConverter(Graph dotGraph, boolean emulateLayout,
 			boolean invertYAxis) {
 		this.dotGraph = dotGraph;
@@ -97,7 +99,7 @@ public class Dot2ZestGraphConverter {
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
-		// head and tail label labels
+		// head and tail labels (headlabel, taillabel)
 		String dotHeadLabel = DotAttributes.getHeadLabel(dot);
 		if (dotHeadLabel != null) {
 			ZestProperties.setTargetLabel(zest, dotHeadLabel);

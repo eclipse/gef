@@ -137,6 +137,11 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			}
 		}
 		children.addAll(getContent().getNodes());
+		for (org.eclipse.gef4.graph.Node n : getContent().getNodes()) {
+			if (ZestProperties.getExternalLabel(n) != null) {
+				children.add(new Pair<>(n, ZestProperties.ELEMENT_EXTERNAL_LABEL));
+			}
+		}
 		return children;
 	}
 

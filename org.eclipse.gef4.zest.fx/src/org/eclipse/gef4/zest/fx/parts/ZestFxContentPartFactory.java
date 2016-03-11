@@ -58,6 +58,9 @@ public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 						|| ZestProperties.EDGE_SOURCE_LABEL.equals(((Pair) content).getValue())
 						|| ZestProperties.EDGE_TARGET_LABEL.equals(((Pair) content).getValue()))) {
 			part = new EdgeLabelPart();
+		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof org.eclipse.gef4.graph.Node
+				&& ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue())) {
+			part = new NodeExternalLabelPart();
 		}
 		if (part != null) {
 			injector.injectMembers(part);
