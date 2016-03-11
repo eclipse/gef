@@ -174,6 +174,11 @@ public class Shape2Geometry {
 			QuadCurve quad = (QuadCurve) visual;
 			return toQuadraticCurve(quad);
 		} else if (visual instanceof Rectangle) {
+			Rectangle rect = (Rectangle) visual;
+			if (rect.getArcWidth() == 0 && rect.getArcHeight() == 0) {
+				// corners are not rounded => normal rectangle is sufficient
+				return toRectangle(rect);
+			}
 			return toRoundedRectangle((Rectangle) visual);
 		} else {
 			// Text and SVGPath shapes are currently not supported
@@ -257,7 +262,8 @@ public class Shape2Geometry {
 	 *         {@link org.eclipse.gef4.geometry.planar.Polygon} that describes
 	 *         the given {@link Polygon}.
 	 */
-	public static IGeometry toPolygon(Polygon polygon) {
+	public static org.eclipse.gef4.geometry.planar.Polygon toPolygon(
+			Polygon polygon) {
 		double[] coords = new double[polygon.getPoints().size()];
 		for (int i = 0; i < coords.length; i++) {
 			coords[i] = polygon.getPoints().get(i).doubleValue();
@@ -275,7 +281,8 @@ public class Shape2Geometry {
 	 *         {@link org.eclipse.gef4.geometry.planar.Polyline} that describes
 	 *         the given {@link Polyline}.
 	 */
-	public static IGeometry toPolyline(Polyline polyline) {
+	public static org.eclipse.gef4.geometry.planar.Polyline toPolyline(
+			Polyline polyline) {
 		double[] coords = new double[polyline.getPoints().size()];
 		for (int i = 0; i < coords.length; i++) {
 			coords[i] = polyline.getPoints().get(i).doubleValue();
@@ -293,10 +300,30 @@ public class Shape2Geometry {
 	 *         {@link org.eclipse.gef4.geometry.planar.QuadraticCurve} that
 	 *         describes the given {@link QuadCurve}.
 	 */
-	public static IGeometry toQuadraticCurve(QuadCurve quad) {
+	public static org.eclipse.gef4.geometry.planar.QuadraticCurve toQuadraticCurve(
+			QuadCurve quad) {
 		return new org.eclipse.gef4.geometry.planar.QuadraticCurve(
 				quad.getStartX(), quad.getStartY(), quad.getControlX(),
 				quad.getControlY(), quad.getEndX(), quad.getEndY());
+	}
+
+	/**
+	 * Converts the given JavaFX {@link Rectangle} to a
+	 * {@link org.eclipse.gef4.geometry.planar.Rectangle}. Note, that the
+	 * arc-width and arc-height of the given {@link Rectangle} will not be
+	 * preserved in the resulting geometry.
+	 *
+	 * @param rect
+	 *            The JavaFX {@link Rectangle} to convert.
+	 * @return The newly created
+	 *         {@link org.eclipse.gef4.geometry.planar.Rectangle} that describes
+	 *         the given {@link Rectangle} (without its arc-width and
+	 *         arc-height).
+	 */
+	public static org.eclipse.gef4.geometry.planar.Rectangle toRectangle(
+			Rectangle rect) {
+		return new org.eclipse.gef4.geometry.planar.Rectangle(rect.getX(),
+				rect.getY(), rect.getWidth(), rect.getHeight());
 	}
 
 	/**
@@ -309,7 +336,8 @@ public class Shape2Geometry {
 	 *         {@link org.eclipse.gef4.geometry.planar.RoundedRectangle} that
 	 *         describes the given {@link Rectangle}.
 	 */
-	public static IGeometry toRoundedRectangle(Rectangle rect) {
+	public static org.eclipse.gef4.geometry.planar.RoundedRectangle toRoundedRectangle(
+			Rectangle rect) {
 		return new org.eclipse.gef4.geometry.planar.RoundedRectangle(
 				rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(),
 				rect.getArcWidth(), rect.getArcHeight());
