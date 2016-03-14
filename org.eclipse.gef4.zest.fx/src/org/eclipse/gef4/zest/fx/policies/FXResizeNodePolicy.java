@@ -17,13 +17,14 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
  * The {@link FXResizeNodePolicy} is a specialization of {@link FXResizePolicy}
  * that chains a {@link ChangeNodeSizeOperation} for updating the resized
- * {@link Node}. Therefore, it is only applicable for {@link NodeContentPart}.
+ * {@link Node}. It is applicable to {@link IContentPart} with
+ * {@link javafx.scene.Node} visual and {@link Node} content.
  *
  * @author mwienand
  *
@@ -42,7 +43,7 @@ public class FXResizeNodePolicy extends FXResizePolicy {
 
 		// create model operation
 		Dimension finalSize = new Dimension(initialSize.width + dw, initialSize.height + dh);
-		ChangeNodeSizeOperation modelOperation = new ChangeNodeSizeOperation(getHost(), finalSize);
+		ChangeNodeSizeOperation modelOperation = new ChangeNodeSizeOperation(getNode(), finalSize);
 
 		// assemble visual and model operations
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Resize Node");
@@ -54,8 +55,20 @@ public class FXResizeNodePolicy extends FXResizePolicy {
 	}
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> getHost() {
+		// XXX: We don't tie this policy to NodeContentPart, but only to
+		// IContentPart with a Node content, so it can be re-used in other
+		// situations.
+		return (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>) super.getHost();
+	}
+
+	/**
+	 * Returns the {@link Node} content element of the host part.
+	 *
+	 * @return The {@link Node} content element.
+	 */
+	protected Node getNode() {
+		return (Node) getHost().getContent();
 	}
 
 }

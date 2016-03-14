@@ -22,7 +22,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
  * The {@link ChangeNodePositionOperation} can be used to manipulate the
@@ -33,7 +32,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  */
 public class ChangeNodePositionOperation extends AbstractOperation implements ITransactionalOperation {
 
-	private NodeContentPart nodePart;
+	private Node node;
 	private Point initialPosition;
 	private Point finalPosition;
 
@@ -41,17 +40,17 @@ public class ChangeNodePositionOperation extends AbstractOperation implements IT
 	 * Constructs a new {@link ChangeNodePositionOperation} that can be used to
 	 * manipulate the position of the given {@link Node}.
 	 *
-	 * @param nodePart
+	 * @param node
 	 *            The {@link Node} that is manipulated by this operation.
 	 * @param finalPosition
 	 *            A {@link Point} describing the final position for the given
 	 *            {@link Node}.
 	 */
-	public ChangeNodePositionOperation(NodeContentPart nodePart, Point finalPosition) {
+	public ChangeNodePositionOperation(Node node, Point finalPosition) {
 		super("TransformNode()");
-		this.nodePart = nodePart;
+		this.node = node;
 		this.finalPosition = finalPosition;
-		initialPosition = ZestProperties.getPosition(nodePart.getContent());
+		initialPosition = ZestProperties.getPosition(node);
 		if (initialPosition != null) {
 			initialPosition = initialPosition.getCopy();
 		}
@@ -59,9 +58,9 @@ public class ChangeNodePositionOperation extends AbstractOperation implements IT
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		Point currentPosition = ZestProperties.getPosition(nodePart.getContent());
+		Point currentPosition = ZestProperties.getPosition(node);
 		if (finalPosition != currentPosition && (finalPosition == null || !finalPosition.equals(currentPosition))) {
-			ZestProperties.setPosition(nodePart.getContent(), finalPosition);
+			ZestProperties.setPosition(node, finalPosition);
 		}
 		return Status.OK_STATUS;
 	}
@@ -94,10 +93,10 @@ public class ChangeNodePositionOperation extends AbstractOperation implements IT
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		Point currentPosition = ZestProperties.getPosition(nodePart.getContent());
+		Point currentPosition = ZestProperties.getPosition(node);
 		if (initialPosition != currentPosition
 				&& (initialPosition == null || !initialPosition.equals(currentPosition))) {
-			ZestProperties.setPosition(nodePart.getContent(), initialPosition);
+			ZestProperties.setPosition(node, initialPosition);
 		}
 		return Status.OK_STATUS;
 	}

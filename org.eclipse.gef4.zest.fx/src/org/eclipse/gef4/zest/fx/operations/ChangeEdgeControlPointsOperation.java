@@ -26,7 +26,6 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 
 /**
  * The {@link ChangeEdgeControlPointsOperation} can be used to manipulate the
@@ -37,7 +36,7 @@ import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
  */
 public class ChangeEdgeControlPointsOperation extends AbstractOperation implements ITransactionalOperation {
 
-	private EdgeContentPart edgePart;
+	private Edge edge;
 	private List<Point> initialControlPoints;
 	private List<Point> finalControlPoints;
 
@@ -45,25 +44,24 @@ public class ChangeEdgeControlPointsOperation extends AbstractOperation implemen
 	 * Constructs a new {@link ChangeEdgeControlPointsOperation} that can be
 	 * used to manipulate the position of the given {@link Node}.
 	 *
-	 * @param edgePart
-	 *            The {@link EdgeContentPart} that is manipulated by this
-	 *            operation.
+	 * @param edge
+	 *            The {@link Edge} that is manipulated by this operation.
 	 * @param finalControlPoints
 	 *            The control points to set on the given {@link Edge}.
 	 */
-	public ChangeEdgeControlPointsOperation(EdgeContentPart edgePart, List<Point> finalControlPoints) {
+	public ChangeEdgeControlPointsOperation(Edge edge, List<Point> finalControlPoints) {
 		super("TransformNode()");
-		this.edgePart = edgePart;
+		this.edge = edge;
 		this.finalControlPoints = new ArrayList<>(finalControlPoints);
-		this.initialControlPoints = new ArrayList<>(ZestProperties.getControlPoints(edgePart.getContent()));
+		this.initialControlPoints = new ArrayList<>(ZestProperties.getControlPoints(edge));
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		List<Point> currentPoints = ZestProperties.getControlPoints(edgePart.getContent());
+		List<Point> currentPoints = ZestProperties.getControlPoints(edge);
 		if (finalControlPoints != currentPoints
 				&& (finalControlPoints == null || !finalControlPoints.equals(currentPoints))) {
-			ZestProperties.setControlPoints(edgePart.getContent(), finalControlPoints);
+			ZestProperties.setControlPoints(edge, finalControlPoints);
 		}
 		return Status.OK_STATUS;
 	}
@@ -97,10 +95,10 @@ public class ChangeEdgeControlPointsOperation extends AbstractOperation implemen
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		List<Point> currentPoints = ZestProperties.getControlPoints(edgePart.getContent());
+		List<Point> currentPoints = ZestProperties.getControlPoints(edge);
 		if (initialControlPoints != currentPoints
 				&& (initialControlPoints == null || !initialControlPoints.equals(currentPoints))) {
-			ZestProperties.setControlPoints(edgePart.getContent(), initialControlPoints);
+			ZestProperties.setControlPoints(edge, initialControlPoints);
 		}
 		return Status.OK_STATUS;
 	}

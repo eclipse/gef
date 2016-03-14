@@ -15,18 +15,20 @@ package org.eclipse.gef4.zest.fx.policies;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.operations.ChangeNodePositionOperation;
 import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
  * The {@link FXTransformNodePolicy} is a specialization of the
  * {@link FXTransformPolicy} that chains a {@link ChangeNodeSizeOperation} to
- * affect the underlying model when transforming nodes. Therefore, it is only
- * applicable for {@link NodeContentPart}.
+ * affect the underlying model when transforming nodes. It is applicable to
+ * {@link IContentPart} with {@link javafx.scene.Node} visual and {@link Node}
+ * content.
  *
  * @author mwienand
  *
@@ -43,7 +45,7 @@ public class FXTransformNodePolicy extends FXTransformPolicy {
 
 		// create model operation
 		Point finalPosition = new Point(newTransform.getTranslateX(), newTransform.getTranslateY());
-		ChangeNodePositionOperation modelOperation = new ChangeNodePositionOperation(getHost(), finalPosition);
+		ChangeNodePositionOperation modelOperation = new ChangeNodePositionOperation(getNode(), finalPosition);
 
 		// assemble operations
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Transform Node");
@@ -55,8 +57,20 @@ public class FXTransformNodePolicy extends FXTransformPolicy {
 	}
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> getHost() {
+		// XXX: We don't tie this policy to NodeContentPart, but only to
+		// IContentPart with a Node content, so it can be re-used in other
+		// situations.
+		return (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>) super.getHost();
+	}
+
+	/**
+	 * Returns the {@link Node} content element of the host part.
+	 *
+	 * @return The {@link Node} content element.
+	 */
+	protected Node getNode() {
+		return (Node) getHost().getContent();
 	}
 
 }

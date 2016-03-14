@@ -22,7 +22,6 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 /**
  * The {@link ChangeNodeSizeOperation} can be used to manipulate the size of a
@@ -33,7 +32,7 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  */
 public class ChangeNodeSizeOperation extends AbstractOperation implements ITransactionalOperation {
 
-	private NodeContentPart nodePart;
+	private Node node;
 	private Dimension initialSize;
 	private Dimension finalSize;
 
@@ -41,17 +40,17 @@ public class ChangeNodeSizeOperation extends AbstractOperation implements ITrans
 	 * Constructs a new {@link ChangeNodeSizeOperation} that can be used to
 	 * manipulate the position and size of the given {@link Node}.
 	 *
-	 * @param nodePart
+	 * @param node
 	 *            The {@link Node} that is manipulated by this operation.
 	 * @param finalSize
 	 *            The {@link Dimension} describing the final bounds for the
 	 *            given {@link Node}.
 	 */
-	public ChangeNodeSizeOperation(NodeContentPart nodePart, Dimension finalSize) {
+	public ChangeNodeSizeOperation(Node node, Dimension finalSize) {
 		super("TransformNode()");
-		this.nodePart = nodePart;
+		this.node = node;
 		this.finalSize = finalSize;
-		initialSize = ZestProperties.getSize(nodePart.getContent());
+		initialSize = ZestProperties.getSize(node);
 		if (initialSize != null) {
 			initialSize = initialSize.getCopy();
 		}
@@ -59,9 +58,9 @@ public class ChangeNodeSizeOperation extends AbstractOperation implements ITrans
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		Dimension currentSize = ZestProperties.getSize(nodePart.getContent());
+		Dimension currentSize = ZestProperties.getSize(node);
 		if (finalSize != currentSize && (finalSize == null || !finalSize.equals(currentSize))) {
-			ZestProperties.setSize(nodePart.getContent(), finalSize);
+			ZestProperties.setSize(node, finalSize);
 		}
 		return Status.OK_STATUS;
 	}
@@ -94,9 +93,9 @@ public class ChangeNodeSizeOperation extends AbstractOperation implements ITrans
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		Dimension currentSize = ZestProperties.getSize(nodePart.getContent());
+		Dimension currentSize = ZestProperties.getSize(node);
 		if (initialSize != currentSize && (initialSize == null || !initialSize.equals(currentSize))) {
-			ZestProperties.setSize(nodePart.getContent(), initialSize);
+			ZestProperties.setSize(node, initialSize);
 		}
 		return Status.OK_STATUS;
 	}
