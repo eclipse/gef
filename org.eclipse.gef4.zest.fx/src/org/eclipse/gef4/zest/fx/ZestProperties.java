@@ -113,7 +113,7 @@ public class ZestProperties {
 	 * @see #getControlPoints(Edge)
 	 * @see #setControlPoints(Edge, List)
 	 */
-	public static final String EDGE_CONTROL_POINTS_POINTS = "edge-control-points";
+	public static final String EDGE_CONTROL_POINTS = "edge-control-points";
 
 	/**
 	 * This attribute determines the CSS style for a node rectangle. This
@@ -325,18 +325,18 @@ public class ZestProperties {
 	public static Boolean NODE_FISHEYE_DEFAULT = false;
 
 	/**
-	 * Returns the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 * Returns the value of the {@link #EDGE_CONTROL_POINTS} attribute of
 	 * the given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} for which to determine the router points.
-	 * @return The value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 * @return The value of the {@link #EDGE_CONTROL_POINTS} attribute of
 	 *         the given {@link Edge}, or an empty list, if the attribute is
 	 *         unset.
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Point> getControlPoints(Edge edge) {
-		Object controlPoints = edge.getAttributes().get(EDGE_CONTROL_POINTS_POINTS);
+		Object controlPoints = edge.getAttributes().get(EDGE_CONTROL_POINTS);
 		if (controlPoints instanceof List) {
 			return (List<Point>) controlPoints;
 		}
@@ -889,18 +889,18 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 * Sets the value of the {@link #EDGE_CONTROL_POINTS} attribute of
 	 * the given {@link Edge} to the given value.
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the
-	 *            {@link #EDGE_CONTROL_POINTS_POINTS} attribute is changed.
+	 *            {@link #EDGE_CONTROL_POINTS} attribute is changed.
 	 * @param controlPoints
 	 *            The new {@link List} of control {@link Point}s for the given
 	 *            {@link Edge}.
 	 */
 	public static void setControlPoints(Edge edge, List<Point> controlPoints) {
-		edge.getAttributes().put(EDGE_CONTROL_POINTS_POINTS, controlPoints);
+		edge.getAttributes().put(EDGE_CONTROL_POINTS, controlPoints);
 	}
 
 	/**

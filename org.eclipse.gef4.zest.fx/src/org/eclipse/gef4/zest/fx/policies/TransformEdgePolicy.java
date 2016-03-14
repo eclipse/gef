@@ -23,12 +23,13 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.operations.ChangeEdgeControlPointsOperation;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.operations.ChangeAttributeOperation;
 
 /**
  * The {@link TransformEdgePolicy} is a specialization of the
  * {@link FXTransformConnectionPolicy} that chains a
- * {@link ChangeEdgeControlPointsOperation} to affect the underlying model when
+ * {@link ChangeAttributeOperation} to affect the underlying model when
  * transforming nodes. It is applicable to {@link IContentPart}'s with a
  * {@link Connection} visual and {@link Edge} content.
  *
@@ -49,8 +50,8 @@ public class TransformEdgePolicy extends FXTransformConnectionPolicy {
 			transformedControlPoints
 					.add(finalAnchors.get(i).getPosition(getHost().getVisual().getControlAnchorKey(i - 1)));
 		}
-		ChangeEdgeControlPointsOperation modelOperation = new ChangeEdgeControlPointsOperation(getEdge(),
-				transformedControlPoints);
+		ChangeAttributeOperation modelOperation = new ChangeAttributeOperation(getEdge(),
+				ZestProperties.EDGE_CONTROL_POINTS, transformedControlPoints);
 
 		// assemble operations
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Transform Edge");

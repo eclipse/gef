@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.policies;
 
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -22,18 +23,19 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.operations.ChangeAttributeOperation;
+import org.eclipse.gef4.zest.fx.parts.AbstractLabelPart;
 
 /**
- * The {@link TransformNodePolicy} is a specialization of the
+ * The {@link TransformLabelPolicy} is a specialization of the
  * {@link FXTransformPolicy} that chains a {@link ChangeAttributeOperation} to
  * affect the underlying model when transforming nodes. It is applicable to
  * {@link IContentPart} with {@link javafx.scene.Node} visual and {@link Node}
  * content.
  *
- * @author mwienand
+ * @author anyssen
  *
  */
-public class TransformNodePolicy extends FXTransformPolicy {
+public class TransformLabelPolicy extends FXTransformPolicy {
 
 	@Override
 	public ITransactionalOperation commit() {
@@ -44,12 +46,26 @@ public class TransformNodePolicy extends FXTransformPolicy {
 		ITransactionalOperation visualOperation = super.commit();
 
 		// create model operation
+		String attributeKey = null;
+		String labelRole = getHost().getContent().getValue();
+		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(labelRole)) {
+			attributeKey = ZestProperties.ELEMENT_EXTERNAL_LABEL_POSITION;
+		} else if (ZestProperties.ELEMENT_LABEL.equals(getHost().getContent().getValue())) {
+			// node do not have 'internal' labels
+			attributeKey = ZestProperties.EDGE_LABEL_POSITION;
+		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(getHost().getContent().getValue())) {
+			attributeKey = ZestProperties.EDGE_SOURCE_LABEL_POSITION;
+		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(getHost().getContent().getValue())) {
+			attributeKey = ZestProperties.EDGE_TARGET_LABEL_POSITION;
+		} else {
+			throw new IllegalArgumentException("Unsupported content element.");
+		}
 		Point finalPosition = new Point(newTransform.getTranslateX(), newTransform.getTranslateY());
-		ChangeAttributeOperation modelOperation = new ChangeAttributeOperation(getNode(), ZestProperties.NODE_POSITION,
-				finalPosition);
+		ChangeAttributeOperation modelOperation = new ChangeAttributeOperation(
+				(IAttributeStore) getHost().getContent().getKey(), attributeKey, finalPosition);
 
 		// assemble operations
-		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Transform Node");
+		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Transform label");
 		if (visualOperation != null) {
 			fwdOp.add(visualOperation);
 		}
@@ -58,20 +74,8 @@ public class TransformNodePolicy extends FXTransformPolicy {
 	}
 
 	@Override
-	public IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> getHost() {
-		// XXX: We don't tie this policy to NodePart, but only to
-		// IContentPart with a Node content, so it can be re-used in other
-		// situations.
-		return (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>) super.getHost();
-	}
-
-	/**
-	 * Returns the {@link Node} content element of the host part.
-	 *
-	 * @return The {@link Node} content element.
-	 */
-	protected Node getNode() {
-		return (Node) getHost().getContent();
+	public AbstractLabelPart getHost() {
+		return (AbstractLabelPart) super.getHost();
 	}
 
 }

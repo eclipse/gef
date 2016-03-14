@@ -31,7 +31,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
+import javafx.util.Pair;
 
 /**
  * Abstract base class for external labels.
@@ -57,7 +57,6 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 			refreshVisual();
 		}
 	};
-	private Translate translate;
 	private Text text;
 
 	@Override
@@ -75,9 +74,6 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 		text.setTextOrigin(VPos.TOP);
 		text.setManaged(false);
 		text.setPickOnBounds(true);
-		// add translation transform to the Text
-		translate = new Translate();
-		text.getTransforms().add(translate);
 		// add css class
 		text.getStyleClass().add(CSS_CLASS_LABEL);
 		return text;
@@ -93,13 +89,10 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * Returns the offset that is currently applied to the label.
-	 *
-	 * @return The offset that is currently applied to the label.
-	 */
-	public Translate getOffset() {
-		return translate;
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<?, String> getContent() {
+		return (Pair<?, String>) super.getContent();
 	}
 
 	/**

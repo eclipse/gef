@@ -18,11 +18,12 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
+import org.eclipse.gef4.zest.fx.ZestProperties;
+import org.eclipse.gef4.zest.fx.operations.ChangeAttributeOperation;
 
 /**
  * The {@link ResizeNodePolicy} is a specialization of {@link FXResizePolicy}
- * that chains a {@link ChangeNodeSizeOperation} for updating the resized
+ * that chains a {@link ChangeAttributeOperation} for updating the resized
  * {@link Node}. It is applicable to {@link IContentPart} with
  * {@link javafx.scene.Node} visual and {@link Node} content.
  *
@@ -43,7 +44,8 @@ public class ResizeNodePolicy extends FXResizePolicy {
 
 		// create model operation
 		Dimension finalSize = new Dimension(initialSize.width + dw, initialSize.height + dh);
-		ChangeNodeSizeOperation modelOperation = new ChangeNodeSizeOperation(getNode(), finalSize);
+		ChangeAttributeOperation modelOperation = new ChangeAttributeOperation(getNode(), ZestProperties.NODE_SIZE,
+				finalSize);
 
 		// assemble visual and model operations
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Resize Node");
