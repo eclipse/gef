@@ -449,6 +449,89 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
+	public void test_move_connected_orthogonal_segment_down_translated()
+			throws InterruptedException, InvocationTargetException, AWTException {
+		// create injector (adjust module bindings for test)
+		Injector injector = Guice.createInjector(new TestModule());
+
+		// inject domain
+		injector.injectMembers(this);
+
+		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		ctx.createScene(viewer.getCanvas(), 400, 200);
+
+		// activate domain, so tool gets activated and can register listeners
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		final List<Object> contents = TestModels.getAB_AB_simple();
+		// set contents on JavaFX application thread (visuals are created)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
+			}
+		});
+
+		// check that the parts have been created
+		for (Object content : contents) {
+			assertTrue(viewer.getContentPartMap().containsKey(content));
+		}
+
+		// query bend policy for first connection
+		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
+		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
+
+		assertEquals(2, connection.getVisual().getPoints().size());
+
+		// add translation to connection
+		connection.getVisual().setTranslateX(100);
+		connection.getVisual().setTranslateY(100);
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		connection.getVisual().setRouter(new OrthogonalRouter());
+		((DynamicAnchor) connection.getVisual().getStartAnchor()).setComputationStrategy(
+				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy());
+		((DynamicAnchor) connection.getVisual().getEndAnchor()).setComputationStrategy(
+				connection.getVisual().getEndAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy());
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		Point startPoint = connection.getVisual().getStartPoint();
+		Point endPoint = connection.getVisual().getEndPoint();
+
+		// copy start point and end point
+		bendPolicy.init();
+		AnchorHandle startAnchorHandle = bendPolicy.findExplicitAnchorBackwards(0);
+		assertEquals(startPoint, startAnchorHandle.getPosition());
+		AnchorHandle firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle,
+				startPoint.getTranslated(100, 100));
+		AnchorHandle secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle,
+				endPoint.getTranslated(100, 100));
+		// check number of points
+		assertEquals(4, countExplicit(connection.getVisual()));
+		// check coordinates
+		assertEquals(startPoint, startAnchorHandle.getPosition());
+		assertEquals(startPoint, firstWayAnchorHandle.getPosition());
+		assertEquals(endPoint, secondWayAnchorHandle.getPosition());
+
+		// move segment down by 100 to create 2 new segments
+		bendPolicy.select(firstWayAnchorHandle);
+		bendPolicy.select(secondWayAnchorHandle);
+		bendPolicy.move(new Point(), new Point(0, 100));
+		bendPolicy.commit();
+		// check number of points and their positions
+		assertEquals(4, countExplicit(connection.getVisual()));
+		assertTrue(equalsUnprecise(startPoint.getTranslated(0, 100), connection.getVisual().getControlPoint(0)));
+		assertTrue(equalsUnprecise(endPoint.getTranslated(0, 100), connection.getVisual().getControlPoint(1)));
+	}
+
+	@Test
 	public void test_move_connected_orthogonal_segment_restore()
 			throws InterruptedException, InvocationTargetException, AWTException {
 		// create injector (adjust module bindings for test)
@@ -662,7 +745,7 @@ public class FXBendConnectionPolicyTests {
 		AnchorHandle firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, firstWayPoint);
 		AnchorHandle secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, secondWayPoint);
 		AnchorHandle thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, thirdWayPoint);
-		AnchorHandle fourthWayAnchorHandle = bendPolicy.createAfter(thirdWayAnchorHandle, fourthWayPoint);
+		bendPolicy.createAfter(thirdWayAnchorHandle, fourthWayPoint);
 		// check number of points
 		assertEquals(6, countExplicit(connection.getVisual()));
 
@@ -1352,8 +1435,7 @@ public class FXBendConnectionPolicyTests {
 		assertEquals(wayPoint, connection.getVisual().getPoint(1));
 
 		// create way point 20 px to the right of the existing one
-		AnchorHandle secondWayPointAnchorHandle = bendPolicy.createAfter(firstWayPointAnchorHandle,
-				wayPoint.getTranslated(20, 0));
+		bendPolicy.createAfter(firstWayPointAnchorHandle, wayPoint.getTranslated(20, 0));
 		// verify that the point is inserted
 		assertEquals(4, connection.getVisual().getPoints().size());
 
