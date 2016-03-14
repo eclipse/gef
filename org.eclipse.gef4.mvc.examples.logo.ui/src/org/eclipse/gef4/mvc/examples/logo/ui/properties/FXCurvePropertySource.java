@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -30,8 +30,10 @@ public class FXCurvePropertySource implements IPropertySource {
 					Decoration.CIRCLE.name() });
 	private static final IPropertyDescriptor STROKE_WIDTH_PROPERTY = new TextPropertyDescriptor(
 			FXGeometricCurve.STROKE_WIDTH_PROPERTY, "Stroke Width");
-	private static final IPropertyDescriptor IS_SEGMENT_BASED_PROPERTY = new TextPropertyDescriptor(
-			FXGeometricCurve.IS_SEGMENT_BASED_PROPERTY, "Segment Based");
+	private static final IPropertyDescriptor ROUTING_STYLE_PROPERTY = new ComboBoxPropertyDescriptor(
+			FXGeometricCurve.ROUTING_STYLE_PROPERTY, "Routing Style",
+			new String[] { RoutingStyle.STRAIGHT.name(),
+					RoutingStyle.ORTHOGONAL.name() });
 
 	private FXGeometricCurve curve;
 
@@ -49,7 +51,7 @@ public class FXCurvePropertySource implements IPropertySource {
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return new IPropertyDescriptor[] { SOURCE_DECORATION_PROPERTY,
 				TARGET_DECORATION_PROPERTY, STROKE_WIDTH_PROPERTY,
-				IS_SEGMENT_BASED_PROPERTY };
+				ROUTING_STYLE_PROPERTY };
 	}
 
 	@Override
@@ -60,8 +62,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			return curve.getTargetDecoration().ordinal();
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			return new Double(curve.getStrokeWidth()).toString();
-		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
-			return new Boolean(curve.isSegmentBased()).toString();
+		} else if (ROUTING_STYLE_PROPERTY.getId().equals(id)) {
+			return curve.getRoutingStyle().ordinal();
 		} else {
 			return null;
 		}
@@ -75,8 +77,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			return !curve.getTargetDecoration().equals(Decoration.NONE);
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			return curve.getStrokeWidth() != 1;
-		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
-			return !curve.isSegmentBased();
+		} else if (ROUTING_STYLE_PROPERTY.getId().equals(id)) {
+			return !curve.getRoutingStyle().equals(RoutingStyle.STRAIGHT);
 		} else {
 			return false;
 		}
@@ -90,8 +92,8 @@ public class FXCurvePropertySource implements IPropertySource {
 			curve.setTargetDecoration(Decoration.NONE);
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			curve.setStrokeWidth(1);
-		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
-			curve.setSegmentBased(false);
+		} else if (ROUTING_STYLE_PROPERTY.getId().equals(id)) {
+			curve.setRoutingStyle(RoutingStyle.STRAIGHT);
 		}
 	}
 
@@ -103,15 +105,11 @@ public class FXCurvePropertySource implements IPropertySource {
 			curve.setTargetDecoration(Decoration.values()[(int) value]);
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			curve.setStrokeWidth(Double.parseDouble((String) value));
-		} else if (IS_SEGMENT_BASED_PROPERTY.getId().equals(id)) {
+		} else if (ROUTING_STYLE_PROPERTY.getId().equals(id)) {
 			// TODO: Changing the way points has to be undoable. We need to bind
 			// an own UndoablePropertySheetEntry in the UiModule that chains an
 			// operation changing the way points on the domain object.
-			boolean isSegmentBased = Boolean.parseBoolean((String) value);
-			if (isSegmentBased) {
-				curve.setWayPoints(new Point[] {});
-			}
-			curve.setSegmentBased(isSegmentBased);
+			curve.setRoutingStyle(RoutingStyle.values()[(int) value]);
 		}
 	}
 

@@ -34,6 +34,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
@@ -412,7 +413,7 @@ public class FXGeometricCurvePart
 		}
 
 		// connection router
-		if (content.isSegmentBased()) {
+		if (content.getRoutingStyle().equals(RoutingStyle.ORTHOGONAL)) {
 			// FIXME: Change the computation strategy from the operation that
 			// changes the curve's isSegmentBased flag.
 			Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()

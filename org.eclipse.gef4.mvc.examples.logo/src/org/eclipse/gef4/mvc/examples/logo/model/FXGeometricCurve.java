@@ -23,9 +23,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
@@ -37,9 +35,13 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		NONE, ARROW, CIRCLE
 	}
 
+	public enum RoutingStyle {
+		STRAIGHT, ORTHOGONAL
+	}
+
 	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
 	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
-	public static final String IS_SEGMENT_BASED_PROPERTY = "segmentBasedProperty";
+	public static final String ROUTING_STYLE_PROPERTY = "routingStyle";
 
 	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
 		if (waypoints == null || waypoints.length == 0) {
@@ -55,8 +57,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 			this, SOURCE_DECORATION_PROPERTY, Decoration.NONE);
 	private final ObjectProperty<Decoration> targetDecorationProperty = new SimpleObjectProperty<>(
 			this, TARGET_DECORATION_PROPERTY, Decoration.NONE);
-	private final BooleanProperty isSegmentBasedProperty = new SimpleBooleanProperty(
-			this, IS_SEGMENT_BASED_PROPERTY, false);
+	private final ObjectProperty<RoutingStyle> routingStyleProperty = new SimpleObjectProperty<>(
+			this, ROUTING_STYLE_PROPERTY, RoutingStyle.STRAIGHT);
 	public double[] dashes = new double[0];
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
@@ -90,6 +92,10 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return Arrays.copyOf(dashes, dashes.length);
 	}
 
+	public RoutingStyle getRoutingStyle() {
+		return routingStyleProperty.get();
+	}
+
 	public Set<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
 		return sourceAnchorages;
 	}
@@ -114,10 +120,6 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return new ArrayList<>(waypoints);
 	}
 
-	public boolean isSegmentBased() {
-		return isSegmentBasedProperty.get();
-	}
-
 	public void removeWayPoint(int i) {
 		// TODO: check index
 		List<Point> points = getWayPointsCopy();
@@ -125,8 +127,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		setWayPoints(points.toArray(new Point[] {}));
 	}
 
-	public void setSegmentBased(boolean isSegmentBased) {
-		isSegmentBasedProperty.set(isSegmentBased);
+	public void setRoutingStyle(RoutingStyle routingStyle) {
+		routingStyleProperty.set(routingStyle);
 	}
 
 	public void setSourceDecoration(Decoration sourceDecoration) {
