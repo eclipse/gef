@@ -24,7 +24,6 @@ import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
@@ -75,7 +74,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 *
 	 */
 	public class AnchorHandle {
-
 		private Point initialPosition = null;
 
 		/**
@@ -85,12 +83,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		private int explicitAnchorIndex = 0;
 
 		/**
-		 * Flag that stores if the referenced anchor was made explicit as a side
-		 * effect of interaction.
-		 */
-		private boolean wasImplicit = false;
-
-		/**
 		 * Creates a new {@link AnchorHandle} for the explicit anchor at the
 		 * given index.
 		 *
@@ -98,22 +90,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		 *            The explicit anchor index for which to create a handle.
 		 */
 		public AnchorHandle(int explicitAnchorIndex) {
-			this(explicitAnchorIndex, false);
-		}
-
-		/**
-		 * Creates a new {@link AnchorHandle} for the explicit anchor at the
-		 * given index.
-		 *
-		 * @param explicitAnchorIndex
-		 *            The explicit anchor index for which to create a handle.
-		 * @param wasImplicit
-		 *            Flag to indicate that the referenced anchor was made
-		 *            explicit as a side effect of interaction.
-		 */
-		public AnchorHandle(int explicitAnchorIndex, boolean wasImplicit) {
 			this.explicitAnchorIndex = explicitAnchorIndex;
-			this.wasImplicit = wasImplicit;
 			initialPosition = getPosition();
 		}
 
@@ -180,18 +157,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		public Point getPosition() {
 			return getConnection().getPoint(getConnectionIndex());
 		}
-
-		/**
-		 * Returns <code>true</code> if this {@link AnchorHandle} was made
-		 * explicit as a side effect of interaction. Otherwise returns
-		 * <code>false</code>.
-		 *
-		 * @return <code>true</code> if this {@link AnchorHandle} was made
-		 *         explicit, otherwise <code>false</code>.
-		 */
-		public boolean wasImplicit() {
-			return wasImplicit;
-		}
 	}
 
 	/**
@@ -256,11 +221,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
-		System.out.println(
-				"before normalization: " + getConnection().getPoints());
 		normalize();
-		System.out
-				.println("after normalization: " + getConnection().getPoints());
 		ITransactionalOperation bendOperation = super.commit();
 
 		if (bendOperation == null || bendOperation.isNoOp()) {
@@ -633,7 +594,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				.sceneToLocal(Geometry2FX.toFXPoint(mouseInScene)));
 		getBendOperation().getNewAnchors().add(insertionIndex,
 				createUnconnectedAnchor(mouseInLocal));
-		System.out.println("local position = " + mouseInLocal);
 		locallyExecuteOperation();
 		AnchorHandle newAnchorHandle = new AnchorHandle(insertionIndex);
 		explicitAnchors.add(insertionIndex, newAnchorHandle);
@@ -748,9 +708,9 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		Point mouseDeltaInLocal = getMouseDeltaInLocal(initialMouseInScene,
 				currentMouseInScene);
 		if (isSegmentBased) {
-			boolean isHorizontallyConstrained = PrecisionUtils.equal(
-					selectedAnchors.get(0).getInitialPosition().y,
-					selectedAnchors.get(1).getInitialPosition().y);
+			boolean isHorizontallyConstrained = Math.abs(selectedAnchors.get(0)
+					.getInitialPosition().y
+					- selectedAnchors.get(1).getInitialPosition().y) < 1;
 			if (isHorizontallyConstrained) {
 				mouseDeltaInLocal.x = 0;
 			} else {
@@ -800,18 +760,13 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		}
 
 		// execute operation so that changes are applied
-		System.out.println("[normalize]");
-		System.out
-				.println("operation  = " + getBendOperation().getNewAnchors());
 		locallyExecuteOperation();
 
 		// determine all connection anchors
 		List<IAnchor> anchors = getConnection().getAnchors();
-		System.out.println("connection = " + anchors);
 
 		// determine corresponding positions
 		List<Point> positions = getConnection().getPoints();
-		System.out.println(" -> points = " + positions);
 
 		// test each explicit static anchor for removal potential
 		int explicitIndex = 0; // start is explicit
@@ -833,28 +788,19 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 				if (inDirection.isNull() || outDirection.isNull()
 						|| inDirection.isParallelTo(outDirection)) {
-					System.out.println("::straight line from " + prev + " over "
-							+ current + " to " + next);
-					System.out.println("middle anchor = " + getBendOperation()
-							.getNewAnchors().get(explicitIndex));
 					// make previous and next explicit
 					if (getConnection().getRouter()
 							.isImplicitAnchor(anchors.get(i + 1))) {
 						// make next explicit
-						System.out.println(":: -> make end explicit");
 						makeExplicitBefore(i + 1);
 					}
 					if (getConnection().getRouter()
 							.isImplicitAnchor(anchors.get(i - 1))) {
 						// make previous explicit
-						System.out.println(":: -> make start explicit");
 						makeExplicitAfter(i - 1);
 						explicitIndex++;
 					}
 					// remove current point as it is unnecessary
-					System.out.println(":: -> remove middle");
-					System.out.println("middle anchor = " + getBendOperation()
-							.getNewAnchors().get(explicitIndex));
 					explicitAnchors.remove(explicitIndex);
 					getBendOperation().getNewAnchors().remove(explicitIndex);
 					// start a new normalization
@@ -867,8 +813,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		if (removed) {
 			normalize();
 		}
-
-		System.out.println("[/normalize]");
 	}
 
 	private void removeOverlain(Point initialMouse, Point currentMouse) {
