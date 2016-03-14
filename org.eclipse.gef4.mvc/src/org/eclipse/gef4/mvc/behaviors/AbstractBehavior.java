@@ -258,6 +258,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 				boolean existsAlready = false;
 				for (IHandlePart<VR, ? extends VR> oldHandle : oldHandles) {
 					if (oldHandle instanceof Comparable) {
+						@SuppressWarnings("unchecked")
 						Comparable<IHandlePart<VR, ? extends VR>> comparable = (Comparable<IHandlePart<VR, ? extends VR>>) oldHandle;
 						int compareTo = comparable.compareTo(newHandle);
 						if (compareTo == 0) {
