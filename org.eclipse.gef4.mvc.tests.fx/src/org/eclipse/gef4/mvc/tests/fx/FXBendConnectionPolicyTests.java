@@ -785,6 +785,124 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	@Test
+	public void test_move_explicit_orthogonal_segment_overlay_side()
+			throws InterruptedException, InvocationTargetException, AWTException {
+		// create injector (adjust module bindings for test)
+		Injector injector = Guice.createInjector(new TestModule());
+
+		// inject domain
+		injector.injectMembers(this);
+
+		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		ctx.createScene(viewer.getCanvas(), 400, 200);
+
+		// activate domain, so tool gets activated and can register listeners
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		final List<Object> contents = TestModels.getAB_AB_simple();
+		// set contents on JavaFX application thread (visuals are created)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
+			}
+		});
+
+		// check that the parts have been created
+		for (Object content : contents) {
+			assertTrue(viewer.getContentPartMap().containsKey(content));
+		}
+
+		// query bend policy for first connection
+		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
+		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
+
+		assertEquals(2, connection.getVisual().getPoints().size());
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		connection.getVisual().setRouter(new OrthogonalRouter());
+		((DynamicAnchor) connection.getVisual().getStartAnchor()).setComputationStrategy(
+				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy());
+		((DynamicAnchor) connection.getVisual().getEndAnchor()).setComputationStrategy(
+				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy());
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		Point startPoint = connection.getVisual().getStartPoint();
+		Point endPoint = connection.getVisual().getEndPoint();
+
+		// create control points
+		bendPolicy.init();
+		AnchorHandle startAnchorHandle = bendPolicy.findExplicitAnchorBackwards(0);
+		Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y);
+		Point secondWayPoint = new Point(startPoint.x + 100, startPoint.y + 200);
+		Point thirdWayPoint = new Point(startPoint.x + 200, startPoint.y + 200);
+		Point fourthWayPoint = new Point(startPoint.x + 200, startPoint.y + 100);
+		Point fifthWayPoint = new Point(startPoint.x + 300, startPoint.y + 100);
+		Point sixthWayPoint = new Point(startPoint.x + 300, startPoint.y);
+		AnchorHandle firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, firstWayPoint);
+		AnchorHandle secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, secondWayPoint);
+		AnchorHandle thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, thirdWayPoint);
+		AnchorHandle fourthWayAnchorHandle = bendPolicy.createAfter(thirdWayAnchorHandle, fourthWayPoint);
+		AnchorHandle fifthWayAnchorHandle = bendPolicy.createAfter(fourthWayAnchorHandle, fifthWayPoint);
+		bendPolicy.createAfter(fifthWayAnchorHandle, sixthWayPoint);
+		// check number of points
+		assertEquals(8, countExplicit(connection.getVisual()));
+
+		// move segment to the right to create a 3 segment overlay
+		bendPolicy.select(firstWayAnchorHandle);
+		bendPolicy.select(secondWayAnchorHandle);
+		bendPolicy.move(new Point(), new Point(100, 0));
+		// check number of points and their positions
+		assertEquals(6, countExplicit(connection.getVisual()));
+		assertTrue(equalsUnprecise(startPoint, connection.getVisual().getStartPoint()));
+		assertTrue(equalsUnprecise(firstWayPoint.getTranslated(100, 0), connection.getVisual().getControlPoint(0)));
+		assertTrue(equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(1)));
+		assertTrue(equalsUnprecise(fifthWayPoint, connection.getVisual().getControlPoint(2)));
+		assertTrue(equalsUnprecise(sixthWayPoint, connection.getVisual().getControlPoint(3)));
+		assertTrue(equalsUnprecise(endPoint, connection.getVisual().getEndPoint()));
+
+		// move segment back to the left to restore the original positions
+		bendPolicy.move(new Point(), new Point());
+		assertEquals(8, countExplicit(connection.getVisual()));
+		assertTrue(equalsUnprecise(startPoint, connection.getVisual().getStartPoint()));
+		assertTrue(equalsUnprecise(firstWayPoint, connection.getVisual().getControlPoint(0)));
+		assertTrue(equalsUnprecise(secondWayPoint, connection.getVisual().getControlPoint(1)));
+		assertTrue(equalsUnprecise(thirdWayPoint, connection.getVisual().getControlPoint(2)));
+		assertTrue(equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(3)));
+		assertTrue(equalsUnprecise(fifthWayPoint, connection.getVisual().getControlPoint(4)));
+		assertTrue(equalsUnprecise(sixthWayPoint, connection.getVisual().getControlPoint(5)));
+		assertTrue(equalsUnprecise(endPoint, connection.getVisual().getEndPoint()));
+
+		// move segment to the right to create an unprecise 3 segment overlay
+		// (default threshold of 10px)
+		bendPolicy.move(new Point(), new Point(95, 0));
+		assertEquals(6, countExplicit(connection.getVisual()));
+		assertTrue(equalsUnprecise(startPoint, connection.getVisual().getStartPoint()));
+		assertTrue(equalsUnprecise(firstWayPoint.getTranslated(100, 0), connection.getVisual().getControlPoint(0)));
+		assertTrue(equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(1)));
+		assertTrue(equalsUnprecise(fifthWayPoint, connection.getVisual().getControlPoint(2)));
+		assertTrue(equalsUnprecise(sixthWayPoint, connection.getVisual().getControlPoint(3)));
+		assertTrue(equalsUnprecise(endPoint, connection.getVisual().getEndPoint()));
+
+		// check if the overlay is still removed after commit
+		bendPolicy.commit();
+		assertEquals(6, countExplicit(connection.getVisual()));
+		assertTrue(equalsUnprecise(startPoint, connection.getVisual().getStartPoint()));
+		assertTrue(equalsUnprecise(firstWayPoint.getTranslated(100, 0), connection.getVisual().getControlPoint(0)));
+		assertTrue(equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(1)));
+		assertTrue(equalsUnprecise(fifthWayPoint, connection.getVisual().getControlPoint(2)));
+		assertTrue(equalsUnprecise(sixthWayPoint, connection.getVisual().getControlPoint(3)));
+		assertTrue(equalsUnprecise(endPoint, connection.getVisual().getEndPoint()));
+	}
+
+	@Test
 	public void test_move_explicit_orthogonal_segment_simple()
 			throws InterruptedException, InvocationTargetException, AWTException {
 		// create injector (adjust module bindings for test)
