@@ -12,18 +12,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.parts.PartUtils;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -45,82 +47,11 @@ import javafx.scene.input.MouseEvent;
 public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		extends AbstractFXInteractionPolicy implements IFXOnDragPolicy {
 
-	private int createdSegmentIndex;
-
 	private CursorSupport cursorSupport = new CursorSupport(this);
 
 	private IVisualPart<Node, ? extends Connection> targetPart;
 
 	private Point initialMouseInScene;
-
-	private void adjustHandles(List<Point> points,
-			boolean skipMidPointsAroundCreated) {
-		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
-		return;
-		// // re-assign segment index and segment parameter
-		// List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-		// PartUtils.getAnchoreds(
-		// getHost().getAnchoragesUnmodifiable().keySet()),
-		// FXCircleSegmentHandlePart.class);
-		//
-		// Collections.<FXCircleSegmentHandlePart> sort(parts);
-		// // System.out.println("Found " + points.size() + " points.");
-		// // System.out.println(
-		// // "Found " + parts.size() + " FXSelectionHandleParts");
-		// Iterator<FXCircleSegmentHandlePart> it = parts.iterator();
-		// FXCircleSegmentHandlePart part = null;
-		// for (int i = 0; i < points.size() - 1; i++) {
-		// // param 0
-		// if (it.hasNext()) {
-		// part = it.next();
-		// // System.out.println("Reassigned index " +
-		// // part.getSegmentIndex()
-		// // + " - " + part.getSegmentParameter() + " to " + i
-		// // + " - " + 0.0);
-		// setSegmentIndex(part, i);
-		// setSegmentParameter(part, 0.0);
-		// }
-		//
-		// // skip mid point handles around newly created waypoints
-		// if (createdSegmentIndex < 0 || !skipMidPointsAroundCreated
-		// || part.getSegmentIndex() != createdSegmentIndex - 1
-		// && part.getSegmentIndex() != createdSegmentIndex) {
-		// // param 0.5
-		// if (it.hasNext()) {
-		// part = it.next();
-		// // System.out.println(
-		// // "Reassigned index " + part.getSegmentIndex() + " - "
-		// // + part.getSegmentParameter() + " to " + i
-		// // + " - " + 0.5);
-		// setSegmentIndex(part, i);
-		// setSegmentParameter(part, 0.5);
-		// }
-		// }
-		//
-		// // param 1
-		// if (i == points.size() - 2) {
-		// if (it.hasNext()) {
-		// part = it.next();
-		// // System.out.println(
-		// // "Reassigned index " + part.getSegmentIndex() + " - "
-		// // + part.getSegmentParameter() + " to " + i
-		// // + " - " + 1.0);
-		// setSegmentIndex(part, i);
-		// setSegmentParameter(part, 1.0);
-		// }
-		// }
-		// }
-		// // not used -> could be removed (and re-added)
-		// while (it.hasNext()) {
-		// part = it.next();
-		// // System.out.println("Reassigned index " + part.getSegmentIndex()
-		// // + " - " + part.getSegmentParameter() + " to " + -1 + " - "
-		// // + 1.0);
-		// // hide (but do not remove from root part and anchorage yet
-		// // (this will be initiated upon commit)
-		// setSegmentIndex(part, -1);
-		// }
-	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -132,7 +63,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 		List<Point> after = connection.getPoints();
 		if (before.size() != after.size()) {
-			adjustHandles(after, true);
+			targetPart.getAdapter(SelectionBehavior.class).updateHandles();
 		}
 	}
 
@@ -140,7 +71,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	public void dragAborted() {
 		restoreRefreshVisuals(targetPart);
 		rollback(getBendPolicy(targetPart));
-		adjustHandles(((Connection) targetPart.getVisual()).getPoints(), false);
+		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
 	}
 
 	/**
@@ -194,7 +125,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	@Override
 	public void press(MouseEvent e) {
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
-		createdSegmentIndex = -1;
 		FXCircleSegmentHandlePart hostPart = getHost();
 		targetPart = getTargetPart();
 
@@ -203,22 +133,23 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		init(bendPolicy);
 
 		if (hostPart.getSegmentParameter() == 0.5) {
-			if (e.isShiftDown()) {
-				// determine connectedness for neighbor anchors
+			if (e.isShiftDown() || targetPart.getVisual()
+					.getRouter() instanceof OrthogonalRouter) {
+				// move segment, copy ends when connected
+
+				// determine indices of neighbor anchors
 				int firstSegmentIndex = hostPart.getSegmentIndex();
 				int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
 
+				// determine connectedness for neighbor anchors
 				Node firstAnchorage = targetPart.getVisual()
 						.getAnchor(firstSegmentIndex).getAnchorage();
 				boolean isFirstConnected = firstAnchorage != null
 						&& firstAnchorage != targetPart.getVisual();
-
 				Node secondAnchorage = targetPart.getVisual()
 						.getAnchor(secondSegmentIndex).getAnchorage();
 				boolean isSecondConnected = secondAnchorage != null
 						&& secondAnchorage != targetPart.getVisual();
-
-				// move segment => select the segment end points
 
 				// XXX: Make second explicit first so that the first segment
 				// index is still valid.
@@ -227,31 +158,36 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				AnchorHandle firstAnchorHandle = bendPolicy
 						.makeExplicitAfter(firstSegmentIndex);
 
+				// copy first if connected
 				if (isFirstConnected) {
+					System.out.println("copy first :: initial "
+							+ firstAnchorHandle.getInitialPosition()
+							+ " :: current " + firstAnchorHandle.getPosition());
+					// TODO: transform to scene
 					firstAnchorHandle = bendPolicy.createAfter(
 							firstAnchorHandle,
 							firstAnchorHandle.getInitialPosition());
 				}
-				System.out.println("select " + firstAnchorHandle.getAnchor()
-						+ ", " + firstAnchorHandle.getInitialPosition());
-				bendPolicy.select(firstAnchorHandle);
 
+				// copy second if connected
 				if (isSecondConnected) {
+					System.out.println("copy second :: initial "
+							+ secondAnchorHandle.getInitialPosition()
+							+ " :: current "
+							+ secondAnchorHandle.getPosition());
+					// TODO: transform to scene
 					secondAnchorHandle = bendPolicy.createBefore(
 							secondAnchorHandle,
 							secondAnchorHandle.getInitialPosition());
 				}
-				System.out.println("select " + secondAnchorHandle.getAnchor()
-						+ ", " + secondAnchorHandle.getInitialPosition());
-				bendPolicy.select(secondAnchorHandle);
 
-				// update handles
-				if (isFirstConnected || isSecondConnected) {
-					targetPart.getAdapter(SelectionBehavior.class)
-							.updateHandles();
-				}
+				// select the end anchors for manipulation
+				bendPolicy.select(firstAnchorHandle);
+				bendPolicy.select(secondAnchorHandle);
 			} else {
-				// create new way point
+				// create new way point in middle and move it (disabled for
+				// orthogonal connections)
+
 				AnchorHandle previousAnchorHandle = bendPolicy
 						.findExplicitAnchorBackwards(
 								hostPart.getSegmentIndex());
@@ -260,33 +196,120 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 				// select for manipulation
 				bendPolicy.select(newAnchorHandle);
-
-				// TODO: Check if SelectionBehavior#updateHandles() works here,
-				// too.
-
-				// find other segment handle parts
-				List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-						PartUtils.getAnchoreds(
-								getHost().getAnchoragesUnmodifiable().keySet()),
-						FXCircleSegmentHandlePart.class);
-
-				// sort parts by segment index and parameter
-				Collections.<FXCircleSegmentHandlePart> sort(parts);
-
-				// increment segment index of succeeding parts
-				for (FXCircleSegmentHandlePart p : parts) {
-					if (p.getSegmentIndex() > hostPart.getSegmentIndex() || (p
-							.getSegmentIndex() == hostPart.getSegmentIndex()
-							&& p.getSegmentParameter() == 1)) {
-						p.setSegmentIndex(p.getSegmentIndex() + 1);
-					}
-				}
-
-				// adjust index and parameter of this segment handle part
-				hostPart.setSegmentIndex(hostPart.getSegmentIndex() + 1);
-				hostPart.setSegmentParameter(0);
-				createdSegmentIndex = hostPart.getSegmentIndex();
 			}
+		} else if (hostPart.getSegmentParameter() == 0.25) {
+			// split segment, move its first halve
+
+			// determine segment indices for neighbor anchors
+			int firstSegmentIndex = hostPart.getSegmentIndex();
+			int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
+
+			// determine middle of segment
+			Point firstPoint = targetPart.getVisual()
+					.getPoint(firstSegmentIndex);
+			Point secondPoint = targetPart.getVisual()
+					.getPoint(secondSegmentIndex);
+			Vector direction = new Vector(firstPoint, secondPoint);
+			Point midPoint = firstPoint.getTranslated(direction.x / 2,
+					direction.y / 2);
+			Point2D midInScene = targetPart.getVisual().localToScene(midPoint.x,
+					midPoint.y);
+
+			System.out.println("[split segment 0.25]");
+			System.out.println("first point = " + firstPoint);
+			System.out.println("second point = " + secondPoint);
+			System.out.println("mid point = " + midPoint);
+
+			// determine connectedness of first anchor handle
+			Node firstAnchorage = targetPart.getVisual()
+					.getAnchor(firstSegmentIndex).getAnchorage();
+			boolean isFirstConnected = firstAnchorage != null
+					&& firstAnchorage != targetPart.getVisual();
+
+			// make the anchor handles explicit
+			// XXX: Make second explicit first so that the first segment
+			// index is still valid.
+			AnchorHandle secondAnchorHandle = bendPolicy
+					.makeExplicitBefore(secondSegmentIndex);
+			AnchorHandle firstAnchorHandle = bendPolicy
+					.makeExplicitAfter(firstSegmentIndex);
+
+			// copy first point if connected
+			if (isFirstConnected) {
+				System.out.println("copy first :: initial "
+						+ firstAnchorHandle.getInitialPosition()
+						+ " :: current " + firstAnchorHandle.getPosition());
+				// use the copy as the new first anchor handle
+				// TODO: transform to scene
+				firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+						firstAnchorHandle.getInitialPosition());
+			}
+
+			// create new anchor at the segment's middle
+			secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+					FX2Geometry.toPoint(midInScene));
+			// copy that new anchor
+			secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+					FX2Geometry.toPoint(midInScene));
+
+			// select the first anchor and the copy of the new mid anchor for
+			// movement
+			bendPolicy.select(firstAnchorHandle);
+			bendPolicy.select(secondAnchorHandle);
+		} else if (hostPart.getSegmentParameter() == 0.75) {
+			// split segment, move its second halve
+
+			// determine segment indices for neighbor anchors
+			int firstSegmentIndex = hostPart.getSegmentIndex();
+			int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
+
+			// determine middle of segment
+			Point firstPoint = targetPart.getVisual()
+					.getPoint(firstSegmentIndex);
+			Point secondPoint = targetPart.getVisual()
+					.getPoint(secondSegmentIndex);
+			Vector direction = new Vector(firstPoint, secondPoint);
+			Point midPoint = firstPoint.getTranslated(direction.x / 2,
+					direction.y / 2);
+			Point2D midInScene = targetPart.getVisual().localToScene(midPoint.x,
+					midPoint.y);
+
+			// determine connectedness of second anchor handle
+			Node secondAnchorage = targetPart.getVisual()
+					.getAnchor(secondSegmentIndex).getAnchorage();
+			boolean isSecondConnected = secondAnchorage != null
+					&& secondAnchorage != targetPart.getVisual();
+
+			// make the anchor handles explicit
+			// XXX: Make second explicit first so that the first segment
+			// index is still valid.
+			AnchorHandle secondAnchorHandle = bendPolicy
+					.makeExplicitBefore(secondSegmentIndex);
+			AnchorHandle firstAnchorHandle = bendPolicy
+					.makeExplicitAfter(firstSegmentIndex);
+
+			// copy second point if connected
+			if (isSecondConnected) {
+				System.out.println("copy second :: initial "
+						+ secondAnchorHandle.getInitialPosition()
+						+ " :: current " + secondAnchorHandle.getPosition());
+				// use the copy as the new first anchor handle
+				// TODO: transform to scene
+				secondAnchorHandle = bendPolicy.createBefore(secondAnchorHandle,
+						secondAnchorHandle.getInitialPosition());
+			}
+
+			// create new anchor at the segment's middle
+			firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+					FX2Geometry.toPoint(midInScene));
+			// copy that new anchor
+			firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+					FX2Geometry.toPoint(midInScene));
+
+			// select the second anchor and the copy of the new mid anchor for
+			// movement
+			bendPolicy.select(firstAnchorHandle);
+			bendPolicy.select(secondAnchorHandle);
 		} else {
 			// compute connection index from handle part data
 			int connectionIndex = hostPart.getSegmentIndex()
@@ -295,6 +318,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			// make anchor explicit if it is implicit
 			bendPolicy.select(bendPolicy.makeExplicitAfter(connectionIndex));
 		}
+
+		// update handles
+		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
 	}
 
 	@Override
@@ -303,21 +329,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		restoreRefreshVisuals(targetPart);
 		// it may be that the bend policy returns null (no-op) because a newly
 		// created segment point was direcly removed through overlay. In this
-		// case, we need to adjust the handles as well
-		adjustHandles(((Connection) targetPart.getVisual()).getPoints(), false);
-	}
-
-	private void setSegmentIndex(FXCircleSegmentHandlePart part, int value) {
-		if (part.getSegmentIndex() != value) {
-			part.setSegmentIndex(value);
-		}
-	}
-
-	private void setSegmentParameter(FXCircleSegmentHandlePart part,
-			double value) {
-		if (part.getSegmentParameter() != value) {
-			part.setSegmentParameter(value);
-		}
+		// case, we need to update the handles as well
+		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
 	}
 
 	@Override
