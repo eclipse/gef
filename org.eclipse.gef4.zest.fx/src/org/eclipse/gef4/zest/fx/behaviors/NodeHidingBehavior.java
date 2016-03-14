@@ -20,25 +20,25 @@ import org.eclipse.gef4.mvc.behaviors.BehaviorUtils;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsFeedbackPart;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.collections.SetChangeListener;
 import javafx.scene.Node;
 
 /**
- * The {@link NodeHidingBehavior} is specific to {@link NodeContentPart}. It
+ * The {@link NodeHidingBehavior} is specific to {@link NodePart}. It
  * registers listeners on the {@link HidingModel} upon activation. When the
- * {@link HidingModel} changes, the hidden status of the {@link NodeContentPart}
+ * {@link HidingModel} changes, the hidden status of the {@link NodePart}
  * is determined. If the hidden status of the part changed, either
  * {@link #hide()} or {@link #show()} will be called, respectively, to hide/show
  * the part. Additionally, a {@link HiddenNeighborsFeedbackPart} is managed by
  * this {@link NodeHidingBehavior}. The {@link HiddenNeighborsFeedbackPart}
- * shows the number of hidden neighbors of the {@link NodeContentPart}.
+ * shows the number of hidden neighbors of the {@link NodePart}.
  *
  * @author mwienand
  *
  */
-// Only applicable for NodeContentPart (see #getHost())
+// Only applicable for NodePart (see #getHost())
 public class NodeHidingBehavior extends AbstractHidingBehavior {
 
 	private IVisualPart<Node, ? extends Node> hiddenNeighborsFeedbackPart;
@@ -56,7 +56,7 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 
 	/**
 	 * Creates the {@link HiddenNeighborsFeedbackPart} that shows the hidden
-	 * neighbors of the {@link NodeContentPart} on which this
+	 * neighbors of the {@link NodePart} on which this
 	 * {@link NodeHidingBehavior} is installed.
 	 */
 	protected void createHiddenNeighborsFeedbackPart() {
@@ -106,8 +106,8 @@ public class NodeHidingBehavior extends AbstractHidingBehavior {
 	}
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public NodePart getHost() {
+		return (NodePart) super.getHost();
 	}
 
 	@Override

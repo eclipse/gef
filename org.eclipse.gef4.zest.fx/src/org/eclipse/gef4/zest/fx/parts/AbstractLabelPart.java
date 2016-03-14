@@ -15,9 +15,14 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import javafx.geometry.Bounds;
@@ -38,7 +43,7 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * The CSS class that is assigned to the visualization of the
-	 * {@link EdgeLabelPart} of this {@link EdgeContentPart}.
+	 * {@link EdgeLabelPart} of this {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS_LABEL = "label";
 	private VisualChangeListener vcl = new VisualChangeListener() {
@@ -116,21 +121,16 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 	 */
 	protected void refreshPosition(Node visual, Point position) {
 		if (position != null) {
-			// TODO: use transform policy, so positions are persisted properly
-			getVisual().setTranslateX(position.x);
-			getVisual().setTranslateY(position.y);
-
-			// // translate
-			// FXTransformPolicy transformPolicy =
-			// getAdapter(FXTransformPolicy.class);
-			// transformPolicy.init();
-			// transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1,
-			// position.x, position.y));
-			// try {
-			// transformPolicy.commit().execute(null, null);
-			// } catch (ExecutionException e) {
-			// throw new IllegalStateException(e);
-			// }
+			// translate using a transform operation
+			FXTransformOperation refreshPositionOp = new FXTransformOperation(
+					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
+			refreshPositionOp
+					.setNewTransform(Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
+			try {
+				refreshPositionOp.execute(null, null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

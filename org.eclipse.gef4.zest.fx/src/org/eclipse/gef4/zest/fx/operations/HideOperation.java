@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 /**
- * The {@link HideOperation} can be used to add a {@link NodeContentPart} to the
+ * The {@link HideOperation} can be used to add a {@link NodePart} to the
  * {@link HidingModel}.
  *
  * @author mwienand
@@ -32,21 +32,21 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  */
 public class HideOperation extends AbstractOperation implements ITransactionalOperation {
 
-	private NodeContentPart nodePart;
+	private NodePart nodePart;
 	private IViewer<javafx.scene.Node> viewer;
 	private HidingModel hidingModel;
 	private boolean initialHiddenStatus;
 
 	/**
 	 * Constructs a new {@link HideOperation} that will hide the given
-	 * {@link NodeContentPart} upon execution.
+	 * {@link NodePart} upon execution.
 	 *
 	 * @param viewer
 	 *            The viewer from which to retrieve the {@link HidingModel}.
 	 * @param nodePart
-	 *            The {@link NodeContentPart} to show/hide.
+	 *            The {@link NodePart} to show/hide.
 	 */
-	public HideOperation(IViewer<javafx.scene.Node> viewer, NodeContentPart nodePart) {
+	public HideOperation(IViewer<javafx.scene.Node> viewer, NodePart nodePart) {
 		super("Hide");
 		this.viewer = viewer;
 		this.nodePart = nodePart;

@@ -66,13 +66,13 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 
 /**
- * The {@link NodeContentPart} is the controller for a
+ * The {@link NodePart} is the controller for a
  * {@link org.eclipse.gef4.graph.Node} content object.
  *
  * @author mwienand
  *
  */
-public class NodeContentPart extends AbstractFXContentPart<Group> {
+public class NodePart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * JavaFX Node displaying a small icon representing a nested graph.
@@ -139,7 +139,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	// CSS classes for styling nodes
 	/**
 	 * The CSS class that is applied to the {@link #getVisual() visual} of this
-	 * {@link NodeContentPart}.
+	 * {@link NodePart}.
 	 */
 	public static final String CSS_CLASS = "node";
 
@@ -231,7 +231,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	/**
 	 * Creates the {@link StackPane} that is used to either display nested
 	 * content, or an icon indicating that nested content exists for this
-	 * {@link NodeContentPart}. The given {@link Pane} is inserted into the
+	 * {@link NodePart}. The given {@link Pane} is inserted into the
 	 * children list of the created {@link StackPane}.
 	 *
 	 * @param nestedContentPane
@@ -459,7 +459,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	/**
 	 * Returns the {@link StackPane} that either displays nested content or an
 	 * icon indicating that nested content exists for this
-	 * {@link NodeContentPart}.
+	 * {@link NodePart}.
 	 *
 	 * @return The {@link StackPane} that wraps nested content.
 	 */
@@ -515,10 +515,10 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	/**
-	 * Returns <code>true</code> if this {@link NodeContentPart} contains a
+	 * Returns <code>true</code> if this {@link NodePart} contains a
 	 * nested {@link Graph}. Otherwise, <code>false</code> is returned.
 	 *
-	 * @return <code>true</code> if this {@link NodeContentPart} contains a
+	 * @return <code>true</code> if this {@link NodePart} contains a
 	 *         nested {@link Graph}, otherwise <code>false</code>.
 	 */
 	protected boolean isNesting() {
@@ -543,13 +543,13 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 * letter.
 	 *
 	 * @param visual
-	 *            The visual of this {@link NodeContentPart}.
+	 *            The visual of this {@link NodePart}.
 	 * @param attrs
 	 *            The attributes map that stores the fisheye state of this
-	 *            {@link NodeContentPart}.
+	 *            {@link NodePart}.
 	 * @param str
-	 *            The label of this {@link NodeContentPart}.
-	 * @return The adjusted label for this {@link NodeContentPart}.
+	 *            The label of this {@link NodePart}.
+	 * @return The adjusted label for this {@link NodePart}.
 	 */
 	protected String refreshFisheye(Group visual, Map<String, Object> attrs, String str) {
 		// limit label to first letter when in fisheye mode (and not hovered)
@@ -583,12 +583,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * If the given <i>icon</i> is an {@link Image}, that {@link Image} will be
-	 * used as the icon of this {@link NodeContentPart}.
+	 * used as the icon of this {@link NodePart}.
 	 *
 	 * @param visual
-	 *            The visual of this {@link NodeContentPart}.
+	 *            The visual of this {@link NodePart}.
 	 * @param icon
-	 *            The new icon for this {@link NodeContentPart}.
+	 *            The new icon for this {@link NodePart}.
 	 */
 	protected void refreshIcon(Group visual, Object icon) {
 		if (iconImageView.getImage() != icon && icon instanceof Image) {
@@ -597,12 +597,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	/**
-	 * Changes the label of this {@link NodeContentPart} to the given value.
+	 * Changes the label of this {@link NodePart} to the given value.
 	 *
 	 * @param visual
-	 *            The visual of this {@link NodeContentPart}.
+	 *            The visual of this {@link NodePart}.
 	 * @param str
-	 *            The new label for this {@link NodeContentPart}.
+	 *            The new label for this {@link NodePart}.
 	 */
 	protected void refreshLabel(Group visual, String str) {
 		if (!labelText.getText().equals(str)) {
@@ -685,12 +685,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	/**
-	 * Changes the tooltip of this {@link NodeContentPart} to the given value.
+	 * Changes the tooltip of this {@link NodePart} to the given value.
 	 *
 	 * @param visual
-	 *            The visual of this {@link NodeContentPart}.
+	 *            The visual of this {@link NodePart}.
 	 * @param tooltip
-	 *            The new tooltip for this {@link NodeContentPart}.
+	 *            The new tooltip for this {@link NodePart}.
 	 */
 	protected void refreshTooltip(Group visual, Object tooltip) {
 		if (tooltip instanceof String) {

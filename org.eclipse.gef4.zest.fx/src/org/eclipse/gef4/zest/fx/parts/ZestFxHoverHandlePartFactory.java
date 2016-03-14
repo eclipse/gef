@@ -43,7 +43,7 @@ public class ZestFxHoverHandlePartFactory extends FXDefaultHoverHandlePartFactor
 			IVisualPart<Node, ? extends Node> target, IBehavior<Node> contextBehavior, Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider) {
 		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<>();
-		if (target instanceof NodeContentPart) {
+		if (target instanceof NodePart) {
 			// create prune handle at first vertex
 			HideHoverHandlePart hidePart = injector.getInstance(HideHoverHandlePart.class);
 			hidePart.setSegmentsProvider(segmentsProvider);
@@ -54,7 +54,7 @@ public class ZestFxHoverHandlePartFactory extends FXDefaultHoverHandlePartFactor
 			// create expand handle at second vertex but check if we have pruned
 			// neighbors, first
 			HidingModel hidingModel = target.getRoot().getViewer().getAdapter(HidingModel.class);
-			if (hidingModel.hasHiddenNeighbors((NodeContentPart) target)) {
+			if (hidingModel.hasHiddenNeighbors((NodePart) target)) {
 				ShowHiddenNeighborsHoverHandlePart showPart = injector
 						.getInstance(ShowHiddenNeighborsHoverHandlePart.class);
 				showPart.setSegmentsProvider(segmentsProvider);

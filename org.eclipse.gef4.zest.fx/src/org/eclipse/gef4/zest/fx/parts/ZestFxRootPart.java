@@ -18,19 +18,19 @@ import org.eclipse.gef4.mvc.models.GridModel;
 import javafx.scene.Scene;
 
 /**
- * The {@link GraphRootPart} is an extension to {@link FXRootPart} that hides
+ * The {@link ZestFxRootPart} is an extension to {@link FXRootPart} that hides
  * the grid (see {@link GridModel#setShowGrid(boolean)}) and adds a stylesheet
  * to the {@link Scene} (see {@link Scene#getStylesheets()}).
  *
  * @author mwienand
  *
  */
-public class GraphRootPart extends FXRootPart {
+public class ZestFxRootPart extends FXRootPart {
 
 	/**
 	 * The url to the stylesheet that is added to the {@link Scene}.
 	 */
-	public static final String STYLES_CSS_FILE = GraphRootPart.class.getResource("styles.css").toExternalForm();
+	public static final String STYLES_CSS_FILE = ZestFxRootPart.class.getResource("styles.css").toExternalForm();
 
 	@Override
 	protected void doActivate() {

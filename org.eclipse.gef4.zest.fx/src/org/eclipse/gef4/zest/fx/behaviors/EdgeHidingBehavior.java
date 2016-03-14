@@ -12,16 +12,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
+import org.eclipse.gef4.zest.fx.parts.EdgePart;
 
 /**
- * The {@link EdgeHidingBehavior} is an {@link EdgeContentPart}-specific
+ * The {@link EdgeHidingBehavior} is an {@link EdgePart}-specific
  * {@link AbstractHidingBehavior} implementation.
  *
  * @author mwienand
  *
  */
-// only applicable for EdgeContentPart (see #getHost())
+// only applicable for EdgePart (see #getHost())
 public class EdgeHidingBehavior extends AbstractHidingBehavior {
 
 	@Override
@@ -31,8 +31,8 @@ public class EdgeHidingBehavior extends AbstractHidingBehavior {
 	}
 
 	@Override
-	public EdgeContentPart getHost() {
-		return (EdgeContentPart) super.getHost();
+	public EdgePart getHost() {
+		return (EdgePart) super.getHost();
 	}
 
 }

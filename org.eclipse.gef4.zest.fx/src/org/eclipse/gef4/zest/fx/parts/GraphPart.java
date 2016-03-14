@@ -39,14 +39,14 @@ import javafx.scene.Node;
 import javafx.util.Pair;
 
 /**
- * The {@link GraphContentPart} is the controller for a {@link Graph} content
+ * The {@link GraphPart} is the controller for a {@link Graph} content
  * object. It starts a layout pass after activation and when its content
  * children change.
  *
  * @author mwienand
  *
  */
-public class GraphContentPart extends AbstractFXContentPart<Group> {
+public class GraphPart extends AbstractFXContentPart<Group> {
 
 	private MapChangeListener<String, Object> graphAttributesObserver = new MapChangeListener<String, Object>() {
 
@@ -55,7 +55,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			// refresh visuals
 			refreshVisual();
 			// apply layout
-			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
+			applyLayout(true);
 		}
 	};
 
@@ -69,7 +69,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			}).synchronizeContentChildren(doGetContentChildren());
 
 			// update layout context
-			getAdapter(GraphLayoutContext.class).setGraph(getContent());
+			updateLayoutContext();
 			// apply layout
 			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
 		}
@@ -78,6 +78,13 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
+	}
+
+	private void applyLayout(boolean clean) {
+		GraphLayoutBehavior layoutBehavior = getAdapter(GraphLayoutBehavior.class);
+		if (layoutBehavior != null) {
+			layoutBehavior.applyLayout(clean);
+		}
 	}
 
 	@Override
@@ -90,21 +97,22 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
+
 		getContent().attributesProperty().addListener(graphAttributesObserver);
 		getContent().getNodes().addListener(graphChildrenObserver);
 		getContent().getEdges().addListener(graphChildrenObserver);
+
 		// apply layout if no viewport state is saved for this graph, or we are
 		// nested inside a node, or the saved viewport is outdated
-		ViewportState savedViewport = getViewer().getAdapter(NavigationModel.class).getViewportState(getContent());
+		NavigationModel navigationModel = getViewer().getAdapter(NavigationModel.class);
+		ViewportState savedViewport = navigationModel == null ? null : navigationModel.getViewportState(getContent());
 		InfiniteCanvas canvas = ((FXViewer) getViewer()).getCanvas();
-		boolean isNotSavedViewport = savedViewport == null;
-		boolean isNested = getParent() instanceof NodeContentPart;
-		boolean isViewportChanged = !isNotSavedViewport
+		boolean isNested = getParent() instanceof NodePart;
+		boolean isViewportChanged = savedViewport != null
 				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
-		if (isNotSavedViewport || isNested || isViewportChanged) {
-			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
+		if (savedViewport == null || isNested || isViewportChanged) {
+			applyLayout(true);
 		}
-		refreshVisual();
 	}
 
 	@Override
@@ -165,7 +173,16 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
-		getAdapter(GraphLayoutContext.class).setGraph(getContent());
+
+		// update layout context
+		updateLayoutContext();
+	}
+
+	private void updateLayoutContext() {
+		GraphLayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
+		if (layoutContext != null) {
+			layoutContext.setGraph(getContent());
+		}
 	}
 
 }

@@ -11,11 +11,11 @@
  *******************************************************************************/
 /**
  * This package provides a specific root part that enables support for CSS
- * styling ({@link org.eclipse.gef4.zest.fx.parts.GraphRootPart}), specific
+ * styling ({@link org.eclipse.gef4.zest.fx.parts.ZestFxRootPart}), specific
  * content parts for graphs, nodes, and edges (
- * {@link org.eclipse.gef4.zest.fx.parts.GraphContentPart},
- * {@link org.eclipse.gef4.zest.fx.parts.NodeContentPart},
- * {@link org.eclipse.gef4.zest.fx.parts.EdgeContentPart}), (hover) handle parts
+ * {@link org.eclipse.gef4.zest.fx.parts.GraphPart},
+ * {@link org.eclipse.gef4.zest.fx.parts.NodePart},
+ * {@link org.eclipse.gef4.zest.fx.parts.EdgePart}), (hover) handle parts
  * to realize hiding/unhiding of nodes (
  * {@link org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart},
  * {@link org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart}), as well as

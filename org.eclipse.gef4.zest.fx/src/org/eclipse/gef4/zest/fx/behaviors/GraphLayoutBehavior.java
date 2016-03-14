@@ -30,8 +30,8 @@ import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
-import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.GraphPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -42,12 +42,12 @@ import javafx.scene.layout.Pane;
 
 /**
  * The {@link GraphLayoutBehavior} is responsible for initiating layout passes.
- * It is only applicable to {@link GraphContentPart}.
+ * It is only applicable to {@link GraphPart}.
  *
  * @author mwienand
  *
  */
-// only applicable for GraphContentPart (see #getHost())
+// only applicable for GraphPart (see #getHost())
 public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	private MapChangeListener<String, Object> layoutContextAttributesObserver = new MapChangeListener<String, Object>() {
@@ -136,8 +136,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			nestingVisual.layoutBoundsProperty().addListener(nestingVisualLayoutBoundsChangeListener);
 			Bounds layoutBounds = nestingVisual.getLayoutBounds();
 			// read initial bounds
-			initialBounds.setWidth(layoutBounds.getWidth() / NodeContentPart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
-			initialBounds.setHeight(layoutBounds.getHeight() / NodeContentPart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
+			initialBounds.setWidth(layoutBounds.getWidth() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
+			initialBounds.setHeight(layoutBounds.getHeight() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
 		} else {
 			throw new IllegalStateException("Graph is neither nested nor root?!");
 		}
@@ -201,8 +201,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	public GraphContentPart getHost() {
-		return (GraphContentPart) super.getHost();
+	public GraphPart getHost() {
+		return (GraphPart) super.getHost();
 	}
 
 	/**
@@ -217,17 +217,17 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	/**
-	 * Returns the {@link NodeContentPart} that contains the nested graph to
+	 * Returns the {@link NodePart} that contains the nested graph to
 	 * which the {@link #getGraphLayoutContext()} corresponds.
 	 *
-	 * @return The {@link NodeContentPart} that contains the nested graph to
+	 * @return The {@link NodePart} that contains the nested graph to
 	 *         which the {@link #getGraphLayoutContext()} corresponds.
 	 */
-	protected NodeContentPart getNestingPart() {
+	protected NodePart getNestingPart() {
 		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent().getNestingNode();
 		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(nestingNode);
-		return (NodeContentPart) nestingNodePart;
+		return (NodePart) nestingNodePart;
 	}
 
 	/**
@@ -240,8 +240,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 */
 	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds, Bounds newLayoutBounds) {
 		// update layout bounds to match the nesting visual layout bounds
-		double width = newLayoutBounds.getWidth() / NodeContentPart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
-		double height = newLayoutBounds.getHeight() / NodeContentPart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
+		double width = newLayoutBounds.getWidth() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
+		double height = newLayoutBounds.getHeight() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 		Rectangle newBounds = new Rectangle(0, 0, width, height);
 		LayoutProperties.setBounds(layoutContext, newBounds);
 	}

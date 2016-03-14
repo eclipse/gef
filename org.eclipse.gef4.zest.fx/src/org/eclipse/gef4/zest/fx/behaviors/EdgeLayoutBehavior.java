@@ -14,18 +14,18 @@ package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
+import org.eclipse.gef4.zest.fx.parts.EdgePart;
 
 import javafx.scene.Node;
 
 /**
- * The {@link EdgeLayoutBehavior} is an {@link EdgeContentPart}-specific
+ * The {@link EdgeLayoutBehavior} is an {@link EdgePart}-specific
  * {@link AbstractLayoutBehavior} implementation.
  *
  * @author mwienand
  *
  */
-// only applicable for EdgeContentPart (see #getHost())
+// only applicable for EdgePart (see #getHost())
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
@@ -36,8 +36,8 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	public EdgeContentPart getHost() {
-		return (EdgeContentPart) super.getHost();
+	public EdgePart getHost() {
+		return (EdgePart) super.getHost();
 	}
 
 	@Override

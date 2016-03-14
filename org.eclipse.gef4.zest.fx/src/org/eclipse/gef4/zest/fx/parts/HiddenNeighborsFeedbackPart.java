@@ -34,7 +34,7 @@ import javafx.scene.text.Text;
  * @author mwienand
  *
  */
-// TODO: only applicable for NodeContentPart (anchorage)
+// TODO: only applicable for NodePart (anchorage)
 public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 
 	private Circle circle;
@@ -76,7 +76,7 @@ public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 			return;
 		}
 		IVisualPart<Node, ? extends Node> anchorage = keySet.iterator().next();
-		if (((NodeContentPart) anchorage).getContent() == null) {
+		if (((NodePart) anchorage).getContent() == null) {
 			return;
 		}
 
@@ -90,7 +90,7 @@ public class HiddenNeighborsFeedbackPart extends AbstractFXFeedbackPart<Group> {
 
 		// update text
 		HidingModel hidingModel = getViewer().getAdapter(HidingModel.class);
-		int count = hidingModel.getHiddenNeighbors(((NodeContentPart) anchorage).getContent()).size();
+		int count = hidingModel.getHiddenNeighbors(((NodePart) anchorage).getContent()).size();
 		text.setText(Integer.toString(count));
 
 		Bounds textLayoutBounds = text.getLayoutBounds();

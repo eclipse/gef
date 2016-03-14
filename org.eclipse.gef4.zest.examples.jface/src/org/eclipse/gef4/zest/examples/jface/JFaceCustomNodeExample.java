@@ -27,7 +27,7 @@ import org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider;
 import org.eclipse.gef4.zest.fx.jface.IGraphContentProvider;
 import org.eclipse.gef4.zest.fx.jface.ZestContentViewer;
 import org.eclipse.gef4.zest.fx.jface.ZestFxJFaceModule;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -190,7 +190,7 @@ public class JFaceCustomNodeExample {
 		}
 	}
 
-	public static class CustomNodeContentPart extends NodeContentPart {
+	public static class CustomNodeContentPart extends NodePart {
 		private VBox vbox;
 
 		@Override

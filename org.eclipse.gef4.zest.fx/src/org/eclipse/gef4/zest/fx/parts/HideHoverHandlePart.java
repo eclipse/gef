@@ -23,7 +23,7 @@ import javafx.scene.image.Image;
  * that displays a "collapse" image. By default, the
  * {@link HideFirstAnchorageOnClickPolicy} is installed for
  * {@link HideHoverHandlePart}, so that the corresponding
- * {@link NodeContentPart} can be hidden by a click on this part.
+ * {@link NodePart} can be hidden by a click on this part.
  *
  * @author mwienand
  *

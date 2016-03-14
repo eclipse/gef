@@ -14,10 +14,13 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Map;
 
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
@@ -25,6 +28,7 @@ import com.google.common.collect.SetMultimap;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
@@ -41,7 +45,7 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	protected Group createVisual() {
 		Text text = createText();
 		Group g = new Group();
-		g.getStyleClass().add(EdgeContentPart.CSS_CLASS);
+		g.getStyleClass().add(EdgePart.CSS_CLASS);
 		g.getChildren().add(text);
 		return g;
 	}
@@ -89,34 +93,37 @@ public class EdgeLabelPart extends AbstractLabelPart {
 			}
 		}
 
-		EdgeContentPart edgeContentPart = getHost();
-		if (edgeContentPart == null) {
+		// XXX: We may be refreshed before being anchored on the anchorage.
+		if (getFirstAnchorage() == null) {
 			return;
 		}
 
 		Point labelPosition = null;
 		if (ZestProperties.ELEMENT_LABEL.equals(getContent().getValue())) {
 			labelPosition = ZestProperties.getLabelPosition(edge);
+			if (labelPosition == null) {
+				labelPosition = getMidPoint();
+			}
 		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
 			labelPosition = ZestProperties.getExternalLabelPosition(edge);
+			if (labelPosition == null) {
+				labelPosition = getMidPoint();
+			}
 		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(getContent().getValue())) {
 			labelPosition = ZestProperties.getSourceLabelPosition(edge);
+			// use start point
+			if (labelPosition == null) {
+				labelPosition = getStartPoint();
+			}
 		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(getContent().getValue())) {
 			labelPosition = ZestProperties.getTargetLabelPosition(edge);
+			if (labelPosition == null) {
+				// use end point
+				labelPosition = getEndPoint();
+			}
 		}
 
-		if (labelPosition != null) {
-			refreshPosition(getVisual(), labelPosition);
-		} else {
-			// determine bounds of anchorage visual
-			Rectangle bounds = edgeContentPart.getVisual().getCurveNode().getGeometry().getBounds();
-			// determine text bounds
-			Bounds textBounds = getVisual().getLayoutBounds();
-			// compute label position
-			refreshPosition(getVisual(), new Point(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2,
-					bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight()));
-		}
-
+		refreshPosition(getVisual(), labelPosition);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -125,16 +132,47 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		return (Pair<Edge, String>) super.getContent();
 	}
 
-	/**
-	 * Returns the {@link EdgeContentPart} for which this {@link EdgeLabelPart}
-	 * displays the label.
-	 *
-	 * @return The {@link EdgeContentPart} for which this {@link EdgeLabelPart}
-	 *         displays the label.
-	 */
-	public EdgeContentPart getHost() {
-		return getAnchoragesUnmodifiable().isEmpty() ? null
-				: (EdgeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
+	private Point getEndPoint() {
+		// TODO: compute better label position
+		Connection connection = getFirstAnchorage().getVisual();
+		Point endPoint = connection.getEndPoint();
+		Vector v = new Vector(endPoint, connection.getStartPoint()).getNormalized()
+				.getMultiplied(getText().getLayoutBounds().getHeight());
+		return NodeUtils.sceneToLocal(getVisual().getParent(),
+				NodeUtils.localToScene(connection, endPoint.getTranslated(v.x, v.y)));
 	}
 
+	/**
+	 * Returns the {@link IContentPart} for which this {@link EdgeLabelPart}
+	 * displays the label.
+	 *
+	 * @return The {@link IContentPart} for which this {@link EdgeLabelPart}
+	 *         displays the label.
+	 */
+	@SuppressWarnings("unchecked")
+	protected IContentPart<Node, ? extends Connection> getFirstAnchorage() {
+		return getAnchoragesUnmodifiable().isEmpty() ? null
+				: (IContentPart<Node, ? extends Connection>) getAnchoragesUnmodifiable().keys().iterator().next();
+	}
+
+	private Point getMidPoint() {
+		// TODO: compute a better mid point for the edge
+		// determine bounds of anchorage visual
+		Bounds hostBounds = getFirstAnchorage().getVisual().getLayoutBounds();
+		// determine text bounds
+		Bounds textBounds = getVisual().getLayoutBounds();
+		// compute label position
+		return new Point(hostBounds.getMinX() + hostBounds.getWidth() / 2 - textBounds.getWidth() / 2,
+				hostBounds.getMinY() + hostBounds.getHeight() / 2 - textBounds.getHeight());
+	}
+
+	private Point getStartPoint() {
+		// TODO: compute better label position
+		Connection connection = getFirstAnchorage().getVisual();
+		Point startPoint = connection.getStartPoint();
+		Vector v = new Vector(startPoint, connection.getEndPoint()).getNormalized()
+				.getMultiplied(getText().getLayoutBounds().getHeight());
+		return NodeUtils.sceneToLocal(getVisual().getParent(),
+				NodeUtils.localToScene(connection, startPoint.getTranslated(v.x, v.y)));
+	}
 }

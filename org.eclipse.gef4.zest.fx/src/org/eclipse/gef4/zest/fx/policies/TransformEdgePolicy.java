@@ -73,7 +73,7 @@ public class TransformEdgePolicy extends FXTransformConnectionPolicy {
 	@SuppressWarnings("unchecked")
 	@Override
 	public IContentPart<javafx.scene.Node, ? extends Connection> getHost() {
-		// XXX: We don't tie this policy to EdgeContentPart, but only to
+		// XXX: We don't tie this policy to EdgePart, but only to
 		// IContentPart with a Edge content, so it can be re-used in other
 		// situations.
 		return (IContentPart<javafx.scene.Node, ? extends Connection>) super.getHost();

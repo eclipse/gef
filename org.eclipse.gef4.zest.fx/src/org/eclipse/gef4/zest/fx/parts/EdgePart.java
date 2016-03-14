@@ -43,13 +43,13 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
 /**
- * The {@link EdgeContentPart} is the controller for an {@link Edge} content
+ * The {@link EdgePart} is the controller for an {@link Edge} content
  * object. It uses {@link Connection} for the visualization.
  *
  * @author mwienand
  *
  */
-public class EdgeContentPart extends AbstractFXContentPart<Connection> {
+public class EdgePart extends AbstractFXContentPart<Connection> {
 
 	/**
 	 * The {@link ArrowHead} is used as a decoration for a connection
@@ -66,13 +66,13 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 
 	/**
 	 * The CSS class that is assigned to the visual of this
-	 * {@link EdgeContentPart}.
+	 * {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS = "edge";
 
 	/**
 	 * The CSS class that is assigned to the {@link Connection#getCurveNode()
-	 * curve node} of the {@link Connection} of this {@link EdgeContentPart}.
+	 * curve node} of the {@link Connection} of this {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS_CURVE = "curve";
 
@@ -230,12 +230,12 @@ public class EdgeContentPart extends AbstractFXContentPart<Connection> {
 
 	/**
 	 * Returns the {@link GraphLayoutContext} that corresponds to the
-	 * {@link Graph} to which the content of this {@link EdgeContentPart}
+	 * {@link Graph} to which the content of this {@link EdgePart}
 	 * belongs.
 	 *
 	 * @return The {@link GraphLayoutContext} that corresponds to the
 	 *         {@link Graph} to which the content of this
-	 *         {@link EdgeContentPart} belongs.
+	 *         {@link EdgePart} belongs.
 	 */
 	protected GraphLayoutContext getGraphLayoutContext() {
 		return getViewer().getContentPartMap().get(getContent().getGraph()).getAdapter(GraphLayoutContext.class);

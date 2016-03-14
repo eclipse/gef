@@ -52,12 +52,12 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
-import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
+import org.eclipse.gef4.zest.fx.parts.EdgePart;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
-import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
-import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
+import org.eclipse.gef4.zest.fx.parts.GraphPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxRootPart;
 import org.eclipse.gef4.zest.fx.parts.HideHoverHandlePart;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
@@ -109,7 +109,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link DynamicAnchorProvider} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -120,7 +120,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link EdgeContentPart}
+	 * Adds (default) {@link AdapterMap} bindings for {@link EdgePart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
 	 *
@@ -128,7 +128,7 @@ public class ZestFxModule extends MvcFxModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link EdgeContentPart} as a key.
+	 *            {@link EdgePart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -155,7 +155,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link EdgeHidingBehavior} to the given adapter map
-	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -203,7 +203,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link EdgeLayoutBehavior} to the given adapter map
-	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -241,7 +241,7 @@ public class ZestFxModule extends MvcFxModule {
 	/**
 	 * Adds a binding for {@link FXConnectionClickableAreaBehavior} to the given
 	 * adapter map binder that will insert the bindings into
-	 * {@link EdgeContentPart}s.
+	 * {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -266,7 +266,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link FXHoverOnHoverPolicy} to the given adapter map
-	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -302,7 +302,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link ResizeNodePolicy} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -378,7 +378,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link TransformEdgePolicy} to the given adapter map
-	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -390,7 +390,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link TransformNodePolicy} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -403,7 +403,7 @@ public class ZestFxModule extends MvcFxModule {
 	/**
 	 * Adds a binding for {@link FXTranslateSelectedOnDragPolicy} to the given
 	 * adapter map binder that will insert the bindings into
-	 * {@link NodeContentPart}s.
+	 * {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -416,7 +416,7 @@ public class ZestFxModule extends MvcFxModule {
 	/**
 	 * Adds a binding for {@link FXTraverseFocusOnTypePolicy} to the given
 	 * adapter map binder that will insert the bindings into
-	 * {@link NodeContentPart}s.
+	 * {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -433,7 +433,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link GraphContentPart}
+	 * Adds (default) {@link AdapterMap} bindings for {@link GraphPart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
 	 *
@@ -441,7 +441,7 @@ public class ZestFxModule extends MvcFxModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link GraphContentPart} as a key.
+	 *            {@link GraphPart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -452,7 +452,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link GraphLayoutContext} to the given adapter map
-	 * binder that will insert the bindings into {@link GraphContentPart}s.
+	 * binder that will insert the bindings into {@link GraphPart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -463,7 +463,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link HideOnTypePolicy} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -474,7 +474,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link HidePolicy} to the given adapter map binder
-	 * that will insert the bindings into {@link NodeContentPart}s.
+	 * that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -515,7 +515,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * Adds a binding for
 	 * {@link FXDefaultHoverFeedbackPartFactory#HOVER_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link GeometricOutlineProvider} to the given adapter
-	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * map binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -591,12 +591,12 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindIRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
-		}).to(GraphRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
+		}).to(ZestFxRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	/**
 	 * Adds a binding for {@link GraphLayoutBehavior} to the given adapter map
-	 * binder that will insert the bindings into {@link GraphContentPart}s.
+	 * binder that will insert the bindings into {@link GraphPart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -618,7 +618,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link NodeContentPart}
+	 * Adds (default) {@link AdapterMap} bindings for {@link NodePart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
 	 *
@@ -626,7 +626,7 @@ public class ZestFxModule extends MvcFxModule {
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link NodeContentPart} as a key.
+	 *            {@link NodePart} as a key.
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
@@ -658,7 +658,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link NodeHidingBehavior} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -669,7 +669,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link NodeLayoutBehavior} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -694,7 +694,7 @@ public class ZestFxModule extends MvcFxModule {
 	/**
 	 * Adds a binding for {@link OpenNestedGraphOnDoubleClickPolicy} to the
 	 * given adapter map binder that will insert the bindings into
-	 * {@link NodeContentPart}s.
+	 * {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -723,7 +723,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * Adds a binding for
 	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link GeometricOutlineProvider} to the given adapter
-	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * map binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -775,7 +775,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * Adds a binding for
 	 * {@link FXDefaultSelectionHandlePartFactory#SELECTION_HANDLES_GEOMETRY_PROVIDER}
 	 * with implementation {@link ShapeBoundsProvider} to the given adapter map
-	 * binder that will insert the bindings into {@link NodeContentPart}s.
+	 * binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -796,7 +796,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * Adds a binding for
 	 * {@link FXDefaultSelectionFeedbackPartFactory#SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER}
 	 * with implementation {@link GeometricOutlineProvider} to the given adapter
-	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * map binder that will insert the bindings into {@link EdgePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -862,7 +862,7 @@ public class ZestFxModule extends MvcFxModule {
 	/**
 	 * Adds a binding for {@link ShowHiddenNeighborsOnTypePolicy} to the given
 	 * adapter map binder that will insert the bindings into
-	 * {@link NodeContentPart}s.
+	 * {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -874,7 +874,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	/**
 	 * Adds a binding for {@link ShowHiddenNeighborsPolicy} to the given adapter
-	 * map binder that will insert the bindings into {@link NodeContentPart}s.
+	 * map binder that will insert the bindings into {@link NodePart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -890,9 +890,9 @@ public class ZestFxModule extends MvcFxModule {
 
 		bindIContentPartFactory();
 
-		bindGraphContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GraphContentPart.class));
-		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodeContentPart.class));
-		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeContentPart.class));
+		bindGraphContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GraphPart.class));
+		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodePart.class));
+		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgePart.class));
 		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeLabelPart.class));
 
 		bindFXRectangleSegmentHandlePartAdapters(

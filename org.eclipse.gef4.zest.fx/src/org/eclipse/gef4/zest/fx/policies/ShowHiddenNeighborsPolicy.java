@@ -17,13 +17,13 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.zest.fx.operations.ShowHiddenNeighborsOperation;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.scene.Node;
 
 /**
  * The {@link ShowHiddenNeighborsPolicy} can be installed on
- * {@link NodeContentPart} to show its hidden neighbours
+ * {@link NodePart} to show its hidden neighbours
  *
  * @author mwienand
  *
@@ -36,13 +36,13 @@ public class ShowHiddenNeighborsPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public NodePart getHost() {
+		return (NodePart) super.getHost();
 	}
 
 	/**
 	 * Executes an operation on the history that shows the {@link #getHost()
-	 * host} {@link NodeContentPart}.
+	 * host} {@link NodePart}.
 	 */
 	public void showHiddenNeighbors() {
 		checkInitialized();

@@ -14,7 +14,7 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import org.eclipse.gef4.mvc.fx.policies.IFXOnTypePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractInteractionPolicy;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -30,8 +30,8 @@ import javafx.scene.input.KeyEvent;
 public class ShowHiddenNeighborsOnTypePolicy extends AbstractInteractionPolicy<Node>implements IFXOnTypePolicy {
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public NodePart getHost() {
+		return (NodePart) super.getHost();
 	}
 
 	@Override

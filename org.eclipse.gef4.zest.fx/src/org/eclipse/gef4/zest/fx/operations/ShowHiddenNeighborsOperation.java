@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 /**
  * The {@link ShowHiddenNeighborsOperation} can be used to remove the neighbors
- * of a given {@link NodeContentPart} from the {@link HidingModel} of a given
+ * of a given {@link NodePart} from the {@link HidingModel} of a given
  * {@link IViewer}.
  *
  * @author mwienand
@@ -37,22 +37,22 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
  */
 public class ShowHiddenNeighborsOperation extends AbstractOperation implements ITransactionalOperation {
 
-	private NodeContentPart nodePart;
+	private NodePart nodePart;
 	private HidingModel hidingModel;
-	private List<NodeContentPart> shownNeighbors = new ArrayList<>();
+	private List<NodePart> shownNeighbors = new ArrayList<>();
 
 	/**
 	 * Constructs a new {@link ShowHiddenNeighborsOperation} that will show all
-	 * hidden neighbors of the given {@link NodeContentPart} by removing them
+	 * hidden neighbors of the given {@link NodePart} by removing them
 	 * from the {@link HidingModel} of the given {@link IViewer} upon execution.
 	 *
 	 * @param viewer
 	 *            The viewer from which to retrieve the {@link HidingModel}.
 	 * @param nodePart
-	 *            The {@link NodeContentPart} of which the hidden neighbors are
+	 *            The {@link NodePart} of which the hidden neighbors are
 	 *            to be shown.
 	 */
-	public ShowHiddenNeighborsOperation(IViewer<javafx.scene.Node> viewer, NodeContentPart nodePart) {
+	public ShowHiddenNeighborsOperation(IViewer<javafx.scene.Node> viewer, NodePart nodePart) {
 		super("ShowHiddenNeighbors");
 		this.nodePart = nodePart;
 		hidingModel = viewer.getAdapter(HidingModel.class);
@@ -62,9 +62,9 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		// save the graph nodes that are removed from the hiding model
 		shownNeighbors.clear();
-		Set<NodeContentPart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
+		Set<NodePart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
 		if (hiddenNeighbors != null && !hiddenNeighbors.isEmpty()) {
-			for (NodeContentPart neighborPart : hiddenNeighbors) {
+			for (NodePart neighborPart : hiddenNeighbors) {
 				neighborPart.activate();
 				hidingModel.show(neighborPart);
 				shownNeighbors.add(neighborPart);
@@ -80,7 +80,7 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 
 	@Override
 	public boolean isNoOp() {
-		Set<NodeContentPart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
+		Set<NodePart> hiddenNeighbors = hidingModel.getHiddenNeighborParts(nodePart);
 		return hiddenNeighbors != null && !hiddenNeighbors.isEmpty();
 	}
 
@@ -91,7 +91,7 @@ public class ShowHiddenNeighborsOperation extends AbstractOperation implements I
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		for (NodeContentPart neighborPart : shownNeighbors) {
+		for (NodePart neighborPart : shownNeighbors) {
 			hidingModel.hide(neighborPart);
 			neighborPart.deactivate();
 		}

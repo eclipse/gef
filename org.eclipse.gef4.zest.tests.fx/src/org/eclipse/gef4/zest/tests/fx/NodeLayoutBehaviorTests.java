@@ -31,7 +31,7 @@ import org.eclipse.gef4.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,12 +59,12 @@ public class NodeLayoutBehaviorTests {
 	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location, final Dimension size,
 			final GraphNodeLayout pNodeLayout) {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
-			private NodeContentPart host;
+			private NodePart host;
 
 			@Override
-			public NodeContentPart getHost() {
+			public NodePart getHost() {
 				if (host == null) {
-					host = new NodeContentPart() {
+					host = new NodePart() {
 						{
 							setAdapter(new FXResizePolicy());
 							FXTransformProvider transformProvider = new FXTransformProvider();

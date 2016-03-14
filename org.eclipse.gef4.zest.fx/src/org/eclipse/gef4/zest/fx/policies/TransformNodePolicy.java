@@ -58,7 +58,7 @@ public class TransformNodePolicy extends FXTransformPolicy {
 
 	@Override
 	public IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> getHost() {
-		// XXX: We don't tie this policy to NodeContentPart, but only to
+		// XXX: We don't tie this policy to NodePart, but only to
 		// IContentPart with a Node content, so it can be re-used in other
 		// situations.
 		return (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>) super.getHost();

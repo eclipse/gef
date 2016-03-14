@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
@@ -59,29 +59,29 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	}
 
 	/**
-	 * Returns a {@link List} containing all {@link NodeContentPart}s (within
+	 * Returns a {@link List} containing all {@link NodePart}s (within
 	 * the currently rendered graph) that have a nested graph assigned to them.
 	 *
-	 * @return A {@link List} containing all {@link NodeContentPart}s (within
+	 * @return A {@link List} containing all {@link NodePart}s (within
 	 *         the currently rendered graph) that have a nested graph assigned
 	 *         to them.
 	 */
-	protected List<NodeContentPart> findNestingNodes() {
+	protected List<NodePart> findNestingNodes() {
 		// find the first level visual parts (not considering nested graphs)
 		List<IVisualPart<Node, ? extends Node>> rootChildren = getHost().getRoot().getChildrenUnmodifiable();
 
-		// rootChildren.get(0) should be the GraphContentPart containing the
+		// rootChildren.get(0) should be the GraphPart containing the
 		// NodeContentParts
 		List<IVisualPart<Node, ? extends Node>> graphChildren = rootChildren.size() > 0
 				? rootChildren.get(0).getChildrenUnmodifiable()
 				: Collections.<IVisualPart<Node, ? extends Node>> emptyList();
 
-		// filter for NodeContentPart
-		List<NodeContentPart> nestingNodeContentParts = PartUtils.filterParts(graphChildren, NodeContentPart.class);
+		// filter for NodePart
+		List<NodePart> nestingNodeContentParts = PartUtils.filterParts(graphChildren, NodePart.class);
 
 		// filter out all non-nesting nodes
 		for (int i = nestingNodeContentParts.size() - 1; i >= 0; i--) {
-			NodeContentPart nodePart = nestingNodeContentParts.get(i);
+			NodePart nodePart = nestingNodeContentParts.get(i);
 			if (nodePart.getContent().getNestedGraph() == null) {
 				nestingNodeContentParts.remove(i);
 			}
@@ -135,19 +135,19 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		if (initialZoomLevel < finalZoomLevel && finalZoomLevel > 3) {
 			// zooming in => open nested graph (if any)
 			// find all NodeContentParts with nested graphs
-			List<NodeContentPart> nestingNodeContentParts = findNestingNodes();
+			List<NodePart> nestingNodeContentParts = findNestingNodes();
 
 			// determine the nesting node that is at least partially visible and
 			// nearest to the pivot point
 			double pivotDistance = Double.MAX_VALUE;
-			NodeContentPart pivotPart = null;
+			NodePart pivotPart = null;
 
 			InfiniteCanvas infiniteCanvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 			org.eclipse.gef4.geometry.planar.Rectangle viewportBounds = new org.eclipse.gef4.geometry.planar.Rectangle(
 					0, 0, infiniteCanvas.getWidth(), infiniteCanvas.getHeight());
 			Point pivotPoint = FX2Geometry.toPoint(infiniteCanvas.sceneToLocal(sceneX, sceneY));
 
-			for (NodeContentPart nodePart : new ArrayList<>(nestingNodeContentParts)) {
+			for (NodePart nodePart : new ArrayList<>(nestingNodeContentParts)) {
 				Group visual = nodePart.getVisual();
 				Bounds boundsInScene = visual.localToScene(visual.getLayoutBounds());
 				org.eclipse.gef4.geometry.planar.Rectangle boundsInViewport = FX2Geometry
@@ -186,7 +186,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 		}
 
 		// synchronize content children of nesting node parts
-		for (NodeContentPart nestingNodePart : findNestingNodes()) {
+		for (NodePart nestingNodePart : findNestingNodes()) {
 			nestingNodePart.recomputeContentChildren();
 			nestingNodePart.getAdapter(new TypeToken<ContentBehavior<Node>>() {
 			}).synchronizeContentChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));

@@ -23,7 +23,7 @@ import javafx.scene.image.Image;
  * {@link AbstractFXSegmentHandlePart} that displays an expansion image. By
  * default, the {@link ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy} is
  * installed for {@link ShowHiddenNeighborsHoverHandlePart}, so that the
- * corresponding {@link NodeContentPart} can be expanded by a click on this
+ * corresponding {@link NodePart} can be expanded by a click on this
  * part.
  *
  * @author mwienand

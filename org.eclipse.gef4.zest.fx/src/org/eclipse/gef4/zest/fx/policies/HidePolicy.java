@@ -25,49 +25,49 @@ import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.operations.HideOperation;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 
 /**
- * The {@link HidePolicy} can be installed on {@link NodeContentPart} to hide
+ * The {@link HidePolicy} can be installed on {@link NodePart} to hide
  * the contents.
  *
  * @author mwienand
  *
  */
-// TODO: only applicable for NodeContentPart (override #getHost)
+// TODO: only applicable for NodePart (override #getHost)
 public class HidePolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that removes the given
-	 * {@link NodeContentPart} from the {@link SelectionModel} of the
+	 * {@link NodePart} from the {@link SelectionModel} of the
 	 * corresponding {@link IViewer}.
 	 *
 	 * @param part
-	 *            The {@link NodeContentPart} that is to be removed from the
+	 *            The {@link NodePart} that is to be removed from the
 	 *            {@link SelectionModel}.
 	 * @return An {@link ITransactionalOperation} that removes the given
-	 *         {@link NodeContentPart} from the {@link SelectionModel}.
+	 *         {@link NodePart} from the {@link SelectionModel}.
 	 */
-	protected ITransactionalOperation createDeselectOperation(NodeContentPart part) {
+	protected ITransactionalOperation createDeselectOperation(NodePart part) {
 		return new DeselectOperation<>(part.getRoot().getViewer(), Collections.singletonList(part));
 	}
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that adds the given
-	 * {@link NodeContentPart} to the {@link HidingModel} of its {@link IViewer}
+	 * {@link NodePart} to the {@link HidingModel} of its {@link IViewer}
 	 * .
 	 *
 	 * @param part
-	 *            The {@link NodeContentPart} that is to be hidden.
+	 *            The {@link NodePart} that is to be hidden.
 	 * @return An {@link ITransactionalOperation} that adds the given
-	 *         {@link NodeContentPart} to the {@link HidingModel} of its
+	 *         {@link NodePart} to the {@link HidingModel} of its
 	 *         {@link IViewer}.
 	 */
-	protected ITransactionalOperation createHideOperation(NodeContentPart part) {
+	protected ITransactionalOperation createHideOperation(NodePart part) {
 		return new HideOperation(part.getRoot().getViewer(), part);
 	}
 
@@ -78,16 +78,16 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 
 	/**
 	 * Returns an {@link ITransactionalOperation} that removes the given
-	 * {@link NodeContentPart} from the {@link FocusModel} of the corresponding
+	 * {@link NodePart} from the {@link FocusModel} of the corresponding
 	 * {@link IViewer}.
 	 *
 	 * @param part
-	 *            The {@link NodeContentPart} that is to be removed.
+	 *            The {@link NodePart} that is to be removed.
 	 * @return An {@link ITransactionalOperation} that removes the given
-	 *         {@link NodeContentPart} from the {@link FocusModel}.
+	 *         {@link NodePart} from the {@link FocusModel}.
 	 */
 	@SuppressWarnings("serial")
-	protected ITransactionalOperation createUnfocusOperation(NodeContentPart part) {
+	protected ITransactionalOperation createUnfocusOperation(NodePart part) {
 		IViewer<Node> viewer = part.getRoot().getViewer();
 
 		FocusModel<Node> focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
@@ -102,13 +102,13 @@ public class HidePolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public NodePart getHost() {
+		return (NodePart) super.getHost();
 	}
 
 	/**
 	 * Executes an operation on the history that hides the {@link #getHost()
-	 * host} {@link NodeContentPart} (and removes it from the {@link FocusModel}
+	 * host} {@link NodePart} (and removes it from the {@link FocusModel}
 	 * and from the {@link SelectionModel}).
 	 */
 	public void hide() {

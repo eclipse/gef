@@ -14,11 +14,13 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Map;
 
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import com.google.common.collect.HashMultimap;
@@ -30,19 +32,19 @@ import javafx.scene.text.Text;
 import javafx.util.Pair;
 
 /**
- * The {@link NodeExternalLabelPart} is an {@link AbstractVisualPart} that is
+ * The {@link NodeLabelPart} is an {@link AbstractVisualPart} that is
  * used to display the external label of a node.
  *
  * @author mwienand
  *
  */
-public class NodeExternalLabelPart extends AbstractLabelPart {
+public class NodeLabelPart extends AbstractLabelPart {
 
 	@Override
 	protected Group createVisual() {
 		Text text = createText();
 		Group g = new Group();
-		g.getStyleClass().add(NodeContentPart.CSS_CLASS);
+		g.getStyleClass().add(NodePart.CSS_CLASS);
 		g.getChildren().add(text);
 		return g;
 	}
@@ -69,8 +71,8 @@ public class NodeExternalLabelPart extends AbstractLabelPart {
 			getText().setText(label);
 		}
 
-		NodeContentPart NodeContentPart = getHost();
-		if (NodeContentPart == null) {
+		IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> firstAnchorage = getFirstAnchorage();
+		if (firstAnchorage == null) {
 			return;
 		}
 
@@ -79,12 +81,16 @@ public class NodeExternalLabelPart extends AbstractLabelPart {
 			refreshPosition(getVisual(), labelPosition);
 		} else {
 			// determine bounds of anchorage visual
-			Rectangle bounds = FX2Geometry.toRectangle(NodeContentPart.getVisual().getLayoutBounds());
+			Rectangle anchorageBounds = NodeUtils
+					.sceneToLocal(visual.getParent(), NodeUtils.localToScene(firstAnchorage.getVisual(),
+							FX2Geometry.toRectangle(firstAnchorage.getVisual().getLayoutBounds())))
+					.getBounds();
 			// determine text bounds
 			Bounds textBounds = getVisual().getLayoutBounds();
-			// compute label position
-			refreshPosition(getVisual(), new Point(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2,
-					bounds.getY() + bounds.getHeight() / 2 - textBounds.getHeight()));
+			// TODO: compute better label position
+			refreshPosition(getVisual(),
+					new Point(anchorageBounds.getX() + anchorageBounds.getWidth() / 2 - textBounds.getWidth() / 2,
+							anchorageBounds.getY() + anchorageBounds.getHeight()));
 		}
 	}
 
@@ -95,15 +101,16 @@ public class NodeExternalLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Returns the {@link NodeContentPart} for which this
-	 * {@link NodeExternalLabelPart} displays the label.
+	 * Returns the {@link NodePart} for which this
+	 * {@link NodeLabelPart} displays the label.
 	 *
-	 * @return The {@link NodeContentPart} for which this
-	 *         {@link NodeExternalLabelPart} displays the label.
+	 * @return The {@link NodePart} for which this
+	 *         {@link NodeLabelPart} displays the label.
 	 */
-	public NodeContentPart getHost() {
+	public IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> getFirstAnchorage() {
 		return getAnchoragesUnmodifiable().isEmpty() ? null
-				: (NodeContentPart) getAnchoragesUnmodifiable().keys().iterator().next();
+				: (IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node>) getAnchoragesUnmodifiable().keys()
+						.iterator().next();
 	}
 
 }

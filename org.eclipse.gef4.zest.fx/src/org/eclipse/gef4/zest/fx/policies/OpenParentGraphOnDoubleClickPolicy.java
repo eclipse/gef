@@ -19,13 +19,13 @@ import org.eclipse.gef4.mvc.fx.policies.IFXOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.zest.fx.operations.NavigateOperation;
-import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxRootPart;
 
 import javafx.scene.input.MouseEvent;
 
 /**
  * The {@link OpenParentGraphOnDoubleClickPolicy} is an {@link IFXOnClickPolicy}
- * that can be installed on {@link GraphRootPart}s (see {@link #getHost()}). It
+ * that can be installed on {@link ZestFxRootPart}s (see {@link #getHost()}). It
  * opens the {@link Graph} that contains the node that contains the
  * {@link Graph} that is currently open when the background is double clicked.
  *
@@ -64,8 +64,8 @@ public class OpenParentGraphOnDoubleClickPolicy extends AbstractFXInteractionPol
 	}
 
 	@Override
-	public GraphRootPart getHost() {
-		return (GraphRootPart) super.getHost();
+	public ZestFxRootPart getHost() {
+		return (ZestFxRootPart) super.getHost();
 	}
 
 }

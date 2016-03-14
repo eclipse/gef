@@ -23,20 +23,20 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 /**
- * The {@link NodeLayoutBehavior} is a {@link NodeContentPart}-specific
+ * The {@link NodeLayoutBehavior} is a {@link NodePart}-specific
  * {@link AbstractLayoutBehavior} implementation.
  *
  * @author mwienand
  *
  */
-// only applicable to NodeContentPart (see #getHost())
+// only applicable to NodePart (see #getHost())
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
@@ -47,17 +47,17 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
+	public NodePart getHost() {
+		return (NodePart) super.getHost();
 	}
 
 	/**
 	 * Returns the {@link GraphNodeLayout} that corresponds to the
-	 * {@link NodeContentPart} on which this {@link NodeLayoutBehavior} is
+	 * {@link NodePart} on which this {@link NodeLayoutBehavior} is
 	 * installed.
 	 *
 	 * @return The {@link GraphNodeLayout} that corresponds to the
-	 *         {@link NodeContentPart} on which this {@link NodeLayoutBehavior}
+	 *         {@link NodePart} on which this {@link NodeLayoutBehavior}
 	 *         is installed.
 	 */
 	protected GraphNodeLayout getNodeLayout() {

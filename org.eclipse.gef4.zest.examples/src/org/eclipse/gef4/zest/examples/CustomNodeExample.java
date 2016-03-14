@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -81,7 +81,7 @@ public class CustomNodeExample extends AbstractZestExample {
 		}
 	}
 
-	public static class CustomNodeContentPart extends NodeContentPart {
+	public static class CustomNodeContentPart extends NodePart {
 		private VBox vbox;
 
 		@Override

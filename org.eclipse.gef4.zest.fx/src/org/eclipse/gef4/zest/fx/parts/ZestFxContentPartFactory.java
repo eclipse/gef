@@ -29,8 +29,8 @@ import javafx.util.Pair;
 
 /**
  * The {@link ZestFxContentPartFactory} is a {@link Graph}-specific
- * {@link IContentPartFactory}. It creates {@link GraphContentPart}s,
- * {@link NodeContentPart}s, and {@link EdgeContentPart}s for the corresponding
+ * {@link IContentPartFactory}. It creates {@link GraphPart}s,
+ * {@link NodePart}s, and {@link EdgePart}s for the corresponding
  * {@link Graph}s, {@link Node}s, and {@link Edge}s.
  *
  * @author mwienand
@@ -47,11 +47,11 @@ public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 			Map<Object, Object> contextMap) {
 		IContentPart<Node, ? extends Node> part = null;
 		if (content instanceof Graph) {
-			part = new GraphContentPart();
+			part = new GraphPart();
 		} else if (content instanceof org.eclipse.gef4.graph.Node) {
-			part = new NodeContentPart();
+			part = new NodePart();
 		} else if (content instanceof Edge) {
-			part = new EdgeContentPart();
+			part = new EdgePart();
 		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof Edge
 				&& (ZestProperties.ELEMENT_LABEL.equals(((Pair) content).getValue())
 						|| ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue())
@@ -60,7 +60,7 @@ public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 			part = new EdgeLabelPart();
 		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof org.eclipse.gef4.graph.Node
 				&& ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue())) {
-			part = new NodeExternalLabelPart();
+			part = new NodeLabelPart();
 		}
 		if (part != null) {
 			injector.injectMembers(part);
