@@ -13,7 +13,6 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -56,74 +55,71 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	private void adjustHandles(List<Point> points,
 			boolean skipMidPointsAroundCreated) {
-		if (12 != 1) {
-			targetPart.getAdapter(SelectionBehavior.class).updateHandles();
-			return;
-		}
-
-		// re-assign segment index and segment parameter
-		List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
-				PartUtils.getAnchoreds(
-						getHost().getAnchoragesUnmodifiable().keySet()),
-				FXCircleSegmentHandlePart.class);
-
-		Collections.<FXCircleSegmentHandlePart> sort(parts);
-		// System.out.println("Found " + points.size() + " points.");
-		// System.out.println(
-		// "Found " + parts.size() + " FXSelectionHandleParts");
-		Iterator<FXCircleSegmentHandlePart> it = parts.iterator();
-		FXCircleSegmentHandlePart part = null;
-		for (int i = 0; i < points.size() - 1; i++) {
-			// param 0
-			if (it.hasNext()) {
-				part = it.next();
-				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex()
-				// + " - " + part.getSegmentParameter() + " to " + i
-				// + " - " + 0.0);
-				setSegmentIndex(part, i);
-				setSegmentParameter(part, 0.0);
-			}
-
-			// skip mid point handles around newly created waypoints
-			if (createdSegmentIndex < 0 || !skipMidPointsAroundCreated
-					|| part.getSegmentIndex() != createdSegmentIndex - 1
-							&& part.getSegmentIndex() != createdSegmentIndex) {
-				// param 0.5
-				if (it.hasNext()) {
-					part = it.next();
-					// System.out.println(
-					// "Reassigned index " + part.getSegmentIndex() + " - "
-					// + part.getSegmentParameter() + " to " + i
-					// + " - " + 0.5);
-					setSegmentIndex(part, i);
-					setSegmentParameter(part, 0.5);
-				}
-			}
-
-			// param 1
-			if (i == points.size() - 2) {
-				if (it.hasNext()) {
-					part = it.next();
-					// System.out.println(
-					// "Reassigned index " + part.getSegmentIndex() + " - "
-					// + part.getSegmentParameter() + " to " + i
-					// + " - " + 1.0);
-					setSegmentIndex(part, i);
-					setSegmentParameter(part, 1.0);
-				}
-			}
-		}
-		// not used -> could be removed (and re-added)
-		while (it.hasNext()) {
-			part = it.next();
-			// System.out.println("Reassigned index " + part.getSegmentIndex()
-			// + " - " + part.getSegmentParameter() + " to " + -1 + " - "
-			// + 1.0);
-			// hide (but do not remove from root part and anchorage yet
-			// (this will be initiated upon commit)
-			setSegmentIndex(part, -1);
-		}
+		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
+		return;
+		// // re-assign segment index and segment parameter
+		// List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
+		// PartUtils.getAnchoreds(
+		// getHost().getAnchoragesUnmodifiable().keySet()),
+		// FXCircleSegmentHandlePart.class);
+		//
+		// Collections.<FXCircleSegmentHandlePart> sort(parts);
+		// // System.out.println("Found " + points.size() + " points.");
+		// // System.out.println(
+		// // "Found " + parts.size() + " FXSelectionHandleParts");
+		// Iterator<FXCircleSegmentHandlePart> it = parts.iterator();
+		// FXCircleSegmentHandlePart part = null;
+		// for (int i = 0; i < points.size() - 1; i++) {
+		// // param 0
+		// if (it.hasNext()) {
+		// part = it.next();
+		// // System.out.println("Reassigned index " +
+		// // part.getSegmentIndex()
+		// // + " - " + part.getSegmentParameter() + " to " + i
+		// // + " - " + 0.0);
+		// setSegmentIndex(part, i);
+		// setSegmentParameter(part, 0.0);
+		// }
+		//
+		// // skip mid point handles around newly created waypoints
+		// if (createdSegmentIndex < 0 || !skipMidPointsAroundCreated
+		// || part.getSegmentIndex() != createdSegmentIndex - 1
+		// && part.getSegmentIndex() != createdSegmentIndex) {
+		// // param 0.5
+		// if (it.hasNext()) {
+		// part = it.next();
+		// // System.out.println(
+		// // "Reassigned index " + part.getSegmentIndex() + " - "
+		// // + part.getSegmentParameter() + " to " + i
+		// // + " - " + 0.5);
+		// setSegmentIndex(part, i);
+		// setSegmentParameter(part, 0.5);
+		// }
+		// }
+		//
+		// // param 1
+		// if (i == points.size() - 2) {
+		// if (it.hasNext()) {
+		// part = it.next();
+		// // System.out.println(
+		// // "Reassigned index " + part.getSegmentIndex() + " - "
+		// // + part.getSegmentParameter() + " to " + i
+		// // + " - " + 1.0);
+		// setSegmentIndex(part, i);
+		// setSegmentParameter(part, 1.0);
+		// }
+		// }
+		// }
+		// // not used -> could be removed (and re-added)
+		// while (it.hasNext()) {
+		// part = it.next();
+		// // System.out.println("Reassigned index " + part.getSegmentIndex()
+		// // + " - " + part.getSegmentParameter() + " to " + -1 + " - "
+		// // + 1.0);
+		// // hide (but do not remove from root part and anchorage yet
+		// // (this will be initiated upon commit)
+		// setSegmentIndex(part, -1);
+		// }
 	}
 
 	@Override
