@@ -20,7 +20,6 @@ import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.INodeLayout;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -42,14 +41,14 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 /**
- * The {@link LayoutContextBehavior} is responsible for initiating layout
- * passes. It is only applicable to {@link GraphContentPart}.
+ * The {@link GraphLayoutBehavior} is responsible for initiating layout passes.
+ * It is only applicable to {@link GraphContentPart}.
  *
  * @author mwienand
  *
  */
 // only applicable for GraphContentPart (see #getHost())
-public class LayoutContextBehavior extends AbstractBehavior<Node> {
+public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	private MapChangeListener<String, Object> layoutContextAttributesObserver = new MapChangeListener<String, Object>() {
 
@@ -59,15 +58,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 					&& change.getMap().get(change.getKey()) != null) {
 				applyLayout(true);
 			}
-		}
-	};
-
-	private ChangeListener<ILayoutAlgorithm> layoutAlgorithmObserver = new ChangeListener<ILayoutAlgorithm>() {
-
-		@Override
-		public void changed(ObservableValue<? extends ILayoutAlgorithm> observable, ILayoutAlgorithm oldValue,
-				ILayoutAlgorithm newValue) {
-			applyLayout(true);
 		}
 	};
 
@@ -103,6 +93,20 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
 				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
 						FX2Geometry.toAffineTransform(canvas.getContentTransform())));
+		// update layout algorithm (apply layout will depend on it)
+		Object layoutAlgorithmValue = getHost().getContent().attributesProperty()
+				.get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
+		if (layoutAlgorithmValue != null) {
+			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) layoutAlgorithmValue;
+			if (layoutContext.getLayoutAlgorithm() == null) {
+				layoutContext.setLayoutAlgorithm(layoutAlgorithm);
+			}
+		} else {
+			if (layoutContext.getLayoutAlgorithm() != null) {
+				layoutContext.setLayoutAlgorithm(null);
+			}
+		}
+		// apply layout (if no algorithm is set, will be a no-op)
 		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
 	}
@@ -165,7 +169,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		// the initial layout properties, so that this listener will not be
 		// called for the initial layout properties
 		layoutContext.attributesProperty().addListener(layoutContextAttributesObserver);
-		layoutContext.layoutAlgorithmProperty().addListener(layoutAlgorithmObserver);
 	}
 
 	@Override
@@ -173,7 +176,6 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		// remove property change listener from context
 		if (layoutContext != null) {
 			layoutContext.attributesProperty().removeListener(layoutContextAttributesObserver);
-			layoutContext.layoutAlgorithmProperty().removeListener(layoutAlgorithmObserver);
 		}
 		if (nestingVisual == null) {
 			// remove change listener from viewport
@@ -193,8 +195,9 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 	 * @return The {@link GraphLayoutContext} that corresponds to the
 	 *         {@link #getHost() host}.
 	 */
+	@Override
 	protected GraphLayoutContext getGraphLayoutContext() {
-		return getHost().<GraphLayoutContext> getAdapter(GraphLayoutContext.class);
+		return getHost().getAdapter(GraphLayoutContext.class);
 	}
 
 	@Override
@@ -255,6 +258,14 @@ public class LayoutContextBehavior extends AbstractBehavior<Node> {
 		InfiniteCanvas canvas = getInfiniteCanvas();
 		Rectangle newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
 		LayoutProperties.setBounds(layoutContext, newBounds);
+	}
+
+	@Override
+	protected void postLayout() {
+	}
+
+	@Override
+	protected void preLayout() {
 	}
 
 }

@@ -39,11 +39,38 @@ import javafx.scene.transform.Affine;
 // only applicable to NodeContentPart (see #getHost())
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
+	@Override
+	protected GraphLayoutContext getGraphLayoutContext() {
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
+				.get(getHost().getContent().getGraph());
+		return graphPart.getAdapter(GraphLayoutContext.class);
+	}
+
+	@Override
+	public NodeContentPart getHost() {
+		return (NodeContentPart) super.getHost();
+	}
+
 	/**
-	 * Reads the location and size of its host {@link NodeContentPart} from the
-	 * layout model and updates the visualization accordingly.
+	 * Returns the {@link GraphNodeLayout} that corresponds to the
+	 * {@link NodeContentPart} on which this {@link NodeLayoutBehavior} is
+	 * installed.
+	 *
+	 * @return The {@link GraphNodeLayout} that corresponds to the
+	 *         {@link NodeContentPart} on which this {@link NodeLayoutBehavior}
+	 *         is installed.
 	 */
-	public void adaptLayoutInformation() {
+	protected GraphNodeLayout getNodeLayout() {
+		// TODO: use event to update node layout
+		GraphNodeLayout nodeLayout = getGraphLayoutContext().getNodeLayout(getHost().getContent());
+		if (nodeLayout == null) {
+			throw new IllegalStateException("Cannot find INodeLayout in NavigationModel.");
+		}
+		return nodeLayout;
+	}
+
+	@Override
+	protected void postLayout() {
 		Node visual = getHost().getVisual();
 		Bounds layoutBounds = visual.getLayoutBounds();
 		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
@@ -86,54 +113,11 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 				throw new IllegalStateException(e);
 			}
 		}
-	}
-
-	@Override
-	protected GraphLayoutContext getGraphLayoutContext() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
-				.get(getHost().getContent().getGraph());
-		return graphPart.getAdapter(GraphLayoutContext.class);
-	}
-
-	@Override
-	public NodeContentPart getHost() {
-		return (NodeContentPart) super.getHost();
-	}
-
-	/**
-	 * Returns the {@link GraphNodeLayout} that corresponds to the
-	 * {@link NodeContentPart} on which this {@link NodeLayoutBehavior} is
-	 * installed.
-	 *
-	 * @return The {@link GraphNodeLayout} that corresponds to the
-	 *         {@link NodeContentPart} on which this {@link NodeLayoutBehavior}
-	 *         is installed.
-	 */
-	protected GraphNodeLayout getNodeLayout() {
-		// TODO: use event to update node layout
-		GraphNodeLayout nodeLayout = getGraphLayoutContext().getNodeLayout(getHost().getContent());
-		if (nodeLayout == null) {
-			throw new IllegalStateException("Cannot find INodeLayout in NavigationModel.");
-		}
-		return nodeLayout;
-	}
-
-	@Override
-	protected void postLayout() {
-		adaptLayoutInformation();
 		getHost().refreshVisual();
 	}
 
 	@Override
 	protected void preLayout() {
-		provideLayoutInformation();
-	}
-
-	/**
-	 * Writes the location and size of its host {@link NodeContentPart} into the
-	 * layout model.
-	 */
-	public void provideLayoutInformation() {
 		Node visual = getHost().getVisual();
 		Bounds hostBounds = visual.getLayoutBounds();
 		double minx = hostBounds.getMinX();

@@ -18,14 +18,12 @@ import java.util.List;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.GraphLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
@@ -54,7 +52,10 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 		@Override
 		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
+			// refresh visuals
 			refreshVisual();
+			// apply layout
+			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
 		}
 	};
 
@@ -63,14 +64,15 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		@SuppressWarnings("serial")
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Object> c) {
-			// update layout context
-			getAdapter(GraphLayoutContext.class).setGraph(getContent());
+			// synchronize children
 			getAdapter(new TypeToken<ContentBehavior<Node>>() {
 			}).synchronizeContentChildren(doGetContentChildren());
-			// apply layout
-			getAdapter(LayoutContextBehavior.class).applyLayout(true);
-		}
 
+			// update layout context
+			getAdapter(GraphLayoutContext.class).setGraph(getContent());
+			// apply layout
+			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
+		}
 	};
 
 	@Override
@@ -100,7 +102,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		boolean isViewportChanged = !isNotSavedViewport
 				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
 		if (isNotSavedViewport || isNested || isViewportChanged) {
-			getAdapter(LayoutContextBehavior.class).applyLayout(true);
+			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
 		}
 		refreshVisual();
 	}
@@ -147,8 +149,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	public void doRefreshVisual(Group visual) {
-		// set layout algorithm from Graph on the context
-		setGraphLayoutAlgorithm();
 		// TODO: setGraphStyleSheet();
 	}
 
@@ -166,21 +166,6 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	public void setContent(Object content) {
 		super.setContent(content);
 		getAdapter(GraphLayoutContext.class).setGraph(getContent());
-	}
-
-	private void setGraphLayoutAlgorithm() {
-		ILayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
-		Object layoutAlgorithmValue = getContent().attributesProperty().get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
-		if (layoutAlgorithmValue != null) {
-			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) layoutAlgorithmValue;
-			if (layoutContext.getLayoutAlgorithm() == null) {
-				layoutContext.setLayoutAlgorithm(layoutAlgorithm);
-			}
-		} else {
-			if (layoutContext.getLayoutAlgorithm() != null) {
-				layoutContext.setLayoutAlgorithm(null);
-			}
-		}
 	}
 
 }

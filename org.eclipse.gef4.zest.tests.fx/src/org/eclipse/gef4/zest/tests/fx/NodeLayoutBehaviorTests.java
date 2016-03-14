@@ -14,6 +14,8 @@ package org.eclipse.gef4.zest.tests.fx;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -106,7 +108,7 @@ public class NodeLayoutBehaviorTests {
 	}
 
 	@Test
-	public void test_adapt() {
+	public void test_adapt() throws Exception {
 		GraphNodeLayout nodeLayout = createNodeLayout();
 		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(), null, nodeLayout);
 
@@ -115,7 +117,10 @@ public class NodeLayoutBehaviorTests {
 		LayoutProperties.setLocation(nodeLayout, location.x, location.y);
 		LayoutProperties.setSize(nodeLayout, size.getWidth(), size.getHeight());
 
-		behavior.adaptLayoutInformation();
+		// postLayout
+		Method method = NodeLayoutBehavior.class.getDeclaredMethod("postLayout", new Class[] {});
+		method.setAccessible(true);
+		method.invoke(behavior, new Object[] {});
 
 		/*
 		 * <i>location</i> is the center, <i>translate-xy</i> is the top left
@@ -133,7 +138,7 @@ public class NodeLayoutBehaviorTests {
 	}
 
 	@Test
-	public void test_provide() {
+	public void test_provide() throws Exception {
 		final Point location = new Point(10, 20);
 
 		// setup with non-resizable figure
@@ -141,7 +146,10 @@ public class NodeLayoutBehaviorTests {
 		NodeLayoutBehavior behavior = createNodeLayoutBehavior(location, null, nodeLayout);
 		Group visual = behavior.getHost().getVisual();
 
-		behavior.provideLayoutInformation();
+		// preLayout
+		Method method = NodeLayoutBehavior.class.getDeclaredMethod("preLayout", new Class[] {});
+		method.setAccessible(true);
+		method.invoke(behavior, new Object[] {});
 
 		assertEquals(visual.isResizable(), LayoutProperties.isResizable(nodeLayout));
 

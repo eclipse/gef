@@ -46,7 +46,7 @@ import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.GraphLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -595,7 +595,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link LayoutContextBehavior} to the given adapter map
+	 * Adds a binding for {@link GraphLayoutBehavior} to the given adapter map
 	 * binder that will insert the bindings into {@link GraphContentPart}s.
 	 *
 	 * @param adapterMapBinder
@@ -603,7 +603,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindLayoutContextBehaviorAsGraphContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LayoutContextBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GraphLayoutBehavior.class);
 	}
 
 	/**

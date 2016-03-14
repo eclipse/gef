@@ -12,7 +12,7 @@
 /**
  * This package provides behaviors for transferring information between graph
  * model elements and layout abstractions (
- * {@link org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior},
+ * {@link org.eclipse.gef4.zest.fx.behaviors.GraphLayoutBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.AbstractLayoutBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior},
  * {@link org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior}), as well as

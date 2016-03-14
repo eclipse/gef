@@ -27,11 +27,11 @@ import com.google.inject.multibindings.MapBinder;
 public class DotGraphViewModule extends ZestFxModule {
 
 	// // TODO: Guard calls to LayoutContextBehaivor and trigger layout
-	// // computations from within LayoutContextBehavior so that a replacement
+	// // computations from within GraphLayoutBehavior so that a replacement
 	// is
 	// // not needed, but the binding can just be removed.
 	// public static final class NullLayoutContextBehavior
-	// extends LayoutContextBehavior {
+	// extends GraphLayoutBehavior {
 	// @Override
 	// protected void doActivate() {
 	// // super.doActivate();
