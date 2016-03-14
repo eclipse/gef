@@ -46,7 +46,7 @@ public class FXTransformNodePolicy extends FXTransformPolicy {
 		ChangeNodePositionOperation modelOperation = new ChangeNodePositionOperation(getHost(), finalPosition);
 
 		// assemble operations
-		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("TransformNode()");
+		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Transform Node");
 		if (visualOperation != null) {
 			fwdOp.add(visualOperation);
 		}

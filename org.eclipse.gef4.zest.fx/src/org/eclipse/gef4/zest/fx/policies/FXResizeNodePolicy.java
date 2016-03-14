@@ -45,7 +45,7 @@ public class FXResizeNodePolicy extends FXResizePolicy {
 		ChangeNodeSizeOperation modelOperation = new ChangeNodeSizeOperation(getHost(), finalSize);
 
 		// assemble visual and model operations
-		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("ResizeNode()");
+		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Resize Node");
 		if (visualOperation != null) {
 			fwdOp.add(visualOperation);
 		}
