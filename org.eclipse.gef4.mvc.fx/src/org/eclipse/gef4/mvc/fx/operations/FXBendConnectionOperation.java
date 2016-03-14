@@ -26,13 +26,13 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
- * An {@link FXBendOperation} can be used to manipulate an {@link Connection} in
+ * An {@link FXBendConnectionOperation} can be used to manipulate an {@link Connection} in
  * an undo-context.
  *
  * @author mwienand
  *
  */
-public class FXBendOperation extends AbstractOperation
+public class FXBendConnectionOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final Connection connection;
@@ -47,7 +47,7 @@ public class FXBendOperation extends AbstractOperation
 	 *            The {@link Connection} which will be modified by this
 	 *            operation.
 	 */
-	public FXBendOperation(Connection connection) {
+	public FXBendConnectionOperation(Connection connection) {
 		super("Bend");
 		this.connection = connection;
 		this.initialAnchors = new ArrayList<>(
@@ -140,7 +140,7 @@ public class FXBendOperation extends AbstractOperation
 
 	@Override
 	public String toString() {
-		return "FXBendOperation";
+		return "FXBendConnectionOperation";
 	}
 
 	@Override

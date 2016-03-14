@@ -27,7 +27,7 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -326,8 +326,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	@Override
-	protected FXBendOperation createOperation() {
-		return new FXBendOperation(getConnection());
+	protected FXBendConnectionOperation createOperation() {
+		return new FXBendConnectionOperation(getConnection());
 	}
 
 	/**
@@ -513,14 +513,14 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	/**
-	 * Returns an {@link FXBendOperation} that is extracted from the operation
+	 * Returns an {@link FXBendConnectionOperation} that is extracted from the operation
 	 * created by {@link #createOperation()}.
 	 *
-	 * @return an {@link FXBendOperation} that is extracted from the operation
+	 * @return an {@link FXBendConnectionOperation} that is extracted from the operation
 	 *         created by {@link #createOperation()}.
 	 */
-	protected FXBendOperation getBendOperation() {
-		return (FXBendOperation) super.getOperation();
+	protected FXBendConnectionOperation getBendOperation() {
+		return (FXBendConnectionOperation) super.getOperation();
 	}
 
 	/**

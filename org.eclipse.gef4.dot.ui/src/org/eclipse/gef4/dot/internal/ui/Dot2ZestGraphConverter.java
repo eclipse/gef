@@ -121,7 +121,7 @@ public class Dot2ZestGraphConverter {
 		}
 		// TODO: handle tapered edges
 		if (connectionCssStyle != null) {
-			ZestProperties.setEdgeConnCssStyle(zest, connectionCssStyle);
+			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
 		}
 
 		// only convert layout information in native mode, as the results will

@@ -63,6 +63,7 @@ import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxSelectionHandlePartFactory;
 import org.eclipse.gef4.zest.fx.policies.FXResizeNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.FXTransformEdgePolicy;
 import org.eclipse.gef4.zest.fx.policies.FXTransformNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
@@ -144,6 +145,12 @@ public class ZestFxModule extends MvcFxModule {
 
 		// clickable area resizing
 		bindFXClickableAreaBehaviorAsEdgeContentPartAdapter(adapterMapBinder);
+
+		// transform policy
+		bindFXTransformEdgePolicyAsEdgeContentPartAdapter(adapterMapBinder);
+
+		// translate selected on drag
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
 	}
 
 	/**
@@ -232,8 +239,9 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FXConnectionClickableAreaBehavior} to the given adapter
-	 * map binder that will insert the bindings into {@link EdgeContentPart}s.
+	 * Adds a binding for {@link FXConnectionClickableAreaBehavior} to the given
+	 * adapter map binder that will insert the bindings into
+	 * {@link EdgeContentPart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
@@ -366,6 +374,18 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXSelectFocusedOnTypeAsFXRootPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXSelectFocusedOnTypePolicy.class);
+	}
+
+	/**
+	 * Adds a binding for {@link FXTransformEdgePolicy} to the given adapter map
+	 * binder that will insert the bindings into {@link EdgeContentPart}s.
+	 *
+	 * @param adapterMapBinder
+	 *            The adapter map binder to which the binding is added.
+	 */
+	protected void bindFXTransformEdgePolicyAsEdgeContentPartAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformEdgePolicy.class);
 	}
 
 	/**

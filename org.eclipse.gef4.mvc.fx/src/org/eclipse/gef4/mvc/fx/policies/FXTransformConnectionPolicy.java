@@ -21,22 +21,22 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
  * The {@link FXTransformConnectionPolicy} is an {@link FXTransformPolicy} that
  * is adjusted for the relocation of an {@link Connection}. It uses an
- * {@link FXBendOperation} to update the anchors of the {@link Connection}
- * according to the applied translation.
+ * {@link FXBendConnectionOperation} to update the anchors of the
+ * {@link Connection} according to the applied translation.
  *
  * @author mwienand
  *
  */
 public class FXTransformConnectionPolicy extends FXTransformPolicy {
 
-	private FXBendOperation op;
+	private FXBendConnectionOperation op;
 	private Point[] initialPositions;
 
 	@Override
@@ -72,6 +72,16 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	}
 
 	/**
+	 * Returns the {@link FXBendConnectionOperation} used to manipulate the
+	 * {@link Connection}.
+	 *
+	 * @return The operation used to bend the connection.
+	 */
+	protected FXBendConnectionOperation getBendOperation() {
+		return op;
+	}
+
+	/**
 	 * Returns the indices of all movable anchors. Only those anchors are
 	 * relocated by this policy.
 	 *
@@ -99,7 +109,7 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 		// super#init() so that the policy is properly initialized
 		super.init();
 		// create operation
-		op = new FXBendOperation((Connection) getHost().getVisual());
+		op = new FXBendConnectionOperation((Connection) getHost().getVisual());
 		// compute inverse transformation
 		AffineTransform inverse = null;
 		try {

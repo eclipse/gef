@@ -99,7 +99,7 @@ public class ZestProperties {
 	 * not have a default value.
 	 *
 	 * @see #getEdgeCurveCssStyle(Edge)
-	 * @see #setEdgeConnCssStyle(Edge, String)
+	 * @see #setEdgeCurveCssStyle(Edge, String)
 	 */
 	public static final String EDGE_CURVE_CSS_STYLE = "edge-curve-css-style";
 
@@ -110,7 +110,7 @@ public class ZestProperties {
 	 * the source and target node of the {@link Edge} (and not included in the
 	 * list of way points).
 	 *
-	 * @see #getWayPoints(Edge)
+	 * @see #getControlPoints(Edge)
 	 * @see #setControlPoints(Edge, List)
 	 */
 	public static final String EDGE_CONTROL_POINTS_POINTS = "edge-control-points";
@@ -325,6 +325,25 @@ public class ZestProperties {
 	public static Boolean NODE_FISHEYE_DEFAULT = false;
 
 	/**
+	 * Returns the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 * the given {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} for which to determine the router points.
+	 * @return The value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
+	 *         the given {@link Edge}, or an empty list, if the attribute is
+	 *         unset.
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<Point> getControlPoints(Edge edge) {
+		Object controlPoints = edge.getAttributes().get(EDGE_CONTROL_POINTS_POINTS);
+		if (controlPoints instanceof List) {
+			return (List<Point>) controlPoints;
+		}
+		return Collections.emptyList();
+	}
+
+	/**
 	 * Returns the value of the {@link #ELEMENT_CSS_CLASS} attribute of the
 	 * given {@link Edge}.
 	 *
@@ -332,7 +351,6 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the CSS class is determined.
 	 * @return The CSS class of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
 	public static String getCssClass(Edge edge) {
 		return (String) edge.attributesProperty().get(ELEMENT_CSS_CLASS);
 	}
@@ -345,7 +363,6 @@ public class ZestProperties {
 	 *            The {@link Node} of which the CSS class is determined.
 	 * @return The CSS class of the given {@link Node}.
 	 */
-	// TODO: Return null if not present.
 	public static String getCssClass(Node node) {
 		return (String) node.attributesProperty().get(ELEMENT_CSS_CLASS);
 	}
@@ -358,7 +375,6 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the CSS id is determined.
 	 * @return The CSS id of the given {@link Edge}.
 	 */
-	// TODO: Return null if not present.
 	public static String getCssId(Edge edge) {
 		return (String) edge.attributesProperty().get(ELEMENT_CSS_ID);
 	}
@@ -371,7 +387,6 @@ public class ZestProperties {
 	 *            The {@link Node} of which the CSS id is determined.
 	 * @return The CSS id of the given {@link Node}.
 	 */
-	// TODO: Return null if not present.
 	public static String getCssId(Node node) {
 		return (String) node.attributesProperty().get(ELEMENT_CSS_ID);
 	}
@@ -508,7 +523,6 @@ public class ZestProperties {
 	 *            The {@link Node} of which the icon is determined.
 	 * @return The icon of the given {@link Node}.
 	 */
-	// TODO: Return null if not present.
 	public static Image getIcon(Node node) {
 		return (Image) node.attributesProperty().get(NODE_ICON);
 	}
@@ -672,7 +686,6 @@ public class ZestProperties {
 	 *            The {@link Node} of which the label CSS style is determined.
 	 * @return The label CSS style of the given {@link Node}.
 	 */
-	// TODO: Return null if not present.
 	public static String getNodeLabelCssStyle(Node node) {
 		return (String) node.attributesProperty().get(ELEMENT_LABEL_CSS_STYLE);
 	}
@@ -686,7 +699,6 @@ public class ZestProperties {
 	 *            determined.
 	 * @return The node rectangle CSS style of the given {@link Node}.
 	 */
-	// TODO: Return null if not present.
 	public static String getNodeRectCssStyle(Node node) {
 		return (String) node.attributesProperty().get(NODE_RECT_CSS_STYLE);
 	}
@@ -877,24 +889,6 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
-	 * the given {@link Edge}.
-	 *
-	 * @param edge
-	 *            The {@link Edge} for which to determine the router points.
-	 * @return The value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
-	 *         the given {@link Edge}.
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<Point> getWayPoints(Edge edge) {
-		Object routerPoints = edge.getAttributes().get(EDGE_CONTROL_POINTS_POINTS);
-		if (routerPoints instanceof List) {
-			return (List<Point>) routerPoints;
-		}
-		return Collections.emptyList();
-	}
-
-	/**
 	 * Sets the value of the {@link #EDGE_CONTROL_POINTS_POINTS} attribute of
 	 * the given {@link Edge} to the given value.
 	 *
@@ -902,7 +896,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the
 	 *            {@link #EDGE_CONTROL_POINTS_POINTS} attribute is changed.
 	 * @param controlPoints
-	 *            The new {@link List} of router {@link Point}s for the given
+	 *            The new {@link List} of control {@link Point}s for the given
 	 *            {@link Edge}.
 	 */
 	public static void setControlPoints(Edge edge, List<Point> controlPoints) {
@@ -970,8 +964,7 @@ public class ZestProperties {
 	 * @param connCssStyle
 	 *            The new curve CSS style for the given {@link Edge}.
 	 */
-	// TODO: Rename to setEdgeCurveCssStyle
-	public static void setEdgeConnCssStyle(Edge edge, String connCssStyle) {
+	public static void setEdgeCurveCssStyle(Edge edge, String connCssStyle) {
 		edge.attributesProperty().put(EDGE_CURVE_CSS_STYLE, connCssStyle);
 	}
 

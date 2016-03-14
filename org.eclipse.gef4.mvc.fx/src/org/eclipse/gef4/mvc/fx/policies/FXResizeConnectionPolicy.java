@@ -18,7 +18,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import javafx.geometry.Bounds;
@@ -33,7 +33,7 @@ import javafx.geometry.Bounds;
  */
 public class FXResizeConnectionPolicy extends FXResizePolicy {
 
-	private FXBendOperation op;
+	private FXBendConnectionOperation op;
 	private Point[] initialPositions;
 	private Double[] relX = null;
 	private Double[] relY = null;
@@ -77,7 +77,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 		super.init();
 		// create operation
 		Connection connection = (Connection) getHost().getVisual();
-		op = new FXBendOperation(connection);
+		op = new FXBendConnectionOperation(connection);
 		// save initial anchor positions
 		initialPositions = connection.getPoints().toArray(new Point[] {});
 		// compute relative positions
