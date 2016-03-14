@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -160,25 +161,22 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 				// copy first if connected
 				if (isFirstConnected) {
-					System.out.println("copy first :: initial "
-							+ firstAnchorHandle.getInitialPosition()
-							+ " :: current " + firstAnchorHandle.getPosition());
-					// TODO: transform to scene
 					firstAnchorHandle = bendPolicy.createAfter(
 							firstAnchorHandle,
-							firstAnchorHandle.getInitialPosition());
+							FX2Geometry.toPoint(targetPart.getVisual()
+									.localToScene(Geometry2FX
+											.toFXPoint(firstAnchorHandle
+													.getInitialPosition()))));
 				}
 
 				// copy second if connected
 				if (isSecondConnected) {
-					System.out.println("copy second :: initial "
-							+ secondAnchorHandle.getInitialPosition()
-							+ " :: current "
-							+ secondAnchorHandle.getPosition());
-					// TODO: transform to scene
 					secondAnchorHandle = bendPolicy.createBefore(
 							secondAnchorHandle,
-							secondAnchorHandle.getInitialPosition());
+							FX2Geometry.toPoint(targetPart.getVisual()
+									.localToScene(Geometry2FX
+											.toFXPoint(secondAnchorHandle
+													.getInitialPosition()))));
 				}
 
 				// select the end anchors for manipulation
@@ -236,13 +234,11 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 			// copy first point if connected
 			if (isFirstConnected) {
-				System.out.println("copy first :: initial "
-						+ firstAnchorHandle.getInitialPosition()
-						+ " :: current " + firstAnchorHandle.getPosition());
 				// use the copy as the new first anchor handle
-				// TODO: transform to scene
 				firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-						firstAnchorHandle.getInitialPosition());
+						FX2Geometry.toPoint(targetPart.getVisual().localToScene(
+								Geometry2FX.toFXPoint(firstAnchorHandle
+										.getInitialPosition()))));
 			}
 
 			// create new anchor at the segment's middle
@@ -290,13 +286,11 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 			// copy second point if connected
 			if (isSecondConnected) {
-				System.out.println("copy second :: initial "
-						+ secondAnchorHandle.getInitialPosition()
-						+ " :: current " + secondAnchorHandle.getPosition());
 				// use the copy as the new first anchor handle
-				// TODO: transform to scene
 				secondAnchorHandle = bendPolicy.createBefore(secondAnchorHandle,
-						secondAnchorHandle.getInitialPosition());
+						FX2Geometry.toPoint(targetPart.getVisual().localToScene(
+								Geometry2FX.toFXPoint(secondAnchorHandle
+										.getInitialPosition()))));
 			}
 
 			// create new anchor at the segment's middle
