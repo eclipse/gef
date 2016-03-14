@@ -374,7 +374,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public void doRefreshVisual(Group visual) {
+	protected void doRefreshVisual(Group visual) {
 		org.eclipse.gef4.graph.Node node = getContent();
 		if (node == null) {
 			throw new IllegalStateException();
