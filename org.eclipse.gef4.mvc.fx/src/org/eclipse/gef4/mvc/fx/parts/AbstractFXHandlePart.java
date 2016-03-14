@@ -15,10 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -36,6 +40,7 @@ abstract public class AbstractFXHandlePart<V extends Node>
 
 	private final Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 	private final Map<IVisualPart<Node, ? extends Node>, Integer> anchorageLinkCount = new HashMap<>();
+	private final Map<IVisualPart<Node, ? extends Node>, ChangeListener<ICurve>> geometryChangeListeners = new HashMap<>();
 
 	@Override
 	protected void attachToAnchorageVisual(
@@ -61,6 +66,24 @@ abstract public class AbstractFXHandlePart<V extends Node>
 			};
 			visualChangeListeners.put(anchorage, listener);
 			listener.register(anchorage.getVisual(), getVisual());
+
+			// for connections, we need to refresh the handle if the
+			// connection's geometry changes, too
+			Node anchorageVisual = anchorage.getVisual();
+			if (anchorageVisual instanceof Connection) {
+				Connection connection = (Connection) anchorageVisual;
+				ChangeListener<ICurve> geometryListener = new ChangeListener<ICurve>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends ICurve> observable,
+							ICurve oldValue, ICurve newValue) {
+						refreshVisual();
+					}
+				};
+				connection.getCurveNode().geometryProperty()
+						.addListener(geometryListener);
+				geometryChangeListeners.put(anchorage, geometryListener);
+			}
 		}
 
 		anchorageLinkCount.put(anchorage, count + 1);
@@ -79,6 +102,12 @@ abstract public class AbstractFXHandlePart<V extends Node>
 			// now we are sure that we do not need to listen to visual changes
 			// of this anchorage any more
 			visualChangeListeners.remove(anchorage).unregister();
+			ChangeListener<ICurve> geometryListener = geometryChangeListeners
+					.remove(anchorage);
+			if (geometryListener != null) {
+				((Connection) anchorage.getVisual()).getCurveNode()
+						.geometryProperty().removeListener(geometryListener);
+			}
 		}
 
 		if (count > 0) {

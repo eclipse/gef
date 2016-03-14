@@ -12,10 +12,14 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -46,15 +50,35 @@ abstract public class AbstractFXFeedbackPart<V extends Node>
 		}
 	};
 
+	private ChangeListener<ICurve> geometryListener = new ChangeListener<ICurve>() {
+		@Override
+		public void changed(ObservableValue<? extends ICurve> observable,
+				ICurve oldValue, ICurve newValue) {
+			refreshVisual();
+		}
+	};
+
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		visualListener.register(anchorage.getVisual(), getVisual());
+		Node anchorageVisual = anchorage.getVisual();
+		visualListener.register(anchorageVisual, getVisual());
+		if (anchorageVisual instanceof Connection) {
+			Connection connection = (Connection) anchorageVisual;
+			connection.getCurveNode().geometryProperty()
+					.addListener(geometryListener);
+		}
 	}
 
 	@Override
 	protected void detachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
+		Node anchorageVisual = anchorage.getVisual();
+		if (anchorageVisual instanceof Connection) {
+			Connection connection = (Connection) anchorageVisual;
+			connection.getCurveNode().geometryProperty()
+					.removeListener(geometryListener);
+		}
 		visualListener.unregister();
 	}
 
