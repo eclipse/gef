@@ -404,7 +404,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		}
 
 		// determine label
-		Object label = attrs.get(ZestProperties.ELEMENT_LABEL);
+		String label = ZestProperties.getLabel(node);
 		// use id if no label is set
 		if (label == null) {
 			label = id;

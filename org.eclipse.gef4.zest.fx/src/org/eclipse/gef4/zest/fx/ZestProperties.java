@@ -30,12 +30,14 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 
+import com.google.inject.Provider;
+
 import javafx.scene.image.Image;
 
 /**
- * The {@link ZestProperties} class contains a collection of attributes that are
- * evaluated by Zest.FX and their default values. It does also provide utility
- * methods to read and write these attributes.
+ * The {@link ZestProperties} class contains a definition of attributes
+ * (including their default values) that are evaluated by Zest.FX. It also
+ * provides type-safe utility methods to set and get attribute values.
  *
  * @author mwienand
  *
@@ -43,8 +45,8 @@ import javafx.scene.image.Image;
 public class ZestProperties {
 
 	/**
-	 * This attribute determines if an element (node/edge) is irrelevant for
-	 * laying out, i.e. it should be filtered before laying out.
+	 * This attribute determines if an element (node/edge) should be ignored by
+	 * automatic layout.
 	 *
 	 * @see #ELEMENT_LAYOUT_IRRELEVANT_DEFAULT
 	 * @see #getLayoutIrrelevant(Edge, boolean)
@@ -52,7 +54,7 @@ public class ZestProperties {
 	 * @see #setLayoutIrrelevant(Edge, Boolean)
 	 * @see #setLayoutIrrelevant(Node, Boolean)
 	 */
-	public static final String ELEMENT_LAYOUT_IRRELEVANT = "layoutIrrelevant";
+	public static final String ELEMENT_LAYOUT_IRRELEVANT = "element-layout-irrelevant";
 
 	/**
 	 * The default value for the {@link #ELEMENT_LAYOUT_IRRELEVANT} attribute.
@@ -395,7 +397,11 @@ public class ZestProperties {
 	 * @return The label of the given {@link Edge}.
 	 */
 	public static String getExternalLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(ELEMENT_EXTERNAL_LABEL);
+		Object value = edge.attributesProperty().get(ELEMENT_EXTERNAL_LABEL);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -407,7 +413,11 @@ public class ZestProperties {
 	 * @return The label of the given {@link Node}.
 	 */
 	public static String getExternalLabel(Node node) {
-		return (String) node.attributesProperty().get(ELEMENT_EXTERNAL_LABEL);
+		Object value = node.attributesProperty().get(ELEMENT_EXTERNAL_LABEL);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -516,27 +526,39 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #ELEMENT_LABEL} attribute of the given
+	 * Returns the value of the {@link #ELEMENT_LABEL} attribute for the given
 	 * {@link Edge}.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the label is determined.
-	 * @return The label of the given {@link Edge}.
+	 *            The {@link Edge} whose attribute value is to be retrieved.
+	 * @return The value of the {@link #ELEMENT_LABEL} attribute {@link Edge}.
+	 *         If a {@link Provider} was set for the attribute, the value is
+	 *         retrieved from the provider using {@link Provider#get()}.
 	 */
 	public static String getLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(ELEMENT_LABEL);
+		Object value = edge.attributesProperty().get(ELEMENT_LABEL);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
-	 * Returns the value of the {@link #ELEMENT_LABEL} attribute of the given
+	 * Returns the value of the {@link #ELEMENT_LABEL} attribute for the given
 	 * {@link Node}.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the label is determined.
-	 * @return The label of the given {@link Node}.
+	 *            The {@link Node} whose attribute value is to be retrieved.
+	 * @return The value of the {@link #ELEMENT_LABEL} attribute {@link Node}.
+	 *         If a {@link Provider} was set for the attribute, the value is
+	 *         retrieved from the provider using {@link Provider#get()}.
 	 */
 	public static String getLabel(Node node) {
-		return (String) node.attributesProperty().get(ELEMENT_LABEL);
+		Object value = node.attributesProperty().get(ELEMENT_LABEL);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -733,10 +755,16 @@ public class ZestProperties {
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the source decoration is determined.
-	 * @return The source label of the given {@link Edge}.
+	 * @return The value of the {@link #EDGE_SOURCE_LABEL} attribute. In case a
+	 *         provider is set for the attribute, the value will be retrieved
+	 *         from the provider using {@link Provider#get()}.
 	 */
 	public static String getSourceLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_SOURCE_LABEL);
+		Object value = edge.attributesProperty().get(EDGE_SOURCE_LABEL);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -775,10 +803,16 @@ public class ZestProperties {
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the target decoration is determined.
-	 * @return The target decoration of the given {@link Edge}.
+	 * @return The value of the {@link #EDGE_TARGET_LABEL} attribute. In case a
+	 *         provider is set for the attribute, the value will be retrieved
+	 *         from the provider using {@link Provider#get()}.
 	 */
 	public static String getTargetLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_TARGET_LABEL);
+		Object value = edge.attributesProperty().get(EDGE_TARGET_LABEL);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -805,11 +839,16 @@ public class ZestProperties {
 	 *
 	 * @param node
 	 *            The {@link Node} of which the tooltip is determined.
-	 * @return The tooltip of the given {@link Node}.
+	 * @return The tooltip of the given {@link Node}. If a {@link Provider} is
+	 *         set for {@link #NODE_TOOLTIP}, the value will be retrieved from
+	 *         it using {@link Provider#get()}.
 	 */
-	// TODO: Return null if not present.
 	public static String getTooltip(Node node) {
-		return (String) node.attributesProperty().get(NODE_TOOLTIP);
+		Object value = node.attributesProperty().get(NODE_TOOLTIP);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -938,6 +977,20 @@ public class ZestProperties {
 
 	/**
 	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
+	 * given {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the external label is changed.
+	 * @param labelProvider
+	 *            A {@link Provider} that is used to retrieve the value of the
+	 *            {@link #ELEMENT_EXTERNAL_LABEL} attribute.
+	 */
+	public static void setExternalLabel(Edge edge, Provider<String> labelProvider) {
+		edge.attributesProperty().put(ELEMENT_EXTERNAL_LABEL, labelProvider);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
 	 * given {@link Edge} to the given value.
 	 *
 	 * @param edge
@@ -947,6 +1000,20 @@ public class ZestProperties {
 	 */
 	public static void setExternalLabel(Edge edge, String label) {
 		edge.attributesProperty().put(ELEMENT_EXTERNAL_LABEL, label);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_EXTERNAL_LABEL} attribute of the
+	 * given {@link Node} to the given provider.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the external label is changed.
+	 * @param labelProvider
+	 *            A {@link Provider} that is used to retrieve the value of the
+	 *            {@link #ELEMENT_EXTERNAL_LABEL} attribute.
+	 */
+	public static void setExternalLabel(Node node, Provider<String> labelProvider) {
+		node.attributesProperty().put(ELEMENT_EXTERNAL_LABEL, labelProvider);
 	}
 
 	/**
@@ -1057,26 +1124,54 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #ELEMENT_LABEL} attribute of the given
-	 * {@link Edge} to the given value.
+	 * Sets the {@link #ELEMENT_LABEL} attribute of the given {@link Edge} to
+	 * the given provider.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the label is changed.
+	 *            The {@link Edge} whose attribute is to be changed.
+	 * @param labelProvider
+	 *            A {@link Provider} which provides the value for the
+	 *            {@link #ELEMENT_LABEL} attribute.
+	 */
+	public static void setLabel(Edge edge, Provider<String> labelProvider) {
+		edge.attributesProperty().put(ELEMENT_LABEL, labelProvider);
+	}
+
+	/**
+	 * Sets the {@link #ELEMENT_LABEL} attribute of the given {@link Edge} to
+	 * the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute is to be changed.
 	 * @param label
-	 *            The new label for the given {@link Edge}.
+	 *            The new value for the {@link #ELEMENT_LABEL} attribute.
 	 */
 	public static void setLabel(Edge edge, String label) {
 		edge.attributesProperty().put(ELEMENT_LABEL, label);
 	}
 
 	/**
-	 * Sets the value of the {@link #ELEMENT_LABEL} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the {@link #ELEMENT_LABEL} attribute of the given {@link Node} to
+	 * the given provider.
 	 *
 	 * @param node
-	 *            The {@link Node} of which the label is changed.
+	 *            The {@link Node} whose attribute is to be changed.
+	 * @param labelProvider
+	 *            A {@link Provider} which provides the value for the
+	 *            {@link #ELEMENT_LABEL} attribute.
+	 */
+	public static void setLabel(Node node, Provider<String> labelProvider) {
+		node.attributesProperty().put(ELEMENT_LABEL, labelProvider);
+	}
+
+	/**
+	 * Sets the {@link #ELEMENT_LABEL} attribute of the given {@link Node} to
+	 * the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} whose attribute is to be changed.
 	 * @param label
-	 *            The new label for the given {@link Node}.
+	 *            The new value for the {@link #ELEMENT_LABEL} attribute.
 	 */
 	public static void setLabel(Node node, String label) {
 		node.attributesProperty().put(ELEMENT_LABEL, label);
@@ -1233,6 +1328,20 @@ public class ZestProperties {
 
 	/**
 	 * Sets the value of the {@link #EDGE_SOURCE_LABEL} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration is changed.
+	 * @param sourceLabelProvider
+	 *            A {@link Provider} which provides the value for
+	 *            {@link #EDGE_SOURCE_LABEL} attribute.
+	 */
+	public static void setSourceLabel(Edge edge, Provider<String> sourceLabelProvider) {
+		edge.attributesProperty().put(EDGE_SOURCE_LABEL, sourceLabelProvider);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_SOURCE_LABEL} attribute of the given
 	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
@@ -1274,6 +1383,20 @@ public class ZestProperties {
 
 	/**
 	 * Sets the value of the {@link #EDGE_TARGET_LABEL} attribute of the given
+	 * {@link Edge} to the given provider.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the target decoration is changed.
+	 * @param targetLabelProvider
+	 *            A {@link Provider} which provides the value for
+	 *            {@link #EDGE_TARGET_LABEL} attribute.
+	 */
+	public static void setTargetLabel(Edge edge, Provider<String> targetLabelProvider) {
+		edge.attributesProperty().put(EDGE_TARGET_LABEL, targetLabelProvider);
+	}
+
+	/**
+	 * Sets the value of the {@link #EDGE_TARGET_LABEL} attribute of the given
 	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
@@ -1297,6 +1420,20 @@ public class ZestProperties {
 	 */
 	public static void setTargetLabelPosition(Edge edge, Point labelPosition) {
 		edge.attributesProperty().put(EDGE_TARGET_LABEL_POSITION, labelPosition);
+	}
+
+	/**
+	 * Sets the value of the {@link #NODE_TOOLTIP} attribute of the given
+	 * {@link Node} to the given provider.
+	 *
+	 * @param node
+	 *            The {@link Node} whose attribute is change.
+	 * @param tooltipProvider
+	 *            A {@link Provider} which is used to retrieve the
+	 *            {@link #NODE_TOOLTIP} value.
+	 */
+	public static void setTooltip(Node node, Provider<String> tooltipProvider) {
+		node.attributesProperty().put(NODE_TOOLTIP, tooltipProvider);
 	}
 
 	/**

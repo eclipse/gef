@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ListChangeListener;
@@ -266,8 +267,8 @@ public class ZestContentViewer extends ContentViewer {
 	 *            This viewer's {@link ILabelProvider} for convenience.
 	 * @return The new {@link Node}.
 	 */
-	protected Node createNode(Object contentNode, IGraphContentProvider graphContentProvider,
-			ILabelProvider labelProvider) {
+	protected Node createNode(final Object contentNode, IGraphContentProvider graphContentProvider,
+			final ILabelProvider labelProvider) {
 		// do not create the same node twice
 		if (contentNodeMap.containsKey(contentNode)) {
 			throw new IllegalStateException("A node for content <" + contentNode + "> has already been created.");
@@ -277,12 +278,15 @@ public class ZestContentViewer extends ContentViewer {
 		contentNodeMap.put(contentNode, node);
 
 		// label
-		String label = labelProvider.getText(contentNode);
-		if (label != null) {
-			ZestProperties.setLabel(node, label);
-		}
+		ZestProperties.setLabel(node, new Provider<String>() {
+			@Override
+			public String get() {
+				return labelProvider.getText(contentNode);
+			}
+		});
 
 		// icon
+		// TODO: use provider
 		Image icon = labelProvider.getImage(contentNode);
 		if (icon != null) {
 			ZestProperties.setIcon(node, SWTFXUtils.toFXImage(icon.getImageData(), null));
@@ -290,11 +294,14 @@ public class ZestContentViewer extends ContentViewer {
 
 		// tooltip
 		if (labelProvider instanceof IToolTipProvider) {
-			IToolTipProvider toolTipProvider = (IToolTipProvider) labelProvider;
-			String toolTipText = toolTipProvider.getToolTipText(contentNode);
-			if (toolTipText != null) {
-				ZestProperties.setTooltip(node, toolTipText);
-			}
+			final IToolTipProvider toolTipProvider = (IToolTipProvider) labelProvider;
+			ZestProperties.setTooltip(node, new Provider<String>() {
+
+				@Override
+				public String get() {
+					return toolTipProvider.getToolTipText(contentNode);
+				}
+			});
 		}
 
 		String textCssStyle = "";
