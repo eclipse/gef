@@ -213,11 +213,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			Point2D midInScene = targetPart.getVisual().localToScene(midPoint.x,
 					midPoint.y);
 
-			System.out.println("[split segment 0.25]");
-			System.out.println("first point = " + firstPoint);
-			System.out.println("second point = " + secondPoint);
-			System.out.println("mid point = " + midPoint);
-
 			// determine connectedness of first anchor handle
 			Node firstAnchorage = targetPart.getVisual()
 					.getAnchor(firstSegmentIndex).getAnchorage();
