@@ -19,11 +19,13 @@ import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -641,14 +643,15 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	 */
 	protected void refreshPosition(Node visual, Point position) {
 		if (position != null) {
-			// translate
-			FXTransformPolicy transformPolicy = getAdapter(FXTransformPolicy.class);
-			transformPolicy.init();
-			transformPolicy.setTransform(new AffineTransform(1, 0, 0, 1, position.x, position.y));
+			// translate using a transform operation
+			FXTransformOperation refreshPositionOp = new FXTransformOperation(
+					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
+			refreshPositionOp
+					.setNewTransform(Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
 			try {
-				transformPolicy.commit().execute(null, null);
+				refreshPositionOp.execute(null, null);
 			} catch (ExecutionException e) {
-				throw new IllegalStateException(e);
+				e.printStackTrace();
 			}
 		}
 	}
