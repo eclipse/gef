@@ -62,9 +62,9 @@ import org.eclipse.gef4.zest.fx.parts.ShowHiddenNeighborsHoverHandlePart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxSelectionHandlePartFactory;
-import org.eclipse.gef4.zest.fx.policies.FXResizeNodePolicy;
-import org.eclipse.gef4.zest.fx.policies.FXTransformEdgePolicy;
-import org.eclipse.gef4.zest.fx.policies.FXTransformNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.ResizeNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.TransformEdgePolicy;
+import org.eclipse.gef4.zest.fx.policies.TransformNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
@@ -301,14 +301,14 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FXResizeNodePolicy} to the given adapter map
+	 * Adds a binding for {@link ResizeNodePolicy} to the given adapter map
 	 * binder that will insert the bindings into {@link NodeContentPart}s.
 	 *
 	 * @param adapterMapBinder
 	 *            The adapter map binder to which the binding is added.
 	 */
 	protected void bindFXResizeNodePolicyAsNodeContentPartAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizeNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeNodePolicy.class);
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Adds a binding for {@link FXTransformEdgePolicy} to the given adapter map
+	 * Adds a binding for {@link TransformEdgePolicy} to the given adapter map
 	 * binder that will insert the bindings into {@link EdgeContentPart}s.
 	 *
 	 * @param adapterMapBinder
@@ -385,11 +385,11 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXTransformEdgePolicyAsEdgeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformEdgePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformEdgePolicy.class);
 	}
 
 	/**
-	 * Adds a binding for {@link FXTransformNodePolicy} to the given adapter map
+	 * Adds a binding for {@link TransformNodePolicy} to the given adapter map
 	 * binder that will insert the bindings into {@link NodeContentPart}s.
 	 *
 	 * @param adapterMapBinder
@@ -397,7 +397,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXTransformNodePolicyAsNodeContentPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformNodePolicy.class);
 	}
 
 	/**

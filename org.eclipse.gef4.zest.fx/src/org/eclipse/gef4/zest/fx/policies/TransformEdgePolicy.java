@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.operations.ChangeEdgeControlPointsOperation;
 
 /**
- * The {@link FXTransformEdgePolicy} is a specialization of the
+ * The {@link TransformEdgePolicy} is a specialization of the
  * {@link FXTransformConnectionPolicy} that chains a
  * {@link ChangeEdgeControlPointsOperation} to affect the underlying model when
  * transforming nodes. It is applicable to {@link IContentPart}'s with a
@@ -35,7 +35,7 @@ import org.eclipse.gef4.zest.fx.operations.ChangeEdgeControlPointsOperation;
  * @author anyssen
  *
  */
-public class FXTransformEdgePolicy extends FXTransformConnectionPolicy {
+public class TransformEdgePolicy extends FXTransformConnectionPolicy {
 
 	@Override
 	public ITransactionalOperation commit() {

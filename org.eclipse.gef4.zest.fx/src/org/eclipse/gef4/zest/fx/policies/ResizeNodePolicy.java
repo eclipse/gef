@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
 
 /**
- * The {@link FXResizeNodePolicy} is a specialization of {@link FXResizePolicy}
+ * The {@link ResizeNodePolicy} is a specialization of {@link FXResizePolicy}
  * that chains a {@link ChangeNodeSizeOperation} for updating the resized
  * {@link Node}. It is applicable to {@link IContentPart} with
  * {@link javafx.scene.Node} visual and {@link Node} content.
@@ -29,7 +29,7 @@ import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
  * @author mwienand
  *
  */
-public class FXResizeNodePolicy extends FXResizePolicy {
+public class ResizeNodePolicy extends FXResizePolicy {
 
 	@Override
 	public ITransactionalOperation commit() {

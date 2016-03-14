@@ -24,7 +24,7 @@ import org.eclipse.gef4.zest.fx.operations.ChangeNodePositionOperation;
 import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
 
 /**
- * The {@link FXTransformNodePolicy} is a specialization of the
+ * The {@link TransformNodePolicy} is a specialization of the
  * {@link FXTransformPolicy} that chains a {@link ChangeNodeSizeOperation} to
  * affect the underlying model when transforming nodes. It is applicable to
  * {@link IContentPart} with {@link javafx.scene.Node} visual and {@link Node}
@@ -33,7 +33,7 @@ import org.eclipse.gef4.zest.fx.operations.ChangeNodeSizeOperation;
  * @author mwienand
  *
  */
-public class FXTransformNodePolicy extends FXTransformPolicy {
+public class TransformNodePolicy extends FXTransformPolicy {
 
 	@Override
 	public ITransactionalOperation commit() {
