@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
@@ -109,7 +110,11 @@ public class FXCurvePropertySource implements IPropertySource {
 			// TODO: Changing the way points has to be undoable. We need to bind
 			// an own UndoablePropertySheetEntry in the UiModule that chains an
 			// operation changing the way points on the domain object.
-			curve.setRoutingStyle(RoutingStyle.values()[(int) value]);
+			RoutingStyle routingStyle = RoutingStyle.values()[(int) value];
+			if (RoutingStyle.ORTHOGONAL.equals(routingStyle)) {
+				curve.setWayPoints(new Point[] {});
+			}
+			curve.setRoutingStyle(routingStyle);
 		}
 	}
 
