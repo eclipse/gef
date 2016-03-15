@@ -26,7 +26,8 @@ import org.eclipse.gef4.zest.fx.operations.ChangeAttributeOperation;
 import org.eclipse.gef4.zest.fx.parts.EdgePart;
 
 /**
- * The {@link BendEdgePolicy}
+ * An {@link FXBendConnectionPolicy} that ensures the graph model is properly
+ * updated.
  *
  * @author mwienand
  *

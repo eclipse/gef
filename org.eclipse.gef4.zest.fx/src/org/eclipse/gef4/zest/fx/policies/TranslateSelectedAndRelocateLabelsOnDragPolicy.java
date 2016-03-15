@@ -37,7 +37,7 @@ import javafx.scene.input.MouseEvent;
  * @author anyssen
  *
  */
-public class TranslateSelectedAndLabelsOnDragPolicy extends FXTranslateSelectedOnDragPolicy {
+public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateSelectedOnDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
