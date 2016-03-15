@@ -14,9 +14,7 @@
  * nodes and related edges (
  * {@link org.eclipse.gef4.zest.fx.policies.HidePolicy},
  * {@link org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy}),
- * dragging of edge labels (
- * {@link org.eclipse.gef4.zest.fx.policies.RelocateAnchoredLabelsOnDragPolicy}
- * ), and navigating nested graphs via double-click (
+ * navigating nested graphs via double-click (
  * {@link org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy},
  * {@link org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy}
  * ).

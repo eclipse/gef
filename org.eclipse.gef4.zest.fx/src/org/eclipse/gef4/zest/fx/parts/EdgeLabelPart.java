@@ -26,7 +26,6 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
@@ -122,7 +121,6 @@ public class EdgeLabelPart extends AbstractLabelPart {
 				labelPosition = getEndPoint();
 			}
 		}
-
 		refreshPosition(getVisual(), labelPosition);
 	}
 
@@ -156,14 +154,9 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	}
 
 	private Point getMidPoint() {
-		// TODO: compute a better mid point for the edge
-		// determine bounds of anchorage visual
-		Bounds hostBounds = getFirstAnchorage().getVisual().getLayoutBounds();
-		// determine text bounds
-		Bounds textBounds = getVisual().getLayoutBounds();
-		// compute label position
-		return new Point(hostBounds.getMinX() + hostBounds.getWidth() / 2 - textBounds.getWidth() / 2,
-				hostBounds.getMinY() + hostBounds.getHeight() / 2 - textBounds.getHeight());
+		Connection connection = getFirstAnchorage().getVisual();
+		Point midPoint = connection.getCenter();
+		return NodeUtils.sceneToLocal(getVisual().getParent(), NodeUtils.localToScene(connection, midPoint));
 	}
 
 	private Point getStartPoint() {

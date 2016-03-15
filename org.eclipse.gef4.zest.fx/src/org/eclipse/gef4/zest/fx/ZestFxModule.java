@@ -66,7 +66,6 @@ import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
-import org.eclipse.gef4.zest.fx.policies.RelocateAnchoredLabelsOnDragPolicy;
 import org.eclipse.gef4.zest.fx.policies.ResizeNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.SemanticZoomPolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy;
@@ -75,6 +74,7 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformEdgePolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformLabelPolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.TranslateSelectedAndLabelsOnDragPolicy;
 
 import com.google.inject.Binder;
 import com.google.inject.Provider;
@@ -194,11 +194,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformEdgePolicy.class);
 
 		// translate selected on-drag policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
-
-		// relocate labels
-		adapterMapBinder.addBinding(AdapterKey.role("relocate-anchored-labels"))
-				.to(RelocateAnchoredLabelsOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndLabelsOnDragPolicy.class);
 
 		// hover on-hover policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
@@ -379,7 +375,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodeHidingBehavior.class);
 
 		// translate on-drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndLabelsOnDragPolicy.class);
 
 		// show hidden neighbors on-type
 		adapterMapBinder.addBinding(AdapterKey.role("show-hidden-neighbors")).to(ShowHiddenNeighborsOnTypePolicy.class);
@@ -441,10 +437,6 @@ public class ZestFxModule extends MvcFxModule {
 						return new ShapeBoundsProvider(0.5);
 					}
 				});
-
-		// relocate labels
-		adapterMapBinder.addBinding(AdapterKey.role("relocate-anchored-labels"))
-				.to(RelocateAnchoredLabelsOnDragPolicy.class);
 
 		// hover on-hover
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);

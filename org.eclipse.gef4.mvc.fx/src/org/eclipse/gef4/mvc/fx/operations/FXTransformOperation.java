@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 import javafx.scene.Node;
@@ -32,54 +33,6 @@ import javafx.scene.transform.Affine;
  */
 public class FXTransformOperation extends AbstractOperation
 		implements ITransactionalOperation {
-
-	/**
-	 * Returns <code>true</code> if the given {@link Affine}s are equal.
-	 * Otherwise returns <code>false</code>.
-	 *
-	 * @param a1
-	 *            The first operand.
-	 * @param a2
-	 *            The second operand.
-	 * @return <code>true</code> if the given {@link Affine}s are equal,
-	 *         otherwise <code>false</code>.
-	 */
-	protected static boolean equals(Affine a1, Affine a2) {
-		// Affine does not properly implement equals, so we have to implement
-		// that here
-		return a1.getMxx() == a2.getMxx() && a1.getMxy() == a2.getMxy()
-				&& a1.getMxz() == a2.getMxz() && a1.getMyx() == a2.getMyx()
-				&& a1.getMyy() == a2.getMyy() && a1.getMyz() == a2.getMyz()
-				&& a1.getMzx() == a2.getMzx() && a1.getMzy() == a2.getMzy()
-				&& a1.getMzz() == a2.getMzz() && a1.getTx() == a2.getTx()
-				&& a1.getTy() == a2.getTy() && a1.getTz() == a2.getTz();
-	}
-
-	/**
-	 * Assigns the transformation values of the <i>src</i> {@link Affine} to the
-	 * <i>dst</i> {@link Affine}.
-	 *
-	 * @param dst
-	 *            The destination {@link Affine}.
-	 * @param src
-	 *            The source {@link Affine}.
-	 * @return The destination {@link Affine} for convenience.
-	 */
-	protected static Affine setAffine(Affine dst, Affine src) {
-		dst.setMxx(src.getMxx());
-		dst.setMxy(src.getMxy());
-		dst.setMxz(src.getMxz());
-		dst.setMyx(src.getMyx());
-		dst.setMyy(src.getMyy());
-		dst.setMyz(src.getMyz());
-		dst.setMzx(src.getMzx());
-		dst.setMzy(src.getMzy());
-		dst.setMzz(src.getMzz());
-		dst.setTx(src.getTx());
-		dst.setTy(src.getTy());
-		dst.setTz(src.getTz());
-		return dst;
-	}
 
 	private final Affine nodeTransform;
 
@@ -97,8 +50,9 @@ public class FXTransformOperation extends AbstractOperation
 	public FXTransformOperation(Affine nodeTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
-		this.initialTransform = setAffine(new Affine(), nodeTransform);
-		this.newTransform = setAffine(new Affine(), nodeTransform);
+		this.initialTransform = NodeUtils.setAffine(new Affine(),
+				nodeTransform);
+		this.newTransform = NodeUtils.setAffine(new Affine(), nodeTransform);
 	}
 
 	/**
@@ -115,14 +69,17 @@ public class FXTransformOperation extends AbstractOperation
 	public FXTransformOperation(Affine nodeTransform, Affine newTransform) {
 		super("Transform");
 		this.nodeTransform = nodeTransform;
-		this.initialTransform = setAffine(new Affine(), nodeTransform);
+		this.initialTransform = NodeUtils.setAffine(new Affine(),
+				nodeTransform);
 		this.newTransform = newTransform;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		setAffine(nodeTransform, newTransform);
+		if (!NodeUtils.equals(nodeTransform, newTransform)) {
+			NodeUtils.setAffine(nodeTransform, newTransform);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -155,7 +112,7 @@ public class FXTransformOperation extends AbstractOperation
 
 	@Override
 	public boolean isNoOp() {
-		return equals(newTransform, initialTransform);
+		return NodeUtils.equals(newTransform, initialTransform);
 	}
 
 	@Override
@@ -179,7 +136,9 @@ public class FXTransformOperation extends AbstractOperation
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		setAffine(nodeTransform, initialTransform);
+		if (!NodeUtils.equals(nodeTransform, initialTransform)) {
+			NodeUtils.setAffine(nodeTransform, initialTransform);
+		}
 		return Status.OK_STATUS;
 	}
 

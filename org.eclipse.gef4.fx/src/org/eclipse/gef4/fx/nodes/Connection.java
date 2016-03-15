@@ -534,6 +534,23 @@ public class Connection extends Group {
 	}
 
 	/**
+	 * Computes the 'logical' center point of the {@link Connection}, which is
+	 * the middle control point position (in case the curve consists of an even
+	 * number of segment) or the middle point of the middle segment.
+	 *
+	 * @return The logical center of this {@link Connection}.
+	 */
+	public Point getCenter() {
+		int startIndex = (int) (getPoints().size() - 0.5) / 2;
+		int endIndex = (int) (getPoints().size() + 0.5) / 2;
+		if (startIndex == endIndex) {
+			return getPoint(startIndex);
+		} else {
+			return getCurveNode().getGeometry().toBezier()[startIndex].get(0.5);
+		}
+	}
+
+	/**
 	 * Returns the control {@link IAnchor anchor} for the given control anchor
 	 * index which is currently assigned, or <code>null</code> if no control
 	 * {@link IAnchor anchor} is assigned for that index.

@@ -43,6 +43,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Affine;
 
 /**
  * The {@link NodeUtils} class contains utility methods for working with JavaFX:
@@ -64,6 +65,28 @@ import javafx.scene.text.Text;
  *
  */
 public class NodeUtils {
+
+	/**
+	 * Returns <code>true</code> if the given {@link Affine}s are equal.
+	 * Otherwise returns <code>false</code>.
+	 *
+	 * @param a1
+	 *            The first operand.
+	 * @param a2
+	 *            The second operand.
+	 * @return <code>true</code> if the given {@link Affine}s are equal,
+	 *         otherwise <code>false</code>.
+	 */
+	public static boolean equals(Affine a1, Affine a2) {
+		// Affine does not properly implement equals, so we have to implement
+		// that here
+		return a1.getMxx() == a2.getMxx() && a1.getMxy() == a2.getMxy()
+				&& a1.getMxz() == a2.getMxz() && a1.getMyx() == a2.getMyx()
+				&& a1.getMyy() == a2.getMyy() && a1.getMyz() == a2.getMyz()
+				&& a1.getMzx() == a2.getMzx() && a1.getMzy() == a2.getMzy()
+				&& a1.getMzz() == a2.getMzz() && a1.getTx() == a2.getTx()
+				&& a1.getTy() == a2.getTy() && a1.getTz() == a2.getTz();
+	}
 
 	/**
 	 * Returns an {@link IGeometry} that corresponds to the geometric outline of
@@ -370,4 +393,29 @@ public class NodeUtils {
 		return sceneToLocalTx.getTransformed(p);
 	}
 
+	/**
+	 * Assigns the transformation values of the <i>src</i> {@link Affine} to the
+	 * <i>dst</i> {@link Affine}.
+	 *
+	 * @param dst
+	 *            The destination {@link Affine}.
+	 * @param src
+	 *            The source {@link Affine}.
+	 * @return The destination {@link Affine} for convenience.
+	 */
+	public static Affine setAffine(Affine dst, Affine src) {
+		dst.setMxx(src.getMxx());
+		dst.setMxy(src.getMxy());
+		dst.setMxz(src.getMxz());
+		dst.setMyx(src.getMyx());
+		dst.setMyy(src.getMyy());
+		dst.setMyz(src.getMyz());
+		dst.setMzx(src.getMzx());
+		dst.setMzy(src.getMzy());
+		dst.setMzz(src.getMzz());
+		dst.setTx(src.getTx());
+		dst.setTy(src.getTy());
+		dst.setTz(src.getTz());
+		return dst;
+	}
 }

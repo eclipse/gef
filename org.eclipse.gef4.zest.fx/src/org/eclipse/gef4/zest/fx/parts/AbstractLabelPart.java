@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -24,6 +25,7 @@ import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
@@ -91,8 +93,41 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Pair<?, String> getContent() {
-		return (Pair<?, String>) super.getContent();
+	public Pair<? extends IAttributeStore, String> getContent() {
+		return (Pair<? extends IAttributeStore, String>) super.getContent();
+	}
+
+	/**
+	 * Retrieves the position attribute key for the given label role.
+	 *
+	 * @return The key via which to retrieve the position attribute for the
+	 *         label.
+	 */
+	public String getLabelPositionAttributeKey() {
+		String labelRole = getContent().getValue();
+		String attributeKey = null;
+		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(labelRole)) {
+			attributeKey = ZestProperties.ELEMENT_EXTERNAL_LABEL_POSITION;
+		} else if (ZestProperties.ELEMENT_LABEL.equals(labelRole)) {
+			// node do not have 'internal' labels
+			attributeKey = ZestProperties.EDGE_LABEL_POSITION;
+		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(labelRole)) {
+			attributeKey = ZestProperties.EDGE_SOURCE_LABEL_POSITION;
+		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(labelRole)) {
+			attributeKey = ZestProperties.EDGE_TARGET_LABEL_POSITION;
+		} else {
+			throw new IllegalArgumentException("Unsupported content element.");
+		}
+		return attributeKey;
+	}
+
+	/**
+	 * Retrieves the stored position for the label.
+	 *
+	 * @return The label position stored in the attributes.
+	 */
+	public Point getStoredLabelPosition() {
+		return (Point) getContent().getKey().getAttributes().get(getLabelPositionAttributeKey());
 	}
 
 	/**
@@ -116,9 +151,8 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 		if (position != null) {
 			// translate using a transform operation
 			FXTransformOperation refreshPositionOp = new FXTransformOperation(
-					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
-			refreshPositionOp
-					.setNewTransform(Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
+					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get(),
+					Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
 			try {
 				refreshPositionOp.execute(null, null);
 			} catch (ExecutionException e) {
