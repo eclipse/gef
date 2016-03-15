@@ -451,6 +451,9 @@ public class FXBendConnectionPolicyTests {
 	@Test
 	public void test_move_connected_orthogonal_segment_down_translated()
 			throws InterruptedException, InvocationTargetException, AWTException {
+		// FIXME: This test case is unstable. Sometimes, the segment is
+		// properly moved, sometimes it is not.
+
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new TestModule());
 
@@ -756,7 +759,9 @@ public class FXBendConnectionPolicyTests {
 		// check number of points and their positions
 		assertEquals(4, countExplicit(connection.getVisual()));
 		assertTrue(equalsUnprecise(startPoint, connection.getVisual().getStartPoint()));
-		assertTrue(equalsUnprecise(firstWayPoint, connection.getVisual().getControlPoint(0)));
+		// double point at fourth way point due to selection constraint
+		// (snapping)
+		assertTrue(equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(0)));
 		assertTrue(equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(1)));
 		assertTrue(equalsUnprecise(endPoint, connection.getVisual().getEndPoint()));
 
