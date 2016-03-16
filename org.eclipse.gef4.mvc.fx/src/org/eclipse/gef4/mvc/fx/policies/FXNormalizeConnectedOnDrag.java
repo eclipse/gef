@@ -12,11 +12,15 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import com.google.common.reflect.TypeToken;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -34,15 +38,14 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
 	private List<IVisualPart<Node, ? extends Node>> connected;
-	private List<FXBendConnectionPolicy> connectedPolicies;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		if (connected == null) {
 			return;
 		}
-		for (FXBendConnectionPolicy policy : connectedPolicies) {
-			policy.normalize();
+		for (IVisualPart<Node, ? extends Node> part : connected) {
+			part.getAdapter(FXBendConnectionPolicy.class).normalize();
 		}
 	}
 
@@ -51,14 +54,11 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 		if (connected == null) {
 			return;
 		}
-		for (FXBendConnectionPolicy policy : connectedPolicies) {
-			rollback(policy);
-		}
 		for (IVisualPart<Node, ? extends Node> part : connected) {
+			rollback(part.getAdapter(FXBendConnectionPolicy.class));
 			restoreRefreshVisuals(part);
 		}
 		connected = null;
-		connectedPolicies = null;
 	}
 
 	@Override
@@ -68,7 +68,6 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 	@Override
 	public void press(MouseEvent e) {
 		connected = new ArrayList<>();
-		connectedPolicies = new ArrayList<>();
 		for (IVisualPart<Node, ? extends Node> anchored : getHost()
 				.getAnchoredsUnmodifiable()) {
 			if (anchored instanceof IContentPart) {
@@ -76,20 +75,30 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 						.getAdapter(FXBendConnectionPolicy.class);
 				if (bendConnectionPolicy != null) {
 					connected.add(anchored);
-					connectedPolicies.add(bendConnectionPolicy);
 				}
+			}
+		}
+
+		// filter out selected
+		@SuppressWarnings("serial")
+		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
+				.getAdapter(new TypeToken<SelectionModel<Node>>() {
+				});
+		Iterator<IVisualPart<Node, ? extends Node>> it = connected.iterator();
+		while (it.hasNext()) {
+			IVisualPart<Node, ? extends Node> part = it.next();
+			if (part instanceof IContentPart && selectionModel
+					.isSelected((IContentPart<Node, ? extends Node>) part)) {
+				it.remove();
 			}
 		}
 
 		if (connected.isEmpty()) {
 			connected = null;
-			connectedPolicies = null;
 		} else {
 			for (IVisualPart<Node, ? extends Node> part : connected) {
 				storeAndDisableRefreshVisuals(part);
-			}
-			for (FXBendConnectionPolicy policy : connectedPolicies) {
-				init(policy);
+				init(part.getAdapter(FXBendConnectionPolicy.class));
 			}
 		}
 	}
@@ -99,14 +108,11 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 		if (connected == null) {
 			return;
 		}
-		for (FXBendConnectionPolicy policy : connectedPolicies) {
-			commit(policy);
-		}
 		for (IVisualPart<Node, ? extends Node> part : connected) {
+			commit(part.getAdapter(FXBendConnectionPolicy.class));
 			restoreRefreshVisuals(part);
 		}
 		connected = null;
-		connectedPolicies = null;
 	}
 
 	@Override
