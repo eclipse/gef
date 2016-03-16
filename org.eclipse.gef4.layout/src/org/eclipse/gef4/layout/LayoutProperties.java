@@ -34,17 +34,6 @@ public class LayoutProperties {
 	public static final Rectangle DEFAULT_BOUNDS = new Rectangle();
 
 	/**
-	 * Indicates whether an algorithm is allowed to place graph elements outside
-	 * of the bounds.
-	 */
-	public static final String BOUNDS_EXPANDABLE_PROPERTY = "layout_bounds-expandable";
-
-	/**
-	 * Defines the default value for the {@link #BOUNDS_EXPANDABLE_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_BOUNDS_EXPANDABLE = false;
-
-	/**
 	 * Stores the location of this EntityLayout.
 	 */
 	public static final String LOCATION_PROPERTY = "layout_location";
@@ -96,29 +85,6 @@ public class LayoutProperties {
 	public static final Double DEFAULT_ASPECT_RATIO = 0d;
 
 	/**
-	 * Stores the visibility state of the entity.
-	 */
-	public static final String VISIBLE_PROPERTY = "layout_visible";
-
-	/**
-	 * Defines the default value for the {@link #VISIBLE_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_VISIBLE = true;
-
-	/**
-	 * Stores the minimized state of this NodeLayout. A minimized NodeLayout
-	 * resizes its visual to (0, 0). When it is unminimized, it resizes it back
-	 * to its previous dimension. Note that a NodeLayout can be minimized even
-	 * if it is not resizable.
-	 */
-	public static final String MINIMIZED_PROPERTY = "layout_minimized";
-
-	/**
-	 * Defines the default value for the {@link #MINIMIZED_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_MINIMIZED = false;
-
-	/**
 	 * Stores a weight for this connection.
 	 */
 	public static final String WEIGHT_PROPERTY = "layout_weight";
@@ -127,16 +93,6 @@ public class LayoutProperties {
 	 * Defines the default value for the {@link #WEIGHT_PROPERTY}.
 	 */
 	public static final Double DEFAULT_WEIGHT = 0d;
-
-	/**
-	 * Stores a weight for this connection.
-	 */
-	public static final String DIRECTED_PROPERTY = "layout_directed";
-
-	/**
-	 * Defines the default value for the {@link #DIRECTED_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_DIRECTED = true;
 
 	/**
 	 * Constant for top-down direction (default).
@@ -169,17 +125,6 @@ public class LayoutProperties {
 	public static final Integer DEFAULT_DIRECTION = DIRECTION_TOP_DOWN;
 
 	/**
-	 * Indicates whether this subgraph is visualized differently depending on
-	 * its .
-	 */
-	public static final String DIRECTION_DEPENDANT_PROPERTY = "layout_direction-dependant";
-
-	/**
-	 * Defines the default value for the {@link #DIRECTION_DEPENDANT_PROPERTY}.
-	 */
-	public static final Boolean DEFAULT_DIRECTION_DEPENDANT = true;
-
-	/**
 	 * Returns the value of the {@link #BOUNDS_PROPERTY} of the given
 	 * {@link ILayoutContext}.
 	 * 
@@ -210,42 +155,6 @@ public class LayoutProperties {
 	 */
 	public static void setBounds(ILayoutContext context, Rectangle bounds) {
 		context.getAttributes().put(BOUNDS_PROPERTY, bounds);
-	}
-
-	/**
-	 * Returns the value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
-	 * {@link ILayoutContext}.
-	 * 
-	 * @param context
-	 *            The {@link ILayoutContext} whose
-	 *            {@link #BOUNDS_EXPANDABLE_PROPERTY} is read.
-	 * @return The value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
-	 *         {@link ILayoutContext}.
-	 */
-	public static Boolean isBoundsExpandable(ILayoutContext context) {
-		Object boundsExpandable = context.getAttributes()
-				.get(BOUNDS_EXPANDABLE_PROPERTY);
-		if (boundsExpandable instanceof Boolean) {
-			return (Boolean) boundsExpandable;
-		}
-		return DEFAULT_BOUNDS_EXPANDABLE;
-	}
-
-	/**
-	 * Sets the value of the {@link #BOUNDS_EXPANDABLE_PROPERTY} of the given
-	 * {@link ILayoutContext} to the given value.
-	 * 
-	 * @param context
-	 *            The {@link ILayoutContext} whose
-	 *            {@link #BOUNDS_EXPANDABLE_PROPERTY} is changed.
-	 * @param boundsExpandable
-	 *            The new value for the {@link #BOUNDS_EXPANDABLE_PROPERTY} of
-	 *            the given {@link ILayoutContext}.
-	 */
-	public static void setBoundsExpandable(ILayoutContext context,
-			boolean boundsExpandable) {
-		context.getAttributes().put(BOUNDS_EXPANDABLE_PROPERTY,
-				boundsExpandable);
 	}
 
 	/**
@@ -401,99 +310,12 @@ public class LayoutProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #MINIMIZED_PROPERTY} of the given
-	 * {@link INodeLayout}.
-	 * 
-	 * @param node
-	 *            The {@link INodeLayout} whose {@link #MINIMIZED_PROPERTY} is
-	 *            read.
-	 * @return The value of the {@link #MINIMIZED_PROPERTY} of the given
-	 *         {@link INodeLayout}.
-	 */
-	public static Boolean isMinimized(INodeLayout node) {
-		Object minimized = node.getAttributes().get(MINIMIZED_PROPERTY);
-		if (minimized instanceof Boolean) {
-			return (Boolean) minimized;
-		}
-		return DEFAULT_MINIMIZED;
-	}
-
-	/**
-	 * Sets the value of the {@link #MINIMIZED_PROPERTY} of the given
-	 * {@link INodeLayout} to the given value.
-	 * 
-	 * @param node
-	 *            The {@link INodeLayout} whose {@link #MINIMIZED_PROPERTY} is
-	 *            changed.
-	 * @param minimized
-	 *            The new value for the {@link #MINIMIZED_PROPERTY} of the given
-	 *            {@link INodeLayout}.
-	 */
-	public static void setMinimized(INodeLayout node, boolean minimized) {
-		node.getAttributes().put(MINIMIZED_PROPERTY, minimized);
-	}
-
-	/**
-	 * Returns the value of the {@link #DIRECTED_PROPERTY} of the given
-	 * {@link IEdgeLayout}.
-	 * 
-	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #DIRECTED_PROPERTY}
-	 *            is read.
-	 * @return The value of the {@link #DIRECTED_PROPERTY} of the given
-	 *         {@link IEdgeLayout}.
-	 */
-	public static Boolean isDirected(IEdgeLayout edge) {
-		Object directed = edge.getAttributes().get(DIRECTED_PROPERTY);
-		if (directed instanceof Boolean) {
-			return (Boolean) directed;
-		}
-		return DEFAULT_DIRECTED;
-	}
-
-	/**
-	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
-	 * {@link IEdgeLayout}.
-	 * 
-	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #VISIBLE_PROPERTY}
-	 *            is read.
-	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
-	 *         {@link IEdgeLayout}.
-	 */
-	public static Boolean isVisible(IEdgeLayout edge) {
-		Object visible = edge.getAttributes().get(VISIBLE_PROPERTY);
-		if (visible instanceof Boolean) {
-			return (Boolean) visible;
-		}
-		return DEFAULT_VISIBLE;
-	}
-
-	/**
-	 * Returns the value of the {@link #VISIBLE_PROPERTY} of the given
-	 * {@link INodeLayout}.
-	 * 
-	 * @param node
-	 *            The {@link INodeLayout} whose {@link #VISIBLE_PROPERTY} is
-	 *            read.
-	 * @return The value of the {@link #VISIBLE_PROPERTY} of the given
-	 *         {@link INodeLayout}.
-	 */
-	public static Boolean isVisible(INodeLayout node) {
-		Object visible = node.getAttributes().get(VISIBLE_PROPERTY);
-		if (visible instanceof Boolean) {
-			return (Boolean) visible;
-		}
-		return DEFAULT_VISIBLE;
-	}
-
-	/**
 	 * Returns the value of the {@link #WEIGHT_PROPERTY} of the given
 	 * {@link IEdgeLayout}.
 	 * 
 	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY}
-	 *            is read.
+	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY} is
+	 *            read.
 	 * @return The value of the {@link #WEIGHT_PROPERTY} of the given
 	 *         {@link IEdgeLayout}.
 	 */
@@ -506,42 +328,12 @@ public class LayoutProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #DIRECTED_PROPERTY} of the given
-	 * {@link IEdgeLayout} to the given value.
-	 * 
-	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #DIRECTED_PROPERTY}
-	 *            is changed.
-	 * @param directed
-	 *            The new value for the {@link #DIRECTED_PROPERTY} of the given
-	 *            {@link IEdgeLayout}.
-	 */
-	public static void setDirected(IEdgeLayout edge, boolean directed) {
-		edge.getAttributes().put(DIRECTED_PROPERTY, directed);
-	}
-
-	/**
-	 * Sets the value of the {@link #VISIBLE_PROPERTY} of the given
-	 * {@link IEdgeLayout} to the given value.
-	 * 
-	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #VISIBLE_PROPERTY}
-	 *            is changed.
-	 * @param visible
-	 *            The new value for the {@link #VISIBLE_PROPERTY} of the given
-	 *            {@link IEdgeLayout}.
-	 */
-	public static void setVisible(IEdgeLayout edge, boolean visible) {
-		edge.getAttributes().put(VISIBLE_PROPERTY, visible);
-	}
-
-	/**
 	 * Sets the value of the {@link #WEIGHT_PROPERTY} of the given
 	 * {@link IEdgeLayout} to the given value.
 	 * 
 	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY}
-	 *            is changed.
+	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY} is
+	 *            changed.
 	 * @param weight
 	 *            The new value for the {@link #WEIGHT_PROPERTY} of the given
 	 *            {@link IEdgeLayout}.

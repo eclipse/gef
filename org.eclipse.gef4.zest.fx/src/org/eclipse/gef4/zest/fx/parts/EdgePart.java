@@ -26,7 +26,6 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -39,12 +38,11 @@ import com.google.inject.Provider;
 
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
 /**
- * The {@link EdgePart} is the controller for an {@link Edge} content
- * object. It uses {@link Connection} for the visualization.
+ * The {@link EdgePart} is the controller for an {@link Edge} content object. It
+ * uses {@link Connection} for the visualization.
  *
  * @author mwienand
  *
@@ -52,21 +50,7 @@ import javafx.scene.shape.Shape;
 public class EdgePart extends AbstractFXContentPart<Connection> {
 
 	/**
-	 * The {@link ArrowHead} is used as a decoration for a connection
-	 * {@link Connection}.
-	 */
-	public static class ArrowHead extends Polygon {
-		/**
-		 * Default constructor.
-		 */
-		public ArrowHead() {
-			super(0, 0, 10, 3, 10, -3);
-		}
-	}
-
-	/**
-	 * The CSS class that is assigned to the visual of this
-	 * {@link EdgePart}.
+	 * The CSS class that is assigned to the visual of this {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS = "edge";
 
@@ -184,17 +168,6 @@ public class EdgePart extends AbstractFXContentPart<Connection> {
 			curveNode.setStyle(connCssStyle);
 		}
 
-		// default decoration for directed graphs (in case edge is directed)
-		if (ZestProperties.GRAPH_TYPE_DIRECTED.equals(ZestProperties.getType(glc.getGraph(), true))) {
-			if (Boolean.TRUE.equals(getContent().attributesProperty().get(LayoutProperties.DIRECTED_PROPERTY))) {
-				visual.setEndDecoration(new ArrowHead());
-			} else {
-				visual.setEndDecoration(null);
-			}
-		} else {
-			visual.setEndDecoration(null);
-		}
-
 		// custom decoration
 		Shape sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
@@ -230,12 +203,11 @@ public class EdgePart extends AbstractFXContentPart<Connection> {
 
 	/**
 	 * Returns the {@link GraphLayoutContext} that corresponds to the
-	 * {@link Graph} to which the content of this {@link EdgePart}
-	 * belongs.
+	 * {@link Graph} to which the content of this {@link EdgePart} belongs.
 	 *
 	 * @return The {@link GraphLayoutContext} that corresponds to the
-	 *         {@link Graph} to which the content of this
-	 *         {@link EdgePart} belongs.
+	 *         {@link Graph} to which the content of this {@link EdgePart}
+	 *         belongs.
 	 */
 	protected GraphLayoutContext getGraphLayoutContext() {
 		return getViewer().getContentPartMap().get(getContent().getGraph()).getAdapter(GraphLayoutContext.class);

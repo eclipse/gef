@@ -37,7 +37,6 @@ public class FilterLayoutExample extends AbstractZestExample {
 	@Override
 	protected Graph createGraph() {
 		Graph graph = new Graph();
-		ZestProperties.setType(graph, ZestProperties.GRAPH_TYPE_DIRECTED);
 
 		Node a = n(graph, LABEL, "Root");
 		Node b = n(graph, LABEL, "B");

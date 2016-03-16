@@ -13,12 +13,9 @@
 package org.eclipse.gef4.zest.fx;
 
 import java.sql.Connection;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
@@ -274,43 +271,6 @@ public class ZestProperties {
 	public static final String EDGE_INTERPOLATOR = "edge-interpolator";
 
 	/**
-	 * This attribute determines if a graph is directed or undirected.
-	 *
-	 * @see #GRAPH_TYPE_VALUES
-	 * @see #GRAPH_TYPE_DEFAULT
-	 * @see #getType(Graph, boolean)
-	 * @see #setType(Graph, String)
-	 */
-	public static final String GRAPH_TYPE = "type";
-
-	/**
-	 * This {@link #GRAPH_TYPE} specifies that the edges of the graph are
-	 * directed.
-	 */
-	public static final String GRAPH_TYPE_DIRECTED = "directed";
-
-	/**
-	 * This {@link #GRAPH_TYPE} specifies that the edges of the graph are
-	 * undirected.
-	 */
-	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";
-
-	/**
-	 * These are the possible {@link #GRAPH_TYPE} values:
-	 * <ul>
-	 * <li>{@link #GRAPH_TYPE_DIRECTED}
-	 * <li>{@link #GRAPH_TYPE_UNDIRECTED} (default)
-	 * </ul>
-	 */
-	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<>(
-			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
-
-	/**
-	 * The default value for the {@link #GRAPH_TYPE} attribute.
-	 */
-	public static final String GRAPH_TYPE_DEFAULT = GRAPH_TYPE_UNDIRECTED;
-
-	/**
 	 * This attribute determines the {@link ILayoutAlgorithm} used to layout the
 	 * graph.
 	 *
@@ -325,14 +285,13 @@ public class ZestProperties {
 	public static Boolean NODE_FISHEYE_DEFAULT = false;
 
 	/**
-	 * Returns the value of the {@link #EDGE_CONTROL_POINTS} attribute of
-	 * the given {@link Edge}.
+	 * Returns the value of the {@link #EDGE_CONTROL_POINTS} attribute of the
+	 * given {@link Edge}.
 	 *
 	 * @param edge
 	 *            The {@link Edge} for which to determine the router points.
-	 * @return The value of the {@link #EDGE_CONTROL_POINTS} attribute of
-	 *         the given {@link Edge}, or an empty list, if the attribute is
-	 *         unset.
+	 * @return The value of the {@link #EDGE_CONTROL_POINTS} attribute of the
+	 *         given {@link Edge}, or an empty list, if the attribute is unset.
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Point> getControlPoints(Edge edge) {
@@ -864,37 +823,12 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #GRAPH_TYPE} attribute of the given
-	 * {@link Graph}. If the attribute is not set for the given {@link Graph},
-	 * either the default attribute value is returned, or <code>null</code>,
-	 * depending on the <i>returnDefaultIfMissing</i> flag.
-	 *
-	 * @param graph
-	 *            The {@link Graph} of which the graph type is determined.
-	 * @param returnDefaultIfMissing
-	 *            <code>true</code> to indicate that the default attribute value
-	 *            should be returned if the attribute is not set for the given
-	 *            {@link Graph}, otherwise <code>false</code>.
-	 * @return The graph type of the given {@link Graph}.
-	 */
-	public static String getType(Graph graph, boolean returnDefaultIfMissing) {
-		Object type = graph.attributesProperty().get(GRAPH_TYPE);
-		if (type instanceof String) {
-			String stype = (String) type;
-			if (GRAPH_TYPE_VALUES.contains(stype)) {
-				return stype;
-			}
-		}
-		return returnDefaultIfMissing ? GRAPH_TYPE_DEFAULT : null;
-	}
-
-	/**
-	 * Sets the value of the {@link #EDGE_CONTROL_POINTS} attribute of
-	 * the given {@link Edge} to the given value.
+	 * Sets the value of the {@link #EDGE_CONTROL_POINTS} attribute of the given
+	 * {@link Edge} to the given value.
 	 *
 	 * @param edge
-	 *            The {@link Edge} of which the
-	 *            {@link #EDGE_CONTROL_POINTS} attribute is changed.
+	 *            The {@link Edge} of which the {@link #EDGE_CONTROL_POINTS}
+	 *            attribute is changed.
 	 * @param controlPoints
 	 *            The new {@link List} of control {@link Point}s for the given
 	 *            {@link Edge}.
@@ -1210,8 +1144,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #GRAPH_TYPE} attribute of the given
-	 * {@link Graph} to the given value.
+	 * Sets the value of the {@link #GRAPH_LAYOUT_ALGORITHM} attribute of the
+	 * given {@link Graph} to the given value.
 	 *
 	 * @param graph
 	 *            The {@link Graph} of which the layout algorithm is changed.
@@ -1441,25 +1375,4 @@ public class ZestProperties {
 	public static void setTooltip(Node node, String tooltip) {
 		node.attributesProperty().put(NODE_TOOLTIP, tooltip);
 	}
-
-	/**
-	 * Sets the value of the {@link #GRAPH_TYPE} attribute of the given
-	 * {@link Graph} to the given value.
-	 *
-	 * @param graph
-	 *            The {@link Graph} of which the type is changed.
-	 * @param type
-	 *            The new type for the given {@link Graph}.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>type</i> value is not contained within
-	 *             {@link #GRAPH_TYPE_VALUES}.
-	 */
-	public static void setType(Graph graph, String type) {
-		if (!GRAPH_TYPE_VALUES.contains(type)) {
-			throw new IllegalArgumentException("Cannot set graph attribute \"" + GRAPH_TYPE + "\" to \"" + type
-					+ "\"; supported values: " + GRAPH_TYPE_VALUES);
-		}
-		graph.attributesProperty().put(GRAPH_TYPE, type);
-	}
-
 }

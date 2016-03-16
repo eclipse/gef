@@ -17,13 +17,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javafx.application.Application;
-
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import javafx.application.Application;
 
 public class ZestGraphExample extends AbstractZestExample {
 
@@ -45,7 +45,6 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
-		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
 		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 	}
@@ -75,7 +74,6 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
-		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
 		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 	}
@@ -107,7 +105,6 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
-		attrs.put(ZestProperties.GRAPH_TYPE, ZestProperties.GRAPH_TYPE_DIRECTED);
 		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 

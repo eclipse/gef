@@ -14,9 +14,7 @@
 package org.eclipse.gef4.dot.internal.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
@@ -36,7 +34,15 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import javafx.geometry.Bounds;
 import javafx.scene.text.Text;
 
-public class Dot2ZestGraphConverter {
+/**
+ * A converter that transforms a {@link Graph} that is attributed with
+ * {@link ZestProperties} into a {@link Graph} that is attributed with
+ * {@link DotAttributes}.
+ * 
+ * @author anyssen
+ *
+ */
+public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 	public static final class Options {
 
@@ -49,7 +55,7 @@ public class Dot2ZestGraphConverter {
 		 * position information is already provided in the dot input), the
 		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} should remain unset.
 		 */
-		public boolean emulateLayout;
+		public boolean emulateLayout = true;
 
 		/**
 		 * Specifies whether the y-coordinate values of all position information
@@ -57,55 +63,21 @@ public class Dot2ZestGraphConverter {
 		 * position information is to be inverted. If set to <code>false</code>,
 		 * it is to be transformed without inversion.
 		 */
-		public boolean invertVerticalAxis;
+		public boolean invertYAxis = true;
 	}
 
-	private Map<Node, Node> dotToZestNodes = new HashMap<Node, Node>();
-	private Graph dotGraph;
 	private Options options;
 
-	// TODO: introduce an option class that we can pass in (allows us to add
-	// options without breaking API)
-	public Dot2ZestGraphConverter(Graph dotGraph, Options options) {
-		this.dotGraph = dotGraph;
-		this.options = options;
+	public Dot2ZestGraphConverter() {
+		this.options = new Options();
 	}
 
-	public Graph convert() {
-		return convertGraph(dotGraph);
+	public Options options() {
+		return options;
 	}
 
-	private Graph convertGraph(Graph dot) {
-		Graph zest = new Graph();
-		convertGraphAttributes(dot.getAttributes(), zest.getAttributes());
-		// convert nodes and store dot to zest mapping, so that source and
-		// destination of edges can be found easily later
-		for (Node dotNode : dot.getNodes()) {
-			Node zestNode = convertNode(dotNode);
-			zestNode.setGraph(zest);
-			dotToZestNodes.put(dotNode, zestNode);
-			zest.getNodes().add(zestNode);
-		}
-		// convert edges
-		for (Edge dotEdge : dot.getEdges()) {
-			Edge edge = convertEdge(dotEdge);
-			edge.setGraph(zest);
-			zest.getEdges().add(edge);
-		}
-		return zest;
-	}
-
-	private Edge convertEdge(Edge dotEdge) {
-		// find nodes
-		Node zestSource = dotToZestNodes.get(dotEdge.getSource());
-		Node zestTarget = dotToZestNodes.get(dotEdge.getTarget());
-		// create edge
-		Edge zestEdge = new Edge(zestSource, zestTarget);
-		convertEdgeAttributes(dotEdge, zestEdge);
-		return zestEdge;
-	}
-
-	private void convertEdgeAttributes(Edge dot, Edge zest) {
+	@Override
+	protected void convertAttributes(Edge dot, Edge zest) {
 		// convert id and label
 		String dotId = DotAttributes.getId(dot);
 		String dotLabel = DotAttributes.getLabel(dot);
@@ -142,6 +114,9 @@ public class Dot2ZestGraphConverter {
 		if (connectionCssStyle != null) {
 			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
 		}
+
+		// TODO: in case graph type is directed, we should add default target
+		// decoration if none is set.
 
 		// only convert layout information in native mode, as the results will
 		// otherwise
@@ -203,13 +178,13 @@ public class Dot2ZestGraphConverter {
 				startp = spline.getControlPoints().get(0);
 			}
 			controlPoints.add(new Point(startp.getX(),
-					(options.invertVerticalAxis ? -1 : 1) * startp.getY()));
+					(options.invertYAxis ? -1 : 1) * startp.getY()));
 
 			// control points
 			for (org.eclipse.gef4.dot.internal.parser.dotAttributes.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
-						(options.invertVerticalAxis ? -1 : 1) * cp.getY()));
+						(options.invertYAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
@@ -222,23 +197,13 @@ public class Dot2ZestGraphConverter {
 						.get(spline.getControlPoints().size() - 1);
 			}
 			controlPoints.add(new Point(endp.getX(),
-					(options.invertVerticalAxis ? -1 : 1) * endp.getY()));
+					(options.invertYAxis ? -1 : 1) * endp.getY()));
 		}
 		return controlPoints;
 	}
 
-	private Node convertNode(Node dotNode) {
-		Node node = new Node();
-		convertNodeAttributes(dotNode, node);
-		// convert nested graph
-		if (dotNode.getNestedGraph() != null) {
-			Graph nested = convertGraph(dotNode.getNestedGraph());
-			node.setNestedGraph(nested);
-		}
-		return node;
-	}
-
-	private void convertNodeAttributes(Node dot, Node zest) {
+	@Override
+	protected void convertAttributes(Node dot, Node zest) {
 		// convert id and label
 		String dotId = DotAttributes.getId(dot);
 		ZestProperties.setCssId(zest, dotId);
@@ -296,7 +261,7 @@ public class Dot2ZestGraphConverter {
 			double widthInPixel, double heightInPixel) {
 		// dot positions are provided as center positions, Zest uses top-left
 		return new Point(dotPosition.getX() - widthInPixel / 2,
-				(options.invertVerticalAxis ? -1 : 1) * (dotPosition.getY())
+				(options.invertYAxis ? -1 : 1) * (dotPosition.getY())
 						- heightInPixel / 2);
 	}
 
@@ -311,12 +276,12 @@ public class Dot2ZestGraphConverter {
 				layoutBounds.getHeight());
 	}
 
-	private void convertGraphAttributes(Map<String, Object> dot,
-			Map<String, Object> zest) {
+	@Override
+	protected void convertAttributes(Graph dot, Graph zest) {
 		// convert layout and rankdir to LayoutAlgorithm
 		if (options.emulateLayout) {
-			Object dotLayout = dot.get(DotAttributes.GRAPH_LAYOUT);
-			Object dotRankdir = dot.get(DotAttributes.GRAPH_RANKDIR);
+			Object dotLayout = DotAttributes.getLayout(dot);
+			Object dotRankdir = DotAttributes.getRankdir(dot);
 			ILayoutAlgorithm algo = null;
 			if (DotAttributes.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
 					|| DotAttributes.GRAPH_LAYOUT_NEATO.equals(dotLayout)
@@ -334,17 +299,7 @@ public class Dot2ZestGraphConverter {
 						lr ? TreeLayoutAlgorithm.LEFT_RIGHT
 								: TreeLayoutAlgorithm.TOP_DOWN);
 			}
-			zest.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, algo);
-		}
-
-		// convert graph type
-		Object dotType = dot.get(DotAttributes.GRAPH_TYPE);
-		if (DotAttributes.GRAPH_TYPE_DIRECTED.equals(dotType)) {
-			zest.put(ZestProperties.GRAPH_TYPE,
-					ZestProperties.GRAPH_TYPE_DIRECTED);
-		} else if (DotAttributes.GRAPH_TYPE_UNDIRECTED.equals(dotType)) {
-			zest.put(ZestProperties.GRAPH_TYPE,
-					ZestProperties.GRAPH_TYPE_UNDIRECTED);
+			ZestProperties.setLayoutAlgorithm(zest, algo);
 		}
 	}
 }

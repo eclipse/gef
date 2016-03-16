@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.layout.examples;
 
-import javafx.application.Application;
-
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import javafx.application.Application;
 
 public class SugiyamaLayoutExample extends AbstractZestExample {
 
@@ -51,10 +51,8 @@ public class SugiyamaLayoutExample extends AbstractZestExample {
 										 * stone -> concrete
 										 */ };
 
-		return new Graph.Builder()
-				.attr(ZestProperties.GRAPH_TYPE,
-						ZestProperties.GRAPH_TYPE_DIRECTED)
-				.nodes(nodes).edges(edges).attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+		return new Graph.Builder().nodes(nodes).edges(edges)
+				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
 						new SugiyamaLayoutAlgorithm())
 				.build();
 	}
