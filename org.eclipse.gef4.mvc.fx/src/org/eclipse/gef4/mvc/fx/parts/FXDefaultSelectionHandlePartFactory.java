@@ -25,6 +25,7 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
@@ -52,6 +53,10 @@ public class FXDefaultSelectionHandlePartFactory
 	 * used to generate selection handles.
 	 */
 	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
+	/**
+	 * The minimum segment length so that creation handles are shown.
+	 */
+	public static final double CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH = 0;
 
 	// TODO
 	private static Provider<BezierCurve[]> createSegmentsProvider(
@@ -273,29 +278,34 @@ public class FXDefaultSelectionHandlePartFactory
 					hps.add(part);
 				}
 
-				// create quarter handle for the creation of a new segment
-				FXRectangleSegmentHandlePart part = injector
-						.getInstance(FXRectangleSegmentHandlePart.class);
-				part.setSegmentsProvider(segmentsProvider);
-				part.setSegmentIndex(i);
-				part.setSegmentParameter(0.25);
-				hps.add(part);
+				double segmentLength = new Polyline(segments[i].getPoints())
+						.getLength();
+				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH) {
+					// create quarter handle for the creation of a new segment
+					FXRectangleSegmentHandlePart part = injector
+							.getInstance(FXRectangleSegmentHandlePart.class);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(0.25);
+					hps.add(part);
 
-				// create quarter handle for the creation of a new segment
-				part = injector.getInstance(FXRectangleSegmentHandlePart.class);
-				part.setSegmentsProvider(segmentsProvider);
-				part.setSegmentIndex(i);
-				part.setSegmentParameter(0.75);
-				hps.add(part);
+					// create quarter handle for the creation of a new segment
+					part = injector
+							.getInstance(FXRectangleSegmentHandlePart.class);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(0.75);
+					hps.add(part);
+				}
 
 				// create handle for the end point of the curve
 				if (i == segments.length - 1) {
-					FXCircleSegmentHandlePart part2 = injector
+					FXCircleSegmentHandlePart part = injector
 							.getInstance(FXCircleSegmentHandlePart.class);
-					part2.setSegmentsProvider(segmentsProvider);
-					part2.setSegmentIndex(i);
-					part2.setSegmentParameter(1.0);
-					hps.add(part2);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(1.0);
+					hps.add(part);
 				}
 			}
 		} else {
@@ -309,12 +319,17 @@ public class FXDefaultSelectionHandlePartFactory
 				part.setSegmentParameter(0.0);
 				hps.add(part);
 
-				// create handle for the middle of a segment
-				part = injector.getInstance(FXCircleSegmentHandlePart.class);
-				part.setSegmentsProvider(segmentsProvider);
-				part.setSegmentIndex(i);
-				part.setSegmentParameter(0.5);
-				hps.add(part);
+				double segmentLength = new Polyline(segments[i].getPoints())
+						.getLength();
+				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH) {
+					// create handle for the middle of a segment
+					part = injector
+							.getInstance(FXCircleSegmentHandlePart.class);
+					part.setSegmentsProvider(segmentsProvider);
+					part.setSegmentIndex(i);
+					part.setSegmentParameter(0.5);
+					hps.add(part);
+				}
 
 				// create handle for the end point of the curve
 				if (i == segments.length - 1) {
