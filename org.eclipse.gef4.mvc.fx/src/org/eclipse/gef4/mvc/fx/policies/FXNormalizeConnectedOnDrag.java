@@ -33,15 +33,32 @@ import javafx.scene.input.MouseEvent;
 public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
-	private List<IContentPart<Node, ? extends Node>> connected;
+	private List<IVisualPart<Node, ? extends Node>> connected;
+	private List<FXBendConnectionPolicy> connectedPolicies;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		if (connected == null) {
+			return;
+		}
+		for (FXBendConnectionPolicy policy : connectedPolicies) {
+			policy.normalize();
+		}
 	}
 
 	@Override
 	public void dragAborted() {
+		if (connected == null) {
+			return;
+		}
+		for (FXBendConnectionPolicy policy : connectedPolicies) {
+			rollback(policy);
+		}
+		for (IVisualPart<Node, ? extends Node> part : connected) {
+			restoreRefreshVisuals(part);
+		}
 		connected = null;
+		connectedPolicies = null;
 	}
 
 	@Override
@@ -51,32 +68,29 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 	@Override
 	public void press(MouseEvent e) {
 		connected = new ArrayList<>();
+		connectedPolicies = new ArrayList<>();
 		for (IVisualPart<Node, ? extends Node> anchored : getHost()
 				.getAnchoredsUnmodifiable()) {
 			if (anchored instanceof IContentPart) {
-				if (anchored.getAdapter(FXBendConnectionPolicy.class) != null) {
-					connected
-							.add((IContentPart<Node, ? extends Node>) anchored);
+				FXBendConnectionPolicy bendConnectionPolicy = anchored
+						.getAdapter(FXBendConnectionPolicy.class);
+				if (bendConnectionPolicy != null) {
+					connected.add(anchored);
+					connectedPolicies.add(bendConnectionPolicy);
 				}
 			}
 		}
 
-		// filter out selected
-		// @SuppressWarnings("serial")
-		// SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
-		// .getAdapter(new TypeToken<SelectionModel<Node>>() {
-		// });
-		// Iterator<IContentPart<Node, ? extends Node>> it =
-		// connected.iterator();
-		// while (it.hasNext()) {
-		// IContentPart<Node, ? extends Node> part = it.next();
-		// if (selectionModel.isSelected(part)) {
-		// it.remove();
-		// }
-		// }
-
 		if (connected.isEmpty()) {
 			connected = null;
+			connectedPolicies = null;
+		} else {
+			for (IVisualPart<Node, ? extends Node> part : connected) {
+				storeAndDisableRefreshVisuals(part);
+			}
+			for (FXBendConnectionPolicy policy : connectedPolicies) {
+				init(policy);
+			}
 		}
 	}
 
@@ -85,18 +99,14 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 		if (connected == null) {
 			return;
 		}
-		// normalize connected
-		for (IContentPart<Node, ? extends Node> part : connected) {
-			FXBendConnectionPolicy bendPolicy = part
-					.getAdapter(FXBendConnectionPolicy.class);
-			if (bendPolicy != null) {
-				init(bendPolicy);
-				// FIXME: Normalization always occurs when committing a bend
-				// policy. However, it should only happen when interacting.
-				// bendPolicy.normalizeControlPoints();
-				commit(bendPolicy);
-			}
+		for (FXBendConnectionPolicy policy : connectedPolicies) {
+			commit(policy);
 		}
+		for (IVisualPart<Node, ? extends Node> part : connected) {
+			restoreRefreshVisuals(part);
+		}
+		connected = null;
+		connectedPolicies = null;
 	}
 
 	@Override

@@ -1142,6 +1142,10 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 					// remove current point as it is unnecessary
 					explicitAnchors.remove(explicitIndex);
 					getBendOperation().getNewAnchors().remove(explicitIndex);
+					// fix anchor indices
+					for (int j = 0; j < explicitAnchors.size(); j++) {
+						explicitAnchors.get(j).explicitAnchorIndex = j;
+					}
 					// start a new normalization
 					removed = true;
 					break;
