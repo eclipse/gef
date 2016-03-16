@@ -38,18 +38,37 @@ import javafx.scene.text.Text;
 
 public class Dot2ZestGraphConverter {
 
-	private Graph dotGraph;
+	public static final class Options {
+
+		/**
+		 * Indicates whether layout should be emulated or not. If set to
+		 * <code>true</code>, an {@link ILayoutAlgorithm} is to be inferred for
+		 * the given dot, and set as value of the
+		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} attribute. If set to
+		 * <code>false</code> (i.e. native layout is performed via Graphviz and
+		 * position information is already provided in the dot input), the
+		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} should remain unset.
+		 */
+		public boolean emulateLayout;
+
+		/**
+		 * Specifies whether the y-coordinate values of all position information
+		 * is to be inverted. If set to <code>true</code> the y-values of all
+		 * position information is to be inverted. If set to <code>false</code>,
+		 * it is to be transformed without inversion.
+		 */
+		public boolean invertVerticalAxis;
+	}
+
 	private Map<Node, Node> dotToZestNodes = new HashMap<Node, Node>();
-	private boolean emulateLayout;
-	private boolean invertYAxis;
+	private Graph dotGraph;
+	private Options options;
 
 	// TODO: introduce an option class that we can pass in (allows us to add
 	// options without breaking API)
-	public Dot2ZestGraphConverter(Graph dotGraph, boolean emulateLayout,
-			boolean invertYAxis) {
+	public Dot2ZestGraphConverter(Graph dotGraph, Options options) {
 		this.dotGraph = dotGraph;
-		this.emulateLayout = emulateLayout;
-		this.invertYAxis = invertYAxis;
+		this.options = options;
 	}
 
 	public Graph convert() {
@@ -127,7 +146,7 @@ public class Dot2ZestGraphConverter {
 		// only convert layout information in native mode, as the results will
 		// otherwise
 		// not match
-		if (!emulateLayout) {
+		if (!options.emulateLayout) {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null) {
@@ -184,13 +203,13 @@ public class Dot2ZestGraphConverter {
 				startp = spline.getControlPoints().get(0);
 			}
 			controlPoints.add(new Point(startp.getX(),
-					(invertYAxis ? -1 : 1) * startp.getY()));
+					(options.invertVerticalAxis ? -1 : 1) * startp.getY()));
 
 			// control points
 			for (org.eclipse.gef4.dot.internal.parser.dotAttributes.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
-						(invertYAxis ? -1 : 1) * cp.getY()));
+						(options.invertVerticalAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
@@ -203,7 +222,7 @@ public class Dot2ZestGraphConverter {
 						.get(spline.getControlPoints().size() - 1);
 			}
 			controlPoints.add(new Point(endp.getX(),
-					(invertYAxis ? -1 : 1) * endp.getY()));
+					(options.invertVerticalAxis ? -1 : 1) * endp.getY()));
 		}
 		return controlPoints;
 	}
@@ -277,7 +296,7 @@ public class Dot2ZestGraphConverter {
 			double widthInPixel, double heightInPixel) {
 		// dot positions are provided as center positions, Zest uses top-left
 		return new Point(dotPosition.getX() - widthInPixel / 2,
-				(invertYAxis ? -1 : 1) * (dotPosition.getY())
+				(options.invertVerticalAxis ? -1 : 1) * (dotPosition.getY())
 						- heightInPixel / 2);
 	}
 
@@ -295,7 +314,7 @@ public class Dot2ZestGraphConverter {
 	private void convertGraphAttributes(Map<String, Object> dot,
 			Map<String, Object> zest) {
 		// convert layout and rankdir to LayoutAlgorithm
-		if (emulateLayout) {
+		if (options.emulateLayout) {
 			Object dotLayout = dot.get(DotAttributes.GRAPH_LAYOUT);
 			Object dotRankdir = dot.get(DotAttributes.GRAPH_RANKDIR);
 			ILayoutAlgorithm algo = null;

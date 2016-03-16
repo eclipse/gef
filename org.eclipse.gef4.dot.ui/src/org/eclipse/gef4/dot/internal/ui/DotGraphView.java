@@ -220,8 +220,10 @@ public class DotGraphView extends ZestFxUiView {
 		// do no convert layout algorithm and rankdir in emulated mode, invert
 		// y-axis mode (as by default y-axis is interpreted inverse in dot)
 		boolean isNativeMode = isNativeMode();
-		super.setGraph(new Dot2ZestGraphConverter(graph, !isNativeMode, true)
-				.convert());
+		Dot2ZestGraphConverter.Options options = new Dot2ZestGraphConverter.Options();
+		options.emulateLayout = !isNativeMode;
+		options.invertVerticalAxis = true;
+		super.setGraph(new Dot2ZestGraphConverter(graph, options).convert());
 	}
 
 	private boolean toggle(Action action, boolean input) {
