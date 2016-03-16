@@ -281,13 +281,6 @@ public class FXDefaultSelectionHandlePartFactory
 				part.setSegmentParameter(0.25);
 				hps.add(part);
 
-				// create mid point handle for the translation of a segment
-				part = injector.getInstance(FXRectangleSegmentHandlePart.class);
-				part.setSegmentsProvider(segmentsProvider);
-				part.setSegmentIndex(i);
-				part.setSegmentParameter(0.5);
-				hps.add(part);
-
 				// create quarter handle for the creation of a new segment
 				part = injector.getInstance(FXRectangleSegmentHandlePart.class);
 				part.setSegmentsProvider(segmentsProvider);
