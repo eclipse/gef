@@ -1084,7 +1084,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		locallyExecuteOperation();
 
 		// remove overlain
-		removeOverlain(initialMouseInScene, currentMouseInScene);
+		removeOverlain();
 	}
 
 	/**
@@ -1154,74 +1154,21 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		}
 	}
 
-	private void removeOverlain(Point initialMouse, Point currentMouse) {
-		// find segment overlays
+	private void removeOverlain() {
 		if (getConnection().getRouter() instanceof OrthogonalRouter
 				&& selectedAnchors.size() == 2) {
-			// only for orthogonal connections
-			SegmentOverlay segmentOverlay = getSegmentOverlayLeft();
-			if (segmentOverlay != null) {
-				segmentOverlays.add(segmentOverlay);
-				// previous segment overlay
-				// => isFirst = true (retained-n, removed-n, removed-s,
-				// constrained-s)
-				// constrain selected
-				getBendOperation().getNewAnchors().set(
-						segmentOverlay.constrainedSelectedHandle.explicitAnchorIndex,
-						segmentOverlay.constrainedSelectedNewAnchor);
-				// remove selected
-				int index = segmentOverlay.removedSelectedHandle.explicitAnchorIndex;
-				getBendOperation().getNewAnchors().remove(index);
-				explicitAnchors.remove(index);
-				// remove neighbor
-				index = segmentOverlay.removedNeighborHandle.explicitAnchorIndex;
-				getBendOperation().getNewAnchors().remove(index);
-				explicitAnchors.remove(index);
-				// retain neighbor
-				index = segmentOverlay.retainedNeighborHandle.explicitAnchorIndex;
-				getBendOperation().getNewAnchors().set(index,
-						segmentOverlay.retainedNeighborNewAnchor);
-				// adjust indices of anchor handles
-				for (int j = 0; j < explicitAnchors.size(); j++) {
-					explicitAnchors.get(j).explicitAnchorIndex = j;
-				}
-			} else {
-				segmentOverlay = getSegmentOverlayRight();
-				if (segmentOverlay != null) {
-					segmentOverlays.add(segmentOverlay);
-					// next segment overlay
-					// => isFirst = false (constrained-s, removed-s, removed-n,
-					// retained-n)
-					// retain neighbor
-					int index = segmentOverlay.retainedNeighborHandle.explicitAnchorIndex;
-					getBendOperation().getNewAnchors().set(index,
-							segmentOverlay.retainedNeighborNewAnchor);
-					// remove neighbor
-					index = segmentOverlay.removedNeighborHandle.explicitAnchorIndex;
-					getBendOperation().getNewAnchors().remove(index);
-					explicitAnchors.remove(index);
-					// remove selected
-					index = segmentOverlay.removedSelectedHandle.explicitAnchorIndex;
-					getBendOperation().getNewAnchors().remove(index);
-					explicitAnchors.remove(index);
-					// constrain selected
-					getBendOperation().getNewAnchors().set(
-							segmentOverlay.constrainedSelectedHandle.explicitAnchorIndex,
-							segmentOverlay.constrainedSelectedNewAnchor);
-					// adjust indices of anchor handles
-					for (int j = 0; j < explicitAnchors.size(); j++) {
-						explicitAnchors.get(j).explicitAnchorIndex = j;
-					}
-				}
+			// segment overlay removal for orthogonal connection
+			removeOverlainSegments();
+			// do not remove point overlays if a segment overlay was found
+			if (!segmentOverlays.isEmpty()) {
+				return;
 			}
 		}
+		// point overlay removal
+		removeOverlainPoints();
+	}
 
-		if (!segmentOverlays.isEmpty()) {
-			locallyExecuteOperation();
-			return;
-		}
-
-		// find point overlays
+	private void removeOverlainPoints() {
 		for (int i = 0; i < selectedAnchors.size(); i++) {
 			AnchorHandle handle = selectedAnchors.get(i);
 			int index = handle.explicitAnchorIndex;
@@ -1242,8 +1189,9 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				AnchorHandle explicitNeighborHandle = explicitAnchors
 						.get(overlainIndex);
 				if (selectedAnchors.contains(explicitNeighborHandle)) {
-					throw new IllegalStateException(
-							"Selected overlays other selected.");
+					// selected overlays other selected
+					// => skip this overlay
+					continue;
 				}
 				// remove overlaying anchor handle (the selected handle)
 				explicitAnchors.remove(index);
@@ -1262,6 +1210,67 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				pointOverlays.add(pointOverlay);
 				locallyExecuteOperation();
 			}
+		}
+	}
+
+	private void removeOverlainSegments() {
+		SegmentOverlay segmentOverlay = getSegmentOverlayLeft();
+		if (segmentOverlay != null) {
+			segmentOverlays.add(segmentOverlay);
+			// previous segment overlay
+			// => isFirst = true (retained-n, removed-n, removed-s,
+			// constrained-s)
+			// constrain selected
+			getBendOperation().getNewAnchors().set(
+					segmentOverlay.constrainedSelectedHandle.explicitAnchorIndex,
+					segmentOverlay.constrainedSelectedNewAnchor);
+			// remove selected
+			int index = segmentOverlay.removedSelectedHandle.explicitAnchorIndex;
+			getBendOperation().getNewAnchors().remove(index);
+			explicitAnchors.remove(index);
+			// remove neighbor
+			index = segmentOverlay.removedNeighborHandle.explicitAnchorIndex;
+			getBendOperation().getNewAnchors().remove(index);
+			explicitAnchors.remove(index);
+			// retain neighbor
+			index = segmentOverlay.retainedNeighborHandle.explicitAnchorIndex;
+			getBendOperation().getNewAnchors().set(index,
+					segmentOverlay.retainedNeighborNewAnchor);
+			// adjust indices of anchor handles
+			for (int j = 0; j < explicitAnchors.size(); j++) {
+				explicitAnchors.get(j).explicitAnchorIndex = j;
+			}
+		} else {
+			segmentOverlay = getSegmentOverlayRight();
+			if (segmentOverlay != null) {
+				segmentOverlays.add(segmentOverlay);
+				// next segment overlay
+				// => isFirst = false (constrained-s, removed-s, removed-n,
+				// retained-n)
+				// retain neighbor
+				int index = segmentOverlay.retainedNeighborHandle.explicitAnchorIndex;
+				getBendOperation().getNewAnchors().set(index,
+						segmentOverlay.retainedNeighborNewAnchor);
+				// remove neighbor
+				index = segmentOverlay.removedNeighborHandle.explicitAnchorIndex;
+				getBendOperation().getNewAnchors().remove(index);
+				explicitAnchors.remove(index);
+				// remove selected
+				index = segmentOverlay.removedSelectedHandle.explicitAnchorIndex;
+				getBendOperation().getNewAnchors().remove(index);
+				explicitAnchors.remove(index);
+				// constrain selected
+				getBendOperation().getNewAnchors().set(
+						segmentOverlay.constrainedSelectedHandle.explicitAnchorIndex,
+						segmentOverlay.constrainedSelectedNewAnchor);
+				// adjust indices of anchor handles
+				for (int j = 0; j < explicitAnchors.size(); j++) {
+					explicitAnchors.get(j).explicitAnchorIndex = j;
+				}
+			}
+		}
+		if (!segmentOverlays.isEmpty()) {
+			locallyExecuteOperation();
 		}
 	}
 

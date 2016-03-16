@@ -605,10 +605,10 @@ public class FXBendConnectionPolicyTests {
 
 		// move segment back
 		bendPolicy.move(new Point(), new Point());
-		// check number of points and their positions
+		// check number of points
 		assertEquals(2, connection.getVisual().getPoints().size());
 
-		// check number of points and their positions after commit
+		// check number of points after commit
 		bendPolicy.commit();
 		assertEquals(2, connection.getVisual().getPoints().size());
 	}
