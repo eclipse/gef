@@ -157,6 +157,21 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return CurveUtils.getIntersections(this, c);
 	}
 
+	/**
+	 * Returns the length of this {@link Polyline} by adding up the lengths of
+	 * the individual {@link Line}s.
+	 *
+	 * @return The length of this {@link Polyline}.
+	 */
+	// TODO: tests
+	public double getLength() {
+		double length = 0;
+		for (Line line : getCurves()) {
+			length += line.getLength();
+		}
+		return length;
+	}
+
 	@Override
 
 	public ICurve[] getOverlaps(ICurve c) {
