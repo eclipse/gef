@@ -265,8 +265,8 @@ public class FXDefaultSelectionHandlePartFactory
 			for (int i = 0; i < segments.length; i++) {
 				// create handle for the start point of the curve
 				if (i == 0) {
-					FXRectangleSegmentHandlePart part = injector
-							.getInstance(FXRectangleSegmentHandlePart.class);
+					FXCircleSegmentHandlePart part = injector
+							.getInstance(FXCircleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
 					part.setSegmentIndex(i);
 					part.setSegmentParameter(0.0);
@@ -297,12 +297,12 @@ public class FXDefaultSelectionHandlePartFactory
 
 				// create handle for the end point of the curve
 				if (i == segments.length - 1) {
-					part = injector
-							.getInstance(FXRectangleSegmentHandlePart.class);
-					part.setSegmentsProvider(segmentsProvider);
-					part.setSegmentIndex(i);
-					part.setSegmentParameter(1.0);
-					hps.add(part);
+					FXCircleSegmentHandlePart part2 = injector
+							.getInstance(FXCircleSegmentHandlePart.class);
+					part2.setSegmentsProvider(segmentsProvider);
+					part2.setSegmentIndex(i);
+					part2.setSegmentParameter(1.0);
+					hps.add(part2);
 				}
 			}
 		} else {
