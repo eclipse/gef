@@ -47,6 +47,15 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 		}
 	}
 
+	@Override
+	public void dragAborted() {
+		for (AbstractLabelPart lp : getLabelParts()) {
+			rollback(lp.getAdapter(TransformLabelPolicy.class));
+			restoreRefreshVisuals(lp);
+		}
+		super.dragAborted();
+	}
+
 	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
 		List<AbstractLabelPart> linked = new ArrayList<>();
 		linked.addAll(new ArrayList<>(PartUtils
