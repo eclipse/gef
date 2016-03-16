@@ -21,7 +21,7 @@ import javafx.scene.shape.StrokeType;
  * @author mwienand
  *
  */
-public class FXRectangleSegmentHandlePart
+public class FXSquareSegmentHandlePart
 		extends AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
 
 	/**

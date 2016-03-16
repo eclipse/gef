@@ -43,7 +43,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -322,7 +322,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// rectangle handles
 		bindFXRectangleSegmentHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(),
-						FXRectangleSegmentHandlePart.class));
+						FXSquareSegmentHandlePart.class));
 
 		// hover handles
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),

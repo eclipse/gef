@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -232,13 +232,13 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	/**
-	 * Bind resize and rotate behavior to {@link FXRectangleSegmentHandlePart}.
+	 * Bind resize and rotate behavior to {@link FXSquareSegmentHandlePart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXRectangleSegmentHandlePart} as a key.
+	 *            {@link FXSquareSegmentHandlePart} as a key.
 	 */
 	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("resize-relocate-first-anchorage"))
@@ -512,7 +512,7 @@ public class ZestFxModule extends MvcFxModule {
 		bindNodeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodeLabelPart.class));
 
 		bindFXRectangleSegmentHandlePartAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXRectangleSegmentHandlePart.class));
+				AdapterMaps.getAdapterMapBinder(binder(), FXSquareSegmentHandlePart.class));
 		bindFXCircleSegmentHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXCircleSegmentHandlePart.class));
 

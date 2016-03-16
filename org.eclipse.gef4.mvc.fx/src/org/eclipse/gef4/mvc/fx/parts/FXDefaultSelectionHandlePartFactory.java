@@ -145,8 +145,8 @@ public class FXDefaultSelectionHandlePartFactory
 				handleGeometryProvider);
 		for (int i = 0; i < 4; i++) {
 			// create handle for the start point of the segment
-			FXRectangleSegmentHandlePart part = injector
-					.getInstance(FXRectangleSegmentHandlePart.class);
+			FXSquareSegmentHandlePart part = injector
+					.getInstance(FXSquareSegmentHandlePart.class);
 			part.setSegmentsProvider(segmentsProvider);
 			part.setSegmentIndex(i);
 			part.setSegmentParameter(0);
@@ -413,8 +413,8 @@ public class FXDefaultSelectionHandlePartFactory
 		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<>();
 		BezierCurve[] segments = segmentsProvider.get();
 		for (int i = 0; i < segments.length; i++) {
-			FXRectangleSegmentHandlePart part = injector
-					.getInstance(FXRectangleSegmentHandlePart.class);
+			FXSquareSegmentHandlePart part = injector
+					.getInstance(FXSquareSegmentHandlePart.class);
 			part.setSegmentsProvider(segmentsProvider);
 			part.setSegmentIndex(i);
 			part.setSegmentParameter(0);
