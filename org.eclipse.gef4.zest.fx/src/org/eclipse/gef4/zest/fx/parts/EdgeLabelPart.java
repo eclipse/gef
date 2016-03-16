@@ -41,6 +41,22 @@ import javafx.util.Pair;
 public class EdgeLabelPart extends AbstractLabelPart {
 
 	@Override
+	public Point computeLabelPosition() {
+		Point position = null;
+		String value = getContent().getValue();
+		if (ZestProperties.ELEMENT_LABEL.equals(value)) {
+			position = getMidPoint();
+		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(value)) {
+			position = getMidPoint();
+		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(value)) {
+			position = getStartPoint();
+		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(value)) {
+			position = getEndPoint();
+		}
+		return position;
+	}
+
+	@Override
 	protected Group createVisual() {
 		Text text = createText();
 		Group g = new Group();
@@ -97,31 +113,7 @@ public class EdgeLabelPart extends AbstractLabelPart {
 			return;
 		}
 
-		Point labelPosition = null;
-		if (ZestProperties.ELEMENT_LABEL.equals(getContent().getValue())) {
-			labelPosition = ZestProperties.getLabelPosition(edge);
-			if (labelPosition == null) {
-				labelPosition = getMidPoint();
-			}
-		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
-			labelPosition = ZestProperties.getExternalLabelPosition(edge);
-			if (labelPosition == null) {
-				labelPosition = getMidPoint();
-			}
-		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(getContent().getValue())) {
-			labelPosition = ZestProperties.getSourceLabelPosition(edge);
-			// use start point
-			if (labelPosition == null) {
-				labelPosition = getStartPoint();
-			}
-		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(getContent().getValue())) {
-			labelPosition = ZestProperties.getTargetLabelPosition(edge);
-			if (labelPosition == null) {
-				// use end point
-				labelPosition = getEndPoint();
-			}
-		}
-		refreshPosition(getVisual(), labelPosition);
+		refreshPosition(getVisual(), getStoredLabelPosition());
 	}
 
 	@SuppressWarnings("unchecked")

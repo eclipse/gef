@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+import javafx.collections.ObservableMap;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
@@ -65,6 +66,14 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.register(anchorage.getVisual(), getVisual());
 	}
+
+	/**
+	 * Computes a position for this label.
+	 *
+	 * @return The computed position for this label in the coordinate system of
+	 *         the {@link GraphPart} that contains this label.
+	 */
+	public abstract Point computeLabelPosition();
 
 	/**
 	 * Creates the text visual.
@@ -127,7 +136,12 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 	 * @return The label position stored in the attributes.
 	 */
 	public Point getStoredLabelPosition() {
-		return (Point) getContent().getKey().getAttributes().get(getLabelPositionAttributeKey());
+		String key = getLabelPositionAttributeKey();
+		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
+		if (!attributes.containsKey(key)) {
+			return null;
+		}
+		return (Point) attributes.get(key);
 	}
 
 	/**
@@ -159,6 +173,18 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Sets the stored label position to the given value.
+	 *
+	 * @param computedPosition
+	 *            The new label position.
+	 */
+	public void setStoredLabelPosition(Point computedPosition) {
+		String key = getLabelPositionAttributeKey();
+		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
+		attributes.put(key, computedPosition);
 	}
 
 }

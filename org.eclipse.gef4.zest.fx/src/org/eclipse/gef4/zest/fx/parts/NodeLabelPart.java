@@ -32,13 +32,28 @@ import javafx.scene.text.Text;
 import javafx.util.Pair;
 
 /**
- * The {@link NodeLabelPart} is an {@link AbstractVisualPart} that is
- * used to display the external label of a node.
+ * The {@link NodeLabelPart} is an {@link AbstractVisualPart} that is used to
+ * display the external label of a node.
  *
  * @author mwienand
  *
  */
 public class NodeLabelPart extends AbstractLabelPart {
+
+	@Override
+	public Point computeLabelPosition() {
+		IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> firstAnchorage = getFirstAnchorage();
+		// determine bounds of anchorage visual
+		Rectangle anchorageBounds = NodeUtils
+				.sceneToLocal(getVisual().getParent(), NodeUtils.localToScene(firstAnchorage.getVisual(),
+						FX2Geometry.toRectangle(firstAnchorage.getVisual().getLayoutBounds())))
+				.getBounds();
+		// determine text bounds
+		Bounds textBounds = getVisual().getLayoutBounds();
+		// TODO: compute better label position
+		return new Point(anchorageBounds.getX() + anchorageBounds.getWidth() / 2 - textBounds.getWidth() / 2,
+				anchorageBounds.getY() + anchorageBounds.getHeight());
+	}
 
 	@Override
 	protected Group createVisual() {
@@ -76,22 +91,7 @@ public class NodeLabelPart extends AbstractLabelPart {
 			return;
 		}
 
-		Point labelPosition = ZestProperties.getExternalLabelPosition(node);
-		if (labelPosition != null) {
-			refreshPosition(getVisual(), labelPosition);
-		} else {
-			// determine bounds of anchorage visual
-			Rectangle anchorageBounds = NodeUtils
-					.sceneToLocal(visual.getParent(), NodeUtils.localToScene(firstAnchorage.getVisual(),
-							FX2Geometry.toRectangle(firstAnchorage.getVisual().getLayoutBounds())))
-					.getBounds();
-			// determine text bounds
-			Bounds textBounds = getVisual().getLayoutBounds();
-			// TODO: compute better label position
-			refreshPosition(getVisual(),
-					new Point(anchorageBounds.getX() + anchorageBounds.getWidth() / 2 - textBounds.getWidth() / 2,
-							anchorageBounds.getY() + anchorageBounds.getHeight()));
-		}
+		refreshPosition(getVisual(), getStoredLabelPosition());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,11 +101,11 @@ public class NodeLabelPart extends AbstractLabelPart {
 	}
 
 	/**
-	 * Returns the {@link NodePart} for which this
-	 * {@link NodeLabelPart} displays the label.
+	 * Returns the {@link NodePart} for which this {@link NodeLabelPart}
+	 * displays the label.
 	 *
-	 * @return The {@link NodePart} for which this
-	 *         {@link NodeLabelPart} displays the label.
+	 * @return The {@link NodePart} for which this {@link NodeLabelPart}
+	 *         displays the label.
 	 */
 	public IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> getFirstAnchorage() {
 		return getAnchoragesUnmodifiable().isEmpty() ? null

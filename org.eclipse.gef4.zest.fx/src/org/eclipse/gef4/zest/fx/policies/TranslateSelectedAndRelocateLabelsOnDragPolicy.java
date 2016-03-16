@@ -13,7 +13,6 @@ package org.eclipse.gef4.zest.fx.policies;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -89,12 +88,6 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 			}
 		}
 		labelParts.removeAll(targetParts);
-		for (Iterator<AbstractLabelPart> iterator = labelParts.iterator(); iterator.hasNext();) {
-			// fiter out those that do not have a stored position
-			if (iterator.next().getStoredLabelPosition() == null) {
-				iterator.remove();
-			}
-		}
 		return new ArrayList<>(labelParts);
 	}
 

@@ -13,7 +13,6 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.parts.EdgePart;
 
 import javafx.scene.Node;
@@ -29,10 +28,14 @@ import javafx.scene.Node;
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
-	protected GraphLayoutContext getGraphLayoutContext() {
+	protected void adaptToLayout() {
+	}
+
+	@Override
+	protected GraphLayoutBehavior getGraphLayoutBehavior() {
 		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
-		return graphPart.getAdapter(GraphLayoutContext.class);
+		return graphPart.getAdapter(GraphLayoutBehavior.class);
 	}
 
 	@Override
@@ -41,11 +44,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected void postLayout() {
-	}
-
-	@Override
-	protected void preLayout() {
+	protected void provideLayout() {
 	}
 
 }

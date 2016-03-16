@@ -12,73 +12,104 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.parts.AbstractLabelPart;
 
 import javafx.scene.Node;
 
 /**
  * The {@link AbstractLayoutBehavior} is an abstract behavior that schedules
- * {@link #preLayout()} and {@link #postLayout()} to be called before or after a
- * layout pass, respectively. The {@link #preLayout()} method can be used to
- * write layout information into the layout model. Similarly, the
- * {@link #postLayout()} method can be used to read layout information from the
- * layout model.
+ * {@link #provideLayout()} and {@link #adaptToLayout()} to be called before or
+ * after a layout pass, respectively. The {@link #provideLayout()} method can be
+ * used to write layout information into the layout model. Similarly, the
+ * {@link #adaptToLayout()} method can be used to read layout information from
+ * the layout model.
  *
  * @author mwienand
  *
  */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	private Runnable postLayout = new Runnable() {
+	private Runnable adaptToLayout = new Runnable() {
 		@Override
 		public void run() {
-			postLayout();
+			adaptToLayout();
 		}
 	};
 
-	private Runnable preLayout = new Runnable() {
+	private Runnable provideLayout = new Runnable() {
 		@Override
 		public void run() {
-			preLayout();
+			provideLayout();
 		}
 	};
 
-	@Override
-	protected void doActivate() {
-		GraphLayoutContext layoutContext = getGraphLayoutContext();
-		layoutContext.schedulePreLayoutPass(preLayout);
-		layoutContext.schedulePostLayoutPass(postLayout);
-	}
-
-	@Override
-	protected void doDeactivate() {
-		GraphLayoutContext layoutContext = getGraphLayoutContext();
-		layoutContext.unschedulePreLayoutPass(preLayout);
-		layoutContext.unschedulePostLayoutPass(postLayout);
-	}
-
-	/**
-	 * Returns the {@link GraphLayoutContext} for which {@link #preLayout()} and
-	 * {@link #postLayout()} shall be called before or after a layout pass,
-	 * respectively.
-	 *
-	 * @return The {@link GraphLayoutContext} for which {@link #preLayout()} and
-	 *         {@link #postLayout()} shall be called before or after a layout
-	 *         pass, respectively.
-	 */
-	protected abstract GraphLayoutContext getGraphLayoutContext();
+	private Runnable updateLabels = new Runnable() {
+		@Override
+		public void run() {
+			updateLabels();
+		}
+	};
 
 	/**
 	 * Called after a layout pass. Should be used to transfer layout information
 	 * from the layout model over to the visualization.
 	 */
-	protected abstract void postLayout();
+	protected abstract void adaptToLayout();
+
+	@Override
+	protected void doActivate() {
+		GraphLayoutBehavior layoutBehavior = getGraphLayoutBehavior();
+		layoutBehavior.scheduleProvideLayout(provideLayout);
+		layoutBehavior.scheduleAdaptToLayout(adaptToLayout);
+		layoutBehavior.schedulePostLayoutPass(updateLabels);
+	}
+
+	@Override
+	protected void doDeactivate() {
+		GraphLayoutBehavior layoutBehavior = getGraphLayoutBehavior();
+		layoutBehavior.unscheduleProvideLayout(provideLayout);
+		layoutBehavior.unscheduleAdaptToLayout(adaptToLayout);
+		layoutBehavior.unschedulePostLayoutPass(updateLabels);
+	}
+
+	/**
+	 * Returns the {@link GraphLayoutContext} for which {@link #provideLayout()}
+	 * and {@link #adaptToLayout()} shall be called before or after a layout
+	 * pass, respectively.
+	 *
+	 * @return The {@link GraphLayoutContext} for which {@link #provideLayout()}
+	 *         and {@link #adaptToLayout()} shall be called before or after a
+	 *         layout pass, respectively.
+	 */
+	protected abstract GraphLayoutBehavior getGraphLayoutBehavior();
 
 	/**
 	 * Called before a layout pass. Should be used to transfer layout
 	 * information from the visualization over to the layout model.
 	 */
-	protected abstract void preLayout();
+	protected abstract void provideLayout();
+
+	/**
+	 * Called after all layout behaviors had the chance to adapt to the layout.
+	 * Should be used to update the label positions for the new layout.
+	 */
+	protected void updateLabels() {
+		// iterate anchoreds
+		for (IVisualPart<Node, ? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
+			// filter for label parts
+			if (anchored instanceof AbstractLabelPart) {
+				AbstractLabelPart labelPart = (AbstractLabelPart) anchored;
+				// compute label position
+				Point computedPosition = labelPart.computeLabelPosition();
+				// store it as an attribute
+				labelPart.setStoredLabelPosition(computedPosition);
+				labelPart.refreshVisual();
+			}
+		}
+	}
 
 }
