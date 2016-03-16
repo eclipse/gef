@@ -47,6 +47,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -170,6 +171,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to relocate on drag
 		adapterMapBinder.addBinding(AdapterKey.role("1"))
 				.to(FXTranslateSelectedOnDragPolicy.class);
+
+		// drag individual segments
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXBendOnSegmentDragPolicy.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTransformCurvePolicy.class);

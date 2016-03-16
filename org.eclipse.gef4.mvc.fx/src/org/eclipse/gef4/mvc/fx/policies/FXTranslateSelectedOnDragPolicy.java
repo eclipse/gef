@@ -149,7 +149,13 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 
 		// determine target parts
 		targetParts = getTargetParts();
-		if (targetParts.isEmpty()) {
+		// do not translate the only selected part if an
+		// FXBendOnSegmentDragPolicy is registered for that part
+		if (targetParts.size() == 1 && targetParts.get(0)
+				.getAdapter(FXBendOnSegmentDragPolicy.class) != null) {
+			targetParts = null;
+		}
+		if (targetParts == null || targetParts.isEmpty()) {
 			// abort this policy if no target parts could be found
 			targetParts = null;
 			return;
