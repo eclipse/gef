@@ -265,8 +265,8 @@ public class FXDefaultSelectionHandlePartFactory
 			for (int i = 0; i < segments.length; i++) {
 				// create handle for the start point of the curve
 				if (i == 0) {
-					FXCircleSegmentHandlePart part = injector
-							.getInstance(FXCircleSegmentHandlePart.class);
+					FXRectangleSegmentHandlePart part = injector
+							.getInstance(FXRectangleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
 					part.setSegmentIndex(i);
 					part.setSegmentParameter(0.0);
@@ -274,22 +274,22 @@ public class FXDefaultSelectionHandlePartFactory
 				}
 
 				// create quarter handle for the creation of a new segment
-				FXCircleSegmentHandlePart part = injector
-						.getInstance(FXCircleSegmentHandlePart.class);
+				FXRectangleSegmentHandlePart part = injector
+						.getInstance(FXRectangleSegmentHandlePart.class);
 				part.setSegmentsProvider(segmentsProvider);
 				part.setSegmentIndex(i);
 				part.setSegmentParameter(0.25);
 				hps.add(part);
 
 				// create mid point handle for the translation of a segment
-				part = injector.getInstance(FXCircleSegmentHandlePart.class);
+				part = injector.getInstance(FXRectangleSegmentHandlePart.class);
 				part.setSegmentsProvider(segmentsProvider);
 				part.setSegmentIndex(i);
 				part.setSegmentParameter(0.5);
 				hps.add(part);
 
 				// create quarter handle for the creation of a new segment
-				part = injector.getInstance(FXCircleSegmentHandlePart.class);
+				part = injector.getInstance(FXRectangleSegmentHandlePart.class);
 				part.setSegmentsProvider(segmentsProvider);
 				part.setSegmentIndex(i);
 				part.setSegmentParameter(0.75);
@@ -298,7 +298,7 @@ public class FXDefaultSelectionHandlePartFactory
 				// create handle for the end point of the curve
 				if (i == segments.length - 1) {
 					part = injector
-							.getInstance(FXCircleSegmentHandlePart.class);
+							.getInstance(FXRectangleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
 					part.setSegmentIndex(i);
 					part.setSegmentParameter(1.0);

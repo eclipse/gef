@@ -50,7 +50,8 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 	public int compareTo(AbstractFXSegmentHandlePart<? extends Node> o) {
 		// if we are bound to the same anchorages, we may compare segment
 		// positions, otherwise we are not comparable
-		if (!getAnchoragesUnmodifiable().equals(o.getAnchoragesUnmodifiable())) {
+		if (!getAnchoragesUnmodifiable()
+				.equals(o.getAnchoragesUnmodifiable())) {
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
@@ -61,6 +62,25 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 	@Override
 	public void doRefreshVisual(N visual) {
 		updateLocation(visual);
+	}
+
+	/**
+	 * Returns the {@link BezierCurve} at which this handle part is anchored
+	 * (depending on segment index), or <code>null</code> if that
+	 * {@link BezierCurve} cannot be determined.
+	 *
+	 * @return The {@link BezierCurve} at which this handle part is anchored, or
+	 *         <code>null</code> if that {@link BezierCurve} cannot be
+	 *         determined.
+	 */
+	protected BezierCurve getBezierSegmentInParent() {
+		segments = segmentsProvider.get();
+		if (segmentIndex < 0 || segmentIndex > segments.length - 1) {
+			return null;
+		} else {
+			return (BezierCurve) NodeUtils.sceneToLocal(getVisual().getParent(),
+					segments[segmentIndex]);
+		}
 	}
 
 	/**
@@ -184,19 +204,14 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node>
 			return;
 		}
 
-		segments = segmentsProvider.get();
-		if (segmentIndex < 0 || segmentIndex > segments.length - 1) {
+		BezierCurve segmentInParent = getBezierSegmentInParent();
+		if (segmentInParent == null) {
 			// hide those that have "invalid" index. (this may happen during
 			// life-feedback, when a way-point is removed)
 			visual.setVisible(false);
 		} else {
 			visual.setVisible(true);
-
-			// get new position (in parent coordinate space)
-			BezierCurve segmentInParent = (BezierCurve) NodeUtils
-					.sceneToLocal(visual.getParent(), segments[segmentIndex]);
 			Point positionInParent = getPosition(segmentInParent);
-
 			// transform to handle space
 			visual.relocate(
 					positionInParent.x + visual.getLayoutBounds().getMinX(),

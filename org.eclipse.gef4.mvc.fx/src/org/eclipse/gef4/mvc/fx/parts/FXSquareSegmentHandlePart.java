@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
 /**
- * An {@link AbstractFXSegmentHandlePart} with a
+ * An {@link AbstractFXSegmentHandlePart} with a quadratic
  * {@link javafx.scene.shape.Rectangle} visual.
  *
  * @author mwienand

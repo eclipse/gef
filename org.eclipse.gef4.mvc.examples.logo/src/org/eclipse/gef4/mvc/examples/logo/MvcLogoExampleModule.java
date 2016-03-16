@@ -38,12 +38,14 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
+import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -106,6 +108,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// select on type
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXSelectFocusedOnTypePolicy.class);
+	}
+
+	protected void bindFXCircleSegmentHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(
@@ -275,6 +282,11 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
+	}
+
+	protected void bindFXSquareSegmentHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(AdapterKey.role("0"))
 				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
@@ -319,10 +331,16 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFXGeometricCurvePartAdapters(AdapterMaps
 				.getAdapterMapBinder(binder(), FXGeometricCurvePart.class));
 
-		// rectangle handles
+		// node selection handles and multi selection handles
+		bindFXSquareSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXSquareSegmentHandlePart.class));
+
+		// curve selection handles
+		bindFXCircleSegmentHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXCircleSegmentHandlePart.class));
 		bindFXRectangleSegmentHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(),
-						FXSquareSegmentHandlePart.class));
+						FXCircleSegmentHandlePart.class));
 
 		// hover handles
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
