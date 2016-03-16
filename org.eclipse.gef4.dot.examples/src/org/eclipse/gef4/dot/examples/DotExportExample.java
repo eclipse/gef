@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.examples;
 
-import org.eclipse.gef4.dot.internal.DotExport;
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.DotExport;
 import org.eclipse.gef4.graph.Graph;
 
 public final class DotExportExample {
@@ -19,15 +19,14 @@ public final class DotExportExample {
 	public static void main(final String[] args) {
 		/* Set up a directed graph with a single connection: */
 		Graph graph = new Graph.Builder()
-				.attr(DotAttributes.GRAPH_TYPE,
-						DotAttributes.GRAPH_TYPE_DIRECTED)
-				.node("n1").attr(DotAttributes.NODE_ID, "1")
-				.attr(DotAttributes.NODE_LABEL, "Node 1")//
-				.node("n2").attr(DotAttributes.NODE_ID, "2")
-				.attr(DotAttributes.NODE_LABEL, "Node 2")//
+				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH)
+				.node("n1").attr(DotAttributes._NAME__GNE, "1")
+				.attr(DotAttributes.LABEL__GNE, "Node 1")//
+				.node("n2").attr(DotAttributes._NAME__GNE, "2")
+				.attr(DotAttributes.LABEL__GNE, "Node 2")//
 				.edge("n1", "n2")
-				.attr(DotAttributes.EDGE_LABEL, "A dotted edge")
-				.attr(DotAttributes.EDGE_STYLE, DotAttributes.EDGE_STYLE_DOTTED)
+				.attr(DotAttributes.LABEL__GNE, "A dotted edge")
+				.attr(DotAttributes.STYLE__E, DotAttributes.STYLE__E__DOTTED)
 				.build();
 
 		/* Export the graph to a DOT string or a DOT file: */

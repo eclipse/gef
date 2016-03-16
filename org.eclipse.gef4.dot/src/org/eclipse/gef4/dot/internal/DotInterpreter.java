@@ -51,7 +51,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String globalNodeLabel;
 	private String currentEdgeStyle;
 	private String currentEdgeLabel;
-	private String currentEdgeSourceNodeId;
+	private String currentEdgeSourceNodeName;
 	private String currentEdgePos;
 	private boolean createEdge;
 	private String currentEdgeXLabel;
@@ -61,6 +61,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String currentEdgeHeadLabel;
 	private String currentEdgeHeadLp;
 	private String currentEdgeTailLp;
+	private String currentEdgeId;
+	private String currentEdgeOp;
 
 	/**
 	 * @param dotAst
@@ -68,9 +70,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	 * @return A graph instance for the given DOT AST
 	 */
 	public Graph interpret(DotAst dotAst) {
-		return interpret(dotAst,
-				new Graph.Builder().attr(DotAttributes.GRAPH_LAYOUT,
-						DotAttributes.GRAPH_LAYOUT_DEFAULT));
+		return interpret(dotAst, new Graph.Builder().attr(
+				DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DEFAULT));
 	}
 
 	private Graph interpret(DotAst dotAst, Graph.Builder graph) {
@@ -101,19 +102,18 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		 * Convenience for common 'rankdir=LR' attribute: use
 		 * TreeLayoutAlgorithm.LEFT_RIGHT if nothing else is specified
 		 */
-		if (DotAttributes.GRAPH_RANKDIR.equals(object.getName())) {
+		if (DotAttributes.RANKDIR__G.equals(object.getName())) {
 			String value = object.getValue();
 			if (value == null)
 				value = "";
 			value = value.toLowerCase();
-			boolean lr = DotAttributes.GRAPH_RANKDIR_LR.equals(value);
-			boolean td = DotAttributes.GRAPH_RANKDIR_TD.equals(value);
-			graph.attr(DotAttributes.GRAPH_LAYOUT,
-					DotAttributes.GRAPH_LAYOUT_DOT);
-			graph.attr(DotAttributes.GRAPH_RANKDIR,
-					lr ? DotAttributes.GRAPH_RANKDIR_LR
-							: td ? DotAttributes.GRAPH_RANKDIR_TD
-									: DotAttributes.GRAPH_RANKDIR_DEFAULT);
+			boolean lr = DotAttributes.RANKDIR__G__LR.equals(value);
+			boolean td = DotAttributes.RANKDIR__G__TD.equals(value);
+			graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+			graph.attr(DotAttributes.RANKDIR__G,
+					lr ? DotAttributes.RANKDIR__G__LR
+							: td ? DotAttributes.RANKDIR__G__TD
+									: DotAttributes.RANKDIR__G__DEFAULT);
 		}
 		return super.caseAttribute(object);
 	}
@@ -132,65 +132,72 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	@Override
 	public Object caseEdgeStmtNode(EdgeStmtNode object) {
-		currentEdgeLabel = getAttributeValue(object, DotAttributes.EDGE_LABEL);
-		currentEdgeLp = getAttributeValue(object, DotAttributes.EDGE_LP);
-		currentEdgeXLabel = getAttributeValue(object,
-				DotAttributes.EDGE_XLABEL);
-		currentEdgeXlp = getAttributeValue(object, DotAttributes.EDGE_XLP);
-		currentEdgeStyle = getAttributeValue(object, DotAttributes.EDGE_STYLE);
-		currentEdgePos = getAttributeValue(object, DotAttributes.EDGE_POS);
+		currentEdgeId = getAttributeValue(object, DotAttributes.ID__GNE);
+		currentEdgeLabel = getAttributeValue(object, DotAttributes.LABEL__GNE);
+		currentEdgeLp = getAttributeValue(object, DotAttributes.LP__E);
+		currentEdgeXLabel = getAttributeValue(object, DotAttributes.XLABEL__NE);
+		currentEdgeXlp = getAttributeValue(object, DotAttributes.XLP__NE);
+		currentEdgeStyle = getAttributeValue(object, DotAttributes.STYLE__E);
+		currentEdgePos = getAttributeValue(object, DotAttributes.POS__NE);
 		currentEdgeHeadLabel = getAttributeValue(object,
-				DotAttributes.EDGE_HEADLABEL);
-		currentEdgeHeadLp = getAttributeValue(object,
-				DotAttributes.EDGE_HEAD_LP);
+				DotAttributes.HEADLABEL__E);
+		currentEdgeHeadLp = getAttributeValue(object, DotAttributes.HEAD_LP__E);
 		currentEdgeTailLabel = getAttributeValue(object,
-				DotAttributes.EDGE_TAILLABEL);
-		currentEdgeTailLp = getAttributeValue(object,
-				DotAttributes.EDGE_TAIL_LP);
+				DotAttributes.TAILLABEL__E);
+		currentEdgeTailLp = getAttributeValue(object, DotAttributes.TAIL_LP__E);
 		return super.caseEdgeStmtNode(object);
 	}
 
 	@Override
 	public Object caseNodeId(NodeId object) {
 		if (!createEdge) {
-			currentEdgeSourceNodeId = escaped(object.getName());
+			currentEdgeSourceNodeName = escaped(object.getName());
 		} else {
 			String targetNodeId = escaped(object.getName());
-			if (currentEdgeSourceNodeId != null && targetNodeId != null) {
+			if (currentEdgeSourceNodeName != null && targetNodeId != null) {
 				createEdge(targetNodeId);
 				// current target node may be source for next EdgeRHS
-				currentEdgeSourceNodeId = targetNodeId;
+				currentEdgeSourceNodeName = targetNodeId;
 			}
 			createEdge = false;
 		}
 		return super.caseNodeId(object);
 	}
 
-	private void createEdge(String targetNodeId) {
+	private void createEdge(String targetNodeName) {
 		Edge.Builder edgeBuilder = new Edge.Builder(
-				node(currentEdgeSourceNodeId), node(targetNodeId));
+				node(currentEdgeSourceNodeName), node(targetNodeName));
+
+		// name (always set)
+		String name = currentEdgeSourceNodeName + currentEdgeOp
+				+ targetNodeName;
+		edgeBuilder.attr(DotAttributes._NAME__GNE, name);
+
+		// id
+		if (currentEdgeId != null) {
+			edgeBuilder.attr(DotAttributes.ID__GNE, currentEdgeId);
+		}
+
 		// label
 		if (currentEdgeLabel != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_LABEL, currentEdgeLabel);
+			edgeBuilder.attr(DotAttributes.LABEL__GNE, currentEdgeLabel);
 		} else if (globalEdgeLabel != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_LABEL, globalEdgeLabel);
+			edgeBuilder.attr(DotAttributes.LABEL__GNE, globalEdgeLabel);
 		}
 
 		// external label (xlabel)
 		if (currentEdgeXLabel != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_XLABEL, currentEdgeXLabel);
+			edgeBuilder.attr(DotAttributes.XLABEL__NE, currentEdgeXLabel);
 		}
 
 		// head label (headllabel)
 		if (currentEdgeHeadLabel != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_HEADLABEL,
-					currentEdgeHeadLabel);
+			edgeBuilder.attr(DotAttributes.HEADLABEL__E, currentEdgeHeadLabel);
 		}
 
 		// tail label (taillabel)
 		if (currentEdgeTailLabel != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_TAILLABEL,
-					currentEdgeTailLabel);
+			edgeBuilder.attr(DotAttributes.TAILLABEL__E, currentEdgeTailLabel);
 		}
 
 		// style
@@ -198,40 +205,40 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				currentEdgeStyle == null ? "" : currentEdgeStyle).toLowerCase();
 		String globalEdgeStyleLc = new String(
 				globalEdgeStyle == null ? "" : globalEdgeStyle).toLowerCase();
-		if (!DotAttributes.EDGE_STYLE_VOID.equals(currentEdgeStyleLc)
+		if (!DotAttributes.STYLE__E__VOID.equals(currentEdgeStyleLc)
 				&& supported(currentEdgeStyleLc,
-						DotAttributes.EDGE_STYLE_VALUES)) {
+						DotAttributes.STYLE__E__VALUES)) {
 			// if an explicit local style is set, use it
-			edgeBuilder.attr(DotAttributes.EDGE_STYLE, currentEdgeStyleLc);
-		} else if (!DotAttributes.EDGE_STYLE_VOID.equals(globalEdgeStyleLc)
+			edgeBuilder.attr(DotAttributes.STYLE__E, currentEdgeStyleLc);
+		} else if (!DotAttributes.STYLE__E__VOID.equals(globalEdgeStyleLc)
 				&& supported(globalEdgeStyleLc,
-						DotAttributes.EDGE_STYLE_VALUES)) {
+						DotAttributes.STYLE__E__VALUES)) {
 			// if an explicit global style is set, use it
-			edgeBuilder.attr(DotAttributes.EDGE_STYLE, globalEdgeStyleLc);
+			edgeBuilder.attr(DotAttributes.STYLE__E, globalEdgeStyleLc);
 		}
 
 		// position (pos)
 		if (currentEdgePos != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_POS, currentEdgePos);
+			edgeBuilder.attr(DotAttributes.POS__NE, currentEdgePos);
 		}
 		// label position (lp)
 		if (currentEdgeLp != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_LP, currentEdgeLp);
+			edgeBuilder.attr(DotAttributes.LP__E, currentEdgeLp);
 		}
 
 		// external label position (xlp)
 		if (currentEdgeXlp != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_XLP, currentEdgeXlp);
+			edgeBuilder.attr(DotAttributes.XLP__NE, currentEdgeXlp);
 		}
 
 		// head label position (head_lp)
 		if (currentEdgeHeadLp != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_HEAD_LP, currentEdgeHeadLp);
+			edgeBuilder.attr(DotAttributes.HEAD_LP__E, currentEdgeHeadLp);
 		}
 
 		// tail label position (tail_lp)
 		if (currentEdgeTailLp != null) {
-			edgeBuilder.attr(DotAttributes.EDGE_TAIL_LP, currentEdgeTailLp);
+			edgeBuilder.attr(DotAttributes.TAIL_LP__E, currentEdgeTailLp);
 		}
 
 		graph.edges(edgeBuilder.buildEdge());
@@ -248,6 +255,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	public Object caseEdgeRhsNode(EdgeRhsNode object) {
 		// Set the flag for the node_id case handled above
 		createEdge = true;
+		currentEdgeOp = object.getOp().getLiteral();
 		return super.caseEdgeRhsNode(object);
 	}
 
@@ -258,14 +266,21 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	// private implementation of the cases above
 
-	private void createGraph(DotGraph object) {
-		graph.attr(DotAttributes.GRAPH_LAYOUT,
-				DotAttributes.GRAPH_LAYOUT_DEFAULT);
-		GraphType graphType = object.getType();
-		graph.attr(DotAttributes.GRAPH_TYPE,
-				graphType == GraphType.DIGRAPH
-						? DotAttributes.GRAPH_TYPE_DIRECTED
-						: DotAttributes.GRAPH_TYPE_UNDIRECTED);
+	private void createGraph(DotGraph dotGraph) {
+		// name (from grammar definition, not attribute)
+		String name = escaped(dotGraph.getName());
+		if (name != null) {
+			graph.attr(DotAttributes._NAME__GNE, name);
+		}
+
+		// TODO: extract layout from dot!
+		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DEFAULT);
+
+		// type
+		GraphType graphType = dotGraph.getType();
+		graph.attr(DotAttributes._TYPE__G,
+				graphType == GraphType.DIGRAPH ? DotAttributes._TYPE__G__GRAPH
+						: DotAttributes._TYPE__G__DIGRAPH);
 	}
 
 	private void createAttributes(final AttrStmt attrStmt) {
@@ -276,14 +291,14 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		switch (type) {
 		case EDGE: {
 			globalEdgeStyle = getAttributeValue(attrStmt,
-					DotAttributes.EDGE_STYLE);
+					DotAttributes.STYLE__E);
 			globalEdgeLabel = getAttributeValue(attrStmt,
-					DotAttributes.EDGE_LABEL);
+					DotAttributes.LABEL__GNE);
 			break;
 		}
 		case NODE: {
 			globalNodeLabel = getAttributeValue(attrStmt,
-					DotAttributes.NODE_LABEL);
+					DotAttributes.LABEL__GNE);
 			break;
 		}
 		case GRAPH: {
@@ -293,16 +308,16 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				}
 			}
 			String graphLayout = getAttributeValue(attrStmt,
-					DotAttributes.GRAPH_LAYOUT);
+					DotAttributes.LAYOUT_G);
 			if (graphLayout != null) {
 				String graphLayoutLc = new String(graphLayout).toLowerCase();
 				if (!supported(graphLayoutLc,
-						DotAttributes.GRAPH_LAYOUT_VALUES)) {
+						DotAttributes.LAYOUT__G__VALUES)) {
 					throw new IllegalArgumentException(
 							"Unknown layout algorithm <" + graphLayoutLc
 									+ ">.");
 				}
-				graph.attr(DotAttributes.GRAPH_LAYOUT, graphLayoutLc);
+				graph.attr(DotAttributes.LAYOUT_G, graphLayoutLc);
 			}
 			break;
 		}
@@ -310,54 +325,66 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	}
 
 	private void createNode(final NodeStmt nodeStatement) {
-		String nodeId = escaped(nodeStatement.getNode().getName());
-
+		// name (from grammar definition, not attribute)
+		String nodeName = escaped(nodeStatement.getNode().getName());
 		Node node;
-		if (nodes.containsKey(nodeId)) {
-			node = nodes.get(nodeId);
+		if (nodes.containsKey(nodeName)) {
+			node = nodes.get(nodeName);
 		} else {
-			node = new Node.Builder().attr(DotAttributes.NODE_ID, nodeId)
+			node = new Node.Builder().attr(DotAttributes._NAME__GNE, nodeName)
 					.buildNode();
 		}
 
+		// id
+		String id = getAttributeValue(nodeStatement, DotAttributes.ID__GNE);
+		if (id != null) {
+			DotAttributes.setId(node, id);
+		}
+
+		// label
 		String label = getAttributeValue(nodeStatement,
-				DotAttributes.NODE_LABEL);
+				DotAttributes.LABEL__GNE);
 		if (label != null) {
 			DotAttributes.setLabel(node, label);
 		} else if (globalNodeLabel != null) {
 			DotAttributes.setLabel(node, globalNodeLabel);
 		}
 
+		// xlabel
 		String xLabel = getAttributeValue(nodeStatement,
-				DotAttributes.NODE_XLABEL);
+				DotAttributes.XLABEL__NE);
 		if (xLabel != null) {
 			DotAttributes.setXLabel(node, xLabel);
 		}
 
-		String pos = getAttributeValue(nodeStatement, DotAttributes.NODE_POS);
+		// pos
+		String pos = getAttributeValue(nodeStatement, DotAttributes.POS__NE);
 		if (pos != null) {
 			DotAttributes.setPos(node, pos);
 		}
 
-		String xlp = getAttributeValue(nodeStatement, DotAttributes.NODE_XLP);
+		// xlp
+		String xlp = getAttributeValue(nodeStatement, DotAttributes.XLP__NE);
 		if (xlp != null) {
 			DotAttributes.setXlp(node, xlp);
 		}
 
-		String width = getAttributeValue(nodeStatement,
-				DotAttributes.NODE_WIDTH);
+		// width
+		String width = getAttributeValue(nodeStatement, DotAttributes.WIDTH__N);
 		if (width != null) {
 			DotAttributes.setWidth(node, width);
 		}
 
+		// height
 		String height = getAttributeValue(nodeStatement,
-				DotAttributes.NODE_HEIGHT);
+				DotAttributes.HEIGHT__N);
 		if (height != null) {
 			DotAttributes.setHeight(node, height);
 		}
 
-		if (!nodes.containsKey(nodeId)) {
-			nodes.put(nodeId, node);
+		// TODO: do we have to perform containment check here??
+		if (!nodes.containsKey(nodeName)) {
+			nodes.put(nodeName, node);
 			graph = graph.nodes(node);
 		}
 	}
@@ -365,9 +392,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private Node node(String id) {
 		if (!nodes.containsKey(id)) { // undeclared node, as in "graph{1->2}"
 			Node node = new Node.Builder()
-					.attr(DotAttributes.NODE_LABEL,
+					.attr(DotAttributes.LABEL__GNE,
 							globalNodeLabel != null ? globalNodeLabel : id)
-					.attr(DotAttributes.NODE_ID, id).buildNode();
+					.attr(DotAttributes._NAME__GNE, id).buildNode();
 			nodes.put(id, node);
 			graph = graph.nodes(node);
 		}
@@ -406,6 +433,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	}
 
 	private String escaped(String id) {
+		if (id == null) {
+			return null;
+		}
 		return id
 				/* In DOT, an ID can be quoted... */
 				.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$

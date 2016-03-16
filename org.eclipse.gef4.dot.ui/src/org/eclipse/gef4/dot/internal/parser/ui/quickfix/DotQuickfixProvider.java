@@ -34,7 +34,7 @@ public class DotQuickfixProvider extends DefaultQuickfixProvider {
 	@Fix(DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_STYLE)
 	public void fixEdgeStyleAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
-		for (String edgeStyle : DotAttributes.EDGE_STYLE_VALUES) {
+		for (String edgeStyle : DotAttributes.STYLE__E__VALUES) {
 			// quote values if needed, otherwise use plain attribute value
 			final String validValue = DotTerminalConverters.needsToBeQuoted(
 					edgeStyle) ? DotTerminalConverters.quote(edgeStyle)

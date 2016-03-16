@@ -55,12 +55,12 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	@Check
 	public void checkValidAttributeValue(Attribute attribute) {
 		if (isEdgeAttribute(attribute)
-				&& DotAttributes.EDGE_STYLE.equals(attribute.getName())) {
+				&& DotAttributes.STYLE__E.equals(attribute.getName())) {
 			// 'style' can also be used for nodes or clusters, so we have to
 			// check the context as well
 			String unquotedValue = DotTerminalConverters
 					.unquote(attribute.getValue());
-			if (!DotAttributes.EDGE_STYLE_VALUES.contains(unquotedValue)) {
+			if (!DotAttributes.STYLE__E__VALUES.contains(unquotedValue)) {
 				// provide (issue) code and data for quickfix
 				error("Style '" + unquotedValue
 						+ "' is not a valid DOT style for Edge.",

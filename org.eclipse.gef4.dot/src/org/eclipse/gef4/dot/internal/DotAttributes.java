@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.dot.internal.parser.DotAttributesStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.Point;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotAttributesParser;
@@ -54,664 +55,508 @@ public class DotAttributes {
 			.getInstance(DotAttributesGrammarAccess.class);
 
 	/**
-	 * Specifies the identifier of a node.
+	 * Specifies the name of a graph, node, or edge (not an attribute), as
+	 * retrieved through the graph, node_id, as well as edge_stmt and edgeRHS
+	 * grammar rules.
 	 */
-	public static final String NODE_ID = "id";
+	public static final String _NAME__GNE = "_name";
 
 	/**
-	 * Specifies the label of a node.
+	 * Specifies the graph type. Possible values are defined by
+	 * {@link #_TYPE__G__VALUES}.
 	 */
-	public static final String NODE_LABEL = "label";
+	public static final String _TYPE__G = "_type";
 
 	/**
-	 * Specified the 'pos' attribute of a node
+	 * This {@link #_TYPE__G} value specifies that the edges within the graph
+	 * are undirected.
 	 */
-	public static final String NODE_POS = "pos";
+	public static final String _TYPE__G__DIGRAPH = GraphType.DIGRAPH
+			.getLiteral();
 
 	/**
-	 * Specified the 'height' attribute of a node
+	 * This {@link #_TYPE__G} value specifies that the edges within the graph
+	 * are directed.
 	 */
-	public static final String NODE_HEIGHT = "height";
+	public static final String _TYPE__G__GRAPH = GraphType.GRAPH.getLiteral();
 
 	/**
-	 * Specified the 'width' attribute of a node
+	 * Defines all possible values for the {@link #_TYPE__G} property.
 	 */
-	public static final String NODE_WIDTH = "width";
+	public static final Set<String> _TYPE__G__VALUES = new HashSet<>(
+			Arrays.asList(_TYPE__G__GRAPH, _TYPE__G__DIGRAPH));
 
 	/**
-	 * Specifies the 'id' attribuge of an edge.
+	 * Specifies the 'head_lp' attribute (head label position) of an edge.
 	 */
-	public static final String EDGE_ID = "id";
-
-	/**
-	 * Specifies the 'pos' attribute of an edge.
-	 */
-	public static final String EDGE_POS = "pos";
-
-	/**
-	 * Specifies the label of an edge.
-	 */
-	public static final String EDGE_LABEL = "label";
-
-	/**
-	 * Specifies the tail label of an edge (taillabel).
-	 */
-	public static final String EDGE_TAILLABEL = "taillabel";
+	public static final String HEAD_LP__E = "head_lp";
 
 	/**
 	 * Specifies the tail label of an edge (headlabel).
 	 */
-	public static final String EDGE_HEADLABEL = "headlabel";
+	public static final String HEADLABEL__E = "headlabel";
 
 	/**
-	 * Specifies the external label of an edge.
+	 * Specified the 'height' attribute of a node.
 	 */
-	public static final String EDGE_XLABEL = "xlabel";
+	public static final String HEIGHT__N = "height";
 
 	/**
-	 * Specifies the external label of an node.
+	 * Specifies the 'id' attribute of a graph, node, or edge.
 	 */
-	public static final String NODE_XLABEL = "xlabel";
+	public static final String ID__GNE = "id";
 
 	/**
-	 * Specifies the position of a node's external label.
+	 * Specifies the 'label' attribute of a graph, node, or edge.
 	 */
-	public static final String NODE_XLP = "xlp";
+	public static final String LABEL__GNE = "label";
 
 	/**
-	 * Specifies the position of an edge's external label.
+	 * This {@link #LAYOUT_G} value specifies that the "circo" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
-	public static final String EDGE_XLP = "xlp";
+	public static final String LAYOUT__G__CIRCO = "circo";
 
 	/**
-	 * Specifies the position of an edge's label (lp).
+	 * This {@link #LAYOUT_G} value specifies that the "dot" layout algorithm is
+	 * to be used for laying out the graph.
 	 */
-	public static final String EDGE_LP = "lp";
+	public static final String LAYOUT__G__DOT = "dot";
 
 	/**
-	 * Specifies the position of an edge's head label (head_lp).
+	 * This {@link #LAYOUT_G} value specifies that the "fdp" layout algorithm is
+	 * to be used for laying out the graph.
 	 */
-	public static final String EDGE_HEAD_LP = "head_lp";
+	public static final String LAYOUT__G__FDP = "fdp";
 
 	/**
-	 * Specifies the position of an edge's tail label (tail_lp).
+	 * This {@link #LAYOUT_G} value specifies that the "grid" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
-	public static final String EDGE_TAIL_LP = "tail_lp";
+	public static final String LAYOUT__G__GRID = "grid";
 
 	/**
-	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
-	 * dotted, etc. Possible values are defined by {@link #EDGE_STYLE_VALUES}.
-	 * The default value is defined by {@link #EDGE_STYLE_DEFAULT}.
+	 * This {@link #LAYOUT_G} value specifies that the "neato" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
-	public static final String EDGE_STYLE = "style";
+	public static final String LAYOUT__G__NEATO = "neato";
 
 	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered with
-	 * the void, which means the the original Dot default value is used.
+	 * This {@link #LAYOUT_G} value specifies that the "osage" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
-	public static final String EDGE_STYLE_VOID = "";
+	public static final String LAYOUT__G__OSAGE = "osage";
 
 	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
-	 * dashed.
+	 * This {@link #LAYOUT_G} value specifies that the "sfdp" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
-	public static final String EDGE_STYLE_DASHED = "dashed";
+	public static final String LAYOUT__G__SFDP = "sfdp";
 
 	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
-	 * dotted.
+	 * This {@link #LAYOUT_G} value specifies that the "twopi" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
-	public static final String EDGE_STYLE_DOTTED = "dotted";
+	public static final String LAYOUT__G__TWOPI = "twopi";
 
 	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered solid.
+	 * Defines the default value for the {@link #LAYOUT_G} property, which is
+	 * {@link #LAYOUT__G__DOT}.
 	 */
-	public static final String EDGE_STYLE_SOLID = "solid";
+	public static final String LAYOUT__G__DEFAULT = LAYOUT__G__DOT;
 
 	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
-	 * invisible.
+	 * Defines all possible values for the {@link #LAYOUT_G} property.
 	 */
-	public static final String EDGE_STYLE_INVIS = "invis";
-
-	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered bold.
-	 */
-	public static final String EDGE_STYLE_BOLD = "bold";
-
-	/**
-	 * This {@link #EDGE_STYLE} value specifies that the edge is rendered
-	 * tapered.
-	 */
-	public static final String EDGE_STYLE_TAPERED = "tapered";
-
-	/**
-	 * Defines all possible values for the {@link #EDGE_STYLE} property.
-	 */
-	public static final Set<String> EDGE_STYLE_VALUES = new HashSet<>(
-			Arrays.asList(EDGE_STYLE_DASHED, EDGE_STYLE_DOTTED,
-					EDGE_STYLE_SOLID, EDGE_STYLE_INVIS, EDGE_STYLE_BOLD,
-					EDGE_STYLE_TAPERED, EDGE_STYLE_VOID));
-
-	/**
-	 * Defines the default value for the {@link #EDGE_STYLE} property, which is
-	 * {@link #EDGE_STYLE_SOLID}.
-	 */
-	public static final String EDGE_STYLE_DEFAULT = EDGE_STYLE_SOLID;
-
-	/**
-	 * Specifies the graph type. Possible values are defined by
-	 * {@link #GRAPH_TYPE_VALUES}. The default value is defined by
-	 * {@link #GRAPH_TYPE_DEFAULT}.
-	 */
-	public static final String GRAPH_TYPE = "type";
-
-	/**
-	 * This {@link #GRAPH_TYPE} value specifies that the edges within the graph
-	 * are directed.
-	 */
-	public static final String GRAPH_TYPE_DIRECTED = "directed";
-
-	/**
-	 * This {@link #GRAPH_TYPE} value specifies that the edges within the graph
-	 * are undirected.
-	 */
-	public static final String GRAPH_TYPE_UNDIRECTED = "undirected";
-
-	/**
-	 * Defines all possible values for the {@link #GRAPH_TYPE} property.
-	 */
-	public static final Set<String> GRAPH_TYPE_VALUES = new HashSet<>(
-			Arrays.asList(GRAPH_TYPE_DIRECTED, GRAPH_TYPE_UNDIRECTED));
-
-	/**
-	 * Defines the default value for {@link #GRAPH_TYPE}, which is
-	 * {@link #GRAPH_TYPE_UNDIRECTED}.
-	 */
-	public static final String GRAPH_TYPE_DEFAULT = GRAPH_TYPE_UNDIRECTED;
+	public static final Set<String> LAYOUT__G__VALUES = new HashSet<>(
+			Arrays.asList(LAYOUT__G__DOT, LAYOUT__G__OSAGE, LAYOUT__G__GRID,
+					LAYOUT__G__TWOPI, LAYOUT__G__CIRCO, LAYOUT__G__NEATO,
+					LAYOUT__G__FDP, LAYOUT__G__SFDP));
 
 	/**
 	 * Specifies the layout algorithm which shall be used to layout the graph.
-	 * Possible values are defined by {@link #GRAPH_LAYOUT_VALUES}. The default
-	 * value is defined by {@link #GRAPH_LAYOUT_DEFAULT}.
+	 * Possible values are defined by {@link #LAYOUT__G__VALUES}. The default
+	 * value is defined by {@link #LAYOUT__G__DEFAULT}.
 	 */
-	public static final String GRAPH_LAYOUT = "layout";
+	public static final String LAYOUT_G = "layout";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "dot" layout
-	 * algorithm is to be used for laying out the graph.
+	 * Specifies 'lp' attribute (label position) of an edge.
 	 */
-	public static final String GRAPH_LAYOUT_DOT = "dot";
+	public static final String LP__E = "lp";
 
 	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "osage" layout
-	 * algorithm is to be used for laying out the graph.
+	 * Specified the 'pos' attribute of a node or edge.
 	 */
-	public static final String GRAPH_LAYOUT_OSAGE = "osage";
-
-	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "grid" layout
-	 * algorithm is to be used for laying out the graph.
-	 */
-	public static final String GRAPH_LAYOUT_GRID = "grid";
-
-	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "twopi" layout
-	 * algorithm is to be used for laying out the graph.
-	 */
-	public static final String GRAPH_LAYOUT_TWOPI = "twopi";
-
-	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "circo" layout
-	 * algorithm is to be used for laying out the graph.
-	 */
-	public static final String GRAPH_LAYOUT_CIRCO = "circo";
-
-	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "neato" layout
-	 * algorithm is to be used for laying out the graph.
-	 */
-	public static final String GRAPH_LAYOUT_NEATO = "neato";
-
-	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "fdp" layout
-	 * algorithm is to be used for laying out the graph.
-	 */
-	public static final String GRAPH_LAYOUT_FDP = "fdp";
-
-	/**
-	 * This {@link #GRAPH_LAYOUT} value specifies that the "sfdp" layout
-	 * algorithm is to be used for laying out the graph.
-	 */
-	public static final String GRAPH_LAYOUT_SFDP = "sfdp";
-
-	/**
-	 * Defines all possible values for the {@link #GRAPH_LAYOUT} property.
-	 */
-	public static final Set<String> GRAPH_LAYOUT_VALUES = new HashSet<>(
-			Arrays.asList(GRAPH_LAYOUT_DOT, GRAPH_LAYOUT_OSAGE,
-					GRAPH_LAYOUT_GRID, GRAPH_LAYOUT_TWOPI, GRAPH_LAYOUT_CIRCO,
-					GRAPH_LAYOUT_NEATO, GRAPH_LAYOUT_FDP, GRAPH_LAYOUT_SFDP));
-
-	/**
-	 * Defines the default value for the {@link #GRAPH_LAYOUT} property, which
-	 * is {@link #GRAPH_LAYOUT_DOT}.
-	 */
-	public static final String GRAPH_LAYOUT_DEFAULT = GRAPH_LAYOUT_DOT;
+	public static final String POS__NE = "pos";
 
 	/**
 	 * Specifies the rankdir property which is passed to the layout algorithm
 	 * which is used for laying out the graph. Possible values are defined by
-	 * {@link #GRAPH_RANKDIR_VALUES}. The default value is defined by
-	 * {@link #GRAPH_RANKDIR_DEFAULT}.
+	 * {@link #RANKDIR__G__VALUES}. The default value is defined by
+	 * {@link #RANKDIR__G__DEFAULT}.
 	 */
-	public static final String GRAPH_RANKDIR = "rankdir";
+	public static final String RANKDIR__G = "rankdir";
 
 	/**
-	 * This {@link #GRAPH_RANKDIR} value specifies that the graph is to be laid
-	 * out horizontally from left to right.
+	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
+	 * horizontally from left to right.
 	 */
-	public static final String GRAPH_RANKDIR_LR = "lr";
+	public static final String RANKDIR__G__LR = "lr";
 
 	/**
-	 * This {@link #GRAPH_RANKDIR} value specifies that the graph is to be laid
-	 * out vertically from top to bottom.
+	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
+	 * vertically from top to bottom.
 	 */
-	public static final String GRAPH_RANKDIR_TD = "td";
+	public static final String RANKDIR__G__TD = "td";
 
 	/**
-	 * Defines all possible values for the {@link #GRAPH_RANKDIR} property.
+	 * Defines the default value for the {@link #RANKDIR__G} property.
 	 */
-	public static final Set<String> GRAPH_RANKDIR_VALUES = new HashSet<>(
-			Arrays.asList(GRAPH_RANKDIR_LR, GRAPH_RANKDIR_TD));
+	public static final String RANKDIR__G__DEFAULT = RANKDIR__G__TD;
 
 	/**
-	 * Defines the default value for the {@link #GRAPH_RANKDIR} property.
+	 * Defines all possible values for the {@link #RANKDIR__G} property.
 	 */
-	public static final String GRAPH_RANKDIR_DEFAULT = GRAPH_RANKDIR_TD;
+	public static final Set<String> RANKDIR__G__VALUES = new HashSet<>(
+			Arrays.asList(RANKDIR__G__LR, RANKDIR__G__TD));
 
 	/**
-	 * Returns the value of the {@link #GRAPH_LAYOUT} property of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #GRAPH_LAYOUT} property.
-	 * @return The value of the {@link #GRAPH_LAYOUT} property of the given
-	 *         {@link Graph}.
+	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
+	 * dotted, etc. Possible values are defined by {@link #STYLE__E__VALUES}.
+	 * The default value is defined by {@link #STYLE__E__DEFAULT}.
 	 */
-	public static String getLayout(Graph graph) {
-		return (String) graph.attributesProperty().get(GRAPH_LAYOUT);
-	}
+	public static final String STYLE__E = "style";
 
 	/**
-	 * Sets the {@link #GRAPH_LAYOUT} property of the given {@link Graph} to the
-	 * given <i>layout</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #GRAPH_LAYOUT} property.
-	 * @param layout
-	 *            The new value for the {@link #GRAPH_LAYOUT} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>layout</i> value is not supported, i.e. not
-	 *             contained within {@link #GRAPH_LAYOUT_VALUES}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered bold.
 	 */
-	public static void setLayout(Graph graph, String layout) {
-		if (!GRAPH_LAYOUT_VALUES.contains(layout)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"layout\" to \"" + layout
-							+ "\"; supported values: " + GRAPH_LAYOUT_VALUES);
-		}
-		graph.attributesProperty().put(GRAPH_LAYOUT, layout);
-	}
+	public static final String STYLE__E__BOLD = "bold";
 
 	/**
-	 * Returns the value of the {@link #GRAPH_TYPE} property of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #GRAPH_TYPE} property.
-	 * @return The value of the {@link #GRAPH_TYPE} property of the given
-	 *         {@link Graph}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered dashed.
 	 */
-	public static String getType(Graph graph) {
-		return (String) graph.attributesProperty().get(GRAPH_TYPE);
-	}
+	public static final String STYLE__E__DASHED = "dashed";
 
 	/**
-	 * Sets the {@link #GRAPH_TYPE} property of the given {@link Graph} to the
-	 * given <i>type</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #GRAPH_TYPE} property.
-	 * @param type
-	 *            The new value for the {@link #GRAPH_TYPE} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>type</i> value is not supported, i.e. not
-	 *             contained within {@link #GRAPH_TYPE_VALUES}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered dotted.
 	 */
-	public static void setType(Graph graph, String type) {
-		if (!GRAPH_TYPE_VALUES.contains(type)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"type\" to \"" + type
-							+ "\"; supported values: " + GRAPH_TYPE_VALUES);
-		}
-		graph.attributesProperty().put(GRAPH_TYPE, type);
-	}
+	public static final String STYLE__E__DOTTED = "dotted";
 
 	/**
-	 * Returns the value of the {@link #GRAPH_RANKDIR} property of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #GRAPH_RANKDIR} property.
-	 * @return The value of the {@link #GRAPH_RANKDIR} property of the given
-	 *         {@link Graph}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered
+	 * invisible.
 	 */
-	public static String getRankdir(Graph graph) {
-		return (String) graph.attributesProperty().get(GRAPH_RANKDIR);
-	}
+	public static final String STYLE__E__INVIS = "invis";
 
 	/**
-	 * Sets the {@link #GRAPH_RANKDIR} property of the given {@link Graph} to
-	 * the given <i>rankdir</i> value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #GRAPH_RANKDIR} property.
-	 * @param rankdir
-	 *            The new value for the {@link #GRAPH_RANKDIR} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>rankdir</i> value is not supported, i.e.
-	 *             not contained within {@link #GRAPH_RANKDIR_VALUES}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered solid.
 	 */
-	public static void setRankdir(Graph graph, String rankdir) {
-		if (!GRAPH_RANKDIR_VALUES.contains(rankdir)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"rankdir\" to \"" + rankdir
-							+ "\"; supported values: " + GRAPH_RANKDIR_VALUES);
-		}
-		graph.attributesProperty().put(GRAPH_RANKDIR, rankdir);
-	}
+	public static final String STYLE__E__SOLID = "solid";
 
 	/**
-	 * Returns the value of the {@link #NODE_LABEL} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_LABEL} property.
-	 * @return The value of the {@link #NODE_LABEL} property of the given
-	 *         {@link Node}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered tapered.
 	 */
-	public static String getLabel(Node node) {
-		return (String) node.attributesProperty().get(NODE_LABEL);
-	}
+	public static final String STYLE__E__TAPERED = "tapered";
 
 	/**
-	 * Returns the value of the {@link #NODE_XLABEL} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_XLABEL} property.
-	 * @return The value of the {@link #NODE_XLABEL} property of the given
-	 *         {@link Node}.
+	 * This {@link #STYLE__E} value specifies that the edge is rendered with the
+	 * void, which means the the original Dot default value is used.
 	 */
-	public static String getXLabel(Node node) {
-		return (String) node.attributesProperty().get(NODE_XLABEL);
-	}
+	public static final String STYLE__E__VOID = "";
 
 	/**
-	 * Returns the value of the {@link #EDGE_XLABEL} property of the given
+	 * Defines the default value for the {@link #STYLE__E} property, which is
+	 * {@link #STYLE__E__SOLID}.
+	 */
+	public static final String STYLE__E__DEFAULT = STYLE__E__SOLID;
+
+	/**
+	 * Defines all possible values for the {@link #STYLE__E} property.
+	 */
+	public static final Set<String> STYLE__E__VALUES = new HashSet<>(
+			Arrays.asList(STYLE__E__DASHED, STYLE__E__DOTTED, STYLE__E__SOLID,
+					STYLE__E__INVIS, STYLE__E__BOLD, STYLE__E__TAPERED,
+					STYLE__E__VOID));
+
+	/**
+	 * Specifies the 'tail_lp' attribute (tail label position) of an edge.
+	 */
+	public static final String TAIL_LP__E = "tail_lp";
+
+	/**
+	 * Specifies the tail label of an edge (taillabel).
+	 */
+	public static final String TAILLABEL__E = "taillabel";
+
+	/**
+	 * Specified the 'width' attribute of a node.
+	 */
+	public static final String WIDTH__N = "width";
+
+	/**
+	 * Specifies the external label of an node.
+	 */
+	public static final String XLABEL__NE = "xlabel";
+
+	/**
+	 * Specifies the 'xlp' attribute (external label position) of a node or
+	 * edge.
+	 */
+	public static final String XLP__NE = "xlp";
+
+	/**
+	 * Returns the value of the {@link #HEADLABEL__E} property of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_XLABEL} property.
-	 * @return The value of the {@link #EDGE_XLABEL} property of the given
+	 *            {@link #HEADLABEL__E} property.
+	 * @return The value of the {@link #HEADLABEL__E} property of the given
 	 *         {@link Edge}.
 	 */
-	public static String getXLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_XLABEL);
+	public static String getHeadLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(HEADLABEL__E);
 	}
 
 	/**
-	 * Returns the value of the {@link #NODE_XLP} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_XLP} property.
-	 * @return The value of the {@link #NODE_XLP} property of the given
-	 *         {@link Node}.
-	 */
-	public static String getXlp(Node node) {
-		return (String) node.attributesProperty().get(NODE_XLP);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_XLP} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_XLP} property.
-	 * @return The value of the {@link #EDGE_XLP} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getXlp(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_XLP);
-	}
-
-	/**
-	 * Sets the {@link #NODE_LABEL} property of the given {@link Node} to the
-	 * given <i>label</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #NODE_LABEL} property.
-	 * @param label
-	 *            The new value for the {@link #NODE_LABEL} property.
-	 */
-	public static void setLabel(Node node, String label) {
-		node.attributesProperty().put(NODE_LABEL, label);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_XLABEL} property of the given {@link Edge} to the
-	 * given <i>xLabel</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_XLABEL} property.
-	 * @param xLabel
-	 *            The new value for the {@link #EDGE_XLABEL} property.
-	 */
-	public static void setXLabel(Edge edge, String xLabel) {
-		edge.attributesProperty().put(EDGE_XLABEL, xLabel);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_XLP} property of the given {@link Edge} to the
-	 * given <i>xlp</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_XLP} property.
-	 * @param xlp
-	 *            The new value for the {@link #EDGE_XLP} property.
-	 */
-	public static void setXlp(Edge edge, String xlp) {
-		edge.attributesProperty().put(EDGE_XLP, xlp);
-	}
-
-	/**
-	 * Sets the {@link #NODE_XLP} property of the given {@link Node} to the
-	 * given <i>xlp</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #NODE_XLP} property.
-	 * @param xlp
-	 *            The new value for the {@link #NODE_XLP} property.
-	 */
-	public static void setXlp(Node node, String xlp) {
-		node.attributesProperty().put(NODE_XLP, xlp);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_LP} property of the given {@link Edge} to the given
-	 * <i>lp</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_LP} property.
-	 * @param lp
-	 *            The new value for the {@link #EDGE_LP} property.
-	 */
-	public static void setLp(Edge edge, String lp) {
-		edge.attributesProperty().put(EDGE_LP, lp);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_HEAD_LP} property of the given {@link Edge} to the
-	 * given <i>headLp</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_HEAD_LP} property.
-	 * @param headLp
-	 *            The new value for the {@link #EDGE_HEAD_LP} property.
-	 */
-	public static void setHeadLp(Edge edge, String headLp) {
-		edge.attributesProperty().put(EDGE_LP, headLp);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_TAIL_LP} property of the given {@link Edge} to the
-	 * given <i>tailLp</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_TAIL_LP} property.
-	 * @param tailLp
-	 *            The new value for the {@link #EDGE_TAIL_LP} property.
-	 */
-	public static void setTailLp(Edge edge, String tailLp) {
-		edge.attributesProperty().put(EDGE_TAIL_LP, tailLp);
-	}
-
-	/**
-	 * Sets the {@link #NODE_XLABEL} property of the given {@link Node} to the
-	 * given <i>xLabel</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #NODE_XLABEL} property.
-	 * @param xLabel
-	 *            The new value for the {@link #NODE_XLABEL} property.
-	 */
-	public static void setXLabel(Node node, String xLabel) {
-		node.attributesProperty().put(NODE_XLABEL, xLabel);
-	}
-
-	/**
-	 * Returns the value of the {@link #NODE_ID} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_ID} property.
-	 * @return The value of the {@link #NODE_ID} property of the given
-	 *         {@link Node}.
-	 */
-	public static String getId(Node node) {
-		return (String) node.attributesProperty().get(NODE_ID);
-	}
-
-	/**
-	 * Returns the value of the {@link #NODE_POS} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_POS} property.
-	 * @return The value of the {@link #NODE_POS} property of the given
-	 *         {@link Node}.
-	 */
-	public static String getPos(Node node) {
-		return (String) node.attributesProperty().get(NODE_POS);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_POS} property of the given
+	 * Returns the value of the {@link #HEAD_LP__E} property of the given
 	 * {@link Node}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_POS} property.
-	 * @return The value of the {@link #EDGE_POS} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getPos(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_POS);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_LP} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_LP} property.
-	 * @return The value of the {@link #EDGE_LP} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getLp(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_LP);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_HEAD_LP} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_HEAD_LP} property.
-	 * @return The value of the {@link #EDGE_HEAD_LP} property of the given
+	 *            {@link #HEAD_LP__E} property.
+	 * @return The value of the {@link #HEAD_LP__E} property of the given
 	 *         {@link Edge}.
 	 */
 	public static String getHeadLp(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_HEAD_LP);
+		return (String) edge.attributesProperty().get(HEAD_LP__E);
 	}
 
 	/**
-	 * Returns the value of the {@link #EDGE_TAIL_LP} property of the given
-	 * {@link Node}.
+	 * Returns the (parsed) value of the {@link #HEAD_LP__E} property of the
+	 * given {@link Node}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_TAIL_LP} property.
-	 * @return The value of the {@link #EDGE_TAIL_LP} property of the given
+	 *            {@link #HEAD_LP__E} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #HEAD_LP__E} property of the given
 	 *         {@link Edge}.
 	 */
-	public static String getTailLp(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_TAIL_LP);
+	public static Point getHeadLpParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getHeadLp(edge));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #EDGE_POS} property of the given
+	 * Returns the value of the {@link #HEIGHT__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #HEIGHT__N} property.
+	 * @return The value of the {@link #HEIGHT__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getHeight(Node node) {
+		return (String) node.attributesProperty().get(HEIGHT__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} property of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_POS} property, parsed as a {@link SplineType}.
-	 * @return The value of the {@link #EDGE_POS} property of the given
+	 *            {@link #ID__GNE} property.
+	 * @return The value of the {@link #ID__GNE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getId(Edge edge) {
+		return (String) edge.attributesProperty().get(ID__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #ID__GNE} property.
+	 * @return The value of the {@link #ID__GNE} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getId(Graph graph) {
+		return (String) graph.attributesProperty().get(ID__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #ID__GNE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #ID__GNE} property.
+	 * @return The value of the {@link #ID__GNE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getId(Node node) {
+		return (String) node.attributesProperty().get(ID__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABEL__GNE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LABEL__GNE} property.
+	 * @return The value of the {@link #LABEL__GNE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(LABEL__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #LABEL__GNE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #LABEL__GNE} property.
+	 * @return The value of the {@link #LABEL__GNE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getLabel(Node node) {
+		return (String) node.attributesProperty().get(LABEL__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #LAYOUT_G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #LAYOUT_G} property.
+	 * @return The value of the {@link #LAYOUT_G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getLayout(Graph graph) {
+		return (String) graph.attributesProperty().get(LAYOUT_G);
+	}
+
+	/**
+	 * Returns the value of the {@link #LP__E} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LP__E} property.
+	 * @return The value of the {@link #LP__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getLp(Edge edge) {
+		return (String) edge.attributesProperty().get(LP__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #LP__E} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #LP__E} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #LP__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Point getLpParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), getLp(edge));
+		Point point = (Point) parsedPropertyValue.getRootASTElement();
+		return point;
+	}
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getName(Edge edge) {
+		return (String) edge.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getName(Graph graph) {
+		return (String) graph.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #_NAME__GNE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @return The value of the {@link #_NAME__GNE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getName(Node node) {
+		return (String) node.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #POS__NE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #POS__NE} property.
+	 * @return The value of the {@link #POS__NE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getPos(Edge edge) {
+		return (String) edge.attributesProperty().get(POS__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #POS__NE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #POS__NE} property.
+	 * @return The value of the {@link #POS__NE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getPos(Node node) {
+		return (String) node.attributesProperty().get(POS__NE);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #POS__NE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #POS__NE} property, parsed as a {@link SplineType}.
+	 * @return The value of the {@link #POS__NE} property of the given
 	 *         {@link Edge}.
 	 */
 	public static SplineType getPosParsed(Edge edge) {
@@ -723,13 +568,13 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #NODE_POS} property of the given
+	 * Returns the (parsed) value of the {@link #POS__NE} property of the given
 	 * {@link Node}.
 	 * 
 	 * @param node
 	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_POS} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #NODE_POS} property of the given
+	 *            {@link #POS__NE} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #POS__NE} property of the given
 	 *         {@link Node}.
 	 */
 	public static Point getPosParsed(Node node) {
@@ -740,280 +585,31 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #NODE_HEIGHT} property of the given
-	 * {@link Node}.
+	 * Returns the value of the {@link #RANKDIR__G} property of the given
+	 * {@link Graph}.
 	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_HEIGHT} property.
-	 * @return The value of the {@link #NODE_HEIGHT} property of the given
-	 *         {@link Node}.
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #RANKDIR__G} property.
+	 * @return The value of the {@link #RANKDIR__G} property of the given
+	 *         {@link Graph}.
 	 */
-	public static String getHeight(Node node) {
-		return (String) node.attributesProperty().get(NODE_HEIGHT);
+	public static String getRankdir(Graph graph) {
+		return (String) graph.attributesProperty().get(RANKDIR__G);
 	}
 
 	/**
-	 * Returns the value of the {@link #NODE_WIDTH} property of the given
-	 * {@link Node}.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_WIDTH} property.
-	 * @return The value of the {@link #NODE_WIDTH} property of the given
-	 *         {@link Node}.
-	 */
-	public static String getWidth(Node node) {
-		return (String) node.attributesProperty().get(NODE_WIDTH);
-	}
-
-	/**
-	 * Sets the {@link #NODE_POS} property of the given {@link Node} to the
-	 * given value.
-	 * 
-	 * @param node
-	 *            The {@link Node} whose property value to set.
-	 * @param pos
-	 *            The new value of the {@link #NODE_POS} property.
-	 */
-	public static void setPos(Node node, String pos) {
-		IParseResult parseResult = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), pos);
-		if (parseResult.hasSyntaxErrors()) {
-			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + NODE_POS + "' to '" + pos
-							+ "': " + getSyntaxErrorMessages(parseResult));
-		}
-		node.getAttributes().put(NODE_POS, pos);
-	}
-
-	/**
-	 * Sets the {@link #NODE_HEIGHT} property of the given {@link Node} to the
-	 * given value.
-	 * 
-	 * @param node
-	 *            The {@link Node} whose property value to set.
-	 * @param height
-	 *            The new value of the {@link #NODE_HEIGHT} property.
-	 */
-	public static void setHeight(Node node, String height) {
-		try {
-			Double.parseDouble(height);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + NODE_HEIGHT + "' to '"
-							+ height + "': parsing as double failed.");
-		}
-		node.getAttributes().put(NODE_HEIGHT, height);
-	}
-
-	/**
-	 * Sets the {@link #NODE_WIDTH} property of the given {@link Node} to the
-	 * given value.
-	 * 
-	 * @param node
-	 *            The {@link Node} whose property value to set.
-	 * @param width
-	 *            The new value of the {@link #NODE_WIDTH} property.
-	 */
-	public static void setWidth(Node node, String width) {
-		try {
-			Double.parseDouble(width);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + NODE_WIDTH + "' to '"
-							+ width + "': parsing as double failed.");
-		}
-		node.getAttributes().put(NODE_WIDTH, width);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_POS} property of the given {@link Edge} to the
-	 * given value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} whose property value to set.
-	 * @param pos
-	 *            The new value of the {@link #EDGE_POS} property.
-	 */
-	public static void setPos(Edge edge, String pos) {
-		IParseResult parseResult = parsePropertyValue(
-				dotAttributesGrammarAccess.getSplineTypeRule(), pos);
-		if (parseResult.hasSyntaxErrors()) {
-			throw new IllegalArgumentException(
-					"Cannot set edge attribute '" + EDGE_POS + "' to '" + pos
-							+ "': " + getSyntaxErrorMessages(parseResult));
-		}
-		edge.getAttributes().put(EDGE_POS, pos);
-	}
-
-	/**
-	 * Sets the {@link #NODE_ID} property of the given {@link Node} to the given
-	 * <i>id</i> value.
-	 * 
-	 * @param node
-	 *            The {@link Node} for which to change the value of the
-	 *            {@link #NODE_ID} property.
-	 * @param id
-	 *            The new value for the {@link #NODE_ID} property.
-	 */
-	public static void setId(Node node, String id) {
-		node.attributesProperty().put(NODE_ID, id);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_LABEL} property of the given
+	 * Returns the value of the {@link #STYLE__E} property of the given
 	 * {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_LABEL} property.
-	 * @return The value of the {@link #EDGE_LABEL} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_LABEL);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_HEADLABEL} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_HEADLABEL} property.
-	 * @return The value of the {@link #EDGE_HEADLABEL} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getHeadLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_HEADLABEL);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_TAILLABEL} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_TAILLABEL} property.
-	 * @return The value of the {@link #EDGE_TAILLABEL} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getTailLabel(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_TAILLABEL);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_LABEL} property of the given {@link Edge} to the
-	 * given <i>label</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_LABEL} property.
-	 * @param label
-	 *            The new value for the {@link #EDGE_LABEL} property.
-	 */
-	public static void setLabel(Edge edge, String label) {
-		edge.attributesProperty().put(EDGE_LABEL, label);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_HEADLABEL} property of the given {@link Edge} to
-	 * the given <i>label</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_HEADLABEL} property.
-	 * @param label
-	 *            The new value for the {@link #EDGE_HEADLABEL} property.
-	 */
-	public static void setHeadLabel(Edge edge, String label) {
-		edge.attributesProperty().put(EDGE_HEADLABEL, label);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_TAILLABEL} property of the given {@link Edge} to
-	 * the given <i>label</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_TAILLABEL} property.
-	 * @param label
-	 *            The new value for the {@link #EDGE_TAILLABEL} property.
-	 */
-	public static void setTailLabel(Edge edge, String label) {
-		edge.attributesProperty().put(EDGE_TAILLABEL, label);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_STYLE} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_STYLE} property.
-	 * @return The value of the {@link #EDGE_STYLE} property of the given
+	 *            {@link #STYLE__E} property.
+	 * @return The value of the {@link #STYLE__E} property of the given
 	 *         {@link Edge}.
 	 */
 	public static String getStyle(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_STYLE);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_STYLE} property of the given {@link Edge} to the
-	 * given <i>style</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_STYLE} property.
-	 * @param style
-	 *            The new value for the {@link #EDGE_STYLE} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>style</i> value is not supported, i.e. not
-	 *             contained within {@link #EDGE_STYLE_VALUES}.
-	 */
-	public static void setStyle(Edge edge, String style) {
-		if (!EDGE_STYLE_VALUES.contains(style)) {
-			throw new IllegalArgumentException(
-					"Cannot set edge attribute \"style\" to \"" + style
-							+ "\"; supported values: " + EDGE_STYLE_VALUES);
-		}
-		edge.attributesProperty().put(EDGE_STYLE, style);
-	}
-
-	/**
-	 * Returns the value of the {@link #EDGE_ID} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_ID} property.
-	 * @return The value of the {@link #EDGE_ID} property of the given
-	 *         {@link Edge}.
-	 */
-	public static String getId(Edge edge) {
-		return (String) edge.attributesProperty().get(EDGE_ID);
-	}
-
-	/**
-	 * Sets the {@link #EDGE_ID} property of the given {@link Edge} to the given
-	 * <i>id</i> value.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to change the value of the
-	 *            {@link #EDGE_ID} property.
-	 * @param id
-	 *            The new value for the {@link #EDGE_ID} property.
-	 */
-	public static void setId(Edge edge, String id) {
-		edge.attributesProperty().put(EDGE_ID, id);
-	}
-
-	private static IParseResult parsePropertyValue(ParserRule rule,
-			String propertyValue) {
-		IParseResult parseResult = dotAttributesParser.parse(rule,
-				new StringReader(propertyValue));
-		return parseResult;
+		return (String) edge.attributesProperty().get(STYLE__E);
 	}
 
 	private static String getSyntaxErrorMessages(IParseResult parseResult) {
@@ -1027,30 +623,142 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #NODE_XLP} property of the given
+	 * Returns the value of the {@link #TAILLABEL__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #TAILLABEL__E} property.
+	 * @return The value of the {@link #TAILLABEL__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getTailLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(TAILLABEL__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #TAIL_LP__E} property of the given
 	 * {@link Node}.
 	 * 
-	 * @param node
-	 *            The {@link Node} for which to return the value of the
-	 *            {@link #NODE_XLP} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #NODE_XLP} property of the given
-	 *         {@link Node}.
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #TAIL_LP__E} property.
+	 * @return The value of the {@link #TAIL_LP__E} property of the given
+	 *         {@link Edge}.
 	 */
-	public static Point getXlpParsed(Node node) {
+	public static String getTailLp(Edge edge) {
+		return (String) edge.attributesProperty().get(TAIL_LP__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #TAIL_LP__E} property of the
+	 * given {@link Node}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #TAIL_LP__E} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #TAIL_LP__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Point getTailLpParsed(Edge edge) {
 		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getXlp(node));
+				dotAttributesGrammarAccess.getPointRule(), getTailLp(edge));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #EDGE_XLP} property of the given
+	 * Returns the value of the {@link #_TYPE__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #_TYPE__G} property.
+	 * @return The value of the {@link #_TYPE__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getType(Graph graph) {
+		return (String) graph.attributesProperty().get(_TYPE__G);
+	}
+
+	/**
+	 * Returns the value of the {@link #WIDTH__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #WIDTH__N} property.
+	 * @return The value of the {@link #WIDTH__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getWidth(Node node) {
+		return (String) node.attributesProperty().get(WIDTH__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLABEL__NE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #XLABEL__NE} property.
+	 * @return The value of the {@link #XLABEL__NE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getXLabel(Edge edge) {
+		return (String) edge.attributesProperty().get(XLABEL__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLABEL__NE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLABEL__NE} property.
+	 * @return The value of the {@link #XLABEL__NE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getXLabel(Node node) {
+		return (String) node.attributesProperty().get(XLABEL__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLP__NE} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #XLP__NE} property.
+	 * @return The value of the {@link #XLP__NE} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getXlp(Edge edge) {
+		return (String) edge.attributesProperty().get(XLP__NE);
+	}
+
+	/**
+	 * Returns the value of the {@link #XLP__NE} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLP__NE} property.
+	 * @return The value of the {@link #XLP__NE} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getXlp(Node node) {
+		return (String) node.attributesProperty().get(XLP__NE);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #XLP__NE} property of the given
 	 * {@link Node}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_XLP} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #EDGE_XLP} property of the given
+	 *            {@link #XLP__NE} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #XLP__NE} property of the given
 	 *         {@link Edge}.
 	 */
 	public static Point getXlpParsed(Edge edge) {
@@ -1061,53 +769,432 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #EDGE_LP} property of the given
+	 * Returns the (parsed) value of the {@link #XLP__NE} property of the given
 	 * {@link Node}.
 	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_LP} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #EDGE_LP} property of the given
-	 *         {@link Edge}.
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #XLP__NE} property, parsed as a {@link Point}.
+	 * @return The value of the {@link #XLP__NE} property of the given
+	 *         {@link Node}.
 	 */
-	public static Point getLpParsed(Edge edge) {
+	public static Point getXlpParsed(Node node) {
 		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getLp(edge));
+				dotAttributesGrammarAccess.getPointRule(), getXlp(node));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
 
-	/**
-	 * Returns the (parsed) value of the {@link #EDGE_HEAD_LP} property of the
-	 * given {@link Node}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_HEAD_LP} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #EDGE_HEAD_LP} property of the given
-	 *         {@link Edge}.
-	 */
-	public static Point getHeadLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getHeadLp(edge));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+	private static IParseResult parsePropertyValue(ParserRule rule,
+			String propertyValue) {
+		IParseResult parseResult = dotAttributesParser.parse(rule,
+				new StringReader(propertyValue));
+		return parseResult;
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #EDGE_TAIL_LP} property of the
-	 * given {@link Node}.
+	 * Sets the {@link #HEADLABEL__E} property of the given {@link Edge} to the
+	 * given <i>label</i> value.
 	 * 
 	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #EDGE_TAIL_LP} property, parsed as a {@link Point}.
-	 * @return The value of the {@link #EDGE_TAIL_LP} property of the given
-	 *         {@link Edge}.
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #HEADLABEL__E} property.
+	 * @param label
+	 *            The new value for the {@link #HEADLABEL__E} property.
 	 */
-	public static Point getTailLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getTailLp(edge));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+	public static void setHeadLabel(Edge edge, String label) {
+		edge.attributesProperty().put(HEADLABEL__E, label);
+	}
+
+	/**
+	 * Sets the {@link #HEAD_LP__E} property of the given {@link Edge} to the
+	 * given <i>headLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #HEAD_LP__E} property.
+	 * @param headLp
+	 *            The new value for the {@link #HEAD_LP__E} property.
+	 */
+	public static void setHeadLp(Edge edge, String headLp) {
+		edge.attributesProperty().put(LP__E, headLp);
+	}
+
+	/**
+	 * Sets the {@link #HEIGHT__N} property of the given {@link Node} to the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param height
+	 *            The new value of the {@link #HEIGHT__N} property.
+	 */
+	public static void setHeight(Node node, String height) {
+		try {
+			Double.parseDouble(height);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + HEIGHT__N + "' to '"
+							+ height + "': parsing as double failed.");
+		}
+		node.getAttributes().put(HEIGHT__N, height);
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} property of the given {@link Edge} to the given
+	 * <i>id</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ID__GNE} property.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} property.
+	 */
+	public static void setId(Edge edge, String id) {
+		edge.attributesProperty().put(ID__GNE, id);
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} property of the given {@link Graph} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #ID__GNE} property.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} property.
+	 */
+	public static void setId(Graph graph, String id) {
+		graph.attributesProperty().put(ID__GNE, id);
+	}
+
+	/**
+	 * Sets the {@link #ID__GNE} property of the given {@link Node} to the given
+	 * <i>id</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #ID__GNE} property.
+	 * @param id
+	 *            The new value for the {@link #ID__GNE} property.
+	 */
+	public static void setId(Node node, String id) {
+		node.attributesProperty().put(ID__GNE, id);
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} property of the given {@link Edge} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LABEL__GNE} property.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} property.
+	 */
+	public static void setLabel(Edge edge, String label) {
+		edge.attributesProperty().put(LABEL__GNE, label);
+	}
+
+	/**
+	 * Sets the {@link #LABEL__GNE} property of the given {@link Node} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #LABEL__GNE} property.
+	 * @param label
+	 *            The new value for the {@link #LABEL__GNE} property.
+	 */
+	public static void setLabel(Node node, String label) {
+		node.attributesProperty().put(LABEL__GNE, label);
+	}
+
+	/**
+	 * Sets the {@link #LAYOUT_G} property of the given {@link Graph} to the
+	 * given <i>layout</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #LAYOUT_G} property.
+	 * @param layout
+	 *            The new value for the {@link #LAYOUT_G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>layout</i> value is not supported, i.e. not
+	 *             contained within {@link #LAYOUT__G__VALUES}.
+	 */
+	public static void setLayout(Graph graph, String layout) {
+		if (!LAYOUT__G__VALUES.contains(layout)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"layout\" to \"" + layout
+							+ "\"; supported values: " + LAYOUT__G__VALUES);
+		}
+		graph.attributesProperty().put(LAYOUT_G, layout);
+	}
+
+	/**
+	 * Sets the {@link #LP__E} property of the given {@link Edge} to the given
+	 * <i>lp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LP__E} property.
+	 * @param lp
+	 *            The new value for the {@link #LP__E} property.
+	 */
+	public static void setLp(Edge edge, String lp) {
+		edge.attributesProperty().put(LP__E, lp);
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
+	 * given <i>name</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @param name
+	 *            The new value for the {@link #_NAME__GNE} property.
+	 */
+	public static void setName(Edge edge, String name) {
+		edge.attributesProperty().put(_NAME__GNE, name);
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
+	 * given <i>name</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @param name
+	 *            The new value for the {@link #_NAME__GNE} property.
+	 */
+	public static void setName(Graph graph, String name) {
+		graph.attributesProperty().put(_NAME__GNE, name);
+	}
+
+	/**
+	 * Sets the {@link #_NAME__GNE} property of the given {@link Node} to the
+	 * given <i>id</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #_NAME__GNE} property.
+	 * @param id
+	 *            The new value for the {@link #_NAME__GNE} property.
+	 */
+	public static void setName(Node node, String id) {
+		node.attributesProperty().put(_NAME__GNE, id);
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} property of the given {@link Edge} to the given
+	 * value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} whose property value to set.
+	 * @param pos
+	 *            The new value of the {@link #POS__NE} property.
+	 */
+	public static void setPos(Edge edge, String pos) {
+		IParseResult parseResult = parsePropertyValue(
+				dotAttributesGrammarAccess.getSplineTypeRule(), pos);
+		if (parseResult.hasSyntaxErrors()) {
+			throw new IllegalArgumentException(
+					"Cannot set edge attribute '" + POS__NE + "' to '" + pos
+							+ "': " + getSyntaxErrorMessages(parseResult));
+		}
+		edge.getAttributes().put(POS__NE, pos);
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} property of the given {@link Node} to the given
+	 * value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param pos
+	 *            The new value of the {@link #POS__NE} property.
+	 */
+	public static void setPos(Node node, String pos) {
+		IParseResult parseResult = parsePropertyValue(
+				dotAttributesGrammarAccess.getPointRule(), pos);
+		if (parseResult.hasSyntaxErrors()) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + POS__NE + "' to '" + pos
+							+ "': " + getSyntaxErrorMessages(parseResult));
+		}
+		node.getAttributes().put(POS__NE, pos);
+	}
+
+	/**
+	 * Sets the {@link #RANKDIR__G} property of the given {@link Graph} to the
+	 * given <i>rankdir</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #RANKDIR__G} property.
+	 * @param rankdir
+	 *            The new value for the {@link #RANKDIR__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>rankdir</i> value is not supported, i.e.
+	 *             not contained within {@link #RANKDIR__G__VALUES}.
+	 */
+	public static void setRankdir(Graph graph, String rankdir) {
+		if (!RANKDIR__G__VALUES.contains(rankdir)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"rankdir\" to \"" + rankdir
+							+ "\"; supported values: " + RANKDIR__G__VALUES);
+		}
+		graph.attributesProperty().put(RANKDIR__G, rankdir);
+	}
+
+	/**
+	 * Sets the {@link #STYLE__E} property of the given {@link Edge} to the
+	 * given <i>style</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #STYLE__E} property.
+	 * @param style
+	 *            The new value for the {@link #STYLE__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>style</i> value is not supported, i.e. not
+	 *             contained within {@link #STYLE__E__VALUES}.
+	 */
+	public static void setStyle(Edge edge, String style) {
+		if (!STYLE__E__VALUES.contains(style)) {
+			throw new IllegalArgumentException(
+					"Cannot set edge attribute \"style\" to \"" + style
+							+ "\"; supported values: " + STYLE__E__VALUES);
+		}
+		edge.attributesProperty().put(STYLE__E, style);
+	}
+
+	/**
+	 * Sets the {@link #TAILLABEL__E} property of the given {@link Edge} to the
+	 * given <i>label</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #TAILLABEL__E} property.
+	 * @param label
+	 *            The new value for the {@link #TAILLABEL__E} property.
+	 */
+	public static void setTailLabel(Edge edge, String label) {
+		edge.attributesProperty().put(TAILLABEL__E, label);
+	}
+
+	/**
+	 * Sets the {@link #TAIL_LP__E} property of the given {@link Edge} to the
+	 * given <i>tailLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #TAIL_LP__E} property.
+	 * @param tailLp
+	 *            The new value for the {@link #TAIL_LP__E} property.
+	 */
+	public static void setTailLp(Edge edge, String tailLp) {
+		edge.attributesProperty().put(TAIL_LP__E, tailLp);
+	}
+
+	/**
+	 * Sets the {@link #_TYPE__G} property of the given {@link Graph} to the
+	 * given <i>type</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #_TYPE__G} property.
+	 * @param type
+	 *            The new value for the {@link #_TYPE__G} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>type</i> value is not supported, i.e. not
+	 *             contained within {@link #_TYPE__G__VALUES}.
+	 */
+	public static void setType(Graph graph, String type) {
+		if (!_TYPE__G__VALUES.contains(type)) {
+			throw new IllegalArgumentException(
+					"Cannot set graph attribute \"type\" to \"" + type
+							+ "\"; supported values: " + _TYPE__G__VALUES);
+		}
+		graph.attributesProperty().put(_TYPE__G, type);
+	}
+
+	/**
+	 * Sets the {@link #WIDTH__N} property of the given {@link Node} to the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param width
+	 *            The new value of the {@link #WIDTH__N} property.
+	 */
+	public static void setWidth(Node node, String width) {
+		try {
+			Double.parseDouble(width);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"Cannot set node attribute '" + WIDTH__N + "' to '" + width
+							+ "': parsing as double failed.");
+		}
+		node.getAttributes().put(WIDTH__N, width);
+	}
+
+	/**
+	 * Sets the {@link #XLABEL__NE} property of the given {@link Edge} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #XLABEL__NE} property.
+	 * @param xLabel
+	 *            The new value for the {@link #XLABEL__NE} property.
+	 */
+	public static void setXLabel(Edge edge, String xLabel) {
+		edge.attributesProperty().put(XLABEL__NE, xLabel);
+	}
+
+	/**
+	 * Sets the {@link #XLABEL__NE} property of the given {@link Node} to the
+	 * given <i>xLabel</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLABEL__NE} property.
+	 * @param xLabel
+	 *            The new value for the {@link #XLABEL__NE} property.
+	 */
+	public static void setXLabel(Node node, String xLabel) {
+		node.attributesProperty().put(XLABEL__NE, xLabel);
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} property of the given {@link Edge} to the given
+	 * <i>xlp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #XLP__NE} property.
+	 * @param xlp
+	 *            The new value for the {@link #XLP__NE} property.
+	 */
+	public static void setXlp(Edge edge, String xlp) {
+		edge.attributesProperty().put(XLP__NE, xlp);
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} property of the given {@link Node} to the given
+	 * <i>xlp</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLP__NE} property.
+	 * @param xlp
+	 *            The new value for the {@link #XLP__NE} property.
+	 */
+	public static void setXlp(Node node, String xlp) {
+		node.attributesProperty().put(XLP__NE, xlp);
 	}
 }

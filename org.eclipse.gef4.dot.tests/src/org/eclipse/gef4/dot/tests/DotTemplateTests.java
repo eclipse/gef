@@ -31,17 +31,17 @@ public class DotTemplateTests {
 	@Test
 	public void zestGraph() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotAttributes.GRAPH_LAYOUT, DotAttributes.GRAPH_LAYOUT_DOT);
-		graph.attr(DotAttributes.GRAPH_RANKDIR, DotAttributes.GRAPH_RANKDIR_LR);
-		Node node1 = new Node.Builder().attr(DotAttributes.NODE_LABEL, "Node 1")
+		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+		graph.attr(DotAttributes.RANKDIR__G, DotAttributes.RANKDIR__G__LR);
+		Node node1 = new Node.Builder().attr(DotAttributes.LABEL__GNE, "Node 1")
 				.buildNode();
-		Node node2 = new Node.Builder().attr(DotAttributes.NODE_LABEL, "Node 2")
+		Node node2 = new Node.Builder().attr(DotAttributes.LABEL__GNE, "Node 2")
 				.buildNode();
 		Edge edge = new Edge.Builder(node1, node2)
-				.attr(DotAttributes.EDGE_LABEL, "A dotted edge")
-				.attr(DotAttributes.EDGE_STYLE, DotAttributes.EDGE_STYLE_DOTTED)
+				.attr(DotAttributes.LABEL__GNE, "A dotted edge")
+				.attr(DotAttributes.STYLE__E, DotAttributes.STYLE__E__DOTTED)
 				.buildEdge();
-		graph.attr(DotAttributes.GRAPH_TYPE, DotAttributes.GRAPH_TYPE_DIRECTED)
+		graph.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH)
 				.edges(edge);
 		String dot = new DotTemplate().generate(graph.build());
 		Assert.assertTrue(
@@ -96,7 +96,7 @@ public class DotTemplateTests {
 		Assert.assertTrue(
 				"DOT representation must contain simple class name of Dot input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
-		Assert.assertTrue(DotAttributes.GRAPH_TYPE_DIRECTED
+		Assert.assertTrue(DotAttributes._TYPE__G__DIGRAPH
 				.equals(DotAttributes.getType(graph)) ? dot.contains("digraph") //$NON-NLS-1$
 						: !dot.contains("digraph")); //$NON-NLS-1$
 		System.out.println(dot);

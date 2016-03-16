@@ -84,6 +84,12 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		ZestProperties.setCssId(zest, dotId);
 		ZestProperties.setLabel(zest, dotLabel);
 
+		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
+			// The node default label '\N' is used to indicate that a node's
+			// name or id becomes its label.
+			dotLabel = dotId != null ? dotId : DotAttributes.getName(dot);
+		}
+
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXLabel(dot);
 		if (dotXLabel != null) {
@@ -103,11 +109,11 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		// convert edge style
 		String dotStyle = DotAttributes.getStyle(dot);
 		String connectionCssStyle = null;
-		if (DotAttributes.EDGE_STYLE_DASHED.equals(dotStyle)) {
+		if (DotAttributes.STYLE__E__DASHED.equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-dash-array: 7 7;"; //$NON-NLS-1$
-		} else if (DotAttributes.EDGE_STYLE_DOTTED.equals(dotStyle)) {
+		} else if (DotAttributes.STYLE__E__DOTTED.equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
-		} else if (DotAttributes.EDGE_STYLE_BOLD.equals(dotStyle)) {
+		} else if (DotAttributes.STYLE__E__BOLD.equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
 		}
 		// TODO: handle tapered edges
@@ -204,16 +210,18 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 	@Override
 	protected void convertAttributes(Node dot, Node zest) {
-		// convert id and label
+		// id
 		String dotId = DotAttributes.getId(dot);
-		ZestProperties.setCssId(zest, dotId);
+		if (dotId != null) {
+			ZestProperties.setCssId(zest, dotId);
+		}
 
 		// label
 		String dotLabel = DotAttributes.getLabel(dot);
 		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
-			// name or ID becomes its label.
-			dotLabel = dotId;
+			// name or id becomes its label.
+			dotLabel = dotId != null ? dotId : DotAttributes.getName(dot);
 		}
 		ZestProperties.setLabel(zest, dotLabel);
 
@@ -278,23 +286,26 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 	@Override
 	protected void convertAttributes(Graph dot, Graph zest) {
-		// convert layout and rankdir to LayoutAlgorithm
+
+		// TODO: graph label
+
 		if (options.emulateLayout) {
+			// convert layout and rankdir to LayoutAlgorithm
 			Object dotLayout = DotAttributes.getLayout(dot);
-			Object dotRankdir = DotAttributes.getRankdir(dot);
 			ILayoutAlgorithm algo = null;
-			if (DotAttributes.GRAPH_LAYOUT_CIRCO.equals(dotLayout)
-					|| DotAttributes.GRAPH_LAYOUT_NEATO.equals(dotLayout)
-					|| DotAttributes.GRAPH_LAYOUT_TWOPI.equals(dotLayout)) {
+			if (DotAttributes.LAYOUT__G__CIRCO.equals(dotLayout)
+					|| DotAttributes.LAYOUT__G__NEATO.equals(dotLayout)
+					|| DotAttributes.LAYOUT__G__TWOPI.equals(dotLayout)) {
 				algo = new RadialLayoutAlgorithm();
-			} else if (DotAttributes.GRAPH_LAYOUT_FDP.equals(dotLayout)
-					|| DotAttributes.GRAPH_LAYOUT_SFDP.equals(dotLayout)) {
+			} else if (DotAttributes.LAYOUT__G__FDP.equals(dotLayout)
+					|| DotAttributes.LAYOUT__G__SFDP.equals(dotLayout)) {
 				algo = new SpringLayoutAlgorithm();
-			} else if (DotAttributes.GRAPH_LAYOUT_GRID.equals(dotLayout)
-					|| DotAttributes.GRAPH_LAYOUT_OSAGE.equals(dotLayout)) {
+			} else if (DotAttributes.LAYOUT__G__GRID.equals(dotLayout)
+					|| DotAttributes.LAYOUT__G__OSAGE.equals(dotLayout)) {
 				algo = new GridLayoutAlgorithm();
 			} else {
-				boolean lr = DotAttributes.GRAPH_RANKDIR_LR.equals(dotRankdir);
+				Object dotRankdir = DotAttributes.getRankdir(dot);
+				boolean lr = DotAttributes.RANKDIR__G__LR.equals(dotRankdir);
 				algo = new TreeLayoutAlgorithm(
 						lr ? TreeLayoutAlgorithm.LEFT_RIGHT
 								: TreeLayoutAlgorithm.TOP_DOWN);

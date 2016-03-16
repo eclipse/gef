@@ -106,7 +106,7 @@ public final class DotImportTests {
 	public void importNonExistingNodesIntoGraph() {
 		// simple graph
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotAttributes.GRAPH_LAYOUT, new TreeLayoutAlgorithm());
+		graph.attr(DotAttributes.LAYOUT_G, new TreeLayoutAlgorithm());
 		Assert.assertEquals(0, graph.build().getNodes().size());
 		Assert.assertEquals(0, graph.build().getEdges().size());
 		new DotImport("1->2").into(graph); //$NON-NLS-1$
@@ -157,14 +157,14 @@ public final class DotImportTests {
 	public void importLayoutAlgorithmIntoGraph() {
 		Graph.Builder graph = new Graph.Builder();
 		new DotImport("rankdir=LR").into(graph);
-		Assert.assertEquals(DotAttributes.GRAPH_LAYOUT_DOT,
+		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
 				DotAttributes.getLayout(graph.build()));
-		Assert.assertEquals(DotAttributes.GRAPH_RANKDIR_LR,
+		Assert.assertEquals(DotAttributes.RANKDIR__G__LR,
 				DotAttributes.getRankdir(graph.build()));
 		new DotImport("rankdir=TD").into(graph);
-		Assert.assertEquals(DotAttributes.GRAPH_LAYOUT_DOT,
+		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
 				DotAttributes.getLayout(graph.build()));
-		Assert.assertEquals(DotAttributes.GRAPH_RANKDIR_TD,
+		Assert.assertEquals(DotAttributes.RANKDIR__G__TD,
 				DotAttributes.getRankdir(graph.build()));
 	}
 
@@ -177,7 +177,7 @@ public final class DotImportTests {
 		assertNodesEdgesCount(2, 1, graph);
 		Iterator<Edge> iterator = graph.build().getEdges().iterator();
 		Edge edge = iterator.next();
-		Assert.assertEquals(DotAttributes.EDGE_STYLE_DASHED,
+		Assert.assertEquals(DotAttributes.STYLE__E__DASHED,
 				DotAttributes.getStyle(edge));
 		Assert.assertEquals("dashed", DotAttributes.getLabel(edge));
 		new DotImport("2->3[style=dotted label=dotted]").into(graph);
@@ -185,7 +185,7 @@ public final class DotImportTests {
 		iterator = graph.build().getEdges().iterator();
 		iterator.next();
 		edge = iterator.next();
-		Assert.assertEquals(DotAttributes.EDGE_STYLE_DOTTED,
+		Assert.assertEquals(DotAttributes.STYLE__E__DOTTED,
 				DotAttributes.getStyle(edge));
 		Assert.assertEquals("dotted", DotAttributes.getLabel(edge));
 	}
@@ -223,7 +223,7 @@ public final class DotImportTests {
 		DotImport importer = new DotImport("digraph Sample{1;2;1->2}"); //$NON-NLS-1$
 		Graph graph = importer.toGraph();
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.GRAPH_TYPE_DIRECTED,
+		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
 				DotAttributes.getType(graph));
 	}
 

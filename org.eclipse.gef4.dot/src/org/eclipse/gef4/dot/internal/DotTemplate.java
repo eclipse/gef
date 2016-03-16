@@ -46,20 +46,20 @@ public class DotTemplate
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
      Graph graph = (Graph) argument; 
-     String algo = DotAttributes.getLayout(graph); if (algo == null) algo = DotAttributes.GRAPH_LAYOUT_DEFAULT;
-     boolean digraph = DotAttributes.GRAPH_TYPE_DIRECTED.equals(DotAttributes.getType(graph)); 
+     String algo = DotAttributes.getLayout(graph); if (algo == null) algo = DotAttributes.LAYOUT__G__DEFAULT;
+     boolean digraph = DotAttributes._TYPE__G__DIGRAPH.equals(DotAttributes.getType(graph)); 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
      simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(TEXT_2);
-    stringBuffer.append( digraph ? "digraph" : "graph" );
+    stringBuffer.append( digraph ? DotAttributes._TYPE__G__DIGRAPH : DotAttributes._TYPE__G__GRAPH );
     stringBuffer.append(TEXT_3);
     stringBuffer.append(simpleClassName);
     stringBuffer.append(TEXT_4);
     stringBuffer.append(algo);
     stringBuffer.append(TEXT_5);
-    stringBuffer.append(DotAttributes.getRankdir(graph) != null ? DotAttributes.getRankdir(graph).toUpperCase() : DotAttributes.GRAPH_RANKDIR_TD.toUpperCase());
+    stringBuffer.append(DotAttributes.getRankdir(graph) != null ? DotAttributes.getRankdir(graph).toUpperCase() : DotAttributes.RANKDIR__G__DEFAULT.toUpperCase());
     stringBuffer.append(TEXT_6);
      for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; 
     stringBuffer.append(TEXT_7);
@@ -71,7 +71,7 @@ public class DotTemplate
     stringBuffer.append(TEXT_10);
      for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; 
     stringBuffer.append(TEXT_11);
-    boolean dashed = DotAttributes.EDGE_STYLE_DASHED.equals(DotAttributes.getStyle(edge)); boolean dotted = DotAttributes.EDGE_STYLE_DOTTED.equals(DotAttributes.getStyle(edge));
+    boolean dashed = DotAttributes.STYLE__E__DASHED.equals(DotAttributes.getStyle(edge)); boolean dotted = DotAttributes.STYLE__E__DOTTED.equals(DotAttributes.getStyle(edge));
     stringBuffer.append(TEXT_12);
     stringBuffer.append(edge.getSource().hashCode());
     stringBuffer.append(TEXT_13);

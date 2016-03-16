@@ -22,6 +22,7 @@ import org.eclipse.gef4.graph.GraphCopier;
  * attributes defined in {@link DotAttributes}.
  * 
  * @author Fabian Steeg (fsteeg)
+ * @author anyssen
  */
 public final class DotImport {
 	private String dotString;
@@ -110,7 +111,7 @@ public final class DotImport {
 	 *            The graph to add the imported dot into
 	 */
 	public void into(Graph.Builder graph) {
-		new GraphCopier(toGraph(), DotAttributes.NODE_ID).into(graph);
+		new GraphCopier(toGraph(), DotAttributes._NAME__GNE).into(graph);
 	}
 
 	@Override

@@ -8,18 +8,18 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/%>
 <% Graph graph = (Graph) argument; %>
-<% String algo = DotAttributes.getLayout(graph); if (algo == null) algo = DotAttributes.GRAPH_LAYOUT_DEFAULT;%>
-<% boolean digraph = DotAttributes.GRAPH_TYPE_DIRECTED.equals(DotAttributes.getType(graph)); %>
+<% String algo = DotAttributes.getLayout(graph); if (algo == null) algo = DotAttributes.LAYOUT__G__DEFAULT;%>
+<% boolean digraph = DotAttributes._TYPE__G__DIGRAPH.equals(DotAttributes.getType(graph)); %>
 <% String simpleClassName = graph.getClass().getSimpleName(); %>
 <% /* The exact name 'Graph' is not valid for rendering with Graphviz: */ %>
 <% simpleClassName = simpleClassName.equals("Graph") ? "Dot" + simpleClassName : simpleClassName; %>
 
-<%= digraph ? "digraph" : "graph" %> <%=simpleClassName%>{
+<%= digraph ? DotAttributes._TYPE__G__DIGRAPH : DotAttributes._TYPE__G__GRAPH %> <%=simpleClassName%>{
 
 	/* Global settings */
 	graph[layout=<%=algo%>]
 	node[shape=box]
-	rankdir=<%=DotAttributes.getRankdir(graph) != null ? DotAttributes.getRankdir(graph).toUpperCase() : DotAttributes.GRAPH_RANKDIR_TD.toUpperCase()%>
+	rankdir=<%=DotAttributes.getRankdir(graph) != null ? DotAttributes.getRankdir(graph).toUpperCase() : DotAttributes.RANKDIR__G__DEFAULT.toUpperCase()%>
 	
 	/* Nodes */
 	<% for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; %> 
@@ -28,7 +28,7 @@
 	
 	/* Edges */
 	<% for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; %> 
-	<%boolean dashed = DotAttributes.EDGE_STYLE_DASHED.equals(DotAttributes.getStyle(edge)); boolean dotted = DotAttributes.EDGE_STYLE_DOTTED.equals(DotAttributes.getStyle(edge));%> 
+	<%boolean dashed = DotAttributes.STYLE__E__DASHED.equals(DotAttributes.getStyle(edge)); boolean dotted = DotAttributes.STYLE__E__DOTTED.equals(DotAttributes.getStyle(edge));%> 
 	<%=edge.getSource().hashCode()%> <%= digraph ? "->" : "--" %> <%=edge.getTarget().hashCode()%>[style=<%=dashed?"dashed":dotted?"dotted":"solid"%> label="<%=DotAttributes.getLabel(edge)%>"];
 	<% }%>
 }
