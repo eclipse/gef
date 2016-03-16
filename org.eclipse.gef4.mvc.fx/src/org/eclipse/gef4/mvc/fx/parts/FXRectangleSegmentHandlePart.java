@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -127,9 +128,18 @@ public class FXRectangleSegmentHandlePart
 	@Override
 	protected void updateLocation(Rectangle visual) {
 		super.updateLocation(visual);
-		Point direction = getBezierSegmentInParent().getDerivative()
+		BezierCurve bezierSegmentInParent = getBezierSegmentInParent();
+		if (bezierSegmentInParent == null) {
+			return;
+		}
+
+		Point direction = bezierSegmentInParent.getDerivative()
 				.get(getSegmentParameter());
 		Vector directionVector = new Vector(direction.x, direction.y);
+		if (directionVector.isNull()) {
+			return;
+		}
+
 		Vector xVector = new Vector(1, 0);
 		Angle angleCcw = xVector.getAngleCCW(directionVector);
 		visual.setRotate(angleCcw.deg());

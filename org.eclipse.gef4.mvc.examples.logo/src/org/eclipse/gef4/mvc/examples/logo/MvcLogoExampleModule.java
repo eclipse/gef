@@ -44,6 +44,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -112,7 +113,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXCircleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
 	protected void bindFXCreateCurveHandlePartAdapters(
@@ -282,7 +284,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
 	}
 
 	protected void bindFXSquareSegmentHandlePartAdapters(
@@ -340,7 +343,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				binder(), FXCircleSegmentHandlePart.class));
 		bindFXRectangleSegmentHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(),
-						FXCircleSegmentHandlePart.class));
+						FXRectangleSegmentHandlePart.class));
 
 		// hover handles
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),

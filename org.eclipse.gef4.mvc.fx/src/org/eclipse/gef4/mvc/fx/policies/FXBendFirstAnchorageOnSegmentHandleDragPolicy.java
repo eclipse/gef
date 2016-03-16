@@ -22,6 +22,7 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -101,8 +102,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	}
 
 	@Override
-	public FXCircleSegmentHandlePart getHost() {
-		return (FXCircleSegmentHandlePart) super.getHost();
+	public AbstractFXSegmentHandlePart<? extends Node> getHost() {
+		return (AbstractFXSegmentHandlePart<? extends Node>) super.getHost();
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	@Override
 	public void press(MouseEvent e) {
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
-		FXCircleSegmentHandlePart hostPart = getHost();
+		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
 		targetPart = getTargetPart();
 
 		storeAndDisableRefreshVisuals(targetPart);
