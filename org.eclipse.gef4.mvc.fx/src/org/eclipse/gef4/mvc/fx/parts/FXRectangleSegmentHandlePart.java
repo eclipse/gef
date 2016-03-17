@@ -38,12 +38,12 @@ public class FXRectangleSegmentHandlePart
 	/**
 	 * The default width for this part's visualization.
 	 */
-	public static final double DEFAULT_WIDTH = 5;
+	public static final double DEFAULT_WIDTH = 3;
 
 	/**
 	 * The default length for this part's visualization.
 	 */
-	public static final double DEFAULT_LENGTH = 10;
+	public static final double DEFAULT_LENGTH = 8;
 
 	/**
 	 * The default stroke color for this part's visualization.
