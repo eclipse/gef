@@ -1048,7 +1048,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// evaluate connection points for the given indices
 		List<Point> points = new ArrayList<>();
 		for (int i = startConnectionIndex; i <= endConnectionIndex; i++) {
-			points.add(getConnection().getPoint(i));
+			points.add(FX2Geometry.toPoint(getConnection().localToScene(
+					Geometry2FX.toFXPoint(getConnection().getPoint(i)))));
 		}
 		// create explicit anchors one by one
 		AnchorHandle nextHandle = endConnectionIndex == getConnection()
@@ -1156,6 +1157,10 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				// found an explicit anchor
 				explicitIndex++;
 
+				// retrieve handle for it (needed for inserting points)
+				AnchorHandle explicitHandle = explicitAnchors
+						.get(explicitIndex);
+
 				// determine surrounding positions
 				Point prev = positions.get(i - 1);
 				Point next = positions.get(i + 1);
@@ -1168,16 +1173,23 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 				if (inDirection.isNull() || outDirection.isNull()
 						|| inDirection.isParallelTo(outDirection)) {
+					// XXX: Compute previous position in scene coordinates
+					// before manipulating the connection.
+					Point prevInScene = FX2Geometry.toPoint(
+							getConnection().localToScene(prev.x, prev.y));
 					// make previous and next explicit
 					if (getConnection().getRouter()
 							.isImplicitAnchor(anchors.get(i + 1))) {
 						// make next explicit
-						makeExplicit(i + 1, i + 1);
+						makeExplicit(i + 1);
 					}
 					if (getConnection().getRouter()
 							.isImplicitAnchor(anchors.get(i - 1))) {
 						// make previous explicit
-						makeExplicit(i - 1, i - 1);
+						// XXX: We need to insert a point manually here and
+						// cannot rely on makeExplicit() because the indices
+						// could have changed.
+						createBefore(explicitHandle, prevInScene);
 						explicitIndex++;
 					}
 					// remove current point as it is unnecessary
