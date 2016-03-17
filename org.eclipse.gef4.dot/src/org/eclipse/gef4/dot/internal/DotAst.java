@@ -20,13 +20,13 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 
 /**
  * Creation and access to the parsed object tree.
@@ -50,18 +50,8 @@ public final class DotAst {
 	 * @return The name of the DOT graph described in the given file
 	 */
 	public String graphName() {
-		EObject graph = graph();
-		Iterator<EAttribute> graphAttributes = graph.eClass()
-				.getEAllAttributes().iterator();
-		while (graphAttributes.hasNext()) {
-			EAttribute a = graphAttributes.next();
-			/* We return the name attribute of the graph: */
-			if (a.getName().equals("name")) { //$NON-NLS-1$
-				return (String) graph.eGet(a);
-			}
-		}
-		System.err.println("Could not find name attribute in: " + graph); //$NON-NLS-1$
-		return ""; //$NON-NLS-1$
+		DotGraph graph = graph();
+		return graph.getName();
 	}
 
 	/**
@@ -82,13 +72,13 @@ public final class DotAst {
 	/**
 	 * @return The graph EObjects to walk or inspect
 	 */
-	EObject graph() {
+	DotGraph graph() {
 		/* We load the input DOT file: */
 		EList<EObject> contents = resource.getContents();
 		EObject graphs = contents.iterator().next();
 		/* We assume one graph per file, i.e. we take the first only: */
 		EObject graph = graphs.eContents().iterator().next();
-		return graph;
+		return (DotGraph) graph;
 	}
 
 	/**

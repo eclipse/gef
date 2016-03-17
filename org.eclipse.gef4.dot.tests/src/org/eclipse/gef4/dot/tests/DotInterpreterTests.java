@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAst;
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotInterpreter;
-import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -38,7 +38,7 @@ public final class DotInterpreterTests {
 	public void digraphType() {
 		Graph graph = interpreter.interpret(parse("digraph Sample{1;2;1->2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
+		Assert.assertEquals(DotAttributes._TYPE__G__DIGRAPH,
 				DotAttributes.getType(graph));
 	}
 
@@ -46,7 +46,7 @@ public final class DotInterpreterTests {
 	public void graphType() {
 		Graph graph = interpreter.interpret(parse("graph Sample{1;2;1--2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes._TYPE__G__DIGRAPH,
+		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
 				DotAttributes.getType(graph));
 	}
 

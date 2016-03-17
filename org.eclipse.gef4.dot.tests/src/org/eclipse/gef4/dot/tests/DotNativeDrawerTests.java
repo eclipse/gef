@@ -25,6 +25,7 @@ import org.eclipse.gef4.dot.internal.ui.GraphvizPreferencePage;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Tests for the {@link DotExport} class.
@@ -32,7 +33,7 @@ import org.junit.BeforeClass;
  * @author Fabian Steeg (fsteeg)
  * @author Tamas Miklossy
  */
-public class DotNativeDrawerTests extends DotTemplateTests {
+public class DotNativeDrawerTests {
 
 	private static String dotExecutablePath = null;
 
@@ -77,16 +78,34 @@ public class DotNativeDrawerTests extends DotTemplateTests {
 		return dotExecutablePath;
 	}
 
-	@Override
-	protected void testDotGeneration(final Graph graph) {
+	@Test
+	public void simpleGraph() {
+		testDotGeneration(DotTestUtils.getSimpleGraph(), "simple_graph.dot");
+	}
+
+	@Test
+	public void directedGraph() {
+		testDotGeneration(DotTestUtils.getSimpleDiGraph(),
+				"simple_digraph.dot");
+	}
+
+	@Test
+	public void labeledGraph() {
+		testDotGeneration(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
+	}
+
+	@Test
+	public void styledGraph() {
+		testDotGeneration(DotTestUtils.getStyledGraph(), "styled_graph.dot");
+	}
+
+	protected void testDotGeneration(final Graph graph, String fileName) {
 		/*
 		 * The DotExport class wraps the simple DotTemplate class, so when we
 		 * test DotExport, we also run the test in the test superclass:
 		 */
 		if (dotExecutablePath != null) {
-			super.testDotGeneration(graph);
-			File dotFile = DotFileUtils
-					.write(new DotExport(graph).toDotString());
+			File dotFile = DotFileUtils.write(new DotExport().export(graph));
 			File image = DotNativeDrawer.renderImage(
 					new File(dotExecutablePath), dotFile, "pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$

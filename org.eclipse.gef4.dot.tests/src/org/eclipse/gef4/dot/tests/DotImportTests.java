@@ -17,8 +17,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -82,16 +82,6 @@ public final class DotImportTests {
 		importFrom(new File(RESOURCES_TESTS + "layout_spring_graph.dot")); //$NON-NLS-1$
 		importFrom(new File(RESOURCES_TESTS + "layout_radial_graph.dot")); //$NON-NLS-1$
 		importFrom(new File(RESOURCES_TESTS + "layout_grid_graph.dot")); //$NON-NLS-1$
-
-		// graphs with animations
-		importFrom(new File(
-				RESOURCES_TESTS + "experimental_animation_simple.dot")); //$NON-NLS-1$
-		importFrom(new File(
-				RESOURCES_TESTS + "experimental_animation_bintree.dot")); //$NON-NLS-1$
-		importFrom(new File(
-				RESOURCES_TESTS + "experimental_animation_layout.dot")); //$NON-NLS-1$
-		importFrom(
-				new File(RESOURCES_TESTS + "experimental_animation_full.dot")); //$NON-NLS-1$
 	}
 
 	/**
@@ -223,7 +213,7 @@ public final class DotImportTests {
 		DotImport importer = new DotImport("digraph Sample{1;2;1->2}"); //$NON-NLS-1$
 		Graph graph = importer.toGraph();
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
+		Assert.assertEquals(DotAttributes._TYPE__G__DIGRAPH,
 				DotAttributes.getType(graph));
 	}
 

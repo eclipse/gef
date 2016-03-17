@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
+import static org.eclipse.gef4.dot.tests.DotTestUtils.RESOURCES_TESTS;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.internal.DotExport;
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.DotExport;
+import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,7 +31,7 @@ import org.junit.Test;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-public class DotExportTests extends DotTemplateTests {
+public class DotExportTests {
 
 	public static final File OUTPUT = new File("output"); //$NON-NLS-1$
 
@@ -40,79 +43,73 @@ public class DotExportTests extends DotTemplateTests {
 		}
 	}
 
-	@Override
-	protected void testDotGeneration(final Graph graph) {
+	protected void testDotGeneration(final Graph graph, String fileName) {
 		/*
 		 * The DotExport class wraps the simple DotTemplate class, so when we
 		 * test DotExport, we also run the test in the test superclass:
 		 */
-		super.testDotGeneration(graph);
+		String dot = new DotExport().export(graph);
+		String fileContents = DotFileUtils
+				.read(new File(RESOURCES_TESTS + fileName));
+		assertEquals(dot, fileContents);
 
 		/* DotExport adds stripping of blank lines and file output: */
-		DotExport dotExport = new DotExport(graph);
-		String dot = dotExport.toDotString();
-		assertNoBlankLines(dot);
+		DotExport dotExport = new DotExport();
+		String dotString = dotExport.export(graph);
+		assertNoBlankLines(dotString);
 
-		File file = new File(OUTPUT, new DotExport(graph).toString() + ".dot"); //$NON-NLS-1$
-		dotExport.toDotFile(file);
-		Assert.assertTrue("Generated file " + file.getName() + " must exist!", //$NON-NLS-1$
-				file.exists());
-		String dotRead = read(file);
+		dotExport.export(graph, new File(OUTPUT, fileName).getPath());
 		Assert.assertTrue(
-				"DOT file output representation must contain simple class name of Zest input!", //$NON-NLS-1$
-				dotRead.contains(graph.getClass().getSimpleName()));
+				"Generated file " + new File(OUTPUT, fileName).getName() //$NON-NLS-1$
+						+ " must exist!",
+				new File(OUTPUT, fileName).exists());
+		String dotRead = read(new File(OUTPUT, fileName));
 		Assert.assertEquals("File output and String output should be equal;", //$NON-NLS-1$
 				dot, dotRead);
-
 	}
 
-	// TODO: move test to zest, as the mapping should be done there
-	// /** Test mapping of GEF4 layouts to Graphviz layouts. */
-	// @Test
-	// public void layoutToGraphvizLayoutMapping() {
-	// Graph.Builder graph = new Graph.Builder();
-	// graph.attr(DotAttributes.LAYOUT_G, new TreeLayoutAlgorithm());
-	// assertTrue("TreeLayout -> 'dot'", new DotExport(graph.build())
-	// .toDotString().contains("graph[layout=dot]"));
-	// graph.attr(DotAttributes.LAYOUT_G, new RadialLayoutAlgorithm());
-	// assertTrue("RadialLayout -> 'twopi'", new DotExport(graph.build())
-	// .toDotString().contains("graph[layout=twopi]"));
-	// graph.attr(DotAttributes.LAYOUT_G, new GridLayoutAlgorithm());
-	// assertTrue("GridLayout -> 'osage'", new DotExport(graph.build())
-	// .toDotString().contains("graph[layout=osage]"));
-	// graph.attr(DotAttributes.LAYOUT_G, new SpringLayoutAlgorithm());
-	// assertTrue("SpringLayout, small -> 'fdp'", new DotExport(graph.build())
-	// .toDotString().contains("graph[layout=fdp]"));
-	// for (int i = 0; i < 100; i++) {
-	// graph.nodes(new Node.Builder().build());
-	// }
-	// assertTrue(
-	// "SpringLayout, large -> 'sfdp'",
-	// new DotExport(graph.build()).toDotString().contains(
-	// "graph[layout=sfdp]"));
-	// }
+	@Test
+	public void simpleGraph() {
+		testDotGeneration(DotTestUtils.getSimpleGraph(), "simple_graph.dot");
+	}
+
+	@Test
+	public void directedGraph() {
+		testDotGeneration(DotTestUtils.getSimpleDiGraph(),
+				"simple_digraph.dot");
+	}
+
+	@Test
+	public void labeledGraph() {
+		testDotGeneration(DotTestUtils.getLabeledGraph(), "labeled_graph.dot");
+	}
+
+	@Test
+	public void styledGraph() {
+		testDotGeneration(DotTestUtils.getStyledGraph(), "styled_graph.dot");
+	}
 
 	/** Test setting layout algorithms. */
 	@Test
 	public void layoutToGraphvizLayoutMapping() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
-		assertTrue("'dot'", new DotExport(graph.build()).toDotString()
-				.contains("graph[layout=dot]"));
-		graph.attr(DotAttributes.LAYOUT_G,
-				DotAttributes.LAYOUT__G__TWOPI);
-		assertTrue("'twopi'", new DotExport(graph.build()).toDotString()
-				.contains("graph[layout=twopi]"));
-		graph.attr(DotAttributes.LAYOUT_G,
-				DotAttributes.LAYOUT__G__OSAGE);
-		assertTrue("'osage'", new DotExport(graph.build()).toDotString()
-				.contains("graph[layout=osage]"));
+		graph.attr(DotAttributes._NAME__GNE, "LayoutMapping")
+				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
+				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+		assertTrue("'dot'", new DotExport().export(graph.build())
+				.contains("layout=\"dot\""));
+		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__TWOPI);
+		assertTrue("'twopi'", new DotExport().export(graph.build())
+				.contains("layout=\"twopi\""));
+		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__OSAGE);
+		assertTrue("'osage'", new DotExport().export(graph.build())
+				.contains("layout=\"osage\""));
 		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__FDP);
-		assertTrue("'fdp'", new DotExport(graph.build()).toDotString()
-				.contains("graph[layout=fdp]"));
+		assertTrue("'fdp'", new DotExport().export(graph.build())
+				.contains("layout=\"fdp\""));
 		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__SFDP);
-		assertTrue("'sfdp'", new DotExport(graph.build()).toDotString()
-				.contains("graph[layout=sfdp]"));
+		assertTrue("'sfdp'", new DotExport().export(graph.build())
+				.contains("layout=\"sfdp\""));
 	}
 
 	private void assertNoBlankLines(final String dot) {

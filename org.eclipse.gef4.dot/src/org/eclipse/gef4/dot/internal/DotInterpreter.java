@@ -16,6 +16,7 @@ package org.eclipse.gef4.dot.internal;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,12 +71,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	/**
 	 * @param dotAst
-	 *            The DOT abstract synstx tree (AST) to interpret
+	 *            The DOT abstract syntax tree (AST) to interpret
 	 * @return A graph instance for the given DOT AST
 	 */
 	public Graph interpret(DotAst dotAst) {
-		return interpret(dotAst, new Graph.Builder().attr(
-				DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DEFAULT));
+		return interpret(dotAst, new Graph.Builder());
 	}
 
 	private Graph interpret(DotAst dotAst, Graph.Builder graph) {
@@ -268,23 +268,25 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		return super.caseSubgraph(object);
 	}
 
-	// private implementation of the cases above
-
 	private void createGraph(DotGraph dotGraph) {
-		// name (from grammar definition, not attribute)
+		// name (meta-attribute)
 		String name = escaped(dotGraph.getName());
 		if (name != null) {
 			graph.attr(DotAttributes._NAME__GNE, name);
 		}
 
-		// TODO: extract layout from dot!
-		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DEFAULT);
-
-		// type
+		// type (meta-attribute)
 		GraphType graphType = dotGraph.getType();
 		graph.attr(DotAttributes._TYPE__G,
-				graphType == GraphType.DIGRAPH ? DotAttributes._TYPE__G__GRAPH
+				GraphType.GRAPH.equals(graphType)
+						? DotAttributes._TYPE__G__GRAPH
 						: DotAttributes._TYPE__G__DIGRAPH);
+
+		// layout
+		String layout = getAttributeValue(dotGraph, DotAttributes.LAYOUT_G);
+		if (layout != null) {
+			graph.attr(DotAttributes.LAYOUT_G, layout);
+		}
 	}
 
 	private void createAttributes(final AttrStmt attrStmt) {
@@ -405,33 +407,76 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		return nodes.get(id);
 	}
 
+	private String getAttributeValue(final DotGraph graph, final String name) {
+		for (Stmt stmt : graph.getStmts()) {
+			if (stmt instanceof AttrStmt) {
+				return getAttributeValue((AttrStmt) stmt, name);
+			} else if (stmt instanceof Attribute) {
+				return getAttributeValue((Attribute) stmt, name);
+			}
+		}
+		return null;
+	}
+
 	/**
-	 * @param eStatementObject
-	 *            The statement object, e.g. the object corresponding to
+	 * @param stmt
+	 *            The {@link Stmt} object, e.g. the object corresponding to
 	 *            "node[label="hi"]"
-	 * @param attributeName
+	 * @param name
 	 *            The name of the attribute to get the value for, e.g. "label"
 	 * @return The value of the given attribute, e.g. "hi"
 	 */
-	private String getAttributeValue(final Stmt eStatementObject,
-			final String attributeName) {
-		Iterator<EObject> nodeContents = eStatementObject.eContents()
-				.iterator();
-		while (nodeContents.hasNext()) {
-			EObject nodeContentElement = nodeContents.next();
-			if (nodeContentElement instanceof AttrList) {
-				Iterator<EObject> attributeContents = nodeContentElement
-						.eContents().iterator();
-				while (attributeContents.hasNext()) {
-					EObject next = attributeContents.next();
-					if (next instanceof Attribute) {
-						Attribute attributeElement = (Attribute) next;
-						if (attributeElement.getName().equals(attributeName)) {
-							return escaped(attributeElement.getValue());
-						}
-					}
+	private String getAttributeValue(final NodeStmt stmt, final String name) {
+		return getAttributeValue(stmt.getAttrLists(), name);
+	}
+
+	/**
+	 * Returns the value of the first attribute with the give name or
+	 * <code>null</code> if no attribute could be found.
+	 * 
+	 * @param attrLists
+	 *            The {@link AttrList}s to search.
+	 * @param name
+	 *            The name of the attribute whose value is to be retrieved.
+	 * @return The attribute value or <code>null</code> in case the attribute
+	 *         could not be found.
+	 */
+	private String getAttributeValue(List<AttrList> attrLists,
+			final String name) {
+		for (AttrList attrList : attrLists) {
+			String value = getAttributeValue(attrList, name);
+			if (value != null) {
+				return value;
+			}
+		}
+		return null;
+	}
+
+	private String getAttributeValue(AttrStmt attrStmt, String name) {
+		return getAttributeValue(attrStmt.getAttrLists(), name);
+	}
+
+	private String getAttributeValue(EdgeStmtNode edgeStmtNode, String name) {
+		return getAttributeValue(edgeStmtNode.getAttrLists(), name);
+	}
+
+	private String getAttributeValue(AttrList attrList, final String name) {
+		Iterator<EObject> attributeContents = attrList.eContents().iterator();
+		while (attributeContents.hasNext()) {
+			EObject next = attributeContents.next();
+			if (next instanceof Attribute) {
+				String value = getAttributeValue((Attribute) next, name);
+				if (value != null) {
+					return value;
 				}
 			}
+		}
+		return null;
+	}
+
+	private String getAttributeValue(Attribute attribute, final String name) {
+		if (attribute.getName().equals(name)) {
+			return escaped(attribute.getValue());
 		}
 		return null;
 	}

@@ -84,8 +84,7 @@ public final class DotTestUtils {
 		/* Global settings: */
 		Graph.Builder graph = new Graph.Builder()
 				.attr(DotAttributes._NAME__GNE, "LabeledGraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH)
-				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH);
 
 		/* Nodes: */
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
@@ -114,44 +113,12 @@ public final class DotTestUtils {
 		return graph.nodes(n1, n2, n3, n4).edges(e1, e2, e3).build();
 	}
 
-	public static Graph getSampleGraph() {
-		/* Global settings: */
-		Graph.Builder graph = new Graph.Builder()//
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH)//
-				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
-
-		/* Nodes: */
-		Node n1 = new Node.Builder().attr(DotAttributes.LABEL__GNE, "Node") //$NON-NLS-1$
-				.buildNode();
-		Node n2 = new Node.Builder().attr(DotAttributes.LABEL__GNE, "Node") //$NON-NLS-1$
-				.buildNode();
-		Node n3 = new Node.Builder().attr(DotAttributes.LABEL__GNE, "Leaf1") //$NON-NLS-1$
-				.buildNode();
-		Node n4 = new Node.Builder().attr(DotAttributes.LABEL__GNE, "Leaf2") //$NON-NLS-1$
-				.buildNode();
-
-		/* Connection from n2 to n3: */
-		Edge e1 = new Edge.Builder(n2, n3)
-				.attr(DotAttributes.LABEL__GNE, "Edge")
-				.attr(DotAttributes.STYLE__E, DotAttributes.STYLE__E__DASHED)
-				.buildEdge();
-
-		/* Connection from n2 to n4: */
-		Edge e2 = new Edge.Builder(n2, n4)
-				.attr(DotAttributes.LABEL__GNE, "Dotted")
-				.attr(DotAttributes.STYLE__E, DotAttributes.STYLE__E__DOTTED)
-				.buildEdge();
-
-		return graph.nodes(n1, n2, n3, n4).edges(e1, e2).build();
-	}
-
 	public static Graph getSimpleDiGraph() {
 
 		/* Global settings, here we set the directed property: */
 		Graph.Builder graph = new Graph.Builder()
 				.attr(DotAttributes._NAME__GNE, "SimpleDigraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH)
-				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH);
 
 		/* Nodes: */
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
@@ -176,8 +143,7 @@ public final class DotTestUtils {
 		/* Set a layout algorithm: */
 		Graph.Builder graph = new Graph.Builder()
 				.attr(DotAttributes._NAME__GNE, "SimpleGraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH);
 
 		/* Set the nodes: */
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$
@@ -202,7 +168,7 @@ public final class DotTestUtils {
 		/* Global properties: */
 		Graph.Builder graph = new Graph.Builder()
 				.attr(DotAttributes._NAME__GNE, "StyledGraph")
-				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__GRAPH)
+				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
 				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
 
 		/* Nodes: */
