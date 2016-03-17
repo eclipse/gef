@@ -64,6 +64,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				new Point(e.getSceneX(), e.getSceneY()));
 
 		List<Point> after = connection.getPoints();
+
 		if (before.size() != after.size()) {
 			targetPart.getAdapter(SelectionBehavior.class).updateHandles();
 		}
@@ -153,12 +154,11 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				boolean isSecondConnected = secondAnchorage != null
 						&& secondAnchorage != targetPart.getVisual();
 
-				// XXX: Make second explicit first so that the first segment
-				// index is still valid.
-				AnchorHandle secondAnchorHandle = bendPolicy
-						.makeExplicitBefore(secondSegmentIndex);
-				AnchorHandle firstAnchorHandle = bendPolicy
-						.makeExplicitAfter(firstSegmentIndex);
+				// make explicit
+				List<AnchorHandle> explicit = bendPolicy
+						.makeExplicit(firstSegmentIndex, secondSegmentIndex);
+				AnchorHandle firstAnchorHandle = explicit.get(0);
+				AnchorHandle secondAnchorHandle = explicit.get(1);
 
 				// copy first if connected
 				if (isFirstConnected) {
@@ -221,12 +221,12 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 					&& firstAnchorage != targetPart.getVisual();
 
 			// make the anchor handles explicit
-			// XXX: Make second explicit first so that the first segment
-			// index is still valid.
-			AnchorHandle secondAnchorHandle = bendPolicy
-					.makeExplicitBefore(secondSegmentIndex);
-			AnchorHandle firstAnchorHandle = bendPolicy
-					.makeExplicitAfter(firstSegmentIndex);
+			boolean isStart = firstSegmentIndex == 0;
+			List<AnchorHandle> explicit = bendPolicy.makeExplicit(
+					isStart ? firstSegmentIndex : firstSegmentIndex - 1,
+					secondSegmentIndex);
+			AnchorHandle firstAnchorHandle = explicit.get(isStart ? 0 : 1);
+			AnchorHandle secondAnchorHandle = explicit.get(isStart ? 1 : 2);
 
 			// copy first point if connected
 			if (isFirstConnected) {
@@ -273,12 +273,13 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 					&& secondAnchorage != targetPart.getVisual();
 
 			// make the anchor handles explicit
-			// XXX: Make second explicit first so that the first segment
-			// index is still valid.
-			AnchorHandle secondAnchorHandle = bendPolicy
-					.makeExplicitBefore(secondSegmentIndex);
-			AnchorHandle firstAnchorHandle = bendPolicy
-					.makeExplicitAfter(firstSegmentIndex);
+			boolean isEnd = secondSegmentIndex == targetPart.getVisual()
+					.getAnchors().size() - 1;
+			List<AnchorHandle> explicit = bendPolicy.makeExplicit(
+					firstSegmentIndex,
+					isEnd ? secondSegmentIndex : secondSegmentIndex + 1);
+			AnchorHandle firstAnchorHandle = explicit.get(0);
+			AnchorHandle secondAnchorHandle = explicit.get(1);
 
 			// copy second point if connected
 			if (isSecondConnected) {
@@ -306,7 +307,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 					+ (hostPart.getSegmentParameter() == 1 ? 1 : 0);
 
 			// make anchor explicit if it is implicit
-			bendPolicy.select(bendPolicy.makeExplicitAfter(connectionIndex));
+			bendPolicy.select(bendPolicy
+					.makeExplicit(connectionIndex, connectionIndex).get(0));
 		}
 
 		// update handles

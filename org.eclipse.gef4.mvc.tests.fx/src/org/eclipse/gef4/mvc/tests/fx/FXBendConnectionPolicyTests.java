@@ -32,6 +32,9 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.CursorUtils;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -64,6 +67,7 @@ import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 
@@ -223,6 +227,19 @@ public class FXBendConnectionPolicyTests {
 			return contents;
 		}
 
+		public static List<Object> getAB_offset2_simple() {
+			List<Object> contents = new ArrayList<>();
+			org.eclipse.gef4.geometry.planar.Rectangle A = new org.eclipse.gef4.geometry.planar.Rectangle(0, 0, 50, 50);
+			org.eclipse.gef4.geometry.planar.Rectangle B = new org.eclipse.gef4.geometry.planar.Rectangle(300, 500, 50,
+					50);
+			contents.add(A);
+			contents.add(B);
+			ConnectionContent connectionContent = new ConnectionContent(A, B);
+			connectionContent.isSimple = true;
+			contents.add(connectionContent);
+			return contents;
+		}
+
 		public static List<Object> getABC_AB_BC() {
 			List<Object> contents = new ArrayList<>();
 			org.eclipse.gef4.geometry.planar.Rectangle A = new org.eclipse.gef4.geometry.planar.Rectangle(0, 0, 50, 50);
@@ -303,6 +320,163 @@ public class FXBendConnectionPolicyTests {
 
 	private boolean equalsUnprecise(Point p, Point q) {
 		return Math.abs(p.x - q.x) < 0.5 && Math.abs(p.y - q.y) < 0.5;
+	}
+
+	@Test
+	public void test_create_orthogonal_segment_from_implicit_connected()
+			throws InterruptedException, InvocationTargetException, AWTException {
+		// create injector (adjust module bindings for test)
+		Injector injector = Guice.createInjector(new TestModule());
+
+		// inject domain
+		injector.injectMembers(this);
+
+		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		ctx.createScene(viewer.getCanvas(), 400, 200);
+
+		// activate domain, so tool gets activated and can register listeners
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		final List<Object> contents = TestModels.getAB_offset2_simple();
+		// set contents on JavaFX application thread (visuals are created)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
+			}
+		});
+
+		// check that the parts have been created
+		for (Object content : contents) {
+			assertTrue(viewer.getContentPartMap().containsKey(content));
+		}
+
+		// query bend policy for first connection
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+
+		assertEquals(2, connection.getVisual().getPoints().size());
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+
+		// XXX: The strategies are exchanged before setting the router so that a
+		// refresh will use these strategies
+		((DynamicAnchor) connection.getVisual().getStartAnchor()).setComputationStrategy(
+				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
+					@Override
+					public Point computePositionInScene(Node anchorage, Node anchored,
+							Point anchoredReferencePointInLocal) {
+						// ensure routing starts going to the right
+						return new Point(49, 25);
+					}
+				});
+		((DynamicAnchor) connection.getVisual().getEndAnchor()).setComputationStrategy(
+				connection.getVisual().getEndAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
+					@Override
+					public Point computePositionInScene(Node anchorage, Node anchored,
+							Point anchoredReferencePointInLocal) {
+						// ensure routing ends going to the right
+						return new Point(301, 525);
+					}
+				});
+
+		// XXX: Set router on application thread as the position change listener
+		// is executed within the application thread, too, and we need to wait
+		// for a recent connection refresh that was caused by an anchor position
+		// change
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				connection.getVisual().setRouter(new OrthogonalRouter());
+			}
+		});
+
+		// check if router inserted implicit points
+		assertEquals(4, connection.getVisual().getPoints().size());
+
+		// create new segment between 2nd implicit and end
+		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
+		bendPolicy.init();
+
+		// determine segment indices for neighbor anchors
+		int firstSegmentIndex = 2;
+		int secondSegmentIndex = 3;
+
+		// determine middle of segment
+		Point firstPoint = connection.getVisual().getPoint(firstSegmentIndex);
+		Point secondPoint = connection.getVisual().getPoint(secondSegmentIndex);
+
+		// check that segment to be selected is horizontal
+		assertEquals(firstPoint.y, secondPoint.y, 0.0001);
+
+		Vector direction = new Vector(firstPoint, secondPoint);
+		Point midPoint = firstPoint.getTranslated(direction.x / 2, direction.y / 2);
+		Point2D midInScene = connection.getVisual().localToScene(midPoint.x, midPoint.y);
+
+		// determine connectedness of first anchor handle
+		Node firstAnchorage = connection.getVisual().getAnchor(firstSegmentIndex).getAnchorage();
+		boolean isFirstConnected = firstAnchorage != null && firstAnchorage != connection.getVisual();
+
+		// make the anchor handles explicit
+		List<AnchorHandle> explicit = bendPolicy.makeExplicit(firstSegmentIndex - 1, secondSegmentIndex);
+		AnchorHandle firstAnchorHandle = explicit.get(1);
+		AnchorHandle secondAnchorHandle = explicit.get(2);
+		assertEquals(4, connection.getVisual().getPoints().size());
+
+		// copy first point if connected
+		if (isFirstConnected) {
+			// use the copy as the new first anchor handle
+			firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle, FX2Geometry.toPoint(connection.getVisual()
+					.localToScene(Geometry2FX.toFXPoint(firstAnchorHandle.getInitialPosition()))));
+		}
+
+		// create new anchor at the segment's middle
+		secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle, FX2Geometry.toPoint(midInScene));
+		// copy that new anchor
+		secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle, FX2Geometry.toPoint(midInScene));
+
+		// check to be selected segment is horizontal
+		assertEquals(firstAnchorHandle.getPosition().y, secondAnchorHandle.getPosition().y, 0.0001);
+
+		// select the first anchor and the copy of the new mid anchor for
+		// movement
+		bendPolicy.select(firstAnchorHandle);
+		bendPolicy.select(secondAnchorHandle);
+		assertEquals(6, connection.getVisual().getPoints().size());
+
+		// move new segment up
+		bendPolicy.move(new Point(), new Point(0, -50));
+		assertEquals(6, connection.getVisual().getPoints().size());
+
+		// move new segment further up
+		bendPolicy.move(new Point(), new Point(0, -100));
+		assertEquals(6, connection.getVisual().getPoints().size());
+
+		// move new segment further up
+		bendPolicy.move(new Point(), new Point(0, -150));
+		assertEquals(6, connection.getVisual().getPoints().size());
+
+		// move new segment down a bit
+		bendPolicy.move(new Point(), new Point(0, -120));
+		assertEquals(6, connection.getVisual().getPoints().size());
+
+		// move new segment down a bit
+		bendPolicy.move(new Point(), new Point(0, -60));
+		assertEquals(6, connection.getVisual().getPoints().size());
+
+		// move new segment back to its original position
+		bendPolicy.move(new Point(), new Point());
+		assertEquals(4, connection.getVisual().getPoints().size());
+
+		// commit (i.e. normalize)
+		bendPolicy.commit();
+		assertEquals(4, connection.getVisual().getPoints().size());
 	}
 
 	@Test

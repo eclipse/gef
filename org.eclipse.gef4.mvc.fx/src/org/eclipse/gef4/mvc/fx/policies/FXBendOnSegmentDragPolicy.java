@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.List;
+
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -131,6 +133,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 		// determine curve in scene coordinates
 		Connection connection = bendPolicy.getConnection();
+
 		ICurve curve = connection.getCurveNode().getGeometry();
 		ICurve curveInScene = (ICurve) NodeUtils
 				.localToScene(connection.getCurveNode(), curve);
@@ -159,6 +162,8 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		int firstSegmentIndex = segmentIndex;
 		int secondSegmentIndex = segmentIndex + 1;
 
+		// move segment, copy ends when connected
+
 		// determine connectedness for neighbor anchors
 		Node firstAnchorage = connection.getAnchor(firstSegmentIndex)
 				.getAnchorage();
@@ -169,12 +174,11 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		boolean isSecondConnected = secondAnchorage != null
 				&& secondAnchorage != connection;
 
-		// XXX: Make second explicit first so that the first segment
-		// index is still valid.
-		AnchorHandle secondAnchorHandle = bendPolicy
-				.makeExplicitBefore(secondSegmentIndex);
-		AnchorHandle firstAnchorHandle = bendPolicy
-				.makeExplicitAfter(firstSegmentIndex);
+		// make explicit
+		List<AnchorHandle> explicit = bendPolicy.makeExplicit(firstSegmentIndex,
+				secondSegmentIndex);
+		AnchorHandle firstAnchorHandle = explicit.get(0);
+		AnchorHandle secondAnchorHandle = explicit.get(1);
 
 		// copy first if connected
 		if (isFirstConnected) {
@@ -192,7 +196,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 									secondAnchorHandle.getInitialPosition()))));
 		}
 
-		// select the segment anchors for manipulation
+		// select the end anchors for manipulation
 		bendPolicy.select(firstAnchorHandle);
 		bendPolicy.select(secondAnchorHandle);
 

@@ -338,6 +338,17 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		return updateOperation;
 	}
 
+	private int countConnectionExplicit() {
+		int explicit = 0;
+		for (int i = 0; i < getConnection().getAnchors().size(); i++) {
+			if (!(getConnection().getRouter()
+					.isImplicitAnchor(getConnection().getAnchor(i)))) {
+				explicit++;
+			}
+		}
+		return explicit;
+	}
+
 	/**
 	 * Creates a new anchor after the anchor specified by the given explicit
 	 * anchor index. Returns the new anchor's explicit index.
@@ -667,6 +678,26 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			return null;
 		}
 
+		// // debug output
+		// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
+		// String anchorsString = "";
+		// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++)
+		// {
+		// IAnchor anchor = getConnection().getAnchor(i);
+		// if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+		// anchorsString = anchorsString
+		// + (selectedAnchors.contains(explicitAnchors.get(j))
+		// ? "(*)" : " * ")
+		// + anchor.getClass().toString() + "["
+		// + getConnection().getPoint(i) + "]" + " ("
+		// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
+		// + "},\n";
+		// j++;
+		// }
+		// }
+		// System.out.println(
+		// "before realizing left is no overlay:\n" + anchorsString);
+
 		// determine segment direction constraint before manipulating the
 		// selection
 		boolean isSameY = isSelectionOnHorizontalLine();
@@ -688,8 +719,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// determine if removed neighbor is explicit
 		boolean removedNeighborWasExplicit = isExplicit(removedNeighborIndex);
 		// make it explicit
-		AnchorHandle removedNeighborHandle = makeExplicitBefore(
-				removedNeighborIndex);
+		AnchorHandle removedNeighborHandle = makeExplicit(removedNeighborIndex);
 
 		// retained neighbor
 		int retainedNeighborIndex = removedNeighborIndex - 1;
@@ -698,7 +728,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// determine if retained neighbor is explicit
 		boolean retainedNeighborWasExplicit = isExplicit(retainedNeighborIndex);
 		// make it explicit
-		AnchorHandle retainedNeighborHandle = makeExplicitBefore(
+		AnchorHandle retainedNeighborHandle = makeExplicit(
 				retainedNeighborIndex);
 		IAnchor retainedNeighborNewAnchor = retainedNeighborHandle.getAnchor();
 
@@ -741,22 +771,46 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 		// restore removed neighbor anchor
 		if (!removedNeighborWasExplicit) {
-			getBendOperation().getNewAnchors().set(
-					removedNeighborHandle.explicitAnchorIndex,
-					removedNeighborOldAnchor);
+			getBendOperation().getNewAnchors()
+					.remove(removedNeighborHandle.explicitAnchorIndex);
 			explicitAnchors.remove(removedNeighborHandle.explicitAnchorIndex);
+			// fix explicit anchor indices
+			locallyExecuteOperation();
+			for (int i = 0; i < explicitAnchors.size(); i++) {
+				explicitAnchors.get(i).explicitAnchorIndex = i;
+			}
 		}
 		// restore retained neighbor anchor
 		if (!retainedNeighborWasExplicit) {
-			getBendOperation().getNewAnchors().set(
-					retainedNeighborHandle.explicitAnchorIndex,
-					retainedNeighborOldAnchor);
+			getBendOperation().getNewAnchors()
+					.remove(retainedNeighborHandle.explicitAnchorIndex);
 			explicitAnchors.remove(retainedNeighborHandle.explicitAnchorIndex);
+			// fix explicit anchor indices
+			locallyExecuteOperation();
+			for (int i = 0; i < explicitAnchors.size(); i++) {
+				explicitAnchors.get(i).explicitAnchorIndex = i;
+			}
 		}
-		// fix explicit anchor indices
-		for (int i = 0; i < explicitAnchors.size(); i++) {
-			explicitAnchors.get(i).explicitAnchorIndex = i;
-		}
+
+		// // debug output
+		// newAnchors = getBendOperation().getNewAnchors();
+		// anchorsString = "";
+		// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++)
+		// {
+		// IAnchor anchor = getConnection().getAnchor(i);
+		// if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
+		// anchorsString = anchorsString
+		// + (selectedAnchors.contains(explicitAnchors.get(j))
+		// ? "(*)" : " * ")
+		// + anchor.getClass().toString() + "["
+		// + getConnection().getPoint(i) + "]" + " ("
+		// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
+		// + "},\n";
+		// j++;
+		// }
+		// }
+		// System.out.println(
+		// "after realizing left is no overlay:\n" + anchorsString);
 
 		return null;
 	}
@@ -767,14 +821,14 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 			return null;
 		}
 
-		// debug output
+		// // debug output
 		// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-		// String anchorsBeforeRightOverlay = "";
+		// String anchorsString = "";
 		// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++)
 		// {
 		// IAnchor anchor = getConnection().getAnchor(i);
 		// if (!getConnection().getRouter().isImplicitAnchor(anchor)) {
-		// anchorsBeforeRightOverlay = anchorsBeforeRightOverlay
+		// anchorsString = anchorsString
 		// + (selectedAnchors.contains(explicitAnchors.get(j))
 		// ? "(*)" : " * ")
 		// + anchor.getClass().toString() + "["
@@ -796,8 +850,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// determine if retained neighbor is explicit
 		boolean retainedNeighborWasExplicit = isExplicit(retainedNeighborIndex);
 		// make it explicit
-		AnchorHandle retainedNeighborHandle = makeExplicitBefore(
-				retainedNeighborIndex);
+		AnchorHandle retainedNeighborHandle = makeExplicit(
+				retainedNeighborIndex, retainedNeighborIndex).get(0);
 		IAnchor retainedNeighborNewAnchor = retainedNeighborHandle.getAnchor();
 
 		// removed neighbor
@@ -807,8 +861,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		// determine if removed neighbor is explicit
 		boolean removedNeighborWasExplicit = isExplicit(removedNeighborIndex);
 		// make it explicit
-		AnchorHandle removedNeighborHandle = makeExplicitBefore(
-				removedNeighborIndex);
+		AnchorHandle removedNeighborHandle = makeExplicit(removedNeighborIndex,
+				removedNeighborIndex).get(0);
 
 		// removed selected
 		AnchorHandle removedSelectedHandle = selectedAnchors.get(1);
@@ -861,21 +915,25 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 		// restore retained neighbor anchor
 		if (!retainedNeighborWasExplicit) {
-			getBendOperation().getNewAnchors().set(
-					retainedNeighborHandle.explicitAnchorIndex,
-					retainedNeighborOldAnchor);
+			getBendOperation().getNewAnchors()
+					.remove(retainedNeighborHandle.explicitAnchorIndex);
 			explicitAnchors.remove(retainedNeighborHandle.explicitAnchorIndex);
+			locallyExecuteOperation();
+			// fix explicit anchor indices
+			for (int i = 0; i < explicitAnchors.size(); i++) {
+				explicitAnchors.get(i).explicitAnchorIndex = i;
+			}
 		}
 		// restore removed neighbor anchor
 		if (!removedNeighborWasExplicit) {
-			getBendOperation().getNewAnchors().set(
-					removedNeighborHandle.explicitAnchorIndex,
-					removedNeighborOldAnchor);
+			getBendOperation().getNewAnchors()
+					.remove(removedNeighborHandle.explicitAnchorIndex);
 			explicitAnchors.remove(removedNeighborHandle.explicitAnchorIndex);
-		}
-		// fix explicit anchor indices
-		for (int i = 0; i < explicitAnchors.size(); i++) {
-			explicitAnchors.get(i).explicitAnchorIndex = i;
+			locallyExecuteOperation();
+			// fix explicit anchor indices
+			for (int i = 0; i < explicitAnchors.size(); i++) {
+				explicitAnchors.get(i).explicitAnchorIndex = i;
+			}
 		}
 
 		return null;
@@ -918,9 +976,8 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		AnchorHandle newAnchorHandle = new AnchorHandle(insertionIndex);
 		explicitAnchors.add(insertionIndex, newAnchorHandle);
 		// update explicit anchor indices
-		// => increment successing anchors' indices
-		for (int i = insertionIndex + 1; i < explicitAnchors.size(); i++) {
-			explicitAnchors.get(i).explicitAnchorIndex++;
+		for (int i = 0; i < explicitAnchors.size(); i++) {
+			explicitAnchors.get(i).explicitAnchorIndex = i;
 		}
 	}
 
@@ -976,55 +1033,50 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	/**
-	 * Returns an {@link AnchorHandle} for the explicit anchor at the given
-	 * connection index. If the anchor at the given connection index is
-	 * implicit, it will be made explicit first.
+	 * Makes the connection anchor at the given connection index explicit and
+	 * returns an {@link AnchorHandle} for it.
 	 *
 	 * @param connectionIndex
-	 *            The connection index of the anchor to make explicit.
-	 * @return The {@link AnchorHandle} for the explicit anchor that references
-	 *         the specified connection anchor.
+	 *            The connection index to make explicit.
+	 * @return The {@link AnchorHandle} for the given connection index.
 	 */
-	public AnchorHandle makeExplicitAfter(int connectionIndex) {
-		AnchorHandle precedingAnchorHandle = findExplicitAnchorBackwards(
-				connectionIndex);
-		if (isExplicit(connectionIndex)) {
-			// the "preceding" anchor handle is actually the anchor handle
-			// for
-			// the passed-in connection index
-			return precedingAnchorHandle;
-		}
-		// create a new anchor handle after the preceding anchor handle. use
-		// the
-		// connection to determine the position for the new anchor.
-		Point position = getConnection().getPoint(connectionIndex);
-		return createAfter(precedingAnchorHandle, FX2Geometry
-				.toPoint(getConnection().localToScene(position.x, position.y)));
+	public AnchorHandle makeExplicit(int connectionIndex) {
+		return makeExplicit(connectionIndex, connectionIndex).get(0);
 	}
 
 	/**
-	 * Returns an {@link AnchorHandle} for the explicit anchor at the given
-	 * connection index. If the anchor at the given connection index is
-	 * implicit, it will be made explicit first.
+	 * Makes the connection anchors within the given range of connection indices
+	 * explicit and returns {@link AnchorHandle}s for them.
 	 *
-	 * @param connectionIndex
-	 *            The connection index of the anchor to make explicit.
-	 * @return The {@link AnchorHandle} for the explicit anchor that references
-	 *         the specified connection anchor.
+	 * @param startConnectionIndex
+	 *            The first connection index to make explicit.
+	 * @param endConnectionIndex
+	 *            The last connection index to make explicit.
+	 * @return A list of {@link AnchorHandle}s for the given range of indices.
 	 */
-	public AnchorHandle makeExplicitBefore(int connectionIndex) {
-		AnchorHandle nextAnchorHandle = findExplicitAnchorForwards(
-				connectionIndex);
-		if (isExplicit(connectionIndex)) {
-			// the "next" anchor handle is actually the anchor handle for
-			// the passed-in connection index
-			return nextAnchorHandle;
+	public List<AnchorHandle> makeExplicit(int startConnectionIndex,
+			int endConnectionIndex) {
+		// evaluate connection points for the given indices
+		List<Point> points = new ArrayList<>();
+		for (int i = startConnectionIndex; i <= endConnectionIndex; i++) {
+			points.add(getConnection().getPoint(i));
 		}
-		// create a new anchor handle before the next anchor handle. use the
-		// connection to determine the position for the new anchor.
-		Point position = getConnection().getPoint(connectionIndex);
-		return createBefore(nextAnchorHandle, FX2Geometry
-				.toPoint(getConnection().localToScene(position.x, position.y)));
+		// create explicit anchors one by one
+		AnchorHandle nextHandle = endConnectionIndex == getConnection()
+				.getAnchors().size() - 1 ? null
+						: findExplicitAnchorForwards(endConnectionIndex + 1);
+		List<AnchorHandle> handles = new ArrayList<>();
+		for (int i = points.size() - 1; i >= 0; i--) {
+			if (isExplicit(startConnectionIndex + i)) {
+				nextHandle = findExplicitAnchorForwards(
+						startConnectionIndex + i);
+			} else {
+				nextHandle = createBefore(nextHandle, points.get(i));
+			}
+			handles.add(nextHandle);
+		}
+		Collections.reverse(handles);
+		return handles;
 	}
 
 	/**
@@ -1131,12 +1183,12 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 					if (getConnection().getRouter()
 							.isImplicitAnchor(anchors.get(i + 1))) {
 						// make next explicit
-						makeExplicitBefore(i + 1);
+						makeExplicit(i + 1, i + 1);
 					}
 					if (getConnection().getRouter()
 							.isImplicitAnchor(anchors.get(i - 1))) {
 						// make previous explicit
-						makeExplicitAfter(i - 1);
+						makeExplicit(i - 1, i - 1);
 						explicitIndex++;
 					}
 					// remove current point as it is unnecessary
