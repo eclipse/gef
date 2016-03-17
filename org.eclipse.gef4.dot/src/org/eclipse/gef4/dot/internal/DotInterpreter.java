@@ -6,7 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Fabian Steeg                - initial API and implementation 
+ *                                   (bug #277380)
+ *     Alexander Nyßen (itemis AG) - several refactorings and additions 
+ *                                   (bug #487081, 489793)
  *******************************************************************************/
 
 package org.eclipse.gef4.dot.internal;
@@ -41,6 +44,7 @@ import org.eclipse.gef4.graph.Node;
  * the parsed DOT.
  * 
  * @author Fabian Steeg (fsteeg)
+ * @author Alexander Nyßen (anyssen)
  */
 public final class DotInterpreter extends DotSwitch<Object> {
 

@@ -7,11 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *     Fabian Steeg - initial API and implementation (see bug #277380)
- *     Alexander Nyßen (alexander.nyssen@itemis.de) - fixed NPE (see bug #473011)
- *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
- *                                - Exporting *.dot files in different formats (bug #446647)
- *                                - Naming of output file (bug #484198)
+ *     Fabian Steeg                - initial API and implementation (see bug #277380)
+ *     Alexander Nyßen (itemis AG) - Fixed NPE (see bug #473011)
+ *     Tamas Miklossy (itemis AG)  - Refactoring of preferences (bug #446639)
+ *                                 - Exporting *.dot files in different formats (bug #446647)
+ *                                 - Naming of output file (bug #484198)
  *
  *********************************************************************************************/
 package org.eclipse.gef4.dot.internal;
