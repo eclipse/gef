@@ -294,13 +294,13 @@ public class FXDefaultSelectionHandlePartFactory
 					hps.add(part);
 				}
 
-				// // mid handle for segment drag
-				// FXSquareSegmentHandlePart midPart = injector
-				// .getInstance(FXSquareSegmentHandlePart.class);
-				// midPart.setSegmentsProvider(segmentsProvider);
-				// midPart.setSegmentIndex(i);
-				// midPart.setSegmentParameter(0.5);
-				// hps.add(midPart);
+				// mid handle for segment drag
+				FXRectangleSegmentHandlePart midPart = injector
+						.getInstance(FXRectangleSegmentHandlePart.class);
+				midPart.setSegmentsProvider(segmentsProvider);
+				midPart.setSegmentIndex(i);
+				midPart.setSegmentParameter(0.5);
+				hps.add(midPart);
 
 				// create quarter handle for the creation of a new segment
 				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL) {
