@@ -32,6 +32,7 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javafx.geometry.Bounds;
@@ -44,7 +45,7 @@ public class NodeLayoutBehaviorTests {
 	 * Ensure all tests are executed on the JavaFX application thread (and the
 	 * JavaFX toolkit is properly initialized).
 	 */
-	// @Rule
+	@Rule
 	public FXApplicationThreadRule fxApplicationThreadRule = new FXApplicationThreadRule();
 
 	private GraphNodeLayout createNodeLayout() {
