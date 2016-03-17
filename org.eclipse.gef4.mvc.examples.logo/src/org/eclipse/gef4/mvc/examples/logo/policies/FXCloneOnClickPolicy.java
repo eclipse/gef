@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
@@ -60,6 +61,20 @@ public class FXCloneOnClickPolicy extends AbstractInteractionPolicy<Node>
 						HashMultimap
 								.<IContentPart<Node, ? extends Node>, String> create());
 		commit(creationPolicy);
+
+		// XXX: Ensure start and end anchor are set for connections, so that
+		// they can be interacted with (transform/bend).
+		if (clonedContentPart.getVisual() instanceof Connection) {
+			Connection connection = (Connection) clonedContentPart.getVisual();
+			if (connection.getStartAnchor() == null) {
+				connection.setStartPoint(
+						((Connection) getHost().getVisual()).getStartPoint());
+			}
+			if (connection.getEndAnchor() == null) {
+				connection.setEndPoint(
+						((Connection) getHost().getVisual()).getEndPoint());
+			}
+		}
 
 		// deselect all but the clone
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
