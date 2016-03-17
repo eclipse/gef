@@ -139,50 +139,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			if (e.isShiftDown() || targetPart.getVisual()
 					.getRouter() instanceof OrthogonalRouter) {
 				// move segment, copy ends when connected
-
-				// determine indices of neighbor anchors
-				int firstSegmentIndex = hostPart.getSegmentIndex();
-				int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
-
-				// determine connectedness for neighbor anchors
-				Node firstAnchorage = targetPart.getVisual()
-						.getAnchor(firstSegmentIndex).getAnchorage();
-				boolean isFirstConnected = firstAnchorage != null
-						&& firstAnchorage != targetPart.getVisual();
-				Node secondAnchorage = targetPart.getVisual()
-						.getAnchor(secondSegmentIndex).getAnchorage();
-				boolean isSecondConnected = secondAnchorage != null
-						&& secondAnchorage != targetPart.getVisual();
-
-				// make explicit
-				List<AnchorHandle> explicit = bendPolicy
-						.makeExplicit(firstSegmentIndex, secondSegmentIndex);
-				AnchorHandle firstAnchorHandle = explicit.get(0);
-				AnchorHandle secondAnchorHandle = explicit.get(1);
-
-				// copy first if connected
-				if (isFirstConnected) {
-					firstAnchorHandle = bendPolicy.createAfter(
-							firstAnchorHandle,
-							FX2Geometry.toPoint(targetPart.getVisual()
-									.localToScene(Geometry2FX
-											.toFXPoint(firstAnchorHandle
-													.getInitialPosition()))));
-				}
-
-				// copy second if connected
-				if (isSecondConnected) {
-					secondAnchorHandle = bendPolicy.createBefore(
-							secondAnchorHandle,
-							FX2Geometry.toPoint(targetPart.getVisual()
-									.localToScene(Geometry2FX
-											.toFXPoint(secondAnchorHandle
-													.getInitialPosition()))));
-				}
-
-				// select the end anchors for manipulation
-				bendPolicy.select(firstAnchorHandle);
-				bendPolicy.select(secondAnchorHandle);
+				bendPolicy.selectSegment(hostPart.getSegmentIndex());
 			} else {
 				// create new way point in middle and move it (disabled for
 				// orthogonal connections)
@@ -310,6 +267,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			bendPolicy.select(bendPolicy
 					.makeExplicit(connectionIndex, connectionIndex).get(0));
 		}
+
+		// move initially to remove a possible overlay
+		bendPolicy.move(new Point(), new Point());
 
 		// update handles
 		targetPart.getAdapter(SelectionBehavior.class).updateHandles();

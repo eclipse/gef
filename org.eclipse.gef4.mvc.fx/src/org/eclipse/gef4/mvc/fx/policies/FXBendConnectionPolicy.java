@@ -338,17 +338,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		return updateOperation;
 	}
 
-	private int countConnectionExplicit() {
-		int explicit = 0;
-		for (int i = 0; i < getConnection().getAnchors().size(); i++) {
-			if (!(getConnection().getRouter()
-					.isImplicitAnchor(getConnection().getAnchor(i)))) {
-				explicit++;
-			}
-		}
-		return explicit;
-	}
-
 	/**
 	 * Creates a new anchor after the anchor specified by the given explicit
 	 * anchor index. Returns the new anchor's explicit index.
@@ -1474,6 +1463,58 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		checkInitialized();
 		// save selected anchor handles
 		selectedAnchors.add(explicitAnchorHandle);
+	}
+
+	/**
+	 * Selects the end points of the connection segment specified by the given
+	 * index. Makes the corresponding anchors explicit first and copies them if
+	 * they are connected.
+	 *
+	 * @param segmentIndex
+	 *            The index of a connection segment.
+	 */
+	public void selectSegment(int segmentIndex) {
+		// determine indices of neighbor anchors
+		int firstSegmentIndex = segmentIndex;
+		int secondSegmentIndex = segmentIndex + 1;
+
+		// move segment, copy ends when connected
+
+		// determine connectedness for neighbor anchors
+		Node firstAnchorage = getConnection().getAnchor(firstSegmentIndex)
+				.getAnchorage();
+		boolean isFirstConnected = firstAnchorage != null
+				&& firstAnchorage != getConnection();
+		Node secondAnchorage = getConnection().getAnchor(secondSegmentIndex)
+				.getAnchorage();
+		boolean isSecondConnected = secondAnchorage != null
+				&& secondAnchorage != getConnection();
+
+		// make explicit
+		List<AnchorHandle> explicit = makeExplicit(firstSegmentIndex,
+				secondSegmentIndex);
+		AnchorHandle firstAnchorHandle = explicit.get(0);
+		AnchorHandle secondAnchorHandle = explicit.get(1);
+
+		// copy first if connected
+		if (isFirstConnected) {
+			firstAnchorHandle = createAfter(firstAnchorHandle,
+					FX2Geometry.toPoint(
+							getConnection().localToScene(Geometry2FX.toFXPoint(
+									firstAnchorHandle.getInitialPosition()))));
+		}
+
+		// copy second if connected
+		if (isSecondConnected) {
+			secondAnchorHandle = createBefore(secondAnchorHandle,
+					FX2Geometry.toPoint(
+							getConnection().localToScene(Geometry2FX.toFXPoint(
+									secondAnchorHandle.getInitialPosition()))));
+		}
+
+		// select the end anchors for manipulation
+		select(firstAnchorHandle);
+		select(secondAnchorHandle);
 	}
 
 	@Override

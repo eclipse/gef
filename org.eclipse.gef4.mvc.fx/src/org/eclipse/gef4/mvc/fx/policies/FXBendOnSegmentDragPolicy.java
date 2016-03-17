@@ -11,20 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.List;
-
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
-import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -158,47 +153,8 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 			throw new IllegalStateException("Cannot identify pressed segment.");
 		}
 
-		// determine indices of neighbor anchors
-		int firstSegmentIndex = segmentIndex;
-		int secondSegmentIndex = segmentIndex + 1;
-
-		// move segment, copy ends when connected
-
-		// determine connectedness for neighbor anchors
-		Node firstAnchorage = connection.getAnchor(firstSegmentIndex)
-				.getAnchorage();
-		boolean isFirstConnected = firstAnchorage != null
-				&& firstAnchorage != connection;
-		Node secondAnchorage = connection.getAnchor(secondSegmentIndex)
-				.getAnchorage();
-		boolean isSecondConnected = secondAnchorage != null
-				&& secondAnchorage != connection;
-
-		// make explicit
-		List<AnchorHandle> explicit = bendPolicy.makeExplicit(firstSegmentIndex,
-				secondSegmentIndex);
-		AnchorHandle firstAnchorHandle = explicit.get(0);
-		AnchorHandle secondAnchorHandle = explicit.get(1);
-
-		// copy first if connected
-		if (isFirstConnected) {
-			firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-					FX2Geometry.toPoint(
-							connection.localToScene(Geometry2FX.toFXPoint(
-									firstAnchorHandle.getInitialPosition()))));
-		}
-
-		// copy second if connected
-		if (isSecondConnected) {
-			secondAnchorHandle = bendPolicy.createBefore(secondAnchorHandle,
-					FX2Geometry.toPoint(
-							connection.localToScene(Geometry2FX.toFXPoint(
-									secondAnchorHandle.getInitialPosition()))));
-		}
-
-		// select the end anchors for manipulation
-		bendPolicy.select(firstAnchorHandle);
-		bendPolicy.select(secondAnchorHandle);
+		// select segment
+		bendPolicy.selectSegment(segmentIndex);
 
 		// move initially to remove a potentially overlain anchor
 		bendPolicy.move(initialMouseInScene, initialMouseInScene);
