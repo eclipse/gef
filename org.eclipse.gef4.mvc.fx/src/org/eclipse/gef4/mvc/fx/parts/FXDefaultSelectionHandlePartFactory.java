@@ -56,9 +56,13 @@ public class FXDefaultSelectionHandlePartFactory
 	/**
 	 * The minimum segment length so that creation handles are shown.
 	 */
-	public static final double CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH = 0;
+	public static final double CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH = 30;
+	/**
+	 * The minimum segment length so that creation handles are shown for
+	 * orthogonal connections.
+	 */
+	public static final double CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL = 45;
 
-	// TODO
 	private static Provider<BezierCurve[]> createSegmentsProvider(
 			final Provider<? extends IGeometry> geometryProvider) {
 		return new Provider<BezierCurve[]>() {
@@ -278,19 +282,29 @@ public class FXDefaultSelectionHandlePartFactory
 					hps.add(part);
 				}
 
+				// create quarter handle for the creation of a new segment
 				double segmentLength = new Polyline(segments[i].getPoints())
 						.getLength();
-				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH) {
-					// create quarter handle for the creation of a new segment
+				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL) {
 					FXRectangleSegmentHandlePart part = injector
 							.getInstance(FXRectangleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
 					part.setSegmentIndex(i);
 					part.setSegmentParameter(0.25);
 					hps.add(part);
+				}
 
-					// create quarter handle for the creation of a new segment
-					part = injector
+				// // mid handle for segment drag
+				// FXSquareSegmentHandlePart midPart = injector
+				// .getInstance(FXSquareSegmentHandlePart.class);
+				// midPart.setSegmentsProvider(segmentsProvider);
+				// midPart.setSegmentIndex(i);
+				// midPart.setSegmentParameter(0.5);
+				// hps.add(midPart);
+
+				// create quarter handle for the creation of a new segment
+				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL) {
+					FXRectangleSegmentHandlePart part = injector
 							.getInstance(FXRectangleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
 					part.setSegmentIndex(i);
