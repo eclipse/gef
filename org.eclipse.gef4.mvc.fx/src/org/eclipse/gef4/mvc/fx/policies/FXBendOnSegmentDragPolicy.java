@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
@@ -42,11 +43,11 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 	private CursorSupport cursorSupport = new CursorSupport(this);
 	private Point initialMouseInScene;
-	private boolean isPartOfMultipleSelection = false;
+	private boolean isInvalid = false;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		if (isPartOfMultipleSelection) {
+		if (isInvalid) {
 			return;
 		}
 
@@ -58,7 +59,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void dragAborted() {
-		if (isPartOfMultipleSelection) {
+		if (isInvalid) {
 			return;
 		}
 
@@ -87,6 +88,12 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		return cursorSupport;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public IVisualPart<Node, Connection> getHost() {
+		return (IVisualPart<Node, Connection>) super.getHost();
+	}
+
 	@Override
 	public void hideIndicationCursor() {
 		cursorSupport.restoreCursor();
@@ -94,16 +101,21 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void press(MouseEvent e) {
-		// abort if part of multiple selection
-		IVisualPart<Node, ? extends Node> host = getHost();
-		@SuppressWarnings("serial")
-		ObservableList<IContentPart<Node, ? extends Node>> selection = host
-				.getRoot().getViewer()
-				.getAdapter(new TypeToken<SelectionModel<Node>>() {
-				}).getSelectionUnmodifiable();
-		isPartOfMultipleSelection = selection.size() > 1
-				&& selection.contains(host);
-		if (isPartOfMultipleSelection) {
+		isInvalid = false;
+		if (!(getHost().getVisual().getRouter() instanceof OrthogonalRouter)) {
+			// abort if non-orthogonal
+			isInvalid = true;
+		} else {
+			// abort if part of multiple selection
+			IVisualPart<Node, ? extends Node> host = getHost();
+			@SuppressWarnings("serial")
+			ObservableList<IContentPart<Node, ? extends Node>> selection = host
+					.getRoot().getViewer()
+					.getAdapter(new TypeToken<SelectionModel<Node>>() {
+					}).getSelectionUnmodifiable();
+			isInvalid = selection.size() > 1 && selection.contains(host);
+		}
+		if (isInvalid) {
 			return;
 		}
 
@@ -111,7 +123,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 
 		// disable refresh visuals for the host
-		storeAndDisableRefreshVisuals(host);
+		storeAndDisableRefreshVisuals(getHost());
 
 		// initialize bend policy
 		FXBendConnectionPolicy bendPolicy = getBendPolicy();
@@ -193,7 +205,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		if (isPartOfMultipleSelection) {
+		if (isInvalid) {
 			return;
 		}
 

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.fx.nodes.Connection;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -150,10 +152,16 @@ public class FXTranslateSelectedOnDragPolicy extends AbstractFXInteractionPolicy
 		// determine target parts
 		targetParts = getTargetParts();
 		// do not translate the only selected part if an
-		// FXBendOnSegmentDragPolicy is registered for that part
+		// FXBendOnSegmentDragPolicy is registered for that part and the part is
+		// an orthogonal connection
 		if (targetParts.size() == 1 && targetParts.get(0)
 				.getAdapter(FXBendOnSegmentDragPolicy.class) != null) {
-			targetParts = null;
+			IContentPart<Node, ? extends Node> part = targetParts.get(0);
+			Node visual = part.getVisual();
+			if (visual instanceof Connection && ((Connection) visual)
+					.getRouter() instanceof OrthogonalRouter) {
+				targetParts = null;
+			}
 		}
 		if (targetParts == null || targetParts.isEmpty()) {
 			// abort this policy if no target parts could be found
