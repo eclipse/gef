@@ -114,7 +114,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	};
 
 	@Override
-	protected void adaptToLayout() {
+	protected void adaptFromLayout() {
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected void provideLayout() {
+	protected void provideToLayout() {
 	}
 
 	/**

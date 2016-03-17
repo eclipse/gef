@@ -39,7 +39,7 @@ import javafx.scene.transform.Affine;
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
-	protected void adaptToLayout() {
+	protected void adaptFromLayout() {
 		NodePart nodePart = getHost();
 		Node visual = nodePart.getVisual();
 		Bounds layoutBounds = visual.getLayoutBounds();
@@ -117,7 +117,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected void provideLayout() {
+	protected void provideToLayout() {
 		Node visual = getHost().getVisual();
 		Bounds hostBounds = visual.getLayoutBounds();
 		double minx = hostBounds.getMinX();

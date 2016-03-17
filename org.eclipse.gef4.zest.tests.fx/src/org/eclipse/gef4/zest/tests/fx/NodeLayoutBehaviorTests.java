@@ -32,7 +32,6 @@ import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
-import org.junit.Rule;
 import org.junit.Test;
 
 import javafx.geometry.Bounds;
@@ -45,7 +44,7 @@ public class NodeLayoutBehaviorTests {
 	 * Ensure all tests are executed on the JavaFX application thread (and the
 	 * JavaFX toolkit is properly initialized).
 	 */
-	@Rule
+	// @Rule
 	public FXApplicationThreadRule fxApplicationThreadRule = new FXApplicationThreadRule();
 
 	private GraphNodeLayout createNodeLayout() {
@@ -118,7 +117,7 @@ public class NodeLayoutBehaviorTests {
 		LayoutProperties.setSize(nodeLayout, size.getWidth(), size.getHeight());
 
 		// postLayout
-		Method method = NodeLayoutBehavior.class.getDeclaredMethod("postLayout", new Class[] {});
+		Method method = NodeLayoutBehavior.class.getDeclaredMethod("adaptFromLayout", new Class[] {});
 		method.setAccessible(true);
 		method.invoke(behavior, new Object[] {});
 
@@ -147,7 +146,7 @@ public class NodeLayoutBehaviorTests {
 		Group visual = behavior.getHost().getVisual();
 
 		// preLayout
-		Method method = NodeLayoutBehavior.class.getDeclaredMethod("preLayout", new Class[] {});
+		Method method = NodeLayoutBehavior.class.getDeclaredMethod("provideToLayout", new Class[] {});
 		method.setAccessible(true);
 		method.invoke(behavior, new Object[] {});
 

@@ -28,7 +28,7 @@ import javafx.scene.Node;
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
-	protected void adaptToLayout() {
+	protected void adaptFromLayout() {
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected void provideLayout() {
+	protected void provideToLayout() {
 	}
 
 }

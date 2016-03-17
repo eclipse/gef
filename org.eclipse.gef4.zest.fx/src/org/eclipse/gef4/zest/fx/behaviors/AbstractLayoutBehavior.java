@@ -22,10 +22,10 @@ import javafx.scene.Node;
 
 /**
  * The {@link AbstractLayoutBehavior} is an abstract behavior that schedules
- * {@link #provideLayout()} and {@link #adaptToLayout()} to be called before or
- * after a layout pass, respectively. The {@link #provideLayout()} method can be
+ * {@link #provideToLayout()} and {@link #adaptFromLayout()} to be called before or
+ * after a layout pass, respectively. The {@link #provideToLayout()} method can be
  * used to write layout information into the layout model. Similarly, the
- * {@link #adaptToLayout()} method can be used to read layout information from
+ * {@link #adaptFromLayout()} method can be used to read layout information from
  * the layout model.
  *
  * @author mwienand
@@ -36,14 +36,14 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	private Runnable adaptToLayout = new Runnable() {
 		@Override
 		public void run() {
-			adaptToLayout();
+			adaptFromLayout();
 		}
 	};
 
 	private Runnable provideLayout = new Runnable() {
 		@Override
 		public void run() {
-			provideLayout();
+			provideToLayout();
 		}
 	};
 
@@ -58,7 +58,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	 * Called after a layout pass. Should be used to transfer layout information
 	 * from the layout model over to the visualization.
 	 */
-	protected abstract void adaptToLayout();
+	protected abstract void adaptFromLayout();
 
 	@Override
 	protected void doActivate() {
@@ -77,12 +77,12 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	}
 
 	/**
-	 * Returns the {@link GraphLayoutContext} for which {@link #provideLayout()}
-	 * and {@link #adaptToLayout()} shall be called before or after a layout
+	 * Returns the {@link GraphLayoutContext} for which {@link #provideToLayout()}
+	 * and {@link #adaptFromLayout()} shall be called before or after a layout
 	 * pass, respectively.
 	 *
-	 * @return The {@link GraphLayoutContext} for which {@link #provideLayout()}
-	 *         and {@link #adaptToLayout()} shall be called before or after a
+	 * @return The {@link GraphLayoutContext} for which {@link #provideToLayout()}
+	 *         and {@link #adaptFromLayout()} shall be called before or after a
 	 *         layout pass, respectively.
 	 */
 	protected abstract GraphLayoutBehavior getGraphLayoutBehavior();
@@ -91,7 +91,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	 * Called before a layout pass. Should be used to transfer layout
 	 * information from the visualization over to the layout model.
 	 */
-	protected abstract void provideLayout();
+	protected abstract void provideToLayout();
 
 	/**
 	 * Called after all layout behaviors had the chance to adapt to the layout.
