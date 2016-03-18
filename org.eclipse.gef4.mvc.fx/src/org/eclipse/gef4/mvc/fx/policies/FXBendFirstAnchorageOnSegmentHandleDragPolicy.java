@@ -58,8 +58,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	private IVisualPart<Node, ? extends Connection> targetPart;
 
+	private boolean isSegmentDragged;
 	private Point initialMouseInScene;
-	private Point currentMouseInScene;
+	private Point handlePositionInScene;
 
 	private Comparator<IHandlePart<Node, ? extends Node>> handleDistanceComparator = new Comparator<IHandlePart<Node, ? extends Node>>() {
 		@Override
@@ -75,21 +76,36 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 							+ otherBounds.getWidth() / 2,
 					otherBounds.getMinY() + otherBounds.getHeight() / 2);
 			// only useful to find the most similar part
-			return (int) (currentMouseInScene
+			return (int) (handlePositionInScene
 					.getDistance(FX2Geometry.toPoint(otherPosition)) * 10);
 		}
 	};
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		currentMouseInScene.setX(e.getSceneX());
-		currentMouseInScene.setY(e.getSceneY());
-
 		Connection connection = targetPart.getVisual();
 		List<Point> before = connection.getPoints();
 
+		boolean isOrthogonal = isSegmentDragged
+				&& connection.getRouter() instanceof OrthogonalRouter;
+		boolean isHorizontal = isOrthogonal
+				&& getBendPolicy(targetPart).isSelectionOnHorizontalLine();
+
 		getBendPolicy(targetPart).move(initialMouseInScene,
-				currentMouseInScene);
+				new Point(e.getSceneX(), e.getSceneY()));
+
+		if (isOrthogonal) {
+			if (isHorizontal) {
+				// can only move vertically
+				handlePositionInScene.setY(e.getSceneY());
+			} else {
+				// can only move horizontally
+				handlePositionInScene.setX(e.getSceneX());
+			}
+		} else {
+			handlePositionInScene.setX(e.getSceneX());
+			handlePositionInScene.setY(e.getSceneY());
+		}
 
 		List<Point> after = connection.getPoints();
 
@@ -155,8 +171,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	@Override
 	public void press(MouseEvent e) {
+		isSegmentDragged = false;
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
-		currentMouseInScene = initialMouseInScene.getCopy();
+		handlePositionInScene = initialMouseInScene.getCopy();
 		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
 		targetPart = getTargetPart();
 
@@ -169,6 +186,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 					.getRouter() instanceof OrthogonalRouter) {
 				// move segment, copy ends when connected
 				bendPolicy.selectSegment(hostPart.getSegmentIndex());
+				isSegmentDragged = true;
 			} else {
 				// create new way point in middle and move it (disabled for
 				// orthogonal connections)
@@ -184,6 +202,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			}
 		} else if (hostPart.getSegmentParameter() == 0.25) {
 			// split segment, move its first halve
+			// TODO: use BendPolicy#selectSegment()
 
 			// determine segment indices for neighbor anchors
 			int firstSegmentIndex = hostPart.getSegmentIndex();
@@ -234,8 +253,11 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			// movement
 			bendPolicy.select(firstAnchorHandle);
 			bendPolicy.select(secondAnchorHandle);
+
+			isSegmentDragged = true;
 		} else if (hostPart.getSegmentParameter() == 0.75) {
 			// split segment, move its second halve
+			// TODO: use bendPolicy#selectSegment()
 
 			// determine segment indices for neighbor anchors
 			int firstSegmentIndex = hostPart.getSegmentIndex();
@@ -287,6 +309,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			// movement
 			bendPolicy.select(firstAnchorHandle);
 			bendPolicy.select(secondAnchorHandle);
+
+			isSegmentDragged = true;
 		} else {
 			// compute connection index from handle part data
 			int connectionIndex = hostPart.getSegmentIndex()
@@ -304,11 +328,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		currentMouseInScene.setX(e.getSceneX());
-		currentMouseInScene.setY(e.getSceneY());
 		commit(getBendPolicy(targetPart));
 		restoreRefreshVisuals(targetPart);
-		// updateHandles();
 	}
 
 	@Override

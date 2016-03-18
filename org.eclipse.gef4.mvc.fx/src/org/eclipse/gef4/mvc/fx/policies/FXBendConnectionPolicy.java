@@ -1010,7 +1010,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * @return <code>true</code> if the Y coordinates of the selected anchors
 	 *         are the same, otherwise <code>false</code>.
 	 */
-	protected boolean isSelectionOnHorizontalLine() {
+	public boolean isSelectionOnHorizontalLine() {
 		double y0 = selectedAnchors.get(0).getInitialPosition().y;
 		double y1 = selectedAnchors.get(1).getInitialPosition().y;
 		boolean isHorizontallyConstrained = isUnpreciseEquals(y0, y1);
