@@ -50,8 +50,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 		Point currentMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 		getBendPolicy().move(initialMouseInScene, currentMouseInScene);
-		// update handles
-		getHost().getAdapter(SelectionBehavior.class).updateHandles(null, null);
+		updateHandles();
 	}
 
 	@Override
@@ -63,8 +62,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		rollback(getBendPolicy());
 		restoreRefreshVisuals(getHost());
 
-		// update handles
-		getHost().getAdapter(SelectionBehavior.class).updateHandles(null, null);
+		updateHandles();
 	}
 
 	/**
@@ -158,9 +156,7 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 		// move initially to remove a potentially overlain anchor
 		bendPolicy.move(initialMouseInScene, initialMouseInScene);
-
-		// update handles
-		getHost().getAdapter(SelectionBehavior.class).updateHandles(null, null);
+		updateHandles();
 	}
 
 	@Override
@@ -184,6 +180,14 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 		// cursorSupport.storeAndReplaceCursor(verticalSegment ?
 		// LEFT_RIGHT_CURSRO : TOP_DOWN_CURSOR);
 		return false;
+	}
+
+	/**
+	 * Updates the selection handles.
+	 */
+	@SuppressWarnings("unchecked")
+	protected void updateHandles() {
+		getHost().getAdapter(SelectionBehavior.class).updateHandles(null, null);
 	}
 
 }

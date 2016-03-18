@@ -325,6 +325,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	 * Re-computes the handle parts. Adjusts the host to reflect its new
 	 * position.
 	 */
+	@SuppressWarnings({ "serial", "unchecked" })
 	protected void updateHandles() {
 		IHandlePart<Node, ? extends Node> replacementHandle = targetPart
 				.getAdapter(new TypeToken<SelectionBehavior<Node>>() {
