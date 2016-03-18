@@ -15,10 +15,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.dot.internal.DotAst;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotInterpreter;
+import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -36,7 +36,8 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void digraphType() {
-		Graph graph = interpreter.interpret(parse("digraph Sample{1;2;1->2}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(parse("digraph Sample{1;2;1->2}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes._TYPE__G__DIGRAPH,
 				DotAttributes.getType(graph));
@@ -44,7 +45,8 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void graphType() {
-		Graph graph = interpreter.interpret(parse("graph Sample{1;2;1--2}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(parse("graph Sample{1;2;1--2}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
 				DotAttributes.getType(graph));
@@ -52,7 +54,7 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void nodeDefaultLabel() {
-		Graph graph = interpreter.interpret(parse("graph Sample{1}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(parse("graph Sample{1}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("1", //$NON-NLS-1$
 				DotAttributes.getName(graph.getNodes().get(0)));
@@ -60,7 +62,7 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void nodeCount() {
-		Graph graph = interpreter.interpret(parse("graph Sample{1;2}")); //$NON-NLS-1$
+		Graph graph = interpreter.interpret(parse("graph Sample{1;2}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(2, graph.getNodes().size());
 	}
@@ -68,7 +70,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void edgeCount() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{1;2;1--2;2--2;1--1}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{1;2;1--2;2--2;1--1}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(3, graph.getEdges().size());
 	}
@@ -76,7 +78,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void nodeLabel() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{1[label=\"Node1\"];}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{1[label=\"Node1\"];}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Node1", //$NON-NLS-1$
 				DotAttributes.getLabel(graph.getNodes().get(0)));
@@ -85,7 +87,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void edgeLabel() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{1;2;1--2[label=\"Edge1\"]}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{1;2;1--2[label=\"Edge1\"]}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Edge1", DotAttributes.getLabel(graph.getEdges() //$NON-NLS-1$
 				.get(0)));
@@ -94,7 +97,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void edgeStyle() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{1;2;1->2[style=dashed]}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{1;2;1->2[style=dashed]}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.STYLE__E__DASHED,
 				DotAttributes.getStyle(graph.getEdges().get(0)));
@@ -103,7 +107,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void globalEdgeStyle() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{edge[style=dashed];1;2;1--2}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{edge[style=dashed];1;2;1--2}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.STYLE__E__DASHED,
 				DotAttributes.getStyle(graph.getEdges().get(0)));
@@ -111,8 +116,10 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void globalEdgeLabel() {
-		Graph graph = interpreter.interpret(
-				parse("graph Sample{edge[label=\"Edge1\"];1;2;1--2}")); //$NON-NLS-1$
+		Graph graph = interpreter
+				.interpret(
+						parse("graph Sample{edge[label=\"Edge1\"];1;2;1--2}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Edge1", DotAttributes.getLabel(graph.getEdges() //$NON-NLS-1$
 				.get(0)));
@@ -121,7 +128,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void globalNodeLabel() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{node[label=\"Node1\"];1;}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{node[label=\"Node1\"];1;}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("Node1", //$NON-NLS-1$
 				DotAttributes.getLabel(graph.getNodes().get(0)));
@@ -130,7 +138,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void layoutSpring() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{graph[layout=fdp];1;}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{graph[layout=fdp];1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__FDP,
 				DotAttributes.getLayout(graph));
@@ -139,7 +147,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void layoutGrid() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{graph[layout=osage];1;}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{graph[layout=osage];1;}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__OSAGE,
 				DotAttributes.getLayout(graph));
@@ -148,7 +157,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void layoutRadial() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{graph[layout=twopi];1;}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{graph[layout=twopi];1;}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__TWOPI,
 				DotAttributes.getLayout(graph));
@@ -157,7 +167,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void layoutTree() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{graph[layout=dot];1;}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{graph[layout=dot];1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
 				DotAttributes.getLayout(graph));
@@ -165,8 +175,10 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void layoutHorizontalTreeViaLayout() {
-		Graph graph = interpreter.interpret(
-				parse("graph Sample{graph[layout=dot];rankdir=LR;1;}")); //$NON-NLS-1$
+		Graph graph = interpreter
+				.interpret(
+						parse("graph Sample{graph[layout=dot];rankdir=LR;1;}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
 				DotAttributes.getLayout(graph));
@@ -177,7 +189,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void layoutHorizontalTreeViaAttribute() {
 		Graph graph = interpreter
-				.interpret(parse("graph Sample{rankdir=LR;1;}")); //$NON-NLS-1$
+				.interpret(parse("graph Sample{rankdir=LR;1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
 				DotAttributes.getLayout(graph));
@@ -188,7 +200,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void globalNodeAttributeAdHocNodes() {
 		Graph graph = interpreter
-				.interpret(parse("graph{node[label=\"TEXT\"];1--2}")); //$NON-NLS-1$
+				.interpret(parse("graph{node[label=\"TEXT\"];1--2}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("TEXT", //$NON-NLS-1$
 				DotAttributes.getLabel(graph.getNodes().get(0)));
@@ -197,7 +209,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void globalEdgeAttributeAdHocNodes() {
 		Graph graph = interpreter
-				.interpret(parse("graph{edge[label=\"TEXT\"];1--2}")); //$NON-NLS-1$
+				.interpret(parse("graph{edge[label=\"TEXT\"];1--2}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("TEXT", DotAttributes.getLabel(graph.getEdges() //$NON-NLS-1$
 				.get(0)));
@@ -206,7 +218,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void headerCommentGraph() {
 		Graph graph = interpreter
-				.interpret(parse("/*A header comment*/\ngraph{1--2}")); //$NON-NLS-1$
+				.interpret(parse("/*A header comment*/\ngraph{1--2}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(2, graph.getNodes().size());
 		Assert.assertEquals(1, graph.getEdges().size());
@@ -215,7 +227,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void nodesBeforeEdges() {
 		Graph graph = interpreter
-				.interpret(parse("graph{1;2;3;4; 1--2;2--3;2--4}")); //$NON-NLS-1$
+				.interpret(parse("graph{1;2;3;4; 1--2;2--3;2--4}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(4, graph.getNodes().size());
 		Assert.assertEquals(3, graph.getEdges().size());
@@ -223,8 +235,10 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void nodesAfterEdges() {
-		Graph graph = interpreter.interpret(
-				parse("graph{1--2;2--3;2--4;1[label=\"node\"];2;3;4}")); //$NON-NLS-1$
+		Graph graph = interpreter
+				.interpret(
+						parse("graph{1--2;2--3;2--4;1[label=\"node\"];2;3;4}")) //$NON-NLS-1$
+				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(4, graph.getNodes().size());
 		Assert.assertEquals(3, graph.getEdges().size());
@@ -235,8 +249,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void useInterpreterTwice() {
 		String dot = "graph{1;2;3;4; 1--2;2--3;2--4}"; //$NON-NLS-1$
-		Graph graph = interpreter.interpret(parse(dot));
-		graph = interpreter.interpret(parse(dot));
+		Graph graph = interpreter.interpret(parse(dot)).get(0);
+		graph = interpreter.interpret(parse(dot)).get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(4, graph.getNodes().size());
 		Assert.assertEquals(3, graph.getEdges().size());
@@ -245,7 +259,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void idsWithQuotes() {
 		String dot = "graph{\"node 1\";\"node 2\"}"; //$NON-NLS-1$
-		Graph graph = interpreter.interpret(parse(dot));
+		Graph graph = interpreter.interpret(parse(dot)).get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		List<Node> list = graph.getNodes();
 		Assert.assertEquals("node 1", //$NON-NLS-1$
@@ -257,7 +271,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void escapedQuotes() {
 		String dot = "graph{n1[label=\"node \\\"1\\\"\"]}"; //$NON-NLS-1$
-		Graph graph = interpreter.interpret(parse(dot));
+		Graph graph = interpreter.interpret(parse(dot)).get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("node \"1\"", //$NON-NLS-1$
 				DotAttributes.getLabel(graph.getNodes().get(0)));
@@ -266,7 +280,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void fullyQuoted() {
 		String dot = "graph{\"n1\";\"n2\";\"n1\"--\"n2\"}"; //$NON-NLS-1$
-		Graph graph = interpreter.interpret(parse(dot));
+		Graph graph = interpreter.interpret(parse(dot)).get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(2, graph.getNodes().size());
 		Assert.assertEquals(1, graph.getEdges().size());
@@ -280,7 +294,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void labelsWithQuotes() {
 		String dot = "graph{n1[label=\"node 1\"];n2[label=\"node 2\"];n1--n2[label=\"edge 1\"]}"; //$NON-NLS-1$
-		Graph graph = interpreter.interpret(parse(dot));
+		Graph graph = interpreter.interpret(parse(dot)).get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		List<Node> list = graph.getNodes();
 		Assert.assertEquals("node 1", //$NON-NLS-1$
@@ -294,7 +308,7 @@ public final class DotInterpreterTests {
 	@Test
 	public void newLinesInLabels() {
 		String dot = "graph{n1[label=\"node\n1\"]}"; //$NON-NLS-1$
-		Graph graph = interpreter.interpret(parse(dot));
+		Graph graph = interpreter.interpret(parse(dot)).get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("node\n1", //$NON-NLS-1$
 				DotAttributes.getLabel(graph.getNodes().get(0)));
@@ -333,7 +347,8 @@ public final class DotInterpreterTests {
 	@Test
 	public void otherUnsupportedStyles() {
 		Graph graph = interpreter.interpret(parse(
-				"graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")); //$NON-NLS-1$
+				"graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")) //$NON-NLS-1$
+				.get(0);
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getEdges().size());
 	}
@@ -344,6 +359,6 @@ public final class DotInterpreterTests {
 	}
 
 	private DotAst parse(String dot) {
-		return new DotAst(dot);
+		return (DotAst) new DotImport(dot).dotGraph().eContainer();
 	}
 }

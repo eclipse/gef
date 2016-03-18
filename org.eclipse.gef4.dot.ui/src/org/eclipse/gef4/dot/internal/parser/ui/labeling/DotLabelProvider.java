@@ -15,11 +15,11 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
+import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhs;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhsNode;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtNode;
-import org.eclipse.gef4.dot.internal.parser.dot.GraphvizModel;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeId;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
@@ -41,7 +41,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-	String image(GraphvizModel model) {
+	String image(DotAst ast) {
 		return "file.png"; //$NON-NLS-1$
 	}
 
@@ -81,7 +81,7 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 		return "rhs.png"; //$NON-NLS-1$
 	}
 
-	Object text(GraphvizModel model) {
+	Object text(DotAst model) {
 		return styled(model.eResource().getURI().lastSegment() + ": File"); //$NON-NLS-1$
 	}
 

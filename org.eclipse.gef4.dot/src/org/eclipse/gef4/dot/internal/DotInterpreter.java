@@ -14,6 +14,7 @@
 
 package org.eclipse.gef4.dot.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.eclipse.gef4.dot.internal.parser.dot.AttrList;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
 import org.eclipse.gef4.dot.internal.parser.dot.AttributeType;
+import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeRhsNode;
 import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtNode;
@@ -74,21 +76,23 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	 *            The DOT abstract syntax tree (AST) to interpret
 	 * @return A graph instance for the given DOT AST
 	 */
-	public Graph interpret(DotAst dotAst) {
-		return interpret(dotAst, new Graph.Builder());
+	public List<Graph> interpret(DotAst dotAst) {
+		List<Graph> graphs = new ArrayList<>();
+		for (DotGraph dotGraph : dotAst.getGraphs()) {
+			Graph g = interpret(dotGraph, new Graph.Builder());
+			if (g != null) {
+				graphs.add(g);
+			}
+		}
+		return graphs;
 	}
 
-	private Graph interpret(DotAst dotAst, Graph.Builder graph) {
-		if (dotAst.errors().size() > 0) {
-			throw new IllegalArgumentException(
-					String.format("Could not create graph: %s", dotAst //$NON-NLS-1$
-							.errors().toString()));
-		}
+	private Graph interpret(DotGraph dotGraph, Graph.Builder graph) {
 		this.graph = graph;
 		nodes = new HashMap<>();
-		doSwitch(dotAst.graph());
-		TreeIterator<Object> contents = EcoreUtil
-				.getAllProperContents(dotAst.graph(), false);
+		doSwitch(dotGraph);
+		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(dotGraph,
+				false);
 		while (contents.hasNext()) {
 			doSwitch((EObject) contents.next());
 		}

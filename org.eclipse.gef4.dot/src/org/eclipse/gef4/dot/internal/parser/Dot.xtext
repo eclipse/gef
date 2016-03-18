@@ -24,7 +24,7 @@ grammar org.eclipse.gef4.dot.internal.parser.Dot hidden(WS, ML_COMMENT, SL_COMME
 generate dot "http://www.eclipse.org/gef4/dot/internal/parser/Dot"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-GraphvizModel:
+DotAst:
 	(graphs+=DotGraph)*;
 
 DotGraph:
