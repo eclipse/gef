@@ -90,7 +90,9 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			// name or id becomes its label.
 			dotLabel = dotId != null ? dotId : DotAttributes.getName(dot);
 		}
-		ZestProperties.setLabel(zest, dotLabel);
+		if (dotLabel != null) {
+			ZestProperties.setLabel(zest, dotLabel);
+		}
 
 		// external label (xlabel)
 		String dotXLabel = DotAttributes.getXLabel(dot);
@@ -220,7 +222,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// label
 		String dotLabel = DotAttributes.getLabel(dot);
-		if (dotLabel != null && dotLabel.equals("\\N")) { //$NON-NLS-1$
+		if (dotLabel == null || dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or id becomes its label.
 			dotLabel = dotId != null ? dotId : DotAttributes.getName(dot);
