@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.behaviors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -224,9 +225,23 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	 *            handles.
 	 * @param handles
 	 *            The new handles for the given target.
+	 * @param interactedWithComparator
+	 *            A function that computes the distance to the currently
+	 *            interacted with handle for the passed-in handle part. Can be
+	 *            <code>null</code> if no handle should be preserved.
+	 * @param interactedWith
+	 *            The {@link IHandlePart} that is currently interacted with and
+	 *            that should be preserved, or <code>null</code>.
+	 * @return The new {@link IHandlePart} for the position of the handle part
+	 *         that is interacted with.
 	 */
-	protected void updateHandles(IVisualPart<VR, ? extends VR> target,
-			List<? extends IHandlePart<VR, ? extends VR>> handles) {
+	protected IHandlePart<VR, ? extends VR> updateHandles(
+			IVisualPart<VR, ? extends VR> target,
+			List<? extends IHandlePart<VR, ? extends VR>> handles,
+			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
+			IHandlePart<VR, ? extends VR> interactedWith) {
+		IHandlePart<VR, ? extends VR> replacementHandle = null;
+
 		if (handles != null && !handles.isEmpty()) {
 			// determine old handles for target
 			List<IHandlePart<VR, ? extends VR>> oldHandles = new ArrayList<>(
@@ -246,6 +261,33 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 					handles);
 			BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(),
 					Collections.singletonList(target), newHandles);
+
+			if (interactedWithComparator != null) {
+				// find new handle at interaction position and remove it from
+				// the
+				// new handles
+				double minDistance = -1;
+				it = newHandles.iterator();
+				while (it.hasNext()) {
+					IHandlePart<VR, ? extends VR> newHandle = it.next();
+					double distance = interactedWithComparator
+							.compare(interactedWith, newHandle);
+					if (replacementHandle == null || distance < minDistance) {
+						minDistance = distance;
+						replacementHandle = newHandle;
+					}
+				}
+				// remove replacement handle from new handles
+				if (replacementHandle != null) {
+					newHandles.remove(replacementHandle);
+				}
+			}
+
+			if (interactedWith != null) {
+				// remove interacted with handle from old handles so that it is
+				// preserved
+				oldHandles.remove(interactedWith);
+			}
 
 			// find handles that no longer exist
 			List<IHandlePart<VR, ? extends VR>> toRemove = new ArrayList<>();
@@ -297,12 +339,20 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 					it.remove();
 				}
 			}
+
+			// add replacement handle to existing handles
+			if (replacementHandle != null) {
+				alreadyExists.add(replacementHandle);
+			}
+
 			// remove already existing handles
 			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
 					Collections.singletonList(target), alreadyExists);
 			// add new handles that did not exist yet
 			handleParts.addAll(newHandles);
 		}
+
+		return replacementHandle;
 	}
 
 }

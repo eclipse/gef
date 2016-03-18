@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -25,8 +26,12 @@ import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -54,19 +59,42 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	private IVisualPart<Node, ? extends Connection> targetPart;
 
 	private Point initialMouseInScene;
+	private Point currentMouseInScene;
+
+	private Comparator<IHandlePart<Node, ? extends Node>> handleDistanceComparator = new Comparator<IHandlePart<Node, ? extends Node>>() {
+		@Override
+		public int compare(IHandlePart<Node, ? extends Node> interactedWith,
+				IHandlePart<Node, ? extends Node> other) {
+			// Bounds bounds = getHost().getVisual().getLayoutBounds();
+			// Point2D position = getHost().getVisual().localToScene(
+			// bounds.getMinX() + bounds.getWidth() / 2,
+			// bounds.getMinY() + bounds.getHeight() / 2);
+			Bounds otherBounds = other.getVisual().getLayoutBounds();
+			Point2D otherPosition = other.getVisual()
+					.localToScene(otherBounds.getMinX()
+							+ otherBounds.getWidth() / 2,
+					otherBounds.getMinY() + otherBounds.getHeight() / 2);
+			// only useful to find the most similar part
+			return (int) (currentMouseInScene
+					.getDistance(FX2Geometry.toPoint(otherPosition)) * 10);
+		}
+	};
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		currentMouseInScene.setX(e.getSceneX());
+		currentMouseInScene.setY(e.getSceneY());
+
 		Connection connection = targetPart.getVisual();
 		List<Point> before = connection.getPoints();
 
 		getBendPolicy(targetPart).move(initialMouseInScene,
-				new Point(e.getSceneX(), e.getSceneY()));
+				currentMouseInScene);
 
 		List<Point> after = connection.getPoints();
 
 		if (before.size() != after.size()) {
-			targetPart.getAdapter(SelectionBehavior.class).updateHandles();
+			updateHandles();
 		}
 	}
 
@@ -74,7 +102,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	public void dragAborted() {
 		restoreRefreshVisuals(targetPart);
 		rollback(getBendPolicy(targetPart));
-		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
+		updateHandles();
 	}
 
 	/**
@@ -128,6 +156,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	@Override
 	public void press(MouseEvent e) {
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
+		currentMouseInScene = initialMouseInScene.getCopy();
 		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
 		targetPart = getTargetPart();
 
@@ -270,19 +299,16 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 		// move initially to remove a possible overlay
 		bendPolicy.move(new Point(), new Point());
-
-		// update handles
-		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
+		updateHandles();
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
+		currentMouseInScene.setX(e.getSceneX());
+		currentMouseInScene.setY(e.getSceneY());
 		commit(getBendPolicy(targetPart));
 		restoreRefreshVisuals(targetPart);
-		// it may be that the bend policy returns null (no-op) because a newly
-		// created segment point was direcly removed through overlay. In this
-		// case, we need to update the handles as well
-		targetPart.getAdapter(SelectionBehavior.class).updateHandles();
+		// updateHandles();
 	}
 
 	@Override
@@ -293,6 +319,21 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 	@Override
 	public boolean showIndicationCursor(MouseEvent event) {
 		return false;
+	}
+
+	/**
+	 * Re-computes the handle parts. Adjusts the host to reflect its new
+	 * position.
+	 */
+	protected void updateHandles() {
+		IHandlePart<Node, ? extends Node> replacementHandle = targetPart
+				.getAdapter(new TypeToken<SelectionBehavior<Node>>() {
+				}).updateHandles(handleDistanceComparator, getHost());
+		if (replacementHandle instanceof AbstractFXSegmentHandlePart) {
+			AbstractFXSegmentHandlePart<Node> segmentData = (AbstractFXSegmentHandlePart<Node>) replacementHandle;
+			getHost().setSegmentIndex(segmentData.getSegmentIndex());
+			getHost().setSegmentParameter(segmentData.getSegmentParameter());
+		}
 	}
 
 }

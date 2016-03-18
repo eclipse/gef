@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.behaviors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.gef4.common.collections.CollectionUtils;
@@ -193,15 +194,30 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 
 	/**
 	 * Updates the handles of this host.
+	 *
+	 * @param interactedWithComparator
+	 *            A {@link Comparator} that can be used to identify a new handle
+	 *            at the same position as the handle that is currently
+	 *            interacted with. Can be <code>null</code> if no handle should
+	 *            be preserved.
+	 * @param interactedWith
+	 *            The {@link IHandlePart} that is interacted with, or
+	 *            <code>null</code>.
+	 * @return The new {@link IHandlePart} for the position of the handle part
+	 *         that is interacted with so that its information can be applied to
+	 *         the preserved handle part.
 	 */
-	public void updateHandles() {
+	public IHandlePart<VR, ? extends VR> updateHandles(
+			Comparator<IHandlePart<VR, ? extends VR>> interactedWithComparator,
+			IHandlePart<VR, ? extends VR> interactedWith) {
 		// determine new handles
 		switchAdaptableScopes();
 		List<IHandlePart<VR, ? extends VR>> newHandles = handlePartFactory
 				.createHandleParts(Collections.singletonList(getHost()), this,
 						Collections.emptyMap());
 		// compare to current handles => remove/add as needed
-		updateHandles(getHost(), newHandles);
+		return updateHandles(getHost(), newHandles, interactedWithComparator,
+				interactedWith);
 	}
 
 }
