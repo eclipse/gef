@@ -12,6 +12,7 @@ package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -27,6 +28,9 @@ public class PropertySourceAdapterFactory implements IAdapterFactory {
 			} else if (adaptableObject instanceof FXGeometricShape) {
 				return new FXShapePropertySource(
 						(FXGeometricShape) adaptableObject);
+			} else if (adaptableObject instanceof FXGeometricModel) {
+				return new FXModelPropertySource(
+						(FXGeometricModel) adaptableObject);
 			}
 		}
 		return null;
