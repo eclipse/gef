@@ -50,17 +50,12 @@ public class FXRectangleSegmentHandlePart
 	 */
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 
-	/**
-	 * The default fill color for this part's visualization.
-	 */
-	public static final Color DEFAULT_FILL = Color.web("#d5faff");
-
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setTranslateX(-DEFAULT_LENGTH / 2);
 		visual.setTranslateY(-DEFAULT_WIDTH / 2);
-		visual.setFill(DEFAULT_FILL);
+		visual.setFill(FXCircleSegmentHandlePart.DEFAULT_FILL);
 		visual.setStroke(DEFAULT_STROKE);
 		visual.setWidth(DEFAULT_LENGTH);
 		visual.setHeight(DEFAULT_WIDTH);
@@ -82,7 +77,7 @@ public class FXRectangleSegmentHandlePart
 	 * is connected to another part, and
 	 * {@link FXCircleSegmentHandlePart#UNCONNECTED_FILL} otherwise. If this
 	 * handle part represents a middle point on a segment, it's color will be
-	 * set to {@link #DEFAULT_FILL}.
+	 * set to {@link FXCircleSegmentHandlePart#DEFAULT_FILL}.
 	 */
 	protected void updateColor() {
 		// only update when bound to anchorage
@@ -97,11 +92,15 @@ public class FXRectangleSegmentHandlePart
 			return;
 		}
 
-		if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
+		if (getSegmentParameter() == 0.5) {
 			// handle in the middle of a segment
+			visual.setFill(FXCircleSegmentHandlePart.UNCONNECTED_FILL);
+		} else if (getSegmentParameter() != 0.0
+				&& getSegmentParameter() != 1.0) {
+			// quarter handles
 			visual.setFill(FXCircleSegmentHandlePart.DEFAULT_FILL);
 		} else {
-			// determine connected state for end point handles
+			// end point handles
 			boolean connected = false;
 			IVisualPart<Node, ? extends Node> targetPart = anchorages.keySet()
 					.iterator().next();
