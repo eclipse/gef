@@ -247,8 +247,33 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(),
 					Collections.singletonList(target), newHandles);
 
+			// find handles that no longer exist
+			List<IHandlePart<VR, ? extends VR>> toRemove = new ArrayList<>();
+			it = oldHandles.iterator();
+			while (it.hasNext()) {
+				IHandlePart<VR, ? extends VR> oldHandle = it.next();
+				boolean noLongerExists = true;
+				for (IHandlePart<VR, ? extends VR> newHandle : newHandles) {
+					if (newHandle instanceof Comparable) {
+						@SuppressWarnings("unchecked")
+						Comparable<IHandlePart<VR, ? extends VR>> comparable = (Comparable<IHandlePart<VR, ? extends VR>>) oldHandle;
+						int compareTo = comparable.compareTo(newHandle);
+						if (compareTo == 0) {
+							noLongerExists = false;
+							break;
+						}
+					}
+				}
+				if (noLongerExists) {
+					toRemove.add(oldHandle);
+					it.remove();
+				}
+			}
+
 			// remove handles that no longer exist
-			// TODO
+			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
+					Collections.singletonList(target), toRemove);
+			handleParts.removeAll(toRemove);
 
 			// find new handles that did not exist yet
 			List<IHandlePart<VR, ? extends VR>> alreadyExists = new ArrayList<>();
