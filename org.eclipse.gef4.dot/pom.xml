@@ -32,10 +32,16 @@
 									<directory>${basedir}/src-gen/</directory>
 								</fileset>
 								<fileset>
+									<directory>${basedir}/xtend-gen/</directory>
+								</fileset>
+								<fileset>
 									<directory>${basedir}/model/generated/</directory>
 								</fileset>
 								<fileset>
 									<directory>${basedir}/../${project.artifactId}.ui/src-gen/</directory>
+								</fileset>
+								<fileset>
+									<directory>${basedir}/../${project.artifactId}.ui/xtend-gen/</directory>
 								</fileset>
 							</filesets>
 						</configuration>
