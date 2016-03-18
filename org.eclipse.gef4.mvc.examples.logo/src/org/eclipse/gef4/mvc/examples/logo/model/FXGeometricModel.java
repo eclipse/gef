@@ -42,7 +42,9 @@ public class FXGeometricModel {
 
 	public static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
-	public static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
+	public static final Double[] GEF_DASH_PATTERN = new Double[] { 13d, 8d };
+
+	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
 
 	public static IShape createCursorShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<>();
@@ -287,11 +289,11 @@ public class FXGeometricModel {
 
 	private final FXGeometricCurve selectionBoundsBottomLine = new FXGeometricCurve(
 			new Point[] { new Point(140, 118) }, GEF_COLOR_GREEN,
-			GEF_STROKE_WIDTH, new double[] { 15, 10 }, null);
+			GEF_STROKE_WIDTH, new Double[] { 15d, 10d }, null);
 
 	private final FXGeometricCurve selectionBoundsRightLine = new FXGeometricCurve(
 			new Point[] { new Point(250, 70) }, GEF_COLOR_GREEN,
-			GEF_STROKE_WIDTH, new double[] { 15, 10 }, null);
+			GEF_STROKE_WIDTH, new Double[] { 15d, 10d }, null);
 	// g shapes
 	// TODO: create multi shape visual for G shape
 	private final FXGeometricShape gBaseShape = new FXGeometricShape(
@@ -339,6 +341,8 @@ public class FXGeometricModel {
 			Color.BLACK, GEF_SHADOW_EFFECT);
 
 	private List<AbstractFXGeometricElement<? extends IGeometry>> visualShapes;
+
+	private boolean isSnapToGrid = false;
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
@@ -395,6 +399,14 @@ public class FXGeometricModel {
 		visualShapes.add(fDotShape);
 
 		visualShapes.add(cursorShape);
+	}
+
+	public boolean isSnapToGrid() {
+		return isSnapToGrid;
+	}
+
+	public void setSnapToGrid(boolean snapToGrid) {
+		isSnapToGrid = snapToGrid;
 	}
 
 }

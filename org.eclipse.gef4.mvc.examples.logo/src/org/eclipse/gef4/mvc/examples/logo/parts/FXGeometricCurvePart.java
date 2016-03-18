@@ -34,6 +34,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -48,6 +49,9 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -117,10 +121,42 @@ public class FXGeometricCurvePart
 	}
 
 	private final CircleHead START_CIRCLE_HEAD = new CircleHead();
+
 	private final CircleHead END_CIRCLE_HEAD = new CircleHead();
+
 	private final ArrowHead START_ARROW_HEAD = new ArrowHead();
 	private final ArrowHead END_ARROW_HEAD = new ArrowHead();
 	private FXGeometricCurve previousContent;
+
+	// refresh visual upon model property changes
+	private final ListChangeListener<Point> wayPointsChangeListener = new ListChangeListener<Point>() {
+		@Override
+		public void onChanged(
+				javafx.collections.ListChangeListener.Change<? extends Point> c) {
+			refreshVisual();
+		}
+	};
+	private final ListChangeListener<Double> dashesChangeListener = new ListChangeListener<Double>() {
+		@Override
+		public void onChanged(
+				javafx.collections.ListChangeListener.Change<? extends Double> c) {
+			refreshVisual();
+		}
+	};
+	private final ChangeListener<RoutingStyle> routingStyleChangeListener = new ChangeListener<RoutingStyle>() {
+		@Override
+		public void changed(ObservableValue<? extends RoutingStyle> observable,
+				RoutingStyle oldValue, RoutingStyle newValue) {
+			refreshVisual();
+		}
+	};
+	private final ChangeListener<Decoration> decorationChangeListener = new ChangeListener<Decoration>() {
+		@Override
+		public void changed(ObservableValue<? extends Decoration> observable,
+				Decoration oldValue, Decoration newValue) {
+			refreshVisual();
+		}
+	};
 
 	@SuppressWarnings("serial")
 	@Override
@@ -404,8 +440,8 @@ public class FXGeometricCurvePart
 		}
 
 		// dashes
-		List<Double> dashList = new ArrayList<>(content.dashes.length);
-		for (double d : content.dashes) {
+		List<Double> dashList = new ArrayList<>(content.getDashes().length);
+		for (double d : content.getDashes()) {
 			dashList.add(d);
 		}
 		if (!visual.getCurveNode().getStrokeDashArray().equals(dashList)) {
@@ -448,7 +484,9 @@ public class FXGeometricCurvePart
 
 			visual.setInterpolator(new PolylineInterpolator());
 			visual.setRouter(new OrthogonalRouter());
-		} else {
+		} else
+
+		{
 			// FIXME: Restore the computation strategy from the operation that
 			// changes the curve's isSegmentBased flag.
 			Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
@@ -491,6 +529,7 @@ public class FXGeometricCurvePart
 
 		// apply effect
 		super.doRefreshVisual(visual);
+
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(
@@ -521,7 +560,31 @@ public class FXGeometricCurvePart
 			throw new IllegalArgumentException(
 					"Only ICurve models are supported.");
 		}
+		if (getContent() != null) {
+			// remove property change listeners from model
+			getContent().wayPointsProperty()
+					.removeListener(wayPointsChangeListener);
+			getContent().dashesProperty().removeListener(dashesChangeListener);
+			getContent().routingStyleProperty()
+					.removeListener(routingStyleChangeListener);
+			getContent().sourceDecorationProperty()
+					.removeListener(decorationChangeListener);
+			getContent().targetDecorationProperty()
+					.removeListener(decorationChangeListener);
+		}
 		super.setContent(model);
+		if (getContent() != null) {
+			// add property change listeners to model
+			getContent().wayPointsProperty()
+					.addListener(wayPointsChangeListener);
+			getContent().dashesProperty().addListener(dashesChangeListener);
+			getContent().routingStyleProperty()
+					.addListener(routingStyleChangeListener);
+			getContent().sourceDecorationProperty()
+					.addListener(decorationChangeListener);
+			getContent().targetDecorationProperty()
+					.addListener(decorationChangeListener);
+		}
 	}
 
 }

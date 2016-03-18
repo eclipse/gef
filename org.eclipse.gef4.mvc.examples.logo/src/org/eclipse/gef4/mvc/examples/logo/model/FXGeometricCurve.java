@@ -18,12 +18,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
+import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Paint;
@@ -42,6 +45,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
 	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
 	public static final String ROUTING_STYLE_PROPERTY = "routingStyle";
+	public static final String WAY_POINTS_PROPERTY = "wayPoints";
+	public static final String DASHES_PROPERTY = "dashes";
 
 	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
 		if (waypoints == null || waypoints.length == 0) {
@@ -52,23 +57,27 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return PolyBezier.interpolateCubic(waypoints);
 	}
 
-	private final List<Point> waypoints = new ArrayList<>();
+	private final ReadOnlyListWrapperEx<Point> wayPointsProperty = new ReadOnlyListWrapperEx<>(
+			this, WAY_POINTS_PROPERTY,
+			CollectionUtils.<Point> observableArrayList());
 	private final ObjectProperty<Decoration> sourceDecorationProperty = new SimpleObjectProperty<>(
 			this, SOURCE_DECORATION_PROPERTY, Decoration.NONE);
 	private final ObjectProperty<Decoration> targetDecorationProperty = new SimpleObjectProperty<>(
 			this, TARGET_DECORATION_PROPERTY, Decoration.NONE);
 	private final ObjectProperty<RoutingStyle> routingStyleProperty = new SimpleObjectProperty<>(
 			this, ROUTING_STYLE_PROPERTY, RoutingStyle.STRAIGHT);
-	public double[] dashes = new double[0];
+	private final ReadOnlyListWrapperEx<Double> dashesProperty = new ReadOnlyListWrapperEx<>(
+			this, DASHES_PROPERTY,
+			CollectionUtils.<Double> observableArrayList());
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
 
 	public FXGeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth,
-			double[] dashes, Effect effect) {
+			Double[] dashes, Effect effect) {
 		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
 				effect);
-		this.waypoints.addAll(Arrays.asList(waypoints));
-		this.dashes = dashes;
+		wayPointsProperty.addAll(Arrays.asList(waypoints));
+		dashesProperty.addAll(dashes);
 	}
 
 	public void addSourceAnchorage(
@@ -88,8 +97,12 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		setWayPoints(points.toArray(new Point[] {}));
 	}
 
-	public double[] getDashes() {
-		return Arrays.copyOf(dashes, dashes.length);
+	public ReadOnlyListProperty<Double> dashesProperty() {
+		return dashesProperty.getReadOnlyProperty();
+	}
+
+	public Double[] getDashes() {
+		return dashesProperty.get().toArray(new Double[] {});
 	}
 
 	public RoutingStyle getRoutingStyle() {
@@ -113,11 +126,11 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public List<Point> getWayPoints() {
-		return Collections.unmodifiableList(waypoints);
+		return Collections.unmodifiableList(wayPointsProperty.get());
 	}
 
 	public List<Point> getWayPointsCopy() {
-		return new ArrayList<>(waypoints);
+		return new ArrayList<>(getWayPoints());
 	}
 
 	public void removeWayPoint(int i) {
@@ -125,6 +138,17 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		List<Point> points = getWayPointsCopy();
 		points.remove(i);
 		setWayPoints(points.toArray(new Point[] {}));
+	}
+
+	/**
+	 * Returns the {@link ObjectProperty} for the {@link RoutingStyle} of this
+	 * {@link FXGeometricCurve}.
+	 *
+	 * @return The {@link ObjectProperty} for the {@link RoutingStyle} of this
+	 *         {@link FXGeometricCurve}.
+	 */
+	public ObjectProperty<RoutingStyle> routingStyleProperty() {
+		return routingStyleProperty;
 	}
 
 	public void setRoutingStyle(RoutingStyle routingStyle) {
@@ -147,9 +171,34 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
 	public void setWayPoints(Point... waypoints) {
 		// cache waypoints and polybezier
-		this.waypoints.clear();
-		this.waypoints.addAll(Arrays.asList(waypoints));
+		this.wayPointsProperty.setAll(Arrays.asList(waypoints));
 		setGeometry(constructCurveFromWayPoints(waypoints));
+	}
+
+	/**
+	 * Returns the {@link ObjectProperty} for the source {@link Decoration} of
+	 * this {@link FXGeometricCurve}.
+	 *
+	 * @return The {@link ObjectProperty} for the source {@link Decoration} of
+	 *         this {@link FXGeometricCurve}.
+	 */
+	public ObjectProperty<Decoration> sourceDecorationProperty() {
+		return sourceDecorationProperty;
+	}
+
+	/**
+	 * Returns the {@link ObjectProperty} for the target {@link Decoration} of
+	 * this {@link FXGeometricCurve}.
+	 *
+	 * @return The {@link ObjectProperty} for the target {@link Decoration} of
+	 *         this {@link FXGeometricCurve}.
+	 */
+	public ObjectProperty<Decoration> targetDecorationProperty() {
+		return targetDecorationProperty;
+	}
+
+	public ReadOnlyListProperty<Point> wayPointsProperty() {
+		return wayPointsProperty.getReadOnlyProperty();
 	}
 
 }
