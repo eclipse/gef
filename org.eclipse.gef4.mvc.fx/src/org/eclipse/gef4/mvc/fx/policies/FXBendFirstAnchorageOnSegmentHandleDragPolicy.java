@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -58,9 +59,12 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	private IVisualPart<Node, ? extends Connection> targetPart;
 
-	private boolean isSegmentDragged;
 	private Point initialMouseInScene;
 	private Point handlePositionInScene;
+
+	private boolean isSegmentDragged;
+
+	private double initialSegmentParameter;
 
 	private Comparator<IHandlePart<Node, ? extends Node>> handleDistanceComparator = new Comparator<IHandlePart<Node, ? extends Node>>() {
 		@Override
@@ -81,10 +85,11 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		}
 	};
 
+	private int initialSegmentIndex;
+
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		Connection connection = targetPart.getVisual();
-		List<Point> before = connection.getPoints();
 
 		boolean isOrthogonal = isSegmentDragged
 				&& connection.getRouter() instanceof OrthogonalRouter;
@@ -107,11 +112,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			handlePositionInScene.setY(e.getSceneY());
 		}
 
-		List<Point> after = connection.getPoints();
-
-		if (before.size() != after.size()) {
-			updateHandles();
-		}
+		updateHandles();
 	}
 
 	@Override
@@ -175,6 +176,8 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		initialMouseInScene = new Point(e.getSceneX(), e.getSceneY());
 		handlePositionInScene = initialMouseInScene.getCopy();
 		AbstractFXSegmentHandlePart<? extends Node> hostPart = getHost();
+		initialSegmentIndex = hostPart.getSegmentIndex();
+		initialSegmentParameter = hostPart.getSegmentParameter();
 		targetPart = getTargetPart();
 
 		storeAndDisableRefreshVisuals(targetPart);
@@ -355,6 +358,23 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			AbstractFXSegmentHandlePart<Node> segmentData = (AbstractFXSegmentHandlePart<Node>) replacementHandle;
 			getHost().setSegmentIndex(segmentData.getSegmentIndex());
 			getHost().setSegmentParameter(segmentData.getSegmentParameter());
+			if (segmentData.getSegmentParameter() == initialSegmentParameter) {
+				// Restore hover if the replacement handle fulfills the same
+				// role as the host (same parameter == same role).
+				getHost().getRoot().getViewer()
+						.getAdapter(new TypeToken<HoverModel<Node>>() {
+						}).setHover(getHost());
+			} else if (!((initialSegmentParameter == 0.25
+					|| initialSegmentParameter == 0.75)
+					&& segmentData.getSegmentParameter() == 0.5
+					&& Math.abs(segmentData.getSegmentIndex()
+							- initialSegmentIndex) < 2)) {
+				// XXX: If a quarter handle was dragged and replaced by a mid
+				// handle, we do not clear hover.
+				getHost().getRoot().getViewer()
+						.getAdapter(new TypeToken<HoverModel<Node>>() {
+						}).clearHover();
+			}
 		}
 	}
 
