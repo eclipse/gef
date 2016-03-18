@@ -50,9 +50,9 @@ public class DotOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 * Skip the `AttrList` wrapper element in the outline structure.
 	 * 
 	 * @param parent
-	 *            The outline parent node
-	 * @param flow
-	 *            The `AttrStmt` model element
+	 *            The outline parent node.
+	 * @param stmt
+	 *            The attribute statement.
 	 */
 	protected void _createChildren(IOutlineNode parent, AttrStmt stmt) {
 		if (stmt.getAttrLists().size() > 0) {
