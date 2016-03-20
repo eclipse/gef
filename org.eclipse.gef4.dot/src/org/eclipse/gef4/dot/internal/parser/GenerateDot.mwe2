@@ -8,6 +8,7 @@
  * 		Fabian Steeg    - initial implementation (bug #277380)
  * 		Alexander Nyßen - migration to Xtext 2.7.3 (bug #478562); 
  *                        support for case insensitive keywords (bug #454626)
+ *      Tamas Miklossy	- support for junit test plugin generation
  *******************************************************************************/
 module org.eclipse.gef4.dot.internal.parser.Dot
 
@@ -36,10 +37,15 @@ Workflow {
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}.ui/src-gen"
 	}
+	
+	component = DirectoryCleaner {
+    	directory = "${runtimeProject}.tests/src-gen"
+    }
 
 	component = Generator {
 		pathRtProject = runtimeProject
 		pathUiProject = "${runtimeProject}.ui"
+		pathTestProject = "${runtimeProject}.tests"
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
@@ -98,12 +104,16 @@ Workflow {
 					ignoreCase = true
 				}
 			}
+			
+			// generates junit test support classes into Generator#pathTestProject
+    		fragment = junit.Junit4Fragment auto-inject {}
 		}
 	}
 
 	component = Generator {
 		pathRtProject = runtimeProject
 		pathUiProject = "${runtimeProject}.ui"
+		pathTestProject = "${runtimeProject}.tests"
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
@@ -129,6 +139,9 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
+			
+			// generates junit test support classes into Generator#pathTestProject
+    		fragment = junit.Junit4Fragment auto-inject {}
 		}
 	}
 }

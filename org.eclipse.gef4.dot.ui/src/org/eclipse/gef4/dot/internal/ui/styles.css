@@ -31,5 +31,5 @@
 .edge .decoration {
 	-fx-stroke: black;
 	-fx-stroke-width: 1px;
-	-fx-fill: white;
+	-fx-fill: black;
 }

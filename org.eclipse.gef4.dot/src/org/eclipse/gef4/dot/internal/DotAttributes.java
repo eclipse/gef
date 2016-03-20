@@ -9,6 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Alexander Nyßen (itemis AG)  - initial API and implementation
+ *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
@@ -20,6 +21,8 @@ import java.util.Set;
 
 import org.eclipse.gef4.dot.internal.parser.DotAttributesStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_ArrowShape;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.Point;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotAttributesParser;
@@ -86,6 +89,11 @@ public class DotAttributes {
 	 */
 	public static final Set<String> _TYPE__G__VALUES = new HashSet<>(
 			Arrays.asList(_TYPE__G__GRAPH, _TYPE__G__DIGRAPH));
+
+	/**
+	 * Specifies the 'arrowhead' attribute of an edge.
+	 */
+	public static final String ARROWHEAD__E = "arrowhead";
 
 	/**
 	 * Specifies the 'head_lp' attribute (head label position) of an edge.
@@ -305,6 +313,41 @@ public class DotAttributes {
 	 * edge.
 	 */
 	public static final String XLP__NE = "xlp";
+
+	/**
+	 * Returns the value of the {@link #ARROWHEAD__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWHEAD__E} property.
+	 * @return The value of the {@link #ARROWHEAD__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getArrowHead(Edge edge) {
+		return (String) edge.attributesProperty().get(ARROWHEAD__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #ARROWHEAD__E} property of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWHEAD__E} property, parsed as an
+	 *            {@link ArrowType_ArrowShape}.
+	 * @return The value of the {@link #ARROWHEAD__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static ArrowType getArrowHeadParsed(Edge edge) {
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotAttributesGrammarAccess.getArrowTypeRule(),
+				getArrowHead(edge));
+
+		ArrowType arrowType = (ArrowType) parsedPropertyValue
+				.getRootASTElement();
+		return arrowType;
+	}
 
 	/**
 	 * Returns the value of the {@link #HEADLABEL__E} property of the given
@@ -794,6 +837,20 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #ARROWHEAD__E} property of the given {@link Edge} to the
+	 * given <i>arrowHead</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWHEAD__E} property.
+	 * @param arrowHead
+	 *            The new value for the {@link #ARROWHEAD__E} property.
+	 */
+	public static void setArrowHead(Edge edge, String arrowHead) {
+		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
+	}
+
+	/**
 	 * Sets the {@link #HEADLABEL__E} property of the given {@link Edge} to the
 	 * given <i>label</i> value.
 	 * 
@@ -1197,5 +1254,17 @@ public class DotAttributes {
 	 */
 	public static void setXlp(Node node, String xlp) {
 		node.attributesProperty().put(XLP__NE, xlp);
+	}
+
+	/**
+	 * @param arrowType
+	 *            the arrow type to check for validity
+	 * 
+	 * @return true if the arrowType is valid, false otherwise
+	 */
+	public static boolean isValidArrowType(String arrowType) {
+		IParseResult parseResult = parsePropertyValue(
+				dotAttributesGrammarAccess.getArrowTypeRule(), arrowType);
+		return !parseResult.hasSyntaxErrors();
 	}
 }

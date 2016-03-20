@@ -9,6 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     Alexander Nyßen  (itemis AG) - initial API & implementation
+ *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
@@ -17,8 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_ArrowName;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_ArrowShape;
+import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_DeprecatedArrowName;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
 import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType_Spline;
+import org.eclipse.gef4.dot.internal.ui.shapes.ArrowShapes;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
@@ -32,6 +38,7 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 /**
@@ -127,6 +134,11 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// TODO: in case graph type is directed, we should add default target
 		// decoration if none is set.
+		Shape edgeDecoration = computeEdgeDecoration(dot);
+		if (edgeDecoration != null) {
+			ZestProperties.setTargetDecoration(zest,
+					computeEdgeDecoration(dot));
+		}
 
 		// only convert layout information in native mode, as the results will
 		// otherwise
@@ -172,6 +184,93 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			}
 
 		}
+	}
+
+	private Shape computeEdgeDecoration(Edge dot) {
+		ArrowType arrowType = DotAttributes.getArrowHeadParsed(dot);
+		if (arrowType == null)
+			return null;
+		Shape shape = null;
+		if (arrowType instanceof ArrowType_DeprecatedArrowName) {
+			String firstArrowShape = ((ArrowType_DeprecatedArrowName) arrowType)
+					.getArrowShapes().get(0);
+			switch (firstArrowShape) {
+			case "ediamond": //$NON-NLS-1$
+				// "ediamond" is deprecated, use "odiamond"
+				shape = new ArrowShapes.Diamond();
+				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+				break;
+			case "open": //$NON-NLS-1$
+				// "open" is deprecated, use "vee"
+				shape = new ArrowShapes.Vee();
+				shape.setStyle("-fx-fill: black"); //$NON-NLS-1$
+				break;
+			case "halfopen": //$NON-NLS-1$
+				// "halfopen" is deprecated, use "lvee"
+				shape = new ArrowShapes.LVee();
+				shape.setStyle("-fx-fill: black"); //$NON-NLS-1$
+				break;
+			case "empty": //$NON-NLS-1$
+				// "empty" is deprecated, use "onormal"
+				shape = new ArrowShapes.Normal();
+				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+				break;
+			case "invempty": //$NON-NLS-1$
+				// "invempty" is deprecated, use "oinv"
+				shape = new ArrowShapes.Inv();
+				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+				break;
+			default:
+				break;
+			}
+		} else {
+			ArrowType_ArrowShape arrowShape = ((ArrowType_ArrowName) arrowType)
+					.getArrowShapes().get(0);
+			switch (arrowShape.getShape()) {
+			case BOX:
+				shape = new ArrowShapes.Box();
+				break;
+			case CROW:
+				shape = new ArrowShapes.Crow();
+				break;
+			case CURVE:
+				shape = new ArrowShapes.Curve();
+				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+				break;
+			case ICURVE:
+				shape = new ArrowShapes.ICurve();
+				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+				break;
+			case DIAMOND:
+				shape = new ArrowShapes.Diamond();
+				break;
+			case DOT:
+				shape = new ArrowShapes.Dot();
+				break;
+			case INV:
+				shape = new ArrowShapes.Inv();
+				break;
+			case NONE:
+				return null;
+			case NORMAL:
+				shape = new ArrowShapes.Normal();
+				break;
+			case TEE:
+				shape = new ArrowShapes.Tee();
+				break;
+			case VEE:
+				shape = new ArrowShapes.Vee();
+				break;
+			default:
+				break;
+			}
+			if (arrowShape.isOpen()) {
+				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
+			}
+
+		}
+
+		return shape;
 	}
 
 	private List<Point> computeZestConnectionBSplineControlPoints(Edge dot) {

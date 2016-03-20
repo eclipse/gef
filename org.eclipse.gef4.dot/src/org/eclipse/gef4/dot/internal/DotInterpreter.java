@@ -10,6 +10,7 @@
  *                                   (bug #277380)
  *     Alexander Nyßen (itemis AG) - several refactorings and additions 
  *                                   (bug #487081, 489793)
+ *     Tamas Miklossy (itemis AG)  - Add support for arrowType edge decorations (bug #477980)                              
  *******************************************************************************/
 
 package org.eclipse.gef4.dot.internal;
@@ -56,6 +57,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
 	private String globalNodeLabel;
+	private String currentArrowHead;
 	private String currentEdgeStyle;
 	private String currentEdgeLabel;
 	private String currentEdgeSourceNodeName;
@@ -154,6 +156,8 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		currentEdgeTailLabel = getAttributeValue(object,
 				DotAttributes.TAILLABEL__E);
 		currentEdgeTailLp = getAttributeValue(object, DotAttributes.TAIL_LP__E);
+		currentArrowHead = getAttributeValue(object,
+				DotAttributes.ARROWHEAD__E);
 		return super.caseEdgeStmtNode(object);
 	}
 
@@ -248,6 +252,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// tail label position (tail_lp)
 		if (currentEdgeTailLp != null) {
 			edgeBuilder.attr(DotAttributes.TAIL_LP__E, currentEdgeTailLp);
+		}
+
+		// arrow head
+		if (currentArrowHead != null) {
+			edgeBuilder.attr(DotAttributes.ARROWHEAD__E, currentArrowHead);
 		}
 
 		graph.edges(edgeBuilder.buildEdge());

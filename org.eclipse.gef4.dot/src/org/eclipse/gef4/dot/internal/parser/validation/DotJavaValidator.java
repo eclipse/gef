@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Fabian Steeg and others.
+ * Copyright (c) 2009, 2016 itemis AG and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +9,7 @@
  * Contributors:
  *     Fabian Steeg    - intial Xtext generation (see bug #277380)
  *     Alexander Nyßen - initial implementation
+ *     Tamas Miklossy  - Add support for arrowType edge decorations (bug #477980)
  *
  *******************************************************************************/
 
@@ -46,6 +48,12 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	public static final String ATTRIBUTE__INVALID_VALUE__EDGE_STYLE = "ATTRIBUTE__INVALID_VALUE__EDGE_STYLE";
 
 	/**
+	 * Error code for invalid edge 'arrow type' attribute value. Used to bind
+	 * quick fixes.
+	 */
+	public static final String ATTRIBUTE__INVALID_VALUE__ARROW_TYPE = "ATTRIBUTE__INVALID_VALUE__ARROW_TYPE";
+
+	/**
 	 * Checks that within an {@link Attribute} only valid attribute values are
 	 * used (dependent on context, in which the attribute is specified).
 	 * 
@@ -66,6 +74,19 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						+ "' is not a valid DOT style for Edge.",
 						DotPackage.eINSTANCE.getAttribute_Value(),
 						ATTRIBUTE__INVALID_VALUE__EDGE_STYLE, unquotedValue);
+			}
+		}
+
+		if (isEdgeAttribute(attribute)
+				&& DotAttributes.ARROWHEAD__E.equals(attribute.getName())) {
+			String unquotedValue = DotTerminalConverters
+					.unquote(attribute.getValue());
+			if (!DotAttributes.isValidArrowType(unquotedValue)) {
+				// provide (issue) code and data for quickfix
+				error("Arrow Type '" + unquotedValue
+						+ "' is not a valid DOT arrowhead for Edge.",
+						DotPackage.eINSTANCE.getAttribute_Value(),
+						ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, unquotedValue);
 			}
 		}
 	}
