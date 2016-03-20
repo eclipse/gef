@@ -37,10 +37,10 @@ Workflow {
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}.ui/src-gen"
 	}
-	
+
 	component = DirectoryCleaner {
-    	directory = "${runtimeProject}.tests/src-gen"
-    }
+		directory = "${runtimeProject}.tests/src-gen"
+	}
 
 	component = Generator {
 		pathRtProject = runtimeProject
@@ -49,12 +49,10 @@ Workflow {
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
-		
 		language = auto-inject {
 		// grammarURI has to be platform:/resource for headless execution (Tycho)
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/Dot.xtext"// Java API to access grammar elements (required by several other fragments)
-			fileExtensions="dot"
-			
+			fileExtensions = "dot"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
@@ -104,9 +102,9 @@ Workflow {
 					ignoreCase = true
 				}
 			}
-			
+
 			// generates junit test support classes into Generator#pathTestProject
-    		fragment = junit.Junit4Fragment auto-inject {}
+			fragment = junit.Junit4Fragment auto-inject {}
 		}
 	}
 
@@ -119,8 +117,7 @@ Workflow {
 		encoding = encoding
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotPoint.xtext"// Java API to access grammar elements (required by several other fragments)
-			fileExtensions="dot_point"
-			
+			fileExtensions = "dot_point"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// a custom ResourceFactory for use with EMF
@@ -139,9 +136,9 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
-			
+
 			// generates junit test support classes into Generator#pathTestProject
-    		fragment = junit.Junit4Fragment auto-inject {}
+			fragment = junit.Junit4Fragment auto-inject {}
 		}
 	}
 	
@@ -154,8 +151,7 @@ Workflow {
 		encoding = encoding
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotSplineType.xtext"// Java API to access grammar elements (required by several other fragments)
-			fileExtensions="dot_splineType"
-			
+			fileExtensions = "dot_splineType"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// a custom ResourceFactory for use with EMF
@@ -174,12 +170,12 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
-			
+
 			// generates junit test support classes into Generator#pathTestProject
-    		fragment = junit.Junit4Fragment auto-inject {}
+			fragment = junit.Junit4Fragment auto-inject {}
 		}
 	}
-	
+
 	component = Generator {
 		pathRtProject = runtimeProject
 		pathUiProject = "${runtimeProject}.ui"
@@ -189,8 +185,7 @@ Workflow {
 		encoding = encoding
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotArrowType.xtext"// Java API to access grammar elements (required by several other fragments)
-			fileExtensions="dot_arrowType"
-			
+			fileExtensions = "dot_arrowType"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// a custom ResourceFactory for use with EMF
@@ -209,9 +204,9 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
-			
+
 			// generates junit test support classes into Generator#pathTestProject
-    		fragment = junit.Junit4Fragment auto-inject {}
+			fragment = junit.Junit4Fragment auto-inject {}
 		}
 	}
 }

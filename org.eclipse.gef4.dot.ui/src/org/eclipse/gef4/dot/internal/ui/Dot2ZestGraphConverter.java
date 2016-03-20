@@ -282,7 +282,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		List<Point> controlPoints = new ArrayList<>();
 		for (Spline spline : splineType.getSplines()) {
 			// start
-			org.eclipse.gef4.dot.internal.parser.dotPoint.Point startp = spline
+			org.eclipse.gef4.dot.internal.parser.dotSplineType.Point startp = spline
 					.getStartp();
 			if (startp == null) {
 				// if we have no start point, add the first control
@@ -294,14 +294,14 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 					(options.invertYAxis ? -1 : 1) * startp.getY()));
 
 			// control points
-			for (org.eclipse.gef4.dot.internal.parser.dotPoint.Point cp : spline
+			for (org.eclipse.gef4.dot.internal.parser.dotSplineType.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
 						(options.invertYAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
-			org.eclipse.gef4.dot.internal.parser.dotPoint.Point endp = spline
+			org.eclipse.gef4.dot.internal.parser.dotSplineType.Point endp = spline
 					.getEndp();
 			if (endp == null) {
 				// if we have no end point, add the last control point
