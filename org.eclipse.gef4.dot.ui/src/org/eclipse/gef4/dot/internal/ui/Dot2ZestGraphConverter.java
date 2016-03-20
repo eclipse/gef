@@ -18,13 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_ArrowName;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_ArrowShape;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_DeprecatedArrowName;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType_Spline;
-import org.eclipse.gef4.dot.internal.ui.shapes.ArrowShapes;
+import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowShape;
+import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowShapes;
+import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.dotArrowType.DeprecatedArrowShape;
+import org.eclipse.gef4.dot.internal.parser.dotSplineType.Spline;
+import org.eclipse.gef4.dot.internal.parser.dotSplineType.SplineType;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
@@ -139,13 +138,11 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			// use "normal" in case graph is directed
 			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
 					.getAttributes().get(DotAttributes._TYPE__G))) {
-				connectionTargetDecoration = new ArrowShapes.Normal();
+				connectionTargetDecoration = new DotArrowShapeDecorations.Normal();
 			}
 		} else {
-			// TODO: Enable after remaining problems in #477980 have been
-			// resolved
-			// connectionTargetDecoration = computeZestDecoration(
-			// DotAttributes.getArrowHeadParsed(dot));
+			connectionTargetDecoration = computeZestDecoration(
+					DotAttributes.getArrowHeadParsed(dot));
 		}
 		ZestProperties.setTargetDecoration(zest, connectionTargetDecoration);
 
@@ -197,75 +194,76 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 	private Shape computeZestDecoration(ArrowType arrowType) {
 		Shape shape = null;
-		if (arrowType instanceof ArrowType_DeprecatedArrowName) {
-			String firstArrowShape = ((ArrowType_DeprecatedArrowName) arrowType)
+		if (arrowType instanceof DeprecatedArrowShape) {
+			String firstArrowShape = ((DeprecatedArrowShape) arrowType)
 					.getArrowShapes().get(0);
 			switch (firstArrowShape) {
 			case "ediamond": //$NON-NLS-1$
 				// "ediamond" is deprecated, use "odiamond"
-				shape = new ArrowShapes.Diamond();
+				shape = new DotArrowShapeDecorations.Diamond();
 				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
 				break;
 			case "open": //$NON-NLS-1$
 				// "open" is deprecated, use "vee"
-				shape = new ArrowShapes.Vee();
+				shape = new DotArrowShapeDecorations.Vee();
 				shape.setStyle("-fx-fill: black"); //$NON-NLS-1$
 				break;
 			case "halfopen": //$NON-NLS-1$
 				// "halfopen" is deprecated, use "lvee"
-				shape = new ArrowShapes.LVee();
+				shape = new DotArrowShapeDecorations.LVee();
 				shape.setStyle("-fx-fill: black"); //$NON-NLS-1$
 				break;
 			case "empty": //$NON-NLS-1$
 				// "empty" is deprecated, use "onormal"
-				shape = new ArrowShapes.Normal();
+				shape = new DotArrowShapeDecorations.Normal();
 				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
 				break;
 			case "invempty": //$NON-NLS-1$
 				// "invempty" is deprecated, use "oinv"
-				shape = new ArrowShapes.Inv();
+				shape = new DotArrowShapeDecorations.Inv();
 				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
 				break;
 			default:
 				break;
 			}
 		} else {
-			ArrowType_ArrowShape arrowShape = ((ArrowType_ArrowName) arrowType)
-					.getArrowShapes().get(0);
+			// TODO: handle multi shapes
+			ArrowShape arrowShape = ((ArrowShapes) arrowType).getArrowShapes()
+					.get(0);
 			switch (arrowShape.getShape()) {
 			case BOX:
-				shape = new ArrowShapes.Box();
+				shape = new DotArrowShapeDecorations.Box();
 				break;
 			case CROW:
-				shape = new ArrowShapes.Crow();
+				shape = new DotArrowShapeDecorations.Crow();
 				break;
 			case CURVE:
-				shape = new ArrowShapes.Curve();
+				shape = new DotArrowShapeDecorations.Curve();
 				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
 				break;
 			case ICURVE:
-				shape = new ArrowShapes.ICurve();
+				shape = new DotArrowShapeDecorations.ICurve();
 				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
 				break;
 			case DIAMOND:
-				shape = new ArrowShapes.Diamond();
+				shape = new DotArrowShapeDecorations.Diamond();
 				break;
 			case DOT:
-				shape = new ArrowShapes.Dot();
+				shape = new DotArrowShapeDecorations.Dot();
 				break;
 			case INV:
-				shape = new ArrowShapes.Inv();
+				shape = new DotArrowShapeDecorations.Inv();
 				break;
 			case NONE:
 				return null;
 			case NORMAL:
-				shape = new ArrowShapes.Normal();
+				shape = new DotArrowShapeDecorations.Normal();
 				break;
 			case TEE:
-				shape = new ArrowShapes.Tee();
+				shape = new DotArrowShapeDecorations.Tee();
 				break;
 			case VEE:
-				shape = new ArrowShapes.Vee();
+				shape = new DotArrowShapeDecorations.Vee();
 				break;
 			default:
 				break;
@@ -282,9 +280,9 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	private List<Point> computeZestConnectionBSplineControlPoints(Edge dot) {
 		SplineType splineType = DotAttributes.getPosParsed(dot);
 		List<Point> controlPoints = new ArrayList<>();
-		for (SplineType_Spline spline : splineType.getSplines()) {
+		for (Spline spline : splineType.getSplines()) {
 			// start
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point startp = spline
+			org.eclipse.gef4.dot.internal.parser.dotPoint.Point startp = spline
 					.getStartp();
 			if (startp == null) {
 				// if we have no start point, add the first control
@@ -296,14 +294,14 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 					(options.invertYAxis ? -1 : 1) * startp.getY()));
 
 			// control points
-			for (org.eclipse.gef4.dot.internal.parser.dotAttributes.Point cp : spline
+			for (org.eclipse.gef4.dot.internal.parser.dotPoint.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
 						(options.invertYAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point endp = spline
+			org.eclipse.gef4.dot.internal.parser.dotPoint.Point endp = spline
 					.getEndp();
 			if (endp == null) {
 				// if we have no end point, add the last control point
@@ -354,7 +352,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 			// node position is interpreted as center of node in Dot, and
 			// top-left in Zest
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotPosParsed = DotAttributes
+			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotPosParsed = DotAttributes
 					.getPosParsed(dot);
 			ZestProperties.setPosition(zest,
 					computeZestPosition(dotPosParsed, zestWidth, zestHeight));
@@ -366,7 +364,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		// external label position (xlp)
 		String dotXlp = DotAttributes.getXlp(dot);
 		if (dotXLabel != null && dotXlp != null) {
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotXlpParsed = DotAttributes
+			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotXlpParsed = DotAttributes
 					.getXlpParsed(dot);
 			ZestProperties.setExternalLabelPosition(zest,
 					computeZestLabelPosition(dotXlpParsed, dotXLabel));
@@ -374,7 +372,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	}
 
 	private Point computeZestPosition(
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotPosition,
+			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotPosition,
 			double widthInPixel, double heightInPixel) {
 		// dot positions are provided as center positions, Zest uses top-left
 		return new Point(dotPosition.getX() - widthInPixel / 2,
@@ -383,7 +381,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	}
 
 	private Point computeZestLabelPosition(
-			org.eclipse.gef4.dot.internal.parser.dotAttributes.Point dotLabelPosition,
+			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotLabelPosition,
 			String labelText) {
 		// FIXME: Is it legal to use JavaFX for metrics calculation here (while
 		// we are part of DOT.UI)?

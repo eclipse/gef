@@ -25,7 +25,6 @@ import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,15 +41,11 @@ public class DotParserTests {
 	private ValidationTestHelper validationTestHelper;
 
 	@Test
-	@Ignore
-	// TODO: Enable when remaining problems of #477980 have been fixed
 	public void testArrowShapesSingle() {
 		testFile("arrowshapes_single.dot");
 	}
 
 	@Test
-	@Ignore
-	// TODO: Enable when remaining problems of #477980 have been fixed
 	public void testArrowShapesMultiple() {
 		testFile("arrowshapes_multiple.dot");
 	}

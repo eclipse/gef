@@ -8,8 +8,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * Use this class to register components to be used within the IDE.
  */
-public class DotAttributesUiModule extends org.eclipse.gef4.dot.internal.parser.ui.AbstractDotAttributesUiModule {
-	public DotAttributesUiModule(AbstractUIPlugin plugin) {
+public class DotSplineTypeUiModule extends org.eclipse.gef4.dot.internal.parser.ui.AbstractDotSplineTypeUiModule {
+	public DotSplineTypeUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
 }

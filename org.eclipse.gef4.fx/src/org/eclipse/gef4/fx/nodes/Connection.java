@@ -541,12 +541,11 @@ public class Connection extends Group {
 	 * @return The logical center of this {@link Connection}.
 	 */
 	public Point getCenter() {
-		int startIndex = (int) (getPoints().size() - 0.5) / 2;
-		int endIndex = (int) (getPoints().size() + 0.5) / 2;
-		if (startIndex == endIndex) {
-			return getPoint(startIndex);
+		BezierCurve[] bezierCurves = getCurveNode().getGeometry().toBezier();
+		if (bezierCurves.length % 2 == 0) {
+			return getPoint((int) (getPoints().size() - 0.5) / 2);
 		} else {
-			return getCurveNode().getGeometry().toBezier()[startIndex].get(0.5);
+			return bezierCurves[bezierCurves.length / 2].get(0.5);
 		}
 	}
 

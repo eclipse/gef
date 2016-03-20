@@ -2,7 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 DOT
 Bundle-SymbolicName: org.eclipse.gef4.dot;singleton:=true
+Bundle-Vendor: Eclipse GEF
 Bundle-Version: 0.3.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.antlr.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.emf.common;bundle-version="[2.9.0,3.0.0)",
  org.eclipse.emf.ecore;bundle-version="[2.9.0,3.0.0)",
@@ -29,9 +31,13 @@ Export-Package: org.eclipse.gef4.dot.internal;x-friends:="org.eclipse.gef4.dot.t
  org.eclipse.gef4.dot.internal.parser.parser.antlr.lexer;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.dot.internal.parser.serializer;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
  org.eclipse.gef4.dot.internal.parser.services;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.dot.internal.parser.dotAttributes;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.dot.internal.parser.dotAttributes.impl;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
- org.eclipse.gef4.dot.internal.parser.dotAttributes.util;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Vendor: Eclipse GEF
+ org.eclipse.gef4.dot.internal.parser.dotPoint;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotPoint.impl;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotPoint.util;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotSplineType;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotSplineType.impl;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotSplineType.util;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotArrowType;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotArrowType.impl;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui",
+ org.eclipse.gef4.dot.internal.parser.dotArrowType.util;x-friends:="org.eclipse.gef4.dot.tests,org.eclipse.gef4.dot.ui"
 Import-Package: org.apache.log4j;version="[1.2.15,2.0.0)"

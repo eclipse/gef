@@ -19,14 +19,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef4.dot.internal.parser.DotAttributesStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.DotPointStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.DotSplineTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.ArrowType_ArrowShape;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.Point;
-import org.eclipse.gef4.dot.internal.parser.dotAttributes.SplineType;
-import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotAttributesParser;
-import org.eclipse.gef4.dot.internal.parser.services.DotAttributesGrammarAccess;
+import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.dotPoint.Point;
+import org.eclipse.gef4.dot.internal.parser.dotSplineType.SplineType;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotArrowTypeParser;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotPointParser;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotSplineTypeParser;
+import org.eclipse.gef4.dot.internal.parser.services.DotArrowTypeGrammarAccess;
+import org.eclipse.gef4.dot.internal.parser.services.DotPointGrammarAccess;
+import org.eclipse.gef4.dot.internal.parser.services.DotSplineTypeGrammarAccess;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -34,6 +39,7 @@ import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.parser.IParser;
 
 import com.google.inject.Injector;
 
@@ -49,14 +55,34 @@ import com.google.inject.Injector;
 public class DotAttributes {
 
 	// TODO: if platform is running, don't use standalone setup here
-	private static final Injector injector = new DotAttributesStandaloneSetup()
+	private static final Injector pointInjector = new DotPointStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
 
-	private static final DotAttributesParser dotAttributesParser = injector
-			.getInstance(DotAttributesParser.class);
+	private static final DotPointParser dotPointParser = pointInjector
+			.getInstance(DotPointParser.class);
 
-	private static final DotAttributesGrammarAccess dotAttributesGrammarAccess = injector
-			.getInstance(DotAttributesGrammarAccess.class);
+	private static final DotPointGrammarAccess dotPointGrammarAccess = pointInjector
+			.getInstance(DotPointGrammarAccess.class);
+
+	// TODO: if platform is running, don't use standalone setup here
+	private static final Injector splineTypeInjector = new DotSplineTypeStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	private static final DotSplineTypeParser dotSplineTypeParser = splineTypeInjector
+			.getInstance(DotSplineTypeParser.class);
+
+	private static final DotSplineTypeGrammarAccess dotSplineTypeGrammarAccess = splineTypeInjector
+			.getInstance(DotSplineTypeGrammarAccess.class);
+
+	// TODO: if platform is running, don't use standalone setup here
+	private static final Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	private static final DotArrowTypeParser dotArrowTypeParser = arrowTypeInjector
+			.getInstance(DotArrowTypeParser.class);
+
+	private static final DotArrowTypeGrammarAccess dotArrowTypeGrammarAccess = arrowTypeInjector
+			.getInstance(DotArrowTypeGrammarAccess.class);
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
@@ -334,8 +360,8 @@ public class DotAttributes {
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWHEAD__E} property, parsed as an
-	 *            {@link ArrowType_ArrowShape}.
+	 *            {@link #ARROWHEAD__E} property, parsed as an {@link ArrowType}
+	 *            .
 	 * @return The value of the {@link #ARROWHEAD__E} property of the given
 	 *         {@link Edge}.
 	 */
@@ -345,7 +371,8 @@ public class DotAttributes {
 			return null;
 		}
 		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getArrowTypeRule(), arrowHead);
+				dotArrowTypeParser,
+				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowHead);
 
 		ArrowType arrowType = (ArrowType) parsedPropertyValue
 				.getRootASTElement();
@@ -391,8 +418,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getHeadLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getHeadLp(edge));
+		IParseResult parsedPropertyValue = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), getHeadLp(edge));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
@@ -520,8 +547,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getLp(edge));
+		IParseResult parsedPropertyValue = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), getLp(edge));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
@@ -608,7 +635,8 @@ public class DotAttributes {
 	 */
 	public static SplineType getPosParsed(Edge edge) {
 		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getSplineTypeRule(), getPos(edge));
+				dotSplineTypeParser,
+				dotSplineTypeGrammarAccess.getSplineTypeRule(), getPos(edge));
 		SplineType splineType = (SplineType) parsedPropertyValue
 				.getRootASTElement();
 		return splineType;
@@ -625,8 +653,8 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getPosParsed(Node node) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getPos(node));
+		IParseResult parsedPropertyValue = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), getPos(node));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
@@ -708,8 +736,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getTailLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getTailLp(edge));
+		IParseResult parsedPropertyValue = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), getTailLp(edge));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
@@ -809,8 +837,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getXlpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getXlp(edge));
+		IParseResult parsedPropertyValue = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), getXlp(edge));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
@@ -826,15 +854,15 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getXlpParsed(Node node) {
-		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), getXlp(node));
+		IParseResult parsedPropertyValue = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), getXlp(node));
 		Point point = (Point) parsedPropertyValue.getRootASTElement();
 		return point;
 	}
 
-	private static IParseResult parsePropertyValue(ParserRule rule,
-			String propertyValue) {
-		IParseResult parseResult = dotAttributesParser.parse(rule,
+	private static IParseResult parsePropertyValue(IParser parser,
+			ParserRule rule, String propertyValue) {
+		IParseResult parseResult = parser.parse(rule,
 				new StringReader(propertyValue));
 		return parseResult;
 	}
@@ -1059,8 +1087,8 @@ public class DotAttributes {
 	 *            The new value of the {@link #POS__NE} property.
 	 */
 	public static void setPos(Edge edge, String pos) {
-		IParseResult parseResult = parsePropertyValue(
-				dotAttributesGrammarAccess.getSplineTypeRule(), pos);
+		IParseResult parseResult = parsePropertyValue(dotSplineTypeParser,
+				dotSplineTypeGrammarAccess.getSplineTypeRule(), pos);
 		if (parseResult.hasSyntaxErrors()) {
 			throw new IllegalArgumentException(
 					"Cannot set edge attribute '" + POS__NE + "' to '" + pos
@@ -1079,8 +1107,8 @@ public class DotAttributes {
 	 *            The new value of the {@link #POS__NE} property.
 	 */
 	public static void setPos(Node node, String pos) {
-		IParseResult parseResult = parsePropertyValue(
-				dotAttributesGrammarAccess.getPointRule(), pos);
+		IParseResult parseResult = parsePropertyValue(dotPointParser,
+				dotPointGrammarAccess.getPointRule(), pos);
 		if (parseResult.hasSyntaxErrors()) {
 			throw new IllegalArgumentException(
 					"Cannot set node attribute '" + POS__NE + "' to '" + pos
@@ -1266,8 +1294,8 @@ public class DotAttributes {
 	 * @return true if the arrowType is valid, false otherwise
 	 */
 	public static boolean isValidArrowType(String arrowType) {
-		IParseResult parseResult = parsePropertyValue(
-				dotAttributesGrammarAccess.getArrowTypeRule(), arrowType);
+		IParseResult parseResult = parsePropertyValue(dotArrowTypeParser,
+				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowType);
 		return !parseResult.hasSyntaxErrors();
 	}
 }

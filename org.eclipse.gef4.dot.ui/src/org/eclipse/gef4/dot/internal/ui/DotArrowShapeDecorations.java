@@ -10,13 +10,13 @@
  *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
  *
  ***********************************************************************************************/
-package org.eclipse.gef4.dot.internal.ui.shapes;
+package org.eclipse.gef4.dot.internal.ui;
 
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
-public class ArrowShapes {
+public class DotArrowShapeDecorations {
 
 	public static class Box extends Polygon {
 		public Box() {
