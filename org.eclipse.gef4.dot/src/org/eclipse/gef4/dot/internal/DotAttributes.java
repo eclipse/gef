@@ -340,9 +340,12 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowHeadParsed(Edge edge) {
+		String arrowHead = getArrowHead(edge);
+		if (arrowHead == null) {
+			return null;
+		}
 		IParseResult parsedPropertyValue = parsePropertyValue(
-				dotAttributesGrammarAccess.getArrowTypeRule(),
-				getArrowHead(edge));
+				dotAttributesGrammarAccess.getArrowTypeRule(), arrowHead);
 
 		ArrowType arrowType = (ArrowType) parsedPropertyValue
 				.getRootASTElement();

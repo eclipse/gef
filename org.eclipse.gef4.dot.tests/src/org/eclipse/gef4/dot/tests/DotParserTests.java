@@ -33,7 +33,7 @@ import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
 @InjectWith(DotInjectorProvider.class)
-public class DotDslParserTest {
+public class DotParserTests {
 
 	@Inject
 	private ParseHelper<DotAst> parserHelper;
@@ -43,12 +43,14 @@ public class DotDslParserTest {
 
 	@Test
 	@Ignore
+	// TODO: Enable when remaining problems of #477980 have been fixed
 	public void testArrowShapesSingle() {
 		testFile("arrowshapes_single.dot");
 	}
 
 	@Test
 	@Ignore
+	// TODO: Enable when remaining problems of #477980 have been fixed
 	public void testArrowShapesMultiple() {
 		testFile("arrowshapes_multiple.dot");
 	}

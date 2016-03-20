@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ DotImportTests.class, DotExportTests.class,
 		DotNativeDrawerTests.class, DotInterpreterTests.class,
 		DotExtractorTests.class, DotAttributesTests.class,
-		DotDslParserTest.class, DotDslValidatorTest.class })
+		DotParserTests.class, DotValidatorTests.class })
 public class AllTests {
 
 }

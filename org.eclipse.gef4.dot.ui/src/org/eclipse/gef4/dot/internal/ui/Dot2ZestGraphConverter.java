@@ -132,13 +132,22 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
 		}
 
-		// TODO: in case graph type is directed, we should add default target
-		// decoration if none is set.
-		Shape edgeDecoration = computeEdgeDecoration(dot);
-		if (edgeDecoration != null) {
-			ZestProperties.setTargetDecoration(zest,
-					computeEdgeDecoration(dot));
+		// arrow head
+		String dotArrowHead = DotAttributes.getArrowHead(dot);
+		Shape connectionTargetDecoration = null;
+		if (dotArrowHead == null) {
+			// use "normal" in case graph is directed
+			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
+					.getAttributes().get(DotAttributes._TYPE__G))) {
+				connectionTargetDecoration = new ArrowShapes.Normal();
+			}
+		} else {
+			// TODO: Enable after remaining problems in #477980 have been
+			// resolved
+			// connectionTargetDecoration = computeZestDecoration(
+			// DotAttributes.getArrowHeadParsed(dot));
 		}
+		ZestProperties.setTargetDecoration(zest, connectionTargetDecoration);
 
 		// only convert layout information in native mode, as the results will
 		// otherwise
@@ -186,10 +195,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		}
 	}
 
-	private Shape computeEdgeDecoration(Edge dot) {
-		ArrowType arrowType = DotAttributes.getArrowHeadParsed(dot);
-		if (arrowType == null)
-			return null;
+	private Shape computeZestDecoration(ArrowType arrowType) {
 		Shape shape = null;
 		if (arrowType instanceof ArrowType_DeprecatedArrowName) {
 			String firstArrowShape = ((ArrowType_DeprecatedArrowName) arrowType)

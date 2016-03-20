@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
 @InjectWith(DotInjectorProvider.class)
-public class DotDslValidatorTest {
+public class DotValidatorTests {
 
 	@Inject
 	ParseHelper<DotAst> parserHelper;
