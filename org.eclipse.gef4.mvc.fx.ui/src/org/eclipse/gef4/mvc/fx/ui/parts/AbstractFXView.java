@@ -145,6 +145,8 @@ public abstract class AbstractFXView extends ViewPart {
 		// contribute to Properties view
 		else if (IPropertySheetPage.class.equals(key)) {
 			if (propertySheetPage == null) {
+				// TODO: use assisted inject here, so UndoablePropertySheetPage
+				// can be bound in module
 				propertySheetPage = new UndoablePropertySheetPage(
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class),

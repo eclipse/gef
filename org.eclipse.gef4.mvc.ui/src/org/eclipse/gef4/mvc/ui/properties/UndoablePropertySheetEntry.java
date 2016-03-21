@@ -165,7 +165,16 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 				compositeOperation.unwrap(true));
 	}
 
-	private void valueChanged(UndoablePropertySheetEntry child,
+	/**
+	 * Update parent entry about change, being encapsulated into the given
+	 * operation.
+	 *
+	 * @param child
+	 *            The child entry that changed.
+	 * @param operation
+	 *            An operation encapsulating the change.
+	 */
+	protected void valueChanged(UndoablePropertySheetEntry child,
 			ITransactionalOperation operation) {
 		// inform our parent
 		if (getParent() != null) {

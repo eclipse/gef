@@ -164,7 +164,7 @@ public class SetPropertyValueOperation extends AbstractOperation
 	 * @return the new value or {@link #DEFAULT_VALUE} to indicate that the
 	 *         default value should be set as the new value.
 	 */
-	protected Object getNewValue() {
+	public Object getNewValue() {
 		return newValue;
 	}
 
@@ -175,7 +175,7 @@ public class SetPropertyValueOperation extends AbstractOperation
 	 *
 	 * @return the old value of the property or {@link #DEFAULT_VALUE}.
 	 */
-	protected Object getOldValue() {
+	public Object getOldValue() {
 		return oldValue;
 	}
 
@@ -185,7 +185,7 @@ public class SetPropertyValueOperation extends AbstractOperation
 	 *
 	 * @return the id of the property whose value is to be set.
 	 */
-	protected Object getPropertyId() {
+	public Object getPropertyId() {
 		return propertyId;
 	}
 
@@ -195,7 +195,7 @@ public class SetPropertyValueOperation extends AbstractOperation
 	 *
 	 * @return the {@link IPropertySource} which provides the property.
 	 */
-	protected IPropertySource getPropertySource() {
+	public IPropertySource getPropertySource() {
 		return propertySource;
 	}
 

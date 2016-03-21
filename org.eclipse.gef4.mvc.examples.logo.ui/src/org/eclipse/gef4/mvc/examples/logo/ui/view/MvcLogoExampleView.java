@@ -11,24 +11,94 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.view;
 
+import java.util.Collections;
+
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart.ChangeWayPointsOperation;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
+import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.ui.properties.SetPropertyValueOperation;
+import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetEntry;
+import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
 public class MvcLogoExampleView extends AbstractFXView {
 
-	// TODO: create AbstractFXView via an executable extension factory (obtaining the
+	private UndoablePropertySheetEntry rootEntry;
+
+	// TODO: create AbstractFXView via an executable extension factory
+	// (obtaining the
 	// injector via the bundle)
 	public MvcLogoExampleView() {
 		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
 				.with(new MvcLogoExampleUiModule())));
 		// set default contents (GEF logo)
-		getViewer().getAdapter(ContentModel.class)
-				.getContents().setAll(MvcLogoExample.createDefaultContents());
+		getViewer().getAdapter(ContentModel.class).getContents()
+				.setAll(MvcLogoExample.createDefaultContents());
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Object getAdapter(Class key) {
+		if (IPropertySheetPage.class.equals(key)) {
+			// use another UndoablePropertySheetEntry, which chains undo of
+			// waypoint removal
+			UndoablePropertySheetPage propertySheetPage = (UndoablePropertySheetPage) super.getAdapter(
+					key);
+			if (rootEntry == null) {
+				rootEntry = new UndoablePropertySheetEntry(
+						(IOperationHistory) getAdapter(IOperationHistory.class),
+						(IUndoContext) getAdapter(IUndoContext.class)) {
+					@Override
+					protected void valueChanged(
+							UndoablePropertySheetEntry child,
+							ITransactionalOperation operation) {
+						// in case routing style is changed, clear the
+						// waypoints (chain into a composite operation)
+						if (operation instanceof SetPropertyValueOperation) {
+							SetPropertyValueOperation changeRoutingStyleOperation = (SetPropertyValueOperation) operation;
+							if (changeRoutingStyleOperation
+									.getPropertySource() instanceof FXCurvePropertySource
+									&& FXCurvePropertySource.ROUTING_STYLE_PROPERTY
+											.getId()
+											.equals(changeRoutingStyleOperation
+													.getPropertyId())) {
+								// clear way anchors using bend policy
+								FXCurvePropertySource ps = (FXCurvePropertySource) changeRoutingStyleOperation
+										.getPropertySource();
+								ChangeWayPointsOperation clearWaypointsOperation = new ChangeWayPointsOperation(
+										"Clear waypoints", ps.getCurve(),
+										ps.getCurve().getWayPointsCopy(),
+										Collections.<Point> emptyList());
+								AbstractCompositeOperation c = new ForwardUndoCompositeOperation(
+										"Change routing style");
+								c.add(changeRoutingStyleOperation);
+								c.add(clearWaypointsOperation);
+								super.valueChanged(child, c);
+							} else {
+								super.valueChanged(child, operation);
+							}
+						} else {
+							super.valueChanged(child, operation);
+						}
+					}
+				};
+				propertySheetPage.setRootEntry(rootEntry);
+			}
+			return propertySheetPage;
+		}
+		return super.getAdapter(key);
 	}
 }

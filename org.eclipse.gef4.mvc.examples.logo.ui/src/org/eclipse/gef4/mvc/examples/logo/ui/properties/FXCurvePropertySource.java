@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.properties;
 
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.Decoration;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve.RoutingStyle;
@@ -21,17 +20,17 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class FXCurvePropertySource implements IPropertySource {
 
-	private static final IPropertyDescriptor SOURCE_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
+	public static final IPropertyDescriptor SOURCE_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
 			FXGeometricCurve.SOURCE_DECORATION_PROPERTY, "Source Decoration",
 			new String[] { Decoration.NONE.name(), Decoration.ARROW.name(),
 					Decoration.CIRCLE.name() });
-	private static final IPropertyDescriptor TARGET_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
+	public static final IPropertyDescriptor TARGET_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
 			FXGeometricCurve.TARGET_DECORATION_PROPERTY, "Target Decoration",
 			new String[] { Decoration.NONE.name(), Decoration.ARROW.name(),
 					Decoration.CIRCLE.name() });
-	private static final IPropertyDescriptor STROKE_WIDTH_PROPERTY = new TextPropertyDescriptor(
+	public static final IPropertyDescriptor STROKE_WIDTH_PROPERTY = new TextPropertyDescriptor(
 			FXGeometricCurve.STROKE_WIDTH_PROPERTY, "Stroke Width");
-	private static final IPropertyDescriptor ROUTING_STYLE_PROPERTY = new ComboBoxPropertyDescriptor(
+	public static final IPropertyDescriptor ROUTING_STYLE_PROPERTY = new ComboBoxPropertyDescriptor(
 			FXGeometricCurve.ROUTING_STYLE_PROPERTY, "Routing Style",
 			new String[] { RoutingStyle.STRAIGHT.name(),
 					RoutingStyle.ORTHOGONAL.name() });
@@ -40,6 +39,10 @@ public class FXCurvePropertySource implements IPropertySource {
 
 	public FXCurvePropertySource(FXGeometricCurve curve) {
 		this.curve = curve;
+	}
+
+	public FXGeometricCurve getCurve() {
+		return curve;
 	}
 
 	@Override
@@ -107,14 +110,7 @@ public class FXCurvePropertySource implements IPropertySource {
 		} else if (STROKE_WIDTH_PROPERTY.getId().equals(id)) {
 			curve.setStrokeWidth(Double.parseDouble((String) value));
 		} else if (ROUTING_STYLE_PROPERTY.getId().equals(id)) {
-			// TODO: Changing the way points has to be undoable. We need to bind
-			// an own UndoablePropertySheetEntry in the UiModule that chains an
-			// operation changing the way points on the domain object.
-			RoutingStyle routingStyle = RoutingStyle.values()[(int) value];
-			if (RoutingStyle.ORTHOGONAL.equals(routingStyle)) {
-				curve.setWayPoints(new Point[] {});
-			}
-			curve.setRoutingStyle(routingStyle);
+			curve.setRoutingStyle(RoutingStyle.values()[(int) value]);
 		}
 	}
 

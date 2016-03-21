@@ -69,8 +69,8 @@ public class FXGeometricCurvePart
 		}
 	}
 
-	private static final class ChangeWayPointsOperation
-			extends AbstractOperation implements ITransactionalOperation {
+	public static final class ChangeWayPointsOperation extends AbstractOperation
+			implements ITransactionalOperation {
 
 		private final FXGeometricCurve curve;
 		private final List<Point> newWayPoints;
