@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.geometry.convert.swt"
       label="GEF4 Geometry.Convert.SWT"
-      version="0.3.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.geometry.convert.swt"
       license-feature="org.eclipse.license"
@@ -21,7 +21,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.geometry" version="0.3.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.geometry" version="1.0.0" match="equivalent"/>
    </requires>
 
    <plugin

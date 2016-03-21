@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.common.sdk"
       label="GEF4 Common SDK"
-      version="0.3.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

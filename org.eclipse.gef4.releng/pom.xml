@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.gef4</groupId>
 	<artifactId>org.eclipse.gef4.releng</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
@@ -308,7 +308,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef4</groupId>
 									<artifactId>org.eclipse.gef4.target</artifactId>
-									<version>0.3.0-SNAPSHOT</version>
+									<version>1.0.0-SNAPSHOT</version>
 									<classifier>NEON</classifier>
 								</artifact>
 							</target>
@@ -364,7 +364,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef4</groupId>
 									<artifactId>org.eclipse.gef4.target</artifactId>
-									<version>0.3.0-SNAPSHOT</version>
+									<version>1.0.0-SNAPSHOT</version>
 									<classifier>MARS</classifier>
 								</artifact>
 							</target>
@@ -423,7 +423,7 @@
 								<artifact>
 									<groupId>org.eclipse.gef4</groupId>
 									<artifactId>org.eclipse.gef4.target</artifactId>
-									<version>0.3.0-SNAPSHOT</version>
+									<version>1.0.0-SNAPSHOT</version>
 									<classifier>LUNA</classifier>
 								</artifact>
 							</target>

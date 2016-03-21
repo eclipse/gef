@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.zest.fx.compatibility.equinox"
       label="GEF4 Zest.FX Equinox Compatibility"
-      version="0.3.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
@@ -20,7 +20,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.zest.fx" version="0.1.0" match="compatible"/>
+      <import feature="org.eclipse.gef4.zest.fx" version="1.0.0" match="compatible"/>
    </requires>
 
    <plugin
