@@ -59,21 +59,18 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 	private IVisualPart<Node, ? extends Connection> targetPart;
 
+	private boolean isSegmentDragged;
+
 	private Point initialMouseInScene;
 	private Point handlePositionInScene;
 
-	private boolean isSegmentDragged;
-
+	private int initialSegmentIndex;
 	private double initialSegmentParameter;
 
 	private Comparator<IHandlePart<Node, ? extends Node>> handleDistanceComparator = new Comparator<IHandlePart<Node, ? extends Node>>() {
 		@Override
 		public int compare(IHandlePart<Node, ? extends Node> interactedWith,
 				IHandlePart<Node, ? extends Node> other) {
-			// Bounds bounds = getHost().getVisual().getLayoutBounds();
-			// Point2D position = getHost().getVisual().localToScene(
-			// bounds.getMinX() + bounds.getWidth() / 2,
-			// bounds.getMinY() + bounds.getHeight() / 2);
 			Bounds otherBounds = other.getVisual().getLayoutBounds();
 			Point2D otherPosition = other.getVisual()
 					.localToScene(otherBounds.getMinX()
@@ -84,8 +81,6 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 					.getDistance(FX2Geometry.toPoint(otherPosition)) * 10);
 		}
 	};
-
-	private int initialSegmentIndex;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -195,8 +190,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				// orthogonal connections)
 
 				AnchorHandle previousAnchorHandle = bendPolicy
-						.findExplicitAnchorBackwards(
-								hostPart.getSegmentIndex());
+						.findExplicitAnchorBackward(hostPart.getSegmentIndex());
 				AnchorHandle newAnchorHandle = bendPolicy
 						.createAfter(previousAnchorHandle, initialMouseInScene);
 
