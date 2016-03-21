@@ -22,7 +22,7 @@ var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
-	// register current projects and its siblings for platform URI map, as they are not on the classpath.
+		// register current projects and its siblings for platform URI map, as they are not on the classpath.
 		platformUri = "${runtimeProject}/.."
 	}
 

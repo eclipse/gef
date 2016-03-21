@@ -17,8 +17,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
-import org.eclipse.gef4.dot.internal.parser.dotSplineType.Spline;
-import org.eclipse.gef4.dot.internal.parser.dotSplineType.SplineType;
+import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
+import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Node;
 import org.junit.Test;

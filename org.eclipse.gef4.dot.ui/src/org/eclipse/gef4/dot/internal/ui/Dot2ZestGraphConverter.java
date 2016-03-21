@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
-import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowShape;
-import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowShapes;
-import org.eclipse.gef4.dot.internal.parser.dotArrowType.ArrowType;
-import org.eclipse.gef4.dot.internal.parser.dotArrowType.DeprecatedArrowShape;
-import org.eclipse.gef4.dot.internal.parser.dotSplineType.Spline;
-import org.eclipse.gef4.dot.internal.parser.dotSplineType.SplineType;
+import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShape;
+import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShapes;
+import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedArrowShape;
+import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
+import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
@@ -282,7 +282,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		List<Point> controlPoints = new ArrayList<>();
 		for (Spline spline : splineType.getSplines()) {
 			// start
-			org.eclipse.gef4.dot.internal.parser.dotSplineType.Point startp = spline
+			org.eclipse.gef4.dot.internal.parser.splinetype.Point startp = spline
 					.getStartp();
 			if (startp == null) {
 				// if we have no start point, add the first control
@@ -294,14 +294,14 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 					(options.invertYAxis ? -1 : 1) * startp.getY()));
 
 			// control points
-			for (org.eclipse.gef4.dot.internal.parser.dotSplineType.Point cp : spline
+			for (org.eclipse.gef4.dot.internal.parser.splinetype.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
 						(options.invertYAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
-			org.eclipse.gef4.dot.internal.parser.dotSplineType.Point endp = spline
+			org.eclipse.gef4.dot.internal.parser.splinetype.Point endp = spline
 					.getEndp();
 			if (endp == null) {
 				// if we have no end point, add the last control point
@@ -352,7 +352,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 			// node position is interpreted as center of node in Dot, and
 			// top-left in Zest
-			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotPosParsed = DotAttributes
+			org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
 					.getPosParsed(dot);
 			ZestProperties.setPosition(zest,
 					computeZestPosition(dotPosParsed, zestWidth, zestHeight));
@@ -364,7 +364,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		// external label position (xlp)
 		String dotXlp = DotAttributes.getXlp(dot);
 		if (dotXLabel != null && dotXlp != null) {
-			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotXlpParsed = DotAttributes
+			org.eclipse.gef4.dot.internal.parser.point.Point dotXlpParsed = DotAttributes
 					.getXlpParsed(dot);
 			ZestProperties.setExternalLabelPosition(zest,
 					computeZestLabelPosition(dotXlpParsed, dotXLabel));
@@ -372,7 +372,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	}
 
 	private Point computeZestPosition(
-			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotPosition,
+			org.eclipse.gef4.dot.internal.parser.point.Point dotPosition,
 			double widthInPixel, double heightInPixel) {
 		// dot positions are provided as center positions, Zest uses top-left
 		return new Point(dotPosition.getX() - widthInPixel / 2,
@@ -381,7 +381,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	}
 
 	private Point computeZestLabelPosition(
-			org.eclipse.gef4.dot.internal.parser.dotPoint.Point dotLabelPosition,
+			org.eclipse.gef4.dot.internal.parser.point.Point dotLabelPosition,
 			String labelText) {
 		// FIXME: Is it legal to use JavaFX for metrics calculation here (while
 		// we are part of DOT.UI)?
