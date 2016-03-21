@@ -49,11 +49,8 @@ import com.google.inject.TypeLiteral;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class JFaceCustomNodeExample {
@@ -192,11 +189,10 @@ public class JFaceCustomNodeExample {
 
 	public static class CustomNodeContentPart extends NodePart {
 		private VBox vbox;
+		private Text labelText;
 
 		@Override
-		protected void createNodeVisual(Group group, Rectangle rect,
-				ImageView iconImageView, Text labelText,
-				StackPane nestedContentStackPane) {
+		protected Group createVisual() {
 			ImageView ian = new ImageView(new javafx.scene.image.Image(
 					getClass().getResource("ibull.jpg").toExternalForm()));
 			Polyline body = new Polyline(0, 0, 0, 60, 25, 90, 0, 60, -25, 90, 0,
@@ -204,17 +200,15 @@ public class JFaceCustomNodeExample {
 			body.setTranslateX(ian.getLayoutBounds().getWidth() / 2
 					- body.getLayoutBounds().getWidth() / 2 - 5);
 			body.setTranslateY(-15);
+			labelText = new Text();
 			vbox = new VBox();
-			vbox.getChildren().addAll(ian, body, labelText, iconImageView,
-					nestedContentStackPane);
-			group.getChildren().add(vbox);
-			labelText.setStroke(Color.BLACK);
+			vbox.getChildren().addAll(ian, body, labelText);
+			return new Group(vbox);
 		}
 
 		@Override
-		protected void refreshNestedGraphArea(Group visual, boolean isNesting) {
-			vbox.setPrefSize(0, 0);
-			vbox.resize(0, 0);
+		protected Text getLabelText() {
+			return labelText;
 		}
 	}
 

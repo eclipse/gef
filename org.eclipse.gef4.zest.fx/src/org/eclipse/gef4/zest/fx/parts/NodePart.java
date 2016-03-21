@@ -37,9 +37,6 @@ import com.google.common.collect.SetMultimap;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
@@ -47,11 +44,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -136,6 +133,32 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 */
 	public static final double DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR = 0.25;
 
+	/**
+	 * The default width for the outer most layout container of this node in the
+	 * case of nested content.
+	 */
+	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING = DEFAULT_CHILDREN_PANE_WIDTH
+			* DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
+
+	/**
+	 * The default height for the outer most layout container of this node in
+	 * the case of nested content.
+	 */
+	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING = DEFAULT_CHILDREN_PANE_HEIGHT
+			* DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
+
+	/**
+	 * The default width for the outer most layout container of this node in the
+	 * case of no nested content.
+	 */
+	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF = 0;
+
+	/**
+	 * The default height for the outer most layout container of this node in
+	 * the case of no nested content.
+	 */
+	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF = 0;
+
 	// CSS classes for styling nodes
 	/**
 	 * The CSS class that is applied to the {@link #getVisual() visual} of this
@@ -176,31 +199,9 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	private StackPane nestedContentStackPane;
 	private Pane nestedChildrenPane;
 	private Pane nestedChildrenPaneScaled;
-	private int originalIndex = -1;
-	private Bounds originalBounds = null;
 	private Tooltip tooltipNode;
-	private HBox hbox;
-	private VBox vbox;
+	private VBox outerLayoutContainer;
 	private Rectangle rect;
-	private EventHandler<? super MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent event) {
-			EventType<? extends Event> type = event.getEventType();
-			if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_EXITED)) {
-				refreshVisual();
-			} else if (type.equals(MouseEvent.MOUSE_MOVED) || type.equals(MouseEvent.MOUSE_DRAGGED)) {
-				if (originalBounds != null) {
-					if (!originalBounds.contains(event.getSceneX(), event.getSceneY())) {
-						// unhover the visual by making it mouse transparent
-						getVisual().setMouseTransparent(true);
-						// this will result in a MOUSE_EXITED event being fired,
-						// which will lead to a refreshVisual() call, which will
-						// update the visualization
-					}
-				}
-			}
-		}
-	};
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
@@ -212,7 +213,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 *
 	 * @return The {@link Pane} that is used to display nested content.
 	 */
-	protected Pane createNestedContentPane() {
+	private Pane createNestedContentPane() {
 		final AnchorPane pane = new AnchorPane();
 		pane.setStyle("-fx-background-color: white;");
 		nestedChildrenPaneScaled = new Pane();
@@ -231,62 +232,17 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	/**
 	 * Creates the {@link StackPane} that is used to either display nested
 	 * content, or an icon indicating that nested content exists for this
-	 * {@link NodePart}. The given {@link Pane} is inserted into the
-	 * children list of the created {@link StackPane}.
+	 * {@link NodePart}. The given {@link Pane} is inserted into the children
+	 * list of the created {@link StackPane}.
 	 *
 	 * @param nestedContentPane
 	 *            The nested content {@link Pane}.
 	 * @return The created {@link StackPane}.
 	 */
-	protected StackPane createNestedContentStackPane(Pane nestedContentPane) {
+	private StackPane createNestedContentStackPane(Pane nestedContentPane) {
 		StackPane stackPane = new StackPane();
 		stackPane.getChildren().add(nestedContentPane);
 		return stackPane;
-	}
-
-	/**
-	 * Creates the node visual. The given {@link ImageView}, {@link Text}, and
-	 * {@link StackPane} are inserted into that node visual to display the
-	 * node's icon, label and nested children, respectively. The node visual
-	 * needs to be inserted into the given {@link Group}.
-	 *
-	 * @param group
-	 *            This node's visual.
-	 * @param rect
-	 *            The {@link Rectangle} displaying border and background.
-	 * @param iconImageView
-	 *            The {@link ImageView} displaying the node's icon.
-	 * @param labelText
-	 *            The {@link Text} displaying the node's label.
-	 * @param nestedContentStackPane
-	 *            The {@link StackPane} displaying the node's nested content.
-	 */
-	protected void createNodeVisual(final Group group, final Rectangle rect, final ImageView iconImageView,
-			final Text labelText, final StackPane nestedContentStackPane) {
-		// put image and text next to each other at the top of the node
-		hbox = new HBox();
-		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		hbox.getChildren().addAll(iconImageView, labelText);
-
-		// put nested content stack pane below image and text
-		vbox = new VBox();
-		vbox.setMouseTransparent(true);
-		vbox.getChildren().addAll(hbox, nestedContentStackPane);
-		VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
-
-		// expand box depending on content size
-		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				vbox.setTranslateX(getPadding());
-				vbox.setTranslateY(getPadding());
-				rect.setWidth(vbox.getWidth() + 2 * getPadding());
-				rect.setHeight(vbox.getHeight() + 2 * getPadding());
-			}
-		});
-
-		// place the box below the other visuals
-		group.getChildren().addAll(rect, vbox);
 	}
 
 	@Override
@@ -303,11 +259,11 @@ public class NodePart extends AbstractFXContentPart<Group> {
 			public void resize(double w, double h) {
 				// compute new size, based on layout bounds
 				Bounds layoutBounds = getLayoutBounds();
-				Bounds vboxBounds = vbox.getLayoutBounds();
+				Bounds vboxBounds = outerLayoutContainer.getLayoutBounds();
 				double vw = vboxBounds.getWidth() + w - layoutBounds.getWidth();
 				double vh = vboxBounds.getHeight() + h - layoutBounds.getHeight();
-				vbox.setPrefSize(vw, vh);
-				vbox.resize(vw, vh);
+				outerLayoutContainer.setPrefSize(vw, vh);
+				outerLayoutContainer.resize(vw, vh);
 			}
 		};
 
@@ -334,8 +290,30 @@ public class NodePart extends AbstractFXContentPart<Group> {
 		labelText.setText(NODE_LABEL_EMPTY);
 		labelText.getStyleClass().add(CSS_CLASS_LABEL);
 
-		// build node visual
-		createNodeVisual(group, rect, iconImageView, labelText, nestedContentStackPane);
+		// put image and text next to each other at the top of the node
+		HBox hbox = new HBox();
+		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		hbox.getChildren().addAll(iconImageView, labelText);
+
+		// put nested content stack pane below image and text
+		outerLayoutContainer = new VBox();
+		outerLayoutContainer.setMouseTransparent(true);
+		outerLayoutContainer.getChildren().addAll(hbox, nestedContentStackPane);
+		VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
+
+		// expand box depending on content size
+		outerLayoutContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+				outerLayoutContainer.setTranslateX(getPadding());
+				outerLayoutContainer.setTranslateY(getPadding());
+				getNodeRect().setWidth(outerLayoutContainer.getWidth() + 2 * getPadding());
+				getNodeRect().setHeight(outerLayoutContainer.getHeight() + 2 * getPadding());
+			}
+		});
+
+		// place the box below the other visuals
+		group.getChildren().addAll(rect, outerLayoutContainer);
 
 		return group;
 	}
@@ -387,7 +365,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 		visual.getStyleClass().add(CSS_CLASS);
 		Map<String, Object> attrs = node.attributesProperty();
 		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
-			refreshCssClass(visual, ZestProperties.getCssClass(node));
+			visual.getStyleClass().add(ZestProperties.getCssClass(node));
 		}
 
 		// set CSS id
@@ -399,29 +377,19 @@ public class NodePart extends AbstractFXContentPart<Group> {
 
 		// set CSS style
 		if (attrs.containsKey(ZestProperties.NODE_RECT_CSS_STYLE)) {
-			rect.setStyle(ZestProperties.getNodeRectCssStyle(node));
+			refreshRectCssStyle(ZestProperties.getNodeRectCssStyle(node));
 		}
 		if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
-			labelText.setStyle(ZestProperties.getNodeLabelCssStyle(node));
+			refreshLabelCssStyle(ZestProperties.getNodeLabelCssStyle(node));
 		}
 
-		// determine label
-		String label = ZestProperties.getLabel(node);
-		// use id if no label is set
-		if (label == null) {
-			label = id;
-		}
-		// use the the DEFAULT_LABEL if no label is set
-		String str = label instanceof String ? (String) label : label == null ? NODE_LABEL_EMPTY : label.toString();
-		// eventually let the fisheye mode trim the label
-		str = refreshFisheye(visual, attrs, str);
-		refreshLabel(visual, str);
+		refreshNesting(isNesting());
 
-		refreshIcon(visual, ZestProperties.getIcon(node));
-		refreshNestedGraphArea(visual, isNesting());
-		refreshTooltip(visual, ZestProperties.getTooltip(node));
-		refreshPosition(visual, ZestProperties.getPosition(node));
-		refreshSize(visual, ZestProperties.getSize(node));
+		refreshLabel(ZestProperties.getLabel(node));
+		refreshIcon(ZestProperties.getIcon(node));
+		refreshTooltip(ZestProperties.getTooltip(node));
+		refreshPosition(ZestProperties.getPosition(node));
+		refreshSize(ZestProperties.getSize(node));
 	}
 
 	@Override
@@ -458,12 +426,11 @@ public class NodePart extends AbstractFXContentPart<Group> {
 
 	/**
 	 * Returns the {@link StackPane} that either displays nested content or an
-	 * icon indicating that nested content exists for this
-	 * {@link NodePart}.
+	 * icon indicating that nested content exists for this {@link NodePart}.
 	 *
 	 * @return The {@link StackPane} that wraps nested content.
 	 */
-	protected StackPane getNestedContentStackPane() {
+	private StackPane getNestedContentStackPane() {
 		return nestedContentStackPane;
 	}
 
@@ -476,7 +443,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 *         {@link #getNestedContentStackPane()} when nested content is
 	 *         available, but not rendered, currently.
 	 */
-	protected Node getNestedGraphIcon() {
+	private Node getNestedGraphIcon() {
 		return nestedGraphIcon;
 	}
 
@@ -489,6 +456,17 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 */
 	protected Rectangle getNodeRect() {
 		return rect;
+	}
+
+	/**
+	 * Returns the outer most layout container that is used to layout the
+	 * content of this node (including nested content).
+	 *
+	 * @return The outer most layout container that is used to layout the
+	 *         content of this node (including nested content).
+	 */
+	protected Region getOuterLayoutContainer() {
+		return outerLayoutContainer;
 	}
 
 	/**
@@ -507,7 +485,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 * {@link #getNestedContentStackPane()} and {@link #setNestedGraphIcon(Node)
 	 * sets} the nested graph icon to <code>null</code>.
 	 */
-	protected void hideNestedGraphIcon() {
+	private void hideNestedGraphIcon() {
 		if (getNestedGraphIcon() != null) {
 			getNestedContentStackPane().getChildren().remove(getNestedGraphIcon());
 			setNestedGraphIcon(null);
@@ -515,133 +493,90 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	}
 
 	/**
-	 * Returns <code>true</code> if this {@link NodePart} contains a
-	 * nested {@link Graph}. Otherwise, <code>false</code> is returned.
+	 * Returns <code>true</code> if this {@link NodePart} contains a nested
+	 * {@link Graph}. Otherwise, <code>false</code> is returned.
 	 *
-	 * @return <code>true</code> if this {@link NodePart} contains a
-	 *         nested {@link Graph}, otherwise <code>false</code>.
+	 * @return <code>true</code> if this {@link NodePart} contains a nested
+	 *         {@link Graph}, otherwise <code>false</code>.
 	 */
 	protected boolean isNesting() {
 		return getContent().getNestedGraph() != null;
 	}
 
 	/**
-	 * Adds the given CSS class to the given visual.
-	 *
-	 * @param visual
-	 *            The visual to which the CSS class is added.
-	 * @param cssClass
-	 *            The CSS class that is added to the visual.
-	 */
-	protected void refreshCssClass(Group visual, String cssClass) {
-		visual.getStyleClass().add(cssClass);
-	}
-
-	/**
-	 * Adjusts the visualization to reflect the fisheye state of the node. If
-	 * the node is in fisheye state, its label will be reduced to the first
-	 * letter.
-	 *
-	 * @param visual
-	 *            The visual of this {@link NodePart}.
-	 * @param attrs
-	 *            The attributes map that stores the fisheye state of this
-	 *            {@link NodePart}.
-	 * @param str
-	 *            The label of this {@link NodePart}.
-	 * @return The adjusted label for this {@link NodePart}.
-	 */
-	protected String refreshFisheye(Group visual, Map<String, Object> attrs, String str) {
-		// limit label to first letter when in fisheye mode (and not hovered)
-		Object fisheye = attrs.get(ZestProperties.NODE_FISHEYE);
-		if (fisheye instanceof Boolean && (Boolean) fisheye) {
-			// register mouse event listeners
-			visual.addEventHandler(MouseEvent.ANY, mouseHandler);
-			if (!visual.isHover()) {
-				// limit label to first letter
-				// TODO: hide image, hide children/graph icon
-				str = str.substring(0, 1);
-				restoreZOrder();
-			} else {
-				if (originalBounds == null) {
-					originalBounds = visual.localToScene(visual.getLayoutBounds());
-				}
-				// TODO: show image, show children/graph icon
-				// highlight this node by moving it to the front
-				List<IVisualPart<Node, ? extends Node>> children = getParent().getChildrenUnmodifiable();
-				originalIndex = children.indexOf(this); // restore later
-				getParent().reorderChild(this, children.size() - 1);
-				visual.toFront();
-			}
-		} else {
-			// TODO: show image, show children/graph icon
-			restoreZOrder();
-			visual.removeEventHandler(MouseEvent.ANY, mouseHandler);
-		}
-		return str;
-	}
-
-	/**
 	 * If the given <i>icon</i> is an {@link Image}, that {@link Image} will be
 	 * used as the icon of this {@link NodePart}.
 	 *
-	 * @param visual
-	 *            The visual of this {@link NodePart}.
 	 * @param icon
 	 *            The new icon for this {@link NodePart}.
 	 */
-	protected void refreshIcon(Group visual, Object icon) {
-		if (iconImageView.getImage() != icon && icon instanceof Image) {
-			iconImageView.setImage((Image) icon);
+	protected void refreshIcon(Image icon) {
+		if (getIconImageView() != null && getIconImageView().getImage() != icon && icon instanceof Image) {
+			getIconImageView().setImage(icon);
 		}
 	}
 
 	/**
 	 * Changes the label of this {@link NodePart} to the given value.
 	 *
-	 * @param visual
-	 *            The visual of this {@link NodePart}.
-	 * @param str
+	 * @param label
 	 *            The new label for this {@link NodePart}.
 	 */
-	protected void refreshLabel(Group visual, String str) {
-		if (!labelText.getText().equals(str)) {
-			labelText.setText(str);
+	protected void refreshLabel(String label) {
+		if (label == null || label.isEmpty()) {
+			label = NODE_LABEL_EMPTY;
+		}
+		if (getLabelText() != null && !getLabelText().getText().equals(label)) {
+			getLabelText().setText(label);
+		}
+	}
+
+	/**
+	 * Adjusts the node's label CSS style to the given value.
+	 *
+	 * @param labelCssStyle
+	 *            The new label CSS style for this node.
+	 */
+	protected void refreshLabelCssStyle(String labelCssStyle) {
+		if (getLabelText() != null) {
+			getLabelText().setStyle(labelCssStyle);
 		}
 	}
 
 	/**
 	 * When this node has a nested graph, space is reserved for it, so that the
 	 * transition from an icon to the real graph will not change the node's
-	 * size.
+	 * size. Adjusts the space that is reserved depending on the given flag.
 	 *
-	 * @param visual
-	 *            The visual of this part.
 	 * @param isNesting
 	 *            <code>true</code> if this node has a nested graph, otherwise
 	 *            <code>false</code>.
 	 */
-	protected void refreshNestedGraphArea(Group visual, boolean isNesting) {
-		if (isNesting) {
-			if (vbox.getPrefWidth() == 0 && vbox.getPrefHeight() == 0) {
-				vbox.setPrefSize(300 / 4, 300 / 4);
-				vbox.resize(300 / 4, 300 / 4);
+	protected void refreshNesting(boolean isNesting) {
+		if (getOuterLayoutContainer() != null) {
+			if (isNesting) {
+				if (getOuterLayoutContainer().getPrefWidth() == 0 && getOuterLayoutContainer().getPrefHeight() == 0) {
+					getOuterLayoutContainer().setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+					getOuterLayoutContainer().resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+				}
+			} else {
+				getOuterLayoutContainer().setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
+						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
+				getOuterLayoutContainer().resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
+						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
 			}
-		} else {
-			vbox.setPrefSize(0, 0);
-			vbox.resize(0, 0);
 		}
 	}
 
 	/**
 	 * Adjusts the node's position to fit the given {@link Point}.
 	 *
-	 * @param visual
-	 *            This node's visual.
 	 * @param position
 	 *            This node's position.
 	 */
-	protected void refreshPosition(Node visual, Point position) {
+	protected void refreshPosition(Point position) {
 		if (position != null) {
 			// translate using a transform operation
 			FXTransformOperation refreshPositionOp = new FXTransformOperation(
@@ -657,24 +592,32 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	}
 
 	/**
+	 * Adjusts the node rectangle's CSS style to the given value.
+	 *
+	 * @param nodeRectCssStyle
+	 *            The new node rectangle CSS style.
+	 */
+	protected void refreshRectCssStyle(String nodeRectCssStyle) {
+		if (getNodeRect() != null) {
+			getNodeRect().setStyle(nodeRectCssStyle);
+		}
+	}
+
+	/**
 	 * Adjusts the position and size of this part's visual to the given bounds.
 	 *
-	 * @param visual
-	 *            The visual of this part.
-	 * @param object
+	 * @param size
 	 *            The {@link Rectangle} describing the bounds for this part's
 	 *            visual.
 	 */
-	protected void refreshSize(Group visual, Object object) {
-		if (object instanceof Dimension) {
-			Dimension size = (Dimension) object;
-			// resize
-			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(visual);
+	protected void refreshSize(Dimension size) {
+		if (size != null) {
+			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(getVisual());
 			if (size.getWidth() != -1) {
-				resizeOperation.setDw(size.getWidth() - visual.getLayoutBounds().getWidth());
+				resizeOperation.setDw(size.getWidth() - getVisual().getLayoutBounds().getWidth());
 			}
 			if (size.getHeight() != -1) {
-				resizeOperation.setDh(size.getHeight() - visual.getLayoutBounds().getHeight());
+				resizeOperation.setDh(size.getHeight() - getVisual().getLayoutBounds().getHeight());
 			}
 			try {
 				resizeOperation.execute(null, null);
@@ -687,35 +630,21 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	/**
 	 * Changes the tooltip of this {@link NodePart} to the given value.
 	 *
-	 * @param visual
-	 *            The visual of this {@link NodePart}.
 	 * @param tooltip
 	 *            The new tooltip for this {@link NodePart}.
 	 */
-	protected void refreshTooltip(Group visual, Object tooltip) {
-		if (tooltip instanceof String) {
-			if (tooltipNode == null) {
-				tooltipNode = new Tooltip((String) tooltip);
-				Tooltip.install(visual, tooltipNode);
-			} else {
-				tooltipNode.setText((String) tooltip);
-			}
+	protected void refreshTooltip(String tooltip) {
+		if (tooltipNode == null) {
+			tooltipNode = new Tooltip(tooltip);
+			Tooltip.install(getVisual(), tooltipNode);
+		} else {
+			tooltipNode.setText(tooltip);
 		}
 	}
 
 	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		nestedChildrenPaneScaled.getChildren().remove(index);
-	}
-
-	private void restoreZOrder() {
-		if (originalIndex >= 0) {
-			getParent().reorderChild(this, originalIndex);
-		}
-		// make the visual hoverable by making it opaque for mouse events again
-		getVisual().setMouseTransparent(false);
-		// clear original bounds, so that they are recomputed
-		originalBounds = null;
 	}
 
 	/**
@@ -725,7 +654,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 * @param nestedGraphIcon
 	 *            The new nested graph icon.
 	 */
-	protected void setNestedGraphIcon(Node nestedGraphIcon) {
+	private void setNestedGraphIcon(Node nestedGraphIcon) {
 		this.nestedGraphIcon = nestedGraphIcon;
 	}
 
@@ -733,7 +662,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 * Creates the nested graph icon and adds it to the
 	 * {@link #getNestedContentStackPane()}.
 	 */
-	protected void showNestedGraphIcon() {
+	private void showNestedGraphIcon() {
 		if (getNestedGraphIcon() == null) {
 			setNestedGraphIcon(new NestedGraphIcon());
 			getNestedContentStackPane().getChildren().add(getNestedGraphIcon());
