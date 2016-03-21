@@ -11,17 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
-
-import com.google.common.reflect.TypeToken;
-
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
- * The {@link FXTraverseFocusOnTypePolicy} implements focus traversal via keyboard
- * input.
+ * The {@link FXTraverseFocusOnTypePolicy} implements focus traversal via
+ * keyboard input.
  *
  * @author mwienand
  *
@@ -29,17 +24,15 @@ import javafx.scene.input.KeyEvent;
 public class FXTraverseFocusOnTypePolicy extends AbstractFXInteractionPolicy
 		implements IFXOnTypePolicy {
 
-	@SuppressWarnings("serial")
 	@Override
 	public void pressed(KeyEvent event) {
 		if (KeyCode.TAB.equals(event.getCode())) {
 			// get traversal policy
-			FocusTraversalPolicy<Node> focusTraversalPolicy = getHost()
-					.getAdapter(new TypeToken<FocusTraversalPolicy<Node>>() {
-					});
+			FXFocusTraversalPolicy focusTraversalPolicy = getHost()
+					.getAdapter(FXFocusTraversalPolicy.class);
 			if (focusTraversalPolicy == null) {
 				throw new IllegalStateException(
-						"Cannot find <FocusTraversalPolicy> for host <"
+						"Cannot find <FXFocusTraversalPolicy> for host <"
 								+ getHost() + ">.");
 			}
 

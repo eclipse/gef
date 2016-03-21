@@ -9,42 +9,46 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
 
-import org.eclipse.gef4.common.reflect.Types;
+import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 
 /**
- * The {@link FocusTraversalPolicy} can be used to assign focus to the next or
+ * The {@link FXFocusTraversalPolicy} can be used to assign focus to the next or
  * previous part in the focus traversal cycle.
  *
  * @author mwienand
  *
- * @param <VR>
- *            The visual root node of the UI toolkit used, e.g.
- *            javafx.scene.Node in case of JavaFX.
  */
-public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
+public class FXFocusTraversalPolicy extends AbstractTransactionPolicy<Node> {
 
-	private IViewer<VR> viewer;
-	private FocusModel<VR> focusModel;
+	private IViewer<Node> viewer;
+	private FocusModel<Node> focusModel;
 
 	@Override
 	protected ITransactionalOperation createOperation() {
-		return new ChangeFocusOperation<>(viewer, null);
+		ForwardUndoCompositeOperation focusAndRevealOperation = new ForwardUndoCompositeOperation(
+				"Resize and Reveal");
+		focusAndRevealOperation.add(new ChangeFocusOperation<>(viewer, null));
+		focusAndRevealOperation.add(new FXRevealOperation(getHost()));
+		return focusAndRevealOperation;
 	}
 
 	/**
@@ -59,17 +63,17 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 * @return The inner most {@link IContentPart} child within the part
 	 *         hierarchy of the given {@link IContentPart}.
 	 */
-	protected IContentPart<VR, ? extends VR> findInnerMostContentPart(
-			IContentPart<VR, ? extends VR> part) {
-		ObservableList<IVisualPart<VR, ? extends VR>> children = part
+	protected IContentPart<Node, ? extends Node> findInnerMostContentPart(
+			IContentPart<Node, ? extends Node> part) {
+		ObservableList<IVisualPart<Node, ? extends Node>> children = part
 				.getChildrenUnmodifiable();
 		while (!children.isEmpty()) {
 			for (int i = children.size() - 1; i >= 0; i--) {
-				IVisualPart<VR, ? extends VR> child = children.get(i);
+				IVisualPart<Node, ? extends Node> child = children.get(i);
 				if (child instanceof IContentPart) {
 					// continue searching for content part children within this
 					// child's part hierarchy
-					part = (IContentPart<VR, ? extends VR>) child;
+					part = (IContentPart<Node, ? extends Node>) child;
 					children = part.getChildrenUnmodifiable();
 					break;
 				}
@@ -101,35 +105,35 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *         {@link IContentPart} could be determined.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected IContentPart<VR, ? extends VR> findNextContentPart(
-			IContentPart<VR, ? extends VR> current) {
+	protected IContentPart<Node, ? extends Node> findNextContentPart(
+			IContentPart<Node, ? extends Node> current) {
 		// search children for content parts
-		List<IVisualPart<VR, ? extends VR>> children = current
+		List<IVisualPart<Node, ? extends Node>> children = current
 				.getChildrenUnmodifiable();
 		if (!children.isEmpty()) {
-			for (IVisualPart<VR, ? extends VR> child : children) {
+			for (IVisualPart<Node, ? extends Node> child : children) {
 				if (child instanceof IContentPart) {
-					return (IContentPart<VR, ? extends VR>) child;
+					return (IContentPart<Node, ? extends Node>) child;
 				}
 			}
 		}
 		// no content part children available, therefore, we have to search our
 		// siblings and move up the hierarchy
-		IVisualPart<VR, ? extends VR> parent = current.getParent();
+		IVisualPart<Node, ? extends Node> parent = current.getParent();
 		while (parent instanceof IContentPart || parent instanceof IRootPart) {
 			children = parent instanceof IContentPart
 					? parent.getChildrenUnmodifiable()
 					: ((IRootPart) parent).getContentPartChildren();
 			int index = children.indexOf(current) + 1;
 			while (index < children.size()) {
-				IVisualPart<VR, ? extends VR> part = children.get(index);
+				IVisualPart<Node, ? extends Node> part = children.get(index);
 				if (part instanceof IContentPart) {
-					return (IContentPart<VR, ? extends VR>) part;
+					return (IContentPart<Node, ? extends Node>) part;
 				}
 				index++;
 			}
 			if (parent instanceof IContentPart) {
-				current = (IContentPart<VR, ? extends VR>) parent;
+				current = (IContentPart<Node, ? extends Node>) parent;
 				parent = current.getParent();
 			} else {
 				return null;
@@ -157,26 +161,26 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *         assigned, or <code>null</code> if no previous
 	 *         {@link IContentPart} could be determined.
 	 */
-	protected IContentPart<VR, ? extends VR> findPreviousContentPart(
-			IContentPart<VR, ? extends VR> current) {
+	protected IContentPart<Node, ? extends Node> findPreviousContentPart(
+			IContentPart<Node, ? extends Node> current) {
 		// find previous content part sibling
-		IVisualPart<VR, ? extends VR> parent = current.getParent();
+		IVisualPart<Node, ? extends Node> parent = current.getParent();
 		if (parent instanceof IContentPart || parent instanceof IRootPart) {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
-			List<IVisualPart<VR, ? extends VR>> children = parent instanceof IContentPart
+			List<IVisualPart<Node, ? extends Node>> children = parent instanceof IContentPart
 					? parent.getChildrenUnmodifiable()
 					: ((IRootPart) parent).getContentPartChildren();
 			int index = children.indexOf(current) - 1;
 			while (index >= 0) {
-				IVisualPart<VR, ? extends VR> part = children.get(index);
+				IVisualPart<Node, ? extends Node> part = children.get(index);
 				if (part instanceof IContentPart) {
 					return findInnerMostContentPart(
-							(IContentPart<VR, ? extends VR>) part);
+							(IContentPart<Node, ? extends Node>) part);
 				}
 				index--;
 			}
 			if (parent instanceof IContentPart) {
-				return (IContentPart<VR, ? extends VR>) parent;
+				return (IContentPart<Node, ? extends Node>) parent;
 			}
 		}
 		// could not find a previous content part
@@ -205,17 +209,29 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 *         part.
 	 */
 	@SuppressWarnings("unchecked")
-	protected ChangeFocusOperation<VR> getChangeFocusOperation() {
-		return (ChangeFocusOperation<VR>) getOperation();
+	protected ChangeFocusOperation<Node> getChangeFocusOperation() {
+		return (ChangeFocusOperation<Node>) ((AbstractCompositeOperation) getOperation())
+				.getOperations().get(0);
+	}
+
+	/**
+	 * Returns the {@link FXRevealOperation} that is used to reveal the focus
+	 * part.
+	 *
+	 * @return The {@link FXRevealOperation} that is used to reveal the focus
+	 *         part.
+	 */
+	protected FXRevealOperation getRevealOperation() {
+		return (FXRevealOperation) ((AbstractCompositeOperation) getOperation())
+				.getOperations().get(1);
 	}
 
 	@SuppressWarnings("serial")
 	@Override
 	public void init() {
 		viewer = getHost().getRoot().getViewer();
-		focusModel = viewer.getAdapter(new TypeToken<FocusModel<VR>>() {
-		}.where(new TypeParameter<VR>() {
-		}, Types.<VR> argumentOf(viewer.getClass())));
+		focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
+		});
 		super.init();
 	}
 
@@ -228,13 +244,13 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 	 */
 	protected void traverse(boolean backwards) {
 		// get current focus part
-		IContentPart<VR, ? extends VR> current = focusModel.getFocus();
-		IContentPart<VR, ? extends VR> next = null;
+		IContentPart<Node, ? extends Node> current = focusModel.getFocus();
+		IContentPart<Node, ? extends Node> next = null;
 
 		// determine the first focus part if no part currently has focus
 		if (current == null) {
-			List<IContentPart<VR, ? extends VR>> children = viewer.getRootPart()
-					.getContentPartChildren();
+			List<IContentPart<Node, ? extends Node>> children = viewer
+					.getRootPart().getContentPartChildren();
 			if (children != null && !children.isEmpty()) {
 				if (backwards) {
 					// focus last content leaf
@@ -269,6 +285,7 @@ public class FocusTraversalPolicy<VR> extends AbstractTransactionPolicy<VR> {
 		// give focus to the next part or to the viewer (if next is null)
 		if (next == null || next.isFocusable()) {
 			getChangeFocusOperation().setNewFocused(next);
+			getRevealOperation().setPart(next);
 		}
 	}
 

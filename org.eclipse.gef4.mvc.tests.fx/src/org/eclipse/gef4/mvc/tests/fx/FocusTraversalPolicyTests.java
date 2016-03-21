@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.tests;
+package org.eclipse.gef4.mvc.tests.fx;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -25,14 +25,14 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.mvc.fx.policies.FXFocusTraversalPolicy;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
-import org.eclipse.gef4.mvc.tests.stubs.MvcTestsDomain;
-import org.eclipse.gef4.mvc.tests.stubs.MvcTestsModule;
-import org.eclipse.gef4.mvc.tests.stubs.MvcTestsViewer;
+import org.eclipse.gef4.mvc.tests.fx.stubs.MvcFxTestsDomain;
+import org.eclipse.gef4.mvc.tests.fx.stubs.MvcFxTestsModule;
+import org.eclipse.gef4.mvc.tests.fx.stubs.MvcFxTestsViewer;
 import org.eclipse.gef4.mvc.tests.stubs.cell.Cell;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.junit.After;
@@ -45,6 +45,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
+import javafx.scene.Node;
+
 public class FocusTraversalPolicyTests {
 
 	public static String NEXT = "NEXT";
@@ -52,29 +54,28 @@ public class FocusTraversalPolicyTests {
 
 	private static Injector injector;
 
-	private static MvcTestsDomain domain;
-	private static MvcTestsViewer viewer;
+	private static MvcFxTestsDomain domain;
+	private static MvcFxTestsViewer viewer;
 
 	@BeforeClass
 	public static void setUpMVC() {
-		injector = Guice.createInjector(new MvcTestsModule() {
+		injector = Guice.createInjector(new MvcFxTestsModule() {
 			@Override
 			protected void configure() {
 				super.configure();
 
 				// bind FocusModel
 				AdapterMaps.getAdapterMapBinder(binder(), IViewer.class).addBinding(AdapterKey.defaultRole())
-						.to(new TypeLiteral<FocusModel<Object>>() {
+						.to(new TypeLiteral<FocusModel<Node>>() {
 				});
 				// bind FocusTraversalPolicy
 				AdapterMaps.getAdapterMapBinder(binder(), AbstractRootPart.class).addBinding(AdapterKey.defaultRole())
-						.to(new TypeLiteral<FocusTraversalPolicy<Object>>() {
-				});
+						.to(FXFocusTraversalPolicy.class);
 			}
 		});
-		domain = new MvcTestsDomain();
+		domain = new MvcFxTestsDomain();
 		injector.injectMembers(domain);
-		viewer = domain.getAdapter(MvcTestsViewer.class);
+		viewer = domain.getAdapter(MvcFxTestsViewer.class);
 
 		// ensure exceptions are not caught
 		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -88,19 +89,18 @@ public class FocusTraversalPolicyTests {
 		});
 	}
 
-	private FocusModel<Object> focusModel;
+	private FocusModel<Node> focusModel;
 
-	private FocusTraversalPolicy<Object> traversePolicy;
+	private FXFocusTraversalPolicy traversePolicy;
 
 	@SuppressWarnings("serial")
 	@Before
 	public void activate() {
 		domain.activate();
-		focusModel = viewer.getAdapter(new TypeToken<FocusModel<Object>>() {
+		focusModel = viewer.getAdapter(new TypeToken<FocusModel<Node>>() {
 		});
-		IRootPart<Object, ? extends Object> rootPart = viewer.getRootPart();
-		traversePolicy = rootPart.getAdapter(new TypeToken<FocusTraversalPolicy<Object>>() {
-		});
+		IRootPart<Node, ? extends Node> rootPart = viewer.getRootPart();
+		traversePolicy = rootPart.getAdapter(FXFocusTraversalPolicy.class);
 	}
 
 	/**

@@ -36,6 +36,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXChangeViewportPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXFocusTraversalPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnTypePolicy;
@@ -62,7 +63,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
-import org.eclipse.gef4.mvc.policies.FocusTraversalPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Binder;
@@ -317,8 +317,8 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Adds a binding for {@link FocusTraversalPolicy} to the {@link AdapterMap}
-	 * binder for {@link AbstractRootPart}.
+	 * Adds a binding for {@link FXFocusTraversalPolicy} to the
+	 * {@link AdapterMap} binder for {@link AbstractRootPart}.
 	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
@@ -331,8 +331,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFocusTraversalPolicyAsFXRootPartAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<FocusTraversalPolicy<Node>>() {
-				});
+				.to(FXFocusTraversalPolicy.class);
 	}
 
 	/**

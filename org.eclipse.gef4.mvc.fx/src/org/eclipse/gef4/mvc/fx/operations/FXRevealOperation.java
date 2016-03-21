@@ -81,6 +81,16 @@ public class FXRevealOperation extends AbstractOperation
 		return execute(monitor, info);
 	}
 
+	/**
+	 * Sets the part that is to be revealed.
+	 *
+	 * @param part
+	 *            The part to be revealed.
+	 */
+	public void setPart(IVisualPart<Node, ? extends Node> part) {
+		this.part = part;
+	}
+
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {

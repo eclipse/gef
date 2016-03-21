@@ -18,7 +18,7 @@ import com.google.common.reflect.TypeToken;
 
 /**
  * Utilities around {@link TypeToken}
- * 
+ *
  * @author anyssen
  *
  */
@@ -37,6 +37,10 @@ public class Types {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> TypeToken<T> argumentOf(Class<?> contextClass) {
+		while (contextClass != null && !(contextClass
+				.getGenericSuperclass() instanceof ParameterizedType)) {
+			contextClass = contextClass.getSuperclass();
+		}
 		return (TypeToken<T>) TypeToken
 				.of(((ParameterizedType) contextClass.getGenericSuperclass())
 						.getActualTypeArguments()[0]);

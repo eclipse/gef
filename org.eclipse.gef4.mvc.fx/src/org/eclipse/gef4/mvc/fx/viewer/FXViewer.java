@@ -276,7 +276,12 @@ public class FXViewer extends AbstractViewer<Node> {
 
 	@Override
 	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
-		getCanvas().reveal(visualPart.getVisual());
+		if (visualPart == null) {
+			getCanvas().setHorizontalScrollOffset(0);
+			getCanvas().setVerticalScrollOffset(0);
+		} else {
+			getCanvas().reveal(visualPart.getVisual());
+		}
 	}
 
 	@Override
