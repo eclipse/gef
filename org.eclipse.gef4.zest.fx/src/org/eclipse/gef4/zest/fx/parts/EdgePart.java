@@ -25,11 +25,9 @@ import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -139,11 +137,6 @@ public class EdgePart extends AbstractFXContentPart<Connection> {
 
 	@Override
 	protected void doRefreshVisual(Connection visual) {
-		GraphLayoutContext glc = getGraphLayoutContext();
-		if (glc == null) {
-			return;
-		}
-
 		Edge edge = getContent();
 		Map<String, Object> attrs = edge.attributesProperty();
 		GeometryNode<ICurve> curveNode = visual.getCurveNode();
@@ -199,18 +192,6 @@ public class EdgePart extends AbstractFXContentPart<Connection> {
 	@Override
 	public Edge getContent() {
 		return (Edge) super.getContent();
-	}
-
-	/**
-	 * Returns the {@link GraphLayoutContext} that corresponds to the
-	 * {@link Graph} to which the content of this {@link EdgePart} belongs.
-	 *
-	 * @return The {@link GraphLayoutContext} that corresponds to the
-	 *         {@link Graph} to which the content of this {@link EdgePart}
-	 *         belongs.
-	 */
-	protected GraphLayoutContext getGraphLayoutContext() {
-		return getViewer().getContentPartMap().get(getContent().getGraph()).getAdapter(GraphLayoutContext.class);
 	}
 
 	@Override
