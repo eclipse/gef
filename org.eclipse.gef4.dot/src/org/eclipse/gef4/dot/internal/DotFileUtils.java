@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg. All rights reserved. This program and
- * the accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
+ * Copyright (c) 2009, 2016 Fabian Steeg and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * <p/>
- * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ *
+ * Contributors:
+ *     Fabian Steeg    - initial API and implementation (bug #277380)
+ *     Tamas Miklossy  - usage of platform specific line separators (bug #490118)
  *******************************************************************************/
 
 package org.eclipse.gef4.dot.internal;
@@ -94,11 +98,12 @@ public final class DotFileUtils {
 	 * @return The string containing the contents of the given file
 	 */
 	public static String read(final File file) {
+		String lineSeparator = System.lineSeparator();
 		StringBuilder builder = new StringBuilder();
 		try {
 			Scanner s = new Scanner(file);
 			while (s.hasNextLine()) {
-				builder.append(s.nextLine()).append("\n"); //$NON-NLS-1$
+				builder.append(s.nextLine()).append(lineSeparator);
 			}
 			s.close();
 		} catch (FileNotFoundException e) {

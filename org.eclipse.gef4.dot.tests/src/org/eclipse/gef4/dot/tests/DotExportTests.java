@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fabian Steeg and others.
+ * Copyright (c) 2009, 2016 Fabian Steeg and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fabian Steeg - initial API and implementation (see bug #277380)
+ *     Fabian Steeg    - initial API and implementation (bug #277380)
+ *     Tamas Miklossy  - usage of platform specific line separators (bug #490118)
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
@@ -15,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
@@ -63,7 +64,7 @@ public class DotExportTests {
 				"Generated file " + new File(OUTPUT, fileName).getName() //$NON-NLS-1$
 						+ " must exist!",
 				new File(OUTPUT, fileName).exists());
-		String dotRead = read(new File(OUTPUT, fileName));
+		String dotRead = DotFileUtils.read(new File(OUTPUT, fileName));
 		Assert.assertEquals("File output and String output should be equal;", //$NON-NLS-1$
 				dot, dotRead);
 	}
@@ -121,20 +122,4 @@ public class DotExportTests {
 		}
 		scanner.close();
 	}
-
-	private String read(final File file) {
-		try {
-			Scanner scanner = new Scanner(file);
-			StringBuilder builder = new StringBuilder();
-			while (scanner.hasNextLine()) {
-				builder.append(scanner.nextLine() + "\n"); //$NON-NLS-1$
-			}
-			scanner.close();
-			return builder.toString();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 }

@@ -16,9 +16,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 
+import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.parser.DotInjectorProvider;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.xtext.junit4.InjectWith;
@@ -55,22 +54,11 @@ public class DotParserTests {
 		testFile("arrowshapes_deprecated.dot");
 	}
 
-	private void testFile(String path) {
-		String newline = System.getProperty("line.separator");
-		String content = "";
+	private void testFile(String fileName) {
+		String fileContents = DotFileUtils
+				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
 		try {
-			Scanner scanner = new Scanner(
-					new File(DotTestUtils.RESOURCES_TESTS + path));
-			while (scanner.hasNextLine()) {
-				content += scanner.nextLine() + newline;
-			}
-			scanner.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			DotAst dotAst = parserHelper.parse(content);
+			DotAst dotAst = parserHelper.parse(fileContents);
 			assertNotNull(dotAst);
 			validationTestHelper.assertNoErrors(dotAst);
 		} catch (Exception e) {
@@ -78,5 +66,4 @@ public class DotParserTests {
 			fail();
 		}
 	}
-
 }
