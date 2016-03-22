@@ -393,7 +393,12 @@ public abstract class AbstractContentPart<VR, V extends VR>
 	}
 
 	@Override
-	public void recomputeContentChildren() {
+	public void refreshContentAnchorages() {
+		contentAnchorages.replaceAll(doGetContentAnchorages());
+	}
+
+	@Override
+	public void refreshContentChildren() {
 		contentChildren.setAll(doGetContentChildren());
 	}
 

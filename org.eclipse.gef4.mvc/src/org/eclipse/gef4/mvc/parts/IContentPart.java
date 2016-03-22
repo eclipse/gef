@@ -185,10 +185,16 @@ public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 	public boolean isSelectable();
 
 	/**
+	 * Triggers a re-computation of the content anchorages of this
+	 * {@link IContentPart}.
+	 */
+	public void refreshContentAnchorages();
+
+	/**
 	 * Triggers a re-computation of the content children of this
 	 * {@link IContentPart}.
 	 */
-	public void recomputeContentChildren();
+	public void refreshContentChildren();
 
 	/**
 	 * Removes the given <i>contentChild</i> from this part's content children,
