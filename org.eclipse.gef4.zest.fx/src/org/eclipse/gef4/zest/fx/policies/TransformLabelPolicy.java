@@ -16,13 +16,11 @@ import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.operations.ChangeAttributeOperation;
@@ -41,32 +39,6 @@ import org.eclipse.gef4.zest.fx.parts.AbstractLabelPart;
 public class TransformLabelPolicy extends FXTransformPolicy {
 
 	private Point initialOffset;
-
-	@Override
-	public ITransactionalOperation commit() {
-		// extract changes
-		AffineTransform newTransform = FX2Geometry.toAffineTransform(getTransformOperation().getNewTransform());
-
-		// get visual operation
-		ITransactionalOperation visualOperation = super.commit();
-		if (visualOperation == null) {
-			return null;
-		}
-
-		// create model operation
-		String attributeKey = getHost().getLabelPositionAttributeKey();
-		Point finalPosition = new Point(newTransform.getTranslateX(), newTransform.getTranslateY());
-		ChangeAttributeOperation modelOperation = new ChangeAttributeOperation(getHost().getContent().getKey(),
-				attributeKey, finalPosition);
-
-		// assemble operations
-		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation("Transform label");
-		if (visualOperation != null) {
-			fwdOp.add(visualOperation);
-		}
-		fwdOp.add(modelOperation);
-		return fwdOp;
-	}
 
 	private IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> getFirstAnchorage() {
 		return (IContentPart<javafx.scene.Node, ? extends javafx.scene.Node>) getHost().getAnchoragesUnmodifiable()
@@ -150,7 +122,7 @@ public class TransformLabelPolicy extends FXTransformPolicy {
 	/**
 	 * Enforce that label is preserved at its respective relative location.
 	 *
-	 * @return Whether the prosition was adjusted or not.
+	 * @return Whether the position was adjusted or not.
 	 */
 	protected boolean preserveLabelOffset() {
 		if (initialOffset == null) {
@@ -158,10 +130,9 @@ public class TransformLabelPolicy extends FXTransformPolicy {
 		}
 		Point currentLabelOffset = getLabelOffsetInParent();
 		Point delta = currentLabelOffset.getTranslated(initialOffset.getNegated());
-		getTransformOperation().getNewTransform()
-				.setTx(getTransformOperation().getInitialTransform().getTx() - delta.x);
-		getTransformOperation().getNewTransform()
-				.setTy(getTransformOperation().getInitialTransform().getTy() - delta.y);
+		FXTransformOperation op = ((FXTransformOperation) getOperation());
+		op.getNewTransform().setTx(op.getInitialTransform().getTx() - delta.x);
+		op.getNewTransform().setTy(op.getInitialTransform().getTy() - delta.y);
 		locallyExecuteOperation();
 		return true;
 	}

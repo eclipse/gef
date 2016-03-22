@@ -96,6 +96,8 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> {
 					this, Collections.emptyMap()));
 		} else if (selected.contains(getHost())) {
 			// reveal the clicked part
+			// TODO: this should be encapsulated in an operation by the
+			// interaction policy
 			getHost().getRoot().getViewer().reveal(getHost());
 			// add feedback and handles
 			List<IVisualPart<VR, ? extends VR>> targets = Collections

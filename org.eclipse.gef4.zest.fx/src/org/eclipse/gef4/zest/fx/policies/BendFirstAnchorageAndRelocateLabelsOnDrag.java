@@ -73,7 +73,7 @@ public class BendFirstAnchorageAndRelocateLabelsOnDrag extends FXBendFirstAnchor
 		labelParts
 				.addAll(getEdgeLabelParts((EdgePart) getHost().getAnchoragesUnmodifiable().keySet().iterator().next()));
 		for (Iterator<AbstractLabelPart> iterator = labelParts.iterator(); iterator.hasNext();) {
-			// fiter out those that do not have a stored position
+			// filter out those that do not have a stored position
 			if (iterator.next().getStoredLabelPosition() == null) {
 				iterator.remove();
 			}

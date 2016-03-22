@@ -863,6 +863,29 @@ public class Connection extends Group {
 	}
 
 	/**
+	 * Returns whether the (start, end, or control) anchor at the respective
+	 * index is connected.
+	 *
+	 * @param index
+	 *            The index, referring to the start, end, or a control point.
+	 * @return <code>true</code> if the anchor at the given index is connected,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isConnected(int index) {
+		if (index < 0 || index >= getAnchors().size()) {
+			throw new IllegalArgumentException(
+					"The given index is out of bounds.");
+		}
+		if (index == 0) {
+			return isStartConnected();
+		} else if (index == getAnchors().size() - 1) {
+			return isEndConnected();
+		} else {
+			return isControlConnected(index - 1);
+		}
+	}
+
+	/**
 	 * Returns <code>true</code> if the currently assigned
 	 * {@link #getControlAnchor(int) control anchor} for the given index is
 	 * bound to an anchorage. Otherwise returns <code>false</code>.

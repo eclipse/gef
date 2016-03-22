@@ -14,14 +14,21 @@ package org.eclipse.gef4.mvc.fx.policies;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.BendContentOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.parts.IBendableContentPart;
+import org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 
 /**
  * The {@link FXResizeConnectionPolicy} is a specialization of the
@@ -33,20 +40,56 @@ import javafx.geometry.Bounds;
  */
 public class FXResizeConnectionPolicy extends FXResizePolicy {
 
-	private FXBendConnectionOperation op;
+	private List<BendPoint> initialBendPoints;
 	private Point[] initialPositions;
 	private Double[] relX = null;
 	private Double[] relY = null;
 
 	@Override
 	public ITransactionalOperation commit() {
-		super.commit();
-		ITransactionalOperation commit = op.isNoOp() ? null : op;
-		op = null;
+		ITransactionalOperation commit = super.commit();
+
+		// clear state
 		initialPositions = null;
 		relX = null;
 		relY = null;
+		initialBendPoints = null;
+
 		return commit;
+	}
+
+	@Override
+	protected ITransactionalOperation createOperation() {
+		ForwardUndoCompositeOperation resizeAndRevealOperation = new ForwardUndoCompositeOperation(
+				"Bend and Reveal");
+		resizeAndRevealOperation
+				.add(new FXBendConnectionOperation(getHost().getVisual()));
+		resizeAndRevealOperation.add(new FXRevealOperation(getHost()));
+		return resizeAndRevealOperation;
+	}
+
+	@Override
+	protected ITransactionalOperation createResizeContentOperation() {
+		return new BendContentOperation<>(
+				(IBendableContentPart<Node, ? extends Node>) getHost(),
+				initialBendPoints,
+				FXBendConnectionPolicy.getCurrentBendPoints(getHost()));
+	}
+
+	/**
+	 * Returns the {@link FXBendConnectionOperation} to be used by this policy.
+	 *
+	 * @return The {@link FXBendConnectionOperation} used to resize the visual.
+	 */
+	protected FXBendConnectionOperation getBendConnectionOperation() {
+		return (FXBendConnectionOperation) ((AbstractCompositeOperation) getOperation())
+				.getOperations().get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public IVisualPart<Node, Connection> getHost() {
+		return (IVisualPart<Node, Connection>) super.getHost();
 	}
 
 	/**
@@ -57,6 +100,7 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	 *         relocate.
 	 */
 	protected List<Integer> getIndicesOfMovableAnchors() {
+		FXBendConnectionOperation op = getBendConnectionOperation();
 		List<Integer> indices = new ArrayList<>();
 		if (!op.getConnection().isStartConnected()) {
 			indices.add(0);
@@ -75,10 +119,8 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	@Override
 	public void init() {
 		super.init();
-		// create operation
-		Connection connection = (Connection) getHost().getVisual();
-		op = new FXBendConnectionOperation(connection);
 		// save initial anchor positions
+		Connection connection = getHost().getVisual();
 		initialPositions = connection.getPoints().toArray(new Point[] {});
 		// compute relative positions
 		Bounds layoutBounds = connection.getLayoutBounds();
@@ -93,21 +135,21 @@ public class FXResizeConnectionPolicy extends FXResizePolicy {
 	}
 
 	@Override
-	public void resize(double dw, double dh) {
+	protected boolean isContentResizable() {
+		return getHost() instanceof IBendableContentPart;
+	}
+
+	@Override
+	protected void updateResizeOperation(double dw, double dh) {
+		FXBendConnectionOperation bendConnectionOperation = getBendConnectionOperation();
 		for (int i : getIndicesOfMovableAnchors()) {
 			Point p = initialPositions[i];
 			// scale dw and dh by relX and relY
 			Point newPosition = new Point(p.x + relX[i] * dw,
 					p.y + relY[i] * dh);
 			// relocate bend point
-			op.getNewAnchors().set(i,
-					new StaticAnchor(op.getConnection(), newPosition));
-		}
-		// locally execute operation
-		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+			bendConnectionOperation.getNewAnchors().set(i, new StaticAnchor(
+					bendConnectionOperation.getConnection(), newPosition));
 		}
 	}
 

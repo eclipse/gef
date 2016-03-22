@@ -123,7 +123,7 @@ public class FXResizeTransformSelectedOnHandleDragPolicy
 
 			// check if we can resize the part
 			AffineTransform affineTransform = getTransformPolicy(targetPart)
-					.getCurrentNodeTransform();
+					.getCurrentTransform();
 			if (affineTransform.getRotation().equals(Angle.fromDeg(0))) {
 				// no rotation => resize possible
 				// TODO: special case 90 degree rotations

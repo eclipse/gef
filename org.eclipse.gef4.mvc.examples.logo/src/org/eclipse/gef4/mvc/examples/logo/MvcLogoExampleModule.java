@@ -26,16 +26,12 @@ import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.CloneShapePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXBendCurvePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCloneOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreateCurveOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuItemProvider;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformCurvePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
@@ -46,6 +42,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -53,11 +50,14 @@ import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXNormalizeConnectedOnDrag;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnRotatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
@@ -166,7 +166,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXResizeConnectionPolicy.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXBendCurvePolicy.class);
+				.to(FXBendConnectionPolicy.class);
 
 		// interaction policy to relocate on drag
 		adapterMapBinder.addBinding(AdapterKey.role("1"))
@@ -177,7 +177,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXBendOnSegmentDragPolicy.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXTransformCurvePolicy.class);
+				.to(FXTransformConnectionPolicy.class);
 
 		// cloning
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -260,9 +260,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// register resize/transform policies (writing changes also to model)
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXTransformShapePolicy.class);
+				.to(FXTransformPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXResizeShapePolicy.class);
+				.to(FXResizePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
 		adapterMapBinder.addBinding(AdapterKey.role("1"))

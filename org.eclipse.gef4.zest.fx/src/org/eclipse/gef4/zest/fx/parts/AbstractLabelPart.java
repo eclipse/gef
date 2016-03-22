@@ -24,6 +24,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
@@ -42,7 +43,8 @@ import javafx.util.Pair;
  * @author anyssen
  *
  */
-public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
+public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
+		implements ITransformableContentPart<Node, Group> {
 
 	/**
 	 * The CSS class that is assigned to the visualization of the
@@ -185,6 +187,11 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group> {
 		String key = getLabelPositionAttributeKey();
 		ObservableMap<String, Object> attributes = getContent().getKey().getAttributes();
 		attributes.put(key, computedPosition);
+	}
+
+	@Override
+	public void transformContent(AffineTransform transform) {
+		setStoredLabelPosition(transform.getTransformed(getStoredLabelPosition()));
 	}
 
 }

@@ -12,11 +12,12 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
+import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 
 import com.google.common.reflect.TypeToken;
@@ -96,31 +97,20 @@ public class FXTransformPolicy extends AbstractTransformPolicy<Node> {
 			}, TRANSFORMATION_PROVIDER_ROLE);
 
 	@Override
-	protected FXTransformOperation createOperation() {
+	protected ITransactionalOperation createOperation() {
 		return new FXTransformOperation(
 				getHost().getAdapter(TRANSFORM_PROVIDER_KEY).get());
-	}
+	};
 
 	@Override
-	public AffineTransform getCurrentNodeTransform() {
+	public AffineTransform getCurrentTransform() {
 		return FX2Geometry.toAffineTransform(
 				getHost().getAdapter(TRANSFORM_PROVIDER_KEY).get());
 	}
 
-	/**
-	 * Returns an {@link FXTransformOperation} that is extracted from the
-	 * operation created by {@link #createOperation()}.
-	 *
-	 * @return An {@link FXTransformOperation} that is extracted from the
-	 *         operation created by {@link #createOperation()}.
-	 */
-	protected FXTransformOperation getTransformOperation() {
-		return (FXTransformOperation) super.getOperation();
-	}
-
 	@Override
-	protected void updateOperation(AffineTransform newTransform) {
-		getTransformOperation()
+	protected void updateTransformOperation(AffineTransform newTransform) {
+		((FXTransformOperation) getOperation())
 				.setNewTransform(Geometry2FX.toFXAffine(newTransform));
 	}
 

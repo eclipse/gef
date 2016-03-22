@@ -16,11 +16,16 @@ import java.util.List;
 
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.IScalable;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.parts.IResizableContentPart;
+import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
@@ -33,7 +38,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.transform.Affine;
 
 public class FXGeometricShapePart
-		extends AbstractFXGeometricElementPart<GeometryNode<IShape>> {
+		extends AbstractFXGeometricElementPart<GeometryNode<IShape>>
+		implements ITransformableContentPart<Node, GeometryNode<IShape>>,
+		IResizableContentPart<Node, GeometryNode<IShape>> {
 
 	private final ChangeListener<? super Paint> fillObserver = new ChangeListener<Paint>() {
 		@Override
@@ -164,6 +171,16 @@ public class FXGeometricShapePart
 	}
 
 	@Override
+	public void resizeContent(Dimension size) {
+		IShape geometry = getContent().getGeometry();
+		Rectangle geometricBounds = geometry.getBounds();
+		double sx = size.width / geometricBounds.getWidth();
+		double sy = size.height / geometricBounds.getHeight();
+		((IScalable<?>) geometry).scale(sx, sy, geometricBounds.getX(),
+				geometricBounds.getY());
+	}
+
+	@Override
 	public void setContent(Object model) {
 		if (model != null && !(model instanceof FXGeometricShape)) {
 			throw new IllegalArgumentException(
@@ -172,4 +189,9 @@ public class FXGeometricShapePart
 		super.setContent(model);
 	}
 
+	@Override
+	public void transformContent(AffineTransform transform) {
+		getContent().setTransform(
+				getContent().getTransform().preConcatenate(transform));
+	}
 }

@@ -36,9 +36,10 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SelectOperation;
+import org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractTransactionPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractBendPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractTransformPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -67,7 +68,7 @@ import javafx.scene.Node;
  * @author mwienand
  * @author anyssen
  */
-public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
+public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	/**
 	 * An {@link AnchorHandle} represents an explicit {@link IAnchor} within the
@@ -161,6 +162,16 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		 */
 		public Point getPosition() {
 			return getConnection().getPoint(getConnectionIndex());
+		}
+
+		/**
+		 * Returns whether the anchor is connected.
+		 *
+		 * @return whether the anchor is connected or not.
+		 */
+		public boolean isConnected() {
+			return getAnchor().getAnchorage() != null
+					&& getAnchor().getAnchorage() != getConnection();
 		}
 	}
 
@@ -331,9 +342,59 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 * are regarded as overlying.
 	 */
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
+
+	/**
+	 * Retrieves the content element represented by the anchor's anchorage.
+	 *
+	 * @param viewer
+	 *            The viewer to find the content part in.
+	 * @param anchor
+	 *            The anchor whose anchorage is to be evaluated.
+	 * @return The content element, or <code>null</code> if none could be
+	 *         retrieved.
+	 */
+	static Object getAnchorageContent(IViewer<Node> viewer, IAnchor anchor) {
+		Node anchorageNode = anchor.getAnchorage();
+		IVisualPart<Node, ? extends Node> part = FXPartUtils
+				.retrieveVisualPart(viewer, anchorageNode);
+		if (part instanceof IContentPart) {
+			return ((IContentPart<Node, ? extends Node>) part).getContent();
+		}
+		return null;
+	}
+
+	/**
+	 * Retrieves the current bend points of the connection.
+	 *
+	 * @param connectionPart
+	 *            The connection part whose bend points to infer.
+	 * @return The list of bend points.
+	 */
+	static List<BendPoint> getCurrentBendPoints(
+			IVisualPart<Node, ? extends Connection> connectionPart) {
+		List<BendPoint> bendPoints = new ArrayList<>();
+		Connection connection = connectionPart.getVisual();
+		List<IAnchor> anchors = connection.getAnchors();
+		for (int i = 0; i < anchors.size(); i++) {
+			IAnchor a = anchors.get(i);
+			if (!connection.getRouter().isImplicitAnchor(a)) {
+				if (connection.isConnected(i)) {
+					bendPoints.add(new BendPoint(
+							FXBendConnectionPolicy.getAnchorageContent(
+									connectionPart.getRoot().getViewer(), a)));
+				} else {
+					bendPoints.add(new BendPoint(connection.getPoint(i)));
+				}
+			}
+		}
+		return bendPoints;
+	}
+
 	private List<AnchorHandle> explicitAnchors = new ArrayList<>();
 	private List<AnchorHandle> selectedAnchors = new ArrayList<>();
+
 	private List<PointOverlay> pointOverlays = new ArrayList<>();
+
 	private List<SegmentOverlay> segmentOverlays = new ArrayList<>();
 
 	/**
@@ -354,17 +415,19 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
-		normalize();
-		ITransactionalOperation bendOperation = super.commit();
 
-		if (bendOperation == null || bendOperation.isNoOp()) {
+		normalize();
+
+		ITransactionalOperation commit = super.commit();
+		if (commit == null || commit.isNoOp()) {
 			return null;
 		}
 
 		// chain a reselect operation here, so handles are properly updated
+		// TODO: move reselect into interaction policy
 		ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
-				bendOperation.getLabel());
-		updateOperation.add(bendOperation);
+				commit.getLabel());
+		updateOperation.add(commit);
 		ReverseUndoCompositeOperation reselectOperation = createReselectOperation();
 		if (reselectOperation != null) {
 			updateOperation.add(reselectOperation);
@@ -420,7 +483,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	}
 
 	@Override
-	protected FXBendConnectionOperation createOperation() {
+	protected ITransactionalOperation createOperation() {
 		return new FXBendConnectionOperation(getConnection());
 	}
 
@@ -626,6 +689,21 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 	 */
 	protected Connection getConnection() {
 		return getHost().getVisual();
+	}
+
+	@Override
+	protected List<BendPoint> getCurrentBendPoints() {
+		// List<BendPoint> bendPoints = new ArrayList<>();
+		// for (AnchorHandle a : explicitAnchors) {
+		// if (a.isConnected()) {
+		// bendPoints.add(new BendPoint(getAnchorageContent(
+		// getHost().getRoot().getViewer(), a.getAnchor())));
+		// } else {
+		// bendPoints.add(new BendPoint(a.getPosition()));
+		// }
+		// }
+		// return bendPoints;
+		return getCurrentBendPoints(getHost());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -919,7 +997,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		explicitAnchors.clear();
 		pointOverlays.clear();
 		segmentOverlays.clear();
-		super.init();
 		// create handles for all explicit anchors
 		int explicitAnchorIndex = 0;
 		for (int i = 0; i < getConnection().getAnchors().size(); i++) {
@@ -928,6 +1005,7 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 				explicitAnchors.add(new AnchorHandle(explicitAnchorIndex++));
 			}
 		}
+		super.init();
 	}
 
 	/**
@@ -1449,6 +1527,29 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		selectedAnchors.add(explicitAnchorHandle);
 	}
 
+	// private void showAnchors(String message) {
+	// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
+	// String anchorsString = "";
+	// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++) {
+	// IAnchor anchor = getConnection().getAnchor(i);
+	// if (getConnection().getRouter().isImplicitAnchor(anchor)) {
+	// anchorsString = anchorsString + " - "
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "],\n";
+	// } else {
+	// anchorsString = anchorsString
+	// + (selectedAnchors.contains(explicitAnchors.get(j))
+	// ? "(*)" : " * ")
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "]" + " ("
+	// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
+	// + "},\n";
+	// j++;
+	// }
+	// }
+	// System.out.println(message + "\n" + anchorsString);
+	// }
+
 	/**
 	 * Selects the end points of the connection segment specified by the given
 	 * index. Makes the corresponding anchors explicit first and copies them if
@@ -1498,29 +1599,6 @@ public class FXBendConnectionPolicy extends AbstractTransactionPolicy<Node> {
 		select(firstAnchorHandle);
 		select(secondAnchorHandle);
 	}
-
-	// private void showAnchors(String message) {
-	// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-	// String anchorsString = "";
-	// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++) {
-	// IAnchor anchor = getConnection().getAnchor(i);
-	// if (getConnection().getRouter().isImplicitAnchor(anchor)) {
-	// anchorsString = anchorsString + " - "
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "],\n";
-	// } else {
-	// anchorsString = anchorsString
-	// + (selectedAnchors.contains(explicitAnchors.get(j))
-	// ? "(*)" : " * ")
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "]" + " ("
-	// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
-	// + "},\n";
-	// j++;
-	// }
-	// }
-	// System.out.println(message + "\n" + anchorsString);
-	// }
 
 	@Override
 	public String toString() {

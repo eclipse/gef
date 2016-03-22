@@ -24,14 +24,14 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import javafx.scene.Node;
 
 /**
- * The {@link FXResizeNodeOperation} can be used to alter the size of a
+ * The {@link FXResizeOperation} can be used to alter the size of a
  * {@link Node visual}.
  *
  * @author anyssen
  * @author mwienand
  *
  */
-public class FXResizeNodeOperation extends AbstractOperation
+public class FXResizeOperation extends AbstractOperation
 		implements ITransactionalOperation {
 
 	private final Node visual;
@@ -40,18 +40,18 @@ public class FXResizeNodeOperation extends AbstractOperation
 	private double dh;
 
 	/**
-	 * Constructs a new {@link FXResizeNodeOperation} for the manipulation of
+	 * Constructs a new {@link FXResizeOperation} for the manipulation of
 	 * the given {@link Node}.
 	 *
 	 * @param visual
 	 *            The {@link Node} that is manipulated by this operation.
 	 */
-	public FXResizeNodeOperation(Node visual) {
+	public FXResizeOperation(Node visual) {
 		this(visual, 0, 0);
 	}
 
 	/**
-	 * Constructs a new {@link FXResizeNodeOperation} for the manipulation of
+	 * Constructs a new {@link FXResizeOperation} for the manipulation of
 	 * the given {@link Node}. The given delta width and height will be applied
 	 * when executing this operation.
 	 *
@@ -63,7 +63,7 @@ public class FXResizeNodeOperation extends AbstractOperation
 	 *            The delta height that is applied when executing this
 	 *            operation.
 	 */
-	public FXResizeNodeOperation(Node visual, double dw, double dh) {
+	public FXResizeOperation(Node visual, double dw, double dh) {
 		this("Resize", visual,
 				new Dimension(visual.getLayoutBounds().getWidth(),
 						visual.getLayoutBounds().getHeight()),
@@ -71,7 +71,7 @@ public class FXResizeNodeOperation extends AbstractOperation
 	}
 
 	/**
-	 * Constructs a new {@link FXResizeNodeOperation} from the given values.
+	 * Constructs a new {@link FXResizeOperation} from the given values.
 	 * Note that the <i>oldLocation</i> does include the layout-bounds minimum.
 	 *
 	 * @param label
@@ -85,7 +85,7 @@ public class FXResizeNodeOperation extends AbstractOperation
 	 * @param dh
 	 *            The vertical size difference.
 	 */
-	public FXResizeNodeOperation(String label, Node visual,
+	public FXResizeOperation(String label, Node visual,
 			Dimension initialSize, double dw, double dh) {
 		super(label);
 		this.visual = visual;

@@ -15,7 +15,6 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -23,7 +22,13 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendConnectionOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
+import org.eclipse.gef4.mvc.operations.BendContentOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.parts.IBendableContentPart;
+import org.eclipse.gef4.mvc.parts.IBendableContentPart.BendPoint;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import javafx.scene.Node;
 
 /**
  * The {@link FXTransformConnectionPolicy} is an {@link FXTransformPolicy} that
@@ -36,49 +41,48 @@ import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
  */
 public class FXTransformConnectionPolicy extends FXTransformPolicy {
 
-	private FXBendConnectionOperation op;
+	private List<BendPoint> initialBendPoints;
+
 	private Point[] initialPositions;
 
 	@Override
-	public void applyTransform(AffineTransform newTransform) {
-		// transform all anchor points
-		for (int i : getIndicesOfMovableAnchors()) {
-			Point p = initialPositions[i];
-			Point pTx = newTransform.getTransformed(p);
-			double nx = pTx.x;
-			double ny = pTx.y;
-			// TODO: make stepping (0.5) configurable
-			Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
-					.getViewer().<GridModel> getAdapter(GridModel.class), nx,
-					ny, 0.5, 0.5);
-			op.getNewAnchors().set(i,
-					new StaticAnchor(getHost().getVisual(),
-							new Point(nx - snapToGridOffset.width,
-									ny - snapToGridOffset.height)));
-		}
-		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+	public ITransactionalOperation commit() {
+		ITransactionalOperation commit = super.commit();
+
+		// clear state
+		initialPositions = null;
+		initialBendPoints = null;
+
+		return commit;
 	}
 
 	@Override
-	public ITransactionalOperation commit() {
-		// super#commit() so that it is reset properly, but throw away its
-		// operation as we have prepared our own
-		super.commit();
-		return op.isNoOp() ? null : op;
+	protected ITransactionalOperation createOperation() {
+		return new FXBendConnectionOperation(getHost().getVisual());
+	}
+
+	@Override
+	protected ITransactionalOperation createTransformContentOperation() {
+		return new BendContentOperation<>(
+				(IBendableContentPart<Node, ? extends Node>) getHost(),
+				initialBendPoints,
+				FXBendConnectionPolicy.getCurrentBendPoints(getHost()));
 	}
 
 	/**
-	 * Returns the {@link FXBendConnectionOperation} used to manipulate the
-	 * {@link Connection}.
+	 * Returns the {@link FXBendConnectionOperation} to be used by this policy.
 	 *
-	 * @return The operation used to bend the connection.
+	 * @return The {@link FXBendConnectionOperation} used to transform the
+	 *         visual.
 	 */
-	protected FXBendConnectionOperation getBendOperation() {
-		return op;
+	protected FXBendConnectionOperation getBendConnectionOperation() {
+		return (FXBendConnectionOperation) getOperation();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public IVisualPart<Node, Connection> getHost() {
+		return (IVisualPart<Node, Connection>) super.getHost();
 	}
 
 	/**
@@ -88,7 +92,8 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	 * @return {@link List} of {@link Integer}s specifying the anchors to
 	 *         relocate.
 	 */
-	protected List<Integer> getIndicesOfMovableAnchors() {
+	protected List<Integer> getIndicesOfUnconnectedAnchors() {
+		FXBendConnectionOperation op = getBendConnectionOperation();
 		List<Integer> indices = new ArrayList<>();
 		if (!op.getConnection().isStartConnected()) {
 			indices.add(0);
@@ -108,21 +113,45 @@ public class FXTransformConnectionPolicy extends FXTransformPolicy {
 	public void init() {
 		// super#init() so that the policy is properly initialized
 		super.init();
-		// create operation
-		op = new FXBendConnectionOperation((Connection) getHost().getVisual());
 		// compute inverse transformation
 		AffineTransform inverse = null;
 		try {
-			inverse = getInitialNodeTransform().invert();
+			inverse = getInitialTransform().invert();
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
 		// compute initial anchor positions (inverse transformed)
-		initialPositions = op.getConnection().getPoints()
-				.toArray(new Point[] {});
-		for (int i : getIndicesOfMovableAnchors()) {
+		initialPositions = getBendConnectionOperation().getConnection()
+				.getPoints().toArray(new Point[] {});
+		for (int i : getIndicesOfUnconnectedAnchors()) {
 			initialPositions[i] = inverse.getTransformed(initialPositions[i]);
 		}
+
+		initialBendPoints = FXBendConnectionPolicy
+				.getCurrentBendPoints(getHost());
 	}
 
+	@Override
+	protected boolean isContentTransformable() {
+		return getHost() instanceof IBendableContentPart;
+	}
+
+	@Override
+	protected void updateTransformOperation(AffineTransform newTransform) {
+		// transform all anchor points
+		for (int i : getIndicesOfUnconnectedAnchors()) {
+			Point p = initialPositions[i];
+			Point pTx = newTransform.getTransformed(p);
+			double nx = pTx.x;
+			double ny = pTx.y;
+			// TODO: make stepping (0.5) configurable
+			Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
+					.getViewer().<GridModel> getAdapter(GridModel.class), nx,
+					ny, 0.5, 0.5);
+			getBendConnectionOperation().getNewAnchors().set(i,
+					new StaticAnchor(getHost().getVisual(),
+							new Point(nx - snapToGridOffset.width,
+									ny - snapToGridOffset.height)));
+		}
+	}
 }

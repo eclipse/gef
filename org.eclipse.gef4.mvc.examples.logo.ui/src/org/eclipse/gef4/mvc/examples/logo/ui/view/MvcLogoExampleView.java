@@ -12,13 +12,19 @@
 package org.eclipse.gef4.mvc.examples.logo.ui.view;
 
 import java.util.Collections;
+import java.util.List;
 
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart.ChangeWayPointsOperation;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
@@ -35,6 +41,50 @@ import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
 public class MvcLogoExampleView extends AbstractFXView {
+
+	public static final class ChangeWayPointsOperation extends AbstractOperation
+			implements ITransactionalOperation {
+
+		private final FXGeometricCurve curve;
+		private final List<Point> newWayPoints;
+		private final List<Point> oldWayPoints;
+
+		public ChangeWayPointsOperation(String label, FXGeometricCurve curve,
+				List<Point> oldWayPoints, List<Point> newWayPoints) {
+			super(label);
+			this.curve = curve;
+			this.oldWayPoints = oldWayPoints;
+			this.newWayPoints = newWayPoints;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
+			curve.setWayPoints(newWayPoints.toArray(new Point[] {}));
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean isContentRelevant() {
+			return true;
+		}
+
+		@Override
+		public boolean isNoOp() {
+			return oldWayPoints == newWayPoints || (oldWayPoints != null
+					&& oldWayPoints.equals(newWayPoints));
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info) {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
+			curve.setWayPoints(oldWayPoints.toArray(new Point[] {}));
+			return Status.OK_STATUS;
+		}
+	}
 
 	private UndoablePropertySheetEntry rootEntry;
 

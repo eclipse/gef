@@ -27,12 +27,15 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultSelectionHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.policies.FXBendFirstAnchorageOnSegmentHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectFocusedOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
@@ -63,20 +66,17 @@ import org.eclipse.gef4.zest.fx.parts.ZestFxContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHoverHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxRootPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxSelectionHandlePartFactory;
-import org.eclipse.gef4.zest.fx.policies.BendEdgePolicy;
+import org.eclipse.gef4.zest.fx.policies.BendFirstAnchorageAndRelocateLabelsOnDrag;
 import org.eclipse.gef4.zest.fx.policies.HideFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.HidePolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
-import org.eclipse.gef4.zest.fx.policies.ResizeNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.SemanticZoomPolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOfFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
-import org.eclipse.gef4.zest.fx.policies.TransformEdgePolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformLabelPolicy;
-import org.eclipse.gef4.zest.fx.policies.TransformNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.TranslateSelectedAndRelocateLabelsOnDragPolicy;
 
 import com.google.inject.Binder;
@@ -199,7 +199,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXConnectionClickableAreaBehavior.class);
 
 		// transform policy
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformEdgePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformConnectionPolicy.class);
 
 		// translate selected on-drag policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedAndRelocateLabelsOnDragPolicy.class);
@@ -207,7 +207,7 @@ public class ZestFxModule extends MvcFxModule {
 		// hover on-hover policy
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendEdgePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXBendConnectionPolicy.class);
 	}
 
 	@Override
@@ -228,7 +228,7 @@ public class ZestFxModule extends MvcFxModule {
 	 */
 	protected void bindFXCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		AdapterMaps.getAdapterMapBinder(binder(), FXCircleSegmentHandlePart.class).addBinding(AdapterKey.defaultRole())
-				.to(FXBendFirstAnchorageOnSegmentHandleDragPolicy.class);
+				.to(BendFirstAnchorageAndRelocateLabelsOnDrag.class);
 	}
 
 	/**
@@ -410,10 +410,10 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.role("open-nested-graph")).to(OpenNestedGraphOnDoubleClickPolicy.class);
 
 		// transform policy for relocation
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTransformPolicy.class);
 
 		// resize policy to resize nesting nodes
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizeNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
 
 		// anchor provider
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DynamicAnchorProvider.class);

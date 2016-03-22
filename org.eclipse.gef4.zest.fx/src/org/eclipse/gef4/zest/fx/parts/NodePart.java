@@ -24,10 +24,12 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXResizeOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
+import org.eclipse.gef4.mvc.parts.IResizableContentPart;
+import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
@@ -69,7 +71,8 @@ import javafx.scene.transform.Transform;
  * @author mwienand
  *
  */
-public class NodePart extends AbstractFXContentPart<Group> {
+public class NodePart extends AbstractFXContentPart<Group>
+		implements ITransformableContentPart<Node, Group>, IResizableContentPart<Node, Group> {
 
 	/**
 	 * JavaFX Node displaying a small icon representing a nested graph.
@@ -612,7 +615,7 @@ public class NodePart extends AbstractFXContentPart<Group> {
 	 */
 	protected void refreshSize(Dimension size) {
 		if (size != null) {
-			FXResizeNodeOperation resizeOperation = new FXResizeNodeOperation(getVisual());
+			FXResizeOperation resizeOperation = new FXResizeOperation(getVisual());
 			if (size.getWidth() != -1) {
 				resizeOperation.setDw(size.getWidth() - getVisual().getLayoutBounds().getWidth());
 			}
@@ -647,6 +650,11 @@ public class NodePart extends AbstractFXContentPart<Group> {
 		nestedChildrenPaneScaled.getChildren().remove(index);
 	}
 
+	@Override
+	public void resizeContent(Dimension size) {
+		ZestProperties.setSize(getContent(), size);
+	}
+
 	/**
 	 * Changes the nested graph icon that is displayed to indicate that nested
 	 * content is available to the given value.
@@ -666,6 +674,15 @@ public class NodePart extends AbstractFXContentPart<Group> {
 		if (getNestedGraphIcon() == null) {
 			setNestedGraphIcon(new NestedGraphIcon());
 			getNestedContentStackPane().getChildren().add(getNestedGraphIcon());
+		}
+	}
+
+	@Override
+	public void transformContent(AffineTransform transform) {
+		// transform operation
+		Point position = ZestProperties.getPosition(getContent());
+		if (position != null) {
+			ZestProperties.setPosition(getContent(), transform.getTransformed(position));
 		}
 	}
 

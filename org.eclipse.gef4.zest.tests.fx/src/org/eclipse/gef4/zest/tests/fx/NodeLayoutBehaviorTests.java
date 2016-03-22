@@ -128,7 +128,7 @@ public class NodeLayoutBehaviorTests {
 		 * 2</code>.
 		 */
 		Affine affine = Geometry2FX
-				.toFXAffine(behavior.getHost().getAdapter(FXTransformPolicy.class).getCurrentNodeTransform());
+				.toFXAffine(behavior.getHost().getAdapter(FXTransformPolicy.class).getCurrentTransform());
 		// FIXME: as size is not set (in case there are no child nodes), this
 		// seems to be invalid
 		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(affine.getTx(), affine.getTy()));

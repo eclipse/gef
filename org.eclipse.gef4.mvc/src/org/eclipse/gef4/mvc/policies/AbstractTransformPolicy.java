@@ -18,7 +18,10 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.models.GridModel;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.operations.TransformContentOperation;
+import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
@@ -45,7 +48,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * <pre>
  *            --&gt; --&gt; --&gt;  direction of concatenation --&gt; --&gt; --&gt;
  *
- *            postTransforms  initialNodeTransform  preTransforms
+ *            postTransforms  initialTransform  preTransforms
  *            |------------|                        |-----------|
  * postIndex: n, n-1, ...  0              preIndex: 0, 1,  ...  m
  *
@@ -79,16 +82,17 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * <ul>
  * <li>{@link #createOperation()} - Creates an {@link ITransactionalOperation}
  * that can be used to change the host's transformation.
- * <li>{@link #getCurrentNodeTransform()} - Extracts the host's transformation
- * and converts it to an {@link AffineTransform}.
- * <li>{@link #updateOperation(AffineTransform)} - Updates the operation that
- * was created within {@link #createOperation()} so that the host's
- * transformation is changed to match the given {@link AffineTransform}.
+ * <li>{@link #getCurrentTransform()} - Extracts the host's transformation and
+ * converts it to an {@link AffineTransform}.
+ * <li>{@link #updateTransformOperation(AffineTransform)} - Updates the
+ * operation that was created within {@link #createOperation()} so that the
+ * host's transformation is changed to match the given {@link AffineTransform}.
  * </ul>
  *
  * @author mwienand
  * @param <VR>
- *            type parameter, visual root type
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  *
  */
 public abstract class AbstractTransformPolicy<VR>
@@ -144,7 +148,7 @@ public abstract class AbstractTransformPolicy<VR>
 	/**
 	 * The initial node transformation of the manipulated part.
 	 */
-	private AffineTransform initialNodeTransform;
+	private AffineTransform initialTransform;
 
 	/**
 	 * The {@link List} of transformations that are applied before the old
@@ -165,21 +169,34 @@ public abstract class AbstractTransformPolicy<VR>
 	 * to perform adjustments that are necessary for its {@link #getHost() host}
 	 * .
 	 *
-	 * @param newTransform
+	 * @param finalTransform
 	 *            The new transformation matrix for the {@link #getHost() host}.
 	 */
-	protected void applyTransform(AffineTransform newTransform) {
-		updateOperation(newTransform);
+	protected void applyTransform(AffineTransform finalTransform) {
+		updateTransformOperation(finalTransform);
 		// locally execute operation
 		locallyExecuteOperation();
 	}
 
 	@Override
 	public ITransactionalOperation commit() {
+		ITransactionalOperation commitOperation = super.commit();
+		if (commitOperation != null && !commitOperation.isNoOp()
+				&& isContentTransformable()) {
+			// chain content changes
+			ForwardUndoCompositeOperation composite = new ForwardUndoCompositeOperation(
+					"Transform Content");
+			composite.add(commitOperation);
+			// compute delta between new and initial transform and apply it
+			composite.add(createTransformContentOperation());
+			commitOperation = composite;
+		}
+
 		preTransforms.clear();
 		postTransforms.clear();
-		initialNodeTransform = null;
-		return super.commit();
+		initialTransform = null;
+
+		return commitOperation;
 	}
 
 	/**
@@ -190,7 +207,7 @@ public abstract class AbstractTransformPolicy<VR>
 	 * <pre>
 	 *            --&gt; --&gt; --&gt;  direction of concatenation --&gt; --&gt; --&gt;
 	 *
-	 *            postTransforms  initialNodeTransform  preTransforms
+	 *            postTransforms  initialTransform  preTransforms
 	 *            |------------|                        |-----------|
 	 * postIndex: n, n-1, ...  0              preIndex: 0, 1,  ...  m
 	 *
@@ -217,7 +234,7 @@ public abstract class AbstractTransformPolicy<VR>
 	 * <pre>
 	 *            --&gt; --&gt; --&gt;  direction of concatenation --&gt; --&gt; --&gt;
 	 *
-	 *            postTransforms  initialNodeTransform  preTransforms
+	 *            postTransforms  initialTransform  preTransforms
 	 *            |------------|                        |-----------|
 	 * postIndex: n, n-1, ...  0              preIndex: 0, 1,  ...  m
 	 *
@@ -237,30 +254,53 @@ public abstract class AbstractTransformPolicy<VR>
 	}
 
 	/**
+	 * Returns an operation to transform the content.
+	 *
+	 * @return The ITransactionalOperation to transform the content.
+	 */
+	protected ITransactionalOperation createTransformContentOperation() {
+		AffineTransform delta = getInitialTransform().getInverse()
+				.preConcatenate(getCurrentTransform());
+		ITransactionalOperation transformContentOperation = new TransformContentOperation<>(
+				(ITransformableContentPart<VR, ? extends VR>) getHost(), delta);
+		return transformContentOperation;
+	}
+
+	/**
 	 * Returns the {@link AffineTransform} that matches the node transformation
 	 * of the {@link #getHost() host}.
 	 *
 	 * @return The host's {@link AffineTransform}.
 	 */
-	public abstract AffineTransform getCurrentNodeTransform();
+	public abstract AffineTransform getCurrentTransform();
 
 	/**
 	 * Returns a copy of the initial node transformation of the host (obtained
-	 * via {@link #getCurrentNodeTransform()}).
+	 * via {@link #getCurrentTransform()}).
 	 *
 	 * @return A copy of the initial node transformation of the host (obtained
-	 *         via {@link #getCurrentNodeTransform()}).
+	 *         via {@link #getCurrentTransform()}).
 	 */
-	public AffineTransform getInitialNodeTransform() {
-		return initialNodeTransform;
+	public AffineTransform getInitialTransform() {
+		return initialTransform;
 	}
 
 	@Override
 	public void init() {
 		preTransforms.clear();
 		postTransforms.clear();
-		initialNodeTransform = getCurrentNodeTransform();
+		initialTransform = getCurrentTransform();
 		super.init();
+	}
+
+	/**
+	 * Returns whether the content can be transformed.
+	 *
+	 * @return <code>true</code> if the content can be transformed,
+	 *         <code>false</code> otherwise.
+	 */
+	protected boolean isContentTransformable() {
+		return getHost() instanceof ITransformableContentPart;
 	}
 
 	/**
@@ -393,28 +433,18 @@ public abstract class AbstractTransformPolicy<VR>
 	 * Changes the {@link #getHost() host's} transformation to the given
 	 * {@link AffineTransform}. Clears the pre- and post-transforms lists.
 	 *
-	 * @param newTransform
+	 * @param finalTransform
 	 *            The new {@link AffineTransform} for the {@link #getHost()
 	 *            host}.
 	 */
-	public void setTransform(AffineTransform newTransform) {
+	public void setTransform(AffineTransform finalTransform) {
 		checkInitialized();
 		// clear pre- and post-transforms lists
 		preTransforms.clear();
 		postTransforms.clear();
 		// apply new transform to host (and update the operation)
-		applyTransform(newTransform);
+		applyTransform(finalTransform);
 	}
-
-	/**
-	 * Updates the operation that was created within {@link #createOperation()}
-	 * so that it will set the {@link #getHost() host's} transformation to match
-	 * the given {@link AffineTransform} upon execution.
-	 *
-	 * @param newTransform
-	 *            The new transformation for the host.
-	 */
-	protected abstract void updateOperation(AffineTransform newTransform);
 
 	/**
 	 * Composes the pre- and post-transforms lists and the initial node
@@ -425,7 +455,7 @@ public abstract class AbstractTransformPolicy<VR>
 	 * <pre>
 	 *            --&gt; --&gt; --&gt;  direction of concatenation --&gt; --&gt; --&gt;
 	 *
-	 *            postTransforms  initialNodeTransform  preTransforms
+	 *            postTransforms  initialTransform  preTransforms
 	 *            |------------|                        |-----------|
 	 * postIndex: n, n-1, ...  0              preIndex: 0, 1,  ...  m
 	 *
@@ -433,7 +463,6 @@ public abstract class AbstractTransformPolicy<VR>
 	 * </pre>
 	 */
 	protected void updateTransform() {
-		checkInitialized();
 		// compose transformations to one composite transformation
 		AffineTransform composite = new AffineTransform();
 		// concatenate pre transforms (in reverse order as the last pre
@@ -442,7 +471,7 @@ public abstract class AbstractTransformPolicy<VR>
 			composite.concatenate(postTransforms.get(i));
 		}
 		// concatenate old transform
-		composite.concatenate(initialNodeTransform);
+		composite.concatenate(initialTransform);
 		// concatenate post transforms
 		for (AffineTransform pre : preTransforms) {
 			composite.concatenate(pre);
@@ -450,5 +479,16 @@ public abstract class AbstractTransformPolicy<VR>
 		// apply composite transform to host
 		applyTransform(composite);
 	}
+
+	/**
+	 * Updates the operation that was created within {@link #createOperation()}
+	 * so that it will set the {@link #getHost() host's} transformation to match
+	 * the given {@link AffineTransform} upon execution.
+	 *
+	 * @param finalTransform
+	 *            The new transformation for the host.
+	 */
+	protected abstract void updateTransformOperation(
+			AffineTransform finalTransform);
 
 }

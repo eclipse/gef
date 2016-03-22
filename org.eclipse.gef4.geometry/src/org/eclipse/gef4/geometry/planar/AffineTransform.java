@@ -93,6 +93,10 @@ public class AffineTransform implements Cloneable {
 		delegate = new java.awt.geom.AffineTransform(flatmatrix);
 	}
 
+	private AffineTransform(java.awt.geom.AffineTransform delegate) {
+		this.delegate = delegate;
+	}
+
 	@Override
 	public Object clone() {
 		return delegate.clone();
@@ -112,21 +116,6 @@ public class AffineTransform implements Cloneable {
 	public AffineTransform concatenate(AffineTransform Tx) {
 		delegate.concatenate(Tx.delegate);
 		return this;
-	}
-
-	/**
-	 * Creates a new {@link AffineTransform} that represents the inverse
-	 * transformation of this {@link AffineTransform}.
-	 *
-	 * @return a new {@link AffineTransform} that represents the inverse
-	 *         transformation of this {@link AffineTransform}
-	 * @throws NoninvertibleTransformException
-	 *             when this {@link AffineTransform} is not invertible.
-	 */
-	public java.awt.geom.AffineTransform createInverse()
-			throws NoninvertibleTransformException {
-		// TODO: return our AffineTransform, not the AWT thing
-		return delegate.createInverse();
 	}
 
 	/**
@@ -194,6 +183,21 @@ public class AffineTransform implements Cloneable {
 	 */
 	public double getDeterminant() {
 		return delegate.getDeterminant();
+	}
+
+	/**
+	 * Creates a new {@link AffineTransform} that represents the inverse
+	 * transformation of this {@link AffineTransform}.
+	 *
+	 * @return a new {@link AffineTransform} that represents the inverse
+	 *         transformation of this {@link AffineTransform}
+	 */
+	public AffineTransform getInverse() {
+		try {
+			return new AffineTransform(delegate.createInverse());
+		} catch (NoninvertibleTransformException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**

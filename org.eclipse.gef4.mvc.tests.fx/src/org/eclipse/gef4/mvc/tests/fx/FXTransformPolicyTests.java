@@ -156,8 +156,8 @@ public class FXTransformPolicyTests {
 	public void test_concat() {
 		// test that the initial and current node transformation are identity
 		// transforms
-		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
+		assertEquals(new AffineTransform(), transformPolicy.getInitialTransform());
+		assertEquals(transformPolicy.getInitialTransform(), transformPolicy.getCurrentTransform());
 		// create pre and post transforms
 		assertEquals(0, transformPolicy.createPreTransform());
 		assertEquals(1, transformPolicy.createPreTransform());
@@ -183,15 +183,15 @@ public class FXTransformPolicyTests {
 		// test the concatenation
 		AffineTransform concatenation = t0.getCopy().concatenate(t1).concatenate(t2).concatenate(t3).concatenate(t4)
 				.concatenate(t5);
-		assertEquals(concatenation, transformPolicy.getCurrentNodeTransform());
+		assertEquals(concatenation, transformPolicy.getCurrentTransform());
 	}
 
 	@Test
 	public void test_create() {
 		// test that the initial and current node transformation are identity
 		// transforms
-		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
+		assertEquals(new AffineTransform(), transformPolicy.getInitialTransform());
+		assertEquals(transformPolicy.getInitialTransform(), transformPolicy.getCurrentTransform());
 		// create a new transform that is applied before the node transformation
 		int firstPreIndex = transformPolicy.createPreTransform();
 		// test that the first created transform has index 0
@@ -213,7 +213,7 @@ public class FXTransformPolicyTests {
 		transformPolicy.setPreTranslate(firstPreIndex, 0, 0);
 		// test that the composite transformation equals the initial
 		// transformation since only identity transforms have been applied
-		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
+		assertEquals(transformPolicy.getInitialTransform(), transformPolicy.getCurrentTransform());
 		// set all transforms to translations
 		transformPolicy.setPreTranslate(firstPreIndex, 10, 10);
 		transformPolicy.setPreTranslate(secondPreIndex, 10, 10);
@@ -221,15 +221,15 @@ public class FXTransformPolicyTests {
 		transformPolicy.setPostTranslate(secondPostIndex, 10, 10);
 		// test that the composite transform equals a translation by 40, 40 (4
 		// individual translations by 10, 10 => 40, 40)
-		assertEquals(new AffineTransform().setToTranslation(40, 40), transformPolicy.getCurrentNodeTransform());
+		assertEquals(new AffineTransform().setToTranslation(40, 40), transformPolicy.getCurrentTransform());
 	}
 
 	@Test
 	public void test_init() {
 		// test that the initial and current node transformation are identity
 		// transforms
-		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
+		assertEquals(new AffineTransform(), transformPolicy.getInitialTransform());
+		assertEquals(transformPolicy.getInitialTransform(), transformPolicy.getCurrentTransform());
 		// create a new transform that is applied before the node transformation
 		int firstIndex = transformPolicy.createPreTransform();
 		// test that the first created transform has index 0
@@ -238,14 +238,14 @@ public class FXTransformPolicyTests {
 		transformPolicy.setPreTranslate(firstIndex, 10, 10);
 		// test that the initial node transformation differs from the current
 		// node transformation (due to the translation)
-		assertFalse(transformPolicy.getInitialNodeTransform().equals(transformPolicy.getCurrentNodeTransform()));
+		assertFalse(transformPolicy.getInitialTransform().equals(transformPolicy.getCurrentTransform()));
 		// call init() again to reset the policy
 		transformPolicy.rollback();
 		transformPolicy.init();
 		// test that the initial and current node transformation are identity
 		// transforms again
-		assertEquals(new AffineTransform(), transformPolicy.getInitialNodeTransform());
-		assertEquals(transformPolicy.getInitialNodeTransform(), transformPolicy.getCurrentNodeTransform());
+		assertEquals(new AffineTransform(), transformPolicy.getInitialTransform());
+		assertEquals(transformPolicy.getInitialTransform(), transformPolicy.getCurrentTransform());
 		// create a new transform that is applied before the node transformation
 		firstIndex = transformPolicy.createPreTransform();
 		// test that the first created transform has index 0
