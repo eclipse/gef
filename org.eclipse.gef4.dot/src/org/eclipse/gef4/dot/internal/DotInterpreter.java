@@ -57,12 +57,13 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
 	private String globalNodeLabel;
+
+	private boolean createEdge;
 	private String currentArrowHead;
 	private String currentEdgeStyle;
 	private String currentEdgeLabel;
 	private String currentEdgeSourceNodeName;
 	private String currentEdgePos;
-	private boolean createEdge;
 	private String currentEdgeXLabel;
 	private String currentEdgeXlp;
 	private String currentEdgeLp;
@@ -166,51 +167,52 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		if (!createEdge) {
 			currentEdgeSourceNodeName = escaped(object.getName());
 		} else {
-			String targetNodeId = escaped(object.getName());
-			if (currentEdgeSourceNodeName != null && targetNodeId != null) {
-				createEdge(targetNodeId);
+			String targetNodeName = escaped(object.getName());
+			if (currentEdgeSourceNodeName != null && targetNodeName != null) {
+				createEdge(currentEdgeSourceNodeName, currentEdgeOp,
+						targetNodeName);
 				// current target node may be source for next EdgeRHS
-				currentEdgeSourceNodeName = targetNodeId;
+				currentEdgeSourceNodeName = targetNodeName;
 			}
 			createEdge = false;
 		}
 		return super.caseNodeId(object);
 	}
 
-	private void createEdge(String targetNodeName) {
-		Edge.Builder edgeBuilder = new Edge.Builder(
-				node(currentEdgeSourceNodeName), node(targetNodeName));
+	private void createEdge(String sourceNodeName, String edgeOp,
+			String targetNodeName) {
+		Edge.Builder edgeBuilder = new Edge.Builder(node(sourceNodeName),
+				node(targetNodeName));
+		Edge edge = edgeBuilder.buildEdge();
 
 		// name (always set)
-		String name = currentEdgeSourceNodeName + currentEdgeOp
-				+ targetNodeName;
-		edgeBuilder.attr(DotAttributes._NAME__GNE, name);
+		DotAttributes.setName(edge, sourceNodeName + edgeOp + targetNodeName);
 
 		// id
 		if (currentEdgeId != null) {
-			edgeBuilder.attr(DotAttributes.ID__GNE, currentEdgeId);
+			DotAttributes.setId(edge, currentEdgeId);
 		}
 
 		// label
 		if (currentEdgeLabel != null) {
-			edgeBuilder.attr(DotAttributes.LABEL__GNE, currentEdgeLabel);
+			DotAttributes.setLabel(edge, currentEdgeLabel);
 		} else if (globalEdgeLabel != null) {
-			edgeBuilder.attr(DotAttributes.LABEL__GNE, globalEdgeLabel);
+			DotAttributes.setLabel(edge, globalEdgeLabel);
 		}
 
 		// external label (xlabel)
 		if (currentEdgeXLabel != null) {
-			edgeBuilder.attr(DotAttributes.XLABEL__NE, currentEdgeXLabel);
+			DotAttributes.setXLabel(edge, currentEdgeXLabel);
 		}
 
 		// head label (headllabel)
 		if (currentEdgeHeadLabel != null) {
-			edgeBuilder.attr(DotAttributes.HEADLABEL__E, currentEdgeHeadLabel);
+			DotAttributes.setHeadLabel(edge, currentEdgeHeadLabel);
 		}
 
 		// tail label (taillabel)
 		if (currentEdgeTailLabel != null) {
-			edgeBuilder.attr(DotAttributes.TAILLABEL__E, currentEdgeTailLabel);
+			DotAttributes.setTailLabel(edge, currentEdgeTailLabel);
 		}
 
 		// style
@@ -222,44 +224,44 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				&& supported(currentEdgeStyleLc,
 						DotAttributes.STYLE__E__VALUES)) {
 			// if an explicit local style is set, use it
-			edgeBuilder.attr(DotAttributes.STYLE__E, currentEdgeStyleLc);
+			DotAttributes.setStyle(edge, currentEdgeStyleLc);
 		} else if (!DotAttributes.STYLE__E__VOID.equals(globalEdgeStyleLc)
 				&& supported(globalEdgeStyleLc,
 						DotAttributes.STYLE__E__VALUES)) {
 			// if an explicit global style is set, use it
-			edgeBuilder.attr(DotAttributes.STYLE__E, globalEdgeStyleLc);
+			DotAttributes.setStyle(edge, globalEdgeStyleLc);
 		}
 
 		// position (pos)
 		if (currentEdgePos != null) {
-			edgeBuilder.attr(DotAttributes.POS__NE, currentEdgePos);
+			DotAttributes.setPos(edge, currentEdgePos);
 		}
 		// label position (lp)
 		if (currentEdgeLp != null) {
-			edgeBuilder.attr(DotAttributes.LP__E, currentEdgeLp);
+			DotAttributes.setLp(edge, currentEdgeLp);
 		}
 
 		// external label position (xlp)
 		if (currentEdgeXlp != null) {
-			edgeBuilder.attr(DotAttributes.XLP__NE, currentEdgeXlp);
+			DotAttributes.setXlp(edge, currentEdgeXlp);
 		}
 
 		// head label position (head_lp)
 		if (currentEdgeHeadLp != null) {
-			edgeBuilder.attr(DotAttributes.HEAD_LP__E, currentEdgeHeadLp);
+			DotAttributes.setHeadLp(edge, currentEdgeHeadLp);
 		}
 
 		// tail label position (tail_lp)
 		if (currentEdgeTailLp != null) {
-			edgeBuilder.attr(DotAttributes.TAIL_LP__E, currentEdgeTailLp);
+			DotAttributes.setTailLp(edge, currentEdgeTailLp);
 		}
 
 		// arrow head
 		if (currentArrowHead != null) {
-			edgeBuilder.attr(DotAttributes.ARROWHEAD__E, currentArrowHead);
+			DotAttributes.setArrowHead(edge, currentArrowHead);
 		}
 
-		graph.edges(edgeBuilder.buildEdge());
+		graph.edges(edge);
 	}
 
 	private boolean supported(String value, Set<String> vals) {
