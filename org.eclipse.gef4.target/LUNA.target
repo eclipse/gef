@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="LUNA" sequenceNumber="65">
+<?pde version="3.8"?><target name="LUNA" sequenceNumber="69">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.google.inject" version="3.0.0.v201312141243"/>
-<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
-<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
-<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.sdk.ide" version="4.4.2.M20150204-1700"/>
 <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.7.0.v201409021027"/>
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.7.3.v201411190455"/>
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.2.v20150123-0452"/>
-<repository location="http://download.eclipse.org/releases/luna"/>
+<repository location="http://download.eclipse.org/releases/luna/201502271000/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
-<repository location="http://download.itemis.de/updates/"/>
+<repository location="http://download.itemis.com/updates/releases/2.1.1"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
+<repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="2.0.0.201506111452"/>
-<repository location="http://download.eclipse.org/efxclipse/updates-released/2.0.0/site"/>
+<unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
 </location>
 </locations>
 </target>
