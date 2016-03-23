@@ -40,6 +40,7 @@ import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.serializer.ISerializer;
 
 import com.google.inject.Injector;
 
@@ -60,6 +61,9 @@ public class DotAttributes {
 
 	private static final DotPointParser dotPointParser = pointInjector
 			.getInstance(DotPointParser.class);
+
+	private static final ISerializer dotPointSerializer = pointInjector
+			.getInstance(ISerializer.class);
 
 	private static final DotPointGrammarAccess dotPointGrammarAccess = pointInjector
 			.getInstance(DotPointGrammarAccess.class);
@@ -1095,6 +1099,20 @@ public class DotAttributes {
 							+ "': " + getSyntaxErrorMessages(parseResult));
 		}
 		edge.getAttributes().put(POS__NE, pos);
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} property of the given {@link Node} to the
+	 * string representation of the given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param parsedPos
+	 *            The new value of the {@link #POS__NE} property.
+	 */
+	public static void setPosParsed(Node node, Point parsedPos) {
+		node.getAttributes().put(POS__NE,
+				dotPointSerializer.serialize(parsedPos));
 	}
 
 	/**
