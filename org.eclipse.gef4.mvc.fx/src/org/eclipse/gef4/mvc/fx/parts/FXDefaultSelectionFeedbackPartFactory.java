@@ -160,17 +160,11 @@ public class FXDefaultSelectionFeedbackPartFactory
 							IGeometry anchoredGeometryInLocal,
 							Node anchorageVisual,
 							IGeometry anchorageGeometryInLocal) {
+						Point anchorageReferencePointInLocal = anchorageGeometryInLocal
+								.getBounds().getCenter();
 						return computationStrategy.computePositionInScene(
 								anchorageVisual, anchoredVisual,
-								computationStrategy
-										.computeAnchorageReferencePointInLocal(
-												anchoredVisual,
-												anchoredGeometryInLocal,
-												NodeUtils.localToScene(
-														anchoredVisual,
-														anchoredGeometryInLocal
-																.getBounds()
-																.getCenter())));
+								anchorageReferencePointInLocal);
 					}
 
 					@Override

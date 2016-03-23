@@ -29,7 +29,6 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.collections.MapChangeListener;
@@ -51,22 +50,6 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
 
 public class DynamicAnchorELetterSnippet extends AbstractFxExample {
-
-	private static class ComputationStrategy
-			extends DynamicAnchor.ProjectionStrategy {
-
-		@Override
-		protected Point computeAnchorageReferencePointInScene(Node node,
-				IGeometry geometryInLocal, Point anchoredRefPointInLocal) {
-			return super.computeAnchorageReferencePointInScene(node,
-					geometryInLocal,
-					anchoredRefPointInLocal == null
-							? NodeUtils.localToScene(node,
-									geometryInLocal.getBounds().getCenter())
-							: anchoredRefPointInLocal);
-		}
-
-	}
 
 	private abstract static class OnDrag extends AbstractMouseDragGesture {
 		private Node target;
@@ -179,7 +162,6 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private Circle boundsCenterNode;
 	private Node eLetterReferenceNode;
 
-	private ComputationStrategy computationStrategy = new ComputationStrategy();
 	private MapChangeListener<AnchorKey, Point> anchorPositionListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
@@ -262,8 +244,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		Circle node = new Circle(ELETTER_REFERENCE_POINT_RADIUS);
 		node.setStroke(ELETTER_REFERENCE_POINT_STROKE);
 		node.setFill(ELETTER_REFERENCE_POINT_FILL);
-		Point p = computationStrategy.computeAnchorageReferencePointInScene(
-				eLetterShape, eLetterShape.getGeometry(), null);
+		Point p = eLetterShape.getGeometry().getBounds().getCenter();
 		node.setCenterX(p.x);
 		node.setCenterY(p.y);
 		return node;
@@ -392,9 +373,8 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		boundsCenterNode = createBoundsCenterNode(boundsCenterInScene);
 		markerLayer.getChildren().add(boundsCenterNode);
 
-		Point eLetterShapeReferencePoint = computationStrategy
-				.computeAnchorageReferencePointInScene(eLetterShape,
-						eLetterShape.getGeometry(), null);
+		Point eLetterShapeReferencePoint = eLetterShape.getGeometry()
+				.getBounds().getCenter();
 
 		// show outline vertices and distance to the bounds center
 		for (BezierCurve seg : eLetterShape.getGeometry()
@@ -589,9 +569,8 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		lineReal.setEndY(anchorPosition.y);
 
 		// update imaginary line
-		Point eLetterReferencePoint = computationStrategy
-				.computeAnchorageReferencePointInScene(eLetterShape,
-						eLetterShape.getGeometry(), null);
+		Point eLetterReferencePoint = eLetterShape.getGeometry().getBounds()
+				.getCenter();
 		Line lineImaginary = dynamicLinesImaginary.get(ak);
 		lineImaginary.setStartX(anchorPosition.x);
 		lineImaginary.setStartY(anchorPosition.y);
