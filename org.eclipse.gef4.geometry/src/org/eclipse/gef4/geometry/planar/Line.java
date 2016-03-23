@@ -343,6 +343,11 @@ public class Line extends BezierCurve {
 		// the point was already projected onto the straight through this line.
 		// If its not located within the bounds, its not on this line and we
 		// have to return start or end point as nearest point.
+		if (Double.isNaN(projected.x) || Double.isNaN(projected.y)
+				|| Double.isInfinite(projected.x)
+				|| Double.isInfinite(projected.y)) {
+			return p;
+		}
 		if (getP1().equals(getP2())
 				&& (getP1().equals(projected) || getP2().equals(projected))
 				|| getBounds().contains(projected)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -271,6 +271,65 @@ public class LineTests {
 		Line l7 = new Line(4, 0, 5, 4);
 		assertNull(l1.getIntersection(l7));
 		assertNull(l7.getIntersection(l1));
+	}
+
+	@Test
+	public void test_getProjection() {
+		Line x100 = new Line(0, 0, 100, 0);
+		// check start point
+		assertEquals(new Point(0, 0), x100.getProjection(new Point(-10, 0)));
+		assertEquals(new Point(0, 0), x100.getProjection(new Point(-10, 10)));
+		assertEquals(new Point(0, 0), x100.getProjection(new Point(-10, -10)));
+		// check end point
+		assertEquals(new Point(100, 0), x100.getProjection(new Point(110, 0)));
+		assertEquals(new Point(100, 0),
+				x100.getProjection(new Point(110, -10)));
+		assertEquals(new Point(100, 0), x100.getProjection(new Point(110, 10)));
+		// check middle
+		assertEquals(new Point(50, 0), x100.getProjection(new Point(50, 0)));
+		assertEquals(new Point(50, 0), x100.getProjection(new Point(50, 10)));
+		assertEquals(new Point(50, 0), x100.getProjection(new Point(50, -10)));
+		// 25
+		assertEquals(new Point(25, 0), x100.getProjection(new Point(25, 0)));
+		assertEquals(new Point(25, 0), x100.getProjection(new Point(25, 10)));
+		assertEquals(new Point(25, 0), x100.getProjection(new Point(25, -10)));
+		// 75
+		assertEquals(new Point(75, 0), x100.getProjection(new Point(75, 0)));
+		assertEquals(new Point(75, 0), x100.getProjection(new Point(75, 10)));
+		assertEquals(new Point(75, 0), x100.getProjection(new Point(75, -10)));
+
+		Line y100 = new Line(0, 0, 0, 100);
+		// check start point
+		assertEquals(new Point(0, 0), y100.getProjection(new Point(0, -10)));
+		assertEquals(new Point(0, 0), y100.getProjection(new Point(10, -10)));
+		assertEquals(new Point(0, 0), y100.getProjection(new Point(-10, -10)));
+		// check end point
+		assertEquals(new Point(0, 100), y100.getProjection(new Point(0, 110)));
+		assertEquals(new Point(0, 100),
+				y100.getProjection(new Point(-10, 110)));
+		assertEquals(new Point(0, 100), y100.getProjection(new Point(10, 110)));
+		// check middle
+		assertEquals(new Point(0, 50), y100.getProjection(new Point(0, 50)));
+		assertEquals(new Point(0, 50), y100.getProjection(new Point(10, 50)));
+		assertEquals(new Point(0, 50), y100.getProjection(new Point(-10, 50)));
+		// 25
+		assertEquals(new Point(0, 25), y100.getProjection(new Point(0, 25)));
+		assertEquals(new Point(0, 25), y100.getProjection(new Point(10, 25)));
+		assertEquals(new Point(0, 25), y100.getProjection(new Point(-10, 25)));
+		// 75
+		assertEquals(new Point(0, 75), y100.getProjection(new Point(0, 75)));
+		assertEquals(new Point(0, 75), y100.getProjection(new Point(10, 75)));
+		assertEquals(new Point(0, 75), y100.getProjection(new Point(-10, 75)));
+
+		// NaN
+		assertEquals(new Point(), new Line(Double.NaN, Double.NaN, 10, 10)
+				.getProjection(new Point()));
+		assertEquals(new Point(1, 1), new Line(10, 10, Double.NaN, Double.NaN)
+				.getProjection(new Point(1, 1)));
+		assertEquals(new Point(2, 2), new Line(10, Double.NaN, 10, Double.NaN)
+				.getProjection(new Point(2, 2)));
+		assertEquals(new Point(3, 3), new Line(Double.NaN, 10, Double.NaN, 10)
+				.getProjection(new Point(3, 3)));
 	}
 
 	@Test
