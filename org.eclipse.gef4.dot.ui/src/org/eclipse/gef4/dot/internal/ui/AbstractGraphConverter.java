@@ -6,57 +6,91 @@ import java.util.Map;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public abstract class AbstractGraphConverter {
 
-	private Map<Node, Node> dotToZestNodes = new HashMap<Node, Node>();
+	public static final class Options {
 
-	public Graph convert(Graph dot) {
-		Graph zest = new Graph();
-		convertAttributes(dot, zest);
+		/**
+		 * Indicates whether layout should be emulated or not. If set to
+		 * <code>true</code>, an {@link ILayoutAlgorithm} is to be inferred for
+		 * the given dot, and set as value of the
+		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} attribute. If set to
+		 * <code>false</code> (i.e. native layout is performed via Graphviz and
+		 * position information is already provided in the dot input), the
+		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} should remain unset.
+		 */
+		public boolean emulateLayout = true;
+
+		// TOOD: control whether position information is to be transformed or
+		// not; should not depend on emulateLayout
+		// public boolean ignoreLayoutInfo = false;
+
+		/**
+		 * Specifies whether the y-coordinate values of all position information
+		 * is to be inverted. If set to <code>true</code> the y-values of all
+		 * position information is to be inverted. If set to <code>false</code>,
+		 * it is to be transformed without inversion.
+		 */
+		public boolean invertYAxis = true;
+	}
+
+	private Map<Node, Node> inputToOutputNodes = new HashMap<Node, Node>();
+	private Options options = new Options();
+
+	public Options options() {
+		return options;
+	}
+
+	public Graph convert(Graph inputGraph) {
+		Graph outputGraph = new Graph();
+		convertAttributes(inputGraph, outputGraph);
 		// convert nodes and store dot to zest mapping, so that source and
 		// destination of edges can be found easily later
-		for (Node dotNode : dot.getNodes()) {
-			Node zestNode = convertNode(dotNode);
-			zestNode.setGraph(zest);
-			dotToZestNodes.put(dotNode, zestNode);
-			zest.getNodes().add(zestNode);
+		for (Node inputNode : inputGraph.getNodes()) {
+			Node outputNode = convertNode(inputNode);
+			outputNode.setGraph(outputGraph);
+			inputToOutputNodes.put(inputNode, outputNode);
+			outputGraph.getNodes().add(outputNode);
 		}
 		// convert edges
-		for (Edge dotEdge : dot.getEdges()) {
+		for (Edge dotEdge : inputGraph.getEdges()) {
 			Edge edge = convertEdge(dotEdge);
-			edge.setGraph(zest);
-			zest.getEdges().add(edge);
+			edge.setGraph(outputGraph);
+			outputGraph.getEdges().add(edge);
 		}
-		dotToZestNodes.clear();
-		return zest;
+		inputToOutputNodes.clear();
+		return outputGraph;
 	}
 
-	protected Edge convertEdge(Edge dotEdge) {
+	protected Edge convertEdge(Edge inputEdge) {
 		// find nodes
-		Node zestSource = dotToZestNodes.get(dotEdge.getSource());
-		Node zestTarget = dotToZestNodes.get(dotEdge.getTarget());
+		Node outputSource = inputToOutputNodes.get(inputEdge.getSource());
+		Node outputTarget = inputToOutputNodes.get(inputEdge.getTarget());
 		// create edge
-		Edge zestEdge = new Edge(zestSource, zestTarget);
-		convertAttributes(dotEdge, zestEdge);
-		return zestEdge;
+		Edge outputEdge = new Edge(outputSource, outputTarget);
+		convertAttributes(inputEdge, outputEdge);
+		return outputEdge;
 	}
 
-	protected Node convertNode(Node dotNode) {
-		Node node = new Node();
-		convertAttributes(dotNode, node);
+	protected Node convertNode(Node inputNode) {
+		Node outputNode = new Node();
+		convertAttributes(inputNode, outputNode);
 		// convert nested graph
-		if (dotNode.getNestedGraph() != null) {
-			Graph nested = convert(dotNode.getNestedGraph());
-			node.setNestedGraph(nested);
+		if (inputNode.getNestedGraph() != null) {
+			Graph nested = convert(inputNode.getNestedGraph());
+			outputNode.setNestedGraph(nested);
 		}
-		return node;
+		return outputNode;
 	}
 
-	protected abstract void convertAttributes(Graph dot, Graph zest);
+	protected abstract void convertAttributes(Graph inputGraph,
+			Graph outputGraph);
 
-	protected abstract void convertAttributes(Edge dot, Edge zest);
+	protected abstract void convertAttributes(Edge inputEdge, Edge outputEdge);
 
-	protected abstract void convertAttributes(Node dot, Node zest);
+	protected abstract void convertAttributes(Node inputNode, Node outputNode);
 
 }

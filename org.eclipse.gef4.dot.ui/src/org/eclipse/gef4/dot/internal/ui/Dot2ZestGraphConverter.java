@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 itemis AG and others.
+ * Copyright (c) 2015, 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -49,38 +49,6 @@ import javafx.scene.text.Text;
  *
  */
 public class Dot2ZestGraphConverter extends AbstractGraphConverter {
-
-	public static final class Options {
-
-		/**
-		 * Indicates whether layout should be emulated or not. If set to
-		 * <code>true</code>, an {@link ILayoutAlgorithm} is to be inferred for
-		 * the given dot, and set as value of the
-		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} attribute. If set to
-		 * <code>false</code> (i.e. native layout is performed via Graphviz and
-		 * position information is already provided in the dot input), the
-		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} should remain unset.
-		 */
-		public boolean emulateLayout = true;
-
-		/**
-		 * Specifies whether the y-coordinate values of all position information
-		 * is to be inverted. If set to <code>true</code> the y-values of all
-		 * position information is to be inverted. If set to <code>false</code>,
-		 * it is to be transformed without inversion.
-		 */
-		public boolean invertYAxis = true;
-	}
-
-	private Options options;
-
-	public Dot2ZestGraphConverter() {
-		this.options = new Options();
-	}
-
-	public Options options() {
-		return options;
-	}
 
 	@Override
 	protected void convertAttributes(Edge dot, Edge zest) {
@@ -149,7 +117,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		// only convert layout information in native mode, as the results will
 		// otherwise
 		// not match
-		if (!options.emulateLayout) {
+		if (!options().emulateLayout) {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null) {
@@ -291,13 +259,13 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 				startp = spline.getControlPoints().get(0);
 			}
 			controlPoints.add(new Point(startp.getX(),
-					(options.invertYAxis ? -1 : 1) * startp.getY()));
+					(options().invertYAxis ? -1 : 1) * startp.getY()));
 
 			// control points
 			for (org.eclipse.gef4.dot.internal.parser.point.Point cp : spline
 					.getControlPoints()) {
 				controlPoints.add(new Point(cp.getX(),
-						(options.invertYAxis ? -1 : 1) * cp.getY()));
+						(options().invertYAxis ? -1 : 1) * cp.getY()));
 			}
 
 			// end
@@ -310,7 +278,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 						.get(spline.getControlPoints().size() - 1);
 			}
 			controlPoints.add(new Point(endp.getX(),
-					(options.invertYAxis ? -1 : 1) * endp.getY()));
+					(options().invertYAxis ? -1 : 1) * endp.getY()));
 		}
 		return controlPoints;
 	}
@@ -376,7 +344,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			double widthInPixel, double heightInPixel) {
 		// dot positions are provided as center positions, Zest uses top-left
 		return new Point(dotPosition.getX() - widthInPixel / 2,
-				(options.invertYAxis ? -1 : 1) * (dotPosition.getY())
+				(options().invertYAxis ? -1 : 1) * (dotPosition.getY())
 						- heightInPixel / 2);
 	}
 
@@ -393,10 +361,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 	@Override
 	protected void convertAttributes(Graph dot, Graph zest) {
-
 		// TODO: graph label
-
-		if (options.emulateLayout) {
+		if (options().emulateLayout) {
 			// convert layout and rankdir to LayoutAlgorithm
 			Object dotLayout = DotAttributes.getLayout(dot);
 			ILayoutAlgorithm algo = null;

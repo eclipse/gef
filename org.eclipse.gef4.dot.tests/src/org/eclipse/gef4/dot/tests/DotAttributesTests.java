@@ -13,21 +13,40 @@
 package org.eclipse.gef4.dot.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.parser.point.Point;
+import org.eclipse.gef4.dot.internal.parser.point.PointFactory;
+import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
+import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Node;
 import org.junit.Test;
 
-public class DotPointTests {
+public class DotAttributesTests {
 
 	@Test
 	public void node_pos() {
 		Node n = new Node.Builder().buildNode();
 
-		// set valid values
+		// set valid string values
 		DotAttributes.setPos(n, "47, 11");
 		DotAttributes.setPos(n, "34.5, 45.3!");
+
+		// set valid parsed value
+		Point pos = PointFactory.eINSTANCE.createPoint();
+		pos.setX(33);
+		pos.setY(54.6);
+		pos.setInputOnly(true);
+		DotAttributes.setPosParsed(n, pos);
+		// TODO: adjust formatting (white spaces should not be inserted)
+		// assertEquals("33.0, 54.6!", DotAttributes.getPos(n));
+		assertTrue(EcoreUtil.equals(DotAttributes.getPosParsed(n), pos));
 
 		// set invalid values
 		try {
@@ -76,5 +95,32 @@ public class DotPointTests {
 					"Cannot set node attribute 'width' to '47x, 11': parsing as double failed.",
 					e.getMessage());
 		}
+	}
+
+	@Test
+	public void edge_pos() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge e = new Edge.Builder(n1, n2).buildEdge();
+
+		// set valid values
+		DotAttributes.setPos(e,
+				"e,42.762,459.02 49.25,203.93 41.039,213.9 31.381,227.75 27,242 3.486,318.47 8.9148,344.07 27,422 29.222,431.57 33.428,441.41 37.82,449.98");
+		assertEquals(
+				"e,42.762,459.02 " + "49.25,203.93 " + "41.039,213.9 "
+						+ "31.381,227.75 " + "27,242 " + "3.486,318.47 "
+						+ "8.9148,344.07 " + "27,422 " + "29.222,431.57 "
+						+ "33.428,441.41 " + "37.82,449.98",
+				DotAttributes.getPos(e));
+
+		SplineType posParsed = DotAttributes.getPosParsed(e);
+		assertNotNull(posParsed);
+		assertEquals(1, posParsed.getSplines().size());
+		Spline spline = posParsed.getSplines().get(0);
+		assertNotNull(spline.getEndp());
+		assertEquals(spline.getEndp().getX(), 42.762, 0.0);
+		assertEquals(spline.getEndp().getY(), 459.02, 0.0);
+		assertEquals(10, spline.getControlPoints().size());
+		assertNull(spline.getStartp());
 	}
 }
