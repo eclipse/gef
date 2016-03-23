@@ -191,7 +191,11 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 
 	@Override
 	public void transformContent(AffineTransform transform) {
-		setStoredLabelPosition(transform.getTransformed(getStoredLabelPosition()));
+		Point storedLabelPosition = getStoredLabelPosition();
+		if (storedLabelPosition == null) {
+			storedLabelPosition = new Point();
+		}
+		setStoredLabelPosition(transform.getTransformed(storedLabelPosition));
 	}
 
 }

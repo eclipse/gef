@@ -681,9 +681,10 @@ public class NodePart extends AbstractFXContentPart<Group>
 	public void transformContent(AffineTransform transform) {
 		// transform operation
 		Point position = ZestProperties.getPosition(getContent());
-		if (position != null) {
-			ZestProperties.setPosition(getContent(), transform.getTransformed(position));
+		if (position == null) {
+			position = new Point();
 		}
+		ZestProperties.setPosition(getContent(), transform.getTransformed(position));
 	}
 
 }
