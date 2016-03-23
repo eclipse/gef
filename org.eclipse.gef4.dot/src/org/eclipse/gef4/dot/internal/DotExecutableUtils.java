@@ -19,7 +19,9 @@ package org.eclipse.gef4.dot.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class for drawing dot graphs by calling the dot executable.
@@ -93,12 +95,16 @@ final public class DotExecutableUtils {
 	public static String[] executeDot(final File dotExecutablePath,
 			final File dotInputFile, final File outputFile,
 			final String outputFormat) {
-		String[] commands = new String[] { dotExecutablePath.getAbsolutePath(),
-				outputFormat == null ? "" : "-T" + outputFormat,
-				outputFile == null ? ""
-						: ("-o" + outputFile.toPath().toString()),
-				dotInputFile.toPath().toString() };
-		return call(commands);
+		List<String> commands = new ArrayList<>();
+		commands.add(dotExecutablePath.getAbsolutePath());
+		if (outputFormat != null) {
+			commands.add("-T" + outputFormat);
+		}
+		if (outputFile != null) {
+			commands.add("-o" + outputFile.toPath().toString());
+		}
+		commands.add(dotInputFile.toPath().toString());
+		return call(commands.toArray(new String[] {}));
 	}
 
 	/***
@@ -146,9 +152,9 @@ final public class DotExecutableUtils {
 		// handle input and error stream only if process succeeded.
 		if (p != null) {
 			String output = read(p.getInputStream());
-			outputs[0] = output.trim();
+			outputs[0] = output;
 			String errors = read(p.getErrorStream());
-			outputs[1] = errors.trim();
+			outputs[1] = errors;
 		}
 		return outputs;
 	}
@@ -163,7 +169,8 @@ final public class DotExecutableUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return builder.toString();
+		return builder.toString()
+				.replaceAll("\\\\" + System.lineSeparator(), "").trim();
 	}
 
 }
