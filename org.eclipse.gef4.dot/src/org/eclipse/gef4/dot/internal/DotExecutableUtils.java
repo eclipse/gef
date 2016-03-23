@@ -27,8 +27,10 @@ import java.util.Arrays;
  * @author Fabian Steeg (fsteeg)
  * @author Alexander Nyßen (anyssen)
  */
-final public class DotNativeDrawer {
-	private DotNativeDrawer() {/* Enforce non-instantiability */
+final public class DotExecutableUtils {
+
+	private DotExecutableUtils() {
+		// should not be instantiated by clients
 	}
 
 	/**

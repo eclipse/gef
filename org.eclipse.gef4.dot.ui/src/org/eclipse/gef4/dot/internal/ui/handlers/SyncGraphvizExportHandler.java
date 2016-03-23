@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
-import org.eclipse.gef4.dot.internal.DotNativeDrawer;
+import org.eclipse.gef4.dot.internal.DotExecutableUtils;
 import org.eclipse.gef4.dot.internal.ui.GraphvizPreferencePage;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -227,7 +227,7 @@ public class SyncGraphvizExportHandler extends AbstractHandler {
 		if (dotExportFormat.isEmpty()) {
 			return;
 		}
-		File outputFile = DotNativeDrawer.renderImage(
+		File outputFile = DotExecutableUtils.renderImage(
 				new File(GraphvizPreferencePage.getDotExecutablePath()),
 				resolvedInputFile, dotExportFormat, null);
 

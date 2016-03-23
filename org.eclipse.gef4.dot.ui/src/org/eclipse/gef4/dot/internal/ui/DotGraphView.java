@@ -17,6 +17,8 @@ package org.eclipse.gef4.dot.internal.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -30,10 +32,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.dot.internal.DotExtractor;
+import org.eclipse.gef4.dot.internal.DotExecutableUtils;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.DotImport;
-import org.eclipse.gef4.dot.internal.DotNativeDrawer;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
@@ -77,6 +78,61 @@ import javafx.scene.Scene;
  */
 /* provisional API */@SuppressWarnings("restriction")
 public class DotGraphView extends ZestFxUiView {
+
+	public static class DotExtractor {
+
+		/**
+		 * The DOT graph returned if the input contains no DOT graph substring.
+		 */
+		public static final String NO_DOT = "graph{n1[label=\"no DOT\"]}"; //$NON-NLS-1$
+		private String input = NO_DOT;
+
+		/**
+		 * @param input
+		 *            The string to extract a DOT graph substring from
+		 */
+		public DotExtractor(final String input) {
+			this.input = input;
+		}
+
+		/**
+		 * @param file
+		 *            The file to extract a DOT substring from
+		 */
+		public DotExtractor(final File file) {
+			this(DotFileUtils.read(file));
+		}
+
+		/**
+		 * @return A DOT string extracted from the input, or the {@code NO_DOT}
+		 *         constant, a valid DOT graph
+		 */
+		public String getDotString() {
+			return trimNonDotSuffix(trimNonDotPrefix());
+		}
+
+		private String trimNonDotPrefix() {
+			Matcher m = Pattern.compile("((?:di)?graph\\s*[^{\\s]*\\s*\\{.+)", //$NON-NLS-1$
+					Pattern.DOTALL).matcher(input);
+			String dotSubstring = m.find() ? m.group(1) : NO_DOT;
+			return dotSubstring;
+		}
+
+		private String trimNonDotSuffix(String dot) {
+			int first = dot.indexOf('{') + 1;
+			StringBuilder builder = new StringBuilder(dot.substring(0, first));
+			int count = 1; /* we count to include embedded { ... } blocks */
+			int index = first;
+			while (count > 0 && index < dot.length()) {
+				char c = dot.charAt(index);
+				builder.append(c);
+				count = (c == '{') ? count + 1 : (c == '}') ? count - 1 : count;
+				index++;
+			}
+			return builder.toString().trim();
+		}
+
+	}
 
 	public static final String STYLES_CSS_FILE = DotGraphView.class
 			.getResource("styles.css") //$NON-NLS-1$
@@ -257,7 +313,7 @@ public class DotGraphView extends ZestFxUiView {
 		// (native mode); otherwise we emulate layout with GEF4 Layout
 		// algorithms.
 		if (isNativeMode()) {
-			String[] result = DotNativeDrawer.executeDot(
+			String[] result = DotExecutableUtils.executeDot(
 					new File(GraphvizPreferencePage.getDotExecutablePath()),
 					file, null, null);
 			currentDot = result[0];

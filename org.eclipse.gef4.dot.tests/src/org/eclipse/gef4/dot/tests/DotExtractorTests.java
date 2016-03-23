@@ -13,7 +13,8 @@ package org.eclipse.gef4.dot.tests;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.dot.internal.DotExtractor;
+import org.eclipse.gef4.dot.internal.ui.DotGraphView;
+import org.eclipse.gef4.dot.internal.ui.DotGraphView.DotExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -51,7 +52,7 @@ public class DotExtractorTests {
 	public void extractDot() {
 		for (String input : values.keySet()) {
 			String expected = values.get(input);
-			String output = new DotExtractor(input).getDotString();
+			String output = new DotGraphView.DotExtractor(input).getDotString();
 			Assert.assertEquals(/*
 								 * String.format(
 								 * "Incorrect DOT extraction for '%s';", input),

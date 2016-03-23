@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.eclipse.gef4.dot.internal.DotNativeDrawer;
+import org.eclipse.gef4.dot.internal.DotExecutableUtils;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -195,7 +195,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	private String[] getSupportedExportFormats(String dotExecutablePath) {
 		String[] supportedExportFormats = null;
 
-		supportedExportFormats = DotNativeDrawer
+		supportedExportFormats = DotExecutableUtils
 				.getSupportedExportFormats(dotExecutablePath);
 		return supportedExportFormats;
 	}
