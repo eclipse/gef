@@ -24,6 +24,7 @@ Workflow {
 	bean = StandaloneSetup {
 		// register current projects and its siblings for platform URI map, as they are not on the classpath.
 		platformUri = "${runtimeProject}/.."
+		resourceSet = org.eclipse.xtext.resource.XtextResourceSet:attributeGrammarsResourceSet {}
 	}
 
 	component = DirectoryCleaner {
@@ -50,7 +51,7 @@ Workflow {
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
 		language = auto-inject {
-		// grammarURI has to be platform:/resource for headless execution (Tycho)
+			// grammarURI has to be platform:/resource for headless execution (Tycho)
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/Dot.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dot"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
@@ -116,6 +117,8 @@ Workflow {
 		projectNameUi = "${projectName}.ui"
 		encoding = encoding
 		language = auto-inject {
+			forcedResourceSet = attributeGrammarsResourceSet
+			
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotPoint.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dot_point"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
@@ -140,16 +143,9 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
-	}
-	
-	component = Generator {
-		pathRtProject = runtimeProject
-		pathUiProject = "${runtimeProject}.ui"
-		pathTestProject = "${runtimeProject}.tests"
-		projectNameRt = projectName
-		projectNameUi = "${projectName}.ui"
-		encoding = encoding
 		language = auto-inject {
+			forcedResourceSet = attributeGrammarsResourceSet
+			
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotSplineType.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dot_splineType"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
@@ -174,16 +170,9 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
-	}
-
-	component = Generator {
-		pathRtProject = runtimeProject
-		pathUiProject = "${runtimeProject}.ui"
-		pathTestProject = "${runtimeProject}.tests"
-		projectNameRt = projectName
-		projectNameUi = "${projectName}.ui"
-		encoding = encoding
 		language = auto-inject {
+			forcedResourceSet = attributeGrammarsResourceSet
+			
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotArrowType.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dot_arrowType"
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
