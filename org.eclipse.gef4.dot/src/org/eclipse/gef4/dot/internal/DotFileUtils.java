@@ -65,7 +65,7 @@ public final class DotFileUtils {
 	 */
 	public static File write(final String text) {
 		try {
-			return write(text, File.createTempFile("zest", ".dot")); //$NON-NLS-1$//$NON-NLS-2$
+			return write(text, File.createTempFile("tmp", ".dot")); //$NON-NLS-1$//$NON-NLS-2$
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
