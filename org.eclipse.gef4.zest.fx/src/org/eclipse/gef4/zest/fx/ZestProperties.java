@@ -335,7 +335,11 @@ public class ZestProperties {
 	 * @return The CSS id of the given {@link Edge}.
 	 */
 	public static String getCssId(Edge edge) {
-		return (String) edge.attributesProperty().get(ELEMENT_CSS_ID);
+		Object value = edge.attributesProperty().get(ELEMENT_CSS_ID);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -347,7 +351,11 @@ public class ZestProperties {
 	 * @return The CSS id of the given {@link Node}.
 	 */
 	public static String getCssId(Node node) {
-		return (String) node.attributesProperty().get(ELEMENT_CSS_ID);
+		Object value = node.attributesProperty().get(ELEMENT_CSS_ID);
+		if (value instanceof Provider) {
+			return (String) ((Provider<?>) value).get();
+		}
+		return (String) value;
 	}
 
 	/**
@@ -869,11 +877,37 @@ public class ZestProperties {
 	 *
 	 * @param edge
 	 *            The {@link Edge} of which the CSS id is changed.
+	 * @param cssIdProvider
+	 *            The new CSS id for the given {@link Edge}.
+	 */
+	public static void setCssId(Edge edge, Provider<String> cssIdProvider) {
+		edge.attributesProperty().put(ELEMENT_CSS_ID, cssIdProvider);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_CSS_ID} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the CSS id is changed.
 	 * @param cssId
 	 *            The new CSS id for the given {@link Edge}.
 	 */
 	public static void setCssId(Edge edge, String cssId) {
 		edge.attributesProperty().put(ELEMENT_CSS_ID, cssId);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_CSS_ID} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the CSS id is changed.
+	 * @param cssIdProvider
+	 *            The new CSS id for the given {@link Node}.
+	 */
+	public static void setCssId(Node node, Provider<String> cssIdProvider) {
+		node.attributesProperty().put(ELEMENT_CSS_ID, cssIdProvider);
 	}
 
 	/**
@@ -1209,6 +1243,9 @@ public class ZestProperties {
 	 *            The new node position.
 	 */
 	public static void setPosition(Node node, Point position) {
+		if (position == null) {
+			node.getAttributes().remove(NODE_POSITION);
+		}
 		node.getAttributes().put(NODE_POSITION, position);
 	}
 
@@ -1236,6 +1273,9 @@ public class ZestProperties {
 	 *            {@link Node}.
 	 */
 	public static void setSize(Node node, Dimension size) {
+		if (size == null) {
+			node.getAttributes().remove(NODE_SIZE);
+		}
 		node.getAttributes().put(NODE_SIZE, size);
 	}
 
