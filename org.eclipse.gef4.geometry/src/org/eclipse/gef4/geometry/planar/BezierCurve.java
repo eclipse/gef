@@ -1360,9 +1360,11 @@ public class BezierCurve extends AbstractGeometry
 			}
 
 			// split interval
-			double im = i.getMid();
-			parts.push(new Interval(im, i.b));
-			parts.push(new Interval(i.a, im));
+			if (!i.converges()) {
+				double im = i.getMid();
+				parts.push(new Interval(im, i.b));
+				parts.push(new Interval(i.a, im));
+			}
 		}
 
 		return xtreme;
@@ -1984,7 +1986,7 @@ public class BezierCurve extends AbstractGeometry
 				return p.getDistance(reference) < q.getDistance(reference);
 			}
 		};
-		Point extremeProjection = findExtreme(cmp, Interval.getFull());
+		Point extremeProjection = findExtreme(cmp);
 		return extremeProjection;
 	}
 
