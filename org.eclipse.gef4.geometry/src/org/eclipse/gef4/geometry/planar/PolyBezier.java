@@ -152,6 +152,9 @@ public class PolyBezier extends AbstractGeometry
 		for (int i = 0; i < handleLines.length; i++) {
 			double d0 = lines[i].getP1().getDistance(lines[i].getP2());
 			double d1 = lines[i + 1].getP1().getDistance(lines[i + 1].getP2());
+			if (d0 + d1 == 0) {
+				d0 = 1;
+			}
 			handleAnchors[i] = handleLines[i].get(d0 / (d0 + d1));
 		}
 
