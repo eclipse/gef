@@ -233,25 +233,6 @@ public class Edge implements IAttributeStore {
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof Edge)) {
-			return false;
-		}
-		Edge otherEdge = (Edge) other;
-		// XXX: In JavaFX 2.2, a property's equals() falls back to equality of
-		// the enclosing bean; to prevent a StackOverflowError here, we fall
-		// back comparing the observed map value instead.
-		boolean attrsEqual = attributesProperty.get() == null ? false
-				: attributesProperty().get().equals(otherEdge.attributesProperty());
-		boolean sourceEqual = this.getSource().equals(otherEdge.getSource());
-		boolean targetEqual = this.getTarget().equals(otherEdge.getTarget());
-		return attrsEqual && sourceEqual && targetEqual;
-	}
-
-	@Override
 	public ObservableMap<String, Object> getAttributes() {
 		return attributesProperty.get();
 	}
@@ -281,18 +262,6 @@ public class Edge implements IAttributeStore {
 	 */
 	public Node getTarget() {
 		return target;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = 17;
-		// XXX: In JavaFX 2.2, hashCode() falls back on the hash code of the
-		// enclosing bean; to prevent a StackOverflowError, we fall back to the
-		// hash code of the contained map value, rather than the property itself
-		result = 31 * result + (attributesProperty.get() == null ? 0 : attributesProperty.get().hashCode());
-		result = 31 * result + getSource().hashCode();
-		result = 31 * result + getTarget().hashCode();
-		return result;
 	}
 
 	/**

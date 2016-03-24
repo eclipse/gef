@@ -214,21 +214,6 @@ public class Node implements IAttributeStore {
 		return attributesProperty.getReadOnlyProperty();
 	}
 
-	@Override
-	public boolean equals(Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof Node)) {
-			return false;
-		}
-		// XXX: In JavaFX 2.2, a property's equals() falls back to equality of
-		// the enclosing bean; to prevent a StackOverflowError here, we fall
-		// back comparing the observed map value instead.
-		return attributesProperty.get() == null ? false
-				: attributesProperty().get().equals(((Node) other).attributesProperty());
-	}
-
 	/**
 	 * Returns all incoming {@link Edge}s of this {@link Node}. The full graph
 	 * hierarchy is scanned for incoming edges, and not just the
@@ -426,14 +411,6 @@ public class Node implements IAttributeStore {
 	 */
 	public Graph getNestedGraph() {
 		return nestedGraph;
-	}
-
-	@Override
-	public int hashCode() {
-		// XXX: In JavaFX 2.2, hashCode() falls back on the hash code of the
-		// enclosing bean; to prevent a StackOverflowError, we fall back to the
-		// hash code of the contained map value, rather than the property itself
-		return attributesProperty.get() == null ? 0 : attributesProperty.get().hashCode();
 	}
 
 	/**
