@@ -1456,7 +1456,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 						segmentOverlay.retainedNeighborHandle.explicitAnchorIndex,
 						segmentOverlay.retainedNeighborOldAnchor);
 				if (getConnection().getRouter().isImplicitAnchor(
-						segmentOverlay.removedNeighborOldAnchor)) {
+						segmentOverlay.retainedNeighborOldAnchor)) {
 					getBendOperation().getNewAnchors().remove(
 							segmentOverlay.retainedNeighborHandle.explicitAnchorIndex);
 					explicitAnchors.remove(
@@ -1526,29 +1526,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		selectedAnchors.add(explicitAnchorHandle);
 	}
 
-	// private void showAnchors(String message) {
-	// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-	// String anchorsString = "";
-	// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++) {
-	// IAnchor anchor = getConnection().getAnchor(i);
-	// if (getConnection().getRouter().isImplicitAnchor(anchor)) {
-	// anchorsString = anchorsString + " - "
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "],\n";
-	// } else {
-	// anchorsString = anchorsString
-	// + (selectedAnchors.contains(explicitAnchors.get(j))
-	// ? "(*)" : " * ")
-	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "]" + " ("
-	// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
-	// + "},\n";
-	// j++;
-	// }
-	// }
-	// System.out.println(message + "\n" + anchorsString);
-	// }
-
 	/**
 	 * Selects the end points of the connection segment specified by the given
 	 * index. Makes the corresponding anchors explicit first and copies them if
@@ -1598,6 +1575,29 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		select(firstAnchorHandle);
 		select(secondAnchorHandle);
 	}
+
+	// private void showAnchors(String message) {
+	// List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
+	// String anchorsString = "";
+	// for (int i = 0, j = 0; i < getConnection().getAnchors().size(); i++) {
+	// IAnchor anchor = getConnection().getAnchor(i);
+	// if (getConnection().getRouter().isImplicitAnchor(anchor)) {
+	// anchorsString = anchorsString + " - "
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "],\n";
+	// } else {
+	// anchorsString = anchorsString
+	// + (selectedAnchors.contains(explicitAnchors.get(j))
+	// ? "(*)" : " * ")
+	// + anchor.getClass().toString() + "["
+	// + getConnection().getPoint(i) + "]" + " ("
+	// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
+	// + "},\n";
+	// j++;
+	// }
+	// }
+	// System.out.println(message + "\n" + anchorsString);
+	// }
 
 	@Override
 	public String toString() {
