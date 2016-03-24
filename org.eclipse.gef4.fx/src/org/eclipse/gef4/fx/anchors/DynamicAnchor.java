@@ -34,6 +34,7 @@ import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 /**
@@ -143,6 +144,145 @@ public class DynamicAnchor extends AbstractAnchor {
 				Node anchorage) {
 			return NodeUtils.localToScene(anchorage,
 					getAnchorageReferenceGeometryInLocal(anchorage));
+		}
+	}
+
+	/**
+	 *
+	 */
+	public static class ChopBoxStrategy extends ProjectionStrategy {
+		/**
+		 * Computes the anchorage reference position within the coordinate
+		 * system of the given {@link IGeometry}. For an {@link IShape}
+		 * geometry, the center is used if it is contained within the shape,
+		 * otherwise, the vertex nearest to the center is used as the reference
+		 * position. For an {@link ICurve} geometry, the first point is used as
+		 * the reference position.
+		 *
+		 * @param anchorage
+		 *            The anchorage visual.
+		 * @param geometryInLocal
+		 *            The anchorage geometry within the local coordinate system
+		 *            of the anchorage visual.
+		 * @param anchoredReferencePointInAnchorageLocal
+		 *            Refernce point of the anchored for which to determine the
+		 *            anchorage reference point. Within the local coordinate
+		 *            system of the anchorage.
+		 * @return A position within the given {@link IGeometry}.
+		 */
+		public Point computeAnchorageReferencePointInLocal(Node anchorage,
+				IGeometry geometryInLocal,
+				Point anchoredReferencePointInAnchorageLocal) {
+			if (geometryInLocal instanceof IShape) {
+				IShape shape = (IShape) geometryInLocal;
+				// in case of an IShape we can pick the bounds center if it
+				// is contained, or the vertex nearest to the center point
+				Point boundsCenterInLocal = geometryInLocal.getBounds()
+						.getCenter();
+				if (shape.contains(boundsCenterInLocal)) {
+					return boundsCenterInLocal;
+				} else {
+					return null;
+				}
+			} else if (geometryInLocal instanceof ICurve) {
+				return null;
+			} else if (geometryInLocal instanceof Path) {
+				// in case of a Path we can pick the vertex nearest
+				// to the center point
+				Point boundsCenterInLocal = geometryInLocal.getBounds()
+						.getCenter();
+				if (geometryInLocal.contains(boundsCenterInLocal)) {
+					return boundsCenterInLocal;
+				} else {
+					return null;
+				}
+			} else {
+				throw new IllegalArgumentException("Unknwon IGeometry: <"
+						+ geometryInLocal.getClass() + ">.");
+			}
+		}
+
+		/**
+		 * Computes the anchorage reference position in scene coordinates, based
+		 * on the given anchorage geometry.
+		 *
+		 * @see #computeAnchorageReferencePointInLocal(Node, IGeometry, Point)
+		 * @param anchorage
+		 *            The anchorage visual.
+		 * @param geometryInLocal
+		 *            The anchorage geometry within the coordinate system of the
+		 *            anchorage visual.
+		 * @param anchoredReferencePointInScene
+		 *            The reference {@link Point} of the anchored for which the
+		 *            anchorage reference {@link Point} is to be determined.
+		 * @return The anchorage reference position.
+		 */
+		protected Point computeAnchorageReferencePointInScene(Node anchorage,
+				IGeometry geometryInLocal,
+				Point anchoredReferencePointInScene) {
+			Point2D anchoredReferencePointInAnchorageLocal = anchorage
+					.sceneToLocal(anchoredReferencePointInScene.x,
+							anchoredReferencePointInScene.y);
+			Point anchorageReferencePointInLocal = computeAnchorageReferencePointInLocal(
+					anchorage, geometryInLocal,
+					new Point(anchoredReferencePointInAnchorageLocal.getX(),
+							anchoredReferencePointInAnchorageLocal.getY()));
+			if (anchorageReferencePointInLocal == null) {
+				return null;
+			}
+			return NodeUtils.localToScene(anchorage,
+					anchorageReferencePointInLocal);
+		}
+
+		@Override
+		public Point computePositionInScene(Node anchorage, Node anchored,
+				Point anchoredReferencePointInLocal) {
+			IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(
+					anchorage);
+
+			Point anchoredReferencePointInScene = NodeUtils
+					.localToScene(anchored, anchoredReferencePointInLocal);
+
+			Point anchorageReferencePointInScene = computeAnchorageReferencePointInScene(
+					anchorage, anchorageReferenceGeometryInLocal,
+					anchoredReferencePointInScene);
+
+			if (anchorageReferencePointInScene == null) {
+				return super.computePositionInScene(anchorage, anchored,
+						anchoredReferencePointInLocal);
+			}
+
+			Line referenceLineInScene = new Line(anchorageReferencePointInScene,
+					anchoredReferencePointInScene);
+
+			IGeometry anchorageGeometryInScene = NodeUtils
+					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
+			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
+					anchorageGeometryInScene);
+
+			Point nearestProjectionInScene = null;
+			double nearestDistance = 0d;
+			for (ICurve anchorageOutlineInScene : anchorageOutlinesInScene) {
+				Point[] intersections = anchorageOutlineInScene
+						.getIntersections(referenceLineInScene);
+				if (intersections.length > 0) {
+					Point nearestIntersection = Point.nearest(
+							anchoredReferencePointInScene, intersections);
+					double distance = anchoredReferencePointInScene
+							.getDistance(nearestIntersection);
+					if (nearestProjectionInScene == null
+							|| distance < nearestDistance) {
+						nearestProjectionInScene = nearestIntersection;
+						nearestDistance = distance;
+					}
+				}
+			}
+
+			if (nearestProjectionInScene != null) {
+				return nearestProjectionInScene;
+			}
+			return super.computePositionInScene(anchorage, anchored,
+					anchoredReferencePointInLocal);
 		}
 	}
 
@@ -533,7 +673,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public static final String DEFAULT_COMPUTATION_STRATEGY_PROPERTY = "defaultComputationStrategy";
 
-	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ProjectionStrategy();
+	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ChopBoxStrategy();
 	private ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty;
 	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategyProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections
