@@ -261,10 +261,18 @@ public class FXGeometricCurvePart
 		}
 
 		if (!getContentAnchoragesUnmodifiable().containsValue(START_ROLE)) {
-			visual.setStartPoint(wayPoints.remove(0));
+			if (!wayPoints.isEmpty()) {
+				visual.setStartPoint(wayPoints.remove(0));
+			} else {
+				visual.setStartPoint(new Point());
+			}
 		}
 		if (!getContentAnchoragesUnmodifiable().containsValue(END_ROLE)) {
-			visual.setEndPoint(wayPoints.remove(wayPoints.size() - 1));
+			if (!wayPoints.isEmpty()) {
+				visual.setEndPoint(wayPoints.remove(wayPoints.size() - 1));
+			} else {
+				visual.setEndPoint(new Point());
+			}
 		}
 		if (!visual.getControlPoints().equals(wayPoints)) {
 			visual.setControlPoints(wayPoints);

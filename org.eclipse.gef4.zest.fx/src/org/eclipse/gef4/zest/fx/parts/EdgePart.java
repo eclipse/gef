@@ -104,34 +104,35 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		List<Point> waypoints = new ArrayList<>();
 		for (int i = 0; i < bendPoints.size(); i++) {
 			BendPoint bp = bendPoints.get(i);
-			if (bp.isAttached()) {
-				if (i == 0) {
-					// update source
-					org.eclipse.gef4.graph.Node newSource = (org.eclipse.gef4.graph.Node) bp.getContentAnchorage();
-					org.eclipse.gef4.graph.Node oldSource = getContent().getSource();
-					if (oldSource != newSource) {
-						if (oldSource != null) {
-							detachFromContentAnchorage(oldSource, SOURCE_ROLE);
-						}
-						if (newSource != null) {
-							attachToContentAnchorage(newSource, SOURCE_ROLE);
-						}
+			if (i == 0) {
+				// update source
+				org.eclipse.gef4.graph.Node newSource = bp.isAttached()
+						? (org.eclipse.gef4.graph.Node) bp.getContentAnchorage() : null;
+				org.eclipse.gef4.graph.Node oldSource = getContent().getSource();
+				if (oldSource != newSource) {
+					if (oldSource != null) {
+						detachFromContentAnchorage(oldSource, SOURCE_ROLE);
+					}
+					if (newSource != null) {
+						attachToContentAnchorage(newSource, SOURCE_ROLE);
 					}
 				}
-				if (i == bendPoints.size() - 1) {
-					// update target
-					org.eclipse.gef4.graph.Node newTarget = (org.eclipse.gef4.graph.Node) bp.getContentAnchorage();
-					org.eclipse.gef4.graph.Node oldTarget = getContent().getTarget();
-					if (oldTarget != newTarget) {
-						if (oldTarget != null) {
-							detachFromContentAnchorage(oldTarget, TARGET_ROLE);
-						}
-						if (newTarget != null) {
-							attachToContentAnchorage(newTarget, TARGET_ROLE);
-						}
+			}
+			if (i == bendPoints.size() - 1) {
+				// update target
+				org.eclipse.gef4.graph.Node newTarget = bp.isAttached()
+						? (org.eclipse.gef4.graph.Node) bp.getContentAnchorage() : null;
+				org.eclipse.gef4.graph.Node oldTarget = getContent().getTarget();
+				if (oldTarget != newTarget) {
+					if (oldTarget != null) {
+						detachFromContentAnchorage(oldTarget, TARGET_ROLE);
+					}
+					if (newTarget != null) {
+						attachToContentAnchorage(newTarget, TARGET_ROLE);
 					}
 				}
-			} else {
+			}
+			if (!bp.isAttached()) {
 				waypoints.add(bp.getPosition());
 			}
 		}
@@ -261,8 +262,22 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 
 		// control points
-		List<Point> controlPoints = ZestProperties.getControlPoints(edge);
-		if (controlPoints != null && !controlPoints.isEmpty()) {
+		List<Point> controlPoints = new ArrayList<>(ZestProperties.getControlPoints(edge));
+		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
+			if (!controlPoints.isEmpty()) {
+				visual.setStartPoint(controlPoints.remove(0));
+			} else {
+				visual.setStartPoint(new Point());
+			}
+		}
+		if (!getContentAnchoragesUnmodifiable().containsValue(TARGET_ROLE)) {
+			if (!controlPoints.isEmpty()) {
+				visual.setEndPoint(controlPoints.remove(controlPoints.size() - 1));
+			} else {
+				visual.setEndPoint(new Point());
+			}
+		}
+		if (!visual.getControlPoints().equals(controlPoints)) {
 			visual.setControlPoints(controlPoints);
 		}
 	}

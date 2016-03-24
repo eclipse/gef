@@ -415,7 +415,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
-
 		normalize();
 
 		ITransactionalOperation commit = super.commit();
