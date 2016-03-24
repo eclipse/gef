@@ -28,6 +28,7 @@ import org.eclipse.gef4.mvc.parts.ITransformableContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
@@ -51,6 +52,7 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	 * {@link EdgeLabelPart} of this {@link EdgePart}.
 	 */
 	public static final String CSS_CLASS_LABEL = "label";
+
 	private VisualChangeListener vcl = new VisualChangeListener() {
 		@Override
 		protected void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds) {
@@ -62,6 +64,14 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 			refreshVisual();
 		}
 	};
+
+	private MapChangeListener<String, Object> elementAttributesObserver = new MapChangeListener<String, Object>() {
+		@Override
+		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
+			refreshVisual();
+		}
+	};
+
 	private Text text;
 
 	@Override
@@ -95,6 +105,18 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
 		vcl.unregister();
+	}
+
+	@Override
+	protected void doActivate() {
+		super.doActivate();
+		getContent().getKey().attributesProperty().addListener(elementAttributesObserver);
+	}
+
+	@Override
+	protected void doDeactivate() {
+		getContent().getKey().attributesProperty().removeListener(elementAttributesObserver);
+		super.doDeactivate();
 	}
 
 	@Override
