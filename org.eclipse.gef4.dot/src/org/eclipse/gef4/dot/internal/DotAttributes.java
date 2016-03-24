@@ -915,7 +915,7 @@ public class DotAttributes {
 	 *            The new value for the {@link #HEAD_LP__E} property.
 	 */
 	public static void setHeadLp(Edge edge, String headLp) {
-		edge.attributesProperty().put(LP__E, headLp);
+		edge.attributesProperty().put(HEAD_LP__E, headLp);
 	}
 
 	/**
