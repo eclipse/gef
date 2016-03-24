@@ -571,15 +571,24 @@ public class BezierCurveTests {
 		assertEquals(c0.getP1().getDistance(new Point(20, -20)),
 				projection.getDistance(reference), 0.001);
 
-		// circular approximation
+		// circular approximation (greater delta needed)
 		Ellipse ellipse = new Ellipse(-10, -10, 20, 20);
 		CubicCurve[] outlineSegments = ellipse.getOutlineSegments();
 		reference = new Point(0, 0);
 		for (CubicCurve c : outlineSegments) {
 			projection = c.getProjection(reference);
 			assertEquals(reference.getDistance(new Point(-10, 0)),
-					projection.getDistance(reference), 0.001);
+					projection.getDistance(reference), 0.05);
 		}
+
+		// check that projection is really the closest
+		BezierCurve strangeCurve = new BezierCurve(0, 0, 10, 100, 20, 0, -20,
+				-300, 40, 0);
+		reference = new Point(0, -100);
+		projection = strangeCurve.getProjection(reference);
+		Point test = strangeCurve.get(0.75);
+		assertTrue(reference.getDistance(projection) <= reference
+				.getDistance(test));
 	}
 
 	@Test

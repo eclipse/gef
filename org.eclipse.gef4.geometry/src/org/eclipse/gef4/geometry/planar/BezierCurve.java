@@ -1185,6 +1185,14 @@ public class BezierCurve extends AbstractGeometry
 		return interval;
 	}
 
+	private Point[] constructLUT(double start, double end, int size) {
+		Point[] lut = new Point[size];
+		for (int i = 0; i < size; i++) {
+			lut[i] = get(start + i * (end - start) / (size - 1));
+		}
+		return lut;
+	}
+
 	/**
 	 * <p>
 	 * Tests if this {@link BezierCurve} contains the given other
@@ -1971,23 +1979,66 @@ public class BezierCurve extends AbstractGeometry
 
 	@Override
 	public Point getProjection(final Point reference) {
-		// // determine start point and start distance
-		// Point start = getP1();
-		// double startDistance = start.getDistance(reference);
-		//
-		// // determine end point and end distance
-		// Point end = getP2();
-		// double endDistance = end.getDistance(reference);
+		// construct look up table (LUT)
+		int size = 100;
+		Point[] lut = constructLUT(0, 1, size);
 
-		// determine extreme point and its distance
-		IPointCmp cmp = new IPointCmp() {
-			@Override
-			public boolean pIsBetterThanQ(Point p, Point q) {
-				return p.getDistance(reference) < q.getDistance(reference);
+		// find nearest LUT entry
+		int nearestLut = 0;
+		double distance = reference.getDistance(lut[0]);
+		for (int i = 1; i < lut.length; i++) {
+			double dist = reference.getDistance(lut[i]);
+			if (dist < distance) {
+				distance = dist;
+				nearestLut = i;
 			}
-		};
-		Point extremeProjection = findExtreme(cmp);
-		return extremeProjection;
+		}
+		Point nearest = lut[nearestLut];
+
+		// compute interval based on LUT
+		Interval interval = new Interval(
+				nearestLut / (double) (size - 1) - 1 / (double) (size - 1),
+				nearestLut / (double) (size - 1) + 1 / (double) (size - 1));
+		// ensure interval is valid
+		interval.a = Math.min(1, Math.max(0, interval.a));
+		interval.b = Math.min(1, Math.max(0, interval.b));
+
+		// refine interval
+		while (!interval.converges()) {
+			// compute start point and end point for the current interval
+			Point sp = get(interval.a);
+			Point ep = get(interval.b);
+
+			// compute distance to reference point
+			double sDist = reference.getDistance(sp);
+			double eDist = reference.getDistance(ep);
+
+			if (sDist >= distance && eDist >= distance) {
+				// start point and end point have greater distance
+				// => reduce interval on both sides
+				double range = interval.b - interval.a;
+				interval.b = interval.a + 0.75 * range;
+				interval.a = interval.a + 0.25 * range;
+			} else if (sDist < distance && sDist < eDist) {
+				// start has smaller distance
+				distance = sDist;
+				nearest = sp;
+				// reduce interval to its left side
+				interval.b = (interval.a + interval.b) / 2;
+			} else if (eDist < distance) {
+				// end has smaller distance
+				distance = eDist;
+				nearest = ep;
+				// reduce interval to its right side
+				interval.a = (interval.a + interval.b) / 2;
+			} else {
+				// impossible
+				throw new IllegalStateException(
+						"condition should not be reachable");
+			}
+		}
+
+		return nearest;
 	}
 
 	@Override
