@@ -311,22 +311,25 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		String dotPos = DotAttributes.getPos(dot);
 		String dotHeight = DotAttributes.getHeight(dot);
 		String dotWidth = DotAttributes.getWidth(dot);
-		if (dotPos != null && dotWidth != null && dotHeight != null) {
+		if (dotWidth != null && dotHeight != null) {
 			// dot default scaling is 72 DPI
 			// TODO: if dpi option is set, we should probably use it!
 			double zestHeight = Double.parseDouble(dotHeight) * 72; // inches
 			double zestWidth = Double.parseDouble(dotWidth) * 72; // inches
 			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
 
-			// node position is interpreted as center of node in Dot, and
-			// top-left in Zest
-			org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
-					.getPosParsed(dot);
-			ZestProperties.setPosition(zest,
-					computeZestPosition(dotPosParsed, zestWidth, zestHeight));
-			// if a position is marked as input-only in Dot, have Zest ignore it
-			ZestProperties.setLayoutIrrelevant(zest,
-					dotPosParsed.isInputOnly());
+			if (dotPos != null) {
+				// node position is interpreted as center of node in Dot, and
+				// top-left in Zest
+				org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
+						.getPosParsed(dot);
+				ZestProperties.setPosition(zest, computeZestPosition(
+						dotPosParsed, zestWidth, zestHeight));
+				// if a position is marked as input-only in Dot, have Zest
+				// ignore it
+				ZestProperties.setLayoutIrrelevant(zest,
+						dotPosParsed.isInputOnly());
+			}
 		}
 
 		// external label position (xlp)
@@ -351,12 +354,10 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	private Point computeZestLabelPosition(
 			org.eclipse.gef4.dot.internal.parser.point.Point dotLabelPosition,
 			String labelText) {
-		// FIXME: Is it legal to use JavaFX for metrics calculation here (while
-		// we are part of DOT.UI)?
 		// TODO: respect font settings (font name and size)
-		Bounds layoutBounds = new Text(labelText).getLayoutBounds();
-		return computeZestPosition(dotLabelPosition, layoutBounds.getWidth(),
-				layoutBounds.getHeight());
+		Bounds labelSize = new Text(labelText).getLayoutBounds();
+		return computeZestPosition(dotLabelPosition, labelSize.getWidth(),
+				labelSize.getHeight());
 	}
 
 	@Override

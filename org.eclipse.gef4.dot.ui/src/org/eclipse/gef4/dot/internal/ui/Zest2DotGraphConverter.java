@@ -21,6 +21,9 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
+import javafx.geometry.Bounds;
+import javafx.scene.text.Text;
+
 public class Zest2DotGraphConverter extends AbstractGraphConverter {
 
 	@Override
@@ -44,16 +47,7 @@ public class Zest2DotGraphConverter extends AbstractGraphConverter {
 		// label
 		String zestLabel = ZestProperties.getLabel(zest);
 		if (zestLabel != null) {
-			// If id is set label equals id or id is not set and label equals
-			// the name, set '\N' default label. Set provided label in all other
-			// cases.
-			if (zestCssId != null && zestLabel.equals(zestCssId)
-					|| zestCssId == null
-							&& zestLabel.equals(DotAttributes.getName(dot))) {
-				DotAttributes.setLabel(dot, "\\N"); //$NON-NLS-1$
-			} else {
-				DotAttributes.setLabel(dot, zestLabel);
-			}
+			DotAttributes.setLabel(dot, zestLabel);
 		}
 
 		// external label (xlabel)
@@ -67,7 +61,7 @@ public class Zest2DotGraphConverter extends AbstractGraphConverter {
 
 		Point zestPosition = ZestProperties.getPosition(zest);
 		Dimension zestSize = ZestProperties.getSize(zest);
-		if (zestPosition != null && zestSize != null) {
+		if (zestSize != null) {
 			// dot default scaling is 72 DPI
 			// TODO: if dpi option is set, we should probably use it!
 			double dotWidth = zestSize.width / 72; // inches
@@ -75,28 +69,32 @@ public class Zest2DotGraphConverter extends AbstractGraphConverter {
 			DotAttributes.setWidth(dot, Double.toString(dotWidth));
 			DotAttributes.setHeight(dot, Double.toString(dotHeight));
 
-			// node position is interpreted as center of node in Dot, and
-			// top-left in Zest
-			org.eclipse.gef4.dot.internal.parser.point.Point dotPos = PointFactory.eINSTANCE
-					.createPoint();
-			dotPos.setX(zestPosition.x - zestSize.width / 2);
-			dotPos.setY(zestPosition.y - zestSize.height / 2);
-			dotPos.setInputOnly(Boolean.TRUE
-					.equals(ZestProperties.getLayoutIrrelevant(zest, false)));
-			DotAttributes.setPosParsed(dot, dotPos);
+			if (zestPosition != null) {
+				// node position is interpreted as center of node in Dot, and
+				// top-left in Zest
+				org.eclipse.gef4.dot.internal.parser.point.Point dotPos = PointFactory.eINSTANCE
+						.createPoint();
+				dotPos.setX(zestPosition.x - zestSize.width / 2);
+				dotPos.setY((options().invertYAxis ? -1 : 1)
+						* (zestPosition.y - zestSize.height / 2));
+				dotPos.setInputOnly(Boolean.TRUE.equals(
+						ZestProperties.getLayoutIrrelevant(zest, false)));
+				DotAttributes.setPosParsed(dot, dotPos);
+			}
 		}
 
 		// external label position (xlp)
 		Point zestExternalLabelPosition = ZestProperties
 				.getExternalLabelPosition(zest);
 		if (zestExternalLabel != null && zestExternalLabelPosition != null) {
-			// TODO:
-			// org.eclipse.gef4.dot.internal.parser.point.Point dotXlp =
-
-			// DotAttributes
-			// .getXlpParsed(dot);
-			// ZestProperties.setExternalLabelPosition(zest,
-			// computeZestLabelPosition(dotXlpParsed, dotXLabel));
+			org.eclipse.gef4.dot.internal.parser.point.Point dotXlp = PointFactory.eINSTANCE
+					.createPoint();
+			Bounds labelSize = new Text(zestExternalLabel).getLayoutBounds();
+			dotXlp.setX(zestExternalLabelPosition.x - labelSize.getWidth() / 2);
+			dotXlp.setY((options().invertYAxis ? -1 : 1)
+					* (zestExternalLabelPosition.y
+							- labelSize.getHeight() / 2));
+			DotAttributes.setXlpParsed(dot, dotXlp);
 		}
 	}
 

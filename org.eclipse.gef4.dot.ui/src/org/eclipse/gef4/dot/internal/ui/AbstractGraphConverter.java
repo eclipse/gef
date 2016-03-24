@@ -11,7 +11,7 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 
 public abstract class AbstractGraphConverter {
 
-	public static final class Options {
+	public final static class Options {
 
 		/**
 		 * Indicates whether layout should be emulated or not. If set to
