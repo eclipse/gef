@@ -126,6 +126,11 @@ public class DotAttributes {
 	public static final String ARROWHEAD__E = "arrowhead";
 
 	/**
+	 * Specifies the 'forceLabels' attribute of a graph.
+	 */
+	public static final String FORCELABELS__G = "forcelabels";
+
+	/**
 	 * Specifies the 'head_lp' attribute (head label position) of an edge.
 	 */
 	public static final String HEAD_LP__E = "head_lp";
@@ -1111,8 +1116,7 @@ public class DotAttributes {
 	 *            The new value of the {@link #POS__NE} property.
 	 */
 	public static void setPosParsed(Node node, Point parsedPos) {
-		node.getAttributes().put(POS__NE,
-				dotPointSerializer.serialize(parsedPos));
+		setPos(node, dotPointSerializer.serialize(parsedPos));
 	}
 
 	/**
@@ -1315,5 +1319,57 @@ public class DotAttributes {
 		IParseResult parseResult = parsePropertyValue(dotArrowTypeParser,
 				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowType);
 		return !parseResult.hasSyntaxErrors();
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} property of the given {@link Node} to the
+	 * string value of the given <i>xlpParsed</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #XLP__NE} property.
+	 * @param xlpParsed
+	 *            The new value for the {@link #XLP__NE} property.
+	 */
+	public static void setXlpParsed(Node node, Point xlpParsed) {
+		setXlp(node, dotPointSerializer.serialize(xlpParsed));
+	}
+
+	// TODO: add a forcedLabelsParsed that takes a Dot boolean -> from specific
+	// grammar
+
+	/**
+	 * Returns the value of the {@link #FORCELABELS__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FORCELABELS__G} property.
+	 * @param defaultIfUnset
+	 *            whether to return the default value {@link Boolean#TRUE} in
+	 *            case {@link #FORCELABELS__G} is unset.
+	 * @return The value of the {@link #FORCELABELS__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static Boolean isForceLabels(Graph graph, boolean defaultIfUnset) {
+		Boolean value = (Boolean) graph.getAttributes().get(FORCELABELS__G);
+		if (value == null && defaultIfUnset) {
+			return Boolean.TRUE;
+		}
+		return value;
+	}
+
+	/**
+	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
+	 * the given value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FORCELABELS__G} property.
+	 * @param forceLabels
+	 *            The new value for the {@link #FORCELABELS__G} property.
+	 */
+	public static void setForceLabels(Graph graph, Boolean forceLabels) {
+		graph.getAttributes().put(FORCELABELS__G, forceLabels);
 	}
 }
