@@ -243,20 +243,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		IHandlePart<VR, ? extends VR> replacementHandle = null;
 
 		if (handles != null && !handles.isEmpty()) {
-			// determine old handles for target
-			List<IHandlePart<VR, ? extends VR>> oldHandles = new ArrayList<>(
-					getHandleParts());
-			Iterator<IHandlePart<VR, ? extends VR>> it = oldHandles.iterator();
-			while (it.hasNext()) {
-				IHandlePart<VR, ? extends VR> oldHandle = it.next();
-				ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = oldHandle
-						.getAnchoragesUnmodifiable();
-				if (!anchorages.keySet().contains(target)) {
-					it.remove();
-				}
-			}
-
-			// set the handles as anchoreds so that they can be compared
+			// set new handles as anchoreds so that they can be compared
 			List<IHandlePart<VR, ? extends VR>> newHandles = new ArrayList<>(
 					handles);
 			BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(),
@@ -267,7 +254,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 				// the
 				// new handles
 				double minDistance = -1;
-				it = newHandles.iterator();
+				Iterator<IHandlePart<VR, ? extends VR>> it = newHandles
+						.iterator();
 				while (it.hasNext()) {
 					IHandlePart<VR, ? extends VR> newHandle = it.next();
 					double distance = interactedWithComparator
@@ -283,43 +271,62 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 				}
 			}
 
-			if (interactedWith != null) {
-				// remove interacted with handle from old handles so that it is
-				// preserved
-				oldHandles.remove(interactedWith);
-			}
-
-			// find handles that no longer exist
-			List<IHandlePart<VR, ? extends VR>> toRemove = new ArrayList<>();
-			it = oldHandles.iterator();
-			while (it.hasNext()) {
-				IHandlePart<VR, ? extends VR> oldHandle = it.next();
-				boolean noLongerExists = true;
-				for (IHandlePart<VR, ? extends VR> newHandle : newHandles) {
-					if (newHandle instanceof Comparable) {
-						@SuppressWarnings("unchecked")
-						Comparable<IHandlePart<VR, ? extends VR>> comparable = (Comparable<IHandlePart<VR, ? extends VR>>) oldHandle;
-						int compareTo = comparable.compareTo(newHandle);
-						if (compareTo == 0) {
-							noLongerExists = false;
-							break;
-						}
+			// determine old handles for target
+			List<IHandlePart<VR, ? extends VR>> oldHandles;
+			if (handleParts != null) {
+				oldHandles = new ArrayList<>(getHandleParts());
+				Iterator<IHandlePart<VR, ? extends VR>> it = oldHandles
+						.iterator();
+				while (it.hasNext()) {
+					IHandlePart<VR, ? extends VR> oldHandle = it.next();
+					ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = oldHandle
+							.getAnchoragesUnmodifiable();
+					if (!anchorages.keySet().contains(target)) {
+						it.remove();
 					}
 				}
-				if (noLongerExists) {
-					toRemove.add(oldHandle);
-					it.remove();
-				}
-			}
 
-			// remove handles that no longer exist
-			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
-					Collections.singletonList(target), toRemove);
-			handleParts.removeAll(toRemove);
+				if (interactedWith != null) {
+					// remove interacted with handle from old handles so that it
+					// is
+					// preserved
+					oldHandles.remove(interactedWith);
+				}
+
+				// find handles that no longer exist
+				List<IHandlePart<VR, ? extends VR>> toRemove = new ArrayList<>();
+				it = oldHandles.iterator();
+				while (it.hasNext()) {
+					IHandlePart<VR, ? extends VR> oldHandle = it.next();
+					boolean noLongerExists = true;
+					for (IHandlePart<VR, ? extends VR> newHandle : newHandles) {
+						if (newHandle instanceof Comparable) {
+							@SuppressWarnings("unchecked")
+							Comparable<IHandlePart<VR, ? extends VR>> comparable = (Comparable<IHandlePart<VR, ? extends VR>>) oldHandle;
+							int compareTo = comparable.compareTo(newHandle);
+							if (compareTo == 0) {
+								noLongerExists = false;
+								break;
+							}
+						}
+					}
+					if (noLongerExists) {
+						toRemove.add(oldHandle);
+						it.remove();
+					}
+				}
+
+				// remove handles that no longer exist
+				BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
+						Collections.singletonList(target), toRemove);
+				handleParts.removeAll(toRemove);
+			} else {
+				oldHandles = new ArrayList<>();
+			}
 
 			// find new handles that did not exist yet
 			List<IHandlePart<VR, ? extends VR>> alreadyExists = new ArrayList<>();
-			it = newHandles.iterator();
+			Iterator<IHandlePart<VR, ? extends VR>> it = newHandles.iterator();
 			while (it.hasNext()) {
 				IHandlePart<VR, ? extends VR> newHandle = it.next();
 				boolean existsAlready = false;
@@ -349,7 +356,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(),
 					Collections.singletonList(target), alreadyExists);
 			// add new handles that did not exist yet
-			handleParts.addAll(newHandles);
+			if (handleParts == null) {
+				handleParts = new ArrayList<>(newHandles);
+			} else {
+				handleParts.addAll(newHandles);
+			}
 		}
 
 		return replacementHandle;
