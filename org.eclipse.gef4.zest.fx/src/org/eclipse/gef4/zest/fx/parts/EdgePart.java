@@ -53,8 +53,14 @@ import javafx.scene.shape.Shape;
 public class EdgePart extends AbstractFXContentPart<Connection>
 		implements ITransformableContentPart<Node, Connection>, IBendableContentPart<Node, Connection> {
 
-	private static final String SOURCE_ROLE = "SOURCE";
-	private static final String TARGET_ROLE = "TARGET";
+	/**
+	 * The role used for attaching to the source node.
+	 */
+	protected static final String SOURCE_ROLE = "SOURCE";
+	/**
+	 * The role used for attaching to the target node.
+	 */
+	protected static final String TARGET_ROLE = "TARGET";
 
 	/**
 	 * The CSS class that is assigned to the visual of this {@link EdgePart}.
