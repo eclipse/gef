@@ -15,8 +15,18 @@
 
 package org.eclipse.gef4.dot.internal.parser.validation;
 
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
@@ -31,7 +41,13 @@ import org.eclipse.gef4.dot.internal.parser.dot.EdgeStmtSubgraph;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotArrowTypeParser;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
+
+import com.google.inject.Injector;
 
 /**
  * Provides DOT-specific validation rules.
@@ -40,6 +56,15 @@ import org.eclipse.xtext.validation.Check;
  *
  */
 public class DotJavaValidator extends AbstractDotJavaValidator {
+
+	private static final Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	private static final DotArrowTypeJavaValidator arrowTypeValidator = arrowTypeInjector
+			.getInstance(DotArrowTypeJavaValidator.class);
+
+	private static final DotArrowTypeParser arrowTypeParser = arrowTypeInjector
+			.getInstance(DotArrowTypeParser.class);
 
 	/**
 	 * Error code for invalid edge 'style' attribute value. Used to bind quick
@@ -61,7 +86,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 *            The {@link Attribute} to validate.
 	 */
 	@Check
-	public void checkValidAttributeValue(Attribute attribute) {
+	public void checkValidAttributeValue(final Attribute attribute) {
 		if (isEdgeAttribute(attribute)
 				&& DotAttributes.STYLE__E.equals(attribute.getName())) {
 			// 'style' can also be used for nodes or clusters, so we have to
@@ -79,16 +104,121 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		if (isEdgeAttribute(attribute)
 				&& DotAttributes.ARROWHEAD__E.equals(attribute.getName())) {
-			String unquotedValue = DotTerminalConverters
-					.unquote(attribute.getValue());
-			if (!DotAttributes.isValidArrowType(unquotedValue)) {
-				// provide (issue) code and data for quickfix
-				error("Arrow Type '" + unquotedValue
-						+ "' is not a valid DOT arrowhead for Edge.",
-						DotPackage.eINSTANCE.getAttribute_Value(),
-						ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, unquotedValue);
+			validateArrowTypeValue(attribute);
+		}
+	}
+
+	private void validateArrowTypeValue(final Attribute attribute) {
+		// ensure we always use the unquoted value
+		final String unquotedValue = DotTerminalConverters
+				.unquote(attribute.getValue());
+		IParseResult parseResult = arrowTypeParser
+				.parse(new StringReader(unquotedValue));
+		if (parseResult.hasSyntaxErrors()) {
+			// syntactical problems
+			error("The value '" + unquotedValue
+					+ "' is syntactically not correct: "
+					+ getFormattedSyntaxErrorMessages(parseResult),
+					DotPackage.eINSTANCE.getAttribute_Value(),
+					ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, unquotedValue);
+		} else {
+			// check for semantic problems by using DotArrowTypeJavaValidator
+			Map<Object, Object> context = new HashMap<>(getContext());
+			context.put(CURRENT_LANGUAGE_NAME, ReflectionUtils
+					.getPrivateFieldValue(arrowTypeValidator, "languageName"));
+			// we need a specific message acceptor
+			arrowTypeValidator
+					.setMessageAcceptor(new ValidationMessageAcceptor() {
+
+						final String prefix = "The value '" + unquotedValue
+								+ "' is not a semantically correct arrow type: ";
+
+						@Override
+						public void acceptWarning(String message,
+								EObject object, int offset, int length,
+								String code, String... issueData) {
+							getMessageAcceptor().acceptWarning(prefix + message,
+									attribute, offset, length,
+									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
+									unquotedValue);
+						}
+
+						@Override
+						public void acceptWarning(String message,
+								EObject object, EStructuralFeature feature,
+								int index, String code, String... issueData) {
+							getMessageAcceptor().acceptWarning(prefix + message,
+									attribute,
+									DotPackage.Literals.ATTRIBUTE__VALUE, -1,
+									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
+									unquotedValue);
+						}
+
+						@Override
+						public void acceptInfo(String message, EObject object,
+								int offset, int length, String code,
+								String... issueData) {
+							getMessageAcceptor().acceptInfo(message, attribute,
+									offset, length,
+									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
+									unquotedValue);
+						}
+
+						@Override
+						public void acceptInfo(String message, EObject object,
+								EStructuralFeature feature, int index,
+								String code, String... issueData) {
+							getMessageAcceptor().acceptInfo(message, attribute,
+									DotPackage.Literals.ATTRIBUTE__VALUE, -1,
+									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
+									unquotedValue);
+						}
+
+						@Override
+						public void acceptError(String message, EObject object,
+								int offset, int length, String code,
+								String... issueData) {
+							getMessageAcceptor().acceptError(prefix + message,
+									attribute, offset, length,
+									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
+									unquotedValue);
+						}
+
+						@Override
+						public void acceptError(String message, EObject object,
+								EStructuralFeature feature, int index,
+								String code, String... issueData) {
+							getMessageAcceptor().acceptError(prefix + message,
+									attribute,
+									DotPackage.Literals.ATTRIBUTE__VALUE, -1,
+									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
+									unquotedValue);
+						}
+					});
+			for (Iterator<EObject> iterator = EcoreUtil.getAllProperContents(
+					parseResult.getRootASTElement(), true); iterator
+							.hasNext();) {
+				arrowTypeValidator.validate(
+						ArrowtypePackage.eINSTANCE.getArrowType(),
+						iterator.next(), getChain(), context);
 			}
 		}
+	}
+
+	public static String getFormattedSyntaxErrorMessages(
+			IParseResult parseResult) {
+		StringBuilder sb = new StringBuilder();
+		for (INode n : parseResult.getSyntaxErrors()) {
+			String message = n.getSyntaxErrorMessage().getMessage();
+			if (!message.isEmpty()) {
+				if (sb.length() != 0) {
+					sb.append(" ");
+				}
+				sb.append(message.substring(0, 1).toUpperCase()
+						+ message.substring(1) + ".");
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -101,6 +231,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * @return <code>true</code> if the {@link Attribute} is used in the context
 	 *         of an node, <code>false</code> otherwise.
 	 */
+	// TODO: move to DotAttributes
 	public static boolean isNodeAttribute(Attribute attribute) {
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
 		if (getAncestorOfType(attribute, NodeStmt.class) != null) {
@@ -121,6 +252,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * @return <code>true</code> if the {@link Attribute} is used in the context
 	 *         of subgraph, <code>false</code> otherwise.
 	 */
+	// TODO: move to DotAttributes
 	public static boolean isSubgraphAttribute(Attribute attribute) {
 		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)) {
 			return false;
@@ -138,7 +270,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * @return <code>true</code> if the {@link Attribute} is used in the context
 	 *         of a top-level graph, <code>false</code> otherwise.
 	 */
-	public static boolean isRootGraphAttribute(Attribute attribute) {
+	// TODO: move to DotAttributes
+	public static boolean isGraphAttribute(Attribute attribute) {
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
 		if (isEdgeAttribute(attribute) || isNodeAttribute(attribute)
 				|| isSubgraphAttribute(attribute)) {
@@ -158,6 +291,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * @return <code>true</code> if the {@link Attribute} is used in the context
 	 *         of an edge, <code>false</code> otherwise.
 	 */
+	// TODO: move to DotAttributes
 	public static boolean isEdgeAttribute(Attribute attribute) {
 		// attribute nested below EdgeStmtNode or EdgeStmtSubgraph
 		if (getAncestorOfType(attribute, EdgeStmtNode.class) != null

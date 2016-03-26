@@ -176,6 +176,9 @@ Workflow {
 			// has to be explicitly set for headless execution (Tycho)
 				javaModelDirectory = "/${projectName}/src-gen"
 			}
+			
+			// Xtend-based validator
+			fragment = validation.JavaValidatorFragment auto-inject {}
 
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {

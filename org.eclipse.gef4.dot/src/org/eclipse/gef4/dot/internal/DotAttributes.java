@@ -17,6 +17,7 @@ package org.eclipse.gef4.dot.internal;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
@@ -32,11 +33,11 @@ import org.eclipse.gef4.dot.internal.parser.services.DotArrowTypeGrammarAccess;
 import org.eclipse.gef4.dot.internal.parser.services.DotPointGrammarAccess;
 import org.eclipse.gef4.dot.internal.parser.services.DotSplineTypeGrammarAccess;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.xtext.ParserRule;
-import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
@@ -124,6 +125,11 @@ public class DotAttributes {
 	 * Specifies the 'arrowhead' attribute of an edge.
 	 */
 	public static final String ARROWHEAD__E = "arrowhead";
+
+	/**
+	 * Specifies the 'arrowhead' attribute of an edge.
+	 */
+	public static final String ARROWTAIL__E = "arrowtail";
 
 	/**
 	 * Specifies the 'forceLabels' attribute of a graph.
@@ -696,11 +702,10 @@ public class DotAttributes {
 		return (String) edge.attributesProperty().get(STYLE__E);
 	}
 
-	private static String getSyntaxErrorMessages(IParseResult parseResult) {
+	private static String getFormattedMessage(
+			List<SyntaxErrorMessage> syntaxErrorMessages) {
 		StringBuilder sb = new StringBuilder();
-		for (INode error : parseResult.getSyntaxErrors()) {
-			SyntaxErrorMessage syntaxErrorMessage = error
-					.getSyntaxErrorMessage();
+		for (SyntaxErrorMessage syntaxErrorMessage : syntaxErrorMessages) {
 			sb.append(syntaxErrorMessage.getMessage());
 		}
 		return sb.toString();
@@ -887,6 +892,14 @@ public class DotAttributes {
 	 *            The new value for the {@link #ARROWHEAD__E} property.
 	 */
 	public static void setArrowHead(Edge edge, String arrowHead) {
+		IParseResult parseResult = parsePropertyValue(dotArrowTypeParser,
+				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowHead);
+		if (parseResult.hasSyntaxErrors()) {
+			throw new IllegalArgumentException("Cannot set node attribute '"
+					+ ARROWHEAD__E + "' to '" + arrowHead + "': "
+					+ DotJavaValidator
+							.getFormattedSyntaxErrorMessages(parseResult));
+		}
 		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
 	}
 
@@ -1099,9 +1112,9 @@ public class DotAttributes {
 		IParseResult parseResult = parsePropertyValue(dotSplineTypeParser,
 				dotSplineTypeGrammarAccess.getSplineTypeRule(), pos);
 		if (parseResult.hasSyntaxErrors()) {
-			throw new IllegalArgumentException(
-					"Cannot set edge attribute '" + POS__NE + "' to '" + pos
-							+ "': " + getSyntaxErrorMessages(parseResult));
+			throw new IllegalArgumentException("Cannot set edge attribute '"
+					+ POS__NE + "' to '" + pos + "': " + DotJavaValidator
+							.getFormattedSyntaxErrorMessages(parseResult));
 		}
 		edge.getAttributes().put(POS__NE, pos);
 	}
@@ -1132,9 +1145,9 @@ public class DotAttributes {
 		IParseResult parseResult = parsePropertyValue(dotPointParser,
 				dotPointGrammarAccess.getPointRule(), pos);
 		if (parseResult.hasSyntaxErrors()) {
-			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + POS__NE + "' to '" + pos
-							+ "': " + getSyntaxErrorMessages(parseResult));
+			throw new IllegalArgumentException("Cannot set node attribute '"
+					+ POS__NE + "' to '" + pos + "': " + DotJavaValidator
+							.getFormattedSyntaxErrorMessages(parseResult));
 		}
 		node.getAttributes().put(POS__NE, pos);
 	}
@@ -1307,18 +1320,6 @@ public class DotAttributes {
 	 */
 	public static void setXlp(Node node, String xlp) {
 		node.attributesProperty().put(XLP__NE, xlp);
-	}
-
-	/**
-	 * @param arrowType
-	 *            the arrow type to check for validity
-	 * 
-	 * @return true if the arrowType is valid, false otherwise
-	 */
-	public static boolean isValidArrowType(String arrowType) {
-		IParseResult parseResult = parsePropertyValue(dotArrowTypeParser,
-				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowType);
-		return !parseResult.hasSyntaxErrors();
 	}
 
 	/**
