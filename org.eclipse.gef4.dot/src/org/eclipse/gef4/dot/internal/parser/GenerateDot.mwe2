@@ -107,15 +107,6 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
-	}
-
-	component = Generator {
-		pathRtProject = runtimeProject
-		pathUiProject = "${runtimeProject}.ui"
-		pathTestProject = "${runtimeProject}.tests"
-		projectNameRt = projectName
-		projectNameUi = "${projectName}.ui"
-		encoding = encoding
 		language = auto-inject {
 			uri = "platform:/resource/${projectName}/src/org/eclipse/gef4/dot/internal/parser/DotPoint.xtext"// Java API to access grammar elements (required by several other fragments)
 			fileExtensions = "dot_point"
@@ -137,7 +128,7 @@ Workflow {
 			}
 
 			// The antlr parser generator fragment
-			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
 			
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -166,7 +157,7 @@ Workflow {
 			}
 
 			// The antlr parser generator fragment
-			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
 			
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
@@ -192,7 +183,7 @@ Workflow {
 			}
 
 			// The antlr parser generator fragment
-			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
+			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {}
 			
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
