@@ -100,7 +100,6 @@ Workflow {
 			// generates a more lightweight Antlr parser and lexer tailored for content assist (for case-insensitive keywords)
 			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject {
 				options = {
-					backtrack = true
 					ignoreCase = true
 				}
 			}
@@ -139,7 +138,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
-
+			
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
@@ -168,7 +167,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
-
+			
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
@@ -194,7 +193,7 @@ Workflow {
 
 			// The antlr parser generator fragment
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment auto-inject {}
-
+			
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment auto-inject {}
 		}
