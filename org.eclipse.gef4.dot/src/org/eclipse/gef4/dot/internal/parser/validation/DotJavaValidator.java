@@ -117,7 +117,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		if (parseResult.hasSyntaxErrors()) {
 			// syntactical problems
 			error("The value '" + unquotedValue
-					+ "' is syntactically not correct: "
+					+ "' is not a syntactically correct arrow type: "
 					+ getFormattedSyntaxErrorMessages(parseResult),
 					DotPackage.eINSTANCE.getAttribute_Value(),
 					ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, unquotedValue);
