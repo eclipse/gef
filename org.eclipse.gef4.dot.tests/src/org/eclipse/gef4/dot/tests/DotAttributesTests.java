@@ -54,7 +54,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'pos' to '47x, 11': no viable alternative at character 'x'",
+					"Cannot set node attribute 'pos' to '47x, 11': No viable alternative at character 'x'.",
 					e.getMessage());
 		}
 	}

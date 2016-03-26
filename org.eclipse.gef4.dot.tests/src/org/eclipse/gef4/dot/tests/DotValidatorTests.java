@@ -44,8 +44,7 @@ public class DotValidatorTests {
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
-				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-				"Arrow Type 'fooBar' is not a valid DOT arrowhead for Edge.");
-
+				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, 35, 6,
+				"The value 'fooBar' is syntactically not correct: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.");
 	}
 }
