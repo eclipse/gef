@@ -18,10 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
-import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShape;
-import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShapes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
-import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -106,7 +103,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			// use "normal" in case graph is directed
 			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
 					.getAttributes().get(DotAttributes._TYPE__G))) {
-				connectionTargetDecoration = new DotArrowShapeDecorations.Normal();
+				connectionTargetDecoration = DotArrowShapeDecorations
+						.getDefault(true);
 			}
 		} else {
 			connectionTargetDecoration = computeZestDecoration(
@@ -161,88 +159,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	}
 
 	private Shape computeZestDecoration(ArrowType arrowType) {
-		Shape shape = null;
-		if (arrowType instanceof DeprecatedArrowShape) {
-			String firstArrowShape = ((DeprecatedArrowShape) arrowType)
-					.getArrowShapes().get(0);
-			switch (firstArrowShape) {
-			case "ediamond": //$NON-NLS-1$
-				// "ediamond" is deprecated, use "odiamond"
-				shape = new DotArrowShapeDecorations.Diamond();
-				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
-				break;
-			case "open": //$NON-NLS-1$
-				// "open" is deprecated, use "vee"
-				shape = new DotArrowShapeDecorations.Vee();
-				shape.setStyle("-fx-fill: black"); //$NON-NLS-1$
-				break;
-			case "halfopen": //$NON-NLS-1$
-				// "halfopen" is deprecated, use "lvee"
-				shape = new DotArrowShapeDecorations.LVee();
-				shape.setStyle("-fx-fill: black"); //$NON-NLS-1$
-				break;
-			case "empty": //$NON-NLS-1$
-				// "empty" is deprecated, use "onormal"
-				shape = new DotArrowShapeDecorations.Normal();
-				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
-				break;
-			case "invempty": //$NON-NLS-1$
-				// "invempty" is deprecated, use "oinv"
-				shape = new DotArrowShapeDecorations.Inv();
-				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
-				break;
-			default:
-				break;
-			}
-		} else {
-			// TODO: handle multi shapes
-			ArrowShape arrowShape = ((ArrowShapes) arrowType).getArrowShapes()
-					.get(0);
-			switch (arrowShape.getShape()) {
-			case BOX:
-				shape = new DotArrowShapeDecorations.Box();
-				break;
-			case CROW:
-				shape = new DotArrowShapeDecorations.Crow();
-				break;
-			case CURVE:
-				shape = new DotArrowShapeDecorations.Curve();
-				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
-				break;
-			case ICURVE:
-				shape = new DotArrowShapeDecorations.ICurve();
-				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
-				break;
-			case DIAMOND:
-				shape = new DotArrowShapeDecorations.Diamond();
-				break;
-			case DOT:
-				shape = new DotArrowShapeDecorations.Dot();
-				break;
-			case INV:
-				shape = new DotArrowShapeDecorations.Inv();
-				break;
-			case NONE:
-				return null;
-			case NORMAL:
-				shape = new DotArrowShapeDecorations.Normal();
-				break;
-			case TEE:
-				shape = new DotArrowShapeDecorations.Tee();
-				break;
-			case VEE:
-				shape = new DotArrowShapeDecorations.Vee();
-				break;
-			default:
-				break;
-			}
-			if (arrowShape.isOpen()) {
-				shape.setStyle("-fx-fill: white"); //$NON-NLS-1$
-			}
-
-		}
-
-		return shape;
+		return DotArrowShapeDecorations.get(arrowType);
 	}
 
 	private List<Point> computeZestConnectionBSplineControlPoints(Edge dot) {
