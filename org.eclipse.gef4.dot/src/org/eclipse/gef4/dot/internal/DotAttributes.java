@@ -127,9 +127,19 @@ public class DotAttributes {
 	public static final String ARROWHEAD__E = "arrowhead";
 
 	/**
-	 * Specifies the 'arrowhead' attribute of an edge.
+	 * Specifies the 'arrowsize' attribute of an edge.
+	 */
+	public static final String ARROWSIZE__E = "arrowsize";
+
+	/**
+	 * Specifies the 'arrowtail' attribute of an edge.
 	 */
 	public static final String ARROWTAIL__E = "arrowtail";
+
+	/**
+	 * Specifies the 'dir' attribute of an edge.
+	 */
+	public static final String DIR__E = "dir";
 
 	/**
 	 * Specifies the 'forceLabels' attribute of a graph.
@@ -392,6 +402,120 @@ public class DotAttributes {
 		ArrowType arrowType = (ArrowType) parsedPropertyValue
 				.getRootASTElement();
 		return arrowType;
+	}
+
+	/**
+	 * Returns the value of the {@link #ARROWSIZE__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWSIZE__E} property.
+	 * @return The value of the {@link #ARROWSIZE__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getArrowSize(Edge edge) {
+		return (String) edge.attributesProperty().get(ARROWSIZE__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #ARROWTAIL__E} property of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWTAIL__E} property, parsed as an {@link ArrowType}
+	 *            .
+	 * 
+	 * @return The value of the {@link #ARROWTAIL__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static Double getArrowSizeParsed(Edge edge) {
+		String arrowSize = getArrowSize(edge);
+		if (arrowSize == null) {
+			return null;
+		}
+		Double arrowSizeParsed;
+		try {
+			arrowSizeParsed = Double.parseDouble(arrowSize);
+		} catch (NumberFormatException exception) {
+			return null;
+		}
+
+		return arrowSizeParsed;
+	}
+
+	/**
+	 * Returns the value of the {@link #ARROWTAIL__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWTAIL__E} property.
+	 * @return The value of the {@link #ARROWTAIL__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getArrowTail(Edge edge) {
+		return (String) edge.attributesProperty().get(ARROWTAIL__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #ARROWTAIL__E} property of the
+	 * given {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #ARROWTAIL__E} property, parsed as an {@link ArrowType}
+	 *            .
+	 * 
+	 * @return The value of the {@link #ARROWTAIL__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static ArrowType getArrowTailParsed(Edge edge) {
+		String arrowTail = getArrowTail(edge);
+		if (arrowTail == null) {
+			return null;
+		}
+		IParseResult parsedPropertyValue = parsePropertyValue(
+				dotArrowTypeParser,
+				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowTail);
+
+		ArrowType arrowType = (ArrowType) parsedPropertyValue
+				.getRootASTElement();
+		return arrowType;
+	}
+
+	/**
+	 * Returns the value of the {@link #DIR__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #DIR__E} property.
+	 * @return The value of the {@link #DIR__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static String getEdgeDirection(Edge edge) {
+		return (String) edge.attributesProperty().get(DIR__E);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #DIR__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #DIR__E} property.
+	 * @return The value of the {@link #DIR__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static EdgeDirection getEdgeDirectionParsed(Edge edge) {
+		String direction = getEdgeDirection(edge);
+		if (direction != null) {
+			return EdgeDirection.get(direction);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -895,12 +1019,78 @@ public class DotAttributes {
 		IParseResult parseResult = parsePropertyValue(dotArrowTypeParser,
 				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowHead);
 		if (parseResult.hasSyntaxErrors()) {
-			throw new IllegalArgumentException("Cannot set node attribute '"
+			throw new IllegalArgumentException("Cannot set edge attribute '"
 					+ ARROWHEAD__E + "' to '" + arrowHead + "': "
 					+ DotJavaValidator
 							.getFormattedSyntaxErrorMessages(parseResult));
 		}
 		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
+	}
+
+	/**
+	 * Sets the {@link #ARROWSIZE__E} property of the given {@link Edge} to the
+	 * given <i>arrowSize</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWTAIL__E} property.
+	 * @param arrowSize
+	 *            The new value for the {@link #ARROWTAIL__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowSize</i> value is not supported.
+	 */
+	public static void setArrowSize(Edge edge, String arrowSize) {
+		if (!DotJavaValidator.isValidEdgeArrowSize(arrowSize)) {
+			throw new IllegalArgumentException(
+					"Cannot set edge attribute \"arrowsize\" to \"" + arrowSize
+							+ "\"; value is not supported.");
+		}
+		edge.attributesProperty().put(ARROWSIZE__E, arrowSize);
+	}
+
+	/**
+	 * Sets the {@link #ARROWTAIL__E} property of the given {@link Edge} to the
+	 * given <i>arrowTail</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWTAIL__E} property.
+	 * @param arrowTail
+	 *            The new value for the {@link #ARROWTAIL__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowTail</i> value is not supported.
+	 */
+	public static void setArrowTail(Edge edge, String arrowTail) {
+		IParseResult parseResult = parsePropertyValue(dotArrowTypeParser,
+				dotArrowTypeGrammarAccess.getArrowTypeRule(), arrowTail);
+		if (parseResult.hasSyntaxErrors()) {
+			throw new IllegalArgumentException("Cannot set edge attribute '"
+					+ ARROWTAIL__E + "' to '" + arrowTail + "': "
+					+ DotJavaValidator
+							.getFormattedSyntaxErrorMessages(parseResult));
+		}
+		edge.attributesProperty().put(ARROWTAIL__E, arrowTail);
+	}
+
+	/**
+	 * Sets the {@link #DIR__E} property of the given {@link Edge} to the given
+	 * <i>direction</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #DIR__E} property.
+	 * @param direction
+	 *            The new value for the {@link #DIR__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>direction</i> value is not supported.
+	 */
+	public static void setEdgeDirection(Edge edge, String direction) {
+		if (!DotJavaValidator.isValidEdgeDirection(direction)) {
+			throw new IllegalArgumentException(
+					"Cannot set edge attribute \"dir\" to \"" + direction
+							+ "\"; value is not supported.");
+		}
+		edge.attributesProperty().put(DIR__E, direction);
 	}
 
 	/**
@@ -1372,5 +1562,61 @@ public class DotAttributes {
 	 */
 	public static void setForceLabels(Graph graph, Boolean forceLabels) {
 		graph.getAttributes().put(FORCELABELS__G, forceLabels);
+	}
+
+	/**
+	 * Defines all possible values for the {@link #DIR__E} property.
+	 */
+	public enum EdgeDirection {
+		/**
+		 * Indicates that the edge is directed into the forward direction.
+		 */
+		FORWARD("forward"),
+
+		/**
+		 * Indicates that the edge is directed into the backward direction.
+		 */
+		BACKWARD("back"),
+
+		/**
+		 * Indicates that the edge is directed in both direction.
+		 */
+		BOTH("both"),
+
+		/**
+		 * Indicates that the edge has no direction.
+		 */
+		NONE("none");
+
+		private final String literal;
+
+		// the constructor of an enum class can only be specified as private
+		private EdgeDirection(String literal) {
+			this.literal = literal;
+		}
+
+		/**
+		 * Returns the '<em><b>Edge Direction</b></em>' literal with the
+		 * specified literal value.
+		 * 
+		 * @param literal
+		 *            the literal to convert
+		 * @return the matching enumerator or <code>null</code>.
+		 */
+		public static EdgeDirection get(String literal) {
+			for (EdgeDirection result : EdgeDirection.values()) {
+				if (result.toString().equals(literal)) {
+					return result;
+				}
+			}
+
+			return null;
+		}
+
+		@Override
+		public String toString() {
+			return literal;
+		}
+
 	}
 }

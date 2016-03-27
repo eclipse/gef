@@ -60,6 +60,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private boolean createEdge;
 	private String currentArrowHead;
+	private String currentArrowTail;
+	private String currentArrowSize;
+	private String currentEdgeDirection;
 	private String currentEdgeStyle;
 	private String currentEdgeLabel;
 	private String currentEdgeSourceNodeName;
@@ -159,6 +162,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		currentEdgeTailLp = getAttributeValue(object, DotAttributes.TAIL_LP__E);
 		currentArrowHead = getAttributeValue(object,
 				DotAttributes.ARROWHEAD__E);
+		currentArrowTail = getAttributeValue(object,
+				DotAttributes.ARROWTAIL__E);
+		currentArrowSize = getAttributeValue(object,
+				DotAttributes.ARROWSIZE__E);
+		currentEdgeDirection = getAttributeValue(object, DotAttributes.DIR__E);
 		return super.caseEdgeStmtNode(object);
 	}
 
@@ -259,6 +267,21 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// arrow head
 		if (currentArrowHead != null) {
 			DotAttributes.setArrowHead(edge, currentArrowHead);
+		}
+
+		// arrow tail
+		if (currentArrowTail != null) {
+			DotAttributes.setArrowTail(edge, currentArrowTail);
+		}
+
+		// arrow size
+		if (currentArrowSize != null) {
+			DotAttributes.setArrowSize(edge, currentArrowSize);
+		}
+
+		// direction
+		if (currentEdgeDirection != null) {
+			DotAttributes.setEdgeDirection(edge, currentEdgeDirection);
 		}
 
 		graph.edges(edge);

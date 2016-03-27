@@ -5,6 +5,7 @@ package org.eclipse.gef4.dot.internal.parser.validation;
 
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowtypePackage;
+import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.PrimitiveShape;
 import org.eclipse.xtext.validation.Check;
 
@@ -35,5 +36,18 @@ public class DotArrowTypeJavaValidator extends
 					+ arrowShape.getShape() + "'.",
 					ArrowtypePackage.Literals.ARROW_SHAPE__SIDE);
 		}
+	}
+
+	/**
+	 * Checks that no deprecated arrow shapes are used
+	 * 
+	 * @param arrowShape
+	 *            The arrowShape element to check.
+	 */
+	@Check
+	public void checkDeprecatedArrowShape(DeprecatedArrowShape arrowShape) {
+		warning("Arrow shape '" + arrowShape.getShape().toString()
+				+ "' is a deprecated DOT arrow type for Edge.",
+				ArrowtypePackage.Literals.DEPRECATED_ARROW_SHAPE__SHAPE);
 	}
 }

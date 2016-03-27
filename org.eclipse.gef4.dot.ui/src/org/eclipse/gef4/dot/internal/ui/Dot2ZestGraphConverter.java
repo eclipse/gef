@@ -9,7 +9,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     Alexander Nyßen  (itemis AG) - initial API & implementation
- *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
+ *     Tamas Miklossy   (itemis AG) - Add support for arrowType edge decorations (bug #477980)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
@@ -39,8 +39,8 @@ import javafx.scene.text.Text;
 
 /**
  * A converter that transforms a {@link Graph} that is attributed with
- * {@link ZestProperties} into a {@link Graph} that is attributed with
- * {@link DotAttributes}.
+ * {@link DotAttributes} into a {@link Graph} that is attributed with
+ * {@link ZestProperties}.
  * 
  * @author anyssen
  *
@@ -95,22 +95,68 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		if (connectionCssStyle != null) {
 			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
 		}
+		// direction
+		DotAttributes.EdgeDirection direction = DotAttributes
+				.getEdgeDirectionParsed(dot);
+
+		if (direction == null) {
+			// use the default direction if no direction is specified for
+			// the edge
+			direction = DotAttributes._TYPE__G__DIGRAPH.equals(
+					dot.getGraph().getAttributes().get(DotAttributes._TYPE__G))
+							? DotAttributes.EdgeDirection.FORWARD
+							: DotAttributes.EdgeDirection.NONE;
+		}
+
+		// arrow size
+		Double arrowSizeParsed = DotAttributes.getArrowSizeParsed(dot);
+		double arrowSize = arrowSizeParsed == null ? 1.0 : arrowSizeParsed;
 
 		// arrow head
 		String dotArrowHead = DotAttributes.getArrowHead(dot);
-		Shape connectionTargetDecoration = null;
+		Shape zestEdgeTargetDecoration = null;
 		if (dotArrowHead == null) {
-			// use "normal" in case graph is directed
+			// use the default arrow head decoration in case the graph is
+			// directed
 			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
 					.getAttributes().get(DotAttributes._TYPE__G))) {
-				connectionTargetDecoration = DotArrowShapeDecorations
-						.getDefault(true);
+				zestEdgeTargetDecoration = DotArrowShapeDecorations
+						.getDefault(arrowSize, true);
 			}
 		} else {
-			connectionTargetDecoration = computeZestDecoration(
-					DotAttributes.getArrowHeadParsed(dot));
+			zestEdgeTargetDecoration = computeZestDecoration(
+					DotAttributes.getArrowHeadParsed(dot), arrowSize);
 		}
-		ZestProperties.setTargetDecoration(zest, connectionTargetDecoration);
+
+		// The zest edge target decoration should only appear if the edge
+		// direction is "forward" or "both".
+		if (direction == DotAttributes.EdgeDirection.FORWARD
+				|| direction == DotAttributes.EdgeDirection.BOTH) {
+			ZestProperties.setTargetDecoration(zest, zestEdgeTargetDecoration);
+		}
+
+		// arrow tail
+		String dotArrowTail = DotAttributes.getArrowTail(dot);
+		Shape zestEdgeSourceDecoration = null;
+		if (dotArrowTail == null) {
+			// use the default arrow tail decoration in case the graph is
+			// directed
+			if (DotAttributes._TYPE__G__DIGRAPH.equals(dot.getGraph()
+					.getAttributes().get(DotAttributes._TYPE__G))) {
+				zestEdgeSourceDecoration = DotArrowShapeDecorations
+						.getDefault(arrowSize, true);
+			}
+		} else {
+			zestEdgeSourceDecoration = computeZestDecoration(
+					DotAttributes.getArrowTailParsed(dot), arrowSize);
+		}
+
+		// The zest edge source decoration should only appear if the edge
+		// direction is "back" or "both".
+		if (direction == DotAttributes.EdgeDirection.BACKWARD
+				|| direction == DotAttributes.EdgeDirection.BOTH) {
+			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
+		}
 
 		// only convert layout information in native mode, as the results will
 		// otherwise
@@ -158,8 +204,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		}
 	}
 
-	private Shape computeZestDecoration(ArrowType arrowType) {
-		return DotArrowShapeDecorations.get(arrowType);
+	private Shape computeZestDecoration(ArrowType arrowType, double arrowSize) {
+		return DotArrowShapeDecorations.get(arrowType, arrowSize);
 	}
 
 	private List<Point> computeZestConnectionBSplineControlPoints(Edge dot) {

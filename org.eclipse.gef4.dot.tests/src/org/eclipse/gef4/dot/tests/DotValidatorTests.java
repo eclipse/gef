@@ -21,6 +21,7 @@ import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,13 +39,23 @@ public class DotValidatorTests {
 
 	@Test
 	public void testWrongArrowType() throws Exception {
-		String text = "digraph testGraph { 1->2[arrowhead=fooBar] }";
+		String text = "digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }";
 
 		DotAst dotAst = parserHelper.parse(text);
 
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
-				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, 35, 6,
+				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE, 35,
+				6,
 				"The value 'fooBar' is not a syntactically correct ArrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.");
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE, 52,
+				7,
+				"The value 'fooBar2' is not a syntactically correct ArrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at character '2'.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
 	}
 }

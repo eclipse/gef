@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.DotAttributes.EdgeDirection;
 import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
@@ -79,7 +80,19 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	 * Error code for invalid edge 'arrow type' attribute value. Used to bind
 	 * quick fixes.
 	 */
-	public static final String ATTRIBUTE__INVALID_VALUE__ARROW_TYPE = "ATTRIBUTE__INVALID_VALUE__ARROW_TYPE";
+	public static final String ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE = "ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE";
+
+	/**
+	 * Error code for invalid edge 'dir' attribute value. Used to bind quick
+	 * fixes.
+	 */
+	public static final String ATTRIBUTE__INVALID_VALUE__EDGE_DIRECTION = "ATTRIBUTE__INVALID_VALUE__EDGE_DIRECTION";
+
+	/**
+	 * Error code for invalid edge 'arrowsize' attribute value. Used to bind
+	 * quick fixes.
+	 */
+	public static final String ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_SIZE = "ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_SIZE";
 
 	/**
 	 * Checks that within an {@link Attribute} only valid attribute values are
@@ -105,12 +118,41 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 		}
 
-		if (isEdgeAttribute(attribute)
-				&& DotAttributes.ARROWHEAD__E.equals(attribute.getName())) {
-			// validate arrowhead using delegate parser and validator
+		if (isEdgeAttribute(attribute) && (DotAttributes.ARROWHEAD__E
+				.equals(attribute.getName())
+				|| DotAttributes.ARROWTAIL__E.equals(attribute.getName()))) {
+			// validate arrowhead/arrowtail using delegate parser and validator
 			validateAttributeValue(arrowTypeParser, arrowTypeValidator,
 					attribute, ArrowtypePackage.eINSTANCE.getArrowType(),
-					ATTRIBUTE__INVALID_VALUE__ARROW_TYPE);
+					ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE);
+		}
+
+		if (isEdgeAttribute(attribute)
+				&& DotAttributes.ARROWSIZE__E.equals(attribute.getName())) {
+			String unquotedValue = DotTerminalConverters
+					.unquote(attribute.getValue());
+			if (!isValidEdgeArrowSize(unquotedValue)) {
+				// provide (issue) code and data for quickfix
+				error("Edge Arrow Size '" + unquotedValue
+						+ "' is not a valid DOT arrow size for Edge.",
+						DotPackage.eINSTANCE.getAttribute_Value(),
+						ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_SIZE,
+						unquotedValue);
+			}
+		}
+
+		if (isEdgeAttribute(attribute)
+				&& DotAttributes.DIR__E.equals(attribute.getName())) {
+			String unquotedValue = DotTerminalConverters
+					.unquote(attribute.getValue());
+			if (!isValidEdgeDirection(unquotedValue)) {
+				// provide (issue) code and data for quickfix
+				error("Edge Direction '" + unquotedValue
+						+ "' is not a valid DOT direction for Edge.",
+						DotPackage.eINSTANCE.getAttribute_Value(),
+						ATTRIBUTE__INVALID_VALUE__EDGE_DIRECTION,
+						unquotedValue);
+			}
 		}
 	}
 
@@ -219,6 +261,32 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * @param edgeDirection
+	 *            the edge direction to check for validity
+	 * 
+	 * @return true if the edge direction is valid, false otherwise
+	 */
+	public static boolean isValidEdgeDirection(String edgeDirection) {
+		return EdgeDirection.get(edgeDirection) != null;
+	}
+
+	/**
+	 * @param arrowsize
+	 *            the edge arrow size to check for validity
+	 * 
+	 * @return true if the edge arrowsize is valid, false otherwise
+	 */
+	public static boolean isValidEdgeArrowSize(String arrowsize) {
+		double arrowSizeDouble;
+		try {
+			arrowSizeDouble = Double.parseDouble(arrowsize);
+		} catch (NumberFormatException exception) {
+			return false;
+		}
+		return arrowSizeDouble >= 0.0;
 	}
 
 	/**

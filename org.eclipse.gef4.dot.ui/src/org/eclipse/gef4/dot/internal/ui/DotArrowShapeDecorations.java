@@ -7,13 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
+ *     Tamas Miklossy (itemis AG) - Add support for arrowType edge decorations (bug #477980)
  *
  ***********************************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
+import org.eclipse.gef4.dot.internal.parser.arrowtype.AbstractArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShape;
-import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowShapes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.DeprecatedArrowShape;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.PrimitiveShape;
@@ -26,18 +26,22 @@ import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineJoin;
 
 public class DotArrowShapeDecorations {
+
 	/**
 	 * Returns the default dot arrow shape decoration for directed/non-directed
 	 * graphs.
+	 *
+	 * @param arrowSize
+	 *            The size of the arrow shape decoration.
 	 * 
 	 * @param isGraphDirected
 	 *            true if the graph is directed, false otherwise
-	 * 
+	 *
 	 * @return The default dot arrow shape decoration
 	 */
-	public static Shape getDefault(boolean isGraphDirected) {
+	public static Shape getDefault(double arrowSize, boolean isGraphDirected) {
 
-		Shape shape = isGraphDirected ? new Normal() : null;
+		Shape shape = isGraphDirected ? new Normal(arrowSize) : null;
 		useRoundStrokeLineJoin(shape);
 		return shape;
 	}
@@ -49,49 +53,50 @@ public class DotArrowShapeDecorations {
 	 * @param arrowType
 	 *            The arrow type for which the dot edge decoration should be
 	 *            determined.
+	 *
+	 * @param arrowSize
+	 *            The size of the arrow shape decoration.
 	 * 
 	 * @return The dot arrow shape decoration.
 	 */
-	public static Shape get(ArrowType arrowType) {
+	public static Shape get(ArrowType arrowType, double arrowSize) {
 		Shape shape = null;
-		if (arrowType instanceof DeprecatedArrowShape) {
-			// TODO: handle multiple-shapes
-			String firstArrowShape = ((DeprecatedArrowShape) arrowType)
-					.getArrowShapes().get(0);
-			switch (firstArrowShape) {
-			case "ediamond": //$NON-NLS-1$
+
+		// TODO: handle multiple-shapes
+		AbstractArrowShape firstShape = arrowType.getArrowShapes().get(0);
+
+		if (firstShape instanceof DeprecatedArrowShape) {
+			switch (((DeprecatedArrowShape) firstShape).getShape()) {
+			case EDIAMOND:
 				// "ediamond" is deprecated, use "odiamond"
-				shape = new Diamond();
+				shape = new Diamond(arrowSize);
 				setOpen(shape);
 				break;
-			case "open": //$NON-NLS-1$
+			case OPEN:
 				// "open" is deprecated, use "vee"
-				shape = new Vee();
+				shape = new Vee(arrowSize);
 				break;
-			case "halfopen": //$NON-NLS-1$
+			case HALFOPEN:
 				// "halfopen" is deprecated, use "lvee"
-				shape = new Vee();
+				shape = new Vee(arrowSize);
 				setSide(shape, "l"); //$NON-NLS-1$
 				break;
-			case "empty": //$NON-NLS-1$
+			case EMPTY:
 				// "empty" is deprecated, use "onormal"
-				shape = new Normal();
+				shape = new Normal(arrowSize);
 				setOpen(shape);
 				break;
-			case "invempty": //$NON-NLS-1$
+			case INVEMPTY:
 				// "invempty" is deprecated, use "oinv"
-				shape = new Inv();
+				shape = new Inv(arrowSize);
 				setOpen(shape);
 				break;
 			default:
 				break;
 			}
 		} else {
-			// TODO: handle multiple-shapes
-			ArrowShape arrowShape = ((ArrowShapes) arrowType).getArrowShapes()
-					.get(0);
-
-			shape = getPrimitiveShape(arrowShape.getShape());
+			ArrowShape arrowShape = (ArrowShape) firstShape;
+			shape = getPrimitiveShape(arrowShape.getShape(), arrowSize);
 			if (arrowShape.isOpen()) {
 				setOpen(shape);
 			}
@@ -156,54 +161,58 @@ public class DotArrowShapeDecorations {
 		}
 	}
 
-	private static Shape getPrimitiveShape(PrimitiveShape primitiveShape) {
+	private static Shape getPrimitiveShape(PrimitiveShape primitiveShape,
+			double arrowSize) {
 		switch (primitiveShape) {
 		case BOX:
-			return new Box();
+			return new Box(arrowSize);
 		case CROW:
-			return new Crow();
+			return new Crow(arrowSize);
 		case CURVE:
-			return new Curve();
+			return new Curve(arrowSize);
 		case ICURVE:
-			return new ICurve();
+			return new ICurve(arrowSize);
 		case DIAMOND:
-			return new Diamond();
+			return new Diamond(arrowSize);
 		case DOT:
-			return new Dot();
+			return new Dot(arrowSize);
 		case INV:
-			return new Inv();
+			return new Inv(arrowSize);
 		case NONE:
 			return null;
 		case NORMAL:
-			return new Normal();
+			return new Normal(arrowSize);
 		case TEE:
-			return new Tee();
+			return new Tee(arrowSize);
 		case VEE:
-			return new Vee();
+			return new Vee(arrowSize);
 		default:
 			return null;
 		}
 	}
 
 	private static class Box extends Polygon {
-		private Box() {
-			super(0, size / 2, 0, -size / 2, size, -size / 2, size, size / 2);
+		private Box(double arrowSize) {
+			super(0, arrowSize * size / 2, 0, -arrowSize * size / 2,
+					arrowSize * size, -arrowSize * size / 2, arrowSize * size,
+					arrowSize * size / 2);
 
 		}
 	}
 
 	private static class Crow extends Polygon {
-		private Crow() {
-			super(size / 2, 0, 0, -size / 2, size, 0, 0, size / 2);
+		private Crow(double arrowSize) {
+			super(arrowSize * size / 2, 0, 0, -arrowSize * size / 2,
+					arrowSize * size, 0, 0, arrowSize * size / 2);
 		}
 	}
 
 	private static class Curve extends Arc {
-		private Curve() {
-			super(size / 2, // centerX
+		private Curve(double arrowSize) {
+			super(arrowSize * size / 2, // centerX
 					0, // centerY
-					size / 2, // radiusX
-					size / 2, // radiusY
+					arrowSize * size / 2, // radiusX
+					arrowSize * size / 2, // radiusY
 					90, // startAngle
 					180// length
 			);
@@ -212,23 +221,25 @@ public class DotArrowShapeDecorations {
 	}
 
 	private static class Diamond extends Polygon {
-		private Diamond() {
-			super(0, 0, size / 2, -size / 3, size, 0, size / 2, size / 3);
+		private Diamond(double arrowSize) {
+			super(0, 0, arrowSize * size / 2, -arrowSize * size / 3,
+					arrowSize * size, 0, arrowSize * size / 2,
+					arrowSize * size / 3);
 		}
 	}
 
 	private static class Dot extends Circle {
-		private Dot() {
-			super(0, 0, size / 2);
+		private Dot(double arrowSize) {
+			super(0, 0, arrowSize * size / 2);
 		}
 	}
 
 	private static class ICurve extends Arc {
-		private ICurve() {
+		private ICurve(double arrowSize) {
 			super(0, // centerX
 					0, // centerY
-					size / 2, // radiusX
-					size / 2, // radiusY
+					arrowSize * size / 2, // radiusX
+					arrowSize * size / 2, // radiusY
 					90, // startAngle
 					-180// length
 			);
@@ -237,30 +248,35 @@ public class DotArrowShapeDecorations {
 	}
 
 	private static class Inv extends Polygon {
-		private Inv() {
-			super(0, size / 3, size, 0, 0, -size / 3);
+		private Inv(double arrowSize) {
+			super(0, arrowSize * size / 3, arrowSize * size, 0, 0,
+					-arrowSize * size / 3);
 		}
 	}
 
 	private static class Normal extends Polygon {
-		private Normal() {
-			super(0, 0, size, -size / 3, size, size / 3);
+		private Normal(double arrowSize) {
+			super(0, 0, arrowSize * size, -arrowSize * size / 3,
+					arrowSize * size, arrowSize * size / 3);
 		}
 	}
 
 	private static class Tee extends Polygon {
-		private Tee() {
-			super(0, -size / 2, size / 4, -size / 2, size / 4, size / 2, 0,
-					size / 2);
+		private Tee(double arrowSize) {
+			super(0, -arrowSize * size / 2, arrowSize * size / 4,
+					-arrowSize * size / 2, arrowSize * size / 4,
+					arrowSize * size / 2, 0, arrowSize * size / 2);
 		}
 	}
 
 	private static class Vee extends Polygon {
-		private Vee() {
-			super(0, 0, size, -size / 2, 2 * size / 3, 0, size, size / 2);
+		private Vee(double arrowSize) {
+			super(0, 0, arrowSize * size, -arrowSize * size / 2,
+					2 * arrowSize * size / 3, 0, arrowSize * size,
+					arrowSize * size / 2);
 		}
 	}
 
-	private static int size = 10;
+	private static double size = 10;
 
 }
