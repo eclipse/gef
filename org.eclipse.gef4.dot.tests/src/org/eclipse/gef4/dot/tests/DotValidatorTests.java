@@ -45,6 +45,6 @@ public class DotValidatorTests {
 		validationTestHelper.assertError(dotAst,
 				DotPackage.eINSTANCE.getAttribute(),
 				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, 35, 6,
-				"The value 'fooBar' is not a syntactically correct arrow type: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.");
+				"The value 'fooBar' is not a syntactically correct ArrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.");
 	}
 }

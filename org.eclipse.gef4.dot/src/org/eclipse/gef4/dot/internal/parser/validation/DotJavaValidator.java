@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -44,6 +45,8 @@ import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotArrowTypeParser;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.parser.antlr.AbstractAntlrParser;
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
@@ -104,11 +107,17 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		if (isEdgeAttribute(attribute)
 				&& DotAttributes.ARROWHEAD__E.equals(attribute.getName())) {
-			validateArrowTypeValue(attribute);
+			// validate arrowhead using delegate parser and validator
+			validateAttributeValue(arrowTypeParser, arrowTypeValidator,
+					attribute, ArrowtypePackage.eINSTANCE.getArrowType(),
+					ATTRIBUTE__INVALID_VALUE__ARROW_TYPE);
 		}
 	}
 
-	private void validateArrowTypeValue(final Attribute attribute) {
+	private void validateAttributeValue(final AbstractAntlrParser parser,
+			final AbstractDeclarativeValidator validator,
+			final Attribute attribute, final EClass attributeType,
+			final String issueCode) {
 		// ensure we always use the unquoted value
 		final String unquotedValue = DotTerminalConverters
 				.unquote(attribute.getValue());
@@ -117,90 +126,81 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		if (parseResult.hasSyntaxErrors()) {
 			// syntactical problems
 			error("The value '" + unquotedValue
-					+ "' is not a syntactically correct arrow type: "
+					+ "' is not a syntactically correct "
+					+ ArrowtypePackage.eINSTANCE.getArrowType().getName() + ": "
 					+ getFormattedSyntaxErrorMessages(parseResult),
-					DotPackage.eINSTANCE.getAttribute_Value(),
-					ATTRIBUTE__INVALID_VALUE__ARROW_TYPE, unquotedValue);
+					DotPackage.eINSTANCE.getAttribute_Value(), issueCode,
+					unquotedValue);
 		} else {
 			// check for semantic problems by using DotArrowTypeJavaValidator
 			Map<Object, Object> context = new HashMap<>(getContext());
 			context.put(CURRENT_LANGUAGE_NAME, ReflectionUtils
-					.getPrivateFieldValue(arrowTypeValidator, "languageName"));
+					.getPrivateFieldValue(validator, "languageName"));
 			// we need a specific message acceptor
-			arrowTypeValidator
-					.setMessageAcceptor(new ValidationMessageAcceptor() {
+			validator.setMessageAcceptor(new ValidationMessageAcceptor() {
 
-						final String prefix = "The value '" + unquotedValue
-								+ "' is not a semantically correct arrow type: ";
+				final String prefix = "The value '" + unquotedValue
+						+ "' is not a semantically correct "
+						+ attributeType.getName() + ": ";
 
-						@Override
-						public void acceptWarning(String message,
-								EObject object, int offset, int length,
-								String code, String... issueData) {
-							getMessageAcceptor().acceptWarning(prefix + message,
-									attribute, offset, length,
-									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-									unquotedValue);
-						}
+				@Override
+				public void acceptWarning(String message, EObject object,
+						int offset, int length, String code,
+						String... issueData) {
+					getMessageAcceptor().acceptWarning(prefix + message,
+							attribute, offset, length, issueCode,
+							unquotedValue);
+				}
 
-						@Override
-						public void acceptWarning(String message,
-								EObject object, EStructuralFeature feature,
-								int index, String code, String... issueData) {
-							getMessageAcceptor().acceptWarning(prefix + message,
-									attribute,
-									DotPackage.Literals.ATTRIBUTE__VALUE, -1,
-									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-									unquotedValue);
-						}
+				@Override
+				public void acceptWarning(String message, EObject object,
+						EStructuralFeature feature, int index, String code,
+						String... issueData) {
+					getMessageAcceptor().acceptWarning(prefix + message,
+							attribute, DotPackage.Literals.ATTRIBUTE__VALUE, -1,
+							issueCode, unquotedValue);
+				}
 
-						@Override
-						public void acceptInfo(String message, EObject object,
-								int offset, int length, String code,
-								String... issueData) {
-							getMessageAcceptor().acceptInfo(message, attribute,
-									offset, length,
-									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-									unquotedValue);
-						}
+				@Override
+				public void acceptInfo(String message, EObject object,
+						int offset, int length, String code,
+						String... issueData) {
+					getMessageAcceptor().acceptInfo(message, attribute, offset,
+							length, issueCode, unquotedValue);
+				}
 
-						@Override
-						public void acceptInfo(String message, EObject object,
-								EStructuralFeature feature, int index,
-								String code, String... issueData) {
-							getMessageAcceptor().acceptInfo(message, attribute,
-									DotPackage.Literals.ATTRIBUTE__VALUE, -1,
-									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-									unquotedValue);
-						}
+				@Override
+				public void acceptInfo(String message, EObject object,
+						EStructuralFeature feature, int index, String code,
+						String... issueData) {
+					getMessageAcceptor().acceptInfo(message, attribute,
+							DotPackage.Literals.ATTRIBUTE__VALUE, -1, issueCode,
+							unquotedValue);
+				}
 
-						@Override
-						public void acceptError(String message, EObject object,
-								int offset, int length, String code,
-								String... issueData) {
-							getMessageAcceptor().acceptError(prefix + message,
-									attribute, offset, length,
-									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-									unquotedValue);
-						}
+				@Override
+				public void acceptError(String message, EObject object,
+						int offset, int length, String code,
+						String... issueData) {
+					getMessageAcceptor().acceptError(prefix + message,
+							attribute, offset, length, issueCode,
+							unquotedValue);
+				}
 
-						@Override
-						public void acceptError(String message, EObject object,
-								EStructuralFeature feature, int index,
-								String code, String... issueData) {
-							getMessageAcceptor().acceptError(prefix + message,
-									attribute,
-									DotPackage.Literals.ATTRIBUTE__VALUE, -1,
-									ATTRIBUTE__INVALID_VALUE__ARROW_TYPE,
-									unquotedValue);
-						}
-					});
+				@Override
+				public void acceptError(String message, EObject object,
+						EStructuralFeature feature, int index, String code,
+						String... issueData) {
+					getMessageAcceptor().acceptError(prefix + message,
+							attribute, DotPackage.Literals.ATTRIBUTE__VALUE, -1,
+							issueCode, unquotedValue);
+				}
+			});
 			for (Iterator<EObject> iterator = EcoreUtil.getAllProperContents(
 					parseResult.getRootASTElement(), true); iterator
 							.hasNext();) {
-				arrowTypeValidator.validate(
-						ArrowtypePackage.eINSTANCE.getArrowType(),
-						iterator.next(), getChain(), context);
+				validator.validate(attributeType, iterator.next(), getChain(),
+						context);
 			}
 		}
 	}
