@@ -46,8 +46,8 @@ public class DotArrowTypeJavaValidator extends
 	 */
 	@Check
 	public void checkDeprecatedArrowShape(DeprecatedArrowShape arrowShape) {
-		warning("Arrow shape '" + arrowShape.getShape().toString()
-				+ "' is a deprecated DOT arrow type for Edge.",
+		warning("The shape '" + arrowShape.getShape().toString()
+				+ "' is deprecated.",
 				ArrowtypePackage.Literals.DEPRECATED_ARROW_SHAPE__SHAPE);
 	}
 }

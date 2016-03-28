@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.dot.internal.DotAttributes;
-import org.eclipse.gef4.dot.internal.DotAttributes.EdgeDirection;
 import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
@@ -145,7 +144,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				&& DotAttributes.DIR__E.equals(attribute.getName())) {
 			String unquotedValue = DotTerminalConverters
 					.unquote(attribute.getValue());
-			if (!isValidEdgeDirection(unquotedValue)) {
+			if (!DotAttributes.DIR__E__VALUES.contains(unquotedValue)) {
 				// provide (issue) code and data for quickfix
 				error("Edge Direction '" + unquotedValue
 						+ "' is not a valid DOT direction for Edge.",
@@ -247,6 +246,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		}
 	}
 
+	// TODO: replace by usage of validator instance inside DotAttributes
 	public static String getFormattedSyntaxErrorMessages(
 			IParseResult parseResult) {
 		StringBuilder sb = new StringBuilder();
@@ -264,21 +264,13 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	}
 
 	/**
-	 * @param edgeDirection
-	 *            the edge direction to check for validity
-	 * 
-	 * @return true if the edge direction is valid, false otherwise
-	 */
-	public static boolean isValidEdgeDirection(String edgeDirection) {
-		return EdgeDirection.get(edgeDirection) != null;
-	}
-
-	/**
 	 * @param arrowsize
 	 *            the edge arrow size to check for validity
 	 * 
 	 * @return true if the edge arrowsize is valid, false otherwise
 	 */
+	// TODO: can be made private as soon as DotAttributes invokes validator
+	// generically
 	public static boolean isValidEdgeArrowSize(String arrowsize) {
 		double arrowSizeDouble;
 		try {

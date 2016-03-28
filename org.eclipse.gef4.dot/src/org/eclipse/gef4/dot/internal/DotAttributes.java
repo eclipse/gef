@@ -142,6 +142,31 @@ public class DotAttributes {
 	public static final String DIR__E = "dir";
 
 	/**
+	 * This {@link #DIR__E} value specifies 'forward' direction.
+	 */
+	public static final String DIR__E__FORWARD = "forward";
+
+	/**
+	 * This {@link #DIR__E} value specifies 'back' direction.
+	 */
+	public static final String DIR__E__BACK = "back";
+
+	/**
+	 * This {@link #DIR__E} value specifies 'both' direction.
+	 */
+	public static final String DIR__E__BOTH = "both";
+
+	/**
+	 * This {@link #DIR__E} value specifies 'none' direction.
+	 */
+	public static final String DIR__E__NONE = "none";
+
+	/**
+	 * The valid values for the {@link #DIR__E} attribute.
+	 */
+	public static final Set<String> DIR__E__VALUES = new HashSet<>(Arrays
+			.asList(DIR__E__FORWARD, DIR__E__BACK, DIR__E__BOTH, DIR__E__NONE));
+	/**
 	 * Specifies the 'forceLabels' attribute of a graph.
 	 */
 	public static final String FORCELABELS__G = "forcelabels";
@@ -495,27 +520,8 @@ public class DotAttributes {
 	 * @return The value of the {@link #DIR__E} property of the given
 	 *         {@link Edge}.
 	 */
-	public static String getEdgeDirection(Edge edge) {
+	public static String getDir(Edge edge) {
 		return (String) edge.attributesProperty().get(DIR__E);
-	}
-
-	/**
-	 * Returns the (parsed) value of the {@link #DIR__E} property of the given
-	 * {@link Edge}.
-	 * 
-	 * @param edge
-	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #DIR__E} property.
-	 * @return The value of the {@link #DIR__E} property of the given
-	 *         {@link Edge}.
-	 */
-	public static EdgeDirection getEdgeDirectionParsed(Edge edge) {
-		String direction = getEdgeDirection(edge);
-		if (direction != null) {
-			return EdgeDirection.get(direction);
-		} else {
-			return null;
-		}
 	}
 
 	/**
@@ -1084,11 +1090,10 @@ public class DotAttributes {
 	 * @throws IllegalArgumentException
 	 *             when the given <i>direction</i> value is not supported.
 	 */
-	public static void setEdgeDirection(Edge edge, String direction) {
-		if (!DotJavaValidator.isValidEdgeDirection(direction)) {
-			throw new IllegalArgumentException(
-					"Cannot set edge attribute \"dir\" to \"" + direction
-							+ "\"; value is not supported.");
+	public static void setDir(Edge edge, String direction) {
+		if (!DIR__E__VALUES.contains(direction)) {
+			throw new IllegalArgumentException("Cannot set edge attribute '"
+					+ DIR__E + "' to '" + direction + "'.");
 		}
 		edge.attributesProperty().put(DIR__E, direction);
 	}
@@ -1446,6 +1451,7 @@ public class DotAttributes {
 	 *            The new value of the {@link #WIDTH__N} property.
 	 */
 	public static void setWidth(Node node, String width) {
+		// TODO: replace with generic call to validator
 		try {
 			Double.parseDouble(width);
 		} catch (NumberFormatException e) {
@@ -1562,61 +1568,5 @@ public class DotAttributes {
 	 */
 	public static void setForceLabels(Graph graph, Boolean forceLabels) {
 		graph.getAttributes().put(FORCELABELS__G, forceLabels);
-	}
-
-	/**
-	 * Defines all possible values for the {@link #DIR__E} property.
-	 */
-	public enum EdgeDirection {
-		/**
-		 * Indicates that the edge is directed into the forward direction.
-		 */
-		FORWARD("forward"),
-
-		/**
-		 * Indicates that the edge is directed into the backward direction.
-		 */
-		BACKWARD("back"),
-
-		/**
-		 * Indicates that the edge is directed in both direction.
-		 */
-		BOTH("both"),
-
-		/**
-		 * Indicates that the edge has no direction.
-		 */
-		NONE("none");
-
-		private final String literal;
-
-		// the constructor of an enum class can only be specified as private
-		private EdgeDirection(String literal) {
-			this.literal = literal;
-		}
-
-		/**
-		 * Returns the '<em><b>Edge Direction</b></em>' literal with the
-		 * specified literal value.
-		 * 
-		 * @param literal
-		 *            the literal to convert
-		 * @return the matching enumerator or <code>null</code>.
-		 */
-		public static EdgeDirection get(String literal) {
-			for (EdgeDirection result : EdgeDirection.values()) {
-				if (result.toString().equals(literal)) {
-					return result;
-				}
-			}
-
-			return null;
-		}
-
-		@Override
-		public String toString() {
-			return literal;
-		}
-
 	}
 }

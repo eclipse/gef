@@ -96,16 +96,14 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
 		}
 		// direction
-		DotAttributes.EdgeDirection direction = DotAttributes
-				.getEdgeDirectionParsed(dot);
-
-		if (direction == null) {
+		String dotDir = DotAttributes.getDir(dot);
+		if (dotDir == null) {
 			// use the default direction if no direction is specified for
 			// the edge
-			direction = DotAttributes._TYPE__G__DIGRAPH.equals(
+			dotDir = DotAttributes._TYPE__G__DIGRAPH.equals(
 					dot.getGraph().getAttributes().get(DotAttributes._TYPE__G))
-							? DotAttributes.EdgeDirection.FORWARD
-							: DotAttributes.EdgeDirection.NONE;
+							? DotAttributes.DIR__E__FORWARD
+							: DotAttributes.DIR__E__NONE;
 		}
 
 		// arrow size
@@ -130,8 +128,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// The zest edge target decoration should only appear if the edge
 		// direction is "forward" or "both".
-		if (direction == DotAttributes.EdgeDirection.FORWARD
-				|| direction == DotAttributes.EdgeDirection.BOTH) {
+		if (dotDir == DotAttributes.DIR__E__FORWARD
+				|| dotDir == DotAttributes.DIR__E__BOTH) {
 			ZestProperties.setTargetDecoration(zest, zestEdgeTargetDecoration);
 		}
 
@@ -153,8 +151,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// The zest edge source decoration should only appear if the edge
 		// direction is "back" or "both".
-		if (direction == DotAttributes.EdgeDirection.BACKWARD
-				|| direction == DotAttributes.EdgeDirection.BOTH) {
+		if (dotDir == DotAttributes.DIR__E__BACK
+				|| dotDir == DotAttributes.DIR__E__BOTH) {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
 		}
 

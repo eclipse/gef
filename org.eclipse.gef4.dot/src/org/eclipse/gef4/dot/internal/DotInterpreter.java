@@ -281,7 +281,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 		// direction
 		if (currentEdgeDirection != null) {
-			DotAttributes.setEdgeDirection(edge, currentEdgeDirection);
+			DotAttributes.setDir(edge, currentEdgeDirection);
 		}
 
 		graph.edges(edge);
