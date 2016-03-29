@@ -34,6 +34,8 @@ import com.google.inject.Injector;
  * @author nyssen
  *
  */
+// TODO: This class should remain internal, even when exposing the rest of the
+// API.
 public class DotLanguageSupport {
 
 	private static final Injector dotInjector = new DotStandaloneSetup()
