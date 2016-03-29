@@ -54,7 +54,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'pos' to '47x, 11': No viable alternative at character 'x'.",
+					"Cannot set node attribute 'pos' to '47x, 11'. The value '47x, 11' is not a syntactically correct Point: No viable alternative at character 'x'.",
 					e.getMessage());
 		}
 	}
@@ -122,5 +122,30 @@ public class DotAttributesTests {
 		assertEquals(spline.getEndp().getY(), 459.02, 0.0);
 		assertEquals(10, spline.getControlPoints().size());
 		assertNull(spline.getStartp());
+	}
+
+	@Test
+	public void edge_arrowhead() {
+		Node n1 = new Node.Builder().buildNode();
+		Node n2 = new Node.Builder().buildNode();
+		Edge edge = new Edge.Builder(n1, n2).buildEdge();
+
+		// valid value
+		DotAttributes.setArrowHead(edge, "olbox");
+		assertEquals("olbox", DotAttributes.getArrowHead(edge));
+
+		// deprecated (but valid) value
+		DotAttributes.setArrowHead(edge, "ediamond");
+		assertEquals("ediamond", DotAttributes.getArrowHead(edge));
+
+		// invalid value
+		try {
+			DotAttributes.setArrowHead(edge, "olox");
+			fail("IllegalArgumentException expected.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set node attribute 'arrowhead' to 'olox'. The value 'olox' is not a syntactically correct ArrowType: No viable alternative at input 'o'. No viable alternative at character 'x'.",
+					e.getMessage());
+		}
 	}
 }

@@ -13,10 +13,10 @@
 
 package org.eclipse.gef4.dot.tests;
 
+import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.DotInjectorProvider;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.dot.DotPackage;
-import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
@@ -44,15 +44,13 @@ public class DotValidatorTests {
 		DotAst dotAst = parserHelper.parse(text);
 
 		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(),
-				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE, 35,
-				6,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWHEAD__E,
+				35, 6,
 				"The value 'fooBar' is not a syntactically correct ArrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at input '<EOF>'.");
 
 		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(),
-				DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_ARROW_TYPE, 52,
-				7,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWTAIL__E,
+				52, 7,
 				"The value 'fooBar2' is not a syntactically correct ArrowType: No viable alternative at character 'f'. No viable alternative at input 'o'. No viable alternative at character 'B'. No viable alternative at character 'a'. No viable alternative at character '2'.");
 
 		// verify that these are the only reported issues

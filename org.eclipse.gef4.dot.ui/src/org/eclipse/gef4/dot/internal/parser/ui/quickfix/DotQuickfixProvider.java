@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.Attribute;
-import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
@@ -31,7 +30,7 @@ import org.eclipse.xtext.validation.Issue;
  */
 public class DotQuickfixProvider extends DefaultQuickfixProvider {
 
-	@Fix(DotJavaValidator.ATTRIBUTE__INVALID_VALUE__EDGE_STYLE)
+	@Fix(DotAttributes.STYLE__E)
 	public void fixEdgeStyleAttributeValue(final Issue issue,
 			IssueResolutionAcceptor acceptor) {
 		for (String edgeStyle : DotAttributes.STYLE__E__VALUES) {
