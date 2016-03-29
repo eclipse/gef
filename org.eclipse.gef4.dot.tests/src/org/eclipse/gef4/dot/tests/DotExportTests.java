@@ -96,19 +96,19 @@ public class DotExportTests {
 		Graph.Builder graph = new Graph.Builder();
 		graph.attr(DotAttributes._NAME__GNE, "LayoutMapping")
 				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__DOT);
 		assertTrue("'dot'", new DotExport().export(graph.build())
 				.contains("layout=\"dot\""));
-		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__TWOPI);
+		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__TWOPI);
 		assertTrue("'twopi'", new DotExport().export(graph.build())
 				.contains("layout=\"twopi\""));
-		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__OSAGE);
+		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__OSAGE);
 		assertTrue("'osage'", new DotExport().export(graph.build())
 				.contains("layout=\"osage\""));
-		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__FDP);
+		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__FDP);
 		assertTrue("'fdp'", new DotExport().export(graph.build())
 				.contains("layout=\"fdp\""));
-		graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__SFDP);
+		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__SFDP);
 		assertTrue("'sfdp'", new DotExport().export(graph.build())
 				.contains("layout=\"sfdp\""));
 	}

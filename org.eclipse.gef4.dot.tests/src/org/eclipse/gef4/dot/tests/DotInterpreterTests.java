@@ -191,8 +191,6 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter
 				.interpret(parse("graph Sample{rankdir=LR;1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
-				DotAttributes.getLayout(graph));
 		Assert.assertEquals(DotAttributes.RANKDIR__G__LR,
 				DotAttributes.getRankdir(graph));
 	}

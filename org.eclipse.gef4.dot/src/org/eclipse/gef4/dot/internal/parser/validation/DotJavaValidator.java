@@ -155,7 +155,34 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		String unquotedValue = DotTerminalConverters.unquote(value);
 
 		// use parser (and validator) for respective attribute type
-		if (DotAttributes.ARROWHEAD__E.equals(name)
+		if (DotAttributes.RANKDIR__G.equals(name)) {
+			if (!DotAttributes.RANKDIR__G__VALUES.contains(unquotedValue)) {
+				return Collections.<Diagnostic> singletonList(
+						createSyntacticAttributeValueProblem(unquotedValue,
+								"rankdir",
+								"Value has to be one of " + getFormattedValues(
+										DotAttributes.RANKDIR__G__VALUES),
+								name));
+			}
+		} else if (DotAttributes.LAYOUT__G.equals(name)) {
+			if (!DotAttributes.LAYOUT__G__VALUES.contains(unquotedValue)) {
+				return Collections.<Diagnostic> singletonList(
+						createSyntacticAttributeValueProblem(unquotedValue,
+								"layout",
+								"Value has to be one of " + getFormattedValues(
+										DotAttributes.LAYOUT__G__VALUES),
+								name));
+			}
+		} else if (DotAttributes.DIR__E.equals(name)) {
+			if (!DotAttributes.DIR__E__VALUES.contains(unquotedValue)) {
+				return Collections.<Diagnostic> singletonList(
+						createSyntacticAttributeValueProblem(unquotedValue,
+								"dir",
+								"Value has to be one of " + getFormattedValues(
+										DotAttributes.DIR__E__VALUES),
+								name));
+			}
+		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
 			return validateAttributeValue(DotLanguageSupport.ARROWTYPE_PARSER,

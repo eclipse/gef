@@ -112,28 +112,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	}
 
 	@Override
-	public Object caseAttribute(Attribute object) {
-		/*
-		 * Convenience for common 'rankdir=LR' attribute: use
-		 * TreeLayoutAlgorithm.LEFT_RIGHT if nothing else is specified
-		 */
-		if (DotAttributes.RANKDIR__G.equals(object.getName())) {
-			String value = object.getValue();
-			if (value == null)
-				value = "";
-			value = value.toLowerCase();
-			boolean lr = DotAttributes.RANKDIR__G__LR.equals(value);
-			boolean td = DotAttributes.RANKDIR__G__TD.equals(value);
-			graph.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
-			graph.attr(DotAttributes.RANKDIR__G,
-					lr ? DotAttributes.RANKDIR__G__LR
-							: td ? DotAttributes.RANKDIR__G__TD
-									: DotAttributes.RANKDIR__G__DEFAULT);
-		}
-		return super.caseAttribute(object);
-	}
-
-	@Override
 	public Object caseAttrStmt(AttrStmt object) {
 		createAttributes(object);
 		return super.caseAttrStmt(object);
@@ -322,9 +300,14 @@ public final class DotInterpreter extends DotSwitch<Object> {
 						: DotAttributes._TYPE__G__DIGRAPH);
 
 		// layout
-		String layout = getAttributeValue(dotGraph, DotAttributes.LAYOUT_G);
+		String layout = getAttributeValue(dotGraph, DotAttributes.LAYOUT__G);
 		if (layout != null) {
-			graph.attr(DotAttributes.LAYOUT_G, layout);
+			graph.attr(DotAttributes.LAYOUT__G, layout);
+		}
+
+		String rankdir = getAttributeValue(dotGraph, DotAttributes.RANKDIR__G);
+		if (rankdir != null) {
+			graph.attr(DotAttributes.RANKDIR__G, rankdir);
 		}
 	}
 
@@ -353,7 +336,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				}
 			}
 			String graphLayout = getAttributeValue(attrStmt,
-					DotAttributes.LAYOUT_G);
+					DotAttributes.LAYOUT__G);
 			if (graphLayout != null) {
 				String graphLayoutLc = new String(graphLayout).toLowerCase();
 				if (!supported(graphLayoutLc,
@@ -362,7 +345,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 							"Unknown layout algorithm <" + graphLayoutLc
 									+ ">.");
 				}
-				graph.attr(DotAttributes.LAYOUT_G, graphLayoutLc);
+				graph.attr(DotAttributes.LAYOUT__G, graphLayoutLc);
 			}
 			break;
 		}
@@ -448,10 +431,14 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private String getAttributeValue(final DotGraph graph, final String name) {
 		for (Stmt stmt : graph.getStmts()) {
+			String value = null;
 			if (stmt instanceof AttrStmt) {
-				return getAttributeValue((AttrStmt) stmt, name);
+				value = getAttributeValue((AttrStmt) stmt, name);
 			} else if (stmt instanceof Attribute) {
-				return getAttributeValue((Attribute) stmt, name);
+				value = getAttributeValue((Attribute) stmt, name);
+			}
+			if (value != null) {
+				return value;
 			}
 		}
 		return null;

@@ -169,7 +169,7 @@ public final class DotTestUtils {
 		Graph.Builder graph = new Graph.Builder()
 				.attr(DotAttributes._NAME__GNE, "StyledGraph")
 				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
-				.attr(DotAttributes.LAYOUT_G, DotAttributes.LAYOUT__G__DOT);
+				.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__DOT);
 
 		/* Nodes: */
 		Node n1 = new Node.Builder().attr(DotAttributes._NAME__GNE, "1") //$NON-NLS-1$

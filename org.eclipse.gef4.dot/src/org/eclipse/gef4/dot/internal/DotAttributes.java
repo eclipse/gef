@@ -151,61 +151,61 @@ public class DotAttributes {
 	public static final String LABEL__GNE = "label";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "circo" layout algorithm
+	 * This {@link #LAYOUT__G} value specifies that the "circo" layout algorithm
 	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__CIRCO = "circo";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "dot" layout algorithm is
-	 * to be used for laying out the graph.
+	 * This {@link #LAYOUT__G} value specifies that the "dot" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__DOT = "dot";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "fdp" layout algorithm is
-	 * to be used for laying out the graph.
+	 * This {@link #LAYOUT__G} value specifies that the "fdp" layout algorithm
+	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__FDP = "fdp";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "grid" layout algorithm
+	 * This {@link #LAYOUT__G} value specifies that the "grid" layout algorithm
 	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__GRID = "grid";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "neato" layout algorithm
+	 * This {@link #LAYOUT__G} value specifies that the "neato" layout algorithm
 	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__NEATO = "neato";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "osage" layout algorithm
+	 * This {@link #LAYOUT__G} value specifies that the "osage" layout algorithm
 	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__OSAGE = "osage";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "sfdp" layout algorithm
+	 * This {@link #LAYOUT__G} value specifies that the "sfdp" layout algorithm
 	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__SFDP = "sfdp";
 
 	/**
-	 * This {@link #LAYOUT_G} value specifies that the "twopi" layout algorithm
+	 * This {@link #LAYOUT__G} value specifies that the "twopi" layout algorithm
 	 * is to be used for laying out the graph.
 	 */
 	public static final String LAYOUT__G__TWOPI = "twopi";
 
 	/**
-	 * Defines the default value for the {@link #LAYOUT_G} property, which is
+	 * Defines the default value for the {@link #LAYOUT__G} property, which is
 	 * {@link #LAYOUT__G__DOT}.
 	 */
 	public static final String LAYOUT__G__DEFAULT = LAYOUT__G__DOT;
 
 	/**
-	 * Defines all possible values for the {@link #LAYOUT_G} property.
+	 * Defines all possible values for the {@link #LAYOUT__G} property.
 	 */
 	public static final Set<String> LAYOUT__G__VALUES = new HashSet<>(
 			Arrays.asList(LAYOUT__G__DOT, LAYOUT__G__OSAGE, LAYOUT__G__GRID,
@@ -217,7 +217,7 @@ public class DotAttributes {
 	 * Possible values are defined by {@link #LAYOUT__G__VALUES}. The default
 	 * value is defined by {@link #LAYOUT__G__DEFAULT}.
 	 */
-	public static final String LAYOUT_G = "layout";
+	public static final String LAYOUT__G = "layout";
 
 	/**
 	 * Specifies 'lp' attribute (label position) of an edge.
@@ -241,24 +241,37 @@ public class DotAttributes {
 	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
 	 * horizontally from left to right.
 	 */
-	public static final String RANKDIR__G__LR = "lr";
+	public static final String RANKDIR__G__LR = "LR";
+
+	/**
+	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
+	 * horizontally from right to left.
+	 */
+	public static final String RANKDIR__G__RL = "RL";
 
 	/**
 	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
 	 * vertically from top to bottom.
 	 */
-	public static final String RANKDIR__G__TD = "td";
+	public static final String RANKDIR__G__TB = "TB";
+
+	/**
+	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
+	 * vertically from bottom to top.
+	 */
+	public static final String RANKDIR__G__BT = "BT";
 
 	/**
 	 * Defines the default value for the {@link #RANKDIR__G} property.
 	 */
-	public static final String RANKDIR__G__DEFAULT = RANKDIR__G__TD;
+	public static final String RANKDIR__G__DEFAULT = RANKDIR__G__TB;
 
 	/**
 	 * Defines all possible values for the {@link #RANKDIR__G} property.
 	 */
 	public static final Set<String> RANKDIR__G__VALUES = new HashSet<>(
-			Arrays.asList(RANKDIR__G__LR, RANKDIR__G__TD));
+			Arrays.asList(RANKDIR__G__LR, RANKDIR__G__TB, RANKDIR__G__RL,
+					RANKDIR__G__BT));
 
 	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
@@ -606,17 +619,17 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the value of the {@link #LAYOUT_G} property of the given
+	 * Returns the value of the {@link #LAYOUT__G} property of the given
 	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #LAYOUT_G} property.
-	 * @return The value of the {@link #LAYOUT_G} property of the given
+	 *            {@link #LAYOUT__G} property.
+	 * @return The value of the {@link #LAYOUT__G} property of the given
 	 *         {@link Graph}.
 	 */
 	public static String getLayout(Graph graph) {
-		return (String) graph.attributesProperty().get(LAYOUT_G);
+		return (String) graph.attributesProperty().get(LAYOUT__G);
 	}
 
 	/**
@@ -1052,17 +1065,21 @@ public class DotAttributes {
 	 * @param edge
 	 *            The {@link Edge} for which to change the value of the
 	 *            {@link #DIR__E} property.
-	 * @param direction
+	 * @param dir
 	 *            The new value for the {@link #DIR__E} property.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>direction</i> value is not supported.
 	 */
-	public static void setDir(Edge edge, String direction) {
-		if (!DIR__E__VALUES.contains(direction)) {
+	public static void setDir(Edge edge, String dir) {
+		List<Diagnostic> diagnostics = filter(DotLanguageSupport.DOT_VALIDATOR
+				.validateAttributeValue(AttributeContext.EDGE, DIR__E, dir),
+				Diagnostic.ERROR);
+		if (!diagnostics.isEmpty()) {
 			throw new IllegalArgumentException("Cannot set edge attribute '"
-					+ DIR__E + "' to '" + direction + "'.");
+					+ DIR__E + "' to '" + dir + "': "
+					+ getFormattedDiagnosticMessage(diagnostics));
 		}
-		edge.attributesProperty().put(DIR__E, direction);
+		edge.attributesProperty().put(DIR__E, dir);
 	}
 
 	/**
@@ -1103,6 +1120,7 @@ public class DotAttributes {
 	 *            The new value of the {@link #HEIGHT__N} property.
 	 */
 	public static void setHeight(Node node, String height) {
+		// TODO: move check to DotJavaValidator
 		try {
 			Double.parseDouble(height);
 		} catch (NumberFormatException e) {
@@ -1184,25 +1202,29 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #LAYOUT_G} property of the given {@link Graph} to the
+	 * Sets the {@link #LAYOUT__G} property of the given {@link Graph} to the
 	 * given <i>layout</i> value.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #LAYOUT_G} property.
+	 *            {@link #LAYOUT__G} property.
 	 * @param layout
-	 *            The new value for the {@link #LAYOUT_G} property.
+	 *            The new value for the {@link #LAYOUT__G} property.
 	 * @throws IllegalArgumentException
 	 *             when the given <i>layout</i> value is not supported, i.e. not
 	 *             contained within {@link #LAYOUT__G__VALUES}.
 	 */
 	public static void setLayout(Graph graph, String layout) {
-		if (!LAYOUT__G__VALUES.contains(layout)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"layout\" to \"" + layout
-							+ "\"; supported values: " + LAYOUT__G__VALUES);
+		List<Diagnostic> diagnostics = filter(
+				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
+						AttributeContext.GRAPH, LAYOUT__G, layout),
+				Diagnostic.ERROR);
+		if (!diagnostics.isEmpty()) {
+			throw new IllegalArgumentException("Cannot set graph attribute '"
+					+ LAYOUT__G + "' to '" + layout + "'. "
+					+ getFormattedDiagnosticMessage(diagnostics));
 		}
-		graph.attributesProperty().put(LAYOUT_G, layout);
+		graph.attributesProperty().put(LAYOUT__G, layout);
 	}
 
 	/**
@@ -1330,10 +1352,14 @@ public class DotAttributes {
 	 *             not contained within {@link #RANKDIR__G__VALUES}.
 	 */
 	public static void setRankdir(Graph graph, String rankdir) {
-		if (!RANKDIR__G__VALUES.contains(rankdir)) {
-			throw new IllegalArgumentException(
-					"Cannot set graph attribute \"rankdir\" to \"" + rankdir
-							+ "\"; supported values: " + RANKDIR__G__VALUES);
+		List<Diagnostic> diagnostics = filter(
+				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
+						AttributeContext.GRAPH, RANKDIR__G, rankdir),
+				Diagnostic.ERROR);
+		if (!diagnostics.isEmpty()) {
+			throw new IllegalArgumentException("Cannot set graph attribute '"
+					+ RANKDIR__G + "' to '" + rankdir + "'. "
+					+ getFormattedDiagnosticMessage(diagnostics));
 		}
 		graph.attributesProperty().put(RANKDIR__G, rankdir);
 	}
@@ -1352,10 +1378,14 @@ public class DotAttributes {
 	 *             contained within {@link #STYLE__E__VALUES}.
 	 */
 	public static void setStyle(Edge edge, String style) {
-		if (!STYLE__E__VALUES.contains(style)) {
-			throw new IllegalArgumentException(
-					"Cannot set edge attribute \"style\" to \"" + style
-							+ "\"; supported values: " + STYLE__E__VALUES);
+		List<Diagnostic> diagnostics = filter(
+				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
+						AttributeContext.EDGE, STYLE__E, style),
+				Diagnostic.ERROR);
+		if (!diagnostics.isEmpty()) {
+			throw new IllegalArgumentException("Cannot set edge attribute '"
+					+ STYLE__E + "' to '" + style + "'. "
+					+ getFormattedDiagnosticMessage(diagnostics));
 		}
 		edge.attributesProperty().put(STYLE__E, style);
 	}

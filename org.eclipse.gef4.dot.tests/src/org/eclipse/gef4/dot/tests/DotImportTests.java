@@ -96,7 +96,7 @@ public final class DotImportTests {
 	public void importNonExistingNodesIntoGraph() {
 		// simple graph
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(DotAttributes.LAYOUT_G, new TreeLayoutAlgorithm());
+		graph.attr(DotAttributes.LAYOUT__G, new TreeLayoutAlgorithm());
 		Assert.assertEquals(0, graph.build().getNodes().size());
 		Assert.assertEquals(0, graph.build().getEdges().size());
 		new DotImport("1->2").into(graph); //$NON-NLS-1$
@@ -147,14 +147,10 @@ public final class DotImportTests {
 	public void importLayoutAlgorithmIntoGraph() {
 		Graph.Builder graph = new Graph.Builder();
 		new DotImport("rankdir=LR").into(graph);
-		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
-				DotAttributes.getLayout(graph.build()));
 		Assert.assertEquals(DotAttributes.RANKDIR__G__LR,
 				DotAttributes.getRankdir(graph.build()));
-		new DotImport("rankdir=TD").into(graph);
-		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
-				DotAttributes.getLayout(graph.build()));
-		Assert.assertEquals(DotAttributes.RANKDIR__G__TD,
+		new DotImport("rankdir=TB").into(graph);
+		Assert.assertEquals(DotAttributes.RANKDIR__G__TB,
 				DotAttributes.getRankdir(graph.build()));
 	}
 
