@@ -23,7 +23,7 @@ AbstractArrowShape:
 	ArrowShape | DeprecatedArrowShape;
 
 ArrowShape:
-	((open?="o")? (side=("l" | "r"))? shape=PrimitiveShape);
+	(open?="o")? (side=("l" | "r"))? shape=PrimitiveShape;
 
 DeprecatedArrowShape:
 	shape = DeprecatedShape;

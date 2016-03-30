@@ -360,9 +360,15 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				context.put(CURRENT_LANGUAGE_NAME, ReflectionUtils
 						.getPrivateFieldValue(validator, "languageName"));
 
+				EObject root = parseResult.getRootASTElement();
+				// validate the root element...
+				validator.validate(attributeType, root,
+						null /* diagnostic chain */, context);
+
+				// ...and all its children
 				for (Iterator<EObject> iterator = EcoreUtil
-						.getAllProperContents(parseResult.getRootASTElement(),
-								true); iterator.hasNext();) {
+						.getAllProperContents(root, true); iterator
+								.hasNext();) {
 					validator.validate(attributeType, iterator.next(),
 							null /* diagnostic chain */, context);
 				}

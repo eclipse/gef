@@ -1,0 +1,48 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text
+ *******************************************************************************/
+
+/*
+ * The ArrowShapes_Direction_Both directed graph represents the different arrow shapes in both direction.
+ * The arrowtail attribute represents the open variant of the arrowhead attribute.
+ * The visualization can be controlled with the arrowsize and the direction attributes as well.
+ */
+digraph ArrowShapes_Direction_Both{
+     rankdir=LR
+
+     /* Primitive shape: box */
+     1-> 2[arrowhead=box      arrowsize=2.0  arrowtail=obox       dir=none  label="box"     ]
+     3-> 4[arrowhead=lbox     arrowsize=2.0  arrowtail=olbox      dir=both  label="lbox"    ]
+     5-> 6[arrowhead=rbox     arrowsize=2.0  arrowtail=orbox      dir=both  label="rbox"    ]
+
+    /* Primitive shape: diamond */
+    7->8[arrowhead=diamond    arrowsize=2.0  arrowtail=odiamond   dir=both  label="diamond" ]
+    9->10[arrowhead=ldiamond  arrowsize=2.0  arrowtail=oldiamond  dir=both  label="ldiamond"]
+    11->12[arrowhead=rdiamond arrowsize=2.0  arrowtail=ordiamond  dir=both  label="rdiamond"]
+
+
+    /* Primitive shape: dot */
+    13->14[arrowhead=dot      arrowsize=2.0  arrowtail=odot       dir=both  label="dot"     ]
+
+    /* Primitive shape: inv */
+    15->16[arrowhead=inv      arrowsize=2.0  arrowtail=oinv       dir=both  label="inv"     ]
+    17->18[arrowhead=linv     arrowsize=2.0  arrowtail=olinv      dir=both  label="linv"    ]
+    19->20[arrowhead=rinv     arrowsize=2.0  arrowtail=orinv      dir=both  label="rinv"    ]
+
+
+    /* Primitive shape: normal */
+    21->22[arrowhead=normal                  arrowtail=onormal    dir=both  label="normal"  ]
+    23->24[arrowhead=lnormal  arrowsize=2.0  arrowtail=olnormal   dir=both  label="lnormal" ]
+    25->26[arrowhead=rnormal  arrowsize=2.0  arrowtail=ornormal   dir=both  label="rnormal" ]
+
+    /* Default - No attribute is specified */
+    27->28[                   arrowsize=2.0                       dir=back  label="default" ]
+}

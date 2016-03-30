@@ -1,0 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text
+ *******************************************************************************/
+
+/*
+ * The ArrowShapes_Invalid_Modifiers directed graph represents the syntactically correct,
+ * but semantically meaningless arrow shapes. The usage of these arrow shapes should produce
+ * warnings rather than xtext errors, because the graph can still be rendered by Graphviz,
+ * even it the modifier does not modify the occurrence of primary shape.
+ */
+digraph ArrowShapes_Invalid_Modifiers {
+    rankdir=LR
+
+     // crow: modifier 'o' does not make sense
+     1-> 2[arrowhead=ocrow,      label=ocrow     ]
+     3-> 4[arrowhead=olcrow,     label="olcrow"  ]
+     5-> 6[arrowhead=orcrow,     label="orcrow"  ]
+
+     // dot: modifier 'l'/'r' does not make sense
+     7-> 8[arrowhead=rdot,       label="rdot"    ]
+     9->10[arrowhead=ldot,       label="ldot"    ]
+    11->12[arrowhead=oldot,      label="oldot"   ]
+    13->14[arrowhead=ordot,      label="ordot"   ]
+
+    // none: none of the modifiers makes any sense
+    15->16[arrowhead=lnone,     label="lnone"    ]
+    17->18[arrowhead=rnone,     label="rnone"    ]
+    19->20[arrowhead=onone,     label="onone"    ]
+    21->22[arrowhead=olnone,    label="olnone"   ]
+    23->24[arrowhead=ornone,    label="ornone"   ]
+
+    // tee: modifier 'o' does not makes sense
+    25->26[arrowhead=otee,      label="otee"     ]
+    27->28[arrowhead=oltee,     label="oltee"    ]
+    29->30[arrowhead=ortee,     label="ortee"    ]
+
+    // vee: modifier 'o' does not makes sense
+    31->32[arrowhead=ovee,      label="ovee"     ]
+    33->34[arrowhead=olvee,     label="olvee"    ]
+    35->36[arrowhead=orvee,     label="orvee"    ]
+
+    // curve: modifier 'o' does not makes sense
+    37->38[arrowhead=ocurve,    label="ocurve"   ]
+    39->40[arrowhead=olcurve,   label="olcurve"  ]
+    41->42[arrowhead=orcurve,   label="orcurve"  ]
+
+    // icurve: modifier 'o' does not makes sense
+    43->44[arrowhead=oicurve,   label="oicurve"  ]
+    45->46[arrowhead=olicurve,  label="olicurve" ]
+    47->48[arrowhead=oricurve,  label="oricurve" ]
+}

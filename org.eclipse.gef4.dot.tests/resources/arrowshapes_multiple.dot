@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 itemis AG and others.
+ * Copyright (c) 2015, 2016 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,28 +7,36 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *       Tamas Miklossy  (itemis AG) - Initial text 
+ *       Tamas Miklossy  (itemis AG) - Initial text
  *******************************************************************************/
 
-/* 
- * The ArrowShapes_Multiple directed graph represents some combinations of the 
- * different arrow shapes which can also be used as valid values for the arrowhead edge attribute.
+/*
+ * The ArrowShapes_Multiple directed graph represents some combinations of the
+ * different arrow shapes which can also be used as valid values for the arrowhead/arrowtail edge attribute.
  */
 digraph ArrowShapes_Multiple {
     rankdir=LR
-    
-    /* Combination of two primitive shapes */
-     1-> 2[arrowhead=invdot,        label="invdot"       ]
-     3-> 4[arrowhead=invodot,       label="invodot"      ]
-     5-> 6[arrowhead=boxbox,        label="boxbox"       ]
-     7-> 8[arrowhead=nonenormal,    label="nonenormal"   ]
-     9->10[arrowhead=lteeoldiamond, label="lteeoldiamond"]
-     
-     /* Combination of three primitive shapes */
-     11-> 12[arrowhead=dotodotdot,   label="dotodotdot"  ]
-     13-> 14[arrowhead=lveerveelvee, label="lveerveelvee"]
-     
-     /* Combination of four primitive shapes */
-     15-> 16[arrowhead=onormalnormalonormalnormal, 
-             label="onormalnormalonormalnormal"]
+
+     /* Combination of two primitive shapes */
+     1-> 2[arrowhead=invdot,        arrowtail=invdot,        dir=both, arrowsize=1.0,  label="invdot"       ]
+     3-> 4[arrowhead=invodot,       arrowtail=invodot,       dir=both, arrowsize=1.0,  label="invodot"      ]
+     5-> 6[arrowhead=boxbox,        arrowtail=boxbox,        dir=both, arrowsize=2.0,  label="boxbox"       ]
+     7-> 8[arrowhead=nonenormal,    arrowtail=nonenormal,    dir=both, arrowsize=2.5,  label="nonenormal"   ]
+     9->10[arrowhead=lteeoldiamond, arrowtail=lteeoldiamond, dir=both, arrowsize=1.0,  label="lteeoldiamond"]
+    11->12[arrowhead=nonedot,       arrowtail=nonedot,       dir=both, arrowsize=1.0,  label="nonedot"      ]
+
+    /* Combination of three primitive shapes */
+    13->14[arrowhead=dotodotdot,   arrowtail=dotodotdot,     dir=both, arrowsize=1.0,  label="dotodotdot"   ]
+    15->16[arrowhead=lveerveelvee, arrowtail=lveerveelvee,   dir=both, arrowsize=1.0,  label="lveerveelvee" ]
+    17->18[arrowhead=nonenonedot,  arrowtail=nonenonedot,    dir=both, arrowsize=1.0,  label="nonenonedot"  ]
+
+    /* Combination of four primitive shapes */
+    19->20[arrowhead=onormalnormalonormalnormal,
+           arrowtail=onormalnormalonormalnormal,
+           dir=both,
+           arrowsize=1.0,
+           label="onormalnormalonormalnormal"]
+    21->22[arrowhead=nonenonenonedot, arrowtail=nonenonenonedot, dir=both, arrowsize=1.0,  label="nonenonenonedot"]
+    23->24[arrowhead=noneboxnonedot,  arrowtail=noneboxnonedot,  dir=both, arrowsize=1.0,  label="noneboxnonedot" ]
+    25->26[arrowhead=boxnonenonedot,  arrowtail=boxnonenonedot,  dir=both, arrowsize=1.0,  label="boxnonenonedot" ]
 }

@@ -13,7 +13,13 @@
 
 package org.eclipse.gef4.dot.tests;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+
 import org.eclipse.gef4.dot.internal.DotAttributes;
+import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.parser.DotInjectorProvider;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.dot.DotPackage;
@@ -38,6 +44,110 @@ public class DotValidatorTests {
 	ValidationTestHelper validationTestHelper;
 
 	@Test
+	public void testSingleArrowShapes() {
+		DotAst dotAst = parse("arrowshapes_single.dot");
+		validationTestHelper.assertNoIssues(dotAst);
+	}
+
+	@Test
+	public void testMultipleArrowShapes() {
+		DotAst dotAst = parse("arrowshapes_multiple.dot");
+		validationTestHelper.assertNoIssues(dotAst);
+	}
+
+	@Test
+	public void testDeprecatedArrowType() throws Exception {
+		DotAst dotAst = parse("arrowshapes_deprecated.dot");
+
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ediamond' is not semantically correct: The shape 'ediamond' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'open' is not semantically correct: The shape 'open' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'halfopen' is not semantically correct: The shape 'halfopen' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'empty' is not semantically correct: The shape 'empty' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'invempty' is not semantically correct: The shape 'invempty' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ediamondinvempty' is not semantically correct: The shape 'ediamond' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ediamondinvempty' is not semantically correct: The shape 'invempty' is deprecated.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'openbox' is not semantically correct: The shape 'open' is deprecated.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(8, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testArrowshapesDirectionBoth() {
+		DotAst dotAst = parse("arrowshapes_direction_both.dot");
+		validationTestHelper.assertNoIssues(dotAst);
+	}
+
+	@Test
+	public void testArrowShapesInvalidModifiers() throws Exception {
+		DotAst dotAst = parse("arrowshapes_invalid_modifiers.dot");
+
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ocrow' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'crow'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'olcrow' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'crow'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'orcrow' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'crow'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'rdot' is not semantically correct: The side modifier 'r' may not be combined with primitive shape 'dot'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ldot' is not semantically correct: The side modifier 'l' may not be combined with primitive shape 'dot'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'oldot' is not semantically correct: The side modifier 'l' may not be combined with primitive shape 'dot'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ordot' is not semantically correct: The side modifier 'r' may not be combined with primitive shape 'dot'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'lnone' is not semantically correct: The side modifier 'l' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'rnone' is not semantically correct: The side modifier 'r' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'onone' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'olnone' is not semantically correct: The side modifier 'l' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'olnone' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ornone' is not semantically correct: The side modifier 'r' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ornone' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'none'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'otee' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'tee'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'oltee' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'tee'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ortee' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'tee'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ovee' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'vee'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'olvee' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'vee'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'orvee' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'vee'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'ocurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'curve'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'olcurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'curve'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'orcurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'curve'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'oicurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'icurve'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'olicurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'icurve'.");
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'oricurve' is not semantically correct: The open modifier 'o' may not be combined with primitive shape 'icurve'.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(26, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
 	public void testWrongArrowType() throws Exception {
 		String text = "digraph testGraph { 1->2[arrowhead=fooBar arrowtail=fooBar2] }";
 
@@ -55,5 +165,70 @@ public class DotValidatorTests {
 
 		// verify that these are the only reported issues
 		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongEdgeDirection() throws Exception {
+		String text = "digraph testGraph { 1->2[dir=foo] }";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.DIR__E,
+				"The value 'foo' is not a syntactically correct dir: Value has to be one of 'both', 'forward', 'none', 'back'.");
+
+		// verify that it is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongEdgeArrowSize() throws Exception {
+		String text = "digraph testGraph { 1->2[arrowsize=foo] 3->4[arrowsize=\"-2.0\"]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWSIZE__E,
+				"The value 'foo' is not a syntactically correct double: For input string: \"foo\".");
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWSIZE__E,
+				"The double value '-2.0' is not semantically correct: Value may not be smaller than 0.0.");
+
+		// verify that these are the only reported issues
+		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testNoneIsTheLastArrowShape() throws Exception {
+		String text = "digraph { 1->2[arrowhead=boxnone] }";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		assertArrowTypeWarning(dotAst,
+				"The ArrowType value 'boxnone' is not semantically correct: The shape 'none' may not be the last shape.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	private DotAst parse(String fileName) {
+		DotAst dotAst = null;
+		String fileContents = DotFileUtils
+				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
+		try {
+			dotAst = parserHelper.parse(fileContents);
+			assertNotNull(dotAst);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+		return dotAst;
+	}
+
+	private void assertArrowTypeWarning(DotAst dotAst, String warningMessage) {
+		validationTestHelper.assertWarning(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.ARROWHEAD__E,
+				warningMessage);
 	}
 }

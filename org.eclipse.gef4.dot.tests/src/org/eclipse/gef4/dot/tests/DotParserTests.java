@@ -54,6 +54,16 @@ public class DotParserTests {
 		testFile("arrowshapes_deprecated.dot");
 	}
 
+	@Test
+	public void testArrowshapesDirectionBoth() {
+		testFile("arrowshapes_direction_both.dot");
+	}
+
+	@Test
+	public void testArrowShapesInvalidModifiers() {
+		testFile("arrowshapes_invalid_modifiers.dot");
+	}
+
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));

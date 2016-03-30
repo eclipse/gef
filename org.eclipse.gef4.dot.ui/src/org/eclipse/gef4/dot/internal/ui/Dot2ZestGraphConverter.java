@@ -128,8 +128,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// The zest edge target decoration should only appear if the edge
 		// direction is "forward" or "both".
-		if (dotDir == DotAttributes.DIR__E__FORWARD
-				|| dotDir == DotAttributes.DIR__E__BOTH) {
+		if (DotAttributes.DIR__E__FORWARD.equals(dotDir)
+				|| DotAttributes.DIR__E__BOTH.equals(dotDir)) {
 			ZestProperties.setTargetDecoration(zest, zestEdgeTargetDecoration);
 		}
 
@@ -151,8 +151,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// The zest edge source decoration should only appear if the edge
 		// direction is "back" or "both".
-		if (dotDir == DotAttributes.DIR__E__BACK
-				|| dotDir == DotAttributes.DIR__E__BOTH) {
+		if (DotAttributes.DIR__E__BACK.equals(dotDir)
+				|| DotAttributes.DIR__E__BOTH.equals(dotDir)) {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
 		}
 
