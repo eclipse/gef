@@ -62,6 +62,12 @@ public class DotLanguageSupport {
 	public static final DotArrowTypeParser ARROWTYPE_PARSER = arrowTypeInjector
 			.getInstance(DotArrowTypeParser.class);
 
+	/**
+	 * The serializer for arrowtype attribute values.
+	 */
+	public static final ISerializer ARROWTYPE_SERIALIZER = arrowTypeInjector
+			.getInstance(ISerializer.class);
+
 	private static final Injector pointInjector = new DotPointStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
 
@@ -91,6 +97,12 @@ public class DotLanguageSupport {
 	 */
 	public static final DotSplineTypeParser SPLINETYPE_PARSER = splineTypeInjector
 			.getInstance(DotSplineTypeParser.class);
+
+	/**
+	 * The serializer for splinetype attribute values.
+	 */
+	public static final ISerializer SPLINETYPE_SERIALIZER = splineTypeInjector
+			.getInstance(ISerializer.class);
 
 	/**
 	 * The validator for splinetype attribute values.

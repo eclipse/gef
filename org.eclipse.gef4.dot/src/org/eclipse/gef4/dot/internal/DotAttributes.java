@@ -415,30 +415,19 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Returns the (parsed) value of the {@link #ARROWTAIL__E} property of the
+	 * Returns the (parsed) value of the {@link #ARROWSIZE__E} property of the
 	 * given {@link Edge}.
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWTAIL__E} property, parsed as an {@link ArrowType}
+	 *            {@link #ARROWSIZE__E} property, parsed as an {@link ArrowType}
 	 *            .
 	 * 
-	 * @return The value of the {@link #ARROWTAIL__E} property of the given
+	 * @return The value of the {@link #ARROWSIZE__E} property of the given
 	 *         {@link Edge}.
 	 */
 	public static Double getArrowSizeParsed(Edge edge) {
-		String arrowSize = getArrowSize(edge);
-		if (arrowSize == null) {
-			return null;
-		}
-		Double arrowSizeParsed;
-		try {
-			arrowSizeParsed = Double.parseDouble(arrowSize);
-		} catch (NumberFormatException exception) {
-			return null;
-		}
-
-		return arrowSizeParsed;
+		return parseDouble(getArrowSize(edge));
 	}
 
 	/**
@@ -554,6 +543,20 @@ public class DotAttributes {
 	 */
 	public static String getHeight(Node node) {
 		return (String) node.attributesProperty().get(HEIGHT__N);
+	}
+
+	/**
+	 * Returns the value of the {@link #HEIGHT__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #HEIGHT__N} property.
+	 * @return The value of the {@link #HEIGHT__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Double getHeightParsed(Node node) {
+		return parseDouble(getHeight(node));
 	}
 
 	/**
@@ -775,6 +778,34 @@ public class DotAttributes {
 		return (T) parsedAttributeValue.getRootASTElement();
 	}
 
+	private static Double parseDouble(String attributeValue) {
+		if (attributeValue == null) {
+			return null;
+		}
+		Double parsedAttributeValue;
+		try {
+			// TODO: use specific parser that sticks strictly to DOT double
+			parsedAttributeValue = Double.parseDouble(attributeValue);
+		} catch (NumberFormatException exception) {
+			return null;
+		}
+		return parsedAttributeValue;
+	}
+
+	private static Boolean parseBoolean(String attributeValue) {
+		if (attributeValue == null) {
+			return null;
+		}
+		Boolean parsedAttributeValue;
+		try {
+			// TODO: use specific parser that sticks strictly to DOT boolean
+			parsedAttributeValue = Boolean.parseBoolean(attributeValue);
+		} catch (NumberFormatException exception) {
+			return null;
+		}
+		return parsedAttributeValue;
+	}
+
 	/**
 	 * Returns the value of the {@link #RANKDIR__G} property of the given
 	 * {@link Graph}.
@@ -874,6 +905,20 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #WIDTH__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #WIDTH__N} property.
+	 * @return The value of the {@link #WIDTH__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Double getWidthParsed(Node node) {
+		return parseDouble(getWidth(node));
+	}
+
+	/**
 	 * Returns the value of the {@link #XLABEL__NE} property of the given
 	 * {@link Edge}.
 	 * 
@@ -964,18 +1009,25 @@ public class DotAttributes {
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
 	 *            {@link #FORCELABELS__G} property.
-	 * @param defaultIfUnset
-	 *            whether to return the default value {@link Boolean#TRUE} in
-	 *            case {@link #FORCELABELS__G} is unset.
 	 * @return The value of the {@link #FORCELABELS__G} property of the given
 	 *         {@link Graph}.
 	 */
-	public static Boolean isForceLabels(Graph graph, boolean defaultIfUnset) {
-		Boolean value = (Boolean) graph.getAttributes().get(FORCELABELS__G);
-		if (value == null && defaultIfUnset) {
-			return Boolean.TRUE;
-		}
-		return value;
+	public static Boolean getForceLabelsParsed(Graph graph) {
+		return parseBoolean(getForceLabels(graph));
+	}
+
+	/**
+	 * Returns the value of the {@link #FORCELABELS__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FORCELABELS__G} property.
+	 * @return The value of the {@link #FORCELABELS__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getForceLabels(Graph graph) {
+		return (String) graph.getAttributes().get(FORCELABELS__G);
 	}
 
 	/**
@@ -991,6 +1043,22 @@ public class DotAttributes {
 	public static void setArrowHead(Edge edge, String arrowHead) {
 		validate(AttributeContext.EDGE, ARROWHEAD__E, arrowHead);
 		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
+	}
+
+	/**
+	 * Sets the {@link #ARROWHEAD__E} property of the given {@link Edge} to the
+	 * given <i>arrowHead</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWHEAD__E} property.
+	 * @param arrowHeadParsed
+	 *            The new value for the {@link #ARROWHEAD__E} property.
+	 */
+	public static void setArrowHeadParsed(Edge edge,
+			ArrowType arrowHeadParsed) {
+		setArrowHead(edge, serialize(DotLanguageSupport.ARROWTYPE_SERIALIZER,
+				arrowHeadParsed));
 	}
 
 	/**
@@ -1011,6 +1079,22 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #ARROWSIZE__E} property of the given {@link Edge} to the
+	 * given <i>arrowSize</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWSIZE__E} property.
+	 * @param arrowSizeParsed
+	 *            The new value for the {@link #ARROWSIZE__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowSize</i> value is not supported.
+	 */
+	public static void setArrowSizeParsed(Edge edge, Double arrowSizeParsed) {
+		setArrowSize(edge, arrowSizeParsed.toString());
+	}
+
+	/**
 	 * Sets the {@link #ARROWTAIL__E} property of the given {@link Edge} to the
 	 * given <i>arrowTail</i> value.
 	 * 
@@ -1025,6 +1109,24 @@ public class DotAttributes {
 	public static void setArrowTail(Edge edge, String arrowTail) {
 		validate(AttributeContext.EDGE, ARROWTAIL__E, arrowTail);
 		edge.attributesProperty().put(ARROWTAIL__E, arrowTail);
+	}
+
+	/**
+	 * Sets the {@link #ARROWTAIL__E} property of the given {@link Edge} to the
+	 * given <i>arrowTail</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #ARROWTAIL__E} property.
+	 * @param arrowTailParsed
+	 *            The new value for the {@link #ARROWTAIL__E} property.
+	 * @throws IllegalArgumentException
+	 *             when the given <i>arrowTail</i> value is not supported.
+	 */
+	public static void setArrowTailParsed(Edge edge,
+			ArrowType arrowTailParsed) {
+		setArrowTail(edge, serialize(DotLanguageSupport.ARROWTYPE_SERIALIZER,
+				arrowTailParsed));
 	}
 
 	/**
@@ -1051,11 +1153,26 @@ public class DotAttributes {
 	 * @param graph
 	 *            The {@link Graph} for which to change the value of the
 	 *            {@link #FORCELABELS__G} property.
+	 * @param forceLabelsParsed
+	 *            The new value for the {@link #FORCELABELS__G} property.
+	 */
+	public static void setForceLabelsParsed(Graph graph,
+			Boolean forceLabelsParsed) {
+		setForceLabels(graph, forceLabelsParsed.toString());
+	}
+
+	/**
+	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
+	 * the given value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FORCELABELS__G} property.
 	 * @param forceLabels
 	 *            The new value for the {@link #FORCELABELS__G} property.
 	 */
-	public static void setForceLabels(Graph graph, Boolean forceLabels) {
-		graph.getAttributes().put(FORCELABELS__G, forceLabels);
+	public static void setForceLabels(Graph graph, String forceLabels) {
+		graph.getAttributes().put(FORCELABELS__G, forceLabels.toString());
 	}
 
 	/**
@@ -1087,6 +1204,21 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #HEAD_LP__E} property of the given {@link Edge} to the
+	 * given <i>headLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #HEAD_LP__E} property.
+	 * @param headLpParsed
+	 *            The new value for the {@link #HEAD_LP__E} property.
+	 */
+	public static void setHeadLpParsed(Edge edge, Point headLpParsed) {
+		setHeadLp(edge,
+				serialize(DotLanguageSupport.POINT_SERIALIZER, headLpParsed));
+	}
+
+	/**
 	 * Sets the {@link #HEIGHT__N} property of the given {@link Node} to the
 	 * given value.
 	 * 
@@ -1098,6 +1230,19 @@ public class DotAttributes {
 	public static void setHeight(Node node, String height) {
 		validate(AttributeContext.NODE, HEIGHT__N, height);
 		node.getAttributes().put(HEIGHT__N, height);
+	}
+
+	/**
+	 * Sets the {@link #HEIGHT__N} property of the given {@link Node} to the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param heightParsed
+	 *            The new value of the {@link #HEIGHT__N} property.
+	 */
+	public static void setHeightParsed(Node node, Double heightParsed) {
+		setHeight(node, heightParsed.toString());
 	}
 
 	/**
@@ -1203,6 +1348,20 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #LP__E} property of the given {@link Edge} to the given
+	 * <i>lp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #LP__E} property.
+	 * @param lpParsed
+	 *            The new value for the {@link #LP__E} property.
+	 */
+	public static void setLpParsed(Edge edge, Point lpParsed) {
+		setLp(edge, serialize(DotLanguageSupport.POINT_SERIALIZER, lpParsed));
+	}
+
+	/**
 	 * Sets the {@link #_NAME__GNE} property of the given {@link Graph} to the
 	 * given <i>name</i> value.
 	 * 
@@ -1278,11 +1437,25 @@ public class DotAttributes {
 	 * 
 	 * @param node
 	 *            The {@link Node} whose property value to set.
-	 * @param parsedPos
+	 * @param posParsed
 	 *            The new value of the {@link #POS__NE} property.
 	 */
-	public static void setPosParsed(Node node, Point parsedPos) {
-		setPos(node, serialize(DotLanguageSupport.POINT_SERIALIZER, parsedPos));
+	public static void setPosParsed(Node node, Point posParsed) {
+		setPos(node, serialize(DotLanguageSupport.POINT_SERIALIZER, posParsed));
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} property of the given {@link Edge} to the given
+	 * value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} whose property value to set.
+	 * @param posParsed
+	 *            The new value of the {@link #POS__NE} property.
+	 */
+	public static void setPosParsed(Edge edge, SplineType posParsed) {
+		setPos(edge,
+				serialize(DotLanguageSupport.SPLINETYPE_SERIALIZER, posParsed));
 	}
 
 	/**
@@ -1350,6 +1523,21 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Sets the {@link #TAIL_LP__E} property of the given {@link Edge} to the
+	 * given <i>tailLp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #TAIL_LP__E} property.
+	 * @param tailLpParsed
+	 *            The new value for the {@link #TAIL_LP__E} property.
+	 */
+	public static void setTailLpParsed(Edge edge, Point tailLpParsed) {
+		setTailLp(edge,
+				serialize(DotLanguageSupport.POINT_SERIALIZER, tailLpParsed));
+	}
+
+	/**
 	 * Sets the {@link #_TYPE__G} property of the given {@link Graph} to the
 	 * given <i>type</i> value.
 	 * 
@@ -1383,6 +1571,19 @@ public class DotAttributes {
 	public static void setWidth(Node node, String width) {
 		validate(AttributeContext.NODE, WIDTH__N, width);
 		node.getAttributes().put(WIDTH__N, width);
+	}
+
+	/**
+	 * Sets the {@link #WIDTH__N} property of the given {@link Node} to the
+	 * given value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param widthParsed
+	 *            The new value of the {@link #WIDTH__N} property.
+	 */
+	public static void setWidthParsed(Node node, Double widthParsed) {
+		setWidth(node, widthParsed.toString());
 	}
 
 	/**
@@ -1453,6 +1654,20 @@ public class DotAttributes {
 	 */
 	public static void setXlpParsed(Node node, Point xlpParsed) {
 		setXlp(node, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
+	}
+
+	/**
+	 * Sets the {@link #XLP__NE} property of the given {@link Edge} to the given
+	 * <i>xlp</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #XLP__NE} property.
+	 * @param xlpParsed
+	 *            The new value for the {@link #XLP__NE} property.
+	 */
+	public static void setXlpParsed(Edge edge, Point xlpParsed) {
+		setXlp(edge, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
 	}
 
 	private static <T extends EObject> String serialize(ISerializer serializer,
