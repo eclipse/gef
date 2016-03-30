@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
@@ -31,6 +32,8 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.parser.IParser;
+import org.eclipse.xtext.serializer.ISerializer;
 
 /**
  * The {@link DotAttributes} class contains all properties which are supported
@@ -394,16 +397,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowHeadParsed(Edge edge) {
-		String arrowHead = getArrowHead(edge);
-		if (arrowHead == null) {
-			return null;
-		}
-		IParseResult parsedPropertyValue = DotLanguageSupport.ARROWTYPE_PARSER
-				.parse(new StringReader(arrowHead));
-
-		ArrowType arrowType = (ArrowType) parsedPropertyValue
-				.getRootASTElement();
-		return arrowType;
+		return parse(DotLanguageSupport.ARROWTYPE_PARSER, getArrowHead(edge));
 	}
 
 	/**
@@ -474,16 +468,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowTailParsed(Edge edge) {
-		String arrowTail = getArrowTail(edge);
-		if (arrowTail == null) {
-			return null;
-		}
-		IParseResult parsedPropertyValue = DotLanguageSupport.ARROWTYPE_PARSER
-				.parse(new StringReader(arrowTail));
-
-		ArrowType arrowType = (ArrowType) parsedPropertyValue
-				.getRootASTElement();
-		return arrowType;
+		return parse(DotLanguageSupport.ARROWTYPE_PARSER, getArrowTail(edge));
 	}
 
 	/**
@@ -554,10 +539,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getHeadLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.POINT_PARSER
-				.parse(new StringReader(getHeadLp(edge)));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+		return parse(DotLanguageSupport.POINT_PARSER, getHeadLp(edge));
 	}
 
 	/**
@@ -683,10 +665,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.POINT_PARSER
-				.parse(new StringReader(getLp(edge)));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+		return parse(DotLanguageSupport.POINT_PARSER, getLp(edge));
 	}
 
 	/**
@@ -770,11 +749,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static SplineType getPosParsed(Edge edge) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.SPLINETYPE_PARSER
-				.parse(new StringReader(getPos(edge)));
-		SplineType splineType = (SplineType) parsedPropertyValue
-				.getRootASTElement();
-		return splineType;
+		return parse(DotLanguageSupport.SPLINETYPE_PARSER, getPos(edge));
 	}
 
 	/**
@@ -788,10 +763,16 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getPosParsed(Node node) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.POINT_PARSER
-				.parse(new StringReader(getPos(node)));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+		return parse(DotLanguageSupport.POINT_PARSER, getPos(node));
+	}
+
+	private static <T> T parse(IParser parser, String attributeValue) {
+		if (attributeValue == null) {
+			return null;
+		}
+		IParseResult parsedAttributeValue = parser
+				.parse(new StringReader(attributeValue));
+		return (T) parsedAttributeValue.getRootASTElement();
 	}
 
 	/**
@@ -861,10 +842,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getTailLpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.POINT_PARSER
-				.parse(new StringReader(getTailLp(edge)));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+		return parse(DotLanguageSupport.POINT_PARSER, getTailLp(edge));
 	}
 
 	/**
@@ -962,10 +940,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getXlpParsed(Edge edge) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.POINT_PARSER
-				.parse(new StringReader(getXlp(edge)));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+		return parse(DotLanguageSupport.POINT_PARSER, getXlp(edge));
 	}
 
 	/**
@@ -979,10 +954,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getXlpParsed(Node node) {
-		IParseResult parsedPropertyValue = DotLanguageSupport.POINT_PARSER
-				.parse(new StringReader(getXlp(node)));
-		Point point = (Point) parsedPropertyValue.getRootASTElement();
-		return point;
+		return parse(DotLanguageSupport.POINT_PARSER, getXlp(node));
 	}
 
 	/**
@@ -1310,7 +1282,7 @@ public class DotAttributes {
 	 *            The new value of the {@link #POS__NE} property.
 	 */
 	public static void setPosParsed(Node node, Point parsedPos) {
-		setPos(node, DotLanguageSupport.POINT_SERIALIZER.serialize(parsedPos));
+		setPos(node, serialize(DotLanguageSupport.POINT_SERIALIZER, parsedPos));
 	}
 
 	/**
@@ -1480,7 +1452,15 @@ public class DotAttributes {
 	 *            The new value for the {@link #XLP__NE} property.
 	 */
 	public static void setXlpParsed(Node node, Point xlpParsed) {
-		setXlp(node, DotLanguageSupport.POINT_SERIALIZER.serialize(xlpParsed));
+		setXlp(node, serialize(DotLanguageSupport.POINT_SERIALIZER, xlpParsed));
+	}
+
+	private static <T extends EObject> String serialize(ISerializer serializer,
+			T parsedValue) {
+		if (parsedValue == null) {
+			return null;
+		}
+		return serializer.serialize(parsedValue);
 	}
 
 	private static void validate(AttributeContext context, String attributeName,
