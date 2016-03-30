@@ -54,7 +54,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'pos' to '47x, 11'. The value '47x, 11' is not a syntactically correct Point: No viable alternative at character 'x'.",
+					"Cannot set node attribute 'pos' to '47x, 11'. The value '47x, 11' is not a syntactically correct point: No viable alternative at character 'x'.",
 					e.getMessage());
 		}
 	}
@@ -73,7 +73,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'height' to '47x, 11': parsing as double failed.",
+					"Cannot set node attribute 'height' to '47x, 11'. The value '47x, 11' is not a syntactically correct double: For input string: \"47x, 11\".",
 					e.getMessage());
 		}
 	}
@@ -92,7 +92,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'width' to '47x, 11': parsing as double failed.",
+					"Cannot set node attribute 'width' to '47x, 11'. The value '47x, 11' is not a syntactically correct double: For input string: \"47x, 11\".",
 					e.getMessage());
 		}
 	}
@@ -144,7 +144,7 @@ public class DotAttributesTests {
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set node attribute 'arrowhead' to 'olox'. The value 'olox' is not a syntactically correct ArrowType: No viable alternative at input 'o'. No viable alternative at character 'x'.",
+					"Cannot set edge attribute 'arrowhead' to 'olox'. The value 'olox' is not a syntactically correct arrowtype: No viable alternative at input 'o'. No viable alternative at character 'x'.",
 					e.getMessage());
 		}
 	}

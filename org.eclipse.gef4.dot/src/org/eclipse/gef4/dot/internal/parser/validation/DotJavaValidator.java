@@ -156,32 +156,14 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.RANKDIR__G.equals(name)) {
-			if (!DotAttributes.RANKDIR__G__VALUES.contains(unquotedValue)) {
-				return Collections.<Diagnostic> singletonList(
-						createSyntacticAttributeValueProblem(unquotedValue,
-								"rankdir",
-								"Value has to be one of " + getFormattedValues(
-										DotAttributes.RANKDIR__G__VALUES),
-								name));
-			}
+			return validateEnumValue(name, unquotedValue, "rankdir",
+					DotAttributes.RANKDIR__G__VALUES);
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
-			if (!DotAttributes.LAYOUT__G__VALUES.contains(unquotedValue)) {
-				return Collections.<Diagnostic> singletonList(
-						createSyntacticAttributeValueProblem(unquotedValue,
-								"layout",
-								"Value has to be one of " + getFormattedValues(
-										DotAttributes.LAYOUT__G__VALUES),
-								name));
-			}
+			return validateEnumValue(name, unquotedValue, "layout",
+					DotAttributes.LAYOUT__G__VALUES);
 		} else if (DotAttributes.DIR__E.equals(name)) {
-			if (!DotAttributes.DIR__E__VALUES.contains(unquotedValue)) {
-				return Collections.<Diagnostic> singletonList(
-						createSyntacticAttributeValueProblem(unquotedValue,
-								"dir",
-								"Value has to be one of " + getFormattedValues(
-										DotAttributes.DIR__E__VALUES),
-								name));
-			}
+			return validateEnumValue(name, unquotedValue, "dir",
+					DotAttributes.DIR__E__VALUES);
 		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
@@ -201,24 +183,11 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						unquotedValue, SplinetypePackage.Literals.SPLINE_TYPE);
 			}
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
-			// parse value
-			double parsedValue;
-			try {
-				parsedValue = Double.parseDouble(unquotedValue);
-			} catch (NumberFormatException e) {
-				return Collections.<Diagnostic> singletonList(
-						createSyntacticAttributeValueProblem(unquotedValue,
-								"double", e.getMessage() + ".", name));
-			}
-			// validate value
-			if (parsedValue < 0) {
-				return Collections.<Diagnostic> singletonList(
-						createSemanticAttributeValueProblem(Diagnostic.ERROR,
-								unquotedValue, "double",
-								"Value has to be greater than or equal to zero.",
-								name));
-			}
-			return Collections.emptyList();
+			return validateDoubleValue(name, unquotedValue, 0.0);
+		} else if (DotAttributes.WIDTH__N.equals(name)) {
+			return validateDoubleValue(name, unquotedValue, 0.01);
+		} else if (DotAttributes.HEIGHT__N.equals(name)) {
+			return validateDoubleValue(name, unquotedValue, 0.02);
 		} else if (DotAttributes.STYLE__E.equals(name)) {
 			if (!DotAttributes.STYLE__E__VALUES.contains(unquotedValue)) {
 				return Collections.<Diagnostic> singletonList(
@@ -228,6 +197,43 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 										DotAttributes.STYLE__E__VALUES),
 								name));
 			}
+		}
+		return Collections.emptyList();
+	}
+
+	private List<Diagnostic> validateEnumValue(final String attributeName,
+			String attributeValue, String attributeTypeName,
+			Set<String> validValues) {
+		if (!validValues.contains(attributeValue)) {
+			return Collections.<Diagnostic> singletonList(
+					createSyntacticAttributeValueProblem(attributeValue,
+							attributeTypeName,
+							"Value has to be one of "
+									+ getFormattedValues(validValues),
+							attributeName));
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Diagnostic> validateDoubleValue(final String attributeName,
+			String attributeValue, double minValue) {
+		// parse value
+		double parsedValue;
+		try {
+			parsedValue = Double.parseDouble(attributeValue);
+		} catch (NumberFormatException e) {
+			return Collections.<Diagnostic> singletonList(
+					createSyntacticAttributeValueProblem(attributeValue,
+							"double", e.getMessage() + ".", attributeName));
+		}
+		// validate value
+		if (parsedValue < minValue) {
+			return Collections.<Diagnostic> singletonList(
+					createSemanticAttributeValueProblem(Diagnostic.ERROR,
+							attributeValue, "double",
+							"Value may not be smaller than " + minValue + ".",
+							attributeName));
 		}
 		return Collections.emptyList();
 	}
@@ -277,7 +283,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			// handle syntactical problems
 			return Collections.<Diagnostic> singletonList(
 					createSyntacticAttributeValueProblem(attributeValue,
-							attributeType.getName(),
+							attributeType.getName().toLowerCase(),
 							getFormattedSyntaxErrorMessages(parseResult),
 							attributeName));
 		} else {
@@ -295,7 +301,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.WARNING, attributeValue,
-								attributeType.getName(), message,
+								attributeType.getName().toLowerCase(), message,
 								attributeName));
 					}
 
@@ -305,7 +311,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.WARNING, attributeValue,
-								attributeType.getName(), message,
+								attributeType.getName().toLowerCase(), message,
 								attributeName));
 					}
 
@@ -315,7 +321,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.INFO, attributeValue,
-								attributeType.getName(), message,
+								attributeType.getName().toLowerCase(), message,
 								attributeName));
 					}
 
@@ -325,7 +331,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.INFO, attributeValue,
-								attributeType.getName(), message,
+								attributeType.getName().toLowerCase(), message,
 								attributeName));
 					}
 
@@ -335,7 +341,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.ERROR, attributeValue,
-								attributeType.getName(), message,
+								attributeType.getName().toLowerCase(), message,
 								attributeName));
 					}
 
@@ -345,7 +351,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.ERROR, attributeValue,
-								attributeType.getName(), message,
+								attributeType.getName().toLowerCase(), message,
 								attributeName));
 					}
 				});

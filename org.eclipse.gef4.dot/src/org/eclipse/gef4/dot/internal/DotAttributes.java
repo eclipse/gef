@@ -357,6 +357,17 @@ public class DotAttributes {
 	 */
 	public static final String XLP__NE = "xlp";
 
+	private static List<Diagnostic> filter(List<Diagnostic> diagnostics,
+			int severity) {
+		List<Diagnostic> filtered = new ArrayList<>();
+		for (Diagnostic d : diagnostics) {
+			if (d.getSeverity() >= severity) {
+				filtered.add(d);
+			}
+		}
+		return filtered;
+	}
+
 	/**
 	 * Returns the value of the {@link #ARROWHEAD__E} property of the given
 	 * {@link Edge}.
@@ -487,6 +498,21 @@ public class DotAttributes {
 	 */
 	public static String getDir(Edge edge) {
 		return (String) edge.attributesProperty().get(DIR__E);
+	}
+
+	private static String getFormattedDiagnosticMessage(
+			List<Diagnostic> diagnostics) {
+		StringBuilder sb = new StringBuilder();
+		for (Diagnostic n : diagnostics) {
+			String message = n.getMessage();
+			if (!message.isEmpty()) {
+				if (sb.length() != 0) {
+					sb.append(" ");
+				}
+				sb.append(message);
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -960,6 +986,27 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #FORCELABELS__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #FORCELABELS__G} property.
+	 * @param defaultIfUnset
+	 *            whether to return the default value {@link Boolean#TRUE} in
+	 *            case {@link #FORCELABELS__G} is unset.
+	 * @return The value of the {@link #FORCELABELS__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static Boolean isForceLabels(Graph graph, boolean defaultIfUnset) {
+		Boolean value = (Boolean) graph.getAttributes().get(FORCELABELS__G);
+		if (value == null && defaultIfUnset) {
+			return Boolean.TRUE;
+		}
+		return value;
+	}
+
+	/**
 	 * Sets the {@link #ARROWHEAD__E} property of the given {@link Edge} to the
 	 * given <i>arrowHead</i> value.
 	 * 
@@ -970,42 +1017,8 @@ public class DotAttributes {
 	 *            The new value for the {@link #ARROWHEAD__E} property.
 	 */
 	public static void setArrowHead(Edge edge, String arrowHead) {
-		List<Diagnostic> diagnostics = filter(
-				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
-						AttributeContext.EDGE, ARROWHEAD__E, arrowHead),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set node attribute '"
-					+ ARROWHEAD__E + "' to '" + arrowHead + "'. "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.EDGE, ARROWHEAD__E, arrowHead);
 		edge.attributesProperty().put(ARROWHEAD__E, arrowHead);
-	}
-
-	private static List<Diagnostic> filter(List<Diagnostic> diagnostics,
-			int severity) {
-		List<Diagnostic> filtered = new ArrayList<>();
-		for (Diagnostic d : diagnostics) {
-			if (d.getSeverity() >= severity) {
-				filtered.add(d);
-			}
-		}
-		return filtered;
-	}
-
-	private static String getFormattedDiagnosticMessage(
-			List<Diagnostic> diagnostics) {
-		StringBuilder sb = new StringBuilder();
-		for (Diagnostic n : diagnostics) {
-			String message = n.getMessage();
-			if (!message.isEmpty()) {
-				if (sb.length() != 0) {
-					sb.append(" ");
-				}
-				sb.append(message);
-			}
-		}
-		return sb.toString();
 	}
 
 	/**
@@ -1021,15 +1034,7 @@ public class DotAttributes {
 	 *             when the given <i>arrowSize</i> value is not supported.
 	 */
 	public static void setArrowSize(Edge edge, String arrowSize) {
-		List<Diagnostic> diagnostics = filter(
-				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
-						AttributeContext.EDGE, ARROWSIZE__E, arrowSize),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set edge attribute '"
-					+ ARROWSIZE__E + "' to '" + arrowSize + "': "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.EDGE, ARROWSIZE__E, arrowSize);
 		edge.attributesProperty().put(ARROWSIZE__E, arrowSize);
 	}
 
@@ -1046,15 +1051,7 @@ public class DotAttributes {
 	 *             when the given <i>arrowTail</i> value is not supported.
 	 */
 	public static void setArrowTail(Edge edge, String arrowTail) {
-		List<Diagnostic> diagnostics = filter(
-				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
-						AttributeContext.EDGE, ARROWTAIL__E, arrowTail),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set node attribute '"
-					+ ARROWTAIL__E + "' to '" + arrowTail + "': "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.EDGE, ARROWTAIL__E, arrowTail);
 		edge.attributesProperty().put(ARROWTAIL__E, arrowTail);
 	}
 
@@ -1071,15 +1068,22 @@ public class DotAttributes {
 	 *             when the given <i>direction</i> value is not supported.
 	 */
 	public static void setDir(Edge edge, String dir) {
-		List<Diagnostic> diagnostics = filter(DotLanguageSupport.DOT_VALIDATOR
-				.validateAttributeValue(AttributeContext.EDGE, DIR__E, dir),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set edge attribute '"
-					+ DIR__E + "' to '" + dir + "': "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.EDGE, DIR__E, dir);
 		edge.attributesProperty().put(DIR__E, dir);
+	}
+
+	/**
+	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
+	 * the given value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #FORCELABELS__G} property.
+	 * @param forceLabels
+	 *            The new value for the {@link #FORCELABELS__G} property.
+	 */
+	public static void setForceLabels(Graph graph, Boolean forceLabels) {
+		graph.getAttributes().put(FORCELABELS__G, forceLabels);
 	}
 
 	/**
@@ -1120,14 +1124,7 @@ public class DotAttributes {
 	 *            The new value of the {@link #HEIGHT__N} property.
 	 */
 	public static void setHeight(Node node, String height) {
-		// TODO: move check to DotJavaValidator
-		try {
-			Double.parseDouble(height);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + HEIGHT__N + "' to '"
-							+ height + "': parsing as double failed.");
-		}
+		validate(AttributeContext.NODE, HEIGHT__N, height);
 		node.getAttributes().put(HEIGHT__N, height);
 	}
 
@@ -1215,15 +1212,7 @@ public class DotAttributes {
 	 *             contained within {@link #LAYOUT__G__VALUES}.
 	 */
 	public static void setLayout(Graph graph, String layout) {
-		List<Diagnostic> diagnostics = filter(
-				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
-						AttributeContext.GRAPH, LAYOUT__G, layout),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set graph attribute '"
-					+ LAYOUT__G + "' to '" + layout + "'. "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.GRAPH, LAYOUT__G, layout);
 		graph.attributesProperty().put(LAYOUT__G, layout);
 	}
 
@@ -1293,15 +1282,22 @@ public class DotAttributes {
 	 *            The new value of the {@link #POS__NE} property.
 	 */
 	public static void setPos(Edge edge, String pos) {
-		List<Diagnostic> diagnostics = filter(DotLanguageSupport.DOT_VALIDATOR
-				.validateAttributeValue(AttributeContext.EDGE, POS__NE, pos),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set edge attribute '"
-					+ POS__NE + "' to '" + pos + "'. "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.EDGE, POS__NE, pos);
 		edge.getAttributes().put(POS__NE, pos);
+	}
+
+	/**
+	 * Sets the {@link #POS__NE} property of the given {@link Node} to the given
+	 * value.
+	 * 
+	 * @param node
+	 *            The {@link Node} whose property value to set.
+	 * @param pos
+	 *            The new value of the {@link #POS__NE} property.
+	 */
+	public static void setPos(Node node, String pos) {
+		validate(AttributeContext.NODE, POS__NE, pos);
+		node.getAttributes().put(POS__NE, pos);
 	}
 
 	/**
@@ -1318,27 +1314,6 @@ public class DotAttributes {
 	}
 
 	/**
-	 * Sets the {@link #POS__NE} property of the given {@link Node} to the given
-	 * value.
-	 * 
-	 * @param node
-	 *            The {@link Node} whose property value to set.
-	 * @param pos
-	 *            The new value of the {@link #POS__NE} property.
-	 */
-	public static void setPos(Node node, String pos) {
-		List<Diagnostic> diagnostics = filter(DotLanguageSupport.DOT_VALIDATOR
-				.validateAttributeValue(AttributeContext.NODE, POS__NE, pos),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set node attribute '"
-					+ POS__NE + "' to '" + pos + "'. "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
-		node.getAttributes().put(POS__NE, pos);
-	}
-
-	/**
 	 * Sets the {@link #RANKDIR__G} property of the given {@link Graph} to the
 	 * given <i>rankdir</i> value.
 	 * 
@@ -1352,15 +1327,7 @@ public class DotAttributes {
 	 *             not contained within {@link #RANKDIR__G__VALUES}.
 	 */
 	public static void setRankdir(Graph graph, String rankdir) {
-		List<Diagnostic> diagnostics = filter(
-				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
-						AttributeContext.GRAPH, RANKDIR__G, rankdir),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set graph attribute '"
-					+ RANKDIR__G + "' to '" + rankdir + "'. "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.GRAPH, RANKDIR__G, rankdir);
 		graph.attributesProperty().put(RANKDIR__G, rankdir);
 	}
 
@@ -1378,15 +1345,7 @@ public class DotAttributes {
 	 *             contained within {@link #STYLE__E__VALUES}.
 	 */
 	public static void setStyle(Edge edge, String style) {
-		List<Diagnostic> diagnostics = filter(
-				DotLanguageSupport.DOT_VALIDATOR.validateAttributeValue(
-						AttributeContext.EDGE, STYLE__E, style),
-				Diagnostic.ERROR);
-		if (!diagnostics.isEmpty()) {
-			throw new IllegalArgumentException("Cannot set edge attribute '"
-					+ STYLE__E + "' to '" + style + "'. "
-					+ getFormattedDiagnosticMessage(diagnostics));
-		}
+		validate(AttributeContext.EDGE, STYLE__E, style);
 		edge.attributesProperty().put(STYLE__E, style);
 	}
 
@@ -1450,14 +1409,7 @@ public class DotAttributes {
 	 *            The new value of the {@link #WIDTH__N} property.
 	 */
 	public static void setWidth(Node node, String width) {
-		// TODO: replace with generic call to validator
-		try {
-			Double.parseDouble(width);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(
-					"Cannot set node attribute '" + WIDTH__N + "' to '" + width
-							+ "': parsing as double failed.");
-		}
+		validate(AttributeContext.NODE, WIDTH__N, width);
 		node.getAttributes().put(WIDTH__N, width);
 	}
 
@@ -1531,38 +1483,16 @@ public class DotAttributes {
 		setXlp(node, DotLanguageSupport.POINT_SERIALIZER.serialize(xlpParsed));
 	}
 
-	/**
-	 * Returns the value of the {@link #FORCELABELS__G} property of the given
-	 * {@link Graph}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #FORCELABELS__G} property.
-	 * @param defaultIfUnset
-	 *            whether to return the default value {@link Boolean#TRUE} in
-	 *            case {@link #FORCELABELS__G} is unset.
-	 * @return The value of the {@link #FORCELABELS__G} property of the given
-	 *         {@link Graph}.
-	 */
-	public static Boolean isForceLabels(Graph graph, boolean defaultIfUnset) {
-		Boolean value = (Boolean) graph.getAttributes().get(FORCELABELS__G);
-		if (value == null && defaultIfUnset) {
-			return Boolean.TRUE;
+	private static void validate(AttributeContext context, String attributeName,
+			String attributeValue) {
+		List<Diagnostic> diagnostics = filter(DotLanguageSupport.DOT_VALIDATOR
+				.validateAttributeValue(context, attributeName, attributeValue),
+				Diagnostic.ERROR);
+		if (!diagnostics.isEmpty()) {
+			throw new IllegalArgumentException("Cannot set "
+					+ context.name().toLowerCase() + " attribute '"
+					+ attributeName + "' to '" + attributeValue + "'. "
+					+ getFormattedDiagnosticMessage(diagnostics));
 		}
-		return value;
-	}
-
-	/**
-	 * Sets the {@link #FORCELABELS__G} property of the given {@link Graph} to
-	 * the given value.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to change the value of the
-	 *            {@link #FORCELABELS__G} property.
-	 * @param forceLabels
-	 *            The new value for the {@link #FORCELABELS__G} property.
-	 */
-	public static void setForceLabels(Graph graph, Boolean forceLabels) {
-		graph.getAttributes().put(FORCELABELS__G, forceLabels);
 	}
 }
