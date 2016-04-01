@@ -52,11 +52,11 @@ import org.eclipse.gef4.graph.Node;
  */
 public final class DotInterpreter extends DotSwitch<Object> {
 
-	private Map<String, Node> nodes;
+	private Map<String, String> globalNodeAttributes = new HashMap<>();
+	private Map<String, String> globalEdgeAttributes = new HashMap<>();
+
 	private Graph.Builder graph;
-	private String globalEdgeStyle;
-	private String globalEdgeLabel;
-	private String globalNodeLabel;
+	private Map<String, Node> nodes;
 
 	private boolean createEdge;
 	private String currentArrowHead;
@@ -182,8 +182,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// label
 		if (currentEdgeLabel != null) {
 			DotAttributes.setLabel(edge, currentEdgeLabel);
-		} else if (globalEdgeLabel != null) {
-			DotAttributes.setLabel(edge, globalEdgeLabel);
+		} else if (globalEdgeAttributes.containsKey(DotAttributes.LABEL__GNE)) {
+			DotAttributes.setLabel(edge,
+					globalEdgeAttributes.get(DotAttributes.LABEL__GNE));
 		}
 
 		// external label (xlabel)
@@ -202,20 +203,11 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		}
 
 		// style
-		String currentEdgeStyleLc = new String(
-				currentEdgeStyle == null ? "" : currentEdgeStyle).toLowerCase();
-		String globalEdgeStyleLc = new String(
-				globalEdgeStyle == null ? "" : globalEdgeStyle).toLowerCase();
-		if (!DotAttributes.STYLE__E__VOID.equals(currentEdgeStyleLc)
-				&& supported(currentEdgeStyleLc,
-						DotAttributes.STYLE__E__VALUES)) {
-			// if an explicit local style is set, use it
-			DotAttributes.setStyle(edge, currentEdgeStyleLc);
-		} else if (!DotAttributes.STYLE__E__VOID.equals(globalEdgeStyleLc)
-				&& supported(globalEdgeStyleLc,
-						DotAttributes.STYLE__E__VALUES)) {
-			// if an explicit global style is set, use it
-			DotAttributes.setStyle(edge, globalEdgeStyleLc);
+		if (currentEdgeStyle != null) {
+			DotAttributes.setStyle(edge, currentEdgeStyle);
+		} else if (globalEdgeAttributes.containsKey(DotAttributes.STYLE__E)) {
+			DotAttributes.setArrowTail(edge,
+					globalEdgeAttributes.get(DotAttributes.STYLE__E));
 		}
 
 		// position (pos)
@@ -245,21 +237,36 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// arrow head
 		if (currentArrowHead != null) {
 			DotAttributes.setArrowHead(edge, currentArrowHead);
+		} else if (globalEdgeAttributes
+				.containsKey(DotAttributes.ARROWHEAD__E)) {
+			DotAttributes.setArrowHead(edge,
+					globalEdgeAttributes.get(DotAttributes.ARROWHEAD__E));
 		}
 
 		// arrow tail
 		if (currentArrowTail != null) {
 			DotAttributes.setArrowTail(edge, currentArrowTail);
+		} else if (globalEdgeAttributes
+				.containsKey(DotAttributes.ARROWTAIL__E)) {
+			DotAttributes.setArrowTail(edge,
+					globalEdgeAttributes.get(DotAttributes.ARROWTAIL__E));
 		}
 
 		// arrow size
 		if (currentArrowSize != null) {
 			DotAttributes.setArrowSize(edge, currentArrowSize);
+		} else if (globalEdgeAttributes
+				.containsKey(DotAttributes.ARROWSIZE__E)) {
+			DotAttributes.setArrowSize(edge,
+					globalEdgeAttributes.get(DotAttributes.ARROWSIZE__E));
 		}
 
 		// direction
 		if (currentEdgeDirection != null) {
 			DotAttributes.setDir(edge, currentEdgeDirection);
+		} else if (globalEdgeAttributes.containsKey(DotAttributes.DIR__E)) {
+			DotAttributes.setDir(edge,
+					globalEdgeAttributes.get(DotAttributes.DIR__E));
 		}
 
 		graph.edges(edge);
@@ -318,15 +325,56 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		AttributeType type = attrStmt.getType();
 		switch (type) {
 		case EDGE: {
-			globalEdgeStyle = getAttributeValue(attrStmt,
-					DotAttributes.STYLE__E);
-			globalEdgeLabel = getAttributeValue(attrStmt,
+			// label
+			String globalEdgeLabel = getAttributeValue(attrStmt,
 					DotAttributes.LABEL__GNE);
+			if (globalEdgeLabel != null) {
+				globalEdgeAttributes.put(DotAttributes.LABEL__GNE,
+						globalEdgeLabel);
+			}
+			// arrowhead
+			String globalArrowHead = getAttributeValue(attrStmt,
+					DotAttributes.ARROWHEAD__E);
+			if (globalArrowHead != null) {
+				globalEdgeAttributes.put(DotAttributes.ARROWHEAD__E,
+						globalArrowHead);
+			}
+			// arrowtail
+			String globalArrowTail = getAttributeValue(attrStmt,
+					DotAttributes.ARROWTAIL__E);
+			if (globalArrowTail != null) {
+				globalEdgeAttributes.put(DotAttributes.ARROWTAIL__E,
+						globalArrowTail);
+			}
+			// arrowsize
+			String globalArrowSize = getAttributeValue(attrStmt,
+					DotAttributes.ARROWSIZE__E);
+			if (globalArrowSize != null) {
+				globalEdgeAttributes.put(DotAttributes.ARROWSIZE__E,
+						globalArrowSize);
+			}
+			// dir
+			String globalDir = getAttributeValue(attrStmt,
+					DotAttributes.DIR__E);
+			if (globalDir != null) {
+				globalEdgeAttributes.put(DotAttributes.DIR__E, globalDir);
+			}
+			// style
+			String globalEdgeStyle = getAttributeValue(attrStmt,
+					DotAttributes.STYLE__E);
+			if (globalEdgeStyle != null) {
+				globalEdgeAttributes.put(DotAttributes.STYLE__E,
+						globalEdgeStyle);
+			}
 			break;
 		}
 		case NODE: {
-			globalNodeLabel = getAttributeValue(attrStmt,
+			String globalNodeLabel = getAttributeValue(attrStmt,
 					DotAttributes.LABEL__GNE);
+			if (globalNodeLabel != null) {
+				globalNodeAttributes.put(DotAttributes.LABEL__GNE,
+						globalNodeLabel);
+			}
 			break;
 		}
 		case GRAPH: {
@@ -374,8 +422,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.LABEL__GNE);
 		if (label != null) {
 			DotAttributes.setLabel(node, label);
-		} else if (globalNodeLabel != null) {
-			DotAttributes.setLabel(node, globalNodeLabel);
+		} else if (globalNodeAttributes.containsKey(DotAttributes.LABEL__GNE)) {
+			DotAttributes.setLabel(node,
+					globalNodeAttributes.get(DotAttributes.LABEL__GNE));
 		}
 
 		// xlabel
@@ -417,16 +466,14 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		}
 	}
 
-	private Node node(String id) {
-		if (!nodes.containsKey(id)) { // undeclared node, as in "graph{1->2}"
+	private Node node(String nodeName) {
+		if (!nodes.containsKey(nodeName)) {
 			Node node = new Node.Builder()
-					.attr(DotAttributes.LABEL__GNE,
-							globalNodeLabel != null ? globalNodeLabel : id)
-					.attr(DotAttributes._NAME__GNE, id).buildNode();
-			nodes.put(id, node);
+					.attr(DotAttributes._NAME__GNE, nodeName).buildNode();
+			nodes.put(nodeName, node);
 			graph = graph.nodes(node);
 		}
-		return nodes.get(id);
+		return nodes.get(nodeName);
 	}
 
 	private String getAttributeValue(final DotGraph graph, final String name) {
