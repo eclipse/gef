@@ -15,6 +15,8 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
@@ -58,29 +60,54 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 		int numControlPoints = controlPoints.size();
 		if (start == null || end == null) {
 			return new Line(0, 0, 0, 0);
-		} else if (numControlPoints < 4 || (numControlPoints % 3 != 0)) {
+		} else if (numControlPoints < 4) {
 			return new Line(start, end);
 		}
 
-		// start and end point may be equal to the first and last control points
-		// or else we need to add a line segment to connect each.
+		// obtain start and end reference points, which have to be used to infer
+		// whether the first and last control point have to be evaluated.
+		Point startReference = connection
+				.getStartAnchor() instanceof DynamicAnchor
+						? ((DynamicAnchor) connection.getStartAnchor())
+								.referencePointProperty()
+								.get(connection.getStartAnchorKey())
+						: ((StaticAnchor) connection.getStartAnchor())
+								.getReferencePosition();
+		Point endReference = connection.getEndAnchor() instanceof DynamicAnchor
+				? ((DynamicAnchor) connection.getEndAnchor())
+						.referencePointProperty()
+						.get(connection.getEndAnchorKey())
+				: ((StaticAnchor) connection.getEndAnchor())
+						.getReferencePosition();
+
+		// the first and last control point may be equal to the start and end
+		// anchor reference points, in which case we have to ignore the control
+		// points; else we need to add a line segment from the first control
+		// point to the
 		List<BezierCurve> segments = new ArrayList<>();
-		Point c = controlPoints.get(0);
-		if (!start.equals(c)) {
-			segments.add(new Line(start, c));
+		Point p0 = controlPoints.get(0);
+		if (!startReference.equals(p0)) {
+			segments.add(new Line(start, p0));
+		} else {
+			p0 = start;
 		}
+
 		// process segments
-		c = controlPoints.get(1);
-		for (int i = 2; i + 2 < numControlPoints; i += 3) {
-			segments.add(new CubicCurve(c, controlPoints.get(i),
-					controlPoints.get(i + 1), controlPoints.get(i + 2)));
+		Point p2 = null;
+		for (int i = 1; i + 2 < numControlPoints; i += 3) {
+			p2 = controlPoints.get(i + 2);
+			if (i + 2 == numControlPoints - 1) {
+				if (endReference.equals(p2)) {
+					p2 = end;
+				}
+			}
+			segments.add(new CubicCurve(p0, controlPoints.get(i),
+					controlPoints.get(i + 1), p2));
 			// keep track of the last control point of the respective segment
 			// (which is the start point of the next segment)
-			c = controlPoints.get(i + 2);
 		}
-		c = controlPoints.get(numControlPoints - 1);
-		if (!end.equals(c)) {
-			segments.add(new Line(c, end));
+		if (!endReference.equals(p2)) {
+			segments.add(new Line(p2, end));
 		}
 		return new PolyBezier(segments.toArray(new BezierCurve[] {}));
 	}

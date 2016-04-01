@@ -163,10 +163,26 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null) {
-				ZestProperties.setControlPoints(zest,
-						computeZestConnectionBSplineControlPoints(dot));
+				// special format: in case start or end is not given, the first
+				// or last control point will be contained twice.
+				final List<Point> bSplineControlPoints = computeZestBSplineControlPoints(
+						dot);
+				// first and last way point are provided by start and end
+				// anchor, so we need to remove them as control points...
+				ZestProperties.setControlPoints(zest, bSplineControlPoints
+						.subList(1, bSplineControlPoints.size() - 1));
+				// ... but pass them to the router, so they are used as
+				// reference points for start and end.
+				ZestProperties.setRouter(zest,
+						new DotBSplineRouter(bSplineControlPoints.get(0),
+								bSplineControlPoints
+										.get(bSplineControlPoints.size() - 1)));
 				ZestProperties.setInterpolator(zest,
 						new DotBSplineInterpolator());
+
+				// TODO: handle orthogonal case -> normalize control points use
+				// orthogonal router; ensure orthogonal projection strategy is
+				// used, etc.
 			}
 
 			// label position (lp)
@@ -206,7 +222,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		return DotArrowShapeDecorations.get(arrowType, arrowSize);
 	}
 
-	private List<Point> computeZestConnectionBSplineControlPoints(Edge dot) {
+	private List<Point> computeZestBSplineControlPoints(Edge dot) {
 		SplineType splineType = DotAttributes.getPosParsed(dot);
 		List<Point> controlPoints = new ArrayList<>();
 		for (Spline spline : splineType.getSplines()) {
@@ -215,8 +231,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 					.getStartp();
 			if (startp == null) {
 				// if we have no start point, add the first control
-				// point
-				// twice
+				// point twice
 				startp = spline.getControlPoints().get(0);
 			}
 			controlPoints.add(new Point(startp.getX(),

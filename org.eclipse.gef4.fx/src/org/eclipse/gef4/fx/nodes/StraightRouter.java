@@ -119,7 +119,17 @@ public class StraightRouter implements IConnectionRouter {
 		}
 	}
 
-	private void updateReferencePoint(Connection connection, int anchorIndex) {
+	/**
+	 * Update's the reference point of the anchor with the given index.
+	 *
+	 * @param connection
+	 *            The connection whose anchor to update.
+	 * @param anchorIndex
+	 *            The index of the connection anchor, whose reference point is
+	 *            to be updated.
+	 */
+	protected void updateReferencePoint(Connection connection,
+			int anchorIndex) {
 		// FIXME: cannot query connection if start/end is unset
 		if (connection.getStartAnchor() == null
 				|| connection.getEndAnchor() == null) {
