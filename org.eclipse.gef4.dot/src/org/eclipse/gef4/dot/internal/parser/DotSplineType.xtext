@@ -18,5 +18,5 @@ SplineType:
 	splines+=Spline (";" splines+=Spline)*;
 
 Spline:
-	("e" "," endp=Point)? ("s" "," startp=Point)? controlPoints+=Point (controlPoints+=Point controlPoints+=Point
+	("s" "," startp=Point)? ("e" "," endp=Point)? controlPoints+=Point (controlPoints+=Point controlPoints+=Point
 	controlPoints+=Point)+;
