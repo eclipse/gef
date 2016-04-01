@@ -190,16 +190,27 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// external label (xlabel)
 		if (currentEdgeXLabel != null) {
 			DotAttributes.setXLabel(edge, currentEdgeXLabel);
+		} else if (globalEdgeAttributes.containsKey(DotAttributes.XLABEL__NE)) {
+			DotAttributes.setXLabel(edge,
+					globalEdgeAttributes.get(DotAttributes.XLABEL__NE));
 		}
 
 		// head label (headllabel)
 		if (currentEdgeHeadLabel != null) {
 			DotAttributes.setHeadLabel(edge, currentEdgeHeadLabel);
+		} else if (globalEdgeAttributes
+				.containsKey(DotAttributes.HEADLABEL__E)) {
+			DotAttributes.setHeadLabel(edge,
+					globalEdgeAttributes.get(DotAttributes.HEADLABEL__E));
 		}
 
 		// tail label (taillabel)
 		if (currentEdgeTailLabel != null) {
 			DotAttributes.setTailLabel(edge, currentEdgeTailLabel);
+		} else if (globalEdgeAttributes
+				.containsKey(DotAttributes.TAILLABEL__E)) {
+			DotAttributes.setTailLabel(edge,
+					globalEdgeAttributes.get(DotAttributes.TAILLABEL__E));
 		}
 
 		// style
@@ -208,30 +219,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		} else if (globalEdgeAttributes.containsKey(DotAttributes.STYLE__E)) {
 			DotAttributes.setArrowTail(edge,
 					globalEdgeAttributes.get(DotAttributes.STYLE__E));
-		}
-
-		// position (pos)
-		if (currentEdgePos != null) {
-			DotAttributes.setPos(edge, currentEdgePos);
-		}
-		// label position (lp)
-		if (currentEdgeLp != null) {
-			DotAttributes.setLp(edge, currentEdgeLp);
-		}
-
-		// external label position (xlp)
-		if (currentEdgeXlp != null) {
-			DotAttributes.setXlp(edge, currentEdgeXlp);
-		}
-
-		// head label position (head_lp)
-		if (currentEdgeHeadLp != null) {
-			DotAttributes.setHeadLp(edge, currentEdgeHeadLp);
-		}
-
-		// tail label position (tail_lp)
-		if (currentEdgeTailLp != null) {
-			DotAttributes.setTailLp(edge, currentEdgeTailLp);
 		}
 
 		// arrow head
@@ -267,6 +254,30 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		} else if (globalEdgeAttributes.containsKey(DotAttributes.DIR__E)) {
 			DotAttributes.setDir(edge,
 					globalEdgeAttributes.get(DotAttributes.DIR__E));
+		}
+
+		// position (pos)
+		if (currentEdgePos != null) {
+			DotAttributes.setPos(edge, currentEdgePos);
+		}
+		// label position (lp)
+		if (currentEdgeLp != null) {
+			DotAttributes.setLp(edge, currentEdgeLp);
+		}
+
+		// external label position (xlp)
+		if (currentEdgeXlp != null) {
+			DotAttributes.setXlp(edge, currentEdgeXlp);
+		}
+
+		// head label position (head_lp)
+		if (currentEdgeHeadLp != null) {
+			DotAttributes.setHeadLp(edge, currentEdgeHeadLp);
+		}
+
+		// tail label position (tail_lp)
+		if (currentEdgeTailLp != null) {
+			DotAttributes.setTailLp(edge, currentEdgeTailLp);
 		}
 
 		graph.edges(edge);
@@ -326,11 +337,17 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		switch (type) {
 		case EDGE: {
 			// label
-			String globalEdgeLabel = getAttributeValue(attrStmt,
+			String globalLabel = getAttributeValue(attrStmt,
 					DotAttributes.LABEL__GNE);
-			if (globalEdgeLabel != null) {
-				globalEdgeAttributes.put(DotAttributes.LABEL__GNE,
-						globalEdgeLabel);
+			if (globalLabel != null) {
+				globalEdgeAttributes.put(DotAttributes.LABEL__GNE, globalLabel);
+			}
+			// xlabel
+			String globalXLabel = getAttributeValue(attrStmt,
+					DotAttributes.XLABEL__NE);
+			if (globalXLabel != null) {
+				globalEdgeAttributes.put(DotAttributes.XLABEL__NE,
+						globalXLabel);
 			}
 			// arrowhead
 			String globalArrowHead = getAttributeValue(attrStmt,
@@ -353,6 +370,20 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				globalEdgeAttributes.put(DotAttributes.ARROWSIZE__E,
 						globalArrowSize);
 			}
+			// headlabel
+			String globalHeadLabel = getAttributeValue(attrStmt,
+					DotAttributes.HEADLABEL__E);
+			if (globalHeadLabel != null) {
+				globalEdgeAttributes.put(DotAttributes.HEADLABEL__E,
+						globalHeadLabel);
+			}
+			// taillabel
+			String globalTailLabel = getAttributeValue(attrStmt,
+					DotAttributes.TAILLABEL__E);
+			if (globalTailLabel != null) {
+				globalEdgeAttributes.put(DotAttributes.TAILLABEL__E,
+						globalTailLabel);
+			}
 			// dir
 			String globalDir = getAttributeValue(attrStmt,
 					DotAttributes.DIR__E);
@@ -369,11 +400,30 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			break;
 		}
 		case NODE: {
-			String globalNodeLabel = getAttributeValue(attrStmt,
+			// label
+			String globalLabel = getAttributeValue(attrStmt,
 					DotAttributes.LABEL__GNE);
-			if (globalNodeLabel != null) {
-				globalNodeAttributes.put(DotAttributes.LABEL__GNE,
-						globalNodeLabel);
+			if (globalLabel != null) {
+				globalNodeAttributes.put(DotAttributes.LABEL__GNE, globalLabel);
+			}
+			// xlabel
+			String globalXLabel = getAttributeValue(attrStmt,
+					DotAttributes.XLABEL__NE);
+			if (globalXLabel != null) {
+				globalNodeAttributes.put(DotAttributes.XLABEL__NE,
+						globalXLabel);
+			}
+			// width
+			String globalWidth = getAttributeValue(attrStmt,
+					DotAttributes.WIDTH__N);
+			if (globalWidth != null) {
+				globalNodeAttributes.put(DotAttributes.WIDTH__N, globalWidth);
+			}
+			// height
+			String globalHeight = getAttributeValue(attrStmt,
+					DotAttributes.HEIGHT__N);
+			if (globalHeight != null) {
+				globalNodeAttributes.put(DotAttributes.HEIGHT__N, globalHeight);
 			}
 			break;
 		}
@@ -398,6 +448,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			break;
 		}
 		}
+
 	}
 
 	private void createNode(final NodeStmt nodeStatement) {
@@ -432,6 +483,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.XLABEL__NE);
 		if (xLabel != null) {
 			DotAttributes.setXLabel(node, xLabel);
+		} else if (globalNodeAttributes.containsKey(DotAttributes.XLABEL__NE)) {
+			DotAttributes.setXLabel(node,
+					globalNodeAttributes.get(DotAttributes.XLABEL__NE));
 		}
 
 		// pos
@@ -450,6 +504,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		String width = getAttributeValue(nodeStatement, DotAttributes.WIDTH__N);
 		if (width != null) {
 			DotAttributes.setWidth(node, width);
+		} else if (globalNodeAttributes.containsKey(DotAttributes.WIDTH__N)) {
+			DotAttributes.setWidth(node,
+					globalNodeAttributes.get(DotAttributes.WIDTH__N));
 		}
 
 		// height
@@ -457,6 +514,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.HEIGHT__N);
 		if (height != null) {
 			DotAttributes.setHeight(node, height);
+		} else if (globalNodeAttributes.containsKey(DotAttributes.HEIGHT__N)) {
+			DotAttributes.setHeight(node,
+					globalNodeAttributes.get(DotAttributes.HEIGHT__N));
 		}
 
 		// TODO: do we have to perform containment check here??
