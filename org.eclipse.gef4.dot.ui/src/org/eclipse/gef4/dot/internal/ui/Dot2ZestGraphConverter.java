@@ -174,12 +174,21 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null) {
-				String splines = DotAttributes.getSplines(dot.getGraph());
-
-				// special format: in case start or end is not given, the first
-				// or last control point will be contained twice.
+				// XXX: We use a special format to represent DOT B-splines:
+				// in case start or end is not given, the
+				// first or last control point will be contained twice.
 				final List<Point> bSplineControlPoints = computeZestBSplineControlPoints(
 						dot);
+				// mapping to Zest depends on value of 'splines' graph attribute
+				String splines = DotAttributes.getSplines(dot.getGraph());
+				if (DotAttributes.SPLINES__G__LINE.equals(splines)
+						|| DotAttributes.SPLINES__G__FALSE.equals(splines)) {
+
+				}
+				// 'normalize' B-splines dependent on 'splines' values
+				// if (splines == null
+				// || DotAttributes.SPLINES__G__TRUE.equals(splines)
+				// || DotAttributes.SPLINES__G__SPLINE.equals(splines)) {
 				// first and last way point are provided by start and end
 				// anchor, so we need to remove them as control points...
 				ZestProperties.setControlPoints(zest, bSplineControlPoints
@@ -192,6 +201,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 										.get(bSplineControlPoints.size() - 1)));
 				ZestProperties.setInterpolator(zest,
 						new DotBSplineInterpolator());
+				// }
 
 				// TODO: handle orthogonal case -> normalize control points use
 				// orthogonal router; ensure orthogonal projection strategy is

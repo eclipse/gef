@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
 
+import java.io.StringReader;
+
 import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotPointStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotSplineTypeStandaloneSetup;
@@ -23,6 +25,8 @@ import org.eclipse.gef4.dot.internal.parser.validation.DotArrowTypeJavaValidator
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotPointJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotSplineTypeJavaValidator;
+import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.serializer.ISerializer;
 
 import com.google.inject.Injector;
@@ -110,4 +114,49 @@ public class DotLanguageSupport {
 	public static final DotSplineTypeJavaValidator SPLINETYPE_VALIDATOR = splineTypeInjector
 			.getInstance(DotSplineTypeJavaValidator.class);
 
+	public static <T> T parse(IParser parser, String attributeValue) {
+		if (attributeValue == null) {
+			return null;
+		}
+		IParseResult parsedAttributeValue = parser
+				.parse(new StringReader(attributeValue));
+		return (T) parsedAttributeValue.getRootASTElement();
+	}
+
+	public static Double parseDouble(String attributeValue) {
+		if (attributeValue == null) {
+			return null;
+		}
+		Double parsedAttributeValue;
+		try {
+			// TODO: use specific parser that sticks strictly to DOT double
+			parsedAttributeValue = Double.parseDouble(attributeValue);
+		} catch (NumberFormatException exception) {
+			return null;
+		}
+		return parsedAttributeValue;
+	}
+
+	public static Boolean parseBoolean(String attributeValue) {
+		if (attributeValue == null) {
+			return null;
+		}
+		// case insensitive "true" or "yes"
+		if (Boolean.TRUE.toString().equalsIgnoreCase(attributeValue)
+				|| "yes".equalsIgnoreCase(attributeValue)) {
+			return Boolean.TRUE;
+		}
+		// case insensitive "false" or "no"
+		if (Boolean.FALSE.toString().equalsIgnoreCase(attributeValue)
+				|| "no".equalsIgnoreCase(attributeValue)) {
+			return Boolean.FALSE;
+		}
+		// an integer value
+		try {
+			int parsedValue = Integer.parseInt(attributeValue);
+			return parsedValue > 0 ? Boolean.TRUE : Boolean.FALSE;
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
 }

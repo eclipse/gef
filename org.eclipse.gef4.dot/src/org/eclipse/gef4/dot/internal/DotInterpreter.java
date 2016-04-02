@@ -150,12 +150,23 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		}
 		// splines
 		String splines = getAttributeValue(dotGraph, DotAttributes.SPLINES__G);
-		if (splines != null) {
-			DotAttributes.setSplines(graph, splines);
-		} else if (globalGraphAttributes
+		if (splines == null && globalGraphAttributes
 				.containsKey(DotAttributes.SPLINES__G)) {
-			DotAttributes.setSplines(graph,
-					globalGraphAttributes.get(DotAttributes.SPLINES__G));
+			splines = globalGraphAttributes.get(DotAttributes.SPLINES__G);
+		}
+		if (splines != null) {
+			// XXX: splines can either be a defined enum value or a bool value
+			// (which is mapped to respective enum values); we use the enum
+			// values alone and thus map the bool value here
+			Boolean booleanValue = DotLanguageSupport.parseBoolean(splines);
+			if (booleanValue != null) {
+				DotAttributes.setSplines(graph,
+						Boolean.TRUE.equals(booleanValue)
+								? DotAttributes.SPLINES__G__TRUE
+								: DotAttributes.SPLINES__G__FALSE);
+			} else {
+				DotAttributes.setSplines(graph, splines);
+			}
 		}
 		return graph;
 	}

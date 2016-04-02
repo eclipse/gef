@@ -159,16 +159,22 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			return validateEnumValue(name, unquotedValue, "rankdir",
 					DotAttributes.RANKDIR__G__VALUES);
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
-			// boolean values are case insensitive; we need to handle that here
-			// properly
-			if (Boolean.TRUE.toString().equalsIgnoreCase(unquotedValue)) {
-				unquotedValue = DotAttributes.SPLINES__G__TRUE;
-			} else if (Boolean.FALSE.toString()
-					.equalsIgnoreCase(unquotedValue)) {
-				unquotedValue = DotAttributes.SPLINES__G__FALSE;
-			}
-			return validateEnumValue(name, unquotedValue, "bool/string",
+			// XXX: splines can either be an enum or a bool value; we try both
+			// options here
+			List<Diagnostic> booleanCaseFindings = validateBooleanValue(name,
+					unquotedValue);
+			List<Diagnostic> stringCaseFindings = validateEnumValue(name,
+					unquotedValue, "splines string",
 					DotAttributes.SPLINES__G__VALUES);
+			if (booleanCaseFindings.isEmpty() || stringCaseFindings.isEmpty()) {
+				return Collections.emptyList();
+			} else {
+				// TODO: create a better, combined error message here
+				List<Diagnostic> combinedFindings = new ArrayList<>();
+				combinedFindings.addAll(booleanCaseFindings);
+				combinedFindings.addAll(stringCaseFindings);
+				return combinedFindings;
+			}
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
 			return validateEnumValue(name, unquotedValue, "layout",
 					DotAttributes.LAYOUT__G__VALUES);
@@ -247,6 +253,29 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							attributeName));
 		}
 		return Collections.emptyList();
+	}
+
+	private List<Diagnostic> validateBooleanValue(final String attributeName,
+			String attributeValue) {
+		// parse value
+		if ("true".equalsIgnoreCase(attributeValue)
+				|| "yes".equalsIgnoreCase(attributeValue)) {
+			return Collections.emptyList();
+		} else if ("false".equalsIgnoreCase(attributeValue)
+				|| "no".equalsIgnoreCase(attributeValue)) {
+			return Collections.emptyList();
+		} else {
+			try {
+				// valid boolean value
+				Integer.parseInt(attributeValue);
+				return Collections.emptyList();
+			} catch (NumberFormatException e) {
+				return Collections.<Diagnostic> singletonList(
+						createSyntacticAttributeValueProblem(attributeValue,
+								"boolean", e.getMessage() + ".",
+								attributeName));
+			}
+		}
 	}
 
 	private String getFormattedValues(Set<String> values) {
