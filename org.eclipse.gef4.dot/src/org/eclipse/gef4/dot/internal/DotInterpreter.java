@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -37,10 +36,10 @@ import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeId;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Stmt;
-import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.parser.dot.util.DotSwitch;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Graph.Builder;
 import org.eclipse.gef4.graph.Node;
 
 /**
@@ -52,11 +51,12 @@ import org.eclipse.gef4.graph.Node;
  */
 public final class DotInterpreter extends DotSwitch<Object> {
 
+	private Builder graphBuilder;
+	private Map<String, Node> nodesByName = new HashMap<>();
+
+	private Map<String, String> globalGraphAttributes = new HashMap<>();
 	private Map<String, String> globalNodeAttributes = new HashMap<>();
 	private Map<String, String> globalEdgeAttributes = new HashMap<>();
-
-	private Graph.Builder graph;
-	private Map<String, Node> nodes;
 
 	private boolean createEdge;
 	private String currentArrowHead;
@@ -85,7 +85,27 @@ public final class DotInterpreter extends DotSwitch<Object> {
 	public List<Graph> interpret(DotAst dotAst) {
 		List<Graph> graphs = new ArrayList<>();
 		for (DotGraph dotGraph : dotAst.getGraphs()) {
-			Graph g = interpret(dotGraph, new Graph.Builder());
+			// clear global attributes, which only hold for each respective
+			// graph
+			globalGraphAttributes.clear();
+			globalNodeAttributes.clear();
+			globalEdgeAttributes.clear();
+
+			// create a new graph builder and clear the nodes map
+			graphBuilder = new Graph.Builder();
+			nodesByName.clear();
+
+			// process all contents (nodes, edges, attributes)
+			TreeIterator<Object> contents = EcoreUtil
+					.getAllProperContents(dotGraph, false);
+			while (contents.hasNext()) {
+				doSwitch((EObject) contents.next());
+			}
+
+			// process the graph last, so we can initialize attributes of the
+			// created graph object rather than using the builder; we can thus
+			// ensure attribute values get properly validated.
+			Graph g = (Graph) doSwitch(dotGraph);
 			if (g != null) {
 				graphs.add(g);
 			}
@@ -93,34 +113,127 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		return graphs;
 	}
 
-	private Graph interpret(DotGraph dotGraph, Graph.Builder graph) {
-		this.graph = graph;
-		nodes = new HashMap<>();
-		doSwitch(dotGraph);
-		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(dotGraph,
-				false);
-		while (contents.hasNext()) {
-			doSwitch((EObject) contents.next());
+	@Override
+	public Object caseDotGraph(DotGraph dotGraph) {
+		// name (meta-attribute)
+		String name = escaped(dotGraph.getName());
+		if (name != null) {
+			graphBuilder.attr(DotAttributes._NAME__GNE, name);
 		}
-		return graph.build();
+
+		// type (meta-attribute)
+		GraphType graphType = dotGraph.getType();
+		graphBuilder.attr(DotAttributes._TYPE__G,
+				GraphType.GRAPH.equals(graphType)
+						? DotAttributes._TYPE__G__GRAPH
+						: DotAttributes._TYPE__G__DIGRAPH);
+		Graph graph = graphBuilder.build();
+
+		// layout
+		String layout = getAttributeValue(dotGraph, DotAttributes.LAYOUT__G);
+		if (layout != null) {
+			DotAttributes.setLayout(graph, layout);
+		} else if (globalGraphAttributes.containsKey(DotAttributes.LAYOUT__G)) {
+			DotAttributes.setLayout(graph,
+					globalGraphAttributes.get(DotAttributes.LAYOUT__G));
+		}
+		// rankdir
+		String rankdir = getAttributeValue(dotGraph, DotAttributes.RANKDIR__G);
+		if (rankdir != null) {
+			DotAttributes.setRankdir(graph, rankdir);
+		} else if (globalGraphAttributes
+				.containsKey(DotAttributes.RANKDIR__G)) {
+			DotAttributes.setRankdir(graph,
+					globalGraphAttributes.get(DotAttributes.RANKDIR__G));
+		}
+		return graph;
 	}
 
 	@Override
-	public Object caseDotGraph(DotGraph object) {
-		createGraph(object);
-		return super.caseDotGraph(object);
+	public Object caseAttrStmt(AttrStmt attrStmt) {
+		AttributeType type = attrStmt.getType();
+		switch (type) {
+		case EDGE: {
+			// global edge attributes
+			for (AttrList al : attrStmt.getAttrLists()) {
+				for (Attribute a : al.getAttributes()) {
+					globalEdgeAttributes.put(a.getName(),
+							escaped(a.getValue()));
+				}
+			}
+			break;
+		}
+		case NODE: {
+			// global node attributes
+			for (AttrList al : attrStmt.getAttrLists()) {
+				for (Attribute a : al.getAttributes()) {
+					globalNodeAttributes.put(a.getName(),
+							escaped(a.getValue()));
+				}
+			}
+			break;
+		}
+		case GRAPH: {
+			// global graph attributes
+			for (AttrList al : attrStmt.getAttrLists()) {
+				for (Attribute a : al.getAttributes()) {
+					globalGraphAttributes.put(a.getName(),
+							escaped(a.getValue()));
+				}
+			}
+			break;
+		}
+		}
+		return super.caseAttrStmt(attrStmt);
 	}
 
 	@Override
-	public Object caseAttrStmt(AttrStmt object) {
-		createAttributes(object);
-		return super.caseAttrStmt(object);
-	}
+	public Object caseNodeStmt(NodeStmt nodeStmt) {
+		// name (from grammar definition, not attribute)
+		Node node = node(escaped(nodeStmt.getNode().getName()));
 
-	@Override
-	public Object caseNodeStmt(NodeStmt object) {
-		createNode(object);
-		return super.caseNodeStmt(object);
+		// id
+		String id = getAttributeValue(nodeStmt, DotAttributes.ID__GNE);
+		if (id != null) {
+			DotAttributes.setId(node, id);
+		}
+
+		// label
+		String label = getAttributeValue(nodeStmt, DotAttributes.LABEL__GNE);
+		if (label != null) {
+			DotAttributes.setLabel(node, label);
+		}
+
+		// xlabel
+		String xLabel = getAttributeValue(nodeStmt, DotAttributes.XLABEL__NE);
+		if (xLabel != null) {
+			DotAttributes.setXLabel(node, xLabel);
+		}
+
+		// pos
+		String pos = getAttributeValue(nodeStmt, DotAttributes.POS__NE);
+		if (pos != null) {
+			DotAttributes.setPos(node, pos);
+		}
+
+		// xlp
+		String xlp = getAttributeValue(nodeStmt, DotAttributes.XLP__NE);
+		if (xlp != null) {
+			DotAttributes.setXlp(node, xlp);
+		}
+
+		// width
+		String width = getAttributeValue(nodeStmt, DotAttributes.WIDTH__N);
+		if (width != null) {
+			DotAttributes.setWidth(node, width);
+		}
+
+		// height
+		String height = getAttributeValue(nodeStmt, DotAttributes.HEIGHT__N);
+		if (height != null) {
+			DotAttributes.setHeight(node, height);
+		}
+		return super.caseNodeStmt(nodeStmt);
 	}
 
 	@Override
@@ -155,8 +268,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		} else {
 			String targetNodeName = escaped(object.getName());
 			if (currentEdgeSourceNodeName != null && targetNodeName != null) {
-				createEdge(currentEdgeSourceNodeName, currentEdgeOp,
-						targetNodeName);
+				edge(currentEdgeSourceNodeName, currentEdgeOp, targetNodeName);
 				// current target node may be source for next EdgeRHS
 				currentEdgeSourceNodeName = targetNodeName;
 			}
@@ -165,14 +277,12 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		return super.caseNodeId(object);
 	}
 
-	private void createEdge(String sourceNodeName, String edgeOp,
+	private void edge(String sourceNodeName, String edgeOp,
 			String targetNodeName) {
-		Edge.Builder edgeBuilder = new Edge.Builder(node(sourceNodeName),
-				node(targetNodeName));
-		Edge edge = edgeBuilder.buildEdge();
-
-		// name (always set)
-		DotAttributes.setName(edge, sourceNodeName + edgeOp + targetNodeName);
+		Edge edge = new Edge.Builder(node(sourceNodeName), node(targetNodeName))
+				.attr(DotAttributes._NAME__GNE,
+						sourceNodeName + edgeOp + targetNodeName)
+				.buildEdge();
 
 		// id
 		if (currentEdgeId != null) {
@@ -280,14 +390,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			DotAttributes.setTailLp(edge, currentEdgeTailLp);
 		}
 
-		graph.edges(edge);
-	}
-
-	private boolean supported(String value, Set<String> vals) {
-		if (value == null) {
-			return false;
-		}
-		return vals.contains(value);
+		graphBuilder.edges(edge);
 	}
 
 	@Override
@@ -298,215 +401,12 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		return super.caseEdgeRhsNode(object);
 	}
 
-	@Override
-	public Object caseSubgraph(Subgraph object) {
-		return super.caseSubgraph(object);
-	}
-
-	private void createGraph(DotGraph dotGraph) {
-		// name (meta-attribute)
-		String name = escaped(dotGraph.getName());
-		if (name != null) {
-			graph.attr(DotAttributes._NAME__GNE, name);
-		}
-
-		// type (meta-attribute)
-		GraphType graphType = dotGraph.getType();
-		graph.attr(DotAttributes._TYPE__G,
-				GraphType.GRAPH.equals(graphType)
-						? DotAttributes._TYPE__G__GRAPH
-						: DotAttributes._TYPE__G__DIGRAPH);
-
-		// layout
-		String layout = getAttributeValue(dotGraph, DotAttributes.LAYOUT__G);
-		if (layout != null) {
-			graph.attr(DotAttributes.LAYOUT__G, layout);
-		}
-
-		String rankdir = getAttributeValue(dotGraph, DotAttributes.RANKDIR__G);
-		if (rankdir != null) {
-			graph.attr(DotAttributes.RANKDIR__G, rankdir);
-		}
-	}
-
-	private void createAttributes(final AttrStmt attrStmt) {
-		// TODO: Verify that the global values are retrieved from edge/node
-		// attributes. Maybe they are retrieved from graph attributes, and it
-		// should really be GRAPH_EDGE_STYLE.
-		AttributeType type = attrStmt.getType();
-		switch (type) {
-		case EDGE: {
-			// label
-			String globalLabel = getAttributeValue(attrStmt,
-					DotAttributes.LABEL__GNE);
-			if (globalLabel != null) {
-				globalEdgeAttributes.put(DotAttributes.LABEL__GNE, globalLabel);
-			}
-			// xlabel
-			String globalXLabel = getAttributeValue(attrStmt,
-					DotAttributes.XLABEL__NE);
-			if (globalXLabel != null) {
-				globalEdgeAttributes.put(DotAttributes.XLABEL__NE,
-						globalXLabel);
-			}
-			// arrowhead
-			String globalArrowHead = getAttributeValue(attrStmt,
-					DotAttributes.ARROWHEAD__E);
-			if (globalArrowHead != null) {
-				globalEdgeAttributes.put(DotAttributes.ARROWHEAD__E,
-						globalArrowHead);
-			}
-			// arrowtail
-			String globalArrowTail = getAttributeValue(attrStmt,
-					DotAttributes.ARROWTAIL__E);
-			if (globalArrowTail != null) {
-				globalEdgeAttributes.put(DotAttributes.ARROWTAIL__E,
-						globalArrowTail);
-			}
-			// arrowsize
-			String globalArrowSize = getAttributeValue(attrStmt,
-					DotAttributes.ARROWSIZE__E);
-			if (globalArrowSize != null) {
-				globalEdgeAttributes.put(DotAttributes.ARROWSIZE__E,
-						globalArrowSize);
-			}
-			// headlabel
-			String globalHeadLabel = getAttributeValue(attrStmt,
-					DotAttributes.HEADLABEL__E);
-			if (globalHeadLabel != null) {
-				globalEdgeAttributes.put(DotAttributes.HEADLABEL__E,
-						globalHeadLabel);
-			}
-			// taillabel
-			String globalTailLabel = getAttributeValue(attrStmt,
-					DotAttributes.TAILLABEL__E);
-			if (globalTailLabel != null) {
-				globalEdgeAttributes.put(DotAttributes.TAILLABEL__E,
-						globalTailLabel);
-			}
-			// dir
-			String globalDir = getAttributeValue(attrStmt,
-					DotAttributes.DIR__E);
-			if (globalDir != null) {
-				globalEdgeAttributes.put(DotAttributes.DIR__E, globalDir);
-			}
-			// style
-			String globalEdgeStyle = getAttributeValue(attrStmt,
-					DotAttributes.STYLE__E);
-			if (globalEdgeStyle != null) {
-				globalEdgeAttributes.put(DotAttributes.STYLE__E,
-						globalEdgeStyle);
-			}
-			break;
-		}
-		case NODE: {
-			// label
-			String globalLabel = getAttributeValue(attrStmt,
-					DotAttributes.LABEL__GNE);
-			if (globalLabel != null) {
-				globalNodeAttributes.put(DotAttributes.LABEL__GNE, globalLabel);
-			}
-			// xlabel
-			String globalXLabel = getAttributeValue(attrStmt,
-					DotAttributes.XLABEL__NE);
-			if (globalXLabel != null) {
-				globalNodeAttributes.put(DotAttributes.XLABEL__NE,
-						globalXLabel);
-			}
-			// width
-			String globalWidth = getAttributeValue(attrStmt,
-					DotAttributes.WIDTH__N);
-			if (globalWidth != null) {
-				globalNodeAttributes.put(DotAttributes.WIDTH__N, globalWidth);
-			}
-			// height
-			String globalHeight = getAttributeValue(attrStmt,
-					DotAttributes.HEIGHT__N);
-			if (globalHeight != null) {
-				globalNodeAttributes.put(DotAttributes.HEIGHT__N, globalHeight);
-			}
-			break;
-		}
-		case GRAPH: {
-			for (AttrList al : attrStmt.getAttrLists()) {
-				for (Attribute a : al.getAttributes()) {
-					graph.attr(a.getName(), a.getValue());
-				}
-			}
-			String graphLayout = getAttributeValue(attrStmt,
-					DotAttributes.LAYOUT__G);
-			if (graphLayout != null) {
-				String graphLayoutLc = new String(graphLayout).toLowerCase();
-				if (!supported(graphLayoutLc,
-						DotAttributes.LAYOUT__G__VALUES)) {
-					throw new IllegalArgumentException(
-							"Unknown layout algorithm <" + graphLayoutLc
-									+ ">.");
-				}
-				graph.attr(DotAttributes.LAYOUT__G, graphLayoutLc);
-			}
-			break;
-		}
-		}
-
-	}
-
-	private void createNode(final NodeStmt nodeStatement) {
-		// name (from grammar definition, not attribute)
-		Node node = node(escaped(nodeStatement.getNode().getName()));
-
-		// id
-		String id = getAttributeValue(nodeStatement, DotAttributes.ID__GNE);
-		if (id != null) {
-			DotAttributes.setId(node, id);
-		}
-
-		// label
-		String label = getAttributeValue(nodeStatement,
-				DotAttributes.LABEL__GNE);
-		if (label != null) {
-			DotAttributes.setLabel(node, label);
-		}
-
-		// xlabel
-		String xLabel = getAttributeValue(nodeStatement,
-				DotAttributes.XLABEL__NE);
-		if (xLabel != null) {
-			DotAttributes.setXLabel(node, xLabel);
-		}
-
-		// pos
-		String pos = getAttributeValue(nodeStatement, DotAttributes.POS__NE);
-		if (pos != null) {
-			DotAttributes.setPos(node, pos);
-		}
-
-		// xlp
-		String xlp = getAttributeValue(nodeStatement, DotAttributes.XLP__NE);
-		if (xlp != null) {
-			DotAttributes.setXlp(node, xlp);
-		}
-
-		// width
-		String width = getAttributeValue(nodeStatement, DotAttributes.WIDTH__N);
-		if (width != null) {
-			DotAttributes.setWidth(node, width);
-		}
-
-		// height
-		String height = getAttributeValue(nodeStatement,
-				DotAttributes.HEIGHT__N);
-		if (height != null) {
-			DotAttributes.setHeight(node, height);
-		}
-	}
-
 	private Node node(String nodeName) {
-		if (!nodes.containsKey(nodeName)) {
+		if (!nodesByName.containsKey(nodeName)) {
 			Node node = new Node.Builder()
 					.attr(DotAttributes._NAME__GNE, nodeName).buildNode();
-			nodes.put(nodeName, node);
-			graph.nodes(node);
+			graphBuilder.nodes(node);
+			nodesByName.put(nodeName, node);
 
 			// evaluate global attributes
 			if (globalNodeAttributes.containsKey(DotAttributes.LABEL__GNE)) {
@@ -526,7 +426,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 						globalNodeAttributes.get(DotAttributes.HEIGHT__N));
 			}
 		}
-		return nodes.get(nodeName);
+		return nodesByName.get(nodeName);
 	}
 
 	private String getAttributeValue(final DotGraph graph, final String name) {
