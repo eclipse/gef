@@ -49,6 +49,8 @@ import org.eclipse.gef4.graph.Node;
  * @author Fabian Steeg (fsteeg)
  * @author Alexander Nyßen (anyssen)
  */
+// TODO: merge this into DotImport; turning DotImport into an Xtend class (so we
+// can use create functions)
 public final class DotInterpreter extends DotSwitch<Object> {
 
 	private Builder graphBuilder;
