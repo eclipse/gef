@@ -217,7 +217,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		if (currentEdgeStyle != null) {
 			DotAttributes.setStyle(edge, currentEdgeStyle);
 		} else if (globalEdgeAttributes.containsKey(DotAttributes.STYLE__E)) {
-			DotAttributes.setArrowTail(edge,
+			DotAttributes.setStyle(edge,
 					globalEdgeAttributes.get(DotAttributes.STYLE__E));
 		}
 
@@ -453,14 +453,7 @@ public final class DotInterpreter extends DotSwitch<Object> {
 
 	private void createNode(final NodeStmt nodeStatement) {
 		// name (from grammar definition, not attribute)
-		String nodeName = escaped(nodeStatement.getNode().getName());
-		Node node;
-		if (nodes.containsKey(nodeName)) {
-			node = nodes.get(nodeName);
-		} else {
-			node = new Node.Builder().attr(DotAttributes._NAME__GNE, nodeName)
-					.buildNode();
-		}
+		Node node = node(escaped(nodeStatement.getNode().getName()));
 
 		// id
 		String id = getAttributeValue(nodeStatement, DotAttributes.ID__GNE);
@@ -473,9 +466,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.LABEL__GNE);
 		if (label != null) {
 			DotAttributes.setLabel(node, label);
-		} else if (globalNodeAttributes.containsKey(DotAttributes.LABEL__GNE)) {
-			DotAttributes.setLabel(node,
-					globalNodeAttributes.get(DotAttributes.LABEL__GNE));
 		}
 
 		// xlabel
@@ -483,9 +473,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.XLABEL__NE);
 		if (xLabel != null) {
 			DotAttributes.setXLabel(node, xLabel);
-		} else if (globalNodeAttributes.containsKey(DotAttributes.XLABEL__NE)) {
-			DotAttributes.setXLabel(node,
-					globalNodeAttributes.get(DotAttributes.XLABEL__NE));
 		}
 
 		// pos
@@ -504,9 +491,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		String width = getAttributeValue(nodeStatement, DotAttributes.WIDTH__N);
 		if (width != null) {
 			DotAttributes.setWidth(node, width);
-		} else if (globalNodeAttributes.containsKey(DotAttributes.WIDTH__N)) {
-			DotAttributes.setWidth(node,
-					globalNodeAttributes.get(DotAttributes.WIDTH__N));
 		}
 
 		// height
@@ -514,15 +498,6 @@ public final class DotInterpreter extends DotSwitch<Object> {
 				DotAttributes.HEIGHT__N);
 		if (height != null) {
 			DotAttributes.setHeight(node, height);
-		} else if (globalNodeAttributes.containsKey(DotAttributes.HEIGHT__N)) {
-			DotAttributes.setHeight(node,
-					globalNodeAttributes.get(DotAttributes.HEIGHT__N));
-		}
-
-		// TODO: do we have to perform containment check here??
-		if (!nodes.containsKey(nodeName)) {
-			nodes.put(nodeName, node);
-			graph = graph.nodes(node);
 		}
 	}
 
@@ -531,7 +506,25 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			Node node = new Node.Builder()
 					.attr(DotAttributes._NAME__GNE, nodeName).buildNode();
 			nodes.put(nodeName, node);
-			graph = graph.nodes(node);
+			graph.nodes(node);
+
+			// evaluate global attributes
+			if (globalNodeAttributes.containsKey(DotAttributes.LABEL__GNE)) {
+				DotAttributes.setLabel(node,
+						globalNodeAttributes.get(DotAttributes.LABEL__GNE));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.XLABEL__NE)) {
+				DotAttributes.setXLabel(node,
+						globalNodeAttributes.get(DotAttributes.XLABEL__NE));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.WIDTH__N)) {
+				DotAttributes.setWidth(node,
+						globalNodeAttributes.get(DotAttributes.WIDTH__N));
+			}
+			if (globalNodeAttributes.containsKey(DotAttributes.HEIGHT__N)) {
+				DotAttributes.setHeight(node,
+						globalNodeAttributes.get(DotAttributes.HEIGHT__N));
+			}
 		}
 		return nodes.get(nodeName);
 	}

@@ -342,15 +342,6 @@ public final class DotInterpreterTests {
 		assertEquals(1, graph.getEdges().size());
 	}
 
-	@Test
-	public void otherUnsupportedStyles() {
-		Graph graph = interpreter.interpret(parse(
-				"graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")) //$NON-NLS-1$
-				.get(0);
-		assertEquals(2, graph.getNodes().size());
-		assertEquals(1, graph.getEdges().size());
-	}
-
 	@Test(expected = IllegalArgumentException.class)
 	public void faultyLayout() {
 		interpreter.interpret(parse("graph Sample{graph[layout=cool];1;}")); //$NON-NLS-1$
