@@ -51,15 +51,19 @@ public abstract class AbstractGraphConverter {
 		// destination of edges can be found easily later
 		for (Node inputNode : inputGraph.getNodes()) {
 			Node outputNode = convertNode(inputNode);
-			outputNode.setGraph(outputGraph);
-			inputToOutputNodes.put(inputNode, outputNode);
-			outputGraph.getNodes().add(outputNode);
+			if (outputNode != null) {
+				inputToOutputNodes.put(inputNode, outputNode);
+				outputNode.setGraph(outputGraph);
+				outputGraph.getNodes().add(outputNode);
+			}
 		}
 		// convert edges
-		for (Edge dotEdge : inputGraph.getEdges()) {
-			Edge edge = convertEdge(dotEdge);
-			edge.setGraph(outputGraph);
-			outputGraph.getEdges().add(edge);
+		for (Edge inputEdge : inputGraph.getEdges()) {
+			Edge outputEdge = convertEdge(inputEdge);
+			if (outputEdge != null) {
+				outputEdge.setGraph(outputGraph);
+				outputGraph.getEdges().add(outputEdge);
+			}
 		}
 		inputToOutputNodes.clear();
 		return outputGraph;

@@ -277,6 +277,66 @@ public class DotAttributes {
 					RANKDIR__G__BT));
 
 	/**
+	 * Specifies the name of the 'splines' attribute. It is used to control how
+	 * edges are to be rendered.
+	 */
+	public static final String SPLINES__G = "splines";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that no edges are to be drawn.
+	 * This is a synonym of {@link #SPLINES__G__EMPTY}
+	 */
+	public static final String SPLINES__G__NONE = "none";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that no edges are to be drawn.
+	 * This is a synonym of {@link #SPLINES__G__NONE}
+	 */
+	public static final String SPLINES__G__EMPTY = "";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that lines are to be used.
+	 */
+	public static final String SPLINES__G__LINE = "line";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that lines are to be used. This
+	 * is a synonym of {@link #SPLINES__G__LINE}
+	 */
+	public static final String SPLINES__G__FALSE = "false";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that splines are to be used.
+	 */
+	public static final String SPLINES__G__SPLINE = "spline";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that straight polylines are to
+	 * be used.
+	 */
+	public static final String SPLINES__G__POLYLINE = "polyline";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that orthogonal polylines are to
+	 * be used.
+	 */
+	public static final String SPLINES__G__ORTHO = "ortho";
+
+	/**
+	 * This {@link #SPLINES__G} value indicates that splines are to be used.
+	 * This is a synonym of {@link #SPLINES__G__SPLINE}
+	 */
+	public static final String SPLINES__G__TRUE = "true";
+
+	/**
+	 * The possible values of the {@link #SPLINES__G} attribute.
+	 */
+	public static final Set<String> SPLINES__G__VALUES = new HashSet<>(
+			Arrays.asList(SPLINES__G__EMPTY, SPLINES__G__NONE,
+					SPLINES__G__FALSE, SPLINES__G__LINE, SPLINES__G__POLYLINE,
+					SPLINES__G__ORTHO, SPLINES__G__SPLINE, SPLINES__G__TRUE));
+
+	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
 	 * dotted, etc. Possible values are defined by {@link #STYLE__E__VALUES}.
 	 * The default value is defined by {@link #STYLE__E__DEFAULT}.
@@ -687,7 +747,7 @@ public class DotAttributes {
 
 	/**
 	 * Returns the value of the {@link #_NAME__GNE} property of the given
-	 * {@link Edge}.
+	 * {@link Graph}.
 	 * 
 	 * @param graph
 	 *            The {@link Graph} for which to return the value of the
@@ -697,6 +757,20 @@ public class DotAttributes {
 	 */
 	public static String getName(Graph graph) {
 		return (String) graph.attributesProperty().get(_NAME__GNE);
+	}
+
+	/**
+	 * Returns the value of the {@link #SPLINES__G} attribute of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #SPLINES__G} property.
+	 * @return The value of the {@link #SPLINES__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static String getSplines(Graph graph) {
+		return (String) graph.attributesProperty().get(SPLINES__G);
 	}
 
 	/**
@@ -1474,6 +1548,23 @@ public class DotAttributes {
 	public static void setRankdir(Graph graph, String rankdir) {
 		validate(AttributeContext.GRAPH, RANKDIR__G, rankdir);
 		graph.attributesProperty().put(RANKDIR__G, rankdir);
+	}
+
+	/**
+	 * Sets the {@link #SPLINES__G} attribute of the given {@link Graph} to the
+	 * given value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #SPLINES__G} property.
+	 * @param splines
+	 *            The new value for the {@link #SPLINES__G} property.
+	 * @throws IllegalArgumentException
+	 *             When the given value is not supported.
+	 */
+	public static void setSplines(Graph graph, String splines) {
+		validate(AttributeContext.GRAPH, SPLINES__G, splines);
+		graph.attributesProperty().put(SPLINES__G, splines);
 	}
 
 	/**

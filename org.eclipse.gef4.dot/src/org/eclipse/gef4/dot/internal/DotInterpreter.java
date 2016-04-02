@@ -148,6 +148,15 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			DotAttributes.setRankdir(graph,
 					globalGraphAttributes.get(DotAttributes.RANKDIR__G));
 		}
+		// splines
+		String splines = getAttributeValue(dotGraph, DotAttributes.SPLINES__G);
+		if (splines != null) {
+			DotAttributes.setSplines(graph, splines);
+		} else if (globalGraphAttributes
+				.containsKey(DotAttributes.SPLINES__G)) {
+			DotAttributes.setSplines(graph,
+					globalGraphAttributes.get(DotAttributes.SPLINES__G));
+		}
 		return graph;
 	}
 

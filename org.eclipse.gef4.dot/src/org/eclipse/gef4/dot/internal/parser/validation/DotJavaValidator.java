@@ -158,6 +158,17 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		if (DotAttributes.RANKDIR__G.equals(name)) {
 			return validateEnumValue(name, unquotedValue, "rankdir",
 					DotAttributes.RANKDIR__G__VALUES);
+		} else if (DotAttributes.SPLINES__G.equals(name)) {
+			// boolean values are case insensitive; we need to handle that here
+			// properly
+			if (Boolean.TRUE.toString().equalsIgnoreCase(unquotedValue)) {
+				unquotedValue = DotAttributes.SPLINES__G__TRUE;
+			} else if (Boolean.FALSE.toString()
+					.equalsIgnoreCase(unquotedValue)) {
+				unquotedValue = DotAttributes.SPLINES__G__FALSE;
+			}
+			return validateEnumValue(name, unquotedValue, "bool/string",
+					DotAttributes.SPLINES__G__VALUES);
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
 			return validateEnumValue(name, unquotedValue, "layout",
 					DotAttributes.LAYOUT__G__VALUES);

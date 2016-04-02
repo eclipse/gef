@@ -48,6 +48,17 @@ import javafx.scene.text.Text;
 public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 	@Override
+	protected Edge convertEdge(Edge inputEdge) {
+		String splines = DotAttributes.getSplines(inputEdge.getGraph());
+		// skip edges in case splines is set to empty or none.
+		if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
+				|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
+			return null;
+		}
+		return super.convertEdge(inputEdge);
+	}
+
+	@Override
 	protected void convertAttributes(Edge dot, Edge zest) {
 		// convert id and label
 		String dotId = DotAttributes.getId(dot);
@@ -163,6 +174,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null) {
+				String splines = DotAttributes.getSplines(dot.getGraph());
+
 				// special format: in case start or end is not given, the first
 				// or last control point will be contained twice.
 				final List<Point> bSplineControlPoints = computeZestBSplineControlPoints(
