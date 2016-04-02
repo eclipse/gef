@@ -39,9 +39,9 @@ import javafx.scene.Node;
 import javafx.util.Pair;
 
 /**
- * The {@link GraphPart} is the controller for a {@link Graph} content
- * object. It starts a layout pass after activation and when its content
- * children change.
+ * The {@link GraphPart} is the controller for a {@link Graph} content object.
+ * It starts a layout pass after activation and when its content children
+ * change.
  *
  * @author mwienand
  *
@@ -131,6 +131,12 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected List<? extends Object> doGetContentChildren() {
 		List<Object> children = new ArrayList<>();
+		children.addAll(getContent().getNodes());
+		for (org.eclipse.gef4.graph.Node n : getContent().getNodes()) {
+			if (ZestProperties.getExternalLabel(n) != null) {
+				children.add(new Pair<>(n, ZestProperties.ELEMENT_EXTERNAL_LABEL));
+			}
+		}
 		children.addAll(getContent().getEdges());
 		for (Edge e : getContent().getEdges()) {
 			if (ZestProperties.getLabel(e) != null) {
@@ -144,12 +150,6 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 			}
 			if (ZestProperties.getTargetLabel(e) != null) {
 				children.add(new Pair<>(e, ZestProperties.EDGE_TARGET_LABEL));
-			}
-		}
-		children.addAll(getContent().getNodes());
-		for (org.eclipse.gef4.graph.Node n : getContent().getNodes()) {
-			if (ZestProperties.getExternalLabel(n) != null) {
-				children.add(new Pair<>(n, ZestProperties.ELEMENT_EXTERNAL_LABEL));
 			}
 		}
 		return children;
