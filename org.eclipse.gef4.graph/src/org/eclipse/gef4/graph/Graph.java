@@ -151,6 +151,19 @@ public final class Graph implements IAttributeStore {
 		 *            which is constructed by this {@link Builder}.
 		 * @return <code>this</code> for convenience.
 		 */
+		public Graph.Builder edges(Collection<Edge> edges) {
+			return edges(edges.toArray(new Edge[] {}));
+		}
+
+		/**
+		 * Adds the given {@link Edge}s to the {@link Graph} which is
+		 * constructed by this {@link Builder}.
+		 *
+		 * @param edges
+		 *            The {@link Edge}s which are added to the {@link Graph}
+		 *            which is constructed by this {@link Builder}.
+		 * @return <code>this</code> for convenience.
+		 */
 		public Graph.Builder edges(Edge... edges) {
 			this.edges.addAll(Arrays.asList(edges));
 			return this;
@@ -203,6 +216,19 @@ public final class Graph implements IAttributeStore {
 		public Node.Builder node(Object key) {
 			Node.Builder nb = new Node.Builder(context, key);
 			return nb;
+		}
+
+		/**
+		 * Adds the given {@link Node}s to the {@link Graph} which is
+		 * constructed by this {@link Builder}.
+		 *
+		 * @param nodes
+		 *            The {@link Node}s which are added to the {@link Graph}
+		 *            which is constructed by this {@link Builder}.
+		 * @return <code>this</code> for convenience.
+		 */
+		public Graph.Builder nodes(Collection<Node> nodes) {
+			return nodes(nodes.toArray(new Node[] {}));
 		}
 
 		/**
