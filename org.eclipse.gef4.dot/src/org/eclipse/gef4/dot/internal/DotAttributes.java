@@ -22,15 +22,19 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator.AttributeContext;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.xtext.serializer.ISerializer;
+
+import com.google.inject.Injector;
 
 /**
  * The {@link DotAttributes} class contains all properties which are supported
@@ -42,6 +46,12 @@ import org.eclipse.xtext.serializer.ISerializer;
  *
  */
 public class DotAttributes {
+
+	private static final Injector dotInjector = new DotStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	private static final DotJavaValidator DOT_VALIDATOR = dotInjector
+			.getInstance(DotJavaValidator.class);
 
 	/**
 	 * Specifies the name of a graph, node, or edge (not an attribute), as
@@ -454,8 +464,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowHeadParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.ARROWTYPE_PARSER,
-				getArrowHead(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.ARROWTYPE_PARSER, getArrowHead(edge));
 	}
 
 	/**
@@ -485,7 +495,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Double getArrowSizeParsed(Edge edge) {
-		return DotLanguageSupport.parseDouble(getArrowSize(edge));
+		return DotLanguageSupport.parseDoubleAttributeValue(getArrowSize(edge));
 	}
 
 	/**
@@ -515,8 +525,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowTailParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.ARROWTYPE_PARSER,
-				getArrowTail(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.ARROWTYPE_PARSER, getArrowTail(edge));
 	}
 
 	/**
@@ -544,7 +554,8 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static Boolean getForcedLabelsParsed(Graph graph) {
-		return DotLanguageSupport.parseBoolean(getForceLabels(graph));
+		return DotLanguageSupport
+				.parseBooleanAttributeValue(getForceLabels(graph));
 	}
 
 	/**
@@ -572,7 +583,8 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static Boolean getForceLabelsParsed(Graph graph) {
-		return DotLanguageSupport.parseBoolean(getForceLabels(graph));
+		return DotLanguageSupport
+				.parseBooleanAttributeValue(getForceLabels(graph));
 	}
 
 	private static String getFormattedDiagnosticMessage(
@@ -629,8 +641,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getHeadLpParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.POINT_PARSER,
-				getHeadLp(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getHeadLp(edge));
 	}
 
 	/**
@@ -658,7 +670,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Double getHeightParsed(Node node) {
-		return DotLanguageSupport.parseDouble(getHeight(node));
+		return DotLanguageSupport.parseDoubleAttributeValue(getHeight(node));
 	}
 
 	/**
@@ -770,8 +782,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getLpParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.POINT_PARSER,
-				getLp(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getLp(edge));
 	}
 
 	/**
@@ -855,8 +867,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static SplineType getPosParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.SPLINETYPE_PARSER,
-				getPos(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.SPLINETYPE_PARSER, getPos(edge));
 	}
 
 	/**
@@ -870,8 +882,8 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getPosParsed(Node node) {
-		return DotLanguageSupport.parse(DotLanguageSupport.POINT_PARSER,
-				getPos(node));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getPos(node));
 	}
 
 	/**
@@ -955,8 +967,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getTailLpParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.POINT_PARSER,
-				getTailLp(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getTailLp(edge));
 	}
 
 	/**
@@ -998,7 +1010,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Double getWidthParsed(Node node) {
-		return DotLanguageSupport.parseDouble(getWidth(node));
+		return DotLanguageSupport.parseDoubleAttributeValue(getWidth(node));
 	}
 
 	/**
@@ -1068,8 +1080,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getXlpParsed(Edge edge) {
-		return DotLanguageSupport.parse(DotLanguageSupport.POINT_PARSER,
-				getXlp(edge));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getXlp(edge));
 	}
 
 	/**
@@ -1083,8 +1095,8 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getXlpParsed(Node node) {
-		return DotLanguageSupport.parse(DotLanguageSupport.POINT_PARSER,
-				getXlp(node));
+		return DotLanguageSupport.parseObjectAttributeValue(
+				DotLanguageSupport.POINT_PARSER, getXlp(node));
 	}
 
 	private static <T extends EObject> String serialize(ISerializer serializer,
@@ -1754,7 +1766,7 @@ public class DotAttributes {
 
 	private static void validate(AttributeContext context, String attributeName,
 			String attributeValue) {
-		List<Diagnostic> diagnostics = filter(DotLanguageSupport.DOT_VALIDATOR
+		List<Diagnostic> diagnostics = filter(DOT_VALIDATOR
 				.validateAttributeValue(context, attributeName, attributeValue),
 				Diagnostic.ERROR);
 		if (!diagnostics.isEmpty()) {

@@ -15,21 +15,12 @@
 
 package org.eclipse.gef4.dot.internal.parser.validation;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotLanguageSupport;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowtypePackage;
@@ -49,14 +40,7 @@ import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.parser.point.PointPackage;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplinetypePackage;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.parser.IParser;
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.validation.CheckType;
-import org.eclipse.xtext.validation.FeatureBasedDiagnostic;
-import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
 /**
  * Provides DOT-specific validation rules.
@@ -156,16 +140,16 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.RANKDIR__G.equals(name)) {
-			return validateEnumValue(name, unquotedValue, "rankdir",
-					DotAttributes.RANKDIR__G__VALUES);
+			return DotLanguageSupport.validateEnumAttributeValue(name, unquotedValue,
+					"rankdir", DotAttributes.RANKDIR__G__VALUES);
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
 			// XXX: splines can either be an enum or a bool value; we try both
 			// options here
-			List<Diagnostic> booleanCaseFindings = validateBooleanValue(name,
-					unquotedValue);
-			List<Diagnostic> stringCaseFindings = validateEnumValue(name,
-					unquotedValue, "splines string",
-					DotAttributes.SPLINES__G__VALUES);
+			List<Diagnostic> booleanCaseFindings = DotLanguageSupport
+					.validateBooleanAttributeValue(name, unquotedValue);
+			List<Diagnostic> stringCaseFindings = DotLanguageSupport
+					.validateEnumAttributeValue(name, unquotedValue, "splines string",
+							DotAttributes.SPLINES__G__VALUES);
 			if (booleanCaseFindings.isEmpty() || stringCaseFindings.isEmpty()) {
 				return Collections.emptyList();
 			} else {
@@ -176,261 +160,45 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				return combinedFindings;
 			}
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
-			return validateEnumValue(name, unquotedValue, "layout",
-					DotAttributes.LAYOUT__G__VALUES);
+			return DotLanguageSupport.validateEnumAttributeValue(name, unquotedValue,
+					"layout", DotAttributes.LAYOUT__G__VALUES);
 		} else if (DotAttributes.DIR__E.equals(name)) {
-			return validateEnumValue(name, unquotedValue, "dir",
-					DotAttributes.DIR__E__VALUES);
+			return DotLanguageSupport.validateEnumAttributeValue(name, unquotedValue,
+					"dir", DotAttributes.DIR__E__VALUES);
 		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
-			return validateAttributeValue(DotLanguageSupport.ARROWTYPE_PARSER,
+			return DotLanguageSupport.validateObjectAttributeValue(
+					DotLanguageSupport.ARROWTYPE_PARSER,
 					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, unquotedValue,
 					ArrowtypePackage.Literals.ARROW_TYPE);
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge)
 			if (AttributeContext.NODE.equals(context)) {
-				return validateAttributeValue(DotLanguageSupport.POINT_PARSER,
+				return DotLanguageSupport.validateObjectAttributeValue(
+						DotLanguageSupport.POINT_PARSER,
 						DotLanguageSupport.POINT_VALIDATOR, name, unquotedValue,
 						PointPackage.Literals.POINT);
 			} else if (AttributeContext.EDGE.equals(context)) {
-				return validateAttributeValue(
+				return DotLanguageSupport.validateObjectAttributeValue(
 						DotLanguageSupport.SPLINETYPE_PARSER,
 						DotLanguageSupport.SPLINETYPE_VALIDATOR, name,
 						unquotedValue, SplinetypePackage.Literals.SPLINE_TYPE);
 			}
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
-			return validateDoubleValue(name, unquotedValue, 0.0);
+			return DotLanguageSupport.validateDoubleAttributeValue(name, unquotedValue,
+					0.0);
 		} else if (DotAttributes.WIDTH__N.equals(name)) {
-			return validateDoubleValue(name, unquotedValue, 0.01);
+			return DotLanguageSupport.validateDoubleAttributeValue(name, unquotedValue,
+					0.01);
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
-			return validateDoubleValue(name, unquotedValue, 0.02);
+			return DotLanguageSupport.validateDoubleAttributeValue(name, unquotedValue,
+					0.02);
 		} else if (DotAttributes.STYLE__E.equals(name)) {
-			if (!DotAttributes.STYLE__E__VALUES.contains(unquotedValue)) {
-				return Collections.<Diagnostic> singletonList(
-						createSyntacticAttributeValueProblem(unquotedValue,
-								"style",
-								"Value has to be one of " + getFormattedValues(
-										DotAttributes.STYLE__E__VALUES),
-								name));
-			}
+			return DotLanguageSupport.validateEnumAttributeValue(name, unquotedValue,
+					"style", DotAttributes.STYLE__E__VALUES);
 		}
 		return Collections.emptyList();
-	}
-
-	private List<Diagnostic> validateEnumValue(final String attributeName,
-			String attributeValue, String attributeTypeName,
-			Set<String> validValues) {
-		if (!validValues.contains(attributeValue)) {
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue,
-							attributeTypeName,
-							"Value has to be one of "
-									+ getFormattedValues(validValues),
-							attributeName));
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	private List<Diagnostic> validateDoubleValue(final String attributeName,
-			String attributeValue, double minValue) {
-		// parse value
-		double parsedValue;
-		try {
-			parsedValue = Double.parseDouble(attributeValue);
-		} catch (NumberFormatException e) {
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue,
-							"double", e.getMessage() + ".", attributeName));
-		}
-		// validate value
-		if (parsedValue < minValue) {
-			return Collections.<Diagnostic> singletonList(
-					createSemanticAttributeValueProblem(Diagnostic.ERROR,
-							attributeValue, "double",
-							"Value may not be smaller than " + minValue + ".",
-							attributeName));
-		}
-		return Collections.emptyList();
-	}
-
-	private List<Diagnostic> validateBooleanValue(final String attributeName,
-			String attributeValue) {
-		// parse value
-		if ("true".equalsIgnoreCase(attributeValue)
-				|| "yes".equalsIgnoreCase(attributeValue)) {
-			return Collections.emptyList();
-		} else if ("false".equalsIgnoreCase(attributeValue)
-				|| "no".equalsIgnoreCase(attributeValue)) {
-			return Collections.emptyList();
-		} else {
-			try {
-				// valid boolean value
-				Integer.parseInt(attributeValue);
-				return Collections.emptyList();
-			} catch (NumberFormatException e) {
-				return Collections.<Diagnostic> singletonList(
-						createSyntacticAttributeValueProblem(attributeValue,
-								"boolean", e.getMessage() + ".",
-								attributeName));
-			}
-		}
-	}
-
-	private String getFormattedValues(Set<String> values) {
-		StringBuilder sb = new StringBuilder();
-		for (String value : values) {
-			if (sb.length() > 0) {
-				sb.append(", ");
-			}
-			sb.append("'" + value + "'");
-		}
-		return sb.append(".").toString();
-	}
-
-	private Diagnostic createSyntacticAttributeValueProblem(
-			String attributeValue, String attributeTypeName,
-			String parserMessage, String issueCode) {
-		return new FeatureBasedDiagnostic(Diagnostic.ERROR,
-				"The value '" + attributeValue
-						+ "' is not a syntactically correct "
-						+ attributeTypeName + ": " + parserMessage,
-				null /* current object */, DotPackage.Literals.ATTRIBUTE__VALUE,
-				INSIGNIFICANT_INDEX, CheckType.NORMAL, issueCode,
-				attributeValue);
-	}
-
-	private Diagnostic createSemanticAttributeValueProblem(int severity,
-			String attributeValue, String attributeTypeName,
-			String validatorMessage, String issueCode) {
-		return new FeatureBasedDiagnostic(severity,
-				"The " + attributeTypeName + " value '" + attributeValue
-						+ "' is not semantically correct: " + validatorMessage,
-				null /* current object */, DotPackage.Literals.ATTRIBUTE__VALUE,
-				INSIGNIFICANT_INDEX, CheckType.NORMAL, issueCode,
-				attributeValue);
-	}
-
-	private List<Diagnostic> validateAttributeValue(final IParser parser,
-			final AbstractDeclarativeValidator validator,
-			final String attributeName, final String attributeValue,
-			final EClass attributeType) {
-		// ensure we always use the unquoted value
-		IParseResult parseResult = parser
-				.parse(new StringReader(attributeValue));
-		if (parseResult.hasSyntaxErrors()) {
-			// handle syntactical problems
-			return Collections.<Diagnostic> singletonList(
-					createSyntacticAttributeValueProblem(attributeValue,
-							attributeType.getName().toLowerCase(),
-							getFormattedSyntaxErrorMessages(parseResult),
-							attributeName));
-		} else {
-			// handle semantical problems
-			final List<Diagnostic> diagnostics = new ArrayList<>();
-			// validation is optional; if validator is provided, check for
-			// semantic problems using it
-			if (validator != null) {
-				// we need a specific message acceptor
-				validator.setMessageAcceptor(new ValidationMessageAcceptor() {
-
-					@Override
-					public void acceptWarning(String message, EObject object,
-							int offset, int length, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.WARNING, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
-					}
-
-					@Override
-					public void acceptWarning(String message, EObject object,
-							EStructuralFeature feature, int index, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.WARNING, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
-					}
-
-					@Override
-					public void acceptInfo(String message, EObject object,
-							int offset, int length, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.INFO, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
-					}
-
-					@Override
-					public void acceptInfo(String message, EObject object,
-							EStructuralFeature feature, int index, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.INFO, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
-					}
-
-					@Override
-					public void acceptError(String message, EObject object,
-							int offset, int length, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.ERROR, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
-					}
-
-					@Override
-					public void acceptError(String message, EObject object,
-							EStructuralFeature feature, int index, String code,
-							String... issueData) {
-						diagnostics.add(createSemanticAttributeValueProblem(
-								Diagnostic.ERROR, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
-					}
-				});
-
-				Map<Object, Object> context = new HashMap<>();
-				context.put(CURRENT_LANGUAGE_NAME, ReflectionUtils
-						.getPrivateFieldValue(validator, "languageName"));
-
-				EObject root = parseResult.getRootASTElement();
-				// validate the root element...
-				validator.validate(attributeType, root,
-						null /* diagnostic chain */, context);
-
-				// ...and all its children
-				for (Iterator<EObject> iterator = EcoreUtil
-						.getAllProperContents(root, true); iterator
-								.hasNext();) {
-					validator.validate(attributeType, iterator.next(),
-							null /* diagnostic chain */, context);
-				}
-			}
-			return diagnostics;
-		}
-	}
-
-	private static String getFormattedSyntaxErrorMessages(
-			IParseResult parseResult) {
-		StringBuilder sb = new StringBuilder();
-		for (INode n : parseResult.getSyntaxErrors()) {
-			String message = n.getSyntaxErrorMessage().getMessage();
-			if (!message.isEmpty()) {
-				if (sb.length() != 0) {
-					sb.append(" ");
-				}
-				sb.append(message.substring(0, 1).toUpperCase()
-						+ message.substring(1) + ".");
-			}
-		}
-		return sb.toString();
 	}
 
 	/**
