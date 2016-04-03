@@ -45,6 +45,8 @@ import com.google.inject.Injector;
  * @author anyssen
  *
  */
+// TODO: Define explicit enum types for enumerated string values. Provided them
+// as parsed values as well.
 public class DotAttributes {
 
 	private static final Injector dotInjector = new DotStandaloneSetup()
@@ -464,7 +466,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowHeadParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.ARROWTYPE_PARSER, getArrowHead(edge));
 	}
 
@@ -495,7 +497,8 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Double getArrowSizeParsed(Edge edge) {
-		return DotLanguageSupport.parseDoubleAttributeValue(getArrowSize(edge));
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.DOUBLE_PARSER, getArrowSize(edge));
 	}
 
 	/**
@@ -525,7 +528,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static ArrowType getArrowTailParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.ARROWTYPE_PARSER, getArrowTail(edge));
 	}
 
@@ -541,21 +544,6 @@ public class DotAttributes {
 	 */
 	public static String getDir(Edge edge) {
 		return (String) edge.attributesProperty().get(DIR__E);
-	}
-
-	/**
-	 * Returns the value of the {@link #FORCELABELS__G} property of the given
-	 * {@link Grpah}.
-	 * 
-	 * @param graph
-	 *            The {@link Graph} for which to return the value of the
-	 *            {@link #FORCELABELS__G} property.
-	 * @return The value of the {@link #FORCELABELS__G} property of the given
-	 *         {@link Graph}.
-	 */
-	public static Boolean getForcedLabelsParsed(Graph graph) {
-		return DotLanguageSupport
-				.parseBooleanAttributeValue(getForceLabels(graph));
 	}
 
 	/**
@@ -583,8 +571,8 @@ public class DotAttributes {
 	 *         {@link Graph}.
 	 */
 	public static Boolean getForceLabelsParsed(Graph graph) {
-		return DotLanguageSupport
-				.parseBooleanAttributeValue(getForceLabels(graph));
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.BOOL_PARSER, getForceLabels(graph));
 	}
 
 	private static String getFormattedDiagnosticMessage(
@@ -641,7 +629,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getHeadLpParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getHeadLp(edge));
 	}
 
@@ -670,7 +658,8 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Double getHeightParsed(Node node) {
-		return DotLanguageSupport.parseDoubleAttributeValue(getHeight(node));
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.DOUBLE_PARSER, getHeight(node));
 	}
 
 	/**
@@ -782,7 +771,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getLpParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getLp(edge));
 	}
 
@@ -867,7 +856,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static SplineType getPosParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.SPLINETYPE_PARSER, getPos(edge));
 	}
 
@@ -882,7 +871,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getPosParsed(Node node) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getPos(node));
 	}
 
@@ -967,7 +956,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getTailLpParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getTailLp(edge));
 	}
 
@@ -1010,7 +999,8 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Double getWidthParsed(Node node) {
-		return DotLanguageSupport.parseDoubleAttributeValue(getWidth(node));
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.DOUBLE_PARSER, getWidth(node));
 	}
 
 	/**
@@ -1080,7 +1070,7 @@ public class DotAttributes {
 	 *         {@link Edge}.
 	 */
 	public static Point getXlpParsed(Edge edge) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getXlp(edge));
 	}
 
@@ -1095,7 +1085,7 @@ public class DotAttributes {
 	 *         {@link Node}.
 	 */
 	public static Point getXlpParsed(Node node) {
-		return DotLanguageSupport.parseObjectAttributeValue(
+		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.POINT_PARSER, getXlp(node));
 	}
 

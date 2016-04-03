@@ -158,7 +158,9 @@ public final class DotInterpreter extends DotSwitch<Object> {
 			// XXX: splines can either be a defined enum value or a bool value
 			// (which is mapped to respective enum values); we use the enum
 			// values alone and thus map the bool value here
-			Boolean booleanValue = DotLanguageSupport.parseBooleanAttributeValue(splines);
+			Boolean booleanValue = DotLanguageSupport
+					.parseAttributeValue(
+							DotLanguageSupport.BOOL_PARSER, splines);
 			if (booleanValue != null) {
 				DotAttributes.setSplines(graph,
 						Boolean.TRUE.equals(booleanValue)
