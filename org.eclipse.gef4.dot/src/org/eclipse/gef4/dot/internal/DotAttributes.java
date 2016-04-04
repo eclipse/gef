@@ -64,7 +64,7 @@ public class DotAttributes {
 
 	/**
 	 * Specifies the graph type. Possible values are defined by
-	 * {@link #_TYPE__G__VALUES}.
+	 * {@link #_TYPE__G__GRAPH} and {@link #_TYPE__G__DIGRAPH}.
 	 */
 	public static final String _TYPE__G = "_type";
 
@@ -80,12 +80,6 @@ public class DotAttributes {
 	 * are directed.
 	 */
 	public static final String _TYPE__G__GRAPH = GraphType.GRAPH.getLiteral();
-
-	/**
-	 * Defines all possible values for the {@link #_TYPE__G} property.
-	 */
-	public static final Set<String> _TYPE__G__VALUES = new HashSet<>(
-			Arrays.asList(_TYPE__G__GRAPH, _TYPE__G__DIGRAPH));
 
 	/**
 	 * Specifies the 'arrowhead' attribute of an edge.
@@ -130,6 +124,7 @@ public class DotAttributes {
 	/**
 	 * The valid values for the {@link #DIR__E} attribute.
 	 */
+	// TODO: convert into enum
 	public static final Set<String> DIR__E__VALUES = new HashSet<>(Arrays
 			.asList(DIR__E__FORWARD, DIR__E__BACK, DIR__E__BOTH, DIR__E__NONE));
 	/**
@@ -219,6 +214,7 @@ public class DotAttributes {
 	/**
 	 * Defines all possible values for the {@link #LAYOUT__G} property.
 	 */
+	// TODO: convert into enum
 	public static final Set<String> LAYOUT__G__VALUES = new HashSet<>(
 			Arrays.asList(LAYOUT__G__DOT, LAYOUT__G__OSAGE, LAYOUT__G__GRID,
 					LAYOUT__G__TWOPI, LAYOUT__G__CIRCO, LAYOUT__G__NEATO,
@@ -281,6 +277,7 @@ public class DotAttributes {
 	/**
 	 * Defines all possible values for the {@link #RANKDIR__G} property.
 	 */
+	// TODO: convert into enum
 	public static final Set<String> RANKDIR__G__VALUES = new HashSet<>(
 			Arrays.asList(RANKDIR__G__LR, RANKDIR__G__TB, RANKDIR__G__RL,
 					RANKDIR__G__BT));
@@ -340,6 +337,7 @@ public class DotAttributes {
 	/**
 	 * The possible values of the {@link #SPLINES__G} attribute.
 	 */
+	// TODO: convert into enum
 	public static final Set<String> SPLINES__G__VALUES = new HashSet<>(
 			Arrays.asList(SPLINES__G__EMPTY, SPLINES__G__NONE,
 					SPLINES__G__FALSE, SPLINES__G__LINE, SPLINES__G__POLYLINE,
@@ -398,6 +396,7 @@ public class DotAttributes {
 	/**
 	 * Defines all possible values for the {@link #STYLE__E} property.
 	 */
+	// TODO: convert into enum
 	public static final Set<String> STYLE__E__VALUES = new HashSet<>(
 			Arrays.asList(STYLE__E__DASHED, STYLE__E__DOTTED, STYLE__E__SOLID,
 					STYLE__E__INVIS, STYLE__E__BOLD, STYLE__E__TAPERED,
@@ -1630,15 +1629,13 @@ public class DotAttributes {
 	 *            {@link #_TYPE__G} property.
 	 * @param type
 	 *            The new value for the {@link #_TYPE__G} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>type</i> value is not supported, i.e. not
-	 *             contained within {@link #_TYPE__G__VALUES}.
 	 */
 	public static void setType(Graph graph, String type) {
-		if (!_TYPE__G__VALUES.contains(type)) {
+		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
 			throw new IllegalArgumentException(
 					"Cannot set graph attribute \"type\" to \"" + type
-							+ "\"; supported values: " + _TYPE__G__VALUES);
+							+ "\"; supported values: " + _TYPE__G__GRAPH + ", "
+							+ _TYPE__G__DIGRAPH);
 		}
 		graph.attributesProperty().put(_TYPE__G, type);
 	}
