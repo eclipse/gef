@@ -21,9 +21,11 @@ import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotPointStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotSplineTypeStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotArrowTypeParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotPointParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotSplineTypeParser;
+import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.validation.DotArrowTypeJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotPointJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotSplineTypeJavaValidator;
@@ -131,6 +133,66 @@ public class DotLanguageSupport {
 		 *         result.
 		 */
 		IPrimitiveValueParseResult<T> parse(String rawValue);
+	}
+
+	/**
+	 * Parses the given value as a DOT dirType.
+	 */
+	public static IPrimitiveValueParser<DirType> DIRTYPE_PARSER = new IPrimitiveValueParser<DirType>() {
+		@Override
+		public IPrimitiveValueParseResult<DirType> parse(String rawValue) {
+			if (rawValue == null) {
+				return null;
+			}
+			for (DirType value : DirType.values()) {
+				if (value.toString().equals(rawValue)) {
+					return new PrimitiveValueParseResultImpl<>(value);
+				}
+			}
+			return new PrimitiveValueParseResultImpl<>(
+					Collections.<Diagnostic> singletonList(new BasicDiagnostic(
+							Diagnostic.ERROR, rawValue, -1,
+							"Value has to be one of "
+									+ getFormattedValues(DirType.values())
+									+ ".",
+							new Object[] {})));
+		}
+	};
+
+	/**
+	 * Parses the given value as a DOT rankdir.
+	 */
+	public static IPrimitiveValueParser<Rankdir> RANKDIR_PARSER = new IPrimitiveValueParser<Rankdir>() {
+		@Override
+		public IPrimitiveValueParseResult<Rankdir> parse(String rawValue) {
+			if (rawValue == null) {
+				return null;
+			}
+			for (Rankdir value : Rankdir.values()) {
+				if (value.toString().equals(rawValue)) {
+					return new PrimitiveValueParseResultImpl<>(value);
+				}
+			}
+			return new PrimitiveValueParseResultImpl<>(
+					Collections.<Diagnostic> singletonList(
+							new BasicDiagnostic(Diagnostic.ERROR, rawValue, -1,
+									"The given value '" + rawValue
+											+ "' has to be one of "
+											+ getFormattedValues(
+													Rankdir.values()),
+									new Object[] {})));
+		}
+	};
+
+	private static String getFormattedValues(Object[] values) {
+		StringBuilder sb = new StringBuilder();
+		for (Object value : values) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append("'" + value.toString() + "'");
+		}
+		return sb.append(".").toString();
 	}
 
 	/**

@@ -33,6 +33,7 @@ import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotLanguageSupport;
 import org.eclipse.gef4.dot.internal.DotLanguageSupport.IPrimitiveValueParseResult;
+import org.eclipse.gef4.dot.internal.DotLanguageSupport.IPrimitiveValueParser;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowtypePackage;
 import org.eclipse.gef4.dot.internal.parser.conversion.DotTerminalConverters;
 import org.eclipse.gef4.dot.internal.parser.dot.AttrStmt;
@@ -158,14 +159,14 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 		// use parser (and validator) for respective attribute type
 		if (DotAttributes.RANKDIR__G.equals(name)) {
-			return validateEnumAttributeValue(name, unquotedValue, "rankdir",
-					DotAttributes.RANKDIR__G__VALUES);
+			return validateEnumAttributeValue(DotLanguageSupport.RANKDIR_PARSER,
+					name, unquotedValue, "rankdir");
 		} else if (DotAttributes.SPLINES__G.equals(name)) {
 			// XXX: splines can either be an enum or a bool value; we try both
 			// options here
 			List<Diagnostic> booleanCaseFindings = validateBooleanAttributeValue(
 					name, unquotedValue);
-			List<Diagnostic> stringCaseFindings = validateEnumAttributeValue(
+			List<Diagnostic> stringCaseFindings = validateStringAttributeValue(
 					name, unquotedValue, "splines string",
 					DotAttributes.SPLINES__G__VALUES);
 			if (booleanCaseFindings.isEmpty() || stringCaseFindings.isEmpty()) {
@@ -178,30 +179,32 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 				return combinedFindings;
 			}
 		} else if (DotAttributes.LAYOUT__G.equals(name)) {
-			return validateEnumAttributeValue(name, unquotedValue, "layout",
+			return validateStringAttributeValue(name, unquotedValue, "layout",
 					DotAttributes.LAYOUT__G__VALUES);
 		} else if (DotAttributes.DIR__E.equals(name)) {
-			return validateEnumAttributeValue(name, unquotedValue, "dir",
-					DotAttributes.DIR__E__VALUES);
+			// dirType enum
+			return validateEnumAttributeValue(DotLanguageSupport.DIRTYPE_PARSER,
+					name, unquotedValue, "dirType");
 		} else if (DotAttributes.ARROWHEAD__E.equals(name)
 				|| DotAttributes.ARROWTAIL__E.equals(name)) {
 			// validate arrowtype using delegate parser and validator
 			return validateObjectAttributeValue(
 					DotLanguageSupport.ARROWTYPE_PARSER,
 					DotLanguageSupport.ARROWTYPE_VALIDATOR, name, unquotedValue,
-					ArrowtypePackage.Literals.ARROW_TYPE);
+					ArrowtypePackage.Literals.ARROW_TYPE, "arrowType");
 		} else if (DotAttributes.POS__NE.equals(name)) {
 			// validate point (node) or splinetype (edge)
 			if (AttributeContext.NODE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.POINT_PARSER,
 						DotLanguageSupport.POINT_VALIDATOR, name, unquotedValue,
-						PointPackage.Literals.POINT);
+						PointPackage.Literals.POINT, "point");
 			} else if (AttributeContext.EDGE.equals(context)) {
 				return validateObjectAttributeValue(
 						DotLanguageSupport.SPLINETYPE_PARSER,
 						DotLanguageSupport.SPLINETYPE_VALIDATOR, name,
-						unquotedValue, SplinetypePackage.Literals.SPLINE_TYPE);
+						unquotedValue, SplinetypePackage.Literals.SPLINE_TYPE,
+						"splineType");
 			}
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.0);
@@ -210,7 +213,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 		} else if (DotAttributes.HEIGHT__N.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.02);
 		} else if (DotAttributes.STYLE__E.equals(name)) {
-			return validateEnumAttributeValue(name, unquotedValue, "style",
+			return validateStringAttributeValue(name, unquotedValue, "style",
 					DotAttributes.STYLE__E__VALUES);
 		}
 		return Collections.emptyList();
@@ -388,7 +391,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					sb.append(" ");
 				}
 				sb.append(message.substring(0, 1).toUpperCase()
-						+ message.substring(1) + ".");
+						+ message.substring(1)
+						+ (message.endsWith(".") ? "" : "."));
 			}
 		}
 		return sb.toString();
@@ -404,7 +408,8 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 					sb.append(" ");
 				}
 				sb.append(message.substring(0, 1).toUpperCase()
-						+ message.substring(1) + ".");
+						+ message.substring(1)
+						+ (message.endsWith(".") ? "" : "."));
 			}
 		}
 		return sb.toString();
@@ -446,19 +451,36 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			}
 			sb.append("'" + value + "'");
 		}
-		return sb.append(".").toString();
+		return sb.toString();
 	}
 
 	private List<Diagnostic> validateEnumAttributeValue(
-			final String attributeName, String attributeValue,
-			String attributeTypeName, Set<String> validValues) {
-		if (!validValues.contains(attributeValue)) {
+			final IPrimitiveValueParser<?> parser, final String attributeName,
+			String attributeValue, String attributeTypeName) {
+		IPrimitiveValueParseResult<?> parseResult = parser
+				.parse(attributeValue);
+		if (parseResult.hasSyntaxErrors()) {
 			return Collections.<Diagnostic> singletonList(
 					createSyntacticAttributeValueProblem(attributeValue,
 							attributeTypeName,
-							"Value has to be one of "
-									+ getFormattedValues(validValues),
+							getFormattedSyntaxErrorMessages(parseResult),
 							attributeName));
+		}
+		// no semantic validation
+		return Collections.emptyList();
+	}
+
+	private List<Diagnostic> validateStringAttributeValue(
+			final String attributeName, String attributeValue,
+			String attributeTypeName, Set<String> validValues) {
+		if (!validValues.contains(attributeValue)) {
+			// TODO: we should probably only issue a warning here
+			return Collections.<Diagnostic> singletonList(
+					createSemanticAttributeValueProblem(Diagnostic.ERROR,
+							attributeValue, attributeTypeName,
+							"Value should be one of "
+									+ getFormattedValues(validValues) + ".",
+							null));
 		} else {
 			return Collections.emptyList();
 		}
@@ -467,7 +489,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 	private List<Diagnostic> validateObjectAttributeValue(final IParser parser,
 			final AbstractDeclarativeValidator validator,
 			final String attributeName, final String attributeValue,
-			final EClass attributeType) {
+			final EClass attributeType, final String attributeTypeName) {
 		// ensure we always use the unquoted value
 		IParseResult parseResult = parser
 				.parse(new StringReader(attributeValue));
@@ -475,7 +497,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 			// handle syntactical problems
 			return Collections.<Diagnostic> singletonList(
 					createSyntacticAttributeValueProblem(attributeValue,
-							attributeType.getName().toLowerCase(),
+							attributeTypeName,
 							getFormattedSyntaxErrorMessages(parseResult),
 							attributeName));
 		} else {
@@ -493,8 +515,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.ERROR, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
+								attributeTypeName, message, attributeName));
 					}
 
 					@Override
@@ -503,8 +524,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.ERROR, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
+								attributeTypeName, message, attributeName));
 					}
 
 					@Override
@@ -513,8 +533,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.INFO, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
+								attributeTypeName, message, attributeName));
 					}
 
 					@Override
@@ -523,8 +542,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.INFO, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
+								attributeTypeName, message, attributeName));
 					}
 
 					@Override
@@ -533,8 +551,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.WARNING, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
+								attributeTypeName, message, attributeName));
 					}
 
 					@Override
@@ -543,8 +560,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 							String... issueData) {
 						diagnostics.add(createSemanticAttributeValueProblem(
 								Diagnostic.WARNING, attributeValue,
-								attributeType.getName().toLowerCase(), message,
-								attributeName));
+								attributeTypeName, message, attributeName));
 					}
 				});
 

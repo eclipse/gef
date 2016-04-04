@@ -19,6 +19,7 @@ import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotInterpreter;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
+import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -182,8 +183,7 @@ public final class DotInterpreterTests {
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes.LAYOUT__G__DOT,
 				DotAttributes.getLayout(graph));
-		Assert.assertEquals(DotAttributes.RANKDIR__G__LR,
-				DotAttributes.getRankdir(graph));
+		Assert.assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(graph));
 	}
 
 	@Test
@@ -191,8 +191,7 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter
 				.interpret(parse("graph Sample{rankdir=LR;1;}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(DotAttributes.RANKDIR__G__LR,
-				DotAttributes.getRankdir(graph));
+		Assert.assertEquals(Rankdir.LR, DotAttributes.getRankdirParsed(graph));
 	}
 
 	@Test

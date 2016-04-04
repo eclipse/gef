@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.dir.DirType;
+import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -107,14 +109,13 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
 		}
 		// direction
-		String dotDir = DotAttributes.getDir(dot);
+		DirType dotDir = DotAttributes.getDirParsed(dot);
 		if (dotDir == null) {
 			// use the default direction if no direction is specified for
 			// the edge
 			dotDir = DotAttributes._TYPE__G__DIGRAPH.equals(
 					dot.getGraph().getAttributes().get(DotAttributes._TYPE__G))
-							? DotAttributes.DIR__E__FORWARD
-							: DotAttributes.DIR__E__NONE;
+							? DirType.FORWARD : DirType.NONE;
 		}
 
 		// arrow size
@@ -139,8 +140,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// The zest edge target decoration should only appear if the edge
 		// direction is "forward" or "both".
-		if (DotAttributes.DIR__E__FORWARD.equals(dotDir)
-				|| DotAttributes.DIR__E__BOTH.equals(dotDir)) {
+		if (DirType.FORWARD.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
 			ZestProperties.setTargetDecoration(zest, zestEdgeTargetDecoration);
 		}
 
@@ -162,8 +162,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// The zest edge source decoration should only appear if the edge
 		// direction is "back" or "both".
-		if (DotAttributes.DIR__E__BACK.equals(dotDir)
-				|| DotAttributes.DIR__E__BOTH.equals(dotDir)) {
+		if (DirType.BACK.equals(dotDir) || DirType.BOTH.equals(dotDir)) {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
 		}
 
@@ -201,7 +200,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 										.get(bSplineControlPoints.size() - 1)));
 				ZestProperties.setInterpolator(zest,
 						new DotBSplineInterpolator());
-				// }
+						// }
 
 				// TODO: handle orthogonal case -> normalize control points use
 				// orthogonal router; ensure orthogonal projection strategy is
@@ -377,11 +376,10 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 					|| DotAttributes.LAYOUT__G__OSAGE.equals(dotLayout)) {
 				algo = new GridLayoutAlgorithm();
 			} else {
-				Object dotRankdir = DotAttributes.getRankdir(dot);
-				boolean lr = DotAttributes.RANKDIR__G__LR.equals(dotRankdir);
-				algo = new TreeLayoutAlgorithm(
-						lr ? TreeLayoutAlgorithm.LEFT_RIGHT
-								: TreeLayoutAlgorithm.TOP_DOWN);
+				Rankdir dotRankdir = DotAttributes.getRankdirParsed(dot);
+				algo = new TreeLayoutAlgorithm(Rankdir.LR.equals(dotRankdir)
+						? TreeLayoutAlgorithm.LEFT_RIGHT
+						: TreeLayoutAlgorithm.TOP_DOWN);
 			}
 			ZestProperties.setLayoutAlgorithm(zest, algo);
 		}

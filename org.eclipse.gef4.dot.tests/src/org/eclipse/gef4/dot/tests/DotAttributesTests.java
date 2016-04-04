@@ -144,7 +144,7 @@ public class DotAttributesTests {
 			fail("IllegalArgumentException expected.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set edge attribute 'arrowhead' to 'olox'. The value 'olox' is not a syntactically correct arrowtype: No viable alternative at input 'o'. No viable alternative at character 'x'.",
+					"Cannot set edge attribute 'arrowhead' to 'olox'. The value 'olox' is not a syntactically correct arrowType: No viable alternative at input 'o'. No viable alternative at character 'x'.",
 					e.getMessage());
 		}
 	}

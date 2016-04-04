@@ -24,8 +24,10 @@ import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
+import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
+import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator.AttributeContext;
@@ -101,32 +103,6 @@ public class DotAttributes {
 	 */
 	public static final String DIR__E = "dir";
 
-	/**
-	 * This {@link #DIR__E} value specifies 'forward' direction.
-	 */
-	public static final String DIR__E__FORWARD = "forward";
-
-	/**
-	 * This {@link #DIR__E} value specifies 'back' direction.
-	 */
-	public static final String DIR__E__BACK = "back";
-
-	/**
-	 * This {@link #DIR__E} value specifies 'both' direction.
-	 */
-	public static final String DIR__E__BOTH = "both";
-
-	/**
-	 * This {@link #DIR__E} value specifies 'none' direction.
-	 */
-	public static final String DIR__E__NONE = "none";
-
-	/**
-	 * The valid values for the {@link #DIR__E} attribute.
-	 */
-	// TODO: convert into enum
-	public static final Set<String> DIR__E__VALUES = new HashSet<>(Arrays
-			.asList(DIR__E__FORWARD, DIR__E__BACK, DIR__E__BOTH, DIR__E__NONE));
 	/**
 	 * Specifies the 'forceLabels' attribute of a graph.
 	 */
@@ -214,7 +190,6 @@ public class DotAttributes {
 	/**
 	 * Defines all possible values for the {@link #LAYOUT__G} property.
 	 */
-	// TODO: convert into enum
 	public static final Set<String> LAYOUT__G__VALUES = new HashSet<>(
 			Arrays.asList(LAYOUT__G__DOT, LAYOUT__G__OSAGE, LAYOUT__G__GRID,
 					LAYOUT__G__TWOPI, LAYOUT__G__CIRCO, LAYOUT__G__NEATO,
@@ -239,48 +214,9 @@ public class DotAttributes {
 
 	/**
 	 * Specifies the rankdir property which is passed to the layout algorithm
-	 * which is used for laying out the graph. Possible values are defined by
-	 * {@link #RANKDIR__G__VALUES}. The default value is defined by
-	 * {@link #RANKDIR__G__DEFAULT}.
+	 * which is used for laying out the graph.
 	 */
 	public static final String RANKDIR__G = "rankdir";
-
-	/**
-	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
-	 * horizontally from left to right.
-	 */
-	public static final String RANKDIR__G__LR = "LR";
-
-	/**
-	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
-	 * horizontally from right to left.
-	 */
-	public static final String RANKDIR__G__RL = "RL";
-
-	/**
-	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
-	 * vertically from top to bottom.
-	 */
-	public static final String RANKDIR__G__TB = "TB";
-
-	/**
-	 * This {@link #RANKDIR__G} value specifies that the graph is to be laid out
-	 * vertically from bottom to top.
-	 */
-	public static final String RANKDIR__G__BT = "BT";
-
-	/**
-	 * Defines the default value for the {@link #RANKDIR__G} property.
-	 */
-	public static final String RANKDIR__G__DEFAULT = RANKDIR__G__TB;
-
-	/**
-	 * Defines all possible values for the {@link #RANKDIR__G} property.
-	 */
-	// TODO: convert into enum
-	public static final Set<String> RANKDIR__G__VALUES = new HashSet<>(
-			Arrays.asList(RANKDIR__G__LR, RANKDIR__G__TB, RANKDIR__G__RL,
-					RANKDIR__G__BT));
 
 	/**
 	 * Specifies the name of the 'splines' attribute. It is used to control how
@@ -335,13 +271,18 @@ public class DotAttributes {
 	public static final String SPLINES__G__TRUE = "true";
 
 	/**
+	 * This {@link #SPLINES__G} value indicates that 'compound' are to be used.
+	 */
+	public static final String SPLINES__G__COMPOUND = "compound";
+
+	/**
 	 * The possible values of the {@link #SPLINES__G} attribute.
 	 */
-	// TODO: convert into enum
 	public static final Set<String> SPLINES__G__VALUES = new HashSet<>(
 			Arrays.asList(SPLINES__G__EMPTY, SPLINES__G__NONE,
 					SPLINES__G__FALSE, SPLINES__G__LINE, SPLINES__G__POLYLINE,
-					SPLINES__G__ORTHO, SPLINES__G__SPLINE, SPLINES__G__TRUE));
+					SPLINES__G__ORTHO, SPLINES__G__SPLINE, SPLINES__G__TRUE,
+					SPLINES__G__COMPOUND));
 
 	/**
 	 * Specifies the rendering style of an edge, i.e. if it is solid, dashed,
@@ -543,6 +484,21 @@ public class DotAttributes {
 	 */
 	public static String getDir(Edge edge) {
 		return (String) edge.attributesProperty().get(DIR__E);
+	}
+
+	/**
+	 * Returns the value of the {@link #DIR__E} property of the given
+	 * {@link Edge}.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to return the value of the
+	 *            {@link #DIR__E} property.
+	 * @return The value of the {@link #DIR__E} property of the given
+	 *         {@link Edge}.
+	 */
+	public static DirType getDirParsed(Edge edge) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.DIRTYPE_PARSER, getDir(edge));
 	}
 
 	/**
@@ -889,6 +845,21 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #RANKDIR__G} property of the given
+	 * {@link Graph}.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to return the value of the
+	 *            {@link #RANKDIR__G} property.
+	 * @return The value of the {@link #RANKDIR__G} property of the given
+	 *         {@link Graph}.
+	 */
+	public static Rankdir getRankdirParsed(Graph graph) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.RANKDIR_PARSER, getRankdir(graph));
+	}
+
+	/**
 	 * Returns the value of the {@link #SPLINES__G} attribute of the given
 	 * {@link Graph}.
 	 * 
@@ -1204,12 +1175,24 @@ public class DotAttributes {
 	 *            {@link #DIR__E} property.
 	 * @param dir
 	 *            The new value for the {@link #DIR__E} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>direction</i> value is not supported.
 	 */
 	public static void setDir(Edge edge, String dir) {
 		validate(AttributeContext.EDGE, DIR__E, dir);
 		edge.attributesProperty().put(DIR__E, dir);
+	}
+
+	/**
+	 * Sets the {@link #DIR__E} property of the given {@link Edge} to the given
+	 * <i>dir</i> value.
+	 * 
+	 * @param edge
+	 *            The {@link Edge} for which to change the value of the
+	 *            {@link #DIR__E} property.
+	 * @param dirParsed
+	 *            The new value for the {@link #DIR__E} property.
+	 */
+	public static void setDirParsed(Edge edge, DirType dirParsed) {
+		setDir(edge, dirParsed.toString());
 	}
 
 	/**
@@ -1533,13 +1516,24 @@ public class DotAttributes {
 	 *            {@link #RANKDIR__G} property.
 	 * @param rankdir
 	 *            The new value for the {@link #RANKDIR__G} property.
-	 * @throws IllegalArgumentException
-	 *             when the given <i>rankdir</i> value is not supported, i.e.
-	 *             not contained within {@link #RANKDIR__G__VALUES}.
 	 */
 	public static void setRankdir(Graph graph, String rankdir) {
 		validate(AttributeContext.GRAPH, RANKDIR__G, rankdir);
 		graph.attributesProperty().put(RANKDIR__G, rankdir);
+	}
+
+	/**
+	 * Sets the {@link #RANKDIR__G} property of the given {@link Graph} to the
+	 * given <i>rankdir</i> value.
+	 * 
+	 * @param graph
+	 *            The {@link Graph} for which to change the value of the
+	 *            {@link #RANKDIR__G} property.
+	 * @param rankdirParsed
+	 *            The new value for the {@link #RANKDIR__G} property.
+	 */
+	public static void setRankdirParsed(Graph graph, Rankdir rankdirParsed) {
+		setRankdir(graph, rankdirParsed.toString());
 	}
 
 	/**

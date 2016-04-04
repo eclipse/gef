@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
+import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -147,11 +148,11 @@ public final class DotImportTests {
 	public void importLayoutAlgorithmIntoGraph() {
 		Graph.Builder graph = new Graph.Builder();
 		new DotImport("rankdir=LR").into(graph);
-		Assert.assertEquals(DotAttributes.RANKDIR__G__LR,
-				DotAttributes.getRankdir(graph.build()));
+		Assert.assertEquals(Rankdir.LR,
+				DotAttributes.getRankdirParsed(graph.build()));
 		new DotImport("rankdir=TB").into(graph);
-		Assert.assertEquals(DotAttributes.RANKDIR__G__TB,
-				DotAttributes.getRankdir(graph.build()));
+		Assert.assertEquals(Rankdir.TB,
+				DotAttributes.getRankdirParsed(graph.build()));
 	}
 
 	@Test

@@ -174,9 +174,9 @@ public class DotValidatorTests {
 		DotAst dotAst = parserHelper.parse(text);
 
 		validationTestHelper.assertError(dotAst,
-				DotPackage.eINSTANCE.getAttribute(), DotAttributes.DIR__E,
-				"The value 'foo' is not a syntactically correct dir: Value has to be one of 'both', 'forward', 'none', 'back'.");
-
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.DIR__E, 29,
+				3,
+				"The value 'foo' is not a syntactically correct dirType: Value has to be one of 'forward', 'back', 'both', 'none'.");
 		// verify that it is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
 	}
