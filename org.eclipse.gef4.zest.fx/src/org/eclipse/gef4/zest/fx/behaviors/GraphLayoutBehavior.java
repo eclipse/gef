@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -83,36 +80,6 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		}
 	};
 
-	private List<Runnable> provideLayoutRunnables = new ArrayList<>();
-	private Runnable provideLayoutRunnable = new Runnable() {
-		@Override
-		public void run() {
-			for (Runnable r : provideLayoutRunnables) {
-				r.run();
-			}
-		}
-	};
-
-	private List<Runnable> adaptToLayoutRunnables = new ArrayList<>();
-	private Runnable adaptToLayoutRunnable = new Runnable() {
-		@Override
-		public void run() {
-			for (Runnable r : adaptToLayoutRunnables) {
-				r.run();
-			}
-		}
-	};
-
-	private List<Runnable> updateLabelsRunnables = new ArrayList<>();
-	private Runnable updateLabelsRunnable = new Runnable() {
-		@Override
-		public void run() {
-			for (Runnable r : updateLabelsRunnables) {
-				r.run();
-			}
-		}
-	};
-
 	@Override
 	protected void adaptFromLayout() {
 	}
@@ -147,11 +114,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
 		// update label positions
-
 	}
 
 	@Override
 	protected void doActivate() {
+		super.doActivate();
+
 		// register listener for bounds changes
 		Rectangle initialBounds = new Rectangle();
 		if (getHost().getParent() == getHost().getRoot()) {
@@ -182,7 +150,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		}
 
 		// retrieve layout context
-		layoutContext = getGraphLayoutContext();
+		layoutContext = getLayoutContext();
 
 		// add layout filter for hidden/layout irrelevant elements
 		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
@@ -208,15 +176,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		// the initial layout properties, so that this listener will not be
 		// called for the initial layout properties
 		layoutContext.attributesProperty().addListener(layoutContextAttributesObserver);
-
-		// schedule pre/post layout runnables
-		layoutContext.schedulePreLayoutPass(provideLayoutRunnable);
-		layoutContext.schedulePostLayoutPass(adaptToLayoutRunnable);
-		layoutContext.schedulePostLayoutPass(updateLabelsRunnable);
 	}
 
 	@Override
 	protected void doDeactivate() {
+		super.doDeactivate();
+
 		// remove property change listener from context
 		if (layoutContext != null) {
 			layoutContext.attributesProperty().removeListener(layoutContextAttributesObserver);
@@ -227,29 +192,9 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		} else {
 			nestingVisual.layoutBoundsProperty().removeListener(nestingVisualLayoutBoundsChangeListener);
 		}
-		// unschedule pre/post layout runnables
-		layoutContext.unschedulePreLayoutPass(provideLayoutRunnable);
-		layoutContext.unschedulePostLayoutPass(adaptToLayoutRunnable);
-		layoutContext.unschedulePostLayoutPass(updateLabelsRunnable);
 		// nullify variables
 		layoutContext = null;
 		nestingVisual = null;
-	}
-
-	@Override
-	protected GraphLayoutBehavior getGraphLayoutBehavior() {
-		return this;
-	}
-
-	/**
-	 * Returns the {@link GraphLayoutContext} that corresponds to the
-	 * {@link #getHost() host}.
-	 *
-	 * @return The {@link GraphLayoutContext} that corresponds to the
-	 *         {@link #getHost() host}.
-	 */
-	protected GraphLayoutContext getGraphLayoutContext() {
-		return getHost().getAdapter(GraphLayoutContext.class);
 	}
 
 	@Override
@@ -269,11 +214,23 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	/**
+	 * Returns the {@link GraphLayoutContext} that corresponds to the
+	 * {@link #getHost() host}.
+	 *
+	 * @return The {@link GraphLayoutContext} that corresponds to the
+	 *         {@link #getHost() host}.
+	 */
+	@Override
+	protected GraphLayoutContext getLayoutContext() {
+		return getHost().getAdapter(GraphLayoutContext.class);
+	}
+
+	/**
 	 * Returns the {@link NodePart} that contains the nested graph to which the
-	 * {@link #getGraphLayoutBehavior()} corresponds.
+	 * behavior corresponds.
 	 *
 	 * @return The {@link NodePart} that contains the nested graph to which the
-	 *         {@link #getGraphLayoutBehavior()} corresponds.
+	 *         behavior corresponds.
 	 */
 	protected NodePart getNestingPart() {
 		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent().getNestingNode();
@@ -314,79 +271,6 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void provideToLayout() {
-	}
-
-	/**
-	 * Schedules the given "adapt to layout" {@link Runnable} for execution
-	 * after a layout pass.
-	 *
-	 * @param adaptToLayout
-	 *            The {@link Runnable} that will be executed after a layout pass
-	 *            and before all "update label" runnables.
-	 */
-	public void scheduleAdaptToLayout(Runnable adaptToLayout) {
-		adaptToLayoutRunnables.add(adaptToLayout);
-	}
-
-	/**
-	 * Schedules the given "update label" {@link Runnable} for execution after a
-	 * layout pass and after all "adapt to layout" runnables.
-	 *
-	 * @param updateLabels
-	 *            The {@link Runnable} that will be executed after a layout pass
-	 *            and after all "adapt to layout" runnables.
-	 */
-	public void schedulePostLayoutPass(Runnable updateLabels) {
-		updateLabelsRunnables.add(updateLabels);
-	}
-
-	/**
-	 * Schedules the given "provide layout" {@link Runnable} for execution
-	 * before a layout pass.
-	 *
-	 * @param provideLayout
-	 *            The {@link Runnable} that will be executed before a layout
-	 *            pass.
-	 */
-	public void scheduleProvideLayout(Runnable provideLayout) {
-		provideLayoutRunnables.add(provideLayout);
-	}
-
-	/**
-	 * Unschedules the given "adapt to layout" {@link Runnable} so that it will
-	 * no longer be executed after a layout pass.
-	 *
-	 * @param adaptToLayout
-	 *            The {@link Runnable} that will no longer be executed after a
-	 *            layout pass and before all "update label" runnables.
-	 */
-	public void unscheduleAdaptToLayout(Runnable adaptToLayout) {
-		adaptToLayoutRunnables.remove(adaptToLayout);
-	}
-
-	/**
-	 * Unschedules the given "update label" {@link Runnable} so that it will no
-	 * longer be executed after a layout pass and after all "adapt to layout"
-	 * runnables.
-	 *
-	 * @param updateLabels
-	 *            The {@link Runnable} that will no longer be executed after a
-	 *            layout pass and after all "adapt to layout" runnables.
-	 */
-	public void unschedulePostLayoutPass(Runnable updateLabels) {
-		updateLabelsRunnables.remove(updateLabels);
-	}
-
-	/**
-	 * Unschedules the given "provide layout" {@link Runnable} so that it will
-	 * no longer be executed before a layout pass.
-	 *
-	 * @param provideLayout
-	 *            The {@link Runnable} that will no longer be executed before a
-	 *            layout pass.
-	 */
-	public void unscheduleProvideLayout(Runnable provideLayout) {
-		provideLayoutRunnables.remove(provideLayout);
 	}
 
 }

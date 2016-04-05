@@ -122,26 +122,6 @@ public abstract class AbstractLayoutContext implements ILayoutContext {
 	}
 
 	@Override
-	public IEdgeLayout[] getConnections(INodeLayout layoutEntity1,
-			INodeLayout layoutEntity2) {
-		List<IEdgeLayout> connections = new ArrayList<>();
-
-		for (IEdgeLayout c : layoutEntity1.getOutgoingConnections()) {
-			if (c.getTarget() == layoutEntity2) {
-				connections.add(c);
-			}
-		}
-
-		for (IEdgeLayout c : layoutEntity2.getOutgoingConnections()) {
-			if (c.getTarget() == layoutEntity1) {
-				connections.add(c);
-			}
-		}
-
-		return connections.toArray(new IEdgeLayout[0]);
-	}
-
-	@Override
 	public INodeLayout[] getNodes() {
 		return layoutNodes.toArray(new INodeLayout[0]);
 	}

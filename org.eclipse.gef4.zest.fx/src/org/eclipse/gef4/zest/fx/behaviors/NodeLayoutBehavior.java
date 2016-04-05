@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
 
@@ -40,6 +41,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void adaptFromLayout() {
+		// update label positions, which are not computed by layout itself
+		// TODO: this should be part of layout
+		updateLabels();
+
 		NodePart nodePart = getHost();
 		Node visual = nodePart.getVisual();
 		Bounds layoutBounds = visual.getLayoutBounds();
@@ -87,15 +92,15 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected GraphLayoutBehavior getGraphLayoutBehavior() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
-				.get(getHost().getContent().getGraph());
-		return graphPart.getAdapter(GraphLayoutBehavior.class);
+	public NodePart getHost() {
+		return (NodePart) super.getHost();
 	}
 
 	@Override
-	public NodePart getHost() {
-		return (NodePart) super.getHost();
+	protected GraphLayoutContext getLayoutContext() {
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
+				.get(getHost().getContent().getGraph());
+		return graphPart.getAdapter(GraphLayoutBehavior.class).getLayoutContext();
 	}
 
 	/**
@@ -108,8 +113,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	 */
 	protected GraphNodeLayout getNodeLayout() {
 		// TODO: use event to update node layout
-		GraphNodeLayout nodeLayout = getGraphLayoutBehavior().getGraphLayoutContext()
-				.getNodeLayout(getHost().getContent());
+		GraphNodeLayout nodeLayout = getLayoutContext().getNodeLayout(getHost().getContent());
 		if (nodeLayout == null) {
 			throw new IllegalStateException("Cannot find INodeLayout in NavigationModel.");
 		}

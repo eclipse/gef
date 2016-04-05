@@ -99,10 +99,6 @@ public class GraphLayoutContextTests {
 		INodeLayout target = layout.getTarget();
 		assertSame(edges.get(x).getSource(), ((GraphNodeLayout) source).getNode());
 		assertSame(edges.get(x).getTarget(), ((GraphNodeLayout) target).getNode());
-
-		IEdgeLayout[] connections = glc.getConnections(source, target);
-		assertEquals(1, connections.length);
-		assertSame(layout, connections[0]);
 	}
 
 	/**

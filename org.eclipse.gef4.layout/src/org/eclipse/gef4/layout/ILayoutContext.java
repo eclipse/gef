@@ -68,22 +68,6 @@ public interface ILayoutContext extends IAttributeStore {
 	public IEdgeLayout[] getEdges();
 
 	/**
-	 * Returns all the connections between given source and target entities. If
-	 * given entity is a subgraph, connections adjacent to each of its nodes
-	 * will be included in the result. All the undirected nodes connecting the
-	 * two nodes will be also included in the result. Replacing elements in the
-	 * returned array does not affect this context.
-	 * 
-	 * @param layoutEntity1
-	 *            The source entity.
-	 * @param layoutEntity2
-	 *            The target entity.
-	 * @return The connections between the source and target entities.
-	 */
-	public IEdgeLayout[] getConnections(INodeLayout layoutEntity1,
-			INodeLayout layoutEntity2);
-
-	/**
 	 * Sets the static layout algorithm for this context. The static algorithm
 	 * has to be manually invoked, for example, after significant changes to the
 	 * context.

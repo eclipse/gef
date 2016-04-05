@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.layout.ILayoutContext;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -22,9 +23,9 @@ import javafx.scene.Node;
 
 /**
  * The {@link AbstractLayoutBehavior} is an abstract behavior that schedules
- * {@link #provideToLayout()} and {@link #adaptFromLayout()} to be called before or
- * after a layout pass, respectively. The {@link #provideToLayout()} method can be
- * used to write layout information into the layout model. Similarly, the
+ * {@link #provideToLayout()} and {@link #adaptFromLayout()} to be called before
+ * or after a layout pass, respectively. The {@link #provideToLayout()} method
+ * can be used to write layout information into the layout model. Similarly, the
  * {@link #adaptFromLayout()} method can be used to read layout information from
  * the layout model.
  *
@@ -33,24 +34,17 @@ import javafx.scene.Node;
  */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	private Runnable adaptToLayout = new Runnable() {
+	private Runnable adaptFromLayout = new Runnable() {
 		@Override
 		public void run() {
 			adaptFromLayout();
 		}
 	};
 
-	private Runnable provideLayout = new Runnable() {
+	private Runnable provideToLayout = new Runnable() {
 		@Override
 		public void run() {
 			provideToLayout();
-		}
-	};
-
-	private Runnable updateLabels = new Runnable() {
-		@Override
-		public void run() {
-			updateLabels();
 		}
 	};
 
@@ -62,30 +56,28 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
 	@Override
 	protected void doActivate() {
-		GraphLayoutBehavior layoutBehavior = getGraphLayoutBehavior();
-		layoutBehavior.scheduleProvideLayout(provideLayout);
-		layoutBehavior.scheduleAdaptToLayout(adaptToLayout);
-		layoutBehavior.schedulePostLayoutPass(updateLabels);
+		ILayoutContext layoutContext = getLayoutContext();
+		layoutContext.schedulePreLayoutPass(provideToLayout);
+		layoutContext.schedulePostLayoutPass(adaptFromLayout);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		GraphLayoutBehavior layoutBehavior = getGraphLayoutBehavior();
-		layoutBehavior.unscheduleProvideLayout(provideLayout);
-		layoutBehavior.unscheduleAdaptToLayout(adaptToLayout);
-		layoutBehavior.unschedulePostLayoutPass(updateLabels);
+		ILayoutContext layoutContext = getLayoutContext();
+		layoutContext.unschedulePreLayoutPass(provideToLayout);
+		layoutContext.unschedulePostLayoutPass(adaptFromLayout);
 	}
 
 	/**
-	 * Returns the {@link GraphLayoutContext} for which {@link #provideToLayout()}
-	 * and {@link #adaptFromLayout()} shall be called before or after a layout
-	 * pass, respectively.
+	 * Returns the {@link GraphLayoutContext} for which
+	 * {@link #provideToLayout()} and {@link #adaptFromLayout()} shall be called
+	 * before or after a layout pass, respectively.
 	 *
-	 * @return The {@link GraphLayoutContext} for which {@link #provideToLayout()}
-	 *         and {@link #adaptFromLayout()} shall be called before or after a
-	 *         layout pass, respectively.
+	 * @return The {@link GraphLayoutContext} for which
+	 *         {@link #provideToLayout()} and {@link #adaptFromLayout()} shall
+	 *         be called before or after a layout pass, respectively.
 	 */
-	protected abstract GraphLayoutBehavior getGraphLayoutBehavior();
+	protected abstract ILayoutContext getLayoutContext();
 
 	/**
 	 * Called before a layout pass. Should be used to transfer layout

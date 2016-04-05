@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.parts.EdgePart;
 
 import javafx.scene.Node;
@@ -29,18 +30,21 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void adaptFromLayout() {
-	}
-
-	@Override
-	protected GraphLayoutBehavior getGraphLayoutBehavior() {
-		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
-				.get(getHost().getContent().getGraph());
-		return graphPart.getAdapter(GraphLayoutBehavior.class);
+		// update label positions, which are not computed by layout itself
+		// TODO: this should be part of layout
+		updateLabels();
 	}
 
 	@Override
 	public EdgePart getHost() {
 		return (EdgePart) super.getHost();
+	}
+
+	@Override
+	protected GraphLayoutContext getLayoutContext() {
+		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
+				.get(getHost().getContent().getGraph());
+		return graphPart.getAdapter(GraphLayoutBehavior.class).getLayoutContext();
 	}
 
 	@Override
