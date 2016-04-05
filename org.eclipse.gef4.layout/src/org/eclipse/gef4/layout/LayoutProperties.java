@@ -15,11 +15,14 @@ package org.eclipse.gef4.layout;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 
 /**
  * {@link LayoutProperties} contains all properties which can be accessed on
- * {@link ILayoutContext}, {@link IEdgeLayout}, {@link INodeLayout}, their
- * default values, as well as static accessor methods for those properties.
+ * {@link Graph}, {@link Edge}, {@link Node}, their default values, as well as
+ * static accessor methods for those properties.
  */
 public class LayoutProperties {
 
@@ -126,16 +129,15 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #BOUNDS_PROPERTY} of the given
-	 * {@link ILayoutContext}.
+	 * {@link LayoutContext}.
 	 * 
-	 * @param context
-	 *            The {@link ILayoutContext} whose {@link #BOUNDS_PROPERTY} is
-	 *            read.
+	 * @param graph
+	 *            The {@link Graph} whose {@link #BOUNDS_PROPERTY} is read.
 	 * @return The value of the {@link #BOUNDS_PROPERTY} of the given
-	 *         {@link ILayoutContext}.
+	 *         {@link Graph}.
 	 */
-	public static Rectangle getBounds(ILayoutContext context) {
-		Object bounds = context.getAttributes().get(BOUNDS_PROPERTY);
+	public static Rectangle getBounds(Graph graph) {
+		Object bounds = graph.getAttributes().get(BOUNDS_PROPERTY);
 		if (bounds instanceof Rectangle) {
 			return ((Rectangle) bounds).getCopy();
 		}
@@ -144,30 +146,28 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #BOUNDS_PROPERTY} of the given
-	 * {@link ILayoutContext} to the given value.
+	 * {@link LayoutContext} to the given value.
 	 * 
-	 * @param context
-	 *            The {@link ILayoutContext} whose {@link #BOUNDS_PROPERTY} is
-	 *            changed.
+	 * @param graph
+	 *            The {@link Graph} whose {@link #BOUNDS_PROPERTY} is changed.
 	 * @param bounds
 	 *            The new value for the {@link #BOUNDS_PROPERTY} of the given
-	 *            {@link ILayoutContext}.
+	 *            {@link Graph}.
 	 */
-	public static void setBounds(ILayoutContext context, Rectangle bounds) {
-		context.getAttributes().put(BOUNDS_PROPERTY, bounds);
+	public static void setBounds(Graph graph, Rectangle bounds) {
+		graph.getAttributes().put(BOUNDS_PROPERTY, bounds);
 	}
 
 	/**
 	 * Returns the value of the {@link #LOCATION_PROPERTY} of the given
-	 * {@link INodeLayout}.
+	 * {@link Node}.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #LOCATION_PROPERTY} is
-	 *            read.
+	 *            The {@link Node} whose {@link #LOCATION_PROPERTY} is read.
 	 * @return The value of the {@link #LOCATION_PROPERTY} of the given
-	 *         {@link INodeLayout}.
+	 *         {@link Node}.
 	 */
-	public static Point getLocation(INodeLayout node) {
+	public static Point getLocation(Node node) {
 		Object location = node.getAttributes().get(LOCATION_PROPERTY);
 		if (location instanceof Point) {
 			return ((Point) location).getCopy();
@@ -176,15 +176,15 @@ public class LayoutProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #SIZE_PROPERTY} of the given
-	 * {@link INodeLayout}.
+	 * Returns the value of the {@link #SIZE_PROPERTY} of the given {@link Node}
+	 * .
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #SIZE_PROPERTY} is read.
-	 * @return The value of the {@link #SIZE_PROPERTY} of the given
-	 *         {@link INodeLayout}.
+	 *            The {@link Node} whose {@link #SIZE_PROPERTY} is read.
+	 * @return The value of the {@link #SIZE_PROPERTY} of the given {@link Node}
+	 *         .
 	 */
-	public static Dimension getSize(INodeLayout node) {
+	public static Dimension getSize(Node node) {
 		Object size = node.getAttributes().get(SIZE_PROPERTY);
 		if (size instanceof Dimension) {
 			return ((Dimension) size).getCopy();
@@ -194,15 +194,14 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #ASPECT_RATIO_PROPERTY} of the given
-	 * {@link INodeLayout}.
+	 * {@link Node}.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #ASPECT_RATIO_PROPERTY}
-	 *            is read.
+	 *            The {@link Node} whose {@link #ASPECT_RATIO_PROPERTY} is read.
 	 * @return The value of the {@link #ASPECT_RATIO_PROPERTY} of the given
-	 *         {@link INodeLayout}.
+	 *         {@link Node}.
 	 */
-	public static Double getPreferredAspectRatio(INodeLayout node) {
+	public static Double getPreferredAspectRatio(Node node) {
 		Object ar = node.getAttributes().get(ASPECT_RATIO_PROPERTY);
 		if (ar instanceof Double) {
 			return (Double) ar;
@@ -212,15 +211,14 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #RESIZABLE_PROPERTY} of the given
-	 * {@link INodeLayout}.
+	 * {@link Node}.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #RESIZABLE_PROPERTY} is
-	 *            read.
+	 *            The {@link Node} whose {@link #RESIZABLE_PROPERTY} is read.
 	 * @return The value of the {@link #RESIZABLE_PROPERTY} of the given
-	 *         {@link INodeLayout}.
+	 *         {@link Node}.
 	 */
-	public static Boolean isResizable(INodeLayout node) {
+	public static Boolean isResizable(Node node) {
 		Object resizable = node.getAttributes().get(RESIZABLE_PROPERTY);
 		if (resizable instanceof Boolean) {
 			return (Boolean) resizable;
@@ -230,15 +228,14 @@ public class LayoutProperties {
 
 	/**
 	 * Returns the value of the {@link #MOVABLE_PROPERTY} of the given
-	 * {@link INodeLayout}.
+	 * {@link Node}.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #MOVABLE_PROPERTY} is
-	 *            read.
+	 *            The {@link Node} whose {@link #MOVABLE_PROPERTY} is read.
 	 * @return The value of the {@link #MOVABLE_PROPERTY} of the given
-	 *         {@link INodeLayout}.
+	 *         {@link Node}.
 	 */
-	public static Boolean isMovable(INodeLayout node) {
+	public static Boolean isMovable(Node node) {
 		Object movable = node.getAttributes().get(MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
 			return (Boolean) movable;
@@ -248,19 +245,18 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #LOCATION_PROPERTY} of the given
-	 * {@link INodeLayout} to the given value.
+	 * {@link Node} to the given value.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #LOCATION_PROPERTY} is
-	 *            changed.
+	 *            The {@link Node} whose {@link #LOCATION_PROPERTY} is changed.
 	 * @param x
 	 *            The new x coordinate for the {@link #LOCATION_PROPERTY} of the
-	 *            given {@link INodeLayout}.
+	 *            given {@link Node}.
 	 * @param y
 	 *            The new y coordinate for the {@link #LOCATION_PROPERTY} of the
-	 *            given {@link INodeLayout}.
+	 *            given {@link Node}.
 	 */
-	public static void setLocation(INodeLayout node, double x, double y) {
+	public static void setLocation(Node node, double x, double y) {
 		if (Double.isNaN(x)) {
 			x = 0;
 		}
@@ -271,20 +267,19 @@ public class LayoutProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #SIZE_PROPERTY} of the given
-	 * {@link INodeLayout} to the given value.
+	 * Sets the value of the {@link #SIZE_PROPERTY} of the given {@link Node} to
+	 * the given value.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #SIZE_PROPERTY} is
-	 *            changed.
+	 *            The {@link Node} whose {@link #SIZE_PROPERTY} is changed.
 	 * @param w
 	 *            The new width for the {@link #SIZE_PROPERTY} of the given
-	 *            {@link INodeLayout}.
+	 *            {@link Node}.
 	 * @param h
 	 *            The new height for the {@link #SIZE_PROPERTY} of the given
-	 *            {@link INodeLayout}.
+	 *            {@link Node}.
 	 */
-	public static void setSize(INodeLayout node, double w, double h) {
+	public static void setSize(Node node, double w, double h) {
 		if (Double.isNaN(w)) {
 			w = 0;
 		}
@@ -296,30 +291,28 @@ public class LayoutProperties {
 
 	/**
 	 * Sets the value of the {@link #RESIZABLE_PROPERTY} of the given
-	 * {@link INodeLayout} to the given value.
+	 * {@link Node} to the given value.
 	 * 
 	 * @param node
-	 *            The {@link INodeLayout} whose {@link #RESIZABLE_PROPERTY} is
-	 *            changed.
+	 *            The {@link Node} whose {@link #RESIZABLE_PROPERTY} is changed.
 	 * @param resizable
 	 *            The new value for the {@link #RESIZABLE_PROPERTY} of the given
-	 *            {@link INodeLayout}.
+	 *            {@link Node}.
 	 */
-	public static void setResizable(INodeLayout node, boolean resizable) {
+	public static void setResizable(Node node, boolean resizable) {
 		node.getAttributes().put(RESIZABLE_PROPERTY, resizable);
 	}
 
 	/**
 	 * Returns the value of the {@link #WEIGHT_PROPERTY} of the given
-	 * {@link IEdgeLayout}.
+	 * {@link Edge}.
 	 * 
 	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY} is
-	 *            read.
+	 *            The {@link Edge} whose {@link #WEIGHT_PROPERTY} is read.
 	 * @return The value of the {@link #WEIGHT_PROPERTY} of the given
-	 *         {@link IEdgeLayout}.
+	 *         {@link Edge}.
 	 */
-	public static Double getWeight(IEdgeLayout edge) {
+	public static Double getWeight(Edge edge) {
 		Object weight = edge.getAttributes().get(WEIGHT_PROPERTY);
 		if (weight instanceof Double) {
 			return (Double) weight;
@@ -328,17 +321,16 @@ public class LayoutProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #WEIGHT_PROPERTY} of the given
-	 * {@link IEdgeLayout} to the given value.
+	 * Sets the value of the {@link #WEIGHT_PROPERTY} of the given {@link Edge}
+	 * to the given value.
 	 * 
 	 * @param edge
-	 *            The {@link IEdgeLayout} whose {@link #WEIGHT_PROPERTY} is
-	 *            changed.
+	 *            The {@link Edge} whose {@link #WEIGHT_PROPERTY} is changed.
 	 * @param weight
 	 *            The new value for the {@link #WEIGHT_PROPERTY} of the given
-	 *            {@link IEdgeLayout}.
+	 *            {@link Edge}.
 	 */
-	public static void setWeight(IEdgeLayout edge, double weight) {
+	public static void setWeight(Edge edge, double weight) {
 		edge.getAttributes().put(WEIGHT_PROPERTY, weight);
 	}
 

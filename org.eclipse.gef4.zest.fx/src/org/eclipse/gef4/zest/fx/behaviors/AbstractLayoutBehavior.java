@@ -13,10 +13,9 @@
 package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.parts.AbstractLabelPart;
 
 import javafx.scene.Node;
@@ -56,28 +55,28 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
 	@Override
 	protected void doActivate() {
-		ILayoutContext layoutContext = getLayoutContext();
+		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.schedulePreLayoutPass(provideToLayout);
 		layoutContext.schedulePostLayoutPass(adaptFromLayout);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		ILayoutContext layoutContext = getLayoutContext();
+		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.unschedulePreLayoutPass(provideToLayout);
 		layoutContext.unschedulePostLayoutPass(adaptFromLayout);
 	}
 
 	/**
-	 * Returns the {@link GraphLayoutContext} for which
-	 * {@link #provideToLayout()} and {@link #adaptFromLayout()} shall be called
-	 * before or after a layout pass, respectively.
+	 * Returns the {@link LayoutContext} for which {@link #provideToLayout()}
+	 * and {@link #adaptFromLayout()} shall be called before or after a layout
+	 * pass, respectively.
 	 *
-	 * @return The {@link GraphLayoutContext} for which
-	 *         {@link #provideToLayout()} and {@link #adaptFromLayout()} shall
-	 *         be called before or after a layout pass, respectively.
+	 * @return The {@link LayoutContext} for which {@link #provideToLayout()}
+	 *         and {@link #adaptFromLayout()} shall be called before or after a
+	 *         layout pass, respectively.
 	 */
-	protected abstract ILayoutContext getLayoutContext();
+	protected abstract LayoutContext getLayoutContext();
 
 	/**
 	 * Called before a layout pass. Should be used to transfer layout

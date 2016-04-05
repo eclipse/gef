@@ -15,9 +15,9 @@
 package org.eclipse.gef4.layout.examples;
 
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -53,24 +53,25 @@ public class CustomLayoutExample extends AbstractZestExample {
 				e(nodes[0], nodes[1]), e(nodes[1], nodes[2]) };
 
 		return new Graph.Builder().nodes(nodes).edges(edges)
-				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM, createLayoutAlgorithm())
+				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+						createLayoutAlgorithm())
 				.build();
 	}
 
 	private ILayoutAlgorithm createLayoutAlgorithm() {
 		ILayoutAlgorithm layoutAlgorithm = new ILayoutAlgorithm() {
-			private ILayoutContext context;
+			private LayoutContext context;
 
 			@Override
 			public void applyLayout(boolean clean) {
-				INodeLayout[] entitiesToLayout = context.getNodes();
+				Node[] entitiesToLayout = context.getNodes();
 				int totalSteps = entitiesToLayout.length;
-				double distance = LayoutProperties.getBounds(context).getWidth()
-						/ totalSteps;
+				double distance = LayoutProperties.getBounds(context.getGraph())
+						.getWidth() / totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
-					INodeLayout layoutEntity = entitiesToLayout[currentStep];
+					Node layoutEntity = entitiesToLayout[currentStep];
 					LayoutProperties.setLocation(layoutEntity, xLocation,
 							/*
 							 * LayoutProperties.getLocation( layoutEntity).y
@@ -80,12 +81,12 @@ public class CustomLayoutExample extends AbstractZestExample {
 			}
 
 			@Override
-			public ILayoutContext getLayoutContext() {
+			public LayoutContext getLayoutContext() {
 				return context;
 			}
 
 			@Override
-			public void setLayoutContext(ILayoutContext context) {
+			public void setLayoutContext(LayoutContext context) {
 				this.context = context;
 			}
 		};

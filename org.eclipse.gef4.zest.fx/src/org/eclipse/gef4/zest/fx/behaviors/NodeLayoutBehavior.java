@@ -16,13 +16,12 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.geometry.Bounds;
@@ -46,6 +45,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		updateLabels();
 
 		NodePart nodePart = getHost();
+		org.eclipse.gef4.graph.Node node = getHost().getContent();
 		Node visual = nodePart.getVisual();
 		Bounds layoutBounds = visual.getLayoutBounds();
 		Affine transform = nodePart.getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
@@ -54,9 +54,8 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		double w = layoutBounds.getWidth();
 		double h = layoutBounds.getHeight();
 
-		GraphNodeLayout nodeLayout = getNodeLayout();
-		Point location = LayoutProperties.getLocation(nodeLayout);
-		Dimension size = LayoutProperties.getSize(nodeLayout);
+		Point location = LayoutProperties.getLocation(node);
+		Dimension size = LayoutProperties.getSize(node);
 
 		// location is the center of the node, therefore we subtract half
 		// width/height from it
@@ -97,27 +96,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected GraphLayoutContext getLayoutContext() {
+	protected LayoutContext getLayoutContext() {
 		IContentPart<Node, ? extends Node> graphPart = getHost().getRoot().getViewer().getContentPartMap()
 				.get(getHost().getContent().getGraph());
 		return graphPart.getAdapter(GraphLayoutBehavior.class).getLayoutContext();
-	}
-
-	/**
-	 * Returns the {@link GraphNodeLayout} that corresponds to the
-	 * {@link NodePart} on which this {@link NodeLayoutBehavior} is installed.
-	 *
-	 * @return The {@link GraphNodeLayout} that corresponds to the
-	 *         {@link NodePart} on which this {@link NodeLayoutBehavior} is
-	 *         installed.
-	 */
-	protected GraphNodeLayout getNodeLayout() {
-		// TODO: use event to update node layout
-		GraphNodeLayout nodeLayout = getLayoutContext().getNodeLayout(getHost().getContent());
-		if (nodeLayout == null) {
-			throw new IllegalStateException("Cannot find INodeLayout in NavigationModel.");
-		}
-		return nodeLayout;
 	}
 
 	@Override
@@ -131,10 +113,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 
-		GraphNodeLayout nodeLayout = getNodeLayout();
-		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx, transform.getTy() + miny);
-		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
-		LayoutProperties.setResizable(nodeLayout, visual.isResizable());
+		org.eclipse.gef4.graph.Node node = getHost().getContent();
+		LayoutProperties.setLocation(node, transform.getTx() + minx, transform.getTy() + miny);
+		LayoutProperties.setSize(node, maxx - minx, maxy - miny);
+		LayoutProperties.setResizable(node, visual.isResizable());
 	}
 
 }

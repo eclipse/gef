@@ -12,36 +12,35 @@
  *******************************************************************************/
 package org.eclipse.gef4.layout;
 
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Node;
+
 /**
  * An {@link ILayoutFilter} can be used to filter layout objects, so that they
- * are not reported to any {@link ILayoutAlgorithm} by the
- * {@link ILayoutContext}.
+ * are not reported to any {@link ILayoutAlgorithm}.
  */
 public interface ILayoutFilter {
 
 	/**
-	 * Returns <code>true</code> to indicate that the given
-	 * {@link IEdgeLayout} is irrelevant for layout. Otherwise returns
-	 * <code>false</code>.
+	 * Returns <code>true</code> to indicate that the given {@link Edge} is
+	 * irrelevant for layout. Otherwise returns <code>false</code>.
 	 * 
-	 * @param connectionLayout
-	 *            The {@link IEdgeLayout} which may be irrelevant for
-	 *            layout.
-	 * @return <code>true</code> to indicate that the given
-	 *         {@link IEdgeLayout} is irrelevant for layout, otherwise
-	 *         <code>false</code>.
+	 * @param edge
+	 *            The {@link Edge} which may be irrelevant for layout.
+	 * @return <code>true</code> to indicate that the given {@link Edge} is
+	 *         irrelevant for layout, otherwise <code>false</code>.
 	 */
-	public boolean isLayoutIrrelevant(IEdgeLayout connectionLayout);
+	public boolean isLayoutIrrelevant(Edge edge);
 
 	/**
-	 * Returns <code>true</code> to indicate that the given {@link INodeLayout}
-	 * is irrelevant for layout. Otherwise returns <code>false</code>.
+	 * Returns <code>true</code> to indicate that the given {@link Node} is
+	 * irrelevant for layout. Otherwise returns <code>false</code>.
 	 * 
-	 * @param nodeLayout
-	 *            The {@link INodeLayout} which may be irrelevant for layout.
-	 * @return <code>true</code> to indicate that the given {@link INodeLayout}
-	 *         is irrelevant for layout, otherwise <code>false</code>.
+	 * @param node
+	 *            The {@link Node} which may be irrelevant for layout.
+	 * @return <code>true</code> to indicate that the given {@link Node} is
+	 *         irrelevant for layout, otherwise <code>false</code>.
 	 */
-	public boolean isLayoutIrrelevant(INodeLayout nodeLayout);
+	public boolean isLayoutIrrelevant(Node node);
 
 }

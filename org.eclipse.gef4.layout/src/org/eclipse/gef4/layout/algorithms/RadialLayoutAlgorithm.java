@@ -14,9 +14,9 @@ package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -35,7 +35,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 	private double startDegree = 0;
 	private double endDegree = MAX_DEGREES;
 
-	private ILayoutContext context;
+	private LayoutContext context;
 	private boolean resize = false;
 
 	private TreeLayoutAlgorithm treeLayout = new TreeLayoutAlgorithm();
@@ -50,8 +50,8 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		if (!clean)
 			return;
 		treeLayout.internalApplyLayout();
-		INodeLayout[] entities = context.getNodes();
-		Rectangle bounds = LayoutProperties.getBounds(context);
+		Node[] entities = context.getNodes();
+		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 		computeRadialPositions(entities, bounds);
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
@@ -63,8 +63,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		AlgorithmHelper.fitWithinBounds(entities, bounds, resize);
 	}
 
-	private void computeRadialPositions(INodeLayout[] entities,
-			Rectangle bounds) {
+	private void computeRadialPositions(Node[] entities, Rectangle bounds) {
 		Rectangle layoutBounds = AlgorithmHelper.getLayoutBounds(entities,
 				false);
 		layoutBounds.setX(bounds.getX());
@@ -83,12 +82,12 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(ILayoutContext context) {
+	public void setLayoutContext(LayoutContext context) {
 		this.context = context;
 		treeLayout.setLayoutContext(context);
 	}
 
-	public ILayoutContext getLayoutContext() {
+	public LayoutContext getLayoutContext() {
 		return context;
 	}
 

@@ -14,9 +14,9 @@ package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -81,7 +81,7 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	 */
 	private double childrenWidth;
 
-	private ILayoutContext context;
+	private LayoutContext context;
 
 	/**
 	 * Default constructor.
@@ -89,21 +89,21 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 	public GridLayoutAlgorithm() {
 	}
 
-	public void setLayoutContext(ILayoutContext context) {
+	public void setLayoutContext(LayoutContext context) {
 		this.context = context;
 	}
 
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		Rectangle bounds = LayoutProperties.getBounds(context);
+		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 		calculateGrid(bounds);
 
 		int index = 0;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				if ((i * cols + j) < numChildren) {
-					INodeLayout node = context.getNodes()[index++];
+					Node node = context.getNodes()[index++];
 					if (resize && LayoutProperties.isResizable(node))
 						LayoutProperties.setSize(node,
 								Math.max(childrenWidth, MIN_ENTITY_SIZE),
@@ -327,7 +327,7 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 		resize = resizing;
 	}
 
-	public ILayoutContext getLayoutContext() {
+	public LayoutContext getLayoutContext() {
 		return context;
 	}
 

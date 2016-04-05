@@ -22,12 +22,12 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
@@ -112,7 +112,8 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
 				.edges(edges.toArray(new Edge[] {}))
-				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm())
+				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+						new SpringLayoutAlgorithm())
 				.build();
 	}
 
@@ -128,11 +129,11 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 				if (layoutAlgorithm[0] == null) {
 					layoutAlgorithm[0] = new ManualSpringLayoutAlgorithm();
 					layoutAlgorithm[0].setRandom(false);
-					ZestProperties.setLayoutAlgorithm(graph, layoutAlgorithm[0]);
+					ZestProperties.setLayoutAlgorithm(graph,
+							layoutAlgorithm[0]);
 				} else {
 					viewer.getContentPartMap().get(graph)
-							.getAdapter(GraphLayoutContext.class)
-							.applyLayout(true);
+							.getAdapter(LayoutContext.class).applyLayout(true);
 				}
 			}
 		});

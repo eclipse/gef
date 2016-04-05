@@ -16,6 +16,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -52,7 +53,6 @@ import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.GraphLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.parts.EdgeLabelPart;
@@ -281,7 +281,7 @@ public class ZestFxModule extends MvcFxModule {
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindGraphPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GraphLayoutContext.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(LayoutContext.class);
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(GraphLayoutBehavior.class);
 	}
 

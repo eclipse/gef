@@ -7,5 +7,6 @@ Bundle-Vendor: Eclipse GEF
 Export-Package: org.eclipse.gef4.layout;x-internal:=true,
  org.eclipse.gef4.layout.algorithms;x-internal:=true
 Require-Bundle: org.eclipse.gef4.common;bundle-version="[1.0.0,2.0.0)",
- org.eclipse.gef4.geometry;bundle-version="[1.0.0,2.0.0)"
+ org.eclipse.gef4.geometry;bundle-version="[1.0.0,2.0.0)",
+ org.eclipse.gef4.graph;bundle-version="[1.0.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

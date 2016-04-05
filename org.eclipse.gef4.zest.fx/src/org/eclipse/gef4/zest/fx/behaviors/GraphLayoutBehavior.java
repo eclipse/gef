@@ -15,18 +15,16 @@ package org.eclipse.gef4.zest.fx.behaviors;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEdgeLayout;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.ILayoutFilter;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
-import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
@@ -35,7 +33,6 @@ import org.eclipse.gef4.zest.fx.parts.NodePart;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -50,18 +47,7 @@ import javafx.scene.layout.Pane;
 // only applicable for GraphPart (see #getHost())
 public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
-	private MapChangeListener<String, Object> layoutContextAttributesObserver = new MapChangeListener<String, Object>() {
-
-		@Override
-		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
-			if (LayoutProperties.BOUNDS_PROPERTY.equals(change.getKey())
-					&& change.getMap().get(change.getKey()) != null) {
-				applyLayout(true);
-			}
-		}
-	};
-
-	private GraphLayoutContext layoutContext;
+	private LayoutContext layoutContext;
 	private Pane nestingVisual;
 
 	private ChangeListener<? super Bounds> nestingVisualLayoutBoundsChangeListener = new ChangeListener<Bounds>() {
@@ -93,16 +79,20 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 */
 	public void applyLayout(boolean clean) {
 		InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
-		Rectangle bounds = LayoutProperties.getBounds(layoutContext);
+
+		Graph graph = getHost().getContent();
+
+		// TODO: move this into provideToLayout?
+		Rectangle bounds = LayoutProperties.getBounds(graph);
+
 		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
 				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
 						FX2Geometry.toAffineTransform(canvas.getContentTransform())));
+
 		// update layout algorithm (apply layout will depend on it)
-		Object layoutAlgorithmValue = getHost().getContent().attributesProperty()
-				.get(ZestProperties.GRAPH_LAYOUT_ALGORITHM);
-		if (layoutAlgorithmValue != null) {
-			ILayoutAlgorithm layoutAlgorithm = (ILayoutAlgorithm) layoutAlgorithmValue;
-			if (layoutContext.getLayoutAlgorithm() == null) {
+		ILayoutAlgorithm layoutAlgorithm = ZestProperties.getLayoutAlgorithm(graph);
+		if (layoutAlgorithm != null) {
+			if (layoutContext.getLayoutAlgorithm() != layoutAlgorithm) {
 				layoutContext.setLayoutAlgorithm(layoutAlgorithm);
 			}
 		} else {
@@ -110,6 +100,12 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 				layoutContext.setLayoutAlgorithm(null);
 			}
 		}
+
+		// update the graph
+		if (layoutContext.getGraph() != graph) {
+			layoutContext.setGraph(graph);
+		}
+
 		// apply layout (if no algorithm is set, will be a no-op)
 		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
@@ -122,6 +118,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 		// register listener for bounds changes
 		Rectangle initialBounds = new Rectangle();
+		Graph graph = getHost().getContent();
 		if (getHost().getParent() == getHost().getRoot()) {
 			/*
 			 * Our graph is the root graph, therefore we listen to viewport
@@ -134,7 +131,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			initialBounds.setY(0);
 			initialBounds.setWidth(fxViewer.getCanvas().getWidth());
 			initialBounds.setHeight(fxViewer.getCanvas().getHeight());
-		} else if (getHost().getContent().getNestingNode() != null) {
+		} else if (graph.getNestingNode() != null) {
 			/*
 			 * Our graph is nested inside a node of another graph, therefore we
 			 * listen to changes of that node's layout-bounds.
@@ -156,36 +153,25 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
 		layoutContext.addLayoutFilter(new ILayoutFilter() {
 			@Override
-			public boolean isLayoutIrrelevant(IEdgeLayout connectionLayout) {
-				return ZestProperties.getLayoutIrrelevant(((GraphEdgeLayout) connectionLayout).getEdge(), true)
-						|| isLayoutIrrelevant(connectionLayout.getSource())
-						|| isLayoutIrrelevant(connectionLayout.getTarget());
+			public boolean isLayoutIrrelevant(Edge edge) {
+				return ZestProperties.getLayoutIrrelevant(edge, true) || isLayoutIrrelevant(edge.getSource())
+						|| isLayoutIrrelevant(edge.getTarget());
 			}
 
 			@Override
-			public boolean isLayoutIrrelevant(INodeLayout nodeLayout) {
-				org.eclipse.gef4.graph.Node node = ((GraphNodeLayout) nodeLayout).getNode();
+			public boolean isLayoutIrrelevant(org.eclipse.gef4.graph.Node node) {
 				return ZestProperties.getLayoutIrrelevant(node, true) || hidingModel.isHidden(node);
 			}
 		});
 
 		// set initial bounds on the context
-		LayoutProperties.setBounds(layoutContext, initialBounds);
-
-		// register listener for layout context property changes after setting
-		// the initial layout properties, so that this listener will not be
-		// called for the initial layout properties
-		layoutContext.attributesProperty().addListener(layoutContextAttributesObserver);
+		LayoutProperties.setBounds(graph, initialBounds);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		super.doDeactivate();
 
-		// remove property change listener from context
-		if (layoutContext != null) {
-			layoutContext.attributesProperty().removeListener(layoutContextAttributesObserver);
-		}
 		if (nestingVisual == null) {
 			// remove change listener from viewport
 			getInfiniteCanvas().scrollableBoundsProperty().removeListener(viewportBoundsChangeListener);
@@ -213,16 +199,9 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		return ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
 	}
 
-	/**
-	 * Returns the {@link GraphLayoutContext} that corresponds to the
-	 * {@link #getHost() host}.
-	 *
-	 * @return The {@link GraphLayoutContext} that corresponds to the
-	 *         {@link #getHost() host}.
-	 */
 	@Override
-	protected GraphLayoutContext getLayoutContext() {
-		return getHost().getAdapter(GraphLayoutContext.class);
+	protected LayoutContext getLayoutContext() {
+		return getHost().getAdapter(LayoutContext.class);
 	}
 
 	/**
@@ -252,7 +231,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		double width = newLayoutBounds.getWidth() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 		double height = newLayoutBounds.getHeight() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 		Rectangle newBounds = new Rectangle(0, 0, width, height);
-		LayoutProperties.setBounds(layoutContext, newBounds);
+		LayoutProperties.setBounds(getHost().getContent(), newBounds);
 	}
 
 	/**
@@ -266,7 +245,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	protected void onViewportModelPropertyChange(Bounds oldScrollableBounds, Bounds newScrollableBounds) {
 		InfiniteCanvas canvas = getInfiniteCanvas();
 		Rectangle newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
-		LayoutProperties.setBounds(layoutContext, newBounds);
+		LayoutProperties.setBounds(getHost().getContent(), newBounds);
 	}
 
 	@Override

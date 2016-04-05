@@ -23,6 +23,7 @@
    <requires>
       <import feature="org.eclipse.gef4.common.doc" version="1.0.0" match="equivalent"/>
       <import feature="org.eclipse.gef4.geometry.doc" version="1.0.0" match="equivalent"/>
+      <import feature="org.eclipse.gef4.graph.doc" version="1.0.0" match="equivalent"/>
    </requires>
 
    <plugin

@@ -21,6 +21,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
@@ -29,8 +30,6 @@ import org.eclipse.gef4.mvc.fx.providers.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.tests.fx.rules.FXApplicationThreadRule;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,16 +47,15 @@ public class NodeLayoutBehaviorTests {
 	@Rule
 	public FXApplicationThreadRule fxApplicationThreadRule = new FXApplicationThreadRule();
 
-	private GraphNodeLayout createNodeLayout() {
+	private Node createNode() {
 		Node node = new Node.Builder().buildNode();
 		Graph graph = new Graph.Builder().nodes(node).build();
-		GraphLayoutContext glc = new GraphLayoutContext(graph);
-		GraphNodeLayout nodeLayout = new GraphNodeLayout(glc, node);
-		return nodeLayout;
+		LayoutContext glc = new LayoutContext();
+		glc.setGraph(graph);
+		return node;
 	}
 
-	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location, final Dimension size,
-			final GraphNodeLayout pNodeLayout) {
+	private NodeLayoutBehavior createNodeLayoutBehavior(final Point location, final Dimension size, final Node node) {
 		NodeLayoutBehavior behavior = new NodeLayoutBehavior() {
 			private NodePart host;
 
@@ -88,7 +86,7 @@ public class NodeLayoutBehaviorTests {
 
 						@Override
 						public Node getContent() {
-							return new Node();
+							return node;
 						}
 					};
 					FXRootPart rootPart = new FXRootPart();
@@ -99,17 +97,13 @@ public class NodeLayoutBehaviorTests {
 				return host;
 			}
 
-			@Override
-			protected GraphNodeLayout getNodeLayout() {
-				return pNodeLayout;
-			}
 		};
 		return behavior;
 	}
 
 	@Test
 	public void test_adapt() throws Exception {
-		GraphNodeLayout nodeLayout = createNodeLayout();
+		Node nodeLayout = createNode();
 		NodeLayoutBehavior behavior = createNodeLayoutBehavior(new Point(), null, nodeLayout);
 
 		Point location = new Point(1, 5);
@@ -142,7 +136,7 @@ public class NodeLayoutBehaviorTests {
 		final Point location = new Point(10, 20);
 
 		// setup with non-resizable figure
-		GraphNodeLayout nodeLayout = createNodeLayout();
+		Node nodeLayout = createNode();
 		NodeLayoutBehavior behavior = createNodeLayoutBehavior(location, null, nodeLayout);
 		Group visual = behavior.getHost().getVisual();
 

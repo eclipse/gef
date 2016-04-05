@@ -31,14 +31,14 @@ public interface ILayoutAlgorithm {
 	 *            a new layout context or null if this algorithm should not
 	 *            perform any layout
 	 */
-	public void setLayoutContext(ILayoutContext context);
+	public void setLayoutContext(LayoutContext context);
 
 	/**
-	 * Returns the previously set {@link ILayoutContext}.
+	 * Returns the previously set {@link LayoutContext}.
 	 * 
-	 * @return the previously set {@link ILayoutContext}
+	 * @return the previously set {@link LayoutContext}
 	 */
-	public ILayoutContext getLayoutContext();
+	public LayoutContext getLayoutContext();
 
 	/**
 	 * Makes this algorithm perform layout computation and apply it to its

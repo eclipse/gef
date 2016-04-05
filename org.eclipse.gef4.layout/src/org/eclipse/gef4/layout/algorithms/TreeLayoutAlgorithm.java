@@ -18,9 +18,9 @@ import java.util.Iterator;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 
@@ -66,7 +66,7 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private boolean resize = false;
 
-	private ILayoutContext context;
+	private LayoutContext context;
 
 	private Rectangle bounds;
 
@@ -166,7 +166,7 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		resize = resizing;
 	}
 
-	public void setLayoutContext(ILayoutContext context) {
+	public void setLayoutContext(LayoutContext context) {
 		if (treeObserver != null) {
 			treeObserver.stop();
 		}
@@ -176,7 +176,7 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	public ILayoutContext getLayoutContext() {
+	public LayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -186,14 +186,14 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 		internalApplyLayout();
 
-		INodeLayout[] entities = context.getNodes();
+		Node[] entities = context.getNodes();
 
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
 		scaleEntities(entities);
 	}
 
-	private void scaleEntities(INodeLayout[] entities) {
+	private void scaleEntities(Node[] entities) {
 		if (nodeSpace == null) {
 			Rectangle bounds2 = new Rectangle(bounds);
 			int insets = 4;
@@ -211,7 +211,7 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 */
 	void internalApplyLayout() {
 		TreeNode superRoot = treeObserver.getSuperRoot();
-		bounds = LayoutProperties.getBounds(context);
+		bounds = LayoutProperties.getBounds(context.getGraph());
 		updateLeafAndLayerSizes();
 		int leafCountSoFar = 0;
 		for (Iterator<TreeNode> iterator = superRoot.getChildren()

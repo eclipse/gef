@@ -19,10 +19,10 @@ import java.util.HashMap;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IEdgeLayout;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 
 /**
@@ -126,7 +126,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private double[][] srcDestToSumOfWeights;
 
-	private INodeLayout[] entities;
+	private Node[] entities;
 
 	private double[] forcesX, forcesY;
 
@@ -142,7 +142,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	// TODO: expose field
 	private boolean fitWithinBounds = true;
 
-	private ILayoutContext context;
+	private LayoutContext context;
 
 	public void applyLayout(boolean clean) {
 		initLayout();
@@ -169,12 +169,12 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(ILayoutContext context) {
+	public void setLayoutContext(LayoutContext context) {
 		this.context = context;
 		initLayout();
 	}
 
-	public ILayoutContext getLayoutContext() {
+	public LayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -190,7 +190,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			loadLocations();
 			initLayout();
 		}
-		bounds = LayoutProperties.getBounds(context);
+		bounds = LayoutProperties.getBounds(context.getGraph());
 		for (int i = 0; i < n; i++) {
 			computeOneIteration();
 			saveLocations();
@@ -207,7 +207,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			loadLocations();
 			initLayout();
 		}
-		bounds = LayoutProperties.getBounds(context);
+		bounds = LayoutProperties.getBounds(context.getGraph());
 		computeOneIteration();
 		saveLocations();
 		context.flushChanges();
@@ -375,18 +375,18 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private void initLayout() {
 		entities = context.getNodes();
-		bounds = LayoutProperties.getBounds(context);
+		bounds = LayoutProperties.getBounds(context.getGraph());
 		loadLocations();
 
 		srcDestToSumOfWeights = new double[entities.length][entities.length];
-		HashMap<INodeLayout, Integer> entityToPosition = new HashMap<>();
+		HashMap<Node, Integer> entityToPosition = new HashMap<>();
 		for (int i = 0; i < entities.length; i++) {
 			entityToPosition.put(entities[i], new Integer(i));
 		}
 
-		IEdgeLayout[] connections = context.getEdges();
+		Edge[] connections = context.getEdges();
 		for (int i = 0; i < connections.length; i++) {
-			IEdgeLayout connection = connections[i];
+			Edge connection = connections[i];
 			Integer source = entityToPosition.get(connection.getSource());
 			Integer target = entityToPosition.get(connection.getTarget());
 			if (source == null || target == null)

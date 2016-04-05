@@ -18,13 +18,13 @@ import java.util.List;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.behaviors.GraphLayoutBehavior;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.NavigationModel;
 import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
@@ -46,6 +46,7 @@ import javafx.util.Pair;
  * @author mwienand
  *
  */
+// TODO: most of the listeners should probably be moved to GraphLayoutBehavior
 public class GraphPart extends AbstractFXContentPart<Group> {
 
 	private MapChangeListener<String, Object> graphAttributesObserver = new MapChangeListener<String, Object>() {
@@ -179,7 +180,7 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	}
 
 	private void updateLayoutContext() {
-		GraphLayoutContext layoutContext = getAdapter(GraphLayoutContext.class);
+		LayoutContext layoutContext = getAdapter(LayoutContext.class);
 		if (layoutContext != null) {
 			layoutContext.setGraph(getContent());
 		}

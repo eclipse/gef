@@ -18,7 +18,6 @@ Require-Bundle: org.eclipse.osgi;bundle-version="[3.9.0,4.0.0)",
  org.eclipse.gef4.layout;bundle-version="[1.0.0,2.0.0)"
 Export-Package: org.eclipse.gef4.zest.fx;x-internal:=true,
  org.eclipse.gef4.zest.fx.behaviors;x-internal:=true,
- org.eclipse.gef4.zest.fx.layout;x-internal:=true,
  org.eclipse.gef4.zest.fx.models;x-internal:=true,
  org.eclipse.gef4.zest.fx.parts;x-internal:=true,
  org.eclipse.gef4.zest.fx.policies;x-internal:=true

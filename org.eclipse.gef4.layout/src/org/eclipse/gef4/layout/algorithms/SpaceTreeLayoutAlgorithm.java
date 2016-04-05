@@ -24,9 +24,9 @@ import java.util.ListIterator;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
-import org.eclipse.gef4.layout.INodeLayout;
+import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 
@@ -73,7 +73,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		public boolean expanded = true;
 		public double positionInLayer;
 
-		public SpaceTreeNode(INodeLayout node, TreeLayoutObserver owner) {
+		public SpaceTreeNode(Node node, TreeLayoutObserver owner) {
 			super(node, owner);
 		}
 
@@ -279,7 +279,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		 * @return true if location of at least one node has changed
 		 */
 		public boolean flushLocationChanges(double thicknessSoFar) {
-			Rectangle bounds = LayoutProperties.getBounds(context);
+			Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 			boolean madeChanges = false;
 			if (node != null) {
 				Dimension nodeSize = LayoutProperties.getSize(node);
@@ -346,8 +346,8 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	private TreeLayoutObserver.TreeNodeFactory spaceTreeNodeFactory = new TreeLayoutObserver.TreeNodeFactory() {
-		public TreeLayoutObserver.TreeNode createTreeNode(
-				INodeLayout nodeLayout, TreeLayoutObserver observer) {
+		public TreeLayoutObserver.TreeNode createTreeNode(Node nodeLayout,
+				TreeLayoutObserver observer) {
 			return new SpaceTreeNode(nodeLayout, observer);
 		};
 	};
@@ -863,7 +863,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		return this.layerGap;
 	}
 
-	private ILayoutContext context;
+	private LayoutContext context;
 
 	private TreeLayoutObserver treeObserver;
 
@@ -925,7 +925,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	public void applyLayout(boolean clean) {
-		Rectangle bounds = LayoutProperties.getBounds(context);
+		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 		if (bounds.isEmpty()) {
 			return;
 		}
@@ -1020,7 +1020,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		nodeToExpand.centerParentsTopDown();
 	}
 
-	public void setLayoutContext(ILayoutContext context) {
+	public void setLayoutContext(LayoutContext context) {
 		if (this.context != null) {
 			treeObserver.stop();
 		}
@@ -1028,7 +1028,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 		treeObserver = new TreeLayoutObserver(context, spaceTreeNodeFactory);
 	}
 
-	public ILayoutContext getLayoutContext() {
+	public LayoutContext getLayoutContext() {
 		return context;
 	}
 
@@ -1043,7 +1043,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 	 * @return
 	 */
 	private double getAvailableSpace() {
-		Rectangle bounds = LayoutProperties.getBounds(context);
+		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
 		double result = (direction == TOP_DOWN || direction == BOTTOM_UP)
 				? bounds.getWidth() : bounds.getHeight();
 		result = Math.max(result, this.availableSpace);

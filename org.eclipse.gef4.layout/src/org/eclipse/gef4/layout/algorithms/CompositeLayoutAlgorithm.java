@@ -13,7 +13,7 @@
 package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
-import org.eclipse.gef4.layout.ILayoutContext;
+import org.eclipse.gef4.layout.LayoutContext;
 
 /**
  * The {@link CompositeLayoutAlgorithm} combines multiple
@@ -26,7 +26,7 @@ import org.eclipse.gef4.layout.ILayoutContext;
  */
 public class CompositeLayoutAlgorithm implements ILayoutAlgorithm {
 
-	private ILayoutContext context = null;
+	private LayoutContext context = null;
 	private ILayoutAlgorithm[] algorithms = null;
 
 	/**
@@ -47,14 +47,14 @@ public class CompositeLayoutAlgorithm implements ILayoutAlgorithm {
 		}
 	}
 
-	public void setLayoutContext(ILayoutContext context) {
+	public void setLayoutContext(LayoutContext context) {
 		this.context = context;
 		for (int i = 0; i < algorithms.length; i++) {
 			algorithms[i].setLayoutContext(context);
 		}
 	}
 
-	public ILayoutContext getLayoutContext() {
+	public LayoutContext getLayoutContext() {
 		return context;
 	}
 
