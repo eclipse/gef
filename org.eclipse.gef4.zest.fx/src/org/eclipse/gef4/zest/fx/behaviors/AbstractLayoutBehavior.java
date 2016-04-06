@@ -22,71 +22,71 @@ import javafx.scene.Node;
 
 /**
  * The {@link AbstractLayoutBehavior} is an abstract behavior that schedules
- * {@link #provideToLayout()} and {@link #adaptFromLayout()} to be called before
- * or after a layout pass, respectively. The {@link #provideToLayout()} method
- * can be used to write layout information into the layout model. Similarly, the
- * {@link #adaptFromLayout()} method can be used to read layout information from
- * the layout model.
+ * {@link #preLayout()} and {@link #postLayout()} to be called before or after a
+ * layout pass, respectively. The {@link #preLayout()} method can be used to
+ * write layout information into the layout model. Similarly, the
+ * {@link #postLayout()} method can be used to read layout information from the
+ * layout model.
  *
  * @author mwienand
  *
  */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	private Runnable adaptFromLayout = new Runnable() {
+	private Runnable postLayout = new Runnable() {
 		@Override
 		public void run() {
-			adaptFromLayout();
+			postLayout();
 		}
 	};
 
-	private Runnable provideToLayout = new Runnable() {
+	private Runnable preLayout = new Runnable() {
 		@Override
 		public void run() {
-			provideToLayout();
+			preLayout();
 		}
 	};
-
-	/**
-	 * Called after a layout pass. Should be used to transfer layout information
-	 * from the layout model over to the visualization.
-	 */
-	protected abstract void adaptFromLayout();
 
 	@Override
 	protected void doActivate() {
 		LayoutContext layoutContext = getLayoutContext();
-		layoutContext.schedulePreLayoutPass(provideToLayout);
-		layoutContext.schedulePostLayoutPass(adaptFromLayout);
+		layoutContext.schedulePreLayoutPass(preLayout);
+		layoutContext.schedulePostLayoutPass(postLayout);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		LayoutContext layoutContext = getLayoutContext();
-		layoutContext.unschedulePreLayoutPass(provideToLayout);
-		layoutContext.unschedulePostLayoutPass(adaptFromLayout);
+		layoutContext.unschedulePreLayoutPass(preLayout);
+		layoutContext.unschedulePostLayoutPass(postLayout);
 	}
 
 	/**
-	 * Returns the {@link LayoutContext} for which {@link #provideToLayout()}
-	 * and {@link #adaptFromLayout()} shall be called before or after a layout
-	 * pass, respectively.
+	 * Returns the {@link LayoutContext} for which {@link #preLayout()} and
+	 * {@link #postLayout()} shall be called before or after a layout pass,
+	 * respectively.
 	 *
-	 * @return The {@link LayoutContext} for which {@link #provideToLayout()}
-	 *         and {@link #adaptFromLayout()} shall be called before or after a
-	 *         layout pass, respectively.
+	 * @return The {@link LayoutContext} for which {@link #preLayout()} and
+	 *         {@link #postLayout()} shall be called before or after a layout
+	 *         pass, respectively.
 	 */
 	protected abstract LayoutContext getLayoutContext();
 
 	/**
-	 * Called before a layout pass. Should be used to transfer layout
-	 * information from the visualization over to the layout model.
+	 * Called after a layout pass. Should be used to transfer layout information
+	 * from the layout model.
 	 */
-	protected abstract void provideToLayout();
+	protected abstract void postLayout();
 
 	/**
-	 * Called after all layout behaviors had the chance to adapt to the layout.
-	 * Should be used to update the label positions for the new layout.
+	 * Called before a layout pass. Should be used to transfer layout
+	 * information to the layout model.
+	 */
+	protected abstract void preLayout();
+
+	/**
+	 * Called before a layout pass. Should be used to transfer layout
+	 * information from the visualization over to the layout model.
 	 */
 	protected void updateLabels() {
 		// iterate anchoreds

@@ -306,7 +306,7 @@ public class SpaceTreeLayoutAlgorithm implements ILayoutAlgorithm {
 				}
 				Point currentLocation = LayoutProperties.getLocation(node);
 				if (currentLocation.x != x || currentLocation.y != y) {
-					LayoutProperties.setLocation(node, x, y);
+					LayoutProperties.setLocation(node, new Point(x, y));
 					SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 							.getTreeNode(node);
 					spaceTreeNode

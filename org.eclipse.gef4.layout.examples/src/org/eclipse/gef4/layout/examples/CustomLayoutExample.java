@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.layout.examples;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -72,10 +73,11 @@ public class CustomLayoutExample extends AbstractZestExample {
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
 					Node layoutEntity = entitiesToLayout[currentStep];
-					LayoutProperties.setLocation(layoutEntity, xLocation,
+					LayoutProperties.setLocation(layoutEntity, new Point(
+							xLocation,
 							/*
 							 * LayoutProperties.getLocation( layoutEntity).y
-							 */0);
+							 */0));
 					xLocation += distance;
 				}
 			}

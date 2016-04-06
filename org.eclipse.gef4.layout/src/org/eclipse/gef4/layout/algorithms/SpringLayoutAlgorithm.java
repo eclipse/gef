@@ -433,8 +433,13 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		for (int i = 0; i < entities.length; i++) {
 			// TODO ensure no dynamic layout passes are triggered as a result of
 			// storing the positions
-			LayoutProperties.setLocation(entities[i], locationsX[i],
-					locationsY[i]);
+			// TODO: check where NaN values originate from
+			if (Double.isNaN(locationsX[i]) || Double.isNaN(locationsY[i])) {
+				locationsX[i] = 0;
+				locationsY[i] = 0;
+			}
+			LayoutProperties.setLocation(entities[i],
+					new Point(locationsX[i], locationsY[i]));
 		}
 	}
 

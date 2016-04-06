@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Node;
@@ -1387,14 +1388,14 @@ public class SugiyamaLayoutAlgorithm implements ILayoutAlgorithm {
 		if (direction == Direction.HORIZONTAL)
 			for (Node node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				LayoutProperties.setLocation(node, (nw.layer + 0.5d) * dx,
-						(nw.index + 0.5d) * dy);
+				LayoutProperties.setLocation(node, new Point(
+						(nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy));
 			}
 		else
 			for (Node node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				LayoutProperties.setLocation(node, (nw.index + 0.5d) * dx,
-						(nw.layer + 0.5d) * dy);
+				LayoutProperties.setLocation(node, new Point(
+						(nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy));
 			}
 	}
 

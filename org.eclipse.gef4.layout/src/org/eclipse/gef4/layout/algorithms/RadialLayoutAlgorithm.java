@@ -78,7 +78,7 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 					+ Math.abs(endDegree - startDegree) * percenttheta;
 			location.x = distance * Math.cos(theta);
 			location.y = distance * Math.sin(theta);
-			LayoutProperties.setLocation(entities[i], location.x, location.y);
+			LayoutProperties.setLocation(entities[i], location);
 		}
 	}
 

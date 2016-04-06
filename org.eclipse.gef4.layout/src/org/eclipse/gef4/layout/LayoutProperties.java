@@ -249,21 +249,12 @@ public class LayoutProperties {
 	 * 
 	 * @param node
 	 *            The {@link Node} whose {@link #LOCATION_PROPERTY} is changed.
-	 * @param x
-	 *            The new x coordinate for the {@link #LOCATION_PROPERTY} of the
-	 *            given {@link Node}.
-	 * @param y
-	 *            The new y coordinate for the {@link #LOCATION_PROPERTY} of the
+	 * @param location
+	 *            The new location for the {@link #LOCATION_PROPERTY} of the
 	 *            given {@link Node}.
 	 */
-	public static void setLocation(Node node, double x, double y) {
-		if (Double.isNaN(x)) {
-			x = 0;
-		}
-		if (Double.isNaN(y)) {
-			y = 0;
-		}
-		node.getAttributes().put(LOCATION_PROPERTY, new Point(x, y));
+	public static void setLocation(Node node, Point location) {
+		node.getAttributes().put(LOCATION_PROPERTY, location);
 	}
 
 	/**
@@ -272,21 +263,12 @@ public class LayoutProperties {
 	 * 
 	 * @param node
 	 *            The {@link Node} whose {@link #SIZE_PROPERTY} is changed.
-	 * @param w
-	 *            The new width for the {@link #SIZE_PROPERTY} of the given
-	 *            {@link Node}.
-	 * @param h
-	 *            The new height for the {@link #SIZE_PROPERTY} of the given
+	 * @param size
+	 *            The new size for the {@link #SIZE_PROPERTY} of the given
 	 *            {@link Node}.
 	 */
-	public static void setSize(Node node, double w, double h) {
-		if (Double.isNaN(w)) {
-			w = 0;
-		}
-		if (Double.isNaN(h)) {
-			h = 0;
-		}
-		node.getAttributes().put(SIZE_PROPERTY, new Dimension(w, h));
+	public static void setSize(Node node, Dimension size) {
+		node.getAttributes().put(SIZE_PROPERTY, size);
 	}
 
 	/**

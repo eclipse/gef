@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -83,8 +84,8 @@ public class HorizontalShiftAlgorithm implements ILayoutAlgorithm {
 				Node entity = (Node) iterator2.next();
 				Dimension size = LayoutProperties.getSize(entity);
 				LayoutProperties.setLocation(entity,
-						width + 10 * ++i + size.width / 2,
-						heightSoFar + size.height / 2);
+						new Point(width + 10 * ++i + size.width / 2,
+								heightSoFar + size.height / 2));
 				width += size.width;
 			}
 		}

@@ -108,8 +108,8 @@ public class NodeLayoutBehaviorTests {
 
 		Point location = new Point(1, 5);
 		Dimension size = new Dimension(100, 200);
-		LayoutProperties.setLocation(nodeLayout, location.x, location.y);
-		LayoutProperties.setSize(nodeLayout, size.getWidth(), size.getHeight());
+		LayoutProperties.setLocation(nodeLayout, location);
+		LayoutProperties.setSize(nodeLayout, size);
 
 		// postLayout
 		Method method = NodeLayoutBehavior.class.getDeclaredMethod("adaptFromLayout", new Class[] {});

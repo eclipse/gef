@@ -15,25 +15,19 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.behaviors.GraphLayoutBehavior;
-import org.eclipse.gef4.zest.fx.models.NavigationModel;
-import org.eclipse.gef4.zest.fx.models.NavigationModel.ViewportState;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Pair;
@@ -49,17 +43,6 @@ import javafx.util.Pair;
 // TODO: most of the listeners should probably be moved to GraphLayoutBehavior
 public class GraphPart extends AbstractFXContentPart<Group> {
 
-	private MapChangeListener<String, Object> graphAttributesObserver = new MapChangeListener<String, Object>() {
-
-		@Override
-		public void onChanged(MapChangeListener.Change<? extends String, ? extends Object> change) {
-			// refresh visuals
-			refreshVisual();
-			// apply layout
-			applyLayout(true);
-		}
-	};
-
 	private ListChangeListener<Object> graphChildrenObserver = new ListChangeListener<Object>() {
 
 		@SuppressWarnings("serial")
@@ -69,10 +52,9 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 			getAdapter(new TypeToken<ContentBehavior<Node>>() {
 			}).synchronizeContentChildren(doGetContentChildren());
 
-			// update layout context
-			updateLayoutContext();
 			// apply layout
-			getAdapter(GraphLayoutBehavior.class).applyLayout(true);
+			// TODO: this should be done by GraphLayoutBehavior
+			applyLayout(true);
 		}
 	};
 
@@ -99,28 +81,15 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	protected void doActivate() {
 		super.doActivate();
 
-		getContent().attributesProperty().addListener(graphAttributesObserver);
 		getContent().getNodes().addListener(graphChildrenObserver);
 		getContent().getEdges().addListener(graphChildrenObserver);
-
-		// apply layout if no viewport state is saved for this graph, or we are
-		// nested inside a node, or the saved viewport is outdated
-		NavigationModel navigationModel = getViewer().getAdapter(NavigationModel.class);
-		ViewportState savedViewport = navigationModel == null ? null : navigationModel.getViewportState(getContent());
-		InfiniteCanvas canvas = ((FXViewer) getViewer()).getCanvas();
-		boolean isNested = getParent() instanceof NodePart;
-		boolean isViewportChanged = savedViewport != null
-				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
-		if (savedViewport == null || isNested || isViewportChanged) {
-			applyLayout(true);
-		}
 	}
 
 	@Override
 	protected void doDeactivate() {
-		getContent().attributesProperty().removeListener(graphAttributesObserver);
 		getContent().getNodes().removeListener(graphChildrenObserver);
 		getContent().getEdges().removeListener(graphChildrenObserver);
+
 		super.doDeactivate();
 	}
 
@@ -158,7 +127,6 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 
 	@Override
 	public void doRefreshVisual(Group visual) {
-		// TODO: setGraphStyleSheet();
 	}
 
 	@Override
@@ -170,20 +138,4 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().remove(child.getVisual());
 	}
-
-	@Override
-	public void setContent(Object content) {
-		super.setContent(content);
-
-		// update layout context
-		updateLayoutContext();
-	}
-
-	private void updateLayoutContext() {
-		LayoutContext layoutContext = getAdapter(LayoutContext.class);
-		if (layoutContext != null) {
-			layoutContext.setGraph(getContent());
-		}
-	}
-
 }

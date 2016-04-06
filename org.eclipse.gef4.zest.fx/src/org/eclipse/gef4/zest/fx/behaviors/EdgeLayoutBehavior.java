@@ -29,13 +29,6 @@ import javafx.scene.Node;
 public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
-	protected void adaptFromLayout() {
-		// update label positions, which are not computed by layout itself
-		// TODO: this should be part of layout
-		updateLabels();
-	}
-
-	@Override
 	public EdgePart getHost() {
 		return (EdgePart) super.getHost();
 	}
@@ -48,7 +41,16 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 	}
 
 	@Override
-	protected void provideToLayout() {
+	protected void postLayout() {
+		// refresh visual
+		getHost().refreshVisual();
+
+		// update label positions, which are not computed by layout itself
+		updateLabels();
+	}
+
+	@Override
+	protected void preLayout() {
 	}
 
 }

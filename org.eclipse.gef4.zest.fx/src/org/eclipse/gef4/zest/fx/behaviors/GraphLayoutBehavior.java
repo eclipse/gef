@@ -22,7 +22,6 @@ import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
@@ -34,7 +33,6 @@ import org.eclipse.gef4.zest.fx.parts.NodePart;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 /**
@@ -47,14 +45,19 @@ import javafx.scene.layout.Pane;
 // only applicable for GraphPart (see #getHost())
 public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
-	private LayoutContext layoutContext;
 	private Pane nestingVisual;
 
 	private ChangeListener<? super Bounds> nestingVisualLayoutBoundsChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
 				Bounds newLayoutBounds) {
-			onNestingVisualLayoutBoundsChange(oldLayoutBounds, newLayoutBounds);
+			// update layout bounds to match the nesting visual layout bounds
+			Rectangle newBounds = computeLayoutBounds();
+			Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
+			if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
+				LayoutProperties.setBounds(getHost().getContent(), newBounds);
+				applyLayout(true);
+			}
 		}
 	};
 
@@ -62,13 +65,14 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
 				Bounds newLayoutBounds) {
-			onViewportModelPropertyChange(oldLayoutBounds, newLayoutBounds);
+			Rectangle newBounds = computeLayoutBounds();
+			Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
+			if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
+				LayoutProperties.setBounds(getHost().getContent(), newBounds);
+				applyLayout(true);
+			}
 		}
 	};
-
-	@Override
-	protected void adaptFromLayout() {
-	}
 
 	/**
 	 * Performs one layout pass using the static layout algorithm that is
@@ -78,18 +82,10 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 	 *            Whether to fully re-compute the layout or not.
 	 */
 	public void applyLayout(boolean clean) {
-		InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
-
 		Graph graph = getHost().getContent();
 
-		// TODO: move this into provideToLayout?
-		Rectangle bounds = LayoutProperties.getBounds(graph);
-
-		getHost().getRoot().getViewer().getAdapter(NavigationModel.class).setViewportState(layoutContext.getGraph(),
-				new ViewportState(0, 0, bounds.getWidth(), bounds.getHeight(),
-						FX2Geometry.toAffineTransform(canvas.getContentTransform())));
-
 		// update layout algorithm (apply layout will depend on it)
+		LayoutContext layoutContext = getLayoutContext();
 		ILayoutAlgorithm layoutAlgorithm = ZestProperties.getLayoutAlgorithm(graph);
 		if (layoutAlgorithm != null) {
 			if (layoutContext.getLayoutAlgorithm() != layoutAlgorithm) {
@@ -109,7 +105,26 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		// apply layout (if no algorithm is set, will be a no-op)
 		layoutContext.applyLayout(true);
 		layoutContext.flushChanges();
-		// update label positions
+	}
+
+	/**
+	 * Determines the layout bounds for the graph.
+	 *
+	 * @return The bounds used to layout the graph.
+	 */
+	protected Rectangle computeLayoutBounds() {
+		Rectangle newBounds = new Rectangle();
+		if (nestingVisual != null) {
+			// nested graph uses layout bounds of nesting node
+			Bounds layoutBounds = nestingVisual.getLayoutBounds();
+			newBounds = new Rectangle(0, 0, layoutBounds.getWidth() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR,
+					layoutBounds.getHeight() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
+		} else {
+			// root graph uses infinite canvas bounds
+			InfiniteCanvas canvas = getInfiniteCanvas();
+			newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
+		}
+		return newBounds;
 	}
 
 	@Override
@@ -117,69 +132,73 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		super.doActivate();
 
 		// register listener for bounds changes
-		Rectangle initialBounds = new Rectangle();
-		Graph graph = getHost().getContent();
 		if (getHost().getParent() == getHost().getRoot()) {
 			/*
 			 * Our graph is the root graph, therefore we listen to viewport
 			 * changes to update the layout bounds in the context accordingly.
 			 */
 			getInfiniteCanvas().scrollableBoundsProperty().addListener(viewportBoundsChangeListener);
-			// read initial bounds
-			FXViewer fxViewer = (FXViewer) getHost().getRoot().getViewer();
-			initialBounds.setX(0);
-			initialBounds.setY(0);
-			initialBounds.setWidth(fxViewer.getCanvas().getWidth());
-			initialBounds.setHeight(fxViewer.getCanvas().getHeight());
-		} else if (graph.getNestingNode() != null) {
+		} else {
 			/*
 			 * Our graph is nested inside a node of another graph, therefore we
 			 * listen to changes of that node's layout-bounds.
 			 */
 			nestingVisual = getNestingPart().getNestedChildrenPane();
 			nestingVisual.layoutBoundsProperty().addListener(nestingVisualLayoutBoundsChangeListener);
-			Bounds layoutBounds = nestingVisual.getLayoutBounds();
-			// read initial bounds
-			initialBounds.setWidth(layoutBounds.getWidth() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
-			initialBounds.setHeight(layoutBounds.getHeight() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
-		} else {
-			throw new IllegalStateException("Graph is neither nested nor root?!");
 		}
-
-		// retrieve layout context
-		layoutContext = getLayoutContext();
 
 		// add layout filter for hidden/layout irrelevant elements
 		final HidingModel hidingModel = getHost().getRoot().getViewer().getAdapter(HidingModel.class);
-		layoutContext.addLayoutFilter(new ILayoutFilter() {
-			@Override
-			public boolean isLayoutIrrelevant(Edge edge) {
-				return ZestProperties.getLayoutIrrelevant(edge, true) || isLayoutIrrelevant(edge.getSource())
-						|| isLayoutIrrelevant(edge.getTarget());
-			}
+		if (hidingModel != null) {
+			getLayoutContext().addLayoutFilter(new ILayoutFilter() {
+				@Override
+				public boolean isLayoutIrrelevant(Edge edge) {
+					return ZestProperties.getLayoutIrrelevant(edge, true) || isLayoutIrrelevant(edge.getSource())
+							|| isLayoutIrrelevant(edge.getTarget());
+				}
 
-			@Override
-			public boolean isLayoutIrrelevant(org.eclipse.gef4.graph.Node node) {
-				return ZestProperties.getLayoutIrrelevant(node, true) || hidingModel.isHidden(node);
-			}
-		});
+				@Override
+				public boolean isLayoutIrrelevant(org.eclipse.gef4.graph.Node node) {
+					return ZestProperties.getLayoutIrrelevant(node, true) || hidingModel.isHidden(node);
+				}
+			});
+		}
 
-		// set initial bounds on the context
-		LayoutProperties.setBounds(graph, initialBounds);
+		// initially apply layout if no viewport state is saved for this graph,
+		// or we are nested inside a node, or the saved viewport is outdated
+		NavigationModel navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
+		ViewportState savedViewport = navigationModel == null ? null
+				: navigationModel.getViewportState(getHost().getContent());
+		InfiniteCanvas canvas = ((FXViewer) getHost().getRoot().getViewer()).getCanvas();
+		boolean isNested = getNestingPart() != null;
+		boolean isViewportChanged = savedViewport != null
+				&& (savedViewport.getWidth() != canvas.getWidth() || savedViewport.getHeight() != canvas.getHeight());
+		if (savedViewport == null || isNested || isViewportChanged) {
+			LayoutProperties.setBounds(getHost().getContent(), computeLayoutBounds());
+			applyLayout(true);
+		}
+
 	}
 
 	@Override
 	protected void doDeactivate() {
 		super.doDeactivate();
 
-		if (nestingVisual == null) {
-			// remove change listener from viewport
-			getInfiniteCanvas().scrollableBoundsProperty().removeListener(viewportBoundsChangeListener);
-		} else {
-			nestingVisual.layoutBoundsProperty().removeListener(nestingVisualLayoutBoundsChangeListener);
+		// store the viewport state (in case navigation is supported)
+		Rectangle bounds = LayoutProperties.getBounds(getHost().getContent());
+		NavigationModel navigationModel = getHost().getRoot().getViewer().getAdapter(NavigationModel.class);
+		if (navigationModel != null) {
+			navigationModel.setViewportState(getHost().getContent(), new ViewportState(0, 0, bounds.getWidth(),
+					bounds.getHeight(), FX2Geometry.toAffineTransform(getInfiniteCanvas().getContentTransform())));
 		}
-		// nullify variables
-		layoutContext = null;
+
+		if (nestingVisual != null) {
+			// remove layout change listener from nesting visual
+			nestingVisual.layoutBoundsProperty().removeListener(nestingVisualLayoutBoundsChangeListener);
+		} else {
+			// remove change listener from infinite canvas
+			getInfiniteCanvas().scrollableBoundsProperty().removeListener(viewportBoundsChangeListener);
+		}
 		nestingVisual = null;
 	}
 
@@ -206,50 +225,23 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	/**
 	 * Returns the {@link NodePart} that contains the nested graph to which the
-	 * behavior corresponds.
+	 * behavior corresponds, if this behavior is related to a nested graph.
 	 *
 	 * @return The {@link NodePart} that contains the nested graph to which the
 	 *         behavior corresponds.
 	 */
 	protected NodePart getNestingPart() {
-		org.eclipse.gef4.graph.Node nestingNode = getHost().getContent().getNestingNode();
-		IContentPart<Node, ? extends Node> nestingNodePart = getHost().getRoot().getViewer().getContentPartMap()
-				.get(nestingNode);
-		return (NodePart) nestingNodePart;
-	}
-
-	/**
-	 * Sets the layout bounds on the layout context for nested graphs.
-	 *
-	 * @param oldLayoutBounds
-	 *            The previous nesting node's bounds.
-	 * @param newLayoutBounds
-	 *            The current nesting node's bounds.
-	 */
-	protected void onNestingVisualLayoutBoundsChange(Bounds oldLayoutBounds, Bounds newLayoutBounds) {
-		// update layout bounds to match the nesting visual layout bounds
-		double width = newLayoutBounds.getWidth() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
-		double height = newLayoutBounds.getHeight() / NodePart.DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
-		Rectangle newBounds = new Rectangle(0, 0, width, height);
-		LayoutProperties.setBounds(getHost().getContent(), newBounds);
-	}
-
-	/**
-	 * Called upon viewport bounds changes to update the layout bounds.
-	 *
-	 * @param oldScrollableBounds
-	 *            The old {@link Bounds}.
-	 * @param newScrollableBounds
-	 *            The new {@link Bounds}.
-	 */
-	protected void onViewportModelPropertyChange(Bounds oldScrollableBounds, Bounds newScrollableBounds) {
-		InfiniteCanvas canvas = getInfiniteCanvas();
-		Rectangle newBounds = new Rectangle(0, 0, canvas.getWidth(), canvas.getHeight());
-		LayoutProperties.setBounds(getHost().getContent(), newBounds);
+		if (getHost().getParent() instanceof NodePart) {
+			return (NodePart) getHost().getParent();
+		}
+		return null;
 	}
 
 	@Override
-	protected void provideToLayout() {
+	protected void postLayout() {
 	}
 
+	@Override
+	protected void preLayout() {
+	}
 }

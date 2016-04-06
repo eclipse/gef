@@ -17,6 +17,7 @@ package org.eclipse.gef4.layout.algorithms;
 import java.util.Iterator;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -254,22 +255,22 @@ public class TreeLayoutAlgorithm implements ILayoutAlgorithm {
 
 		switch (direction) {
 		case TOP_DOWN:
-			LayoutProperties.setLocation(entityInfo.getNode(),
-					breadthPosition * leafSize, depthPosition * layerSize);
+			LayoutProperties.setLocation(entityInfo.getNode(), new Point(
+					breadthPosition * leafSize, depthPosition * layerSize));
 			break;
 		case BOTTOM_UP:
 			LayoutProperties.setLocation(entityInfo.getNode(),
-					breadthPosition * leafSize,
-					bounds.getHeight() - depthPosition * layerSize);
+					new Point(breadthPosition * leafSize,
+							bounds.getHeight() - depthPosition * layerSize));
 			break;
 		case LEFT_RIGHT:
-			LayoutProperties.setLocation(entityInfo.getNode(),
-					depthPosition * layerSize, breadthPosition * leafSize);
+			LayoutProperties.setLocation(entityInfo.getNode(), new Point(
+					depthPosition * layerSize, breadthPosition * leafSize));
 			break;
 		case RIGHT_LEFT:
 			LayoutProperties.setLocation(entityInfo.getNode(),
-					bounds.getWidth() - depthPosition * layerSize,
-					breadthPosition * leafSize);
+					new Point(bounds.getWidth() - depthPosition * layerSize,
+							breadthPosition * leafSize));
 			break;
 		}
 

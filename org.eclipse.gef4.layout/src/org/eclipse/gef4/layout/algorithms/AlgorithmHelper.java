@@ -77,7 +77,7 @@ class AlgorithmHelper {
 				if (resize && LayoutProperties.isResizable(entity)) {
 					size.width *= sizeScale;
 					size.height *= sizeScale;
-					LayoutProperties.setSize(entity, size.width, size.height);
+					LayoutProperties.setSize(entity, new Dimension(size));
 				}
 
 				location.x = destinationBounds.getX() + size.width / 2
@@ -86,10 +86,15 @@ class AlgorithmHelper {
 				location.y = destinationBounds.getY() + size.height / 2
 						+ percentY
 								* (destinationBounds.getHeight() - size.height);
-				LayoutProperties.setLocation(entity, location.x, location.y);
+
+				// TODO: investigate cause for NaN values
+				if (Double.isNaN(location.x) || Double.isNaN(location.y)) {
+					location.x = 0;
+					location.y = 0;
+				}
+				LayoutProperties.setLocation(entity, new Point(location));
 			} else if (resize && LayoutProperties.isResizable(entity)) {
-				LayoutProperties.setSize(entity, size.width * sizeScale,
-						size.height * sizeScale);
+				LayoutProperties.setSize(entity, size.getScaled(sizeScale));
 			}
 		}
 	}
@@ -98,9 +103,11 @@ class AlgorithmHelper {
 			Rectangle destinationBounds, boolean resize) {
 		if (LayoutProperties.isMovable(entity)) {
 			LayoutProperties.setLocation(entity,
-					destinationBounds.getX() + destinationBounds.getWidth() / 2,
-					destinationBounds.getY()
-							+ destinationBounds.getHeight() / 2);
+					new Point(
+							destinationBounds.getX()
+									+ destinationBounds.getWidth() / 2,
+							destinationBounds.getY()
+									+ destinationBounds.getHeight() / 2));
 		}
 		if (resize && LayoutProperties.isResizable(entity)) {
 			double width = destinationBounds.getWidth();
@@ -108,12 +115,10 @@ class AlgorithmHelper {
 			double preferredAspectRatio = LayoutProperties
 					.getPreferredAspectRatio(entity);
 			if (preferredAspectRatio > 0) {
-				Dimension fixedSize = fixAspectRatio(width, height,
-						preferredAspectRatio);
-				LayoutProperties.setSize(entity, fixedSize.width,
-						fixedSize.height);
+				LayoutProperties.setSize(entity,
+						fixAspectRatio(width, height, preferredAspectRatio));
 			} else {
-				LayoutProperties.setSize(entity, width, height);
+				LayoutProperties.setSize(entity, new Dimension(width, height));
 			}
 		}
 	}
@@ -139,12 +144,11 @@ class AlgorithmHelper {
 					double preferredRatio = LayoutProperties
 							.getPreferredAspectRatio(entity);
 					if (preferredRatio > 0) {
-						Dimension fixedSize = fixAspectRatio(width, height,
-								preferredRatio);
-						LayoutProperties.setSize(entity, fixedSize.width,
-								fixedSize.height);
+						LayoutProperties.setSize(entity,
+								fixAspectRatio(width, height, preferredRatio));
 					} else {
-						LayoutProperties.setSize(entity, width, height);
+						LayoutProperties.setSize(entity,
+								new Dimension(width, height));
 					}
 				}
 			}

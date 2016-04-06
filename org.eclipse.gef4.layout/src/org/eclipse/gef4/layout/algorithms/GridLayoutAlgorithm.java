@@ -13,6 +13,7 @@
 package org.eclipse.gef4.layout.algorithms;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
@@ -106,15 +107,17 @@ public class GridLayoutAlgorithm implements ILayoutAlgorithm {
 					Node node = context.getNodes()[index++];
 					if (resize && LayoutProperties.isResizable(node))
 						LayoutProperties.setSize(node,
-								Math.max(childrenWidth, MIN_ENTITY_SIZE),
-								Math.max(childrenHeight, MIN_ENTITY_SIZE));
+								new Dimension(Math.max(childrenWidth,
+										MIN_ENTITY_SIZE),
+								Math.max(childrenHeight, MIN_ENTITY_SIZE)));
 					Dimension size = LayoutProperties.getSize(node);
 					double xmove = bounds.getX() + j * colWidth + offsetX
 							+ size.width / 2;
 					double ymove = bounds.getY() + i * rowHeight + offsetY
 							+ size.height / 2;
 					if (LayoutProperties.isMovable(node))
-						LayoutProperties.setLocation(node, xmove, ymove);
+						LayoutProperties.setLocation(node,
+								new Point(xmove, ymove));
 				}
 			}
 		}
