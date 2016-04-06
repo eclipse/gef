@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
@@ -46,7 +46,7 @@ import javafx.collections.ObservableMap;
  * <p>
  * Any client implementing this interface may internally use an
  * {@link AdaptableSupport} as a delegate to realize the required functionality.
- * 
+ *
  * @author anyssen
  */
 public interface IAdaptable {
@@ -54,7 +54,7 @@ public interface IAdaptable {
 	/**
 	 * To be implemented by an adapter to indicate that it intends to be bounded
 	 * to the respective {@link IAdaptable} it is registered at.
-	 * 
+	 *
 	 * @param <A>
 	 *            The type of {@link IAdaptable} this {@link Bound} may be bound
 	 *            to.
@@ -66,7 +66,7 @@ public interface IAdaptable {
 		 * currently bound to, or <code>null</code> if this
 		 * {@link IAdaptable.Bound} is currently not bound to an
 		 * {@link IAdaptable}.
-		 * 
+		 *
 		 * @return The {@link IAdaptable} this {@link IAdaptable.Bound} is
 		 *         currently bound to, or <code>null</code> if this
 		 *         {@link IAdaptable.Bound} is currently not bound to an
@@ -78,7 +78,7 @@ public interface IAdaptable {
 		 * Called by the {@link IAdaptable} this {@link IAdaptable.Bound} is
 		 * registered at or unregistered from, in order to establish or remove a
 		 * back-reference to itself.
-		 * 
+		 *
 		 * @param adaptable
 		 *            The {@link IAdaptable} this {@link IAdaptable.Bound} is
 		 *            bound to or <code>null</code> to unbind this
@@ -91,6 +91,14 @@ public interface IAdaptable {
 	 * The name of the {@link #adaptersProperty() adapters property}.
 	 */
 	public static final String ADAPTERS_PROPERTY = "adapters";
+
+	/**
+	 * Returns an unmodifiable read-only map property that contains the
+	 * registered adapters by their keys.
+	 *
+	 * @return An unmodifiable read-only map property.
+	 */
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty();
 
 	/**
 	 * Returns an adapter for the given {@link AdapterKey} if one can
@@ -108,7 +116,7 @@ public interface IAdaptable {
 	 * If there is more than one adapter that 'matches' the given
 	 * {@link AdapterKey}, or there is no one 'matching' it, <code>null</code>
 	 * will be returned.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -135,7 +143,7 @@ public interface IAdaptable {
 	 * key, it will return the single adapter that is registered for the default
 	 * role ({@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for
 	 * which this holds. Otherwise it will return <code>null</code>.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -162,7 +170,7 @@ public interface IAdaptable {
 	 * registered for the default role ({@link AdapterKey#DEFAULT_ROLE}), if
 	 * there is a single adapter for which this holds. Otherwise it will return
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -175,11 +183,19 @@ public interface IAdaptable {
 	public <T> T getAdapter(TypeToken<T> key);
 
 	/**
+	 * Returns an unmodifiable {@link ObservableMap} that contains the
+	 * registered adapters by their keys.
+	 *
+	 * @return An unmodifiable {@link ObservableMap}.
+	 */
+	public ObservableMap<AdapterKey<?>, Object> getAdapters();
+
+	/**
 	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
 	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -189,27 +205,11 @@ public interface IAdaptable {
 	 *         key ({@link AdapterKey#getKey()}) refers to the same or a
 	 *         sub-type of the given {@link Class} key, qualified by their
 	 *         respective {@link AdapterKey}s.
-	 * 
+	 *
 	 * @see #getAdapter(Class)
 	 */
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> key);
-
-	/**
-	 * Returns an unmodifiable read-only map property that contains the
-	 * registered adapters by their keys.
-	 * 
-	 * @return An unmodifiable read-only map property.
-	 */
-	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty();
-
-	/**
-	 * Returns an unmodifiable {@link ObservableMap} that contains the
-	 * registered adapters by their keys.
-	 * 
-	 * @return An unmodifiable {@link ObservableMap}.
-	 */
-	public ObservableMap<AdapterKey<?>, Object> getAdapters();
 
 	/**
 	 * Returns all adapters 'matching' the given {@link TypeToken} key, i.e. all
@@ -217,7 +217,7 @@ public interface IAdaptable {
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type or of the
 	 * given {@link TypeToken} key (see
 	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -227,7 +227,7 @@ public interface IAdaptable {
 	 *         key ({@link AdapterKey#getKey()}) refers to the same or a
 	 *         sub-type of the given {@link TypeToken} key, qualified by their
 	 *         respective {@link AdapterKey}s.
-	 * 
+	 *
 	 * @see #getAdapter(TypeToken)
 	 */
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
@@ -244,26 +244,26 @@ public interface IAdaptable {
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapter
 	 *            The adapter to register under the given {@link Class} key.
-	 * 
+	 *
 	 * @see IAdaptable#setAdapter(Object, String)
 	 */
 	public <T> void setAdapter(T adapter);
 
 	/**
 	 * Registers the given adapter under the given role .
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapter
 	 *            The adapter to register.
 	 * @param role
 	 *            The role to register this adapter with.
-	 * 
+	 *
 	 * @see IAdaptable#setAdapter(TypeToken, Object)
 	 */
 	public <T> void setAdapter(T adapter, String role);
@@ -275,7 +275,7 @@ public interface IAdaptable {
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapterType
@@ -283,7 +283,7 @@ public interface IAdaptable {
 	 *            adapter, which should reflect the actual adapter type.
 	 * @param adapter
 	 *            The adapter to register under the given {@link TypeToken} key.
-	 * 
+	 *
 	 * @see #setAdapter(TypeToken, Object, String)
 	 */
 	public <T> void setAdapter(TypeToken<T> adapterType, T adapter);
@@ -294,7 +294,7 @@ public interface IAdaptable {
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapterType
@@ -304,7 +304,7 @@ public interface IAdaptable {
 	 *            The adapter to register.
 	 * @param role
 	 *            The role under which to register the adapter.
-	 * 
+	 *
 	 */
 	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
 			String role);
@@ -316,7 +316,7 @@ public interface IAdaptable {
 	 * back-reference to this {@link IAdaptable} will be removed via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method, passing over
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapter

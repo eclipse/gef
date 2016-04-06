@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
@@ -28,51 +28,54 @@ import com.google.common.reflect.TypeToken;
  * {@link #get(TypeToken, String)}, as well as {@link #get(Class)} and
  * {@link #get(TypeToken)} respectively, where the latter two will use the
  * {@link #DEFAULT_ROLE}.
- * 
+ *
  * @author anyssen
  *
  * @param <T>
  *            The type parameter corresponding to the type parameter of the
  *            {@link Class} used as key ({@link #getKey()}).
  */
-public class AdapterKey<T> {
+public class AdapterKey<T> implements Comparable<AdapterKey<T>> {
 
 	/**
 	 * A default role to be used for {@link AdapterKey}s.
-	 * 
+	 *
 	 * @see #get(Class)
 	 */
 	public static final String DEFAULT_ROLE = "default";
 
-	private TypeToken<T> key;
-	private String role;
-
-	private AdapterKey(TypeToken<T> typeKey, String role) {
-		this.key = typeKey;
-		this.role = role;
+	/**
+	 * Returns an {@link AdapterKey} with no type key and the 'default' role,
+	 * which can only be used in adapter map bindings. See {@link AdapterMap}.
+	 *
+	 * @return An AdapterKey without type key, using the 'default' role.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static AdapterKey<?> defaultRole() {
+		return get((Class) null, DEFAULT_ROLE);
 	}
 
 	/**
-	 * Returns the key used by this {@link AdapterKey}.
-	 * 
-	 * @return The key being used.
+	 * Creates a new {@link AdapterKey} for the given raw type key and the
+	 * {@link #DEFAULT_ROLE} role, which can be used to retrieve an adapter from
+	 * an IAdaptable.
+	 *
+	 * @param <T>
+	 *            The adapter type.
+	 * @param key
+	 *            The key to use for the newly created {@link AdapterKey}. May
+	 *            not be <code>null</code>.
+	 * @return A new {@link AdapterKey} for the given key and role.
+	 *
+	 * @see #get(Class, String)
 	 */
-	public TypeToken<T> getKey() {
-		return key;
-	}
-
-	/**
-	 * Returns the role used by this {@link AdapterKey}.
-	 * 
-	 * @return The role being used.
-	 */
-	public String getRole() {
-		return role;
+	public static <T> AdapterKey<T> get(Class<T> key) {
+		return get(TypeToken.of(key), DEFAULT_ROLE);
 	}
 
 	/**
 	 * Creates a new {@link AdapterKey} for the given key and role.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -92,9 +95,27 @@ public class AdapterKey<T> {
 	}
 
 	/**
+	 * Creates a new {@link AdapterKey} for the given type key and the
+	 * {@link #DEFAULT_ROLE} role, which can be used to retrieve an adapter from
+	 * an IAdaptable.
+	 *
+	 * @param <T>
+	 *            The adapter type.
+	 * @param key
+	 *            The key to use for the newly created {@link AdapterKey}. May
+	 *            not be <code>null</code>.
+	 * @return A new {@link AdapterKey} for the given key and role.
+	 *
+	 * @see #get(TypeToken, String)
+	 */
+	public static <T> AdapterKey<T> get(TypeToken<T> key) {
+		return get(key, DEFAULT_ROLE);
+	}
+
+	/**
 	 * Creates a new {@link AdapterKey} for the given key and role, which can be
 	 * used to retrieve an adapter from an IAdaptable.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param key
@@ -114,59 +135,12 @@ public class AdapterKey<T> {
 	}
 
 	/**
-	 * Creates a new {@link AdapterKey} for the given raw type key and the
-	 * {@link #DEFAULT_ROLE} role, which can be used to retrieve an adapter from
-	 * an IAdaptable.
-	 * 
-	 * @param <T>
-	 *            The adapter type.
-	 * @param key
-	 *            The key to use for the newly created {@link AdapterKey}. May
-	 *            not be <code>null</code>.
-	 * @return A new {@link AdapterKey} for the given key and role.
-	 * 
-	 * @see #get(Class, String)
-	 */
-	public static <T> AdapterKey<T> get(Class<T> key) {
-		return get(TypeToken.of(key), DEFAULT_ROLE);
-	}
-
-	/**
-	 * Creates a new {@link AdapterKey} for the given type key and the
-	 * {@link #DEFAULT_ROLE} role, which can be used to retrieve an adapter from
-	 * an IAdaptable.
-	 * 
-	 * @param <T>
-	 *            The adapter type.
-	 * @param key
-	 *            The key to use for the newly created {@link AdapterKey}. May
-	 *            not be <code>null</code>.
-	 * @return A new {@link AdapterKey} for the given key and role.
-	 * 
-	 * @see #get(TypeToken, String)
-	 */
-	public static <T> AdapterKey<T> get(TypeToken<T> key) {
-		return get(key, DEFAULT_ROLE);
-	}
-
-	/**
-	 * Returns an {@link AdapterKey} with no type key and the 'default' role,
-	 * which can only be used in adapter map bindings. See {@link AdapterMap}.
-	 * 
-	 * @return An AdapterKey without type key, using the 'default' role.
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static AdapterKey<?> defaultRole() {
-		return get((Class) null, DEFAULT_ROLE);
-	}
-
-	/**
 	 * Returns an {@link AdapterKey} with no type key and the given role, which
 	 * can only be used in adapter map bindings. See {@link AdapterMap}.
-	 * 
+	 *
 	 * @param role
 	 *            The role to use.
-	 * 
+	 *
 	 * @return An AdapterKey without type key, using the given role.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -174,19 +148,46 @@ public class AdapterKey<T> {
 		return get((Class) null, role);
 	}
 
+	private TypeToken<T> key;
+
+	private String role;
+
+	private AdapterKey(TypeToken<T> typeKey, String role) {
+		this.key = typeKey;
+		this.role = role;
+	}
+
+	@Override
+	public int compareTo(AdapterKey<T> o) {
+		if (key == null) {
+			throw new IllegalArgumentException(
+					"An AdapterKey that is used for binding cannot be compared.");
+		}
+		// primarily sort by key
+		if (role.equals(o.getRole())) {
+			// secondarily sort by key (type) name
+			return key.toString().compareTo(o.getKey().toString());
+		} else {
+			return role.compareTo(o.getRole());
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AdapterKey<?> other = (AdapterKey<?>) obj;
 		if (key == null) {
 			// XXX: In case the map binder used for adapter map injection does
@@ -201,19 +202,40 @@ public class AdapterKey<T> {
 			// never equal to others (because map binder would otherwise detect
 			// duplicates).
 			return false;
-		} else if (!key.equals(other.key))
+		} else if (!key.equals(other.key)) {
 			return false;
+		}
 		if (role == null) {
-			if (other.role != null)
+			if (other.role != null) {
 				return false;
-		} else if (!role.equals(other.role))
+			}
+		} else if (!role.equals(other.role)) {
 			return false;
+		}
 		return true;
+	}
+
+	/**
+	 * Returns the key used by this {@link AdapterKey}.
+	 *
+	 * @return The key being used.
+	 */
+	public TypeToken<T> getKey() {
+		return key;
+	}
+
+	/**
+	 * Returns the role used by this {@link AdapterKey}.
+	 *
+	 * @return The role being used.
+	 */
+	public String getRole() {
+		return role;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
