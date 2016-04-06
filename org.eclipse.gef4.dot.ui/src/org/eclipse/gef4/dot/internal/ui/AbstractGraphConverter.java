@@ -24,9 +24,10 @@ public abstract class AbstractGraphConverter {
 		 */
 		public boolean emulateLayout = true;
 
-		// TOOD: control whether position information is to be transformed or
-		// not; should not depend on emulateLayout
-		// public boolean ignoreLayoutInfo = false;
+		/**
+		 * Whether to ignore position data.
+		 */
+		public boolean ignorePositions = false;
 
 		/**
 		 * Specifies whether the y-coordinate values of all position information

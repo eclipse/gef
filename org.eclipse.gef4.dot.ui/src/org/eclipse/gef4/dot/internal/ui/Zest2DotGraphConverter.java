@@ -69,7 +69,7 @@ public class Zest2DotGraphConverter extends AbstractGraphConverter {
 			DotAttributes.setWidth(dot, Double.toString(dotWidth));
 			DotAttributes.setHeight(dot, Double.toString(dotHeight));
 
-			if (zestPosition != null) {
+			if (zestPosition != null && !options().ignorePositions) {
 				// node position is interpreted as center of node in Dot, and
 				// top-left in Zest
 				org.eclipse.gef4.dot.internal.parser.point.Point dotPos = PointFactory.eINSTANCE
@@ -86,7 +86,8 @@ public class Zest2DotGraphConverter extends AbstractGraphConverter {
 		// external label position (xlp)
 		Point zestExternalLabelPosition = ZestProperties
 				.getExternalLabelPosition(zest);
-		if (zestExternalLabel != null && zestExternalLabelPosition != null) {
+		if (zestExternalLabel != null && zestExternalLabelPosition != null
+				&& !options().ignorePositions) {
 			org.eclipse.gef4.dot.internal.parser.point.Point dotXlp = PointFactory.eINSTANCE
 					.createPoint();
 			Bounds labelSize = new Text(zestExternalLabel).getLayoutBounds();

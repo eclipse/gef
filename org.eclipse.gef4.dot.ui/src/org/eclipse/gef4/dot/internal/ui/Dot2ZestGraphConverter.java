@@ -172,7 +172,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		if (!options().emulateLayout) {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
-			if (dotPos != null) {
+			if (dotPos != null && !options().ignorePositions) {
 				// XXX: We use a special format to represent DOT B-splines:
 				// in case start or end is not given, the
 				// first or last control point will be contained twice.
@@ -209,28 +209,32 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 			// label position (lp)
 			String dotLp = DotAttributes.getLp(dot);
-			if (dotLabel != null && dotLp != null) {
+			if (dotLabel != null && dotLp != null
+					&& !options().ignorePositions) {
 				ZestProperties.setLabelPosition(zest, computeZestLabelPosition(
 						DotAttributes.getLpParsed(dot), dotLabel));
 			}
 
 			// external label position (xlp)
 			String dotXlp = DotAttributes.getXlp(dot);
-			if (dotXLabel != null && dotXlp != null) {
+			if (dotXLabel != null && dotXlp != null
+					&& !options().ignorePositions) {
 				ZestProperties.setExternalLabelPosition(zest,
 						computeZestLabelPosition(
 								DotAttributes.getXlpParsed(dot), dotXLabel));
 			}
 			// head and tail label positions (head_lp, tail_lp)
 			String headLp = DotAttributes.getHeadLp(dot);
-			if (dotHeadLabel != null && headLp != null) {
+			if (dotHeadLabel != null && headLp != null
+					&& !options().ignorePositions) {
 				ZestProperties.setTargetLabelPosition(zest,
 						computeZestLabelPosition(
 								DotAttributes.getHeadLpParsed(dot),
 								dotHeadLabel));
 			}
 			String tailLp = DotAttributes.getTailLp(dot);
-			if (dotTailLabel != null && tailLp != null) {
+			if (dotTailLabel != null && tailLp != null
+					&& !options().ignorePositions) {
 				ZestProperties.setSourceLabelPosition(zest,
 						computeZestLabelPosition(
 								DotAttributes.getTailLpParsed(dot),
@@ -316,7 +320,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			double zestWidth = Double.parseDouble(dotWidth) * 72; // inches
 			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
 
-			if (dotPos != null) {
+			if (dotPos != null && !options().ignorePositions) {
 				// node position is interpreted as center of node in Dot, and
 				// top-left in Zest
 				org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
@@ -332,7 +336,7 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 
 		// external label position (xlp)
 		String dotXlp = DotAttributes.getXlp(dot);
-		if (dotXLabel != null && dotXlp != null) {
+		if (dotXLabel != null && dotXlp != null && !options().ignorePositions) {
 			org.eclipse.gef4.dot.internal.parser.point.Point dotXlpParsed = DotAttributes
 					.getXlpParsed(dot);
 			ZestProperties.setExternalLabelPosition(zest,
