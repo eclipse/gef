@@ -409,6 +409,14 @@ public class Point implements Cloneable, Serializable {
 	 *            y value
 	 */
 	public Point(double x, double y) {
+		if (Double.isNaN(x)) {
+			throw new IllegalArgumentException(
+					"x coordinate has to be differen from NaN.");
+		}
+		if (Double.isNaN(y)) {
+			throw new IllegalArgumentException(
+					"y coordinate has to be differen from NaN.");
+		}
 		this.x = x;
 		this.y = y;
 	}
@@ -420,8 +428,7 @@ public class Point implements Cloneable, Serializable {
 	 *            Point from which the initial values are taken.
 	 */
 	public Point(Point p) {
-		x = p.x;
-		y = p.y;
+		this(p.x, p.y);
 	}
 
 	/**

@@ -94,8 +94,7 @@ public class Dimension implements Cloneable, Serializable {
 	 *            values
 	 */
 	public Dimension(Dimension d) {
-		width = d.width;
-		height = d.height;
+		this(d.width, d.height);
 	}
 
 	/**
@@ -107,6 +106,14 @@ public class Dimension implements Cloneable, Serializable {
 	 *            the height of the new {@link Dimension}
 	 */
 	public Dimension(double w, double h) {
+		if (Double.isNaN(w)) {
+			throw new IllegalArgumentException(
+					"width has to be differen from NaN.");
+		}
+		if (Double.isNaN(h)) {
+			throw new IllegalArgumentException(
+					"height has to be differen from NaN.");
+		}
 		width = w;
 		height = h;
 	}

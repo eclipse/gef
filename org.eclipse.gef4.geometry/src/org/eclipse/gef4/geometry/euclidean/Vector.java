@@ -54,6 +54,14 @@ public class Vector implements Cloneable, Serializable {
 	 *            y coordinate
 	 */
 	public Vector(double x, double y) {
+		if (Double.isNaN(x)) {
+			throw new IllegalArgumentException(
+					"x coordinate has to be differen from NaN.");
+		}
+		if (Double.isNaN(y)) {
+			throw new IllegalArgumentException(
+					"y coordinate has to be differen from NaN.");
+		}
 		this.x = x;
 		this.y = y;
 	}
@@ -66,8 +74,7 @@ public class Vector implements Cloneable, Serializable {
 	 *            the {@link Point} to construct a position {@link Vector} for
 	 */
 	public Vector(Point p) {
-		x = p.x;
-		y = p.y;
+		this(p.x, p.y);
 	}
 
 	/**
