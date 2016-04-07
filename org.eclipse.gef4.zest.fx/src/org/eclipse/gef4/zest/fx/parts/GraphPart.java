@@ -128,7 +128,7 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 			}
 		}
 		// add visible edges
-		children.addAll(edges);
+		children.addAll(visibleEdges);
 		// add labels for visible edges
 		for (Edge e : visibleEdges) {
 			if (ZestProperties.getLabel(e) != null) {

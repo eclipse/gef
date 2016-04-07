@@ -223,6 +223,14 @@ public class Dot2ZestGraphConverter extends GraphCopier
 		// only convert layout information in native mode, as the results
 		// will otherwise not match
 		if (!options().emulateLayout) {
+			// splines attribute defines connection type
+			String splines = DotAttributes.getSplines(dot.getGraph());
+			if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
+					|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
+				// mark as invisible
+				ZestProperties.setInvisible(zest, true);
+			}
+
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
 			if (dotPos != null && !options().ignorePositions) {
@@ -234,7 +242,6 @@ public class Dot2ZestGraphConverter extends GraphCopier
 
 				// mapping to Zest depends on value of 'splines' graph
 				// attribute
-				String splines = DotAttributes.getSplines(dot.getGraph());
 				if (DotAttributes.SPLINES__G__LINE.equals(splines)
 						|| DotAttributes.SPLINES__G__FALSE.equals(splines)) {
 					// use polyline interpolator
@@ -283,11 +290,8 @@ public class Dot2ZestGraphConverter extends GraphCopier
 					// when an anchor is attached.
 				} else if (DotAttributes.SPLINES__G__COMPOUND.equals(splines)) {
 					// TODO
-				} else if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
-						|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
-					// mark as invisible
-					ZestProperties.setInvisible(zest, true);
 				}
+				// XXX: spline types none and empty are already covered above
 			}
 
 			// label position (lp)
@@ -323,7 +327,6 @@ public class Dot2ZestGraphConverter extends GraphCopier
 								DotAttributes.getTailLpParsed(dot),
 								dotTailLabel));
 			}
-
 		}
 	}
 
