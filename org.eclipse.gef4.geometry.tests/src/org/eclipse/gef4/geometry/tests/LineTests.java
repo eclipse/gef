@@ -320,16 +320,6 @@ public class LineTests {
 		assertEquals(new Point(0, 75), y100.getProjection(new Point(0, 75)));
 		assertEquals(new Point(0, 75), y100.getProjection(new Point(10, 75)));
 		assertEquals(new Point(0, 75), y100.getProjection(new Point(-10, 75)));
-
-		// NaN
-		assertEquals(new Point(), new Line(Double.NaN, Double.NaN, 10, 10)
-				.getProjection(new Point()));
-		assertEquals(new Point(1, 1), new Line(10, 10, Double.NaN, Double.NaN)
-				.getProjection(new Point(1, 1)));
-		assertEquals(new Point(2, 2), new Line(10, Double.NaN, 10, Double.NaN)
-				.getProjection(new Point(2, 2)));
-		assertEquals(new Point(3, 3), new Line(Double.NaN, 10, Double.NaN, 10)
-				.getProjection(new Point(3, 3)));
 	}
 
 	@Test
