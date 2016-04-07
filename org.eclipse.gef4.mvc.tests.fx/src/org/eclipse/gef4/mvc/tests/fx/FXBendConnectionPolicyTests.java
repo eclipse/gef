@@ -331,7 +331,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -487,7 +487,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -559,7 +559,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -634,7 +634,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -729,7 +729,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -808,7 +808,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -880,7 +880,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -984,7 +984,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1102,7 +1102,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1199,7 +1199,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1274,7 +1274,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1336,7 +1336,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1418,7 +1418,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1499,7 +1499,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1561,7 +1561,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1630,7 +1630,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1707,7 +1707,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1779,7 +1779,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1849,7 +1849,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners

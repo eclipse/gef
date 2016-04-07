@@ -127,7 +127,7 @@ public class FXTransformPolicyTests {
 		});
 		injector.injectMembers(this);
 		// get viewer
-		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
+		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		// hook viewer to scene
 		Scene scene = new Scene(viewer.getCanvas(), 100, 100);
 		JFXPanel panel = new JFXPanel();

@@ -110,7 +110,7 @@ public class FXTypeToolTests {
 		injector.injectMembers(this);
 
 		InfiniteCanvas infiniteCanvas = domain
-				.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE)).getCanvas();
+				.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE)).getCanvas();
 		ctx.createScene(infiniteCanvas, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners

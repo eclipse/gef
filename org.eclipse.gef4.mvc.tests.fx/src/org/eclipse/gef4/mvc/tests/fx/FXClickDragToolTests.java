@@ -115,7 +115,7 @@ public class FXClickDragToolTests {
 		injector.injectMembers(this);
 
 		final Scene scene = ctx.createScene(
-				domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE)).getCanvas(), 100,
+				domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE)).getCanvas(), 100,
 				100);
 
 		// activate domain, so tool gets activated and can register listeners

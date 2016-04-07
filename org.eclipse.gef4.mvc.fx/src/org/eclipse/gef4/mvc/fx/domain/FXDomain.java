@@ -23,4 +23,9 @@ import javafx.scene.Node;
  *
  */
 public class FXDomain extends AbstractDomain<Node> {
+
+	/**
+	 * The adapter role for the content viewer.
+	 */
+	public static final String CONTENT_VIEWER_ROLE = "contentViewer";
 }

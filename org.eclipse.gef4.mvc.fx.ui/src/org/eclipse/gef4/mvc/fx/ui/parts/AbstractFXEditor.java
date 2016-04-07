@@ -19,7 +19,6 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
-import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
@@ -208,7 +207,7 @@ public abstract class AbstractFXEditor extends EditorPart {
 	// TODO: rename to content viewer (or main viewer)
 	protected FXViewer getViewer() {
 		return domain.getAdapter(AdapterKey.get(FXViewer.class,
-				MvcFxModule.CONTENT_VIEWER_ROLE));
+				FXDomain.CONTENT_VIEWER_ROLE));
 	}
 
 	/**

@@ -19,7 +19,6 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Edge.Builder;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
@@ -102,7 +101,7 @@ public abstract class AbstractZestExample extends Application {
 		Injector injector = Guice.createInjector(createModule());
 		domain = injector.getInstance(FXDomain.class);
 		viewer = domain.getAdapter(AdapterKey.get(FXViewer.class,
-				MvcFxModule.CONTENT_VIEWER_ROLE));
+				FXDomain.CONTENT_VIEWER_ROLE));
 		primaryStage.setScene(createScene(viewer));
 
 		primaryStage.setResizable(true);
