@@ -19,8 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -32,8 +35,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphMerger;
+import org.eclipse.gef4.graph.Node;
 
 /**
  * Utilities to import DOT files or strings into Graph instances containing
@@ -43,6 +47,117 @@ import org.eclipse.gef4.graph.GraphMerger;
  * @author anyssen
  */
 public final class DotImport {
+
+	/**
+	 * Imports the content of a GEF4 graph generated from DOT into an existing
+	 * GEF4 graph.
+	 *
+	 * @author Fabian Steeg (fsteeg)
+	 * @author anyssen
+	 */
+	private static class GraphMerger {
+
+		private String idAttributeName = null;
+
+		/**
+		 * Create a new {@link GraphMerger}, which uses the given attribute key
+		 * to retrieve an identification attribute.
+		 *
+		 * @param idAttributeName
+		 *            The name of the attribute that stores an identification
+		 *            value.
+		 */
+		public GraphMerger(String idAttributeName) {
+			this.idAttributeName = idAttributeName;
+		}
+
+		private Edge copy(Edge edge, Graph.Builder targetGraph,
+				Node targetSource, Node targetTarget) {
+			// copy edge
+			Edge.Builder copy = new Edge.Builder(targetSource, targetTarget);
+
+			// copy attributes
+			for (Entry<String, Object> attr : edge.attributesProperty()
+					.entrySet()) {
+				copy.attr(attr.getKey(), attr.getValue());
+			}
+
+			// put into graph
+			Edge build = copy.buildEdge();
+			targetGraph.edges(build);
+			return build;
+		}
+
+		private Node copy(Node node, Graph.Builder targetGraph) {
+			Node.Builder copy = new Node.Builder();
+			// copy attributes
+			for (Entry<String, Object> attr : node.attributesProperty()
+					.entrySet()) {
+				copy.attr(attr.getKey(), attr.getValue());
+			}
+			Node copiedNode = copy.buildNode();
+			targetGraph.nodes(copiedNode);
+			return copiedNode;
+		}
+
+		private Node find(Map<Object, Node> nodesByIds, Node n) {
+			Object id = n.attributesProperty().get(idAttributeName);
+			if (id != null && !nodesByIds.containsKey(id)) {
+				nodesByIds.put(id, n);
+				return null;
+			}
+			return nodesByIds.get(id);
+		}
+
+		/**
+		 * Merges the given source {@link Graph} into the target {@link Graph}.
+		 *
+		 * @param sourceGraph
+		 *            The source graph to merge into the target graph.
+		 * @param targetGraph
+		 *            The target graph to merge content to.
+		 */
+		public void merge(Graph sourceGraph, Graph.Builder targetGraph) {
+			// copy attributes
+			for (Entry<String, Object> attr : sourceGraph.attributesProperty()
+					.entrySet()) {
+				targetGraph.attr(attr.getKey(), attr.getValue());
+			}
+
+			// find all existing node IDs in the target graph
+			Graph targetGraphBuilt = targetGraph.build();
+			List<Node> nodes = targetGraphBuilt.getNodes();
+			Map<Object, Node> ids = new HashMap<>();
+			for (Node n : nodes) {
+				find(ids, n);
+			}
+			// copy non-existing nodes over
+			Map<Node, Node> copiedNodes = new HashMap<>();
+			for (Node node : sourceGraph.getNodes()) {
+				if (find(ids, node) == null) {
+					copiedNodes.put(node, copy(node, targetGraph));
+				}
+			}
+
+			// copy edges over
+			// TODO: what about existing edges
+			for (Edge edge : sourceGraph.getEdges()) {
+				// determine source and target
+				Node srcSource = edge.getSource();
+				Node tSource = find(ids, srcSource);
+				if (tSource == null) {
+					tSource = copiedNodes.get(srcSource);
+				}
+
+				Node srcTarget = edge.getTarget();
+				Node tTarget = find(ids, srcTarget);
+				if (tTarget == null) {
+					tTarget = copiedNodes.get(srcTarget);
+				}
+				copy(edge, targetGraph, tSource, tTarget);
+			}
+		}
+	}
 
 	private Resource resource;
 	private String dotString;
@@ -168,7 +283,7 @@ public final class DotImport {
 	 *            The graph to add the imported dot into
 	 */
 	public void into(Graph.Builder graph) {
-		new GraphMerger(toGraph(), DotAttributes._NAME__GNE).into(graph);
+		new GraphMerger(DotAttributes._NAME__GNE).merge(toGraph(), graph);
 	}
 
 	@Override
