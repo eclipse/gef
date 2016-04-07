@@ -1,124 +1,120 @@
-/*******************************************************************************
- * Copyright (c) 2013, 2015 Fabian Steeg and others.
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Fabian Steeg                - initial API and implementation (see #372365)
- *     Alexander Nyßen (itemis AG) - major refactorings
- *
- *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import org.eclipse.gef4.common.attributes.IAttributeCopier;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 
 /**
- * Imports the content of a GEF4 graph generated from DOT into an existing GEF4
- * graph.
+ * A copier for {@link Graph}s.
  *
- * @author Fabian Steeg (fsteeg)
  * @author anyssen
+ *
  */
-final public class GraphCopier {
+public class GraphCopier {
 
-	private Graph sourceGraph;
-	private String attributeNameForId = "ID";
+	private Map<Node, Node> inputToOutputNodes = new IdentityHashMap<>();
+	private IAttributeCopier attributeCopier;
 
 	/**
-	 * @param sourceGraph
-	 *            The Zest source graph to import into another graph. Note that
-	 *            this will only support a subset of the graph attributes, as it
-	 *            is used for import of Zest graphs created from DOT input.
-	 * @param attributeNameForId
-	 *            The name of the attribute that stores an identification value
-	 *            for nodes.
+	 * Creates a new {@link GraphCopier} instance with the given
+	 * {@link IAttributeCopier}.
+	 *
+	 * @param attributeCopier
+	 *            The {@link IAttributeCopier} used to copy the attributes of
+	 *            {@link Graph}, {@link Node}s, and {@link Edge}s.
 	 */
-	public GraphCopier(Graph sourceGraph, String attributeNameForId) {
-		this.sourceGraph = sourceGraph;
-		this.attributeNameForId = attributeNameForId;
-	}
-
-	private Edge copy(Edge edge, Graph.Builder targetGraph, Map<Node, Node> copiedNodes, Map<Object, Node> ids) {
-		// determine source and target
-		Node srcSource = edge.getSource();
-		Node source = find(ids, srcSource);
-		if (source == null) {
-			source = copiedNodes.get(srcSource);
-		}
-
-		Node srcTarget = edge.getTarget();
-		Node target = find(ids, srcTarget);
-		if (target == null) {
-			target = copiedNodes.get(srcTarget);
-		}
-
-		// copy edge
-		Edge.Builder copy = new Edge.Builder(source, target);
-
-		// copy attributes
-		for (Entry<String, Object> attr : edge.attributesProperty().entrySet()) {
-			copy.attr(attr.getKey(), attr.getValue());
-		}
-
-		// put into graph
-		Edge build = copy.buildEdge();
-		targetGraph.edges(build);
-		return build;
-	}
-
-	private Node copy(Node node, Graph.Builder targetGraph) {
-		Node.Builder copy = new Node.Builder();
-		// copy attributes
-		for (Entry<String, Object> attr : node.attributesProperty().entrySet()) {
-			copy.attr(attr.getKey(), attr.getValue());
-		}
-		Node copiedNode = copy.buildNode();
-		targetGraph.nodes(copiedNode);
-		return copiedNode;
-	}
-
-	private Node find(Map<Object, Node> ids, Node n) {
-		Object id = n.attributesProperty().get(attributeNameForId);
-		if (id != null && !ids.containsKey(id)) {
-			ids.put(id, n);
-			return null;
-		}
-		return ids.get(id);
+	public GraphCopier(IAttributeCopier attributeCopier) {
+		this.attributeCopier = attributeCopier;
 	}
 
 	/**
-	 * @param targetGraph
-	 *            The graph to add content to
+	 * Creates a copy of the given {@link Graph}.
+	 *
+	 * @param graph
+	 *            The Graph to copy.
+	 * @return A new graph that is the result of the copy operation.
 	 */
-	public void into(Graph.Builder targetGraph) {
-		// copy attributes
-		for (Entry<String, Object> attr : sourceGraph.attributesProperty().entrySet()) {
-			targetGraph.attr(attr.getKey(), attr.getValue());
-		}
-		// find all existing node IDs in the target graph
-		Graph targetGraphBuilt = targetGraph.build();
-		List<Node> nodes = targetGraphBuilt.getNodes();
-		Map<Object, Node> ids = new HashMap<>();
-		for (Node n : nodes) {
-			find(ids, n);
-		}
-		// copy non-existing nodes over
-		Map<Node, Node> copiedNodes = new HashMap<>();
-		for (Node node : sourceGraph.getNodes()) {
-			if (find(ids, node) == null) {
-				copiedNodes.put(node, copy(node, targetGraph));
+	public Graph copy(Graph graph) {
+		Graph outputGraph = new Graph();
+		copyAttributes(graph, outputGraph);
+		// copy nodes, keeping track of copied nodes (so we can relocate them to
+		// link edges)
+		for (Node inputNode : graph.getNodes()) {
+			Node outputNode = copyNode(inputNode);
+			if (outputNode != null) {
+				inputToOutputNodes.put(inputNode, outputNode);
+				outputNode.setGraph(outputGraph);
+				outputGraph.getNodes().add(outputNode);
 			}
 		}
-		// copy edges over
-		for (Edge edge : sourceGraph.getEdges()) {
-			copy(edge, targetGraph, copiedNodes, ids);
+		// convert edges
+		for (Edge inputEdge : graph.getEdges()) {
+			Edge outputEdge = copyEdge(inputEdge);
+			if (outputEdge != null) {
+				outputEdge.setGraph(outputGraph);
+				outputGraph.getEdges().add(outputEdge);
+			}
 		}
+		inputToOutputNodes.clear();
+		return outputGraph;
+	}
+
+	/**
+	 * Transfers attributes from the given input {@link Graph}, {@link Node}, or
+	 * {@link Edge} to the given output {@link Graph}, {@link Node}, or
+	 * {@link Edge}. The attributes may be copied or simply transferred. This
+	 * lies within the responsibility of the {@link IAttributeCopier} that was
+	 * passed in on construction of the {@link GraphCopier}.
+	 *
+	 * @param inputStore
+	 *            The {@link Graph}, {@link Node}, or {@link Edge} from which to
+	 *            copy attributes.
+	 * @param outputStore
+	 *            The {@link Graph}, {@link Node}, or {@link Edge} to copy
+	 *            attributes to.
+	 */
+	// TODO: This callback should be removed (inlined); we will need to refactor
+	// the Dot2ZestGraphConverter first into a pure IAttributeCopier.
+	protected void copyAttributes(IAttributeStore inputStore, IAttributeStore outputStore) {
+		attributeCopier.copy(inputStore, outputStore);
+	}
+
+	/**
+	 * Creates a copy of the given edge.
+	 *
+	 * @param edge
+	 *            The Edge to copy.
+	 * @return A new {@link Edge} with transferred relations and (copied)
+	 *         attributes.
+	 */
+	protected Edge copyEdge(Edge edge) {
+		// find nodes
+		Node outputSource = inputToOutputNodes.get(edge.getSource());
+		Node outputTarget = inputToOutputNodes.get(edge.getTarget());
+		// create edge
+		Edge outputEdge = new Edge(outputSource, outputTarget);
+		copyAttributes(edge, outputEdge);
+		return outputEdge;
+	}
+
+	/**
+	 * Creates a copy of the given node.
+	 *
+	 * @param node
+	 *            The {@link Node} to copy.
+	 * @return A new Node with transferred relations and (copied) attributes.
+	 */
+	protected Node copyNode(Node node) {
+		Node outputNode = new Node();
+		copyAttributes(node, outputNode);
+		// convert nested graph
+		if (node.getNestedGraph() != null) {
+			Graph nested = copy(node.getNestedGraph());
+			outputNode.setNestedGraph(nested);
+		}
+		return outputNode;
 	}
 
 }

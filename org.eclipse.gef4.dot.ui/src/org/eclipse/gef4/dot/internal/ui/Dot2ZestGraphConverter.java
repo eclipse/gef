@@ -17,6 +17,8 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.attributes.IAttributeStore;
+import org.eclipse.gef4.common.attributes.IAttributeCopier;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
@@ -27,6 +29,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
@@ -47,20 +50,65 @@ import javafx.scene.text.Text;
  * @author anyssen
  *
  */
-public class Dot2ZestGraphConverter extends AbstractGraphConverter {
+public class Dot2ZestGraphConverter extends GraphCopier
+		implements IAttributeCopier {
 
-	@Override
-	protected Edge convertEdge(Edge inputEdge) {
-		String splines = DotAttributes.getSplines(inputEdge.getGraph());
-		// skip edges in case splines is set to empty or none.
-		if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
-				|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
-			return null;
-		}
-		return super.convertEdge(inputEdge);
+	public Dot2ZestGraphConverter() {
+		// TODO: this is not really nice; we have to overwrite
+		// transferAttributes()
+		// because we do not pass in an attribute transfer here. We should
+		// rather use an IAttributeCopier as a delegate or convert this class
+		// into an IAttributeCopier as a whole. -> we need to remove the need
+		// for overriding copyEdge before -> introdude invisibility.
+		super(null);
+	}
+
+	public final static class Options {
+
+		/**
+		 * Indicates whether layout should be emulated or not. If set to
+		 * <code>true</code>, an {@link ILayoutAlgorithm} is to be inferred for
+		 * the given dot, and set as value of the
+		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} attribute. If set to
+		 * <code>false</code> (i.e. native layout is performed via Graphviz and
+		 * position information is already provided in the dot input), the
+		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} should remain unset.
+		 */
+		public boolean emulateLayout = true;
+
+		/**
+		 * Whether to ignore position data.
+		 */
+		public boolean ignorePositions = false;
+
+		/**
+		 * Specifies whether the y-coordinate values of all position information
+		 * is to be inverted. If set to <code>true</code> the y-values of all
+		 * position information is to be inverted. If set to <code>false</code>,
+		 * it is to be transformed without inversion.
+		 */
+		public boolean invertYAxis = true;
 	}
 
 	@Override
+	protected void copyAttributes(IAttributeStore inputStore,
+			IAttributeStore outputStore) {
+		copy(inputStore, outputStore);
+	}
+
+	@Override
+	public void copy(IAttributeStore source, IAttributeStore target) {
+		if (source instanceof Node && target instanceof Node) {
+			convertAttributes((Node) source, (Node) target);
+		} else if (source instanceof Edge && target instanceof Edge) {
+			convertAttributes((Edge) source, (Edge) target);
+		} else if (source instanceof Graph && target instanceof Graph) {
+			convertAttributes((Graph) source, (Graph) target);
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
 	protected void convertAttributes(Edge dot, Edge zest) {
 		// convert id and label
 		String dotId = DotAttributes.getId(dot);
@@ -166,7 +214,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setSourceDecoration(zest, zestEdgeSourceDecoration);
 		}
 
-		// only convert layout information in native mode, as the results will
+		// only convert layout information in native mode, as the results
+		// will
 		// otherwise
 		// not match
 		if (!options().emulateLayout) {
@@ -178,7 +227,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 				// first or last control point will be contained twice.
 				final List<Point> bSplineControlPoints = computeZestBSplineControlPoints(
 						dot);
-				// mapping to Zest depends on value of 'splines' graph attribute
+				// mapping to Zest depends on value of 'splines' graph
+				// attribute
 				String splines = DotAttributes.getSplines(dot.getGraph());
 				if (DotAttributes.SPLINES__G__LINE.equals(splines)
 						|| DotAttributes.SPLINES__G__FALSE.equals(splines)) {
@@ -202,8 +252,10 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 						new DotBSplineInterpolator());
 						// }
 
-				// TODO: handle orthogonal case -> normalize control points use
-				// orthogonal router; ensure orthogonal projection strategy is
+				// TODO: handle orthogonal case -> normalize control points
+				// use
+				// orthogonal router; ensure orthogonal projection strategy
+				// is
 				// used, etc.
 			}
 
@@ -285,7 +337,6 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 		return controlPoints;
 	}
 
-	@Override
 	protected void convertAttributes(Node dot, Node zest) {
 		// id
 		String dotId = DotAttributes.getId(dot);
@@ -308,7 +359,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setExternalLabel(zest, dotXLabel);
 		}
 
-		// Convert position and size; as node position is interpreted as center,
+		// Convert position and size; as node position is interpreted as
+		// center,
 		// we need to know the size in order to infer correct zest positions
 		String dotPos = DotAttributes.getPos(dot);
 		String dotHeight = DotAttributes.getHeight(dot);
@@ -321,7 +373,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setSize(zest, new Dimension(zestWidth, zestHeight));
 
 			if (dotPos != null && !options().ignorePositions) {
-				// node position is interpreted as center of node in Dot, and
+				// node position is interpreted as center of node in Dot,
+				// and
 				// top-left in Zest
 				org.eclipse.gef4.dot.internal.parser.point.Point dotPosParsed = DotAttributes
 						.getPosParsed(dot);
@@ -347,7 +400,8 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 	private Point computeZestPosition(
 			org.eclipse.gef4.dot.internal.parser.point.Point dotPosition,
 			double widthInPixel, double heightInPixel) {
-		// dot positions are provided as center positions, Zest uses top-left
+		// dot positions are provided as center positions, Zest uses
+		// top-left
 		return new Point(dotPosition.getX() - widthInPixel / 2,
 				(options().invertYAxis ? -1 : 1) * (dotPosition.getY())
 						- heightInPixel / 2);
@@ -362,7 +416,6 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 				labelSize.getHeight());
 	}
 
-	@Override
 	protected void convertAttributes(Graph dot, Graph zest) {
 		// TODO: graph label
 		if (options().emulateLayout) {
@@ -388,4 +441,26 @@ public class Dot2ZestGraphConverter extends AbstractGraphConverter {
 			ZestProperties.setLayoutAlgorithm(zest, algo);
 		}
 	}
+
+	private Options options;
+
+	public Options options() {
+		if (options == null) {
+			options = new Options();
+		}
+		return options;
+	}
+
+	@Override
+	protected Edge copyEdge(Edge inputEdge) {
+		String splines = DotAttributes.getSplines(inputEdge.getGraph());
+		// skip edges in case splines is set to empty or none.
+		if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
+				|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
+			return null;
+		}
+		// TODO: make edge invisible instead??
+		return super.copyEdge(inputEdge);
+	}
+
 }

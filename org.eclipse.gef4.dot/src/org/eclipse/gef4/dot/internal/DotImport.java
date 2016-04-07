@@ -33,7 +33,7 @@ import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
 import org.eclipse.gef4.dot.internal.parser.dot.DotGraph;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphCopier;
+import org.eclipse.gef4.graph.GraphMerger;
 
 /**
  * Utilities to import DOT files or strings into Graph instances containing
@@ -168,7 +168,7 @@ public final class DotImport {
 	 *            The graph to add the imported dot into
 	 */
 	public void into(Graph.Builder graph) {
-		new GraphCopier(toGraph(), DotAttributes._NAME__GNE).into(graph);
+		new GraphMerger(toGraph(), DotAttributes._NAME__GNE).into(graph);
 	}
 
 	@Override

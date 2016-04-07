@@ -281,7 +281,7 @@ public class DotGraphView extends ZestFxUiView {
 		boolean isNativeMode = isNativeMode();
 		converter.options().emulateLayout = !isNativeMode;
 		converter.options().invertYAxis = true;
-		super.setGraph(converter.convert(graph));
+		super.setGraph(converter.copy(graph));
 	}
 
 	private boolean toggle(Action action, boolean input) {

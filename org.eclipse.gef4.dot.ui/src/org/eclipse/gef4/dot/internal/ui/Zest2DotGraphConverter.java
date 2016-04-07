@@ -12,31 +12,50 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
+import org.eclipse.gef4.common.attributes.IAttributeStore;
+import org.eclipse.gef4.common.attributes.IAttributeCopier;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.point.PointFactory;
+import org.eclipse.gef4.dot.internal.ui.Dot2ZestGraphConverter.Options;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
 import javafx.scene.text.Text;
 
-public class Zest2DotGraphConverter extends AbstractGraphConverter {
+public class Zest2DotGraphConverter extends GraphCopier
+		implements IAttributeCopier {
 
-	@Override
+	public Zest2DotGraphConverter() {
+		// TODO: this is not really nice; we have to overwrite
+		// transferAttributes()
+		// because we do not pass in an attribute transfer here. We should
+		// rather use an IAttributeCopier as a delegate or convert this class
+		// into an IAttributeCopier as a whole. -> we need to remove the need
+		// for overriding copyEdge before -> introdude invisibility.
+		super(null);
+	}
+
+	private Options options;
+
+	public Options options() {
+		if (options == null) {
+			options = new Options();
+		}
+		return options;
+	}
+
 	protected void convertAttributes(Graph zest, Graph dot) {
-		// TODO Auto-generated method stub
 	}
 
-	@Override
 	protected void convertAttributes(Edge zest, Edge dot) {
-		// TODO Auto-generated method stub
 	}
 
-	@Override
 	protected void convertAttributes(Node zest, Node dot) {
 		// id
 		String zestCssId = ZestProperties.getCssId(zest);
@@ -96,6 +115,25 @@ public class Zest2DotGraphConverter extends AbstractGraphConverter {
 					* (zestExternalLabelPosition.y
 							- labelSize.getHeight() / 2));
 			DotAttributes.setXlpParsed(dot, dotXlp);
+		}
+	}
+
+	@Override
+	protected void copyAttributes(IAttributeStore inputStore,
+			IAttributeStore outputStore) {
+		copy(inputStore, outputStore);
+	}
+
+	@Override
+	public void copy(IAttributeStore source, IAttributeStore target) {
+		if (source instanceof Node && target instanceof Node) {
+			convertAttributes((Node) source, (Node) target);
+		} else if (source instanceof Edge && target instanceof Edge) {
+			convertAttributes((Edge) source, (Edge) target);
+		} else if (source instanceof Graph && target instanceof Graph) {
+			convertAttributes((Graph) source, (Graph) target);
+		} else {
+			throw new IllegalArgumentException();
 		}
 	}
 
