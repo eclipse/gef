@@ -17,14 +17,17 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.attributes.IAttributeCopier;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
+import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
+import org.eclipse.gef4.fx.nodes.StraightRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
@@ -227,36 +230,63 @@ public class Dot2ZestGraphConverter extends GraphCopier
 				// first or last control point will be contained twice.
 				final List<Point> bSplineControlPoints = computeZestBSplineControlPoints(
 						dot);
+
 				// mapping to Zest depends on value of 'splines' graph
 				// attribute
 				String splines = DotAttributes.getSplines(dot.getGraph());
 				if (DotAttributes.SPLINES__G__LINE.equals(splines)
 						|| DotAttributes.SPLINES__G__FALSE.equals(splines)) {
-
+					// use polyline interpolator
+					// use straight router
+					// do not use control points TODO: verify
+					ZestProperties.setInterpolator(zest,
+							new PolylineInterpolator());
+					ZestProperties.setRouter(zest, new StraightRouter());
+				} else if (DotAttributes.SPLINES__G__POLYLINE.equals(splines)) {
+					// use polyline interpolator
+					// use straight router
+					// use control points (without start/end) TODO: verify
+					// without start/end
+					ZestProperties.setInterpolator(zest,
+							new PolylineInterpolator());
+					ZestProperties.setRouter(zest, new StraightRouter());
+					ZestProperties.setControlPoints(zest, bSplineControlPoints
+							.subList(1, bSplineControlPoints.size() - 1));
+				} else if (DotAttributes.SPLINES__G__SPLINE.equals(splines)
+						|| DotAttributes.SPLINES__G__TRUE.equals(splines)) {
+					// use dot bspline interpolator
+					// use dot bspline router
+					// use control points (without start/end)
+					ZestProperties.setInterpolator(zest,
+							new DotBSplineInterpolator());
+					// use start/end as reference points for the anchor
+					// computation
+					ZestProperties.setRouter(zest,
+							new DotBSplineRouter(bSplineControlPoints.get(0),
+									bSplineControlPoints.get(
+											bSplineControlPoints.size() - 1)));
+					// first and last way point are provided by start and end
+					// anchor, so we need to remove them as control points
+					ZestProperties.setControlPoints(zest, bSplineControlPoints
+							.subList(1, bSplineControlPoints.size() - 1));
+				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {
+					// use polyline interpolator
+					// use orthogonal router
+					// use control points (without start/end) TODO: verify
+					// without start/end
+					ZestProperties.setInterpolator(zest,
+							new PolylineInterpolator());
+					ZestProperties.setRouter(zest, new OrthogonalRouter());
+					ZestProperties.setControlPoints(zest, bSplineControlPoints
+							.subList(1, bSplineControlPoints.size() - 1));
+					// XXX: OrthogonalProjectionStrategy is set within EdgePart
+					// when an anchor is attached.
+				} else if (DotAttributes.SPLINES__G__COMPOUND.equals(splines)) {
+					// TODO
+				} else if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
+						|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
+					// TODO no edges
 				}
-				// 'normalize' B-splines dependent on 'splines' values
-				// if (splines == null
-				// || DotAttributes.SPLINES__G__TRUE.equals(splines)
-				// || DotAttributes.SPLINES__G__SPLINE.equals(splines)) {
-				// first and last way point are provided by start and end
-				// anchor, so we need to remove them as control points...
-				ZestProperties.setControlPoints(zest, bSplineControlPoints
-						.subList(1, bSplineControlPoints.size() - 1));
-				// ... but pass them to the router, so they are used as
-				// reference points for start and end.
-				ZestProperties.setRouter(zest,
-						new DotBSplineRouter(bSplineControlPoints.get(0),
-								bSplineControlPoints
-										.get(bSplineControlPoints.size() - 1)));
-				ZestProperties.setInterpolator(zest,
-						new DotBSplineInterpolator());
-						// }
-
-				// TODO: handle orthogonal case -> normalize control points
-				// use
-				// orthogonal router; ensure orthogonal projection strategy
-				// is
-				// used, etc.
 			}
 
 			// label position (lp)

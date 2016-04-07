@@ -19,11 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
+import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -97,8 +100,22 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				}));
 		IAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
 		if (role.equals(SOURCE_ROLE)) {
+			if (getVisual().getRouter() instanceof OrthogonalRouter) {
+				// use orthogonal projection strategy
+				if (anchor instanceof DynamicAnchor) {
+					((DynamicAnchor) anchor).setComputationStrategy(getVisual().getStartAnchorKey(),
+							new OrthogonalProjectionStrategy());
+				}
+			}
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals(TARGET_ROLE)) {
+			if (getVisual().getRouter() instanceof OrthogonalRouter) {
+				// use orthogonal projection strategy
+				if (anchor instanceof DynamicAnchor) {
+					((DynamicAnchor) anchor).setComputationStrategy(getVisual().getEndAnchorKey(),
+							new OrthogonalProjectionStrategy());
+				}
+			}
 			getVisual().setEndAnchor(anchor);
 		} else {
 			throw new IllegalArgumentException("Cannot attach to anchor with role <" + role + ">.");
