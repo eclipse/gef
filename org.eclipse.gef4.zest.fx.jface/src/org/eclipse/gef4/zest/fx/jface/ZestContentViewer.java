@@ -23,11 +23,13 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
+import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
@@ -163,7 +165,7 @@ public class ZestContentViewer extends ContentViewer {
 		domain = injector.getInstance(FXDomain.class);
 
 		// hook viewer
-		viewer = domain.getAdapter(FXViewer.class);
+		viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		canvas.setScene(new Scene(viewer.getCanvas()));
 
 		getSelectionModel().getSelectionUnmodifiable().addListener(selectionNotifier);

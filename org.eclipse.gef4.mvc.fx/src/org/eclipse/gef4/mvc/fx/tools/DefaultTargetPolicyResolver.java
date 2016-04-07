@@ -128,8 +128,7 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 		IViewer<Node> viewer = FXPartUtils
 				.retrieveViewer(contextTool.getDomain(), target);
 		if (viewer == null) {
-			throw new IllegalArgumentException(
-					"The given target Node is not contained within an IViewer.");
+			return Collections.emptyList();
 		}
 
 		return getTargetPolicies(contextTool, target, viewer, policyClass);

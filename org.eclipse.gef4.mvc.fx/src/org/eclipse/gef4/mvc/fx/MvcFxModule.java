@@ -100,6 +100,11 @@ import javafx.scene.Node;
 public class MvcFxModule extends MvcModule<Node> {
 
 	/**
+	 * The adapter role for the content viewer.
+	 */
+	public static final String CONTENT_VIEWER_ROLE = "contentViewer";
+
+	/**
 	 * Adds (default) {@link AdapterMap} bindings for
 	 * {@link AbstractFXContentPart} and all sub-classes. May be overwritten by
 	 * sub-classes to change the default bindings.
@@ -765,7 +770,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXViewerAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder.addBinding(AdapterKey.role(CONTENT_VIEWER_ROLE))
 				.to(FXViewer.class);
 	}
 

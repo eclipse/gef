@@ -331,7 +331,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -487,7 +487,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -559,7 +559,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -634,7 +634,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -720,178 +720,6 @@ public class FXBendConnectionPolicyTests {
 		assertTrue(equalsUnprecise(endPoint.getTranslated(0, 100), connection.getVisual().getControlPoint(1)));
 	}
 
-	// @Test
-	// public void test_move_connected_orthogonal_segment_error()
-	// throws InterruptedException, InvocationTargetException, AWTException {
-	// // create injector (adjust module bindings for test)
-	// Injector injector = Guice.createInjector(new TestModule());
-	//
-	// // inject domain
-	// injector.injectMembers(this);
-	//
-	// final FXViewer viewer = domain.getAdapter(FXViewer.class);
-	// ctx.createScene(viewer.getCanvas(), 400, 200);
-	//
-	// // activate domain, so tool gets activated and can register listeners
-	// ctx.runAndWait(new Runnable() {
-	// @Override
-	// public void run() {
-	// domain.activate();
-	// }
-	// });
-	//
-	// final List<Object> contents = TestModels.getAB_offset2_simple();
-	// // set contents on JavaFX application thread (visuals are created)
-	// ctx.runAndWait(new Runnable() {
-	// @Override
-	// public void run() {
-	// viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-	// }
-	// });
-	//
-	// // check that the parts have been created
-	// for (Object content : contents) {
-	// assertTrue(viewer.getContentPartMap().containsKey(content));
-	// }
-	//
-	// // query bend policy for first connection
-	// final ConnectionPart connection = (ConnectionPart)
-	// viewer.getContentPartMap()
-	// .get(contents.get(contents.size() - 1));
-	//
-	// assertEquals(2, connection.getVisual().getPoints().size());
-	//
-	// // setup connection to be orthogonal, i.e. use orthogonal router and
-	// // use orthogonal projection strategy at the anchorages
-	//
-	// // XXX: The strategies are exchanged before setting the router so that a
-	// // refresh will use these strategies
-	// ((DynamicAnchor)
-	// connection.getVisual().getStartAnchor()).setComputationStrategy(
-	// connection.getVisual().getStartAnchorKey(), new
-	// DynamicAnchor.OrthogonalProjectionStrategy() {
-	// @Override
-	// public Point computePositionInScene(Node anchorage, Node anchored,
-	// Point anchoredReferencePointInLocal) {
-	// // ensure routing starts going to the right
-	// return new Point(49, 25);
-	// }
-	// });
-	// ((DynamicAnchor)
-	// connection.getVisual().getEndAnchor()).setComputationStrategy(
-	// connection.getVisual().getEndAnchorKey(), new
-	// DynamicAnchor.OrthogonalProjectionStrategy() {
-	// @Override
-	// public Point computePositionInScene(Node anchorage, Node anchored,
-	// Point anchoredReferencePointInLocal) {
-	// // ensure routing ends going to the right
-	// return new Point(301, 525);
-	// }
-	// });
-	//
-	// // XXX: Set router on application thread as the position change listener
-	// // is executed within the application thread, too, and we need to wait
-	// // for a recent connection refresh that was caused by an anchor position
-	// // change
-	// ctx.runAndWait(new Runnable() {
-	// @Override
-	// public void run() {
-	// connection.getVisual().setRouter(new OrthogonalRouter());
-	// }
-	// });
-	//
-	// // check if router inserted implicit points
-	// assertEquals(4, connection.getVisual().getPoints().size());
-	//
-	// // create new segment between 2nd implicit and end
-	// FXBendConnectionPolicy bendPolicy =
-	// connection.getAdapter(FXBendConnectionPolicy.class);
-	// bendPolicy.init();
-	//
-	// // determine segment indices for neighbor anchors
-	// int firstSegmentIndex = 2;
-	// int secondSegmentIndex = 3;
-	//
-	// // determine middle of segment
-	// Point firstPoint = connection.getVisual().getPoint(firstSegmentIndex);
-	// Point secondPoint = connection.getVisual().getPoint(secondSegmentIndex);
-	//
-	// // check that segment to be selected is horizontal
-	// assertEquals(firstPoint.y, secondPoint.y, 0.0001);
-	//
-	// Vector direction = new Vector(firstPoint, secondPoint);
-	// Point midPoint = firstPoint.getTranslated(direction.x / 2, direction.y /
-	// 2);
-	// Point2D midInScene = connection.getVisual().localToScene(midPoint.x,
-	// midPoint.y);
-	//
-	// // determine connectedness of first anchor handle
-	// Node firstAnchorage =
-	// connection.getVisual().getAnchor(firstSegmentIndex).getAnchorage();
-	// boolean isFirstConnected = firstAnchorage != null && firstAnchorage !=
-	// connection.getVisual();
-	//
-	// // make the anchor handles explicit
-	// List<AnchorHandle> explicit = bendPolicy.makeExplicit(firstSegmentIndex -
-	// 1, secondSegmentIndex);
-	// AnchorHandle firstAnchorHandle = explicit.get(1);
-	// AnchorHandle secondAnchorHandle = explicit.get(2);
-	// assertEquals(4, connection.getVisual().getPoints().size());
-	//
-	// // copy first point if connected
-	// if (isFirstConnected) {
-	// // use the copy as the new first anchor handle
-	// firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-	// FX2Geometry.toPoint(connection.getVisual()
-	// .localToScene(Geometry2FX.toFXPoint(firstAnchorHandle.getInitialPosition()))));
-	// }
-	//
-	// // create new anchor at the segment's middle
-	// secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-	// FX2Geometry.toPoint(midInScene));
-	// // copy that new anchor
-	// secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-	// FX2Geometry.toPoint(midInScene));
-	//
-	// // check to be selected segment is horizontal
-	// assertEquals(firstAnchorHandle.getPosition().y,
-	// secondAnchorHandle.getPosition().y, 0.0001);
-	//
-	// // select the first anchor and the copy of the new mid anchor for
-	// // movement
-	// bendPolicy.select(firstAnchorHandle);
-	// bendPolicy.select(secondAnchorHandle);
-	// assertEquals(6, connection.getVisual().getPoints().size());
-	//
-	// // move new segment up
-	// bendPolicy.move(new Point(), new Point(0, -50));
-	// assertEquals(6, connection.getVisual().getPoints().size());
-	//
-	// // move new segment further up
-	// bendPolicy.move(new Point(), new Point(0, -100));
-	// assertEquals(6, connection.getVisual().getPoints().size());
-	//
-	// // move new segment further up
-	// bendPolicy.move(new Point(), new Point(0, -150));
-	// assertEquals(6, connection.getVisual().getPoints().size());
-	//
-	// // move new segment down a bit
-	// bendPolicy.move(new Point(), new Point(0, -120));
-	// assertEquals(6, connection.getVisual().getPoints().size());
-	//
-	// // move new segment down a bit
-	// bendPolicy.move(new Point(), new Point(0, -60));
-	// assertEquals(6, connection.getVisual().getPoints().size());
-	//
-	// // move new segment back to its original position
-	// bendPolicy.move(new Point(), new Point());
-	// assertEquals(4, connection.getVisual().getPoints().size());
-	//
-	// // commit (i.e. normalize)
-	// bendPolicy.commit();
-	// assertEquals(4, connection.getVisual().getPoints().size());
-	// }
-
 	@Test
 	public void test_move_connected_orthogonal_segment_restore()
 			throws InterruptedException, InvocationTargetException, AWTException {
@@ -901,7 +729,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -980,7 +808,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1052,7 +880,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1156,7 +984,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1274,7 +1102,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1371,7 +1199,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1446,7 +1274,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1500,146 +1328,6 @@ public class FXBendConnectionPolicyTests {
 		assertEquals(wayPoint.getTranslated(0, 100), connection.getVisual().getPoint(1));
 	}
 
-	// @Test
-	// public void test_orthogonal_normalization() throws InterruptedException,
-	// InvocationTargetException, AWTException {
-	// // create injector (adjust module bindings for test)
-	// Injector injector = Guice.createInjector(new TestModule());
-	//
-	// // inject domain
-	// injector.injectMembers(this);
-	//
-	// final FXViewer viewer = domain.getAdapter(FXViewer.class);
-	// ctx.createScene(viewer.getCanvas(), 400, 200);
-	//
-	// // activate domain, so tool gets activated and can register listeners
-	// ctx.runAndWait(new Runnable() {
-	// @Override
-	// public void run() {
-	// domain.activate();
-	// }
-	// });
-	//
-	// final List<Object> contents = TestModels.getAB_AB_simple();
-	// // set contents on JavaFX application thread (visuals are created)
-	// ctx.runAndWait(new Runnable() {
-	// @Override
-	// public void run() {
-	// viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
-	// }
-	// });
-	//
-	// // check that the parts have been created
-	// for (Object content : contents) {
-	// assertTrue(viewer.getContentPartMap().containsKey(content));
-	// }
-	//
-	// // query bend policy for first connection
-	// ConnectionPart connection = (ConnectionPart)
-	// viewer.getContentPartMap().get(contents.get(contents.size() - 1));
-	// FXBendConnectionPolicy bendPolicy =
-	// connection.getAdapter(FXBendConnectionPolicy.class);
-	// assertEquals(2, connection.getVisual().getPoints().size());
-	//
-	// // setup connection to be orthogonal, i.e. use orthogonal router and
-	// // use orthogonal projection strategy at the anchorages
-	// connection.getVisual().setRouter(new OrthogonalRouter());
-	// ((DynamicAnchor)
-	// connection.getVisual().getStartAnchor()).setComputationStrategy(
-	// connection.getVisual().getStartAnchorKey(), new
-	// DynamicAnchor.OrthogonalProjectionStrategy());
-	// ((DynamicAnchor)
-	// connection.getVisual().getEndAnchor()).setComputationStrategy(
-	// connection.getVisual().getStartAnchorKey(), new
-	// DynamicAnchor.OrthogonalProjectionStrategy());
-	//
-	// // prepare connection
-	// Point cp0 = new Point(28.87384605407715, 249.0);
-	// Point cp1 = new Point(519.0096435546875, 249.0);
-	// Point cp2 = new Point(519.0096435546875, 187.99517822265625);
-	// Point cp3 = new Point(394.9903564453125, 187.99517822265625);
-	// Point cp4 = new Point(394.9903564453125, 12.99517822265625);
-	// Point cp5 = new Point(321.9903564453125, 12.99517822265625);
-	// Point cp6 = new Point(321.9903564453125, 192.12921905517578);
-	// Point cp7 = new Point(168.9903564453125, 192.12921142578125);
-	// Point cp8 = new Point(168.9903564453125, 63.99517822265625);
-	// Point cp9 = new Point(242.0096435546875, 63.99517822265625);
-	//
-	// // query start point and end point so that we can construct orthogonal
-	// // control points
-	// Point startPoint = connection.getVisual().getStartPoint();
-	// Point endPoint = connection.getVisual().getEndPoint();
-	//
-	// // create control points
-	// bendPolicy.init();
-	// AnchorHandle startAnchorHandle =
-	// bendPolicy.findExplicitAnchorBackwards(0);
-	// Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y);
-	// Point secondWayPoint = new Point(startPoint.x + 100, startPoint.y + 100);
-	// Point thirdWayPoint = new Point(startPoint.x + 200, startPoint.y + 100);
-	// Point fourthWayPoint = new Point(startPoint.x + 200, startPoint.y);
-	// AnchorHandle firstWayAnchorHandle =
-	// bendPolicy.createAfter(startAnchorHandle, firstWayPoint);
-	// AnchorHandle secondWayAnchorHandle =
-	// bendPolicy.createAfter(firstWayAnchorHandle, secondWayPoint);
-	// AnchorHandle thirdWayAnchorHandle =
-	// bendPolicy.createAfter(secondWayAnchorHandle, thirdWayPoint);
-	// AnchorHandle fourthWayAnchorHandle =
-	// bendPolicy.createAfter(thirdWayAnchorHandle, fourthWayPoint);
-	// // check number of points
-	// assertEquals(6, countExplicit(connection.getVisual()));
-	//
-	// // move segment up to create an overlay
-	// bendPolicy.select(secondWayAnchorHandle);
-	// bendPolicy.select(thirdWayAnchorHandle);
-	// bendPolicy.move(new Point(), new Point(0, -100));
-	// // check number of points and their positions
-	// assertEquals(4, countExplicit(connection.getVisual()));
-	// assertTrue(equalsUnprecise(startPoint,
-	// connection.getVisual().getStartPoint()));
-	// assertTrue(equalsUnprecise(firstWayPoint,
-	// connection.getVisual().getControlPoint(0)));
-	// assertTrue(equalsUnprecise(fourthWayPoint,
-	// connection.getVisual().getControlPoint(1)));
-	// assertTrue(equalsUnprecise(endPoint,
-	// connection.getVisual().getEndPoint()));
-	//
-	// // move segment further up to restore the removed points
-	// bendPolicy.move(new Point(), new Point(0, -200));
-	// // check number of points and their positions
-	// assertEquals(6, countExplicit(connection.getVisual()));
-	// assertTrue(equalsUnprecise(startPoint,
-	// connection.getVisual().getStartPoint()));
-	// assertTrue(equalsUnprecise(firstWayPoint,
-	// connection.getVisual().getControlPoint(0)));
-	// assertTrue(equalsUnprecise(secondWayPoint.getTranslated(0, -200),
-	// connection.getVisual().getControlPoint(1)));
-	// assertTrue(equalsUnprecise(thirdWayPoint.getTranslated(0, -200),
-	// connection.getVisual().getControlPoint(2)));
-	// assertTrue(equalsUnprecise(fourthWayPoint,
-	// connection.getVisual().getControlPoint(3)));
-	// assertTrue(equalsUnprecise(endPoint,
-	// connection.getVisual().getEndPoint()));
-	//
-	// // move segment back to its original position
-	// bendPolicy.move(new Point(), new Point());
-	// bendPolicy.commit();
-	// // check number of points and their positions
-	// assertEquals(6, countExplicit(connection.getVisual()));
-	// assertTrue(equalsUnprecise(startPoint,
-	// connection.getVisual().getStartPoint()));
-	// assertTrue(equalsUnprecise(firstWayPoint,
-	// connection.getVisual().getControlPoint(0)));
-	// assertTrue(equalsUnprecise(secondWayPoint,
-	// connection.getVisual().getControlPoint(1)));
-	// assertTrue(equalsUnprecise(thirdWayPoint,
-	// connection.getVisual().getControlPoint(2)));
-	// assertTrue(equalsUnprecise(fourthWayPoint,
-	// connection.getVisual().getControlPoint(3)));
-	// assertTrue(equalsUnprecise(endPoint,
-	// connection.getVisual().getEndPoint()));
-	// }
-
 	@Test
 	public void test_overlay_segment_left_first() throws InterruptedException, InvocationTargetException, AWTException {
 		// create injector (adjust module bindings for test)
@@ -1648,7 +1336,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1730,7 +1418,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1811,7 +1499,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1873,7 +1561,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -1942,7 +1630,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -2019,7 +1707,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -2091,7 +1779,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners
@@ -2161,7 +1849,7 @@ public class FXBendConnectionPolicyTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final FXViewer viewer = domain.getAdapter(FXViewer.class);
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		ctx.createScene(viewer.getCanvas(), 400, 200);
 
 		// activate domain, so tool gets activated and can register listeners

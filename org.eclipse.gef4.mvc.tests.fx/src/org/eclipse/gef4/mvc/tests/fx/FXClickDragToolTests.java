@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -113,7 +114,9 @@ public class FXClickDragToolTests {
 		// inject domain
 		injector.injectMembers(this);
 
-		final Scene scene = ctx.createScene(domain.getAdapter(FXViewer.class).getCanvas(), 100, 100);
+		final Scene scene = ctx.createScene(
+				domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE)).getCanvas(), 100,
+				100);
 
 		// activate domain, so tool gets activated and can register listeners
 		domain.activate();

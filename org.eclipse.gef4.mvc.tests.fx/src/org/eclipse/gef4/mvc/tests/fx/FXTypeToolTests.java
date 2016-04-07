@@ -18,6 +18,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -108,7 +109,8 @@ public class FXTypeToolTests {
 		});
 		injector.injectMembers(this);
 
-		InfiniteCanvas infiniteCanvas = domain.getAdapter(FXViewer.class).getCanvas();
+		InfiniteCanvas infiniteCanvas = domain
+				.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE)).getCanvas();
 		ctx.createScene(infiniteCanvas, 100, 100);
 
 		// activate domain, so tool gets activated and can register listeners

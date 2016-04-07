@@ -57,6 +57,16 @@ public class FXTransformPolicyTests {
 		}
 
 		@Override
+		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
+			return HashMultimap.create();
+		}
+
+		@Override
+		protected List<? extends Object> doGetContentChildren() {
+			return Collections.emptyList();
+		}
+
+		@Override
 		protected void doRefreshVisual(Rectangle visual) {
 			visual.setX(getContent().x);
 			visual.setY(getContent().y);
@@ -65,16 +75,6 @@ public class FXTransformPolicyTests {
 		@Override
 		public Point getContent() {
 			return (Point) super.getContent();
-		}
-
-		@Override
-		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
-			return HashMultimap.create();
-		}
-
-		@Override
-		protected List<? extends Object> doGetContentChildren() {
-			return Collections.emptyList();
 		}
 	}
 
@@ -127,7 +127,7 @@ public class FXTransformPolicyTests {
 		});
 		injector.injectMembers(this);
 		// get viewer
-		FXViewer viewer = domain.getAdapter(FXViewer.class);
+		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		// hook viewer to scene
 		Scene scene = new Scene(viewer.getCanvas(), 100, 100);
 		JFXPanel panel = new JFXPanel();

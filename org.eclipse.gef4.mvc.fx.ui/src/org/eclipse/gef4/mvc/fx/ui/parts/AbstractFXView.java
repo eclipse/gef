@@ -15,6 +15,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
+import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
@@ -103,6 +104,9 @@ public abstract class AbstractFXView extends ViewPart {
 		// hook viewer controls and selection forwarder
 		hookViewers();
 
+		// register listener to provide selection to workbench
+		registerWorkbenchSelectionForwarder(getViewer());
+
 		// activate domain
 		activate();
 	}
@@ -181,6 +185,15 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
+	 * Returns the {@link FXDomain} that was previously injected.
+	 *
+	 * @return The {@link FXDomain} that was previously injected.
+	 */
+	protected FXDomain getDomain() {
+		return domain;
+	}
+
+	/**
 	 * Returns the {@link FXViewer} of the {@link FXDomain} that was previously
 	 * injected.
 	 *
@@ -188,16 +201,8 @@ public abstract class AbstractFXView extends ViewPart {
 	 *         injected.
 	 */
 	protected FXViewer getViewer() {
-		return domain.getAdapter(AdapterKey.get(FXViewer.class));
-	}
-
-	/**
-	 * Returns the {@link FXDomain} that was previously injected.
-	 *
-	 * @return The {@link FXDomain} that was previously injected.
-	 */
-	protected FXDomain getDomain() {
-		return domain;
+		return domain.getAdapter(AdapterKey.get(FXViewer.class,
+				MvcFxModule.CONTENT_VIEWER_ROLE));
 	}
 
 	/**
@@ -212,12 +217,6 @@ public abstract class AbstractFXView extends ViewPart {
 		// visuals as root visuals into the scene
 		final FXViewer contentViewer = getViewer();
 		canvas.setScene(new Scene(contentViewer.getCanvas()));
-
-		// register listener to provide selection to workbench
-		if (selectionProvider != null) {
-			selectionForwarder = new SelectionForwarder<>(selectionProvider,
-					contentViewer);
-		}
 	}
 
 	@Override
@@ -240,6 +239,21 @@ public abstract class AbstractFXView extends ViewPart {
 		// register selection provider (if we want to a provide selection)
 		if (selectionProvider != null) {
 			site.setSelectionProvider(selectionProvider);
+		}
+	}
+
+	/**
+	 * Registers listeners to synchronize selection with workbench.
+	 *
+	 * @param contentViewer
+	 *            Viewer of which the selection is synchronized with the
+	 *            workbench.
+	 */
+	protected void registerWorkbenchSelectionForwarder(
+			final FXViewer contentViewer) {
+		if (selectionProvider != null) {
+			selectionForwarder = new SelectionForwarder<>(selectionProvider,
+					contentViewer);
 		}
 	}
 

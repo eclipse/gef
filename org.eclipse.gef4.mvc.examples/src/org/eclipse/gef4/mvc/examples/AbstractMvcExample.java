@@ -13,6 +13,8 @@ package org.eclipse.gef4.mvc.examples;
 
 import java.util.List;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
@@ -33,6 +35,8 @@ public abstract class AbstractMvcExample extends Application {
 		this.title = title;
 	}
 
+	protected abstract List<? extends Object> createContents();
+
 	protected abstract Module createModule();
 
 	@Override
@@ -41,7 +45,7 @@ public abstract class AbstractMvcExample extends Application {
 		FXDomain domain = injector.getInstance(FXDomain.class);
 
 		// hook the (single) viewer into the stage
-		FXViewer viewer = domain.getAdapter(FXViewer.class);
+		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, MvcFxModule.CONTENT_VIEWER_ROLE));
 		primaryStage.setScene(new Scene(viewer.getCanvas()));
 
 		primaryStage.setResizable(true);
@@ -57,6 +61,4 @@ public abstract class AbstractMvcExample extends Application {
 		// set viewer contents
 		viewer.getAdapter(ContentModel.class).getContents().setAll(createContents());
 	}
-
-	protected abstract List<? extends Object> createContents();
 }
