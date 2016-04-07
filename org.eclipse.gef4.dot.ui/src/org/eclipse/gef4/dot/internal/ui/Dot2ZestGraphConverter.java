@@ -154,6 +154,9 @@ public class Dot2ZestGraphConverter extends GraphCopier
 			connectionCssStyle = "-fx-stroke-dash-array: 1 7;"; //$NON-NLS-1$
 		} else if (DotAttributes.STYLE__E__BOLD.equals(dotStyle)) {
 			connectionCssStyle = "-fx-stroke-width: 2;"; //$NON-NLS-1$
+		} else if (DotAttributes.STYLE__E__INVIS.equals(dotStyle)) {
+			// mark as invisible
+			ZestProperties.setInvisible(zest, true);
 		}
 		// TODO: handle tapered edges
 		if (connectionCssStyle != null) {
@@ -218,9 +221,7 @@ public class Dot2ZestGraphConverter extends GraphCopier
 		}
 
 		// only convert layout information in native mode, as the results
-		// will
-		// otherwise
-		// not match
+		// will otherwise not match
 		if (!options().emulateLayout) {
 			// position (pos)
 			String dotPos = DotAttributes.getPos(dot);
@@ -284,7 +285,8 @@ public class Dot2ZestGraphConverter extends GraphCopier
 					// TODO
 				} else if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
 						|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
-					// TODO no edges
+					// mark as invisible
+					ZestProperties.setInvisible(zest, true);
 				}
 			}
 
@@ -501,18 +503,6 @@ public class Dot2ZestGraphConverter extends GraphCopier
 			options = new Options();
 		}
 		return options;
-	}
-
-	@Override
-	protected Edge copyEdge(Edge inputEdge) {
-		String splines = DotAttributes.getSplines(inputEdge.getGraph());
-		// skip edges in case splines is set to empty or none.
-		if (DotAttributes.SPLINES__G__EMPTY.equals(splines)
-				|| DotAttributes.SPLINES__G__NONE.equals(splines)) {
-			return null;
-		}
-		// TODO: make edge invisible instead??
-		return super.copyEdge(inputEdge);
 	}
 
 }
