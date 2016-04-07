@@ -25,7 +25,6 @@ import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
-import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
 import org.eclipse.gef4.fx.nodes.StraightRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -247,7 +246,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					// normalize control points for orthogonal lines
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest, new OrthogonalRouter());
+					ZestProperties.setRouter(zest,
+							new DotOrthogonalRouter(bSplineControlPoints.get(0),
+									bSplineControlPoints.get(
+											bSplineControlPoints.size() - 1)));
 					ZestProperties.setControlPoints(zest,
 							computeZestOrthogonalControlPoints(
 									bSplineControlPoints));

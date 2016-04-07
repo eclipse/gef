@@ -195,7 +195,17 @@ public class OrthogonalRouter implements IConnectionRouter {
 		return null;
 	}
 
-	private Point getAnchorReferencePoint(Connection connection, int index) {
+	/**
+	 * Returns the reference point for the anchor at the given index.
+	 *
+	 * @param connection
+	 *            The {@link Connection} that is currently routed.
+	 * @param index
+	 *            The index specifying the anchor for which to provide a
+	 *            reference point.
+	 * @return The reference point for the anchor at the given index.
+	 */
+	protected Point getAnchorReferencePoint(Connection connection, int index) {
 		if (index < 0 || index >= connection.getPoints().size()) {
 			throw new IndexOutOfBoundsException();
 		}
