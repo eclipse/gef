@@ -316,23 +316,19 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 	private List<Point> computeZestOrthogonalControlPoints(
 			List<Point> bSplineControlPoints) {
 		// remove start and end point (both are present twice)
-		List<Point> subList = new ArrayList<>(bSplineControlPoints.subList(2,
-				bSplineControlPoints.size() - 2));
+		List<Point> subList = new ArrayList<>(bSplineControlPoints.subList(1,
+				bSplineControlPoints.size() - 1));
 		// normalize remaining points
-		for (int i = subList.size() - 1; i > 0; i--) {
-			Point p = subList.get(i);
-			Point q = subList.get(i - 1);
-			if (p.x == q.x) {
-				// remove p, keep q but adjust its y coordinate
+		for (int i = subList.size() - 2; i > 0; i--) {
+			Point p = subList.get(i + 1);
+			Point q = subList.get(i);
+			Point r = subList.get(i - 1);
+			if (p.x == q.x && q.x == r.x || p.y == q.y && q.y == r.y) {
+				// remove q
 				subList.remove(i);
-				q.y = p.y / 2 + q.y / 2;
-			} else if (p.y == q.y) {
-				// remove p, keep q but adjust its x coordinate
-				subList.remove(i);
-				q.x = p.x / 2 + q.x / 2;
 			}
 		}
-		return subList;
+		return subList.subList(1, subList.size() - 1);
 	}
 
 	private Shape computeZestDecoration(ArrowType arrowType, double arrowSize) {
