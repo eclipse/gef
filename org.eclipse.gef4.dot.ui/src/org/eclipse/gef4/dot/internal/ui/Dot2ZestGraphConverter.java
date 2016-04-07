@@ -346,7 +346,6 @@ public class Dot2ZestGraphConverter extends GraphCopier
 				q.x = p.x / 2 + q.x / 2;
 			}
 		}
-		System.out.println("ortho: " + subList);
 		return subList;
 	}
 
