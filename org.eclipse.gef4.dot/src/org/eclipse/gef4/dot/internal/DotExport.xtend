@@ -29,7 +29,7 @@ import static org.eclipse.gef4.dot.internal.DotAttributes.*
 class DotExport {
 
 	// TODO: support a list of graphs
-	def String export(Graph graph) {
+	def String exportDot(Graph graph) {
 		// graph type is mandatory meta-attribute
 		if (!graph.attributes.containsKey(_TYPE__G)) {
 			throw new IllegalArgumentException(
@@ -44,8 +44,8 @@ class DotExport {
 	}
 
 	// TODO: support a list of graphs
-	def File export(Graph graph, String pathname) {
-		DotFileUtils.write(export(graph), new File(pathname));
+	def File exportDot(Graph graph, String pathname) {
+		DotFileUtils.write(exportDot(graph), new File(pathname));
 	}
 
 	private def String print(Graph graph) '''

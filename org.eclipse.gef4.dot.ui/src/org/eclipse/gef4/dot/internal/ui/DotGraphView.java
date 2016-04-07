@@ -167,7 +167,7 @@ public class DotGraphView extends ZestFxUiView {
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
 				.with(new ZestFxUiModule())));
-		setGraph(new DotImport(currentDot).toGraph());
+		setGraph(new DotImport().importDot(currentDot));
 	}
 
 	@Override
@@ -252,11 +252,12 @@ public class DotGraphView extends ZestFxUiView {
 			@Override
 			public void run() {
 				if (!dot.trim().isEmpty()) {
-					DotImport dotImport = new DotImport(dot);
-					if (dotImport.getErrors().size() > 0) {
+					try {
+						setGraph(new DotImport().importDot(dot));
+					} catch (Exception e) {
 						String message = String.format(
 								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
-								dotImport.getErrors(), dot);
+								e.getMessage(), dot);
 						DotActivator.getInstance().getLog()
 								.log(new Status(
 										Status.ERROR, DotActivator.getInstance()
@@ -264,7 +265,6 @@ public class DotGraphView extends ZestFxUiView {
 										message));
 						return;
 					}
-					setGraph(dotImport.toGraph());
 					resourceLabel.setText(
 							String.format(GRAPH_RESOURCE, file.getName())
 									+ (isNativeMode() ? " [native]" //$NON-NLS-1$

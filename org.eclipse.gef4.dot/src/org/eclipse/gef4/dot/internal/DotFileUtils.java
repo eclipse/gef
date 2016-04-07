@@ -31,7 +31,9 @@ import java.util.Scanner;
  * @author Fabian Steeg (fsteeg)
  */
 public final class DotFileUtils {
-	private DotFileUtils() {/* Enforce non-instantiability */
+
+	private DotFileUtils() {
+		/* Enforce non-instantiability */
 	}
 
 	/**

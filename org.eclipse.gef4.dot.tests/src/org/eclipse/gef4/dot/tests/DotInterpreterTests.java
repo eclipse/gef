@@ -12,13 +12,16 @@ package org.eclipse.gef4.dot.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.DotInterpreter;
+import org.eclipse.gef4.dot.internal.parser.DotStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dot.DotAst;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotParser;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -26,12 +29,19 @@ import org.eclipse.gef4.graph.Node;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.inject.Injector;
+
 /**
  * Tests for dynamic import of DOT to a Zest graph instance.
  * 
  * @author Fabian Steeg (fsteeg)
  */
 public final class DotInterpreterTests {
+
+	private static final Injector dotInjector = new DotStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+	private static final DotParser dotParser = dotInjector
+			.getInstance(DotParser.class);
 
 	private final DotInterpreter interpreter = new DotInterpreter();
 
@@ -313,7 +323,7 @@ public final class DotInterpreterTests {
 
 	@Test
 	public void multiEdgeStatements() {
-		Graph graph = new DotImport("digraph{1->2->3->4}").toGraph(); //$NON-NLS-1$
+		Graph graph = new DotImport().importDot("digraph{1->2->3->4}"); //$NON-NLS-1$
 		assertEquals(4, graph.getNodes().size());
 		assertEquals(3, graph.getEdges().size());
 		/* Each node should be connected to one other, the previous node: */
@@ -335,8 +345,7 @@ public final class DotInterpreterTests {
 	@Test
 	/* see http://www.graphviz.org/doc/info/attrs.html#d:style */
 	public void edgeStyleInvis() {
-		Graph graph = new DotImport("digraph{1->2[style=invis]}") //$NON-NLS-1$
-				.toGraph();
+		Graph graph = new DotImport().importDot("digraph{1->2[style=invis]}");
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getEdges().size());
 	}
@@ -347,6 +356,7 @@ public final class DotInterpreterTests {
 	}
 
 	private DotAst parse(String dot) {
-		return (DotAst) new DotImport(dot).dotGraph().eContainer();
+		return (DotAst) dotParser.parse(new StringReader(dot))
+				.getRootASTElement();
 	}
 }

@@ -49,17 +49,17 @@ public class DotExportTests {
 		 * The DotExport class wraps the simple DotTemplate class, so when we
 		 * test DotExport, we also run the test in the test superclass:
 		 */
-		String dot = new DotExport().export(graph);
+		String dot = new DotExport().exportDot(graph);
 		String fileContents = DotFileUtils
 				.read(new File(RESOURCES_TESTS + fileName));
 		assertEquals(dot, fileContents);
 
 		/* DotExport adds stripping of blank lines and file output: */
 		DotExport dotExport = new DotExport();
-		String dotString = dotExport.export(graph);
+		String dotString = dotExport.exportDot(graph);
 		assertNoBlankLines(dotString);
 
-		dotExport.export(graph, new File(OUTPUT, fileName).getPath());
+		dotExport.exportDot(graph, new File(OUTPUT, fileName).getPath());
 		Assert.assertTrue(
 				"Generated file " + new File(OUTPUT, fileName).getName() //$NON-NLS-1$
 						+ " must exist!",
@@ -97,19 +97,19 @@ public class DotExportTests {
 		graph.attr(DotAttributes._NAME__GNE, "LayoutMapping")
 				.attr(DotAttributes._TYPE__G, DotAttributes._TYPE__G__DIGRAPH)
 				.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__DOT);
-		assertTrue("'dot'", new DotExport().export(graph.build())
+		assertTrue("'dot'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"dot\""));
 		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__TWOPI);
-		assertTrue("'twopi'", new DotExport().export(graph.build())
+		assertTrue("'twopi'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"twopi\""));
 		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__OSAGE);
-		assertTrue("'osage'", new DotExport().export(graph.build())
+		assertTrue("'osage'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"osage\""));
 		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__FDP);
-		assertTrue("'fdp'", new DotExport().export(graph.build())
+		assertTrue("'fdp'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"fdp\""));
 		graph.attr(DotAttributes.LAYOUT__G, DotAttributes.LAYOUT__G__SFDP);
-		assertTrue("'sfdp'", new DotExport().export(graph.build())
+		assertTrue("'sfdp'", new DotExport().exportDot(graph.build())
 				.contains("layout=\"sfdp\""));
 	}
 

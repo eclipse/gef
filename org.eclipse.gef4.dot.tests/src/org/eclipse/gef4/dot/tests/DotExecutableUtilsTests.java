@@ -105,7 +105,7 @@ public class DotExecutableUtilsTests {
 		 * test DotExport, we also run the test in the test superclass:
 		 */
 		if (dotExecutablePath != null) {
-			File dotFile = DotFileUtils.write(new DotExport().export(graph));
+			File dotFile = DotFileUtils.write(new DotExport().exportDot(graph));
 			File image = DotExecutableUtils.renderImage(
 					new File(dotExecutablePath), dotFile, "pdf", null); //$NON-NLS-1$
 			Assert.assertNotNull("Image must not be null", image); //$NON-NLS-1$

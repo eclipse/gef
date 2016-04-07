@@ -30,7 +30,7 @@ public final class DotExportExample {
 				.build();
 
 		/* Export the graph to a DOT string or a DOT file: */
-		System.out.println(new DotExport().export(graph));
+		System.out.println(new DotExport().exportDot(graph));
 	}
 
 }
