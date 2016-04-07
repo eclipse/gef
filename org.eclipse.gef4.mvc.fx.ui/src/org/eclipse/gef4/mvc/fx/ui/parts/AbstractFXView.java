@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.swt.canvas.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -180,15 +181,6 @@ public abstract class AbstractFXView extends ViewPart {
 	}
 
 	/**
-	 * Returns the {@link FXDomain} that was previously injected.
-	 *
-	 * @return The {@link FXDomain} that was previously injected.
-	 */
-	protected FXDomain getDomain() {
-		return domain;
-	}
-
-	/**
 	 * Returns the {@link FXViewer} of the {@link FXDomain} that was previously
 	 * injected.
 	 *
@@ -196,7 +188,16 @@ public abstract class AbstractFXView extends ViewPart {
 	 *         injected.
 	 */
 	protected FXViewer getViewer() {
-		return domain.getAdapter(FXViewer.class);
+		return domain.getAdapter(AdapterKey.get(FXViewer.class));
+	}
+
+	/**
+	 * Returns the {@link FXDomain} that was previously injected.
+	 *
+	 * @return The {@link FXDomain} that was previously injected.
+	 */
+	protected FXDomain getDomain() {
+		return domain;
 	}
 
 	/**

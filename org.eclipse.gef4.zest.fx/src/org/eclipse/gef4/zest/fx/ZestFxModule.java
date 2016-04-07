@@ -46,7 +46,6 @@ import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeHidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLabelHidingBehavior;
@@ -262,6 +261,12 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	@Override
+	protected void bindFXRootPartAsFXViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ZestFxRootPart.class)
+				.in(AdaptableScopes.typed(FXViewer.class));
+	}
+
+	@Override
 	protected void bindFXViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXViewerAdapters(adapterMapBinder);
 
@@ -319,12 +324,6 @@ public class ZestFxModule extends MvcFxModule {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).annotatedWith(Names.named(HoverBehavior.PART_FACTORIES_BINDING_NAME)).to(ZestFxHoverHandlePartFactory.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
-	}
-
-	@Override
-	protected void bindIRootPart() {
-		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
-		}).to(ZestFxRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	/**

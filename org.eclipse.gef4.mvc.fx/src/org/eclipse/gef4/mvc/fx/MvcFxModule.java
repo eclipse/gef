@@ -20,7 +20,6 @@ import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
@@ -63,7 +62,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
@@ -399,7 +397,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXRotateToolAsFXDomainAdapter(adapterMapBinder);
 		bindFXPinchSpreadToolAsFXDomainAdapter(adapterMapBinder);
 		bindFXScrollToolAsFXDomainAdapter(adapterMapBinder);
-		bindIViewerAsFXDomainAdapter(adapterMapBinder);
+		bindFXViewerAsFXDomainAdapter(adapterMapBinder);
 	}
 
 	/**
@@ -613,6 +611,24 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Adds a binding for {@link IRootPart}, parameterized by {@link Node}, to
+	 * the {@link AdapterMap} binder for {@link FXViewer}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindFXRootPartAsFXViewerAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
+	}
+
+	/**
 	 * Binds {@link FXRotateTool} to the {@link FXDomain} adaptable scope.
 	 */
 	protected void bindFXRotateTool() {
@@ -727,12 +743,30 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFXViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind root part
-		bindIRootPartAsFXViewerAdapter(adapterMapBinder);
+		bindFXRootPartAsFXViewerAdapter(adapterMapBinder);
 		// bind parameterized default viewer models (others are already bound in
 		// superclass)
 		bindFocusModelAsFXViewerAdapter(adapterMapBinder);
 		bindHoverModelAsFXViewerAdapter(adapterMapBinder);
 		bindSelectionModelAsFXViewerAdapter(adapterMapBinder);
+	}
+
+	/**
+	 * Adds a binding for {@link FXViewer} to the {@link AdapterMap} binder for
+	 * {@link FXDomain}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXDomain} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindFXViewerAsFXDomainAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXViewer.class);
 	}
 
 	/**
@@ -847,14 +881,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Binds {@link FXDomain} to {@link IDomain}, parameterized by {@link Node}.
-	 */
-	protected void bindIDomain() {
-		binder().bind(new TypeLiteral<IDomain<Node>>() {
-		}).to(FXDomain.class);
-	}
-
-	/**
 	 * Binds {@link FXDefaultHoverFeedbackPartFactory} (named
 	 * {@link HoverBehavior#PART_FACTORIES_BINDING_NAME}) and
 	 * {@link FXDefaultSelectionFeedbackPartFactory} (named
@@ -898,34 +924,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Binds {@link FXRootPart} to {@link IRootPart}, parameterized by
-	 * {@link Node}, in adaptable scope of {@link FXViewer}.
-	 */
-	protected void bindIRootPart() {
-		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
-		}).to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
-	}
-
-	/**
-	 * Adds a binding for {@link IRootPart}, parameterized by {@link Node}, to
-	 * the {@link AdapterMap} binder for {@link FXViewer}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindIRootPartAsFXViewerAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
-				});
-	}
-
-	/**
 	 * Binds {@link DefaultTargetPolicyResolver} to
 	 * {@link ITargetPolicyResolver} in adaptable scope of {@link FXViewer}.
 	 */
@@ -933,34 +931,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		binder().bind(ITargetPolicyResolver.class)
 				.to(DefaultTargetPolicyResolver.class)
 				.in(AdaptableScopes.typed(FXDomain.class));
-	}
-
-	/**
-	 * Binds {@link IViewer}, parameterized by {@link Node}, to {@link FXViewer}
-	 * .
-	 */
-	protected void bindIViewer() {
-		binder().bind(new TypeLiteral<IViewer<Node>>() {
-		}).to(FXViewer.class);
-	}
-
-	/**
-	 * Adds a binding for {@link IViewer}, parameterized by {@link Node}, to the
-	 * {@link AdapterMap} binder for {@link FXDomain}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXDomain} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindIViewerAsFXDomainAdapter(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<IViewer<Node>>() {
-				});
 	}
 
 	/**
@@ -1042,13 +1012,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindHoverModel();
 		bindSelectionModel();
 		bindFocusModel();
-
-		// bind root IRootPart<Node>, IViewer<Node> and IDomain<Node> to
-		// FXRootPart, FXViewer, and FXDomain
-		bindIDomain();
-		bindIViewer();
-
-		bindIRootPart();
 
 		// bind default target policy resolver for the tools
 		bindITargetPolicyResolver();

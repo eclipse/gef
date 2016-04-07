@@ -88,17 +88,16 @@ public class FXClickDragToolTests {
 			throws InterruptedException, InvocationTargetException, AWTException {
 		// create injector (adjust module bindings for test)
 		Injector injector = Guice.createInjector(new MvcFxModule() {
-			@Override
-			protected void bindIDomain() {
+			protected void bindDomain() {
 				// stub the domain to be able to keep track of opened execution
 				// transactions
-				binder().bind(new TypeLiteral<IDomain<Node>>() {
-				}).to(FXDomainDriver.class);
+				binder().bind(FXDomain.class).to(FXDomainDriver.class);
 			}
 
 			@Override
 			protected void configure() {
 				super.configure();
+				bindDomain();
 				// bind IContentPartFactory
 				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 				}).toInstance(new IContentPartFactory<Node>() {
