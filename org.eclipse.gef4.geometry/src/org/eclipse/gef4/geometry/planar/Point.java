@@ -132,7 +132,11 @@ public class Point implements Cloneable, Serializable {
 		cx += (points[points.length - 1].x + points[0].x) * a;
 		cy += (points[points.length - 1].y + points[0].y) * a;
 
-		return new Point(cx / (3 * sa), cy / (3 * sa));
+		if (sa == 0) {
+			return new Point(cx, cy);
+		} else {
+			return new Point(cx / (3 * sa), cy / (3 * sa));
+		}
 	}
 
 	/**
@@ -411,11 +415,11 @@ public class Point implements Cloneable, Serializable {
 	public Point(double x, double y) {
 		if (Double.isNaN(x)) {
 			throw new IllegalArgumentException(
-					"x coordinate has to be differen from NaN.");
+					"x coordinate has to be different from NaN.");
 		}
 		if (Double.isNaN(y)) {
 			throw new IllegalArgumentException(
-					"y coordinate has to be differen from NaN.");
+					"y coordinate has to be different from NaN.");
 		}
 		this.x = x;
 		this.y = y;
