@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.view;
 
@@ -21,13 +21,17 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.examples.logo.FXPaletteViewer;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -39,6 +43,9 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
+
+import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
 
 public class MvcLogoExampleView extends AbstractFXView {
 
@@ -95,7 +102,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
 				.with(new MvcLogoExampleUiModule())));
 		// set default contents (GEF logo)
-		getViewer().getAdapter(ContentModel.class).getContents()
+		FXViewer viewer = getViewer();
+		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
+		contentModel.getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
 	}
 
@@ -150,5 +159,24 @@ public class MvcLogoExampleView extends AbstractFXView {
 			return propertySheetPage;
 		}
 		return super.getAdapter(key);
+	}
+
+	protected FXViewer getPaletteViewer() {
+		return getDomain().getAdapter(AdapterKey.get(FXPaletteViewer.class,
+				MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
+	}
+
+	@Override
+	protected void hookViewers() {
+		// determine content root node
+		final FXViewer contentViewer = getViewer();
+		InfiniteCanvas contentRootNode = contentViewer.getCanvas();
+		// determine palette root node
+		final FXViewer paletteViewer = getPaletteViewer();
+		InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
+		// arrange both viewers in split pane
+		SplitPane splitPane = new SplitPane(contentRootNode, paletteRootNode);
+		// create scene and populate canvas
+		getCanvas().setScene(new Scene(splitPane));
 	}
 }

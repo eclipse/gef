@@ -79,6 +79,8 @@ import javafx.scene.Node;
 
 public class MvcLogoExampleModule extends MvcFxModule {
 
+	public static final String PALETTE_VIEWER_ROLE = "paletteViewer";
+
 	@Override
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -95,7 +97,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractRootPartAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.role("1"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXCreationMenuOnClickPolicy.class);
 		adapterMapBinder
 				.addBinding(AdapterKey
@@ -123,14 +125,21 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXCreateCurveHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("0"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXCreateCurveOnDragPolicy.class);
 	}
 
 	protected void bindFXDeleteHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("0"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXDeleteFirstAnchorageOnClickPolicy.class);
+	}
+
+	@Override
+	protected void bindFXDomainAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindFXDomainAdapters(adapterMapBinder);
+		bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
 	}
 
 	protected void bindFXGeometricCurvePartAdapters(
@@ -172,7 +181,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXBendConnectionPolicy.class);
 
 		// interaction policy to relocate on drag
-		adapterMapBinder.addBinding(AdapterKey.role("1"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTranslateSelectedOnDragPolicy.class);
 
 		// drag individual segments
@@ -191,7 +200,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXConnectionClickableAreaBehavior.class);
 
 		// clone on shift+click
-		adapterMapBinder.addBinding(AdapterKey.role("0"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXCloneOnClickPolicy.class);
 	}
 
@@ -268,9 +277,9 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXResizePolicy.class);
 
 		// relocate on drag (including anchored elements, which are linked)
-		adapterMapBinder.addBinding(AdapterKey.role("1"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXTranslateSelectedOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.role("2"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXRelocateLinkedOnDragPolicy.class);
 
 		// clone
@@ -282,7 +291,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(DynamicAnchorProvider.class);
 
 		// clone on shift+click
-		adapterMapBinder.addBinding(AdapterKey.role("1"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXCloneOnClickPolicy.class);
 
 		// normalize connected on drag
@@ -304,7 +313,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	 */
 	protected void bindFXPaletteViewerAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE))
 				.to(FXPaletteViewer.class);
 	}
 
@@ -317,14 +326,14 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindFXSquareSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// single selection: resize relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.role("0"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
 		// rotate on drag + control
-		adapterMapBinder.addBinding(AdapterKey.role("1"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXRotateSelectedOnHandleDragPolicy.class);
 
 		// multi selection: scale relocate on handle drag without modifier
-		adapterMapBinder.addBinding(AdapterKey.role("2"))
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXResizeTransformSelectedOnHandleDragPolicy.class);
 	}
 
@@ -351,8 +360,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		super.configure();
 
 		bindIContentPartFactory();
-		bindFXPaletteViewerAsFXDomainAdapter(
-				AdapterMaps.getAdapterMapBinder(binder(), FXDomain.class));
 
 		// contents
 		bindFXGeometricModelPartAdapters(AdapterMaps

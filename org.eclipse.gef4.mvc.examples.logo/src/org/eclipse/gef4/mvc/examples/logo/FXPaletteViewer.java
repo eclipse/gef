@@ -11,36 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo;
 
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.AbstractViewer;
-
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.scene.Node;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 
 /**
  *
  * @author mwienand
  *
  */
-public class FXPaletteViewer extends AbstractViewer<Node> {
-
-	@Override
-	public boolean isViewerFocused() {
-		return false;
-	}
-
-	@Override
-	public boolean isViewerVisual(Node node) {
-		return false;
-	}
-
-	@Override
-	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
-	}
-
-	@Override
-	public ReadOnlyBooleanProperty viewerFocusedProperty() {
-		return null;
-	}
+public class FXPaletteViewer extends FXViewer {
 
 }
