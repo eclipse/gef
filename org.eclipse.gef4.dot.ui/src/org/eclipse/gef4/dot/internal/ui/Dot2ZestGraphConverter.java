@@ -238,7 +238,7 @@ public class Dot2ZestGraphConverter extends GraphCopier
 						|| DotAttributes.SPLINES__G__FALSE.equals(splines)) {
 					// use polyline interpolator
 					// use straight router
-					// do not use control points TODO: verify
+					// do not use control points
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
 					ZestProperties.setRouter(zest, new StraightRouter());
@@ -246,7 +246,6 @@ public class Dot2ZestGraphConverter extends GraphCopier
 					// use polyline interpolator
 					// use straight router
 					// use control points (without start/end) TODO: verify
-					// without start/end
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
 					ZestProperties.setRouter(zest, new StraightRouter());
@@ -272,13 +271,13 @@ public class Dot2ZestGraphConverter extends GraphCopier
 				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {
 					// use polyline interpolator
 					// use orthogonal router
-					// use control points (without start/end) TODO: verify
-					// without start/end
+					// normalize control points for orthogonal lines
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
 					ZestProperties.setRouter(zest, new OrthogonalRouter());
-					ZestProperties.setControlPoints(zest, bSplineControlPoints
-							.subList(1, bSplineControlPoints.size() - 1));
+					ZestProperties.setControlPoints(zest,
+							computeZestOrthogonalControlPoints(
+									bSplineControlPoints));
 					// XXX: OrthogonalProjectionStrategy is set within EdgePart
 					// when an anchor is attached.
 				} else if (DotAttributes.SPLINES__G__COMPOUND.equals(splines)) {
@@ -324,6 +323,29 @@ public class Dot2ZestGraphConverter extends GraphCopier
 			}
 
 		}
+	}
+
+	private List<Point> computeZestOrthogonalControlPoints(
+			List<Point> bSplineControlPoints) {
+		// remove start and end point (both are present twice)
+		List<Point> subList = new ArrayList<>(bSplineControlPoints.subList(2,
+				bSplineControlPoints.size() - 2));
+		// normalize remaining points
+		for (int i = subList.size() - 1; i > 0; i--) {
+			Point p = subList.get(i);
+			Point q = subList.get(i - 1);
+			if (p.x == q.x) {
+				// remove p, keep q but adjust its y coordinate
+				subList.remove(i);
+				q.y = p.y / 2 + q.y / 2;
+			} else if (p.y == q.y) {
+				// remove p, keep q but adjust its x coordinate
+				subList.remove(i);
+				q.x = p.x / 2 + q.x / 2;
+			}
+		}
+		System.out.println("ortho: " + subList);
+		return subList;
 	}
 
 	private Shape computeZestDecoration(ArrowType arrowType, double arrowSize) {
