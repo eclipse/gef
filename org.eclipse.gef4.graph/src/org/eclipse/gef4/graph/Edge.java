@@ -131,16 +131,7 @@ public class Edge implements IAttributeStore {
 					: context.builder.findOrCreateNode(sourceNodeOrKey);
 			Node targetNode = targetNodeOrKey instanceof Node ? (Node) targetNodeOrKey
 					: context.builder.findOrCreateNode(targetNodeOrKey);
-
-			if (sourceNode == null) {
-				throw new IllegalArgumentException("Could not resolve source node (key='" + sourceNodeOrKey + "').");
-			}
-			if (targetNode == null) {
-				throw new IllegalArgumentException("Could not resolve target node (key='" + targetNodeOrKey + "').");
-			}
-
 			return new Edge(attrs, sourceNode, targetNode);
-
 		}
 
 		/**
