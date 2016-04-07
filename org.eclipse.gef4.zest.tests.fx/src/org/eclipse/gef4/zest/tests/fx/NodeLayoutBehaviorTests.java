@@ -112,7 +112,7 @@ public class NodeLayoutBehaviorTests {
 		LayoutProperties.setSize(nodeLayout, size);
 
 		// postLayout
-		Method method = NodeLayoutBehavior.class.getDeclaredMethod("adaptFromLayout", new Class[] {});
+		Method method = NodeLayoutBehavior.class.getDeclaredMethod("postLayout", new Class[] {});
 		method.setAccessible(true);
 		method.invoke(behavior, new Object[] {});
 
@@ -141,7 +141,7 @@ public class NodeLayoutBehaviorTests {
 		Group visual = behavior.getHost().getVisual();
 
 		// preLayout
-		Method method = NodeLayoutBehavior.class.getDeclaredMethod("provideToLayout", new Class[] {});
+		Method method = NodeLayoutBehavior.class.getDeclaredMethod("preLayout", new Class[] {});
 		method.setAccessible(true);
 		method.invoke(behavior, new Object[] {});
 
