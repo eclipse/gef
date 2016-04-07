@@ -37,6 +37,7 @@ import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.gef4.zest.fx.ui.parts.ZestFxUiView;
 import org.eclipse.jface.action.Action;
@@ -147,8 +148,9 @@ public class DotGraphView extends ZestFxUiView {
 	private File currentFile = null;
 	private Link resourceLabel = null;
 
-	// TODO: inject
-	private Dot2ZestGraphConverter converter = new Dot2ZestGraphConverter();
+	private Dot2ZestAttributesConverter dot2ZestAttributeCopier = new Dot2ZestAttributesConverter();
+	private GraphCopier dot2ZestGraphCopier = new GraphCopier(
+			dot2ZestAttributeCopier);
 
 	private IPropertyChangeListener preferenceChangeListener = new IPropertyChangeListener() {
 
@@ -279,9 +281,9 @@ public class DotGraphView extends ZestFxUiView {
 		// do no convert layout algorithm and rankdir in emulated mode, invert
 		// y-axis mode (as by default y-axis is interpreted inverse in dot)
 		boolean isNativeMode = isNativeMode();
-		converter.options().emulateLayout = !isNativeMode;
-		converter.options().invertYAxis = true;
-		super.setGraph(converter.copy(graph));
+		dot2ZestAttributeCopier.options().emulateLayout = !isNativeMode;
+		dot2ZestAttributeCopier.options().invertYAxis = true;
+		super.setGraph(dot2ZestGraphCopier.copy(graph));
 	}
 
 	private boolean toggle(Action action, boolean input) {

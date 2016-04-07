@@ -12,34 +12,22 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
-import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.common.attributes.IAttributeCopier;
+import org.eclipse.gef4.common.attributes.IAttributeStore;
 import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.point.PointFactory;
-import org.eclipse.gef4.dot.internal.ui.Dot2ZestGraphConverter.Options;
+import org.eclipse.gef4.dot.internal.ui.Dot2ZestAttributesConverter.Options;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 
 import javafx.geometry.Bounds;
 import javafx.scene.text.Text;
 
-public class Zest2DotGraphConverter extends GraphCopier
-		implements IAttributeCopier {
-
-	public Zest2DotGraphConverter() {
-		// TODO: this is not really nice; we have to overwrite
-		// transferAttributes()
-		// because we do not pass in an attribute transfer here. We should
-		// rather use an IAttributeCopier as a delegate or convert this class
-		// into an IAttributeCopier as a whole. -> we need to remove the need
-		// for overriding copyEdge before -> introdude invisibility.
-		super(null);
-	}
+public class Zest2DotAttributesConverter implements IAttributeCopier {
 
 	private Options options;
 
@@ -116,12 +104,6 @@ public class Zest2DotGraphConverter extends GraphCopier
 							- labelSize.getHeight() / 2));
 			DotAttributes.setXlpParsed(dot, dotXlp);
 		}
-	}
-
-	@Override
-	protected void copyAttributes(IAttributeStore inputStore,
-			IAttributeStore outputStore) {
-		copy(inputStore, outputStore);
 	}
 
 	@Override

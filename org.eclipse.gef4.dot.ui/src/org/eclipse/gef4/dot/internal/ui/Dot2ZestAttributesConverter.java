@@ -32,7 +32,6 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.ILayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
@@ -53,18 +52,7 @@ import javafx.scene.text.Text;
  * @author anyssen
  *
  */
-public class Dot2ZestGraphConverter extends GraphCopier
-		implements IAttributeCopier {
-
-	public Dot2ZestGraphConverter() {
-		// TODO: this is not really nice; we have to overwrite
-		// transferAttributes()
-		// because we do not pass in an attribute transfer here. We should
-		// rather use an IAttributeCopier as a delegate or convert this class
-		// into an IAttributeCopier as a whole. -> we need to remove the need
-		// for overriding copyEdge before -> introdude invisibility.
-		super(null);
-	}
+public class Dot2ZestAttributesConverter implements IAttributeCopier {
 
 	public final static class Options {
 
@@ -91,12 +79,6 @@ public class Dot2ZestGraphConverter extends GraphCopier
 		 * it is to be transformed without inversion.
 		 */
 		public boolean invertYAxis = true;
-	}
-
-	@Override
-	protected void copyAttributes(IAttributeStore inputStore,
-			IAttributeStore outputStore) {
-		copy(inputStore, outputStore);
 	}
 
 	@Override
@@ -259,8 +241,22 @@ public class Dot2ZestGraphConverter extends GraphCopier
 					ZestProperties.setRouter(zest, new StraightRouter());
 					ZestProperties.setControlPoints(zest, bSplineControlPoints
 							.subList(1, bSplineControlPoints.size() - 1));
-				} else if (DotAttributes.SPLINES__G__SPLINE.equals(splines)
-						|| DotAttributes.SPLINES__G__TRUE.equals(splines)) {
+				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {
+					// use polyline interpolator
+					// use orthogonal router
+					// normalize control points for orthogonal lines
+					ZestProperties.setInterpolator(zest,
+							new PolylineInterpolator());
+					ZestProperties.setRouter(zest, new OrthogonalRouter());
+					ZestProperties.setControlPoints(zest,
+							computeZestOrthogonalControlPoints(
+									bSplineControlPoints));
+					// XXX: OrthogonalProjectionStrategy is set within EdgePart
+					// when an anchor is attached.
+				} else if (DotAttributes.SPLINES__G__COMPOUND.equals(splines)) {
+					// TODO
+				} else {
+					// splines = spline, true and unset
 					// use dot bspline interpolator
 					// use dot bspline router
 					// use control points (without start/end)
@@ -276,22 +272,7 @@ public class Dot2ZestGraphConverter extends GraphCopier
 					// anchor, so we need to remove them as control points
 					ZestProperties.setControlPoints(zest, bSplineControlPoints
 							.subList(1, bSplineControlPoints.size() - 1));
-				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {
-					// use polyline interpolator
-					// use orthogonal router
-					// normalize control points for orthogonal lines
-					ZestProperties.setInterpolator(zest,
-							new PolylineInterpolator());
-					ZestProperties.setRouter(zest, new OrthogonalRouter());
-					ZestProperties.setControlPoints(zest,
-							computeZestOrthogonalControlPoints(
-									bSplineControlPoints));
-					// XXX: OrthogonalProjectionStrategy is set within EdgePart
-					// when an anchor is attached.
-				} else if (DotAttributes.SPLINES__G__COMPOUND.equals(splines)) {
-					// TODO
 				}
-				// XXX: spline types none and empty are already covered above
 			}
 
 			// label position (lp)
