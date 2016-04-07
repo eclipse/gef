@@ -59,6 +59,21 @@ public class ZestProperties {
 	public static final Boolean ELEMENT_LAYOUT_IRRELEVANT_DEFAULT = false;
 
 	/**
+	 * This attribute determines if the corresponding element is invisible.
+	 *
+	 * @see #getInvisible(Edge, Boolean)
+	 * @see #getInvisible(Node, Boolean)
+	 * @see #setInvisible(Edge, Boolean)
+	 * @see #setInvisible(Node, Boolean)
+	 */
+	public static final String ELEMENT_INVISIBLE = "invisible";
+
+	/**
+	 * The default value for the {@link #ELEMENT_INVISIBLE} attribute.
+	 */
+	public static final Boolean ELEMENT_INVISIBLE_DEFAULT = false;
+
+	/**
 	 * This attribute determines the CSS class for an element (node/edge). This
 	 * attribute does not have a default value.
 	 *
@@ -504,6 +519,52 @@ public class ZestProperties {
 	 */
 	public static IConnectionInterpolator getInterpolator(Edge edge) {
 		return (IConnectionInterpolator) edge.attributesProperty().get(EDGE_INTERPOLATOR);
+	}
+
+	/**
+	 * Returns the value of the {@link #ELEMENT_INVISIBLE} attribute of the
+	 * given {@link Edge}. If the attribute is not set for the given
+	 * {@link Edge}, either the default attribute value is returned, or
+	 * <code>null</code>, depending on the <i>returnDefaultIfMissing</i> flag.
+	 *
+	 * @param edge
+	 *            The {@link Edge} of which the {@link #ELEMENT_INVISIBLE}
+	 *            attribute value is determined.
+	 * @param returnDefaultIfMissing
+	 *            <code>true</code> to indicate that the default attribute value
+	 *            should be returned if the attribute is not set for the given
+	 *            {@link Edge}, otherwise <code>false</code>.
+	 * @return The value of the {@link #ELEMENT_INVISIBLE} attribute of the
+	 *         given {@link Edge}.
+	 */
+	public static Boolean getInvisible(Edge edge, Boolean returnDefaultIfMissing) {
+		if (edge.getAttributes().containsKey(ELEMENT_INVISIBLE)) {
+			return (Boolean) edge.getAttributes().get(ELEMENT_INVISIBLE);
+		}
+		return returnDefaultIfMissing ? ELEMENT_INVISIBLE_DEFAULT : null;
+	}
+
+	/**
+	 * Returns the value of the {@link #ELEMENT_INVISIBLE} attribute of the
+	 * given {@link Node}. If the attribute is not set for the given
+	 * {@link Node}, either the default attribute value is returned, or
+	 * <code>null</code>, depending on the <i>returnDefaultIfMissing</i> flag.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the {@link #ELEMENT_INVISIBLE}
+	 *            attribute value is determined.
+	 * @param returnDefaultIfMissing
+	 *            <code>true</code> to indicate that the default attribute value
+	 *            should be returned if the attribute is not set for the given
+	 *            {@link Node}, otherwise <code>false</code>.
+	 * @return The value of the {@link #ELEMENT_INVISIBLE} attribute of the
+	 *         given {@link Node}.
+	 */
+	public static Boolean getInvisible(Node node, Boolean returnDefaultIfMissing) {
+		if (node.getAttributes().containsKey(ELEMENT_INVISIBLE)) {
+			return (Boolean) node.getAttributes().get(ELEMENT_INVISIBLE);
+		}
+		return returnDefaultIfMissing ? ELEMENT_INVISIBLE_DEFAULT : null;
 	}
 
 	/**
@@ -1082,6 +1143,36 @@ public class ZestProperties {
 	 */
 	public static void setInterpolator(Edge edge, IConnectionInterpolator interpolator) {
 		edge.attributesProperty().put(EDGE_INTERPOLATOR, interpolator);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_INVISIBLE} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} for which to set the
+	 *            {@link #ELEMENT_INVISIBLE} attribute.
+	 * @param invisible
+	 *            The new value for the {@link #ELEMENT_INVISIBLE} attribute of
+	 *            the given {@link Edge}.
+	 */
+	public static void setInvisible(Edge edge, Boolean invisible) {
+		edge.getAttributes().put(ELEMENT_INVISIBLE, invisible);
+	}
+
+	/**
+	 * Sets the value of the {@link #ELEMENT_INVISIBLE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to set the
+	 *            {@link #ELEMENT_INVISIBLE} attribute.
+	 * @param invisible
+	 *            The new value for the {@link #ELEMENT_INVISIBLE} attribute of
+	 *            the given {@link Node}.
+	 */
+	public static void setInvisible(Node node, Boolean invisible) {
+		node.getAttributes().put(ELEMENT_INVISIBLE, invisible);
 	}
 
 	/**

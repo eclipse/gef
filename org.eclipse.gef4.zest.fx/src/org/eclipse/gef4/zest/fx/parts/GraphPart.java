@@ -28,6 +28,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Pair;
@@ -101,14 +102,35 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected List<? extends Object> doGetContentChildren() {
 		List<Object> children = new ArrayList<>();
-		children.addAll(getContent().getNodes());
-		for (org.eclipse.gef4.graph.Node n : getContent().getNodes()) {
+		// collect visible nodes
+		ObservableList<org.eclipse.gef4.graph.Node> nodes = getContent().getNodes();
+		ArrayList<org.eclipse.gef4.graph.Node> visibleNodes = new ArrayList<>();
+		for (org.eclipse.gef4.graph.Node n : nodes) {
+			if (!ZestProperties.getInvisible(n, true)) {
+				visibleNodes.add(n);
+			}
+		}
+		// add visible nodes
+		children.addAll(visibleNodes);
+		// add labels for visible nodes
+		for (org.eclipse.gef4.graph.Node n : visibleNodes) {
 			if (ZestProperties.getExternalLabel(n) != null) {
 				children.add(new Pair<>(n, ZestProperties.ELEMENT_EXTERNAL_LABEL));
 			}
 		}
-		children.addAll(getContent().getEdges());
-		for (Edge e : getContent().getEdges()) {
+		// collect visible edges
+		ObservableList<Edge> edges = getContent().getEdges();
+		ArrayList<Edge> visibleEdges = new ArrayList<>();
+		for (Edge e : edges) {
+			if (!ZestProperties.getInvisible(e, true) && !ZestProperties.getInvisible(e.getSource(), true)
+					&& !ZestProperties.getInvisible(e.getTarget(), true)) {
+				visibleEdges.add(e);
+			}
+		}
+		// add visible edges
+		children.addAll(edges);
+		// add labels for visible edges
+		for (Edge e : visibleEdges) {
 			if (ZestProperties.getLabel(e) != null) {
 				children.add(new Pair<>(e, ZestProperties.ELEMENT_LABEL));
 			}
