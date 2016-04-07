@@ -337,6 +337,15 @@ public class Line extends BezierCurve {
 
 	@Override
 	public Point getProjection(Point p) {
+		// XXX: If this line is degenerated to a point (i.e. start equals end
+		// point) then we can return the start or end point as the projection.
+		// The default computation (see below) cannot handle this case, as a
+		// straight needs to have a direction (which cannot be determined for a
+		// degenerated line).
+		if (getP1().equals(getP2())) {
+			return getP1();
+		}
+
 		Straight s = new Straight(this);
 		Point projected = s.getProjection(new Vector(p)).toPoint();
 		// XXX: We can use our bounds to do a simple containment test here, as
