@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.examples.logo;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
+import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
@@ -34,6 +35,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClick
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXConnectionClickableAreaBehavior;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFocusFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHoverFeedbackPartFactory;
@@ -67,6 +69,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
+import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
@@ -287,6 +290,24 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(FXNormalizeConnectedOnDrag.class);
 	}
 
+	/**
+	 * Adds a binding for {@link FXPaletteViewer} to the {@link AdapterMap}
+	 * binder for {@link FXDomain}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXDomain} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindFXPaletteViewerAsFXDomainAdapter(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+				.to(FXPaletteViewer.class);
+	}
+
 	protected void bindFXRectangleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
@@ -330,6 +351,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		super.configure();
 
 		bindIContentPartFactory();
+		bindFXPaletteViewerAsFXDomainAdapter(
+				AdapterMaps.getAdapterMapBinder(binder(), FXDomain.class));
 
 		// contents
 		bindFXGeometricModelPartAdapters(AdapterMaps
