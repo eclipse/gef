@@ -273,7 +273,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// determine drag policies
 					List<? extends IFXOnDragPolicy> policies = null;
-					if (viewer != null) {
+					if (activeViewer != null) {
 						// XXX: A click policy could have changed the visual
 						// hierarchy so that the viewer cannot be determined for
 						// the target node anymore. If that is the case, no drag
