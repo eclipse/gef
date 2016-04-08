@@ -139,7 +139,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXDomainAdapters(adapterMapBinder);
-		bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
+		// bindFXPaletteViewerAsFXDomainAdapter(adapterMapBinder);
 	}
 
 	protected void bindFXGeometricCurvePartAdapters(

@@ -44,7 +44,6 @@ import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
 import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
 
 public class MvcLogoExampleView extends AbstractFXView {
 
@@ -92,7 +91,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		}
 	}
 
-	private static final String SPLIT_PANE_STYLE = "-fx-background-color: white;";
+	// private static final String SPLIT_PANE_STYLE = "-fx-background-color:
+	// white;";
 
 	private UndoablePropertySheetEntry rootEntry;
 
@@ -107,12 +107,12 @@ public class MvcLogoExampleView extends AbstractFXView {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
 		contentModel.getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
-		// set palette contents
-		FXViewer paletteViewer = getPaletteViewer();
-		ContentModel paletteContentModel = paletteViewer
-				.getAdapter(ContentModel.class);
-		paletteContentModel.getContents()
-				.setAll(MvcLogoExample.createPaletteContents());
+		// // set palette contents
+		// FXViewer paletteViewer = getPaletteViewer();
+		// ContentModel paletteContentModel = paletteViewer
+		// .getAdapter(ContentModel.class);
+		// paletteContentModel.getContents()
+		// .setAll(MvcLogoExample.createPaletteContents());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -178,19 +178,20 @@ public class MvcLogoExampleView extends AbstractFXView {
 		// determine content root node
 		final FXViewer contentViewer = getViewer();
 		InfiniteCanvas contentRootNode = contentViewer.getCanvas();
-		// determine palette root node
-		final FXViewer paletteViewer = getPaletteViewer();
-		InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
-		// arrange both viewers in split pane
-		SplitPane splitPane = new SplitPane();
-		splitPane.getItems().addAll(contentRootNode, paletteRootNode);
-		// fix palette width
-		SplitPane.setResizableWithParent(paletteRootNode, false);
-		paletteRootNode.setPrefWidth(145);
-		// make splitpane background white
-		splitPane.setStyle(SPLIT_PANE_STYLE);
-		// create scene and populate canvas
-		getCanvas().setScene(new Scene(splitPane));
+		getCanvas().setScene(new Scene(contentRootNode));
+		// // determine palette root node
+		// final FXViewer paletteViewer = getPaletteViewer();
+		// InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
+		// // arrange both viewers in split pane
+		// SplitPane splitPane = new SplitPane();
+		// splitPane.getItems().addAll(contentRootNode, paletteRootNode);
+		// // fix palette width
+		// SplitPane.setResizableWithParent(paletteRootNode, false);
+		// paletteRootNode.setPrefWidth(145);
+		// // make splitpane background white
+		// splitPane.setStyle(SPLIT_PANE_STYLE);
+		// // create scene and populate canvas
+		// getCanvas().setScene(new Scene(splitPane));
 	}
 
 }
