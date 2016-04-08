@@ -17,7 +17,6 @@ import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
-import org.eclipse.gef4.mvc.examples.logo.palette.FXPaletteViewer;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHoverHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
@@ -315,7 +314,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	protected void bindFXPaletteViewerAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role(PALETTE_VIEWER_ROLE))
-				.to(FXPaletteViewer.class);
+				.to(FXViewer.class);
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(

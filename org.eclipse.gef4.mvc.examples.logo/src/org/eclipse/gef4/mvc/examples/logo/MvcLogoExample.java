@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.gef4.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.examples.logo.palette.PaletteModel;
+import org.eclipse.gef4.mvc.examples.logo.model.PaletteModel;
 
 import com.google.inject.Module;
 

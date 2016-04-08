@@ -27,7 +27,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.examples.logo.palette.FXPaletteViewer;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
@@ -170,7 +169,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 	}
 
 	protected FXViewer getPaletteViewer() {
-		return getDomain().getAdapter(AdapterKey.get(FXPaletteViewer.class,
+		return getDomain().getAdapter(AdapterKey.get(FXViewer.class,
 				MvcLogoExampleModule.PALETTE_VIEWER_ROLE));
 	}
 

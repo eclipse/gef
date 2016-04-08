@@ -9,17 +9,13 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.examples.logo.palette;
+package org.eclipse.gef4.mvc.examples.logo.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 
 import javafx.scene.paint.Color;
 
