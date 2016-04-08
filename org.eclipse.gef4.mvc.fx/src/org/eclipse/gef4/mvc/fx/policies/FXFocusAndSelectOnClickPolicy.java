@@ -126,8 +126,15 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 				IContentPart<Node, ? extends Node> primarySelection = selection
 						.get(0);
 				if (primarySelection.isFocusable()) {
-					changeFocusOperation = new ChangeFocusOperation<>(viewer,
-							primarySelection);
+					FocusModel<Node> focusModel = viewer
+							.getAdapter(new TypeToken<FocusModel<Node>>() {
+							});
+					if (focusModel.getFocus() == primarySelection) {
+						primarySelection.getVisual().requestFocus();
+					} else {
+						changeFocusOperation = new ChangeFocusOperation<>(
+								viewer, primarySelection);
+					}
 				}
 			}
 
@@ -146,8 +153,17 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXInteractionPolicy
 					|| isRegisteredForHost(e.getTarget())) {
 				// unset focus and clear selection
 				try {
-					viewer.getDomain()
-							.execute(new ChangeFocusOperation<>(viewer, null));
+					FocusModel<Node> focusModel = viewer
+							.getAdapter(new TypeToken<FocusModel<Node>>() {
+							});
+					if (focusModel.getFocus() == null) {
+						// no focus change needed, only update feedback
+						viewer.getRootPart().getVisual().requestFocus();
+					} else {
+						// change focus, will update feedback via behavior
+						viewer.getDomain().execute(
+								new ChangeFocusOperation<>(viewer, null));
+					}
 					viewer.getDomain().execute(new DeselectOperation<>(viewer,
 							selectionModel.getSelectionUnmodifiable()));
 				} catch (ExecutionException e1) {
