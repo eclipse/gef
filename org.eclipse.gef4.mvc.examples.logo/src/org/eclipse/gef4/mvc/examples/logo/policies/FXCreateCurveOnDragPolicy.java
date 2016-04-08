@@ -49,6 +49,8 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
 	private FXCircleSegmentHandlePart bendTargetPart;
+	private Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies;
+	private FXGeometricCurvePart curvePart;
 
 	@Override
 	public void drag(MouseEvent event, Dimension delta) {
@@ -57,10 +59,10 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		}
 
 		// forward drag events to bend target part
-		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
-				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
-		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-			dragPolicy.drag(event, delta);
+		if (dragPolicies != null) {
+			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+				dragPolicy.drag(event, delta);
+			}
 		}
 	}
 
@@ -71,11 +73,16 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		}
 
 		// forward event to bend target part
-		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
-				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
-		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-			dragPolicy.dragAborted();
+		if (dragPolicies != null) {
+			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+				dragPolicy.dragAborted();
+			}
 		}
+
+		restoreRefreshVisuals(curvePart);
+		curvePart = null;
+		bendTargetPart = null;
+		dragPolicies = null;
 	}
 
 	protected FXCircleSegmentHandlePart findBendTargetPart(
@@ -135,11 +142,13 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 				});
 		init(creationPolicy);
 
-		// build create operation
-		FXGeometricCurvePart curvePart = (FXGeometricCurvePart) creationPolicy
-				.create(curve, (FXGeometricModelPart) modelPart, HashMultimap
+		curvePart = (FXGeometricCurvePart) creationPolicy.create(curve,
+				(FXGeometricModelPart) modelPart, HashMultimap
 						.<IContentPart<Node, ? extends Node>, String> create());
 		commit(creationPolicy);
+
+		// disable refresh visuals for the curvePart
+		storeAndDisableRefreshVisuals(curvePart);
 
 		// move curve to pointer location
 		curvePart.getVisual().setEndPoint(getLocation(event));
@@ -163,12 +172,14 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 
 		// find bend target part
 		bendTargetPart = findBendTargetPart(curvePart, event.getTarget());
-
-		// forward event to bend target part
-		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
-				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
-		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-			dragPolicy.press(event);
+		if (bendTargetPart != null) {
+			dragPolicies = bendTargetPart
+					.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
+		}
+		if (dragPolicies != null) {
+			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+				dragPolicy.press(event);
+			}
 		}
 	}
 
@@ -179,11 +190,16 @@ public class FXCreateCurveOnDragPolicy extends AbstractFXInteractionPolicy
 		}
 
 		// forward event to bend target part
-		Map<AdapterKey<? extends IFXOnDragPolicy>, IFXOnDragPolicy> dragPolicies = bendTargetPart
-				.getAdapters(FXClickDragTool.ON_DRAG_POLICY_KEY);
-		for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
-			dragPolicy.release(e, delta);
+		if (dragPolicies != null) {
+			for (IFXOnDragPolicy dragPolicy : dragPolicies.values()) {
+				dragPolicy.release(e, delta);
+			}
 		}
+
+		restoreRefreshVisuals(curvePart);
+		curvePart = null;
+		bendTargetPart = null;
+		dragPolicies = null;
 	}
 
 	@Override
