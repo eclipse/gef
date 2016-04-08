@@ -70,19 +70,18 @@ public class RadialLayoutAlgorithm implements ILayoutAlgorithm {
 		layoutBounds.setWidth(bounds.getWidth());
 		for (int i = 0; i < entities.length; i++) {
 			Point location = LayoutProperties.getLocation(entities[i]);
-			double percenttheta = (location.x - layoutBounds.getX())
-					/ layoutBounds.getWidth();
-			double distance = (location.y - layoutBounds.getY())
-					/ layoutBounds.getHeight();
-			double theta = startDegree
-					+ Math.abs(endDegree - startDegree) * percenttheta;
-			location.x = distance * Math.cos(theta);
-			location.y = distance * Math.sin(theta);
-			if (Double.isNaN(location.x)) {
+			if (layoutBounds.getWidth() == 0 || layoutBounds.getHeight() == 0) {
 				location.x = 0;
-			}
-			if (Double.isNaN(location.y)) {
 				location.y = 0;
+			} else {
+				double percenttheta = (location.x - layoutBounds.getX())
+						/ layoutBounds.getWidth();
+				double distance = (location.y - layoutBounds.getY())
+						/ layoutBounds.getHeight();
+				double theta = startDegree
+						+ Math.abs(endDegree - startDegree) * percenttheta;
+				location.x = distance * Math.cos(theta);
+				location.y = distance * Math.sin(theta);
 			}
 			LayoutProperties.setLocation(entities[i], location);
 		}
