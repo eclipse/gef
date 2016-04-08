@@ -302,7 +302,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		if (adapters.isEmpty()) {
 			return Collections.emptyMap();
 		}
-		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<>();
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new TreeMap<>();
 		for (AdapterKey<?> k : adapters.keySet()) {
 			if (key.isAssignableFrom(k.getKey())) {
 				// check type compliance...
@@ -323,7 +323,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 			return Collections.emptyMap();
 		}
 
-		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<>();
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new TreeMap<>();
 		for (AdapterKey<?> k : adapters.keySet()) {
 			if (role == null || k.getRole().equals(role)) {
 				// return all adapters assignable to the given type
