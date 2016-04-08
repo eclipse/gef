@@ -17,6 +17,7 @@ import java.util.Map;
 import com.google.common.reflect.TypeToken;
 
 import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableMap;
 
 /**
@@ -60,6 +61,14 @@ public interface IAdaptable {
 	 *            to.
 	 */
 	public static interface Bound<A extends IAdaptable> {
+
+		/**
+		 * A read-only object property providing the {@link IAdaptable} this
+		 * {@link IAdaptable.Bound} is bound to.
+		 *
+		 * @return A read-only object property.
+		 */
+		public ReadOnlyObjectProperty<A> adaptableProperty();
 
 		/**
 		 * Returns the {@link IAdaptable} this {@link IAdaptable.Bound} is

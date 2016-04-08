@@ -11,10 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-
-import com.google.inject.Provider;
 
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -28,10 +26,9 @@ import javafx.scene.transform.Affine;
  * @author mwienand
  *
  */
-public class FXTransformProvider implements
-		IAdaptable.Bound<IVisualPart<Node, ? extends Node>>, Provider<Affine> {
+public class FXTransformProvider extends
+		AbstractBoundProvider<Affine, IVisualPart<Node, ? extends Node>> {
 
-	private IVisualPart<Node, ? extends Node> host;
 	private Affine affine = null;
 
 	/**
@@ -44,19 +41,9 @@ public class FXTransformProvider implements
 	public Affine get() {
 		if (affine == null) {
 			affine = new Affine();
-			host.getVisual().getTransforms().add(affine);
+			getAdaptable().getVisual().getTransforms().add(affine);
 		}
 		return affine;
-	}
-
-	@Override
-	public IVisualPart<Node, ? extends Node> getAdaptable() {
-		return host;
-	}
-
-	@Override
-	public void setAdaptable(IVisualPart<Node, ? extends Node> adaptable) {
-		host = adaptable;
 	}
 
 }

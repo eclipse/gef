@@ -11,12 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-
-import com.google.inject.Provider;
 
 import javafx.scene.Node;
 
@@ -27,10 +25,9 @@ import javafx.scene.Node;
  * @author anyssen
  *
  */
-public class DynamicAnchorProvider implements Provider<IAnchor>,
-		IAdaptable.Bound<IVisualPart<Node, ? extends Node>> {
+public class DynamicAnchorProvider extends
+		AbstractBoundProvider<IAnchor, IVisualPart<Node, ? extends Node>> {
 
-	private IVisualPart<Node, ? extends Node> visualPart;
 	private IAnchor anchor;
 
 	@Override
@@ -41,13 +38,4 @@ public class DynamicAnchorProvider implements Provider<IAnchor>,
 		return anchor;
 	}
 
-	@Override
-	public IVisualPart<Node, ? extends Node> getAdaptable() {
-		return visualPart;
-	}
-
-	@Override
-	public void setAdaptable(IVisualPart<Node, ? extends Node> adaptable) {
-		this.visualPart = adaptable;
-	}
 }

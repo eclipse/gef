@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -31,11 +31,8 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class ShapeBoundsProvider
-		implements IAdaptable.Bound<IVisualPart<Node, ? extends Node>>,
-		Provider<IGeometry> {
-
-	private IVisualPart<Node, ? extends Node> host;
+public class ShapeBoundsProvider extends
+		AbstractBoundProvider<IGeometry, IVisualPart<Node, ? extends Node>> {
 
 	private double leftPadding;
 	private double topPadding;
@@ -81,19 +78,10 @@ public class ShapeBoundsProvider
 
 	@Override
 	public Rectangle get() {
-		return FX2Geometry.toRectangle(host.getVisual().getLayoutBounds())
+		return FX2Geometry
+				.toRectangle(getAdaptable().getVisual().getLayoutBounds())
 				.getExpanded(leftPadding, topPadding, rightPadding,
 						bottomPadding);
-	}
-
-	@Override
-	public IVisualPart<Node, ? extends Node> getAdaptable() {
-		return host;
-	}
-
-	@Override
-	public void setAdaptable(IVisualPart<Node, ? extends Node> adaptable) {
-		this.host = adaptable;
 	}
 
 }

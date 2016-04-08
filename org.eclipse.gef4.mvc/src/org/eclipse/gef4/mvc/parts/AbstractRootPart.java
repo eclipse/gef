@@ -21,6 +21,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+
 /**
  * The abstract base implementation of {@link IRootPart}, intended to be
  * sub-classed by clients to create their own custom {@link IRootPart}.
@@ -37,7 +40,7 @@ import com.google.common.reflect.TypeToken;
 public abstract class AbstractRootPart<VR, V extends VR>
 		extends AbstractVisualPart<VR, V> implements IRootPart<VR, V> {
 
-	private IViewer<VR> viewer;
+	private ReadOnlyObjectWrapper<IViewer<VR>> viewerProperty = new ReadOnlyObjectWrapper<>();
 
 	@Override
 	protected void activateChildren() {
@@ -52,6 +55,11 @@ public abstract class AbstractRootPart<VR, V extends VR>
 				child.activate();
 			}
 		}
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<IViewer<VR>> adaptableProperty() {
+		return viewerProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -91,19 +99,22 @@ public abstract class AbstractRootPart<VR, V extends VR>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<VR, ? extends VR>> getContentPartChildren() {
-		return PartUtils.filterParts(getChildrenUnmodifiable(), IContentPart.class);
+		return PartUtils.filterParts(getChildrenUnmodifiable(),
+				IContentPart.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IFeedbackPart<VR, ? extends VR>> getFeedbackPartChildren() {
-		return PartUtils.filterParts(getChildrenUnmodifiable(), IFeedbackPart.class);
+		return PartUtils.filterParts(getChildrenUnmodifiable(),
+				IFeedbackPart.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IHandlePart<VR, ? extends VR>> getHandlePartChildren() {
-		return PartUtils.filterParts(getChildrenUnmodifiable(), IHandlePart.class);
+		return PartUtils.filterParts(getChildrenUnmodifiable(),
+				IHandlePart.class);
 	}
 
 	@Override
@@ -113,16 +124,16 @@ public abstract class AbstractRootPart<VR, V extends VR>
 
 	@Override
 	public IViewer<VR> getViewer() {
-		return viewer;
+		return viewerProperty.get();
 	}
 
 	@Override
 	public void setAdaptable(IViewer<VR> viewer) {
-		IViewer<VR> oldViewer = this.viewer;
+		IViewer<VR> oldViewer = viewerProperty.get();
 		if (oldViewer != null && viewer != oldViewer) {
 			unregister(oldViewer);
 		}
-		this.viewer = viewer;
+		viewerProperty.set(viewer);
 		if (viewer != null && viewer != oldViewer) {
 			register(viewer);
 		}

@@ -33,6 +33,8 @@ import com.google.common.reflect.TypeToken;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableMap;
 
 /**
@@ -52,7 +54,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new IdentityHashMap<>();
 	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<>();
 
-	private IDomain<VR> domain;
+	private ReadOnlyObjectWrapper<IDomain<VR>> domainProperty = new ReadOnlyObjectWrapper<>();
 
 	/**
 	 * Creates a new {@link AbstractViewer} instance, setting the
@@ -68,7 +70,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public void activate() {
 		if (!acs.isActive()) {
-			if (domain == null) {
+			if (getDomain() == null) {
 				throw new IllegalStateException(
 						"Domain has to be set before activation.");
 			}
@@ -82,6 +84,11 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	}
 
 	@Override
+	public ReadOnlyObjectProperty<IDomain<VR>> adaptableProperty() {
+		return domainProperty.getReadOnlyProperty();
+	}
+
+	@Override
 	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
 		return ads.adaptersProperty();
 	}
@@ -89,7 +96,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public void deactivate() {
 		if (acs.isActive()) {
-			if (domain == null) {
+			if (getDomain() == null) {
 				throw new IllegalStateException(
 						"Domain may not be unset before deactivation is completed.");
 			}
@@ -108,7 +115,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 	@Override
 	public IDomain<VR> getAdaptable() {
-		return domain;
+		return domainProperty.get();
 	}
 
 	@Override
@@ -161,7 +168,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 */
 	@Override
 	public IDomain<VR> getDomain() {
-		return domain;
+		return domainProperty.get();
 	}
 
 	@SuppressWarnings("serial")
@@ -187,10 +194,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 	@Override
 	public void setAdaptable(IDomain<VR> domain) {
-		if (this.domain == domain) {
-			return;
-		}
-		this.domain = domain;
+		domainProperty.set(domain);
 	}
 
 	@Override

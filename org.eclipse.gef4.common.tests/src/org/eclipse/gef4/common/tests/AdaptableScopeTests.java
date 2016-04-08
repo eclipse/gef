@@ -26,6 +26,9 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+
 public class AdaptableScopeTests {
 
 	// an adapter for an adapter store
@@ -35,16 +38,21 @@ public class AdaptableScopeTests {
 		@Inject
 		protected InjectionTarget fieldTarget;
 
-		private AdapterStore adaptable;
+		private ReadOnlyObjectWrapper<AdapterStore> adaptableProperty = new ReadOnlyObjectWrapper<>();
+
+		@Override
+		public ReadOnlyObjectProperty<AdapterStore> adaptableProperty() {
+			return adaptableProperty.getReadOnlyProperty();
+		}
 
 		@Override
 		public AdapterStore getAdaptable() {
-			return adaptable;
+			return adaptableProperty.get();
 		}
 
 		@Override
 		public void setAdaptable(AdapterStore adaptable) {
-			this.adaptable = adaptable;
+			this.adaptableProperty.set(adaptable);
 		}
 
 	}
@@ -61,20 +69,25 @@ public class AdaptableScopeTests {
 		@Inject
 		protected InjectionTarget fieldTarget;
 
-		private AdapterStore adaptable;
+		private ReadOnlyObjectWrapper<AdapterStore> adaptableProperty = new ReadOnlyObjectWrapper<>();
 
 		public ScopingAdapterStore() {
 			AdaptableScopes.enter(this);
 		}
 
 		@Override
+		public ReadOnlyObjectProperty<AdapterStore> adaptableProperty() {
+			return adaptableProperty.getReadOnlyProperty();
+		}
+
+		@Override
 		public AdapterStore getAdaptable() {
-			return adaptable;
+			return adaptableProperty.get();
 		}
 
 		@Override
 		public void setAdaptable(AdapterStore adaptable) {
-			this.adaptable = adaptable;
+			this.adaptableProperty.set(adaptable);
 		}
 	}
 

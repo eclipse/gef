@@ -24,6 +24,8 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
  *
@@ -37,12 +39,12 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 public abstract class AbstractTool<VR> implements ITool<VR> {
 
 	private ActivatableSupport acs = new ActivatableSupport(this);
-	private IDomain<VR> domain;
+	private ReadOnlyObjectWrapper<IDomain<VR>> domainProperty = new ReadOnlyObjectWrapper<>();
 	private Map<IViewer<VR>, List<IPolicy<VR>>> activePolicies = new IdentityHashMap<>();
 
 	@Override
 	public void activate() {
-		if (domain == null) {
+		if (getDomain() == null) {
 			throw new IllegalStateException(
 					"The IEditDomain has to be set via setDomain(IDomain) before activation.");
 		}
@@ -55,6 +57,11 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	@Override
 	public ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<IDomain<VR>> adaptableProperty() {
+		return domainProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -92,7 +99,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 
 	@Override
 	public IDomain<VR> getAdaptable() {
-		return domain;
+		return domainProperty.get();
 	}
 
 	@Override
@@ -144,7 +151,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 			throw new IllegalStateException(
 					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
 		}
-		this.domain = adaptable;
+		domainProperty.set(adaptable);
 	}
 
 	/**

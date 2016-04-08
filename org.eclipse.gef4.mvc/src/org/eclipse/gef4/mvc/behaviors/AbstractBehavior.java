@@ -29,6 +29,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 /**
  *
@@ -40,7 +42,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
  */
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
-	private IVisualPart<VR, ? extends VR> host;
+	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> hostProperty = new ReadOnlyObjectWrapper<>();
 	private ActivatableSupport acs = new ActivatableSupport(this);
 
 	private List<IHandlePart<VR, ? extends VR>> handleParts;
@@ -57,6 +59,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	@Override
 	public ReadOnlyBooleanProperty activeProperty() {
 		return acs.activeProperty();
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<IVisualPart<VR, ? extends VR>> adaptableProperty() {
+		return hostProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -149,7 +156,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	@Override
 	public IVisualPart<VR, ? extends VR> getHost() {
-		return host;
+		return hostProperty.get();
 	}
 
 	@Override
@@ -195,7 +202,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	@Override
 	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
-		this.host = adaptable;
+		this.hostProperty.set(adaptable);
 	}
 
 	/**

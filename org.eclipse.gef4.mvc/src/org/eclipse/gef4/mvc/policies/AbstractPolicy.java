@@ -15,6 +15,9 @@ package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+
 /**
  * Abstract base implementation of {@link IPolicy}.
  *
@@ -26,7 +29,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
-	private IVisualPart<VR, ? extends VR> host;
+	private ReadOnlyObjectWrapper<IVisualPart<VR, ? extends VR>> hostProperty = new ReadOnlyObjectWrapper<>();
+
+	@Override
+	public ReadOnlyObjectProperty<IVisualPart<VR, ? extends VR>> adaptableProperty() {
+		return hostProperty.getReadOnlyProperty();
+	}
 
 	@Override
 	public IVisualPart<VR, ? extends VR> getAdaptable() {
@@ -35,12 +43,12 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
 	@Override
 	public IVisualPart<VR, ? extends VR> getHost() {
-		return host;
+		return hostProperty.get();
 	}
 
 	@Override
 	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
-		this.host = adaptable;
+		this.hostProperty.set(adaptable);
 	}
 
 }

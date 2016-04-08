@@ -47,6 +47,9 @@ import com.google.inject.spi.ProviderInstanceBinding;
 import com.google.inject.spi.ProviderKeyBinding;
 import com.google.inject.spi.UntargettedBinding;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 /**
  * A specific {@link MembersInjector} that supports injection of adapters into
  * an {@link IAdaptable} implementation class'
@@ -341,6 +344,28 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	}
 
+	private static final Comparator<Key<?>> ADAPTER_MAP_BINDING_KEY_COMPARATOR = new Comparator<Key<?>>() {
+
+		@Override
+		public int compare(final Key<?> o1, final Key<?> o2) {
+			if (!AdapterMap.class.equals(o1.getAnnotationType())
+					|| !AdapterMap.class.equals(o2.getAnnotationType())) {
+				throw new IllegalArgumentException(
+						"Can only compare keys with AdapterMap annotations");
+			}
+			final AdapterMap a1 = (AdapterMap) o1.getAnnotation();
+			final AdapterMap a2 = (AdapterMap) o2.getAnnotation();
+			if (a1.adaptableType().equals(a2.adaptableType())) {
+				return 0;
+			} else if (a1.adaptableType()
+					.isAssignableFrom(a2.adaptableType())) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	};
+
 	private final List<IAdaptable> deferredInstances = new ArrayList<>();
 
 	private Injector injector;
@@ -356,89 +381,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 */
 	public AdapterInjector(final Method method) {
 		this.method = method;
-	}
-
-	/**
-	 * Retrieves all adapter map bindings where the adaptable type of the map
-	 * binding is the same or a super type or super interface of the one
-	 * referred to in the given method annotation, and assignable from the given
-	 * adaptable type. The bindings are returned mapped to their keys, sorted
-	 * following the inheritance hierarchy of their respective adaptable types.
-	 *
-	 * @param adaptable
-	 *            The adaptable, whose method is to be injected.
-	 * @return All applicable adapter map bindings (mapped to their binding
-	 *         keys), sorted along the type hierarchy of the bindings adaptable
-	 *         types.
-	 */
-	protected SortedMap<Key<?>, Binding<?>> getApplicableAdapterMapBindings(
-			IAdaptable adaptable) {
-		// find available keys
-		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
-		// XXX: Use a sorted map, where keys are sorted according to
-		// hierarchy of annotation types
-		final SortedMap<Key<?>, Binding<?>> applicableBindings = new TreeMap<>(
-				new Comparator<Key<?>>() {
-
-					@Override
-					public int compare(final Key<?> o1, final Key<?> o2) {
-						if (!AdapterMap.class.equals(o1.getAnnotationType())
-								|| !AdapterMap.class
-										.equals(o2.getAnnotationType())) {
-							throw new IllegalArgumentException(
-									"Can only compare keys with AdapterMap annotations");
-						}
-						final AdapterMap a1 = (AdapterMap) o1.getAnnotation();
-						final AdapterMap a2 = (AdapterMap) o2.getAnnotation();
-						if (a1.adaptableType().equals(a2.adaptableType())) {
-							return 0;
-						} else if (a1.adaptableType()
-								.isAssignableFrom(a2.adaptableType())) {
-							return -1;
-						} else {
-							return 1;
-						}
-					}
-				});
-		for (final Key<?> key : allBindings.keySet()) {
-			// only consider bindings that are qualified by an AdapterMap
-			// binding annotation.
-			if ((key.getAnnotationType() != null)
-					&& AdapterMap.class.equals(key.getAnnotationType())) {
-				final AdapterMap keyAnnotation = (AdapterMap) key
-						.getAnnotation();
-				if (keyAnnotation.adaptableType()
-						.isAssignableFrom(adaptable.getClass())) {
-					// TODO: check role
-					if (!AdapterMap.DEFAULT_ROLE
-							.equals(keyAnnotation.adaptableRole())) {
-						// the adapter map binding is targeting a specific role
-						// if the adaptable is itself Adaptable.Bound and uses a
-						// role for its registration, consider that role here
-						if (adaptable instanceof IAdaptable.Bound) {
-							AdapterKey<?> adapterKey = ((IAdaptable.Bound<?>) adaptable)
-									.getAdaptable().getAdapterKey(adaptable);
-							if (adapterKey.getRole()
-									.equals(keyAnnotation.adaptableRole())) {
-								// add all bindings in case the roles match
-								applicableBindings.put(key,
-										allBindings.get(key));
-							}
-						}
-					} else {
-						// XXX: All adapter (map) bindings that are bound to the
-						// adaptable type, or to a super type or super interface
-						// will be considered.
-
-						// System.out.println("Applying binding for " +
-						// keyAnnotation.value() + " to " + type +
-						// " as subtype of " + methodAnnotation.value());
-						applicableBindings.put(key, allBindings.get(key));
-					}
-				}
-			}
-		}
-		return applicableBindings;
 	}
 
 	/**
@@ -465,11 +407,117 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 *            during injection.
 	 */
 	protected void injectAdapters(final IAdaptable adaptable,
-			List<String> issues) {
-		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getApplicableAdapterMapBindings(
-				adaptable);
+			final List<String> issues) {
+		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
+		// XXX: Use a sorted map, where keys are sorted according to
+		// hierarchy of annotation types
+		final SortedMap<Key<?>, Binding<?>> directlyApplicableBindings = new TreeMap<>(
+				ADAPTER_MAP_BINDING_KEY_COMPARATOR);
+		final SortedMap<Key<?>, Binding<?>> deferredBindings = new TreeMap<>(
+				ADAPTER_MAP_BINDING_KEY_COMPARATOR);
+		for (final Key<?> key : allBindings.keySet()) {
+			// only consider bindings that are qualified by an AdapterMap
+			// binding annotation.
+			if ((key.getAnnotationType() != null)
+					&& AdapterMap.class.equals(key.getAnnotationType())) {
+				final AdapterMap keyAnnotation = (AdapterMap) key
+						.getAnnotation();
+				if (keyAnnotation.adaptableType()
+						.isAssignableFrom(adaptable.getClass())) {
+					// TODO: check role
+					if (!AdapterMap.DEFAULT_ROLE
+							.equals(keyAnnotation.adaptableRole())) {
+						// the adapter map binding is targeting a specific role
+						// if the adaptable is itself Adaptable.Bound and uses a
+						// role for its registration, consider that role here
+						if (adaptable instanceof IAdaptable.Bound) {
+							// defer the binding until the adaptable is
+							// registered as an adapter itself.
+							if (((IAdaptable.Bound<?>) adaptable)
+									.getAdaptable() != null) {
+								if (keyAnnotation.adaptableRole()
+										.equals(((IAdaptable.Bound<?>) adaptable)
+												.getAdaptable()
+												.getAdapterKey(adaptable)
+												.getRole())) {
+									// add all bindings in case the roles match
+									directlyApplicableBindings.put(key,
+											allBindings.get(key));
+								}
+							} else {
+								deferredBindings.put(key, allBindings.get(key));
+							}
+						}
+					} else {
+						// XXX: All adapter (map) bindings that are bound to the
+						// adaptable type, or to a super type or super interface
+						// will be considered.
+
+						// System.out.println("Applying binding for " +
+						// keyAnnotation.value() + " to " + type +
+						// " as subtype of " + methodAnnotation.value());
+						directlyApplicableBindings.put(key,
+								allBindings.get(key));
+					}
+				}
+			}
+		}
+		injectAdapters(adaptable, issues, directlyApplicableBindings);
+		if (!deferredBindings.isEmpty()) {
+			// defer injection until the adaptable is
+			// registered as an adapter itself
+			((IAdaptable.Bound<?>) adaptable).adaptableProperty()
+					.addListener(new ChangeListener<IAdaptable>() {
+
+						@Override
+						public void changed(
+								ObservableValue<? extends IAdaptable> observable,
+								IAdaptable oldValue, IAdaptable newValue) {
+							// if the adaptable is itself registered as adapter,
+							// check if the role (under which it is registered
+							// at its own adaptable) matches the role in the map
+							// binding.
+							if (newValue != null) {
+								final SortedMap<Key<?>, Binding<?>> deferredApplicableBindings = new TreeMap<>(
+										ADAPTER_MAP_BINDING_KEY_COMPARATOR);
+								for (final Key<?> key : deferredBindings
+										.keySet()) {
+									if (((AdapterMap) key.getAnnotation())
+											.adaptableRole()
+											.equals(((IAdaptable.Bound<?>) adaptable)
+													.getAdaptable()
+													.getAdapterKey(adaptable)
+													.getRole())) {
+										deferredApplicableBindings.put(key,
+												allBindings.get(key));
+									}
+								}
+								injectAdapters(adaptable, issues,
+										deferredApplicableBindings);
+								observable.removeListener(this);
+							}
+						}
+					});
+		}
+	}
+
+	/**
+	 * Performs the adapter map injection with the given adapter map bindings
+	 * for the given adaptable instance.
+	 *
+	 * @param adaptable
+	 *            The adaptable to inject adapters into.
+	 * @param issues
+	 *            A {@link String} list, to which issues may be added that arise
+	 *            during injection.
+	 * @param adapterMapBindings
+	 *            The bindings for the injection.
+	 */
+	protected void injectAdapters(final IAdaptable adaptable,
+			List<String> issues,
+			final SortedMap<Key<?>, Binding<?>> adapterMapBindings) {
 		// System.out.println("--");
-		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
+		for (final Map.Entry<Key<?>, Binding<?>> entry : adapterMapBindings
 				.entrySet()) {
 			try {
 				// retrieve the to be injected adapters, mapped to adapter keys.
@@ -482,10 +530,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						Object adapter = adapterMap.get(key);
 						TypeToken<?> adapterType = key.getKey();
 						String role = key.getRole();
-
-						// in case the adapter is an adaptable, pass in the
-						// adapter role as role of the adaptable.
-						// TODO.
 
 						// System.out.println(
 						// "Inject adapter " + adapter + " with type "

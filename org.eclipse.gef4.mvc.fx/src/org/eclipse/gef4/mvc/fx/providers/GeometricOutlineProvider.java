@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
-import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -60,25 +60,12 @@ import javafx.scene.shape.Rectangle;
  * @author anyssen
  *
  */
-public class GeometricOutlineProvider
-		implements IAdaptable.Bound<IVisualPart<Node, ? extends Node>>,
-		Provider<IGeometry> {
-
-	private IVisualPart<Node, ? extends Node> host;
+public class GeometricOutlineProvider extends
+		AbstractBoundProvider<IGeometry, IVisualPart<Node, ? extends Node>> {
 
 	@Override
 	public IGeometry get() {
-		return NodeUtils.getGeometricOutline(host.getVisual());
-	}
-
-	@Override
-	public IVisualPart<Node, ? extends Node> getAdaptable() {
-		return host;
-	}
-
-	@Override
-	public void setAdaptable(IVisualPart<Node, ? extends Node> adaptable) {
-		this.host = adaptable;
+		return NodeUtils.getGeometricOutline(getAdaptable().getVisual());
 	}
 
 }
