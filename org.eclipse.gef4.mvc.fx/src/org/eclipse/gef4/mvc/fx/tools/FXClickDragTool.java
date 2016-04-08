@@ -88,6 +88,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<Scene, EventHandler<MouseEvent>> cursorMouseMoveFilters = new HashMap<>();
 	private final Map<Scene, EventHandler<KeyEvent>> cursorKeyFilters = new HashMap<>();
 
+	private IViewer<Node> activeViewer;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IFXOnDragPolicy> getActivePolicies(IViewer<Node> viewer) {
@@ -104,20 +106,29 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				public void changed(
 						ObservableValue<? extends Boolean> observable,
 						Boolean oldValue, Boolean newValue) {
-					if (newValue == null || !newValue) {
-						// cancel target policies
-						for (IPolicy<Node> policy : getActivePolicies(viewer)) {
-							if (policy instanceof IFXOnDragPolicy) {
-								((IFXOnDragPolicy) policy).dragAborted();
-							}
-						}
-						// clear active policies and close execution
-						// transaction
-						clearActivePolicies(viewer);
-						getDomain().closeExecutionTransaction(
-								FXClickDragTool.this);
+					// cannot abort if no activeViewer
+					if (activeViewer == null) {
+						return;
 					}
-
+					// check if any viewer is focused
+					for (IViewer<Node> v : getDomain().getViewers().values()) {
+						if (v.isViewerFocused()) {
+							return;
+						}
+					}
+					// no viewer is focused => abort
+					// cancel target policies
+					for (IPolicy<Node> policy : getActivePolicies(
+							activeViewer)) {
+						if (policy instanceof IFXOnDragPolicy) {
+							((IFXOnDragPolicy) policy).dragAborted();
+						}
+					}
+					// clear active policies
+					clearActivePolicies(activeViewer);
+					activeViewer = null;
+					// close execution transaction
+					getDomain().closeExecutionTransaction(FXClickDragTool.this);
 				}
 			};
 			viewer.viewerFocusedProperty()
@@ -133,7 +144,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 			final IFXOnDragPolicy indicationCursorPolicy[] = new IFXOnDragPolicy[] {
 					null };
 			@SuppressWarnings("unchecked")
-			final List<? extends IFXOnDragPolicy> possibleDragPolicies[] = new ArrayList[] {
+			final List<IFXOnDragPolicy> possibleDragPolicies[] = new ArrayList[] {
 					null };
 
 			// register mouse move filter for forwarding events to drag policies
@@ -151,9 +162,10 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						// determine all drag policies that can be
 						// notified about events
 						Node target = (Node) eventTarget;
-						possibleDragPolicies[0] = targetPolicyResolver
-								.getTargetPolicies(FXClickDragTool.this, target,
-										ON_DRAG_POLICY_KEY);
+						possibleDragPolicies[0] = new ArrayList<>(
+								targetPolicyResolver.getTargetPolicies(
+										FXClickDragTool.this, target,
+										ON_DRAG_POLICY_KEY));
 
 						// search drag policies in reverse order first,
 						// so that the policy closest to the target part
@@ -214,11 +226,12 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						double dy) {
 					// abort processing of this gesture if no policies could be
 					// found that can process it
-					if (getActivePolicies(viewer).isEmpty()) {
+					if (getActivePolicies(activeViewer).isEmpty()) {
 						return;
 					}
 
-					for (IFXOnDragPolicy policy : getActivePolicies(viewer)) {
+					for (IFXOnDragPolicy policy : getActivePolicies(
+							activeViewer)) {
 						policy.drag(e, new Dimension(dx, dy));
 					}
 				}
@@ -255,8 +268,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 
 					// determine viewer that contains the given target part
-					IViewer<Node> viewer = FXPartUtils
-							.retrieveViewer(getDomain(), target);
+					activeViewer = FXPartUtils.retrieveViewer(getDomain(),
+							target);
 
 					// determine drag policies
 					List<? extends IFXOnDragPolicy> policies = null;
@@ -266,7 +279,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						// the target node anymore. If that is the case, no drag
 						// policies should be notified about the event.
 						policies = targetPolicyResolver.getTargetPolicies(
-								FXClickDragTool.this, target, viewer,
+								FXClickDragTool.this, target, activeViewer,
 								ON_DRAG_POLICY_KEY);
 					}
 
@@ -291,7 +304,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 
 					// mark the drag policies as active
-					setActivePolicies(viewer, policies);
+					setActivePolicies(activeViewer, policies);
 
 					// send press() to all drag policies
 					for (IFXOnDragPolicy policy : policies) {
@@ -312,17 +325,20 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// abort processing of this gesture if no policies could be
 					// found that can process it
-					if (getActivePolicies(viewer).isEmpty()) {
+					if (getActivePolicies(activeViewer).isEmpty()) {
+						activeViewer = null;
 						return;
 					}
 
 					// send release() to all drag policies
-					for (IFXOnDragPolicy policy : getActivePolicies(viewer)) {
+					for (IFXOnDragPolicy policy : getActivePolicies(
+							activeViewer)) {
 						policy.release(e, new Dimension(dx, dy));
 					}
 
 					// clear active policies before processing release
-					clearActivePolicies(viewer);
+					clearActivePolicies(activeViewer);
+					activeViewer = null;
 
 					// remove this tool from the domain's execution transaction
 					getDomain().closeExecutionTransaction(FXClickDragTool.this);
@@ -342,14 +358,15 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (Scene scene : gestures.keySet()) {
+		for (Scene scene : new ArrayList<>(gestures.keySet())) {
 			gestures.remove(scene).setScene(null);
 			scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
 					cursorMouseMoveFilters.remove(scene));
 			scene.removeEventFilter(KeyEvent.ANY,
 					cursorKeyFilters.remove(scene));
 		}
-		for (IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
+		for (IViewer<Node> viewer : new ArrayList<>(
+				viewerFocusChangeListeners.keySet())) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}

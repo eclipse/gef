@@ -130,7 +130,6 @@ public class DefaultTargetPolicyResolver implements ITargetPolicyResolver {
 		if (viewer == null) {
 			return Collections.emptyList();
 		}
-
 		return getTargetPolicies(contextTool, target, viewer, policyClass);
 	}
 
