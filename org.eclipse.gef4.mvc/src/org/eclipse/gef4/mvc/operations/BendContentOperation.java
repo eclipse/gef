@@ -76,7 +76,8 @@ public class BendContentOperation<VR> extends AbstractOperation
 
 	@Override
 	public boolean isNoOp() {
-		return initialBendPoints.equals(finalBendPoints);
+		return initialBendPoints == null ? finalBendPoints == null
+				: initialBendPoints.equals(finalBendPoints);
 	}
 
 	@Override
