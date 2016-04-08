@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,11 +136,12 @@ public class FXRotateTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
+		for (IViewer<Node> viewer : new ArrayList<>(
+				viewerFocusChangeListeners.keySet())) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}
-		for (Scene scene : gestures.keySet()) {
+		for (Scene scene : new ArrayList<>(gestures.keySet())) {
 			gestures.remove(scene).setScene(null);
 		}
 		super.unregisterListeners();

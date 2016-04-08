@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,10 +130,11 @@ public class FXScrollTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (Scene scene : gestures.keySet()) {
+		for (Scene scene : new ArrayList<>(gestures.keySet())) {
 			gestures.remove(scene).setScene(null);
 		}
-		for (final IViewer<Node> viewer : viewerFocusChangeListeners.keySet()) {
+		for (final IViewer<Node> viewer : new ArrayList<>(
+				viewerFocusChangeListeners.keySet())) {
 			viewer.viewerFocusedProperty()
 					.removeListener(viewerFocusChangeListeners.remove(viewer));
 		}
