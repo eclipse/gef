@@ -93,6 +93,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		}
 	}
 
+	private static final String SPLIT_PANE_STYLE = "-fx-background-color: white;";
+
 	private UndoablePropertySheetEntry rootEntry;
 
 	// TODO: create AbstractFXView via an executable extension factory
@@ -183,7 +185,11 @@ public class MvcLogoExampleView extends AbstractFXView {
 		// arrange both viewers in split pane
 		SplitPane splitPane = new SplitPane();
 		splitPane.getItems().addAll(contentRootNode, paletteRootNode);
-		// TODO: set divider position
+		// fix palette width
+		SplitPane.setResizableWithParent(paletteRootNode, false);
+		paletteRootNode.setPrefWidth(145);
+		// make splitpane background white
+		splitPane.setStyle(SPLIT_PANE_STYLE);
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(splitPane));
 	}
