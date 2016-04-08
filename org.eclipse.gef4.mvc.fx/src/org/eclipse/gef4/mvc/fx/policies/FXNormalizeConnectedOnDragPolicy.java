@@ -11,9 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -34,10 +35,10 @@ import javafx.scene.input.MouseEvent;
  * @author mwienand
  *
  */
-public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
+public class FXNormalizeConnectedOnDragPolicy extends AbstractFXInteractionPolicy
 		implements IFXOnDragPolicy {
 
-	private List<IVisualPart<Node, ? extends Node>> connected;
+	private Set<IVisualPart<Node, ? extends Node>> connected;
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -67,13 +68,15 @@ public class FXNormalizeConnectedOnDrag extends AbstractFXInteractionPolicy
 
 	@Override
 	public void press(MouseEvent e) {
-		connected = new ArrayList<>();
+		connected = Collections.newSetFromMap(
+				new IdentityHashMap<IVisualPart<Node, ? extends Node>, Boolean>());
 		for (IVisualPart<Node, ? extends Node> anchored : getHost()
 				.getAnchoredsUnmodifiable()) {
 			if (anchored instanceof IContentPart) {
 				FXBendConnectionPolicy bendConnectionPolicy = anchored
 						.getAdapter(FXBendConnectionPolicy.class);
-				if (bendConnectionPolicy != null) {
+				if (bendConnectionPolicy != null
+						&& !connected.contains(anchored)) {
 					connected.add(anchored);
 				}
 			}

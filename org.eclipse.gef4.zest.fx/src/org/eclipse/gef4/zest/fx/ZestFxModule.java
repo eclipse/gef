@@ -31,7 +31,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXSquareSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXNormalizeConnectedOnDrag;
+import org.eclipse.gef4.mvc.fx.policies.FXNormalizeConnectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTranslateFirstAnchorageOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
@@ -466,7 +466,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXHoverOnHoverPolicy.class);
 
 		// normalize on drag
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXNormalizeConnectedOnDrag.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXNormalizeConnectedOnDragPolicy.class);
 	}
 
 	/**

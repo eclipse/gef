@@ -50,7 +50,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXNormalizeConnectedOnDrag;
+import org.eclipse.gef4.mvc.fx.policies.FXNormalizeConnectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeTransformSelectedOnHandleDragPolicy;
@@ -296,7 +296,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// normalize connected on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(FXNormalizeConnectedOnDrag.class);
+				.to(FXNormalizeConnectedOnDragPolicy.class);
 	}
 
 	/**
