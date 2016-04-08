@@ -42,6 +42,31 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 	}
 
 	protected void convertAttributes(Edge zest, Edge dot) {
+		// label
+		String zestLabel = ZestProperties.getLabel(zest);
+		if (zestLabel != null) {
+			DotAttributes.setLabel(dot, zestLabel);
+		}
+
+		// external label (xlabel)
+		String zestExternalLabel = ZestProperties.getExternalLabel(zest);
+		if (zestExternalLabel != null) {
+			DotAttributes.setXLabel(dot, zestExternalLabel);
+		}
+
+		// tail label
+		String zestSourceLabel = ZestProperties.getSourceLabel(zest);
+		if (zestSourceLabel != null) {
+			DotAttributes.setTailLabel(dot, zestSourceLabel);
+		}
+
+		// head label
+		String zestTargetLabel = ZestProperties.getTargetLabel(zest);
+		if (zestTargetLabel != null) {
+			DotAttributes.setHeadLabel(dot, zestTargetLabel);
+		}
+
+		// TODO: positions of labels
 	}
 
 	protected void convertAttributes(Node zest, Node dot) {
