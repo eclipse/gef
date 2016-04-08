@@ -175,7 +175,8 @@ public class MvcLogoExampleView extends AbstractFXView {
 		final FXViewer paletteViewer = getPaletteViewer();
 		InfiniteCanvas paletteRootNode = paletteViewer.getCanvas();
 		// arrange both viewers in split pane
-		SplitPane splitPane = new SplitPane(contentRootNode, paletteRootNode);
+		SplitPane splitPane = new SplitPane();
+		splitPane.getItems().addAll(contentRootNode, paletteRootNode);
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(splitPane));
 	}
