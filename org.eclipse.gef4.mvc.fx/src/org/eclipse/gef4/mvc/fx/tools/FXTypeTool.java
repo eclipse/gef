@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -20,10 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.IFXOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -58,6 +56,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private Map<Scene, EventHandler<? super KeyEvent>> typedFilterMap = new IdentityHashMap<>();
 	private Map<IViewer<Node>, ChangeListener<Boolean>> viewerFocusChangeListeners = new HashMap<>();
 
+	private IViewer<Node> activeViewer;
+
 	@Inject
 	private ITargetPolicyResolver targetPolicyResolver;
 
@@ -66,81 +66,6 @@ public class FXTypeTool extends AbstractTool<Node> {
 	public List<? extends IFXOnTypePolicy> getActivePolicies(
 			IViewer<Node> viewer) {
 		return (List<IFXOnTypePolicy>) super.getActivePolicies(viewer);
-	}
-
-	/**
-	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
-	 * installed on the target {@link IVisualPart} for the given
-	 * {@link KeyEvent}. The target {@link IVisualPart} is determined by using
-	 * {@link #getTargetPolicies(Scene)}.
-	 *
-	 * @param event
-	 *            The {@link KeyEvent} to transfer.
-	 * @return A {@link Set} containing all {@link IFXOnTypePolicy}s that are
-	 *         installed on the target {@link IVisualPart} for the given
-	 *         {@link KeyEvent}.
-	 */
-	protected List<? extends IFXOnTypePolicy> getTargetPolicies(
-			KeyEvent event) {
-		EventTarget target = event.getTarget();
-		if (target instanceof Scene) {
-			return getTargetPolicies((Scene) target);
-		} else if (target instanceof Node) {
-			Scene scene = ((Node) target).getScene();
-			if (scene == null) {
-				return Collections.emptyList();
-			}
-			return getTargetPolicies(scene);
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-	/**
-	 * Returns a {@link Set} containing all {@link IFXOnTypePolicy}s that are
-	 * installed on the target {@link IVisualPart} for the given {@link Scene}.
-	 * If an {@link IVisualPart} within the given {@link Scene} has keyboard
-	 * focus, that part is used as the target part. Otherwise, the root part of
-	 * the {@link IViewer} that is rendered in the given {@link Scene} is used
-	 * as the target part.
-	 *
-	 * @param scene
-	 *            The {@link Scene} for which to determine the
-	 *            {@link IFXOnTypePolicy}s that are installed on the target
-	 *            {@link IVisualPart}.
-	 * @return A {@link List} containing all {@link IFXOnTypePolicy}s that are
-	 *         installed on the target {@link IVisualPart} for the given
-	 *         {@link Scene}.
-	 */
-	@SuppressWarnings("serial")
-	protected List<? extends IFXOnTypePolicy> getTargetPolicies(Scene scene) {
-		IVisualPart<Node, ? extends Node> targetPart = null;
-		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-			if (viewer instanceof FXViewer) {
-				if (((FXViewer) viewer).getScene() == scene) {
-					FocusModel<Node> focusModel = viewer
-							.getAdapter(new TypeToken<FocusModel<Node>>() {
-							});
-					if (focusModel == null) {
-						throw new IllegalStateException(
-								"Cannot find FocusModel<Node>.");
-					}
-					IVisualPart<Node, ? extends Node> part = focusModel
-							.getFocus();
-					if (part == null) {
-						targetPart = viewer.getRootPart();
-					} else {
-						targetPart = part;
-					}
-					break;
-				}
-			}
-		}
-		if (targetPart == null) {
-			return Collections.emptyList();
-		}
-		return targetPolicyResolver.getTargetPolicies(this,
-				targetPart.getVisual(), IFXOnTypePolicy.class);
 	}
 
 	@SuppressWarnings("serial")
@@ -167,23 +92,28 @@ public class FXTypeTool extends AbstractTool<Node> {
 				public void changed(
 						ObservableValue<? extends Boolean> observable,
 						Boolean oldValue, Boolean newValue) {
-					if (newValue == null || !newValue) {
-						if (pressedKeys.isEmpty()) {
+					// cannot abort if no activeViewer
+					if (activeViewer == null) {
+						return;
+					}
+					// check if any viewer is focused
+					for (IViewer<Node> v : getDomain().getViewers().values()) {
+						if (v.isViewerFocused()) {
 							return;
 						}
-						// cancel target policies
-						for (IFXOnTypePolicy policy : getActivePolicies(
-								viewer)) {
-							policy.unfocus();
-						}
-						// clear active policies and close execution
-						// transaction
-						clearActivePolicies(viewer);
-						getDomain().closeExecutionTransaction(FXTypeTool.this);
-						// unset pressed keys
-						pressedKeys.clear();
 					}
-
+					// cancel target policies
+					for (IFXOnTypePolicy policy : getActivePolicies(
+							activeViewer)) {
+						policy.unfocus();
+					}
+					// clear active policies
+					clearActivePolicies(activeViewer);
+					activeViewer = null;
+					// close execution transaction
+					getDomain().closeExecutionTransaction(FXTypeTool.this);
+					// unset pressed keys
+					pressedKeys.clear();
 				}
 			};
 			viewer.viewerFocusedProperty()
@@ -199,18 +129,48 @@ public class FXTypeTool extends AbstractTool<Node> {
 			EventHandler<KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
-					// store initially pressed key
-					// System.out.println("pressed " + event);
 					if (pressedKeys.isEmpty()) {
-						// open exec tx on first key press
+						// determine viewer that contains the given target part
+						Node targetNode = null;
+						EventTarget target = event.getTarget();
+						if (target instanceof Node) {
+							targetNode = (Node) target;
+							activeViewer = FXPartUtils
+									.retrieveViewer(getDomain(), targetNode);
+						} else if (target instanceof Scene) {
+							// first focused viewer in that scene
+							for (IViewer<Node> v : getDomain().getViewers()
+									.values()) {
+								if (v.getRootPart().getVisual()
+										.getScene() == target) {
+									if (v.isViewerFocused()) {
+										activeViewer = v;
+										break;
+									}
+								}
+							}
+							targetNode = activeViewer.getRootPart().getVisual();
+						} else {
+							throw new IllegalStateException(
+									"Unsupported event target: " + target);
+						}
+
+						// open execution transaction
 						getDomain().openExecutionTransaction(FXTypeTool.this);
+
 						// determine target policies on first key press
-						setActivePolicies(viewer, getTargetPolicies(event));
+						setActivePolicies(activeViewer,
+								targetPolicyResolver.getTargetPolicies(
+										FXTypeTool.this, targetNode,
+										ON_TYPE_POLICY_KEY));
 					}
+
+					// store initially pressed key
 					pressedKeys.add(event.getCode());
 
 					// notify target policies
-					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
+					for (IFXOnTypePolicy policy : getActivePolicies(
+							activeViewer)) {
 						policy.pressed(event);
 					}
 				}
@@ -220,10 +180,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 			EventHandler<KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent event) {
-					// System.out.println("released " + event);
-
 					// notify target policies
-					for (IFXOnTypePolicy policy : getActivePolicies(viewer)) {
+					for (IFXOnTypePolicy policy : getActivePolicies(
+							activeViewer)) {
 						policy.released(event);
 					}
 
@@ -232,7 +191,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 							&& pressedKeys.contains(event.getCode())) {
 						// clear active policies and close execution transaction
 						// only when the initially pressed key is released
-						clearActivePolicies(viewer);
+						clearActivePolicies(activeViewer);
+						activeViewer = null;
 						getDomain().closeExecutionTransaction(FXTypeTool.this);
 					}
 					pressedKeys.remove(event.getCode());
@@ -247,8 +207,36 @@ public class FXTypeTool extends AbstractTool<Node> {
 					if (pressedKeys.isEmpty()) {
 						getDomain().openExecutionTransaction(FXTypeTool.this);
 					}
-					Collection<? extends IFXOnTypePolicy> policies = getTargetPolicies(
-							event);
+
+					// determine viewer that contains the given target part
+					IViewer<Node> viewer = null;
+					Node targetNode = null;
+					EventTarget target = event.getTarget();
+					if (target instanceof Node) {
+						targetNode = (Node) target;
+						viewer = FXPartUtils.retrieveViewer(getDomain(),
+								targetNode);
+					} else if (target instanceof Scene) {
+						// first focused viewer in that scene
+						for (IViewer<Node> v : getDomain().getViewers()
+								.values()) {
+							if (v.getRootPart().getVisual()
+									.getScene() == target) {
+								if (v.isViewerFocused()) {
+									viewer = v;
+									break;
+								}
+							}
+						}
+						targetNode = viewer.getRootPart().getVisual();
+					} else {
+						throw new IllegalStateException(
+								"Unsupported event target: " + target);
+					}
+
+					Collection<? extends IFXOnTypePolicy> policies = targetPolicyResolver
+							.getTargetPolicies(FXTypeTool.this, targetNode,
+									ON_TYPE_POLICY_KEY);
 					// active policies are unnecessary because TYPED is not a
 					// gesture, just one event at one point in time
 					for (IFXOnTypePolicy policy : policies) {
