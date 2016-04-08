@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.examples.logo;
+package org.eclipse.gef4.mvc.examples.logo.palette;
 
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 

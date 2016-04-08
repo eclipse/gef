@@ -14,17 +14,23 @@ package org.eclipse.gef4.mvc.examples.logo;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.application.Application;
-
 import org.eclipse.gef4.mvc.examples.AbstractMvcExample;
+import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.examples.logo.palette.PaletteModel;
 
 import com.google.inject.Module;
+
+import javafx.application.Application;
 
 public class MvcLogoExample extends AbstractMvcExample {
 
 	public static List<FXGeometricModel> createDefaultContents() {
 		return Collections.singletonList(new FXGeometricModel());
+	}
+
+	public static List<AbstractFXGeometricElement> createPaletteContents() {
+		return new PaletteModel().getCreatableGeometries();
 	}
 
 	public static void main(String[] args) {
@@ -44,4 +50,5 @@ public class MvcLogoExample extends AbstractMvcExample {
 	protected Module createModule() {
 		return new MvcLogoExampleModule();
 	}
+
 }

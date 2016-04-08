@@ -24,10 +24,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.examples.logo.FXPaletteViewer;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.examples.logo.palette.FXPaletteViewer;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.examples.logo.ui.properties.FXCurvePropertySource;
 import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
@@ -106,6 +106,12 @@ public class MvcLogoExampleView extends AbstractFXView {
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
 		contentModel.getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
+		// set palette contents
+		FXViewer paletteViewer = getPaletteViewer();
+		ContentModel paletteContentModel = paletteViewer
+				.getAdapter(ContentModel.class);
+		paletteContentModel.getContents()
+				.setAll(MvcLogoExample.createPaletteContents());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -177,7 +183,9 @@ public class MvcLogoExampleView extends AbstractFXView {
 		// arrange both viewers in split pane
 		SplitPane splitPane = new SplitPane();
 		splitPane.getItems().addAll(contentRootNode, paletteRootNode);
+		// TODO: set divider position
 		// create scene and populate canvas
 		getCanvas().setScene(new Scene(splitPane));
 	}
+
 }
