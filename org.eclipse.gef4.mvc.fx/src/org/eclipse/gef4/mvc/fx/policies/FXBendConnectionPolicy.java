@@ -1307,7 +1307,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	}
 
 	private void removeOverlainPoints() {
-		for (int i = 0; i < selectedAnchors.size(); i++) {
+		for (int i = 0; i < selectedAnchors.size()
+				&& explicitAnchors.size() > 2; i++) {
 			AnchorHandle handle = selectedAnchors.get(i);
 			int index = handle.explicitAnchorIndex;
 			// XXX: If an overlay is recognized, the overlaying anchor is
