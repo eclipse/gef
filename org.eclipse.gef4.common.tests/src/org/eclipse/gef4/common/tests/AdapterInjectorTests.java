@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjector;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
@@ -130,8 +131,8 @@ public class AdapterInjectorTests {
 
 		List<String> issues = new ArrayList<>();
 		// call adapterInjector.injectAdapters(adaptable, issues);
-		Method injectAdaptersMethod = AdapterInjector.class
-				.getDeclaredMethod("injectAdapters", Object.class, List.class);
+		Method injectAdaptersMethod = AdapterInjector.class.getDeclaredMethod(
+				"injectAdapters", IAdaptable.class, List.class);
 		injectAdaptersMethod.setAccessible(true);
 		injectAdaptersMethod.invoke(adapterInjector, adaptable, issues);
 		return issues;
