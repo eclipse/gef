@@ -159,18 +159,14 @@ final public class DotExecutableUtils {
 		return outputs;
 	}
 
-	private static String read(InputStream s) {
-		StringBuilder builder = new StringBuilder();
+	private static String read(InputStream is) {
 		try {
-			int current = -1;
-			while ((current = s.read()) != -1) {
-				builder.append((char) current);
-			}
+			return DotFileUtils.read(is)
+					.replaceAll("\\\\" + System.lineSeparator(), "").trim();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return builder.toString()
-				.replaceAll("\\\\" + System.lineSeparator(), "").trim();
+		return "";
 	}
 
 }

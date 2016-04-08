@@ -32,11 +32,11 @@ class DotImport {
 
 	// TODO: support a list of graphs
 	def Graph importDot(String dotString) {
-		var parseResult = dotParser.doParse(new StringReader(dotString))
+		var parseResult = dotParser.parse(new StringReader(dotString))
 
 		if (parseResult.hasSyntaxErrors) {
 			throw new IllegalArgumentException(
-				"Given DOT string " + dotString + " is not valid: " +
+				"Given DOT string is not valid: " +
 					parseResult.syntaxErrors.map[syntaxErrorMessage.message].join(","))
 		}
 		// TODO: use validator to semantically validate as well

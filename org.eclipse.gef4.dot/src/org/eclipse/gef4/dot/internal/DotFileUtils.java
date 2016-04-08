@@ -13,17 +13,19 @@
 
 package org.eclipse.gef4.dot.internal;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Scanner;
 
 /**
  * Static helper methods for working with files.
@@ -83,7 +85,8 @@ public final class DotFileUtils {
 	 */
 	public static File write(final String text, final File destination) {
 		try {
-			FileWriter writer = new FileWriter(destination);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(destination), "UTF-8"));
 			writer.write(text);
 			writer.flush();
 			writer.close();
@@ -100,17 +103,34 @@ public final class DotFileUtils {
 	 * @return The string containing the contents of the given file
 	 */
 	public static String read(final File file) {
-		String lineSeparator = System.lineSeparator();
-		StringBuilder builder = new StringBuilder();
 		try {
-			Scanner s = new Scanner(file);
-			while (s.hasNextLine()) {
-				builder.append(s.nextLine()).append(lineSeparator);
-			}
-			s.close();
-		} catch (FileNotFoundException e) {
+			return read(new FileInputStream(file));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return "";
+	}
+
+	/**
+	 * Reads a string from the given input stream.
+	 * 
+	 * @param is
+	 *            The input stream to read.
+	 * @return The contents of the input stream as a {@link String}
+	 * @throws IOException
+	 *             In case I/O exceptions occurred.
+	 */
+	static String read(InputStream is) throws IOException {
+		String lineSeparator = System.lineSeparator();
+		StringBuilder builder = new StringBuilder();
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(is, "UTF-8"));
+		String line = reader.readLine();
+		while (line != null) {
+			builder.append(line).append(lineSeparator);
+			line = reader.readLine();
+		}
+		reader.close();
 		return builder.toString();
 	}
 

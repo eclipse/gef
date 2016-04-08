@@ -255,6 +255,7 @@ public class DotGraphView extends ZestFxUiView {
 					try {
 						setGraph(new DotImport().importDot(dot));
 					} catch (Exception e) {
+						e.printStackTrace();
 						String message = String.format(
 								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
 								e.getMessage(), dot);
