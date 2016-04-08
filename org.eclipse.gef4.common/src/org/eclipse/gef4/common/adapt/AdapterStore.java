@@ -22,7 +22,7 @@ import javafx.collections.ObservableMap;
 /**
  * An {@link AdapterStore} is a basic {@link IAdaptable} implementation that can
  * be used standalone.
- * 
+ *
  * @author anyssen
  */
 public class AdapterStore implements IAdaptable {
@@ -38,12 +38,12 @@ public class AdapterStore implements IAdaptable {
 	/**
 	 * Creates a new AdapterStore with the single given initial adapter, using
 	 * the 'default' role.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapter
 	 *            The adapter to be registered.
-	 * 
+	 *
 	 */
 	public <T> AdapterStore(T adapter) {
 		setAdapter(adapter, AdapterKey.DEFAULT_ROLE);
@@ -52,14 +52,14 @@ public class AdapterStore implements IAdaptable {
 	/**
 	 * Creates a new AdapterStore with the single given initial adapter, using
 	 * the 'default' role.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapterType
 	 *            The runtime type of the adapter to be registered.
 	 * @param adapter
 	 *            The adapter to be registered.
-	 * 
+	 *
 	 */
 	public <T> AdapterStore(TypeToken<T> adapterType, T adapter) {
 		setAdapter(adapterType, adapter, AdapterKey.DEFAULT_ROLE);
@@ -67,7 +67,7 @@ public class AdapterStore implements IAdaptable {
 
 	/**
 	 * Creates a new AdapterStore with the single given initial adapter.
-	 * 
+	 *
 	 * @param <T>
 	 *            The adapter type.
 	 * @param adapterType
@@ -79,6 +79,20 @@ public class AdapterStore implements IAdaptable {
 	 */
 	public <T> AdapterStore(TypeToken<T> adapterType, T adapter, String role) {
 		setAdapter(adapterType, adapter, role);
+	}
+
+	@Override
+	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+		return ads.adaptersProperty();
+	}
+
+	/**
+	 * Removes all registered adapters from this {@link AdapterStore}.
+	 */
+	public void clear() {
+		for (Object adapter : ads.getAdapters().values()) {
+			ads.unsetAdapter(adapter);
+		}
 	}
 
 	@Override
@@ -97,6 +111,16 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
+	public <T> AdapterKey<T> getAdapterKey(T adapter) {
+		return ads.getAdapterKey(adapter);
+	}
+
+	@Override
+	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+		return ads.getAdapters();
+	}
+
+	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> key) {
 		return ads.getAdapters(key);
@@ -109,23 +133,18 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public <T> void unsetAdapter(T adapter) {
-		ads.unsetAdapter(adapter);
-	}
-
-	@Override
 	public <T> void setAdapter(T adapter) {
 		ads.setAdapter(adapter);
 	}
 
 	@Override
-	public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
-		ads.setAdapter(adapterType, adapter);
+	public <T> void setAdapter(T adapter, String role) {
+		ads.setAdapter(adapter, role);
 	}
 
 	@Override
-	public <T> void setAdapter(T adapter, String role) {
-		ads.setAdapter(adapter, role);
+	public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
+		ads.setAdapter(adapterType, adapter);
 	}
 
 	@InjectAdapters
@@ -135,23 +154,9 @@ public class AdapterStore implements IAdaptable {
 		ads.setAdapter(adapterType, adapter, role);
 	}
 
-	/**
-	 * Removes all registered adapters from this {@link AdapterStore}.
-	 */
-	public void clear() {
-		for (Object adapter : ads.getAdapters().values()) {
-			ads.unsetAdapter(adapter);
-		}
-	}
-
 	@Override
-	public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
-		return ads.adaptersProperty();
-	}
-
-	@Override
-	public ObservableMap<AdapterKey<?>, Object> getAdapters() {
-		return ads.getAdapters();
+	public <T> void unsetAdapter(T adapter) {
+		ads.unsetAdapter(adapter);
 	}
 
 }

@@ -183,6 +183,18 @@ public interface IAdaptable {
 	public <T> T getAdapter(TypeToken<T> key);
 
 	/**
+	 * Returns the key under which the given adapter is bound.
+	 *
+	 * @param <T>
+	 *            The adapter type.
+	 * @param adapter
+	 *            The adapter whose key to retrieve.
+	 * @return The {@link AdapterKey} under which the respective adapter is
+	 *         bound, or <code>null</code> if the adapter is not registered.
+	 */
+	public <T> AdapterKey<T> getAdapterKey(T adapter);
+
+	/**
 	 * Returns an unmodifiable {@link ObservableMap} that contains the
 	 * registered adapters by their keys.
 	 *

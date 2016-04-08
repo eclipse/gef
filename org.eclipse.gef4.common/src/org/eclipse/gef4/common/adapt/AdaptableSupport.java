@@ -244,6 +244,26 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	}
 
 	/**
+	 * Returns the key under which the given adapter is bound.
+	 *
+	 * @param <T>
+	 *            The adapter type.
+	 * @param adapter
+	 *            The adapter whose key to retrieve.
+	 * @return The {@link AdapterKey} under which the respective adapter is
+	 *         bound, or <code>null</code> if the adapter is not registered.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> AdapterKey<T> getAdapterKey(T adapter) {
+		for (AdapterKey<?> key : adapters.keySet()) {
+			if (adapters.get(key) == adapter) {
+				return (AdapterKey<T>) key;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Retrieves all registered adapters, mapped to the respective
 	 * {@link AdapterKey}s they are registered.
 	 *

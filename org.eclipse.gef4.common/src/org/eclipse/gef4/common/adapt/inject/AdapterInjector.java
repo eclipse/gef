@@ -78,75 +78,11 @@ import com.google.inject.spi.UntargettedBinding;
 public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
-	 * Tries to infer the actual type of an adapter from bindings that are
-	 * applied (in case linked bindings point to constructor bindings).
-	 * 
-	 * @author anyssen
-	 *
-	 */
-	private class AdapterTypeInferrer
-			implements BindingTargetVisitor<Object, TypeToken<?>> {
-
-		@Override
-		public TypeToken<?> visit(InstanceBinding<? extends Object> binding) {
-			return null;
-		}
-
-		@Override
-		public TypeToken<?> visit(
-				ProviderInstanceBinding<? extends Object> binding) {
-			return null;
-		}
-
-		@Override
-		public TypeToken<?> visit(
-				ProviderKeyBinding<? extends Object> binding) {
-			return null;
-		}
-
-		@Override
-		public TypeToken<?> visit(LinkedKeyBinding<? extends Object> binding) {
-			Binding<?> linkedKeyBinding = injector
-					.getBinding(binding.getLinkedKey());
-			return linkedKeyBinding.acceptTargetVisitor(this);
-		}
-
-		@Override
-		public TypeToken<?> visit(ExposedBinding<? extends Object> binding) {
-			return null;
-		}
-
-		@Override
-		public TypeToken<?> visit(
-				UntargettedBinding<? extends Object> binding) {
-			return null;
-		}
-
-		@Override
-		public TypeToken<?> visit(
-				ConstructorBinding<? extends Object> binding) {
-			return TypeToken.of(binding.getKey().getTypeLiteral().getType());
-		}
-
-		@Override
-		public TypeToken<?> visit(
-				ConvertedConstantBinding<? extends Object> binding) {
-			return null;
-		}
-
-		@Override
-		public TypeToken<?> visit(ProviderBinding<? extends Object> binding) {
-			return null;
-		}
-
-	}
-
-	/**
 	 * Provides the to be injected adapters mapped to {@link AdapterKey}s,
 	 * ensuring that the key type of the {@link AdapterKey} either corresponds
 	 * to the one provided in the binding, or to the actual type (as far as this
 	 * can be inferred).
-	 * 
+	 *
 	 * @author anyssen
 	 *
 	 */
@@ -157,7 +93,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 		/**
 		 * Constructs a new AdapterMapInferrer.
-		 * 
+		 *
 		 * @param issues
 		 *            A {@link String} list, to which the
 		 *            {@link AdapterMapInferrer} may add its issues.
@@ -252,7 +188,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 										.equals(key.getKey().getRawType())) {
 									issues.add(
 											"*** WARNING: The given key (raw) type "
-													+ key.getKey().getRawType().getName()
+													+ key.getKey().getRawType()
+															.getName()
 													+ " does not seem to match the actual type of adapter "
 													+ adapter
 													+ " which was inferred as "
@@ -340,7 +277,71 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		}
 	}
 
-	private final List<Object> deferredInstances = new ArrayList<>();
+	/**
+	 * Tries to infer the actual type of an adapter from bindings that are
+	 * applied (in case linked bindings point to constructor bindings).
+	 *
+	 * @author anyssen
+	 *
+	 */
+	private class AdapterTypeInferrer
+			implements BindingTargetVisitor<Object, TypeToken<?>> {
+
+		@Override
+		public TypeToken<?> visit(
+				ConstructorBinding<? extends Object> binding) {
+			return TypeToken.of(binding.getKey().getTypeLiteral().getType());
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ConvertedConstantBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(ExposedBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(InstanceBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(LinkedKeyBinding<? extends Object> binding) {
+			Binding<?> linkedKeyBinding = injector
+					.getBinding(binding.getLinkedKey());
+			return linkedKeyBinding.acceptTargetVisitor(this);
+		}
+
+		@Override
+		public TypeToken<?> visit(ProviderBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ProviderInstanceBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				ProviderKeyBinding<? extends Object> binding) {
+			return null;
+		}
+
+		@Override
+		public TypeToken<?> visit(
+				UntargettedBinding<? extends Object> binding) {
+			return null;
+		}
+
+	}
+
+	private final List<IAdaptable> deferredInstances = new ArrayList<>();
 
 	private Injector injector;
 
@@ -349,7 +350,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	/**
 	 * Creates a new {@link AdapterInjector} to inject the given {@link Method},
 	 * annotated with the given {@link AdapterMap} method annotation.
-	 * 
+	 *
 	 * @param method
 	 *            The {@link Method} to be injected.
 	 */
@@ -363,15 +364,15 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	 * referred to in the given method annotation, and assignable from the given
 	 * adaptable type. The bindings are returned mapped to their keys, sorted
 	 * following the inheritance hierarchy of their respective adaptable types.
-	 * 
-	 * @param adaptableType
-	 *            The type of the adaptable, whose method is to be injected.
+	 *
+	 * @param adaptable
+	 *            The adaptable, whose method is to be injected.
 	 * @return All applicable adapter map bindings (mapped to their binding
 	 *         keys), sorted along the type hierarchy of the bindings adaptable
 	 *         types.
 	 */
 	protected SortedMap<Key<?>, Binding<?>> getApplicableAdapterMapBindings(
-			final Class<?> adaptableType) {
+			IAdaptable adaptable) {
 		// find available keys
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// XXX: Use a sorted map, where keys are sorted according to
@@ -407,15 +408,33 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				final AdapterMap keyAnnotation = (AdapterMap) key
 						.getAnnotation();
 				if (keyAnnotation.adaptableType()
-						.isAssignableFrom(adaptableType)) {
-					// XXX: All adapter (map) bindings that are bound to the
-					// adaptable type, or to a super type or super interface
-					// will be considered.
+						.isAssignableFrom(adaptable.getClass())) {
+					// TODO: check role
+					if (!AdapterMap.DEFAULT_ROLE
+							.equals(keyAnnotation.adaptableRole())) {
+						// the adapter map binding is targeting a specific role
+						// if the adaptable is itself Adaptable.Bound and uses a
+						// role for its registration, consider that role here
+						if (adaptable instanceof IAdaptable.Bound) {
+							AdapterKey<?> adapterKey = ((IAdaptable.Bound<?>) adaptable)
+									.getAdaptable().getAdapterKey(adaptable);
+							if (adapterKey.getRole()
+									.equals(keyAnnotation.adaptableRole())) {
+								// add all bindings in case the roles match
+								applicableBindings.put(key,
+										allBindings.get(key));
+							}
+						}
+					} else {
+						// XXX: All adapter (map) bindings that are bound to the
+						// adaptable type, or to a super type or super interface
+						// will be considered.
 
-					// System.out.println("Applying binding for " +
-					// keyAnnotation.value() + " to " + type +
-					// " as subtype of " + methodAnnotation.value());
-					applicableBindings.put(key, allBindings.get(key));
+						// System.out.println("Applying binding for " +
+						// keyAnnotation.value() + " to " + type +
+						// " as subtype of " + methodAnnotation.value());
+						applicableBindings.put(key, allBindings.get(key));
+					}
 				}
 			}
 		}
@@ -424,11 +443,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
 	 * Performs the adapter map injection for the given adaptable instance.
-	 * 
+	 *
 	 * @param adaptable
 	 *            The adaptable to inject adapters into.
 	 */
-	protected void injectAdapters(final Object adaptable) {
+	protected void injectAdapters(final IAdaptable adaptable) {
 		List<String> issues = new ArrayList<>();
 		injectAdapters(adaptable, issues);
 		for (String issue : issues) {
@@ -438,16 +457,17 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
 	 * Performs the adapter map injection for the given adaptable instance.
-	 * 
+	 *
 	 * @param adaptable
 	 *            The adaptable to inject adapters into.
 	 * @param issues
 	 *            A {@link String} list, to which issues may be added that arise
 	 *            during injection.
 	 */
-	protected void injectAdapters(final Object adaptable, List<String> issues) {
+	protected void injectAdapters(final IAdaptable adaptable,
+			List<String> issues) {
 		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getApplicableAdapterMapBindings(
-				adaptable.getClass());
+				adaptable);
 		// System.out.println("--");
 		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 				.entrySet()) {
@@ -462,6 +482,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						Object adapter = adapterMap.get(key);
 						TypeToken<?> adapterType = key.getKey();
 						String role = key.getRole();
+
+						// in case the adapter is an adaptable, pass in the
+						// adapter role as role of the adaptable.
+						// TODO.
 
 						// System.out.println(
 						// "Inject adapter " + adapter + " with type "
@@ -497,7 +521,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 
 	/**
 	 * Sets the {@link Injector}, being used for adapter map injection.
-	 * 
+	 *
 	 * @param injector
 	 *            The {@link Injector} to use.
 	 */
@@ -505,7 +529,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 	public void setInjector(final Injector injector) {
 		this.injector = injector;
 		// perform deferred injections (if there have been any)
-		for (final Object instance : deferredInstances) {
+		for (final IAdaptable instance : deferredInstances) {
 			injectAdapters(instance);
 		}
 		deferredInstances.clear();

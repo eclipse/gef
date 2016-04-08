@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt.inject;
 
@@ -18,7 +18,7 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 
 /**
  * Implementation of {@link AdapterMap} annotation.
- * 
+ *
  * @author anyssen
  *
  */
@@ -26,28 +26,51 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 class AdapterMapImpl implements AdapterMap, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Class<? extends IAdaptable> value;
+	private Class<? extends IAdaptable> type;
+	private String role;
 
 	/**
 	 * Creates a new {@link AdapterMapImpl} with the given {@link IAdaptable}
 	 * type as its value.
-	 * 
-	 * @param value
-	 *            The {@link IAdaptable} type being used as value of this
+	 *
+	 * @param type
+	 *            The {@link IAdaptable} type being used as type of this
 	 *            {@link AdapterMapImpl}.
 	 */
-	public AdapterMapImpl(Class<? extends IAdaptable> value) {
-		this.value = value;
+	public AdapterMapImpl(Class<? extends IAdaptable> type) {
+		this.type = type;
+		this.role = AdapterMap.DEFAULT_ROLE;
+	}
+
+	/**
+	 * Creates a new {@link AdapterMapImpl} with the given {@link IAdaptable}
+	 * type and role.
+	 *
+	 * @param type
+	 *            The {@link IAdaptable} type being used as type of this
+	 *            {@link AdapterMapImpl}.
+	 * @param role
+	 *            The {@link String} being used as role of this
+	 *            {@link AdapterMapImpl}.
+	 */
+	public AdapterMapImpl(Class<? extends IAdaptable> type, String role) {
+		this.type = type;
+		this.role = role;
+	}
+
+	@Override
+	public String adaptableRole() {
+		return role;
+	}
+
+	@Override
+	public Class<? extends IAdaptable> adaptableType() {
+		return type;
 	}
 
 	@Override
 	public Class<? extends Annotation> annotationType() {
 		return AdapterMap.class;
-	}
-
-	@Override
-	public Class<? extends IAdaptable> adaptableType() {
-		return value;
 	}
 
 	@Override
@@ -57,16 +80,19 @@ class AdapterMapImpl implements AdapterMap, Serializable {
 		}
 
 		AdapterMap other = (AdapterMap) obj;
-		return value.equals(other.adaptableType());
+		return type.equals(other.adaptableType())
+				&& role.equals(other.adaptableRole());
 	}
 
 	@Override
 	public int hashCode() {
-		return (127 * "value".hashCode()) ^ value.hashCode();
+		return (127 * "type".hashCode())
+				^ type.hashCode() + (127 * "role".hashCode()) ^ role.hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return "@" + AdapterMap.class.getName() + "(value=" + value + ")";
+		return "@" + AdapterMap.class.getName() + "(type=" + type + ", "
+				+ "role=" + role + ")";
 	}
 }

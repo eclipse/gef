@@ -63,6 +63,11 @@ public class AdaptableSupportTests {
 		}
 
 		@Override
+		public <T> AdapterKey<T> getAdapterKey(T adapter) {
+			return ads.getAdapterKey(adapter);
+		}
+
+		@Override
 		public ObservableMap<AdapterKey<?>, Object> getAdapters() {
 			return ads.getAdapters();
 		}
