@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,6 +195,9 @@ public class FXRotateSelectedOnHandleDragPolicy
 		// save pointer location for later angle calculation
 		initialPointerLocationInScene = new Point(e.getSceneX(), e.getSceneY());
 		targetParts = determineTargetParts();
+		if (targetParts == null) {
+			targetParts = Collections.emptyList();
+		}
 		Rectangle bounds = FXPartUtils
 				.getUnionedVisualBoundsInScene(targetParts);
 		if (bounds == null) {
