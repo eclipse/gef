@@ -16,11 +16,7 @@ import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
 
 /**
- * This class contains custom formatting description.
- * 
- * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#formatting
- * on how and when to use it
- * 
+ * This class contains custom formatting declarations.
  */
 public class DotFormatter extends AbstractDeclarativeFormatter {
 

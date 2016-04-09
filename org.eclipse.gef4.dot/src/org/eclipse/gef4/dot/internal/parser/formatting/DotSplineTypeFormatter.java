@@ -16,25 +16,16 @@
  */
 package org.eclipse.gef4.dot.internal.parser.formatting;
 
-import org.eclipse.gef4.dot.internal.parser.services.DotSplineTypeGrammarAccess;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
 
-import com.google.inject.Inject;
-
 /**
  * This class contains custom formatting declarations.
- * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#
- * formatting on how and when to use it.
- * 
- * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an
- * example
  */
 public class DotSplineTypeFormatter extends AbstractDeclarativeFormatter {
 
-	@Inject
-	private DotSplineTypeGrammarAccess grammarAccess;
+	// @Inject
+	// private DotSplineTypeGrammarAccess grammarAccess;
 
 	@Override
 	protected void configureFormatting(FormattingConfig c) {
