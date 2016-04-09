@@ -17,7 +17,7 @@ digraph SampleGraph {
 	   supported) and edges (label and style supported), override these in 
 	   individual nodes or edges (see below): */
 	graph[layout=osage]
-   	node[label="node2"]
+   	node[label=Käse]
    	edge[label="edge", style=dashed]
 	/*-------------------------------------------------------------------------*/
 	/* Nodes can have specified labels: */

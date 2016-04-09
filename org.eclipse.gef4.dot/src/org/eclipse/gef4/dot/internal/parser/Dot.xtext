@@ -93,8 +93,9 @@ enum AttributeType:
 terminal COMPASS_PT:
 	'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'c' | '_';
 
+	// XXX: Any string of alphabetic ([a-zA-Z\200-\377]) characters, underscores ('_') or digits ([0-9]), not beginning with a digit;
 terminal STRING:
-	('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+	('a'..'z' | 'A'..'Z' | '\u0080'..'\u00FF' | '_') ('a'..'z' | 'A'..'Z' | '\u0080'..'\u00FF' | '_' | '0'..'9')*;
 
 terminal NUMERAL:
 	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)?;
