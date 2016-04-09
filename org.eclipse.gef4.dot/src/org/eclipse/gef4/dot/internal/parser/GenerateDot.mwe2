@@ -9,7 +9,8 @@
  * 		Alexander Nyßen - migration to Xtext 2.7.3 (bug #478562); 
  *                        support for case insensitive keywords (bug #454626)
  *                        integration of attribute grammars
- *      Tamas Miklossy	- support for junit test plugin generation
+ *      Tamas Miklossy  - support for junit test plugin generation
+ *                      - support for formatter API generation
  *******************************************************************************/
 module org.eclipse.gef4.dot.internal.parser.Dot
 
@@ -122,7 +123,10 @@ Workflow {
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-
+			
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
+			
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -152,7 +156,10 @@ Workflow {
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-
+			
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
+			
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
@@ -180,7 +187,10 @@ Workflow {
 
 			// Java-based validator
 			fragment = validation.JavaValidatorFragment auto-inject {}
-
+			
+			// formatter API
+			fragment = formatting.FormatterFragment auto-inject {}
+						
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
 				generateStub = false
