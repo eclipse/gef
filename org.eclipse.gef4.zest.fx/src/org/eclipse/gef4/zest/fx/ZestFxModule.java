@@ -261,14 +261,14 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	@Override
-	protected void bindFXRootPartAsFXViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindFXRootPartAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ZestFxRootPart.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override
-	protected void bindFXViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindFXViewerAdapters(adapterMapBinder);
+	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindContentViewerAdapters(adapterMapBinder);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
 	}

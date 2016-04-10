@@ -104,7 +104,7 @@ public abstract class AbstractFXView extends ViewPart {
 		hookViewers();
 
 		// register listener to provide selection to workbench
-		registerWorkbenchSelectionForwarder(getViewer());
+		registerWorkbenchSelectionForwarder(getContentViewer());
 
 		// activate domain
 		activate();
@@ -199,7 +199,7 @@ public abstract class AbstractFXView extends ViewPart {
 	 * @return The {@link FXViewer} of the {@link FXDomain} that was previously
 	 *         injected.
 	 */
-	protected FXViewer getViewer() {
+	protected FXViewer getContentViewer() {
 		return domain.getAdapter(AdapterKey.get(FXViewer.class,
 				FXDomain.CONTENT_VIEWER_ROLE));
 	}
@@ -214,7 +214,7 @@ public abstract class AbstractFXView extends ViewPart {
 	protected void hookViewers() {
 		// by default we only have a single (content) viewer, so hook its
 		// visuals as root visuals into the scene
-		final FXViewer contentViewer = getViewer();
+		final FXViewer contentViewer = getContentViewer();
 		canvas.setScene(new Scene(contentViewer.getCanvas()));
 	}
 
@@ -230,7 +230,7 @@ public abstract class AbstractFXView extends ViewPart {
 		}
 
 		deleteActionHandler = new DeleteActionHandler();
-		deleteActionHandler.init(getViewer());
+		deleteActionHandler.init(getContentViewer());
 
 		site.getActionBars().setGlobalActionHandler(
 				ActionFactory.DELETE.getId(), deleteActionHandler);

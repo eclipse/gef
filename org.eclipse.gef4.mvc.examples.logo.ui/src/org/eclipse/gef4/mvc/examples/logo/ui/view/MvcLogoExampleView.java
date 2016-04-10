@@ -103,7 +103,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
 				.with(new MvcLogoExampleUiModule())));
 		// set default contents (GEF logo)
-		FXViewer viewer = getViewer();
+		FXViewer viewer = getContentViewer();
 		ContentModel contentModel = viewer.getAdapter(ContentModel.class);
 		contentModel.getContents()
 				.setAll(MvcLogoExample.createDefaultContents());
@@ -176,7 +176,7 @@ public class MvcLogoExampleView extends AbstractFXView {
 	@Override
 	protected void hookViewers() {
 		// determine content root node
-		final FXViewer contentViewer = getViewer();
+		final FXViewer contentViewer = getContentViewer();
 		InfiniteCanvas contentRootNode = contentViewer.getCanvas();
 		getCanvas().setScene(new Scene(contentRootNode));
 		// // determine palette root node

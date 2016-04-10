@@ -63,6 +63,7 @@ import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
@@ -231,6 +232,30 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindContentViewerAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// bind root part
+		bindFXRootPartAsContentViewerAdapter(adapterMapBinder);
+		// bind parameterized default viewer models (others are already bound in
+		// superclass)
+		bindFocusModelAsContentViewerAdapter(adapterMapBinder);
+		bindHoverModelAsContentViewerAdapter(adapterMapBinder);
+		bindSelectionModelAsContentViewerAdapter(adapterMapBinder);
+	}
+
+	/**
 	 * Adds a binding for {@link CreationPolicy} to the {@link AdapterMap}
 	 * binder for {@link AbstractRootPart}.
 	 *
@@ -307,10 +332,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindFocusModelAsFXViewerAdapter(
+	@SuppressWarnings("serial")
+	protected void bindFocusModelAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<FocusModel<Node>>() {
+		adapterMapBinder
+				.addBinding(AdapterKey.get(new TypeToken<FocusModel<Node>>() {
+				})).to(new TypeLiteral<FocusModel<Node>>() {
 				});
 	}
 
@@ -622,7 +649,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindFXRootPartAsFXViewerAdapter(
+	protected void bindFXRootPartAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())
 				.to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
@@ -728,30 +755,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
-	 * sub-classes. May be overwritten by sub-classes to change the default
-	 * bindings.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXViewer} as a key.
-	 *
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindFXViewerAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// bind root part
-		bindFXRootPartAsFXViewerAdapter(adapterMapBinder);
-		// bind parameterized default viewer models (others are already bound in
-		// superclass)
-		bindFocusModelAsFXViewerAdapter(adapterMapBinder);
-		bindHoverModelAsFXViewerAdapter(adapterMapBinder);
-		bindSelectionModelAsFXViewerAdapter(adapterMapBinder);
-	}
-
-	/**
 	 * Adds a binding for {@link FXViewer} to the {@link AdapterMap} binder for
 	 * {@link FXDomain}.
 	 *
@@ -765,7 +768,8 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXViewerAsFXDomainAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role(FXDomain.CONTENT_VIEWER_ROLE))
+		adapterMapBinder
+				.addBinding(AdapterKey.role(FXDomain.CONTENT_VIEWER_ROLE))
 				.to(FXViewer.class);
 	}
 
@@ -873,10 +877,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindHoverModelAsFXViewerAdapter(
+	@SuppressWarnings("serial")
+	protected void bindHoverModelAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<HoverModel<Node>>() {
+		adapterMapBinder
+				.addBinding(AdapterKey.get(new TypeToken<HoverModel<Node>>() {
+				})).to(new TypeLiteral<HoverModel<Node>>() {
 				});
 	}
 
@@ -993,10 +999,12 @@ public class MvcFxModule extends MvcModule<Node> {
 	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
-	protected void bindSelectionModelAsFXViewerAdapter(
+	@SuppressWarnings("serial")
+	protected void bindSelectionModelAsContentViewerAdapter(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
-				.to(new TypeLiteral<SelectionModel<Node>>() {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<SelectionModel<Node>>() {
+				})).to(new TypeLiteral<SelectionModel<Node>>() {
 				});
 	}
 
@@ -1035,8 +1043,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				AdapterMaps.getAdapterMapBinder(binder(), FXDomain.class));
 
 		// bind additional adapters for FXViewer
-		bindFXViewerAdapters(
-				AdapterMaps.getAdapterMapBinder(binder(), FXViewer.class));
+		bindContentViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 
 		// bind additional adapters for FXRootPart
 		bindFXRootPartAdapters(

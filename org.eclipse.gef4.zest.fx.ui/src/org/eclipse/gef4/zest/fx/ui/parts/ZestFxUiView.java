@@ -60,7 +60,7 @@ public class ZestFxUiView extends AbstractFXView {
 	}
 
 	/**
-	 * Changes the contents of the {@link #getViewer()} to the given
+	 * Changes the contents of the {@link #getContentViewer()} to the given
 	 * {@link Graph}. The contents are changed by changing the
 	 * {@link ContentModel}.
 	 *
@@ -69,12 +69,12 @@ public class ZestFxUiView extends AbstractFXView {
 	 */
 	public void setGraph(Graph graph) {
 		// check we have a content viewer
-		FXViewer contentViewer = getViewer();
+		FXViewer contentViewer = getContentViewer();
 		if (contentViewer == null) {
 			throw new IllegalStateException("Invalid configuration: Content viewer could not be retrieved.");
 		}
 		// check we have a content model
-		ContentModel contentModel = getViewer().getAdapter(ContentModel.class);
+		ContentModel contentModel = getContentViewer().getAdapter(ContentModel.class);
 		if (contentModel == null) {
 			throw new IllegalStateException("Invalid configuration: Content model could not be retrieved.");
 		}
