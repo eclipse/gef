@@ -16,9 +16,11 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -55,7 +57,9 @@ public class FXViewerTests {
 				});
 			}
 		});
-		FXViewer viewer = injector.getInstance(FXViewer.class);
+		FXDomain domain = new FXDomain();
+		injector.injectMembers(domain);
+		FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
 		IRootPart<Node, ? extends Node> rootPart = viewer.getRootPart();
 		assertNotNull(rootPart);
 		rootPart = viewer.getAdapter(new TypeToken<IRootPart<Node, ? extends Node>>() {
