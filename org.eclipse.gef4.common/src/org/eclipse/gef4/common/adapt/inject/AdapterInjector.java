@@ -322,7 +322,6 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		public Map<AdapterKey<?>, Object> visit(
 				final ProviderInstanceBinding<? extends Object> binding) {
 			Map<AdapterKey<?>, Object> adapters = new HashMap<>();
-			// XXX: This is only used in case the MapBinder permits duplicates
 			Map<AdapterKey<?>, ?> adaptersByKeys = (Map<AdapterKey<?>, ?>) binding
 					.getProviderInstance().get();
 			for (AdapterKey<?> adapterKey : adaptersByKeys.keySet()) {
@@ -504,8 +503,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						// if the adaptable is itself Adaptable.Bound and uses a
 						// role for its registration, consider that role here
 						if (adaptable instanceof IAdaptable.Bound) {
-							// defer the binding until the adaptable is
-							// registered as an adapter itself.
+							// if the adaptable is already registered as an
+							// adaptable, we might evaluate the bindings
+							// directly. Otherwise we have to defer the
+							// evaluation until the adaptable is registered as
+							// adapter.
 							if (((IAdaptable.Bound<?>) adaptable)
 									.getAdaptable() != null) {
 								if (keyAnnotation.adaptableRole()
@@ -518,9 +520,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 											allBindings.get(key));
 								}
 							} else {
-								// TODO: try to infer types already here
-								// does that make a difference??
-								deferredBindings.put(key, allBindings.get(key));
+								// defer the binding until the adaptable is
+								// registered as an adapter itself.
+								Binding<?> binding = allBindings.get(key);
+								deferredBindings.put(key, binding);
 							}
 						}
 					} else {
@@ -569,6 +572,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								}
 								injectAdapters(adaptable, issues,
 										deferredApplicableBindings);
+								// if we defer the injection, we have to print
+								// issues ourselves
+								for (String issue : issues) {
+									System.err.println(issue);
+								}
 								observable.removeListener(this);
 							}
 						}

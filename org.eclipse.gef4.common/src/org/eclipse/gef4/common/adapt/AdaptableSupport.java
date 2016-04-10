@@ -426,8 +426,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	@SuppressWarnings("unchecked")
 	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
 			String role) {
-		// TODO: check if we can make that even better (now we restrict the
-		// check to raw types)
+		// we can only check raw types here because of type erasure
 		if (!adapterType.getRawType().isAssignableFrom(adapter.getClass())
 				|| !adapter.getClass()
 						.isAssignableFrom(adapterType.getRawType())) {
