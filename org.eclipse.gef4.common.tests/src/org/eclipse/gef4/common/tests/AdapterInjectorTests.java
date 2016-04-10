@@ -13,19 +13,23 @@
 package org.eclipse.gef4.common.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjectionSupport;
 import org.eclipse.gef4.common.adapt.inject.AdapterInjector;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.common.adapt.inject.InjectAdapters;
 import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
@@ -36,7 +40,105 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ObservableMap;
+
 public class AdapterInjectorTests {
+
+	private static class AdapterStoreBoundAdaptable
+			implements IAdaptable, IAdaptable.Bound<AdapterStore> {
+
+		private AdaptableSupport<AdapterStoreBoundAdaptable> ads = new AdaptableSupport<>(
+				this);
+
+		private ReadOnlyObjectWrapper<AdapterStore> adaptableProperty = new ReadOnlyObjectWrapper<>();
+
+		@Override
+		public ReadOnlyObjectProperty<AdapterStore> adaptableProperty() {
+			return adaptableProperty.getReadOnlyProperty();
+		}
+
+		@Override
+		public ReadOnlyMapProperty<AdapterKey<?>, Object> adaptersProperty() {
+			return ads.adaptersProperty();
+		}
+
+		@Override
+		public AdapterStore getAdaptable() {
+			return adaptableProperty.get();
+		}
+
+		@Override
+		public <T> T getAdapter(AdapterKey<T> key) {
+			return ads.getAdapter(key);
+		}
+
+		@Override
+		public <T> T getAdapter(Class<T> key) {
+			return ads.getAdapter(key);
+		}
+
+		@Override
+		public <T> T getAdapter(TypeToken<T> key) {
+			return ads.getAdapter(key);
+		}
+
+		@Override
+		public <T> AdapterKey<T> getAdapterKey(T adapter) {
+			return ads.getAdapterKey(adapter);
+		}
+
+		@Override
+		public ObservableMap<AdapterKey<?>, Object> getAdapters() {
+			return ads.getAdapters();
+		}
+
+		@Override
+		public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+				Class<? super T> key) {
+			return ads.getAdapters(key);
+		}
+
+		@Override
+		public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+				TypeToken<? super T> key) {
+			return ads.getAdapters(key);
+		}
+
+		@Override
+		public void setAdaptable(AdapterStore adaptable) {
+			adaptableProperty.set(adaptable);
+		}
+
+		@Override
+		public <T> void setAdapter(T adapter) {
+			ads.setAdapter(adapter);
+		}
+
+		@Override
+		public <T> void setAdapter(T adapter, String role) {
+			ads.setAdapter(adapter, role);
+		}
+
+		@Override
+		public <T> void setAdapter(TypeToken<T> adapterType, T adapter) {
+			ads.setAdapter(adapterType, adapter);
+		}
+
+		@InjectAdapters
+		@Override
+		public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
+				String role) {
+			ads.setAdapter(adapterType, adapter, role);
+		}
+
+		@Override
+		public <T> void unsetAdapter(T adapter) {
+			ads.unsetAdapter(adapter);
+		}
+	}
 
 	private static class ParameterizedSubType<T> extends RawType {
 	}
@@ -44,10 +146,44 @@ public class AdapterInjectorTests {
 	private static class RawType {
 	}
 
+	/**
+	 * Tests that a warning message is given when no type key is provided in the
+	 * binding, and the actual type could also not be inferred from the binding.
+	 */
+	@Test
+	public void ensureMissingKeyDetected() throws Exception {
+		Module module = new AbstractModule() {
+			@Override
+			protected void configure() {
+				install(new AdapterInjectionSupport());
+
+				// create map bindings for AdapterStore, which is an IAdaptable
+				MapBinder<AdapterKey<?>, Object> adapterMapBinder = AdapterMaps
+						.getAdapterMapBinder(binder(), AdapterStore.class);
+				// use raw type as key and target
+				adapterMapBinder.addBinding(AdapterKey.defaultRole())
+						.toInstance(new ParameterizedSubType<Integer>());
+			}
+		};
+
+		AdapterStore adaptable = new AdapterStore();
+		List<String> issues = performInjection(adaptable, module);
+		assertEquals(1, issues.size());
+		System.out.println(issues.get(0));
+		assertTrue(issues.get(0).contains("WARNING"));
+		assertTrue(issues.get(0).contains(
+				"The actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
+		assertTrue(issues.get(0)
+				.contains("could not be inferred from the binding at"));
+	}
+
+	/**
+	 * Tests that a warning message is given when the actual type of an adapter
+	 * could be precisely inferred from the binding, and the binding provides a
+	 * type key as well.
+	 */
 	@Test
 	public void ensureSuperfluousKeyDetected() throws Exception {
-		AdapterStore adaptable = new AdapterStore();
-
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -62,16 +198,57 @@ public class AdapterInjectorTests {
 			}
 		};
 
+		AdapterStore adaptable = new AdapterStore();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		assertTrue(issues.get(0).contains(
-				"The redundant type key org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType may be omitted in the adapter key of the binding, using AdapterKey.defaultRole() or AdapterKey.role(String) instead."));
 		System.out.println(issues.get(0));
+		assertTrue(issues.get(0).contains("WARNING"));
+		assertTrue(issues.get(0).contains(
+				"The redundant type key org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType may be omitted in the adapter key of the binding, using AdapterKey.defaultRole() instead."));
 	}
 
+	/**
+	 * Tests that a warning message is given when no type could be inferred from
+	 * the binding, and the type key can thus not be validated.
+	 */
+	@Test
+	public void ensureUncertainKeyDetected() throws Exception {
+		Module module = new AbstractModule() {
+			@SuppressWarnings("serial")
+			@Override
+			protected void configure() {
+				install(new AdapterInjectionSupport());
+
+				// create map bindings for AdapterStore, which is an IAdaptable
+				MapBinder<AdapterKey<?>, Object> adapterMapBinder = AdapterMaps
+						.getAdapterMapBinder(binder(), AdapterStore.class);
+				// use raw type as key and target
+				adapterMapBinder.addBinding(AdapterKey
+						.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				})).toInstance(new ParameterizedSubType<Integer>());
+			}
+		};
+
+		AdapterStore adaptable = new AdapterStore();
+		List<String> issues = performInjection(adaptable, module);
+		assertEquals(1, issues.size());
+		System.out.println(issues.get(0));
+		assertTrue(issues.get(0).contains("WARNING"));
+		assertTrue(issues.get(0).contains(
+				"The actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
+		assertTrue(issues.get(0)
+				.contains("could not be inferred from the binding at"));
+		assertTrue(issues.get(0).contains("Make sure the provided type key "));
+		assertTrue(issues.get(0)
+				.contains("matches to the actual type of the adapter."));
+	}
+
+	/**
+	 * Tests that a warning message is given when a type different to the key
+	 * type could be inferred from the binding.
+	 */
 	@Test
 	public void ensureUnderspecifiedKeyDetected() throws Exception {
-		AdapterStore adaptable = new AdapterStore();
 
 		Module module = new AbstractModule() {
 			@Override
@@ -88,17 +265,23 @@ public class AdapterInjectorTests {
 			}
 		};
 
+		AdapterStore adaptable = new AdapterStore();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains(
-				"The given key type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not seem to match the actual (parameterized) type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
+				"The given key type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not seem to match the actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
 	}
 
+	/**
+	 * Tests that an error message is given when the binding provides a type
+	 * key, whose raw type does not the actual (raw) type of the adapter, as it
+	 * was inferred from the binding (if possible) or the adapter instance.
+	 */
 	@Test
 	public void ensureUnmatchedRawKeyDetected() throws Exception {
-		AdapterStore adaptable = new AdapterStore();
-
+		// First case: a module that allows to infer the actual type from the
+		// binding
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -113,11 +296,38 @@ public class AdapterInjectorTests {
 			}
 		};
 
+		AdapterStore adaptable = new AdapterStore();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));
+		assertTrue(issues.get(0).contains("ERROR"));
 		assertTrue(issues.get(0).contains(
-				"The given key (raw) type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not seem to match the actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
+				"The given key (raw) type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not match the actual (raw) type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
+
+		// Second case: a module that does not allow to infer the actual type
+		// from the
+		// binding
+		module = new AbstractModule() {
+			@Override
+			protected void configure() {
+				install(new AdapterInjectionSupport());
+
+				// create map bindings for AdapterStore, which is an IAdaptable
+				MapBinder<AdapterKey<?>, Object> adapterMapBinder = AdapterMaps
+						.getAdapterMapBinder(binder(), AdapterStore.class);
+				// use raw type as key and target
+				adapterMapBinder.addBinding(AdapterKey.get(RawType.class))
+						.toInstance(new ParameterizedSubType<Integer>());
+			}
+		};
+
+		adaptable = new AdapterStore();
+		issues = performInjection(adaptable, module);
+		assertEquals(1, issues.size());
+		System.out.println(issues.get(0));
+		assertTrue(issues.get(0).contains("ERROR"));
+		assertTrue(issues.get(0).contains(
+				"The given key (raw) type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not match the actual (raw) type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
 	}
 
 	protected List<String> performInjection(AdapterStore adaptable,
@@ -136,6 +346,51 @@ public class AdapterInjectorTests {
 		injectAdaptersMethod.setAccessible(true);
 		injectAdaptersMethod.invoke(adapterInjector, adaptable, issues);
 		return issues;
+	}
+
+	@SuppressWarnings("serial")
+	@Test
+	public void roleBasedBinding() throws NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		Module module = new AbstractModule() {
+			@Override
+			protected void configure() {
+				install(new AdapterInjectionSupport());
+
+				MapBinder<AdapterKey<?>, Object> adapterMapBinder = AdapterMaps
+						.getAdapterMapBinder(binder(), AdapterStore.class);
+
+				// register adapter
+				adapterMapBinder.addBinding(AdapterKey.role("role"))
+						.to(AdapterStoreBoundAdaptable.class);
+
+				// create map bindings for AdapterStore, which is an IAdaptable
+				MapBinder<AdapterKey<?>, Object> roleBasedAdapterMapBinder = AdapterMaps
+						.getAdapterMapBinder(binder(),
+								AdapterStoreBoundAdaptable.class, "role");
+				// register adapter
+				roleBasedAdapterMapBinder.addBinding(AdapterKey.role("a1"))
+						.to(RawType.class);
+				roleBasedAdapterMapBinder.addBinding(AdapterKey.role("a2"))
+						.to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+				});
+			}
+
+		};
+		Injector injector = Guice.createInjector(module);
+
+		AdapterStore adapterStore = new AdapterStore();
+		injector.injectMembers(adapterStore);
+		AdapterStoreBoundAdaptable adaptableAdapter = adapterStore.getAdapter(
+				AdapterKey.get(AdapterStoreBoundAdaptable.class, "role"));
+		assertNotNull(adaptableAdapter);
+		System.out.println(adaptableAdapter.getAdapters());
+		assertNotNull(adaptableAdapter
+				.getAdapter(AdapterKey.get(RawType.class, "a1")));
+		// TODO: this does not work yet!
+		// assertNotNull(adaptableAdapter.getAdapter(
+		// AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
+		// }, "a2")));
 	}
 
 }

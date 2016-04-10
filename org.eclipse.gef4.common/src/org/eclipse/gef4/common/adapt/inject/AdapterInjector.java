@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.MembersInjector;
+import com.google.inject.Provider;
 import com.google.inject.multibindings.MapBinderBinding;
 import com.google.inject.multibindings.MultibinderBinding;
 import com.google.inject.multibindings.MultibindingsTargetVisitor;
@@ -105,6 +107,138 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			this.issues = issues;
 		}
 
+		protected TypeToken<?> determineAdapterType(Binding<?> binding,
+				AdapterKey<?> bindingKey, Object adapter) {
+			// try to infer the actual type of the adapter from the binding
+			TypeToken<?> bindingInferredType = binding
+					.acceptTargetVisitor(new AdapterTypeInferrer());
+
+			// perform some sanity checks
+			validateBindings(adapter, binding, bindingKey, bindingInferredType);
+
+			// The key type always takes precedence. Otherwise, if we could
+			// infer a type from the binding, we use that before falling back to
+			// inferring the type from the adapter instance itself.
+			TypeToken<?> bindingKeyType = bindingKey.getKey();
+			return bindingKeyType != null ? bindingKeyType
+					: (bindingInferredType != null ? bindingInferredType
+							: TypeToken.of(adapter.getClass()));
+		}
+
+		protected void validateBindings(Object adapter, Binding<?> binding,
+				AdapterKey<?> bindingAdapterKey,
+				TypeToken<?> bindingInferredType) {
+			TypeToken<?> bindingKeyType = bindingAdapterKey.getKey();
+			if (bindingInferredType != null) {
+				if (bindingKeyType != null) {
+					if (bindingKeyType.equals(bindingInferredType)) {
+						// a key type is given and equals the inferred type;
+						// issue a warning because of the superfluous
+						// information
+						issues.add("*** WARNING: The actual type of adapter "
+								+ adapter + " could already be inferred as "
+								+ bindingInferredType + " from the binding at "
+								+ binding.getSource() + ".\n"
+								+ "             The redundant type key "
+								+ bindingKeyType
+								+ " may be omitted in the adapter key of the binding, using "
+								+ (AdapterMap.DEFAULT_ROLE
+										.equals(bindingAdapterKey.getRole())
+												? "AdapterKey.defaultRole()"
+												: " AdapterKey.role("
+														+ bindingAdapterKey
+																.getRole()
+														+ ")")
+								+ " instead.");
+					} else {
+						if (bindingInferredType
+								.getType() instanceof ParameterizedType) {
+							// we know (from a binding) that the actual type
+							// is a parameterized type and the key type
+							// is not equal, so this is a problem
+							issues.add("*** WARNING: The given key type "
+									+ bindingKeyType
+									+ " does not seem to match the actual type of adapter "
+									+ adapter + " which was inferred as "
+									+ bindingInferredType
+									+ " from the binding at "
+									+ binding.getSource() + ".\n"
+									+ "             The adapter will only be retrievable via key types assignable to "
+									+ bindingKeyType
+									+ ". You should probably adjust your binding.");
+						} else {
+							// the actual type (inferred from the
+							// binding) is a raw type; the key raw type
+							// should at least match this raw type
+							if (!bindingInferredType.getRawType()
+									.equals(bindingKeyType.getRawType())) {
+								issues.add(
+										"*** ERROR: The given key (raw) type "
+												+ bindingKeyType.getRawType()
+														.getName()
+												+ " does not match the actual (raw) type of adapter "
+												+ adapter
+												+ " which was inferred as "
+												+ bindingInferredType
+												+ " from the binding at "
+												+ binding.getSource() + ".\n"
+												+ "           The adapter will only be retrievable via key types assignable to "
+												+ bindingKeyType
+												+ ". You need to adjust your binding.");
+							}
+						}
+					}
+				}
+			} else {
+				// no type could be inferred from the binding
+				if (bindingKeyType == null) {
+					issues.add(
+							"*** WARNING: The actual type of adapter " + adapter
+									+ " could not be inferred from the binding at "
+									+ binding.getSource()
+									+ ". The adapter will only be retrievable via key types assignable to "
+									+ TypeToken.of(adapter.getClass())
+									+ ", which is the actual type inferred from the instance.\n"
+									+ "             You should probably adjust your binding to provide a type key using "
+									+ (AdapterMap.DEFAULT_ROLE
+											.equals(bindingAdapterKey.getRole())
+													? "AdapterKey.get(<type>)"
+													: "AdapterKey.get(<type>, "
+															+ bindingAdapterKey
+																	.getRole()
+															+ ")")
+									+ ".");
+
+				} else {
+					// check that at least key raw type and the type inferred
+					// from the adapter instance match
+					if (!bindingKeyType.getRawType()
+							.isAssignableFrom(adapter.getClass())
+							|| !adapter.getClass().isAssignableFrom(
+									bindingKeyType.getRawType())) {
+						issues.add("*** ERROR: The given key (raw) type "
+								+ bindingKeyType.getRawType().getName()
+								+ " does not match the actual (raw) type of adapter "
+								+ adapter + ", which was inferred as "
+								+ adapter.getClass().getName() + ".\n"
+								+ "           You need to adjust your binding.");
+					} else {
+						// warn that the type could not be inferred and thus
+						// both types have to match
+						issues.add("*** WARNING: The actual type of adapter "
+								+ adapter
+								+ " could not be inferred from the binding at "
+								+ binding.getSource()
+								+ ". Therefore, the given type key "
+								+ bindingKeyType + " can not be confirmed.\n"
+								+ "             Make sure the provided type key "
+								+ bindingKeyType
+								+ " matches to the actual type of the adapter.");
+					}
+				}
+			}
+		}
+
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final ConstructorBinding<? extends Object> binding) {
@@ -126,7 +260,20 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final InstanceBinding<? extends Object> binding) {
-			return null;
+			@SuppressWarnings("unchecked")
+			Map.Entry<AdapterKey<?>, ?> entry = (Map.Entry<AdapterKey<?>, ?>) binding
+					.getProvider().get();
+
+			AdapterKey<?> key = entry.getKey();
+			Object adapter = (entry.getValue() instanceof Provider)
+					? ((Provider<?>) entry.getValue()).get() : entry.getValue();
+
+			// determine adapter type
+			TypeToken<?> adapterType = determineAdapterType(binding, key,
+					adapter);
+
+			return Collections.<AdapterKey<?>, Object> singletonMap(
+					AdapterKey.get(adapterType, key.getRole()), adapter);
 		}
 
 		@Override
@@ -138,89 +285,14 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final MapBinderBinding<? extends Object> mapbinding) {
-			// XXX: This is only used in case the MapBinder does not permit
-			// duplicates
 			final Map<AdapterKey<?>, Object> adapters = new HashMap<>();
 			for (final Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
 				AdapterKey<?> key = (AdapterKey<?>) entry.getKey();
-
 				Object adapter = entry.getValue().getProvider().get();
-				// in case of a constructor binding, we may compute a better
-				// type than the runtime type of the adapter.
-				TypeToken<?> adapterType = entry.getValue()
-						.acceptTargetVisitor(new AdapterTypeInferrer());
 
-				if (adapterType != null) {
-					// perform some sanity checks
-					if (key.getKey() != null) {
-						if (key.getKey().equals(adapterType)) {
-							// a key type is given and equals the inferred type;
-							// issue a warning because of the superfluous
-							// information
-							issues.add(
-									"*** WARNING: The actual type of adapter "
-											+ adapter
-											+ " could already be inferred as "
-											+ adapterType
-											+ " from the binding at "
-											+ entry.getValue().getSource()
-											+ ".\n"
-											+ "             The redundant type key "
-											+ key.getKey()
-											+ " may be omitted in the adapter key of the binding, using AdapterKey.defaultRole() or AdapterKey.role(String) instead.");
-						} else {
-							if (adapterType
-									.getType() instanceof ParameterizedType) {
-								// we know (from a binding) that the actual type
-								// is a parameterized type and the key type
-								// is not equal, so this is a problem
-								issues.add("*** WARNING: The given key type "
-										+ key.getKey()
-										+ " does not seem to match the actual (parameterized) type of adapter "
-										+ adapter + " which was inferred as "
-										+ adapterType + " from the binding at "
-										+ entry.getValue().getSource() + ".\n"
-										+ "             The adapter will only be retrievable via key types assignable to "
-										+ key.getKey()
-										+ ". You should probably adjust your binding.");
-							} else {
-								// the actual type (inferred from the
-								// binding) is a raw type; the key raw type
-								// should at least match this raw type
-								if (!adapterType.getRawType()
-										.equals(key.getKey().getRawType())) {
-									issues.add(
-											"*** WARNING: The given key (raw) type "
-													+ key.getKey().getRawType()
-															.getName()
-													+ " does not seem to match the actual type of adapter "
-													+ adapter
-													+ " which was inferred as "
-													+ adapterType
-													+ " from the binding at "
-													+ entry.getValue()
-															.getSource()
-													+ ".\n"
-													+ "             The adapter will only be retrievable via key types assignable to "
-													+ key.getKey()
-													+ ". You should probably adjust your binding.");
-								}
-							}
-						}
-					}
-				} else {
-					// if no (better) adapter type was inferred from the
-					// binding,
-					// fall back to use the type inferred from the adapter
-					// instance
-					adapterType = TypeToken.of(adapter.getClass());
-				}
-
-				// in case a key type is given, that takes precedence over the
-				// inferred actual type.
-				if (key.getKey() != null) {
-					adapterType = key.getKey();
-				}
+				// determine adapter type
+				TypeToken<?> adapterType = determineAdapterType(
+						entry.getValue(), key, adapter);
 
 				adapters.put(AdapterKey.get(adapterType, key.getRole()),
 						adapter);
@@ -231,7 +303,12 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final MultibinderBinding<? extends Object> multibinding) {
-			return null;
+			Map<AdapterKey<?>, Object> adapters = new HashMap<>();
+			for (Binding<?> binding : multibinding.getElements()) {
+				// process the individual bindings
+				adapters.putAll(binding.acceptTargetVisitor(this));
+			}
+			return adapters;
 		}
 
 		@Override
@@ -240,7 +317,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			return null;
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings("unchecked")
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
 				final ProviderInstanceBinding<? extends Object> binding) {
@@ -252,13 +329,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 				// provider already provides adapters per AdapterKey
 				for (Object adapter : (Set<Object>) adaptersByKeys
 						.get(adapterKey)) {
-					// determine proper adapter type (for registration of
-					// adapter
-					TypeToken keyType = adapterKey.getKey();
-					// in case no type key is given, fall back to runtime type
-					// of adapter.
-					TypeToken<?> adapterType = keyType != null ? keyType
-							: TypeToken.of(adapter.getClass());
+					// determine adapter type
+					TypeToken<?> adapterType = determineAdapterType(binding,
+							adapterKey, adapter);
 					adapters.put(
 							AdapterKey.get(adapterType, adapterKey.getRole()),
 							adapter);
@@ -445,6 +518,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 											allBindings.get(key));
 								}
 							} else {
+								// TODO: try to infer types already here
+								// does that make a difference??
 								deferredBindings.put(key, allBindings.get(key));
 							}
 						}
@@ -534,6 +609,7 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						// System.out.println(
 						// "Inject adapter " + adapter + " with type "
 						// + adapterType + " for key " + key);
+						method.setAccessible(true);
 						method.invoke(adaptable,
 								new Object[] { adapterType, adapter, role });
 					}

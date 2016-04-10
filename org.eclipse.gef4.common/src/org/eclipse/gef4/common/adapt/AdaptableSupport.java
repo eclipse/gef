@@ -12,9 +12,7 @@
 package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -358,10 +356,6 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 		return typeSafeAdapters;
 	}
 
-	private <T> boolean isRawType(TypeToken<? super T> typeKey) {
-		return !(typeKey.getType() instanceof ParameterizedType);
-	}
-
 	/**
 	 * Registers the given adapter under the default role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}.
@@ -375,12 +369,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void setAdapter(T adapter) {
-		TypeToken<T> actualType = TypeToken.of((Class<T>) adapter.getClass());
-		if (!isRawType(actualType)) {
-			throw new IllegalArgumentException("Adapter " + adapter
-					+ " has no raw type, thus needs to be registered with a type key reflecting its actual type");
-		}
-		setAdapter(actualType, adapter);
+		setAdapter(TypeToken.of((Class<T>) adapter.getClass()), adapter);
 	}
 
 	/**
@@ -397,20 +386,7 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void setAdapter(T adapter, String role) {
-		// TODO: these checks do not seem to be valid...
-		TypeToken<T> actualType = TypeToken.of((Class<T>) adapter.getClass());
-		if (!isRawType(actualType)) {
-			// check that all parameters are bound to actual types
-			for (Type argument : ((ParameterizedType) actualType.getType())
-					.getActualTypeArguments()) {
-				if (argument instanceof TypeVariable) {
-					throw new IllegalArgumentException("Adapter " + adapter
-							+ " has no raw type, thus needs to be registered with a type key reflecting its actual type");
-				}
-			}
-		}
-
-		setAdapter(actualType, adapter, role);
+		setAdapter(TypeToken.of((Class<T>) adapter.getClass()), adapter, role);
 	}
 
 	/**
