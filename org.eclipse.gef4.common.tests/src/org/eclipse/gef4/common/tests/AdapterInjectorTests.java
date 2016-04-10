@@ -333,6 +333,73 @@ public class AdapterInjectorTests {
 
 	@SuppressWarnings("serial")
 	@Test
+	public void injectAdapters() {
+		Module module = new AbstractModule() {
+			@Override
+			protected void configure() {
+				install(new AdapterInjectionSupport());
+
+				MapBinder<AdapterKey<?>, Object> adapterMapBinder = AdapterMaps
+						.getAdapterMapBinder(binder(), AdapterStore.class);
+
+				// constructor binding
+				adapterMapBinder.addBinding(AdapterKey
+						.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				}, "a1")).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+				});
+
+				// instance binding
+				adapterMapBinder.addBinding(
+						AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, "a2")).toInstance(new Provider<Integer>() {
+
+					@Override
+					public Integer get() {
+						return 5;
+					}
+				});
+
+				// provider binding
+				adapterMapBinder.addBinding(
+						AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, "a3")).toProvider(new Provider<Provider<Integer>>() {
+
+					@Override
+					public Provider<Integer> get() {
+						return new Provider<Integer>() {
+
+							@Override
+							public Integer get() {
+								return 5;
+							}
+						};
+					}
+				});
+			}
+
+		};
+		Injector injector = Guice.createInjector(module);
+		AdapterStore adapterStore = new AdapterStore();
+		injector.injectMembers(adapterStore);
+		assertNotNull(adapterStore.getAdapter(
+				AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				}, "a1")));
+		// retrieve a parameterized type bound as instance
+		assertNotNull(adapterStore
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, "a2")));
+		assertNotNull(adapterStore
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, "a3")));
+	}
+
+	/**
+	 * Tests that adapters, which are bound to an adaptable of a certain role
+	 * are injected to an adaptable, that is itself bound as an adapter with the
+	 * respective role.
+	 */
+	@SuppressWarnings("serial")
+	@Test
 	public void injectAdaptersToBoundAdaptableOfRole()
 			throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
