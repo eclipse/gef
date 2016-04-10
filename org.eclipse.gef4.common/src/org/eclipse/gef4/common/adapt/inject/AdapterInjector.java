@@ -264,9 +264,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 			Map.Entry<AdapterKey<?>, ?> entry = (Map.Entry<AdapterKey<?>, ?>) binding
 					.getProvider().get();
 
+			// TODO: check in which cases an instance binding is found and
+			// whether its safe to assume that the entry is a provider in each
+			// case.
 			AdapterKey<?> key = entry.getKey();
-			Object adapter = (entry.getValue() instanceof Provider)
-					? ((Provider<?>) entry.getValue()).get() : entry.getValue();
+			Object adapter = ((Provider<?>) entry.getValue()).get();
 
 			// determine adapter type
 			TypeToken<?> adapterType = determineAdapterType(binding, key,

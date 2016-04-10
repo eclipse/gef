@@ -427,9 +427,20 @@ public class AdaptableSupport<A extends IAdaptable> implements IDisposable {
 	public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
 			String role) {
 		// we can only check raw types here because of type erasure
-		if (!adapterType.getRawType().isAssignableFrom(adapter.getClass())
-				|| !adapter.getClass()
-						.isAssignableFrom(adapterType.getRawType())) {
+		TypeToken<? extends Object> instanceType = TypeToken
+				.of(adapter.getClass());
+		// if we have an adapter of an anonymous class, it has to be assignable
+		// to the passed in adapter type; otherwise the raw types should be
+		// equal (so that the specified adapter type is as 'good' as possible.
+		if (instanceType.getRawType().isAnonymousClass() && !adapterType
+				.getRawType().isAssignableFrom(instanceType.getRawType())) {
+			throw new IllegalArgumentException("The passed in adapter type "
+					+ adapterType.getRawType().getSimpleName()
+					+ " is not assignable from the runtime (raw) type of the adapter, which is "
+					+ instanceType.getRawType().getSimpleName());
+		} else if (!instanceType.getRawType().isAnonymousClass()
+				&& !instanceType.getRawType()
+						.equals(adapterType.getRawType())) {
 			throw new IllegalArgumentException("The given adapter type "
 					+ adapterType.getType().getClass().getSimpleName()
 					+ " does not match the passed in adapter's type "

@@ -37,6 +37,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
@@ -330,28 +331,11 @@ public class AdapterInjectorTests {
 				"The given key (raw) type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not match the actual (raw) type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
 	}
 
-	protected List<String> performInjection(AdapterStore adaptable,
-			Module module) throws NoSuchMethodException, IllegalAccessException,
-					InvocationTargetException {
-		Injector injector = Guice.createInjector(module);
-		AdapterInjector adapterInjector = new AdapterInjector(
-				AdapterStore.class.getMethod("setAdapter", TypeToken.class,
-						Object.class, String.class));
-		adapterInjector.setInjector(injector);
-
-		List<String> issues = new ArrayList<>();
-		// call adapterInjector.injectAdapters(adaptable, issues);
-		Method injectAdaptersMethod = AdapterInjector.class.getDeclaredMethod(
-				"injectAdapters", IAdaptable.class, List.class);
-		injectAdaptersMethod.setAccessible(true);
-		injectAdaptersMethod.invoke(adapterInjector, adaptable, issues);
-		return issues;
-	}
-
 	@SuppressWarnings("serial")
 	@Test
-	public void roleBasedBinding() throws NoSuchMethodException,
-			IllegalAccessException, InvocationTargetException {
+	public void injectAdaptersToBoundAdaptableOfRole()
+			throws NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException {
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -371,26 +355,62 @@ public class AdapterInjectorTests {
 				// register adapter
 				roleBasedAdapterMapBinder.addBinding(AdapterKey.role("a1"))
 						.to(RawType.class);
-				roleBasedAdapterMapBinder.addBinding(AdapterKey.role("a2"))
-						.to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+				roleBasedAdapterMapBinder.addBinding(AdapterKey
+						.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				}, "a2")).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+				});
+
+				roleBasedAdapterMapBinder.addBinding(
+						AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, "a3")).toInstance(new Provider<Integer>() {
+
+					@Override
+					public Integer get() {
+						return 5;
+					}
 				});
 			}
 
 		};
 		Injector injector = Guice.createInjector(module);
-
 		AdapterStore adapterStore = new AdapterStore();
 		injector.injectMembers(adapterStore);
 		AdapterStoreBoundAdaptable adaptableAdapter = adapterStore.getAdapter(
 				AdapterKey.get(AdapterStoreBoundAdaptable.class, "role"));
 		assertNotNull(adaptableAdapter);
-		System.out.println(adaptableAdapter.getAdapters());
 		assertNotNull(adaptableAdapter
 				.getAdapter(AdapterKey.get(RawType.class, "a1")));
-		// TODO: this does not work yet!
-		// assertNotNull(adaptableAdapter.getAdapter(
-		// AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
-		// }, "a2")));
+		// retrieve by raw type (which works even if we could not infer a type
+		// from the binding)
+		assertNotNull(adaptableAdapter
+				.getAdapter(AdapterKey.get(ParameterizedSubType.class, "a2")));
+		// retrieve by parameterized type token (which only works if we could
+		// infer a type from the binding)
+		assertNotNull(adaptableAdapter.getAdapter(
+				AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				}, "a2")));
+		// retrieve a parameterized type bound as instance
+		assertNotNull(adaptableAdapter
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, "a3")));
+	}
+
+	protected List<String> performInjection(AdapterStore adaptable,
+			Module module) throws NoSuchMethodException, IllegalAccessException,
+					InvocationTargetException {
+		Injector injector = Guice.createInjector(module);
+		AdapterInjector adapterInjector = new AdapterInjector(
+				AdapterStore.class.getMethod("setAdapter", TypeToken.class,
+						Object.class, String.class));
+		adapterInjector.setInjector(injector);
+
+		List<String> issues = new ArrayList<>();
+		// call adapterInjector.injectAdapters(adaptable, issues);
+		Method injectAdaptersMethod = AdapterInjector.class.getDeclaredMethod(
+				"injectAdapters", IAdaptable.class, List.class);
+		injectAdaptersMethod.setAccessible(true);
+		injectAdaptersMethod.invoke(adapterInjector, adaptable, issues);
+		return issues;
 	}
 
 }
