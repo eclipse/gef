@@ -141,6 +141,20 @@ public class AdapterInjectorTests {
 		}
 	}
 
+	private final class AdapterStoreExtension extends AdapterStore {
+		@InjectAdapters
+		@Override
+		public <T> void setAdapter(TypeToken<T> adapterType, T adapter,
+				String role) {
+			try {
+				super.setAdapter(adapterType, adapter, role);
+			} catch (Exception e) {
+				// the injection will fail; we capture this silently here,
+				// as it is not relevant for the test
+			}
+		}
+	}
+
 	private static class ParameterizedSubType<T> extends RawType {
 	}
 
@@ -167,7 +181,7 @@ public class AdapterInjectorTests {
 			}
 		};
 
-		AdapterStore adaptable = new AdapterStore();
+		AdapterStore adaptable = new AdapterStoreExtension();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));
@@ -203,7 +217,7 @@ public class AdapterInjectorTests {
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));
-		assertTrue(issues.get(0).contains("WARNING"));
+		assertTrue(issues.get(0).contains("INFO"));
 		assertTrue(issues.get(0).contains(
 				"The redundant type key org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType may be omitted in the adapter key of the binding, using AdapterKey.defaultRole() instead."));
 	}
@@ -266,7 +280,7 @@ public class AdapterInjectorTests {
 			}
 		};
 
-		AdapterStore adaptable = new AdapterStore();
+		AdapterStore adaptable = new AdapterStoreExtension();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));
@@ -297,7 +311,7 @@ public class AdapterInjectorTests {
 			}
 		};
 
-		AdapterStore adaptable = new AdapterStore();
+		AdapterStore adaptable = new AdapterStoreExtension();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));
@@ -322,7 +336,7 @@ public class AdapterInjectorTests {
 			}
 		};
 
-		adaptable = new AdapterStore();
+		adaptable = new AdapterStoreExtension();
 		issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
 		System.out.println(issues.get(0));

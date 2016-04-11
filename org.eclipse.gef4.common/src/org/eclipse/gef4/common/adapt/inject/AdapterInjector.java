@@ -135,11 +135,11 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						// a key type is given and equals the inferred type;
 						// issue a warning because of the superfluous
 						// information
-						issues.add("*** WARNING: The actual type of adapter "
+						issues.add("*** INFO: The actual type of adapter "
 								+ adapter + " could already be inferred as "
 								+ bindingInferredType + " from the binding at "
 								+ binding.getSource() + ".\n"
-								+ "             The redundant type key "
+								+ "          The redundant type key "
 								+ bindingKeyType
 								+ " may be omitted in the adapter key of the binding, using "
 								+ (AdapterMap.DEFAULT_ROLE
