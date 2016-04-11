@@ -176,7 +176,7 @@ public class Line extends BezierCurve {
 	public Angle getDirectionCCW() {
 		Point start = getP1();
 		Point end = getP2();
-		return Angle.fromRad(Math.atan2(end.y - start.y, end.x - start.y));
+		return Angle.fromRad(Math.atan2(end.y - start.y, end.x - start.x));
 	}
 
 	/**
