@@ -124,7 +124,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'osage', 'sfdp', 'circo', 'grid', 'fdp', 'twopi', 'neato', 'dot'.",
+					"Cannot set graph attribute 'layout' to 'foo'. The layout value 'foo' is not semantically correct: Value should be one of 'circo', 'dot', 'fdp', 'grid', 'neato', 'osage', 'sfdp', 'twopi'.",
 					e.getMessage());
 		}
 	}
@@ -187,7 +187,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of 'ortho', '', 'compound', 'spline', 'polyline', 'true', 'line', 'false', 'none'.",
+					"Cannot set graph attribute 'splines' to 'foo'. The value 'foo' is not a syntactically correct bool: The given value 'foo' does not (case-insensitively) equal 'true', 'yes', 'false', or 'no' and is also not parsable as an integer value. The splines string value 'foo' is not semantically correct: Value should be one of '', 'compound', 'false', 'line', 'none', 'ortho', 'polyline', 'spline', 'true'.",
 					e.getMessage());
 		}
 	}
@@ -901,7 +901,7 @@ public class DotAttributesTests {
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
-					"Cannot set edge attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of '', 'solid', 'bold', 'dashed', 'tapered', 'invis', 'dotted'.",
+					"Cannot set edge attribute 'style' to 'foo'. The style value 'foo' is not semantically correct: Value should be one of '', 'bold', 'dashed', 'dotted', 'invis', 'solid', 'tapered'.",
 					e.getMessage());
 		}
 	}

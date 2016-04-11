@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EClass;
@@ -445,7 +446,7 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 
 	private String getFormattedValues(Set<String> values) {
 		StringBuilder sb = new StringBuilder();
-		for (String value : values) {
+		for (String value : new TreeSet<>(values)) {
 			if (sb.length() > 0) {
 				sb.append(", ");
 			}
