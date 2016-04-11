@@ -184,7 +184,7 @@ public class AdapterInjectorTests {
 		AdapterStore adaptable = new AdapterStoreExtension();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		System.out.println(issues.get(0));
+		// System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains("WARNING"));
 		assertTrue(issues.get(0).contains(
 				"The actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
@@ -216,7 +216,7 @@ public class AdapterInjectorTests {
 		AdapterStore adaptable = new AdapterStore();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		System.out.println(issues.get(0));
+		// System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains("INFO"));
 		assertTrue(issues.get(0).contains(
 				"The redundant type key org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType may be omitted in the adapter key of the binding, using AdapterKey.defaultRole() instead."));
@@ -247,7 +247,7 @@ public class AdapterInjectorTests {
 		AdapterStore adaptable = new AdapterStore();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		System.out.println(issues.get(0));
+		// System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains("WARNING"));
 		assertTrue(issues.get(0).contains(
 				"The actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
@@ -283,7 +283,7 @@ public class AdapterInjectorTests {
 		AdapterStore adaptable = new AdapterStoreExtension();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		System.out.println(issues.get(0));
+		// System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains(
 				"The given key type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not seem to match the actual type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
 	}
@@ -314,7 +314,7 @@ public class AdapterInjectorTests {
 		AdapterStore adaptable = new AdapterStoreExtension();
 		List<String> issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		System.out.println(issues.get(0));
+		// System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains("ERROR"));
 		assertTrue(issues.get(0).contains(
 				"The given key (raw) type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not match the actual (raw) type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));
@@ -339,7 +339,7 @@ public class AdapterInjectorTests {
 		adaptable = new AdapterStoreExtension();
 		issues = performInjection(adaptable, module);
 		assertEquals(1, issues.size());
-		System.out.println(issues.get(0));
+		// System.out.println(issues.get(0));
 		assertTrue(issues.get(0).contains("ERROR"));
 		assertTrue(issues.get(0).contains(
 				"The given key (raw) type org.eclipse.gef4.common.tests.AdapterInjectorTests$RawType does not match the actual (raw) type of adapter org.eclipse.gef4.common.tests.AdapterInjectorTests$ParameterizedSubType"));

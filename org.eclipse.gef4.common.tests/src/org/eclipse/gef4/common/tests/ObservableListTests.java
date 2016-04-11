@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyListWrapperEx;
 import org.eclipse.gef4.common.beans.property.SimpleListPropertyEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ListListenerHelperEx.AtomicChange;
+import org.junit.AssumptionViolatedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -650,6 +652,17 @@ public class ObservableListTests {
 
 	@Test
 	public void listenersNotProperlyIterating() {
+		// ensure assumption exceptions can be properly handled by JUnit
+		Thread.currentThread()
+				.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						if (e instanceof AssumptionViolatedException) {
+							throw (AssumptionViolatedException) e;
+						}
+					}
+				});
+
 		ListChangeListener<Integer> listChangeListener = new ListChangeListener<Integer>() {
 
 			@Override

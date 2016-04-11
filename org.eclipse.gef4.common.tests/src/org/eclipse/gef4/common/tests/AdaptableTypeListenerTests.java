@@ -35,7 +35,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.spi.Message;
 
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.collections.ObservableMap;
@@ -147,11 +146,11 @@ public class AdaptableTypeListenerTests {
 					AdaptableSpecifyingAdapterMapAndInjectAnnotation.class);
 			fail("Configuration should have failed, because adapter map annotation is not properly used (adaptable type is specified).");
 		} catch (ConfigurationException e) {
-			System.out.println(
-					"Guice reported the following configuration problems: ");
-			for (Message message : e.getErrorMessages()) {
-				System.out.println("  - " + message.toString());
-			}
+			// System.out.println(
+			// "Guice reported the following configuration problems: ");
+			// for (Message message : e.getErrorMessages()) {
+			// System.out.println(" - " + message.toString());
+			// }
 			// we expect the configuration to fail
 			assertTrue(e.getMessage().contains(
 					"@AdapterMap annotation may only be used in adapter map bindings, not to mark an injection point. Annotate method with @InjectAdapters instead."));
