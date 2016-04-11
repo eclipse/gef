@@ -42,6 +42,11 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 	}
 
 	protected void convertAttributes(Edge zest, Edge dot) {
+		String zestCssId = ZestProperties.getCssId(zest);
+		if (zestCssId != null) {
+			DotAttributes.setId(dot, zestCssId);
+		}
+
 		// label
 		String zestLabel = ZestProperties.getLabel(zest);
 		if (zestLabel != null) {
