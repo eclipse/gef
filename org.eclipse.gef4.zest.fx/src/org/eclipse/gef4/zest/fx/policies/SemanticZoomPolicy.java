@@ -59,12 +59,12 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 	}
 
 	/**
-	 * Returns a {@link List} containing all {@link NodePart}s (within
-	 * the currently rendered graph) that have a nested graph assigned to them.
+	 * Returns a {@link List} containing all {@link NodePart}s (within the
+	 * currently rendered graph) that have a nested graph assigned to them.
 	 *
-	 * @return A {@link List} containing all {@link NodePart}s (within
-	 *         the currently rendered graph) that have a nested graph assigned
-	 *         to them.
+	 * @return A {@link List} containing all {@link NodePart}s (within the
+	 *         currently rendered graph) that have a nested graph assigned to
+	 *         them.
 	 */
 	protected List<NodePart> findNestingNodes() {
 		// find the first level visual parts (not considering nested graphs)
@@ -190,6 +190,7 @@ public class SemanticZoomPolicy extends FXChangeViewportPolicy {
 			nestingNodePart.refreshContentChildren();
 			nestingNodePart.getAdapter(new TypeToken<ContentBehavior<Node>>() {
 			}).synchronizeContentChildren(ImmutableList.copyOf(nestingNodePart.getContentChildrenUnmodifiable()));
+			nestingNodePart.refreshVisual();
 		}
 		// System.out.println("zoom - " + (System.nanoTime() - startTimeNanos) /
 		// 1000 / 1000 + "ms");

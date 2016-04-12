@@ -40,6 +40,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -60,6 +61,8 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
@@ -187,7 +190,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 */
 	public static final String CSS_CLASS_ICON = "icon";
 
-	private static final String NODE_LABEL_EMPTY = "-";
+	private static final String NODE_LABEL_EMPTY = "";
 
 	private MapChangeListener<String, Object> nodeAttributesObserver = new MapChangeListener<String, Object>() {
 		@Override
@@ -198,13 +201,14 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 	private Text labelText;
 	private ImageView iconImageView;
+	private Tooltip tooltipNode;
+	private VBox outerLayoutContainer;
+	private Shape shape;
+
 	private Node nestedGraphIcon;
 	private StackPane nestedContentStackPane;
 	private Pane nestedChildrenPane;
 	private Pane nestedChildrenPaneScaled;
-	private Tooltip tooltipNode;
-	private VBox outerLayoutContainer;
-	private Rectangle rect;
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
@@ -248,11 +252,19 @@ public class NodePart extends AbstractFXContentPart<Group>
 		return stackPane;
 	}
 
+	/**
+	 * Creates the shape used to display the node's border and background.
+	 *
+	 * @return The newly created {@link Shape}.
+	 */
+	protected Shape createShape() {
+		return new Rectangle();
+	}
+
 	@Override
 	protected Group createVisual() {
 		// container set-up
 		final Group group = new Group() {
-			// @Override
 			@Override
 			public boolean isResizable() {
 				return true;
@@ -260,27 +272,17 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 			@Override
 			public void resize(double w, double h) {
-				// compute new size, based on layout bounds
-				Bounds layoutBounds = getLayoutBounds();
-				Bounds vboxBounds = outerLayoutContainer.getLayoutBounds();
-				double vw = vboxBounds.getWidth() + w - layoutBounds.getWidth();
-				double vh = vboxBounds.getHeight() + h - layoutBounds.getHeight();
-				outerLayoutContainer.setPrefSize(vw, vh);
-				outerLayoutContainer.resize(vw, vh);
+				outerLayoutContainer.setPrefSize(w, h);
 			}
 		};
 
-		// create box for border and background
-		rect = new Rectangle();
-		rect.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
+		// create shape for border and background
+		shape = createShape();
+		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
 				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
-		rect.setStroke(new Color(0, 0, 0, 1));
-		rect.getStyleClass().add(CSS_CLASS_SHAPE);
-
-		nestedChildrenPane = createNestedContentPane();
-		nestedContentStackPane = createNestedContentStackPane(nestedChildrenPane);
-		nestedChildrenPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		nestedContentStackPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		shape.setStroke(new Color(0, 0, 0, 1));
+		shape.setStrokeType(StrokeType.INSIDE);
+		shape.getStyleClass().add(CSS_CLASS_SHAPE);
 
 		// initialize image view
 		iconImageView = new ImageView();
@@ -301,23 +303,18 @@ public class NodePart extends AbstractFXContentPart<Group>
 		// put nested content stack pane below image and text
 		outerLayoutContainer = new VBox();
 		outerLayoutContainer.setMouseTransparent(true);
-		outerLayoutContainer.getChildren().addAll(hbox, nestedContentStackPane);
-		VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
+		outerLayoutContainer.getChildren().add(hbox);
+		outerLayoutContainer.setPadding(new Insets(getPadding()));
 
-		// expand box depending on content size
 		outerLayoutContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				outerLayoutContainer.setTranslateX(getPadding());
-				outerLayoutContainer.setTranslateY(getPadding());
-				getNodeRect().setWidth(outerLayoutContainer.getWidth() + 2 * getPadding());
-				getNodeRect().setHeight(outerLayoutContainer.getHeight() + 2 * getPadding());
+				resizeShape(outerLayoutContainer.getWidth(), outerLayoutContainer.getHeight());
 			}
 		});
 
 		// place the box below the other visuals
-		group.getChildren().addAll(rect, outerLayoutContainer);
-
+		group.getChildren().addAll(shape, outerLayoutContainer);
 		return group;
 	}
 
@@ -348,11 +345,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 		Transform tx = getVisual().getLocalToSceneTransform();
 		double scale = FX2Geometry.toAffineTransform(tx).getScaleX();
 		if (scale > ZOOMLEVEL_SHOW_NESTED_GRAPH) {
-			hideNestedGraphIcon();
 			return Collections.singletonList(nestedGraph);
 		}
-		// show an icon as a replacement when the zoom threshold is not reached
-		showNestedGraphIcon();
 		return Collections.emptyList();
 	}
 
@@ -423,6 +417,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *
 	 * @return The {@link Pane} to which nested children are added.
 	 */
+	// TODO: this should not be public
 	public Pane getNestedChildrenPane() {
 		return nestedChildrenPaneScaled;
 	}
@@ -451,17 +446,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	/**
-	 * Returns the {@link Rectangle} that displays the node's border and
-	 * background.
-	 *
-	 * @return The {@link Rectangle} that displays the node's border and
-	 *         background.
-	 */
-	protected Rectangle getNodeRect() {
-		return rect;
-	}
-
-	/**
 	 * Returns the outer most layout container that is used to layout the
 	 * content of this node (including nested content).
 	 *
@@ -481,6 +465,15 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 */
 	protected double getPadding() {
 		return DEFAULT_PADDING;
+	}
+
+	/**
+	 * Returns the {@link Shape} that displays the node's border and background.
+	 *
+	 * @return The {@link Shape} that displays the node's border and background.
+	 */
+	protected Shape getShape() {
+		return shape;
 	}
 
 	/**
@@ -556,18 +549,43 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *            <code>false</code>.
 	 */
 	protected void refreshNesting(boolean isNesting) {
-		if (getOuterLayoutContainer() != null) {
+		VBox outerLayoutContainer = (VBox) getOuterLayoutContainer();
+		if (outerLayoutContainer != null) {
 			if (isNesting) {
-				if (getOuterLayoutContainer().getPrefWidth() == 0 && getOuterLayoutContainer().getPrefHeight() == 0) {
-					getOuterLayoutContainer().setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+				// create nested content stack pane if needed
+				if (nestedContentStackPane == null) {
+					nestedChildrenPane = createNestedContentPane();
+					nestedContentStackPane = createNestedContentStackPane(nestedChildrenPane);
+					nestedChildrenPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+					nestedContentStackPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+					VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
+				}
+				// add nested content stack pane
+				if (!outerLayoutContainer.getChildren().contains(nestedContentStackPane)) {
+					outerLayoutContainer.getChildren().add(nestedContentStackPane);
+				}
+				if (outerLayoutContainer.getPrefWidth() == 0 && outerLayoutContainer.getPrefHeight() == 0) {
+					outerLayoutContainer.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
 							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
-					getOuterLayoutContainer().resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+					outerLayoutContainer.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
 							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
 				}
+				// show a nested graph icon dependent on the zoom level
+				if (!getChildrenUnmodifiable().isEmpty()) {
+					hideNestedGraphIcon();
+				} else {
+					// show an icon as a replacement when the zoom threshold is
+					// not reached
+					showNestedGraphIcon();
+				}
 			} else {
-				getOuterLayoutContainer().setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
+				// remove nested content stack pane
+				if (outerLayoutContainer.getChildren().contains(nestedContentStackPane)) {
+					outerLayoutContainer.getChildren().remove(nestedContentStackPane);
+				}
+				outerLayoutContainer.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
 						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
-				getOuterLayoutContainer().resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
+				outerLayoutContainer.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
 						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
 			}
 		}
@@ -601,8 +619,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *            The new node rectangle CSS style.
 	 */
 	protected void refreshRectCssStyle(String nodeRectCssStyle) {
-		if (getNodeRect() != null) {
-			getNodeRect().setStyle(nodeRectCssStyle);
+		if (getShape() != null) {
+			getShape().setStyle(nodeRectCssStyle);
 		}
 	}
 
@@ -653,6 +671,19 @@ public class NodePart extends AbstractFXContentPart<Group>
 	@Override
 	public void resizeContent(Dimension size) {
 		ZestProperties.setSize(getContent(), size);
+	}
+
+	/**
+	 * Resize the shape to the given width and height.
+	 *
+	 * @param width
+	 *            The new width
+	 * @param height
+	 *            The new height
+	 */
+	protected void resizeShape(double width, double height) {
+		((Rectangle) getShape()).setWidth(width);
+		((Rectangle) getShape()).setHeight(height);
 	}
 
 	/**
