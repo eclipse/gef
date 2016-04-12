@@ -41,7 +41,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
@@ -291,7 +291,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		// initialize text
 		labelText = new Text();
-		labelText.setTextOrigin(VPos.TOP);
 		labelText.setText(NODE_LABEL_EMPTY);
 		labelText.getStyleClass().add(CSS_CLASS_LABEL);
 
@@ -299,6 +298,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 		HBox hbox = new HBox();
 		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		hbox.getChildren().addAll(iconImageView, labelText);
+		hbox.setAlignment(Pos.CENTER);
 
 		// put nested content stack pane below image and text
 		outerLayoutContainer = new VBox();
