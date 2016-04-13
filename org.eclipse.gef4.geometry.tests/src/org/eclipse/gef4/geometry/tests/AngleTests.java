@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *     Colin Sharples - contribution for Bugzilla #491402
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -92,10 +93,40 @@ public class AngleTests {
 	}
 
 	@Test
+	public void test_getDeltaCCW() throws Exception {
+		Angle alpha = Angle.fromDeg(270);
+		assertEquals(Angle.fromDeg(60), alpha.getDeltaCCW(Angle.fromDeg(210)));
+		assertEquals(Angle.fromDeg(210), alpha.getDeltaCCW(Angle.fromDeg(60)));
+		alpha = Angle.fromDeg(90);
+		assertEquals(Angle.fromDeg(120), alpha.getDeltaCCW(Angle.fromDeg(330)));
+	}
+
+	@Test
+	public void test_getDeltaCW() throws Exception {
+		Angle alpha = Angle.fromDeg(90);
+		assertEquals(Angle.fromDeg(60), alpha.getDeltaCW(Angle.fromDeg(150)));
+		assertEquals(Angle.fromDeg(210), alpha.getDeltaCW(Angle.fromDeg(300)));
+		alpha = Angle.fromDeg(270);
+		assertEquals(Angle.fromDeg(120), alpha.getDeltaCW(Angle.fromDeg(30)));
+	}
+
+	@Test
 	public void test_getMultiplied() {
 		Angle alpha = Angle.fromDeg(180);
 
 		assertTrue(alpha.getMultiplied(2).equals(Angle.fromDeg(360)));
+	}
+
+	@Test
+	public void test_isClockwise() throws Exception {
+		Angle alpha = Angle.fromDeg(90);
+		assertTrue(alpha.isClockwise(Angle.fromDeg(180)));
+		assertFalse(alpha.isClockwise(Angle.fromDeg(0)));
+		alpha = Angle.fromDeg(300);
+		assertTrue(alpha.isClockwise(Angle.fromDeg(60)));
+		assertFalse(alpha.isClockwise(Angle.fromDeg(140)));
+		// edge case - exactly 180 degrees is true
+		assertTrue(alpha.isClockwise(Angle.fromDeg(120)));
 	}
 
 	@Test
