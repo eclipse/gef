@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     Colin Sharples - contribution for Bugzilla #460754
+ *     Colin Sharples - contribution for Bugzilla #460754, #491402
  *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.euclidean;
@@ -35,6 +35,14 @@ import org.eclipse.gef4.geometry.internal.utils.PrecisionUtils;
  */
 public class Angle implements Cloneable, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
+	private static final double DEG_TO_RAD = Math.PI / 180d;
+
+	private static final double RAD_TO_DEG = 180d / Math.PI;
+	private static final double RAD_180 = Math.PI;
+	private static final double RAD_360 = 2 * Math.PI;
+
 	/**
 	 * Constructs a new {@link Angle} object representing the given value. The
 	 * value is interpreted as being in degrees.
@@ -60,12 +68,6 @@ public class Angle implements Cloneable, Serializable {
 	public static Angle fromRad(double radians) {
 		return new Angle(radians);
 	}
-
-	private static final long serialVersionUID = 1L;
-	private static final double DEG_TO_RAD = Math.PI / 180d;
-	private static final double RAD_TO_DEG = 180d / Math.PI;
-	private static final double RAD_180 = Math.PI;
-	private static final double RAD_360 = 2 * Math.PI;
 
 	private double rad = 0d;
 
@@ -147,6 +149,32 @@ public class Angle implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns the difference between this {@link Angle} and another
+	 * {@link Angle} in a counter-clockwise direction
+	 *
+	 * @param other
+	 *            the other angle to compare to
+	 * @return the difference between this {@link Angle} and another
+	 *         {@link Angle} in a counter-clockwise direction
+	 */
+	public Angle getDeltaCCW(Angle other) {
+		return new Angle(this.rad - other.rad);
+	}
+
+	/**
+	 * Returns the difference between this {@link Angle} and another
+	 * {@link Angle} in a clockwise direction
+	 *
+	 * @param other
+	 *            the other angle to compare to
+	 * @return the difference between this {@link Angle} and another
+	 *         {@link Angle} in a clockwise direction
+	 */
+	public Angle getDeltaCW(Angle other) {
+		return new Angle(other.rad - this.rad);
+	}
+
+	/**
 	 * Returns a new {@link Angle} object representing this {@link Angle}
 	 * multiplied by the given factor.
 	 *
@@ -197,6 +225,19 @@ public class Angle implements Cloneable, Serializable {
 		// calculating a better hashCode is not possible, because due to the
 		// imprecision, equals() is no longer transitive
 		return 0;
+	}
+
+	/**
+	 * Tests if the other {@link Angle} is within a half-circle clockwise
+	 * rotation from this {@link Angle}
+	 *
+	 * @param other
+	 *            the other angle to compare to
+	 * @return true if the a clockwise rotation to the other angle is less than
+	 *         180deg
+	 */
+	public boolean isClockwise(Angle other) {
+		return getDeltaCW(other).rad <= RAD_180;
 	}
 
 	/**
