@@ -10,7 +10,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration do double precision
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     Colin Sharples - contribution for Bugzilla #460569
+ *     Colin Sharples - contribution for Bugzilla #460569, #491403
  *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -480,6 +480,19 @@ public class Point implements Cloneable, Serializable {
 	 */
 	public Point getCopy() {
 		return new Point(this);
+	}
+
+	/**
+	 * Returns the translation required to move this {@link Point} to the other
+	 * {@link Point}
+	 *
+	 * @param other
+	 *            the {@link Point} to get the difference from
+	 * @return the translation required to move this {@link Point} to the other
+	 *         {@link Point}
+	 */
+	public Point getDifference(Point other) {
+		return new Point(other.x - x, other.y - y);
 	}
 
 	/**
