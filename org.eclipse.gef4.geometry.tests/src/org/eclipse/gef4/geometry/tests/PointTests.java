@@ -9,7 +9,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     Colin Sharples - contribution for Bugzilla #460569
+ *     Colin Sharples - contribution for Bugzilla #460569, #491403
  *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
@@ -428,6 +428,19 @@ public class PointTests {
 		assertTrue(p1.getCopy().equals(p1));
 		assertTrue(p1.clone().equals(p1));
 		assertTrue(p1.getCopy().equals(p1.clone()));
+	}
+
+	@Test
+	public void test_getDifference() throws Exception {
+		Point p1 = new Point(100, 100);
+		Point p2 = new Point(50, 70);
+		assertEquals(new Point(-50, -30), p1.getDifference(p2));
+		p2 = new Point(150, 70);
+		assertEquals(new Point(50, -30), p1.getDifference(p2));
+		p2 = new Point(50, 170);
+		assertEquals(new Point(-50, 70), p1.getDifference(p2));
+		p2 = new Point(150, 170);
+		assertEquals(new Point(50, 70), p1.getDifference(p2));
 	}
 
 	@Test
