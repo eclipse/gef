@@ -26,7 +26,6 @@ import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
-import org.eclipse.gef4.fx.nodes.StraightRouter;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Edge;
@@ -141,7 +140,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		}
 		// TODO: handle tapered edges
 		if (connectionCssStyle != null) {
-			ZestProperties.setEdgeCurveCssStyle(zest, connectionCssStyle);
+			ZestProperties.setCurveCssStyle(zest, connectionCssStyle);
 		}
 		// direction
 		DirType dotDir = DotAttributes.getDirParsed(dot);
@@ -230,14 +229,20 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					// do not use control points
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest, new StraightRouter());
+					ZestProperties.setRouter(zest,
+							new DotStraightRouter(bSplineControlPoints.get(0),
+									bSplineControlPoints.get(
+											bSplineControlPoints.size() - 1)));
 				} else if (DotAttributes.SPLINES__G__POLYLINE.equals(splines)) {
 					// use polyline interpolator
 					// use straight router
 					// use control points (without start/end) TODO: verify
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest, new StraightRouter());
+					ZestProperties.setRouter(zest,
+							new DotStraightRouter(bSplineControlPoints.get(0),
+									bSplineControlPoints.get(
+											bSplineControlPoints.size() - 1)));
 					ZestProperties.setControlPoints(zest, bSplineControlPoints
 							.subList(1, bSplineControlPoints.size() - 1));
 				} else if (DotAttributes.SPLINES__G__ORTHO.equals(splines)) {

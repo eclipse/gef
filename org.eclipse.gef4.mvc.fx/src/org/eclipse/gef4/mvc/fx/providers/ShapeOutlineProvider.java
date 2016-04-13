@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.providers;
 
+import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
+
+import javafx.scene.Node;
 
 /**
  * The {@link ShapeOutlineProvider} is a {@link Provider Provider<IGeometry>}
@@ -27,17 +30,12 @@ import com.google.inject.Provider;
  * @author mwienand
  *
  */
-public class ShapeOutlineProvider extends GeometricOutlineProvider {
+public class ShapeOutlineProvider extends
+		AbstractBoundProvider<IGeometry, IVisualPart<Node, ? extends Node>> {
 
 	@Override
 	public IGeometry get() {
-		try {
-			return NodeUtils.getResizedToShapeBounds(getAdaptable().getVisual(),
-					super.get());
-		} catch (IllegalArgumentException e) {
-			return FX2Geometry
-					.toRectangle(getAdaptable().getVisual().getLayoutBounds());
-		}
+		return NodeUtils.getShapeOutline(getAdaptable().getVisual());
 	}
 
 }

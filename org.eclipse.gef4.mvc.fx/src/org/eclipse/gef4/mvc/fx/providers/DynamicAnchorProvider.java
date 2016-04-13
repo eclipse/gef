@@ -30,10 +30,19 @@ public class DynamicAnchorProvider extends
 
 	private IAnchor anchor;
 
+	/**
+	 * Creates a new dynamic anchor to be provided.
+	 *
+	 * @return A new {@link DynamicAnchor}.
+	 */
+	protected DynamicAnchor createAnchor() {
+		return new DynamicAnchor(getAdaptable().getVisual());
+	}
+
 	@Override
 	public IAnchor get() {
 		if (anchor == null) {
-			anchor = new DynamicAnchor(getAdaptable().getVisual());
+			anchor = createAnchor();
 		}
 		return anchor;
 	}

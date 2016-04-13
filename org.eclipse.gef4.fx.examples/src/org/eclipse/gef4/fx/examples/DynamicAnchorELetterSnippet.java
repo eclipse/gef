@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.AbstractComputationStrategy;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -179,7 +178,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 
 	private void attachToDynamicAnchor(final AnchorKey ak,
 			final Point refPoint) {
-		dynamicAnchor.referencePointProperty().put(ak, refPoint);
+		dynamicAnchor.anchoredReferencePointsProperty().put(ak, refPoint);
 		dynamicAnchor.attach(ak, null);
 		updateDynamicAnchorLines(ak);
 	}
@@ -300,7 +299,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 				referencePointNode.setCenterX(x);
 				referencePointNode.setCenterY(y);
 				// update reference point
-				dynamicAnchor.referencePointProperty().put(ak, new Point(x, y));
+				dynamicAnchor.anchoredReferencePointsProperty().put(ak, new Point(x, y));
 				updateDynamicAnchorLines(ak);
 			}
 		};
@@ -561,7 +560,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private void updateDynamicAnchorLines(AnchorKey ak) {
 		// update real line
 		Line lineReal = dynamicLinesReal.get(ak);
-		Point referencePosition = dynamicAnchor.getReferencePoint(ak);
+		Point referencePosition = dynamicAnchor.getAnchoredReferencePoint(ak);
 		Point anchorPosition = dynamicAnchor.getPosition(ak);
 		lineReal.setStartX(referencePosition.x);
 		lineReal.setStartY(referencePosition.y);
@@ -584,8 +583,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		}
 		List<Node> intersectionNodes = new ArrayList<>();
 		ICurve eLetterOutline = (ICurve) NodeUtils.localToScene(eLetterShape,
-				AbstractComputationStrategy
-						.getOutlineSegments(eLetterShape.getGeometry()).get(0));
+				eLetterShape.getGeometry().getOutline());
 		org.eclipse.gef4.geometry.planar.Line referenceLine = new org.eclipse.gef4.geometry.planar.Line(
 				referencePosition, eLetterReferencePoint);
 		Point[] intersectionPoints = eLetterOutline

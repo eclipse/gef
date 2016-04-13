@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
-import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
@@ -60,33 +59,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public static abstract class AbstractComputationStrategy
 			implements IComputationStrategy {
-		/**
-		 * Creates a geometry representing the outline of the given {@link Node}
-		 * .
-		 *
-		 * @param node
-		 *            The node to infer an outline geometry for.
-		 * @return An {@link IGeometry} from which the outline may be retrieved.
-		 */
-		public static IGeometry getOutlineGeometry(Node node) {
-			IGeometry geometry = null;
-			// TODO: Refactor that control flow is hanled via exceptions
-			try {
-				geometry = NodeUtils.getGeometricOutline(node);
-			} catch (IllegalArgumentException e) {
-			}
-
-			// resize to layout-bounds to include stroke if not a curve
-			if (geometry instanceof IShape) {
-				return NodeUtils.getResizedToShapeBounds(node, geometry);
-			}
-
-			// fall back to layout-bounds
-			if (geometry == null) {
-				geometry = FX2Geometry.toRectangle(node.getLayoutBounds());
-			}
-			return geometry;
-		}
 
 		/**
 		 * Determines the outline of the given {@link IGeometry}, represented as
@@ -97,8 +69,8 @@ public class DynamicAnchor extends AbstractAnchor {
 		 * @return A list of {@link ICurve}s representing the outline of the
 		 *         given {@link IGeometry}.
 		 */
-		// TODO: Move to GEF4 Geometry
-		public static List<ICurve> getOutlineSegments(IGeometry geometry) {
+		// TODO: Move to GEF4 Geometry?
+		protected static List<ICurve> getOutlineSegments(IGeometry geometry) {
 			if (geometry instanceof IShape) {
 				return Collections
 						.singletonList(((IShape) geometry).getOutline());
@@ -110,40 +82,6 @@ public class DynamicAnchor extends AbstractAnchor {
 				throw new IllegalStateException(
 						"The transformed geometry is neither an ICurve nor an IShape.");
 			}
-		}
-
-		/**
-		 * Determines the anchorage reference geometry based on the given
-		 * anchorage visual. For an {@link GeometryNode}, the corresponding
-		 * geometry is returned, in case of an {@link IShape} resized to include
-		 * the stroke. Otherwise, a {@link Rectangle} representing the
-		 * layout-bounds of the visual is returned.
-		 *
-		 * @param anchorage
-		 *            The anchorage visual.
-		 * @return The anchorage reference geometry within the local coordinate
-		 *         system of the given anchorage visual.
-		 */
-		// TODO: move to somewhere appropriate
-		protected IGeometry getAnchorageReferenceGeometryInLocal(
-				Node anchorage) {
-			return getOutlineGeometry(anchorage);
-		}
-
-		/**
-		 * Returns the anchorage reference geometry within the scene coordinate
-		 * system.
-		 *
-		 * @param anchorage
-		 *            The anchorage visual.
-		 * @return The anchorage reference geometry within the global scene
-		 *         coordinate system.
-		 */
-		// TODO: Move to somewhere appropriate
-		protected IGeometry getAnchorageReferenceGeometryInScene(
-				Node anchorage) {
-			return NodeUtils.localToScene(anchorage,
-					getAnchorageReferenceGeometryInLocal(anchorage));
 		}
 	}
 
@@ -235,11 +173,9 @@ public class DynamicAnchor extends AbstractAnchor {
 		}
 
 		@Override
-		public Point computePositionInScene(Node anchorage, Node anchored,
+		public Point computePositionInScene(Node anchorage,
+				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
 				Point anchoredReferencePointInLocal) {
-			IGeometry anchorageReferenceGeometryInLocal = getAnchorageReferenceGeometryInLocal(
-					anchorage);
-
 			Point anchoredReferencePointInScene = NodeUtils
 					.localToScene(anchored, anchoredReferencePointInLocal);
 
@@ -248,21 +184,28 @@ public class DynamicAnchor extends AbstractAnchor {
 					anchoredReferencePointInScene);
 
 			if (anchorageReferencePointInScene == null) {
-				return super.computePositionInScene(anchorage, anchored,
+				return super.computePositionInScene(anchorage,
+						anchorageReferenceGeometryInLocal, anchored,
 						anchoredReferencePointInLocal);
 			}
-
-			Line referenceLineInScene = new Line(anchorageReferencePointInScene,
-					anchoredReferencePointInScene);
 
 			IGeometry anchorageGeometryInScene = NodeUtils
 					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
 			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
 					anchorageGeometryInScene);
 
+			Line referenceLineInScene = new Line(anchorageReferencePointInScene,
+					anchoredReferencePointInScene);
+
 			Point nearestProjectionInScene = null;
 			double nearestDistance = 0d;
 			for (ICurve anchorageOutlineInScene : anchorageOutlinesInScene) {
+				// if the reference point is already on the outline, we may
+				// directly use it
+				if (anchorageOutlineInScene
+						.contains(anchoredReferencePointInScene)) {
+					return anchoredReferencePointInScene;
+				}
 				Point[] intersections = anchorageOutlineInScene
 						.getIntersections(referenceLineInScene);
 				if (intersections.length > 0) {
@@ -281,16 +224,18 @@ public class DynamicAnchor extends AbstractAnchor {
 			if (nearestProjectionInScene != null) {
 				return nearestProjectionInScene;
 			}
-			return super.computePositionInScene(anchorage, anchored,
+			return super.computePositionInScene(anchorage,
+					anchorageReferenceGeometryInLocal, anchored,
 					anchoredReferencePointInLocal);
 		}
 	}
 
 	/**
 	 * The {@link IComputationStrategy} is responsible for computing anchor
-	 * positions based on an anchorage {@link Node}, an anchored {@link Node},
-	 * and an anchored reference position (
-	 * {@link #computePositionInScene(Node, Node, Point)}).
+	 * positions based on an anchorage {@link Node}, an anchorage reference
+	 * {@link IGeometry}, an anchored {@link Node}, and an anchored reference
+	 * position ( {@link #computePositionInScene(Node, IGeometry, Node, Point)}
+	 * ).
 	 */
 	public interface IComputationStrategy {
 
@@ -300,6 +245,9 @@ public class DynamicAnchor extends AbstractAnchor {
 		 *
 		 * @param anchorage
 		 *            The anchorage visual.
+		 * @param anchorageReferenceGeometryInLocal
+		 *            The anchorage reference geometry within the local
+		 *            coordinate system of the anchorage visual.
 		 * @param anchored
 		 *            The anchored visual.
 		 * @param anchoredReferencePointInLocal
@@ -307,9 +255,9 @@ public class DynamicAnchor extends AbstractAnchor {
 		 *            system of the anchored visual.
 		 * @return The anchor position.
 		 */
-		Point computePositionInScene(Node anchorage, Node anchored,
+		Point computePositionInScene(Node anchorage,
+				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
 				Point anchoredReferencePointInLocal);
-
 	}
 
 	/**
@@ -557,15 +505,16 @@ public class DynamicAnchor extends AbstractAnchor {
 		}
 
 		@Override
-		public Point computePositionInScene(Node anchorage, Node anchored,
+		public Point computePositionInScene(Node anchorage,
+				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
 				Point anchoredReferencePointInLocal) {
 			// anchored reference point
 			Point anchoredReferencePointInScene = NodeUtils
 					.localToScene(anchored, anchoredReferencePointInLocal);
 
 			// anchorage reference geometry
-			IGeometry anchorageReferenceGeometryInScene = getAnchorageReferenceGeometryInScene(
-					anchorage);
+			IGeometry anchorageReferenceGeometryInScene = NodeUtils
+					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
 
 			// compute horizontal or vertical projection on outline segments.
 			List<ICurve> anchorageReferenceGeometryOutlineSegmentsInScene = getOutlineSegments(
@@ -608,11 +557,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *
 	 * In detail, the computation is done as follows:
 	 * <ol>
-	 * <li>Compute the anchorage reference geometry based on its visual and
-	 * transform it to scene coordinates (
-	 * {@link #getAnchorageReferenceGeometryInScene(Node)}).</li>
-	 * <li>Compute the anchorage outlines (in scene) using
-	 * {@link #getOutlineSegments(IGeometry)}.</li>
+	 * <li>Compute the anchorage outlines (in scene) based on the anchorage
+	 * reference geometry,using {@link #getOutlineSegments(IGeometry)}.</li>
 	 * <li>Transform the given anchored reference point to scene coordinates.
 	 * </li>
 	 * <li>Project the anchored reference point (in scene) onto the anchorage
@@ -646,11 +592,12 @@ public class DynamicAnchor extends AbstractAnchor {
 		}
 
 		@Override
-		public Point computePositionInScene(Node anchorage, Node anchored,
+		public Point computePositionInScene(Node anchorage,
+				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
 				Point anchoredReferencePointInLocal) {
 			// determine anchorage geometry in scene
-			IGeometry anchorageGeometryInScene = getAnchorageReferenceGeometryInScene(
-					anchorage);
+			IGeometry anchorageGeometryInScene = NodeUtils
+					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
 
 			// determine anchorage outlines in scene
 			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
@@ -678,7 +625,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategyProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections
 					.<AnchorKey, IComputationStrategy> observableHashMap());
-	private ReadOnlyMapWrapperEx<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapperEx<>(
+	private ReadOnlyMapWrapperEx<AnchorKey, Point> anchoredReferencePointsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	private MapChangeListener<AnchorKey, Point> referencePointChangeListener = new MapChangeListener<AnchorKey, Point>() {
@@ -713,7 +660,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public DynamicAnchor(Node anchorage) {
 		super(anchorage);
-		referencePointProperty.addListener(referencePointChangeListener);
+		anchoredReferencePointsProperty
+				.addListener(referencePointChangeListener);
 	}
 
 	/**
@@ -729,7 +677,21 @@ public class DynamicAnchor extends AbstractAnchor {
 			IComputationStrategy computationStrategy) {
 		super(anchorage);
 		setDefaultComputationStrategy(computationStrategy);
-		referencePointProperty.addListener(referencePointChangeListener);
+		anchoredReferencePointsProperty
+				.addListener(referencePointChangeListener);
+	}
+
+	/**
+	 * Provides a {@link ReadOnlyMapProperty} that stores positions (in the
+	 * local coordinate system of the anchored {@link Node}) for all attached
+	 * {@link AnchorKey}s.
+	 *
+	 * @return A {@link ReadOnlyMapProperty} that stores positions (in the local
+	 *         coordinate system of the anchored {@link Node}) for all attached
+	 *         {@link AnchorKey}s.
+	 */
+	public ReadOnlyMapProperty<AnchorKey, Point> anchoredReferencePointsProperty() {
+		return anchoredReferencePointsProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -751,8 +713,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	@Override
 	protected Point computePosition(AnchorKey key) {
-		return computePosition(key.getAnchored(), getReferencePoint(key),
-				getComputationStrategy(key));
+		return computePosition(key.getAnchored(),
+				getAnchoredReferencePoint(key), getComputationStrategy(key));
 	}
 
 	/**
@@ -778,7 +740,8 @@ public class DynamicAnchor extends AbstractAnchor {
 			IComputationStrategy computationStrategy) {
 		return FX2Geometry.toPoint(anchored.sceneToLocal(Geometry2FX.toFXPoint(
 				computationStrategy.computePositionInScene(getAnchorage(),
-						anchored, anchoredReferencePointInLocal))));
+						getAnchorageReferenceGeometry(), anchored,
+						anchoredReferencePointInLocal))));
 	}
 
 	/**
@@ -794,6 +757,37 @@ public class DynamicAnchor extends AbstractAnchor {
 					DEFAULT_COMPUTATION_STRATEGY);
 		}
 		return defaultComputationStrategyProperty;
+	}
+
+	/**
+	 * Returns the anchorage reference {@link IGeometry geometry} that is to be
+	 * used for computations by this {@link DynamicAnchor}'s
+	 * {@link IComputationStrategy computation strategy}, specified within the
+	 * local coordinate system of the anchorage.
+	 *
+	 * @return The anchorage reference geometry to be used for computations,
+	 *         which by default is the shape's outline geometry.
+	 */
+	public IGeometry getAnchorageReferenceGeometry() {
+		return NodeUtils.getShapeOutline(getAnchorage());
+	}
+
+	/**
+	 * Returns the reference {@link Point} for the given {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which to determine the reference
+	 *            {@link Point}.
+	 * @return The reference {@link Point} for the given {@link AnchorKey} in
+	 *         the local coordinate system of the key's
+	 *         {@link AnchorKey#getAnchored() anchored}.
+	 */
+	public Point getAnchoredReferencePoint(AnchorKey key) {
+		Point referencePoint = anchoredReferencePointsProperty().get(key);
+		if (referencePoint == null) {
+			referencePoint = new Point(0, 0);
+		}
+		return referencePoint;
 	}
 
 	/**
@@ -831,44 +825,15 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	/**
-	 * Returns the reference {@link Point} for the given {@link AnchorKey}.
+	 * Sets the anchored reference point for the given {@link AnchorKey}.
 	 *
 	 * @param key
-	 *            The {@link AnchorKey} for which to determine the reference
-	 *            {@link Point}.
-	 * @return The reference {@link Point} for the given {@link AnchorKey}.
+	 *            The key for which to set the reference point.
+	 * @param referencePoint
+	 *            The reference point to set.
 	 */
-	public Point getReferencePoint(AnchorKey key) {
-		Point referencePoint = referencePointProperty().get(key);
-		if (referencePoint == null) {
-			referencePoint = new Point(0, 0);
-		}
-		return referencePoint;
-	}
-
-	/**
-	 * Provides a {@link ReadOnlyMapProperty} that stores positions (in the
-	 * local coordinate system of the anchored {@link Node}) for all attached
-	 * {@link AnchorKey}s.
-	 *
-	 * @return A {@link ReadOnlyMapProperty} that stores positions (in the local
-	 *         coordinate system of the anchored {@link Node}) for all attached
-	 *         {@link AnchorKey}s.
-	 */
-	public ReadOnlyMapProperty<AnchorKey, Point> referencePointProperty() {
-		return referencePointProperty.getReadOnlyProperty();
-	}
-
-	/**
-	 * Removes the {@link IComputationStrategy} that is currently registered for
-	 * the given {@link AnchorKey}.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} for which to remove the associated
-	 *            {@link IComputationStrategy}.
-	 */
-	public void removeComputationStrategy(AnchorKey key) {
-		computationStrategyProperty.remove(key);
+	public void setAnchoredReferencePoint(AnchorKey key, Point referencePoint) {
+		anchoredReferencePointsProperty.put(key, referencePoint);
 	}
 
 	/**
@@ -886,7 +851,11 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	public void setComputationStrategy(AnchorKey key,
 			IComputationStrategy computationStrategy) {
-		computationStrategyProperty.put(key, computationStrategy);
+		if (computationStrategy == null) {
+			computationStrategyProperty.remove(key);
+		} else {
+			computationStrategyProperty.put(key, computationStrategy);
+		}
 	}
 
 	/**

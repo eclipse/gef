@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.AbstractComputationStrategy;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
@@ -187,10 +186,12 @@ public class OrthogonalRouter implements IConnectionRouter {
 		if (anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != connection) {
 			Node anchorage = anchor.getAnchorage();
-			IGeometry outlineGeometry = AbstractComputationStrategy
-					.getOutlineGeometry(anchorage);
-			return NodeUtils.sceneToLocal(connection,
-					NodeUtils.localToScene(anchorage, outlineGeometry));
+			if (anchor instanceof DynamicAnchor) {
+				return ((DynamicAnchor) anchor).getAnchorageReferenceGeometry();
+			}
+			// fall back to using the shape outline
+			return NodeUtils.sceneToLocal(connection, NodeUtils.localToScene(
+					anchorage, NodeUtils.getShapeOutline(anchorage)));
 		}
 		return null;
 	}
@@ -282,7 +283,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 				Point referencePoint = getAnchorReferencePoint(connection,
 						index);
 				// update reference point for the anchor key at the given index
-				((DynamicAnchor) anchor).referencePointProperty()
+				((DynamicAnchor) anchor).anchoredReferencePointsProperty()
 						.put(connection.getAnchorKey(index), referencePoint);
 				AnchorKey anchorKey = connection.getAnchorKey(index);
 				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -203,7 +204,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	private ImageView iconImageView;
 	private Tooltip tooltipNode;
 	private VBox outerLayoutContainer;
-	private Shape shape;
+	private Node shape;
 
 	private Node nestedGraphIcon;
 	private StackPane nestedContentStackPane;
@@ -257,8 +258,13 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *
 	 * @return The newly created {@link Shape}.
 	 */
-	protected Shape createShape() {
-		return new Rectangle();
+	protected Node createShape() {
+		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef4.geometry.planar.Rectangle());
+		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
+				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
+		shape.setStroke(new Color(0, 0, 0, 1));
+		shape.setStrokeType(StrokeType.INSIDE);
+		return shape;
 	}
 
 	@Override
@@ -278,10 +284,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		// create shape for border and background
 		shape = createShape();
-		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
-				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
-		shape.setStroke(new Color(0, 0, 0, 1));
-		shape.setStrokeType(StrokeType.INSIDE);
 		shape.getStyleClass().add(CSS_CLASS_SHAPE);
 
 		// initialize image view
@@ -309,7 +311,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 		outerLayoutContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				resizeShape(outerLayoutContainer.getWidth(), outerLayoutContainer.getHeight());
+				shape.resize(outerLayoutContainer.getWidth(), outerLayoutContainer.getHeight());
 			}
 		});
 
@@ -373,11 +375,11 @@ public class NodePart extends AbstractFXContentPart<Group>
 		visual.setId(id);
 
 		// set CSS style
-		if (attrs.containsKey(ZestProperties.NODE_RECT_CSS_STYLE)) {
-			refreshRectCssStyle(ZestProperties.getNodeRectCssStyle(node));
+		if (attrs.containsKey(ZestProperties.NODE_SHAPE_CSS_STYLE)) {
+			refreshShapeCssStyle(ZestProperties.getShapeCssStyle(node));
 		}
 		if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
-			refreshLabelCssStyle(ZestProperties.getNodeLabelCssStyle(node));
+			refreshLabelCssStyle(ZestProperties.getLabelCssStyle(node));
 		}
 
 		refreshNesting(isNesting());
@@ -472,7 +474,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *
 	 * @return The {@link Shape} that displays the node's border and background.
 	 */
-	protected Shape getShape() {
+	public Node getShape() {
 		return shape;
 	}
 
@@ -618,7 +620,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 * @param nodeRectCssStyle
 	 *            The new node rectangle CSS style.
 	 */
-	protected void refreshRectCssStyle(String nodeRectCssStyle) {
+	protected void refreshShapeCssStyle(String nodeRectCssStyle) {
 		if (getShape() != null) {
 			getShape().setStyle(nodeRectCssStyle);
 		}
@@ -671,19 +673,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	@Override
 	public void resizeContent(Dimension size) {
 		ZestProperties.setSize(getContent(), size);
-	}
-
-	/**
-	 * Resize the shape to the given width and height.
-	 *
-	 * @param width
-	 *            The new width
-	 * @param height
-	 *            The new height
-	 */
-	protected void resizeShape(double width, double height) {
-		((Rectangle) getShape()).setWidth(width);
-		((Rectangle) getShape()).setHeight(height);
 	}
 
 	/**

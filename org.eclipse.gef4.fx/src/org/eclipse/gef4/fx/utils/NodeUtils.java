@@ -233,6 +233,11 @@ public class NodeUtils {
 		double dw = shapeBounds.getWidth() - geomBounds.getWidth();
 		double dh = shapeBounds.getHeight() - geomBounds.getHeight();
 
+		// geometric bounds match shape bounds, so nothing to do
+		if (dw == 0 && dh == 0) {
+			return geometry;
+		}
+
 		// translate
 		double dx = -dw / 2;
 		double dy = -dh / 2;
@@ -284,6 +289,27 @@ public class NodeUtils {
 						: 0;
 		return FX2Geometry.toRectangle(layoutBounds).shrink(offset, offset,
 				offset, offset);
+	}
+
+	/**
+	 * Creates a geometry representing the outline of the given {@link Node} .
+	 *
+	 * @param node
+	 *            The node to infer an outline geometry for.
+	 * @return An {@link IGeometry} from which the outline may be retrieved.
+	 */
+	public static IGeometry getShapeOutline(Node node) {
+		try {
+			IGeometry geometry = NodeUtils.getGeometricOutline(node);
+			if (geometry != null) {
+				// resize to layout-bounds to include stroke if not a curve
+				return NodeUtils.getResizedToShapeBounds(node, geometry);
+			}
+			return FX2Geometry.toRectangle(node.getLayoutBounds());
+		} catch (IllegalArgumentException e) {
+			// fall back to layout-bounds
+			return FX2Geometry.toRectangle(node.getLayoutBounds());
+		}
 	}
 
 	/**

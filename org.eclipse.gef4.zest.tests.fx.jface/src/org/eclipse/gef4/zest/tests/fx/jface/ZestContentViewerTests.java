@@ -346,10 +346,10 @@ public class ZestContentViewerTests {
 		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
 		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
 		// green background, black foreground
-		String rectCssStyle = ZestProperties.getNodeRectCssStyle(firstNode);
+		String rectCssStyle = ZestProperties.getShapeCssStyle(firstNode);
 		assertEquals("-fx-fill: rgb(0,255,0);-fx-stroke: rgb(0,0,0);", rectCssStyle);
 		// => black label
-		String labelCssStyle = ZestProperties.getNodeLabelCssStyle(firstNode);
+		String labelCssStyle = ZestProperties.getLabelCssStyle(firstNode);
 		assertTrue(labelCssStyle.startsWith("-fx-fill: rgb(0,0,0);"));
 	}
 
@@ -358,7 +358,7 @@ public class ZestContentViewerTests {
 		viewer.setInput(new Object());
 		Map<Object, org.eclipse.gef4.graph.Node> contentNodeMap = viewer.getContentNodeMap();
 		org.eclipse.gef4.graph.Node firstNode = contentNodeMap.get(MyContentProvider.first());
-		String labelCssStyle = ZestProperties.getNodeLabelCssStyle(firstNode);
+		String labelCssStyle = ZestProperties.getLabelCssStyle(firstNode);
 		// -fx-fill due to IColorProvider
 		assertTrue(labelCssStyle.startsWith("-fx-fill: rgb(0,0,0);"));
 		assertTrue(labelCssStyle.contains("-fx-font-family: \"Times New Roman\";"));
@@ -366,7 +366,7 @@ public class ZestContentViewerTests {
 		assertTrue(labelCssStyle.contains("-fx-font-weight: bold;"));
 		// check second style (italic)
 		org.eclipse.gef4.graph.Node secondNode = contentNodeMap.get(MyContentProvider.second());
-		labelCssStyle = ZestProperties.getNodeLabelCssStyle(secondNode);
+		labelCssStyle = ZestProperties.getLabelCssStyle(secondNode);
 		assertTrue(labelCssStyle.startsWith("-fx-fill: rgb(0,0,0);"));
 		assertTrue(labelCssStyle.contains("-fx-font-family: \"Times New Roman\";"));
 		assertTrue(labelCssStyle.contains("-fx-font-size: 8pt;"));

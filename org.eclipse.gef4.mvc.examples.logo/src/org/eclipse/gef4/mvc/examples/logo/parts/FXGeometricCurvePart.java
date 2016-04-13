@@ -430,8 +430,8 @@ public class FXGeometricCurvePart
 					IAnchor sourceAnchor = sourcePart
 							.getAdapter(new TypeToken<Provider<IAnchor>>() {
 							}).get();
-					((DynamicAnchor) sourceAnchor).removeComputationStrategy(
-							visual.getStartAnchorKey());
+					((DynamicAnchor) sourceAnchor).setComputationStrategy(
+							visual.getStartAnchorKey(), null);
 				}
 			}
 
@@ -446,8 +446,8 @@ public class FXGeometricCurvePart
 					IAnchor targetAnchor = targetPart
 							.getAdapter(new TypeToken<Provider<IAnchor>>() {
 							}).get();
-					((DynamicAnchor) targetAnchor).removeComputationStrategy(
-							visual.getEndAnchorKey());
+					((DynamicAnchor) targetAnchor).setComputationStrategy(
+							visual.getEndAnchorKey(), null);
 				}
 			}
 

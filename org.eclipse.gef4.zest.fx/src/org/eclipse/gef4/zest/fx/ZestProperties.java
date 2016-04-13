@@ -110,8 +110,8 @@ public class ZestProperties {
 	 * This attribute determines the CSS style for an edge. This attribute does
 	 * not have a default value.
 	 *
-	 * @see #getEdgeCurveCssStyle(Edge)
-	 * @see #setEdgeCurveCssStyle(Edge, String)
+	 * @see #getCurveCssStyle(Edge)
+	 * @see #setCurveCssStyle(Edge, String)
 	 */
 	public static final String EDGE_CURVE_CSS_STYLE = "edge-curve-css-style";
 
@@ -131,10 +131,10 @@ public class ZestProperties {
 	 * This attribute determines the CSS style for a node rectangle. This
 	 * attribute does not have a default value.
 	 *
-	 * @see #getNodeRectCssStyle(Node)
-	 * @see #setNodeRectCssStyle(Node, String)
+	 * @see #getShapeCssStyle(Node)
+	 * @see #setShapeCssStyle(Node, String)
 	 */
-	public static final String NODE_RECT_CSS_STYLE = "node-rect-css-style";
+	public static final String NODE_SHAPE_CSS_STYLE = "node-rect-css-style";
 
 	/**
 	 * This attribute determines the CSS style for a node or edge label. This
@@ -381,7 +381,7 @@ public class ZestProperties {
 	 *            The {@link Edge} of which the curve CSS style is determined.
 	 * @return The curve CSS style of the given {@link Edge}.
 	 */
-	public static String getEdgeCurveCssStyle(Edge edge) {
+	public static String getCurveCssStyle(Edge edge) {
 		return (String) edge.attributesProperty().get(EDGE_CURVE_CSS_STYLE);
 	}
 
@@ -621,7 +621,7 @@ public class ZestProperties {
 	 *
 	 * @param node
 	 *            The {@link Node} of which the label CSS style is determined.
-	 * @return The label CSS style of the given {@link Edge}.
+	 * @return The label CSS style of the given {@link Node}.
 	 */
 	public static String getLabelCssStyle(Node node) {
 		return (String) node.attributesProperty().get(ELEMENT_LABEL_CSS_STYLE);
@@ -707,31 +707,6 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Returns the value of the {@link #ELEMENT_LABEL_CSS_STYLE} attribute of
-	 * the given {@link Node}.
-	 *
-	 * @param node
-	 *            The {@link Node} of which the label CSS style is determined.
-	 * @return The label CSS style of the given {@link Node}.
-	 */
-	public static String getNodeLabelCssStyle(Node node) {
-		return (String) node.attributesProperty().get(ELEMENT_LABEL_CSS_STYLE);
-	}
-
-	/**
-	 * Returns the value of the {@link #NODE_RECT_CSS_STYLE} attribute of the
-	 * given {@link Node}.
-	 *
-	 * @param node
-	 *            The {@link Node} of which the node rectangle CSS style is
-	 *            determined.
-	 * @return The node rectangle CSS style of the given {@link Node}.
-	 */
-	public static String getNodeRectCssStyle(Node node) {
-		return (String) node.attributesProperty().get(NODE_RECT_CSS_STYLE);
-	}
-
-	/**
 	 * Returns the value of the {@link #NODE_POSITION} attribute of the given
 	 * {@link Node}.
 	 *
@@ -758,6 +733,19 @@ public class ZestProperties {
 	 */
 	public static IConnectionRouter getRouter(Edge edge) {
 		return (IConnectionRouter) edge.attributesProperty().get(EDGE_ROUTER);
+	}
+
+	/**
+	 * Returns the value of the {@link #NODE_SHAPE_CSS_STYLE} attribute of the
+	 * given {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the node rectangle CSS style is
+	 *            determined.
+	 * @return The node rectangle CSS style of the given {@link Node}.
+	 */
+	public static String getShapeCssStyle(Node node) {
+		return (String) node.attributesProperty().get(NODE_SHAPE_CSS_STYLE);
 	}
 
 	/**
@@ -993,7 +981,7 @@ public class ZestProperties {
 	 * @param connCssStyle
 	 *            The new curve CSS style for the given {@link Edge}.
 	 */
-	public static void setEdgeCurveCssStyle(Edge edge, String connCssStyle) {
+	public static void setCurveCssStyle(Edge edge, String connCssStyle) {
 		edge.attributesProperty().put(EDGE_CURVE_CSS_STYLE, connCssStyle);
 	}
 
@@ -1310,8 +1298,8 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #NODE_RECT_CSS_STYLE} attribute of the given
-	 * {@link Node} to the given value.
+	 * Sets the value of the {@link #NODE_SHAPE_CSS_STYLE} attribute of the
+	 * given {@link Node} to the given value.
 	 *
 	 * @param node
 	 *            The {@link Node} of which the node rectangle CSS style is
@@ -1319,8 +1307,8 @@ public class ZestProperties {
 	 * @param rectCssStyle
 	 *            The new node rectangle CSS style for the given {@link Node}.
 	 */
-	public static void setNodeRectCssStyle(Node node, String rectCssStyle) {
-		node.attributesProperty().put(NODE_RECT_CSS_STYLE, rectCssStyle);
+	public static void setShapeCssStyle(Node node, String rectCssStyle) {
+		node.attributesProperty().put(NODE_SHAPE_CSS_STYLE, rectCssStyle);
 	}
 
 	/**

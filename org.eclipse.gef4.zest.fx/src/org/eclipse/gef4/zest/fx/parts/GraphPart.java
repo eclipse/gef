@@ -122,7 +122,8 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 		ObservableList<Edge> edges = getContent().getEdges();
 		ArrayList<Edge> visibleEdges = new ArrayList<>();
 		for (Edge e : edges) {
-			if (!ZestProperties.getInvisible(e, true) && !ZestProperties.getInvisible(e.getSource(), true)
+			if (!ZestProperties.getInvisible(e, true) && e.getSource() != null
+					&& !ZestProperties.getInvisible(e.getSource(), true) && e.getTarget() != null
 					&& !ZestProperties.getInvisible(e.getTarget(), true)) {
 				visibleEdges.add(e);
 			}

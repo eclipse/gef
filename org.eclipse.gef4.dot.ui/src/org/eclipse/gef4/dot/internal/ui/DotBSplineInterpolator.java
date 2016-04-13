@@ -69,13 +69,13 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 		Point startReference = connection
 				.getStartAnchor() instanceof DynamicAnchor
 						? ((DynamicAnchor) connection.getStartAnchor())
-								.referencePointProperty()
+								.anchoredReferencePointsProperty()
 								.get(connection.getStartAnchorKey())
 						: ((StaticAnchor) connection.getStartAnchor())
 								.getReferencePosition();
 		Point endReference = connection.getEndAnchor() instanceof DynamicAnchor
 				? ((DynamicAnchor) connection.getEndAnchor())
-						.referencePointProperty()
+						.anchoredReferencePointsProperty()
 						.get(connection.getEndAnchorKey())
 				: ((StaticAnchor) connection.getEndAnchor())
 						.getReferencePosition();

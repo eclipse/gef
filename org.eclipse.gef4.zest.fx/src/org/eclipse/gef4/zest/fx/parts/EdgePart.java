@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
@@ -100,22 +99,8 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				}));
 		IAnchor anchor = anchorProvider == null ? null : anchorProvider.get();
 		if (role.equals(SOURCE_ROLE)) {
-			if (getVisual().getRouter() instanceof OrthogonalRouter) {
-				// use orthogonal projection strategy
-				if (anchor instanceof DynamicAnchor) {
-					((DynamicAnchor) anchor).setComputationStrategy(getVisual().getStartAnchorKey(),
-							new OrthogonalProjectionStrategy());
-				}
-			}
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals(TARGET_ROLE)) {
-			if (getVisual().getRouter() instanceof OrthogonalRouter) {
-				// use orthogonal projection strategy
-				if (anchor instanceof DynamicAnchor) {
-					((DynamicAnchor) anchor).setComputationStrategy(getVisual().getEndAnchorKey(),
-							new OrthogonalProjectionStrategy());
-				}
-			}
 			getVisual().setEndAnchor(anchor);
 		} else {
 			throw new IllegalArgumentException("Cannot attach to anchor with role <" + role + ">.");
@@ -259,7 +244,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 
 		// css style
 		if (attrs.containsKey(ZestProperties.EDGE_CURVE_CSS_STYLE)) {
-			String connCssStyle = ZestProperties.getEdgeCurveCssStyle(edge);
+			String connCssStyle = ZestProperties.getCurveCssStyle(edge);
 			curveNode.setStyle(connCssStyle);
 		}
 
@@ -277,6 +262,30 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		IConnectionRouter router = ZestProperties.getRouter(edge);
 		if (router != null) {
 			visual.setRouter(router);
+			// update anchors to use corresponding computation strategy
+			if (router instanceof OrthogonalRouter) {
+				IAnchor startAnchor = visual.getStartAnchor();
+				// use orthogonal projection strategy
+				if (startAnchor instanceof DynamicAnchor) {
+					((DynamicAnchor) startAnchor).setComputationStrategy(getVisual().getStartAnchorKey(),
+							new DynamicAnchor.OrthogonalProjectionStrategy());
+				}
+				IAnchor endAnchor = visual.getEndAnchor();
+				if (endAnchor instanceof DynamicAnchor) {
+					((DynamicAnchor) endAnchor).setComputationStrategy(getVisual().getEndAnchorKey(),
+							new DynamicAnchor.OrthogonalProjectionStrategy());
+				}
+			} else {
+				IAnchor startAnchor = visual.getStartAnchor();
+				// use default strategy
+				if (startAnchor instanceof DynamicAnchor) {
+					((DynamicAnchor) startAnchor).setComputationStrategy(getVisual().getStartAnchorKey(), null);
+				}
+				IAnchor endAnchor = visual.getEndAnchor();
+				if (endAnchor instanceof DynamicAnchor) {
+					((DynamicAnchor) endAnchor).setComputationStrategy(getVisual().getEndAnchorKey(), null);
+				}
+			}
 		}
 
 		IConnectionInterpolator interpolator = ZestProperties.getInterpolator(edge);

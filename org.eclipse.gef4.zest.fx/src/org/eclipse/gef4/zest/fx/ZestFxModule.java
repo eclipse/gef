@@ -40,7 +40,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXTransformConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTranslateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTraverseFocusOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
 import org.eclipse.gef4.mvc.fx.providers.GeometricOutlineProvider;
 import org.eclipse.gef4.mvc.fx.providers.ShapeBoundsProvider;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -78,6 +77,7 @@ import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.ShowHiddenNeighborsPolicy;
 import org.eclipse.gef4.zest.fx.policies.TransformLabelPolicy;
 import org.eclipse.gef4.zest.fx.policies.TranslateSelectedAndRelocateLabelsOnDragPolicy;
+import org.eclipse.gef4.zest.fx.providers.NodePartAnchorProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provider;
@@ -112,6 +112,13 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindAbstractViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractViewerAdapters(adapterMapBinder);
 		bindNavigationModelAsAbstractViewerAdapter(adapterMapBinder);
+	}
+
+	@Override
+	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindContentViewerAdapters(adapterMapBinder);
+
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
 	}
 
 	/**
@@ -266,13 +273,6 @@ public class ZestFxModule extends MvcFxModule {
 				.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
-	@Override
-	protected void bindContentViewerAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		super.bindContentViewerAdapters(adapterMapBinder);
-
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(HidingModel.class);
-	}
-
 	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link GraphPart} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
@@ -416,7 +416,7 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
 
 		// anchor provider
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DynamicAnchorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodePartAnchorProvider.class);
 
 		// feedback and handles
 		adapterMapBinder

@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +34,7 @@ import org.eclipse.gef4.fx.utils.CursorUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -370,8 +370,8 @@ public class FXBendConnectionPolicyTests {
 		((DynamicAnchor) connection.getVisual().getStartAnchor()).setComputationStrategy(
 				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
 					@Override
-					public Point computePositionInScene(Node anchorage, Node anchored,
-							Point anchoredReferencePointInLocal) {
+					public Point computePositionInScene(Node anchorage, IGeometry anchorageReferenceGeometryInLocal,
+							Node anchored, Point anchoredReferencePointInLocal) {
 						// ensure routing starts going to the right
 						return new Point(49, 25);
 					}
@@ -379,8 +379,8 @@ public class FXBendConnectionPolicyTests {
 		((DynamicAnchor) connection.getVisual().getEndAnchor()).setComputationStrategy(
 				connection.getVisual().getEndAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
 					@Override
-					public Point computePositionInScene(Node anchorage, Node anchored,
-							Point anchoredReferencePointInLocal) {
+					public Point computePositionInScene(Node anchorage, IGeometry anchorageReferenceGeometryInLocal,
+							Node anchored, Point anchoredReferencePointInLocal) {
 						// ensure routing ends going to the right
 						return new Point(301, 525);
 					}
@@ -1671,10 +1671,10 @@ public class FXBendConnectionPolicyTests {
 		ctx.moveTo(robot, firstConnectionPart.getVisual(), firstConnectionStart.x, firstConnectionStart.y);
 
 		// drag connection down by 10px
-		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
+		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		Point pointerLocation = CursorUtils.getPointerLocation();
 		ctx.mouseDrag(robot, (int) pointerLocation.x, (int) pointerLocation.y + 10);
-		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
+		ctx.mouseRelease(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		robot.delay(1000);
 
 		// check the connection is selected
@@ -1686,10 +1686,10 @@ public class FXBendConnectionPolicyTests {
 		ctx.moveTo(robot, secondPart.getVisual(), center.x, center.y);
 
 		// drag anchorage down by 10px
-		ctx.mousePress(robot, InputEvent.BUTTON1_MASK);
+		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		pointerLocation = CursorUtils.getPointerLocation();
 		ctx.mouseDrag(robot, (int) pointerLocation.x, (int) pointerLocation.y + 10);
-		ctx.mouseRelease(robot, InputEvent.BUTTON1_MASK);
+		ctx.mouseRelease(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		robot.delay(1000);
 
 		// check the anchorage is selected

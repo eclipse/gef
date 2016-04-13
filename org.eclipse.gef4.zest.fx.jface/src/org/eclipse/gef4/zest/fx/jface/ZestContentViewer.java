@@ -321,7 +321,7 @@ public class ZestContentViewer extends ContentViewer {
 				textCssStyle = "-fx-fill: " + toCssRgb(foreground) + ";";
 			}
 			if (!rectCssStyle.isEmpty()) {
-				ZestProperties.setNodeRectCssStyle(node, rectCssStyle);
+				ZestProperties.setShapeCssStyle(node, rectCssStyle);
 			}
 		}
 
