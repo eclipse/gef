@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)		
+ *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)
+ *                                - Add support for polygon-based node shapes (bug #441352)		
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
@@ -62,6 +63,11 @@ public class DotParserTests {
 	@Test
 	public void testArrowShapesInvalidModifiers() {
 		testFile("arrowshapes_invalid_modifiers.dot");
+	}
+
+	@Test
+	public void testPolygonBasedNodeShapes() {
+		testFile("nodeshapes_polygon_based.dot");
 	}
 
 	private void testFile(String fileName) {

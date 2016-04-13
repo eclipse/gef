@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Tamas Miklossy  (itemis AG) - Add support for polygon-based node shapes (bug #441352)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
@@ -20,14 +21,17 @@ import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.gef4.dot.internal.parser.DotArrowTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotPointStandaloneSetup;
+import org.eclipse.gef4.dot.internal.parser.DotShapeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.DotSplineTypeStandaloneSetup;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotArrowTypeParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotPointParser;
+import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotShapeParser;
 import org.eclipse.gef4.dot.internal.parser.parser.antlr.DotSplineTypeParser;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
 import org.eclipse.gef4.dot.internal.parser.validation.DotArrowTypeJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotPointJavaValidator;
+import org.eclipse.gef4.dot.internal.parser.validation.DotShapeJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotSplineTypeJavaValidator;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.IParser;
@@ -255,6 +259,29 @@ public class DotLanguageSupport {
 		}
 	};
 
+	/**
+	 * A parser used to parse DOT int values.
+	 */
+	public static IPrimitiveValueParser<Integer> INT_PARSER = new IPrimitiveValueParser<Integer>() {
+
+		@Override
+		public IPrimitiveValueParseResult<Integer> parse(String rawValue) {
+			if (rawValue == null) {
+				return null;
+			}
+			try {
+				int parsedValue = Integer.parseInt(rawValue);
+				return new PrimitiveValueParseResultImpl<>(
+						new Integer(parsedValue));
+			} catch (NumberFormatException exception) {
+				return new PrimitiveValueParseResultImpl<>(Collections
+						.<Diagnostic> singletonList(new BasicDiagnostic(
+								Diagnostic.ERROR, rawValue, -1,
+								exception.getMessage(), new Object[] {})));
+			}
+		}
+	};
+
 	private static final Injector arrowTypeInjector = new DotArrowTypeStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();
 
@@ -297,6 +324,28 @@ public class DotLanguageSupport {
 	 */
 	public static final DotPointJavaValidator POINT_VALIDATOR = pointInjector
 			.getInstance(DotPointJavaValidator.class);
+
+	private static final Injector shapeInjector = new DotShapeStandaloneSetup()
+			.createInjectorAndDoEMFRegistration();
+
+	/**
+	 * The validator for shape attribute values.
+	 */
+	// TODO: move to dotjavaValidator
+	public static final DotShapeJavaValidator SHAPE_VALIDATOR = shapeInjector
+			.getInstance(DotShapeJavaValidator.class);
+
+	/**
+	 * The parser for shape attribute values.
+	 */
+	public static final DotShapeParser SHAPE_PARSER = shapeInjector
+			.getInstance(DotShapeParser.class);
+
+	/**
+	 * The serializer for shape attribute values.
+	 */
+	public static final ISerializer SHAPE_SERIALIZER = shapeInjector
+			.getInstance(ISerializer.class);
 
 	private static final Injector splineTypeInjector = new DotSplineTypeStandaloneSetup()
 			.createInjectorAndDoEMFRegistration();

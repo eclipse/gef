@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)		
+ *                                - Add support for polygon-based node shapes (bug #441352)
  *
  *******************************************************************************/
 
@@ -210,6 +211,76 @@ public class DotValidatorTests {
 
 		// verify that this is the only reported issue
 		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongNodeDistortion() throws Exception {
+		String text = "graph { 1[distortion=foo] 2[distortion=\"-100.0001\"]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotAttributes.DISTORTION__N,
+				"The value 'foo' is not a syntactically correct double: For input string: \"foo\".");
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(),
+				DotAttributes.DISTORTION__N,
+				"The double value '-100.0001' is not semantically correct: Value may not be smaller than -100.0");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongNodeShape() throws Exception {
+		String text = "graph { 1[shape=foo] }";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SHAPE__N,
+				"The value 'foo' is not a syntactically correct shape: Mismatched character 'o' expecting 'l'.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(1, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongNodeSides() throws Exception {
+		String text = "graph { 1[sides=foo] 2[sides=\"-1\"]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SIDES__N,
+				"The value 'foo' is not a syntactically correct int: For input string: \"foo\".");
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SIDES__N,
+				"The int value '-1' is not semantically correct: Value may not be smaller than 0.");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
+	}
+
+	@Test
+	public void testWrongNodeSkew() throws Exception {
+		String text = "graph { 1[skew=foo] 2[skew=\"-100.1\"]}";
+
+		DotAst dotAst = parserHelper.parse(text);
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SKEW__N,
+				"The value 'foo' is not a syntactically correct double: For input string: \"foo\".");
+
+		validationTestHelper.assertError(dotAst,
+				DotPackage.eINSTANCE.getAttribute(), DotAttributes.SKEW__N,
+				"The double value '-100.1' is not semantically correct: Value may not be smaller than -100.0");
+
+		// verify that this is the only reported issue
+		Assert.assertEquals(2, validationTestHelper.validate(dotAst).size());
 	}
 
 	private DotAst parse(String fileName) {

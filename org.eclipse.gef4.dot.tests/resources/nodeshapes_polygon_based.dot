@@ -1,0 +1,85 @@
+/*******************************************************************************
+ * Copyright (c) 2016 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution  and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *       Tamas Miklossy  (itemis AG) - Initial text (bug #441352)
+ *******************************************************************************/
+
+/* 
+ * The PolygonBasedNodeShapes graph represents the different polygon based node shapes 
+ * that an be used as valid values for the shape node attribute.
+ */
+graph PolygonBasedNodeShapes {
+     rankdir=TB
+     1[shape=box]
+     
+     /* If shape="polygon", the attributes sides, skew and distortion are also used.*/
+     2[shape=polygon sides=5, skew=0, distortion=0]
+     3[shape=ellipse]
+     4[shape=oval]
+     5[shape=circle]
+     6[shape=point]
+     7[shape=egg]
+     8[shape=triangle]
+     9[shape=plaintext]
+    
+    /*
+     * The node shape=plain requires also the label attribute to be set, otherwise it will be rendered
+     * as a box shape with the following warning: "Warning: using box for unknown shape plain."
+     */
+	10[shape=plain label=PLAIN_LABEL]
+    11[shape=diamond]
+    12[shape=trapezium]
+    13[shape=parallelogram]
+    14[shape=house]
+    15[shape=pentagon]
+    16[shape=hexagon]
+    17[shape=septagon]
+    18[shape=octagon]
+    19[shape=doublecircle]
+    20[shape=doubleoctagon]
+    21[shape=tripleoctagon]
+    22[shape=invtriangle]
+    23[shape=invtrapezium]
+    24[shape=invhouse]
+    25[shape=Mdiamond]
+    26[shape=Msquare]
+    27[shape=Mcircle]
+    28[shape=rect]
+    29[shape=rectangle]
+    30[shape=square]
+    31[shape=star]
+    32[shape=none]
+    33[shape=underline]
+    34[shape=cylinder]
+    35[shape=note]
+    36[shape=tab]
+    37[shape=folder]
+    38[shape=box3d]
+    39[shape=component]
+    40[shape=promoter]
+    41[shape=cds]
+    42[shape=terminator]
+    43[shape=utr]
+    44[shape=primersite]
+    45[shape=restrictionsite]
+    46[shape=fivepoverhang]
+    47[shape=threepoverhang]
+    48[shape=noverhang]
+    49[shape=assembly]
+    50[shape=signature]
+    51[shape=insulator]
+    52[shape=ribosite]
+    53[shape=rnastab]
+    54[shape=proteasesite]
+    55[shape=proteinstab]
+    56[shape=rpromoter]
+    57[shape=rarrow]
+    58[shape=larrow]
+    59[shape=lpromoter]
+}

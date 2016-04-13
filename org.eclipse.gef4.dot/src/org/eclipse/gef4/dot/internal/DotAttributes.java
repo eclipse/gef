@@ -10,6 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Alexander Nyßen (itemis AG)  - initial API and implementation
  *     Tamas Miklossy (itemis AG)   - Add support for arrowType edge decorations (bug #477980)
+ *                                  - Add support for polygon-based node shapes (bug #441352)
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal;
@@ -28,6 +29,7 @@ import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.point.Point;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
+import org.eclipse.gef4.dot.internal.parser.shape.Shape;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator;
 import org.eclipse.gef4.dot.internal.parser.validation.DotJavaValidator.AttributeContext;
@@ -102,6 +104,11 @@ public class DotAttributes {
 	 * Specifies the 'dir' attribute of an edge.
 	 */
 	public static final String DIR__E = "dir";
+
+	/**
+	 * Specifies the 'distortion' attribute of a node.
+	 */
+	public static final String DISTORTION__N = "distortion";
 
 	/**
 	 * Specifies the 'forceLabels' attribute of a graph.
@@ -217,6 +224,21 @@ public class DotAttributes {
 	 * which is used for laying out the graph.
 	 */
 	public static final String RANKDIR__G = "rankdir";
+
+	/**
+	 * Specifies the 'shape' attribute of a node.
+	 */
+	public static final String SHAPE__N = "shape";
+
+	/**
+	 * Specifies the 'sides' attribute of a node.
+	 */
+	public static final String SIDES__N = "sides";
+
+	/**
+	 * Specifies the 'skew' attribute of a node.
+	 */
+	public static final String SKEW__N = "skew";
 
 	/**
 	 * Specifies the name of the 'splines' attribute. It is used to control how
@@ -430,8 +452,7 @@ public class DotAttributes {
 	 * 
 	 * @param edge
 	 *            The {@link Edge} for which to return the value of the
-	 *            {@link #ARROWSIZE__E} property, parsed as an {@link ArrowType}
-	 *            .
+	 *            {@link #ARROWSIZE__E} property, parsed as a {@link Double} .
 	 * 
 	 * @return The value of the {@link #ARROWSIZE__E} property of the given
 	 *         {@link Edge}.
@@ -499,6 +520,36 @@ public class DotAttributes {
 	public static DirType getDirParsed(Edge edge) {
 		return DotLanguageSupport.parseAttributeValue(
 				DotLanguageSupport.DIRTYPE_PARSER, getDir(edge));
+	}
+
+	/**
+	 * Returns the value of the {@link #DISTORTION__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #DISTORTION__N} property.
+	 * @return The value of the {@link #DISTORTION__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getDistortion(Node node) {
+		return (String) node.attributesProperty().get(DISTORTION__N);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #DISTORTION__N} property of the
+	 * given {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #DISTORTION__N} property, parsed as a {@link Double} .
+	 * 
+	 * @return The value of the {@link #DISTORTION__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Double getDistortionParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.DOUBLE_PARSER, getDistortion(node));
 	}
 
 	/**
@@ -860,6 +911,95 @@ public class DotAttributes {
 	}
 
 	/**
+	 * Returns the value of the {@link #SHAPE__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SHAPE__N} property.
+	 * @return The value of the {@link #SHAPE__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getShape(Node node) {
+		return (String) node.attributesProperty().get(SHAPE__N);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #SHAPE__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SHAPE__N} property, parsed as an {@link Shape} .
+	 * @return The value of the {@link #SHAPE__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Shape getShapeParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.SHAPE_PARSER, getShape(node));
+	}
+
+	/**
+	 * Returns the value of the {@link #SIDES__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SIDES__N} property.
+	 * @return The value of the {@link #SIDES__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getSides(Node node) {
+		return (String) node.attributesProperty().get(SIDES__N);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #SIDES__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SIDES__N} property, parsed as a {@link Integer} .
+	 * 
+	 * @return The value of the {@link #SIDES__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Integer getSidesParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.INT_PARSER, getSides(node));
+	}
+
+	/**
+	 * Returns the value of the {@link #SKEW__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SKEW__N} property.
+	 * @return The value of the {@link #SKEW__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static String getSkew(Node node) {
+		return (String) node.attributesProperty().get(SKEW__N);
+	}
+
+	/**
+	 * Returns the (parsed) value of the {@link #SKEW__N} property of the given
+	 * {@link Node}.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to return the value of the
+	 *            {@link #SKEW__N} property, parsed as a {@link Double} .
+	 * 
+	 * @return The value of the {@link #SKEW__N} property of the given
+	 *         {@link Node}.
+	 */
+	public static Double getSkewParsed(Node node) {
+		return DotLanguageSupport.parseAttributeValue(
+				DotLanguageSupport.DOUBLE_PARSER, getSkew(node));
+	}
+
+	/**
 	 * Returns the value of the {@link #SPLINES__G} attribute of the given
 	 * {@link Graph}.
 	 * 
@@ -1193,6 +1333,35 @@ public class DotAttributes {
 	 */
 	public static void setDirParsed(Edge edge, DirType dirParsed) {
 		setDir(edge, dirParsed.toString());
+	}
+
+	/**
+	 * Sets the {@link #DISTORTION__N} property of the given {@link Node} to the
+	 * given <i>distortion</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #DISTORTION__N} property.
+	 * @param distortion
+	 *            The new value for the {@link #DISTORTION__N} property.
+	 */
+	public static void setDistortion(Node node, String distortion) {
+		validate(AttributeContext.NODE, DISTORTION__N, distortion);
+		node.attributesProperty().put(DISTORTION__N, distortion);
+	}
+
+	/**
+	 * Sets the {@link #DISTORTION__N} property of the given {@link Node} to the
+	 * given <i>distortion</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #DISTORTION__N} property.
+	 * @param distortionParsed
+	 *            The new value for the {@link #DISTORTION__N} property.
+	 */
+	public static void setDistortionParsed(Node node, Double distortionParsed) {
+		setSkew(node, distortionParsed.toString());
 	}
 
 	/**
@@ -1534,6 +1703,94 @@ public class DotAttributes {
 	 */
 	public static void setRankdirParsed(Graph graph, Rankdir rankdirParsed) {
 		setRankdir(graph, rankdirParsed.toString());
+	}
+
+	/**
+	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
+	 * given <i>sides</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SIDES__N} property.
+	 * @param sides
+	 *            The new value for the {@link #SIDES__N} property.
+	 */
+	public static void setSides(Node node, String sides) {
+		validate(AttributeContext.NODE, SIDES__N, sides);
+		node.attributesProperty().put(SIDES__N, sides);
+	}
+
+	/**
+	 * Sets the {@link #SIDES__N} property of the given {@link Node} to the
+	 * given <i>sides</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SIDES__N} property.
+	 * @param sidesParsed
+	 *            The new value for the {@link #SIDES__N} property.
+	 */
+	public static void setSidesParsed(Node node, Integer sidesParsed) {
+		setSides(node, sidesParsed.toString());
+	}
+
+	/**
+	 * Sets the {@link #SHAPE__N} property of the given {@link Node} to the
+	 * given <i>shape</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SHAPE__N} property.
+	 * @param shape
+	 *            The new value for the {@link #SHAPE__N} property.
+	 */
+	public static void setShape(Node node, String shape) {
+		validate(AttributeContext.NODE, SHAPE__N, shape);
+		node.attributesProperty().put(SHAPE__N, shape);
+	}
+
+	/**
+	 * Sets the {@link #SHAPE__N} property of the given {@link Node} to the
+	 * given <i>shape</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SHAPE__N} property.
+	 * @param shapeParsed
+	 *            The new value for the {@link #SHAPE__N} property.
+	 */
+	public static void setShapeParsed(Node node, Shape shapeParsed) {
+		setShape(node,
+				serialize(DotLanguageSupport.SHAPE_SERIALIZER, shapeParsed));
+	}
+
+	/**
+	 * Sets the {@link #SKEW__N} property of the given {@link Node} to the given
+	 * <i>skew</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SKEW__N} property.
+	 * @param skew
+	 *            The new value for the {@link #SKEW__N} property.
+	 */
+	public static void setSkew(Node node, String skew) {
+		validate(AttributeContext.NODE, SKEW__N, skew);
+		node.attributesProperty().put(SKEW__N, skew);
+	}
+
+	/**
+	 * Sets the {@link #SKEW__N} property of the given {@link Node} to the given
+	 * <i>skew</i> value.
+	 * 
+	 * @param node
+	 *            The {@link Node} for which to change the value of the
+	 *            {@link #SKEW__N} property.
+	 * @param skewParsed
+	 *            The new value for the {@link #SKEW__N} property.
+	 */
+	public static void setSkewParsed(Node node, Double skewParsed) {
+		setSkew(node, skewParsed.toString());
 	}
 
 	/**

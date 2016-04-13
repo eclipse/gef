@@ -10,6 +10,7 @@
  *     Fabian Steeg                - initial API and implementation (bug #277380)                     
  *     Alexander Nyßen (itemis AG) - several refactorings and additions (bugs #487081, #489793)
  *     Tamas Miklossy  (itemis AG) - support for arrowType edge decorations (bug #477980)
+ *                                 - support for polygon-based node shapes (bug #441352)
  *                                   
  *******************************************************************************/
 
@@ -216,6 +217,13 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		// name (from grammar definition, not attribute)
 		Node node = node(escaped(nodeStmt.getNode().getName()));
 
+		// distortion
+		String distortion = getAttributeValue(nodeStmt,
+				DotAttributes.DISTORTION__N);
+		if (distortion != null) {
+			DotAttributes.setDistortion(node, distortion);
+		}
+
 		// id
 		String id = getAttributeValue(nodeStmt, DotAttributes.ID__GNE);
 		if (id != null) {
@@ -256,6 +264,24 @@ public final class DotInterpreter extends DotSwitch<Object> {
 		String height = getAttributeValue(nodeStmt, DotAttributes.HEIGHT__N);
 		if (height != null) {
 			DotAttributes.setHeight(node, height);
+		}
+
+		// shape
+		String shape = getAttributeValue(nodeStmt, DotAttributes.SHAPE__N);
+		if (shape != null) {
+			DotAttributes.setShape(node, shape);
+		}
+
+		// sides
+		String sides = getAttributeValue(nodeStmt, DotAttributes.SIDES__N);
+		if (sides != null) {
+			DotAttributes.setSides(node, sides);
+		}
+
+		// skew
+		String skew = getAttributeValue(nodeStmt, DotAttributes.SKEW__N);
+		if (skew != null) {
+			DotAttributes.setSkew(node, skew);
 		}
 		return super.caseNodeStmt(nodeStmt);
 	}

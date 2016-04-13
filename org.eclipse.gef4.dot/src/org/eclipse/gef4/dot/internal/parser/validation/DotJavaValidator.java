@@ -51,6 +51,7 @@ import org.eclipse.gef4.dot.internal.parser.dot.GraphType;
 import org.eclipse.gef4.dot.internal.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.parser.point.PointPackage;
+import org.eclipse.gef4.dot.internal.parser.shape.ShapePackage;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplinetypePackage;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
@@ -207,6 +208,17 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 						unquotedValue, SplinetypePackage.Literals.SPLINE_TYPE,
 						"splineType");
 			}
+		} else if (DotAttributes.SHAPE__N.equals(name)) {
+			// validate shape using delegate parser and validator
+			return validateObjectAttributeValue(DotLanguageSupport.SHAPE_PARSER,
+					DotLanguageSupport.SHAPE_VALIDATOR, name, unquotedValue,
+					ShapePackage.Literals.SHAPE, "shape");
+		} else if (DotAttributes.SIDES__N.equals(name)) {
+			return validateIntAttributeValue(name, unquotedValue, 0);
+		} else if (DotAttributes.SKEW__N.equals(name)) {
+			return validateDoubleAttributeValue(name, unquotedValue, -100.0);
+		} else if (DotAttributes.DISTORTION__N.equals(name)) {
+			return validateDoubleAttributeValue(name, unquotedValue, -100.0);
 		} else if (DotAttributes.ARROWSIZE__E.equals(name)) {
 			return validateDoubleAttributeValue(name, unquotedValue, 0.0);
 		} else if (DotAttributes.WIDTH__N.equals(name)) {
@@ -436,6 +448,31 @@ public class DotJavaValidator extends AbstractDotJavaValidator {
 								createSemanticAttributeValueProblem(
 										Diagnostic.ERROR, attributeValue,
 										"double",
+										"Value may not be smaller than "
+												+ minValue + ".",
+										attributeName));
+			}
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Diagnostic> validateIntAttributeValue(
+			final String attributeName, String attributeValue, int minValue) {
+		// parse value
+		IPrimitiveValueParseResult<Integer> parseResult = DotLanguageSupport.INT_PARSER
+				.parse(attributeValue);
+		if (parseResult.hasSyntaxErrors()) {
+			return Collections.<Diagnostic> singletonList(
+					createSyntacticAttributeValueProblem(attributeValue, "int",
+							getFormattedSyntaxErrorMessages(parseResult),
+							attributeName));
+		} else {
+			// validate value
+			if (parseResult.getParsedValue().intValue() < minValue) {
+				return Collections
+						.<Diagnostic> singletonList(
+								createSemanticAttributeValueProblem(
+										Diagnostic.ERROR, attributeValue, "int",
 										"Value may not be smaller than "
 												+ minValue + ".",
 										attributeName));
