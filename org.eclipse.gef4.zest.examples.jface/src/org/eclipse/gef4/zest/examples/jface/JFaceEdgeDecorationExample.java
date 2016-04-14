@@ -132,6 +132,8 @@ public class JFaceEdgeDecorationExample {
 					new CircleHead());
 			edgeAttributes.put(ZestProperties.EDGE_TARGET_DECORATION,
 					new DiamondHead());
+			edgeAttributes.put(ZestProperties.EDGE_CURVE_CSS_STYLE,
+					"-fx-stroke: red;");
 			return edgeAttributes;
 		}
 
