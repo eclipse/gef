@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -214,8 +215,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 					// from the adapter instance match
 					if (!bindingKeyType.getRawType()
 							.isAssignableFrom(adapter.getClass())
-							|| !adapter.getClass().isAssignableFrom(
-									bindingKeyType.getRawType())) {
+							|| (!adapter.getClass().isAnonymousClass()
+									&& !adapter.getClass().isAssignableFrom(
+											bindingKeyType.getRawType()))) {
 						issues.add("*** ERROR: The given key (raw) type "
 								+ bindingKeyType.getRawType().getName()
 								+ " does not match the actual (raw) type of adapter "
@@ -324,18 +326,28 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		public Map<AdapterKey<?>, Object> visit(
 				final ProviderInstanceBinding<? extends Object> binding) {
 			Map<AdapterKey<?>, Object> adapters = new HashMap<>();
-			Map<AdapterKey<?>, ?> adaptersByKeys = (Map<AdapterKey<?>, ?>) binding
+			Map<AdapterKey<?>, ?> adaptersOrProvidersByKeys = (Map<AdapterKey<?>, ?>) binding
 					.getProviderInstance().get();
-			for (AdapterKey<?> adapterKey : adaptersByKeys.keySet()) {
+			for (AdapterKey<?> adapterKey : adaptersOrProvidersByKeys
+					.keySet()) {
 				// provider already provides adapters per AdapterKey
-				for (Object adapter : (Set<Object>) adaptersByKeys
-						.get(adapterKey)) {
-					// determine adapter type
+				Object adaptersOrProvider = adaptersOrProvidersByKeys
+						.get(adapterKey);
+				if (adaptersOrProvider instanceof Provider) {
+					Object adapter = ((Provider<?>) adaptersOrProvider).get();
 					TypeToken<?> adapterType = determineAdapterType(binding,
 							adapterKey, adapter);
 					adapters.put(
 							AdapterKey.get(adapterType, adapterKey.getRole()),
 							adapter);
+				} else if (adaptersOrProvider instanceof Set) {
+					for (Object adapter : (Set<?>) adaptersOrProvider) {
+						// determine adapter type
+						TypeToken<?> adapterType = determineAdapterType(binding,
+								adapterKey, adapter);
+						adapters.put(AdapterKey.get(adapterType,
+								adapterKey.getRole()), adapter);
+					}
 				}
 			}
 			return adapters;
@@ -485,10 +497,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// XXX: Use a sorted map, where keys are sorted according to
 		// hierarchy of annotation types
+
 		final SortedMap<Key<?>, Binding<?>> directlyApplicableBindings = new TreeMap<>(
 				ADAPTER_MAP_BINDING_KEY_COMPARATOR);
-		final SortedMap<Key<?>, Binding<?>> deferredBindings = new TreeMap<>(
-				ADAPTER_MAP_BINDING_KEY_COMPARATOR);
+		final IdentityHashMap<Key<?>, Binding<?>> deferredBindings = new IdentityHashMap<>();
 		for (final Key<?> key : allBindings.keySet()) {
 			// only consider bindings that are qualified by an AdapterMap
 			// binding annotation.
@@ -525,6 +537,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								// defer the binding until the adaptable is
 								// registered as an adapter itself.
 								Binding<?> binding = allBindings.get(key);
+								System.out.println(
+										"Deferring binding " + binding);
 								deferredBindings.put(key, binding);
 							}
 						}
@@ -558,16 +572,20 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 							// at its own adaptable) matches the role in the map
 							// binding.
 							if (newValue != null) {
+								String adaptableRole = newValue
+										.getAdapterKey(adaptable).getRole();
+								System.out.println(
+										"Evaluating deferred bindings for adaptable "
+												+ adaptable + " with role "
+												+ adaptableRole);
+
 								final SortedMap<Key<?>, Binding<?>> deferredApplicableBindings = new TreeMap<>(
 										ADAPTER_MAP_BINDING_KEY_COMPARATOR);
 								for (final Key<?> key : deferredBindings
 										.keySet()) {
 									if (((AdapterMap) key.getAnnotation())
 											.adaptableRole()
-											.equals(((IAdaptable.Bound<?>) adaptable)
-													.getAdaptable()
-													.getAdapterKey(adaptable)
-													.getRole())) {
+											.equals(adaptableRole)) {
 										deferredApplicableBindings.put(key,
 												allBindings.get(key));
 									}
@@ -616,9 +634,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						TypeToken<?> adapterType = key.getKey();
 						String role = key.getRole();
 
-						// System.out.println(
-						// "Inject adapter " + adapter + " with type "
-						// + adapterType + " for key " + key);
+						System.out.println("Inject adapter " + adapter
+								+ " with type " + adapterType + " for key "
+								+ key + " to adaptable " + adaptable);
 						method.setAccessible(true);
 						method.invoke(adaptable,
 								new Object[] { adapterType, adapter, role });

@@ -436,18 +436,19 @@ public class AdapterInjectorTests {
 						.to(AdapterStoreBoundAdaptable.class);
 
 				// create map bindings for AdapterStore, which is an IAdaptable
-				MapBinder<AdapterKey<?>, Object> roleBasedAdapterMapBinder = AdapterMaps
+				MapBinder<AdapterKey<?>, Object> firstRoleBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
 								AdapterStoreBoundAdaptable.class, firstRole);
+
 				// register adapter
-				roleBasedAdapterMapBinder.addBinding(AdapterKey.role(role1))
+				firstRoleBinder.addBinding(AdapterKey.role(role1))
 						.to(RawType.class);
-				roleBasedAdapterMapBinder.addBinding(AdapterKey
+				firstRoleBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
 				}, role2)).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
 				});
 
-				roleBasedAdapterMapBinder.addBinding(
+				firstRoleBinder.addBinding(
 						AdapterKey.get(new TypeToken<Provider<Integer>>() {
 				}, role3)).toInstance(new Provider<Integer>() {
 
@@ -462,18 +463,18 @@ public class AdapterInjectorTests {
 						.to(AdapterStoreBoundAdaptable.class);
 
 				// create map bindings for AdapterStore, which is an IAdaptable
-				MapBinder<AdapterKey<?>, Object> roleBasedAdapterMapBinder2 = AdapterMaps
+				MapBinder<AdapterKey<?>, Object> secondRoleBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
 								AdapterStoreBoundAdaptable.class, secondRole);
 				// register adapter
-				roleBasedAdapterMapBinder2.addBinding(AdapterKey.role(role1))
+				secondRoleBinder.addBinding(AdapterKey.role(role1))
 						.to(RawType.class);
-				roleBasedAdapterMapBinder2.addBinding(AdapterKey
+				secondRoleBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
 				}, role2)).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
 				});
 
-				roleBasedAdapterMapBinder2.addBinding(
+				secondRoleBinder.addBinding(
 						AdapterKey.get(new TypeToken<Provider<Integer>>() {
 				}, role3)).toInstance(new Provider<Integer>() {
 
@@ -490,42 +491,42 @@ public class AdapterInjectorTests {
 		injector.injectMembers(adapterStore);
 
 		// test first role
-		AdapterStoreBoundAdaptable adaptableAdapter = adapterStore.getAdapter(
+		AdapterStoreBoundAdaptable adaptableBound = adapterStore.getAdapter(
 				AdapterKey.get(AdapterStoreBoundAdaptable.class, firstRole));
-		assertNotNull(adaptableAdapter);
-		assertNotNull(adaptableAdapter
+		assertNotNull(adaptableBound);
+		assertNotNull(adaptableBound
 				.getAdapter(AdapterKey.get(RawType.class, role1)));
 		// retrieve by raw type (which works even if we could not infer a type
 		// from the binding)
-		assertNotNull(adaptableAdapter
+		assertNotNull(adaptableBound
 				.getAdapter(AdapterKey.get(ParameterizedSubType.class, role2)));
 		// retrieve by parameterized type token (which only works if we could
 		// infer a type from the binding)
-		assertNotNull(adaptableAdapter.getAdapter(
+		assertNotNull(adaptableBound.getAdapter(
 				AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
 				}, role2)));
 		// retrieve a parameterized type bound as instance
-		assertNotNull(adaptableAdapter
+		assertNotNull(adaptableBound
 				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
 				}, role3)));
 
 		// test second role
-		adaptableAdapter = adapterStore.getAdapter(
+		adaptableBound = adapterStore.getAdapter(
 				AdapterKey.get(AdapterStoreBoundAdaptable.class, secondRole));
-		assertNotNull(adaptableAdapter);
-		assertNotNull(adaptableAdapter
+		assertNotNull(adaptableBound);
+		assertNotNull(adaptableBound
 				.getAdapter(AdapterKey.get(RawType.class, role1)));
 		// retrieve by raw type (which works even if we could not infer a type
 		// from the binding)
-		assertNotNull(adaptableAdapter
+		assertNotNull(adaptableBound
 				.getAdapter(AdapterKey.get(ParameterizedSubType.class, role2)));
 		// retrieve by parameterized type token (which only works if we could
 		// infer a type from the binding)
-		assertNotNull(adaptableAdapter.getAdapter(
+		assertNotNull(adaptableBound.getAdapter(
 				AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
 				}, role2)));
 		// retrieve a parameterized type bound as instance
-		assertNotNull(adaptableAdapter
+		assertNotNull(adaptableBound
 				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
 				}, role3)));
 	}
