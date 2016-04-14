@@ -537,8 +537,8 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 								// defer the binding until the adaptable is
 								// registered as an adapter itself.
 								Binding<?> binding = allBindings.get(key);
-								System.out.println(
-										"Deferring binding " + binding);
+								// System.out.println(
+								// "Deferring binding " + binding);
 								deferredBindings.put(key, binding);
 							}
 						}
@@ -574,11 +574,10 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 							if (newValue != null) {
 								String adaptableRole = newValue
 										.getAdapterKey(adaptable).getRole();
-								System.out.println(
-										"Evaluating deferred bindings for adaptable "
-												+ adaptable + " with role "
-												+ adaptableRole);
-
+								// System.out.println(
+								// "Evaluating deferred bindings for adaptable "
+								// + adaptable + " with role "
+								// + adaptableRole);
 								final SortedMap<Key<?>, Binding<?>> deferredApplicableBindings = new TreeMap<>(
 										ADAPTER_MAP_BINDING_KEY_COMPARATOR);
 								for (final Key<?> key : deferredBindings
@@ -634,9 +633,9 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 						TypeToken<?> adapterType = key.getKey();
 						String role = key.getRole();
 
-						System.out.println("Inject adapter " + adapter
-								+ " with type " + adapterType + " for key "
-								+ key + " to adaptable " + adaptable);
+						// System.out.println("Inject adapter " + adapter
+						// + " with type " + adapterType + " for key "
+						// + key + " to adaptable " + adaptable);
 						method.setAccessible(true);
 						method.invoke(adaptable,
 								new Object[] { adapterType, adapter, role });
