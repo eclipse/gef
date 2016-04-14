@@ -247,7 +247,7 @@ public class ZestFxModule extends MvcFxModule {
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link FXSquareSegmentHandlePart} as a key.
 	 */
-	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.role("resize-relocate-first-anchorage"))
 				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
 
@@ -514,7 +514,7 @@ public class ZestFxModule extends MvcFxModule {
 		bindEdgeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeLabelPart.class));
 		bindNodeLabelPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodeLabelPart.class));
 
-		bindFXRectangleSegmentHandlePartAdapters(
+		bindFXSquareSegmentHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXSquareSegmentHandlePart.class));
 		bindFXCircleSegmentHandlePartAdapters(
 				AdapterMaps.getAdapterMapBinder(binder(), FXCircleSegmentHandlePart.class));
