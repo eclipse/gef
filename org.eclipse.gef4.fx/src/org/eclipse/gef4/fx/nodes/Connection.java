@@ -696,13 +696,13 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns the end decoration {@link Node} of this {@link Connection}, or
+	 * Returns the end decoration {@link Shape} of this {@link Connection}, or
 	 * <code>null</code>.
 	 *
-	 * @return The end decoration {@link Node} of this {@link Connection}, or
+	 * @return The end decoration {@link Shape} of this {@link Connection}, or
 	 *         <code>null</code>.
 	 */
-	public Node getEndDecoration() {
+	public Shape getEndDecoration() {
 		return endDecoration;
 	}
 
@@ -822,13 +822,13 @@ public class Connection extends Group {
 	}
 
 	/**
-	 * Returns the start decoration {@link Node} of this {@link Connection}, or
+	 * Returns the start decoration {@link Shape} of this {@link Connection}, or
 	 * <code>null</code>.
 	 *
-	 * @return The start decoration {@link Node } of this {@link Connection}, or
-	 *         <code>null</code>.
+	 * @return The start decoration {@link Shape } of this {@link Connection},
+	 *         or <code>null</code>.
 	 */
-	public Node getStartDecoration() {
+	public Shape getStartDecoration() {
 		return startDecoration;
 	}
 
