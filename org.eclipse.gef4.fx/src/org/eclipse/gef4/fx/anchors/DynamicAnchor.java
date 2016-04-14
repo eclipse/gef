@@ -19,7 +19,6 @@ import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -270,50 +269,6 @@ public class DynamicAnchor extends AbstractAnchor {
 	public static class OrthogonalProjectionStrategy
 			extends AbstractComputationStrategy {
 
-		private static final double TOLERANCE = 0.2;
-
-		/**
-		 * Adjusts the given parameter value to respect the tolerance of 20%
-		 * space around the corners.
-		 *
-		 * @param parameter
-		 *            The parameter to adjust.
-		 * @return The adjusted paremeter.
-		 */
-		private static double adjustParameterToRespectTolerance(
-				double parameter) {
-			if (parameter < TOLERANCE) {
-				parameter = TOLERANCE;
-			} else if (parameter > 1 - TOLERANCE) {
-				parameter = 1 - TOLERANCE;
-			}
-			return parameter;
-		}
-
-		/**
-		 * Converts the given {@link ICurve} to a sequence of
-		 * {@link BezierCurve}s and determines the {@link BezierCurve} that
-		 * contains the given {@link Point}, or <code>null</code> if no
-		 * {@link BezierCurve} contains the {@link Point}.
-		 *
-		 * @param curve
-		 *            The {@link ICurve} that contains the {@link Point}.
-		 * @param point
-		 *            The {@link Point} for which to determine the containing
-		 *            {@link BezierCurve}.
-		 * @return The {@link BezierCurve} segment of the given {@link ICurve}
-		 *         that contains the given {@link Point}, or <code>null</code>.
-		 */
-		private static BezierCurve getContainingBezierCurve(ICurve curve,
-				Point point) {
-			for (BezierCurve bc : curve.toBezier()) {
-				if (bc.contains(point)) {
-					return bc;
-				}
-			}
-			return null;
-		}
-
 		/**
 		 * Returns a point on the {@link ICurve} for which holds that its
 		 * y-coordinate is the same as that of the given reference point, and
@@ -369,9 +324,6 @@ public class DynamicAnchor extends AbstractAnchor {
 			double nearestDistance = 0;
 			for (Line l : outlineSegments) {
 				Point projection = l.getProjection(p);
-				double parameter = l.getParameterAt(projection);
-				parameter = adjustParameterToRespectTolerance(parameter);
-				projection = l.get(parameter);
 				double distance = p.getDistance(projection);
 				if (nearestProjection == null || distance < nearestDistance) {
 					nearestDistance = distance;
@@ -400,23 +352,11 @@ public class DynamicAnchor extends AbstractAnchor {
 						distance = currentDistance;
 					}
 				}
-				if (nearest != null) {
-					BezierCurve bc = getContainingBezierCurve(curve, nearest);
-					// adjust parameter to respect tolerance
-					double parameter = bc.getParameterAt(nearest);
-					parameter = adjustParameterToRespectTolerance(parameter);
-					return bc.get(parameter);
-				}
 				return nearest;
 			} else if (curve.intersects(line)) {
 				Point nearest = Point.nearest(reference,
 						curve.getIntersections(line));
-				// find bezier containing the nearest point
-				BezierCurve bc = getContainingBezierCurve(curve, nearest);
-				// adjust parameter to respect tolerance
-				double parameter = bc.getParameterAt(nearest);
-				parameter = adjustParameterToRespectTolerance(parameter);
-				return bc.get(parameter);
+				return nearest;
 			}
 			// no point found for the given y-coordinate
 			return null;
@@ -516,6 +456,15 @@ public class DynamicAnchor extends AbstractAnchor {
 			IGeometry anchorageReferenceGeometryInScene = NodeUtils
 					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
 
+			if (anchoredReferencePointInLocal.y == -88
+					&& anchorageReferenceGeometryInScene.getBounds()
+							.getHeight() > 20) {
+				System.out.println("anchored reference point = "
+						+ anchoredReferencePointInLocal);
+				System.out.println("anchorage reference geometry bounds = "
+						+ anchorageReferenceGeometryInScene.getBounds());
+			}
+
 			// compute horizontal or vertical projection on outline segments.
 			List<ICurve> anchorageReferenceGeometryOutlineSegmentsInScene = getOutlineSegments(
 					anchorageReferenceGeometryInScene);
@@ -526,6 +475,8 @@ public class DynamicAnchor extends AbstractAnchor {
 				// determine nearest orthogonal projection of each curve
 				Point projection = getOrthogonalProjection(segment,
 						anchoredReferencePointInScene);
+				System.out.println(":: " + segment);
+				System.out.println("::-> " + projection);
 				if (projection != null) {
 					double distance = projection
 							.getDistance(anchoredReferencePointInScene);
@@ -538,8 +489,11 @@ public class DynamicAnchor extends AbstractAnchor {
 			}
 
 			if (nearestOrthogonalProjectionInScene != null) {
+				System.out.println("nearest projection = "
+						+ nearestOrthogonalProjectionInScene);
 				return nearestOrthogonalProjectionInScene;
 			} else {
+				System.out.println("BOUNDS FALLBACK");
 				// TODO: fall back to closes point (we could extend
 				// ProjectionStrategy and call super here)
 				return getNearestBoundsProjection(
