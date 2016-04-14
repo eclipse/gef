@@ -33,7 +33,7 @@ import org.eclipse.gef4.zest.fx.parts.NodePart;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
-import javafx.scene.layout.Pane;
+import javafx.scene.Parent;
 
 /**
  * The {@link GraphLayoutBehavior} is responsible for initiating layout passes.
@@ -45,19 +45,13 @@ import javafx.scene.layout.Pane;
 // only applicable for GraphPart (see #getHost())
 public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
-	private Pane nestingVisual;
+	private Parent nestingVisual;
 
 	private ChangeListener<? super Bounds> nestingVisualLayoutBoundsChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
 				Bounds newLayoutBounds) {
-			// update layout bounds to match the nesting visual layout bounds
-			Rectangle newBounds = computeLayoutBounds();
-			Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
-			if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
-				LayoutProperties.setBounds(getHost().getContent(), newBounds);
-				applyLayout(true);
-			}
+			updateBounds();
 		}
 	};
 
@@ -65,12 +59,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldLayoutBounds,
 				Bounds newLayoutBounds) {
-			Rectangle newBounds = computeLayoutBounds();
-			Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
-			if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
-				LayoutProperties.setBounds(getHost().getContent(), newBounds);
-				applyLayout(true);
-			}
+			updateBounds();
 		}
 	};
 
@@ -143,7 +132,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			 * Our graph is nested inside a node of another graph, therefore we
 			 * listen to changes of that node's layout-bounds.
 			 */
-			nestingVisual = getNestingPart().getNestedChildrenPane();
+			nestingVisual = getHost().getVisual().getParent();
 			nestingVisual.layoutBoundsProperty().addListener(nestingVisualLayoutBoundsChangeListener);
 		}
 
@@ -243,5 +232,17 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void preLayout() {
+	}
+
+	/**
+	 * Updates the bounds property from the visual (viewport or nesting node)
+	 */
+	protected void updateBounds() {
+		Rectangle newBounds = computeLayoutBounds();
+		Rectangle oldBounds = LayoutProperties.getBounds(getHost().getContent());
+		if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
+			LayoutProperties.setBounds(getHost().getContent(), newBounds);
+			applyLayout(true);
+		}
 	}
 }

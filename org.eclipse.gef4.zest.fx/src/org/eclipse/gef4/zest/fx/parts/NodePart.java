@@ -208,12 +208,11 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 	private Node nestedGraphIcon;
 	private StackPane nestedContentStackPane;
-	private Pane nestedChildrenPane;
-	private Pane nestedChildrenPaneScaled;
+	private Pane nestedContentPane;
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		nestedChildrenPaneScaled.getChildren().add(index, child.getVisual());
+		getNestedContentPane().getChildren().add(index, child.getVisual());
 	}
 
 	/**
@@ -222,19 +221,12 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 * @return The {@link Pane} that is used to display nested content.
 	 */
 	private Pane createNestedContentPane() {
-		final AnchorPane pane = new AnchorPane();
-		pane.setStyle("-fx-background-color: white;");
-		nestedChildrenPaneScaled = new Pane();
+		Pane nestedChildrenPaneScaled = new Pane();
 		Scale scale = new Scale();
 		nestedChildrenPaneScaled.getTransforms().add(scale);
 		scale.setX(DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
 		scale.setY(DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR);
-		pane.getChildren().add(nestedChildrenPaneScaled);
-		AnchorPane.setLeftAnchor(nestedChildrenPaneScaled, -0.5d);
-		AnchorPane.setTopAnchor(nestedChildrenPaneScaled, -0.5d);
-		AnchorPane.setRightAnchor(nestedChildrenPaneScaled, 0.5d);
-		AnchorPane.setBottomAnchor(nestedChildrenPaneScaled, 0.5d);
-		return pane;
+		return nestedChildrenPaneScaled;
 	}
 
 	/**
@@ -419,9 +411,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *
 	 * @return The {@link Pane} to which nested children are added.
 	 */
-	// TODO: this should not be public
-	public Pane getNestedChildrenPane() {
-		return nestedChildrenPaneScaled;
+	private Pane getNestedContentPane() {
+		return nestedContentPane;
 	}
 
 	/**
@@ -432,19 +423,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 */
 	private StackPane getNestedContentStackPane() {
 		return nestedContentStackPane;
-	}
-
-	/**
-	 * Returns the {@link Node} that is displayed in the
-	 * {@link #getNestedContentStackPane()} when nested content is available,
-	 * but not rendered, currently.
-	 *
-	 * @return The {@link Node} that is displayed in the
-	 *         {@link #getNestedContentStackPane()} when nested content is
-	 *         available, but not rendered, currently.
-	 */
-	private Node getNestedGraphIcon() {
-		return nestedGraphIcon;
 	}
 
 	/**
@@ -484,9 +462,9 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 * sets} the nested graph icon to <code>null</code>.
 	 */
 	private void hideNestedGraphIcon() {
-		if (getNestedGraphIcon() != null) {
-			getNestedContentStackPane().getChildren().remove(getNestedGraphIcon());
-			setNestedGraphIcon(null);
+		if (nestedGraphIcon != null) {
+			getNestedContentStackPane().getChildren().remove(nestedGraphIcon);
+			nestedGraphIcon = null;
 		}
 	}
 
@@ -556,9 +534,16 @@ public class NodePart extends AbstractFXContentPart<Group>
 			if (isNesting) {
 				// create nested content stack pane if needed
 				if (nestedContentStackPane == null) {
-					nestedChildrenPane = createNestedContentPane();
-					nestedContentStackPane = createNestedContentStackPane(nestedChildrenPane);
-					nestedChildrenPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+					nestedContentPane = createNestedContentPane();
+					final AnchorPane pane = new AnchorPane();
+					pane.setStyle("-fx-background-color: white;");
+					pane.getChildren().add(nestedContentPane);
+					AnchorPane.setLeftAnchor(nestedContentPane, -0.5d);
+					AnchorPane.setTopAnchor(nestedContentPane, -0.5d);
+					AnchorPane.setRightAnchor(nestedContentPane, 0.5d);
+					AnchorPane.setBottomAnchor(nestedContentPane, 0.5d);
+					pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+					nestedContentStackPane = createNestedContentStackPane(pane);
 					nestedContentStackPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 					VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
 				}
@@ -667,7 +652,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 	@Override
 	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
-		nestedChildrenPaneScaled.getChildren().remove(index);
+		getNestedContentPane().getChildren().remove(index);
 	}
 
 	@Override
@@ -676,24 +661,13 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	/**
-	 * Changes the nested graph icon that is displayed to indicate that nested
-	 * content is available to the given value.
-	 *
-	 * @param nestedGraphIcon
-	 *            The new nested graph icon.
-	 */
-	private void setNestedGraphIcon(Node nestedGraphIcon) {
-		this.nestedGraphIcon = nestedGraphIcon;
-	}
-
-	/**
 	 * Creates the nested graph icon and adds it to the
 	 * {@link #getNestedContentStackPane()}.
 	 */
 	private void showNestedGraphIcon() {
-		if (getNestedGraphIcon() == null) {
-			setNestedGraphIcon(new NestedGraphIcon());
-			getNestedContentStackPane().getChildren().add(getNestedGraphIcon());
+		if (nestedGraphIcon == null) {
+			nestedGraphIcon = new NestedGraphIcon();
+			getNestedContentStackPane().getChildren().add(nestedGraphIcon);
 		}
 	}
 
