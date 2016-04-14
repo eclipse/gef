@@ -250,6 +250,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 *
 	 * @return The newly created {@link Shape}.
 	 */
+	// TODO: remove this when shape can be set via property
 	protected Node createShape() {
 		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef4.geometry.planar.Rectangle());
 		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
@@ -432,7 +433,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 * @return The outer most layout container that is used to layout the
 	 *         content of this node (including nested content).
 	 */
-	protected Region getOuterLayoutContainer() {
+	private Region getOuterLayoutContainer() {
 		return outerLayoutContainer;
 	}
 
