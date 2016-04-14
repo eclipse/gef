@@ -243,8 +243,8 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 
 		// css style
+		String connCssStyle = ZestProperties.getCurveCssStyle(edge);
 		if (attrs.containsKey(ZestProperties.EDGE_CURVE_CSS_STYLE)) {
-			String connCssStyle = ZestProperties.getCurveCssStyle(edge);
 			curveNode.setStyle(connCssStyle);
 		}
 
@@ -252,10 +252,18 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		Shape sourceDecoration = ZestProperties.getSourceDecoration(edge);
 		if (sourceDecoration != null) {
 			visual.setStartDecoration(sourceDecoration);
+			// apply curve CSS style
+			if (connCssStyle != null) {
+				sourceDecoration.setStyle(connCssStyle);
+			}
 		}
 		Shape targetDecoration = ZestProperties.getTargetDecoration(edge);
 		if (targetDecoration != null) {
 			visual.setEndDecoration(targetDecoration);
+			// apply curve CSS style
+			if (connCssStyle != null) {
+				targetDecoration.setStyle(connCssStyle);
+			}
 		}
 
 		// connection router

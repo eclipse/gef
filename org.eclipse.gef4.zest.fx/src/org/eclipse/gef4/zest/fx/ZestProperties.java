@@ -1298,20 +1298,6 @@ public class ZestProperties {
 	}
 
 	/**
-	 * Sets the value of the {@link #NODE_SHAPE_CSS_STYLE} attribute of the
-	 * given {@link Node} to the given value.
-	 *
-	 * @param node
-	 *            The {@link Node} of which the node rectangle CSS style is
-	 *            changed.
-	 * @param rectCssStyle
-	 *            The new node rectangle CSS style for the given {@link Node}.
-	 */
-	public static void setShapeCssStyle(Node node, String rectCssStyle) {
-		node.attributesProperty().put(NODE_SHAPE_CSS_STYLE, rectCssStyle);
-	}
-
-	/**
 	 * Sets the value of the {@link #NODE_POSITION} attribute of the given
 	 * {@link Node} to the given value.
 	 *
@@ -1339,6 +1325,20 @@ public class ZestProperties {
 	 */
 	public static void setRouter(Edge edge, IConnectionRouter router) {
 		edge.attributesProperty().put(EDGE_ROUTER, router);
+	}
+
+	/**
+	 * Sets the value of the {@link #NODE_SHAPE_CSS_STYLE} attribute of the
+	 * given {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} of which the node rectangle CSS style is
+	 *            changed.
+	 * @param rectCssStyle
+	 *            The new node rectangle CSS style for the given {@link Node}.
+	 */
+	public static void setShapeCssStyle(Node node, String rectCssStyle) {
+		node.attributesProperty().put(NODE_SHAPE_CSS_STYLE, rectCssStyle);
 	}
 
 	/**
