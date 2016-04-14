@@ -417,6 +417,12 @@ public class AdapterInjectorTests {
 	public void injectAdaptersToBoundAdaptableOfRole()
 			throws NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
+		final String firstRole = "firstRole";
+		final String secondRole = "secondRole";
+		final String role1 = "a1";
+		final String role2 = "a2";
+		final String role3 = "a3";
+
 		Module module = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -425,25 +431,51 @@ public class AdapterInjectorTests {
 				MapBinder<AdapterKey<?>, Object> adapterMapBinder = AdapterMaps
 						.getAdapterMapBinder(binder(), AdapterStore.class);
 
-				// register adapter
-				adapterMapBinder.addBinding(AdapterKey.role("role"))
+				// register adapter for the first role
+				adapterMapBinder.addBinding(AdapterKey.role(firstRole))
 						.to(AdapterStoreBoundAdaptable.class);
 
 				// create map bindings for AdapterStore, which is an IAdaptable
 				MapBinder<AdapterKey<?>, Object> roleBasedAdapterMapBinder = AdapterMaps
 						.getAdapterMapBinder(binder(),
-								AdapterStoreBoundAdaptable.class, "role");
+								AdapterStoreBoundAdaptable.class, firstRole);
 				// register adapter
-				roleBasedAdapterMapBinder.addBinding(AdapterKey.role("a1"))
+				roleBasedAdapterMapBinder.addBinding(AdapterKey.role(role1))
 						.to(RawType.class);
 				roleBasedAdapterMapBinder.addBinding(AdapterKey
 						.get(new TypeToken<ParameterizedSubType<Integer>>() {
-				}, "a2")).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+				}, role2)).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
 				});
 
 				roleBasedAdapterMapBinder.addBinding(
 						AdapterKey.get(new TypeToken<Provider<Integer>>() {
-				}, "a3")).toInstance(new Provider<Integer>() {
+				}, role3)).toInstance(new Provider<Integer>() {
+
+					@Override
+					public Integer get() {
+						return 5;
+					}
+				});
+
+				// register adapter for the second role
+				adapterMapBinder.addBinding(AdapterKey.role(secondRole))
+						.to(AdapterStoreBoundAdaptable.class);
+
+				// create map bindings for AdapterStore, which is an IAdaptable
+				MapBinder<AdapterKey<?>, Object> roleBasedAdapterMapBinder2 = AdapterMaps
+						.getAdapterMapBinder(binder(),
+								AdapterStoreBoundAdaptable.class, secondRole);
+				// register adapter
+				roleBasedAdapterMapBinder2.addBinding(AdapterKey.role(role1))
+						.to(RawType.class);
+				roleBasedAdapterMapBinder2.addBinding(AdapterKey
+						.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				}, role2)).to(new TypeLiteral<ParameterizedSubType<Integer>>() {
+				});
+
+				roleBasedAdapterMapBinder2.addBinding(
+						AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, role3)).toInstance(new Provider<Integer>() {
 
 					@Override
 					public Integer get() {
@@ -456,24 +488,46 @@ public class AdapterInjectorTests {
 		Injector injector = Guice.createInjector(module);
 		AdapterStore adapterStore = new AdapterStore();
 		injector.injectMembers(adapterStore);
+
+		// test first role
 		AdapterStoreBoundAdaptable adaptableAdapter = adapterStore.getAdapter(
-				AdapterKey.get(AdapterStoreBoundAdaptable.class, "role"));
+				AdapterKey.get(AdapterStoreBoundAdaptable.class, firstRole));
 		assertNotNull(adaptableAdapter);
 		assertNotNull(adaptableAdapter
-				.getAdapter(AdapterKey.get(RawType.class, "a1")));
+				.getAdapter(AdapterKey.get(RawType.class, role1)));
 		// retrieve by raw type (which works even if we could not infer a type
 		// from the binding)
 		assertNotNull(adaptableAdapter
-				.getAdapter(AdapterKey.get(ParameterizedSubType.class, "a2")));
+				.getAdapter(AdapterKey.get(ParameterizedSubType.class, role2)));
 		// retrieve by parameterized type token (which only works if we could
 		// infer a type from the binding)
 		assertNotNull(adaptableAdapter.getAdapter(
 				AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
-				}, "a2")));
+				}, role2)));
 		// retrieve a parameterized type bound as instance
 		assertNotNull(adaptableAdapter
 				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
-				}, "a3")));
+				}, role3)));
+
+		// test second role
+		adaptableAdapter = adapterStore.getAdapter(
+				AdapterKey.get(AdapterStoreBoundAdaptable.class, secondRole));
+		assertNotNull(adaptableAdapter);
+		assertNotNull(adaptableAdapter
+				.getAdapter(AdapterKey.get(RawType.class, role1)));
+		// retrieve by raw type (which works even if we could not infer a type
+		// from the binding)
+		assertNotNull(adaptableAdapter
+				.getAdapter(AdapterKey.get(ParameterizedSubType.class, role2)));
+		// retrieve by parameterized type token (which only works if we could
+		// infer a type from the binding)
+		assertNotNull(adaptableAdapter.getAdapter(
+				AdapterKey.get(new TypeToken<ParameterizedSubType<Integer>>() {
+				}, role2)));
+		// retrieve a parameterized type bound as instance
+		assertNotNull(adaptableAdapter
+				.getAdapter(AdapterKey.get(new TypeToken<Provider<Integer>>() {
+				}, role3)));
 	}
 
 	protected List<String> performInjection(AdapterStore adaptable,
