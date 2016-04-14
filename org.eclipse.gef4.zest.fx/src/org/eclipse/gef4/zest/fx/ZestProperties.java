@@ -128,6 +128,12 @@ public class ZestProperties {
 	public static final String EDGE_CONTROL_POINTS = "edge-control-points";
 
 	/**
+	 * This attribute determines the shape being used for background and outline
+	 * visualization of the node.
+	 */
+	public static final String NODE_SHAPE = "node-shape";
+
+	/**
 	 * This attribute determines the CSS style for a node rectangle. This
 	 * attribute does not have a default value.
 	 *
@@ -736,6 +742,20 @@ public class ZestProperties {
 	}
 
 	/**
+	 * Returns the value of the {@link #NODE_SHAPE} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} for which to return the value of its
+	 *            {@link #NODE_SHAPE} attribute.
+	 * @return A {@link javafx.scene.Node} that represents the shape, which is
+	 *         used for rendering background and outline of the node.
+	 */
+	public static javafx.scene.Node getShape(Node node) {
+		return (javafx.scene.Node) node.attributesProperty().get(NODE_SHAPE);
+	}
+
+	/**
 	 * Returns the value of the {@link #NODE_SHAPE_CSS_STYLE} attribute of the
 	 * given {@link Node}.
 	 *
@@ -1325,6 +1345,21 @@ public class ZestProperties {
 	 */
 	public static void setRouter(Edge edge, IConnectionRouter router) {
 		edge.attributesProperty().put(EDGE_ROUTER, router);
+	}
+
+	/**
+	 * Sets the value of the {@link #NODE_SHAPE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node}, for which to set the value of the
+	 *            {@link #NODE_SHAPE} attribute.
+	 * @param shape
+	 *            The shape that is be used for rendering the node outline and
+	 *            background.
+	 */
+	public static void setShape(Node node, javafx.scene.Node shape) {
+		node.attributesProperty().put(NODE_SHAPE, shape);
 	}
 
 	/**

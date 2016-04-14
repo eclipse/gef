@@ -12,14 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
-import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
-
-import com.google.inject.TypeLiteral;
-
-import javafx.scene.Node;
 
 /**
  * The {@link DotGraphViewModule} extends the {@link ZestFxModule} and removes
@@ -30,10 +23,4 @@ import javafx.scene.Node;
  */
 public class DotGraphViewModule extends ZestFxModule {
 
-	@Override
-	protected void bindIContentPartFactory() {
-		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).to(DotContentPartFactory.class)
-				.in(AdaptableScopes.typed(FXViewer.class));
-	}
 }

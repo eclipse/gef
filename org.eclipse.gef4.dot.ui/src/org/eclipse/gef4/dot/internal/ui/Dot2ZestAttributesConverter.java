@@ -23,11 +23,17 @@ import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.parser.arrowtype.ArrowType;
 import org.eclipse.gef4.dot.internal.parser.dir.DirType;
 import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
+import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedNodeShape;
+import org.eclipse.gef4.dot.internal.parser.shape.PolygonBasedShape;
 import org.eclipse.gef4.dot.internal.parser.splinetype.Spline;
 import org.eclipse.gef4.dot.internal.parser.splinetype.SplineType;
+import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.PolylineInterpolator;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Polygon;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
@@ -382,6 +388,36 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		String dotId = DotAttributes.getId(dot);
 		if (dotId != null) {
 			ZestProperties.setCssId(zest, dotId);
+		}
+
+		org.eclipse.gef4.dot.internal.parser.shape.Shape dotShape = DotAttributes
+				.getShapeParsed(dot);
+		if (dotShape == null) {
+			// ellipse is default shape
+			ZestProperties.setShape(zest,
+					new GeometryNode<>(new Ellipse(new Rectangle())));
+		} else if (dotShape.getShape() instanceof PolygonBasedShape) {
+			PolygonBasedNodeShape polygonShape = ((PolygonBasedShape) dotShape
+					.getShape()).getShape();
+			// handle different polygon shapes
+			if (PolygonBasedNodeShape.CIRCLE.equals(polygonShape)
+					|| PolygonBasedNodeShape.OVAL.equals(polygonShape)) {
+				ZestProperties.setShape(zest,
+						new GeometryNode<>(new Ellipse(new Rectangle())));
+			} else if (PolygonBasedNodeShape.BOX.equals(polygonShape)
+					|| PolygonBasedNodeShape.RECT.equals(polygonShape)
+					|| PolygonBasedNodeShape.RECTANGLE.equals(polygonShape)
+					|| PolygonBasedNodeShape.SQUARE.equals(polygonShape)) {
+				ZestProperties.setShape(zest,
+						new GeometryNode<>(new Rectangle()));
+			} else if (PolygonBasedNodeShape.DIAMOND.equals(polygonShape)) {
+				ZestProperties.setShape(zest, new GeometryNode<>(
+						new Polygon(0, 50, 50, 0, 100, 50, 50, 100, 0, 50)));
+			} else {
+				// TODO: handle other polygon shapes
+			}
+		} else {
+			// handle record and custom shapes
 		}
 
 		// label

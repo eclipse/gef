@@ -216,6 +216,20 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	/**
+	 * Creates the shape used to display the node's border and background.
+	 *
+	 * @return The newly created {@link Shape}.
+	 */
+	private Node createDefaultShape() {
+		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef4.geometry.planar.Rectangle());
+		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
+				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
+		shape.setStroke(new Color(0, 0, 0, 1));
+		shape.setStrokeType(StrokeType.INSIDE);
+		return shape;
+	}
+
+	/**
 	 * Creates the {@link Pane} that is used to display nested content.
 	 *
 	 * @return The {@link Pane} that is used to display nested content.
@@ -245,21 +259,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 		return stackPane;
 	}
 
-	/**
-	 * Creates the shape used to display the node's border and background.
-	 *
-	 * @return The newly created {@link Shape}.
-	 */
-	// TODO: remove this when shape can be set via property
-	protected Node createShape() {
-		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef4.geometry.planar.Rectangle());
-		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
-				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
-		shape.setStroke(new Color(0, 0, 0, 1));
-		shape.setStrokeType(StrokeType.INSIDE);
-		return shape;
-	}
-
 	@Override
 	protected Group createVisual() {
 		// container set-up
@@ -276,7 +275,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 		};
 
 		// create shape for border and background
-		shape = createShape();
+		shape = createDefaultShape();
 		shape.getStyleClass().add(CSS_CLASS_SHAPE);
 
 		// initialize image view
@@ -299,12 +298,13 @@ public class NodePart extends AbstractFXContentPart<Group>
 		outerLayoutContainer = new VBox();
 		outerLayoutContainer.setMouseTransparent(true);
 		outerLayoutContainer.getChildren().add(hbox);
-		outerLayoutContainer.setPadding(new Insets(getPadding()));
 
 		outerLayoutContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				shape.resize(outerLayoutContainer.getWidth(), outerLayoutContainer.getHeight());
+				// prevent resize to 0, 0, because the shape might get corrupted
+				shape.resize(outerLayoutContainer.getWidth() == 0 ? 1 : outerLayoutContainer.getWidth(),
+						outerLayoutContainer.getHeight() == 0 ? 1 : outerLayoutContainer.getHeight());
 			}
 		});
 
@@ -366,6 +366,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 			id = ZestProperties.getCssId(node);
 		}
 		visual.setId(id);
+
+		refreshShape(ZestProperties.getShape(node));
 
 		// set CSS style
 		if (attrs.containsKey(ZestProperties.NODE_SHAPE_CSS_STYLE)) {
@@ -558,6 +560,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 					outerLayoutContainer.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
 							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
 				}
+				outerLayoutContainer.setPadding(new Insets(getPadding()));
 				// show a nested graph icon dependent on the zoom level
 				if (!getChildrenUnmodifiable().isEmpty()) {
 					hideNestedGraphIcon();
@@ -571,6 +574,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 				if (outerLayoutContainer.getChildren().contains(nestedContentStackPane)) {
 					outerLayoutContainer.getChildren().remove(nestedContentStackPane);
 				}
+				outerLayoutContainer.setPadding(Insets.EMPTY);
 				outerLayoutContainer.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
 						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
 				outerLayoutContainer.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
@@ -597,6 +601,19 @@ public class NodePart extends AbstractFXContentPart<Group>
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private void refreshShape(Node shape) {
+		if (this.shape != shape && shape != null) {
+			getVisual().getChildren().remove(shape);
+			this.shape = shape;
+			if (shape instanceof GeometryNode) {
+				((GeometryNode<?>) shape).setStrokeType(StrokeType.INSIDE);
+			} else if (shape instanceof Shape) {
+				((Shape) shape).setStrokeType(StrokeType.INSIDE);
+			}
+			getVisual().getChildren().add(0, shape);
 		}
 	}
 
