@@ -35,7 +35,9 @@ import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
@@ -91,7 +93,8 @@ public class FXBendConnectionPolicyTests {
 
 		@Override
 		protected void doRefreshVisual(Rectangle visual) {
-			org.eclipse.gef4.geometry.planar.Rectangle rect = (org.eclipse.gef4.geometry.planar.Rectangle) getContent();
+			org.eclipse.gef4.geometry.planar.Rectangle rect = ((org.eclipse.gef4.geometry.planar.IShape) getContent())
+					.getBounds();
 			visual.setX(rect.getX());
 			visual.setY(rect.getY());
 			visual.setWidth(rect.getWidth());
@@ -100,19 +103,30 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	private static class ConnectionContent {
-		public org.eclipse.gef4.geometry.planar.Rectangle anchorageStart;
-		public org.eclipse.gef4.geometry.planar.Rectangle anchorageEnd;
+		public org.eclipse.gef4.geometry.planar.IShape anchorageStart;
+		public org.eclipse.gef4.geometry.planar.IShape anchorageEnd;
+		public Point startReferencePoint;
+		public Point endReferencePoint;
 		public boolean isSimple;
 
-		public ConnectionContent(org.eclipse.gef4.geometry.planar.Rectangle start,
-				org.eclipse.gef4.geometry.planar.Rectangle end) {
+		public ConnectionContent(org.eclipse.gef4.geometry.planar.IShape start,
+				org.eclipse.gef4.geometry.planar.IShape end) {
 			anchorageStart = start;
 			anchorageEnd = end;
 		}
 
+		public ConnectionContent(org.eclipse.gef4.geometry.planar.IShape start,
+				org.eclipse.gef4.geometry.planar.IShape end, Point startRef, Point endRef) {
+			anchorageStart = start;
+			anchorageEnd = end;
+			startReferencePoint = startRef;
+			endReferencePoint = endRef;
+		}
+
 		public Point getWayPoint() {
-			Point delta = anchorageEnd.getCenter().getTranslated(anchorageStart.getCenter().getNegated());
-			return anchorageStart.getCenter().getTranslated(delta.getScaled(0.5));
+			Point delta = anchorageEnd.getBounds().getCenter()
+					.getTranslated(anchorageStart.getBounds().getCenter().getNegated());
+			return anchorageStart.getBounds().getCenter().getTranslated(delta.getScaled(0.5));
 		}
 	}
 
@@ -126,8 +140,12 @@ public class FXBendConnectionPolicyTests {
 			IAnchor anchor = anchorage.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
 			}).get();
 			if (role.equals(START_ROLE)) {
+				((DynamicAnchor) anchor).setAnchoredReferencePoint(getVisual().getStartAnchorKey(),
+						getContent().startReferencePoint);
 				getVisual().setStartAnchor(anchor);
 			} else if (role.equals(END_ROLE)) {
+				((DynamicAnchor) anchor).setAnchoredReferencePoint(getVisual().getEndAnchorKey(),
+						getContent().endReferencePoint);
 				getVisual().setEndAnchor(anchor);
 			} else {
 				throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
@@ -153,9 +171,8 @@ public class FXBendConnectionPolicyTests {
 		@Override
 		protected SetMultimap<? extends Object, String> doGetContentAnchorages() {
 			SetMultimap<Object, String> contentAnchorages = HashMultimap.create();
-			ConnectionContent content = (ConnectionContent) getContent();
-			contentAnchorages.put(content.anchorageStart, START_ROLE);
-			contentAnchorages.put(content.anchorageEnd, END_ROLE);
+			contentAnchorages.put(getContent().anchorageStart, START_ROLE);
+			contentAnchorages.put(getContent().anchorageEnd, END_ROLE);
 			return contentAnchorages;
 		}
 
@@ -166,9 +183,26 @@ public class FXBendConnectionPolicyTests {
 
 		@Override
 		protected void doRefreshVisual(Connection visual) {
-			if (!((ConnectionContent) getContent()).isSimple && visual.getControlPoints().size() == 0) {
-				visual.addControlPoint(0, ((ConnectionContent) getContent()).getWayPoint());
+			if (!getContent().isSimple && visual.getControlPoints().size() == 0) {
+				visual.addControlPoint(0, getContent().getWayPoint());
 			}
+		}
+
+		@Override
+		public ConnectionContent getContent() {
+			return (ConnectionContent) super.getContent();
+		}
+	}
+
+	public static class TestAnchorProvider extends DynamicAnchorProvider {
+		@Override
+		protected DynamicAnchor createAnchor() {
+			return new DynamicAnchor(getAdaptable().getVisual()) {
+				@Override
+				public IGeometry getAnchorageReferenceGeometry() {
+					return (IShape) ((IContentPart) getAdaptable()).getContent();
+				}
+			};
 		}
 	}
 
@@ -179,7 +213,7 @@ public class FXBendConnectionPolicyTests {
 		@Override
 		public IContentPart<Node, ? extends Node> createContentPart(Object content, IBehavior<Node> contextBehavior,
 				Map<Object, Object> contextMap) {
-			if (content instanceof org.eclipse.gef4.geometry.planar.Rectangle) {
+			if (content instanceof org.eclipse.gef4.geometry.planar.IShape) {
 				return injector.getInstance(AnchoragePart.class);
 			} else if (content instanceof ConnectionContent) {
 				return injector.getInstance(ConnectionPart.class);
@@ -254,6 +288,23 @@ public class FXBendConnectionPolicyTests {
 			contents.add(new ConnectionContent(B, C));
 			return contents;
 		}
+
+		public static List<Object> getDA_click_error() {
+			Polygon startAnchorage = new Polygon(349.49988, 56.54434506500246, 359.9554149349976, 66.99988000000002,
+					349.49988, 77.45541493499758, 339.04434506500246, 66.99988000000002, 349.49988, 56.54434506500246);
+			Polygon endAnchorage = new Polygon(338.49988, 237.54434506500243, 348.9554149349976, 247.99988, 338.49988,
+					258.4554149349975, 328.04434506500246, 247.99988, 338.49988, 237.54434506500243);
+			Point startReferencePoint = new Point(356.25, -365.87);
+			Point endReferencePoint = new Point(350.01, -190.0);
+			List<Object> contents = new ArrayList<>();
+			contents.add(startAnchorage);
+			contents.add(endAnchorage);
+			ConnectionContent connectionContent = new ConnectionContent(startAnchorage, endAnchorage,
+					startReferencePoint, endReferencePoint);
+			connectionContent.isSimple = true;
+			contents.add(connectionContent);
+			return contents;
+		}
 	}
 
 	private static class TestModule extends MvcFxModule {
@@ -270,7 +321,7 @@ public class FXBendConnectionPolicyTests {
 			// relocate on drag
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXTranslateSelectedOnDragPolicy.class);
 			// bind dynamic anchor provider
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(DynamicAnchorProvider.class);
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TestAnchorProvider.class);
 		}
 
 		protected void bindConnectionAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -371,7 +422,7 @@ public class FXBendConnectionPolicyTests {
 				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
 					@Override
 					public Point computePositionInScene(Node anchorage, IGeometry anchorageReferenceGeometryInLocal,
-							Node anchored, Point anchoredReferencePointInLocal) {
+							Node anchored, Point anchoredReferencePointInLocal, Object hint) {
 						// ensure routing starts going to the right
 						return new Point(49, 25);
 					}
@@ -380,7 +431,7 @@ public class FXBendConnectionPolicyTests {
 				connection.getVisual().getEndAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
 					@Override
 					public Point computePositionInScene(Node anchorage, IGeometry anchorageReferenceGeometryInLocal,
-							Node anchored, Point anchoredReferencePointInLocal) {
+							Node anchored, Point anchoredReferencePointInLocal, Object hint) {
 						// ensure routing ends going to the right
 						return new Point(301, 525);
 					}
@@ -521,7 +572,7 @@ public class FXBendConnectionPolicyTests {
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
-		Point wayPoint = ((ConnectionContent) connection.getContent()).getWayPoint();
+		Point wayPoint = connection.getContent().getWayPoint();
 		AnchorHandle wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
 
 		// check anchor position
@@ -792,7 +843,7 @@ public class FXBendConnectionPolicyTests {
 		// move segment back
 		bendPolicy.move(new Point(), new Point());
 		// check number of points
-		assertEquals(2, connection.getVisual().getPoints().size());
+		assertEquals(4, connection.getVisual().getPoints().size());
 
 		// check number of points after commit
 		bendPolicy.commit();
@@ -1305,7 +1356,7 @@ public class FXBendConnectionPolicyTests {
 
 		// find way point anchor
 		bendPolicy.init();
-		Point wayPoint = ((ConnectionContent) connection.getContent()).getWayPoint();
+		Point wayPoint = connection.getContent().getWayPoint();
 		AnchorHandle anchorBackwards = bendPolicy.findExplicitAnchorBackward(1);
 		AnchorHandle anchorForwards = bendPolicy.findExplicitAnchorForward(1);
 		// assertEquals(1, anchorBackwards.getExplicitAnchorIndex());
@@ -1592,7 +1643,7 @@ public class FXBendConnectionPolicyTests {
 
 		// find way point anchor
 		bendPolicy.init();
-		Point wayPoint = ((ConnectionContent) connection.getContent()).getWayPoint();
+		Point wayPoint = connection.getContent().getWayPoint();
 		AnchorHandle anchorBackwards = bendPolicy.findExplicitAnchorBackward(1);
 		AnchorHandle anchorForwards = bendPolicy.findExplicitAnchorForward(1);
 		// assertEquals(1, anchorBackwards.getExplicitAnchorIndex());
@@ -1699,6 +1750,125 @@ public class FXBendConnectionPolicyTests {
 		assertNotEquals(initialP1, secondConnectionPart.getVisual().getCurveNode().getGeometry().toBezier()[0].getP1());
 	}
 
+	/**
+	 * <ol>
+	 * <li>class com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
+	 * ProcessDynamicAnchorProvider$1[Point(352.8252868652344,
+	 * -365.8699951171875)]
+	 * (com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
+	 * ProcessDynamicAnchorProvider$1@665574fb)
+	 * {org.eclipse.gef4.mvc.fx.policies.
+	 * FXBendConnectionPolicy$AnchorHandle@3eb7ff78},
+	 * <ul>
+	 * <li>DA anchorage geometry in scene = Polygon: (349.49988,
+	 * 56.54434506500246) -> (359.9554149349976, 66.99988000000002) ->
+	 * (349.49988, 77.45541493499758) -> (339.04434506500246, 66.99988000000002)
+	 * -> (349.49988, 56.54434506500246)
+	 * <li>DA anchor key = AnchorKey
+	 * <start> <GeometryNode@333e01c6[styleClass=curve]>
+	 * <li>DA anchored reference point = Point(356.25, -365.87)
+	 * </ul>
+	 * <li>class
+	 * org.eclipse.gef4.fx.nodes.OrthogonalRouter$OrthogonalPolylineRouterAnchor
+	 * [Point(352.8252868652344, -190.0)], class
+	 * org.eclipse.gef4.fx.anchors.StaticAnchor[Point(356.25, -190.0)]
+	 * (StaticAnchor[referencePosition = Point(356.25, -190.0)])
+	 * {org.eclipse.gef4.mvc.fx.policies.
+	 * FXBendConnectionPolicy$AnchorHandle@50ad5625},
+	 * <li>class com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
+	 * ProcessDynamicAnchorProvider$1[Point(346.9552917480469, -190.0)]
+	 * (com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
+	 * ProcessDynamicAnchorProvider$1@1d921267)
+	 * {org.eclipse.gef4.mvc.fx.policies.
+	 * FXBendConnectionPolicy$AnchorHandle@1c5f6292}
+	 * <ul>
+	 * <li>DA anchorage geometry in scene = Polygon: (338.49988,
+	 * 237.54434506500243) -> (348.9554149349976, 247.99988) -> (338.49988,
+	 * 258.4554149349975) -> (328.04434506500246, 247.99988) -> (338.49988,
+	 * 237.54434506500243)
+	 * <li>DA anchor key = AnchorKey
+	 * <end> <GeometryNode@333e01c6[styleClass=curve]>
+	 * <li>DA anchored reference point = Point(350.01, -190.0)
+	 * </ul>
+	 * </ol>
+	 *
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws AWTException
+	 */
+	@Test
+	public void test_segment_select_error_split_segment()
+			throws InterruptedException, InvocationTargetException, AWTException {
+		// create injector (adjust module bindings for test)
+		Injector injector = Guice.createInjector(new TestModule());
+
+		// inject domain
+		injector.injectMembers(this);
+
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+		ctx.createScene(viewer.getCanvas(), 400, 200);
+
+		// activate domain, so tool gets activated and can register listeners
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		final List<Object> contents = TestModels.getDA_click_error();
+		// set contents on JavaFX application thread (visuals are created)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
+			}
+		});
+
+		// check that the parts have been created
+		for (Object content : contents) {
+			assertTrue(viewer.getContentPartMap().containsKey(content));
+		}
+
+		// query bend policy for first connection
+		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
+				.get(contents.get(contents.size() - 1));
+
+		Point controlPoint = new Point(356.25, 237.54434204101562);
+		connection.getVisual().addControlPoint(0, controlPoint);
+
+		// XXX: The strategies are exchanged before setting the router so that a
+		// refresh will use these strategies
+		((DynamicAnchor) connection.getVisual().getStartAnchor()).setComputationStrategy(
+				connection.getVisual().getStartAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
+				});
+		((DynamicAnchor) connection.getVisual().getEndAnchor()).setComputationStrategy(
+				connection.getVisual().getEndAnchorKey(), new DynamicAnchor.OrthogonalProjectionStrategy() {
+				});
+
+		// XXX: Set router on application thread as the position change listener
+		// is executed within the application thread, too, and we need to wait
+		// for a recent connection refresh that was caused by an anchor position
+		// change
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				connection.getVisual().setRouter(new OrthogonalRouter());
+			}
+		});
+
+		// ensure router inserted point
+		assertEquals(3, countExplicit(connection.getVisual()));
+
+		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
+		bendPolicy.init();
+		bendPolicy.selectSegment(0);
+		bendPolicy.move(new Point(), new Point());
+		bendPolicy.commit();
+
+		assertEquals(3, countExplicit(connection.getVisual()));
+	}
+
 	@Test
 	public void test_start_overlays_way_restore() throws InterruptedException, InvocationTargetException, AWTException {
 		// create injector (adjust module bindings for test)
@@ -1741,7 +1911,7 @@ public class FXBendConnectionPolicyTests {
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
-		Point wayPoint = ((ConnectionContent) connection.getContent()).getWayPoint();
+		Point wayPoint = connection.getContent().getWayPoint();
 		AnchorHandle wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
 
 		// check anchor position
@@ -1813,7 +1983,7 @@ public class FXBendConnectionPolicyTests {
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
-		Point wayPoint = ((ConnectionContent) connection.getContent()).getWayPoint();
+		Point wayPoint = connection.getContent().getWayPoint();
 		AnchorHandle wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
 
 		// check anchor position
@@ -1883,7 +2053,7 @@ public class FXBendConnectionPolicyTests {
 		// find way point anchor
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
-		Point wayPoint = ((ConnectionContent) connection.getContent()).getWayPoint();
+		Point wayPoint = connection.getContent().getWayPoint();
 		AnchorHandle wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
 
 		// check anchor position
