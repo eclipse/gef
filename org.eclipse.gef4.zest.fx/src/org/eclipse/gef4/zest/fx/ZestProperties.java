@@ -15,7 +15,6 @@ package org.eclipse.gef4.zest.fx;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
@@ -42,36 +41,31 @@ import javafx.scene.image.Image;
 public class ZestProperties {
 
 	/**
+	 * Indicates whether the computed layout information was changed due to a
+	 * manual interaction.
+	 */
+	public static final String _TOUCHED__GNE = "_touched";
+
+	/**
 	 * This attribute determines if an element (node/edge) should be ignored by
 	 * automatic layout.
 	 *
-	 * @see #LAYOUT_IRRELEVANT__NE__DEFAULT
-	 * @see #getLayoutIrrelevant(Edge, boolean)
-	 * @see #getLayoutIrrelevant(Node, boolean)
+	 * @see #getLayoutIrrelevant(Edge)
+	 * @see #getLayoutIrrelevant(Node)
 	 * @see #setLayoutIrrelevant(Edge, Boolean)
 	 * @see #setLayoutIrrelevant(Node, Boolean)
 	 */
 	public static final String LAYOUT_IRRELEVANT__NE = "element-layout-irrelevant";
 
 	/**
-	 * The default value for the {@link #LAYOUT_IRRELEVANT__NE} attribute.
-	 */
-	public static final Boolean LAYOUT_IRRELEVANT__NE__DEFAULT = false;
-
-	/**
 	 * This attribute determines if the corresponding element is invisible.
 	 *
-	 * @see #getInvisible(Edge, Boolean)
-	 * @see #getInvisible(Node, Boolean)
+	 * @see #getInvisible(Edge)
+	 * @see #getInvisible(Node)
 	 * @see #setInvisible(Edge, Boolean)
 	 * @see #setInvisible(Node, Boolean)
 	 */
 	public static final String INVISIBLE__NE = "invisible";
-
-	/**
-	 * The default value for the {@link #INVISIBLE__NE} attribute.
-	 */
-	public static final Boolean INVISIBLE__NE__DEFAULT = false;
 
 	/**
 	 * This attribute determines the CSS class for an element (node/edge). This
@@ -292,6 +286,81 @@ public class ZestProperties {
 	public static final String LAYOUT_ALGORITHM__G = "layout";
 
 	/**
+	 * Gets the value of the {@link #_TOUCHED__GNE} attribute of the given
+	 * {@link Edge}.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute value is to be set.
+	 * @return The value of the attribute.
+	 */
+	public static Boolean _getTouched(Edge edge) {
+		return (Boolean) edge.attributesProperty().get(_TOUCHED__GNE);
+	}
+
+	/**
+	 * Gets the value of the {@link #_TOUCHED__GNE} attribute of the given
+	 * {@link Graph}.
+	 *
+	 * @param graph
+	 *            The {@link Graph} whose attribute value is to be set.
+	 * @return The value of the attribute.
+	 */
+	public static Boolean _getTouched(Graph graph) {
+		return (Boolean) graph.attributesProperty().get(_TOUCHED__GNE);
+	}
+
+	/**
+	 * Gets the value of the {@link #_TOUCHED__GNE} attribute of the given
+	 * {@link Node}.
+	 *
+	 * @param node
+	 *            The {@link Node} whose attribute value is to be set.
+	 * @return The value of the attribute.
+	 */
+	public static Boolean _getTouched(Node node) {
+		return (Boolean) node.attributesProperty().get(_TOUCHED__GNE);
+	}
+
+	/**
+	 * Sets the value of the {@link #_TOUCHED__GNE} attribute of the given
+	 * {@link Edge} to the given value.
+	 *
+	 * @param edge
+	 *            The {@link Edge} whose attribute value is to be set.
+	 * @param touched
+	 *            The new value for the attribute.
+	 */
+	public static void _setTouched(Edge edge, Boolean touched) {
+		edge.attributesProperty().put(_TOUCHED__GNE, touched);
+	}
+
+	/**
+	 * Sets the value of the {@link #_TOUCHED__GNE} attribute of the given
+	 * {@link Graph} to the given value.
+	 *
+	 * @param graph
+	 *            The {@link Graph} whose attribute value is to be set.
+	 * @param touched
+	 *            The new value for the attribute.
+	 */
+	public static void _setTouched(Graph graph, Boolean touched) {
+		graph.attributesProperty().put(_TOUCHED__GNE, touched);
+	}
+
+	/**
+	 * Sets the value of the {@link #_TOUCHED__GNE} attribute of the given
+	 * {@link Node} to the given value.
+	 *
+	 * @param node
+	 *            The {@link Node} whose attribute value is to be set.
+	 * @param touched
+	 *            The new value for the attribute.
+	 */
+	public static void _setTouched(Node node, Boolean touched) {
+		node.attributesProperty().put(_TOUCHED__GNE, touched);
+	}
+
+	/**
 	 * Returns the value of the {@link #CONTROL_POINTS__E} attribute of the
 	 * given {@link Edge}.
 	 *
@@ -500,18 +569,11 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the {@link #INVISIBLE__NE} attribute
 	 *            value is determined.
-	 * @param returnDefaultIfMissing
-	 *            <code>true</code> to indicate that the default attribute value
-	 *            should be returned if the attribute is not set for the given
-	 *            {@link Edge}, otherwise <code>false</code>.
 	 * @return The value of the {@link #INVISIBLE__NE} attribute of the given
 	 *         {@link Edge}.
 	 */
-	public static Boolean getInvisible(Edge edge, Boolean returnDefaultIfMissing) {
-		if (edge.getAttributes().containsKey(INVISIBLE__NE)) {
-			return (Boolean) edge.getAttributes().get(INVISIBLE__NE);
-		}
-		return returnDefaultIfMissing ? INVISIBLE__NE__DEFAULT : null;
+	public static Boolean getInvisible(Edge edge) {
+		return (Boolean) edge.getAttributes().get(INVISIBLE__NE);
 	}
 
 	/**
@@ -523,18 +585,11 @@ public class ZestProperties {
 	 * @param node
 	 *            The {@link Node} of which the {@link #INVISIBLE__NE} attribute
 	 *            value is determined.
-	 * @param returnDefaultIfMissing
-	 *            <code>true</code> to indicate that the default attribute value
-	 *            should be returned if the attribute is not set for the given
-	 *            {@link Node}, otherwise <code>false</code>.
 	 * @return The value of the {@link #INVISIBLE__NE} attribute of the given
 	 *         {@link Node}.
 	 */
-	public static Boolean getInvisible(Node node, Boolean returnDefaultIfMissing) {
-		if (node.getAttributes().containsKey(INVISIBLE__NE)) {
-			return (Boolean) node.getAttributes().get(INVISIBLE__NE);
-		}
-		return returnDefaultIfMissing ? INVISIBLE__NE__DEFAULT : null;
+	public static Boolean getInvisible(Node node) {
+		return (Boolean) node.getAttributes().get(INVISIBLE__NE);
 	}
 
 	/**
@@ -639,18 +694,10 @@ public class ZestProperties {
 	 * @param edge
 	 *            The {@link Edge} of which the layout irrelevant flag is
 	 *            determined.
-	 * @param returnDefaultIfMissing
-	 *            <code>true</code> to indicate that the default attribute value
-	 *            should be returned if the attribute is not set for the given
-	 *            {@link Edge}, otherwise <code>false</code>.
 	 * @return The layout irrelevant flag of the given {@link Edge}.
 	 */
-	public static Boolean getLayoutIrrelevant(Edge edge, boolean returnDefaultIfMissing) {
-		Map<String, Object> attrs = edge.attributesProperty();
-		if (attrs.containsKey(LAYOUT_IRRELEVANT__NE)) {
-			return (Boolean) attrs.get(LAYOUT_IRRELEVANT__NE);
-		}
-		return returnDefaultIfMissing ? LAYOUT_IRRELEVANT__NE__DEFAULT : null;
+	public static Boolean getLayoutIrrelevant(Edge edge) {
+		return (Boolean) edge.attributesProperty().get(LAYOUT_IRRELEVANT__NE);
 	}
 
 	/**
@@ -662,18 +709,10 @@ public class ZestProperties {
 	 * @param node
 	 *            The {@link Edge} of which the layout irrelevant flag is
 	 *            determined.
-	 * @param returnDefaultIfMissing
-	 *            <code>true</code> to indicate that the default attribute value
-	 *            should be returned if the attribute is not set for the given
-	 *            {@link Node}, otherwise <code>false</code>.
 	 * @return The layout irrelevant flag of the given {@link Node}.
 	 */
-	public static Boolean getLayoutIrrelevant(Node node, boolean returnDefaultIfMissing) {
-		Map<String, Object> attrs = node.attributesProperty();
-		if (attrs.containsKey(LAYOUT_IRRELEVANT__NE)) {
-			return (Boolean) attrs.get(LAYOUT_IRRELEVANT__NE);
-		}
-		return returnDefaultIfMissing ? LAYOUT_IRRELEVANT__NE__DEFAULT : null;
+	public static Boolean getLayoutIrrelevant(Node node) {
+		return (Boolean) node.attributesProperty().get(LAYOUT_IRRELEVANT__NE);
 	}
 
 	/**

@@ -106,7 +106,7 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 		ObservableList<org.eclipse.gef4.graph.Node> nodes = getContent().getNodes();
 		ArrayList<org.eclipse.gef4.graph.Node> visibleNodes = new ArrayList<>();
 		for (org.eclipse.gef4.graph.Node n : nodes) {
-			if (!ZestProperties.getInvisible(n, true)) {
+			if (Boolean.FALSE.equals(ZestProperties.getInvisible(n))) {
 				visibleNodes.add(n);
 			}
 		}
@@ -122,9 +122,9 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 		ObservableList<Edge> edges = getContent().getEdges();
 		ArrayList<Edge> visibleEdges = new ArrayList<>();
 		for (Edge e : edges) {
-			if (!ZestProperties.getInvisible(e, true) && e.getSource() != null
-					&& !ZestProperties.getInvisible(e.getSource(), true) && e.getTarget() != null
-					&& !ZestProperties.getInvisible(e.getTarget(), true)) {
+			if (!Boolean.TRUE.equals(ZestProperties.getInvisible(e)) && e.getSource() != null
+					&& !Boolean.TRUE.equals(ZestProperties.getInvisible(e.getSource())) && e.getTarget() != null
+					&& !(Boolean.TRUE.equals(ZestProperties.getInvisible(e.getTarget())))) {
 				visibleEdges.add(e);
 			}
 		}

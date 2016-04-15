@@ -142,13 +142,13 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			getLayoutContext().addLayoutFilter(new ILayoutFilter() {
 				@Override
 				public boolean isLayoutIrrelevant(Edge edge) {
-					return ZestProperties.getLayoutIrrelevant(edge, true) || isLayoutIrrelevant(edge.getSource())
-							|| isLayoutIrrelevant(edge.getTarget());
+					return Boolean.TRUE.equals(ZestProperties.getLayoutIrrelevant(edge))
+							|| isLayoutIrrelevant(edge.getSource()) || isLayoutIrrelevant(edge.getTarget());
 				}
 
 				@Override
 				public boolean isLayoutIrrelevant(org.eclipse.gef4.graph.Node node) {
-					return ZestProperties.getLayoutIrrelevant(node, true) || hidingModel.isHidden(node);
+					return Boolean.TRUE.equals(ZestProperties.getLayoutIrrelevant(node)) || hidingModel.isHidden(node);
 				}
 			});
 		}
