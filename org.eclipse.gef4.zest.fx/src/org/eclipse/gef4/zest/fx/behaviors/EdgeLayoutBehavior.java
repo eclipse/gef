@@ -14,6 +14,7 @@ package org.eclipse.gef4.zest.fx.behaviors;
 
 import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.parts.EdgePart;
 
 import javafx.scene.Node;
@@ -42,6 +43,9 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void postLayout() {
+		// after a layout pass, we are 'untouched'
+		ZestProperties._setTouched(getHost().getContent(), null);
+
 		// refresh visual
 		getHost().refreshVisual();
 

@@ -59,6 +59,9 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		ZestProperties.setPosition(content, location.getTranslated(size.getScaled(0.5).getNegated()));
 		ZestProperties.setSize(content, size.getCopy());
 
+		// after a layout pass, we are 'untouched'
+		ZestProperties._setTouched(content, null);
+
 		// refresh our visual
 		getHost().refreshVisual();
 
@@ -75,11 +78,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		Point position = ZestProperties.getPosition(content);
 		Dimension size = ZestProperties.getSize(content);
 
-		if (position != null && size != null) {
-			// location is center while position is top-left
-			LayoutProperties.setLocation(content, position.getTranslated(size.getScaled(0.5)));
-			LayoutProperties.setSize(content, size.getCopy());
-		} else {
+		if (position == null || size == null || !Boolean.TRUE.equals(ZestProperties._getTouched(content))) {
 			// no model information available yet, use visual location
 			Bounds hostBounds = visual.getLayoutBounds();
 			double minx = hostBounds.getMinX();
@@ -89,6 +88,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 			LayoutProperties.setLocation(content, new Point(transform.getTx() + minx, transform.getTy() + miny));
 			LayoutProperties.setSize(content, new Dimension(maxx - minx, maxy - miny));
+		} else {
+			// location is center while position is top-left
+			LayoutProperties.setLocation(content, position.getTranslated(size.getScaled(0.5)));
+			LayoutProperties.setSize(content, size.getCopy());
 		}
 
 		// additional information inferred from visual

@@ -228,6 +228,8 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void postLayout() {
+		// after a layout pass, we are 'untouched'
+		ZestProperties._setTouched(getHost().getContent(), null);
 	}
 
 	@Override
