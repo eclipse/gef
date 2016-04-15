@@ -36,6 +36,7 @@ import org.eclipse.gef4.dot.internal.DotExecutableUtils;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
 import org.eclipse.gef4.dot.internal.DotImport;
 import org.eclipse.gef4.dot.internal.parser.ui.internal.DotActivator;
+import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.GraphCopier;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
@@ -68,6 +69,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 
 /**
@@ -285,6 +287,20 @@ public class DotGraphView extends ZestFxUiView {
 		dot2ZestAttributeCopier.options().emulateLayout = !isNativeMode;
 		dot2ZestAttributeCopier.options().invertYAxis = true;
 		super.setGraph(dot2ZestGraphCopier.copy(graph));
+
+		// adjust viewport to scroll to top-left
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				InfiniteCanvas canvas = getContentViewer().getCanvas();
+				canvas.setHorizontalScrollOffset(
+						canvas.getHorizontalScrollOffset()
+								- canvas.getContentBounds().getMinX());
+				canvas.setVerticalScrollOffset(canvas.getVerticalScrollOffset()
+						- canvas.getContentBounds().getMinY());
+			}
+		});
 	}
 
 	private boolean toggle(Action action, boolean input) {
