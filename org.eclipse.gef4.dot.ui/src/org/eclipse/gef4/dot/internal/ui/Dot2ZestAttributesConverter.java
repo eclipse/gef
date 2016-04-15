@@ -257,10 +257,9 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 					// normalize control points for orthogonal lines
 					ZestProperties.setInterpolator(zest,
 							new PolylineInterpolator());
-					ZestProperties.setRouter(zest,
-							new DotOrthogonalRouter(bSplineControlPoints.get(0),
-									bSplineControlPoints.get(
-											bSplineControlPoints.size() - 1)));
+					ZestProperties.setRouter(zest, new DotOrthogonalRouter(zest,
+							bSplineControlPoints.get(0), bSplineControlPoints
+									.get(bSplineControlPoints.size() - 1)));
 					ZestProperties.setControlPoints(zest,
 							computeZestOrthogonalControlPoints(
 									bSplineControlPoints));
