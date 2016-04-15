@@ -185,6 +185,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 	 *            The number of iterations to perform.
 	 */
 	public void performNIteration(int n) {
+		context.preLayout();
 		if (iteration == 0) {
 			entities = context.getNodes();
 			loadLocations();
@@ -195,13 +196,14 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 			computeOneIteration();
 			saveLocations();
 		}
-		context.flushChanges();
+		context.postLayout();
 	}
 
 	/**
 	 * Performs one single iteration.
 	 */
 	public void performOneIteration() {
+		context.preLayout();
 		if (iteration == 0) {
 			entities = context.getNodes();
 			loadLocations();
@@ -210,7 +212,7 @@ public class SpringLayoutAlgorithm implements ILayoutAlgorithm {
 		bounds = LayoutProperties.getBounds(context.getGraph());
 		computeOneIteration();
 		saveLocations();
-		context.flushChanges();
+		context.postLayout();
 	}
 
 	/**

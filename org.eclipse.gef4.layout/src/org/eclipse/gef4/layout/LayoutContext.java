@@ -68,28 +68,36 @@ public class LayoutContext {
 	 *            re-compute the layout, otherwise <code>false</code>.
 	 */
 	public void applyLayout(boolean clear) {
+		// we should schedule
+
 		ILayoutAlgorithm layoutAlgorithm = layoutAlgorithmProperty.get();
 		if (layoutAlgorithm != null) {
-			for (Runnable r : preLayoutPass) {
-				r.run();
-			}
+			preLayout();
 			layoutAlgorithm.setLayoutContext(this);
 			layoutAlgorithm.applyLayout(clear);
+			postLayout();
 		}
 	}
 
 	/**
-	 * Causes all the changes made to elements in this context to affect the
-	 * display. Called from layout algorithms on finish of layout.
+	 * Initiated by the context or by an {@link ILayoutAlgorithm} to perform
+	 * steps that are scheduled to be run after the layout pass. Should not be
+	 * called by clients.
 	 */
-	public void flushChanges() {
-		// only flush changes if layout was applied (which is the case if an
-		// algorithm is set)
-		ILayoutAlgorithm layoutAlgorithm = layoutAlgorithmProperty.get();
-		if (layoutAlgorithm != null) {
-			for (Runnable r : new ArrayList<>(postLayoutPass)) {
-				r.run();
-			}
+	public void postLayout() {
+		for (Runnable r : new ArrayList<>(postLayoutPass)) {
+			r.run();
+		}
+	}
+
+	/**
+	 * Initiated by the context or by an {@link ILayoutAlgorithm} to perform
+	 * steps that are scheduled to be run before the layout pass. Should not be
+	 * called by clients.
+	 */
+	public void preLayout() {
+		for (Runnable r : preLayoutPass) {
+			r.run();
 		}
 	}
 
@@ -215,7 +223,7 @@ public class LayoutContext {
 	/**
 	 * Adds the given {@link Runnable} to the list of runnables which are called
 	 * when this {@link LayoutContext} is asked to apply all changes made to its
-	 * elements to the display, i.e. within {@link #flushChanges()}.
+	 * elements to the display.
 	 * 
 	 * @param runnable
 	 *            A {@link Runnable} called whenever this context is asked to
@@ -262,7 +270,7 @@ public class LayoutContext {
 	/**
 	 * Removes the given {@link Runnable} from the list of runnables which are
 	 * called when this {@link LayoutContext} is asked to apply all changes made
-	 * to its elements to the display, i.e. within {@link #flushChanges()}.
+	 * to its elements to the display.
 	 * 
 	 * @param runnable
 	 *            The {@link Runnable} that should no longer get called when
