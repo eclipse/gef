@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples;
 
-import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.nodes.InfiniteCanvas;
@@ -56,7 +55,6 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 	private Line anchorLine;
 	private DynamicAnchor anchor;
 	private AnchorKey anchorKey;
-	private AdapterStore adapterStore;
 
 	private MapChangeListener<AnchorKey, Point> anchorPositionChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
@@ -124,8 +122,8 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 						Point2D refInLocal = anchorLine
 								.sceneToLocal(refInScene);
 						if (anchor != null) {
-							anchor.anchoredReferencePointsProperty().put(anchorKey,
-									new Point(refInLocal.getX(),
+							anchor.anchoredReferencePointsProperty()
+									.put(anchorKey, new Point(refInLocal.getX(),
 											refInLocal.getY()));
 						}
 						anchorLine.setEndX(refInLocal.getX());
@@ -167,8 +165,7 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 		if (anchor != null) {
 			anchor.positionProperty()
 					.removeListener(anchorPositionChangeListener);
-			anchor.detach(anchorKey, adapterStore);
-			adapterStore = null;
+			anchor.detach(anchorKey);
 			anchor = null;
 		}
 
@@ -225,7 +222,7 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 				new Point(refInLocal.getX(), refInLocal.getY()));
 
 		anchor.positionProperty().addListener(anchorPositionChangeListener);
-		anchor.attach(anchorKey, null);
+		anchor.attach(anchorKey);
 	}
 
 }

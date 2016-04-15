@@ -160,7 +160,7 @@ public class FXDefaultSelectionFeedbackPartFactory
 							Node n2, IGeometry n2Geometry) {
 						Point n2RefPoint = n2Geometry.getBounds().getCenter();
 						return computationStrategy.computePositionInScene(n1,
-								n1Geometry, n2, n2RefPoint);
+								n1Geometry, n2, n2RefPoint, null);
 					}
 
 					@Override

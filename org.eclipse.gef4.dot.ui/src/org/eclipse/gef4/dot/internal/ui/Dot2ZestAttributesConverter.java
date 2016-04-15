@@ -339,7 +339,8 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 				subList.remove(i);
 			}
 		}
-		return subList.subList(1, subList.size() - 1);
+		List<Point> subList2 = subList.subList(1, subList.size() - 1);
+		return subList2;
 	}
 
 	private Shape computeZestDecoration(ArrowType arrowType, double arrowSize) {

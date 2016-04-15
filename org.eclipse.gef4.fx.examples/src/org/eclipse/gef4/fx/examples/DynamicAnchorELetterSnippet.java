@@ -179,7 +179,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private void attachToDynamicAnchor(final AnchorKey ak,
 			final Point refPoint) {
 		dynamicAnchor.anchoredReferencePointsProperty().put(ak, refPoint);
-		dynamicAnchor.attach(ak, null);
+		dynamicAnchor.attach(ak);
 		updateDynamicAnchorLines(ak);
 	}
 
@@ -299,7 +299,8 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 				referencePointNode.setCenterX(x);
 				referencePointNode.setCenterY(y);
 				// update reference point
-				dynamicAnchor.anchoredReferencePointsProperty().put(ak, new Point(x, y));
+				dynamicAnchor.anchoredReferencePointsProperty().put(ak,
+						new Point(x, y));
 				updateDynamicAnchorLines(ak);
 			}
 		};

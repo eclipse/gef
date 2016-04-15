@@ -270,6 +270,21 @@ public class BezierCurve extends AbstractGeometry
 			double ratio = (nb - na) / (b - a);
 			a = na;
 			b = nb;
+			// ensure interval stays valid
+			if (a < 0) {
+				a = 0;
+			}
+			if (a > 1) {
+				a = 1;
+				b = 1;
+			}
+			if (b < 0) {
+				a = 0;
+				b = 0;
+			}
+			if (b > 1) {
+				b = 1;
+			}
 			return ratio;
 		}
 

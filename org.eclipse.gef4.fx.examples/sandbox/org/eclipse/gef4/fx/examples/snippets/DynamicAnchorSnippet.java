@@ -91,9 +91,9 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 
 		// use static values for dynamic anchor reference points
 		startAnchor.anchoredReferencePointsProperty().put(startKey, r2Center);
-		startAnchor.attach(startKey, null);
+		startAnchor.attach(startKey);
 		endAnchor.anchoredReferencePointsProperty().put(endKey, r1Center);
-		endAnchor.attach(endKey, null);
+		endAnchor.attach(endKey);
 
 		Group g = new Group(r1, r2, l);
 		root.getChildren().add(g);

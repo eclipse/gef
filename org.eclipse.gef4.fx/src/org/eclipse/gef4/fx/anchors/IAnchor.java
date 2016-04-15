@@ -11,12 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import org.eclipse.gef4.geometry.planar.Point;
+
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
-
-import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * An {@link IAnchor} is a visual anchor that will provide positions for
@@ -29,8 +28,8 @@ import org.eclipse.gef4.geometry.planar.Point;
  * {@link #positionProperty()} will be updated accordingly, it may be monitored
  * for changes.
  * <p>
- * An {@link IAnchor} may be bound to an anchorage {@link Node}. If this is
- * the case, positions for all attached {@link Node}s will also be recomputed in
+ * An {@link IAnchor} may be bound to an anchorage {@link Node}. If this is the
+ * case, positions for all attached {@link Node}s will also be recomputed in
  * case the anchorage {@link Node} or any of its ancestors are changed in a way
  * that will have an effect on the position of the attached {@link Node}.
  *
@@ -40,9 +39,8 @@ public interface IAnchor {
 
 	/**
 	 * Provides a read-only property with the anchorage {@link Node} this
-	 * {@link IAnchor} is bound to. The property value may be
-	 * <code>null</code> in case this {@link IAnchor} is not bound to an
-	 * anchorage {@link Node}.
+	 * {@link IAnchor} is bound to. The property value may be <code>null</code>
+	 * in case this {@link IAnchor} is not bound to an anchorage {@link Node}.
 	 *
 	 * @return A read-only property storing the anchorage {@link Node}.
 	 */
@@ -53,26 +51,16 @@ public interface IAnchor {
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be attached.
-	 * @param info
-	 *            An {@link IAdaptable}, which may be adapted by the
-	 *            {@link IAnchor} to obtain additional information. May be
-	 *            <code>null</code> if the respective {@link IAnchor} does not
-	 *            require additional information.
 	 */
-	void attach(AnchorKey key, IAdaptable info);
+	void attach(AnchorKey key);
 
 	/**
 	 * Detaches the given {@link AnchorKey} from this {@link IAnchor}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be detached.
-	 * @param info
-	 *            An {@link IAdaptable}, which may be adapted by the
-	 *            {@link IAnchor} to obtain additional information. May be
-	 *            <code>null</code> if the respective {@link IAnchor} does not
-	 *            require additional information.
 	 */
-	void detach(AnchorKey key, IAdaptable info);
+	void detach(AnchorKey key);
 
 	/**
 	 * Provides the anchorage {@link Node} this {@link IAnchor} is bound to.
@@ -85,12 +73,12 @@ public interface IAnchor {
 	/**
 	 * Provides a position for the given {@link AnchorKey}. The provided
 	 * {@link AnchorKey} has to be attached to this {@link IAnchor} (see
-	 * {@link #attach(AnchorKey, IAdaptable)}).
+	 * {@link #attach(AnchorKey)}).
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to retrieve a position for. It has to be
-	 *            attached ({@link #attach(AnchorKey, IAdaptable)}) to this
-	 *            {@link IAnchor} before.
+	 *            attached ({@link #attach(AnchorKey)}) to this {@link IAnchor}
+	 *            before.
 	 * @return The position for the given {@link AnchorKey} within local
 	 *         coordinates of the {@link AnchorKey}'s anchored {@link Node}.
 	 */
@@ -111,10 +99,10 @@ public interface IAnchor {
 	 * Provides a read-only (map) property with positions (in local coordinates
 	 * of the anchored {@link Node}s) for all attached {@link AnchorKey}s. The
 	 * positions will be updated for all attached {@link AnchorKey}s if the
-	 * attached {@link Node}s or the anchorage {@link Node}, the
-	 * {@link IAnchor} is bound to, or any of their ancestors changes in a way
-	 * that will effect the positions (within the local coordinate space of the
-	 * attached {@link Node}s).
+	 * attached {@link Node}s or the anchorage {@link Node}, the {@link IAnchor}
+	 * is bound to, or any of their ancestors changes in a way that will effect
+	 * the positions (within the local coordinate space of the attached
+	 * {@link Node}s).
 	 *
 	 * @return A read-only (map) property storing positions for all attached
 	 *         {@link AnchorKey}s.

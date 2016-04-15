@@ -31,6 +31,7 @@ import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
@@ -267,7 +268,9 @@ public class OrthogonalRouter implements IConnectionRouter {
 
 	private Point getPosition(Connection connection, int index) {
 		int numPoints = connection.getPoints().size();
-		if (index == 0 || index == numPoints - 1) {
+		boolean isFirstIndex = index == 0;
+		boolean isLastIndex = index == numPoints - 1;
+		if (isFirstIndex || isLastIndex) {
 			IAnchor anchor = index == 0 ? connection.getStartAnchor()
 					: (index == numPoints - 1 ? connection.getEndAnchor()
 							: connection.getControlAnchor(index - 1));
@@ -285,12 +288,30 @@ public class OrthogonalRouter implements IConnectionRouter {
 				// update reference point for the anchor key at the given index
 				((DynamicAnchor) anchor).anchoredReferencePointsProperty()
 						.put(connection.getAnchorKey(index), referencePoint);
+				// TODO: update orientation hint
+				Point neighborPoint = connection
+						.getPoint(isFirstIndex ? index + 1 : index - 1);
+				Point delta = neighborPoint.getDifference(referencePoint);
+				Orientation hint = null;
+				if (Math.abs(delta.x) < 5
+						&& Math.abs(delta.x) < Math.abs(delta.y)) {
+					// very small x difference => go in vertically
+					hint = Orientation.VERTICAL;
+				} else if (Math.abs(delta.y) < 5
+						&& Math.abs(delta.y) < Math.abs(delta.x)) {
+					// very small y difference => go in horizontally
+					hint = Orientation.HORIZONTAL;
+				}
+				((DynamicAnchor) anchor).hintProperty()
+						.put(connection.getAnchorKey(index), hint);
+				// find computation strategy
 				AnchorKey anchorKey = connection.getAnchorKey(index);
 				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)
 						.getComputationStrategy(anchorKey);
+				// compute position
 				Point computePosition = ((DynamicAnchor) anchor)
 						.computePosition(connection, referencePoint,
-								computationStrategy);
+								computationStrategy, hint);
 				return computePosition;
 			}
 		}

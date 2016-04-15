@@ -415,7 +415,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	@Override
 	public ITransactionalOperation commit() {
+		// showAnchors("pre-norm:");
 		normalize();
+		// showAnchors("commit:");
 
 		ITransactionalOperation commit = super.commit();
 		if (commit == null || commit.isNoOp()) {
@@ -1005,6 +1007,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			}
 		}
 		super.init();
+		// showAnchors("init:");
 	}
 
 	/**
@@ -1301,9 +1304,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			if (!segmentOverlays.isEmpty()) {
 				return;
 			}
+		} else {
+			// point overlay removal
+			removeOverlainPoints();
 		}
-		// point overlay removal
-		removeOverlainPoints();
 	}
 
 	private void removeOverlainPoints() {
@@ -1591,9 +1595,28 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	// + (selectedAnchors.contains(explicitAnchors.get(j))
 	// ? "(*)" : " * ")
 	// + anchor.getClass().toString() + "["
-	// + getConnection().getPoint(i) + "]" + " ("
-	// + newAnchors.get(j) + ") {" + explicitAnchors.get(j)
-	// + "},\n";
+	// + getConnection().getPoint(i) + " :: "
+	// + NodeUtils.localToScene(getConnection(),
+	// getConnection().getPoint(i))
+	// + "]" + " (" + newAnchors.get(j) + ") {"
+	// + explicitAnchors.get(j) + "},\n";
+	// if (anchor instanceof DynamicAnchor) {
+	// DynamicAnchor da = (DynamicAnchor) anchor;
+	// anchorsString = anchorsString
+	// + " DA anchorage geometry in scene = "
+	// + NodeUtils.localToScene(da.getAnchorage(),
+	// da.getAnchorageReferenceGeometry())
+	// + "\n";
+	// AnchorKey anchorKey = getConnection().getAnchorKey(
+	// explicitAnchors.get(j).getConnectionIndex());
+	// anchorsString = anchorsString + " DA anchor key = "
+	// + anchorKey + "\n";
+	// anchorsString = anchorsString
+	// + " DA anchored reference point in scene = "
+	// + NodeUtils.localToScene(anchorKey.getAnchored(),
+	// da.getAnchoredReferencePoint(anchorKey))
+	// + "\n";
+	// }
 	// j++;
 	// }
 	// }

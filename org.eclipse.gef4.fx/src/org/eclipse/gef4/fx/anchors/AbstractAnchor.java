@@ -49,9 +49,8 @@ import javafx.scene.transform.Transform;
  * {@link #computePosition(AnchorKey)}, thus left to subclasses. If a subclass
  * needs additional information to compute positions for attached
  * {@link AnchorKey}s, it may request that an {@link IAdaptable} info gets
- * passed into {@link #attach(AnchorKey, IAdaptable)} and
- * {@link #detach(AnchorKey, IAdaptable)}, and may overwrite both methods to get
- * access to it.
+ * passed into {@link #attach(AnchorKey)} and {@link #detach(AnchorKey)}, and
+ * may overwrite both methods to get access to it.
  *
  * @author anyssen
  * @author mwienand
@@ -156,7 +155,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	@Override
-	public void attach(AnchorKey key, IAdaptable info) {
+	public void attach(AnchorKey key) {
 		Node anchored = key.getAnchored();
 		if (!keys.containsKey(anchored)) {
 			keys.put(anchored, new HashSet<AnchorKey>());
@@ -230,7 +229,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	@Override
-	public void detach(AnchorKey key, IAdaptable info) {
+	public void detach(AnchorKey key) {
 		Node anchored = key.getAnchored();
 		if (!isAttached(key)) {
 			throw new IllegalArgumentException(

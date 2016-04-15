@@ -202,12 +202,12 @@ public class Connection extends Group {
 				controlAnchorsToMove.add(0, a);
 				controlAnchorKeys.remove(ak);
 				anchorsProperty.remove(ak);
-				a.detach(ak, null);
+				a.detach(ak);
 			}
 			controlAnchorKeys.add(anchorKey);
 		}
 		anchorsProperty.put(anchorKey, anchor);
-		anchor.attach(anchorKey, null);
+		anchor.attach(anchorKey);
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
@@ -217,7 +217,7 @@ public class Connection extends Group {
 				IAnchor a = controlAnchorsToMove.get(i);
 				controlAnchorKeys.add(ak);
 				anchorsProperty.put(ak, a);
-				a.attach(ak, null);
+				a.attach(ak);
 			}
 		}
 
@@ -1059,12 +1059,12 @@ public class Connection extends Group {
 				controlAnchorsToMove.add(0, a);
 				controlAnchorKeys.remove(ak);
 				anchorsProperty.remove(ak);
-				a.detach(ak, null);
+				a.detach(ak);
 			}
 			controlAnchorKeys.remove(anchorKey);
 		}
 		anchorsProperty.remove(anchorKey);
-		anchor.detach(anchorKey, null);
+		anchor.detach(anchorKey);
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
@@ -1074,7 +1074,7 @@ public class Connection extends Group {
 				IAnchor a = controlAnchorsToMove.get(i);
 				controlAnchorKeys.add(ak);
 				anchorsProperty.put(ak, a);
-				a.attach(ak, null);
+				a.attach(ak);
 			}
 		}
 		refresh();
