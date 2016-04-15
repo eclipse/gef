@@ -50,7 +50,7 @@ public class SugiyamaLayoutExample extends AbstractZestExample {
 				e(nodes[2], nodes[4]) /* stone -> concrete */ };
 
 		return new Graph.Builder().nodes(nodes).edges(edges)
-				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+				.attr(ZestProperties.LAYOUT_ALGORITHM__G,
 						new SugiyamaLayoutAlgorithm())
 				.build();
 	}

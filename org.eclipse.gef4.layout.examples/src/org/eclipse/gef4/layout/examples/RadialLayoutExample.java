@@ -17,14 +17,14 @@ package org.eclipse.gef4.layout.examples;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.application.Application;
-
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.zest.examples.AbstractZestExample;
 import org.eclipse.gef4.zest.fx.ZestProperties;
+
+import javafx.application.Application;
 
 public class RadialLayoutExample extends AbstractZestExample {
 
@@ -59,7 +59,8 @@ public class RadialLayoutExample extends AbstractZestExample {
 		}
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
 				.edges(edges.toArray(new Edge[] {}))
-				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new RadialLayoutAlgorithm())
+				.attr(ZestProperties.LAYOUT_ALGORITHM__G,
+						new RadialLayoutAlgorithm())
 				.build();
 	}
 

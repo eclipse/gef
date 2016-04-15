@@ -112,7 +112,7 @@ public class SpringLayoutProgressExample extends AbstractZestExample {
 
 		return new Graph.Builder().nodes(nodes.toArray(new Node[] {}))
 				.edges(edges.toArray(new Edge[] {}))
-				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM,
+				.attr(ZestProperties.LAYOUT_ALGORITHM__G,
 						new SpringLayoutAlgorithm())
 				.build();
 	}
