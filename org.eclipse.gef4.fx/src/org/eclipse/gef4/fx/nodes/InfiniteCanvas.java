@@ -16,8 +16,8 @@ package org.eclipse.gef4.fx.nodes;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
 import javafx.animation.FadeTransition;
@@ -55,7 +55,7 @@ import javafx.util.Duration;
 /**
  * An {@link InfiniteCanvas} provides a means to render a portion of a
  * hypothetically infinite canvas, on which arbitrary contents can be placed.
- * 
+ *
  * <pre>
  * +----------------+
  * |content area    |
@@ -1591,7 +1591,7 @@ public class InfiniteCanvas extends Region {
 	 *         scrollbar.
 	 */
 	public ObjectProperty<ScrollBarPolicy> verticalScrollBarPolicyProperty() {
-		return horizontalScrollBarPolicyProperty;
+		return verticalScrollBarPolicyProperty;
 	}
 
 	/**
