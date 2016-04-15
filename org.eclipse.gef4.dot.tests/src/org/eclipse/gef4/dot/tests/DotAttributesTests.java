@@ -135,8 +135,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validGraphName = "simpleGraph";
-		DotAttributes.setName(g, validGraphName);
-		assertEquals(validGraphName, DotAttributes.getName(g));
+		DotAttributes._setName(g, validGraphName);
+		assertEquals(validGraphName, DotAttributes._getName(g));
 
 		// TODO: add test cases for setting invalid graph name (e.g. a keyword)
 	}
@@ -263,16 +263,16 @@ public class DotAttributesTests {
 
 		// set valid string values
 		String validGraphType = "graph";
-		DotAttributes.setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes.getType(g));
+		DotAttributes._setType(g, validGraphType);
+		assertEquals(validGraphType, DotAttributes._getType(g));
 
 		validGraphType = "digraph";
-		DotAttributes.setType(g, validGraphType);
-		assertEquals(validGraphType, DotAttributes.getType(g));
+		DotAttributes._setType(g, validGraphType);
+		assertEquals(validGraphType, DotAttributes._getType(g));
 
 		// set invalid string values
 		try {
-			DotAttributes.setType(g, "foo");
+			DotAttributes._setType(g, "foo");
 			fail("Expecting IllegalArgumentException.");
 		} catch (IllegalArgumentException e) {
 			assertEquals(
@@ -356,8 +356,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validNodeName = "simpleNode";
-		DotAttributes.setName(n, validNodeName);
-		assertEquals(validNodeName, DotAttributes.getName(n));
+		DotAttributes._setName(n, validNodeName);
+		assertEquals(validNodeName, DotAttributes._getName(n));
 
 		// TODO: add test case for setting invalid node name (e.g. a keyword)
 	}
@@ -796,8 +796,8 @@ public class DotAttributesTests {
 
 		// set valid string values
 		final String validEdgeName = "simpleEdge";
-		DotAttributes.setName(edge, validEdgeName);
-		assertEquals(validEdgeName, DotAttributes.getName(edge));
+		DotAttributes._setName(edge, validEdgeName);
+		assertEquals(validEdgeName, DotAttributes._getName(edge));
 
 		// TODO: add test case for setting invalid edge name (e.g. a keyword)
 	}

@@ -114,8 +114,8 @@ public class Zest2DotAttributesConverter implements IAttributeCopier {
 				dotPos.setX(zestPosition.x - zestSize.width / 2);
 				dotPos.setY((options().invertYAxis ? -1 : 1)
 						* (zestPosition.y - zestSize.height / 2));
-				dotPos.setInputOnly(Boolean.TRUE.equals(
-						ZestProperties.getLayoutIrrelevant(zest, false)));
+				dotPos.setInputOnly(Boolean.TRUE
+						.equals(ZestProperties.getLayoutIrrelevant(zest)));
 				DotAttributes.setPosParsed(dot, dotPos);
 			}
 		}

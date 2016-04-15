@@ -51,7 +51,7 @@ public final class DotInterpreterTests {
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes._TYPE__G__DIGRAPH,
-				DotAttributes.getType(graph));
+				DotAttributes._getType(graph));
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public final class DotInterpreterTests {
 				.get(0);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(DotAttributes._TYPE__G__GRAPH,
-				DotAttributes.getType(graph));
+				DotAttributes._getType(graph));
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public final class DotInterpreterTests {
 		Graph graph = interpreter.interpret(parse("graph Sample{1}")).get(0); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals("1", //$NON-NLS-1$
-				DotAttributes.getName(graph.getNodes().get(0)));
+				DotAttributes._getName(graph.getNodes().get(0)));
 	}
 
 	@Test
@@ -270,9 +270,9 @@ public final class DotInterpreterTests {
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		List<Node> list = graph.getNodes();
 		Assert.assertEquals("node 1", //$NON-NLS-1$
-				DotAttributes.getName(list.get(0)));
+				DotAttributes._getName(list.get(0)));
 		Assert.assertEquals("node 2", //$NON-NLS-1$
-				DotAttributes.getName(list.get(1)));
+				DotAttributes._getName(list.get(1)));
 	}
 
 	@Test
@@ -293,9 +293,9 @@ public final class DotInterpreterTests {
 		Assert.assertEquals(1, graph.getEdges().size());
 		List<Node> list = graph.getNodes();
 		Assert.assertEquals("n1", //$NON-NLS-1$
-				DotAttributes.getName(list.get(0)));
+				DotAttributes._getName(list.get(0)));
 		Assert.assertEquals("n2", //$NON-NLS-1$
-				DotAttributes.getName(list.get(1)));
+				DotAttributes._getName(list.get(1)));
 	}
 
 	@Test

@@ -14,16 +14,9 @@ import static org.eclipse.gef4.dot.tests.DotTestUtils.RESOURCES_TESTS;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.gef4.dot.internal.DotAttributes;
 import org.eclipse.gef4.dot.internal.DotImport;
-import org.eclipse.gef4.dot.internal.parser.rankdir.Rankdir;
-import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;
 

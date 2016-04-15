@@ -791,7 +791,7 @@ public class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} property of the given
 	 *         {@link Edge}.
 	 */
-	public static String getName(Edge edge) {
+	public static String _getName(Edge edge) {
 		return (String) edge.attributesProperty().get(_NAME__GNE);
 	}
 
@@ -805,7 +805,7 @@ public class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} property of the given
 	 *         {@link Graph}.
 	 */
-	public static String getName(Graph graph) {
+	public static String _getName(Graph graph) {
 		return (String) graph.attributesProperty().get(_NAME__GNE);
 	}
 
@@ -819,7 +819,7 @@ public class DotAttributes {
 	 * @return The value of the {@link #_NAME__GNE} property of the given
 	 *         {@link Node}.
 	 */
-	public static String getName(Node node) {
+	public static String _getName(Node node) {
 		return (String) node.attributesProperty().get(_NAME__GNE);
 	}
 
@@ -1080,7 +1080,7 @@ public class DotAttributes {
 	 * @return The value of the {@link #_TYPE__G} property of the given
 	 *         {@link Graph}.
 	 */
-	public static String getType(Graph graph) {
+	public static String _getType(Graph graph) {
 		return (String) graph.attributesProperty().get(_TYPE__G);
 	}
 
@@ -1589,7 +1589,7 @@ public class DotAttributes {
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} property.
 	 */
-	public static void setName(Edge edge, String name) {
+	public static void _setName(Edge edge, String name) {
 		edge.attributesProperty().put(_NAME__GNE, name);
 	}
 
@@ -1603,7 +1603,7 @@ public class DotAttributes {
 	 * @param name
 	 *            The new value for the {@link #_NAME__GNE} property.
 	 */
-	public static void setName(Graph graph, String name) {
+	public static void _setName(Graph graph, String name) {
 		graph.attributesProperty().put(_NAME__GNE, name);
 	}
 
@@ -1617,7 +1617,7 @@ public class DotAttributes {
 	 * @param id
 	 *            The new value for the {@link #_NAME__GNE} property.
 	 */
-	public static void setName(Node node, String id) {
+	public static void _setName(Node node, String id) {
 		node.attributesProperty().put(_NAME__GNE, id);
 	}
 
@@ -1881,7 +1881,7 @@ public class DotAttributes {
 	 * @param type
 	 *            The new value for the {@link #_TYPE__G} property.
 	 */
-	public static void setType(Graph graph, String type) {
+	public static void _setType(Graph graph, String type) {
 		if (!_TYPE__G__GRAPH.equals(type) && !_TYPE__G__DIGRAPH.equals(type)) {
 			throw new IllegalArgumentException(
 					"Cannot set graph attribute \"type\" to \"" + type

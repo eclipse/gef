@@ -109,7 +109,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotLabel != null && dotLabel.equals("\\E")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or id becomes its label.
-			dotLabel = dotId != null ? dotId : DotAttributes.getName(dot);
+			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
 		}
 		if (dotLabel != null) {
 			ZestProperties.setLabel(zest, dotLabel);
@@ -426,7 +426,7 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		if (dotLabel == null || dotLabel.equals("\\N")) { //$NON-NLS-1$
 			// The node default label '\N' is used to indicate that a node's
 			// name or id becomes its label.
-			dotLabel = dotId != null ? dotId : DotAttributes.getName(dot);
+			dotLabel = dotId != null ? dotId : DotAttributes._getName(dot);
 		}
 		ZestProperties.setLabel(zest, dotLabel);
 
