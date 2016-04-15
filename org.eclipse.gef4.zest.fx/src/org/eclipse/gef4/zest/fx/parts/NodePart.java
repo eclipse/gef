@@ -348,12 +348,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		refreshShape();
 
-		if (DEFAULT_SHAPE_ROLE.equals(getShape().getUserData()) || isNesting()) {
-			vbox.setPadding(new Insets(DEFAULT_SHAPE_PADDING));
-		} else {
-			vbox.setPadding(Insets.EMPTY);
-		}
-
 		// set CSS style
 		if (attrs.containsKey(ZestProperties.NODE_SHAPE_CSS_STYLE)) {
 			if (getShape() != null) {
@@ -367,29 +361,36 @@ public class NodePart extends AbstractFXContentPart<Group>
 			}
 		}
 
-		if (isNesting()) {
-			if (!vbox.getChildren().contains(nestedContentStackPane)) {
-				vbox.getChildren().add(nestedContentStackPane);
-				if (vbox.getPrefWidth() == 0 && vbox.getPrefHeight() == 0) {
-					vbox.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
-							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
-					vbox.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
-							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
-				}
-			}
-			// show a nested graph icon dependent on the zoom level
-			if (!getChildrenUnmodifiable().isEmpty()) {
-				hideNestedGraphIcon();
+		if (vbox != null) {
+			if (getShape() != null && DEFAULT_SHAPE_ROLE.equals(getShape().getUserData()) || isNesting()) {
+				vbox.setPadding(new Insets(DEFAULT_SHAPE_PADDING));
 			} else {
-				// show an icon as a replacement when the zoom threshold is
-				// not reached
-				showNestedGraphIcon();
+				vbox.setPadding(Insets.EMPTY);
 			}
-		} else {
-			if (vbox.getChildren().contains(nestedContentStackPane)) {
-				vbox.getChildren().remove(nestedContentStackPane);
-				vbox.setPrefSize(0, 0);
-				vbox.resize(0, 0);
+			if (isNesting()) {
+				if (!vbox.getChildren().contains(nestedContentStackPane)) {
+					vbox.getChildren().add(nestedContentStackPane);
+					if (vbox.getPrefWidth() == 0 && vbox.getPrefHeight() == 0) {
+						vbox.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+								DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+						vbox.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+								DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+					}
+				}
+				// show a nested graph icon dependent on the zoom level
+				if (!getChildrenUnmodifiable().isEmpty()) {
+					hideNestedGraphIcon();
+				} else {
+					// show an icon as a replacement when the zoom threshold is
+					// not reached
+					showNestedGraphIcon();
+				}
+			} else {
+				if (vbox.getChildren().contains(nestedContentStackPane)) {
+					vbox.getChildren().remove(nestedContentStackPane);
+					vbox.setPrefSize(0, 0);
+					vbox.resize(0, 0);
+				}
 			}
 		}
 
