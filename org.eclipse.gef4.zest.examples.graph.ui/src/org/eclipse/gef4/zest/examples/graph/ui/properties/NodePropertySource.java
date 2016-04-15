@@ -18,9 +18,9 @@ public class NodePropertySource implements IPropertySource {
 	private static final String POSITION_DELIMITER = ", ";
 	private static final String SIZE_DELIMITER = " x ";
 	private static final IPropertyDescriptor POSITION_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(
-			ZestProperties.NODE_POSITION, ZestProperties.NODE_POSITION);
+			ZestProperties.POSITION__N, ZestProperties.POSITION__N);
 	private static final IPropertyDescriptor SIZE_PROPERTY_DESCRIPTOR = new TextPropertyDescriptor(
-			ZestProperties.NODE_SIZE, ZestProperties.NODE_SIZE);
+			ZestProperties.SIZE__N, ZestProperties.SIZE__N);
 	private Node node;
 	private Dimension initialSize;
 	private Point initialPosition;

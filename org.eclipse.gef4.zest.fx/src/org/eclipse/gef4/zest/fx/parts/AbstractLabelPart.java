@@ -139,15 +139,15 @@ public abstract class AbstractLabelPart extends AbstractFXContentPart<Group>
 	public String getLabelPositionAttributeKey() {
 		String labelRole = getContent().getValue();
 		String attributeKey = null;
-		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(labelRole)) {
-			attributeKey = ZestProperties.ELEMENT_EXTERNAL_LABEL_POSITION;
-		} else if (ZestProperties.ELEMENT_LABEL.equals(labelRole)) {
+		if (ZestProperties.EXTERNAL_LABEL__NE.equals(labelRole)) {
+			attributeKey = ZestProperties.EXTERNAL_LABEL_POSITION__NE;
+		} else if (ZestProperties.LABEL__NE.equals(labelRole)) {
 			// node do not have 'internal' labels
-			attributeKey = ZestProperties.EDGE_LABEL_POSITION;
-		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(labelRole)) {
-			attributeKey = ZestProperties.EDGE_SOURCE_LABEL_POSITION;
-		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(labelRole)) {
-			attributeKey = ZestProperties.EDGE_TARGET_LABEL_POSITION;
+			attributeKey = ZestProperties.LABEL_POSITION__E;
+		} else if (ZestProperties.SOURCE_LABEL__E.equals(labelRole)) {
+			attributeKey = ZestProperties.SOURCE_LABEL_POSITION__E;
+		} else if (ZestProperties.TARGET_LABEL__E.equals(labelRole)) {
+			attributeKey = ZestProperties.TARGET_LABEL_POSITION__E;
 		} else {
 			throw new IllegalArgumentException("Unsupported content element.");
 		}

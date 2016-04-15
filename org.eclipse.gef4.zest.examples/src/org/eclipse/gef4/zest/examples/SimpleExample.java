@@ -41,7 +41,8 @@ public class SimpleExample extends AbstractZestExample {
 		Edge e23 = new Edge(n2, n3);
 		Edge e31 = new Edge(n3, n);
 		return new Graph.Builder().nodes(n, n2, n3).edges(e12, e23, e31)
-				.attr(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm())
+				.attr(ZestProperties.LAYOUT_ALGORITHM__G,
+						new SpringLayoutAlgorithm())
 				.build();
 	}
 

@@ -58,13 +58,13 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 	private List<AbstractLabelPart> getEdgeLabelParts(EdgePart edgePart) {
 		List<AbstractLabelPart> linked = new ArrayList<>();
 		linked.addAll(new ArrayList<>(PartUtils
-				.filterParts(PartUtils.getAnchoreds(edgePart, ZestProperties.ELEMENT_LABEL), AbstractLabelPart.class)));
+				.filterParts(PartUtils.getAnchoreds(edgePart, ZestProperties.LABEL__NE), AbstractLabelPart.class)));
 		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.ELEMENT_EXTERNAL_LABEL), AbstractLabelPart.class)));
+				PartUtils.getAnchoreds(edgePart, ZestProperties.EXTERNAL_LABEL__NE), AbstractLabelPart.class)));
 		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.EDGE_SOURCE_LABEL), AbstractLabelPart.class)));
+				PartUtils.getAnchoreds(edgePart, ZestProperties.SOURCE_LABEL__E), AbstractLabelPart.class)));
 		linked.addAll(new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(edgePart, ZestProperties.EDGE_TARGET_LABEL), AbstractLabelPart.class)));
+				PartUtils.getAnchoreds(edgePart, ZestProperties.TARGET_LABEL__E), AbstractLabelPart.class)));
 		return linked;
 	}
 
@@ -93,7 +93,7 @@ public class TranslateSelectedAndRelocateLabelsOnDragPolicy extends FXTranslateS
 
 	private List<AbstractLabelPart> getNodeLabelParts(NodePart nodePart) {
 		return new ArrayList<>(PartUtils.filterParts(
-				PartUtils.getAnchoreds(nodePart, ZestProperties.ELEMENT_EXTERNAL_LABEL), AbstractLabelPart.class));
+				PartUtils.getAnchoreds(nodePart, ZestProperties.EXTERNAL_LABEL__NE), AbstractLabelPart.class));
 	}
 
 	@Override

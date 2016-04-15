@@ -66,16 +66,16 @@ public class TransformLabelPolicy extends FXTransformPolicy {
 	 *
 	 * @param labelRole
 	 *            The role of the label, i.e. one of
-	 *            {@link ZestProperties#ELEMENT_EXTERNAL_LABEL},
-	 *            {@link ZestProperties#ELEMENT_LABEL},
-	 *            {@link ZestProperties#EDGE_SOURCE_LABEL}, or
-	 *            {@link ZestProperties#EDGE_TARGET_LABEL}.
+	 *            {@link ZestProperties#EXTERNAL_LABEL__NE},
+	 *            {@link ZestProperties#LABEL__NE},
+	 *            {@link ZestProperties#SOURCE_LABEL__E}, or
+	 *            {@link ZestProperties#TARGET_LABEL__E}.
 	 * @return The reference position in scene coordinates.
 	 */
 	// TODO: make reference position configurable via Zest properties
 	private Point getLabelReferencePointInScene(String labelRole) {
 		IAttributeStore contentElement = getHost().getContent().getKey();
-		if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(labelRole)) {
+		if (ZestProperties.EXTERNAL_LABEL__NE.equals(labelRole)) {
 			if (contentElement instanceof Node) {
 				// node center
 				return NodeUtils
@@ -93,7 +93,7 @@ public class TransformLabelPolicy extends FXTransformPolicy {
 			} else {
 				throw new IllegalArgumentException("Unsupported element.");
 			}
-		} else if (ZestProperties.ELEMENT_LABEL.equals(labelRole)) {
+		} else if (ZestProperties.LABEL__NE.equals(labelRole)) {
 			// node do not have 'internal' labels
 			if (contentElement instanceof Edge) {
 				Connection connection = (Connection) getFirstAnchorage().getVisual();
@@ -101,10 +101,10 @@ public class TransformLabelPolicy extends FXTransformPolicy {
 			} else {
 				throw new IllegalArgumentException("Unsupported element.");
 			}
-		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(labelRole)) {
+		} else if (ZestProperties.SOURCE_LABEL__E.equals(labelRole)) {
 			Connection connection = (Connection) getFirstAnchorage().getVisual();
 			return NodeUtils.localToScene(connection, connection.getStartPoint());
-		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(labelRole)) {
+		} else if (ZestProperties.TARGET_LABEL__E.equals(labelRole)) {
 			Connection connection = (Connection) getFirstAnchorage().getVisual();
 			return NodeUtils.localToScene(connection, connection.getEndPoint());
 		} else {

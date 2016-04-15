@@ -44,13 +44,13 @@ public class EdgeLabelPart extends AbstractLabelPart {
 	public Point computeLabelPosition() {
 		Point position = null;
 		String value = getContent().getValue();
-		if (ZestProperties.ELEMENT_LABEL.equals(value)) {
+		if (ZestProperties.LABEL__NE.equals(value)) {
 			position = getMidPoint();
-		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(value)) {
+		} else if (ZestProperties.EXTERNAL_LABEL__NE.equals(value)) {
 			position = getMidPoint();
-		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(value)) {
+		} else if (ZestProperties.SOURCE_LABEL__E.equals(value)) {
 			position = getStartPoint();
-		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(value)) {
+		} else if (ZestProperties.TARGET_LABEL__E.equals(value)) {
 			position = getEndPoint();
 		}
 		return position;
@@ -78,30 +78,30 @@ public class EdgeLabelPart extends AbstractLabelPart {
 		Map<String, Object> attrs = edge.attributesProperty();
 
 		// label or external label (depends on which element we control)
-		if (ZestProperties.ELEMENT_LABEL.equals(getContent().getValue())) {
+		if (ZestProperties.LABEL__NE.equals(getContent().getValue())) {
 			String label = ZestProperties.getLabel(edge);
 			if (label != null) {
 				getText().setText(label);
 			}
-			if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
+			if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__E)) {
 				String textCssStyle = ZestProperties.getLabelCssStyle(edge);
 				getVisual().setStyle(textCssStyle);
 			}
-		} else if (ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(getContent().getValue())) {
+		} else if (ZestProperties.EXTERNAL_LABEL__NE.equals(getContent().getValue())) {
 			String label = ZestProperties.getExternalLabel(edge);
 			if (label != null) {
 				getText().setText(label);
 			}
-			if (attrs.containsKey(ZestProperties.ELEMENT_EXTERNAL_LABEL_CSS_STYLE)) {
+			if (attrs.containsKey(ZestProperties.EXTERNAL_LABEL_CSS_STYLE__NE)) {
 				String textCssStyle = ZestProperties.getLabelCssStyle(edge);
 				getVisual().setStyle(textCssStyle);
 			}
-		} else if (ZestProperties.EDGE_SOURCE_LABEL.equals(getContent().getValue())) {
+		} else if (ZestProperties.SOURCE_LABEL__E.equals(getContent().getValue())) {
 			String label = ZestProperties.getSourceLabel(edge);
 			if (label != null) {
 				getText().setText(label);
 			}
-		} else if (ZestProperties.EDGE_TARGET_LABEL.equals(getContent().getValue())) {
+		} else if (ZestProperties.TARGET_LABEL__E.equals(getContent().getValue())) {
 			String label = ZestProperties.getTargetLabel(edge);
 			if (label != null) {
 				getText().setText(label);

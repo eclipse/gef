@@ -76,7 +76,7 @@ public class NodeLabelPart extends AbstractLabelPart {
 		Node node = getContent().getKey();
 		Map<String, Object> attrs = node.attributesProperty();
 
-		if (attrs.containsKey(ZestProperties.ELEMENT_EXTERNAL_LABEL_CSS_STYLE)) {
+		if (attrs.containsKey(ZestProperties.EXTERNAL_LABEL_CSS_STYLE__NE)) {
 			String textCssStyle = ZestProperties.getExternalLabelCssStyle(node);
 			getVisual().setStyle(textCssStyle);
 		}

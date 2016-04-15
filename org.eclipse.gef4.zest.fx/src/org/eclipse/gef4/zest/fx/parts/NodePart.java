@@ -335,13 +335,13 @@ public class NodePart extends AbstractFXContentPart<Group>
 		visual.getStyleClass().clear();
 		visual.getStyleClass().add(CSS_CLASS);
 		Map<String, Object> attrs = node.attributesProperty();
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
+		if (attrs.containsKey(ZestProperties.CSS_CLASS__NE)) {
 			visual.getStyleClass().add(ZestProperties.getCssClass(node));
 		}
 
 		// set CSS id
 		String id = null;
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
+		if (attrs.containsKey(ZestProperties.CSS_ID__NE)) {
 			id = ZestProperties.getCssId(node);
 		}
 		visual.setId(id);
@@ -349,13 +349,13 @@ public class NodePart extends AbstractFXContentPart<Group>
 		refreshShape();
 
 		// set CSS style
-		if (attrs.containsKey(ZestProperties.NODE_SHAPE_CSS_STYLE)) {
+		if (attrs.containsKey(ZestProperties.SHAPE_CSS_STYLE__N)) {
 			if (getShape() != null) {
 				getShape().setStyle(ZestProperties.getShapeCssStyle(node));
 			}
 
 		}
-		if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
+		if (attrs.containsKey(ZestProperties.LABEL_CSS_STYLE__E)) {
 			if (getLabelText() != null) {
 				getLabelText().setStyle(ZestProperties.getLabelCssStyle(node));
 			}

@@ -128,11 +128,11 @@ public class JFaceEdgeDecorationExample {
 		public Map<String, Object> getEdgeAttributes(Object sourceNode,
 				Object targetNode) {
 			Map<String, Object> edgeAttributes = new HashMap<>();
-			edgeAttributes.put(ZestProperties.EDGE_SOURCE_DECORATION,
+			edgeAttributes.put(ZestProperties.SOURCE_DECORATION__E,
 					new CircleHead());
-			edgeAttributes.put(ZestProperties.EDGE_TARGET_DECORATION,
+			edgeAttributes.put(ZestProperties.TARGET_DECORATION__E,
 					new DiamondHead());
-			edgeAttributes.put(ZestProperties.EDGE_CURVE_CSS_STYLE,
+			edgeAttributes.put(ZestProperties.CURVE_CSS_STYLE__E,
 					"-fx-stroke: red;");
 			return edgeAttributes;
 		}

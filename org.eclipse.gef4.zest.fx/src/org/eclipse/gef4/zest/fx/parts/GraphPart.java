@@ -115,7 +115,7 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 		// add labels for visible nodes
 		for (org.eclipse.gef4.graph.Node n : visibleNodes) {
 			if (ZestProperties.getExternalLabel(n) != null) {
-				children.add(new Pair<>(n, ZestProperties.ELEMENT_EXTERNAL_LABEL));
+				children.add(new Pair<>(n, ZestProperties.EXTERNAL_LABEL__NE));
 			}
 		}
 		// collect visible edges
@@ -133,16 +133,16 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 		// add labels for visible edges
 		for (Edge e : visibleEdges) {
 			if (ZestProperties.getLabel(e) != null) {
-				children.add(new Pair<>(e, ZestProperties.ELEMENT_LABEL));
+				children.add(new Pair<>(e, ZestProperties.LABEL__NE));
 			}
 			if (ZestProperties.getExternalLabel(e) != null) {
-				children.add(new Pair<>(e, ZestProperties.ELEMENT_EXTERNAL_LABEL));
+				children.add(new Pair<>(e, ZestProperties.EXTERNAL_LABEL__NE));
 			}
 			if (ZestProperties.getSourceLabel(e) != null) {
-				children.add(new Pair<>(e, ZestProperties.EDGE_SOURCE_LABEL));
+				children.add(new Pair<>(e, ZestProperties.SOURCE_LABEL__E));
 			}
 			if (ZestProperties.getTargetLabel(e) != null) {
-				children.add(new Pair<>(e, ZestProperties.EDGE_TARGET_LABEL));
+				children.add(new Pair<>(e, ZestProperties.TARGET_LABEL__E));
 			}
 		}
 		return children;

@@ -53,13 +53,13 @@ public class ZestFxContentPartFactory implements IContentPartFactory<Node> {
 		} else if (content instanceof Edge) {
 			part = new EdgePart();
 		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof Edge
-				&& (ZestProperties.ELEMENT_LABEL.equals(((Pair) content).getValue())
-						|| ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue())
-						|| ZestProperties.EDGE_SOURCE_LABEL.equals(((Pair) content).getValue())
-						|| ZestProperties.EDGE_TARGET_LABEL.equals(((Pair) content).getValue()))) {
+				&& (ZestProperties.LABEL__NE.equals(((Pair) content).getValue())
+						|| ZestProperties.EXTERNAL_LABEL__NE.equals(((Pair) content).getValue())
+						|| ZestProperties.SOURCE_LABEL__E.equals(((Pair) content).getValue())
+						|| ZestProperties.TARGET_LABEL__E.equals(((Pair) content).getValue()))) {
 			part = new EdgeLabelPart();
 		} else if (content instanceof Pair && ((Pair) content).getKey() instanceof org.eclipse.gef4.graph.Node
-				&& ZestProperties.ELEMENT_EXTERNAL_LABEL.equals(((Pair) content).getValue())) {
+				&& ZestProperties.EXTERNAL_LABEL__NE.equals(((Pair) content).getValue())) {
 			part = new NodeLabelPart();
 		}
 		if (part != null) {

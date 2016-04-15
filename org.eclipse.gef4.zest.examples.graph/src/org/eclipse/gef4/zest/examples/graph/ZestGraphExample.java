@@ -31,12 +31,12 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<>();
 		nodes.addAll(Arrays.asList(
-				n(ZestProperties.ELEMENT_LABEL, "A", ZestProperties.NODE_TOOLTIP, "Alpha",
-						ZestProperties.ELEMENT_CSS_ID, id + "A"),
-				n(ZestProperties.ELEMENT_LABEL, "B", ZestProperties.NODE_TOOLTIP, "Beta", ZestProperties.ELEMENT_CSS_ID,
+				n(ZestProperties.LABEL__NE, "A", ZestProperties.TOOLTIP__N, "Alpha", ZestProperties.CSS_ID__NE,
+						id + "A"),
+				n(ZestProperties.LABEL__NE, "B", ZestProperties.TOOLTIP__N, "Beta", ZestProperties.CSS_ID__NE,
 						id + "B"),
-				n(ZestProperties.ELEMENT_LABEL, "C", ZestProperties.NODE_TOOLTIP, "Gamma",
-						ZestProperties.ELEMENT_CSS_ID, id + "C")));
+				n(ZestProperties.LABEL__NE, "C", ZestProperties.TOOLTIP__N, "Gamma", ZestProperties.CSS_ID__NE,
+						id + "C")));
 
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<>();
@@ -45,7 +45,7 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
-		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
+		attrs.put(ZestProperties.LAYOUT_ALGORITHM__G, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 	}
 
@@ -53,16 +53,16 @@ public class ZestGraphExample extends AbstractZestExample {
 		// create nodes "A" to "C"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<>();
 		nodes.addAll(Arrays.asList(
-				n(ZestProperties.ELEMENT_LABEL, "A", ZestProperties.NODE_TOOLTIP, "Alpha",
-						ZestProperties.ELEMENT_CSS_ID, id + "A"),
-				n(ZestProperties.ELEMENT_LABEL, "B", ZestProperties.NODE_TOOLTIP, "Beta", ZestProperties.ELEMENT_CSS_ID,
+				n(ZestProperties.LABEL__NE, "A", ZestProperties.TOOLTIP__N, "Alpha", ZestProperties.CSS_ID__NE,
+						id + "A"),
+				n(ZestProperties.LABEL__NE, "B", ZestProperties.TOOLTIP__N, "Beta", ZestProperties.CSS_ID__NE,
 						id + "B"),
-				n(ZestProperties.ELEMENT_LABEL, "C", ZestProperties.NODE_TOOLTIP, "Gamma",
-						ZestProperties.ELEMENT_CSS_ID, id + "C"),
-				n(ZestProperties.ELEMENT_LABEL, "D", ZestProperties.NODE_TOOLTIP, "Delta",
-						ZestProperties.ELEMENT_CSS_ID, id + "D"),
-				n(ZestProperties.ELEMENT_LABEL, "E", ZestProperties.NODE_TOOLTIP, "Epsilon",
-						ZestProperties.ELEMENT_CSS_ID, id + "E")));
+				n(ZestProperties.LABEL__NE, "C", ZestProperties.TOOLTIP__N, "Gamma", ZestProperties.CSS_ID__NE,
+						id + "C"),
+				n(ZestProperties.LABEL__NE, "D", ZestProperties.TOOLTIP__N, "Delta", ZestProperties.CSS_ID__NE,
+						id + "D"),
+				n(ZestProperties.LABEL__NE, "E", ZestProperties.TOOLTIP__N, "Epsilon", ZestProperties.CSS_ID__NE,
+						id + "E")));
 
 		// add nested graphs
 		nodes.get(4).setNestedGraph(buildAC("c"));
@@ -74,23 +74,23 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
-		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
+		attrs.put(ZestProperties.LAYOUT_ALGORITHM__G, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 	}
 
 	public static Graph createDefaultGraph() {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(n(ZestProperties.ELEMENT_LABEL, "0", ZestProperties.NODE_TOOLTIP, "zero"),
-				n(ZestProperties.ELEMENT_LABEL, "1", ZestProperties.NODE_TOOLTIP, "one"),
-				n(ZestProperties.ELEMENT_LABEL, "2", ZestProperties.NODE_TOOLTIP, "two"),
-				n(ZestProperties.ELEMENT_LABEL, "3", ZestProperties.NODE_TOOLTIP, "three"),
-				n(ZestProperties.ELEMENT_LABEL, "4", ZestProperties.NODE_TOOLTIP, "four"),
-				n(ZestProperties.ELEMENT_LABEL, "5", ZestProperties.NODE_TOOLTIP, "five"),
-				n(ZestProperties.ELEMENT_LABEL, "6", ZestProperties.NODE_TOOLTIP, "six"),
-				n(ZestProperties.ELEMENT_LABEL, "7", ZestProperties.NODE_TOOLTIP, "seven"),
-				n(ZestProperties.ELEMENT_LABEL, "8", ZestProperties.NODE_TOOLTIP, "eight"),
-				n(ZestProperties.ELEMENT_LABEL, "9", ZestProperties.NODE_TOOLTIP, "nine")));
+		nodes.addAll(Arrays.asList(n(ZestProperties.LABEL__NE, "0", ZestProperties.TOOLTIP__N, "zero"),
+				n(ZestProperties.LABEL__NE, "1", ZestProperties.TOOLTIP__N, "one"),
+				n(ZestProperties.LABEL__NE, "2", ZestProperties.TOOLTIP__N, "two"),
+				n(ZestProperties.LABEL__NE, "3", ZestProperties.TOOLTIP__N, "three"),
+				n(ZestProperties.LABEL__NE, "4", ZestProperties.TOOLTIP__N, "four"),
+				n(ZestProperties.LABEL__NE, "5", ZestProperties.TOOLTIP__N, "five"),
+				n(ZestProperties.LABEL__NE, "6", ZestProperties.TOOLTIP__N, "six"),
+				n(ZestProperties.LABEL__NE, "7", ZestProperties.TOOLTIP__N, "seven"),
+				n(ZestProperties.LABEL__NE, "8", ZestProperties.TOOLTIP__N, "eight"),
+				n(ZestProperties.LABEL__NE, "9", ZestProperties.TOOLTIP__N, "nine")));
 
 		// set nested graphs
 		nodes.get(0).setNestedGraph(buildAC("a"));
@@ -105,7 +105,7 @@ public class ZestGraphExample extends AbstractZestExample {
 
 		// directed connections
 		HashMap<String, Object> attrs = new HashMap<>();
-		attrs.put(ZestProperties.GRAPH_LAYOUT_ALGORITHM, new SpringLayoutAlgorithm());
+		attrs.put(ZestProperties.LAYOUT_ALGORITHM__G, new SpringLayoutAlgorithm());
 		return new Graph(attrs, nodes, edges);
 
 	}

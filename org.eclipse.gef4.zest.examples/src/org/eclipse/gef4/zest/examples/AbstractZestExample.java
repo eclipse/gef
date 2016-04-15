@@ -37,10 +37,10 @@ import javafx.stage.Stage;
 public abstract class AbstractZestExample extends Application {
 
 	private static int id = 0;
-	protected static final String ID = ZestProperties.ELEMENT_CSS_ID;
-	protected static final String LABEL = ZestProperties.ELEMENT_LABEL;
-	protected static final String CSS_CLASS = ZestProperties.ELEMENT_CSS_CLASS;
-	protected static final String LAYOUT_IRRELEVANT = ZestProperties.ELEMENT_LAYOUT_IRRELEVANT;
+	protected static final String ID = ZestProperties.CSS_ID__NE;
+	protected static final String LABEL = ZestProperties.LABEL__NE;
+	protected static final String CSS_CLASS = ZestProperties.CSS_CLASS__NE;
+	protected static final String LAYOUT_IRRELEVANT = ZestProperties.LAYOUT_IRRELEVANT__NE;
 
 	protected static String genId() {
 		return Integer.toString(id++);

@@ -229,7 +229,7 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		GeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// css class
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_CLASS)) {
+		if (attrs.containsKey(ZestProperties.CSS_CLASS__NE)) {
 			String cssClass = ZestProperties.getCssClass(edge);
 			if (!visual.getStyleClass().contains(cssClass)) {
 				visual.getStyleClass().add(cssClass);
@@ -237,14 +237,14 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 		}
 
 		// css id
-		if (attrs.containsKey(ZestProperties.ELEMENT_CSS_ID)) {
+		if (attrs.containsKey(ZestProperties.CSS_ID__NE)) {
 			String cssId = ZestProperties.getCssId(edge);
 			visual.setId(cssId);
 		}
 
 		// css style
 		String connCssStyle = ZestProperties.getCurveCssStyle(edge);
-		if (attrs.containsKey(ZestProperties.EDGE_CURVE_CSS_STYLE)) {
+		if (attrs.containsKey(ZestProperties.CURVE_CSS_STYLE__E)) {
 			curveNode.setStyle(connCssStyle);
 		}
 

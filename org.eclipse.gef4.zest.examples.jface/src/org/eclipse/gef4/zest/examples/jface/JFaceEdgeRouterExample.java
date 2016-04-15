@@ -140,7 +140,7 @@ public class JFaceEdgeRouterExample {
 		public Map<String, Object> getEdgeAttributes(Object sourceNode,
 				Object targetNode) {
 			return Collections.<String, Object> singletonMap(
-					ZestProperties.EDGE_ROUTER, getManhattenRouter());
+					ZestProperties.ROUTER__E, getManhattenRouter());
 		}
 
 		@Override
