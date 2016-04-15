@@ -37,10 +37,7 @@ import org.eclipse.gef4.zest.fx.ZestProperties;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -52,7 +49,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -107,7 +103,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 	/**
 	 * The default padding between the node's border and its content.
 	 */
-	protected static final double DEFAULT_PADDING = 5;
+	protected static final double DEFAULT_SHAPE_PADDING = 5;
+	private static final String DEFAULT_SHAPE_ROLE = "defaultShape";
 
 	/**
 	 * The zoom level that needs to be reached for the
@@ -154,18 +151,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING = DEFAULT_CHILDREN_PANE_HEIGHT
 			* DEFAULT_NESTED_CHILDREN_ZOOM_FACTOR;
 
-	/**
-	 * The default width for the outer most layout container of this node in the
-	 * case of no nested content.
-	 */
-	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF = 0;
-
-	/**
-	 * The default height for the outer most layout container of this node in
-	 * the case of no nested content.
-	 */
-	public static final double DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF = 0;
-
 	// CSS classes for styling nodes
 	/**
 	 * The CSS class that is applied to the {@link #getVisual() visual} of this
@@ -203,7 +188,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	private Text labelText;
 	private ImageView iconImageView;
 	private Tooltip tooltipNode;
-	private VBox outerLayoutContainer;
+	private VBox vbox;
 	private Node shape;
 
 	private Node nestedGraphIcon;
@@ -222,6 +207,10 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 */
 	private Node createDefaultShape() {
 		GeometryNode<?> shape = new GeometryNode<>(new org.eclipse.gef4.geometry.planar.Rectangle());
+		shape.setUserData(DEFAULT_SHAPE_ROLE); // TODO: we need a proper
+												// mechanism to
+		// handle
+		// padding
 		shape.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
 				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
 		shape.setStroke(new Color(0, 0, 0, 1));
@@ -243,22 +232,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 		return nestedChildrenPaneScaled;
 	}
 
-	/**
-	 * Creates the {@link StackPane} that is used to either display nested
-	 * content, or an icon indicating that nested content exists for this
-	 * {@link NodePart}. The given {@link Pane} is inserted into the children
-	 * list of the created {@link StackPane}.
-	 *
-	 * @param nestedContentPane
-	 *            The nested content {@link Pane}.
-	 * @return The created {@link StackPane}.
-	 */
-	private StackPane createNestedContentStackPane(Pane nestedContentPane) {
-		StackPane stackPane = new StackPane();
-		stackPane.getChildren().add(nestedContentPane);
-		return stackPane;
-	}
-
 	@Override
 	protected Group createVisual() {
 		// container set-up
@@ -270,7 +243,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 			@Override
 			public void resize(double w, double h) {
-				outerLayoutContainer.setPrefSize(w, h);
+				vbox.setPrefSize(w, h);
+				shape.resize(w == 0 ? 1 : w, h == 0 ? 1 : h);
 			}
 		};
 
@@ -294,22 +268,27 @@ public class NodePart extends AbstractFXContentPart<Group>
 		hbox.getChildren().addAll(iconImageView, labelText);
 		hbox.setAlignment(Pos.CENTER);
 
-		// put nested content stack pane below image and text
-		outerLayoutContainer = new VBox();
-		outerLayoutContainer.setMouseTransparent(true);
-		outerLayoutContainer.getChildren().add(hbox);
+		nestedContentPane = createNestedContentPane();
+		final AnchorPane pane = new AnchorPane();
+		pane.setStyle("-fx-background-color: white;");
+		pane.getChildren().add(nestedContentPane);
+		AnchorPane.setLeftAnchor(nestedContentPane, -0.5d);
+		AnchorPane.setTopAnchor(nestedContentPane, -0.5d);
+		AnchorPane.setRightAnchor(nestedContentPane, 0.5d);
+		AnchorPane.setBottomAnchor(nestedContentPane, 0.5d);
+		pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		nestedContentStackPane = new StackPane();
+		nestedContentStackPane.getChildren().add(pane);
+		nestedContentStackPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
 
-		outerLayoutContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-			@Override
-			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
-				// prevent resize to 0, 0, because the shape might get corrupted
-				shape.resize(outerLayoutContainer.getWidth() == 0 ? 1 : outerLayoutContainer.getWidth(),
-						outerLayoutContainer.getHeight() == 0 ? 1 : outerLayoutContainer.getHeight());
-			}
-		});
+		// put nested content stack pane below image and text
+		vbox = new VBox();
+		vbox.setMouseTransparent(true);
+		vbox.getChildren().addAll(hbox);
 
 		// place the box below the other visuals
-		group.getChildren().addAll(shape, outerLayoutContainer);
+		group.getChildren().addAll(shape, vbox);
 		return group;
 	}
 
@@ -367,23 +346,86 @@ public class NodePart extends AbstractFXContentPart<Group>
 		}
 		visual.setId(id);
 
-		refreshShape(ZestProperties.getShape(node));
+		refreshShape();
+
+		if (DEFAULT_SHAPE_ROLE.equals(getShape().getUserData()) || isNesting()) {
+			vbox.setPadding(new Insets(DEFAULT_SHAPE_PADDING));
+		} else {
+			vbox.setPadding(Insets.EMPTY);
+		}
 
 		// set CSS style
 		if (attrs.containsKey(ZestProperties.NODE_SHAPE_CSS_STYLE)) {
-			refreshShapeCssStyle(ZestProperties.getShapeCssStyle(node));
+			if (getShape() != null) {
+				getShape().setStyle(ZestProperties.getShapeCssStyle(node));
+			}
+
 		}
 		if (attrs.containsKey(ZestProperties.ELEMENT_LABEL_CSS_STYLE)) {
-			refreshLabelCssStyle(ZestProperties.getLabelCssStyle(node));
+			if (getLabelText() != null) {
+				getLabelText().setStyle(ZestProperties.getLabelCssStyle(node));
+			}
 		}
 
-		refreshNesting(isNesting());
+		if (isNesting()) {
+			if (!vbox.getChildren().contains(nestedContentStackPane)) {
+				vbox.getChildren().add(nestedContentStackPane);
+				if (vbox.getPrefWidth() == 0 && vbox.getPrefHeight() == 0) {
+					vbox.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+					vbox.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
+							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+				}
+			}
+			// show a nested graph icon dependent on the zoom level
+			if (!getChildrenUnmodifiable().isEmpty()) {
+				hideNestedGraphIcon();
+			} else {
+				// show an icon as a replacement when the zoom threshold is
+				// not reached
+				showNestedGraphIcon();
+			}
+		} else {
+			if (vbox.getChildren().contains(nestedContentStackPane)) {
+				vbox.getChildren().remove(nestedContentStackPane);
+				vbox.setPrefSize(0, 0);
+				vbox.resize(0, 0);
+			}
+		}
 
-		refreshLabel(ZestProperties.getLabel(node));
-		refreshIcon(ZestProperties.getIcon(node));
-		refreshTooltip(ZestProperties.getTooltip(node));
-		refreshPosition(ZestProperties.getPosition(node));
-		refreshSize(ZestProperties.getSize(node));
+		refreshLabel();
+		refreshIcon();
+		refreshTooltip();
+
+		Point position = ZestProperties.getPosition(node);
+		if (position != null) {
+			// translate using a transform operation
+			FXTransformOperation refreshPositionOp = new FXTransformOperation(
+					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
+			refreshPositionOp
+					.setNewTransform(Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
+			try {
+				refreshPositionOp.execute(null, null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Dimension size = ZestProperties.getSize(node);
+		if (size != null) {
+			FXResizeOperation resizeOperation = new FXResizeOperation(getVisual());
+			if (size.getWidth() != -1) {
+				resizeOperation.setDw(size.getWidth() - getVisual().getLayoutBounds().getWidth());
+			}
+			if (size.getHeight() != -1) {
+				resizeOperation.setDh(size.getHeight() - getVisual().getLayoutBounds().getHeight());
+			}
+			try {
+				resizeOperation.execute(null, null);
+			} catch (ExecutionException e) {
+				throw new IllegalStateException(e);
+			}
+		}
 	}
 
 	@Override
@@ -429,28 +471,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	/**
-	 * Returns the outer most layout container that is used to layout the
-	 * content of this node (including nested content).
-	 *
-	 * @return The outer most layout container that is used to layout the
-	 *         content of this node (including nested content).
-	 */
-	private Region getOuterLayoutContainer() {
-		return outerLayoutContainer;
-	}
-
-	/**
-	 * Returns the padding that is maintained between the node's border and its
-	 * content.
-	 *
-	 * @return The padding that is maintained between the node's border and its
-	 *         content.
-	 */
-	protected double getPadding() {
-		return DEFAULT_PADDING;
-	}
-
-	/**
 	 * Returns the {@link Shape} that displays the node's border and background.
 	 *
 	 * @return The {@link Shape} that displays the node's border and background.
@@ -478,18 +498,16 @@ public class NodePart extends AbstractFXContentPart<Group>
 	 * @return <code>true</code> if this {@link NodePart} contains a nested
 	 *         {@link Graph}, otherwise <code>false</code>.
 	 */
-	protected boolean isNesting() {
+	private boolean isNesting() {
 		return getContent().getNestedGraph() != null;
 	}
 
 	/**
 	 * If the given <i>icon</i> is an {@link Image}, that {@link Image} will be
 	 * used as the icon of this {@link NodePart}.
-	 *
-	 * @param icon
-	 *            The new icon for this {@link NodePart}.
 	 */
-	protected void refreshIcon(Image icon) {
+	protected void refreshIcon() {
+		Image icon = ZestProperties.getIcon(getContent());
 		if (getIconImageView() != null && getIconImageView().getImage() != icon && icon instanceof Image) {
 			getIconImageView().setImage(icon);
 		}
@@ -497,11 +515,9 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 	/**
 	 * Changes the label of this {@link NodePart} to the given value.
-	 *
-	 * @param label
-	 *            The new label for this {@link NodePart}.
 	 */
-	protected void refreshLabel(String label) {
+	protected void refreshLabel() {
+		String label = ZestProperties.getLabel(getContent());
 		if (label == null || label.isEmpty()) {
 			label = NODE_LABEL_EMPTY;
 		}
@@ -510,101 +526,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 		}
 	}
 
-	/**
-	 * Adjusts the node's label CSS style to the given value.
-	 *
-	 * @param labelCssStyle
-	 *            The new label CSS style for this node.
-	 */
-	protected void refreshLabelCssStyle(String labelCssStyle) {
-		if (getLabelText() != null) {
-			getLabelText().setStyle(labelCssStyle);
-		}
-	}
-
-	/**
-	 * When this node has a nested graph, space is reserved for it, so that the
-	 * transition from an icon to the real graph will not change the node's
-	 * size. Adjusts the space that is reserved depending on the given flag.
-	 *
-	 * @param isNesting
-	 *            <code>true</code> if this node has a nested graph, otherwise
-	 *            <code>false</code>.
-	 */
-	protected void refreshNesting(boolean isNesting) {
-		VBox outerLayoutContainer = (VBox) getOuterLayoutContainer();
-		if (outerLayoutContainer != null) {
-			if (isNesting) {
-				// create nested content stack pane if needed
-				if (nestedContentStackPane == null) {
-					nestedContentPane = createNestedContentPane();
-					final AnchorPane pane = new AnchorPane();
-					pane.setStyle("-fx-background-color: white;");
-					pane.getChildren().add(nestedContentPane);
-					AnchorPane.setLeftAnchor(nestedContentPane, -0.5d);
-					AnchorPane.setTopAnchor(nestedContentPane, -0.5d);
-					AnchorPane.setRightAnchor(nestedContentPane, 0.5d);
-					AnchorPane.setBottomAnchor(nestedContentPane, 0.5d);
-					pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-					nestedContentStackPane = createNestedContentStackPane(pane);
-					nestedContentStackPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-					VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
-				}
-				// add nested content stack pane
-				if (!outerLayoutContainer.getChildren().contains(nestedContentStackPane)) {
-					outerLayoutContainer.getChildren().add(nestedContentStackPane);
-				}
-				if (outerLayoutContainer.getPrefWidth() == 0 && outerLayoutContainer.getPrefHeight() == 0) {
-					outerLayoutContainer.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
-							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
-					outerLayoutContainer.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
-							DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
-				}
-				outerLayoutContainer.setPadding(new Insets(getPadding()));
-				// show a nested graph icon dependent on the zoom level
-				if (!getChildrenUnmodifiable().isEmpty()) {
-					hideNestedGraphIcon();
-				} else {
-					// show an icon as a replacement when the zoom threshold is
-					// not reached
-					showNestedGraphIcon();
-				}
-			} else {
-				// remove nested content stack pane
-				if (outerLayoutContainer.getChildren().contains(nestedContentStackPane)) {
-					outerLayoutContainer.getChildren().remove(nestedContentStackPane);
-				}
-				outerLayoutContainer.setPadding(Insets.EMPTY);
-				outerLayoutContainer.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
-						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
-				outerLayoutContainer.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_LEAF,
-						DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_LEAF);
-			}
-		}
-	}
-
-	/**
-	 * Adjusts the node's position to fit the given {@link Point}.
-	 *
-	 * @param position
-	 *            This node's position.
-	 */
-	protected void refreshPosition(Point position) {
-		if (position != null) {
-			// translate using a transform operation
-			FXTransformOperation refreshPositionOp = new FXTransformOperation(
-					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
-			refreshPositionOp
-					.setNewTransform(Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
-			try {
-				refreshPositionOp.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private void refreshShape(Node shape) {
+	private void refreshShape() {
+		Node shape = ZestProperties.getShape(getContent());
 		if (this.shape != shape && shape != null) {
 			getVisual().getChildren().remove(shape);
 			this.shape = shape;
@@ -618,48 +541,11 @@ public class NodePart extends AbstractFXContentPart<Group>
 	}
 
 	/**
-	 * Adjusts the node rectangle's CSS style to the given value.
-	 *
-	 * @param nodeRectCssStyle
-	 *            The new node rectangle CSS style.
-	 */
-	protected void refreshShapeCssStyle(String nodeRectCssStyle) {
-		if (getShape() != null) {
-			getShape().setStyle(nodeRectCssStyle);
-		}
-	}
-
-	/**
-	 * Adjusts the position and size of this part's visual to the given bounds.
-	 *
-	 * @param size
-	 *            The {@link Rectangle} describing the bounds for this part's
-	 *            visual.
-	 */
-	protected void refreshSize(Dimension size) {
-		if (size != null) {
-			FXResizeOperation resizeOperation = new FXResizeOperation(getVisual());
-			if (size.getWidth() != -1) {
-				resizeOperation.setDw(size.getWidth() - getVisual().getLayoutBounds().getWidth());
-			}
-			if (size.getHeight() != -1) {
-				resizeOperation.setDh(size.getHeight() - getVisual().getLayoutBounds().getHeight());
-			}
-			try {
-				resizeOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-	}
-
-	/**
 	 * Changes the tooltip of this {@link NodePart} to the given value.
 	 *
-	 * @param tooltip
-	 *            The new tooltip for this {@link NodePart}.
 	 */
-	protected void refreshTooltip(String tooltip) {
+	protected void refreshTooltip() {
+		String tooltip = ZestProperties.getTooltip(getContent());
 		if (tooltipNode == null) {
 			tooltipNode = new Tooltip(tooltip);
 			Tooltip.install(getVisual(), tooltipNode);
