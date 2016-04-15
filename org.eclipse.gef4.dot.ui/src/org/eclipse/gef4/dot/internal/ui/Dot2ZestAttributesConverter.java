@@ -64,10 +64,10 @@ public class Dot2ZestAttributesConverter implements IAttributeCopier {
 		 * Indicates whether layout should be emulated or not. If set to
 		 * <code>true</code>, an {@link ILayoutAlgorithm} is to be inferred for
 		 * the given dot, and set as value of the
-		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} attribute. If set to
+		 * {@link ZestProperties#LAYOUT_ALGORITHM__G} attribute. If set to
 		 * <code>false</code> (i.e. native layout is performed via Graphviz and
 		 * position information is already provided in the dot input), the
-		 * {@link ZestProperties#GRAPH_LAYOUT_ALGORITHM} should remain unset.
+		 * {@link ZestProperties#LAYOUT_ALGORITHM__G} should remain unset.
 		 */
 		public boolean emulateLayout = true;
 
