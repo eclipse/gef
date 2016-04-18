@@ -40,7 +40,8 @@ import javafx.scene.transform.Transform;
  * {@link IAnchor}s. It provides the facility to bind an anchor to an anchorage
  * {@link Node} ({@link #anchorageProperty()}), to attach and detach
  * {@link Node}s via {@link AnchorKey}s, and to provide positions (
- * {@link #positionsUnmodifiableProperty()}) for the attached {@link AnchorKey}s.
+ * {@link #positionsUnmodifiableProperty()}) for the attached {@link AnchorKey}
+ * s.
  * <p>
  * It also registers the necessary listeners at the anchorage {@link Node} and
  * the attached {@link Node}s as well as relevant ancestor {@link Node}s, to
@@ -65,7 +66,7 @@ public abstract class AbstractAnchor implements IAnchor {
 			.observableHashMap();
 	private ObservableMap<AnchorKey, Point> positionsUnmodifiable = FXCollections
 			.unmodifiableObservableMap(positions);
-	private ReadOnlyMapWrapper<AnchorKey, Point> positionsProperty = new ReadOnlyMapWrapperEx<>(
+	private ReadOnlyMapWrapper<AnchorKey, Point> positionsUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(
 			positionsUnmodifiable);
 
 	private Map<Node, Set<AnchorKey>> keys = new HashMap<>();
@@ -286,10 +287,10 @@ public abstract class AbstractAnchor implements IAnchor {
 					"The AnchorKey is not attached to this anchor.");
 		}
 
-		if (!positionsProperty.containsKey(key)) {
+		if (!positions.containsKey(key)) {
 			return null;
 		}
-		return positionsProperty.get(key);
+		return positions.get(key);
 	}
 
 	@Override
@@ -300,7 +301,7 @@ public abstract class AbstractAnchor implements IAnchor {
 
 	@Override
 	public ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty() {
-		return positionsProperty.getReadOnlyProperty();
+		return positionsUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -383,7 +384,8 @@ public abstract class AbstractAnchor implements IAnchor {
 	 * <li>Queries its current position.</li>
 	 * <li>Computes its new position.</li>
 	 * <li>Checks if the position changed, and fires an appropriate event by
-	 * putting the new position into the {@link #positionsUnmodifiableProperty()}</li>
+	 * putting the new position into the
+	 * {@link #positionsUnmodifiableProperty()}</li>
 	 * </ol>
 	 *
 	 * @param key

@@ -84,14 +84,14 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 			.observableArrayList();
 	private ObservableList<IVisualPart<VR, ? extends VR>> childrenUnmodifiable = FXCollections
 			.unmodifiableObservableList(children);
-	private ReadOnlyListWrapperEx<IVisualPart<VR, ? extends VR>> childrenProperty = new ReadOnlyListWrapperEx<>(
+	private ReadOnlyListWrapperEx<IVisualPart<VR, ? extends VR>> childrenUnmodifiableProperty = new ReadOnlyListWrapperEx<>(
 			this, CHILDREN_PROPERTY, childrenUnmodifiable);
 
 	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = CollectionUtils
 			.observableHashMultimap();
 	private ObservableSetMultimap<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiable = CollectionUtils
 			.unmodifiableObservableSetMultimap(anchorages);
-	private ReadOnlySetMultimapWrapper<IVisualPart<VR, ? extends VR>, String> anchoragesProperty = new ReadOnlySetMultimapWrapper<>(
+	private ReadOnlySetMultimapWrapper<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
 			anchoragesUnmodifiable);
 
 	private ObservableMultiset<IVisualPart<VR, ? extends VR>> anchoreds = CollectionUtils
@@ -226,7 +226,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public ReadOnlySetMultimapProperty<IVisualPart<VR, ? extends VR>, String> anchoragesUnmodifiableProperty() {
-		return anchoragesProperty.getReadOnlyProperty();
+		return anchoragesUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -302,7 +302,7 @@ public abstract class AbstractVisualPart<VR, V extends VR>
 
 	@Override
 	public ReadOnlyListProperty<IVisualPart<VR, ? extends VR>> childrenProperty() {
-		return childrenProperty.getReadOnlyProperty();
+		return childrenUnmodifiableProperty.getReadOnlyProperty();
 	}
 
 	/**
