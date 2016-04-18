@@ -75,8 +75,8 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 				}
 			}
 		};
-		startAnchor.positionProperty().addListener(changeListener);
-		endAnchor.positionProperty().addListener(changeListener);
+		startAnchor.positionsUnmodifiableProperty().addListener(changeListener);
+		endAnchor.positionsUnmodifiableProperty().addListener(changeListener);
 
 		Point r1Center = new Point(
 				r1.getLayoutBounds().getMinX() + r1.getLayoutX()

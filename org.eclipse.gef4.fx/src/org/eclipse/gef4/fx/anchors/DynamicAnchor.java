@@ -579,7 +579,7 @@ public class DynamicAnchor extends AbstractAnchor {
 
 	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ChopBoxStrategy();
 
-	private ReadOnlyMapWrapper<AnchorKey, Object> hintProperty = new ReadOnlyMapWrapperEx<>(
+	private ReadOnlyMapWrapper<AnchorKey, Object> hintsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, Object> observableHashMap());
 
 	private ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty;
@@ -676,7 +676,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	protected Point computePosition(AnchorKey key) {
 		return computePosition(key.getAnchored(),
 				getAnchoredReferencePoint(key), getComputationStrategy(key),
-				hintProperty().get(key));
+				hintsProperty().get(key));
 	}
 
 	/**
@@ -796,8 +796,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @return A {@link ReadOnlyMapProperty} that provides an {@link Object} per
 	 *         {@link AnchorKey}.
 	 */
-	public ReadOnlyMapProperty<AnchorKey, Object> hintProperty() {
-		return hintProperty.getReadOnlyProperty();
+	public ReadOnlyMapProperty<AnchorKey, Object> hintsProperty() {
+		return hintsProperty.getReadOnlyProperty();
 	}
 
 	/**

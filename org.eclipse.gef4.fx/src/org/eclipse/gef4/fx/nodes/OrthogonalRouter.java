@@ -230,7 +230,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 				double x2 = Math.min(bounds.getX() + bounds.getWidth(),
 						refBounds.getX() + refBounds.getWidth());
 				if (x1 <= x2) {
-					// vertical overlap => return horizontally stable position
+					// horizontal overlap => return vertically stable position
 					return new Point(x1 + (x2 - x1) / 2,
 							refBounds.getY() > bounds.getY()
 									+ bounds.getHeight() ? refBounds.getY()
@@ -242,7 +242,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 				double y2 = Math.min(bounds.getY() + bounds.getHeight(),
 						refBounds.getY() + refBounds.getHeight());
 				if (y1 <= y2) {
-					// horizontal overlap => return vertically stable position
+					// vertical overlap => return horizontally stable position
 					return new Point(
 							refBounds.getX() > bounds.getX() + bounds.getWidth()
 									? refBounds.getX()
@@ -250,8 +250,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 							y1 + (y2 - y1) / 2);
 				}
 				// TODO: revise handling of this case -> we could optimize this
-				// by
-				// providing a desired direction; fallback to nearest bounds
+				// by providing a desired direction; fallback to nearest bounds
 				// projection
 				return DynamicAnchor.OrthogonalProjectionStrategy
 						.getNearestBoundsProjection(referenceGeometry,
@@ -302,7 +301,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 					// very small y difference => go in horizontally
 					hint = Orientation.HORIZONTAL;
 				}
-				((DynamicAnchor) anchor).hintProperty()
+				((DynamicAnchor) anchor).hintsProperty()
 						.put(connection.getAnchorKey(index), hint);
 				// find computation strategy
 				AnchorKey anchorKey = connection.getAnchorKey(index);

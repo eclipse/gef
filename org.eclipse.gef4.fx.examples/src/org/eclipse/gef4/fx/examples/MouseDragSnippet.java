@@ -150,7 +150,7 @@ public class MouseDragSnippet extends AbstractFxExample {
 			pressed.setEffect(null);
 			IAnchor ifxAnchor = anchors.get(pressed);
 			if (ifxAnchor != null) {
-				Set<AnchorKey> keys = ifxAnchor.positionProperty().keySet();
+				Set<AnchorKey> keys = ifxAnchor.positionsUnmodifiableProperty().keySet();
 				for (AnchorKey key : keys) {
 					key.getAnchored().setEffect(new BoxBlur());
 				}
@@ -182,7 +182,7 @@ public class MouseDragSnippet extends AbstractFxExample {
 		pressed.setEffect(new Bloom(0));
 		IAnchor ifxAnchor = anchors.get(pressed);
 		if (ifxAnchor != null) {
-			Set<AnchorKey> keys = ifxAnchor.positionProperty().keySet();
+			Set<AnchorKey> keys = ifxAnchor.positionsUnmodifiableProperty().keySet();
 			for (AnchorKey key : keys) {
 				key.getAnchored().setEffect(null);
 			}

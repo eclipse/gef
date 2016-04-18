@@ -29,6 +29,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -39,7 +40,7 @@ import javafx.scene.transform.Transform;
  * {@link IAnchor}s. It provides the facility to bind an anchor to an anchorage
  * {@link Node} ({@link #anchorageProperty()}), to attach and detach
  * {@link Node}s via {@link AnchorKey}s, and to provide positions (
- * {@link #positionProperty()}) for the attached {@link AnchorKey}s.
+ * {@link #positionsUnmodifiableProperty()}) for the attached {@link AnchorKey}s.
  * <p>
  * It also registers the necessary listeners at the anchorage {@link Node} and
  * the attached {@link Node}s as well as relevant ancestor {@link Node}s, to
@@ -59,8 +60,13 @@ import javafx.scene.transform.Transform;
 public abstract class AbstractAnchor implements IAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<>();
-	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
+
+	private ObservableMap<AnchorKey, Point> positions = FXCollections
+			.observableHashMap();
+	private ObservableMap<AnchorKey, Point> positionsUnmodifiable = FXCollections
+			.unmodifiableObservableMap(positions);
+	private ReadOnlyMapWrapper<AnchorKey, Point> positionsProperty = new ReadOnlyMapWrapperEx<>(
+			positionsUnmodifiable);
 
 	private Map<Node, Set<AnchorKey>> keys = new HashMap<>();
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
@@ -238,7 +244,7 @@ public abstract class AbstractAnchor implements IAnchor {
 
 		// remove from positions map so that a change event is fired when it is
 		// attached again
-		positionProperty.remove(key);
+		positions.remove(key);
 
 		// remove from keys to indicate it is detached
 		keys.get(anchored).remove(key);
@@ -280,10 +286,10 @@ public abstract class AbstractAnchor implements IAnchor {
 					"The AnchorKey is not attached to this anchor.");
 		}
 
-		if (!positionProperty.containsKey(key)) {
+		if (!positionsProperty.containsKey(key)) {
 			return null;
 		}
-		return positionProperty.get(key);
+		return positionsProperty.get(key);
 	}
 
 	@Override
@@ -293,8 +299,8 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	@Override
-	public ReadOnlyMapProperty<AnchorKey, Point> positionProperty() {
-		return positionProperty.getReadOnlyProperty();
+	public ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty() {
+		return positionsProperty.getReadOnlyProperty();
 	}
 
 	/**
@@ -377,7 +383,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	 * <li>Queries its current position.</li>
 	 * <li>Computes its new position.</li>
 	 * <li>Checks if the position changed, and fires an appropriate event by
-	 * putting the new position into the {@link #positionProperty()}</li>
+	 * putting the new position into the {@link #positionsUnmodifiableProperty()}</li>
 	 * </ol>
 	 *
 	 * @param key
@@ -393,7 +399,7 @@ public abstract class AbstractAnchor implements IAnchor {
 					&& !Double.isInfinite(newPosition.x)
 					&& !Double.isNaN(newPosition.y)
 					&& !Double.isInfinite(newPosition.y)) {
-				positionProperty().put(key, newPosition);
+				positions.put(key, newPosition);
 			}
 		}
 	}

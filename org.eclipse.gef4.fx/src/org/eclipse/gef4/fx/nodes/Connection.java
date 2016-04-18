@@ -225,7 +225,7 @@ public class Connection extends Group {
 			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
 					anchorKey);
 			anchorPCL.put(anchorKey, pcl);
-			anchor.positionProperty().addListener(pcl);
+			anchor.positionsUnmodifiableProperty().addListener(pcl);
 		}
 		refresh();
 	}
@@ -1037,7 +1037,7 @@ public class Connection extends Group {
 	 */
 	protected void removeAnchor(AnchorKey anchorKey, IAnchor anchor) {
 		if (anchorPCL.containsKey(anchorKey)) {
-			anchor.positionProperty()
+			anchor.positionsUnmodifiableProperty()
 					.removeListener(anchorPCL.remove(anchorKey));
 		}
 		/*

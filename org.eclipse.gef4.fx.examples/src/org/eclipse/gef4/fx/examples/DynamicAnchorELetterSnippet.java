@@ -363,7 +363,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		// create dynamic anchor and reference point property (so we can access
 		// the reference points easily)
 		dynamicAnchor = new DynamicAnchor(eLetterShape);
-		dynamicAnchor.positionProperty().addListener(anchorPositionListener);
+		dynamicAnchor.positionsUnmodifiableProperty().addListener(anchorPositionListener);
 
 		// compute bounds center
 		Point boundsCenterInLocal = FX2Geometry

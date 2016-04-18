@@ -48,4 +48,7 @@ public interface IConnectionRouter {
 	 */
 	public void route(Connection connection);
 
+	// TODO: set reference points for a specific index -> has to be cleared by
+	// bend policy
+
 }

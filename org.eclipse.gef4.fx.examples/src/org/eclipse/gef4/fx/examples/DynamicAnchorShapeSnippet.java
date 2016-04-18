@@ -163,7 +163,7 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 	protected void showShape(Group selectedShapeGroup, String item) {
 		// unregister anchor
 		if (anchor != null) {
-			anchor.positionProperty()
+			anchor.positionsUnmodifiableProperty()
 					.removeListener(anchorPositionChangeListener);
 			anchor.detach(anchorKey);
 			anchor = null;
@@ -221,7 +221,7 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 		anchor.anchoredReferencePointsProperty().put(anchorKey,
 				new Point(refInLocal.getX(), refInLocal.getY()));
 
-		anchor.positionProperty().addListener(anchorPositionChangeListener);
+		anchor.positionsUnmodifiableProperty().addListener(anchorPositionChangeListener);
 		anchor.attach(anchorKey);
 	}
 

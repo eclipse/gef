@@ -25,7 +25,7 @@ import javafx.scene.Node;
  * The position for each attached {@link Node} will be recomputed in case the
  * attached {@link Node} or any of its ancestors are changed in a way that has
  * an effect on the position being provided for the attached {@link Node}. The
- * {@link #positionProperty()} will be updated accordingly, it may be monitored
+ * {@link #positionsUnmodifiableProperty()} will be updated accordingly, it may be monitored
  * for changes.
  * <p>
  * An {@link IAnchor} may be bound to an anchorage {@link Node}. If this is the
@@ -107,6 +107,5 @@ public interface IAnchor {
 	 * @return A read-only (map) property storing positions for all attached
 	 *         {@link AnchorKey}s.
 	 */
-	ReadOnlyMapProperty<AnchorKey, Point> positionProperty();
-
+	ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty();
 }

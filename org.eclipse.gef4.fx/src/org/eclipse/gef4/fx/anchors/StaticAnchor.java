@@ -54,12 +54,12 @@ public class StaticAnchor extends AbstractAnchor {
 	 * Creates an {@link StaticAnchor} that is bound to the provided anchorage.
 	 * It will used the passed in reference position (in the local coordinate
 	 * system of the anchorage {@link Node}) to compute positions (see
-	 * {@link #positionProperty()}) for all attached {@link AnchorKey}s (in the
+	 * {@link #positionsUnmodifiableProperty()}) for all attached {@link AnchorKey}s (in the
 	 * local coordinate system of the attached {@link AnchorKey}'s {@link Node}
 	 * ).
 	 * <p>
 	 * In case the anchorage {@link Node} or any of its ancestors are changed in
-	 * a way that will affect the position, the {@link #positionProperty()} will
+	 * a way that will affect the position, the {@link #positionsUnmodifiableProperty()} will
 	 * be updated.
 	 *
 	 * @param anchorage
