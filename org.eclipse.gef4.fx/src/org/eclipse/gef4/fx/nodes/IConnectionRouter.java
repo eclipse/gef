@@ -23,7 +23,6 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
  *
  * @author mwienand
  * @author anyssen
- *
  */
 public interface IConnectionRouter {
 
@@ -48,7 +47,7 @@ public interface IConnectionRouter {
 	 */
 	public void route(Connection connection);
 
-	// TODO: set reference points for a specific index -> has to be cleared by
-	// bend policy
+	// TODO: provide means so that bend policy can provide reference
+	// points/hints for anchor indexes.
 
 }

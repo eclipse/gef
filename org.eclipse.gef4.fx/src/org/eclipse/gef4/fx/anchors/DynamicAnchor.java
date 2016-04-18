@@ -52,40 +52,8 @@ import javafx.scene.Node;
 public class DynamicAnchor extends AbstractAnchor {
 
 	/**
-	 * Abstract base class for {@link IComputationStrategy computation
-	 * strategies} that are based on the outline of the anchorage reference
-	 * geometry.
-	 */
-	public static abstract class AbstractComputationStrategy
-			implements IComputationStrategy {
-
-		/**
-		 * Determines the outline of the given {@link IGeometry}, represented as
-		 * a list of {@link ICurve}s.
-		 *
-		 * @param geometry
-		 *            The anchorage geometry.
-		 * @return A list of {@link ICurve}s representing the outline of the
-		 *         given {@link IGeometry}.
-		 */
-		// TODO: Move to GEF4 Geometry?
-		protected static List<ICurve> getOutlineSegments(IGeometry geometry) {
-			if (geometry instanceof IShape) {
-				return Collections
-						.singletonList(((IShape) geometry).getOutline());
-			} else if (geometry instanceof ICurve) {
-				return Collections.singletonList((ICurve) geometry);
-			} else if (geometry instanceof Path) {
-				return ((Path) geometry).getOutlines();
-			} else {
-				throw new IllegalStateException(
-						"The transformed geometry is neither an ICurve nor an IShape.");
-			}
-		}
-	}
-
-	/**
-	 *
+	 * A specific projection strategy that is based on a center-projection of
+	 * the given reference point.
 	 */
 	public static class ChopBoxStrategy extends ProjectionStrategy {
 		/**
@@ -107,7 +75,7 @@ public class DynamicAnchor extends AbstractAnchor {
 		 *            system of the anchorage.
 		 * @return A position within the given {@link IGeometry}.
 		 */
-		public Point computeAnchorageReferencePointInLocal(Node anchorage,
+		protected Point computeAnchorageReferencePointInLocal(Node anchorage,
 				IGeometry geometryInLocal,
 				Point anchoredReferencePointInAnchorageLocal) {
 			if (geometryInLocal instanceof IShape) {
@@ -256,6 +224,8 @@ public class DynamicAnchor extends AbstractAnchor {
 		 *            An implementation specific hint {@link Object}.
 		 * @return The anchor position.
 		 */
+		// TODO: comprise anchoredReferencePointInLocal and hint into a single
+		// HINT object; What about anchorageReferenceGeometry??
 		Point computePositionInScene(Node anchorage,
 				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
 				Point anchoredReferencePointInLocal, Object hint);
@@ -270,7 +240,43 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * same x- (vertical projection) or y-coordinate (horizontal projection).
 	 */
 	public static class OrthogonalProjectionStrategy
-			extends AbstractComputationStrategy {
+			extends ProjectionStrategy {
+
+		@Override
+		protected Point computeProjectionInScene(
+				List<ICurve> anchorageOutlinesInScene,
+				Point anchoredReferencePointInScene, Object hint) {
+			// extract hint
+			Orientation orientationHint = null;
+			if (hint instanceof Orientation) {
+				orientationHint = (Orientation) hint;
+			}
+
+			Point nearestOrthogonalProjectionInScene = null;
+			double nearestOrthogonalProjectionDistance = Double.MAX_VALUE;
+			for (ICurve segment : anchorageOutlinesInScene) {
+				// determine nearest orthogonal projection of each curve
+				Point projection = getOrthogonalProjection(segment,
+						anchoredReferencePointInScene, orientationHint);
+				if (projection != null) {
+					double distance = projection
+							.getDistance(anchoredReferencePointInScene);
+					if (nearestOrthogonalProjectionInScene == null
+							|| distance < nearestOrthogonalProjectionDistance) {
+						nearestOrthogonalProjectionInScene = projection;
+						nearestOrthogonalProjectionDistance = distance;
+					}
+				}
+			}
+
+			if (nearestOrthogonalProjectionInScene != null) {
+				return nearestOrthogonalProjectionInScene;
+			} else {
+				// Fall back to nearest projection
+				return super.computeProjectionInScene(anchorageOutlinesInScene,
+						anchoredReferencePointInScene, orientationHint);
+			}
+		}
 
 		/**
 		 * Returns a point on the {@link ICurve} for which holds that its
@@ -289,8 +295,7 @@ public class DynamicAnchor extends AbstractAnchor {
 		 * @return The point on the {@link ICurve} that is horizontally nearest
 		 *         to the given reference point.
 		 */
-		private static Point getHorizontalProjection(ICurve curve,
-				Point reference) {
+		private Point getHorizontalProjection(ICurve curve, Point reference) {
 			// Determine points on curve with same y-coordinate; by computing a
 			// line with the respective y-coordinate inside its bounds; then
 			// computing the nearest intersection on the curve
@@ -308,35 +313,7 @@ public class DynamicAnchor extends AbstractAnchor {
 			return projection;
 		}
 
-		/**
-		 * Returns the nearest projection onto the given geometry's rectangular
-		 * bounds. Will ensure that parameter values on the respective outline
-		 * fall into 0.2 .. 0.8.
-		 *
-		 * @param g
-		 *            The {@link IGeometry} whose bounds to use.
-		 * @param p
-		 *            The {@link Point} to project.
-		 * @return The nearest point on the outline segment that lies within the
-		 *         parameter range 0.2 .. 0.8.
-		 */
-		// TODO: Make private
-		public static Point getNearestBoundsProjection(IGeometry g, Point p) {
-			Line[] outlineSegments = g.getBounds().getOutlineSegments();
-			Point nearestProjection = null;
-			double nearestDistance = 0;
-			for (Line l : outlineSegments) {
-				Point projection = l.getProjection(p);
-				double distance = p.getDistance(projection);
-				if (nearestProjection == null || distance < nearestDistance) {
-					nearestDistance = distance;
-					nearestProjection = projection;
-				}
-			}
-			return nearestProjection;
-		}
-
-		private static Point getNearestOrthogonalProjection(ICurve curve,
+		private Point getNearestOrthogonalProjection(ICurve curve,
 				Point reference, Line line) {
 			if (curve.overlaps(line)) {
 				ICurve[] overlaps = curve.getOverlaps(line);
@@ -385,8 +362,8 @@ public class DynamicAnchor extends AbstractAnchor {
 		 * @return The point on the {@link ICurve} that is horizontally or
 		 *         vertically nearest to the given reference point.
 		 */
-		private static Point getOrthogonalProjection(ICurve curve,
-				Point reference, Orientation orientationHint) {
+		private Point getOrthogonalProjection(ICurve curve, Point reference,
+				Orientation orientationHint) {
 			Point nearestHorizonalProjection = getHorizontalProjection(curve,
 					reference);
 			if (nearestHorizonalProjection == null) {
@@ -435,8 +412,7 @@ public class DynamicAnchor extends AbstractAnchor {
 		 * @return The point on the {@link ICurve} that is vertically nearest to
 		 *         the given reference point.
 		 */
-		private static Point getVerticalProjection(ICurve curve,
-				Point reference) {
+		private Point getVerticalProjection(ICurve curve, Point reference) {
 			// Determine points on curve with same x-coordinate; by computing a
 			// line with the respective x-coordinate inside its bounds; then
 			// computing the nearest intersection on the curve
@@ -452,56 +428,6 @@ public class DynamicAnchor extends AbstractAnchor {
 				projection.x = reference.x;
 			}
 			return projection;
-		}
-
-		@Override
-		public Point computePositionInScene(Node anchorage,
-				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
-				Point anchoredReferencePointInLocal, Object hint) {
-			// extract hint
-			Orientation orientationHint = null;
-			if (hint instanceof Orientation) {
-				orientationHint = (Orientation) hint;
-			}
-
-			// anchored reference point
-			Point anchoredReferencePointInScene = NodeUtils
-					.localToScene(anchored, anchoredReferencePointInLocal);
-
-			// anchorage reference geometry
-			IGeometry anchorageReferenceGeometryInScene = NodeUtils
-					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
-
-			// compute horizontal or vertical projection on outline segments.
-			List<ICurve> anchorageReferenceGeometryOutlineSegmentsInScene = getOutlineSegments(
-					anchorageReferenceGeometryInScene);
-
-			Point nearestOrthogonalProjectionInScene = null;
-			double nearestOrthogonalProjectionDistance = Double.MAX_VALUE;
-			for (ICurve segment : anchorageReferenceGeometryOutlineSegmentsInScene) {
-				// determine nearest orthogonal projection of each curve
-				Point projection = getOrthogonalProjection(segment,
-						anchoredReferencePointInScene, orientationHint);
-				if (projection != null) {
-					double distance = projection
-							.getDistance(anchoredReferencePointInScene);
-					if (nearestOrthogonalProjectionInScene == null
-							|| distance < nearestOrthogonalProjectionDistance) {
-						nearestOrthogonalProjectionInScene = projection;
-						nearestOrthogonalProjectionDistance = distance;
-					}
-				}
-			}
-
-			if (nearestOrthogonalProjectionInScene != null) {
-				return nearestOrthogonalProjectionInScene;
-			} else {
-				// TODO: fall back to closes point (we could extend
-				// ProjectionStrategy and call super here)
-				return getNearestBoundsProjection(
-						anchorageReferenceGeometryInScene,
-						anchoredReferencePointInScene);
-			}
 		}
 
 	}
@@ -523,31 +449,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * <li>Return the nearest projection to the anchored reference point.</li>
 	 * </ol>
 	 */
-	public static class ProjectionStrategy extends AbstractComputationStrategy {
-		/**
-		 * Computes the anchorage reference position in scene coordinates, based
-		 * on the given anchorage outlines and the given anchored reference
-		 * point.
-		 *
-		 * @param anchorageOutlinesInScene
-		 *            A list of {@link ICurve}s that describe the outline of the
-		 *            anchorage.
-		 * @param anchoredReferencePointInScene
-		 *            The reference {@link Point} of the anchored for which the
-		 *            anchorage reference {@link Point} is to be determined.
-		 * @return The anchorage reference position.
-		 */
-		protected Point computeNearestProjectionInScene(
-				List<ICurve> anchorageOutlinesInScene,
-				Point anchoredReferencePointInScene) {
-			Point[] projections = new Point[anchorageOutlinesInScene.size()];
-			for (int i = 0; i < anchorageOutlinesInScene.size(); i++) {
-				ICurve c = anchorageOutlinesInScene.get(i);
-				projections[i] = c.getProjection(anchoredReferencePointInScene);
-			}
-			return Point.nearest(anchoredReferencePointInScene, projections);
-		}
-
+	public static class ProjectionStrategy implements IComputationStrategy {
 		@Override
 		public Point computePositionInScene(Node anchorage,
 				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
@@ -566,8 +468,58 @@ public class DynamicAnchor extends AbstractAnchor {
 
 			// compute nearest projection of the anchored reference point on the
 			// anchorage outlines
-			return computeNearestProjectionInScene(anchorageOutlinesInScene,
-					anchoredReferencePointInScene);
+			return computeProjectionInScene(anchorageOutlinesInScene,
+					anchoredReferencePointInScene, hint);
+		}
+
+		/**
+		 * Computes the anchorage reference position in scene coordinates, based
+		 * on the given anchorage outlines and the given anchored reference
+		 * point.
+		 *
+		 * @param anchorageOutlinesInScene
+		 *            A list of {@link ICurve}s that describe the outline of the
+		 *            anchorage.
+		 * @param anchoredReferencePointInScene
+		 *            The reference {@link Point} of the anchored for which the
+		 *            anchorage reference {@link Point} is to be determined.
+		 * @param hint
+		 *            An implementation specific hint {@link Object}.
+		 * @return The anchorage reference position.
+		 */
+		protected Point computeProjectionInScene(
+				List<ICurve> anchorageOutlinesInScene,
+				Point anchoredReferencePointInScene, Object hint) {
+			Point[] projections = new Point[anchorageOutlinesInScene.size()];
+			for (int i = 0; i < anchorageOutlinesInScene.size(); i++) {
+				ICurve c = anchorageOutlinesInScene.get(i);
+				projections[i] = c.getProjection(anchoredReferencePointInScene);
+			}
+			return Point.nearest(anchoredReferencePointInScene, projections);
+		}
+
+		/**
+		 * Determines the outline of the given {@link IGeometry}, represented as
+		 * a list of {@link ICurve}s.
+		 *
+		 * @param geometry
+		 *            The anchorage geometry.
+		 * @return A list of {@link ICurve}s representing the outline of the
+		 *         given {@link IGeometry}.
+		 */
+		// TODO: Move to utility within GEF4 Geometry?
+		protected List<ICurve> getOutlineSegments(IGeometry geometry) {
+			if (geometry instanceof IShape) {
+				return Collections
+						.singletonList(((IShape) geometry).getOutline());
+			} else if (geometry instanceof ICurve) {
+				return Collections.singletonList((ICurve) geometry);
+			} else if (geometry instanceof Path) {
+				return ((Path) geometry).getOutlines();
+			} else {
+				throw new IllegalStateException(
+						"The transformed geometry is neither an ICurve nor an IShape.");
+			}
 		}
 	}
 
@@ -662,7 +614,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @return A {@link ReadOnlyMapProperty} that stores the individual
 	 *         {@link IComputationStrategy} for each {@link AnchorKey}.
 	 */
-	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategyProperty() {
+	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty() {
 		return computationStrategyProperty.getReadOnlyProperty();
 	}
 
@@ -674,38 +626,11 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	@Override
 	protected Point computePosition(AnchorKey key) {
-		return computePosition(key.getAnchored(),
-				getAnchoredReferencePoint(key), getComputationStrategy(key),
-				hintsProperty().get(key));
-	}
-
-	/**
-	 * Computes the point of intersection between the outline of the anchorage
-	 * reference shape and the line through the reference points of anchorage
-	 * and anchored.
-	 *
-	 * @param anchored
-	 *            The to be anchored {@link Node} for which the anchor position
-	 *            is to be determined.
-	 * @param anchoredReferencePointInLocal
-	 *            A reference {@link Point} used for calculation of the anchor
-	 *            position, provided within the local coordinate system of the
-	 *            to be anchored {@link Node}.
-	 * @param computationStrategy
-	 *            The {@link IComputationStrategy} that is used to compute the
-	 *            position based on the given reference point.
-	 * @param hint
-	 *            The hint {@link Object}.
-	 * @return Point The anchor position within the local coordinate system of
-	 *         the to be anchored {@link Node}.
-	 */
-	public Point computePosition(Node anchored,
-			Point anchoredReferencePointInLocal,
-			IComputationStrategy computationStrategy, Object hint) {
-		return FX2Geometry.toPoint(anchored.sceneToLocal(Geometry2FX.toFXPoint(
-				computationStrategy.computePositionInScene(getAnchorage(),
-						getAnchorageReferenceGeometry(), anchored,
-						anchoredReferencePointInLocal, hint))));
+		return FX2Geometry.toPoint(key.getAnchored().sceneToLocal(Geometry2FX
+				.toFXPoint(getComputationStrategy(key).computePositionInScene(
+						getAnchorage(), getAnchorageReferenceGeometry(),
+						key.getAnchored(), getAnchoredReferencePoint(key),
+						hintsProperty().get(key)))));
 	}
 
 	/**

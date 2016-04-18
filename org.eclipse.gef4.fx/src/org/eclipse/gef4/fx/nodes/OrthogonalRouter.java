@@ -24,8 +24,10 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -249,12 +251,11 @@ public class OrthogonalRouter implements IConnectionRouter {
 									: refBounds.getX() + refBounds.getWidth(),
 							y1 + (y2 - y1) / 2);
 				}
+				// fallback to nearest bounds projection
 				// TODO: revise handling of this case -> we could optimize this
-				// by providing a desired direction; fallback to nearest bounds
-				// projection
-				return DynamicAnchor.OrthogonalProjectionStrategy
-						.getNearestBoundsProjection(referenceGeometry,
-								geometry.getBounds().getCenter());
+				// by providing a desired direction
+				return getNearestBoundsProjection(referenceGeometry,
+						geometry.getBounds().getCenter());
 			}
 		}
 		return connection.getPoint(referenceIndex);
@@ -263,6 +264,21 @@ public class OrthogonalRouter implements IConnectionRouter {
 	private Vector getDirection(Connection connection, int i) {
 		return new Vector(getPosition(connection, i),
 				getPosition(connection, i + 1));
+	}
+
+	private Point getNearestBoundsProjection(IGeometry g, Point p) {
+		Line[] outlineSegments = g.getBounds().getOutlineSegments();
+		Point nearestProjection = null;
+		double nearestDistance = 0;
+		for (Line l : outlineSegments) {
+			Point projection = l.getProjection(p);
+			double distance = p.getDistance(projection);
+			if (nearestProjection == null || distance < nearestDistance) {
+				nearestDistance = distance;
+				nearestProjection = projection;
+			}
+		}
+		return nearestProjection;
 	}
 
 	private Point getPosition(Connection connection, int index) {
@@ -301,17 +317,22 @@ public class OrthogonalRouter implements IConnectionRouter {
 					// very small y difference => go in horizontally
 					hint = Orientation.HORIZONTAL;
 				}
+
+				// provide a hint to the anchor's computation strategy
 				((DynamicAnchor) anchor).hintsProperty()
 						.put(connection.getAnchorKey(index), hint);
+
 				// find computation strategy
 				AnchorKey anchorKey = connection.getAnchorKey(index);
 				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)
 						.getComputationStrategy(anchorKey);
-				// compute position
-				Point computePosition = ((DynamicAnchor) anchor)
-						.computePosition(connection, referencePoint,
-								computationStrategy, hint);
-				return computePosition;
+				// compute position using computation strategy
+				return FX2Geometry.toPoint(connection
+						.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
+								.computePositionInScene(anchor.getAnchorage(),
+										((DynamicAnchor) anchor)
+												.getAnchorageReferenceGeometry(),
+										connection, referencePoint, hint))));
 			}
 		}
 		return connection.getPoint(index);
