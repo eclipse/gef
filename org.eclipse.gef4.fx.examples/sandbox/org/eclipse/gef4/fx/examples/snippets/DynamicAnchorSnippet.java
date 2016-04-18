@@ -17,9 +17,7 @@ import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableMap;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -52,6 +50,7 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 		r2.setFill(Color.BLUE);
 		r2.relocate(200, 200);
 		final Line l = new Line();
+		l.setStroke(Color.BLACK);
 
 		DynamicAnchor startAnchor = new DynamicAnchor(r1);
 		DynamicAnchor endAnchor = new DynamicAnchor(r2);
@@ -59,22 +58,22 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 		final AnchorKey endKey = new AnchorKey(l, "end");
 
 		// update start and end point in case provided position values change
-		ChangeListener<ObservableMap<AnchorKey, Point>> changeListener = new ChangeListener<ObservableMap<AnchorKey, Point>>() {
+		MapChangeListener<AnchorKey, Point> changeListener = new MapChangeListener<AnchorKey, Point>() {
+
 			@Override
-			public void changed(
-					ObservableValue<? extends ObservableMap<AnchorKey, Point>> observable,
-					ObservableMap<AnchorKey, Point> oldValue,
-					ObservableMap<AnchorKey, Point> newValue) {
-				if (newValue.containsKey(startKey)) {
-					l.setStartX(newValue.get(startKey).x);
-					l.setStartY(newValue.get(startKey).y);
+			public void onChanged(
+					MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+				if (change.getKey().equals(startKey)) {
+					l.setStartX(change.getMap().get(startKey).x);
+					l.setStartY(change.getMap().get(startKey).y);
 				}
-				if (newValue.containsKey(endKey)) {
-					l.setEndX(newValue.get(endKey).x);
-					l.setEndY(newValue.get(endKey).y);
+				if (change.getKey().equals(endKey)) {
+					l.setEndX(change.getMap().get(endKey).x);
+					l.setEndY(change.getMap().get(endKey).y);
 				}
 			}
 		};
+
 		startAnchor.positionsUnmodifiableProperty().addListener(changeListener);
 		endAnchor.positionsUnmodifiableProperty().addListener(changeListener);
 
