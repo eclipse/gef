@@ -190,7 +190,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 				&& anchor.getAnchorage() != connection) {
 			Node anchorage = anchor.getAnchorage();
 			if (anchor instanceof DynamicAnchor) {
-				return ((DynamicAnchor) anchor).getAnchorageReferenceGeometry();
+				return ((DynamicAnchor) anchor).getReferenceGeometry();
 			}
 			// fall back to using the shape outline
 			return NodeUtils.sceneToLocal(connection, NodeUtils.localToScene(
@@ -331,7 +331,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 						.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
 								.computePositionInScene(anchor.getAnchorage(),
 										((DynamicAnchor) anchor)
-												.getAnchorageReferenceGeometry(),
+												.getReferenceGeometry(),
 										connection, referencePoint, hint))));
 			}
 		}

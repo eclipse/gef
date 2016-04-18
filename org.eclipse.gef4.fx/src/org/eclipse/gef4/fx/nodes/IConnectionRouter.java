@@ -48,6 +48,6 @@ public interface IConnectionRouter {
 	public void route(Connection connection);
 
 	// TODO: provide means so that bend policy can provide reference
-	// points/hints for anchor indexes.
+	// points/hints for anchors
 
 }

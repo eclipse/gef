@@ -626,11 +626,12 @@ public class DynamicAnchor extends AbstractAnchor {
 	 */
 	@Override
 	protected Point computePosition(AnchorKey key) {
-		return FX2Geometry.toPoint(key.getAnchored().sceneToLocal(Geometry2FX
-				.toFXPoint(getComputationStrategy(key).computePositionInScene(
-						getAnchorage(), getAnchorageReferenceGeometry(),
-						key.getAnchored(), getAnchoredReferencePoint(key),
-						hintsProperty().get(key)))));
+		return FX2Geometry.toPoint(key.getAnchored()
+				.sceneToLocal(Geometry2FX.toFXPoint(getComputationStrategy(key)
+						.computePositionInScene(getAnchorage(),
+								getReferenceGeometry(), key.getAnchored(),
+								getAnchoredReferencePoint(key),
+								hintsProperty().get(key)))));
 	}
 
 	/**
@@ -646,19 +647,6 @@ public class DynamicAnchor extends AbstractAnchor {
 					DEFAULT_COMPUTATION_STRATEGY);
 		}
 		return defaultComputationStrategyProperty;
-	}
-
-	/**
-	 * Returns the anchorage reference {@link IGeometry geometry} that is to be
-	 * used for computations by this {@link DynamicAnchor}'s
-	 * {@link IComputationStrategy computation strategy}, specified within the
-	 * local coordinate system of the anchorage.
-	 *
-	 * @return The anchorage reference geometry to be used for computations,
-	 *         which by default is the shape's outline geometry.
-	 */
-	public IGeometry getAnchorageReferenceGeometry() {
-		return NodeUtils.getShapeOutline(getAnchorage());
 	}
 
 	/**
@@ -711,6 +699,21 @@ public class DynamicAnchor extends AbstractAnchor {
 		return defaultComputationStrategyProperty == null
 				? DEFAULT_COMPUTATION_STRATEGY
 				: defaultComputationStrategyProperty().get();
+	}
+
+	/**
+	 * Returns the anchorage reference {@link IGeometry geometry} that is to be
+	 * used for computations by this {@link DynamicAnchor}'s
+	 * {@link IComputationStrategy computation strategy}, specified within the
+	 * local coordinate system of the anchorage.
+	 *
+	 * @return The anchorage reference geometry to be used for computations,
+	 *         which by default is the shape's outline geometry.
+	 */
+	// TODO: provide a property, so we do not have to subclass to change the
+	// reference geometry
+	public IGeometry getReferenceGeometry() {
+		return NodeUtils.getShapeOutline(getAnchorage());
 	}
 
 	/**

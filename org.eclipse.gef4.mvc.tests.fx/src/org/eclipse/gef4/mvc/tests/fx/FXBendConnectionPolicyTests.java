@@ -199,7 +199,7 @@ public class FXBendConnectionPolicyTests {
 		protected DynamicAnchor createAnchor() {
 			return new DynamicAnchor(getAdaptable().getVisual()) {
 				@Override
-				public IGeometry getAnchorageReferenceGeometry() {
+				public IGeometry getReferenceGeometry() {
 					return (IShape) ((IContentPart) getAdaptable()).getContent();
 				}
 			};

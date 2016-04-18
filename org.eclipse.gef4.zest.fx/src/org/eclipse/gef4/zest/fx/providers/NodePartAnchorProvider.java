@@ -21,7 +21,7 @@ public class NodePartAnchorProvider extends DynamicAnchorProvider {
 	protected DynamicAnchor createAnchor() {
 		return new DynamicAnchor(getAdaptable().getVisual()) {
 			@Override
-			public IGeometry getAnchorageReferenceGeometry() {
+			public IGeometry getReferenceGeometry() {
 				Node shape = ((NodePart) getAdaptable()).getShape();
 				return NodeUtils.localToParent(shape, NodeUtils.getShapeOutline(shape));
 			}
