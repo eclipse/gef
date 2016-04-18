@@ -145,8 +145,6 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 			}
 		}
 		ZestProperties.setControlPoints(getContent(), waypoints);
-		// mark as being (manually touched)
-		ZestProperties._setTouched(getContent(), Boolean.TRUE);
 	}
 
 	@Override

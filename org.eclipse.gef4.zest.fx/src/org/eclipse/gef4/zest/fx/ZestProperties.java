@@ -41,12 +41,6 @@ import javafx.scene.image.Image;
 public class ZestProperties {
 
 	/**
-	 * Indicates whether the computed layout information was changed due to a
-	 * manual interaction.
-	 */
-	public static final String _TOUCHED__GNE = "_touched";
-
-	/**
 	 * This attribute determines if an element (node/edge) should be ignored by
 	 * automatic layout.
 	 *
@@ -284,81 +278,6 @@ public class ZestProperties {
 	 * @see #setLayoutAlgorithm(Graph, ILayoutAlgorithm)
 	 */
 	public static final String LAYOUT_ALGORITHM__G = "layout";
-
-	/**
-	 * Gets the value of the {@link #_TOUCHED__GNE} attribute of the given
-	 * {@link Edge}.
-	 *
-	 * @param edge
-	 *            The {@link Edge} whose attribute value is to be set.
-	 * @return The value of the attribute.
-	 */
-	public static Boolean _getTouched(Edge edge) {
-		return (Boolean) edge.attributesProperty().get(_TOUCHED__GNE);
-	}
-
-	/**
-	 * Gets the value of the {@link #_TOUCHED__GNE} attribute of the given
-	 * {@link Graph}.
-	 *
-	 * @param graph
-	 *            The {@link Graph} whose attribute value is to be set.
-	 * @return The value of the attribute.
-	 */
-	public static Boolean _getTouched(Graph graph) {
-		return (Boolean) graph.attributesProperty().get(_TOUCHED__GNE);
-	}
-
-	/**
-	 * Gets the value of the {@link #_TOUCHED__GNE} attribute of the given
-	 * {@link Node}.
-	 *
-	 * @param node
-	 *            The {@link Node} whose attribute value is to be set.
-	 * @return The value of the attribute.
-	 */
-	public static Boolean _getTouched(Node node) {
-		return (Boolean) node.attributesProperty().get(_TOUCHED__GNE);
-	}
-
-	/**
-	 * Sets the value of the {@link #_TOUCHED__GNE} attribute of the given
-	 * {@link Edge} to the given value.
-	 *
-	 * @param edge
-	 *            The {@link Edge} whose attribute value is to be set.
-	 * @param touched
-	 *            The new value for the attribute.
-	 */
-	public static void _setTouched(Edge edge, Boolean touched) {
-		edge.attributesProperty().put(_TOUCHED__GNE, touched);
-	}
-
-	/**
-	 * Sets the value of the {@link #_TOUCHED__GNE} attribute of the given
-	 * {@link Graph} to the given value.
-	 *
-	 * @param graph
-	 *            The {@link Graph} whose attribute value is to be set.
-	 * @param touched
-	 *            The new value for the attribute.
-	 */
-	public static void _setTouched(Graph graph, Boolean touched) {
-		graph.attributesProperty().put(_TOUCHED__GNE, touched);
-	}
-
-	/**
-	 * Sets the value of the {@link #_TOUCHED__GNE} attribute of the given
-	 * {@link Node} to the given value.
-	 *
-	 * @param node
-	 *            The {@link Node} whose attribute value is to be set.
-	 * @param touched
-	 *            The new value for the attribute.
-	 */
-	public static void _setTouched(Node node, Boolean touched) {
-		node.attributesProperty().put(_TOUCHED__GNE, touched);
-	}
 
 	/**
 	 * Returns the value of the {@link #CONTROL_POINTS__E} attribute of the

@@ -563,8 +563,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 	@Override
 	public void resizeContent(Dimension size) {
 		ZestProperties.setSize(getContent(), size);
-		// mark as being (manually touched)
-		ZestProperties._setTouched(getContent(), Boolean.TRUE);
 	}
 
 	/**
@@ -586,8 +584,6 @@ public class NodePart extends AbstractFXContentPart<Group>
 			position = new Point();
 		}
 		ZestProperties.setPosition(getContent(), transform.getTransformed(position));
-		// mark as being (manually touched)
-		ZestProperties._setTouched(getContent(), Boolean.TRUE);
 	}
 
 }
