@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.gestures.AbstractMouseDragGesture;
@@ -178,8 +179,9 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 
 	private void attachToDynamicAnchor(final AnchorKey ak,
 			final Point refPoint) {
-		dynamicAnchor.anchoredReferencePointsProperty().put(ak, refPoint);
 		dynamicAnchor.attach(ak);
+		dynamicAnchor.getDynamicComputationParameter(ak,
+				AnchoredReferencePoint.class).set(refPoint);
 		updateDynamicAnchorLines(ak);
 	}
 
@@ -299,8 +301,10 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 				referencePointNode.setCenterX(x);
 				referencePointNode.setCenterY(y);
 				// update reference point
-				dynamicAnchor.anchoredReferencePointsProperty().put(ak,
-						new Point(x, y));
+				dynamicAnchor
+						.getDynamicComputationParameter(ak,
+								AnchoredReferencePoint.class)
+						.set(new Point(x, y));
 				updateDynamicAnchorLines(ak);
 			}
 		};
@@ -363,7 +367,8 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 		// create dynamic anchor and reference point property (so we can access
 		// the reference points easily)
 		dynamicAnchor = new DynamicAnchor(eLetterShape);
-		dynamicAnchor.positionsUnmodifiableProperty().addListener(anchorPositionListener);
+		dynamicAnchor.positionsUnmodifiableProperty()
+				.addListener(anchorPositionListener);
 
 		// compute bounds center
 		Point boundsCenterInLocal = FX2Geometry
@@ -561,7 +566,8 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private void updateDynamicAnchorLines(AnchorKey ak) {
 		// update real line
 		Line lineReal = dynamicLinesReal.get(ak);
-		Point referencePosition = dynamicAnchor.getAnchoredReferencePoint(ak);
+		Point referencePosition = dynamicAnchor.getDynamicComputationParameter(
+				ak, AnchoredReferencePoint.class).get();
 		Point anchorPosition = dynamicAnchor.getPosition(ak);
 		lineReal.setStartX(referencePosition.x);
 		lineReal.setStartY(referencePosition.y);

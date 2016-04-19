@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.fx.nodes.PolyBezierInterpolator;
@@ -394,7 +395,7 @@ public class FXGeometricCurvePart
 						}).get();
 				((DynamicAnchor) sourceAnchor).setComputationStrategy(
 						visual.getStartAnchorKey(),
-						new DynamicAnchor.OrthogonalProjectionStrategy());
+						new OrthogonalProjectionStrategy());
 			}
 
 			Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
@@ -409,7 +410,7 @@ public class FXGeometricCurvePart
 						}).get();
 				((DynamicAnchor) targetAnchor).setComputationStrategy(
 						visual.getEndAnchorKey(),
-						new DynamicAnchor.OrthogonalProjectionStrategy());
+						new OrthogonalProjectionStrategy());
 			}
 
 			visual.setInterpolator(new PolylineInterpolator());

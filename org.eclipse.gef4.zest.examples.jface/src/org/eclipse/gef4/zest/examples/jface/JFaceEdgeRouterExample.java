@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
@@ -112,9 +113,9 @@ public class JFaceEdgeRouterExample {
 					if (anchor instanceof DynamicAnchor) {
 						DynamicAnchor dynamicAnchor = (DynamicAnchor) anchor;
 						if (!(dynamicAnchor
-								.getDefaultComputationStrategy() instanceof DynamicAnchor.OrthogonalProjectionStrategy)) {
+								.getDefaultComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 							dynamicAnchor.setDefaultComputationStrategy(
-									new DynamicAnchor.OrthogonalProjectionStrategy());
+									new OrthogonalProjectionStrategy());
 						}
 					}
 				}

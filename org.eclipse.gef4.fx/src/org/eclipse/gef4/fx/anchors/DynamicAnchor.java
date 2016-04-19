@@ -12,28 +12,22 @@
 package org.eclipse.gef4.fx.anchors;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
-import org.eclipse.gef4.fx.utils.NodeUtils;
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
-import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
+import org.eclipse.gef4.common.collections.CollectionUtils;
+import org.eclipse.gef4.common.collections.ObservableSetMultimap;
+import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.geometry.planar.Line;
-import org.eclipse.gef4.geometry.planar.Path;
-import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyMapProperty;
-import javafx.beans.property.ReadOnlyMapWrapper;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
-import javafx.geometry.Orientation;
-import javafx.geometry.Point2D;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
@@ -51,518 +45,106 @@ import javafx.scene.Node;
  */
 public class DynamicAnchor extends AbstractAnchor {
 
-	/**
-	 * A specific projection strategy that is based on a center-projection of
-	 * the given reference point.
-	 */
-	public static class ChopBoxStrategy extends ProjectionStrategy {
-		/**
-		 * Computes the anchorage reference position within the coordinate
-		 * system of the given {@link IGeometry}. For an {@link IShape}
-		 * geometry, the center is used if it is contained within the shape,
-		 * otherwise, the vertex nearest to the center is used as the reference
-		 * position. For an {@link ICurve} geometry, the first point is used as
-		 * the reference position.
-		 *
-		 * @param anchorage
-		 *            The anchorage visual.
-		 * @param geometryInLocal
-		 *            The anchorage geometry within the local coordinate system
-		 *            of the anchorage visual.
-		 * @param anchoredReferencePointInAnchorageLocal
-		 *            Refernce point of the anchored for which to determine the
-		 *            anchorage reference point. Within the local coordinate
-		 *            system of the anchorage.
-		 * @return A position within the given {@link IGeometry}.
-		 */
-		protected Point computeAnchorageReferencePointInLocal(Node anchorage,
-				IGeometry geometryInLocal,
-				Point anchoredReferencePointInAnchorageLocal) {
-			if (geometryInLocal instanceof IShape) {
-				IShape shape = (IShape) geometryInLocal;
-				// in case of an IShape we can pick the bounds center if it
-				// is contained, or the vertex nearest to the center point
-				Point boundsCenterInLocal = geometryInLocal.getBounds()
-						.getCenter();
-				if (shape.contains(boundsCenterInLocal)) {
-					return boundsCenterInLocal;
-				} else {
-					return null;
-				}
-			} else if (geometryInLocal instanceof ICurve) {
-				return null;
-			} else if (geometryInLocal instanceof Path) {
-				// in case of a Path we can pick the vertex nearest
-				// to the center point
-				Point boundsCenterInLocal = geometryInLocal.getBounds()
-						.getCenter();
-				if (geometryInLocal.contains(boundsCenterInLocal)) {
-					return boundsCenterInLocal;
-				} else {
-					return null;
-				}
-			} else {
-				throw new IllegalArgumentException("Unknwon IGeometry: <"
-						+ geometryInLocal.getClass() + ">.");
-			}
-		}
+	private AnchorageReferenceGeometry referenceGeometryProperty = new AnchorageReferenceGeometry();
 
-		/**
-		 * Computes the anchorage reference position in scene coordinates, based
-		 * on the given anchorage geometry.
-		 *
-		 * @see #computeAnchorageReferencePointInLocal(Node, IGeometry, Point)
-		 * @param anchorage
-		 *            The anchorage visual.
-		 * @param geometryInLocal
-		 *            The anchorage geometry within the coordinate system of the
-		 *            anchorage visual.
-		 * @param anchoredReferencePointInScene
-		 *            The reference {@link Point} of the anchored for which the
-		 *            anchorage reference {@link Point} is to be determined.
-		 * @return The anchorage reference position.
-		 */
-		protected Point computeAnchorageReferencePointInScene(Node anchorage,
-				IGeometry geometryInLocal,
-				Point anchoredReferencePointInScene) {
-			Point2D anchoredReferencePointInAnchorageLocal = anchorage
-					.sceneToLocal(anchoredReferencePointInScene.x,
-							anchoredReferencePointInScene.y);
-			Point anchorageReferencePointInLocal = computeAnchorageReferencePointInLocal(
-					anchorage, geometryInLocal,
-					new Point(anchoredReferencePointInAnchorageLocal.getX(),
-							anchoredReferencePointInAnchorageLocal.getY()));
-			if (anchorageReferencePointInLocal == null) {
-				return null;
-			}
-			return NodeUtils.localToScene(anchorage,
-					anchorageReferencePointInLocal);
-		}
-
-		@Override
-		public Point computePositionInScene(Node anchorage,
-				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
-				Point anchoredReferencePointInLocal, Object hint) {
-			Point anchoredReferencePointInScene = NodeUtils
-					.localToScene(anchored, anchoredReferencePointInLocal);
-
-			Point anchorageReferencePointInScene = computeAnchorageReferencePointInScene(
-					anchorage, anchorageReferenceGeometryInLocal,
-					anchoredReferencePointInScene);
-
-			if (anchorageReferencePointInScene == null) {
-				return super.computePositionInScene(anchorage,
-						anchorageReferenceGeometryInLocal, anchored,
-						anchoredReferencePointInLocal, hint);
-			}
-
-			IGeometry anchorageGeometryInScene = NodeUtils
-					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
-			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
-					anchorageGeometryInScene);
-
-			Line referenceLineInScene = new Line(anchorageReferencePointInScene,
-					anchoredReferencePointInScene);
-
-			Point nearestProjectionInScene = null;
-			double nearestDistance = 0d;
-			for (ICurve anchorageOutlineInScene : anchorageOutlinesInScene) {
-				// if the reference point is already on the outline, we may
-				// directly use it
-				if (anchorageOutlineInScene
-						.contains(anchoredReferencePointInScene)) {
-					return anchoredReferencePointInScene;
-				}
-				Point[] intersections = anchorageOutlineInScene
-						.getIntersections(referenceLineInScene);
-				if (intersections.length > 0) {
-					Point nearestIntersection = Point.nearest(
-							anchoredReferencePointInScene, intersections);
-					double distance = anchoredReferencePointInScene
-							.getDistance(nearestIntersection);
-					if (nearestProjectionInScene == null
-							|| distance < nearestDistance) {
-						nearestProjectionInScene = nearestIntersection;
-						nearestDistance = distance;
+	{
+		referenceGeometryProperty.addListener(new ChangeListener<IGeometry>() {
+			@Override
+			public void changed(ObservableValue<? extends IGeometry> observable,
+					IGeometry oldValue, IGeometry newValue) {
+				// recompute positions for all anchor keys
+				for (Set<AnchorKey> keys : getKeysByNode().values()) {
+					for (AnchorKey key : keys) {
+						updatePosition(key);
 					}
 				}
 			}
-
-			if (nearestProjectionInScene != null) {
-				return nearestProjectionInScene;
-			}
-			return super.computePositionInScene(anchorage,
-					anchorageReferenceGeometryInLocal, anchored,
-					anchoredReferencePointInLocal, hint);
-		}
+		});
 	}
 
-	/**
-	 * The {@link IComputationStrategy} is responsible for computing anchor
-	 * positions based on an anchorage {@link Node}, an anchorage reference
-	 * {@link IGeometry}, an anchored {@link Node}, and an anchored reference
-	 * position (
-	 * {@link #computePositionInScene(Node, IGeometry, Node, Point, Object)} ).
-	 */
-	public interface IComputationStrategy {
+	private Map<AnchorKey, ChangeListener<Object>> computationParameterChangeListeners = new HashMap<>();
+	private SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>> computationParametersChangeListener = new SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>>() {
 
-		/**
-		 * Computes an anchor position based on the given anchorage visual,
-		 * anchored visual, and anchored reference point.
-		 *
-		 * @param anchorage
-		 *            The anchorage visual.
-		 * @param anchorageReferenceGeometryInLocal
-		 *            The anchorage reference geometry within the local
-		 *            coordinate system of the anchorage visual.
-		 * @param anchored
-		 *            The anchored visual.
-		 * @param anchoredReferencePointInLocal
-		 *            The anchored reference point within the local coordinate
-		 *            system of the anchored visual.
-		 * @param hint
-		 *            An implementation specific hint {@link Object}.
-		 * @return The anchor position.
-		 */
-		// TODO: comprise anchoredReferencePointInLocal and hint into a single
-		// HINT object; What about anchorageReferenceGeometry??
-		Point computePositionInScene(Node anchorage,
-				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
-				Point anchoredReferencePointInLocal, Object hint);
-
-	}
-
-	/**
-	 * An {@link IComputationStrategy} that computes anchor position by
-	 * orthogonally projecting the respective anchored reference point to the
-	 * outline of the anchorage reference geometry so that the respective point
-	 * has minimal distance to the anchored reference point and resembles the
-	 * same x- (vertical projection) or y-coordinate (horizontal projection).
-	 */
-	public static class OrthogonalProjectionStrategy
-			extends ProjectionStrategy {
-
-		@Override
-		protected Point computeProjectionInScene(
-				List<ICurve> anchorageOutlinesInScene,
-				Point anchoredReferencePointInScene, Object hint) {
-			// extract hint
-			Orientation orientationHint = null;
-			if (hint instanceof Orientation) {
-				orientationHint = (Orientation) hint;
-			}
-
-			Point nearestOrthogonalProjectionInScene = null;
-			double nearestOrthogonalProjectionDistance = Double.MAX_VALUE;
-			for (ICurve segment : anchorageOutlinesInScene) {
-				// determine nearest orthogonal projection of each curve
-				Point projection = getOrthogonalProjection(segment,
-						anchoredReferencePointInScene, orientationHint);
-				if (projection != null) {
-					double distance = projection
-							.getDistance(anchoredReferencePointInScene);
-					if (nearestOrthogonalProjectionInScene == null
-							|| distance < nearestOrthogonalProjectionDistance) {
-						nearestOrthogonalProjectionInScene = projection;
-						nearestOrthogonalProjectionDistance = distance;
-					}
-				}
-			}
-
-			if (nearestOrthogonalProjectionInScene != null) {
-				return nearestOrthogonalProjectionInScene;
-			} else {
-				// Fall back to nearest projection
-				return super.computeProjectionInScene(anchorageOutlinesInScene,
-						anchoredReferencePointInScene, orientationHint);
-			}
-		}
-
-		/**
-		 * Returns a point on the {@link ICurve} for which holds that its
-		 * y-coordinate is the same as that of the given reference point, and
-		 * its distance to the given reference point is minimal (i.e. there is
-		 * no other point with the same y-coordinate that has a smaller
-		 * distance), if such a point exists.
-		 *
-		 * @param curve
-		 *            The {@link ICurve} to test. The returned {@link Point} has
-		 *            to be contained by it.
-		 *
-		 * @param reference
-		 *            The reference point which is used to determine the
-		 *            distance.
-		 * @return The point on the {@link ICurve} that is horizontally nearest
-		 *         to the given reference point.
-		 */
-		private Point getHorizontalProjection(ICurve curve, Point reference) {
-			// Determine points on curve with same y-coordinate; by computing a
-			// line with the respective y-coordinate inside its bounds; then
-			// computing the nearest intersection on the curve
-			Rectangle bounds = curve.getBounds();
-			Line line = new Line(bounds.getX(), reference.y,
-					bounds.getX() + bounds.getWidth(), reference.y);
-			Point projection = getNearestOrthogonalProjection(curve, reference,
-					line);
-			// a horizontal projection is constant in y, therefore, we can
-			// ensure that the projection has the same y coordinate as the
-			// reference
-			if (projection != null) {
-				projection.y = reference.y;
-			}
-			return projection;
-		}
-
-		private Point getNearestOrthogonalProjection(ICurve curve,
-				Point reference, Line line) {
-			if (curve.overlaps(line)) {
-				ICurve[] overlaps = curve.getOverlaps(line);
-				// XXX: All overlaps have to be lines since a line can only
-				// overlap with another line. As such, it is sufficient to check
-				// the start and end points of the overlaps.
-				Point nearest = null;
-				double distance = 0;
-				for (ICurve overlap : overlaps) {
-					Point currentNearest = Point.nearest(reference,
-							new Point[] { overlap.getP1(), overlap.getP2() });
-					double currentDistance = reference
-							.getDistance(currentNearest);
-					if (nearest == null || currentDistance < distance) {
-						nearest = currentNearest;
-						distance = currentDistance;
-					}
-				}
-				return nearest;
-			} else if (curve.intersects(line)) {
-				Point nearest = Point.nearest(reference,
-						curve.getIntersections(line));
-				return nearest;
-			}
-			// no point found for the given y-coordinate
-			return null;
-		}
-
-		/**
-		 * Returns a point on the {@link ICurve} for which holds that its
-		 * x-coordinate or y-coordinate is the same as that of the given
-		 * reference point, and its distance to the given reference point is
-		 * minimal (i.e. there is no other point with the same x-coordinate or
-		 * y-coordinate that has a smaller distance).
-		 *
-		 * @param curve
-		 *            The {@link ICurve} to test. The returned {@link Point} has
-		 *            to be contained by it.
-		 *
-		 * @param reference
-		 *            The reference point which is used to determine the
-		 *            distance.
-		 * @param orientationHint
-		 *            A preferred {@link Orientation} or <code>null</code> to
-		 *            indicate no preference.
-		 * @return The point on the {@link ICurve} that is horizontally or
-		 *         vertically nearest to the given reference point.
-		 */
-		private Point getOrthogonalProjection(ICurve curve, Point reference,
-				Orientation orientationHint) {
-			Point nearestHorizonalProjection = getHorizontalProjection(curve,
-					reference);
-			if (nearestHorizonalProjection == null) {
-				// if there is no horizontal projection, the vertical one has to
-				// be minimal (if it exists)
-				return getVerticalProjection(curve, reference);
-			} else if (orientationHint == Orientation.HORIZONTAL) {
-				return nearestHorizonalProjection;
-			} else {
-				Point nearestVerticalProjection = getVerticalProjection(curve,
-						reference);
-				if (nearestVerticalProjection == null) {
-					// if there is no vertical projection, the horizontal one
-					// has to be minimal
-					return nearestHorizonalProjection;
-				} else if (orientationHint == Orientation.VERTICAL) {
-					return nearestVerticalProjection;
-				} else {
-					// compute whether horizontal or vertical is minimal
-					double horizontalDistance = nearestHorizonalProjection
-							.getDistance(reference);
-					double verticalDistance = nearestVerticalProjection
-							.getDistance(reference);
-					if (horizontalDistance <= verticalDistance) {
-						return nearestHorizonalProjection;
-					}
-					return nearestVerticalProjection;
-				}
-			}
-		}
-
-		/**
-		 * Returns a point on the {@link ICurve} for which holds that its
-		 * x-coordinate is the same as that of the given reference point, and
-		 * its distance to the given reference point is minimal (i.e. there is
-		 * no other point with the same x-coordinate that has a smaller
-		 * distance), if such a point exists.
-		 *
-		 * @param curve
-		 *            The {@link ICurve} to test. The returned {@link Point} has
-		 *            to be contained by it.
-		 *
-		 * @param reference
-		 *            The reference point which is used to determine the
-		 *            distance.
-		 * @return The point on the {@link ICurve} that is vertically nearest to
-		 *         the given reference point.
-		 */
-		private Point getVerticalProjection(ICurve curve, Point reference) {
-			// Determine points on curve with same x-coordinate; by computing a
-			// line with the respective x-coordinate inside its bounds; then
-			// computing the nearest intersection on the curve
-			Rectangle bounds = curve.getBounds();
-			Line line = new Line(reference.x, bounds.getY(), reference.x,
-					bounds.getY() + bounds.getHeight());
-			Point projection = getNearestOrthogonalProjection(curve, reference,
-					line);
-			// a vertical projection is constant in x, therefore, we can
-			// ensure that the projection has the same x coordinate as the
-			// reference
-			if (projection != null) {
-				projection.x = reference.x;
-			}
-			return projection;
-		}
-
-	}
-
-	/**
-	 * An {@link IComputationStrategy} that computes anchor position by
-	 * projecting the respective anchored reference point to the outline of the
-	 * anchorage reference geometry so that the respective point has minimal
-	 * distance to the anchored reference point.
-	 *
-	 * In detail, the computation is done as follows:
-	 * <ol>
-	 * <li>Compute the anchorage outlines (in scene) based on the anchorage
-	 * reference geometry,using {@link #getOutlineSegments(IGeometry)}.</li>
-	 * <li>Transform the given anchored reference point to scene coordinates.
-	 * </li>
-	 * <li>Project the anchored reference point (in scene) onto the anchorage
-	 * outlines.</li>
-	 * <li>Return the nearest projection to the anchored reference point.</li>
-	 * </ol>
-	 */
-	public static class ProjectionStrategy implements IComputationStrategy {
-		@Override
-		public Point computePositionInScene(Node anchorage,
-				IGeometry anchorageReferenceGeometryInLocal, Node anchored,
-				Point anchoredReferencePointInLocal, Object hint) {
-			// determine anchorage geometry in scene
-			IGeometry anchorageGeometryInScene = NodeUtils
-					.localToScene(anchorage, anchorageReferenceGeometryInLocal);
-
-			// determine anchorage outlines in scene
-			List<ICurve> anchorageOutlinesInScene = getOutlineSegments(
-					anchorageGeometryInScene);
-
-			// transform anchored reference point to scene
-			Point anchoredReferencePointInScene = NodeUtils
-					.localToScene(anchored, anchoredReferencePointInLocal);
-
-			// compute nearest projection of the anchored reference point on the
-			// anchorage outlines
-			return computeProjectionInScene(anchorageOutlinesInScene,
-					anchoredReferencePointInScene, hint);
-		}
-
-		/**
-		 * Computes the anchorage reference position in scene coordinates, based
-		 * on the given anchorage outlines and the given anchored reference
-		 * point.
-		 *
-		 * @param anchorageOutlinesInScene
-		 *            A list of {@link ICurve}s that describe the outline of the
-		 *            anchorage.
-		 * @param anchoredReferencePointInScene
-		 *            The reference {@link Point} of the anchored for which the
-		 *            anchorage reference {@link Point} is to be determined.
-		 * @param hint
-		 *            An implementation specific hint {@link Object}.
-		 * @return The anchorage reference position.
-		 */
-		protected Point computeProjectionInScene(
-				List<ICurve> anchorageOutlinesInScene,
-				Point anchoredReferencePointInScene, Object hint) {
-			Point[] projections = new Point[anchorageOutlinesInScene.size()];
-			for (int i = 0; i < anchorageOutlinesInScene.size(); i++) {
-				ICurve c = anchorageOutlinesInScene.get(i);
-				projections[i] = c.getProjection(anchoredReferencePointInScene);
-			}
-			return Point.nearest(anchoredReferencePointInScene, projections);
-		}
-
-		/**
-		 * Determines the outline of the given {@link IGeometry}, represented as
-		 * a list of {@link ICurve}s.
-		 *
-		 * @param geometry
-		 *            The anchorage geometry.
-		 * @return A list of {@link ICurve}s representing the outline of the
-		 *         given {@link IGeometry}.
-		 */
-		// TODO: Move to utility within GEF4 Geometry?
-		protected List<ICurve> getOutlineSegments(IGeometry geometry) {
-			if (geometry instanceof IShape) {
-				return Collections
-						.singletonList(((IShape) geometry).getOutline());
-			} else if (geometry instanceof ICurve) {
-				return Collections.singletonList((ICurve) geometry);
-			} else if (geometry instanceof Path) {
-				return ((Path) geometry).getOutlines();
-			} else {
-				throw new IllegalStateException(
-						"The transformed geometry is neither an ICurve nor an IShape.");
-			}
-		}
-	}
-
-	/**
-	 * The name of the {@link #defaultComputationStrategyProperty() computation
-	 * strategy property}.
-	 */
-	public static final String DEFAULT_COMPUTATION_STRATEGY_PROPERTY = "defaultComputationStrategy";
-
-	private static final IComputationStrategy DEFAULT_COMPUTATION_STRATEGY = new ChopBoxStrategy();
-
-	private ReadOnlyMapWrapper<AnchorKey, Object> hintsProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections.<AnchorKey, Object> observableHashMap());
-
-	private ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty;
-
-	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategyProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections
-					.<AnchorKey, IComputationStrategy> observableHashMap());
-	private ReadOnlyMapWrapperEx<AnchorKey, Point> anchoredReferencePointsProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
-	private MapChangeListener<AnchorKey, Point> referencePointChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
-				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			if (change.wasAdded()) {
-				// prevent null from being put into the map
-				if (change.getKey() == null) {
-					throw new IllegalStateException(
-							"Attempt to put <null> key into reference point map!");
-				}
-				if (change.getValueAdded() == null) {
-					throw new IllegalStateException(
-							"Attempt to put <null> value into reference point map!");
-				}
-				if (getKeys().containsKey(change.getKey().getAnchored())
-						&& getKeys().get(change.getKey().getAnchored())
-								.contains(change.getKey())) {
-					updatePosition(change.getKey());
+				final SetMultimapChangeListener.Change<? extends AnchorKey, ? extends Parameter<?>> change) {
+			while (change.next()) {
+				if (change.wasAdded()) {
+					// prevent null from being put into the map
+					if (change.getKey() == null) {
+						throw new IllegalStateException(
+								"Attempt to put <null> key into reference point map!");
+					}
+					if (change.getValuesAdded().contains(null)) {
+						throw new IllegalStateException(
+								"Attempt to put <null> value for key "
+										+ change.getKey()
+										+ " into reference point map!");
+					}
+					for (Parameter<?> p : change.getValuesAdded()) {
+						// ensure there are no duplicates contained
+						if (change.getPreviousContents()
+								.containsKey(change.getKey())
+								&& AbstractComputationStrategy.getParameter(
+										change.getPreviousContents().asMap()
+												.get(change.getKey()),
+												p.getClass()) != null) {
+							throw new IllegalArgumentException(
+									"Attempt to put duplicate parameter " + p
+											+ " for key " + change.getKey()
+											+ " into reference map!");
+						}
+						// add change listener to each added parameter, so we
+						// can recompute the position upon changes
+						final AnchorKey key = change.getKey();
+						ChangeListener<Object> l = computationParameterChangeListeners
+								.get(key);
+						if (l == null) {
+							l = new ChangeListener<Object>() {
+								@Override
+								public void changed(
+										ObservableValue<? extends Object> observable,
+										Object oldValue, Object newValue) {
+									if (getKeysByNode()
+											.containsKey(key.getAnchored())
+											&& getKeysByNode()
+													.get(key.getAnchored())
+													.contains(key)) {
+										updatePosition(key);
+									}
+								}
+							};
+							computationParameterChangeListeners.put(key, l);
+						}
+						p.addListener(l);
+					}
+
+					if (getKeysByNode()
+							.containsKey(change.getKey().getAnchored())
+							&& getKeysByNode()
+									.get(change.getKey().getAnchored())
+									.contains(change.getKey())) {
+						updatePosition(change.getKey());
+					}
+				} else if (change.wasRemoved()) {
+					// unregister change listener from removed parameter
+					for (Parameter<?> p : change.getValuesRemoved()) {
+						p.removeListener(computationParameterChangeListeners
+								.get(change.getKey()));
+					}
 				}
 			}
 		}
 	};
+
+	private ObservableSetMultimap<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParameters = CollectionUtils
+			.observableHashMultimap();
+
+	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersUnmodifiable = new ReadOnlySetMultimapWrapper<>(
+			dynamicComputationParameters);
+
+	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
+			dynamicComputationParametersUnmodifiable);
 
 	/**
 	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual.
@@ -572,9 +154,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *            The anchorage visual.
 	 */
 	public DynamicAnchor(Node anchorage) {
-		super(anchorage);
-		anchoredReferencePointsProperty
-				.addListener(referencePointChangeListener);
+		this(anchorage, new ChopBoxStrategy());
 	}
 
 	/**
@@ -583,122 +163,79 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
-	 * @param computationStrategy
-	 *            The {@link IComputationStrategy} to use.
+	 * @param defaultComputationStrategy
+	 *            The default {@link IComputationStrategy} to use.
 	 */
 	public DynamicAnchor(Node anchorage,
-			IComputationStrategy computationStrategy) {
-		super(anchorage);
-		setDefaultComputationStrategy(computationStrategy);
-		anchoredReferencePointsProperty
-				.addListener(referencePointChangeListener);
+			IComputationStrategy defaultComputationStrategy) {
+		super(anchorage, defaultComputationStrategy);
+		dynamicComputationParameters
+				.addListener(computationParametersChangeListener);
 	}
 
-	/**
-	 * Provides a {@link ReadOnlyMapProperty} that stores positions (in the
-	 * local coordinate system of the anchored {@link Node}) for all attached
-	 * {@link AnchorKey}s.
-	 *
-	 * @return A {@link ReadOnlyMapProperty} that stores positions (in the local
-	 *         coordinate system of the anchored {@link Node}) for all attached
-	 *         {@link AnchorKey}s.
-	 */
-	public ReadOnlyMapProperty<AnchorKey, Point> anchoredReferencePointsProperty() {
-		return anchoredReferencePointsProperty.getReadOnlyProperty();
-	}
-
-	/**
-	 * Returns a {@link ReadOnlyMapProperty} that stores the individual
-	 * {@link IComputationStrategy} for each {@link AnchorKey}.
-	 *
-	 * @return A {@link ReadOnlyMapProperty} that stores the individual
-	 *         {@link IComputationStrategy} for each {@link AnchorKey}.
-	 */
-	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty() {
-		return computationStrategyProperty.getReadOnlyProperty();
-	}
-
-	/**
-	 * Recomputes the position for the given attached {@link AnchorKey}.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} for which to compute an anchor position.
-	 */
 	@Override
-	protected Point computePosition(AnchorKey key) {
-		return FX2Geometry.toPoint(key.getAnchored()
-				.sceneToLocal(Geometry2FX.toFXPoint(getComputationStrategy(key)
-						.computePositionInScene(getAnchorage(),
-								getReferenceGeometry(), key.getAnchored(),
-								getAnchoredReferencePoint(key),
-								hintsProperty().get(key)))));
+	public void attach(AnchorKey key) {
+		initDynamicParameters(key);
+		super.attach(key);
+	}
+
+	private void clearDynamicParameters(AnchorKey key) {
+		dynamicComputationParameters.removeAll(key);
+	}
+
+	@Override
+	public void detach(AnchorKey key) {
+		super.detach(key);
+		clearDynamicParameters(key);
 	}
 
 	/**
-	 * Returns a writable object property for the {@link IComputationStrategy}
-	 * used by this {@link DynamicAnchor}.
+	 * Returns a {@link ReadOnlySetMultimapProperty} that provides the
+	 * {@link IComputationStrategy.Parameter computation parameters} per
+	 * {@link AnchorKey}. The set of computation parameters for each
+	 * {@link AnchorKey} is initialed by the responsible computation strategy.
 	 *
-	 * @return A writable property.
+	 * @return A {@link ReadOnlySetMultimapProperty} that provides an
+	 *         {@link Object} per {@link AnchorKey}.
 	 */
-	public ObjectProperty<IComputationStrategy> defaultComputationStrategyProperty() {
-		if (defaultComputationStrategyProperty == null) {
-			defaultComputationStrategyProperty = new SimpleObjectProperty<>(
-					this, DEFAULT_COMPUTATION_STRATEGY_PROPERTY,
-					DEFAULT_COMPUTATION_STRATEGY);
-		}
-		return defaultComputationStrategyProperty;
+	// TODO: ensure there are no callers that put values in here
+	// TODO: pull up into AbstractAnchor
+	public ReadOnlySetMultimapProperty<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersUnmodifiableProperty() {
+		return dynamicComputationParametersUnmodifiableProperty
+				.getReadOnlyProperty();
 	}
 
 	/**
-	 * Returns the reference {@link Point} for the given {@link AnchorKey}.
+	 * Retrieves a dynamic parameter of the respective type for the given
+	 * {@link AnchorKey}.
 	 *
+	 * @param <T>
+	 *            The value type of the computation parameter.
 	 * @param key
-	 *            The {@link AnchorKey} for which to determine the reference
-	 *            {@link Point}.
-	 * @return The reference {@link Point} for the given {@link AnchorKey} in
-	 *         the local coordinate system of the key's
-	 *         {@link AnchorKey#getAnchored() anchored}.
+	 *            The {@link AnchorKey} for which to retrieve the dynamic
+	 *            parameter.
+	 * @param parameterType
+	 *            The type of computation parameter.
+	 * @return The dynamic computation parameter.
 	 */
-	public Point getAnchoredReferencePoint(AnchorKey key) {
-		Point referencePoint = anchoredReferencePointsProperty().get(key);
-		if (referencePoint == null) {
-			referencePoint = new Point(0, 0);
+	public <T extends Parameter<?>> T getDynamicComputationParameter(
+			AnchorKey key, Class<T> parameterType) {
+		T parameter = AbstractComputationStrategy.getParameter(
+				dynamicComputationParameters.get(key), parameterType);
+		if (parameter == null) {
+			// TODO: this is currently required, because clients provide the
+			// parameter
+			// values before attaching. As the strategies provide the
+			// parameters, they need to decide when to initialize the values.
+			try {
+				parameter = parameterType.getDeclaredConstructor()
+						.newInstance();
+				dynamicComputationParameters.put(key, parameter);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		return referencePoint;
-	}
-
-	/**
-	 * Returns the {@link IComputationStrategy} that is used by this
-	 * {@link DynamicAnchor} to compute the position for the given
-	 * {@link AnchorKey}. If no {@link IComputationStrategy} was explicitly set
-	 * for the given {@link AnchorKey}, then the
-	 * {@link #getDefaultComputationStrategy()} is returned.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} for which the
-	 *            {@link IComputationStrategy} is determined.
-	 * @return The {@link IComputationStrategy} that is used by this
-	 *         {@link DynamicAnchor} to compute the position for the given
-	 *         {@link AnchorKey}.
-	 */
-	public IComputationStrategy getComputationStrategy(AnchorKey key) {
-		if (computationStrategyProperty.containsKey(key)) {
-			return computationStrategyProperty.get(key);
-		}
-		return getDefaultComputationStrategy();
-	}
-
-	/**
-	 * Returns the default {@link IComputationStrategy} used by this
-	 * {@link DynamicAnchor} when no {@link IComputationStrategy} is explicitly
-	 * set for an {@link AnchorKey}.
-	 *
-	 * @return The default {@link IComputationStrategy}.
-	 */
-	public IComputationStrategy getDefaultComputationStrategy() {
-		return defaultComputationStrategyProperty == null
-				? DEFAULT_COMPUTATION_STRATEGY
-				: defaultComputationStrategyProperty().get();
+		return parameter;
 	}
 
 	/**
@@ -710,68 +247,94 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @return The anchorage reference geometry to be used for computations,
 	 *         which by default is the shape's outline geometry.
 	 */
-	// TODO: provide a property, so we do not have to subclass to change the
-	// reference geometry
 	public IGeometry getReferenceGeometry() {
-		return NodeUtils.getShapeOutline(getAnchorage());
+		return referenceGeometryProperty.get();
+	}
+
+	private Set<IComputationStrategy.Parameter<?>> getStaticComputationParameters() {
+		// ensure we have an up-to-date value
+		// if (referenceGeometryProperty.isBound()) {
+		// referenceGeometryProperty.invalidateBinding();
+		// }
+		return Collections.<IComputationStrategy
+				.Parameter<?>> singleton(referenceGeometryProperty);
+	}
+
+	private void initDynamicParameters(AnchorKey key) {
+		// ensure required parameters are provided
+		for (Class<? extends Parameter<?>> paramType : getComputationStrategy(
+				key).getRequiredParameters()) {
+			// skip static ones
+			// TODO: this is not so nice, the parameter could indicate whether
+			// its static or dynamic
+			if (AbstractComputationStrategy.getParameter(
+					getStaticComputationParameters(), paramType) != null) {
+				continue;
+			}
+			Parameter<?> parameter = AbstractComputationStrategy.getParameter(
+					dynamicComputationParameters.get(key), paramType);
+			if (parameter == null) {
+				try {
+					parameter = paramType.getConstructor().newInstance();
+					dynamicComputationParameters.put(key, parameter);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new IllegalArgumentException(
+							"Could not instantiate required parameter ", e);
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void populateParameters(AnchorKey key,
+			Set<IComputationStrategy.Parameter<?>> parameters) {
+		parameters.addAll(getStaticComputationParameters());
+		parameters.addAll(dynamicComputationParameters.get(key));
 	}
 
 	/**
-	 * Returns a {@link ReadOnlyMapProperty} that provides a hint {@link Object}
-	 * per {@link AnchorKey}. The hint can be used by the
-	 * {@link IComputationStrategy}.
+	 * Returns the {@link ObjectProperty} that manages the reference geometry of
+	 * this {@link DynamicAnchor}.
 	 *
-	 * @return A {@link ReadOnlyMapProperty} that provides an {@link Object} per
-	 *         {@link AnchorKey}.
+	 * @return The {@link ObjectProperty} that manages the reference geometry of
+	 *         this {@link DynamicAnchor}.
 	 */
-	public ReadOnlyMapProperty<AnchorKey, Object> hintsProperty() {
-		return hintsProperty.getReadOnlyProperty();
+	// TODO: this has to be transferred into a (static) computation parameter.
+	// TODO: we could turn this into an AnchorageReferenceGeometry
+	public AnchorageReferenceGeometry referenceGeometryProperty() {
+		return referenceGeometryProperty;
 	}
 
-	/**
-	 * Sets the anchored reference point for the given {@link AnchorKey}.
-	 *
-	 * @param key
-	 *            The key for which to set the reference point.
-	 * @param referencePoint
-	 *            The reference point to set.
-	 */
-	public void setAnchoredReferencePoint(AnchorKey key, Point referencePoint) {
-		anchoredReferencePointsProperty.put(key, referencePoint);
-	}
-
-	/**
-	 * Sets the given {@link IComputationStrategy} to be used by this
-	 * {@link DynamicAnchor} to compute the position for the given
-	 * {@link AnchorKey}.
-	 *
-	 * @param key
-	 *            The {@link AnchorKey} for which the given
-	 *            {@link IComputationStrategy} will be used to compute its
-	 *            position.
-	 * @param computationStrategy
-	 *            The {@link IComputationStrategy} that will be used to compute
-	 *            positions for the given {@link AnchorKey}.
-	 */
+	@Override
 	public void setComputationStrategy(AnchorKey key,
 			IComputationStrategy computationStrategy) {
-		if (computationStrategy == null) {
-			computationStrategyProperty.remove(key);
-		} else {
-			computationStrategyProperty.put(key, computationStrategy);
+		clearDynamicParameters(key);
+		super.setComputationStrategy(key, computationStrategy);
+		initDynamicParameters(key);
+	}
+
+	// TODO: check if we want to offer this post creation
+	@Override
+	public void setDefaultComputationStrategy(
+			IComputationStrategy computationStrategy) {
+		for (AnchorKey key : getKeys()) {
+			clearDynamicParameters(key);
+		}
+		super.setDefaultComputationStrategy(computationStrategy);
+		for (AnchorKey key : getKeys()) {
+			initDynamicParameters(key);
 		}
 	}
 
 	/**
-	 * Sets the given {@link IComputationStrategy} for this
-	 * {@link DynamicAnchor} as the default strategy.
+	 * Sets the reference geometry property to the specified value.
 	 *
-	 * @param computationStrategy
-	 *            The new default {@link IComputationStrategy}.
+	 * @param geometry
+	 *            The new geoemtry value.
 	 */
-	public void setDefaultComputationStrategy(
-			IComputationStrategy computationStrategy) {
-		defaultComputationStrategyProperty().set(computationStrategy);
+	public void setReferenceGeometry(IGeometry geometry) {
+		referenceGeometryProperty.set(geometry);
 	}
 
 }

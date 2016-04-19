@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.ui;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -37,15 +38,20 @@ public class DotStraightRouter extends StraightRouter {
 		if (index == 0) {
 			IAnchor startAnchor = connection.getAnchor(index);
 			if (startAnchor instanceof DynamicAnchor) {
-				((DynamicAnchor) startAnchor).anchoredReferencePointsProperty()
-						.put(connection.getAnchorKey(index),
-								startReferencePoint);
+				((DynamicAnchor) startAnchor)
+						.getDynamicComputationParameter(
+								connection.getAnchorKey(index),
+								AnchoredReferencePoint.class)
+						.set(startReferencePoint);
 			}
 		} else if (index == connection.getAnchors().size() - 1) {
 			IAnchor endAnchor = connection.getAnchor(index);
 			if (endAnchor instanceof DynamicAnchor) {
-				((DynamicAnchor) endAnchor).anchoredReferencePointsProperty()
-						.put(connection.getAnchorKey(index), endReferencePoint);
+				((DynamicAnchor) endAnchor)
+						.getDynamicComputationParameter(
+								connection.getAnchorKey(index),
+								AnchoredReferencePoint.class)
+						.set(endReferencePoint);
 			}
 		}
 		super.updateReferencePoint(connection, index);

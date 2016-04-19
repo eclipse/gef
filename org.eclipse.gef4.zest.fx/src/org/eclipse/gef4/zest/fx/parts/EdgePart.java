@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
 import org.eclipse.gef4.fx.nodes.IConnectionInterpolator;
@@ -276,12 +277,12 @@ public class EdgePart extends AbstractFXContentPart<Connection>
 				// use orthogonal projection strategy
 				if (startAnchor instanceof DynamicAnchor) {
 					((DynamicAnchor) startAnchor).setComputationStrategy(getVisual().getStartAnchorKey(),
-							new DynamicAnchor.OrthogonalProjectionStrategy());
+							new OrthogonalProjectionStrategy());
 				}
 				IAnchor endAnchor = visual.getEndAnchor();
 				if (endAnchor instanceof DynamicAnchor) {
 					((DynamicAnchor) endAnchor).setComputationStrategy(getVisual().getEndAnchorKey(),
-							new DynamicAnchor.OrthogonalProjectionStrategy());
+							new OrthogonalProjectionStrategy());
 				}
 			} else {
 				IAnchor startAnchor = visual.getStartAnchor();

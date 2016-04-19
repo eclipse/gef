@@ -15,6 +15,8 @@ package org.eclipse.gef4.dot.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -68,15 +70,15 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 		// whether the first and last control point have to be evaluated.
 		Point startReference = connection
 				.getStartAnchor() instanceof DynamicAnchor
-						? ((DynamicAnchor) connection.getStartAnchor())
-								.anchoredReferencePointsProperty()
-								.get(connection.getStartAnchorKey())
+						? getProjectionReferencePoint(
+								(DynamicAnchor) connection.getStartAnchor(),
+								connection.getStartAnchorKey())
 						: ((StaticAnchor) connection.getStartAnchor())
 								.getReferencePosition();
 		Point endReference = connection.getEndAnchor() instanceof DynamicAnchor
-				? ((DynamicAnchor) connection.getEndAnchor())
-						.anchoredReferencePointsProperty()
-						.get(connection.getEndAnchorKey())
+				? getProjectionReferencePoint(
+						((DynamicAnchor) connection.getEndAnchor()),
+						connection.getEndAnchorKey())
 				: ((StaticAnchor) connection.getEndAnchor())
 						.getReferencePosition();
 
@@ -110,6 +112,13 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 			segments.add(new Line(p2, end));
 		}
 		return new PolyBezier(segments.toArray(new BezierCurve[] {}));
+	}
+
+	protected Point getProjectionReferencePoint(DynamicAnchor anchor,
+			AnchorKey anchorKey) {
+		return anchor.getDynamicComputationParameter(anchorKey,
+				AnchoredReferencePoint.class).get();
+
 	}
 
 }

@@ -14,8 +14,11 @@ package org.eclipse.gef4.mvc.fx.providers;
 import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.utils.NodeUtils;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import javafx.beans.binding.ObjectBinding;
 import javafx.scene.Node;
 
 /**
@@ -36,7 +39,18 @@ public class DynamicAnchorProvider extends
 	 * @return A new {@link DynamicAnchor}.
 	 */
 	protected DynamicAnchor createAnchor() {
-		return new DynamicAnchor(getAdaptable().getVisual());
+		DynamicAnchor anchor = new DynamicAnchor(getAdaptable().getVisual());
+		anchor.referenceGeometryProperty().bind(new ObjectBinding<IGeometry>() {
+			{
+				bind(getAdaptable().getVisual().layoutBoundsProperty());
+			}
+
+			@Override
+			protected IGeometry computeValue() {
+				return NodeUtils.getShapeOutline(getAdaptable().getVisual());
+			}
+		});
+		return anchor;
 	}
 
 	@Override

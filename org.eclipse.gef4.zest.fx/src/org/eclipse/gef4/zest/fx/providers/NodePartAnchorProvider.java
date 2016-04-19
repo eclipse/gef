@@ -6,6 +6,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.providers.DynamicAnchorProvider;
 import org.eclipse.gef4.zest.fx.parts.NodePart;
 
+import javafx.beans.binding.ObjectBinding;
 import javafx.scene.Node;
 
 /**
@@ -19,13 +20,19 @@ public class NodePartAnchorProvider extends DynamicAnchorProvider {
 
 	@Override
 	protected DynamicAnchor createAnchor() {
-		return new DynamicAnchor(getAdaptable().getVisual()) {
+		final Node shape = ((NodePart) getAdaptable()).getShape();
+		DynamicAnchor anchor = new DynamicAnchor(getAdaptable().getVisual());
+		anchor.referenceGeometryProperty().bind(new ObjectBinding<IGeometry>() {
+			{
+				bind(shape.layoutBoundsProperty());
+			}
+
 			@Override
-			public IGeometry getReferenceGeometry() {
-				Node shape = ((NodePart) getAdaptable()).getShape();
+			protected IGeometry computeValue() {
 				return NodeUtils.localToParent(shape, NodeUtils.getShapeOutline(shape));
 			}
-		};
+		});
+		return anchor;
 	}
 
 }

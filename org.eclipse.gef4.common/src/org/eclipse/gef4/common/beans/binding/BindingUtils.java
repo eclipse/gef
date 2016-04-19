@@ -14,7 +14,6 @@ package org.eclipse.gef4.common.beans.binding;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.gef4.common.collections.MultisetChangeListener;
 import org.eclipse.gef4.common.collections.ObservableMultiset;
@@ -27,9 +26,11 @@ import com.google.common.collect.SetMultimap;
 import javafx.beans.WeakListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.SetBinding;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 /**
  * A utility class that augments {@link Bindings} with functionality related to
@@ -694,20 +695,21 @@ public class BindingUtils {
 	 *            the key of the mapping
 	 * @return A new {@code ObjectBinding}.
 	 */
-	public static <K, V> ObjectBinding<Set<V>> valuesAt(
+	public static <K, V> SetBinding<V> valuesAt(
 			final ObservableSetMultimap<K, V> setMultimap, final K key) {
 		if (setMultimap == null) {
 			throw new UnsupportedOperationException(
 					"setMultimap may not be null.");
 		}
-		return new ObjectBinding<Set<V>>() {
+
+		return new SetBinding<V>() {
 			{
 				super.bind(setMultimap);
 			}
 
 			@Override
-			protected Set<V> computeValue() {
-				return setMultimap.get(key);
+			protected ObservableSet<V> computeValue() {
+				return FXCollections.observableSet(setMultimap.get(key));
 			}
 
 			@Override
@@ -738,7 +740,7 @@ public class BindingUtils {
 	 *            the key of the mapping
 	 * @return A new {@code ObjectBinding}.
 	 */
-	public static <K, V> ObjectBinding<Set<V>> valuesAt(
+	public static <K, V> SetBinding<V> valuesAt(
 			final ObservableSetMultimap<K, V> setMultimap,
 			final ObservableValue<K> key) {
 		if (setMultimap == null) {
@@ -748,14 +750,15 @@ public class BindingUtils {
 		if (key == null) {
 			throw new UnsupportedOperationException("key may not be null");
 		}
-		return new ObjectBinding<Set<V>>() {
+		return new SetBinding<V>() {
 			{
 				super.bind(setMultimap);
 			}
 
 			@Override
-			protected Set<V> computeValue() {
-				return setMultimap.get(key.getValue());
+			protected ObservableSet<V> computeValue() {
+				return FXCollections
+						.observableSet(setMultimap.get(key.getValue()));
 			}
 
 			@Override

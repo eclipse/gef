@@ -1605,7 +1605,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	// anchorsString = anchorsString
 	// + " DA anchorage geometry in scene = "
 	// + NodeUtils.localToScene(da.getAnchorage(),
-	// da.getAnchorageReferenceGeometry())
+	// da.getReferenceGeometry())
 	// + "\n";
 	// AnchorKey anchorKey = getConnection().getAnchorKey(
 	// explicitAnchors.get(j).getConnectionIndex());
@@ -1614,7 +1614,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	// anchorsString = anchorsString
 	// + " DA anchored reference point in scene = "
 	// + NodeUtils.localToScene(anchorKey.getAnchored(),
-	// da.getAnchoredReferencePoint(anchorKey))
+	// da.getDynamicComputationParameter(anchorKey,
+	// AnchoredReferencePoint.class).get())
 	// + "\n";
 	// }
 	// j++;

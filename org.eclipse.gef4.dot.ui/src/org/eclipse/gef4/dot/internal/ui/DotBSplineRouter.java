@@ -1,5 +1,6 @@
 package org.eclipse.gef4.dot.internal.ui;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
@@ -27,8 +28,10 @@ public class DotBSplineRouter extends StraightRouter {
 			IAnchor anchor = connection.getAnchors().get(anchorIndex);
 			AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
 			if (anchor instanceof DynamicAnchor) {
-				((DynamicAnchor) anchor).anchoredReferencePointsProperty()
-						.put(anchorKey, anchorIndex == 0 ? startReferencePoint
+				((DynamicAnchor) anchor)
+						.getDynamicComputationParameter(anchorKey,
+								AnchoredReferencePoint.class)
+						.set(anchorIndex == 0 ? startReferencePoint
 								: endReferencePoint);
 			} else if (anchor instanceof StaticAnchor) {
 				((StaticAnchor) anchor).setReferencePosition(anchorIndex == 0

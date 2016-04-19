@@ -169,6 +169,11 @@ public class DotGraphView extends ZestFxUiView {
 	public DotGraphView() {
 		super(Guice.createInjector(Modules.override(new DotGraphViewModule())
 				.with(new ZestFxUiModule())));
+	}
+
+	@Override
+	protected void activate() {
+		super.activate();
 		setGraph(new DotImport().importDot(currentDot));
 	}
 
@@ -187,6 +192,8 @@ public class DotGraphView extends ZestFxUiView {
 	public void dispose() {
 		GraphvizPreferencePage.dotUiPrefStore()
 				.removePropertyChangeListener(preferenceChangeListener);
+		currentDot = null;
+		currentFile = null;
 		super.dispose();
 	}
 

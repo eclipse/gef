@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.examples.AbstractFxExample;
@@ -89,9 +90,11 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 						+ r2.getHeight() / 2);
 
 		// use static values for dynamic anchor reference points
-		startAnchor.anchoredReferencePointsProperty().put(startKey, r2Center);
+		startAnchor.getDynamicComputationParameter(startKey,
+				AnchoredReferencePoint.class).set(r2Center);
 		startAnchor.attach(startKey);
-		endAnchor.anchoredReferencePointsProperty().put(endKey, r1Center);
+		endAnchor.getDynamicComputationParameter(endKey,
+				AnchoredReferencePoint.class).set(r1Center);
 		endAnchor.attach(endKey);
 
 		Group g = new Group(r1, r2, l);

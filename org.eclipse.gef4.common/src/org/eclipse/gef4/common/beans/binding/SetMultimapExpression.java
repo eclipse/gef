@@ -30,6 +30,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ListExpression;
 import javafx.beans.binding.MapExpression;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.SetBinding;
 import javafx.beans.binding.SetExpression;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -333,9 +334,9 @@ public abstract class SetMultimapExpression<K, V>
 	 *
 	 * @param key
 	 *            the key of the mapping
-	 * @return A new {@code ObjectBinding}.
+	 * @return A new {@code SetBinding}.
 	 */
-	public ObjectBinding<Set<V>> valuesAt(final K key) {
+	public SetBinding<V> valuesAt(final K key) {
 		return BindingUtils.valuesAt(this, key);
 	}
 
@@ -347,7 +348,7 @@ public abstract class SetMultimapExpression<K, V>
 	 *            The key of the mapping.
 	 * @return The {@code ObjectBinding}.
 	 */
-	public ObjectBinding<Set<V>> valuesAt(final ObservableValue<K> key) {
+	public SetBinding<V> valuesAt(final ObservableValue<K> key) {
 		return BindingUtils.valuesAt(this, key);
 	}
 

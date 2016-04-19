@@ -18,7 +18,10 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.application.Platform;
@@ -61,7 +64,6 @@ import javafx.scene.transform.Transform;
 public abstract class AbstractAnchor implements IAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<>();
-
 	private ObservableMap<AnchorKey, Point> positions = FXCollections
 			.observableHashMap();
 	private ObservableMap<AnchorKey, Point> positionsUnmodifiable = FXCollections
@@ -69,15 +71,18 @@ public abstract class AbstractAnchor implements IAnchor {
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionsUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(
 			positionsUnmodifiable);
 
-	private Map<Node, Set<AnchorKey>> keys = new HashMap<>();
+	private Map<Node, Set<AnchorKey>> keysByNode = new HashMap<>();
+
+	// TODO: push this down to dynamic anchor (as its only needed there)
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
 
+	// TODO: push this down to dynamic anchor (as its only needed there)
 	private ChangeListener<Scene> anchoredSceneChangeListener = new ChangeListener<Scene>() {
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable,
 				Scene oldValue, Scene newValue) {
 			// determine which anchored changed
-			for (Node anchored : keys.keySet()) {
+			for (Node anchored : keysByNode.keySet()) {
 				if (anchored.sceneProperty() == observable) {
 					if (oldValue == newValue) {
 						return;
@@ -144,31 +149,42 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 	};
 
+	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategiesProperty = new ReadOnlyMapWrapperEx<>(
+			FXCollections
+					.<AnchorKey, IComputationStrategy> observableHashMap());
+
+	private IComputationStrategy defaultComputationStrategy;
+
 	/**
 	 * Creates a new {@link AbstractAnchor} for the given <i>anchorage</i>
 	 * {@link Node}.
 	 *
 	 * @param anchorage
 	 *            The anchorage {@link Node} for this {@link AbstractAnchor}.
+	 * @param defaultComputationStrategy
+	 *            The default computation strategy to use (if no specific is set
+	 *            for an anchor key).
 	 */
-	public AbstractAnchor(Node anchorage) {
+	public AbstractAnchor(Node anchorage,
+			IComputationStrategy defaultComputationStrategy) {
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorage(anchorage);
+		setDefaultComputationStrategy(defaultComputationStrategy);
 	}
 
 	@Override
 	public ReadOnlyObjectProperty<Node> anchorageProperty() {
 		return anchorageProperty.getReadOnlyProperty();
-	}
+	};
 
 	@Override
 	public void attach(AnchorKey key) {
 		Node anchored = key.getAnchored();
-		if (!keys.containsKey(anchored)) {
-			keys.put(anchored, new HashSet<AnchorKey>());
+		if (!keysByNode.containsKey(anchored)) {
+			keysByNode.put(anchored, new HashSet<AnchorKey>());
 			anchored.sceneProperty().addListener(anchoredSceneChangeListener);
 		}
-		keys.get(anchored).add(key);
+		keysByNode.get(anchored).add(key);
 
 		if (!vcls.containsKey(anchored)) {
 			VisualChangeListener vcl = createVCL(anchored);
@@ -178,6 +194,7 @@ public abstract class AbstractAnchor implements IAnchor {
 			// + " was attached to anchorage " + getAnchorage());
 			registerVCL(anchored);
 		}
+
 		updatePosition(key);
 	}
 
@@ -186,14 +203,49 @@ public abstract class AbstractAnchor implements IAnchor {
 				&& anchored != null && anchored.getScene() != null;
 	}
 
+	@Override
+	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty() {
+		return computationStrategiesProperty.getReadOnlyProperty();
+	};
+
 	/**
-	 * Computes and returns the position for the given {@link AnchorKey}.
+	 * Recomputes the position for the given attached {@link AnchorKey} by
+	 * delegating to the respective {@link IComputationStrategy}.
 	 *
 	 * @param key
-	 *            The {@link AnchorKey} for which the position is computed.
-	 * @return The position for the given {@link AnchorKey}.
+	 *            The {@link AnchorKey} for which to compute an anchor position.
+	 * @return The point for the given {@link AnchorKey} in local coordinates of
+	 *         the anchored {@link Node}.
 	 */
-	protected abstract Point computePosition(AnchorKey key);
+	protected Point computePosition(AnchorKey key) {
+		Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
+
+		// add static parameter
+		populateParameters(key, parameters);
+
+		// check for availability of parameters
+		IComputationStrategy computationStrategy = getComputationStrategy(key);
+		for (Class<? extends Parameter<?>> paramType : computationStrategy
+				.getRequiredParameters()) {
+			Parameter<?> p = AbstractComputationStrategy
+					.getParameter(parameters, paramType);
+			if (p == null) {
+				// even optional parameters are passed in (they simply do not
+				// provide a value)
+				return null;
+			} else if (p.get() == null && !p.isOptional()) {
+				// optional parameter may be set to null.
+				return null;
+			}
+		}
+
+		// only invoke strategy if all required parameters are provided
+		Point position = FX2Geometry.toPoint(key.getAnchored()
+				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
+						.computePositionInScene(getAnchorage(),
+								key.getAnchored(), parameters))));
+		return position;
+	}
 
 	private VisualChangeListener createVCL(final Node anchored) {
 		return new VisualChangeListener() {
@@ -247,14 +299,14 @@ public abstract class AbstractAnchor implements IAnchor {
 		// attached again
 		positions.remove(key);
 
-		// remove from keys to indicate it is detached
-		keys.get(anchored).remove(key);
+		// remove from keysByNode to indicate it is detached
+		keysByNode.get(anchored).remove(key);
 
 		// clean-up for this anchored if necessary
-		if (keys.get(anchored).isEmpty()) {
+		if (keysByNode.get(anchored).isEmpty()) {
 			anchored.sceneProperty()
 					.removeListener(anchoredSceneChangeListener);
-			keys.remove(anchored);
+			keysByNode.remove(anchored);
 			// System.out.println("Trying to unregister VCL as anchored "
 			// + anchored + " has been detached from anchorage "
 			// + getAnchorage());
@@ -268,6 +320,38 @@ public abstract class AbstractAnchor implements IAnchor {
 		return anchorageProperty.get();
 	}
 
+	@Override
+	public IComputationStrategy getComputationStrategy(AnchorKey key) {
+		if (computationStrategiesProperty.containsKey(key)) {
+			return computationStrategiesProperty.get(key);
+		}
+		return getDefaultComputationStrategy();
+	}
+
+	/**
+	 * Returns the default {@link IComputationStrategy} used by this
+	 * {@link DynamicAnchor} when no {@link IComputationStrategy} is explicitly
+	 * set for an {@link AnchorKey}.
+	 *
+	 * @return The default {@link IComputationStrategy}.
+	 */
+	public IComputationStrategy getDefaultComputationStrategy() {
+		return defaultComputationStrategy;
+	}
+
+	/**
+	 * Returns all keys maintained by this anchor.
+	 *
+	 * @return A set containing all {@link AnchorKey}s.
+	 */
+	protected Set<AnchorKey> getKeys() {
+		Set<AnchorKey> allKeys = new HashSet<>();
+		for (Node n : keysByNode.keySet()) {
+			allKeys.addAll(keysByNode.get(n));
+		}
+		return allKeys;
+	}
+
 	/**
 	 * Returns the {@link Map} which stores the registered {@link AnchorKey}s
 	 * per {@link Node} by reference.
@@ -275,14 +359,15 @@ public abstract class AbstractAnchor implements IAnchor {
 	 * @return The {@link Map} which stores the registered {@link AnchorKey}s
 	 *         per {@link Node} by reference.
 	 */
-	protected Map<Node, Set<AnchorKey>> getKeys() {
-		return keys;
+	protected Map<Node, Set<AnchorKey>> getKeysByNode() {
+		return keysByNode;
 	}
 
 	@Override
 	public Point getPosition(AnchorKey key) {
 		Node anchored = key.getAnchored();
-		if (!keys.containsKey(anchored) || !keys.get(anchored).contains(key)) {
+		if (!keysByNode.containsKey(anchored)
+				|| !keysByNode.get(anchored).contains(key)) {
 			throw new IllegalArgumentException(
 					"The AnchorKey is not attached to this anchor.");
 		}
@@ -295,9 +380,21 @@ public abstract class AbstractAnchor implements IAnchor {
 
 	@Override
 	public boolean isAttached(AnchorKey key) {
-		return keys.containsKey(key.getAnchored())
-				&& keys.get(key.getAnchored()).contains(key);
+		return keysByNode.containsKey(key.getAnchored())
+				&& keysByNode.get(key.getAnchored()).contains(key);
 	}
+
+	/**
+	 * Adds the static parameters of this anchor to the given set of parameters.
+	 *
+	 * @param key
+	 *            The Anchor key of relevance.
+	 *
+	 * @param parameters
+	 *            The set of parameters to populate
+	 */
+	protected abstract void populateParameters(AnchorKey key,
+			Set<IComputationStrategy.Parameter<?>> parameters);
 
 	@Override
 	public ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty() {
@@ -345,6 +442,29 @@ public abstract class AbstractAnchor implements IAnchor {
 	 */
 	protected void setAnchorage(Node anchorage) {
 		anchorageProperty.set(anchorage);
+	}
+
+	@Override
+	public void setComputationStrategy(AnchorKey key,
+			IComputationStrategy computationStrategy) {
+		if (computationStrategy == null) {
+			computationStrategiesProperty.remove(key);
+		} else {
+			computationStrategiesProperty.put(key, computationStrategy);
+		}
+	}
+
+	/**
+	 * Sets the given {@link IComputationStrategy} for this
+	 * {@link DynamicAnchor} as the default strategy.
+	 *
+	 * @param computationStrategy
+	 *            The new default {@link IComputationStrategy}.
+	 */
+	// TODO: check if we want to offer this post creation
+	public void setDefaultComputationStrategy(
+			IComputationStrategy computationStrategy) {
+		this.defaultComputationStrategy = computationStrategy;
 	}
 
 	/**
@@ -401,14 +521,16 @@ public abstract class AbstractAnchor implements IAnchor {
 					&& !Double.isInfinite(newPosition.x)
 					&& !Double.isNaN(newPosition.y)
 					&& !Double.isInfinite(newPosition.y)) {
+				// System.out.println(
+				// "Updated position for key " + key + ": " + newPosition);
 				positions.put(key, newPosition);
 			}
 		}
 	}
 
 	private void updatePositions(Node anchored) {
-		if (getKeys().containsKey(anchored)) {
-			for (AnchorKey key : getKeys().get(anchored)) {
+		if (getKeysByNode().containsKey(anchored)) {
+			for (AnchorKey key : getKeysByNode().get(anchored)) {
 				updatePosition(key);
 			}
 		}

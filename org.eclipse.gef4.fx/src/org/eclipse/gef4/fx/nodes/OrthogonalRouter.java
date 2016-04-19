@@ -14,13 +14,18 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
@@ -300,10 +305,8 @@ public class OrthogonalRouter implements IConnectionRouter {
 				// perform an instance test
 				Point referencePoint = getAnchorReferencePoint(connection,
 						index);
-				// update reference point for the anchor key at the given index
-				((DynamicAnchor) anchor).anchoredReferencePointsProperty()
-						.put(connection.getAnchorKey(index), referencePoint);
-				// TODO: update orientation hint
+
+				// update orientation hint
 				Point neighborPoint = connection
 						.getPoint(isFirstIndex ? index + 1 : index - 1);
 				Point delta = neighborPoint.getDifference(referencePoint);
@@ -317,22 +320,30 @@ public class OrthogonalRouter implements IConnectionRouter {
 					// very small y difference => go in horizontally
 					hint = Orientation.HORIZONTAL;
 				}
-
 				// provide a hint to the anchor's computation strategy
-				((DynamicAnchor) anchor).hintsProperty()
-						.put(connection.getAnchorKey(index), hint);
+				AnchorKey anchorKey = connection.getAnchorKey(index);
+				((DynamicAnchor) anchor).getDynamicComputationParameter(
+						anchorKey, PreferredOrientation.class).set(hint);
+
+				// update reference point for the anchor key at the given index
+				((DynamicAnchor) anchor)
+						.getDynamicComputationParameter(anchorKey,
+								AnchoredReferencePoint.class)
+						.set(referencePoint);
 
 				// find computation strategy
-				AnchorKey anchorKey = connection.getAnchorKey(index);
 				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)
 						.getComputationStrategy(anchorKey);
 				// compute position using computation strategy
+				Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
+				parameters.add(new AnchorageReferenceGeometry(
+						((DynamicAnchor) anchor).getReferenceGeometry()));
+				parameters.add(new AnchoredReferencePoint(referencePoint));
+				parameters.add(new PreferredOrientation(hint));
 				return FX2Geometry.toPoint(connection
 						.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
 								.computePositionInScene(anchor.getAnchorage(),
-										((DynamicAnchor) anchor)
-												.getReferenceGeometry(),
-										connection, referencePoint, hint))));
+										connection, parameters))));
 			}
 		}
 		return connection.getPoint(index);

@@ -12,12 +12,17 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy;
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy;
+import org.eclipse.gef4.fx.anchors.ProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -154,13 +159,21 @@ public class FXDefaultSelectionFeedbackPartFactory
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
 					// TODO (#471628): inject; maybe extend IComputationStrategy
 					// interface
-					private final DynamicAnchor.ProjectionStrategy computationStrategy = new DynamicAnchor.ProjectionStrategy();
+					private final ProjectionStrategy computationStrategy = new ProjectionStrategy();
 
 					private Point computePosition(Node n1, IGeometry n1Geometry,
 							Node n2, IGeometry n2Geometry) {
 						Point n2RefPoint = n2Geometry.getBounds().getCenter();
+						// TODO: let computation strategy initialize the
+						// parameters, then populate them
+						Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
+						parameters.add(
+								new AnchorageReferenceGeometry(n1Geometry));
+						parameters
+								.add(new AbstractComputationStrategy.AnchoredReferencePoint(
+										n2RefPoint));
 						return computationStrategy.computePositionInScene(n1,
-								n1Geometry, n2, n2RefPoint, null);
+								n2, parameters);
 					}
 
 					@Override

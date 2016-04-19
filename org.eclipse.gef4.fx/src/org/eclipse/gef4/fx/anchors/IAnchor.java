@@ -25,8 +25,8 @@ import javafx.scene.Node;
  * The position for each attached {@link Node} will be recomputed in case the
  * attached {@link Node} or any of its ancestors are changed in a way that has
  * an effect on the position being provided for the attached {@link Node}. The
- * {@link #positionsUnmodifiableProperty()} will be updated accordingly, it may be monitored
- * for changes.
+ * {@link #positionsUnmodifiableProperty()} will be updated accordingly, it may
+ * be monitored for changes.
  * <p>
  * An {@link IAnchor} may be bound to an anchorage {@link Node}. If this is the
  * case, positions for all attached {@link Node}s will also be recomputed in
@@ -52,7 +52,18 @@ public interface IAnchor {
 	 * @param key
 	 *            The {@link AnchorKey} to be attached.
 	 */
+	// TODO add hint provider for computation strategy -> strategy for each
+	// anchor, also for static??
 	void attach(AnchorKey key);
+
+	/**
+	 * Returns a {@link ReadOnlyMapProperty} that stores the individual
+	 * {@link IComputationStrategy} for each {@link AnchorKey}.
+	 *
+	 * @return A {@link ReadOnlyMapProperty} that stores the individual
+	 *         {@link IComputationStrategy} for each {@link AnchorKey}.
+	 */
+	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty();
 
 	/**
 	 * Detaches the given {@link AnchorKey} from this {@link IAnchor}.
@@ -69,6 +80,19 @@ public interface IAnchor {
 	 * @return The value of the {@link #anchorageProperty()}.
 	 */
 	Node getAnchorage();
+
+	/**
+	 * Returns the {@link IComputationStrategy} that is used by this
+	 * {@link IAnchor} to compute the position for the given {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which the
+	 *            {@link IComputationStrategy} is determined.
+	 * @return The {@link IComputationStrategy} that is used by this
+	 *         {@link DynamicAnchor} to compute the position for the given
+	 *         {@link AnchorKey}.
+	 */
+	public IComputationStrategy getComputationStrategy(AnchorKey key);
 
 	/**
 	 * Provides a position for the given {@link AnchorKey}. The provided
@@ -108,4 +132,19 @@ public interface IAnchor {
 	 *         {@link AnchorKey}s.
 	 */
 	ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty();
+
+	/**
+	 * Sets the given {@link IComputationStrategy} to be used by this
+	 * {@link IAnchor} to compute the position for the given {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which the given
+	 *            {@link IComputationStrategy} will be used to compute its
+	 *            position.
+	 * @param computationStrategy
+	 *            The {@link IComputationStrategy} that will be used to compute
+	 *            positions for the given {@link AnchorKey}.
+	 */
+	public void setComputationStrategy(AnchorKey key,
+			IComputationStrategy computationStrategy);
 }

@@ -15,6 +15,7 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.List;
 
+import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
@@ -142,11 +143,6 @@ public class StraightRouter implements IConnectionRouter {
 			return;
 		}
 
-		// get old reference point
-		AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
-		Point oldRef = ((DynamicAnchor) anchor).anchoredReferencePointsProperty()
-				.get(anchorKey);
-
 		// compute new reference point
 		Point newRef = null;
 		Point pred = getPred(connection, anchorIndex);
@@ -170,9 +166,14 @@ public class StraightRouter implements IConnectionRouter {
 		}
 
 		// only update if necessary (when it changes)
+		AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
+		AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) anchor)
+				.getDynamicComputationParameter(anchorKey,
+						AnchoredReferencePoint.class);
+		Point oldRef = referencePointParameter == null ? null
+				: referencePointParameter.get();
 		if (oldRef == null || !newRef.equals(oldRef)) {
-			((DynamicAnchor) anchor).anchoredReferencePointsProperty().put(anchorKey,
-					newRef);
+			referencePointParameter.set(newRef);
 		}
 	}
 
