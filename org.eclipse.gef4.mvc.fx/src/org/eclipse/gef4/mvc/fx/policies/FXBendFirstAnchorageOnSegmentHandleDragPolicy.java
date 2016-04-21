@@ -25,7 +25,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.policies.FXBendConnectionPolicy.AnchorHandle;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -89,7 +88,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 		boolean isOrthogonal = isSegmentDragged
 				&& connection.getRouter() instanceof OrthogonalRouter;
 		boolean isHorizontal = isOrthogonal
-				&& getBendPolicy(targetPart).isSelectionOnHorizontalLine();
+				&& getBendPolicy(targetPart).isSelectionHorizontal();
 
 		getBendPolicy(targetPart).move(initialMouseInScene,
 				new Point(e.getSceneX(), e.getSceneY()));
@@ -189,9 +188,9 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				// create new way point in middle and move it (disabled for
 				// orthogonal connections)
 
-				AnchorHandle previousAnchorHandle = bendPolicy
+				Integer previousAnchorHandle = bendPolicy
 						.findExplicitAnchorBackward(hostPart.getSegmentIndex());
-				AnchorHandle newAnchorHandle = bendPolicy
+				Integer newAnchorHandle = bendPolicy
 						.createAfter(previousAnchorHandle, initialMouseInScene);
 
 				// select for manipulation
@@ -224,19 +223,23 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 
 			// make the anchor handles explicit
 			boolean isStart = firstSegmentIndex == 0;
-			List<AnchorHandle> explicit = bendPolicy.makeExplicit(
+			List<Integer> explicit = bendPolicy.makeExplicit(
 					isStart ? firstSegmentIndex : firstSegmentIndex - 1,
 					secondSegmentIndex);
-			AnchorHandle firstAnchorHandle = explicit.get(isStart ? 0 : 1);
-			AnchorHandle secondAnchorHandle = explicit.get(isStart ? 1 : 2);
+			Integer firstAnchorHandle = explicit.get(isStart ? 0 : 1);
+			Integer secondAnchorHandle = explicit.get(isStart ? 1 : 2);
+
+			int firstAnchorHandleConnectionIndex = bendPolicy
+					.getConnectionIndex(firstAnchorHandle);
 
 			// copy first point if connected
 			if (isFirstConnected) {
 				// use the copy as the new first anchor handle
 				firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-						FX2Geometry.toPoint(targetPart.getVisual().localToScene(
-								Geometry2FX.toFXPoint(firstAnchorHandle
-										.getInitialPosition()))));
+						FX2Geometry.toPoint(targetPart.getVisual()
+								.localToScene(Geometry2FX.toFXPoint(
+										bendPolicy.getConnection().getPoint(
+												firstAnchorHandleConnectionIndex)))));
 			}
 
 			// create new anchor at the segment's middle
@@ -280,19 +283,23 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			// make the anchor handles explicit
 			boolean isEnd = secondSegmentIndex == targetPart.getVisual()
 					.getAnchors().size() - 1;
-			List<AnchorHandle> explicit = bendPolicy.makeExplicit(
-					firstSegmentIndex,
+			List<Integer> explicit = bendPolicy.makeExplicit(firstSegmentIndex,
 					isEnd ? secondSegmentIndex : secondSegmentIndex + 1);
-			AnchorHandle firstAnchorHandle = explicit.get(0);
-			AnchorHandle secondAnchorHandle = explicit.get(1);
+			Integer firstAnchorHandle = explicit.get(0);
+			Integer secondAnchorHandle = explicit.get(1);
+
+			// compute connection indices
+			int secondAnchorHandleConnectionIndex = bendPolicy
+					.getConnectionIndex(secondAnchorHandle);
 
 			// copy second point if connected
 			if (isSecondConnected) {
 				// use the copy as the new first anchor handle
 				secondAnchorHandle = bendPolicy.createBefore(secondAnchorHandle,
-						FX2Geometry.toPoint(targetPart.getVisual().localToScene(
-								Geometry2FX.toFXPoint(secondAnchorHandle
-										.getInitialPosition()))));
+						FX2Geometry.toPoint(targetPart.getVisual()
+								.localToScene(Geometry2FX.toFXPoint(
+										bendPolicy.getConnection().getPoint(
+												secondAnchorHandleConnectionIndex)))));
 			}
 
 			// create new anchor at the segment's middle
