@@ -52,18 +52,7 @@ public interface IAnchor {
 	 * @param key
 	 *            The {@link AnchorKey} to be attached.
 	 */
-	// TODO add hint provider for computation strategy -> strategy for each
-	// anchor, also for static??
 	void attach(AnchorKey key);
-
-	/**
-	 * Returns a {@link ReadOnlyMapProperty} that stores the individual
-	 * {@link IComputationStrategy} for each {@link AnchorKey}.
-	 *
-	 * @return A {@link ReadOnlyMapProperty} that stores the individual
-	 *         {@link IComputationStrategy} for each {@link AnchorKey}.
-	 */
-	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty();
 
 	/**
 	 * Detaches the given {@link AnchorKey} from this {@link IAnchor}.
@@ -83,16 +72,13 @@ public interface IAnchor {
 
 	/**
 	 * Returns the {@link IComputationStrategy} that is used by this
-	 * {@link IAnchor} to compute the position for the given {@link AnchorKey}.
+	 * {@link IAnchor}.
 	 *
-	 * @param key
-	 *            The {@link AnchorKey} for which the
-	 *            {@link IComputationStrategy} is determined.
 	 * @return The {@link IComputationStrategy} that is used by this
-	 *         {@link DynamicAnchor} to compute the position for the given
-	 *         {@link AnchorKey}.
+	 *         {@link DynamicAnchor} to compute positions for all attached
+	 *         {@link AnchorKey}s.
 	 */
-	public IComputationStrategy getComputationStrategy(AnchorKey key);
+	public IComputationStrategy getComputationStrategy();
 
 	/**
 	 * Provides a position for the given {@link AnchorKey}. The provided
@@ -135,16 +121,12 @@ public interface IAnchor {
 
 	/**
 	 * Sets the given {@link IComputationStrategy} to be used by this
-	 * {@link IAnchor} to compute the position for the given {@link AnchorKey}.
+	 * {@link IAnchor}.
 	 *
-	 * @param key
-	 *            The {@link AnchorKey} for which the given
-	 *            {@link IComputationStrategy} will be used to compute its
-	 *            position.
 	 * @param computationStrategy
 	 *            The {@link IComputationStrategy} that will be used to compute
-	 *            positions for the given {@link AnchorKey}.
+	 *            positions for all attached {@link AnchorKey}s.
 	 */
-	public void setComputationStrategy(AnchorKey key,
+	public void setComputationStrategy(
 			IComputationStrategy computationStrategy);
 }

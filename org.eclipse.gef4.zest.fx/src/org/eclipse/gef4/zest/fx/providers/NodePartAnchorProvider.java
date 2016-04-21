@@ -21,6 +21,25 @@ import javafx.scene.Node;
  */
 public class NodePartAnchorProvider extends DynamicAnchorProvider {
 
+	/**
+	 * Creates a new {@link NodePartAnchorProvider} that provides a
+	 * {@link DynamicAnchor} with the default computation strategy.
+	 */
+	public NodePartAnchorProvider() {
+	}
+
+	/**
+	 * Creates a new {@link NodePartAnchorProvider} that provides a
+	 * {@link DynamicAnchor} with the provided computation strategy.
+	 *
+	 * @param computationStrategy
+	 *            The {@link IComputationStrategy} to set on the provided
+	 *            {@link DynamicAnchor}.
+	 */
+	public NodePartAnchorProvider(IComputationStrategy computationStrategy) {
+		super(computationStrategy);
+	}
+
 	@Override
 	protected DynamicAnchor createAnchor(IComputationStrategy computationStrategy) {
 		final DynamicAnchor anchor = computationStrategy == null ? new DynamicAnchor(getAdaptable().getVisual())

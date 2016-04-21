@@ -333,7 +333,7 @@ public class OrthogonalRouter implements IConnectionRouter {
 
 				// find computation strategy
 				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)
-						.getComputationStrategy(anchorKey);
+						.getComputationStrategy();
 				// compute position using computation strategy
 				Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
 				parameters.add(new AnchorageReferenceGeometry(

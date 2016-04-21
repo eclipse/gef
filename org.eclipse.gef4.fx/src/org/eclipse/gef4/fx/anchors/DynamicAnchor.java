@@ -262,8 +262,8 @@ public class DynamicAnchor extends AbstractAnchor {
 
 	private void initDynamicParameters(AnchorKey key) {
 		// ensure required parameters are provided
-		for (Class<? extends Parameter<?>> paramType : getComputationStrategy(
-				key).getRequiredParameters()) {
+		for (Class<? extends Parameter<?>> paramType : getComputationStrategy()
+				.getRequiredParameters()) {
 			// skip static ones
 			// TODO: this is not so nice, the parameter could indicate whether
 			// its static or dynamic
@@ -307,21 +307,12 @@ public class DynamicAnchor extends AbstractAnchor {
 	}
 
 	@Override
-	public void setComputationStrategy(AnchorKey key,
-			IComputationStrategy computationStrategy) {
-		clearDynamicParameters(key);
-		super.setComputationStrategy(key, computationStrategy);
-		initDynamicParameters(key);
-	}
-
-	// TODO: check if we want to offer this post creation
-	@Override
-	public void setDefaultComputationStrategy(
+	public void setComputationStrategy(
 			IComputationStrategy computationStrategy) {
 		for (AnchorKey key : getKeys()) {
 			clearDynamicParameters(key);
 		}
-		super.setDefaultComputationStrategy(computationStrategy);
+		super.setComputationStrategy(computationStrategy);
 		for (AnchorKey key : getKeys()) {
 			initDynamicParameters(key);
 		}

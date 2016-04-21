@@ -30,7 +30,6 @@ public class FXShapePropertySource implements IPropertySource {
 
 	@Override
 	public Object getEditableValue() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

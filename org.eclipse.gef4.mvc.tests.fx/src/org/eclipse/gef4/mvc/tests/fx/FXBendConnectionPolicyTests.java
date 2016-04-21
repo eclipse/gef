@@ -437,7 +437,7 @@ public class FXBendConnectionPolicyTests {
 		// XXX: The strategies are exchanged before setting the router so that a
 		// refresh will use these strategies
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy() {
+				.setComputationStrategy(new OrthogonalProjectionStrategy() {
 					@Override
 					public Point computePositionInScene(Node anchorage, Node anchored, Set<Parameter<?>> parameters) {
 						// ensure routing starts going to the right
@@ -445,7 +445,7 @@ public class FXBendConnectionPolicyTests {
 					}
 				});
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getEndAnchorKey(), new OrthogonalProjectionStrategy() {
+				.setComputationStrategy(new OrthogonalProjectionStrategy() {
 					@Override
 					public Point computePositionInScene(Node anchorage, Node anchored, Set<Parameter<?>> parameters) {
 						// ensure routing ends going to the right
@@ -661,9 +661,9 @@ public class FXBendConnectionPolicyTests {
 		// use orthogonal projection strategy at the anchorages
 		connection.getVisual().setRouter(new OrthogonalRouter());
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getEndAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// query start point and end point so that we can construct orthogonal
 		// control points
@@ -740,9 +740,9 @@ public class FXBendConnectionPolicyTests {
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getEndAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// XXX: Set router on application thread as the position change listener
 		// is executed within the application thread, too, and we need to wait
@@ -831,9 +831,9 @@ public class FXBendConnectionPolicyTests {
 		// use orthogonal projection strategy at the anchorages
 		connection.getVisual().setRouter(new OrthogonalRouter());
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getEndAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// query start point and end point so that we can construct orthogonal
 		// control points
@@ -926,9 +926,9 @@ public class FXBendConnectionPolicyTests {
 		// use orthogonal projection strategy at the anchorages
 		connection.getVisual().setRouter(new OrthogonalRouter());
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getEndAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// query start point and end point so that we can construct orthogonal
 		// control points
@@ -998,9 +998,9 @@ public class FXBendConnectionPolicyTests {
 		// use orthogonal projection strategy at the anchorages
 		connection.getVisual().setRouter(new OrthogonalRouter());
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// query start point and end point so that we can construct orthogonal
 		// control points
@@ -1102,9 +1102,9 @@ public class FXBendConnectionPolicyTests {
 		// use orthogonal projection strategy at the anchorages
 		connection.getVisual().setRouter(new OrthogonalRouter());
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// query start point and end point so that we can construct orthogonal
 		// control points
@@ -1220,9 +1220,9 @@ public class FXBendConnectionPolicyTests {
 		// use orthogonal projection strategy at the anchorages
 		connection.getVisual().setRouter(new OrthogonalRouter());
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy());
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
 
 		// query start point and end point so that we can construct orthogonal
 		// control points
@@ -1873,10 +1873,10 @@ public class FXBendConnectionPolicyTests {
 		// XXX: The strategies are exchanged before setting the router so that a
 		// refresh will use these strategies
 		((DynamicAnchor) connection.getVisual().getStartAnchor())
-				.setComputationStrategy(connection.getVisual().getStartAnchorKey(), new OrthogonalProjectionStrategy() {
+				.setComputationStrategy(new OrthogonalProjectionStrategy() {
 				});
 		((DynamicAnchor) connection.getVisual().getEndAnchor())
-				.setComputationStrategy(connection.getVisual().getEndAnchorKey(), new OrthogonalProjectionStrategy() {
+				.setComputationStrategy(new OrthogonalProjectionStrategy() {
 				});
 
 		// XXX: Set router on application thread as the position change listener

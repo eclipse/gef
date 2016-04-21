@@ -16,6 +16,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
@@ -95,6 +96,16 @@ import javafx.scene.Node;
  *
  */
 public class ZestFxModule extends MvcFxModule {
+
+	/**
+	 * Role under which an anchor provider for straight routing is registered.
+	 */
+	public static final String STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE = "straightRoutingAnchorProvider";
+
+	/**
+	 * Role under which an anchor provider for orthogonal routing is registered.
+	 */
+	public static final String ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE = "orthogonalRoutingAnchorProvider";
 
 	@Override
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -238,22 +249,6 @@ public class ZestFxModule extends MvcFxModule {
 				.to(BendFirstAnchorageAndRelocateLabelsOnDrag.class);
 	}
 
-	/**
-	 * Bind resize and rotate behavior to {@link FXSquareSegmentHandlePart}.
-	 *
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link FXSquareSegmentHandlePart} as a key.
-	 */
-	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.role("resize-relocate-first-anchorage"))
-				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
-
-		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
-	}
-
 	@Override
 	protected void bindFXRootPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindFXRootPartAdapters(adapterMapBinder);
@@ -271,6 +266,22 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXRootPartAsContentViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ZestFxRootPart.class)
 				.in(AdaptableScopes.typed(FXViewer.class));
+	}
+
+	/**
+	 * Bind resize and rotate behavior to {@link FXSquareSegmentHandlePart}.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXSquareSegmentHandlePart} as a key.
+	 */
+	protected void bindFXSquareSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.role("resize-relocate-first-anchorage"))
+				.to(FXResizeTranslateFirstAnchorageOnHandleDragPolicy.class);
+
+		adapterMapBinder.addBinding(AdapterKey.role("rotate")).to(FXRotateSelectedOnHandleDragPolicy.class);
 	}
 
 	/**
@@ -416,7 +427,15 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(FXResizePolicy.class);
 
 		// anchor provider
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(NodePartAnchorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE))
+				.to(NodePartAnchorProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.role(ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE))
+				.toProvider(new Provider<NodePartAnchorProvider>() {
+					@Override
+					public NodePartAnchorProvider get() {
+						return new NodePartAnchorProvider(new OrthogonalProjectionStrategy());
+					}
+				});
 
 		// feedback and handles
 		adapterMapBinder

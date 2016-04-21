@@ -149,11 +149,7 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 	};
 
-	private ReadOnlyMapWrapperEx<AnchorKey, IComputationStrategy> computationStrategiesProperty = new ReadOnlyMapWrapperEx<>(
-			FXCollections
-					.<AnchorKey, IComputationStrategy> observableHashMap());
-
-	private IComputationStrategy defaultComputationStrategy;
+	private IComputationStrategy computationStrategy;
 
 	/**
 	 * Creates a new {@link AbstractAnchor} for the given <i>anchorage</i>
@@ -161,21 +157,20 @@ public abstract class AbstractAnchor implements IAnchor {
 	 *
 	 * @param anchorage
 	 *            The anchorage {@link Node} for this {@link AbstractAnchor}.
-	 * @param defaultComputationStrategy
-	 *            The default computation strategy to use (if no specific is set
-	 *            for an anchor key).
+	 * @param computationStrategy
+	 *            The computation strategy to use.
 	 */
 	public AbstractAnchor(Node anchorage,
-			IComputationStrategy defaultComputationStrategy) {
+			IComputationStrategy computationStrategy) {
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorage(anchorage);
-		setDefaultComputationStrategy(defaultComputationStrategy);
+		setComputationStrategy(computationStrategy);
 	}
 
 	@Override
 	public ReadOnlyObjectProperty<Node> anchorageProperty() {
 		return anchorageProperty.getReadOnlyProperty();
-	};
+	}
 
 	@Override
 	public void attach(AnchorKey key) {
@@ -196,17 +191,12 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 
 		updatePosition(key);
-	}
+	};
 
 	private boolean canRegister(Node anchored) {
 		return getAnchorage() != null && getAnchorage().getScene() != null
 				&& anchored != null && anchored.getScene() != null;
 	}
-
-	@Override
-	public ReadOnlyMapProperty<AnchorKey, IComputationStrategy> computationStrategiesProperty() {
-		return computationStrategiesProperty.getReadOnlyProperty();
-	};
 
 	/**
 	 * Recomputes the position for the given attached {@link AnchorKey} by
@@ -220,11 +210,11 @@ public abstract class AbstractAnchor implements IAnchor {
 	protected Point computePosition(AnchorKey key) {
 		Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
 
-		// add static parameter
+		// add parameters
 		populateParameters(key, parameters);
 
 		// check for availability of parameters
-		IComputationStrategy computationStrategy = getComputationStrategy(key);
+		IComputationStrategy computationStrategy = getComputationStrategy();
 		for (Class<? extends Parameter<?>> paramType : computationStrategy
 				.getRequiredParameters()) {
 			Parameter<?> p = AbstractComputationStrategy
@@ -245,7 +235,7 @@ public abstract class AbstractAnchor implements IAnchor {
 						.computePositionInScene(getAnchorage(),
 								key.getAnchored(), parameters))));
 		return position;
-	}
+	};
 
 	private VisualChangeListener createVCL(final Node anchored) {
 		return new VisualChangeListener() {
@@ -320,14 +310,6 @@ public abstract class AbstractAnchor implements IAnchor {
 		return anchorageProperty.get();
 	}
 
-	@Override
-	public IComputationStrategy getComputationStrategy(AnchorKey key) {
-		if (computationStrategiesProperty.containsKey(key)) {
-			return computationStrategiesProperty.get(key);
-		}
-		return getDefaultComputationStrategy();
-	}
-
 	/**
 	 * Returns the default {@link IComputationStrategy} used by this
 	 * {@link DynamicAnchor} when no {@link IComputationStrategy} is explicitly
@@ -335,8 +317,9 @@ public abstract class AbstractAnchor implements IAnchor {
 	 *
 	 * @return The default {@link IComputationStrategy}.
 	 */
-	public IComputationStrategy getDefaultComputationStrategy() {
-		return defaultComputationStrategy;
+	@Override
+	public IComputationStrategy getComputationStrategy() {
+		return computationStrategy;
 	}
 
 	/**
@@ -445,26 +428,9 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	@Override
-	public void setComputationStrategy(AnchorKey key,
+	public void setComputationStrategy(
 			IComputationStrategy computationStrategy) {
-		if (computationStrategy == null) {
-			computationStrategiesProperty.remove(key);
-		} else {
-			computationStrategiesProperty.put(key, computationStrategy);
-		}
-	}
-
-	/**
-	 * Sets the given {@link IComputationStrategy} for this
-	 * {@link DynamicAnchor} as the default strategy.
-	 *
-	 * @param computationStrategy
-	 *            The new default {@link IComputationStrategy}.
-	 */
-	// TODO: check if we want to offer this post creation
-	public void setDefaultComputationStrategy(
-			IComputationStrategy computationStrategy) {
-		this.defaultComputationStrategy = computationStrategy;
+		this.computationStrategy = computationStrategy;
 	}
 
 	/**

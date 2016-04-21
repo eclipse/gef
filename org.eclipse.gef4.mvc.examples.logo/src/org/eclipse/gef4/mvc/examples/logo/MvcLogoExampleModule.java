@@ -15,6 +15,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdaptableScopes;
 import org.eclipse.gef4.common.adapt.inject.AdapterMap;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXCreateCurveHoverHandlePart;
@@ -80,6 +81,10 @@ import javafx.scene.Node;
 public class MvcLogoExampleModule extends MvcFxModule {
 
 	public static final String PALETTE_VIEWER_ROLE = "paletteViewer";
+
+	public static final String STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE = "straightRoutingAnchorProvider";
+
+	public static final String ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE = "orthogonalRoutingAnchorProvider";
 
 	@Override
 	protected void bindAbstractContentPartAdapters(
@@ -287,8 +292,20 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.to(CloneShapePolicy.class);
 
 		// bind dynamic anchor provider
-		adapterMapBinder.addBinding(AdapterKey.defaultRole())
+		adapterMapBinder
+				.addBinding(
+						AdapterKey.role(STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE))
 				.to(DynamicAnchorProvider.class);
+		adapterMapBinder
+				.addBinding(AdapterKey
+						.role(ORTHOGONAL_ROUTING_ANCHOR_PROVIDER_ROLE))
+				.toProvider(new Provider<DynamicAnchorProvider>() {
+					@Override
+					public DynamicAnchorProvider get() {
+						return new DynamicAnchorProvider(
+								new OrthogonalProjectionStrategy());
+					}
+				});
 
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.defaultRole())

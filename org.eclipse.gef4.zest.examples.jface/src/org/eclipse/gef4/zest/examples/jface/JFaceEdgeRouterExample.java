@@ -17,11 +17,6 @@ package org.eclipse.gef4.zest.examples.jface;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.IAnchor;
-import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
-import org.eclipse.gef4.fx.nodes.Connection;
-import org.eclipse.gef4.fx.nodes.IConnectionRouter;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.fx.ZestProperties;
@@ -101,29 +96,6 @@ public class JFaceEdgeRouterExample {
 		}
 	}
 
-	protected static IConnectionRouter getManhattenRouter() {
-		return new OrthogonalRouter() {
-			@Override
-			public void route(Connection connection) {
-				// FIXME: Register computation strategy per anchor key.
-				if (connection.getPoints().size() < 2) {
-					return;
-				}
-				for (IAnchor anchor : connection.getAnchors()) {
-					if (anchor instanceof DynamicAnchor) {
-						DynamicAnchor dynamicAnchor = (DynamicAnchor) anchor;
-						if (!(dynamicAnchor
-								.getDefaultComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
-							dynamicAnchor.setDefaultComputationStrategy(
-									new OrthogonalProjectionStrategy());
-						}
-					}
-				}
-				super.route(connection);
-			}
-		};
-	}
-
 	static class MyLabelProvider extends LabelProvider
 			implements IGraphAttributesProvider {
 		public Image getImage(Object element) {
@@ -141,7 +113,7 @@ public class JFaceEdgeRouterExample {
 		public Map<String, Object> getEdgeAttributes(Object sourceNode,
 				Object targetNode) {
 			return Collections.<String, Object> singletonMap(
-					ZestProperties.ROUTER__E, getManhattenRouter());
+					ZestProperties.ROUTER__E, new OrthogonalRouter());
 		}
 
 		@Override
