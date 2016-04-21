@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,8 +34,11 @@ import org.eclipse.gef4.mvc.fx.ui.parts.AbstractFXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.DeselectOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
+import org.eclipse.gef4.mvc.operations.SelectOperation;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.ui.properties.SetPropertyValueOperation;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetEntry;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
@@ -43,6 +47,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 
 public class MvcLogoExampleView extends AbstractFXView {
@@ -152,6 +157,17 @@ public class MvcLogoExampleView extends AbstractFXView {
 										"Change routing style");
 								c.add(changeRoutingStyleOperation);
 								c.add(clearWaypointsOperation);
+								// reselect
+								IContentPart<Node, ? extends Node> contentPart = getContentViewer()
+										.getContentPartMap().get(ps.getCurve());
+								IUndoableOperation deselectOperation = new DeselectOperation<>(
+										getContentViewer(),
+										Collections.singletonList(contentPart));
+								IUndoableOperation selectOperation = new SelectOperation<>(
+										getContentViewer(),
+										Collections.singletonList(contentPart));
+								c.add(deselectOperation);
+								c.add(selectOperation);
 								super.valueChanged(child, c);
 							} else {
 								super.valueChanged(child, operation);
