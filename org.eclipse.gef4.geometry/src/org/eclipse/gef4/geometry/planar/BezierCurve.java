@@ -447,7 +447,8 @@ public class BezierCurve extends AbstractGeometry
 							qi.getCopy()),
 					new IntervalPair(p,
 							new Interval(
-									pm + 10 * UNRECOGNIZABLE_PRECISION_FRACTION,
+									Math.min(pi.b,
+											pm + 10 * UNRECOGNIZABLE_PRECISION_FRACTION),
 									pi.b),
 							q, qi.getCopy()) };
 		}
@@ -477,7 +478,8 @@ public class BezierCurve extends AbstractGeometry
 							pi.getCopy()),
 					new IntervalPair(q,
 							new Interval(
-									qm + 10 * UNRECOGNIZABLE_PRECISION_FRACTION,
+									Math.min(qi.b,
+											qm + 10 * UNRECOGNIZABLE_PRECISION_FRACTION),
 									qi.b),
 							p, pi.getCopy()) };
 		}
