@@ -31,6 +31,7 @@ import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReference
 import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.OrthogonalRouter;
@@ -214,8 +215,9 @@ public class FXBendConnectionPolicyTests {
 
 	public static class TestAnchorProvider extends DynamicAnchorProvider {
 		@Override
-		protected DynamicAnchor createAnchor() {
-			DynamicAnchor anchor = new DynamicAnchor(getAdaptable().getVisual());
+		protected DynamicAnchor createAnchor(IComputationStrategy computationStrategy) {
+			DynamicAnchor anchor = computationStrategy == null ? new DynamicAnchor(getAdaptable().getVisual())
+					: new DynamicAnchor(getAdaptable().getVisual(), computationStrategy);
 			anchor.setReferenceGeometry((IShape) ((IContentPart<?, ?>) getAdaptable()).getContent());
 			return anchor;
 		}
