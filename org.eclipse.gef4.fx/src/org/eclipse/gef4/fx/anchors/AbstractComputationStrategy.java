@@ -53,6 +53,7 @@ public abstract class AbstractComputationStrategy
 		 *            The {@link IGeometry} to use by default.
 		 */
 		public AnchorageReferenceGeometry(IGeometry defaultValue) {
+			super(Kind.STATIC);
 			set(defaultValue);
 		}
 	}
@@ -64,20 +65,22 @@ public abstract class AbstractComputationStrategy
 	public static class AnchorageReferencePosition extends Parameter<Point> {
 
 		/**
-		 * Creates a new {@link AnchorageReferencePosition} without default value.
+		 * Creates a new {@link AnchorageReferencePosition} without default
+		 * value.
 		 */
 		public AnchorageReferencePosition() {
 			this(null);
 		}
 
 		/**
-		 * Creates a {@link AnchorageReferencePosition} that encapsulates the given
-		 * {@link Point}.
+		 * Creates a {@link AnchorageReferencePosition} that encapsulates the
+		 * given {@link Point}.
 		 *
 		 * @param defaultValue
 		 *            The {@link Point} to encapsulate.
 		 */
 		public AnchorageReferencePosition(Point defaultValue) {
+			super(Kind.STATIC);
 			set(defaultValue);
 		}
 	}
@@ -103,6 +106,7 @@ public abstract class AbstractComputationStrategy
 		 *            The {@link Point} to encapsulate.
 		 */
 		public AnchoredReferencePoint(Point defaultValue) {
+			super(Kind.DYNAMIC);
 			set(defaultValue);
 		}
 	}
@@ -128,9 +132,10 @@ public abstract class AbstractComputationStrategy
 		 *            The {@link Orientation} to encapsulate.
 		 */
 		public PreferredOrientation(Orientation orientation) {
-			super(true); // optional
+			super(Kind.DYNAMIC, true); // optional
 			set(orientation);
 		}
+
 	}
 
 	/**

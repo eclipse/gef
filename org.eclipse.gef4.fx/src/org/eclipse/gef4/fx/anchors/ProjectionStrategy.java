@@ -121,8 +121,8 @@ public class ProjectionStrategy extends AbstractComputationStrategy {
 	@Override
 	public Set<Class<? extends Parameter<?>>> getRequiredParameters() {
 		Set<Class<? extends Parameter<?>>> parameters = new HashSet<>();
-		parameters.add(AnchoredReferencePoint.class);
 		parameters.add(AnchorageReferenceGeometry.class);
+		parameters.add(AnchoredReferencePoint.class);
 		return parameters;
 	}
 }

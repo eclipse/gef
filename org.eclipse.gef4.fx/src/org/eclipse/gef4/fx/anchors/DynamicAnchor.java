@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +23,7 @@ import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter.Kind;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import javafx.beans.property.ObjectProperty;
@@ -53,10 +54,8 @@ public class DynamicAnchor extends AbstractAnchor {
 			public void changed(ObservableValue<? extends IGeometry> observable,
 					IGeometry oldValue, IGeometry newValue) {
 				// recompute positions for all anchor keys
-				for (Set<AnchorKey> keys : getKeysByNode().values()) {
-					for (AnchorKey key : keys) {
-						updatePosition(key);
-					}
+				for (AnchorKey key : getKeys()) {
+					updatePosition(key);
 				}
 			}
 		});
@@ -82,18 +81,6 @@ public class DynamicAnchor extends AbstractAnchor {
 										+ " into reference point map!");
 					}
 					for (Parameter<?> p : change.getValuesAdded()) {
-						// ensure there are no duplicates contained
-						if (change.getPreviousContents()
-								.containsKey(change.getKey())
-								&& AbstractComputationStrategy.getParameter(
-										change.getPreviousContents().asMap()
-												.get(change.getKey()),
-												p.getClass()) != null) {
-							throw new IllegalArgumentException(
-									"Attempt to put duplicate parameter " + p
-											+ " for key " + change.getKey()
-											+ " into reference map!");
-						}
 						// add change listener to each added parameter, so we
 						// can recompute the position upon changes
 						final AnchorKey key = change.getKey();
@@ -105,11 +92,7 @@ public class DynamicAnchor extends AbstractAnchor {
 								public void changed(
 										ObservableValue<? extends Object> observable,
 										Object oldValue, Object newValue) {
-									if (getKeysByNode()
-											.containsKey(key.getAnchored())
-											&& getKeysByNode()
-													.get(key.getAnchored())
-													.contains(key)) {
+									if (isAttached(key)) {
 										updatePosition(key);
 									}
 								}
@@ -118,20 +101,16 @@ public class DynamicAnchor extends AbstractAnchor {
 						}
 						p.addListener(l);
 					}
-
-					if (getKeysByNode()
-							.containsKey(change.getKey().getAnchored())
-							&& getKeysByNode()
-									.get(change.getKey().getAnchored())
-									.contains(change.getKey())) {
-						updatePosition(change.getKey());
-					}
 				} else if (change.wasRemoved()) {
 					// unregister change listener from removed parameter
 					for (Parameter<?> p : change.getValuesRemoved()) {
 						p.removeListener(computationParameterChangeListeners
 								.get(change.getKey()));
 					}
+				}
+				// update position for this key
+				if (isAttached(change.getKey())) {
+					updatePosition(change.getKey());
 				}
 			}
 		}
@@ -238,6 +217,14 @@ public class DynamicAnchor extends AbstractAnchor {
 		return parameter;
 	}
 
+	@Override
+	protected Set<Parameter<?>> getParameters(AnchorKey key) {
+		Set<Parameter<?>> parameters = new HashSet<>();
+		parameters.add(referenceGeometryProperty);
+		parameters.addAll(dynamicComputationParameters.get(key));
+		return parameters;
+	}
+
 	/**
 	 * Returns the anchorage reference {@link IGeometry geometry} that is to be
 	 * used for computations by this {@link DynamicAnchor}'s
@@ -251,46 +238,31 @@ public class DynamicAnchor extends AbstractAnchor {
 		return referenceGeometryProperty.get();
 	}
 
-	private Set<IComputationStrategy.Parameter<?>> getStaticComputationParameters() {
-		// ensure we have an up-to-date value
-		// if (referenceGeometryProperty.isBound()) {
-		// referenceGeometryProperty.invalidateBinding();
-		// }
-		return Collections.<IComputationStrategy
-				.Parameter<?>> singleton(referenceGeometryProperty);
-	}
-
 	private void initDynamicParameters(AnchorKey key) {
-		// ensure required parameters are provided
+		Set<Parameter<?>> parameters = getParameters(key);
 		for (Class<? extends Parameter<?>> paramType : getComputationStrategy()
 				.getRequiredParameters()) {
-			// skip static ones
-			// TODO: this is not so nice, the parameter could indicate whether
-			// its static or dynamic
-			if (AbstractComputationStrategy.getParameter(
-					getStaticComputationParameters(), paramType) != null) {
-				continue;
-			}
-			Parameter<?> parameter = AbstractComputationStrategy.getParameter(
-					dynamicComputationParameters.get(key), paramType);
-			if (parameter == null) {
+			if (AbstractComputationStrategy.getParameter(parameters,
+					paramType) == null) {
+				// parameter is not already contained
 				try {
-					parameter = paramType.getConstructor().newInstance();
-					dynamicComputationParameters.put(key, parameter);
+					Parameter<?> p = paramType.getDeclaredConstructor()
+							.newInstance();
+					if (Kind.DYNAMIC.equals(p.getKind())) {
+						dynamicComputationParameters.put(key, p);
+					} else {
+						throw new IllegalArgumentException(
+								"Required static parameter of type " + paramType
+										+ " is not provided.");
+					}
 				} catch (Exception e) {
-					e.printStackTrace();
-					throw new IllegalArgumentException(
-							"Could not instantiate required parameter ", e);
+					throw new IllegalStateException(
+							"Could not create instance of parameter type "
+									+ paramType,
+							e);
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void populateParameters(AnchorKey key,
-			Set<IComputationStrategy.Parameter<?>> parameters) {
-		parameters.addAll(getStaticComputationParameters());
-		parameters.addAll(dynamicComputationParameters.get(key));
 	}
 
 	/**
@@ -309,11 +281,9 @@ public class DynamicAnchor extends AbstractAnchor {
 	@Override
 	public void setComputationStrategy(
 			IComputationStrategy computationStrategy) {
-		for (AnchorKey key : getKeys()) {
-			clearDynamicParameters(key);
-		}
 		super.setComputationStrategy(computationStrategy);
 		for (AnchorKey key : getKeys()) {
+			// init will replace all existing values (in an atomic operation)
 			initDynamicParameters(key);
 		}
 	}

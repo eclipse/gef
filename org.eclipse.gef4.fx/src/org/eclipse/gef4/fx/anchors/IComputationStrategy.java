@@ -36,24 +36,50 @@ public interface IComputationStrategy {
 	 */
 	public abstract class Parameter<T> extends ObjectPropertyBase<T> {
 
+		/**
+		 * Indicates whether the parameter value can be shared to compute
+		 * positions of all attached anchors or not.
+		 */
+		public enum Kind {
+			/**
+			 * Indicates that the parameter value may be shared to compute the
+			 * position for all attached {@link AnchorKey}.
+			 */
+			STATIC,
+			/**
+			 * Indicates that the parameter value may not be shared, i.e. an
+			 * individual value is required to compute the position for each
+			 * attached {@link AnchorKey}, e.g. because the value depends on the
+			 * anchored node.
+			 */
+			DYNAMIC
+		};
+
+		private Kind kind;
 		private boolean optional;
 		private ObservableValue<? extends T> bindingTarget;
 
 		/**
-		 * Creates a new mandatory {@link Parameter}.
+		 * Creates a new mandatory {@link Parameter} of the given kind.
+		 *
+		 * @param kind
+		 *            The parameter kind.
 		 */
-		public Parameter() {
-			this(false);
+		public Parameter(Kind kind) {
+			this(kind, false);
 		}
 
 		/**
-		 * Creates a new Parameter, which is optional, i.e. whose value may be
-		 * <code>null</code>.
+		 * Creates a new optional parameter of the given kind.
+		 *
+		 * @param kind
+		 *            The parameter kin.
 		 *
 		 * @param optional
 		 *            Whether this parameter is optional or not.
 		 */
-		public Parameter(boolean optional) {
+		public Parameter(Kind kind, boolean optional) {
+			this.kind = kind;
 			this.optional = optional;
 		}
 
@@ -67,7 +93,18 @@ public interface IComputationStrategy {
 		public Object getBean() {
 			// no bean by default
 			return null;
-		};
+		}
+
+		/**
+		 * Retrieves the {@link Kind} of this parameter, which indicates whether
+		 * a single value may be shared to compute the positions of all attached
+		 * {@link AnchorKey}s or not.
+		 *
+		 * @return The parameter {@link Kind}.
+		 */
+		public Kind getKind() {
+			return kind;
+		}
 
 		@Override
 		public String getName() {

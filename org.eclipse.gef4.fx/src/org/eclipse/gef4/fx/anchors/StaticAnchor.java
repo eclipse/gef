@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferencePosition;
@@ -41,10 +42,8 @@ public class StaticAnchor extends AbstractAnchor {
 			public void changed(ObservableValue<? extends Point> observable,
 					Point oldValue, Point newValue) {
 				// recompute positions for all anchor keys
-				for (Set<AnchorKey> keys : getKeysByNode().values()) {
-					for (AnchorKey key : keys) {
-						updatePosition(key);
-					}
+				for (AnchorKey key : getKeys()) {
+					updatePosition(key);
 				}
 			}
 		});
@@ -90,6 +89,14 @@ public class StaticAnchor extends AbstractAnchor {
 		this(null, referencePositionInScene);
 	}
 
+	@Override
+	protected Set<Parameter<?>> getParameters(AnchorKey key) {
+		Set<Parameter<?>> parameters = new HashSet<>();
+		// TODO: this should be handled generically
+		parameters.add(referencePositionProperty);
+		return parameters;
+	}
+
 	/**
 	 * Returns the reference position of this {@link StaticAnchor}.
 	 *
@@ -97,16 +104,6 @@ public class StaticAnchor extends AbstractAnchor {
 	 */
 	public Point getReferencePosition() {
 		return referencePositionProperty.get();
-	}
-
-	@Override
-	protected void populateParameters(AnchorKey key,
-			Set<Parameter<?>> parameters) {
-		// ensure we have an up-to-date value
-		// if (referencePositionProperty.isBound()) {
-		// referencePositionProperty.invalidateBinding();
-		// }
-		parameters.add(referencePositionProperty);
 	}
 
 	/**

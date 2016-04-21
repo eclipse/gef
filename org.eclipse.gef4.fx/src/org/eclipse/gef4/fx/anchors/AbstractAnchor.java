@@ -24,7 +24,9 @@ import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.Point;
 
-import javafx.application.Platform;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -71,7 +73,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionsUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(
 			positionsUnmodifiable);
 
-	private Map<Node, Set<AnchorKey>> keysByNode = new HashMap<>();
+	private SetMultimap<Node, AnchorKey> keysByNode = HashMultimap.create();
 
 	// TODO: push this down to dynamic anchor (as its only needed there)
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
@@ -163,8 +165,8 @@ public abstract class AbstractAnchor implements IAnchor {
 	public AbstractAnchor(Node anchorage,
 			IComputationStrategy computationStrategy) {
 		anchorageProperty.addListener(anchorageChangeListener);
-		setAnchorage(anchorage);
 		setComputationStrategy(computationStrategy);
+		setAnchorage(anchorage);
 	}
 
 	@Override
@@ -176,10 +178,9 @@ public abstract class AbstractAnchor implements IAnchor {
 	public void attach(AnchorKey key) {
 		Node anchored = key.getAnchored();
 		if (!keysByNode.containsKey(anchored)) {
-			keysByNode.put(anchored, new HashSet<AnchorKey>());
 			anchored.sceneProperty().addListener(anchoredSceneChangeListener);
 		}
-		keysByNode.get(anchored).add(key);
+		keysByNode.put(anchored, key);
 
 		if (!vcls.containsKey(anchored)) {
 			VisualChangeListener vcl = createVCL(anchored);
@@ -208,23 +209,18 @@ public abstract class AbstractAnchor implements IAnchor {
 	 *         the anchored {@link Node}.
 	 */
 	protected Point computePosition(AnchorKey key) {
-		Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
+		// check for availability of (static) parameters
+		Set<IComputationStrategy.Parameter<?>> parameters = getParameters(key);
 
-		// add parameters
-		populateParameters(key, parameters);
-
-		// check for availability of parameters
-		IComputationStrategy computationStrategy = getComputationStrategy();
-		for (Class<? extends Parameter<?>> paramType : computationStrategy
-				.getRequiredParameters()) {
-			Parameter<?> p = AbstractComputationStrategy
-					.getParameter(parameters, paramType);
-			if (p == null) {
-				// even optional parameters are passed in (they simply do not
-				// provide a value)
-				return null;
-			} else if (p.get() == null && !p.isOptional()) {
-				// optional parameter may be set to null.
+		// check that parameter values are provided
+		for (Parameter<?> p : parameters) {
+			if (p.get() == null && !p.isOptional()) {
+				// as long as all required parameters are not provided, we
+				// cannot compute a position.
+				// System.out.println("Skipping computation of position for key
+				// "
+				// + key + " because mandatory parameter " + p
+				// + " has no value.");
 				return null;
 			}
 		}
@@ -234,6 +230,8 @@ public abstract class AbstractAnchor implements IAnchor {
 				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
 						.computePositionInScene(getAnchorage(),
 								key.getAnchored(), parameters))));
+		// System.out.println("Computed position " + position + " for key " +
+		// key);
 		return position;
 	};
 
@@ -267,12 +265,12 @@ public abstract class AbstractAnchor implements IAnchor {
 				// causes a ConcurrentModificationException when changing/ the
 				// scene graph in response to scene-property changes.
 				// With Java 8 this would not be necessary.
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						updatePositions(anchored);
-					}
-				});
+				// Platform.runLater(new Runnable() {
+				// @Override
+				// public void run() {
+				updatePositions(anchored);
+				// }
+				// });
 			}
 		};
 	}
@@ -290,13 +288,13 @@ public abstract class AbstractAnchor implements IAnchor {
 		positions.remove(key);
 
 		// remove from keysByNode to indicate it is detached
-		keysByNode.get(anchored).remove(key);
+		keysByNode.remove(anchored, key);
 
 		// clean-up for this anchored if necessary
 		if (keysByNode.get(anchored).isEmpty()) {
 			anchored.sceneProperty()
 					.removeListener(anchoredSceneChangeListener);
-			keysByNode.remove(anchored);
+			keysByNode.removeAll(anchored);
 			// System.out.println("Trying to unregister VCL as anchored "
 			// + anchored + " has been detached from anchorage "
 			// + getAnchorage());
@@ -342,21 +340,27 @@ public abstract class AbstractAnchor implements IAnchor {
 	 * @return The {@link Map} which stores the registered {@link AnchorKey}s
 	 *         per {@link Node} by reference.
 	 */
-	protected Map<Node, Set<AnchorKey>> getKeysByNode() {
+	protected SetMultimap<Node, AnchorKey> getKeysByNode() {
 		return keysByNode;
 	}
 
+	/**
+	 * Retrieves the relevant parameters for the computation of the given
+	 * {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The Anchor key of relevance.
+	 * @return The parameters required by the computation strategy to compute
+	 *         the position for the given {@link AnchorKey}.
+	 *
+	 */
+	protected abstract Set<Parameter<?>> getParameters(AnchorKey key);
+
 	@Override
 	public Point getPosition(AnchorKey key) {
-		Node anchored = key.getAnchored();
-		if (!keysByNode.containsKey(anchored)
-				|| !keysByNode.get(anchored).contains(key)) {
+		if (!isAttached(key)) {
 			throw new IllegalArgumentException(
 					"The AnchorKey is not attached to this anchor.");
-		}
-
-		if (!positions.containsKey(key)) {
-			return null;
 		}
 		return positions.get(key);
 	}
@@ -366,18 +370,6 @@ public abstract class AbstractAnchor implements IAnchor {
 		return keysByNode.containsKey(key.getAnchored())
 				&& keysByNode.get(key.getAnchored()).contains(key);
 	}
-
-	/**
-	 * Adds the static parameters of this anchor to the given set of parameters.
-	 *
-	 * @param key
-	 *            The Anchor key of relevance.
-	 *
-	 * @param parameters
-	 *            The set of parameters to populate
-	 */
-	protected abstract void populateParameters(AnchorKey key,
-			Set<IComputationStrategy.Parameter<?>> parameters);
 
 	@Override
 	public ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty() {
@@ -495,8 +487,9 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	private void updatePositions(Node anchored) {
-		if (getKeysByNode().containsKey(anchored)) {
-			for (AnchorKey key : getKeysByNode().get(anchored)) {
+		SetMultimap<Node, AnchorKey> keys = getKeysByNode();
+		if (keys.containsKey(anchored)) {
+			for (AnchorKey key : keys.get(anchored)) {
 				updatePosition(key);
 			}
 		}
