@@ -167,6 +167,8 @@ public class FXBendOnSegmentDragPolicy extends AbstractFXInteractionPolicy
 
 		commit(getBendPolicy());
 		restoreRefreshVisuals(getHost());
+
+		updateHandles();
 	}
 
 	@Override
