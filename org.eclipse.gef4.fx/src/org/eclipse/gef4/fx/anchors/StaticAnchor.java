@@ -11,16 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferencePosition;
-import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 
 /**
@@ -35,19 +29,6 @@ import javafx.scene.Node;
 public class StaticAnchor extends AbstractAnchor {
 
 	private AnchorageReferencePosition referencePositionProperty = new AnchorageReferencePosition();
-
-	{
-		referencePositionProperty.addListener(new ChangeListener<Point>() {
-			@Override
-			public void changed(ObservableValue<? extends Point> observable,
-					Point oldValue, Point newValue) {
-				// recompute positions for all anchor keys
-				for (AnchorKey key : getKeys()) {
-					updatePosition(key);
-				}
-			}
-		});
-	}
 
 	/**
 	 * Creates an {@link StaticAnchor} that is bound to the provided anchorage.
@@ -72,6 +53,8 @@ public class StaticAnchor extends AbstractAnchor {
 	public StaticAnchor(Node anchorage,
 			Point referencePositionInAnchorageLocal) {
 		super(anchorage, new ReferencePointStrategy());
+		// init static parameters
+		staticComputationParametersProperty().add(referencePositionProperty);
 		referencePositionProperty.set(referencePositionInAnchorageLocal);
 	}
 
@@ -87,14 +70,6 @@ public class StaticAnchor extends AbstractAnchor {
 	 */
 	public StaticAnchor(Point referencePositionInScene) {
 		this(null, referencePositionInScene);
-	}
-
-	@Override
-	protected Set<Parameter<?>> getParameters(AnchorKey key) {
-		Set<Parameter<?>> parameters = new HashSet<>();
-		// TODO: this should be handled generically
-		parameters.add(referencePositionProperty);
-		return parameters;
 	}
 
 	/**
@@ -113,9 +88,6 @@ public class StaticAnchor extends AbstractAnchor {
 	 * @return The {@link ObjectProperty} that manages the reference position of
 	 *         this {@link StaticAnchor}.
 	 */
-	// TODO: we should unify handling of this property with the reference
-	// geometry of dynamic anchor.
-	// TODO: we could change this into an AnchorageReferencePosition
 	public AnchorageReferencePosition referencePositionProperty() {
 		return referencePositionProperty;
 	}
@@ -136,5 +108,4 @@ public class StaticAnchor extends AbstractAnchor {
 		return "StaticAnchor[referencePosition = "
 				+ referencePositionProperty.get() + "]";
 	}
-
 }

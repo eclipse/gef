@@ -174,7 +174,7 @@ public class StraightRouter implements IConnectionRouter {
 		// only update if necessary (when it changes)
 		AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
 		AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) anchor)
-				.getDynamicComputationParameter(anchorKey,
+				.getComputationParameter(anchorKey,
 						AnchoredReferencePoint.class);
 		Point oldRef = referencePointParameter == null ? null
 				: referencePointParameter.get();

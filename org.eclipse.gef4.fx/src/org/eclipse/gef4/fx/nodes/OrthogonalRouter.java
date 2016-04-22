@@ -324,12 +324,12 @@ public class OrthogonalRouter implements IConnectionRouter {
 				}
 				// provide a hint to the anchor's computation strategy
 				AnchorKey anchorKey = connection.getAnchorKey(index);
-				((DynamicAnchor) anchor).getDynamicComputationParameter(
+				((DynamicAnchor) anchor).getComputationParameter(
 						anchorKey, PreferredOrientation.class).set(hint);
 
 				// update reference point for the anchor key at the given index
 				((DynamicAnchor) anchor)
-						.getDynamicComputationParameter(anchorKey,
+						.getComputationParameter(anchorKey,
 								AnchoredReferencePoint.class)
 						.set(referencePoint);
 

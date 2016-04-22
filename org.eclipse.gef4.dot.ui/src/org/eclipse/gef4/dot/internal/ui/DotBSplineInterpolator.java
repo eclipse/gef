@@ -116,7 +116,7 @@ public class DotBSplineInterpolator implements IConnectionInterpolator {
 
 	protected Point getProjectionReferencePoint(DynamicAnchor anchor,
 			AnchorKey anchorKey) {
-		return anchor.getDynamicComputationParameter(anchorKey,
+		return anchor.getComputationParameter(anchorKey,
 				AnchoredReferencePoint.class).get();
 
 	}

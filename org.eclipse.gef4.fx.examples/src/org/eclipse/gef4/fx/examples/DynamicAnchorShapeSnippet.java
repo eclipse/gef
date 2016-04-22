@@ -123,7 +123,7 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 						Point2D refInLocal = anchorLine
 								.sceneToLocal(refInScene);
 						if (anchor != null) {
-							anchor.getDynamicComputationParameter(anchorKey,
+							anchor.getComputationParameter(anchorKey,
 									AnchoredReferencePoint.class)
 									.set(new Point(refInLocal.getX(),
 											refInLocal.getY()));
@@ -220,7 +220,7 @@ public class DynamicAnchorShapeSnippet extends AbstractFxExample {
 		Point2D refInScene = refPoint.localToScene(refPoint.getCenterX(),
 				refPoint.getCenterY());
 		Point2D refInLocal = anchorLine.sceneToLocal(refInScene);
-		anchor.getDynamicComputationParameter(anchorKey,
+		anchor.getComputationParameter(anchorKey,
 				AnchoredReferencePoint.class)
 				.set(new Point(refInLocal.getX(), refInLocal.getY()));
 		anchor.positionsUnmodifiableProperty()

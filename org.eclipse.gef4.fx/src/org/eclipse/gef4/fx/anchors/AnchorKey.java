@@ -20,7 +20,6 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-// TODO: make unmodifiable?
 public class AnchorKey {
 
 	private Node anchored;

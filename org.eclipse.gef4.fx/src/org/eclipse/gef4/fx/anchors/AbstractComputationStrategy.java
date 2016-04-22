@@ -151,8 +151,6 @@ public abstract class AbstractComputationStrategy
 	 * @return The parameter or <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	// TODO: replace this with a visitor -> and move all predefined keys into a
-	// single place.
 	protected static <T extends Parameter<?>> T getParameter(
 			Collection<? extends Parameter<?>> parameters,
 			Class<T> parameterType) {
@@ -165,8 +163,8 @@ public abstract class AbstractComputationStrategy
 		if (parametersOfType.isEmpty()) {
 			return null;
 		} else if (parametersOfType.size() > 1) {
-			// TODO: prevent this by using an unmodifiable property for dynamic
-			// parameters and have strategy create the parameter objects.
+			// this should already be guarded, but we provide an additional
+			// check here
 			throw new IllegalArgumentException(
 					"The given set of parameters contains " + parameters.size()
 							+ " parameters of type "
@@ -177,7 +175,4 @@ public abstract class AbstractComputationStrategy
 			return parametersOfType.iterator().next();
 		}
 	}
-
-	// TODO: provide convenience methods to obtain a specific parameter by type
-	// (provide info whether the parameter is optional or mandatory)
 }

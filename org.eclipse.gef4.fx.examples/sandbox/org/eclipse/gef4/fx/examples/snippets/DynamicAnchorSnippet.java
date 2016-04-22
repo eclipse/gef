@@ -90,10 +90,10 @@ public class DynamicAnchorSnippet extends AbstractFxExample {
 						+ r2.getHeight() / 2);
 
 		// use static values for dynamic anchor reference points
-		startAnchor.getDynamicComputationParameter(startKey,
+		startAnchor.getComputationParameter(startKey,
 				AnchoredReferencePoint.class).set(r2Center);
 		startAnchor.attach(startKey);
-		endAnchor.getDynamicComputationParameter(endKey,
+		endAnchor.getComputationParameter(endKey,
 				AnchoredReferencePoint.class).set(r1Center);
 		endAnchor.attach(endKey);
 

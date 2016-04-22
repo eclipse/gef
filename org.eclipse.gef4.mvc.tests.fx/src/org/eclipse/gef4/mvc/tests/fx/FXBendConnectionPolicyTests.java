@@ -149,21 +149,21 @@ public class FXBendConnectionPolicyTests {
 				// provide parameters for projection computation strategies
 				getVisual().setStartAnchor(anchor);
 				if (getContent().startReferencePoint != null) {
-					((DynamicAnchor) anchor).getDynamicComputationParameter(getVisual().getStartAnchorKey(),
+					((DynamicAnchor) anchor).getComputationParameter(getVisual().getStartAnchorKey(),
 							AnchoredReferencePoint.class).set(getContent().startReferencePoint);
 				}
 				((DynamicAnchor) anchor)
-						.getDynamicComputationParameter(getVisual().getStartAnchorKey(), PreferredOrientation.class)
+						.getComputationParameter(getVisual().getStartAnchorKey(), PreferredOrientation.class)
 						.set(Orientation.VERTICAL);
 			} else if (role.equals(END_ROLE)) {
 				getVisual().setEndAnchor(anchor);
 				if (getContent().endReferencePoint != null) {
 					((DynamicAnchor) anchor)
-							.getDynamicComputationParameter(getVisual().getEndAnchorKey(), AnchoredReferencePoint.class)
+							.getComputationParameter(getVisual().getEndAnchorKey(), AnchoredReferencePoint.class)
 							.set(getContent().endReferencePoint);
 				}
 				((DynamicAnchor) anchor)
-						.getDynamicComputationParameter(getVisual().getEndAnchorKey(), PreferredOrientation.class)
+						.getComputationParameter(getVisual().getEndAnchorKey(), PreferredOrientation.class)
 						.set(Orientation.VERTICAL);
 			} else {
 				throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");

@@ -39,7 +39,7 @@ public class DotStraightRouter extends StraightRouter {
 			IAnchor startAnchor = connection.getAnchor(index);
 			if (startAnchor instanceof DynamicAnchor) {
 				((DynamicAnchor) startAnchor)
-						.getDynamicComputationParameter(
+						.getComputationParameter(
 								connection.getAnchorKey(index),
 								AnchoredReferencePoint.class)
 						.set(startReferencePoint);
@@ -48,7 +48,7 @@ public class DotStraightRouter extends StraightRouter {
 			IAnchor endAnchor = connection.getAnchor(index);
 			if (endAnchor instanceof DynamicAnchor) {
 				((DynamicAnchor) endAnchor)
-						.getDynamicComputationParameter(
+						.getComputationParameter(
 								connection.getAnchorKey(index),
 								AnchoredReferencePoint.class)
 						.set(endReferencePoint);

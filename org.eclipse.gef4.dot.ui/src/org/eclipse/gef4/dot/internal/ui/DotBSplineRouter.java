@@ -29,7 +29,7 @@ public class DotBSplineRouter extends StraightRouter {
 			AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
 			if (anchor instanceof DynamicAnchor) {
 				((DynamicAnchor) anchor)
-						.getDynamicComputationParameter(anchorKey,
+						.getComputationParameter(anchorKey,
 								AnchoredReferencePoint.class)
 						.set(anchorIndex == 0 ? startReferencePoint
 								: endReferencePoint);

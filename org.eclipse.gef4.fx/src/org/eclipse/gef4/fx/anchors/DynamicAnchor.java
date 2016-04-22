@@ -46,22 +46,11 @@ import javafx.scene.Node;
  */
 public class DynamicAnchor extends AbstractAnchor {
 
+	// TODO: replace with static parameters set
 	private AnchorageReferenceGeometry referenceGeometryProperty = new AnchorageReferenceGeometry();
 
-	{
-		referenceGeometryProperty.addListener(new ChangeListener<IGeometry>() {
-			@Override
-			public void changed(ObservableValue<? extends IGeometry> observable,
-					IGeometry oldValue, IGeometry newValue) {
-				// recompute positions for all anchor keys
-				for (AnchorKey key : getKeys()) {
-					updatePosition(key);
-				}
-			}
-		});
-	}
-
 	private Map<AnchorKey, ChangeListener<Object>> computationParameterChangeListeners = new HashMap<>();
+
 	private SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>> computationParametersChangeListener = new SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>>() {
 
 		@Override
@@ -119,11 +108,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	private ObservableSetMultimap<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParameters = CollectionUtils
 			.observableHashMultimap();
 
-	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersUnmodifiable = new ReadOnlySetMultimapWrapper<>(
+	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersProperty = new ReadOnlySetMultimapWrapper<>(
 			dynamicComputationParameters);
-
-	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersUnmodifiableProperty = new ReadOnlySetMultimapWrapper<>(
-			dynamicComputationParametersUnmodifiable);
 
 	/**
 	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual.
@@ -148,6 +134,8 @@ public class DynamicAnchor extends AbstractAnchor {
 	public DynamicAnchor(Node anchorage,
 			IComputationStrategy defaultComputationStrategy) {
 		super(anchorage, defaultComputationStrategy);
+		// init static parameters
+		staticComputationParametersProperty().add(referenceGeometryProperty);
 		dynamicComputationParameters
 				.addListener(computationParametersChangeListener);
 	}
@@ -177,15 +165,12 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @return A {@link ReadOnlySetMultimapProperty} that provides an
 	 *         {@link Object} per {@link AnchorKey}.
 	 */
-	// TODO: ensure there are no callers that put values in here
-	// TODO: pull up into AbstractAnchor
-	public ReadOnlySetMultimapProperty<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersUnmodifiableProperty() {
-		return dynamicComputationParametersUnmodifiableProperty
-				.getReadOnlyProperty();
+	protected ReadOnlySetMultimapProperty<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersProperty() {
+		return dynamicComputationParametersProperty.getReadOnlyProperty();
 	}
 
 	/**
-	 * Retrieves a dynamic parameter of the respective type for the given
+	 * Retrieves a computation parameter of the respective type for the given
 	 * {@link AnchorKey}.
 	 *
 	 * @param <T>
@@ -197,23 +182,33 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *            The type of computation parameter.
 	 * @return The dynamic computation parameter.
 	 */
-	public <T extends Parameter<?>> T getDynamicComputationParameter(
-			AnchorKey key, Class<T> parameterType) {
+	public <T extends Parameter<?>> T getComputationParameter(AnchorKey key,
+			Class<T> parameterType) {
+
+		// check static parameters
 		T parameter = AbstractComputationStrategy.getParameter(
-				dynamicComputationParameters.get(key), parameterType);
-		if (parameter == null) {
-			// TODO: this is currently required, because clients provide the
-			// parameter
-			// values before attaching. As the strategies provide the
-			// parameters, they need to decide when to initialize the values.
-			try {
-				parameter = parameterType.getDeclaredConstructor()
-						.newInstance();
-				dynamicComputationParameters.put(key, parameter);
-			} catch (Exception e) {
-				throw new IllegalArgumentException(
-						"Cannot instantiate parameter.", e);
+				staticComputationParametersProperty(), parameterType);
+		if (parameter != null) {
+			return parameter;
+		}
+
+		// check dynamic parameters
+		parameter = AbstractComputationStrategy.getParameter(
+				dynamicComputationParametersProperty().get(key), parameterType);
+		if (parameter != null) {
+			return parameter;
+		}
+
+		// create a new parameter instance
+		try {
+			parameter = parameterType.getDeclaredConstructor().newInstance();
+			if (Kind.DYNAMIC.equals(parameter.getKind())) {
+				dynamicComputationParametersProperty().put(key, parameter);
+			} else {
+				staticComputationParametersProperty().add(parameter);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return parameter;
 	}
@@ -221,7 +216,7 @@ public class DynamicAnchor extends AbstractAnchor {
 	@Override
 	protected Set<Parameter<?>> getParameters(AnchorKey key) {
 		Set<Parameter<?>> parameters = new HashSet<>();
-		parameters.add(referenceGeometryProperty);
+		parameters.addAll(super.getParameters(key));
 		parameters.addAll(dynamicComputationParameters.get(key));
 		return parameters;
 	}

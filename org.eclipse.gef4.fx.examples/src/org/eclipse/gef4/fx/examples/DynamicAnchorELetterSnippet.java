@@ -180,7 +180,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private void attachToDynamicAnchor(final AnchorKey ak,
 			final Point refPoint) {
 		dynamicAnchor.attach(ak);
-		dynamicAnchor.getDynamicComputationParameter(ak,
+		dynamicAnchor.getComputationParameter(ak,
 				AnchoredReferencePoint.class).set(refPoint);
 		updateDynamicAnchorLines(ak);
 	}
@@ -302,7 +302,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 				referencePointNode.setCenterY(y);
 				// update reference point
 				dynamicAnchor
-						.getDynamicComputationParameter(ak,
+						.getComputationParameter(ak,
 								AnchoredReferencePoint.class)
 						.set(new Point(x, y));
 				updateDynamicAnchorLines(ak);
@@ -566,7 +566,7 @@ public class DynamicAnchorELetterSnippet extends AbstractFxExample {
 	private void updateDynamicAnchorLines(AnchorKey ak) {
 		// update real line
 		Line lineReal = dynamicLinesReal.get(ak);
-		Point referencePosition = dynamicAnchor.getDynamicComputationParameter(
+		Point referencePosition = dynamicAnchor.getComputationParameter(
 				ak, AnchoredReferencePoint.class).get();
 		Point anchorPosition = dynamicAnchor.getPosition(ak);
 		lineReal.setStartX(referencePosition.x);

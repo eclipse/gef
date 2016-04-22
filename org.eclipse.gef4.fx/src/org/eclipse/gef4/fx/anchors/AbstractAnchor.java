@@ -18,6 +18,8 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetWrapperEx;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
@@ -32,10 +34,14 @@ import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlySetProperty;
+import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -67,14 +73,20 @@ import javafx.scene.transform.Transform;
 public abstract class AbstractAnchor implements IAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<>();
+	private SetMultimap<Node, AnchorKey> keysByNode = HashMultimap.create();
+
+	private IComputationStrategy computationStrategy;
+	private ObservableSet<IComputationStrategy.Parameter<?>> staticComputationParameters = FXCollections
+			.observableSet(new HashSet<IComputationStrategy.Parameter<?>>());
+	private ReadOnlySetWrapper<IComputationStrategy.Parameter<?>> staticComputationParametersProperty = new ReadOnlySetWrapperEx<>(
+			staticComputationParameters);
+
 	private ObservableMap<AnchorKey, Point> positions = FXCollections
 			.observableHashMap();
 	private ObservableMap<AnchorKey, Point> positionsUnmodifiable = FXCollections
 			.unmodifiableObservableMap(positions);
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionsUnmodifiableProperty = new ReadOnlyMapWrapperEx<>(
 			positionsUnmodifiable);
-
-	private SetMultimap<Node, AnchorKey> keysByNode = HashMultimap.create();
 
 	// TODO: push this down to dynamic anchor (as its only needed there)
 	private Map<Node, VisualChangeListener> vcls = new HashMap<>();
@@ -152,7 +164,30 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 	};
 
-	private IComputationStrategy computationStrategy;
+	private SetChangeListener<IComputationStrategy.Parameter<?>> staticComputationParametersChangeListener = new SetChangeListener<IComputationStrategy.Parameter<?>>() {
+
+		private ChangeListener<Object> valueChangeListener = new ChangeListener<Object>() {
+			@Override
+			public void changed(ObservableValue<? extends Object> observable,
+					Object oldValue, Object newValue) {
+				// recompute positions for all anchor keys
+				updatePositions();
+			}
+		};
+
+		@Override
+		public void onChanged(
+				final SetChangeListener.Change<? extends Parameter<?>> change) {
+			if (change.wasRemoved()) {
+				change.getElementRemoved().removeListener(valueChangeListener);
+			}
+			if (change.wasAdded()) {
+				change.getElementAdded().addListener(valueChangeListener);
+			}
+			// if the list of static parameters was changed, recompute positions
+			updatePositions();
+		}
+	};
 
 	/**
 	 * Creates a new {@link AbstractAnchor} for the given <i>anchorage</i>
@@ -166,6 +201,8 @@ public abstract class AbstractAnchor implements IAnchor {
 	public AbstractAnchor(Node anchorage,
 			IComputationStrategy computationStrategy) {
 		anchorageProperty.addListener(anchorageChangeListener);
+		staticComputationParameters
+				.addListener(staticComputationParametersChangeListener);
 		setComputationStrategy(computationStrategy);
 		setAnchorage(anchorage);
 	}
@@ -173,7 +210,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	@Override
 	public ReadOnlyObjectProperty<Node> anchorageProperty() {
 		return anchorageProperty.getReadOnlyProperty();
-	}
+	};
 
 	@Override
 	public void attach(AnchorKey key) {
@@ -193,7 +230,7 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 
 		updatePosition(key);
-	};
+	}
 
 	private boolean canRegister(Node anchored) {
 		return getAnchorage() != null && getAnchorage().getScene() != null
@@ -234,7 +271,7 @@ public abstract class AbstractAnchor implements IAnchor {
 		// System.out.println("Computed position " + position + " for key " +
 		// key);
 		return position;
-	};
+	}
 
 	private VisualChangeListener createVCL(final Node anchored) {
 		return new VisualChangeListener() {
@@ -360,7 +397,11 @@ public abstract class AbstractAnchor implements IAnchor {
 	 *         the position for the given {@link AnchorKey}.
 	 *
 	 */
-	protected abstract Set<Parameter<?>> getParameters(AnchorKey key);
+	protected Set<Parameter<?>> getParameters(AnchorKey key) {
+		Set<Parameter<?>> parameters = new HashSet<>();
+		parameters.addAll(staticComputationParameters);
+		return parameters;
+	}
 
 	@Override
 	public Point getPosition(AnchorKey key) {
@@ -432,6 +473,19 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	/**
+	 * Returns a {@link ReadOnlySetMultimapProperty} that provides the
+	 * {@link IComputationStrategy.Parameter computation parameters} per
+	 * {@link AnchorKey}. The set of computation parameters for each
+	 * {@link AnchorKey} is initialed by the responsible computation strategy.
+	 *
+	 * @return A {@link ReadOnlySetMultimapProperty} that provides an
+	 *         {@link Object} per {@link AnchorKey}.
+	 */
+	protected ReadOnlySetProperty<IComputationStrategy.Parameter<?>> staticComputationParametersProperty() {
+		return staticComputationParametersProperty.getReadOnlyProperty();
+	}
+
+	/**
 	 * Unregisters the {@link VisualChangeListener}s for the given anchored
 	 * {@link Node}.
 	 *
@@ -476,6 +530,12 @@ public abstract class AbstractAnchor implements IAnchor {
 	 *            The {@link AnchorKey} for which the position is updated.
 	 */
 	protected void updatePosition(AnchorKey key) {
+		// only update position if key is attached
+		if (!isAttached(key)) {
+			return;
+		}
+
+		// compute new position to see if it has changed
 		Point oldPosition = getPosition(key);
 		Point newPosition = computePosition(key);
 		if (oldPosition == null || !oldPosition.equals(newPosition)) {
@@ -492,6 +552,15 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 	}
 
+	/**
+	 * Updates the positions for all attached {@link AnchorKey}s.
+	 */
+	protected void updatePositions() {
+		for (AnchorKey key : getKeys()) {
+			updatePosition(key);
+		}
+	}
+
 	private void updatePositions(Node anchored) {
 		SetMultimap<Node, AnchorKey> keys = getKeysByNode();
 		if (keys.containsKey(anchored)) {
@@ -500,5 +569,4 @@ public abstract class AbstractAnchor implements IAnchor {
 			}
 		}
 	}
-
 }
