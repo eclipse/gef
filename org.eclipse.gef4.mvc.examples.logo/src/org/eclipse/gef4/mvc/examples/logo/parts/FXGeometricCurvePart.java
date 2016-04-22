@@ -342,14 +342,20 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
 				detachFromAnchorageVisual(anchorage, START_ROLE);
-				attachToAnchorageVisual(anchorage, START_ROLE);
+				if (anchorage != this) {
+					// connected to anchorage
+					attachToAnchorageVisual(anchorage, START_ROLE);
+				}
 			}
 			if (getVisual().getEndAnchor() != null
 					&& !(getVisual().getEndAnchor().getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
 				detachFromAnchorageVisual(anchorage, END_ROLE);
-				attachToAnchorageVisual(anchorage, END_ROLE);
+				if (anchorage != this) {
+					// connected to anchorage
+					attachToAnchorageVisual(anchorage, END_ROLE);
+				}
 			}
 			visual.setInterpolator(new PolylineInterpolator());
 			visual.setRouter(new OrthogonalRouter());

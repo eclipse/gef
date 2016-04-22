@@ -415,6 +415,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			Provider<? extends IAnchor> anchorProvider = part
 					.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
 					});
+			if (part == getHost()) {
+				continue;
+			}
 			if (anchorProvider != null && anchorProvider.get() != null) {
 				return part;
 			}
