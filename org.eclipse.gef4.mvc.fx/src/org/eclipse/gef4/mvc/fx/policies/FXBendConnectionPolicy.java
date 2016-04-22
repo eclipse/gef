@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
@@ -782,6 +783,35 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		}
 		locallyExecuteOperation();
 		showAnchors("After Move:");
+
+		// TODO: make undoable (BendOperation)
+		// TODO: generalize for all routers
+		if (isOrtho) {
+			// provide anchor reference points to the router
+			if (getBendOperation().getNewAnchors()
+					.get(0) instanceof DynamicAnchor) {
+				IAnchor referenceAnchor = getBendOperation().getNewAnchors()
+						.get(1);
+				AnchorKey referenceAnchorKey = getConnection()
+						.getAnchorKey(getConnectionIndex(1));
+				Point referencePoint = referenceAnchor
+						.getPosition(referenceAnchorKey);
+				getConnection().getRouter().positionHintsProperty().put(
+						getConnection().getStartAnchorKey(), referencePoint);
+			}
+			int lastIndex = getBendOperation().getNewAnchors().size() - 1;
+			if (getBendOperation().getNewAnchors()
+					.get(lastIndex) instanceof DynamicAnchor) {
+				IAnchor referenceAnchor = getBendOperation().getNewAnchors()
+						.get(lastIndex - 1);
+				AnchorKey referenceAnchorKey = getConnection()
+						.getAnchorKey(getConnectionIndex(lastIndex - 1));
+				Point referencePoint = referenceAnchor
+						.getPosition(referenceAnchorKey);
+				getConnection().getRouter().positionHintsProperty()
+						.put(getConnection().getEndAnchorKey(), referencePoint);
+			}
+		}
 
 		// remove overlain
 		removeOverlain();
