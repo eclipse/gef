@@ -19,8 +19,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.ProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -169,9 +169,7 @@ public class FXDefaultSelectionFeedbackPartFactory
 						Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
 						parameters.add(
 								new AnchorageReferenceGeometry(n1Geometry));
-						parameters
-								.add(new AbstractComputationStrategy.AnchoredReferencePoint(
-										n2RefPoint));
+						parameters.add(new AnchoredReferencePoint(n2RefPoint));
 						return computationStrategy.computePositionInScene(n1,
 								n2, parameters);
 					}

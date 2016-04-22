@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -41,16 +43,16 @@ import javafx.scene.Node;
  * <li>Return the nearest projection to the anchored reference point.</li>
  * </ol>
  */
-public class ProjectionStrategy extends AbstractComputationStrategy {
+public class ProjectionStrategy implements IComputationStrategy {
 
 	@Override
 	public Point computePositionInScene(Node anchorage, Node anchored,
 			Set<Parameter<?>> parameters) {
 		// retrieve required computation parameters
-		IGeometry anchorageReferenceGeometryInLocal = getParameter(parameters,
-				AnchorageReferenceGeometry.class).get();
-		Point anchoredReferencePointInLocal = getParameter(parameters,
-				AnchoredReferencePoint.class).get();
+		IGeometry anchorageReferenceGeometryInLocal = Parameter
+				.get(parameters, AnchorageReferenceGeometry.class).get();
+		Point anchoredReferencePointInLocal = Parameter
+				.get(parameters, AnchoredReferencePoint.class).get();
 
 		// determine anchorage geometry in scene
 		IGeometry anchorageGeometryInScene = NodeUtils.localToScene(anchorage,

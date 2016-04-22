@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -36,7 +37,7 @@ public class OrthogonalProjectionStrategy extends ProjectionStrategy {
 			List<ICurve> anchorageOutlinesInScene,
 			Point anchoredReferencePointInScene, Set<Parameter<?>> parameters) {
 		// obtain additionally required parameter
-		PreferredOrientation parameter = getParameter(parameters,
+		PreferredOrientation parameter = Parameter.get(parameters,
 				PreferredOrientation.class);
 		Orientation orientationHint = parameter.get();
 

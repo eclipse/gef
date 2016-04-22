@@ -18,7 +18,9 @@ import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.fx.nodes.IConnectionRouter;
@@ -418,6 +420,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			if (part == getHost()) {
 				continue;
 			}
+			// TODO: this is not correct; we should not hard-code the compatible
+			// anchor via the computation strategy.
 			Map<AdapterKey<? extends Provider<? extends IAnchor>>, Provider<? extends IAnchor>> anchorProviders = part
 					.getAdapters(new TypeToken<Provider<? extends IAnchor>>() {
 					});
@@ -425,9 +429,17 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				for (Provider<? extends IAnchor> anchorProvider : anchorProviders
 						.values()) {
 					IAnchor anchor = anchorProvider.get();
-					if (anchor != null && getConnection().getRouter()
-							.isAnchorCompatible(anchor)) {
-						return anchor;
+					if (anchor != null) {
+						if (getConnection()
+								.getRouter() instanceof OrthogonalRouter) {
+							if (anchor instanceof DynamicAnchor
+									&& ((DynamicAnchor) anchor)
+											.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
+								return anchor;
+							}
+						} else {
+							return anchor;
+						}
 					}
 				}
 			}

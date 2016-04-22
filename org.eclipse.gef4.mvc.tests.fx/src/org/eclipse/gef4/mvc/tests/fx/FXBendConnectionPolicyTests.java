@@ -27,9 +27,10 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
@@ -149,8 +150,9 @@ public class FXBendConnectionPolicyTests {
 				// provide parameters for projection computation strategies
 				getVisual().setStartAnchor(anchor);
 				if (getContent().startReferencePoint != null) {
-					((DynamicAnchor) anchor).getComputationParameter(getVisual().getStartAnchorKey(),
-							AnchoredReferencePoint.class).set(getContent().startReferencePoint);
+					((DynamicAnchor) anchor)
+							.getComputationParameter(getVisual().getStartAnchorKey(), AnchoredReferencePoint.class)
+							.set(getContent().startReferencePoint);
 				}
 				((DynamicAnchor) anchor)
 						.getComputationParameter(getVisual().getStartAnchorKey(), PreferredOrientation.class)
@@ -217,7 +219,8 @@ public class FXBendConnectionPolicyTests {
 		protected DynamicAnchor createAnchor(IComputationStrategy computationStrategy) {
 			DynamicAnchor anchor = computationStrategy == null ? new DynamicAnchor(getAdaptable().getVisual())
 					: new DynamicAnchor(getAdaptable().getVisual(), computationStrategy);
-			anchor.setReferenceGeometry((IShape) ((IContentPart<?, ?>) getAdaptable()).getContent());
+			anchor.getComputationParameter(AnchorageReferenceGeometry.class)
+					.set((IShape) ((IContentPart<?, ?>) getAdaptable()).getContent());
 			return anchor;
 		}
 	}

@@ -1,6 +1,7 @@
 package org.eclipse.gef4.zest.fx.providers;
 
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -44,7 +45,7 @@ public class NodePartAnchorProvider extends DynamicAnchorProvider {
 	protected DynamicAnchor createAnchor(IComputationStrategy computationStrategy) {
 		final DynamicAnchor anchor = computationStrategy == null ? new DynamicAnchor(getAdaptable().getVisual())
 				: new DynamicAnchor(getAdaptable().getVisual(), computationStrategy);
-		anchor.referenceGeometryProperty().bind(new ObjectBinding<IGeometry>() {
+		anchor.getComputationParameter(AnchorageReferenceGeometry.class).bind(new ObjectBinding<IGeometry>() {
 			{
 				// XXX: Binding value needs to be recomputed when the anchorage
 				// changes or when the layout bounds of the respective anchorage

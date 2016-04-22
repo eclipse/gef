@@ -14,6 +14,8 @@ package org.eclipse.gef4.fx.anchors;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -115,10 +117,10 @@ public class ChopBoxStrategy extends ProjectionStrategy {
 			Set<Parameter<?>> parameters) {
 
 		// obtain required computation parameters
-		IGeometry anchorageReferenceGeometryInLocal = getParameter(parameters,
-				AnchorageReferenceGeometry.class).get();
-		Point anchoredReferencePointInLocal = getParameter(parameters,
-				AnchoredReferencePoint.class).get();
+		IGeometry anchorageReferenceGeometryInLocal = Parameter
+				.get(parameters, AnchorageReferenceGeometry.class).get();
+		Point anchoredReferencePointInLocal = Parameter
+				.get(parameters, AnchoredReferencePoint.class).get();
 
 		Point anchoredReferencePointInScene = NodeUtils.localToScene(anchored,
 				anchoredReferencePointInLocal);

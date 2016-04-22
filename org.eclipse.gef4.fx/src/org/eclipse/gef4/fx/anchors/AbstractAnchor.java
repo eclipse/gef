@@ -18,12 +18,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
-import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
-import org.eclipse.gef4.common.beans.property.ReadOnlySetWrapperEx;
-import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
-import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import com.google.common.collect.HashMultimap;
@@ -34,14 +29,10 @@ import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlySetProperty;
-import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -74,12 +65,6 @@ public abstract class AbstractAnchor implements IAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<>();
 	private SetMultimap<Node, AnchorKey> keysByNode = HashMultimap.create();
-
-	private IComputationStrategy computationStrategy;
-	private ObservableSet<IComputationStrategy.Parameter<?>> staticComputationParameters = FXCollections
-			.observableSet(new HashSet<IComputationStrategy.Parameter<?>>());
-	private ReadOnlySetWrapper<IComputationStrategy.Parameter<?>> staticComputationParametersProperty = new ReadOnlySetWrapperEx<>(
-			staticComputationParameters);
 
 	private ObservableMap<AnchorKey, Point> positions = FXCollections
 			.observableHashMap();
@@ -164,46 +149,15 @@ public abstract class AbstractAnchor implements IAnchor {
 		}
 	};
 
-	private SetChangeListener<IComputationStrategy.Parameter<?>> staticComputationParametersChangeListener = new SetChangeListener<IComputationStrategy.Parameter<?>>() {
-
-		private ChangeListener<Object> valueChangeListener = new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<? extends Object> observable,
-					Object oldValue, Object newValue) {
-				// recompute positions for all anchor keys
-				updatePositions();
-			}
-		};
-
-		@Override
-		public void onChanged(
-				final SetChangeListener.Change<? extends Parameter<?>> change) {
-			if (change.wasRemoved()) {
-				change.getElementRemoved().removeListener(valueChangeListener);
-			}
-			if (change.wasAdded()) {
-				change.getElementAdded().addListener(valueChangeListener);
-			}
-			// if the list of static parameters was changed, recompute positions
-			updatePositions();
-		}
-	};
-
 	/**
 	 * Creates a new {@link AbstractAnchor} for the given <i>anchorage</i>
 	 * {@link Node}.
 	 *
 	 * @param anchorage
 	 *            The anchorage {@link Node} for this {@link AbstractAnchor}.
-	 * @param computationStrategy
-	 *            The computation strategy to use.
 	 */
-	public AbstractAnchor(Node anchorage,
-			IComputationStrategy computationStrategy) {
+	public AbstractAnchor(Node anchorage) {
 		anchorageProperty.addListener(anchorageChangeListener);
-		staticComputationParameters
-				.addListener(staticComputationParametersChangeListener);
-		setComputationStrategy(computationStrategy);
 		setAnchorage(anchorage);
 	}
 
@@ -246,32 +200,7 @@ public abstract class AbstractAnchor implements IAnchor {
 	 * @return The point for the given {@link AnchorKey} in local coordinates of
 	 *         the anchored {@link Node}.
 	 */
-	protected Point computePosition(AnchorKey key) {
-		// check for availability of (static) parameters
-		Set<IComputationStrategy.Parameter<?>> parameters = getParameters(key);
-
-		// check that parameter values are provided
-		for (Parameter<?> p : parameters) {
-			if (p.get() == null && !p.isOptional()) {
-				// as long as all required parameters are not provided, we
-				// cannot compute a position.
-				// System.out.println("Skipping computation of position for key
-				// "
-				// + key + " because mandatory parameter " + p
-				// + " has no value.");
-				return null;
-			}
-		}
-
-		// only invoke strategy if all required parameters are provided
-		Point position = FX2Geometry.toPoint(key.getAnchored()
-				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
-						.computePositionInScene(getAnchorage(),
-								key.getAnchored(), parameters))));
-		// System.out.println("Computed position " + position + " for key " +
-		// key);
-		return position;
-	}
+	protected abstract Point computePosition(AnchorKey key);
 
 	private VisualChangeListener createVCL(final Node anchored) {
 		return new VisualChangeListener() {
@@ -352,18 +281,6 @@ public abstract class AbstractAnchor implements IAnchor {
 	}
 
 	/**
-	 * Returns the default {@link IComputationStrategy} used by this
-	 * {@link DynamicAnchor} when no {@link IComputationStrategy} is explicitly
-	 * set for an {@link AnchorKey}.
-	 *
-	 * @return The default {@link IComputationStrategy}.
-	 */
-	@Override
-	public IComputationStrategy getComputationStrategy() {
-		return computationStrategy;
-	}
-
-	/**
 	 * Returns all keys maintained by this anchor.
 	 *
 	 * @return A set containing all {@link AnchorKey}s.
@@ -385,22 +302,6 @@ public abstract class AbstractAnchor implements IAnchor {
 	 */
 	protected SetMultimap<Node, AnchorKey> getKeysByNode() {
 		return keysByNode;
-	}
-
-	/**
-	 * Retrieves the relevant parameters for the computation of the given
-	 * {@link AnchorKey}.
-	 *
-	 * @param key
-	 *            The Anchor key of relevance.
-	 * @return The parameters required by the computation strategy to compute
-	 *         the position for the given {@link AnchorKey}.
-	 *
-	 */
-	protected Set<Parameter<?>> getParameters(AnchorKey key) {
-		Set<Parameter<?>> parameters = new HashSet<>();
-		parameters.addAll(staticComputationParameters);
-		return parameters;
 	}
 
 	@Override
@@ -464,25 +365,6 @@ public abstract class AbstractAnchor implements IAnchor {
 	 */
 	protected void setAnchorage(Node anchorage) {
 		anchorageProperty.set(anchorage);
-	}
-
-	@Override
-	public void setComputationStrategy(
-			IComputationStrategy computationStrategy) {
-		this.computationStrategy = computationStrategy;
-	}
-
-	/**
-	 * Returns a {@link ReadOnlySetMultimapProperty} that provides the
-	 * {@link IComputationStrategy.Parameter computation parameters} per
-	 * {@link AnchorKey}. The set of computation parameters for each
-	 * {@link AnchorKey} is initialed by the responsible computation strategy.
-	 *
-	 * @return A {@link ReadOnlySetMultimapProperty} that provides an
-	 *         {@link Object} per {@link AnchorKey}.
-	 */
-	protected ReadOnlySetProperty<IComputationStrategy.Parameter<?>> staticComputationParametersProperty() {
-		return staticComputationParametersProperty.getReadOnlyProperty();
 	}
 
 	/**

@@ -19,15 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReferencePoint;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
-import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
-import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter.Kind;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
@@ -197,7 +195,10 @@ public class OrthogonalRouter implements IConnectionRouter {
 				&& anchor.getAnchorage() != connection) {
 			Node anchorage = anchor.getAnchorage();
 			if (anchor instanceof DynamicAnchor) {
-				return ((DynamicAnchor) anchor).getReferenceGeometry();
+				return ((DynamicAnchor) anchor)
+						.getComputationParameter(connection.getAnchorKey(index),
+								AnchorageReferenceGeometry.class)
+						.get();
 			}
 			// fall back to using the shape outline
 			return NodeUtils.sceneToLocal(connection, NodeUtils.localToScene(
@@ -324,8 +325,8 @@ public class OrthogonalRouter implements IConnectionRouter {
 				}
 				// provide a hint to the anchor's computation strategy
 				AnchorKey anchorKey = connection.getAnchorKey(index);
-				((DynamicAnchor) anchor).getComputationParameter(
-						anchorKey, PreferredOrientation.class).set(hint);
+				((DynamicAnchor) anchor).getComputationParameter(anchorKey,
+						PreferredOrientation.class).set(hint);
 
 				// update reference point for the anchor key at the given index
 				((DynamicAnchor) anchor)
@@ -338,8 +339,11 @@ public class OrthogonalRouter implements IConnectionRouter {
 						.getComputationStrategy();
 				// compute position using computation strategy
 				Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
-				parameters.add(new AnchorageReferenceGeometry(
-						((DynamicAnchor) anchor).getReferenceGeometry()));
+				parameters.add(
+						new AnchorageReferenceGeometry(((DynamicAnchor) anchor)
+								.getComputationParameter(anchorKey,
+										AnchorageReferenceGeometry.class)
+								.get()));
 				parameters.add(new AnchoredReferencePoint(referencePoint));
 				parameters.add(new PreferredOrientation(hint));
 				return FX2Geometry.toPoint(connection
@@ -365,24 +369,6 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Polygon right = new Polygon(rectangle.getTopRight(),
 				rectangle.getBottomRight(), rectangle.getCenter());
 		return new Polygon[] { top, right, bottom, left };
-	}
-
-	@Override
-	public boolean isAnchorCompatible(IAnchor anchor) {
-		// verify that we provide all parameters that are required by the
-		// computation strategy of the given anchor
-		for (Class<? extends Parameter<?>> paramType : anchor
-				.getComputationStrategy().getRequiredParameters()) {
-			if (Kind.DYNAMIC.equals(Parameter.getKind(paramType))
-					&& !Parameter.isOptional(paramType)) {
-				// XXX: PreferredOrientation is optional so we do not have to
-				// test for it here.
-				if (!AnchoredReferencePoint.class.equals(paramType)) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 	private boolean isBottom(Connection connection, int i, Point currentPoint) {

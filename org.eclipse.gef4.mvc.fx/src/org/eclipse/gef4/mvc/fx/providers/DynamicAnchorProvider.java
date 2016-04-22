@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.providers;
 
 import org.eclipse.gef4.common.adapt.AbstractBoundProvider;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.utils.NodeUtils;
@@ -73,34 +74,38 @@ public class DynamicAnchorProvider extends
 		final DynamicAnchor anchor = computationStrategy == null
 				? new DynamicAnchor(visual)
 				: new DynamicAnchor(visual, computationStrategy);
-		anchor.referenceGeometryProperty().bind(new ObjectBinding<IGeometry>() {
-			{
-				// XXX: Binding value needs to be recomputed when the anchorage
-				// changes or when the layout bounds of the respective anchorage
-				// changes.
-				anchor.anchorageProperty()
-						.addListener(new ChangeListener<Node>() {
+		anchor.getComputationParameter(AnchorageReferenceGeometry.class)
+				.bind(new ObjectBinding<IGeometry>() {
+					{
+						// XXX: Binding value needs to be recomputed when the
+						// anchorage
+						// changes or when the layout bounds of the respective
+						// anchorage
+						// changes.
+						anchor.anchorageProperty()
+								.addListener(new ChangeListener<Node>() {
+							@Override
+							public void changed(
+									ObservableValue<? extends Node> observable,
+									Node oldValue, Node newValue) {
+								if (oldValue != null) {
+									unbind(oldValue.layoutBoundsProperty());
+								}
+								if (newValue != null) {
+									bind(newValue.layoutBoundsProperty());
+								}
+								invalidate();
+							}
+						});
+						bind(anchor.getAnchorage().layoutBoundsProperty());
+					}
+
 					@Override
-					public void changed(
-							ObservableValue<? extends Node> observable,
-							Node oldValue, Node newValue) {
-						if (oldValue != null) {
-							unbind(oldValue.layoutBoundsProperty());
-						}
-						if (newValue != null) {
-							bind(newValue.layoutBoundsProperty());
-						}
-						invalidate();
+					protected IGeometry computeValue() {
+						return NodeUtils
+								.getShapeOutline(getAdaptable().getVisual());
 					}
 				});
-				bind(anchor.getAnchorage().layoutBoundsProperty());
-			}
-
-			@Override
-			protected IGeometry computeValue() {
-				return NodeUtils.getShapeOutline(getAdaptable().getVisual());
-			}
-		});
 		return anchor;
 	}
 

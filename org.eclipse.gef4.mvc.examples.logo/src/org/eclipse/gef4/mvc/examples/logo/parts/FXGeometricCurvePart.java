@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -337,8 +338,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		if (content.getRoutingStyle().equals(RoutingStyle.ORTHOGONAL)) {
 			// re-attach visual in case we are connected to an anchor with
 			// non orthogonal computation strategy
-			if (getVisual().getStartAnchor() != null && !(getVisual().getStartAnchor()
-					.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
+			if (getVisual().getStartAnchor() != null && getVisual().getStartAnchor() instanceof DynamicAnchor
+					&& !(((DynamicAnchor) getVisual().getStartAnchor())
+							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
 				detachFromAnchorageVisual(anchorage, START_ROLE);
@@ -347,8 +349,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 					attachToAnchorageVisual(anchorage, START_ROLE);
 				}
 			}
-			if (getVisual().getEndAnchor() != null
-					&& !(getVisual().getEndAnchor().getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
+			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
+					&& !(((DynamicAnchor) getVisual().getEndAnchor())
+							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
 				detachFromAnchorageVisual(anchorage, END_ROLE);
@@ -362,15 +365,17 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 		} else {
 			// re-attach visual in case we are connected to an anchor with
 			// orthogonal computation strategy
-			if (getVisual().getStartAnchor() != null
-					&& getVisual().getStartAnchor().getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
+			if (getVisual().getStartAnchor() != null && getVisual().getStartAnchor() instanceof DynamicAnchor
+					&& ((DynamicAnchor) getVisual().getStartAnchor())
+							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
 				detachFromAnchorageVisual(anchorage, START_ROLE);
 				attachToAnchorageVisual(anchorage, START_ROLE);
 			}
-			if (getVisual().getEndAnchor() != null
-					&& getVisual().getEndAnchor().getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
+			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
+					&& ((DynamicAnchor) getVisual().getEndAnchor())
+							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<Node, ? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getEndAnchor().getAnchorage());
 				detachFromAnchorageVisual(anchorage, END_ROLE);

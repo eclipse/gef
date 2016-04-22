@@ -27,17 +27,6 @@ import org.eclipse.gef4.fx.anchors.IAnchor;
 public interface IConnectionRouter {
 
 	/**
-	 * Returns <code>true</code> if this router can handle the given
-	 * {@link IAnchor}. Otherwise returns <code>false</code>.
-	 *
-	 * @param anchor
-	 *            The {@link IAnchor} that is tested for compatibility.
-	 * @return <code>true</code> if the given {@link IAnchor} is compatible,
-	 *         otherwise <code>false</code>.
-	 */
-	public boolean isAnchorCompatible(IAnchor anchor);
-
-	/**
 	 * Returns <code>true</code> if the given {@link IAnchor} was added by this
 	 * {@link IConnectionRouter} during {@link #route(Connection)}. Otherwise
 	 * returns <code>false</code>.

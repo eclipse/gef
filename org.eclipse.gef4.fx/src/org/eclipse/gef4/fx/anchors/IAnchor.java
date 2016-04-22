@@ -71,16 +71,6 @@ public interface IAnchor {
 	Node getAnchorage();
 
 	/**
-	 * Returns the {@link IComputationStrategy} that is used by this
-	 * {@link IAnchor}.
-	 *
-	 * @return The {@link IComputationStrategy} that is used by this
-	 *         {@link DynamicAnchor} to compute positions for all attached
-	 *         {@link AnchorKey}s.
-	 */
-	public IComputationStrategy getComputationStrategy();
-
-	/**
 	 * Provides a position for the given {@link AnchorKey}. The provided
 	 * {@link AnchorKey} has to be attached to this {@link IAnchor} (see
 	 * {@link #attach(AnchorKey)}).
@@ -119,14 +109,4 @@ public interface IAnchor {
 	 */
 	ReadOnlyMapProperty<AnchorKey, Point> positionsUnmodifiableProperty();
 
-	/**
-	 * Sets the given {@link IComputationStrategy} to be used by this
-	 * {@link IAnchor}.
-	 *
-	 * @param computationStrategy
-	 *            The {@link IComputationStrategy} that will be used to compute
-	 *            positions for all attached {@link AnchorKey}s.
-	 */
-	public void setComputationStrategy(
-			IComputationStrategy computationStrategy);
 }

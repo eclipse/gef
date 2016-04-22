@@ -18,27 +18,33 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapProperty;
 import org.eclipse.gef4.common.beans.property.ReadOnlySetMultimapWrapper;
+import org.eclipse.gef4.common.beans.property.ReadOnlySetWrapperEx;
 import org.eclipse.gef4.common.collections.CollectionUtils;
 import org.eclipse.gef4.common.collections.ObservableSetMultimap;
 import org.eclipse.gef4.common.collections.SetMultimapChangeListener;
-import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter.Kind;
+import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlySetProperty;
+import javafx.beans.property.ReadOnlySetWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
 /**
- * The {@link DynamicAnchor} computes anchor positions based on a reference
- * position per anchored and one reference position for the anchorage. The
- * anchoreds' reference positions are provided when {@link #attach(AnchorKey)
- * attaching} an {@link AnchorKey}. The computation is carried out by a
- * {@link IComputationStrategy}. The default computation strategy (
- * {@link ProjectionStrategy}) will connect anchored and anchorage reference
- * position and compute the intersection with the outline of the anchorage.
+ * The {@link DynamicAnchor} computes anchor positions through a
+ * {@link IComputationStrategy}. The strategy performs the position calculation
+ * based on {@link Parameter}s, which are controlled by the
+ * {@link DynamicAnchor}.
  *
  * @author anyssen
  * @author mwienand
@@ -46,12 +52,118 @@ import javafx.scene.Node;
  */
 public class DynamicAnchor extends AbstractAnchor {
 
-	// TODO: replace with static parameters set
-	private AnchorageReferenceGeometry referenceGeometryProperty = new AnchorageReferenceGeometry();
+	/**
+	 * An {@link IComputationStrategy.Parameter} that encapsulates an
+	 * (anchorage) reference geometry.
+	 */
+	public static class AnchorageReferenceGeometry
+			extends Parameter<IGeometry> {
 
-	private Map<AnchorKey, ChangeListener<Object>> computationParameterChangeListeners = new HashMap<>();
+		/**
+		 * Creates a new {@link AnchorageReferenceGeometry} with no default
+		 * value.
+		 */
+		public AnchorageReferenceGeometry() {
+			this(new Rectangle());
+		}
 
-	private SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>> computationParametersChangeListener = new SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>>() {
+		/**
+		 * Creates a {@link AnchorageReferenceGeometry} that encapsulates the
+		 * given {@link IGeometry}.
+		 *
+		 * @param defaultValue
+		 *            The {@link IGeometry} to use by default.
+		 */
+		public AnchorageReferenceGeometry(IGeometry defaultValue) {
+			super(Kind.ANCHORAGE);
+			set(defaultValue);
+		}
+	}
+
+	/**
+	 * An {@link IComputationStrategy.Parameter} that encapsulates an
+	 * (anchorage) reference point.
+	 */
+	public static class AnchorageReferencePosition extends Parameter<Point> {
+
+		/**
+		 * Creates a new {@link AnchorageReferencePosition} without default
+		 * value.
+		 */
+		public AnchorageReferencePosition() {
+			this(null);
+		}
+
+		/**
+		 * Creates a {@link AnchorageReferencePosition} that encapsulates the
+		 * given {@link Point}.
+		 *
+		 * @param defaultValue
+		 *            The {@link Point} to encapsulate.
+		 */
+		public AnchorageReferencePosition(Point defaultValue) {
+			super(Kind.ANCHORAGE);
+			set(defaultValue);
+		}
+	}
+
+	/**
+	 * An {@link IComputationStrategy.Parameter} that encapsulates a projection
+	 * reference point.
+	 */
+	public static class AnchoredReferencePoint extends Parameter<Point> {
+
+		/**
+		 * Creates a new {@link AnchoredReferencePoint} with no default value.
+		 */
+		public AnchoredReferencePoint() {
+			this(new Point());
+		}
+
+		/**
+		 * Creates a {@link AnchoredReferencePoint} that encapsulates the given
+		 * {@link Point}.
+		 *
+		 * @param defaultValue
+		 *            The {@link Point} to encapsulate.
+		 */
+		public AnchoredReferencePoint(Point defaultValue) {
+			super(Kind.ANCHORED);
+			set(defaultValue);
+		}
+	}
+
+	/**
+	 * An {@link IComputationStrategy.Parameter} that encapsulates the preferred
+	 * orientation to be used for orthogonal projections.
+	 */
+	public static class PreferredOrientation extends Parameter<Orientation> {
+
+		/**
+		 * Creates a new {@link PreferredOrientation} without default value.
+		 */
+		public PreferredOrientation() {
+			this(Orientation.VERTICAL);
+		}
+
+		/**
+		 * Creates a {@link PreferredOrientation} that encapsulates the given
+		 * {@link Orientation}.
+		 *
+		 * @param orientation
+		 *            The {@link Orientation} to encapsulate.
+		 */
+		public PreferredOrientation(Orientation orientation) {
+			super(Kind.ANCHORED, true); // optional
+			set(orientation);
+		}
+	}
+
+	private SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>> anchoredComputationParametersChangeListener = new SetMultimapChangeListener<AnchorKey, IComputationStrategy.Parameter<?>>() {
+
+		// keep track of the change listeners registered at the individual
+		// parameters
+		private Map<AnchorKey, ChangeListener<Object>> valueChangeListeners = new HashMap<>();
 
 		@Override
 		public void onChanged(
@@ -73,7 +185,7 @@ public class DynamicAnchor extends AbstractAnchor {
 						// add change listener to each added parameter, so we
 						// can recompute the position upon changes
 						final AnchorKey key = change.getKey();
-						ChangeListener<Object> l = computationParameterChangeListeners
+						ChangeListener<Object> l = valueChangeListeners
 								.get(key);
 						if (l == null) {
 							l = new ChangeListener<Object>() {
@@ -81,35 +193,63 @@ public class DynamicAnchor extends AbstractAnchor {
 								public void changed(
 										ObservableValue<? extends Object> observable,
 										Object oldValue, Object newValue) {
-									if (isAttached(key)) {
-										updatePosition(key);
-									}
+									updatePosition(key);
 								}
 							};
-							computationParameterChangeListeners.put(key, l);
+							valueChangeListeners.put(key, l);
 						}
 						p.addListener(l);
 					}
 				} else if (change.wasRemoved()) {
 					// unregister change listener from removed parameter
 					for (Parameter<?> p : change.getValuesRemoved()) {
-						p.removeListener(computationParameterChangeListeners
-								.get(change.getKey()));
+						p.removeListener(
+								valueChangeListeners.get(change.getKey()));
 					}
 				}
 				// update position for this key
-				if (isAttached(change.getKey())) {
-					updatePosition(change.getKey());
-				}
+				updatePosition(change.getKey());
 			}
 		}
 	};
+	private IComputationStrategy computationStrategy;
+	private ObservableSet<IComputationStrategy.Parameter<?>> anchorageComputationParameters = FXCollections
+			.observableSet(new HashSet<IComputationStrategy.Parameter<?>>());
 
-	private ObservableSetMultimap<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParameters = CollectionUtils
+	private ReadOnlySetWrapper<IComputationStrategy.Parameter<?>> anchorageComputationParametersProperty = new ReadOnlySetWrapperEx<>(
+			anchorageComputationParameters);
+
+	private ObservableSetMultimap<AnchorKey, IComputationStrategy.Parameter<?>> anchoredComputationParameters = CollectionUtils
 			.observableHashMultimap();
 
-	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersProperty = new ReadOnlySetMultimapWrapper<>(
-			dynamicComputationParameters);
+	private ReadOnlySetMultimapWrapper<AnchorKey, IComputationStrategy.Parameter<?>> anchoredComputationParametersProperty = new ReadOnlySetMultimapWrapper<>(
+			anchoredComputationParameters);
+
+	private SetChangeListener<IComputationStrategy.Parameter<?>> anchorageComputationParametersChangeListener = new SetChangeListener<IComputationStrategy.Parameter<?>>() {
+
+		private ChangeListener<Object> valueChangeListener = new ChangeListener<Object>() {
+			@Override
+			public void changed(ObservableValue<? extends Object> observable,
+					Object oldValue, Object newValue) {
+				// recompute positions for all anchor keys
+				updatePositions();
+			}
+		};
+
+		@Override
+		public void onChanged(
+				final SetChangeListener.Change<? extends Parameter<?>> change) {
+			if (change.wasRemoved()) {
+				change.getElementRemoved().removeListener(valueChangeListener);
+			}
+			if (change.wasAdded()) {
+				change.getElementAdded().addListener(valueChangeListener);
+			}
+			// if the list of anchorage parameters was changed, recompute
+			// positions
+			updatePositions();
+		}
+	};
 
 	/**
 	 * Constructs a new {@link DynamicAnchor} for the given anchorage visual.
@@ -128,45 +268,96 @@ public class DynamicAnchor extends AbstractAnchor {
 	 *
 	 * @param anchorage
 	 *            The anchorage visual.
-	 * @param defaultComputationStrategy
-	 *            The default {@link IComputationStrategy} to use.
+	 * @param computationStrategy
+	 *            The {@link IComputationStrategy} to use.
 	 */
 	public DynamicAnchor(Node anchorage,
-			IComputationStrategy defaultComputationStrategy) {
-		super(anchorage, defaultComputationStrategy);
-		// init static parameters
-		staticComputationParametersProperty().add(referenceGeometryProperty);
-		dynamicComputationParameters
-				.addListener(computationParametersChangeListener);
+			IComputationStrategy computationStrategy) {
+		super(anchorage);
+		setComputationStrategy(computationStrategy);
+		anchorageComputationParameters
+				.addListener(anchorageComputationParametersChangeListener);
+		anchoredComputationParameters
+				.addListener(anchoredComputationParametersChangeListener);
+	}
+
+	/**
+	 * Returns a {@link ReadOnlySetProperty} that provides the
+	 * {@link IComputationStrategy.Parameter computation parameters} of kind
+	 * {@link Kind#ANCHORAGE}.
+	 *
+	 * @return A {@link ReadOnlySetProperty} providing the {@link Parameter}s.
+	 */
+	protected ReadOnlySetProperty<IComputationStrategy.Parameter<?>> anchorageComputationParametersProperty() {
+		return anchorageComputationParametersProperty.getReadOnlyProperty();
+	}
+
+	/**
+	 * Returns a {@link ReadOnlySetMultimapProperty} that provides the
+	 * {@link IComputationStrategy.Parameter computation parameters} of kind
+	 * {@link Kind#ANCHORED} per {@link AnchorKey}. The set of computation
+	 * parameters for each {@link AnchorKey} is initialed by the responsible
+	 * computation strategy.
+	 *
+	 * @return A {@link ReadOnlySetMultimapProperty} that provides an
+	 *         {@link Object} per {@link AnchorKey}.
+	 */
+	protected ReadOnlySetMultimapProperty<AnchorKey, IComputationStrategy.Parameter<?>> anchoredComputationParametersProperty() {
+		return anchoredComputationParametersProperty.getReadOnlyProperty();
 	}
 
 	@Override
 	public void attach(AnchorKey key) {
-		initDynamicParameters(key);
+		initAnchoredParameters(key);
 		super.attach(key);
 	}
 
-	private void clearDynamicParameters(AnchorKey key) {
-		dynamicComputationParameters.removeAll(key);
+	private void clearAnchoredParameters(AnchorKey key) {
+		anchoredComputationParameters.removeAll(key);
+	}
+
+	/**
+	 * Recomputes the position for the given attached {@link AnchorKey} by
+	 * delegating to the respective {@link IComputationStrategy}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} for which to compute an anchor position.
+	 * @return The point for the given {@link AnchorKey} in local coordinates of
+	 *         the anchored {@link Node}.
+	 */
+	@Override
+	protected Point computePosition(AnchorKey key) {
+		// check for availability of (anchorage) parameters
+		Set<IComputationStrategy.Parameter<?>> parameters = getParameters(key);
+		for (Class<? extends Parameter<?>> parameterType : computationStrategy
+				.getRequiredParameters()) {
+			Parameter<?> p = Parameter.get(parameters, parameterType);
+			// check that parameter values are provided
+			if (p == null || (p.get() == null && !p.isOptional())) {
+				// as long as all required parameters are not provided, we
+				// cannot compute a position.
+				// System.out.println("Skipping computation of position for key
+				// "
+				// + key + " because mandatory parameter " + p
+				// + " has no value.");
+				return null;
+			}
+		}
+
+		// only invoke strategy if all required parameters are provided
+		Point position = FX2Geometry.toPoint(key.getAnchored()
+				.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
+						.computePositionInScene(getAnchorage(),
+								key.getAnchored(), parameters))));
+		// System.out.println("Computed position " + position + " for key " +
+		// key);
+		return position;
 	}
 
 	@Override
 	public void detach(AnchorKey key) {
 		super.detach(key);
-		clearDynamicParameters(key);
-	}
-
-	/**
-	 * Returns a {@link ReadOnlySetMultimapProperty} that provides the
-	 * {@link IComputationStrategy.Parameter computation parameters} per
-	 * {@link AnchorKey}. The set of computation parameters for each
-	 * {@link AnchorKey} is initialed by the responsible computation strategy.
-	 *
-	 * @return A {@link ReadOnlySetMultimapProperty} that provides an
-	 *         {@link Object} per {@link AnchorKey}.
-	 */
-	protected ReadOnlySetMultimapProperty<AnchorKey, IComputationStrategy.Parameter<?>> dynamicComputationParametersProperty() {
-		return dynamicComputationParametersProperty.getReadOnlyProperty();
+		clearAnchoredParameters(key);
 	}
 
 	/**
@@ -176,25 +367,26 @@ public class DynamicAnchor extends AbstractAnchor {
 	 * @param <T>
 	 *            The value type of the computation parameter.
 	 * @param key
-	 *            The {@link AnchorKey} for which to retrieve the dynamic
+	 *            The {@link AnchorKey} for which to retrieve the anchored
 	 *            parameter.
 	 * @param parameterType
 	 *            The type of computation parameter.
-	 * @return The dynamic computation parameter.
+	 * @return The anchored computation parameter.
 	 */
 	public <T extends Parameter<?>> T getComputationParameter(AnchorKey key,
 			Class<T> parameterType) {
 
-		// check static parameters
-		T parameter = AbstractComputationStrategy.getParameter(
-				staticComputationParametersProperty(), parameterType);
+		// check anchorage parameters
+		T parameter = Parameter.get(anchorageComputationParametersProperty(),
+				parameterType);
 		if (parameter != null) {
 			return parameter;
 		}
 
-		// check dynamic parameters
-		parameter = AbstractComputationStrategy.getParameter(
-				dynamicComputationParametersProperty().get(key), parameterType);
+		// check anchored parameters
+		parameter = Parameter.get(
+				anchoredComputationParametersProperty().get(key),
+				parameterType);
 		if (parameter != null) {
 			return parameter;
 		}
@@ -202,10 +394,10 @@ public class DynamicAnchor extends AbstractAnchor {
 		// create a new parameter instance
 		try {
 			parameter = parameterType.getDeclaredConstructor().newInstance();
-			if (Kind.DYNAMIC.equals(parameter.getKind())) {
-				dynamicComputationParametersProperty().put(key, parameter);
+			if (Kind.ANCHORED.equals(parameter.getKind())) {
+				anchoredComputationParametersProperty().put(key, parameter);
 			} else {
-				staticComputationParametersProperty().add(parameter);
+				anchorageComputationParametersProperty().add(parameter);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -213,85 +405,132 @@ public class DynamicAnchor extends AbstractAnchor {
 		return parameter;
 	}
 
-	@Override
-	protected Set<Parameter<?>> getParameters(AnchorKey key) {
-		Set<Parameter<?>> parameters = new HashSet<>();
-		parameters.addAll(super.getParameters(key));
-		parameters.addAll(dynamicComputationParameters.get(key));
-		return parameters;
+	/**
+	 * Retrieves a computation parameter of the respective type.
+	 *
+	 * @param <T>
+	 *            The value type of the computation parameter.
+	 * @param parameterType
+	 *            The type of computation parameter.
+	 * @return The anchored computation parameter.
+	 */
+	public <T extends Parameter<?>> T getComputationParameter(
+			Class<T> parameterType) {
+
+		// check anchorage parameters
+		T parameter = Parameter.get(anchorageComputationParametersProperty(),
+				parameterType);
+		if (parameter != null) {
+			return parameter;
+		}
+
+		// create a new parameter instance
+		try {
+			parameter = parameterType.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (Kind.ANCHORAGE.equals(parameter.getKind())) {
+			anchorageComputationParametersProperty().add(parameter);
+		} else {
+			throw new IllegalArgumentException("Specified parameter type "
+					+ parameterType.getSimpleName()
+					+ " is anchored, it has to be queried per AdapterKey.");
+		}
+		return parameter;
 	}
 
 	/**
-	 * Returns the anchorage reference {@link IGeometry geometry} that is to be
-	 * used for computations by this {@link DynamicAnchor}'s
-	 * {@link IComputationStrategy computation strategy}, specified within the
-	 * local coordinate system of the anchorage.
+	 * Returns the {@link IComputationStrategy} used by this
+	 * {@link DynamicAnchor}.
 	 *
-	 * @return The anchorage reference geometry to be used for computations,
-	 *         which by default is the shape's outline geometry.
+	 * @return The {@link IComputationStrategy}.
 	 */
-	public IGeometry getReferenceGeometry() {
-		return referenceGeometryProperty.get();
+	public IComputationStrategy getComputationStrategy() {
+		return computationStrategy;
 	}
 
-	private void initDynamicParameters(AnchorKey key) {
-		Set<Parameter<?>> parameters = getParameters(key);
-		for (Class<? extends Parameter<?>> paramType : getComputationStrategy()
+	/**
+	 * Retrieves the relevant parameters for the computation of the given
+	 * {@link AnchorKey}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} of relevance.
+	 * @return The parameters required by the computation strategy to compute
+	 *         the position for the given {@link AnchorKey}.
+	 *
+	 */
+	protected Set<Parameter<?>> getParameters(AnchorKey key) {
+		Set<Parameter<?>> parameters = new HashSet<>();
+		parameters.addAll(anchorageComputationParameters);
+		parameters.addAll(anchoredComputationParameters.get(key));
+		return parameters;
+	}
+
+	private void initAnchorageParameters() {
+		for (Class<? extends Parameter<?>> paramType : computationStrategy
 				.getRequiredParameters()) {
-			if (AbstractComputationStrategy.getParameter(parameters,
-					paramType) == null) {
-				// parameter is not already contained
-				try {
-					Parameter<?> p = paramType.getDeclaredConstructor()
-							.newInstance();
-					if (Kind.DYNAMIC.equals(p.getKind())) {
-						dynamicComputationParameters.put(key, p);
-					} else {
-						throw new IllegalArgumentException(
-								"Required static parameter of type " + paramType
-										+ " is not provided.");
+			if (Kind.ANCHORAGE.equals(Parameter.getKind(paramType))) {
+				if (Parameter.get(anchorageComputationParameters,
+						paramType) == null) {
+					// parameter is not already contained
+					try {
+						Parameter<?> p = paramType.getDeclaredConstructor()
+								.newInstance();
+						anchorageComputationParameters.add(p);
+					} catch (Exception e) {
+						throw new IllegalStateException(
+								"Could not create instance of parameter type "
+										+ paramType,
+								e);
 					}
-				} catch (Exception e) {
-					throw new IllegalStateException(
-							"Could not create instance of parameter type "
-									+ paramType,
-							e);
+				}
+			}
+		}
+	}
+
+	private void initAnchoredParameters(AnchorKey key) {
+		Set<Parameter<?>> parameters = getParameters(key);
+		for (Class<? extends Parameter<?>> paramType : computationStrategy
+				.getRequiredParameters()) {
+			if (Kind.ANCHORED.equals(Parameter.getKind(paramType))) {
+				if (Parameter.get(parameters, paramType) == null) {
+					// parameter is not already contained
+					try {
+						Parameter<?> p = paramType.getDeclaredConstructor()
+								.newInstance();
+						if (Kind.ANCHORED.equals(p.getKind())) {
+							anchoredComputationParameters.put(key, p);
+						}
+					} catch (Exception e) {
+						throw new IllegalStateException(
+								"Could not create instance of parameter type "
+										+ paramType,
+								e);
+					}
 				}
 			}
 		}
 	}
 
 	/**
-	 * Returns the {@link ObjectProperty} that manages the reference geometry of
-	 * this {@link DynamicAnchor}.
+	 * Sets the given {@link IComputationStrategy} to be used by this
+	 * {@link IAnchor}.
 	 *
-	 * @return The {@link ObjectProperty} that manages the reference geometry of
-	 *         this {@link DynamicAnchor}.
+	 * @param computationStrategy
+	 *            The {@link IComputationStrategy} that will be used to compute
+	 *            positions for all attached {@link AnchorKey}s.
 	 */
-	// TODO: this has to be transferred into a (static) computation parameter.
-	// TODO: we could turn this into an AnchorageReferenceGeometry
-	public AnchorageReferenceGeometry referenceGeometryProperty() {
-		return referenceGeometryProperty;
-	}
-
-	@Override
 	public void setComputationStrategy(
 			IComputationStrategy computationStrategy) {
-		super.setComputationStrategy(computationStrategy);
 		for (AnchorKey key : getKeys()) {
-			// init will replace all existing values (in an atomic operation)
-			initDynamicParameters(key);
+			clearAnchoredParameters(key);
 		}
-	}
-
-	/**
-	 * Sets the reference geometry property to the specified value.
-	 *
-	 * @param geometry
-	 *            The new geoemtry value.
-	 */
-	public void setReferenceGeometry(IGeometry geometry) {
-		referenceGeometryProperty.set(geometry);
+		this.computationStrategy = computationStrategy;
+		initAnchorageParameters();
+		for (AnchorKey key : getKeys()) {
+			initAnchoredParameters(key);
+		}
 	}
 
 }

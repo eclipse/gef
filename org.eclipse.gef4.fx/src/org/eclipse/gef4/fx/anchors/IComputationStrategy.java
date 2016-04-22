@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.geometry.planar.Point;
@@ -43,17 +45,57 @@ public interface IComputationStrategy {
 		public enum Kind {
 			/**
 			 * Indicates that the parameter value may be shared to compute the
-			 * position for all attached {@link AnchorKey}.
+			 * position for all attached {@link AnchorKey}, as the value depends
+			 * on the anchorage {@link Node} (to which the anchor is bound) and
+			 * not on an individual attached anchored {@link Node}.
 			 */
-			STATIC,
+			ANCHORAGE,
 			/**
 			 * Indicates that the parameter value may not be shared, i.e. an
 			 * individual value is required to compute the position for each
 			 * attached {@link AnchorKey}, e.g. because the value depends on the
 			 * anchored node.
 			 */
-			DYNAMIC
+			ANCHORED
 		};
+
+		/**
+		 * Retrieves a parameter of the respective type from the set of given
+		 * parameters.
+		 *
+		 * @param <T>
+		 *            The runtime type of the parameter.
+		 * @param parameters
+		 *            The set of parameters to search.
+		 * @param parameterType
+		 *            The parameter type
+		 * @return The parameter or <code>null</code>.
+		 */
+		@SuppressWarnings("unchecked")
+		protected static <T extends Parameter<?>> T get(
+				Collection<? extends Parameter<?>> parameters,
+				Class<T> parameterType) {
+			Set<T> parametersOfType = new HashSet<>();
+			for (Parameter<?> p : parameters) {
+				if (parameterType.equals(p.getClass())) {
+					parametersOfType.add((T) p);
+				}
+			}
+			if (parametersOfType.isEmpty()) {
+				return null;
+			} else if (parametersOfType.size() > 1) {
+				// this should already be guarded, but we provide an additional
+				// check here
+				throw new IllegalArgumentException(
+						"The given set of parameters contains "
+								+ parameters.size() + " parameters of type "
+								+ parameterType.getSimpleName() + ": "
+								+ parameters);
+			} else {
+				// TODO: create one if needed (using default constructor)
+				return parametersOfType.iterator().next();
+			}
+		}
 
 		/**
 		 * Returns the {@link Kind} returned by an instance of the given
