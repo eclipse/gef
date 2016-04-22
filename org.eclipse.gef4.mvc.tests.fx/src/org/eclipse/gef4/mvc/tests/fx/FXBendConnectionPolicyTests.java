@@ -876,11 +876,9 @@ public class FXBendConnectionPolicyTests {
 		// move segment back
 		bendPolicy.move(new Point(), new Point());
 		// check number of points
-		assertEquals(4, connection.getVisual().getPoints().size());
+		assertEquals(2, connection.getVisual().getPoints().size());
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
-		equalsUnprecise(startPoint, connection.getVisual().getControlPoint(0));
-		equalsUnprecise(endPoint, connection.getVisual().getControlPoint(1));
 
 		// check number of points after commit
 		bendPolicy.commit();
@@ -1031,12 +1029,8 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.select(thirdWayAnchorHandle);
 		bendPolicy.move(new Point(), new Point(0, -100));
 		// check number of points and their positions
-		assertEquals(4, countExplicit(connection.getVisual()));
+		assertEquals(2, countExplicit(connection.getVisual()));
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
-		// double point at fourth way point due to selection constraint
-		// (snapping)
-		equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(0));
-		equalsUnprecise(fourthWayPoint, connection.getVisual().getControlPoint(1));
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 
 		// move segment further up to restore the removed points

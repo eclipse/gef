@@ -874,8 +874,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	private void removeOverlainPoints() {
 		int explicitAnchorsSize = getBendOperation().getNewAnchors().size();
-		for (int i = 0; i < selectedExplicitAnchorIndices.size()
-				&& explicitAnchorsSize > 2; i++) {
+		for (int i = selectedExplicitAnchorIndices.size() - 1; i >= 0
+				&& explicitAnchorsSize > 2; i--) {
 			int index = selectedExplicitAnchorIndices.get(i);
 			// XXX: If an overlay is recognized, the overlaying anchor is
 			// removed and practically replaced by the overlain anchor. This
@@ -1060,12 +1060,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 					+ overlainSegmentIndicesRelativeToSelection[i]));
 		}
 
-		System.out.println("segment points = " + segmentPoints);
-		System.out
-				.println("selection points = " + points.get(selectionStartIndex)
-						+ " to " + points.get(selectionStartIndex + 1));
-		System.out.println("is horizontal = " + isSelectionHorizontal);
-
 		// determine segment positions (relative to their orientations). if not
 		// all segments have the same position, return without applying any
 		// modifications.
@@ -1123,48 +1117,22 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		System.out.println("distance: " + distance);
 
 		// at this point, the overlay is confirmed and needs to be removed.
-		// if the selection is not contained within the result segment, extend
-		// the result segment to contain the selection.
-		if (isSelectionHorizontal) {
-			double selectionMinX = Math.min(selectionStart.x, selectionEnd.x);
-			double selectionMaxX = Math.max(selectionStart.x, selectionEnd.x);
-			double resultMinX = Math.min(resultStart.x, resultEnd.x);
-			double resultMaxX = Math.max(resultStart.x, resultEnd.x);
-			if (selectionMinX < resultMinX) {
-				// extend result to include selectionMinX
-				if (resultStart.x == resultMinX) {
-					resultStart.x = selectionMinX;
+		// therefore, the overlap of selection and result needs to be removed
+		// and their difference needs to be saved as the final result
+		if (overlainSegmentIndicesRelativeToSelection.length == 2) {
+			if (isSelectionHorizontal) {
+				// same y values => adjust x
+				if (firstIndex < 0) {
+					resultEnd.x = selectionEnd.x;
 				} else {
-					resultEnd.x = selectionMinX;
+					resultStart.x = selectionStart.x;
 				}
-			}
-			if (selectionMaxX > resultMaxX) {
-				// extend result to include selectionMaxX
-				if (resultStart.x == resultMaxX) {
-					resultStart.x = selectionMaxX;
+			} else {
+				// same x values => adjust y
+				if (firstIndex < 0) {
+					resultEnd.y = selectionEnd.y;
 				} else {
-					resultEnd.x = selectionMaxX;
-				}
-			}
-		} else {
-			double selectionMinY = Math.min(selectionStart.y, selectionEnd.y);
-			double selectionMaxY = Math.max(selectionStart.y, selectionEnd.y);
-			double resultMinY = Math.min(resultStart.y, resultEnd.y);
-			double resultMaxY = Math.max(resultStart.y, resultEnd.y);
-			if (selectionMinY < resultMinY) {
-				// extend result to include selectionMinY
-				if (resultStart.y == resultMinY) {
-					resultStart.y = selectionMinY;
-				} else {
-					resultEnd.y = selectionMinY;
-				}
-			}
-			if (selectionMaxY > resultMaxY) {
-				// extend result to include selectionMaxY
-				if (resultStart.y == resultMaxY) {
-					resultStart.y = selectionMaxY;
-				} else {
-					resultEnd.y = selectionMaxY;
+					resultStart.y = selectionStart.y;
 				}
 			}
 		}
@@ -1177,37 +1145,32 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		int overlayEndIndex = Math.max(selectionStartIndex + 1,
 				selectionStartIndex + lastIndex);
 
-		System.out.println("overlay indices = " + overlayStartIndex + " to "
-				+ overlayEndIndex);
-
 		List<Integer> explicit = makeExplicit(overlayStartIndex,
 				overlayEndIndex);
 
 		// remove the selection and the other overlain anchors
 		int removedCount = 0;
 		for (int i = explicit.size() - 2; i >= 1; i--) {
-			System.out.println("-> remove " + explicit.get(i));
 			getBendOperation().getNewAnchors().remove((int) explicit.get(i));
 			removedCount++;
 		}
 
-		System.out
-				.println("new anchors = " + getBendOperation().getNewAnchors());
-
 		// overwrite the first and last explicit anchor with a new unconnected
-		// anchor for the adjusted result position
-		System.out
-				.println("set index " + explicit.get(0) + " to " + resultStart);
-		getBendOperation().getNewAnchors().set(explicit.get(0),
-				createUnconnectedAnchor(resultStart));
-		System.out.println("set index "
-				+ (explicit.get(explicit.size() - 1) - removedCount) + " to "
-				+ resultEnd);
-		getBendOperation().getNewAnchors().set(
-				explicit.get(explicit.size() - 1) - removedCount,
-				createUnconnectedAnchor(resultEnd));
-
-		// TODO: connected end points
+		// anchor for the adjusted result position if the respective anchor is
+		// currently unconnected
+		Integer resultStartIndex = explicit.get(0);
+		if (!(getBendOperation().getNewAnchors()
+				.get(resultStartIndex) instanceof DynamicAnchor)) {
+			getBendOperation().getNewAnchors().set(resultStartIndex,
+					createUnconnectedAnchor(resultStart));
+		}
+		Integer resultEndIndex = explicit.get(explicit.size() - 1)
+				- removedCount;
+		if (!(getBendOperation().getNewAnchors()
+				.get(resultEndIndex) instanceof DynamicAnchor)) {
+			getBendOperation().getNewAnchors().set(resultEndIndex,
+					createUnconnectedAnchor(resultEnd));
+		}
 
 		return true;
 	}
