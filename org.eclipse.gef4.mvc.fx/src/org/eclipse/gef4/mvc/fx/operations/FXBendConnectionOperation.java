@@ -26,8 +26,8 @@ import org.eclipse.gef4.fx.nodes.Connection;
 import org.eclipse.gef4.mvc.operations.ITransactionalOperation;
 
 /**
- * An {@link FXBendConnectionOperation} can be used to manipulate an {@link Connection} in
- * an undo-context.
+ * An {@link FXBendConnectionOperation} can be used to manipulate an
+ * {@link Connection} in an undo-context.
  *
  * @author mwienand
  *
@@ -37,7 +37,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 
 	private final Connection connection;
 	private final List<IAnchor> initialAnchors;
-	private List<IAnchor> newAnchors;
+	private final List<IAnchor> newAnchors;
 
 	/**
 	 * Constructs a new operation from the given connection. The lists of old
@@ -135,7 +135,8 @@ public class FXBendConnectionOperation extends AbstractOperation
 	 *            connection's anchors upon execution.
 	 */
 	public void setNewAnchors(List<IAnchor> newAnchors) {
-		this.newAnchors = newAnchors;
+		this.newAnchors.clear();
+		this.newAnchors.addAll(newAnchors);
 	}
 
 	@Override

@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -720,11 +719,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 						getPoint(selectedExplicitAnchorIndices.get(i)));
 			}
 			// save initial pre-move explicit anchors
-			for (int i = 0; i < getBendOperation().getNewAnchors()
-					.size(); i++) {
-				preMoveExplicitAnchors
-						.add(getBendOperation().getNewAnchors().get(i));
-			}
+			preMoveExplicitAnchors.addAll(getBendOperation().getNewAnchors());
 			// determine selection segment orientation
 			if (isOrtho) {
 				double y0 = selectedInitialPositions.get(0).y;
@@ -961,14 +956,16 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		int firstAnchorHandle = explicit.get(0);
 		int secondAnchorHandle = explicit.get(1);
 
-		// copy first if connected
+		// create unconnected copies of the segment anchors if they are
+		// connected
 		if (isFirstConnected) {
 			firstAnchorHandle = createAfter(firstAnchorHandle,
 					FX2Geometry.toPoint(getConnection().localToScene(Geometry2FX
 							.toFXPoint(getPoint(firstAnchorHandle)))));
+			// XXX: increase index of second anchor because one anchor was
+			// inserted before it
+			secondAnchorHandle++;
 		}
-
-		// copy second if connected
 		if (isSecondConnected) {
 			secondAnchorHandle = createBefore(secondAnchorHandle,
 					FX2Geometry.toPoint(getConnection().localToScene(Geometry2FX
@@ -1021,6 +1018,10 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	private boolean testAndRemoveSegmentOverlay(
 			int[] overlainSegmentIndicesRelativeToSelection) {
+		System.out.println("[test segment overlay]");
+		System.out.println("overlain segment indices = "
+				+ toList(overlainSegmentIndicesRelativeToSelection));
+
 		// check that positions are present for the given indices within the
 		// connection. if not all are present, return without applying any
 		// modifications.
@@ -1031,10 +1032,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				- 1];
 		if (selectionStartIndex + firstIndex < 0
 				|| selectionStartIndex + firstIndex >= points.size()) {
+			System.out.println("FALSE firstIndex");
 			return false;
 		}
 		if (selectionStartIndex + lastIndex < 0
 				|| selectionStartIndex + lastIndex >= points.size()) {
+			System.out.println("FALSE lastIndex");
 			return false;
 		}
 
@@ -1045,6 +1048,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 					+ overlainSegmentIndicesRelativeToSelection[i]));
 		}
 
+		System.out.println("segment points = " + segmentPoints);
+		System.out
+				.println("selection points = " + points.get(selectionStartIndex)
+						+ " to " + points.get(selectionStartIndex + 1));
+		System.out.println("is horizontal = " + isSelectionHorizontal);
+
 		// determine segment positions (relative to their orientations). if not
 		// all segments have the same position, return without applying any
 		// modifications.
@@ -1053,8 +1062,9 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			Point s = segmentPoints.get(i);
 			Point e = segmentPoints.get(i + 1);
 			if (isSelectionHorizontal && !isUnpreciseEquals(s.y, e.y)
-					|| !isUnpreciseEquals(s.x, e.x)) {
+					|| !isSelectionHorizontal && !isUnpreciseEquals(s.x, e.x)) {
 				// wrong orientation
+				System.out.println("FALSE wrong orientation");
 				return false;
 			}
 			if (Double.isNaN(p)) {
@@ -1063,11 +1073,13 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 			if (isSelectionHorizontal) {
 				if (!isUnpreciseEquals(p, s.y) || !isUnpreciseEquals(p, e.y)) {
 					// wrong position
+					System.out.println("FALSE wrong position Y");
 					return false;
 				}
 			} else {
 				if (!isUnpreciseEquals(p, s.x) || !isUnpreciseEquals(p, e.x)) {
 					// wrong position
+					System.out.println("FALSE wrong position X");
 					return false;
 				}
 			}
@@ -1088,13 +1100,14 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				.abs(isSelectionHorizontal ? resultStart.y - selectionStart.y
 						: resultStart.x - selectionStart.x);
 		if (distance > DEFAULT_OVERLAY_THRESHOLD) {
+			System.out.println("FALSE distance = " + distance);
 			return false;
 		}
 
 		System.out.println("=== Segment Overlay ===");
 		System.out.println("selection: " + selectedExplicitAnchorIndices);
 		System.out.println("overlain: "
-				+ Arrays.asList(overlainSegmentIndicesRelativeToSelection));
+				+ toList(overlainSegmentIndicesRelativeToSelection));
 		System.out.println("distance: " + distance);
 
 		// at this point, the overlay is confirmed and needs to be removed.
@@ -1149,24 +1162,50 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// make the result segment explicit
 		int overlayStartIndex = Math.min(selectionStartIndex,
 				selectionStartIndex + firstIndex);
-		int overlayEndIndex = Math.max(selectionStartIndex,
+		int overlayEndIndex = Math.max(selectionStartIndex + 1,
 				selectionStartIndex + lastIndex);
+
+		System.out.println("overlay indices = " + overlayStartIndex + " to "
+				+ overlayEndIndex);
+
 		List<Integer> explicit = makeExplicit(overlayStartIndex,
 				overlayEndIndex);
 
 		// remove the selection and the other overlain anchors
+		int removedCount = 0;
 		for (int i = explicit.size() - 2; i >= 1; i--) {
-			getBendOperation().getNewAnchors().remove(explicit.get(i));
+			System.out.println("-> remove " + explicit.get(i));
+			getBendOperation().getNewAnchors().remove((int) explicit.get(i));
+			removedCount++;
 		}
+
+		System.out
+				.println("new anchors = " + getBendOperation().getNewAnchors());
 
 		// overwrite the first and last explicit anchor with a new unconnected
 		// anchor for the adjusted result position
+		System.out
+				.println("set index " + explicit.get(0) + " to " + resultStart);
 		getBendOperation().getNewAnchors().set(explicit.get(0),
 				createUnconnectedAnchor(resultStart));
-		getBendOperation().getNewAnchors().set(explicit.get(1),
+		System.out.println("set index "
+				+ (explicit.get(explicit.size() - 1) - removedCount) + " to "
+				+ resultEnd);
+		getBendOperation().getNewAnchors().set(
+				explicit.get(explicit.size() - 1) - removedCount,
 				createUnconnectedAnchor(resultEnd));
 
+		// TODO: connected end points
+
 		return true;
+	}
+
+	private List<Integer> toList(int[] array) {
+		List<Integer> list = new ArrayList<>();
+		for (int item : array) {
+			list.add(item);
+		}
+		return list;
 	}
 
 	@Override
