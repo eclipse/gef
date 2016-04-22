@@ -55,8 +55,54 @@ public interface IComputationStrategy {
 			DYNAMIC
 		};
 
+		/**
+		 * Returns the {@link Kind} returned by an instance of the given
+		 * {@link Parameter} type.
+		 *
+		 * @param paramType
+		 *            The {@link Parameter} type for which to return the
+		 *            {@link Kind}.
+		 * @return The {@link Kind} for the given {@link Parameter} type.
+		 */
+		public static Kind getKind(Class<? extends Parameter<?>> paramType) {
+			try {
+				return paramType.newInstance().getKind();
+			} catch (Exception e) {
+				throw new IllegalArgumentException(
+						"Cannot instantiate parameter of type "
+								+ paramType.getSimpleName() + ".",
+						e);
+			}
+		}
+
+		/**
+		 * Returns <code>true</code> if an instance of the given
+		 * {@link Parameter} type is optional. Otherwise returns
+		 * <code>false</code>.
+		 *
+		 * @param paramType
+		 *            The {@link Parameter} type for which to determine
+		 *            optionality.
+		 * @return <code>true</code> if an instance of the given
+		 *         {@link Parameter} type is optional, otherwise
+		 *         <code>false</code>.
+		 */
+		public static boolean isOptional(
+				Class<? extends Parameter<?>> paramType) {
+			try {
+				return paramType.newInstance().isOptional();
+			} catch (Exception e) {
+				throw new IllegalArgumentException(
+						"Cannot instantiate parameter of type "
+								+ paramType.getSimpleName() + ".",
+						e);
+			}
+		}
+
 		private Kind kind;
+
 		private boolean optional;
+
 		private ObservableValue<? extends T> bindingTarget;
 
 		/**
@@ -102,7 +148,7 @@ public interface IComputationStrategy {
 		 *
 		 * @return The parameter {@link Kind}.
 		 */
-		public Kind getKind() {
+		public final Kind getKind() {
 			return kind;
 		}
 
@@ -128,7 +174,7 @@ public interface IComputationStrategy {
 		 * @return <code>true</code> if the parameter is optional,
 		 *         <code>false</code> otherwise.
 		 */
-		public boolean isOptional() {
+		public final boolean isOptional() {
 			return optional;
 		}
 

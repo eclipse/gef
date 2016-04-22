@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.nodes.Connection;
@@ -379,7 +381,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 * @return The {@link IAnchor} that replaces the anchor of the currently
 	 *         modified point.
 	 */
-	@SuppressWarnings("serial")
 	protected IAnchor findOrCreateAnchor(Point positionInLocal,
 			boolean canConnect) {
 		IAnchor anchor = null;
@@ -392,37 +393,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 					getHost().getRoot().getVisual(),
 					selectedPointCurrentPositionInScene.x,
 					selectedPointCurrentPositionInScene.y);
-			IVisualPart<Node, ? extends Node> anchorPart = getAnchorPart(
-					getParts(pickedNodes));
-			if (anchorPart != null) {
-				// use anchor returned by part
-				anchor = anchorPart.getAdapter(
-						new TypeToken<Provider<? extends IAnchor>>() {
-						}).get();
-			}
+			anchor = getCompatibleAnchor(getParts(pickedNodes));
 		}
 		if (anchor == null) {
 			anchor = createUnconnectedAnchor(positionInLocal);
 		}
 		return anchor;
-	}
-
-	@SuppressWarnings("serial")
-	private IContentPart<Node, ? extends Node> getAnchorPart(
-			List<IContentPart<Node, ? extends Node>> partsUnderMouse) {
-		for (IContentPart<Node, ? extends Node> cp : partsUnderMouse) {
-			IContentPart<Node, ? extends Node> part = cp;
-			Provider<? extends IAnchor> anchorProvider = part
-					.getAdapter(new TypeToken<Provider<? extends IAnchor>>() {
-					});
-			if (part == getHost()) {
-				continue;
-			}
-			if (anchorProvider != null && anchorProvider.get() != null) {
-				return part;
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -434,6 +410,30 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 */
 	protected FXBendConnectionOperation getBendOperation() {
 		return (FXBendConnectionOperation) super.getOperation();
+	}
+
+	@SuppressWarnings("serial")
+	private IAnchor getCompatibleAnchor(
+			List<IContentPart<Node, ? extends Node>> partsUnderMouse) {
+		for (IContentPart<Node, ? extends Node> part : partsUnderMouse) {
+			if (part == getHost()) {
+				continue;
+			}
+			Map<AdapterKey<? extends Provider<? extends IAnchor>>, Provider<? extends IAnchor>> anchorProviders = part
+					.getAdapters(new TypeToken<Provider<? extends IAnchor>>() {
+					});
+			if (anchorProviders != null && !anchorProviders.isEmpty()) {
+				for (Provider<? extends IAnchor> anchorProvider : anchorProviders
+						.values()) {
+					IAnchor anchor = anchorProvider.get();
+					if (anchor != null && getConnection().getRouter()
+							.isAnchorCompatible(anchor)) {
+						return anchor;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -709,7 +709,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 		// determine selection status
 		int numPoints = selectedExplicitAnchorIndices.size();
-		boolean isSegmentBased = numPoints == 2
+		boolean isOrtho = numPoints == 2
 				&& getConnection().getRouter() instanceof OrthogonalRouter;
 
 		// save/restore explicit anchors
@@ -726,7 +726,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 						.add(getBendOperation().getNewAnchors().get(i));
 			}
 			// determine selection segment orientation
-			if (isSegmentBased) {
+			if (isOrtho) {
 				double y0 = selectedInitialPositions.get(0).y;
 				double y1 = selectedInitialPositions.get(1).y;
 				isSelectionHorizontal = isUnpreciseEquals(y0, y1);
@@ -741,7 +741,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// constrain movement in one direction for segment based connections
 		Point mouseDeltaInLocal = getMouseDeltaInLocal(initialMouseInScene,
 				currentMouseInScene);
-		if (isSegmentBased) {
+		if (isOrtho) {
 			if (isSelectionHorizontal) {
 				mouseDeltaInLocal.x = 0;
 			} else {

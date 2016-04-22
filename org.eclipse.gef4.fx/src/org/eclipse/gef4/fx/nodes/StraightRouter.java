@@ -19,6 +19,7 @@ import org.eclipse.gef4.fx.anchors.AbstractComputationStrategy.AnchoredReference
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.fx.anchors.ProjectionStrategy;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -103,6 +104,11 @@ public class StraightRouter implements IConnectionRouter {
 
 	private Point getSucc(Connection connection, int anchorIndex) {
 		return getNeighbor(connection, anchorIndex, 1);
+	}
+
+	@Override
+	public boolean isAnchorCompatible(IAnchor anchor) {
+		return anchor.getComputationStrategy() instanceof ProjectionStrategy;
 	}
 
 	@Override

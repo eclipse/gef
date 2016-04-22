@@ -26,6 +26,8 @@ import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.IComputationStrategy;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter;
+import org.eclipse.gef4.fx.anchors.IComputationStrategy.Parameter.Kind;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
@@ -363,6 +365,24 @@ public class OrthogonalRouter implements IConnectionRouter {
 		Polygon right = new Polygon(rectangle.getTopRight(),
 				rectangle.getBottomRight(), rectangle.getCenter());
 		return new Polygon[] { top, right, bottom, left };
+	}
+
+	@Override
+	public boolean isAnchorCompatible(IAnchor anchor) {
+		// verify that we provide all parameters that are required by the
+		// computation strategy of the given anchor
+		for (Class<? extends Parameter<?>> paramType : anchor
+				.getComputationStrategy().getRequiredParameters()) {
+			if (Kind.DYNAMIC.equals(Parameter.getKind(paramType))
+					&& !Parameter.isOptional(paramType)) {
+				// XXX: PreferredOrientation is optional so we do not have to
+				// test for it here.
+				if (!AnchoredReferencePoint.class.equals(paramType)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	private boolean isBottom(Connection connection, int i, Point currentPoint) {

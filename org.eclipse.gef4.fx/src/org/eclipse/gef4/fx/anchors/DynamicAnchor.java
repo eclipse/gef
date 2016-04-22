@@ -211,7 +211,8 @@ public class DynamicAnchor extends AbstractAnchor {
 						.newInstance();
 				dynamicComputationParameters.put(key, parameter);
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new IllegalArgumentException(
+						"Cannot instantiate parameter.", e);
 			}
 		}
 		return parameter;
