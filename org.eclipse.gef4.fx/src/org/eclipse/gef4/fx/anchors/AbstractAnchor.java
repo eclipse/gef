@@ -27,6 +27,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -260,17 +261,22 @@ public abstract class AbstractAnchor implements IAnchor {
 				 * now.
 				 */
 				// XXX: The update has to be postponed because of a JavaFX
-				// Bug in Java 7
+				// Bug in JavaSE-1.7/JavaFX-2.2
 				// (https://bugs.openjdk.java.net/browse/JDK-8124231) that
 				// causes a ConcurrentModificationException when changing/ the
 				// scene graph in response to scene-property changes.
-				// With Java 8 this would not be necessary.
-				// Platform.runLater(new Runnable() {
-				// @Override
-				// public void run() {
-				updatePositions(anchored);
-				// }
-				// });
+				// With JavaSE-1.8 this would not be necessary.
+				// TODO: Remove when dropping support for JavaSE-1.7
+				if (System.getProperty("java.version").startsWith("1.7.0")) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							updatePositions(anchored);
+						}
+					});
+				} else {
+					updatePositions(anchored);
+				}
 			}
 		};
 	}
