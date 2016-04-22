@@ -34,7 +34,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class StraightRouter implements IConnectionRouter {
+public class StraightRouter extends AbstractRouter {
 
 	// TODO: move to utility && replace with safe algorithm
 	private Point getCenter(Connection connection, Node anchorageNode) {

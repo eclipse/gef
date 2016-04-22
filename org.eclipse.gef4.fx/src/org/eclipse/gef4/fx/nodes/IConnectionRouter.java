@@ -13,8 +13,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import java.util.Map;
+
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
+import org.eclipse.gef4.geometry.planar.Point;
+
+import javafx.beans.property.ReadOnlyMapProperty;
 
 /**
  * An {@link IConnectionRouter} is responsible for {@link #route(Connection)
@@ -39,6 +45,14 @@ public interface IConnectionRouter {
 	public boolean isImplicitAnchor(IAnchor anchor);
 
 	/**
+	 * A {@link Map} that stores reference points for {@link AnchorKey}s.
+	 *
+	 * @return A {@link Map} that stores reference points for {@link AnchorKey}
+	 *         s.
+	 */
+	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty();
+
+	/**
 	 * Adjusts the {@link Connection connection's} points (if necessary), which
 	 * includes computing reference points for {@link DynamicAnchor}s (if any).
 	 *
@@ -46,8 +60,5 @@ public interface IConnectionRouter {
 	 *            The {@link Connection} to route.
 	 */
 	public void route(Connection connection);
-
-	// TODO: provide means so that bend policy can provide reference
-	// points/hints for anchors
 
 }

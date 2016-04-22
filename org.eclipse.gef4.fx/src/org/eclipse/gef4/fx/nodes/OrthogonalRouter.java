@@ -51,7 +51,7 @@ import javafx.scene.Node;
  * @author mwienand
  *
  */
-public class OrthogonalRouter implements IConnectionRouter {
+public class OrthogonalRouter extends AbstractRouter {
 
 	private static class ControlPointManipulator {
 
@@ -195,10 +195,12 @@ public class OrthogonalRouter implements IConnectionRouter {
 				&& anchor.getAnchorage() != connection) {
 			Node anchorage = anchor.getAnchorage();
 			if (anchor instanceof DynamicAnchor) {
-				return ((DynamicAnchor) anchor)
+				IGeometry geometry = ((DynamicAnchor) anchor)
 						.getComputationParameter(connection.getAnchorKey(index),
 								AnchorageReferenceGeometry.class)
 						.get();
+				return NodeUtils.sceneToLocal(connection,
+						NodeUtils.localToScene(anchorage, geometry));
 			}
 			// fall back to using the shape outline
 			return NodeUtils.sceneToLocal(connection, NodeUtils.localToScene(
@@ -220,6 +222,11 @@ public class OrthogonalRouter implements IConnectionRouter {
 	protected Point getAnchorReferencePoint(Connection connection, int index) {
 		if (index < 0 || index >= connection.getPoints().size()) {
 			throw new IndexOutOfBoundsException();
+		}
+
+		AnchorKey anchorKey = connection.getAnchorKey(index);
+		if (positionHintsProperty().containsKey(anchorKey)) {
+			return positionHintsProperty().get(anchorKey);
 		}
 
 		IGeometry referenceGeometry = null;
