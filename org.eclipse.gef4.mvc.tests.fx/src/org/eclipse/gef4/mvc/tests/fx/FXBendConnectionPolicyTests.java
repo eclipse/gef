@@ -1755,8 +1755,15 @@ public class FXBendConnectionPolicyTests {
 
 		// drag connection down by 10px
 		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
-		Point pointerLocation = CursorUtils.getPointerLocation();
-		ctx.mouseDrag(robot, (int) pointerLocation.x, (int) pointerLocation.y + 10);
+
+		final Point[] pointerLocation = new Point[1];
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				pointerLocation[0] = CursorUtils.getPointerLocation();
+			}
+		});
+		ctx.mouseDrag(robot, (int) pointerLocation[0].x, (int) pointerLocation[0].y + 10);
 		ctx.mouseRelease(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		robot.delay(1000);
 
@@ -1770,8 +1777,13 @@ public class FXBendConnectionPolicyTests {
 
 		// drag anchorage down by 10px
 		ctx.mousePress(robot, java.awt.event.InputEvent.BUTTON1_MASK);
-		pointerLocation = CursorUtils.getPointerLocation();
-		ctx.mouseDrag(robot, (int) pointerLocation.x, (int) pointerLocation.y + 10);
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				pointerLocation[0] = CursorUtils.getPointerLocation();
+			}
+		});
+		ctx.mouseDrag(robot, (int) pointerLocation[0].x, (int) pointerLocation[0].y + 10);
 		ctx.mouseRelease(robot, java.awt.event.InputEvent.BUTTON1_MASK);
 		robot.delay(1000);
 
