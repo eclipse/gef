@@ -163,6 +163,33 @@ public class Connection extends Group {
 
 		// add the curve node
 		getChildren().add(curveNode);
+
+		// TODO: Remove this defensive check (just added for debugging)
+		anchorsProperty
+				.addListener(new MapChangeListener<AnchorKey, IAnchor>() {
+
+					@Override
+					public void onChanged(
+							MapChangeListener.Change<? extends AnchorKey, ? extends IAnchor> change) {
+						if (change.wasAdded()) {
+							if (change.getValueAdded() == null) {
+								throw new IllegalStateException(
+										"Inconsistent state: null anchor was put in map for key "
+												+ change.getKey());
+							}
+							if (!change.getKey().equals(getStartAnchorKey())
+									&& !change.getKey()
+											.equals(getEndAnchorKey())
+									&& !controlAnchorKeys
+											.contains(change.getKey())) {
+								throw new IllegalStateException(
+										"Inconsistent state: key "
+												+ change.getKey()
+												+ " is not contained in control anchors map");
+							}
+						}
+					}
+				});
 	}
 
 	/**
@@ -171,6 +198,7 @@ public class Connection extends Group {
 	 * {@link IAnchor}. Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
 	 * {@link AnchorKey} is registered on the position property of the
 	 * {@link IAnchor} and the visualization is {@link #refresh() refreshed}.
+	 *
 	 * @param anchorKey
 	 *            The {@link AnchorKey} under which the {@link IAnchor} is to be
 	 *            registered.
@@ -178,6 +206,24 @@ public class Connection extends Group {
 	 *            The {@link IAnchor} which is inserted.
 	 */
 	protected void addAnchor(AnchorKey anchorKey, IAnchor anchor) {
+		if (anchorKey == null) {
+			throw new IllegalArgumentException("anchorKey may not be null.");
+		}
+		if (anchorKey.getAnchored() != getCurveNode()) {
+			throw new IllegalArgumentException(
+					"anchorKey may only be anchored to curve node");
+		}
+		if (anchorsProperty.containsKey(anchorKey)) {
+			throw new IllegalArgumentException(
+					"AnchorKey is already contained");
+		}
+		if (!getStartAnchorKey().equals(anchorKey)
+				&& !getEndAnchorKey().equals(anchorKey)) {
+			if (controlAnchorKeys.contains(anchorKey)) {
+				throw new IllegalStateException(
+						"anchorKey is not contained but key is registered in control anchor key map.");
+			}
+		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
@@ -1035,8 +1081,20 @@ public class Connection extends Group {
 	 *            The corresponding {@link IAnchor}.
 	 */
 	protected void removeAnchor(AnchorKey anchorKey, IAnchor anchor) {
+		if (anchorKey == null) {
+			throw new IllegalArgumentException("anchorKey may not be null.");
+		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
+		}
+		if (!anchorsProperty.containsKey(anchorKey)) {
+			throw new IllegalArgumentException("anchorKey is not contained");
+		}
+		if (!anchorKey.equals(getStartAnchorKey())
+				&& !anchorKey.equals(getEndAnchorKey())
+				&& !controlAnchorKeys.contains(anchorKey)) {
+			throw new IllegalStateException(
+					"anchorKey is contained but key is not registered in control anchor key map.");
 		}
 
 		if (anchorPCL.containsKey(anchorKey)) {
@@ -1050,18 +1108,16 @@ public class Connection extends Group {
 		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
 		int controlIndex = -1;
 		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())
-				&& controlAnchorKeys.contains(anchorKey)) {
+				&& !anchorKey.equals(getEndAnchorKey())) {
 			// remove all control anchors at a larger index
 			controlIndex = getControlAnchorIndex(anchorKey);
 			int controlPointCount = controlAnchorKeys.size();
 			for (int i = controlPointCount - 1; i > controlIndex; i--) {
 				// (temporarily) remove all anchors that are to be moved down
 				AnchorKey ak = getControlAnchorKey(i);
-				IAnchor a = getControlAnchor(i);
-				controlAnchorsToMove.add(0, a);
+				IAnchor a = anchorsProperty.remove(ak);
 				controlAnchorKeys.remove(ak);
-				anchorsProperty.remove(ak);
+				controlAnchorsToMove.add(0, a);
 				a.detach(ak);
 			}
 			controlAnchorKeys.remove(anchorKey);
@@ -1071,7 +1127,7 @@ public class Connection extends Group {
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
-			// re-add all controlpoints at a larger index
+			// re-add all control points at a larger index
 			for (int i = 0; i < controlAnchorsToMove.size(); i++) {
 				AnchorKey ak = getControlAnchorKey(controlIndex + i);
 				IAnchor a = controlAnchorsToMove.get(i);
@@ -1112,10 +1168,16 @@ public class Connection extends Group {
 		AnchorKey anchorKey = getControlAnchorKey(index);
 		if (!anchorsProperty.containsKey(anchorKey)) {
 			throw new IllegalStateException(
-					"Inconsistent state: control anchor not in map!");
+					"Inconsistent state: control anchor key for index " + index
+							+ " not registered.");
 		}
 
 		IAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		if (oldAnchor == null) {
+			throw new IllegalStateException(
+					"Inconsistent state: control anchor for index " + index
+							+ " is null.");
+		}
 		removeAnchor(anchorKey, oldAnchor);
 	}
 
@@ -1202,22 +1264,26 @@ public class Connection extends Group {
 	 *            The new control {@link IAnchor}s for this {@link Connection}.
 	 */
 	public void setControlAnchors(List<IAnchor> anchors) {
-		int controlPointsSize = controlAnchorKeys.size();
-
 		boolean oldInRefresh = inRefresh;
 		inRefresh = true;
 
-		// XXX: We have to do the removal of control anchors before
-		// changing/adding anchors. TODO: Remove this comment if the order is
-		// not important.
-		for (int i = controlPointsSize - 1; i >= anchors.size(); i--) {
+		// remove control points (starting with last to prevent reordering)
+		for (int i = controlAnchorKeys.size() - 1; i >= 0; i--) {
 			removeControlPoint(i);
 		}
-		for (int i = 0; i < controlPointsSize && i < anchors.size(); i++) {
-			setControlAnchor(i, anchors.get(i));
+
+		// TODO: remove defensive checks (for debuggin)
+		if (!controlAnchorKeys.isEmpty()) {
+			throw new IllegalStateException("Remove did not succeed.");
 		}
-		for (int i = controlPointsSize; i < anchors.size(); i++) {
+
+		for (int i = 0; i < anchors.size(); i++) {
 			addControlAnchor(i, anchors.get(i));
+		}
+
+		// TODO: remove defensive checks (for debuggin)
+		if (controlAnchorKeys.size() != anchors.size()) {
+			throw new IllegalStateException("Add did not succeed.");
 		}
 
 		inRefresh = oldInRefresh;

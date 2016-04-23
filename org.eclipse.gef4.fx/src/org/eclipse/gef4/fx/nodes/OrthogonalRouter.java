@@ -134,19 +134,17 @@ public class OrthogonalRouter extends AbstractRouter {
 			// etc.); we need to remove those points we have inserted in a
 			// preceding pass to guarantee that we only do 'minimal' routing; as
 			// we use a special subclass of StaticAnchor, we can easily sort
-			// them out through an instance check.
-			int pointsRemoved = 0;
-			initialControlAnchors = new ArrayList<>(
-					connection.getControlAnchors());
-			for (int i = 0; i < initialControlAnchors.size(); i++) {
-				if (initialControlAnchors
-						.get(i) instanceof OrthogonalPolylineRouterAnchor) {
-					connection.removeControlAnchor(i - pointsRemoved);
-					pointsRemoved++;
+			// them out through an instance check. However, we cannot remove the
+			// anchors one by one, because that will cause a refresh of the
+			// connection after each removed control point (leading to a
+			// re-entrance here).
+			initialControlAnchors = new ArrayList<>();
+			for (IAnchor a : connection.getControlAnchors()) {
+				if (!(a instanceof OrthogonalPolylineRouterAnchor)) {
+					initialControlAnchors.add(a);
 				}
 			}
-			initialControlAnchors = new ArrayList<>(
-					connection.getControlAnchors());
+			connection.setControlAnchors(initialControlAnchors);
 		}
 
 		public void setRoutingData(int index, Point point, Vector direction) {
