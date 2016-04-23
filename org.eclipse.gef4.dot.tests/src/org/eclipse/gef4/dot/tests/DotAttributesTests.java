@@ -828,7 +828,7 @@ public class DotAttributesTests {
 		assertEquals(10, spline.getControlPoints().size());
 		assertNull(spline.getStartp());
 
-		// set valid parsed values
+		// set valid parsed values: spline with 4 control points
 		Point controlPoint0 = PointFactory.eINSTANCE.createPoint();
 		controlPoint0.setX(0);
 		controlPoint0.setY(0);
@@ -851,13 +851,83 @@ public class DotAttributesTests {
 
 		DotAttributes.setPosParsed(edge, posParsed);
 
-		// TODO: check if this string representation is correct
-		assertEquals("0.0 , 0.0 1.0 , 1.0 2.0 , 2.0 3.0 , 3.0",
+		assertEquals("0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0",
 				DotAttributes.getPos(edge));
 		assertTrue(
 				EcoreUtil.equals(posParsed, DotAttributes.getPosParsed(edge)));
 
-		// TODO: add test case for setting invalid edge position
+		// set valid parsed values: spline with 4 control points and a start
+		// point
+		Point startPoint = PointFactory.eINSTANCE.createPoint();
+		startPoint.setX(10);
+		startPoint.setY(11);
+		spline = SplinetypeFactory.eINSTANCE.createSpline();
+		spline.setStartp(startPoint);
+		spline.getControlPoints().add(controlPoint0);
+		spline.getControlPoints().add(controlPoint1);
+		spline.getControlPoints().add(controlPoint2);
+		spline.getControlPoints().add(controlPoint3);
+		posParsed = SplinetypeFactory.eINSTANCE.createSplineType();
+		posParsed.getSplines().add(spline);
+
+		DotAttributes.setPosParsed(edge, posParsed);
+
+		assertEquals("s,10.0,11.0 0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0",
+				DotAttributes.getPos(edge));
+		assertTrue(
+				EcoreUtil.equals(posParsed, DotAttributes.getPosParsed(edge)));
+
+		// set valid parsed values: spline with 4 control points and an end
+		// point
+		Point endPoint = PointFactory.eINSTANCE.createPoint();
+		endPoint.setX(20);
+		endPoint.setY(21);
+		spline = SplinetypeFactory.eINSTANCE.createSpline();
+		spline.getControlPoints().add(controlPoint0);
+		spline.getControlPoints().add(controlPoint1);
+		spline.getControlPoints().add(controlPoint2);
+		spline.getControlPoints().add(controlPoint3);
+		spline.setEndp(endPoint);
+		posParsed = SplinetypeFactory.eINSTANCE.createSplineType();
+		posParsed.getSplines().add(spline);
+
+		DotAttributes.setPosParsed(edge, posParsed);
+
+		assertEquals("e,20.0,21.0 0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0",
+				DotAttributes.getPos(edge));
+		assertTrue(
+				EcoreUtil.equals(posParsed, DotAttributes.getPosParsed(edge)));
+
+		// set valid parsed values: spline with 4 control points, start and end
+		// point
+		spline = SplinetypeFactory.eINSTANCE.createSpline();
+		spline.setStartp(startPoint);
+		spline.getControlPoints().add(controlPoint0);
+		spline.getControlPoints().add(controlPoint1);
+		spline.getControlPoints().add(controlPoint2);
+		spline.getControlPoints().add(controlPoint3);
+		spline.setEndp(endPoint);
+		posParsed = SplinetypeFactory.eINSTANCE.createSplineType();
+		posParsed.getSplines().add(spline);
+
+		DotAttributes.setPosParsed(edge, posParsed);
+
+		assertEquals("s,10.0,11.0 e,20.0,21.0 0.0,0.0 1.0,1.0 2.0,2.0 3.0,3.0",
+				DotAttributes.getPos(edge));
+		assertTrue(
+				EcoreUtil.equals(posParsed, DotAttributes.getPosParsed(edge)));
+
+		// set invalid string values
+		try {
+			DotAttributes.setPos(edge, "s,10.0,11.0 e,20.0,21.0");
+			fail("Expecting IllegalArgumentException.");
+		} catch (IllegalArgumentException e) {
+			assertEquals(
+					"Cannot set edge attribute 'pos' to 's,10.0,11.0 e,20.0,21.0'. The value 's,10.0,11.0 e,20.0,21.0' is not a syntactically correct splineType: Mismatched input '<EOF>' expecting RULE_DOUBLE.",
+					e.getMessage());
+		}
+
+		// TODO: add test case for setting invalid parsed values
 	}
 
 	@Test

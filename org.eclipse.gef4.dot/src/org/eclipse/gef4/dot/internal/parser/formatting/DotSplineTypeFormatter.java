@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tamas Miklossy (itemis AG) - initial implementation
+ *     Tamas Miklossy (itemis AG) - initial implementation (bug #461506)
  *
  *******************************************************************************/
 
@@ -16,23 +16,25 @@
  */
 package org.eclipse.gef4.dot.internal.parser.formatting;
 
+import org.eclipse.gef4.dot.internal.parser.services.DotSplineTypeGrammarAccess;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
+
+import com.google.inject.Inject;
 
 /**
  * This class contains custom formatting declarations.
  */
 public class DotSplineTypeFormatter extends AbstractDeclarativeFormatter {
 
-	// @Inject
-	// private DotSplineTypeGrammarAccess grammarAccess;
+	@Inject
+	private DotSplineTypeGrammarAccess grammarAccess;
 
 	@Override
 	protected void configureFormatting(FormattingConfig c) {
-		// It's usually a good idea to activate the following three statements.
-		// They will add and preserve newlines around comments
-		// c.setLinewrap(0, 1, 2).before(grammarAccess.getSL_COMMENTRule());
-		// c.setLinewrap(0, 1, 2).before(grammarAccess.getML_COMMENTRule());
-		// c.setLinewrap(0, 1, 1).after(grammarAccess.getML_COMMENTRule());
+		for (Keyword keyword : grammarAccess.findKeywords(",")) {
+			c.setNoSpace().around(keyword);
+		}
 	}
 }
