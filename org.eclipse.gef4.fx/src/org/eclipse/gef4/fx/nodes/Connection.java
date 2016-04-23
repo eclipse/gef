@@ -171,19 +171,16 @@ public class Connection extends Group {
 	 * {@link IAnchor}. Furthermore, a {@link #createPCL(AnchorKey) PCL} for the
 	 * {@link AnchorKey} is registered on the position property of the
 	 * {@link IAnchor} and the visualization is {@link #refresh() refreshed}.
-	 *
+	 * @param anchorKey
+	 *            The {@link AnchorKey} under which the {@link IAnchor} is to be
+	 *            registered.
 	 * @param anchor
 	 *            The {@link IAnchor} which is inserted.
-	 * @param anchorKey
-	 *            The {@link AnchorKey} under which the {@link IAnchor} is
-	 *            registered.
-	 * @param controlIndex
-	 *            The control anchor index (only for control point anchors,
-	 *            ignored for start and end anchors).
 	 */
-	// TODO: differentiate between set and add instead of put
-	protected void addAnchor(IAnchor anchor, AnchorKey anchorKey,
-			int controlIndex) {
+	protected void addAnchor(AnchorKey anchorKey, IAnchor anchor) {
+		if (anchor == null) {
+			throw new IllegalArgumentException("anchor may not be null.");
+		}
 		/*
 		 * XXX: The anchor is put into the map before attaching it, so that
 		 * listeners on the map can register position change listeners on the
@@ -193,6 +190,7 @@ public class Connection extends Group {
 		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
+			int controlIndex = getControlAnchorIndex(anchorKey);
 			// remove all controlpoints at a larger index
 			int controlPointCount = controlAnchorKeys.size();
 			for (int i = controlPointCount - 1; i >= controlIndex; i--) {
@@ -211,6 +209,7 @@ public class Connection extends Group {
 
 		if (!anchorKey.equals(getStartAnchorKey())
 				&& !anchorKey.equals(getEndAnchorKey())) {
+			int controlIndex = getControlAnchorIndex(anchorKey);
 			// re-add all controlpoints at a larger index
 			for (int i = 0; i < controlAnchorsToMove.size(); i++) {
 				AnchorKey ak = getControlAnchorKey(controlIndex + i + 1);
@@ -245,7 +244,7 @@ public class Connection extends Group {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
-		addAnchor(anchor, getControlAnchorKey(index), index);
+		addAnchor(getControlAnchorKey(index), anchor);
 	}
 
 	/**
@@ -1036,6 +1035,10 @@ public class Connection extends Group {
 	 *            The corresponding {@link IAnchor}.
 	 */
 	protected void removeAnchor(AnchorKey anchorKey, IAnchor anchor) {
+		if (anchor == null) {
+			throw new IllegalArgumentException("anchor may not be null.");
+		}
+
 		if (anchorPCL.containsKey(anchorKey)) {
 			anchor.positionsUnmodifiableProperty()
 					.removeListener(anchorPCL.remove(anchorKey));
@@ -1187,7 +1190,7 @@ public class Connection extends Group {
 				removeAnchor(anchorKey, oldAnchor);
 				inRefresh = oldInRefresh;
 			}
-			addAnchor(anchor, anchorKey, index);
+			addAnchor(anchorKey, anchor);
 		}
 	}
 
@@ -1286,7 +1289,7 @@ public class Connection extends Group {
 				removeAnchor(anchorKey, oldAnchor);
 				inRefresh = oldInRefresh;
 			}
-			addAnchor(anchor, anchorKey, -1);
+			addAnchor(anchorKey, anchor);
 		}
 	}
 
@@ -1378,7 +1381,7 @@ public class Connection extends Group {
 				removeAnchor(anchorKey, oldAnchor);
 				inRefresh = oldInRefresh;
 			}
-			addAnchor(anchor, anchorKey, -1);
+			addAnchor(anchorKey, anchor);
 		}
 	}
 
