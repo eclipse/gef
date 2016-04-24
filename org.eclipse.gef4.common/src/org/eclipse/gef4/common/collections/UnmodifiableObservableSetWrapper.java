@@ -29,6 +29,7 @@ import com.sun.javafx.collections.ObservableSetWrapper;
  * @param <E>
  *            Type parameter for the contained elements.
  */
+// TODO: This class can be removed as soon as we drop support for JavaSE-1.7
 class UnmodifiableObservableSetWrapper<E> extends ObservableSetWrapper<E> {
 
 	/**
