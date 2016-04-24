@@ -60,7 +60,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 			throws ExecutionException {
 		if (connection != null) {
 			// check if we have to update anchors here
-			if (!connection.getAnchors().equals(newAnchors)) {
+			if (!onlyExplicit(connection.getAnchors()).equals(newAnchors)) {
 				connection.setAnchors(newAnchors);
 			}
 		}
@@ -136,7 +136,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 	 */
 	public void setNewAnchors(List<IAnchor> newAnchors) {
 		this.newAnchors.clear();
-		this.newAnchors.addAll(newAnchors);
+		this.newAnchors.addAll(onlyExplicit(newAnchors));
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class FXBendConnectionOperation extends AbstractOperation
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
-			if (!connection.getAnchors().equals(initialAnchors)) {
+			if (!onlyExplicit(connection.getAnchors()).equals(initialAnchors)) {
 				connection.setAnchors(initialAnchors);
 			}
 		}

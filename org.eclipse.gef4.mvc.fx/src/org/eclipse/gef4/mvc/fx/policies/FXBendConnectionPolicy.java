@@ -642,6 +642,13 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		return Math.abs(y0 - y1) < 1;
 	}
 
+	@Override
+	protected void locallyExecuteOperation() {
+		super.locallyExecuteOperation();
+		// TODO: route should be part of the operation, so it is undoable
+		route();
+	}
+
 	/**
 	 * Makes the connection anchor at the given connection index explicit and
 	 * returns its explicit index.
@@ -783,35 +790,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		}
 		locallyExecuteOperation();
 		showAnchors("After Move:");
-
-		// TODO: make undoable (BendOperation)
-		// TODO: generalize for all routers
-		if (isOrtho) {
-			// provide anchor reference points to the router
-			if (getBendOperation().getNewAnchors()
-					.get(0) instanceof DynamicAnchor) {
-				IAnchor referenceAnchor = getBendOperation().getNewAnchors()
-						.get(1);
-				AnchorKey referenceAnchorKey = getConnection()
-						.getAnchorKey(getConnectionIndex(1));
-				Point referencePoint = referenceAnchor
-						.getPosition(referenceAnchorKey);
-				getConnection().getRouter().positionHintsProperty().put(
-						getConnection().getStartAnchorKey(), referencePoint);
-			}
-			int lastIndex = getBendOperation().getNewAnchors().size() - 1;
-			if (getBendOperation().getNewAnchors()
-					.get(lastIndex) instanceof DynamicAnchor) {
-				IAnchor referenceAnchor = getBendOperation().getNewAnchors()
-						.get(lastIndex - 1);
-				AnchorKey referenceAnchorKey = getConnection()
-						.getAnchorKey(getConnectionIndex(lastIndex - 1));
-				Point referencePoint = referenceAnchor
-						.getPosition(referenceAnchorKey);
-				getConnection().getRouter().positionHintsProperty()
-						.put(getConnection().getEndAnchorKey(), referencePoint);
-			}
-		}
 
 		// remove overlain
 		removeOverlain();
@@ -956,6 +934,47 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	}
 
 	/**
+	 * Provides position hints to the connection's {@link IConnectionRouter} and
+	 * let's the router route the connection, so these position hints can be
+	 * forwarded to the anchors.
+	 */
+	protected void route() {
+		// TODO: generalize for all routers
+		if (getBendOperation().getNewAnchors()
+				.get(0) instanceof DynamicAnchor) {
+			IAnchor referenceAnchor = getBendOperation().getNewAnchors().get(1);
+			AnchorKey referenceAnchorKey = getConnection()
+					.getAnchorKey(getConnectionIndex(1));
+			Point referencePoint = referenceAnchor
+					.getPosition(referenceAnchorKey);
+			getConnection().getRouter().positionHintsProperty()
+					.put(getConnection().getStartAnchorKey(), referencePoint);
+			System.out.println("Set reference point for "
+					+ getConnection().getStartAnchorKey() + " to "
+					+ referencePoint);
+		}
+		int lastIndex = getBendOperation().getNewAnchors().size() - 1;
+		if (getBendOperation().getNewAnchors()
+				.get(lastIndex) instanceof DynamicAnchor) {
+			IAnchor referenceAnchor = getBendOperation().getNewAnchors()
+					.get(lastIndex - 1);
+			AnchorKey referenceAnchorKey = getConnection()
+					.getAnchorKey(getConnectionIndex(lastIndex - 1));
+			Point referencePoint = referenceAnchor
+					.getPosition(referenceAnchorKey);
+			getConnection().getRouter().positionHintsProperty()
+					.put(getConnection().getEndAnchorKey(), referencePoint);
+			System.out.println("Set reference point for "
+					+ getConnection().getEndAnchorKey() + " to "
+					+ referencePoint);
+		}
+		// TODO: routing can affect the anchors (the router will insert or
+		// remove implicit anchors). We need to re-init after we have
+		// applied the router
+		getConnection().getRouter().route(getConnection());
+	}
+
+	/**
 	 * Selects the point specified by the given segment index and parameter for
 	 * manipulation. Captures the initial position of the selected point and the
 	 * related initial mouse location.
@@ -1048,8 +1067,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 * given parameters. The <i>segmentIndicesRelativeToSelection</i> is an
 	 * integer array that specifies the start and end indices (relative to the
 	 * selected indices) of all segments that are tested to be overlain (i.e.
-	 * not including the selected indices). The first and last indices specify
-	 * the resulting segment which the selection snaps to in case of an overlay.
+	 * not including the selected indices).
+	 *
+	 * TODO: is this right?? -> should we not pass in these parameters
+	 * separately?? The first and last indices specify the resulting segment
+	 * which the selection snaps to in case of an overlay.
 	 *
 	 * @param overlainSegmentIndicesRelativeToSelection
 	 *            An integer array that specifies the start and end indices
