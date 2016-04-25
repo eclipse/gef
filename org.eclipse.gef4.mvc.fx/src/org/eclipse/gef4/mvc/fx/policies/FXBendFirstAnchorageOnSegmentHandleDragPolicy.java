@@ -196,68 +196,11 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				// select for manipulation
 				bendPolicy.select(newAnchorHandle);
 			}
-		} else if (hostPart.getSegmentParameter() == 0.25) {
-			// split segment, move its first halve
-			// TODO: use BendPolicy#selectSegment()
-
-			// determine segment indices for neighbor anchors
-			int firstSegmentIndex = hostPart.getSegmentIndex();
-			int secondSegmentIndex = hostPart.getSegmentIndex() + 1;
-
-			// determine middle of segment
-			Point firstPoint = targetPart.getVisual()
-					.getPoint(firstSegmentIndex);
-			Point secondPoint = targetPart.getVisual()
-					.getPoint(secondSegmentIndex);
-			Vector direction = new Vector(firstPoint, secondPoint);
-			Point midPoint = firstPoint.getTranslated(direction.x / 2,
-					direction.y / 2);
-			Point2D midInScene = targetPart.getVisual().localToScene(midPoint.x,
-					midPoint.y);
-
-			// determine connectedness of first anchor handle
-			Node firstAnchorage = targetPart.getVisual()
-					.getAnchor(firstSegmentIndex).getAnchorage();
-			boolean isFirstConnected = firstAnchorage != null
-					&& firstAnchorage != targetPart.getVisual();
-
-			// make the anchor handles explicit
-			boolean isStart = firstSegmentIndex == 0;
-			List<Integer> explicit = bendPolicy.makeExplicit(
-					isStart ? firstSegmentIndex : firstSegmentIndex - 1,
-					secondSegmentIndex);
-			Integer firstAnchorHandle = explicit.get(isStart ? 0 : 1);
-			Integer secondAnchorHandle = explicit.get(isStart ? 1 : 2);
-
-			int firstAnchorHandleConnectionIndex = bendPolicy
-					.getConnectionIndex(firstAnchorHandle);
-
-			// copy first point if connected
-			if (isFirstConnected) {
-				// use the copy as the new first anchor handle
-				firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-						FX2Geometry.toPoint(targetPart.getVisual()
-								.localToScene(Geometry2FX.toFXPoint(
-										bendPolicy.getConnection().getPoint(
-												firstAnchorHandleConnectionIndex)))));
-			}
-
-			// create new anchor at the segment's middle
-			secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-					FX2Geometry.toPoint(midInScene));
-			// copy that new anchor
-			secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-					FX2Geometry.toPoint(midInScene));
-
-			// select the first anchor and the copy of the new mid anchor for
-			// movement
-			bendPolicy.select(firstAnchorHandle);
-			bendPolicy.select(secondAnchorHandle);
-
+		} else if (hostPart.getSegmentParameter() == 0.25
+				|| hostPart.getSegmentParameter() == 0.75) {
+			// split segment
 			isSegmentDragged = true;
-		} else if (hostPart.getSegmentParameter() == 0.75) {
-			// split segment, move its second halve
-			// TODO: use bendPolicy#selectSegment()
+			boolean selectFirstHalve = hostPart.getSegmentParameter() == 0.25;
 
 			// determine segment indices for neighbor anchors
 			int firstSegmentIndex = hostPart.getSegmentIndex();
@@ -274,47 +217,63 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			Point2D midInScene = targetPart.getVisual().localToScene(midPoint.x,
 					midPoint.y);
 
-			// determine connectedness of second anchor handle
-			Node secondAnchorage = targetPart.getVisual()
-					.getAnchor(secondSegmentIndex).getAnchorage();
-			boolean isSecondConnected = secondAnchorage != null
-					&& secondAnchorage != targetPart.getVisual();
+			// determine connected status of start or end point (depending on
+			// which side of the segment is moved after splitting)
+			Node connectedAnchorage = targetPart.getVisual().getAnchor(
+					selectFirstHalve ? firstSegmentIndex : secondSegmentIndex)
+					.getAnchorage();
+			boolean isConnected = connectedAnchorage != null
+					&& connectedAnchorage != targetPart.getVisual();
 
-			// make the anchor handles explicit
-			boolean isEnd = secondSegmentIndex == targetPart.getVisual()
-					.getAnchors().size() - 1;
+			// make the anchors at the segment indices explicit
 			List<Integer> explicit = bendPolicy.makeExplicit(firstSegmentIndex,
-					isEnd ? secondSegmentIndex : secondSegmentIndex + 1);
+					secondSegmentIndex);
 			Integer firstAnchorHandle = explicit.get(0);
 			Integer secondAnchorHandle = explicit.get(1);
 
-			// compute connection indices
-			int secondAnchorHandleConnectionIndex = bendPolicy
-					.getConnectionIndex(secondAnchorHandle);
-
-			// copy second point if connected
-			if (isSecondConnected) {
-				// use the copy as the new first anchor handle
-				secondAnchorHandle = bendPolicy.createBefore(secondAnchorHandle,
-						FX2Geometry.toPoint(targetPart.getVisual()
-								.localToScene(Geometry2FX.toFXPoint(
-										bendPolicy.getConnection().getPoint(
-												secondAnchorHandleConnectionIndex)))));
+			// copy start/end if it is connected so that the copy can be
+			// selected for movement
+			if (isConnected) {
+				// compute connection index for point to copy
+				int connectionIndex = bendPolicy
+						.getConnectionIndex(selectFirstHalve ? firstAnchorHandle
+								: secondAnchorHandle);
+				// determine position in scene for point to copy
+				Point positionInScene = FX2Geometry
+						.toPoint(targetPart.getVisual()
+								.localToScene(Geometry2FX
+										.toFXPoint(bendPolicy.getConnection()
+												.getPoint(connectionIndex))));
+				// copy the anchor
+				if (selectFirstHalve) {
+					firstAnchorHandle = bendPolicy
+							.createAfter(firstAnchorHandle, positionInScene);
+				} else {
+					secondAnchorHandle = bendPolicy
+							.createBefore(secondAnchorHandle, positionInScene);
+				}
 			}
 
-			// create new anchor at the segment's middle
-			firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-					FX2Geometry.toPoint(midInScene));
-			// copy that new anchor
-			firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
-					FX2Geometry.toPoint(midInScene));
+			// create new anchor at segment's middle and copy that new anchor so
+			// that the copy can be selected for movement
+			if (selectFirstHalve) {
+				secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+						FX2Geometry.toPoint(midInScene));
+				secondAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+						FX2Geometry.toPoint(midInScene));
+			} else {
+				firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+						FX2Geometry.toPoint(midInScene));
+				firstAnchorHandle = bendPolicy.createAfter(firstAnchorHandle,
+						FX2Geometry.toPoint(midInScene));
+				// increment second anchor handle because we added 2 points
+				// before that
+				secondAnchorHandle += 2;
+			}
 
-			// select the second anchor and the copy of the new mid anchor for
-			// movement
+			// select the anchors for movement
 			bendPolicy.select(firstAnchorHandle);
 			bendPolicy.select(secondAnchorHandle);
-
-			isSegmentDragged = true;
 		} else {
 			// compute connection index from handle part data
 			int connectionIndex = hostPart.getSegmentIndex()
