@@ -33,6 +33,8 @@ import javafx.collections.SetChangeListener.Change;
  * A replacement for {@link ReadOnlySetWrapper} to fix the following JavaFX
  * issues:
  * <ul>
+ * <li>Change notifications are fired even when the observed value did not
+ * change.(https://bugs.openjdk.java.net/browse/JDK-8089169)</li>
  * <li>Bidirectional binding not working
  * (https://bugs.openjdk.java.net/browse/JDK-8089557): fixed by not forwarding
  * listeners to the nested read-only property but rather keeping the lists of

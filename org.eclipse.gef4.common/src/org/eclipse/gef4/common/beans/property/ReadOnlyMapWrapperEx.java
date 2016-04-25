@@ -38,6 +38,8 @@ import javafx.collections.ObservableMap;
  * (https://bugs.openjdk.java.net/browse/JDK-8136465): fixed by keeping track of
  * all listeners and ensuring that remaining listeners are re-added when a
  * listener is removed.</li>
+ * <li>Change notifications are fired even when the observed value did not
+ * change.(https://bugs.openjdk.java.net/browse/JDK-8089169)</li>
  * <li>Bidirectional binding not working
  * (https://bugs.openjdk.java.net/browse/JDK-8089557): fixed by not forwarding
  * listeners to the nested read-only property but rather keeping the lists of

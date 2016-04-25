@@ -30,6 +30,8 @@ import javafx.collections.ObservableMap;
  * A replacement for {@link SimpleMapProperty} to fix the following JavaFX
  * issues:
  * <ul>
+ * <li>Change notifications are fired even when the observed value did not
+ * change.(https://bugs.openjdk.java.net/browse/JDK-8089169)</li>
  * <li>All listeners were removed when removing one
  * (https://bugs.openjdk.java.net/browse/JDK-8136465): fixed by keeping track of
  * all listeners and ensuring that remaining listeners are re-added when a

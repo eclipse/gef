@@ -30,6 +30,8 @@ import javafx.collections.ObservableList;
  * A replacement for {@link SimpleListProperty} to fix the following JavaFX
  * issue:
  * <ul>
+ * <li>Change notifications are fired even when the observed value did not
+ * change.(https://bugs.openjdk.java.net/browse/JDK-8089169)</li>
  * <li>No proper implementation of equals() for Java 7, but object equality
  * considered (https://bugs.openjdk.java.net/browse/JDK-8120138): fixed by
  * overwriting equals() and hashCode() and by overwriting
