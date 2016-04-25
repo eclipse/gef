@@ -668,9 +668,11 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		if (implicitGroups.get(0).points.isEmpty()) {
 			implicitGroups.remove(0);
 		}
-		// create explicit anchors one by one
+		// create explicit anchors one by one in reverse order so that the
+		// indices are not messed up
 		List<Integer> handles = new ArrayList<>();
-		for (ImplicitGroup ig : implicitGroups) {
+		for (int i = 0; i < implicitGroups.size(); i++) {
+			ImplicitGroup ig = implicitGroups.get(i);
 			int prec = ig.precedingExplicitIndex;
 			if (!handles.isEmpty() || isStartExplicit) {
 				handles.add(prec);
@@ -885,7 +887,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		int[][] possibleSegmentOverlays = new int[][] {
 				new int[] { -2, -1, 2, 3 }, new int[] { -2, -1, 2 },
 				new int[] { -1, 2, 3 }, new int[] { -1, 2 },
-				new int[] { -2, -1 }, new int[] { 2, 3 }, };
+				new int[] { -2, -1 }, new int[] { 2, 3 }, new int[] { 2 },
+				new int[] { -1 } };
 
 		// test for segment overlays and remove the first segment overlays that
 		// can be found
@@ -1090,7 +1093,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		// at this point, the overlay is confirmed and needs to be removed.
 		// therefore, the overlap of selection and result needs to be removed
 		// and their difference needs to be saved as the final result
-		if (overlainPointIndicesRelativeToSelection.length == 2) {
+		if (overlainPointIndicesRelativeToSelection.length <= 2) {
 			if (isSelectionHorizontal) {
 				// same y values => adjust x
 				if (firstIndex < 0) {
@@ -1118,6 +1121,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 		List<Integer> explicit = makeExplicit(overlayStartIndex,
 				overlayEndIndex);
+		showAnchors("After makeExplicit:");
 
 		// remove the selection and the other overlain anchors
 		int removedCount = 0;

@@ -49,8 +49,11 @@ import javafx.scene.Node;
  */
 public class OrthogonalRouter extends AbstractRouter {
 
-	private static class ControlPointManipulator {
-
+	/**
+	 * A {@link ControlPointManipulator} can be used to record, perform, and
+	 * roll back control point changes during routing.
+	 */
+	protected static class ControlPointManipulator {
 		private Connection connection;
 		private Map<Integer, List<Point>> pointsToInsert = new HashMap<>();
 		private int index;
@@ -58,10 +61,20 @@ public class OrthogonalRouter extends AbstractRouter {
 		private Point point;
 		private List<IAnchor> initialControlAnchors;
 
+		/**
+		 * Constructs a new {@link ControlPointManipulator} for the given
+		 * {@link Connection}.
+		 *
+		 * @param c
+		 *            The {@link Connection} that is manipulated.
+		 */
 		public ControlPointManipulator(Connection c) {
 			this.connection = c;
 		}
 
+		/**
+		 * Performs the recorded changes.
+		 */
 		public void addPoints() {
 			int pointsInserted = 0;
 			for (int insertionIndex : pointsToInsert.keySet()) {
@@ -81,6 +94,19 @@ public class OrthogonalRouter extends AbstractRouter {
 			connection.setControlAnchors(initialControlAnchors);
 		}
 
+		/**
+		 * Records the specified change.
+		 *
+		 * @param index
+		 *            The index at which to insert a control point.
+		 * @param point
+		 *            The start coordinates for the change.
+		 * @param dx
+		 *            The horizontal component of the out direction.
+		 * @param dy
+		 *            The vertical component of the out direction.
+		 * @return A {@link Vector} specifying the out direction.
+		 */
 		public Vector addRoutingPoint(int index, Point point, double dx,
 				double dy) {
 			Point insertion = point.getTranslated(dx, dy);
@@ -91,12 +117,29 @@ public class OrthogonalRouter extends AbstractRouter {
 			return new Vector(dx, dy);
 		}
 
+		/**
+		 * Records the specified change.
+		 *
+		 * @param delta
+		 *            A {@link Vector} specifying the out direction.
+		 * @return A {@link Vector} specifying the out direction.
+		 */
 		public Vector addRoutingPoint(Vector delta) {
 			direction = direction.getSubtracted(
 					addRoutingPoint(index, point, delta.x, delta.y));
 			return direction;
 		}
 
+		/**
+		 * Records the given changes.
+		 *
+		 * @param index
+		 *            The start index for the changes.
+		 * @param point
+		 *            The start coordinates for the changes.
+		 * @param deltas
+		 *            The out directions for the new points.
+		 */
 		public void addRoutingPoints(int index, Point point, double... deltas) {
 			if (deltas == null) {
 				throw new IllegalArgumentException(
@@ -124,6 +167,9 @@ public class OrthogonalRouter extends AbstractRouter {
 			}
 		}
 
+		/**
+		 * Rolls back the changes.
+		 */
 		public void clearPoints() {
 			// XXX: Route may be invoked multiple times until the anchor
 			// positions are property computed (because transforms change,
@@ -143,12 +189,23 @@ public class OrthogonalRouter extends AbstractRouter {
 			connection.setControlAnchors(initialControlAnchors);
 		}
 
+		/**
+		 * Initializes this {@link ControlPointManipulator} for the recording of
+		 * changes.
+		 *
+		 * @param index
+		 *            The index of the control point after which points are to
+		 *            be added.
+		 * @param point
+		 *            The start coordinates for the changes.
+		 * @param direction
+		 *            The current direction.
+		 */
 		public void setRoutingData(int index, Point point, Vector direction) {
 			this.index = index;
 			this.point = point;
 			this.direction = direction;
 		}
-
 	}
 
 	// private sub-class to 'mark' those way-points that are added by the router
@@ -460,10 +517,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				// move left/right if current point is on top or
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i, currentPoint)) {
+					System.out.println("1");
 					// point on top or bottom, move vertically
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveVertically);
 				} else {
+					System.out.println("2");
 					// point on left/right, move horizontally
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
@@ -473,10 +532,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i + 1, currentPoint
 						.getTranslated(outDirection.x, outDirection.y))) {
+					System.out.println("3");
 					// point on top or bottom, move horizontally
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
 				} else {
+					System.out.println("4");
 					// point on left/right, move vertically
 					outDirection = controlPointManipulator
 							.addRoutingPoint(moveVertically);
@@ -490,11 +551,13 @@ public class OrthogonalRouter extends AbstractRouter {
 						currentPoint.getTranslated(outDirection.x,
 								outDirection.y));
 				if (currentIsTopOrBottom && nextIsTopOrBottom) {
+					System.out.println("5");
 					// both top/bottom
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, 0, outDirection.y / 2, outDirection.x,
 							outDirection.y / 2);
 				} else if (!currentIsTopOrBottom && !nextIsTopOrBottom) {
+					System.out.println("6");
 					// both left/right
 					controlPointManipulator.addRoutingPoints(i + 1,
 							currentPoint, outDirection.x / 2, 0,
@@ -502,10 +565,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				} else {
 					// on different sides
 					if (currentIsTopOrBottom) {
+						System.out.println("7");
 						// use x coordinate of current point
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					} else {
+						System.out.println("8");
 						// use y coordinate of current point
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
@@ -514,6 +579,7 @@ public class OrthogonalRouter extends AbstractRouter {
 			}
 		} else {
 			if (inDirection == null) {
+				System.out.println("9");
 				// move horizontally first
 				outDirection = controlPointManipulator
 						.addRoutingPoint(moveHorizontally);
@@ -523,10 +589,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				if (inDirection.isHorizontal()) {
 					if (inDirection.x < 0 && outDirection.x < 0
 							|| inDirection.x > 0 && outDirection.x > 0) {
+						System.out.println("10");
 						// prolong current direction horizontally
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
 					} else {
+						System.out.println("11");
 						// move vertically first
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
@@ -534,10 +602,12 @@ public class OrthogonalRouter extends AbstractRouter {
 				} else {
 					if (inDirection.y < 0 && outDirection.y < 0
 							|| inDirection.y > 0 && outDirection.y > 0) {
+						System.out.println("12");
 						// prolong current direction vertically
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					} else {
+						System.out.println("13");
 						// move horizontally first
 						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
@@ -682,7 +752,8 @@ public class OrthogonalRouter extends AbstractRouter {
 	}
 
 	@Override
-	protected void updateComputationParameters(Connection connection, int index) {
+	protected void updateComputationParameters(Connection connection,
+			int index) {
 		// set anchored reference point
 		super.updateComputationParameters(connection, index);
 

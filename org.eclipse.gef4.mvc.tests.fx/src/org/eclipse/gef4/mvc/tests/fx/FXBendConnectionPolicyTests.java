@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.inject.AdapterMaps;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
@@ -243,6 +244,20 @@ public class FXBendConnectionPolicyTests {
 	}
 
 	private static class TestModels {
+		public static List<Object> get_regression_makeExplicit() {
+			List<Object> contents = new ArrayList<>();
+			org.eclipse.gef4.geometry.planar.Rectangle A = new org.eclipse.gef4.geometry.planar.Rectangle(310, 0, 50,
+					50);
+			org.eclipse.gef4.geometry.planar.Rectangle B = new org.eclipse.gef4.geometry.planar.Rectangle(0, 85, 50,
+					50);
+			contents.add(A);
+			contents.add(B);
+			ConnectionContent connectionContent = new ConnectionContent(A, B);
+			connectionContent.isSimple = true;
+			contents.add(connectionContent);
+			return contents;
+		}
+
 		public static List<Object> getAB_AB() {
 			List<Object> contents = new ArrayList<>();
 			org.eclipse.gef4.geometry.planar.Rectangle A = new org.eclipse.gef4.geometry.planar.Rectangle(0, 0, 50, 50);
@@ -1737,6 +1752,109 @@ public class FXBendConnectionPolicyTests {
 		// verify point is removed after commit
 		bendPolicy.commit();
 		assertEquals(3, connection.getVisual().getPoints().size());
+	}
+
+	@Test
+	public void test_regression_makeExplicit() throws InterruptedException, InvocationTargetException, AWTException {
+		// create injector (adjust module bindings for test)
+		Injector injector = Guice.createInjector(new TestModule());
+
+		// inject domain
+		injector.injectMembers(this);
+
+		final FXViewer viewer = domain.getAdapter(AdapterKey.get(FXViewer.class, FXDomain.CONTENT_VIEWER_ROLE));
+		ctx.createScene(viewer.getCanvas(), 400, 200);
+
+		// activate domain, so tool gets activated and can register listeners
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				domain.activate();
+			}
+		});
+
+		final List<Object> contents = TestModels.get_regression_makeExplicit();
+		// set contents on JavaFX application thread (visuals are created)
+		ctx.runAndWait(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getAdapter(ContentModel.class).getContents().setAll(contents);
+			}
+		});
+
+		// check that the parts have been created
+		for (Object content : contents) {
+			assertTrue(viewer.getContentPartMap().containsKey(content));
+		}
+
+		// query bend policy for first connection
+		ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap().get(contents.get(contents.size() - 1));
+		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
+
+		assertEquals(2, connection.getVisual().getPoints().size());
+
+		System.out.println("before setting strategy");
+		((DynamicAnchor) connection.getVisual().getStartAnchor())
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
+		((DynamicAnchor) connection.getVisual().getEndAnchor())
+				.setComputationStrategy(new OrthogonalProjectionStrategy());
+		System.out.println("after setting strategy");
+
+		// setup connection to be orthogonal, i.e. use orthogonal router and
+		// use orthogonal projection strategy at the anchorages
+		connection.getVisual().setRouter(new OrthogonalRouter() {
+			@Override
+			protected void updateComputationParameters(Connection connection, int index) {
+				AnchorKey anchorKey = connection.getAnchorKey(index);
+				IAnchor anchor = connection.getAnchor(index);
+				AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) connection.getAnchor(index))
+						.getComputationParameter(anchorKey, AnchoredReferencePoint.class);
+				if (index == 0) {
+					((DynamicAnchor) anchor).getComputationParameter(anchorKey, PreferredOrientation.class)
+							.set(Orientation.HORIZONTAL);
+					referencePointParameter.set(new Point(310, 40));
+				} else if (index == connection.getPoints().size() - 1) {
+					((DynamicAnchor) anchor).getComputationParameter(anchorKey, PreferredOrientation.class)
+							.set(Orientation.HORIZONTAL);
+					referencePointParameter.set(new Point(50, 95));
+				} else {
+					super.updateComputationParameters(connection, index);
+				}
+			}
+		});
+
+		// verify router inserted two control points
+		assertEquals(2, countExplicit(connection.getVisual()));
+		assertEquals(4, connection.getVisual().getPoints().size());
+
+		// verify control points share X coordinate
+		assertEquals(connection.getVisual().getPoint(1).x, connection.getVisual().getPoint(2).x, 0.5);
+
+		// query start point and end point so that we can construct orthogonal
+		// control points
+		Point startPoint = connection.getVisual().getStartPoint();
+		Point endPoint = connection.getVisual().getEndPoint();
+
+		// select first segment for manipulation
+		bendPolicy.init();
+		bendPolicy.selectSegment(0);
+
+		// move down to endPoint height
+		bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y));
+		assertEquals(3, countExplicit(connection.getVisual()));
+		assertEquals(3, connection.getVisual().getPoints().size());
+		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
+		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
+		equalsUnprecise(new Point(startPoint.x, endPoint.y), connection.getVisual().getPoint(1));
+
+		// move segment back to its original position
+		bendPolicy.move(new Point(), new Point());
+		bendPolicy.commit();
+		// check number of points and their positions
+		assertEquals(3, countExplicit(connection.getVisual()));
+		assertEquals(4, connection.getVisual().getPoints().size());
+		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
+		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 	}
 
 	@Test
