@@ -163,33 +163,6 @@ public class Connection extends Group {
 
 		// add the curve node
 		getChildren().add(curveNode);
-
-		// TODO: Remove this defensive check (just added for debugging)
-		anchorsProperty
-				.addListener(new MapChangeListener<AnchorKey, IAnchor>() {
-
-					@Override
-					public void onChanged(
-							MapChangeListener.Change<? extends AnchorKey, ? extends IAnchor> change) {
-						if (change.wasAdded()) {
-							if (change.getValueAdded() == null) {
-								throw new IllegalStateException(
-										"Inconsistent state: null anchor was put in map for key "
-												+ change.getKey());
-							}
-							if (!change.getKey().equals(getStartAnchorKey())
-									&& !change.getKey()
-											.equals(getEndAnchorKey())
-									&& !controlAnchorKeys
-											.contains(change.getKey())) {
-								throw new IllegalStateException(
-										"Inconsistent state: key "
-												+ change.getKey()
-												+ " is not contained in control anchors map");
-							}
-						}
-					}
-				});
 	}
 
 	/**
@@ -213,9 +186,19 @@ public class Connection extends Group {
 			throw new IllegalArgumentException(
 					"anchorKey may only be anchored to curve node");
 		}
+		if (!anchorsProperty.containsKey(anchorKey)) {
+			if (!getStartAnchorKey().equals(anchorKey)
+					&& !getEndAnchorKey().equals(anchorKey)
+					&& controlAnchorKeys.contains(anchorKey)) {
+				throw new IllegalStateException(
+						"anchorKey is not contained but key is registered in control anchor key map.");
+
+			}
+		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
+
 		/*
 		 * XXX: The anchor is put into the map before attaching it, so that
 		 * listeners on the map can register position change listeners on the
@@ -223,8 +206,9 @@ public class Connection extends Group {
 		 */
 		// controlpoints to move are kept in reverse order
 		List<IAnchor> controlAnchorsToMove = new ArrayList<>();
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())) {
+		if (!anchorKey.equals(
+
+				getStartAnchorKey()) && !anchorKey.equals(getEndAnchorKey())) {
 			int controlIndex = getControlAnchorIndex(anchorKey);
 			// remove all controlpoints at a larger index
 			int controlPointCount = controlAnchorKeys.size();
@@ -1076,14 +1060,13 @@ public class Connection extends Group {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
-		if (!anchorsProperty.containsKey(anchorKey)) {
-			throw new IllegalArgumentException("anchorKey is not contained");
-		}
-		if (!anchorKey.equals(getStartAnchorKey())
-				&& !anchorKey.equals(getEndAnchorKey())
-				&& !controlAnchorKeys.contains(anchorKey)) {
-			throw new IllegalStateException(
-					"anchorKey is contained but key is not registered in control anchor key map.");
+		if (anchorsProperty.containsKey(anchorKey)) {
+			if (!anchorKey.equals(getStartAnchorKey())
+					&& !anchorKey.equals(getEndAnchorKey())
+					&& !controlAnchorKeys.contains(anchorKey)) {
+				throw new IllegalStateException(
+						"anchorKey is contained but key is not registered in control anchor key map.");
+			}
 		}
 
 		if (anchorPCL.containsKey(anchorKey)) {
@@ -1261,19 +1244,19 @@ public class Connection extends Group {
 			removeControlPoint(i);
 		}
 
-		// TODO: remove defensive checks (for debuggin)
-		if (!controlAnchorKeys.isEmpty()) {
-			throw new IllegalStateException("Remove did not succeed.");
-		}
+		// // perform some defensive check
+		// if (!controlAnchorKeys.isEmpty()) {
+		// throw new IllegalStateException("Remove did not succeed.");
+		// }
 
 		for (int i = 0; i < anchors.size(); i++) {
 			addControlAnchor(i, anchors.get(i));
 		}
 
-		// TODO: remove defensive checks (for debuggin)
-		if (controlAnchorKeys.size() != anchors.size()) {
-			throw new IllegalStateException("Add did not succeed.");
-		}
+		// // perform some defensive check
+		// if (controlAnchorKeys.size() != anchors.size()) {
+		// throw new IllegalStateException("Add did not succeed.");
+		// }
 
 		inRefresh = oldInRefresh;
 		refresh();
