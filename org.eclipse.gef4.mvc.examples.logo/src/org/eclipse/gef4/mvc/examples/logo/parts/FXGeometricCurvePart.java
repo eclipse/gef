@@ -121,21 +121,31 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 			anchorProvider = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IAnchor>>() {
 			}, MvcLogoExampleModule.STRAIGHT_ROUTING_ANCHOR_PROVIDER_ROLE));
 		}
-		if (anchorProvider == null) {
+		if (anchorProvider == null)
+
+		{
 			throw new IllegalStateException("Require <Provider<IAnchor>> adapter at <" + anchorage.getClass() + ">.");
 		}
+
 		IAnchor anchor = anchorProvider.get();
-		if (role.equals(START_ROLE)) {
+		if (role.equals(START_ROLE))
+
+		{
 			// System.out.println(
 			// "Setting start anchor of curve " + this + " to " + anchor);
 			getVisual().setStartAnchor(anchor);
-		} else if (role.equals(END_ROLE)) {
+		} else if (role.equals(END_ROLE))
+
+		{
 			// System.out.println(
 			// "Setting end anchor of curve " + this + " to " + anchor);
 			getVisual().setEndAnchor(anchor);
-		} else {
+		} else
+
+		{
 			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -360,8 +370,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 					attachToAnchorageVisual(anchorage, END_ROLE);
 				}
 			}
-			visual.setInterpolator(new PolylineInterpolator());
-			visual.setRouter(new OrthogonalRouter());
+			if (!(visual.getInterpolator() instanceof PolylineInterpolator)) {
+				visual.setInterpolator(new PolylineInterpolator());
+			}
+			if (!(visual.getRouter() instanceof OrthogonalRouter)) {
+				visual.setRouter(new OrthogonalRouter());
+			}
 		} else {
 			// re-attach visual in case we are connected to an anchor with
 			// orthogonal computation strategy
@@ -381,8 +395,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart<Connect
 				detachFromAnchorageVisual(anchorage, END_ROLE);
 				attachToAnchorageVisual(anchorage, END_ROLE);
 			}
-			visual.setRouter(new StraightRouter());
-			visual.setInterpolator(new PolyBezierInterpolator());
+			if (!(visual.getInterpolator() instanceof PolyBezierInterpolator)) {
+				visual.setInterpolator(new PolyBezierInterpolator());
+			}
+			if (!(visual.getRouter() instanceof StraightRouter)) {
+				visual.setRouter(new StraightRouter());
+			}
 		}
 
 		previousContent = content;
