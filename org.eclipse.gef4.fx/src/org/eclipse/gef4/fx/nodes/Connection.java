@@ -673,11 +673,10 @@ public class Connection extends Group {
 	 *         {@link Connection}.
 	 */
 	public List<Point> getControlPoints() {
-		List<IAnchor> controlPointAnchors = getControlAnchors();
-		List<Point> controlPoints = new ArrayList<>(controlPointAnchors.size());
-		for (int i = 0; i < controlPointAnchors.size(); i++) {
-			controlPoints.add(controlPointAnchors.get(i)
-					.getPosition(getControlAnchorKey(i)));
+		int controlPointCount = getControlAnchors().size();
+		List<Point> controlPoints = new ArrayList<>(controlPointCount);
+		for (int i = 0; i < controlPointCount; i++) {
+			controlPoints.add(getControlPoint(i));
 		}
 		return controlPoints;
 	}
