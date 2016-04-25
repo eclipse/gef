@@ -440,14 +440,14 @@ public class OrthogonalRouter extends AbstractRouter {
 			return;
 		}
 
-		ControlPointManipulator controlPointManipulator = new ControlPointManipulator(
-				connection);
 		// XXX: Route may be invoked multiple times until the anchor
 		// positions are property computed (because transforms change,
 		// etc.); we need to remove those points we have inserted in a
 		// preceding pass to guarantee that we only do 'minimal' routing; as
 		// we use a special subclass of StaticAnchor, we can easily sort
 		// them out through an instance check.
+		ControlPointManipulator controlPointManipulator = new ControlPointManipulator(
+				connection);
 		controlPointManipulator.clearPoints();
 
 		// The router will respect the connection's anchors already provided
@@ -455,38 +455,38 @@ public class OrthogonalRouter extends AbstractRouter {
 		// anchors from start to end and compute the respective direction to the
 		// next anchor. For those anchors that are connected, reference points
 		// will be computed.
-		Vector previousDirection = null;
-		Vector currentDirection = null;
+		Vector inDirection = null;
+		Vector outDirection = null;
 		for (int i = 0; i < connection.getPoints().size() - 1; i++) {
 			Point currentPoint = getPosition(connection, i);
 
 			// direction between preceding way/control point and current one has
 			// been computed in previous iteration
-			previousDirection = currentDirection;
+			inDirection = outDirection;
 			// compute the direction between the current way/control point and
 			// the succeeding one
-			currentDirection = getDirection(connection, i);
+			outDirection = getDirection(connection, i);
 
-			if (Math.abs(currentDirection.x) <= 0.05
-					&& Math.abs(currentDirection.y) <= 0.05) {
+			if (Math.abs(outDirection.x) <= 0.05
+					&& Math.abs(outDirection.y) <= 0.05) {
 				// effectively 0 => do not insert point
 				// => use previous direction as current direction
-				currentDirection = previousDirection;
+				outDirection = inDirection;
 				continue;
 			}
 
 			// given the direction, determine if points have to be added
-			if (isSufficientlyHorizontal(currentDirection)
-					|| isSufficientlyVertical(currentDirection)) {
+			if (isSufficientlyHorizontal(outDirection)
+					|| isSufficientlyVertical(outDirection)) {
 				// XXX: We may have to adjust an already orthogonal segment in
 				// case it overlaps with an anchorage outline.
 				// currentDirection = routeOrthogonalSegment(connection,
 				// controlPointManipulator, currentDirection, i,
 				// currentPoint);
 			} else {
-				currentDirection = routeNonOrthogonalSegment(connection,
-						controlPointManipulator, previousDirection,
-						currentDirection, i, currentPoint);
+				outDirection = routeNonOrthogonalSegment(connection,
+						controlPointManipulator, inDirection, outDirection, i,
+						currentPoint);
 			}
 		}
 
@@ -502,10 +502,12 @@ public class OrthogonalRouter extends AbstractRouter {
 	 *            The {@link Connection} that is manipulated.
 	 * @param controlPointManipulator
 	 *            The helper that is used for inserting route points.
-	 * @param previousDirection
-	 *            The previous direction, or <code>null</code>.
-	 * @param currentDirection
-	 *            The current direction.
+	 * @param inDirection
+	 *            The previous direction, or <code>null</code> (for the end
+	 *            point).
+	 * @param outDirection
+	 *            The current direction, or <code>null</code> (for the start
+	 *            point).
 	 * @param i
 	 *            The index of the current point.
 	 * @param currentPoint
@@ -513,13 +515,12 @@ public class OrthogonalRouter extends AbstractRouter {
 	 * @return The manipulated current direction.
 	 */
 	protected Vector routeNonOrthogonalSegment(Connection connection,
-			ControlPointManipulator controlPointManipulator,
-			Vector previousDirection, Vector currentDirection, int i,
-			Point currentPoint) {
+			ControlPointManipulator controlPointManipulator, Vector inDirection,
+			Vector outDirection, int i, Point currentPoint) {
 		controlPointManipulator.setRoutingData(i + 1, currentPoint,
-				currentDirection);
-		Vector moveVertically = new Vector(0, currentDirection.y);
-		Vector moveHorizontally = new Vector(currentDirection.x, 0);
+				outDirection);
+		Vector moveVertically = new Vector(0, outDirection.y);
+		Vector moveHorizontally = new Vector(outDirection.x, 0);
 
 		if (i == 0 && connection.isStartConnected()
 				|| i == connection.getPoints().size() - 2
@@ -529,24 +530,24 @@ public class OrthogonalRouter extends AbstractRouter {
 				// bottom anchorage outline
 				if (isTopOrBottom(connection, i, currentPoint)) {
 					// point on top or bottom, move vertically
-					currentDirection = controlPointManipulator
+					outDirection = controlPointManipulator
 							.addRoutingPoint(moveVertically);
 				} else {
 					// point on left/right, move horizontally
-					currentDirection = controlPointManipulator
+					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
 				}
 			} else if (i != 0 && i == connection.getPoints().size() - 2) {
 				// move left/right if next point is on top or
 				// bottom anchorage outline
-				if (isTopOrBottom(connection, i + 1, currentPoint.getTranslated(
-						currentDirection.x, currentDirection.y))) {
+				if (isTopOrBottom(connection, i + 1, currentPoint
+						.getTranslated(outDirection.x, outDirection.y))) {
 					// point on top or bottom, move horizontally
-					currentDirection = controlPointManipulator
+					outDirection = controlPointManipulator
 							.addRoutingPoint(moveHorizontally);
 				} else {
 					// point on left/right, move vertically
-					currentDirection = controlPointManipulator
+					outDirection = controlPointManipulator
 							.addRoutingPoint(moveVertically);
 				}
 			} else {
@@ -555,67 +556,65 @@ public class OrthogonalRouter extends AbstractRouter {
 				boolean currentIsTopOrBottom = isTopOrBottom(connection, i,
 						currentPoint);
 				boolean nextIsTopOrBottom = isTopOrBottom(connection, i + 1,
-						currentPoint.getTranslated(currentDirection.x,
-								currentDirection.y));
+						currentPoint.getTranslated(outDirection.x,
+								outDirection.y));
 				if (currentIsTopOrBottom && nextIsTopOrBottom) {
 					// both top/bottom
 					controlPointManipulator.addRoutingPoints(i + 1,
-							currentPoint, 0, currentDirection.y / 2,
-							currentDirection.x, currentDirection.y / 2);
+							currentPoint, 0, outDirection.y / 2, outDirection.x,
+							outDirection.y / 2);
 				} else if (!currentIsTopOrBottom && !nextIsTopOrBottom) {
 					// both left/right
 					controlPointManipulator.addRoutingPoints(i + 1,
-							currentPoint, currentDirection.x / 2, 0,
-							currentDirection.x / 2, currentDirection.y);
+							currentPoint, outDirection.x / 2, 0,
+							outDirection.x / 2, outDirection.y);
 				} else {
 					// on different sides
 					if (currentIsTopOrBottom) {
 						// use x coordinate of current point
-						currentDirection = controlPointManipulator
+						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					} else {
 						// use y coordinate of current point
-						currentDirection = controlPointManipulator
+						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
 					}
 				}
 			}
 		} else {
-			if (previousDirection == null) {
+			if (inDirection == null) {
 				// move horizontally first
-				currentDirection = controlPointManipulator
+				outDirection = controlPointManipulator
 						.addRoutingPoint(moveHorizontally);
 			} else {
 				// adjust by inserting a control point; try to follow
 				// previous direction as long as possible
-				if (previousDirection.isHorizontal()) {
-					if (previousDirection.x < 0 && currentDirection.x < 0
-							|| previousDirection.x > 0
-									&& currentDirection.x > 0) {
+				if (inDirection.isHorizontal()) {
+					if (inDirection.x < 0 && outDirection.x < 0
+							|| inDirection.x > 0 && outDirection.x > 0) {
 						// prolong current direction horizontally
-						currentDirection = controlPointManipulator
+						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
 					} else {
 						// move vertically first
-						currentDirection = controlPointManipulator
+						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					}
 				} else {
-					if (previousDirection.y < 0 && currentDirection.y < 0
-							|| previousDirection.y > 0
-									&& currentDirection.y > 0) {
+					if (inDirection.y < 0 && outDirection.y < 0
+							|| inDirection.y > 0 && outDirection.y > 0) {
 						// prolong current direction vertically
-						currentDirection = controlPointManipulator
+						outDirection = controlPointManipulator
 								.addRoutingPoint(moveVertically);
 					} else {
 						// move horizontally first
-						currentDirection = controlPointManipulator
+						outDirection = controlPointManipulator
 								.addRoutingPoint(moveHorizontally);
 					}
 				}
 			}
 		}
-		return currentDirection;
+		return outDirection;
 	}
 
 	/**
