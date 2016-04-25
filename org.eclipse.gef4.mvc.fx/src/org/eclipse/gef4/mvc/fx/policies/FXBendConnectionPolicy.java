@@ -292,83 +292,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	}
 
 	/**
-	 * Returns the explicit anchor index for the first explicit anchor that is
-	 * found within the connection's anchors when starting to search at the
-	 * given connection index, and incrementing the index by the given step per
-	 * iteration.
-	 *
-	 * @param startConnectionIndex
-	 *            The index at which the search starts.
-	 * @param step
-	 *            The increment step (e.g. <code>1</code> or <code>-1</code>).
-	 * @return The explicit anchor index for the first explicit anchor that is
-	 *         found within the connection's anchors when starting to search at
-	 *         the given index.
-	 */
-	protected int findExplicitAnchor(int startConnectionIndex, int step) {
-		List<IAnchor> anchors = getConnection().getAnchors();
-		IConnectionRouter router = getConnection().getRouter();
-		for (int i = startConnectionIndex; i >= 0
-				&& i < anchors.size(); i += step) {
-			IAnchor anchor = anchors.get(i);
-			if (!router.isImplicitAnchor(anchor)) {
-				// found an explicit anchor => iterate explicit anchors to find
-				// the one with matching connection index
-				List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
-				for (int j = 0; j < newAnchors.size(); j++) {
-					if (getBendOperation().getConnectionIndex(j) == i) {
-						return j;
-					}
-				}
-				throw new IllegalStateException(
-						"The explicit anchors of the connection are out of sync with the explicit anchors of the policy.");
-			}
-		}
-
-		// start and end need to be explicit, therefore, we should always be
-		// able to find an explicit anchor, regardless of the passed-in
-		// connection index
-		throw new IllegalStateException(
-				"The start and end anchor of a Connection need to be explicit.");
-	}
-
-	/**
-	 * Returns an explicit anchor index for the first explicit anchor that can
-	 * be found when iterating the connection anchors backwards, starting at the
-	 * given connection index. If the anchor at the given index is an explicit
-	 * anchor, an explicit anchor index for that anchor will be returned. If no
-	 * explicit anchor is found, an exception is thrown, because the start and
-	 * end anchor of a connection need to be explicit.
-	 *
-	 * @param connectionIndex
-	 *            The index that specifies the anchor of the connection at which
-	 *            the search starts.
-	 * @return An explicit anchor index for the previous explicit anchor.
-	 */
-	// TODO: Rename to findFirstExplicitAnchorBefore(int connectionIndex)
-	public int findExplicitAnchorBackward(int connectionIndex) {
-		return findExplicitAnchor(connectionIndex, -1);
-	}
-
-	/**
-	 * Returns an explicit anchor index for the first explicit anchor that can
-	 * be found when iterating the connection anchors forwards, starting at the
-	 * given connection index. If the anchor at the given index is an explicit
-	 * anchor, an explicit anchor index for that anchor will be returned. If no
-	 * explicit anchor is found, an exception is thrown, because the start and
-	 * end anchor of a connection need to be explicit.
-	 *
-	 * @param connectionIndex
-	 *            The index that specifies the anchor of the connection at which
-	 *            the search starts.
-	 * @return An explicit anchor index for the next explicit anchor.
-	 */
-	// TODO: Rename to findFirstExplicitAnchorAfter(int connectionIndex)
-	public int findExplicitAnchorForward(int connectionIndex) {
-		return findExplicitAnchor(connectionIndex, 1);
-	}
-
-	/**
 	 * Determines the {@link IAnchor} that should replace the anchor of the
 	 * currently selected point. If the point can connect, the
 	 * {@link IVisualPart} at the mouse position is queried for an
@@ -461,6 +384,81 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	@Override
 	protected List<BendPoint> getCurrentBendPoints() {
 		return getCurrentBendPoints(getHost());
+	}
+
+	/**
+	 * Returns the explicit anchor index for the first explicit anchor that is
+	 * found within the connection's anchors when starting to search at the
+	 * given connection index, and incrementing the index by the given step per
+	 * iteration.
+	 *
+	 * @param startConnectionIndex
+	 *            The index at which the search starts.
+	 * @param step
+	 *            The increment step (e.g. <code>1</code> or <code>-1</code>).
+	 * @return The explicit anchor index for the first explicit anchor that is
+	 *         found within the connection's anchors when starting to search at
+	 *         the given index.
+	 */
+	protected int getExplicitIndex(int startConnectionIndex, int step) {
+		List<IAnchor> anchors = getConnection().getAnchors();
+		IConnectionRouter router = getConnection().getRouter();
+		for (int i = startConnectionIndex; i >= 0
+				&& i < anchors.size(); i += step) {
+			IAnchor anchor = anchors.get(i);
+			if (!router.isImplicitAnchor(anchor)) {
+				// found an explicit anchor => iterate explicit anchors to find
+				// the one with matching connection index
+				List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
+				for (int j = 0; j < newAnchors.size(); j++) {
+					if (getBendOperation().getConnectionIndex(j) == i) {
+						return j;
+					}
+				}
+				throw new IllegalStateException(
+						"The explicit anchors of the connection are out of sync with the explicit anchors of the policy.");
+			}
+		}
+
+		// start and end need to be explicit, therefore, we should always be
+		// able to find an explicit anchor, regardless of the passed-in
+		// connection index
+		throw new IllegalStateException(
+				"The start and end anchor of a Connection need to be explicit.");
+	}
+
+	/**
+	 * Returns an explicit anchor index for the first explicit anchor that can
+	 * be found when iterating the connection anchors forwards, starting at the
+	 * given connection index. If the anchor at the given index is an explicit
+	 * anchor, an explicit anchor index for that anchor will be returned. If no
+	 * explicit anchor is found, an exception is thrown, because the start and
+	 * end anchor of a connection need to be explicit.
+	 *
+	 * @param connectionIndex
+	 *            The index that specifies the anchor of the connection at which
+	 *            the search starts.
+	 * @return An explicit anchor index for the next explicit anchor.
+	 */
+	public int getExplicitIndexAtOrAfter(int connectionIndex) {
+		return getExplicitIndex(connectionIndex, 1);
+	}
+
+	/**
+	 * Returns an explicit anchor index for the first explicit anchor that can
+	 * be found when iterating the connection anchors backwards, starting at the
+	 * given connection index. If the anchor at the given index is an explicit
+	 * anchor, an explicit anchor index for that anchor will be returned. If no
+	 * explicit anchor is found, an exception is thrown, because the start and
+	 * end anchor of a connection need to be explicit.
+	 *
+	 * @param connectionIndex
+	 *            The index that specifies the anchor of the connection at which
+	 *            the search starts.
+	 * @return An explicit anchor index for the previous explicit anchor.
+	 */
+	public int getExplicitIndexAtOrBefore(int connectionIndex) {
+		return getExplicitIndex(connectionIndex, -1);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -650,12 +648,12 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		List<ImplicitGroup> implicitGroups = new ArrayList<>();
 		boolean isStartExplicit = isExplicit(startConnectionIndex);
 		implicitGroups.add(new ImplicitGroup(
-				findExplicitAnchorBackward(startConnectionIndex)));
+				getExplicitIndexAtOrBefore(startConnectionIndex)));
 		// find implicit groups within the given index range
 		for (int i = startConnectionIndex; i <= endConnectionIndex; i++) {
 			if (isExplicit(i)) {
 				// start a new group
-				int explicitAnchorHandle = findExplicitAnchorBackward(i);
+				int explicitAnchorHandle = getExplicitIndexAtOrBefore(i);
 				implicitGroups.add(new ImplicitGroup(explicitAnchorHandle));
 			} else {
 				// add point to current group

@@ -189,7 +189,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 				// orthogonal connections)
 
 				Integer previousAnchorHandle = bendPolicy
-						.findExplicitAnchorBackward(hostPart.getSegmentIndex());
+						.getExplicitIndexAtOrBefore(hostPart.getSegmentIndex());
 				Integer newAnchorHandle = bendPolicy
 						.createAfter(previousAnchorHandle, initialMouseInScene);
 

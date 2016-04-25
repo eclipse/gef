@@ -632,13 +632,13 @@ public class FXBendConnectionPolicyTests {
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
 		Point wayPoint = connection.getContent().getWayPoint();
-		int wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
+		int wayPointAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(1);
 
 		// check anchor position
 		assertEquals(wayPoint, getPosition(bendPolicy, wayPointAnchorHandle));
 
 		// select end point
-		int endAnchorHandle = bendPolicy.findExplicitAnchorForward(2);
+		int endAnchorHandle = bendPolicy.getExplicitIndexAtOrAfter(2);
 		bendPolicy.select(endAnchorHandle);
 
 		// move left to overlay the way point
@@ -715,7 +715,7 @@ public class FXBendConnectionPolicyTests {
 
 		// copy start point and end point
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, startPoint);
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, endPoint);
 		// check number of points
@@ -805,7 +805,7 @@ public class FXBendConnectionPolicyTests {
 
 		// copy start point and end point
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		assertEquals(startPoint, getPosition(bendPolicy, startAnchorHandle));
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, startPoint.getTranslated(100, 100));
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, endPoint.getTranslated(100, 100));
@@ -887,7 +887,7 @@ public class FXBendConnectionPolicyTests {
 		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
 		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
 
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, startPoint);
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, endPoint);
 		// check number of points
@@ -975,7 +975,7 @@ public class FXBendConnectionPolicyTests {
 
 		// copy start point and end point
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, startPoint);
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, endPoint);
 		// check number of points
@@ -1047,7 +1047,7 @@ public class FXBendConnectionPolicyTests {
 
 		// create control points
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y);
 		Point secondWayPoint = new Point(startPoint.x + 100, startPoint.y + 100);
 		Point thirdWayPoint = new Point(startPoint.x + 200, startPoint.y + 100);
@@ -1147,7 +1147,7 @@ public class FXBendConnectionPolicyTests {
 
 		// create control points
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y);
 		Point secondWayPoint = new Point(startPoint.x + 100, startPoint.y + 200);
 		Point thirdWayPoint = new Point(startPoint.x + 200, startPoint.y + 200);
@@ -1265,7 +1265,7 @@ public class FXBendConnectionPolicyTests {
 
 		// create control points
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		Point firstWayPoint = new Point(startPoint.x + 100, startPoint.y - 25);
 		Point secondWayPoint = new Point(startPoint.x + 100, endPoint.y + 25);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, firstWayPoint);
@@ -1349,8 +1349,8 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.init();
 
 		// find start and end handles
-		int startHandle = bendPolicy.findExplicitAnchorBackward(0);
-		int endHandle = bendPolicy.findExplicitAnchorForward(1);
+		int startHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
+		int endHandle = bendPolicy.getExplicitIndexAtOrAfter(1);
 
 		assertEquals(connection.getVisual().getStartPoint(), getPosition(bendPolicy, startHandle));
 		assertEquals(connection.getVisual().getEndPoint(), getPosition(bendPolicy, endHandle));
@@ -1423,8 +1423,8 @@ public class FXBendConnectionPolicyTests {
 		// find way point anchor
 		bendPolicy.init();
 		Point wayPoint = connection.getContent().getWayPoint();
-		int anchorBackwards = bendPolicy.findExplicitAnchorBackward(1);
-		int anchorForwards = bendPolicy.findExplicitAnchorForward(1);
+		int anchorBackwards = bendPolicy.getExplicitIndexAtOrBefore(1);
+		int anchorForwards = bendPolicy.getExplicitIndexAtOrAfter(1);
 		// assertEquals(1, anchorBackwards.getExplicitAnchorIndex());
 		assertEquals(anchorBackwards, anchorForwards);
 
@@ -1486,7 +1486,7 @@ public class FXBendConnectionPolicyTests {
 
 		// create control points
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, new Point(100, 100));
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, new Point(100, 200));
 		int thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, new Point(200, 210));
@@ -1568,7 +1568,7 @@ public class FXBendConnectionPolicyTests {
 
 		// create control points
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, new Point(100, 100));
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, new Point(100, 210));
 		int thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, new Point(200, 200));
@@ -1649,7 +1649,7 @@ public class FXBendConnectionPolicyTests {
 
 		// create control points
 		bendPolicy.init();
-		int startAnchorHandle = bendPolicy.findExplicitAnchorBackward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(0);
 		int firstWayAnchorHandle = bendPolicy.createAfter(startAnchorHandle, new Point(100, 100));
 		int secondWayAnchorHandle = bendPolicy.createAfter(firstWayAnchorHandle, new Point(100, 200));
 		int thirdWayAnchorHandle = bendPolicy.createAfter(secondWayAnchorHandle, new Point(200, 200));
@@ -1710,8 +1710,8 @@ public class FXBendConnectionPolicyTests {
 		// find way point anchor
 		bendPolicy.init();
 		Point wayPoint = connection.getContent().getWayPoint();
-		int anchorBackwards = bendPolicy.findExplicitAnchorBackward(1);
-		int anchorForwards = bendPolicy.findExplicitAnchorForward(1);
+		int anchorBackwards = bendPolicy.getExplicitIndexAtOrBefore(1);
+		int anchorForwards = bendPolicy.getExplicitIndexAtOrAfter(1);
 		// assertEquals(1, anchorBackwards.getExplicitAnchorIndex());
 		assertEquals(anchorBackwards, anchorForwards);
 		int firstWayPointAnchorHandle = anchorBackwards;
@@ -1991,13 +1991,13 @@ public class FXBendConnectionPolicyTests {
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
 		Point wayPoint = connection.getContent().getWayPoint();
-		int wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
+		int wayPointAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(1);
 
 		// check anchor position
 		assertEquals(wayPoint, getPosition(bendPolicy, wayPointAnchorHandle));
 
 		// select end point
-		int startAnchorHandle = bendPolicy.findExplicitAnchorForward(0);
+		int startAnchorHandle = bendPolicy.getExplicitIndexAtOrAfter(0);
 		bendPolicy.select(startAnchorHandle);
 
 		// move to the right to overlay the way point
@@ -2063,7 +2063,7 @@ public class FXBendConnectionPolicyTests {
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
 		Point wayPoint = connection.getContent().getWayPoint();
-		int wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
+		int wayPointAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(1);
 
 		// check anchor position
 		assertEquals(wayPoint, getPosition(bendPolicy, wayPointAnchorHandle));
@@ -2072,7 +2072,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.select(wayPointAnchorHandle);
 
 		// find end point handle
-		int endPointHandle = bendPolicy.findExplicitAnchorForward(2);
+		int endPointHandle = bendPolicy.getExplicitIndexAtOrAfter(2);
 
 		// move to the right to overlay the end point, but not exactly onto it
 		Point endPoint = getPosition(bendPolicy, endPointHandle);
@@ -2133,7 +2133,7 @@ public class FXBendConnectionPolicyTests {
 		FXBendConnectionPolicy bendPolicy = connection.getAdapter(FXBendConnectionPolicy.class);
 		bendPolicy.init();
 		Point wayPoint = connection.getContent().getWayPoint();
-		int wayPointAnchorHandle = bendPolicy.findExplicitAnchorBackward(1);
+		int wayPointAnchorHandle = bendPolicy.getExplicitIndexAtOrBefore(1);
 
 		// check anchor position
 		assertEquals(wayPoint, getPosition(bendPolicy, wayPointAnchorHandle));
@@ -2142,7 +2142,7 @@ public class FXBendConnectionPolicyTests {
 		bendPolicy.select(wayPointAnchorHandle);
 
 		// find end point handle
-		int endPointHandle = bendPolicy.findExplicitAnchorForward(2);
+		int endPointHandle = bendPolicy.getExplicitIndexAtOrAfter(2);
 
 		// move to the right to overlay the end point
 		double distance = wayPoint.getDistance(getPosition(bendPolicy, endPointHandle));
