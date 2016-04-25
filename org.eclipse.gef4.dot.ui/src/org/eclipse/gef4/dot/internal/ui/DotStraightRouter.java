@@ -34,13 +34,13 @@ public class DotStraightRouter extends StraightRouter {
 	}
 
 	@Override
-	protected void updateReferencePoint(Connection connection, int index) {
+	protected void updateComputationParameters(Connection connection,
+			int index) {
 		if (index == 0) {
 			IAnchor startAnchor = connection.getAnchor(index);
 			if (startAnchor instanceof DynamicAnchor) {
 				((DynamicAnchor) startAnchor)
-						.getComputationParameter(
-								connection.getAnchorKey(index),
+						.getComputationParameter(connection.getAnchorKey(index),
 								AnchoredReferencePoint.class)
 						.set(startReferencePoint);
 			}
@@ -48,12 +48,11 @@ public class DotStraightRouter extends StraightRouter {
 			IAnchor endAnchor = connection.getAnchor(index);
 			if (endAnchor instanceof DynamicAnchor) {
 				((DynamicAnchor) endAnchor)
-						.getComputationParameter(
-								connection.getAnchorKey(index),
+						.getComputationParameter(connection.getAnchorKey(index),
 								AnchoredReferencePoint.class)
 						.set(endReferencePoint);
 			}
 		}
-		super.updateReferencePoint(connection, index);
+		super.updateComputationParameters(connection, index);
 	}
 }

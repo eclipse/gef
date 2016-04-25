@@ -14,10 +14,8 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
@@ -25,11 +23,9 @@ import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchorageReferenceGeometry;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef4.fx.anchors.IAnchor;
-import org.eclipse.gef4.fx.anchors.IComputationStrategy;
 import org.eclipse.gef4.fx.anchors.StaticAnchor;
 import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -185,7 +181,7 @@ public class OrthogonalRouter extends AbstractRouter {
 	 *         anchor at the given index, or <code>null</code> if the anchor is
 	 *         not connected.
 	 */
-	protected IGeometry getAnchorageGeometry(Connection connection, int index) {
+	private IGeometry getAnchorageGeometry(Connection connection, int index) {
 		IAnchor anchor = connection.getAnchor(index);
 		// TODO: use connection methods to detect whether anchors are connected,
 		// don't duplicate logic here
@@ -217,14 +213,11 @@ public class OrthogonalRouter extends AbstractRouter {
 	 *            reference point.
 	 * @return The reference point for the anchor at the given index.
 	 */
-	protected Point getAnchorReferencePoint(Connection connection, int index) {
+	@Override
+	protected Point getAnchoredReferencePoint(Connection connection,
+			int index) {
 		if (index < 0 || index >= connection.getPoints().size()) {
 			throw new IndexOutOfBoundsException();
-		}
-
-		AnchorKey anchorKey = connection.getAnchorKey(index);
-		if (positionHintsProperty().containsKey(anchorKey)) {
-			return positionHintsProperty().get(anchorKey);
 		}
 
 		IGeometry referenceGeometry = null;
@@ -274,11 +267,6 @@ public class OrthogonalRouter extends AbstractRouter {
 		return connection.getPoint(referenceIndex);
 	}
 
-	private Vector getDirection(Connection connection, int i) {
-		return new Vector(getPosition(connection, i),
-				getPosition(connection, i + 1));
-	}
-
 	private Point getNearestBoundsProjection(IGeometry g, Point p) {
 		Line[] outlineSegments = g.getBounds().getOutlineSegments();
 		Point nearestProjection = null;
@@ -292,72 +280,6 @@ public class OrthogonalRouter extends AbstractRouter {
 			}
 		}
 		return nearestProjection;
-	}
-
-	private Point getPosition(Connection connection, int index) {
-		int numPoints = connection.getPoints().size();
-		boolean isFirstIndex = index == 0;
-		boolean isLastIndex = index == numPoints - 1;
-		if (isFirstIndex || isLastIndex) {
-			IAnchor anchor = index == 0 ? connection.getStartAnchor()
-					: (index == numPoints - 1 ? connection.getEndAnchor()
-							: connection.getControlAnchor(index - 1));
-			if (anchor == null) {
-				return connection.getPoint(index);
-			}
-			// XXX: If we have an anchor, we have to use it to compute the
-			// position. To obtain a stable position, we have to provide our own
-			// (stable) reference point.
-			if (anchor instanceof DynamicAnchor) {
-				// TODO: maybe we can generalize this (so we do not have to
-				// perform an instance test
-				Point referencePoint = getAnchorReferencePoint(connection,
-						index);
-
-				// update orientation hint
-				Point neighborPoint = connection
-						.getPoint(isFirstIndex ? index + 1 : index - 1);
-				Point delta = neighborPoint.getDifference(referencePoint);
-				Orientation hint = null;
-				if (Math.abs(delta.x) < 5
-						&& Math.abs(delta.x) < Math.abs(delta.y)) {
-					// very small x difference => go in vertically
-					hint = Orientation.VERTICAL;
-				} else if (Math.abs(delta.y) < 5
-						&& Math.abs(delta.y) < Math.abs(delta.x)) {
-					// very small y difference => go in horizontally
-					hint = Orientation.HORIZONTAL;
-				}
-				// provide a hint to the anchor's computation strategy
-				AnchorKey anchorKey = connection.getAnchorKey(index);
-				((DynamicAnchor) anchor).getComputationParameter(anchorKey,
-						PreferredOrientation.class).set(hint);
-
-				// update reference point for the anchor key at the given index
-				((DynamicAnchor) anchor)
-						.getComputationParameter(anchorKey,
-								AnchoredReferencePoint.class)
-						.set(referencePoint);
-
-				// find computation strategy
-				IComputationStrategy computationStrategy = ((DynamicAnchor) anchor)
-						.getComputationStrategy();
-				// compute position using computation strategy
-				Set<IComputationStrategy.Parameter<?>> parameters = new HashSet<>();
-				parameters.add(
-						new AnchorageReferenceGeometry(((DynamicAnchor) anchor)
-								.getComputationParameter(anchorKey,
-										AnchorageReferenceGeometry.class)
-								.get()));
-				parameters.add(new AnchoredReferencePoint(referencePoint));
-				parameters.add(new PreferredOrientation(hint));
-				return FX2Geometry.toPoint(connection
-						.sceneToLocal(Geometry2FX.toFXPoint(computationStrategy
-								.computePositionInScene(anchor.getAnchorage(),
-										connection, parameters))));
-			}
-		}
-		return connection.getPoint(index);
 	}
 
 	private Polygon[] getTriangles(Connection connection, int i) {
@@ -458,14 +380,23 @@ public class OrthogonalRouter extends AbstractRouter {
 		Vector inDirection = null;
 		Vector outDirection = null;
 		for (int i = 0; i < connection.getPoints().size() - 1; i++) {
-			Point currentPoint = getPosition(connection, i);
+			IAnchor anchor = connection.getAnchor(i);
+			if (anchor instanceof DynamicAnchor) {
+				updateComputationParameters(connection, i);
+			}
+			Point currentPoint = connection.getPoint(i);
 
 			// direction between preceding way/control point and current one has
 			// been computed in previous iteration
 			inDirection = outDirection;
 			// compute the direction between the current way/control point and
 			// the succeeding one
-			outDirection = getDirection(connection, i);
+			IAnchor nextAnchor = connection.getAnchor(i + 1);
+			if (nextAnchor instanceof DynamicAnchor) {
+				updateComputationParameters(connection, i + 1);
+			}
+			outDirection = new Vector(connection.getPoint(i),
+					connection.getPoint(i + 1));
 
 			if (Math.abs(outDirection.x) <= 0.05
 					&& Math.abs(outDirection.y) <= 0.05) {
@@ -748,6 +679,40 @@ public class OrthogonalRouter extends AbstractRouter {
 			}
 		}
 		return currentDirection;
+	}
+
+	@Override
+	protected void updateComputationParameters(Connection connection, int index) {
+		// set anchored reference point
+		super.updateComputationParameters(connection, index);
+
+		// set orientation hint for first and last anchor
+		AnchorKey anchorKey = connection.getAnchorKey(index);
+		IAnchor anchor = connection.getAnchor(index);
+		if (index == 0 || index == connection.getPoints().size() - 1) {
+			// update orientation hint
+			Point neighborPoint = connection
+					.getPoint(index == 0 ? index + 1 : index - 1);
+			Point delta = neighborPoint
+					.getDifference(
+							((DynamicAnchor) anchor)
+									.getComputationParameter(anchorKey,
+											AnchoredReferencePoint.class)
+									.get());
+			Orientation hint = null;
+			if (Math.abs(delta.x) < 5
+					&& Math.abs(delta.x) < Math.abs(delta.y)) {
+				// very small x difference => go in vertically
+				hint = Orientation.VERTICAL;
+			} else if (Math.abs(delta.y) < 5
+					&& Math.abs(delta.y) < Math.abs(delta.x)) {
+				// very small y difference => go in horizontally
+				hint = Orientation.HORIZONTAL;
+			}
+			// provide a hint to the anchor's computation strategy
+			((DynamicAnchor) anchor).getComputationParameter(anchorKey,
+					PreferredOrientation.class).set(hint);
+		}
 	}
 
 }

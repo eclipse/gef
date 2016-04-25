@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
-import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -35,6 +34,47 @@ import javafx.scene.Node;
  *
  */
 public class StraightRouter extends AbstractRouter {
+
+	/**
+	 * Returns the reference point for the anchor at the given index.
+	 *
+	 * @param connection
+	 *            The {@link Connection} that is currently routed.
+	 * @param index
+	 *            The index specifying the anchor for which to provide a
+	 *            reference point.
+	 * @return The reference point for the anchor at the given index.
+	 */
+	@Override
+	protected Point getAnchoredReferencePoint(Connection connection,
+			int index) {
+		if (index < 0 || index >= connection.getPoints().size()) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		// compute new reference point
+		Point newRef = null;
+		Point pred = getPred(connection, index);
+		Point succ = getSucc(connection, index);
+		if (pred == null && succ == null) {
+			/*
+			 * Neither predecessor nor successor can be identified. This can
+			 * happen for the initialization of connections when a static
+			 * position is inside the anchorage of the current anchor. This
+			 * means, the reference point that is returned now will be discarded
+			 * in a succeeding call (we have to come up with some value here for
+			 * the DynamicAnchor to work with).
+			 */
+			newRef = new Point();
+		} else if (pred != null) {
+			newRef = pred;
+		} else if (succ != null) {
+			newRef = succ;
+		} else {
+			newRef = new Line(pred, succ).get(0.5);
+		}
+		return newRef;
+	}
 
 	// TODO: move to utility && replace with safe algorithm
 	private Point getCenter(Connection connection, Node anchorageNode) {
@@ -115,83 +155,14 @@ public class StraightRouter extends AbstractRouter {
 		if (connection.getPoints().size() < 2) {
 			return;
 		}
-		for (int i = 0; i < connection.getAnchors().size(); i++) {
-			updateReferencePoints(connection, i);
-		}
-	}
-
-	/**
-	 * Update's the reference point of the anchor with the given index.
-	 *
-	 * @param connection
-	 *            The connection whose anchor to update.
-	 * @param anchorIndex
-	 *            The index of the connection anchor, whose reference point is
-	 *            to be updated.
-	 */
-	protected void updateReferencePoint(Connection connection,
-			int anchorIndex) {
-		// FIXME: cannot query connection if start/end is unset
-		if (connection.getStartAnchor() == null
-				|| connection.getEndAnchor() == null) {
-			return;
-		}
-
-		// only compute reference points for dynamic anchors
-		IAnchor anchor = connection.getAnchors().get(anchorIndex);
-		if (!(anchor instanceof DynamicAnchor)) {
-			return;
-		}
-
-		// compute new reference point
-		Point newRef = null;
-		Point pred = getPred(connection, anchorIndex);
-		Point succ = getSucc(connection, anchorIndex);
-		if (pred == null && succ == null) {
-			/*
-			 * Neither predecessor nor successor can be identified. This can
-			 * happen for the initialization of connections when a static
-			 * position is inside the anchorage of the current anchor. This
-			 * means, the reference point that is returned now will be discarded
-			 * in a succeeding call (we have to come up with some value here for
-			 * the DynamicAnchor to work with).
-			 */
-			newRef = new Point();
-		} else if (pred != null) {
-			newRef = pred;
-		} else if (succ != null) {
-			newRef = succ;
-		} else {
-			newRef = new Line(pred, succ).get(0.5);
-		}
-
-		// only update if necessary (when it changes)
-		AnchorKey anchorKey = connection.getAnchorKey(anchorIndex);
-		AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) anchor)
-				.getComputationParameter(anchorKey,
-						AnchoredReferencePoint.class);
-		Point oldRef = referencePointParameter == null ? null
-				: referencePointParameter.get();
-		if (oldRef == null || !newRef.equals(oldRef)) {
-			referencePointParameter.set(newRef);
-		}
-	}
-
-	private void updateReferencePoints(Connection connection, int anchorIndex) {
-		// FIXME: cannot query connection if start/end is unset
-		if (connection.getStartAnchor() == null
-				|| connection.getEndAnchor() == null) {
-			return;
-		}
 		List<IAnchor> anchors = connection.getAnchors();
 		for (int i = 0; i < anchors.size(); i++) {
 			// we do not have to update the reference point for the
 			// given key, because the corresponding position just
 			// changed, so it was updated already
-			if (anchorIndex == i) {
-				continue;
+			if (anchors.get(i) instanceof DynamicAnchor) {
+				updateComputationParameters(connection, i);
 			}
-			updateReferencePoint(connection, i);
 		}
 	}
 

@@ -27,13 +27,13 @@ public class DotOrthogonalRouter extends OrthogonalRouter {
 	}
 
 	@Override
-	protected Point getAnchorReferencePoint(Connection connection, int index) {
+	protected Point getAnchoredReferencePoint(Connection connection, int index) {
 		if (index == 0) {
 			return startReferencePoint;
 		} else if (index == connection.getAnchors().size() - 1) {
 			return endReferencePoint;
 		} else {
-			return super.getAnchorReferencePoint(connection, index);
+			return super.getAnchoredReferencePoint(connection, index);
 		}
 	}
 

@@ -15,6 +15,8 @@ package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.common.beans.property.ReadOnlyMapWrapperEx;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.geometry.planar.Point;
 
 import javafx.beans.property.ReadOnlyMapProperty;
@@ -29,9 +31,49 @@ public abstract class AbstractRouter implements IConnectionRouter {
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionHintsProperty = new ReadOnlyMapWrapperEx<>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
 
+	/**
+	 * Computes the reference point for the dynamic anchor at the given index.
+	 *
+	 * @param connection
+	 *            The {@link Connection} that is currently routed.
+	 * @param index
+	 *            The index specifying the dynamic anchor for which to provide a
+	 *            reference point.
+	 * @return The reference point for the anchor at the given index.
+	 */
+	protected abstract Point getAnchoredReferencePoint(Connection connection,
+			int index);
+
 	@Override
 	public ReadOnlyMapProperty<AnchorKey, Point> positionHintsProperty() {
 		return positionHintsProperty.getReadOnlyProperty();
 	}
 
+	/**
+	 * Update's the reference point of the anchor with the given index.
+	 *
+	 * @param connection
+	 *            The connection whose anchor to update.
+	 * @param index
+	 *            The index of the connection anchor, whose reference point is
+	 *            to be updated.
+	 */
+	protected void updateComputationParameters(Connection connection,
+			int index) {
+		// only update if necessary (when it changes)
+		AnchorKey anchorKey = connection.getAnchorKey(index);
+		AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) connection
+				.getAnchor(index)).getComputationParameter(anchorKey,
+						AnchoredReferencePoint.class);
+		Point oldRef = referencePointParameter.get();
+
+		// if we have a position hint for the anchor, we need to use this as the
+		// reference point
+		Point newRef = positionHintsProperty().containsKey(anchorKey)
+				? positionHintsProperty().get(anchorKey)
+				: getAnchoredReferencePoint(connection, index);
+		if (oldRef == null || !newRef.equals(oldRef)) {
+			referencePointParameter.set(newRef);
+		}
+	}
 }

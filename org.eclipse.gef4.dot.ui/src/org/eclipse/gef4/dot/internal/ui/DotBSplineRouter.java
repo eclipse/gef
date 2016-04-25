@@ -21,7 +21,7 @@ public class DotBSplineRouter extends StraightRouter {
 	}
 
 	@Override
-	protected void updateReferencePoint(Connection connection,
+	protected void updateComputationParameters(Connection connection,
 			int anchorIndex) {
 		if (anchorIndex == 0
 				|| anchorIndex == connection.getAnchors().size() - 1) {
@@ -38,7 +38,7 @@ public class DotBSplineRouter extends StraightRouter {
 						? startReferencePoint : endReferencePoint);
 			}
 		} else {
-			super.updateReferencePoint(connection, anchorIndex);
+			super.updateComputationParameters(connection, anchorIndex);
 		}
 	}
 }
