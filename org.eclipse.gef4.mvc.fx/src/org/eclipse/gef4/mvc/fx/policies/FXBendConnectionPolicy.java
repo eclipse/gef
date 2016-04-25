@@ -881,23 +881,20 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	}
 
 	private void removeOverlainSegments() {
-		boolean removed = testAndRemoveSegmentOverlay(
-				new int[] { -2, -1, 2, 3 });
-		if (!removed) {
-			removed = testAndRemoveSegmentOverlay(new int[] { -2, -1, -1, 2 });
+		// define indices for segment overlays
+		int[][] possibleSegmentOverlays = new int[][] {
+				new int[] { -2, -1, 2, 3 }, new int[] { -2, -1, 2 },
+				new int[] { -1, 2, 3 }, new int[] { -1, 2 },
+				new int[] { -2, -1 }, new int[] { 2, 3 }, };
+
+		// test for segment overlays and remove the first segment overlays that
+		// can be found
+		boolean removed = false;
+		for (int i = 0; i < possibleSegmentOverlays.length && !removed; i++) {
+			removed = testAndRemoveSegmentOverlay(possibleSegmentOverlays[i]);
 		}
-		if (!removed) {
-			removed = testAndRemoveSegmentOverlay(new int[] { -1, 2, 2, 3 });
-		}
-		if (!removed) {
-			removed = testAndRemoveSegmentOverlay(new int[] { -1, 2 });
-		}
-		if (!removed) {
-			removed = testAndRemoveSegmentOverlay(new int[] { -2, -1 });
-		}
-		if (!removed) {
-			removed = testAndRemoveSegmentOverlay(new int[] { 2, 3 });
-		}
+
+		// apply changes (if any)
 		if (removed) {
 			locallyExecuteOperation();
 		}
@@ -1001,90 +998,76 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 
 	/**
 	 * Tests if the current selection complies to the overlay specified by the
-	 * given parameters. The <i>segmentIndicesRelativeToSelection</i> is an
-	 * integer array that specifies the start and end indices (relative to the
-	 * selected indices) of all segments that are tested to be overlain (i.e.
-	 * not including the selected indices).
+	 * given parameters. The <i>overlainPointIndicesRelativeToSelection</i> is
+	 * an integer array that specifies the indices (relative to the selected
+	 * indices) of all points that are tested to be overlain by the current
+	 * selection.
+	 * <p>
+	 * The points specified by the given indices need to be aligned with the
+	 * selection, i.e. they need to be on a vertical or horizontal line. The
+	 * first and last indices specify the resulting segment which the selection
+	 * snaps to in case of an overlay. If the distance between the resulting
+	 * segment and the selected segment is smaller than the
+	 * {@link #getOverlayThreshold()}, then all specified points and the
+	 * selection are replaced by the result segment.
 	 *
-	 * TODO: is this right?? -> should we not pass in these parameters
-	 * separately?? The first and last indices specify the resulting segment
-	 * which the selection snaps to in case of an overlay.
-	 *
-	 * @param overlainSegmentIndicesRelativeToSelection
-	 *            An integer array that specifies the start and end indices
-	 *            (relative to the selected indices) of all segments that are
-	 *            part of this overlay, except for the selected indices.
+	 * @param overlainPointIndicesRelativeToSelection
+	 *            An integer array that specifies the indices (relative to the
+	 *            selected indices) of all points that are part of this overlay
+	 *            in ascending order, excluding the selected indices.
 	 * @return <code>true</code> if the overlay was removed, otherwise
 	 *         <code>false</code>.
 	 */
 	private boolean testAndRemoveSegmentOverlay(
-			int[] overlainSegmentIndicesRelativeToSelection) {
-		System.out.println("[test segment overlay]");
-		System.out.println("overlain segment indices = "
-				+ toList(overlainSegmentIndicesRelativeToSelection));
-
+			int[] overlainPointIndicesRelativeToSelection) {
 		// check that positions are present for the given indices within the
 		// connection. if not all are present, return without applying any
 		// modifications.
 		List<Point> points = getConnection().getPoints();
 		int selectionStartIndex = selectedExplicitAnchorIndices.get(0);
-		int firstIndex = overlainSegmentIndicesRelativeToSelection[0];
-		int lastIndex = overlainSegmentIndicesRelativeToSelection[overlainSegmentIndicesRelativeToSelection.length
+		int firstIndex = overlainPointIndicesRelativeToSelection[0];
+		int lastIndex = overlainPointIndicesRelativeToSelection[overlainPointIndicesRelativeToSelection.length
 				- 1];
 		if (selectionStartIndex + firstIndex < 0
 				|| selectionStartIndex + firstIndex >= points.size()) {
-			System.out.println("FALSE firstIndex");
 			return false;
 		}
 		if (selectionStartIndex + lastIndex < 0
 				|| selectionStartIndex + lastIndex >= points.size()) {
-			System.out.println("FALSE lastIndex");
 			return false;
 		}
 
 		// evaluate positions for the given indices
-		List<Point> segmentPoints = new ArrayList<>();
-		for (int i = 0; i < overlainSegmentIndicesRelativeToSelection.length; i++) {
-			segmentPoints.add(points.get(selectionStartIndex
-					+ overlainSegmentIndicesRelativeToSelection[i]));
+		List<Point> overlainPoints = new ArrayList<>();
+		for (int i = 0; i < overlainPointIndicesRelativeToSelection.length; i++) {
+			overlainPoints.add(points.get(selectionStartIndex
+					+ overlainPointIndicesRelativeToSelection[i]));
 		}
 
 		// determine segment positions (relative to their orientations). if not
 		// all segments have the same position, return without applying any
 		// modifications.
-		double p = Double.NaN;
-		for (int i = 0; i < segmentPoints.size(); i += 2) {
-			Point s = segmentPoints.get(i);
-			Point e = segmentPoints.get(i + 1);
-			if (isSelectionHorizontal && !isUnpreciseEquals(s.y, e.y)
-					|| !isSelectionHorizontal && !isUnpreciseEquals(s.x, e.x)) {
+		double p = isSelectionHorizontal ? overlainPoints.get(0).y
+				: overlainPoints.get(0).x;
+		for (int i = 1; i < overlainPoints.size(); i++) {
+			Point q = overlainPoints.get(i);
+			if (isSelectionHorizontal && !isUnpreciseEquals(p, q.y)
+					|| !isSelectionHorizontal && !isUnpreciseEquals(p, q.x)) {
 				// wrong orientation
-				System.out.println("FALSE wrong orientation");
 				return false;
 			}
-			if (Double.isNaN(p)) {
-				p = isSelectionHorizontal ? s.y : s.x;
-			}
-			if (isSelectionHorizontal) {
-				if (!isUnpreciseEquals(p, s.y) || !isUnpreciseEquals(p, e.y)) {
-					// wrong position
-					System.out.println("FALSE wrong position Y");
-					return false;
-				}
-			} else {
-				if (!isUnpreciseEquals(p, s.x) || !isUnpreciseEquals(p, e.x)) {
-					// wrong position
-					System.out.println("FALSE wrong position X");
-					return false;
-				}
+			if (isSelectionHorizontal && !isUnpreciseEquals(p, q.y)
+					|| !isSelectionHorizontal && !isUnpreciseEquals(p, q.x)) {
+				// wrong position
+				return false;
 			}
 		}
 
 		// compute the (provisional) resulting segment from the given overlain
 		// indices. the first index is the start index for the result, the last
 		// index is the end index for the result.
-		Point resultStart = segmentPoints.get(0);
-		Point resultEnd = segmentPoints.get(segmentPoints.size() - 1);
+		Point resultStart = overlainPoints.get(0);
+		Point resultEnd = overlainPoints.get(overlainPoints.size() - 1);
 
 		// compute the distance between the selected segment and the overlain
 		// result segment. if the distance is above the removal threshold,
@@ -1095,20 +1078,19 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				.abs(isSelectionHorizontal ? resultStart.y - selectionStart.y
 						: resultStart.x - selectionStart.x);
 		if (distance > DEFAULT_OVERLAY_THRESHOLD) {
-			System.out.println("FALSE distance = " + distance);
 			return false;
 		}
 
 		System.out.println("=== Segment Overlay ===");
 		System.out.println("selection: " + selectedExplicitAnchorIndices);
-		System.out.println("overlain: "
-				+ toList(overlainSegmentIndicesRelativeToSelection));
+		System.out.println(
+				"overlain: " + toList(overlainPointIndicesRelativeToSelection));
 		System.out.println("distance: " + distance);
 
 		// at this point, the overlay is confirmed and needs to be removed.
 		// therefore, the overlap of selection and result needs to be removed
 		// and their difference needs to be saved as the final result
-		if (overlainSegmentIndicesRelativeToSelection.length == 2) {
+		if (overlainPointIndicesRelativeToSelection.length == 2) {
 			if (isSelectionHorizontal) {
 				// same y values => adjust x
 				if (firstIndex < 0) {
