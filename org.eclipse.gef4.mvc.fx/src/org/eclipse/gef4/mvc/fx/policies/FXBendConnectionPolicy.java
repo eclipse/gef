@@ -612,13 +612,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		return Math.abs(y0 - y1) < 1;
 	}
 
-	@Override
-	protected void locallyExecuteOperation() {
-		super.locallyExecuteOperation();
-		// TODO: route should be part of the operation, so it is undoable
-		route();
-	}
-
 	/**
 	 * Makes the connection anchor at the given connection index explicit and
 	 * returns its explicit index.
@@ -670,15 +663,17 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		}
 		// create explicit anchors one by one in reverse order so that the
 		// indices are not messed up
+		int addedCount = 0;
 		List<Integer> handles = new ArrayList<>();
 		for (int i = 0; i < implicitGroups.size(); i++) {
 			ImplicitGroup ig = implicitGroups.get(i);
-			int prec = ig.precedingExplicitIndex;
+			int prec = ig.precedingExplicitIndex + addedCount;
 			if (!handles.isEmpty() || isStartExplicit) {
 				handles.add(prec);
 			}
 			for (Point p : ig.points) {
 				prec = createAfter(prec, p);
+				addedCount++;
 				handles.add(prec);
 			}
 		}

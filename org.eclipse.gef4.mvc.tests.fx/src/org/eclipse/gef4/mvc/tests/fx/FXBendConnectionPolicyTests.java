@@ -1849,6 +1849,36 @@ public class FXBendConnectionPolicyTests {
 
 		// move segment back to its original position
 		bendPolicy.move(new Point(), new Point());
+		// check number of points and their positions
+		assertEquals(3, countExplicit(connection.getVisual()));
+		assertEquals(4, connection.getVisual().getPoints().size());
+		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
+		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
+
+		// move down to endPoint height - 5 so that it will snap with the two
+		// implicit points
+		bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y - 5));
+		assertEquals(3, countExplicit(connection.getVisual()));
+		assertEquals(3, connection.getVisual().getPoints().size());
+		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
+		equalsUnprecise(endPoint, connection.getVisual().getEndPoint());
+		equalsUnprecise(new Point(startPoint.x, endPoint.y), connection.getVisual().getPoint(1));
+
+		// move further down so that the segment is restored
+		bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y + 15));
+		assertEquals(4, countExplicit(connection.getVisual()));
+		assertEquals(5, connection.getVisual().getPoints().size());
+		equalsUnprecise(startPoint, connection.getVisual().getStartPoint());
+
+		// check that segment is "unsnapped", i.e. end point is still on initial
+		// y coordinate
+		Point endPositionHint = connection.getVisual().getRouter().positionHintsProperty()
+				.get(connection.getVisual().getEndAnchorKey());
+		assertEquals(connection.getVisual().getEndPoint().y, endPositionHint.y, 0.5);
+		// TODO: Ensure position hints are correctly restored.
+
+		// move segment back to its original position
+		bendPolicy.move(new Point(), new Point());
 		bendPolicy.commit();
 		// check number of points and their positions
 		assertEquals(3, countExplicit(connection.getVisual()));
