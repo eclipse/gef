@@ -53,15 +53,19 @@ public class FXDefaultSelectionHandlePartFactory
 	 * used to generate selection handles.
 	 */
 	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
+
 	/**
 	 * The minimum segment length so that creation handles are shown.
 	 */
-	public static final double CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH = 30;
+	protected static final double BENDPOINT_CREATE_HANDLE_MINIMUM_SEGMENT_LENGTH = 30;
 	/**
-	 * The minimum segment length so that creation handles are shown for
-	 * orthogonal connections.
+	 * The minimum segment length for the creation of segment bend handles.
 	 */
-	public static final double CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL = 45;
+	protected static final double SEGMENT_MOVE_HANDLE_MINIMUM_SEGMENT_LENGTH = 1;
+	/**
+	 * The minimum segment length for creation of segment create handles
+	 */
+	protected static final double SEGMENT_CREATE_HANDLE_MINIMUM_SEGMENT_LENGTH = 45;
 
 	private static Provider<BezierCurve[]> createSegmentsProvider(
 			final Provider<? extends IGeometry> geometryProvider) {
@@ -285,7 +289,7 @@ public class FXDefaultSelectionHandlePartFactory
 				// create quarter handle for the creation of a new segment
 				double segmentLength = new Polyline(segments[i].getPoints())
 						.getLength();
-				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL) {
+				if (segmentLength > SEGMENT_CREATE_HANDLE_MINIMUM_SEGMENT_LENGTH) {
 					FXRectangleSegmentHandlePart part = injector
 							.getInstance(FXRectangleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
@@ -295,15 +299,17 @@ public class FXDefaultSelectionHandlePartFactory
 				}
 
 				// mid handle for segment drag
-				FXRectangleSegmentHandlePart midPart = injector
-						.getInstance(FXRectangleSegmentHandlePart.class);
-				midPart.setSegmentsProvider(segmentsProvider);
-				midPart.setSegmentIndex(i);
-				midPart.setSegmentParameter(0.5);
-				hps.add(midPart);
+				if (segmentLength > SEGMENT_MOVE_HANDLE_MINIMUM_SEGMENT_LENGTH) {
+					FXRectangleSegmentHandlePart midPart = injector
+							.getInstance(FXRectangleSegmentHandlePart.class);
+					midPart.setSegmentsProvider(segmentsProvider);
+					midPart.setSegmentIndex(i);
+					midPart.setSegmentParameter(0.5);
+					hps.add(midPart);
+				}
 
 				// create quarter handle for the creation of a new segment
-				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH_ORTHOGONAL) {
+				if (segmentLength > SEGMENT_CREATE_HANDLE_MINIMUM_SEGMENT_LENGTH) {
 					FXRectangleSegmentHandlePart part = injector
 							.getInstance(FXRectangleSegmentHandlePart.class);
 					part.setSegmentsProvider(segmentsProvider);
@@ -335,7 +341,7 @@ public class FXDefaultSelectionHandlePartFactory
 
 				double segmentLength = new Polyline(segments[i].getPoints())
 						.getLength();
-				if (segmentLength >= CREATION_HANDLE_MINIMUM_SEGMENT_LENGTH) {
+				if (segmentLength >= BENDPOINT_CREATE_HANDLE_MINIMUM_SEGMENT_LENGTH) {
 					// create handle for the middle of a segment
 					part = injector
 							.getInstance(FXCircleSegmentHandlePart.class);
