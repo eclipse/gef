@@ -61,7 +61,7 @@ public class FXDefaultSelectionHandlePartFactory
 	/**
 	 * The minimum segment length for the creation of segment bend handles.
 	 */
-	protected static final double SEGMENT_MOVE_HANDLE_MINIMUM_SEGMENT_LENGTH = 1;
+	protected static final double SEGMENT_MOVE_HANDLE_MINIMUM_SEGMENT_LENGTH = 5;
 	/**
 	 * The minimum segment length for creation of segment create handles
 	 */
