@@ -369,8 +369,43 @@ public class FXBendConnectionPolicyTests {
 		}
 	}
 
+	/**
+	 * Returns the index within the Connection's anchors for the given explicit
+	 * anchor index.
+	 *
+	 * @param connection
+	 *            The {@link Connection} for which to determine the anchor index
+	 *            matching the given explicit index.
+	 * @param explicitAnchorIndex
+	 *            The explicit anchor index for which to return the connection
+	 *            index.
+	 * @return The connection's anchor index for the given explicit anchor
+	 *         index.
+	 */
+	// FIXME: Duplicate code (see
+	// FXBendConnectionOperation#getConnectionIndex(int)). Find a better place
+	// for this functionality (perhaps within Connection or IConnectionRouter).
+	public static int getConnectionIndex(Connection connection, int explicitAnchorIndex) {
+		int explicitCount = -1;
+
+		for (int i = 0; i < connection.getPoints().size(); i++) {
+			IAnchor a = connection.getAnchor(i);
+			if (!connection.getRouter().isImplicitAnchor(a)) {
+				explicitCount++;
+			}
+			if (explicitCount == explicitAnchorIndex) {
+				// found all operation indices
+				return i;
+			}
+		}
+
+		throw new IllegalArgumentException(
+				"Cannot determine connection index for operation index " + explicitAnchorIndex + ".");
+	}
+
 	private static Point getPosition(FXBendConnectionPolicy bendPolicy, int explicitIndex) {
-		return bendPolicy.getHost().getVisual().getPoint(bendPolicy.getConnectionIndex(explicitIndex));
+		return bendPolicy.getHost().getVisual()
+				.getPoint(getConnectionIndex(bendPolicy.getHost().getVisual(), explicitIndex));
 	}
 
 	/**

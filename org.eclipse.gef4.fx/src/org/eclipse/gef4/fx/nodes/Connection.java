@@ -1025,7 +1025,6 @@ public class Connection extends Group {
 			curveNode.setClip(null);
 		}
 		inRefresh = false;
-
 	}
 
 	/**

@@ -235,7 +235,7 @@ public class FXBendFirstAnchorageOnSegmentHandleDragPolicy
 			// selected for movement
 			if (isConnected) {
 				// compute connection index for point to copy
-				int connectionIndex = bendPolicy
+				int connectionIndex = bendPolicy.getBendOperation()
 						.getConnectionIndex(selectFirstHalve ? firstAnchorHandle
 								: secondAnchorHandle);
 				// determine position in scene for point to copy

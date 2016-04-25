@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.fx.anchors.OrthogonalProjectionStrategy;
@@ -317,7 +316,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 				// the one with matching connection index
 				List<IAnchor> newAnchors = getBendOperation().getNewAnchors();
 				for (int j = 0; j < newAnchors.size(); j++) {
-					if (getConnectionIndex(j) == i) {
+					if (getBendOperation().getConnectionIndex(j) == i) {
 						return j;
 					}
 				}
@@ -346,6 +345,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 *            the search starts.
 	 * @return An explicit anchor index for the previous explicit anchor.
 	 */
+	// TODO: Rename to findFirstExplicitAnchorBefore(int connectionIndex)
 	public int findExplicitAnchorBackward(int connectionIndex) {
 		return findExplicitAnchor(connectionIndex, -1);
 	}
@@ -363,6 +363,7 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 *            the search starts.
 	 * @return An explicit anchor index for the next explicit anchor.
 	 */
+	// TODO: Rename to findFirstExplicitAnchorAfter(int connectionIndex)
 	public int findExplicitAnchorForward(int connectionIndex) {
 		return findExplicitAnchor(connectionIndex, 1);
 	}
@@ -457,35 +458,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 		return getHost().getVisual();
 	}
 
-	/**
-	 * Returns the index within the Connection's anchors for the given explicit
-	 * anchor index.
-	 *
-	 * @param explicitAnchorIndex
-	 *            The explicit anchor index for which to return the connection
-	 *            index.
-	 * @return The connection's anchor index for the given explicit anchor
-	 *         index.
-	 */
-	public int getConnectionIndex(int explicitAnchorIndex) {
-		int explicitCount = -1;
-
-		for (int i = 0; i < getConnection().getPoints().size(); i++) {
-			IAnchor a = getConnection().getAnchor(i);
-			if (!getConnection().getRouter().isImplicitAnchor(a)) {
-				explicitCount++;
-			}
-			if (explicitCount == explicitAnchorIndex) {
-				// found all operation indices
-				return i;
-			}
-		}
-
-		throw new IllegalArgumentException(
-				"Cannot determine connection index for operation index "
-						+ explicitAnchorIndex + ".");
-	}
-
 	@Override
 	protected List<BendPoint> getCurrentBendPoints() {
 		return getCurrentBendPoints(getHost());
@@ -567,8 +539,8 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 * @return
 	 */
 	private Point getPoint(int explicitAnchorIndex) {
-		return getConnection()
-				.getPoint(getConnectionIndex(explicitAnchorIndex));
+		return getConnection().getPoint(
+				getBendOperation().getConnectionIndex(explicitAnchorIndex));
 	}
 
 	@Override
@@ -939,39 +911,6 @@ public class FXBendConnectionPolicy extends AbstractBendPolicy<Node> {
 	 * forwarded to the anchors.
 	 */
 	protected void route() {
-		// TODO: generalize for all routers
-		if (getBendOperation().getNewAnchors()
-				.get(0) instanceof DynamicAnchor) {
-			IAnchor referenceAnchor = getBendOperation().getNewAnchors().get(1);
-			AnchorKey referenceAnchorKey = getConnection()
-					.getAnchorKey(getConnectionIndex(1));
-			Point referencePoint = referenceAnchor
-					.getPosition(referenceAnchorKey);
-			getConnection().getRouter().positionHintsProperty()
-					.put(getConnection().getStartAnchorKey(), referencePoint);
-			System.out.println("Set reference point for "
-					+ getConnection().getStartAnchorKey() + " to "
-					+ referencePoint);
-		}
-		int lastIndex = getBendOperation().getNewAnchors().size() - 1;
-		if (getBendOperation().getNewAnchors()
-				.get(lastIndex) instanceof DynamicAnchor) {
-			IAnchor referenceAnchor = getBendOperation().getNewAnchors()
-					.get(lastIndex - 1);
-			AnchorKey referenceAnchorKey = getConnection()
-					.getAnchorKey(getConnectionIndex(lastIndex - 1));
-			Point referencePoint = referenceAnchor
-					.getPosition(referenceAnchorKey);
-			getConnection().getRouter().positionHintsProperty()
-					.put(getConnection().getEndAnchorKey(), referencePoint);
-			System.out.println("Set reference point for "
-					+ getConnection().getEndAnchorKey() + " to "
-					+ referencePoint);
-		}
-		// TODO: routing can affect the anchors (the router will insert or
-		// remove implicit anchors). We need to re-init after we have
-		// applied the router
-		getConnection().getRouter().route(getConnection());
 	}
 
 	/**
