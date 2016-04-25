@@ -54,6 +54,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 /**
@@ -160,6 +161,17 @@ public class Connection extends Group {
 
 		// ensure connection does not paint further than geometric end points
 		// getCurveNode().setStrokeLineCap(StrokeLineCap.BUTT);
+
+		curveNode.localToParentTransformProperty()
+				.addListener(new ChangeListener<Transform>() {
+
+					@Override
+					public void changed(
+							ObservableValue<? extends Transform> observable,
+							Transform oldValue, Transform newValue) {
+						refresh();
+					}
+				});
 
 		// add the curve node
 		getChildren().add(curveNode);
@@ -971,7 +983,7 @@ public class Connection extends Group {
 			return;
 		}
 		inRefresh = true;
-
+		
 		// TODO: guard against router value being null
 		getRouter().route(this);
 		ICurve newGeometry = getInterpolator().interpolate(this);
