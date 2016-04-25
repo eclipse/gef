@@ -213,17 +213,6 @@ public class Connection extends Group {
 			throw new IllegalArgumentException(
 					"anchorKey may only be anchored to curve node");
 		}
-		if (anchorsProperty.containsKey(anchorKey)) {
-			throw new IllegalArgumentException(
-					"AnchorKey is already contained");
-		}
-		if (!getStartAnchorKey().equals(anchorKey)
-				&& !getEndAnchorKey().equals(anchorKey)) {
-			if (controlAnchorKeys.contains(anchorKey)) {
-				throw new IllegalStateException(
-						"anchorKey is not contained but key is registered in control anchor key map.");
-			}
-		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
