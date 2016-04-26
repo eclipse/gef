@@ -18,7 +18,7 @@ Point:
 	x=DOUBLE "," y=DOUBLE ("," z=DOUBLE)? (inputOnly?="!")?;
 
 terminal DOUBLE returns ecore::EDouble:
-	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)?;
+	('-')? (('.' ('0'..'9')+) | (('0'..'9')+ (('.') ('0'..'9')*)?));
 
 terminal WS:
 	(' ' | '\t' | '\r' | '\n')+;

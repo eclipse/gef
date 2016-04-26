@@ -369,6 +369,7 @@ public class DotAttributesTests {
 		// set valid string values
 		DotAttributes.setPos(n, "47, 11");
 		DotAttributes.setPos(n, "34.5, 45.3!");
+		DotAttributes.setPos(n, "-221.31,936.82");
 
 		// set valid parsed values
 		Point pos = PointFactory.eINSTANCE.createPoint();
@@ -808,7 +809,7 @@ public class DotAttributesTests {
 		Node n2 = new Node.Builder().buildNode();
 		Edge edge = new Edge.Builder(n1, n2).buildEdge();
 
-		// set valid string values
+		// set valid values
 		DotAttributes.setPos(edge,
 				"e,42.762,459.02 49.25,203.93 41.039,213.9 31.381,227.75 27,242 3.486,318.47 8.9148,344.07 27,422 29.222,431.57 33.428,441.41 37.82,449.98");
 		assertEquals(
