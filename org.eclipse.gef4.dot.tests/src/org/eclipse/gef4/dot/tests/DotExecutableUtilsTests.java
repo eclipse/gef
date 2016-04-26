@@ -124,11 +124,14 @@ public class DotExecutableUtilsTests {
 
 	@Test(timeout = 2000)
 	public void testComplexDot() throws Exception {
-		File dotFile = new File("./resources/arrowshapes_direction_both.dot");
-		assertTrue(dotFile.exists());
-		String[] dotResult = DotExecutableUtils
-				.executeDot(new File(dotExecutablePath), dotFile, null, null);
-		assertNotNull("Result should not be null", dotResult);
+		if (dotExecutablePath != null) {
+			File dotFile = new File(
+					"./resources/arrowshapes_direction_both.dot");
+			assertTrue(dotFile.exists());
+			String[] dotResult = DotExecutableUtils.executeDot(
+					new File(dotExecutablePath), dotFile, null, null);
+			assertNotNull("Result should not be null", dotResult);
+		}
 	}
 
 }
