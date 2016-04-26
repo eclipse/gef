@@ -17,6 +17,7 @@
  *                      insensitive keywords properly (bug #454626)
  *                    - refactored grammar to be unambiguous (not relying on 
  *                      backtracking)
+ *     Tamas Miklossy - modify grammar to allow empty attribute lists (bug #461506)
  * 
  *******************************************************************************/
 grammar org.eclipse.gef4.dot.internal.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
@@ -49,7 +50,8 @@ AttrStmt:
 	type=AttributeType (attrLists+=AttrList)+;
 
 AttrList:
-	"[" (attributes+=Attribute ("," | ";")?)+ "]";
+	{AttrList}
+	"[" (attributes+=Attribute ("," | ";")?)* "]";
 
 Attribute:
 	name=ID "=" value=ID;

@@ -8,12 +8,14 @@
  *
  * Contributors:
  *     Tamas Miklossy (itemis AG) - initial implementation (bug #477980)
- *                                - Add support for polygon-based node shapes (bug #441352)		
+ *                                - Add support for polygon-based node shapes (bug #441352)
+ *                                - modify grammar to allow empty attribute lists (bug #461506)		
  *
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -39,6 +41,72 @@ public class DotParserTests {
 
 	@Inject
 	private ValidationTestHelper validationTestHelper;
+
+	@Test
+	public void testEmptyString() {
+		try {
+			DotAst dotAst = parserHelper.parse("");
+			assertNull(dotAst);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testEmptyGraph() {
+		testString("graph {}");
+	}
+
+	@Test
+	public void testEmptyDirectedGraph() {
+		testString("digraph {}");
+	}
+
+	@Test
+	public void testEmptyStrictGraph() {
+		testString("strict graph {}");
+	}
+
+	@Test
+	public void testEmptyStrictDirectedGraph() {
+		testString("strict digraph {}");
+	}
+
+	@Test
+	public void testGraphWithOneNode() {
+		testString("graph {n1}");
+	}
+
+	@Test
+	public void testGraphWithOneNodeAndEmptyNodeAttributeList() {
+		testString("graph {n1[]}");
+	}
+
+	@Test
+	public void testGraphWithOneEdge() {
+		testString("graph {n1--n2}");
+	}
+
+	@Test
+	public void testGraphWithOneEdgeAndEmptyEdgeAttributeList() {
+		testString("graph {n1--n2[]}");
+	}
+
+	@Test
+	public void testGraphWithEmptyGraphAttributeStatement() {
+		testString("graph {graph[]}");
+	}
+
+	@Test
+	public void testGraphWithEmptyNodeAttributeStatement() {
+		testString("graph {node[]}");
+	}
+
+	@Test
+	public void testGraphWithEmptyEdgeAttributeStatement() {
+		testString("graph {edge[]}");
+	}
 
 	@Test
 	public void testArrowShapesSingle() {
@@ -73,8 +141,12 @@ public class DotParserTests {
 	private void testFile(String fileName) {
 		String fileContents = DotFileUtils
 				.read(new File(DotTestUtils.RESOURCES_TESTS + fileName));
+		testString(fileContents);
+	}
+
+	private void testString(String text) {
 		try {
-			DotAst dotAst = parserHelper.parse(fileContents);
+			DotAst dotAst = parserHelper.parse(text);
 			assertNotNull(dotAst);
 			validationTestHelper.assertNoErrors(dotAst);
 		} catch (Exception e) {
