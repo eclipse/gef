@@ -17,16 +17,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.nodes.GeometryNode;
+import org.eclipse.gef4.fx.utils.NodeUtils;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2FX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeOperation;
-import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IResizableContentPart;
@@ -38,6 +36,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 import javafx.collections.MapChangeListener;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -49,6 +48,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -61,6 +61,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 
@@ -194,6 +195,7 @@ public class NodePart extends AbstractFXContentPart<Group>
 	private Node nestedGraphIcon;
 	private StackPane nestedContentStackPane;
 	private Pane nestedContentPane;
+	private AnchorPane nestedContentAnchorPane;
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
@@ -244,7 +246,8 @@ public class NodePart extends AbstractFXContentPart<Group>
 			@Override
 			public void resize(double w, double h) {
 				vbox.setPrefSize(w, h);
-				shape.resize(w == 0 ? 1 : w, h == 0 ? 1 : h);
+				vbox.autosize();
+				shape.resize(vbox.getLayoutBounds().getWidth(), vbox.getLayoutBounds().getHeight());
 			}
 		};
 
@@ -264,27 +267,25 @@ public class NodePart extends AbstractFXContentPart<Group>
 
 		// put image and text next to each other at the top of the node
 		HBox hbox = new HBox();
-		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		hbox.getChildren().addAll(iconImageView, labelText);
 		hbox.setAlignment(Pos.CENTER);
 
 		nestedContentPane = createNestedContentPane();
-		final AnchorPane pane = new AnchorPane();
-		pane.setStyle("-fx-background-color: white;");
-		pane.getChildren().add(nestedContentPane);
-		AnchorPane.setLeftAnchor(nestedContentPane, -0.5d);
-		AnchorPane.setTopAnchor(nestedContentPane, -0.5d);
-		AnchorPane.setRightAnchor(nestedContentPane, 0.5d);
-		AnchorPane.setBottomAnchor(nestedContentPane, 0.5d);
-		pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		nestedContentStackPane = new StackPane();
-		nestedContentStackPane.getChildren().add(pane);
-		nestedContentStackPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		VBox.setVgrow(nestedContentStackPane, Priority.ALWAYS);
+		nestedContentStackPane.getChildren().add(nestedContentPane);
+		nestedContentAnchorPane = new AnchorPane();
+		nestedContentAnchorPane.setStyle("-fx-background-color: white;");
+		nestedContentAnchorPane.getChildren().add(nestedContentStackPane);
+		AnchorPane.setLeftAnchor(nestedContentStackPane, -0.5d);
+		AnchorPane.setTopAnchor(nestedContentStackPane, -0.5d);
+		AnchorPane.setRightAnchor(nestedContentStackPane, 0.5d);
+		AnchorPane.setBottomAnchor(nestedContentStackPane, 0.5d);
+		VBox.setVgrow(nestedContentAnchorPane, Priority.ALWAYS);
 
 		// put nested content stack pane below image and text
 		vbox = new VBox();
 		vbox.setMouseTransparent(true);
+		vbox.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 		vbox.getChildren().addAll(hbox);
 
 		// place the box below the other visuals
@@ -368,13 +369,12 @@ public class NodePart extends AbstractFXContentPart<Group>
 				vbox.setPadding(Insets.EMPTY);
 			}
 			if (isNesting()) {
-				if (!vbox.getChildren().contains(nestedContentStackPane)) {
-					vbox.getChildren().add(nestedContentStackPane);
+				if (!vbox.getChildren().contains(nestedContentAnchorPane)) {
+					vbox.getChildren().add(nestedContentAnchorPane);
 					if (vbox.getPrefWidth() == 0 && vbox.getPrefHeight() == 0) {
 						vbox.setPrefSize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
 								DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
-						vbox.resize(DEFAULT_OUTER_LAYOUT_CONTAINER_WIDTH_NESTING,
-								DEFAULT_OUTER_LAYOUT_CONTAINER_HEIGHT_NESTING);
+						vbox.autosize();
 					}
 				}
 				// show a nested graph icon dependent on the zoom level
@@ -386,10 +386,10 @@ public class NodePart extends AbstractFXContentPart<Group>
 					showNestedGraphIcon();
 				}
 			} else {
-				if (vbox.getChildren().contains(nestedContentStackPane)) {
-					vbox.getChildren().remove(nestedContentStackPane);
+				if (vbox.getChildren().contains(nestedContentAnchorPane)) {
+					vbox.getChildren().remove(nestedContentAnchorPane);
 					vbox.setPrefSize(0, 0);
-					vbox.resize(0, 0);
+					vbox.autosize();
 				}
 			}
 		}
@@ -401,31 +401,16 @@ public class NodePart extends AbstractFXContentPart<Group>
 		Point position = ZestProperties.getPosition(node);
 		if (position != null) {
 			// translate using a transform operation
-			FXTransformOperation refreshPositionOp = new FXTransformOperation(
-					getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get());
-			refreshPositionOp
-					.setNewTransform(Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y)));
-			try {
-				refreshPositionOp.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
+			Affine transform = getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
+			Affine newTransform = Geometry2FX.toFXAffine(new AffineTransform(1, 0, 0, 1, position.x, position.y));
+			if (!NodeUtils.equals(transform, newTransform)) {
+				NodeUtils.setAffine(transform, newTransform);
 			}
 		}
 
 		Dimension size = ZestProperties.getSize(node);
 		if (size != null) {
-			FXResizeOperation resizeOperation = new FXResizeOperation(getVisual());
-			if (size.getWidth() != -1) {
-				resizeOperation.setDw(size.getWidth() - getVisual().getLayoutBounds().getWidth());
-			}
-			if (size.getHeight() != -1) {
-				resizeOperation.setDh(size.getHeight() - getVisual().getLayoutBounds().getHeight());
-			}
-			try {
-				resizeOperation.execute(null, null);
-			} catch (ExecutionException e) {
-				throw new IllegalStateException(e);
-			}
+			getVisual().resize(size.width, size.height);
 		}
 	}
 
@@ -579,11 +564,18 @@ public class NodePart extends AbstractFXContentPart<Group>
 	@Override
 	public void transformContent(AffineTransform transform) {
 		// transform operation
-		Point position = ZestProperties.getPosition(getContent());
-		if (position == null) {
-			position = new Point();
+		Point position = null;
+		if (ZestProperties.getPosition(getContent()) == null) {
+			// use visual location (that was already applied)
+			Bounds hostBounds = getVisual().getLayoutBounds();
+			double minx = hostBounds.getMinX();
+			double miny = hostBounds.getMinY();
+			Affine tx = getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
+			position = new Point(tx.getTx() + minx, tx.getTy() + miny);
+		} else {
+			position = transform.getTransformed(ZestProperties.getPosition(getContent()));
 		}
-		ZestProperties.setPosition(getContent(), transform.getTransformed(position));
+		ZestProperties.setPosition(getContent(), position);
 	}
 
 }

@@ -54,21 +54,16 @@ public class GraphPart extends AbstractFXContentPart<Group> {
 			}).synchronizeContentChildren(doGetContentChildren());
 
 			// apply layout
-			// TODO: this should be done by GraphLayoutBehavior
-			applyLayout(true);
+			GraphLayoutBehavior layoutBehavior = getAdapter(GraphLayoutBehavior.class);
+			if (layoutBehavior != null) {
+				layoutBehavior.applyLayout(true);
+			}
 		}
 	};
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
 		getVisual().getChildren().add(index, child.getVisual());
-	}
-
-	private void applyLayout(boolean clean) {
-		GraphLayoutBehavior layoutBehavior = getAdapter(GraphLayoutBehavior.class);
-		if (layoutBehavior != null) {
-			layoutBehavior.applyLayout(clean);
-		}
 	}
 
 	@Override

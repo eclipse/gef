@@ -37,6 +37,8 @@ import javafx.scene.transform.Affine;
 // only applicable to NodePart (see #getHost())
 public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
+	private Dimension preLayoutSize = null;
+
 	@Override
 	public NodePart getHost() {
 		return (NodePart) super.getHost();
@@ -52,12 +54,19 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	protected void postLayout() {
 		org.eclipse.gef4.graph.Node content = getHost().getContent();
-		Point location = LayoutProperties.getLocation(content);
-		Dimension size = LayoutProperties.getSize(content);
+
+		// update size
+		Dimension postLayoutSize = LayoutProperties.getSize(content);
+		if (postLayoutSize != null) {
+			ZestProperties.setSize(content, postLayoutSize);
+		}
 
 		// location is center, position is top-left
-		ZestProperties.setPosition(content, location.getTranslated(size.getScaled(0.5).getNegated()));
-		ZestProperties.setSize(content, size.getCopy());
+		Point postLayoutLocation = LayoutProperties.getLocation(content);
+		if (postLayoutLocation != null) {
+			ZestProperties.setPosition(content, postLayoutLocation.getTranslated(
+					(postLayoutSize == null ? preLayoutSize : postLayoutSize).getScaled(0.5).getNegated()));
+		}
 
 		// refresh our visual
 		getHost().refreshVisual();
@@ -70,25 +79,35 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	protected void preLayout() {
 		org.eclipse.gef4.graph.Node content = getHost().getContent();
+
 		Node visual = getHost().getVisual();
+		Bounds hostBounds = visual.getLayoutBounds();
+		double minx = hostBounds.getMinX();
+		double miny = hostBounds.getMinY();
+		double maxx = hostBounds.getMaxX();
+		double maxy = hostBounds.getMaxY();
+		Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
 
-		Point position = ZestProperties.getPosition(content);
-		Dimension size = ZestProperties.getSize(content);
-
-		if (position == null || size == null) {
+		// initialize size
+		if (ZestProperties.getSize(content) != null) {
 			// no model information available yet, use visual location
-			Bounds hostBounds = visual.getLayoutBounds();
-			double minx = hostBounds.getMinX();
-			double miny = hostBounds.getMinY();
-			double maxx = hostBounds.getMaxX();
-			double maxy = hostBounds.getMaxY();
-			Affine transform = getHost().getAdapter(FXTransformPolicy.TRANSFORM_PROVIDER_KEY).get();
-			LayoutProperties.setLocation(content, new Point(transform.getTx() + minx, transform.getTy() + miny));
-			LayoutProperties.setSize(content, new Dimension(maxx - minx, maxy - miny));
+			preLayoutSize = ZestProperties.getSize(content).getCopy();
 		} else {
-			// location is center while position is top-left
-			LayoutProperties.setLocation(content, position.getTranslated(size.getScaled(0.5)));
-			LayoutProperties.setSize(content, size.getCopy());
+			preLayoutSize = new Dimension(maxx - minx, maxy - miny);
+		}
+		System.out.println("pre layout size of " + content + ": " + preLayoutSize);
+		LayoutProperties.setSize(content, preLayoutSize.getCopy());
+
+		// initialize location (layout location is center while visual position
+		// is top-left)
+		if (ZestProperties.getPosition(content) != null) {
+			LayoutProperties.setLocation(content,
+					ZestProperties.getPosition(content).getTranslated(preLayoutSize.getScaled(0.5)));
+
+		} else {
+			// no model information available yet, use visual location
+			LayoutProperties.setLocation(content, new Point(transform.getTx() + minx + (maxx - minx) / 2,
+					transform.getTy() + miny + (maxy - miny) / 2));
 		}
 
 		// additional information inferred from visual

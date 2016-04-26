@@ -32,29 +32,14 @@ public class LayoutProperties {
 	public static final String BOUNDS_PROPERTY = "layout_bounds";
 
 	/**
-	 * Defines the default value for the {@link #BOUNDS_PROPERTY}.
-	 */
-	public static final Rectangle DEFAULT_BOUNDS = new Rectangle();
-
-	/**
 	 * Stores the location of this EntityLayout.
 	 */
 	public static final String LOCATION_PROPERTY = "layout_location";
 
 	/**
-	 * Defines the default value for the {@link #LOCATION_PROPERTY}.
-	 */
-	public static final Point DEFAULT_LOCATION = new Point();
-
-	/**
 	 * Stores the size of this EntityLayout.
 	 */
 	public static final String SIZE_PROPERTY = "layout_size";
-
-	/**
-	 * Defines the default value for the {@link #SIZE_PROPERTY}.
-	 */
-	public static final Dimension DEFAULT_SIZE = new Dimension();
 
 	/**
 	 * Stores the movable state of this EntityLayout.
@@ -137,11 +122,7 @@ public class LayoutProperties {
 	 *         {@link Graph}.
 	 */
 	public static Rectangle getBounds(Graph graph) {
-		Object bounds = graph.getAttributes().get(BOUNDS_PROPERTY);
-		if (bounds instanceof Rectangle) {
-			return ((Rectangle) bounds).getCopy();
-		}
-		return DEFAULT_BOUNDS.getCopy();
+		return (Rectangle) graph.getAttributes().get(BOUNDS_PROPERTY);
 	}
 
 	/**
@@ -168,11 +149,7 @@ public class LayoutProperties {
 	 *         {@link Node}.
 	 */
 	public static Point getLocation(Node node) {
-		Object location = node.getAttributes().get(LOCATION_PROPERTY);
-		if (location instanceof Point) {
-			return ((Point) location).getCopy();
-		}
-		return DEFAULT_LOCATION.getCopy();
+		return (Point) node.getAttributes().get(LOCATION_PROPERTY);
 	}
 
 	/**
@@ -185,11 +162,7 @@ public class LayoutProperties {
 	 *         .
 	 */
 	public static Dimension getSize(Node node) {
-		Object size = node.getAttributes().get(SIZE_PROPERTY);
-		if (size instanceof Dimension) {
-			return ((Dimension) size).getCopy();
-		}
-		return DEFAULT_SIZE.getCopy();
+		return (Dimension) node.getAttributes().get(SIZE_PROPERTY);
 	}
 
 	/**

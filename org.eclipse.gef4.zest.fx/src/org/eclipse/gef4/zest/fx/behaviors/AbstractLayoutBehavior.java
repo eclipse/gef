@@ -33,34 +33,6 @@ import javafx.scene.Node;
  */
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
-	private Runnable postLayout = new Runnable() {
-		@Override
-		public void run() {
-			postLayout();
-		}
-	};
-
-	private Runnable preLayout = new Runnable() {
-		@Override
-		public void run() {
-			preLayout();
-		}
-	};
-
-	@Override
-	protected void doActivate() {
-		LayoutContext layoutContext = getLayoutContext();
-		layoutContext.schedulePreLayoutPass(preLayout);
-		layoutContext.schedulePostLayoutPass(postLayout);
-	}
-
-	@Override
-	protected void doDeactivate() {
-		LayoutContext layoutContext = getLayoutContext();
-		layoutContext.unschedulePreLayoutPass(preLayout);
-		layoutContext.unschedulePostLayoutPass(postLayout);
-	}
-
 	/**
 	 * Returns the {@link LayoutContext} for which {@link #preLayout()} and
 	 * {@link #postLayout()} shall be called before or after a layout pass,

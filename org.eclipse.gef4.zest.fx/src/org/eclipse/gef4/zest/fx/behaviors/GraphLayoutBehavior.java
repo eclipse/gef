@@ -22,6 +22,7 @@ import org.eclipse.gef4.layout.ILayoutFilter;
 import org.eclipse.gef4.layout.LayoutContext;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.ZestProperties;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
@@ -33,6 +34,7 @@ import org.eclipse.gef4.zest.fx.parts.NodePart;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 
 /**
@@ -44,6 +46,20 @@ import javafx.scene.Parent;
  */
 // only applicable for GraphPart (see #getHost())
 public class GraphLayoutBehavior extends AbstractLayoutBehavior {
+
+	private Runnable postLayout = new Runnable() {
+		@Override
+		public void run() {
+			postLayout();
+		}
+	};
+
+	private Runnable preLayout = new Runnable() {
+		@Override
+		public void run() {
+			preLayout();
+		}
+	};
 
 	private Parent nestingVisual;
 
@@ -117,7 +133,9 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void doActivate() {
-		super.doActivate();
+		LayoutContext layoutContext = getLayoutContext();
+		layoutContext.schedulePreLayoutPass(preLayout);
+		layoutContext.schedulePostLayoutPass(postLayout);
 
 		// register listener for bounds changes
 		if (getHost().getParent() == getHost().getRoot()) {
@@ -165,12 +183,13 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 			LayoutProperties.setBounds(getHost().getContent(), computeLayoutBounds());
 			applyLayout(true);
 		}
-
 	}
 
 	@Override
 	protected void doDeactivate() {
-		super.doDeactivate();
+		LayoutContext layoutContext = getLayoutContext();
+		layoutContext.unschedulePreLayoutPass(preLayout);
+		layoutContext.unschedulePostLayoutPass(postLayout);
 
 		// store the viewport state (in case navigation is supported)
 		Rectangle bounds = LayoutProperties.getBounds(getHost().getContent());
@@ -227,10 +246,24 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void postLayout() {
+		// execute post-layout of all nodes and edges
+		for (IVisualPart<Node, ? extends Node> child : getHost().getChildrenUnmodifiable()) {
+			AbstractLayoutBehavior childLayoutBehavior = child.getAdapter(AbstractLayoutBehavior.class);
+			if (childLayoutBehavior != null) {
+				childLayoutBehavior.postLayout();
+			}
+		}
 	}
 
 	@Override
 	protected void preLayout() {
+		// execute pre-layout of all nodes and edges
+		for (IVisualPart<Node, ? extends Node> child : getHost().getChildrenUnmodifiable()) {
+			AbstractLayoutBehavior childLayoutBehavior = child.getAdapter(AbstractLayoutBehavior.class);
+			if (childLayoutBehavior != null) {
+				childLayoutBehavior.preLayout();
+			}
+		}
 	}
 
 	/**

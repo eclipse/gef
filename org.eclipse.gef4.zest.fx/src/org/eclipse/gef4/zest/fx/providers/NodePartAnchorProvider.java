@@ -68,7 +68,11 @@ public class NodePartAnchorProvider extends DynamicAnchorProvider {
 			@Override
 			protected IGeometry computeValue() {
 				final Node shape = ((NodePart) getAdaptable()).getShape();
-				return NodeUtils.localToParent(shape, NodeUtils.getShapeOutline(shape));
+				if (shape != null) {
+					return NodeUtils.localToParent(shape, NodeUtils.getShapeOutline(shape));
+				} else {
+					return NodeUtils.getShapeOutline(((NodePart) getAdaptable()).getVisual());
+				}
 			}
 		});
 		return anchor;
