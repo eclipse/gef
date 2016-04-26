@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.DynamicAnchor;
+import org.eclipse.gef4.fx.anchors.DynamicAnchor.AnchoredReferencePoint;
 import org.eclipse.gef4.fx.anchors.IAnchor;
 import org.eclipse.gef4.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -163,6 +164,23 @@ public class StraightRouter extends AbstractRouter {
 			if (anchors.get(i) instanceof DynamicAnchor) {
 				updateComputationParameters(connection, i);
 			}
+		}
+	}
+
+	// TODO: we do not have to overwrite this as soon as position hints are
+	// properly cleared when positions hints are properly cleared
+	@Override
+	protected void updateComputationParameters(Connection connection,
+			int index) {
+		// ignore positions hints (which are not needed for straight routing)
+		AnchorKey anchorKey = connection.getAnchorKey(index);
+		AnchoredReferencePoint referencePointParameter = ((DynamicAnchor) connection
+				.getAnchor(index)).getComputationParameter(anchorKey,
+						AnchoredReferencePoint.class);
+		Point oldRef = referencePointParameter.get();
+		Point newRef = getAnchoredReferencePoint(connection, index);
+		if (oldRef == null || !newRef.equals(oldRef)) {
+			referencePointParameter.set(newRef);
 		}
 	}
 
