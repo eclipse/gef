@@ -9,18 +9,23 @@
  * Contributors:
  *     Fabian Steeg - initial API and implementation (see bug #277380)
  *     Tamas Miklossy (itemis AG) - Refactoring of preferences (bug #446639)
+ *     Darius Jockel (itemis AG)  - Added tests for calling dot with large 
+ *                                  input files #492395
  *     
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.eclipse.gef4.dot.internal.DotExecutableUtils;
 import org.eclipse.gef4.dot.internal.DotExport;
 import org.eclipse.gef4.dot.internal.DotFileUtils;
-import org.eclipse.gef4.dot.internal.DotExecutableUtils;
 import org.eclipse.gef4.dot.internal.ui.GraphvizPreferencePage;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
@@ -32,6 +37,7 @@ import org.junit.Test;
  * 
  * @author Fabian Steeg (fsteeg)
  * @author Tamas Miklossy
+ * @author Darius Jockel
  */
 public class DotExecutableUtilsTests {
 
@@ -54,7 +60,8 @@ public class DotExecutableUtilsTests {
 			if (stream == null) {
 				System.err.println(
 						"Could not load the test.properties file in directory of " //$NON-NLS-1$
-								+ DotExecutableUtilsTests.class.getSimpleName());
+								+ DotExecutableUtilsTests.class
+										.getSimpleName());
 			} else
 				try {
 					props.load(stream);
@@ -80,7 +87,8 @@ public class DotExecutableUtilsTests {
 
 	@Test
 	public void simpleGraph() {
-		testDotGeneration(DotTestUtils.getSimpleGraph(), "simple_graph.dot");
+		testDotGeneration(DotTestUtils.getSimpleGraph(),
+				"arrowshapes_direction_both.dot");
 	}
 
 	@Test
@@ -112,6 +120,15 @@ public class DotExecutableUtilsTests {
 			System.out.println("Created image: " + image); //$NON-NLS-1$
 			Assert.assertTrue("Image must exist", image.exists()); //$NON-NLS-1$
 		}
+	}
+
+	@Test(timeout = 2000)
+	public void testComplexDot() throws Exception {
+		File dotFile = new File("./resources/arrowshapes_direction_both.dot");
+		assertTrue(dotFile.exists());
+		String[] dotResult = DotExecutableUtils
+				.executeDot(new File(dotExecutablePath), dotFile, null, null);
+		assertNotNull("Result should not be null", dotResult);
 	}
 
 }

@@ -12,11 +12,14 @@
  *     Tamas Miklossy (itemis AG)  - Refactoring of preferences (bug #446639)
  *                                 - Exporting *.dot files in different formats (bug #446647)
  *                                 - Naming of output file (bug #484198)
+ *     Darius Jockel (itemis AG)   - Fixed problems when calling dot on windows with large 
+ *                                   files (#492395)
  *
  *********************************************************************************************/
 package org.eclipse.gef4.dot.internal;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.List;
  * 
  * @author Fabian Steeg (fsteeg)
  * @author Alexander Nyßen (anyssen)
+ * @author Darius Jockel
  */
 final public class DotExecutableUtils {
 
@@ -95,16 +99,41 @@ final public class DotExecutableUtils {
 	public static String[] executeDot(final File dotExecutablePath,
 			final File dotInputFile, final File outputFile,
 			final String outputFormat) {
+		File buffer = null;
+		boolean hasBuffer = false;
 		List<String> commands = new ArrayList<>();
 		commands.add(dotExecutablePath.getAbsolutePath());
 		if (outputFormat != null) {
 			commands.add("-T" + outputFormat);
 		}
 		if (outputFile != null) {
-			commands.add("-o" + outputFile.toPath().toString());
+			buffer = outputFile;
+		} else {
+			try {
+				buffer = File.createTempFile("tmpResult", ".dot");
+				hasBuffer = true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		commands.add("-o" + buffer.toPath().toString());
 		commands.add(dotInputFile.toPath().toString());
-		return call(commands.toArray(new String[] {}));
+		String[] call = call(commands.toArray(new String[] {}));
+		if (hasBuffer) {
+			FileInputStream input;
+			try {
+				input = new FileInputStream(buffer);
+				call[0] = read(input);
+				input.close();
+			} catch (Exception e) {
+				System.out.println("failed to read temp dot file");
+			} finally {
+				buffer.delete();
+			}
+			return call;
+		} else {
+			return call;
+		}
 	}
 
 	/***
